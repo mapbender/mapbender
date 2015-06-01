@@ -4,18 +4,19 @@
 
 {% block css %}
   {{parent()}}
-  {% stylesheets filter="compass,cssrewrite"
-    "bundles/mapbendermanager/sass/manager/services.scss"
-  %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-  {% endstylesheets %}
 {% endblock %}
 
 {% block manager_content %}
-
-{% for manager in managers %}
-  {% render controller(manager.startAction) %}
-  <div class="clearContainer"></div>
+<div id="sourceTabContainer" class="tabContainer sourceTabContainer">
+  <ul class="tabs">
+{% for name, manager in managers %}
+    <li id="tab{{loop.index}}" class="tab{% if loop.first %} active{% endif %}">{{manager.label }}</li>
 {% endfor %}
-
+  </ul>
+{% for name, manager in managers %}
+  <div id="container{{loop.index}}" class="container containerBaseData{% if loop.first %} active{% endif %}">
+    {% render controller(manager.startAction) %}
+  </div>
+{% endfor %}
+</div>
 {% endblock %}

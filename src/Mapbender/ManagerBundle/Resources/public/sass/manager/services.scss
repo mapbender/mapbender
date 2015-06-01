@@ -1,4 +1,4 @@
-$rootPath: "../../../mapbendercore/";
+//$rootPath: "../../../mapbendercore/";
 
 @import "libs/variables";
 @import "libs/mixins";
@@ -47,26 +47,39 @@ $rootPath: "../../../mapbendercore/";
   .metaText{@extend .smallText;}
   margin-bottom:$space;
 }
-.serviceMetaContainer{
-  $labelWidth:120px;
+.serviceMetaContainer {
+  $padding: 5px;
+  .labelText {
+    float: none;
+//    font-size: 13px;
+  }
+  .metaText {
+    line-height: 16px;
+    margin-bottom: 5px;
+    text-align: justify;
+    padding-bottom: $padding;
+  }
 
-  .labelText{width:$labelWidth;}
-  .metaText{margin-left:$labelWidth + $space/2;}
-  .metaUrl{word-wrap: break-word;}
+  .metaUrl {
+    word-wrap: break-word;
+
+  }
 }
+
 .serviceContactContainer{
   $labelWidth:90px;
 
   .labelText{width:$labelWidth; }
   .metaText{margin-left:$labelWidth + $space/2; }
 }
-.serviceServiceContainer{
-  $labelWidth:160px;
-
-  .labelText{width:$labelWidth;}
-  .metaText{margin-left:$labelWidth + $space/2; }
-  .metaFormats{line-height:1em;margin-top:0.6em;}
-}
+//.serviceServiceContainer{
+//  $labelWidth:160px;
+//
+//  .labelText{width:$labelWidth;}
+//  .metaText{margin-left:$labelWidth + $space/2; }
+//  .metaFormats{line-height:1em;margin-top:0.6em;}
+//}
+.serviceServiceContainer,
 .serviceLayersContainer{
   $labeText:85px;
 
@@ -139,12 +152,13 @@ $rootPath: "../../../mapbendercore/";
     margin-bottom:$space/2;
   }
   .leftContainer .inputWrapper input{ width: 100%; }
-  .dimensionGroup{
+  .extendedGroup{
     width: 326px;
     position:absolute;
     right:0px;
     font-size:12px;
     border:solid 1px $thirdColor;
+    z-index:1;
     .on-off{
       background-color:darken($contentColor,20%);
       border: solid 1px darken($contentColor,40%);
@@ -156,7 +170,7 @@ $rootPath: "../../../mapbendercore/";
     .on-off-content{
       background-color:$contentColor;
     }
-    .on-off-content .on-off-content{
+    .vendorspecific-content,.on-off-content .on-off-content{
       padding: 0 $space/2 $space/2 $space/2;
     }
     .labelCheck{
@@ -166,18 +180,23 @@ $rootPath: "../../../mapbendercore/";
     }
     .on-off-title {
       padding: 0 $space/2 0 $space/2;
-      .checkWrapper {
-        margin-left: $space;
-      }
+      .checkWrapper {margin-left: $space;}
     }
     .checkWrapper{
       display: inline-block;
       margin: 0px;
       height: auto;
     }
-    .mb-slider{
-      margin-top: $space/2;
+    .vendorspecific-content{
+      .dropdown,.inputWrapper,.checkWrapper{
+        width:200px !important;
+        margin:0px;
+      }
+      input {width:100%;}
+      .labelInput{width:80px;}
+      .collectionItem > label{display:none;}
     }
+    .mb-slider{margin-top: $space/2;}
   }
 }
 .metaData {

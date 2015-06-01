@@ -13,7 +13,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.layertree.class.title";
     }
@@ -21,7 +21,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.layertree.class.description";
     }
@@ -29,7 +29,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    public function getTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.layertree.tag.layertree",
@@ -56,14 +56,13 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         $assets = array(
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/dragdealer.min.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
-                '@MapbenderCoreBundle/Resources/public/vendor/joii.min.js',
                 '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
                 'mapbender.element.layertree.tree.js',
                 'mapbender.metadata.js'),
@@ -81,25 +80,29 @@ class Layertree extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        $configuration['menu'] = array_values($configuration['menu']);
+        $configuration['menu'] = isset($configuration['menu']) ? array_values($configuration['menu']) : array();
         return $configuration;
     }
 
     /**
      * @inheritdoc
      */
-    static public function getDefaultConfiguration()
+    public static function getDefaultConfiguration()
     {
         return array(
             "target" => null,
             "type" => null,
             "displaytype" => null,
-            "useAccordion" => false,
             "titlemaxlength" => intval(20),
             "autoOpen" => false,
-            "showBaseSource" => true,
+            "showBaseSource" => null,
             "showHeader" => false,
-            "menu" => array()
+            "hideNotToggleable" => false,
+            "hideSelect" => false,
+            "hideInfo" => false,
+            "menu" => array(),
+            "useTheme" => false,
+            'themes' => array()
         );
     }
 
@@ -109,12 +112,12 @@ class Layertree extends Element
     public function render()
     {
         return $this->container->get('templating')->render(
-                'MapbenderCoreBundle:Element:layertree.html.twig',
-                array(
+            'MapbenderCoreBundle:Element:layertree.html.twig',
+            array(
                 'id' => $this->getId(),
                 'configuration' => $this->getConfiguration(),
                 'title' => $this->getTitle()
-                )
+            )
         );
     }
 
@@ -125,5 +128,4 @@ class Layertree extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:layertree.html.twig';
     }
-
 }

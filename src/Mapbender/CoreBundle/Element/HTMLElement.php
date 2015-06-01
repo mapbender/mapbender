@@ -2,8 +2,13 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Doctrine\DBAL\Connection;
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * HTMLElement.
+ */
 class HTMLElement extends Element
 {
 
@@ -35,10 +40,10 @@ class HTMLElement extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array(
-            'js' => array('mapbender.element.htmlelement.js'),
+            'js'  => array('mapbender.element.htmlelement.js'),
             'css' => array('sass/element/htmlelement.scss')
         );
     }
@@ -57,7 +62,8 @@ class HTMLElement extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'classes' => 'html-element-inline'
+            'classes' => 'html-element-inline',
+            'content' =>  ''
         );
     }
 
@@ -74,13 +80,15 @@ class HTMLElement extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:htmlelement.html.twig',
-                    array(
-                    'id'            => $this->getId(),
-                    'entity'        => $this->entity,
-                    'application'   => $this->application,
-                    'configuration' => $this->getConfiguration()));
+        return $this->container->get('templating')->render(
+            'MapbenderCoreBundle:Element:htmlelement.html.twig',
+            array(
+                'id'            => $this->getId(),
+                'entity'        => $this->entity,
+                'application'   => $this->application,
+                'configuration' => $this->getConfiguration()
+            )
+        );
     }
 
     /**
@@ -91,10 +99,13 @@ class HTMLElement extends Element
         return 'MapbenderCoreBundle:ElementAdmin:htmlelement.html.twig';
     }
 
-    static public function getFormAssets()
+    /**
+     * @inheritdoc
+     */
+    public static function getFormAssets()
     {
         return array(
-            'js' => array(
+            'js'  => array(
                 'bundles/mapbendermanager/codemirror/lib/codemirror.js',
                 'bundles/mapbendermanager/codemirror/mode/xml/xml.js',
                 'bundles/mapbendermanager/codemirror/keymap/sublime.js',
@@ -108,4 +119,95 @@ class HTMLElement extends Element
         );
     }
 
+    /**
+     * Is associative array given?
+     *
+     * @param $arr
+     * @return bool
+     */
+    protected static function isAssoc(&$arr)
+    {
+        return array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
+    /**
+     * Prepare elements recursive.
+     *
+     * @param $items
+     * @return array
+     */
+    public function prepareItems($items)
+    {
+        if (!is_array($items)) {
+            return $items;
+        } elseif (self::isAssoc($items)) {
+            $items = $this->prepareItem($items);
+        } else {
+            foreach ($items as $key => $item) {
+                $items[$key] = $this->prepareItem($item);
+            }
+        }
+        return $items;
+    }
+
+    /**
+     * Prepare element by type
+     *
+     * @param $item
+     * @return mixed
+     * @internal param $type
+     */
+    protected function prepareItem($item)
+    {
+        if (!isset($item["type"])) {
+            return $item;
+        }
+
+        if (isset($item["children"])) {
+            $item["children"] = $this->prepareItems($item["children"]);
+        }
+
+        switch ($item['type']) {
+            case 'select':
+                if (isset($item['sql'])) {
+                    $connectionName = isset($item['connection']) ? $item['connection'] : 'default';
+                    $sql            = $item['sql'];
+                    $options        = isset($item["options"]) ? $item["options"] : array();
+
+                    unset($item['sql']);
+                    unset($item['connection']);
+                    /** @var Connection $dbal */
+                    $dbal = $this->container->get("doctrine.dbal.{$connectionName}_connection");
+                    foreach ($dbal->fetchAll($sql) as $option) {
+                        $options[current($option)] = end($option);
+                    }
+                    $item["options"] = $options;
+                }
+                break;
+        }
+        return $item;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function httpAction($action)
+    {
+        switch ($action) {
+            case 'configuration':
+                return new JsonResponse($this->getConfiguration());
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getConfiguration()
+    {
+        $configuration = parent::getConfiguration();
+        if (isset($configuration['children'])) {
+            $configuration['children'] = $this->prepareItems($configuration['children']);
+        }
+        return $configuration;
+    }
 }

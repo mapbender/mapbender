@@ -1,0 +1,51 @@
+.mb-element-digitizer {
+
+  padding: 0;
+
+  > .title {
+    margin-bottom: 9px;
+    text-shadow: 0px 1px 0px #fff;
+  }
+
+  > select {
+    background-color: #fff;
+    padding: 4px;
+    width: 100%;
+    display: block;
+    option {
+      font-weight: bold;
+    }
+    margin-bottom: 10px;
+  }
+
+  .mapbender-element-result-table {
+    margin-top: 10px;
+        
+        // Row higlight by feature select
+        table.dataTable > tbody > tr{
+            
+            &.odd,&.even{
+                &.hover td{
+                    background-color: #F7F79A;
+  }
+                &:hover td{
+                    background-color: #F7F79A;
+                }
+            }
+        }
+    }
+
+}
+
+.olHandlerBoxSelectFeature {
+  background-color: white;
+  border: 2px solid blue;
+  font-size: 1px;
+  opacity: 0.5;
+  position: absolute;
+}
+
+div.notifyjs-container > div.notifyjs-bootstrap-base > span {
+  text-wrap: none;
+  white-space: nowrap;
+}

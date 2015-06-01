@@ -58,7 +58,8 @@ class WmcLoaderAdminType extends AbstractType
                 'choices' => array(
                     "wmcidloader" => "Id Loader",
                     "wmclistloader" => "From List Loader",
-                    "wmcxmlloader" => "Wmc Xml Loader")))
+                    "wmcxmlloader" => "Wmc Xml Loader",
+                    "wmcurlloader" => "Wmc From Url Loader")))
             ->add('keepExtent', 'checkbox', array(
                 'required' => false));
     }

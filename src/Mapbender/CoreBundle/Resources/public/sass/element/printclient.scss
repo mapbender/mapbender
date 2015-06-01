@@ -1,11 +1,14 @@
-@import "libs/variables";
-@import "libs/mixins";
-
 .mb-element-printclient{
   display:none;
   overflow: visible;
 
-  .labelInput{width:80px;}
+  .labelInput{
+    width:80px;
+   }
+   label {
+    font-weight: inherit;
+    margin-bottom: inherit;
+   }
   .input, .dropdown{
     min-width:190px;
     margin-bottom:$space/2;

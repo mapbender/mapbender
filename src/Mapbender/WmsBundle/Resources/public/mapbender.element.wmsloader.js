@@ -25,8 +25,9 @@
                 Mapbender['declarative'] = {'source.add.wms': $.proxy(this.loadDeclarativeWms, this)};
             }
             if(this.options.wms_url && this.options.wms_url !== ''){
+                var urlObj = new Mapbender.Util.Url(this.options.wms_url);
                 var options = {
-                    'gcurl': this.options.wms_url,
+                    'gcurl': urlObj,
                     'type': 'url',
                     'layers': {},
                     'global': {
@@ -36,6 +37,20 @@
                     }
                 };
                 this.loadWms(options);
+            }
+
+            if (this.options.wms_id && this.options.wms_id !== '') {
+                var options = {
+                    'gcurl': '',
+                    'type': 'id',
+                    'layers': {},
+                    'global': {
+                        'mergeSource': false,
+                        'splitLayers': this.options.splitLayers,
+                        'options': {'treeOptions': {'selected': true}}
+                    }
+                };
+                this._getInstances(this.options.wms_id, options);
             }
             this._trigger('ready');
             this._ready();
@@ -217,12 +232,38 @@
                 }
             });
         },
-
-        _addSources: function(sourceDefs, sourceOpts){
+        _getInstances: function(scvIds, sourceOpts) {
             var self = this;
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
-            $.each(sourceDefs, function(idx, sourceDef){
+            sourceOpts['global']['defaultFormat'] = this.options.defaultFormat;
+            sourceOpts['global']['defaultInfoFormat'] = this.options.defaultInfoFormat;
+            sourceOpts['model'] = mbMap.model;
+            $.ajax({
+                url: self.elementUrl + 'getInstances',
+                data: {
+                    instances: scvIds
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        var sources = $.parseJSON(response.success);
+                        self._addSources(sources, sourceOpts);
+                    } else if (response.error) {
+                        Mapbender.error(response.error);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
+                }
+            });
+        },
+        _addSources: function(sourceDefs, sourceOpts) {
+            var self = this;
+            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
+            $.each(sourceDefs, function(idx, sourceDef) {
                 var opts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
+                sourceDef.configuration.status = 'ok';
                 if(!sourceOpts.global.mergeSource){
                     mbMap.addSource(sourceDef, null, null);
                 }else if(mbMap.model.findSource(opts).length === 0){

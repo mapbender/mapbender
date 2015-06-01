@@ -1,5 +1,3 @@
-$rootPath: "../../../mapbendercore/";
-
 @import "libs/variables";
 @import "libs/mixins";
 @import "libs/normalize";
@@ -23,9 +21,6 @@ $bannerHeight:170px;
 $contentPaneWidth:800px;
 $navWidth:200px;
 $pageWidth:$contentPaneWidth + $navWidth;
-
-
-
 
 
 // ------------------------------------------------------------------------ PAGE
@@ -158,11 +153,53 @@ $pageWidth:$contentPaneWidth + $navWidth;
 
   & > .content{
     min-height: 600px;
-    position:relative;
-    padding:$space;
-    margin:0px;
-    background-color:$contentColor;
-    background-image:url($contentPatternUrl);
+    position: relative;
+    padding: $space;
+    margin: 0px;
+    background: $contentColor url($contentPatternUrl);
+
+    form{
+      &:after{
+        content: "";
+        display: block;
+        visibility: hidden;
+        clear: both;
+      }
+
+      label.labelInput{
+        margin-bottom: -6px;
+      }
+      .dropdown{
+        width: 100%;
+        .dropdownList{
+          width: 100%;
+        }
+      }
+      .inputWrapper{
+        width: 100%;
+        textarea,
+        input[type="password"],
+        input[type="email"],
+        input[type="text"]{
+          width: 100%;
+          background: #fff;
+        }
+
+      }
+      .screenshot_upload.left{
+        width: 100%;
+      }
+
+      select[multiple="multiple"]{
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      input[type='submit']{
+        min-width: 20px;
+      }
+    }
+
     border: {
       top: solid 1px $secondColor;
       left: solid 1px $thirdColor;
@@ -174,4 +211,57 @@ $pageWidth:$contentPaneWidth + $navWidth;
     color:$lightFontColor;
     text-align:right;
   }
+}
+
+.icon[data-state]{
+  cursor: default;
+  opacity:1;
+}
+.icon[data-state="running"]{
+  @extend .iconActivity;
+  &:before{
+    -webkit-animation:spin 1s linear infinite;
+    -moz-animation:spin 1s linear infinite;
+    animation:spin 1s linear infinite;
+  }
+}
+.icon[data-state="error"]{
+  @extend .iconBolt;
+  &:before{
+    color:$errorColor;
+  }
+}
+.icon[data-state="success"]{
+  @extend .iconOk;
+}
+[data-state="waiting"]{
+  @extend .iconClock;
+}
+.icon[data-state="aborted"]{
+  @extend .iconWarning;
+  &:before{
+    color:$errorColor;
+  }
+}
+.icon[data-state="new"]{
+  @extend .iconFile;
+}
+
+div[data-type="datetime"] {
+  position: relative;
+  display: inline-block;
+  min-width: 300px;
+  margin-bottom: 10px;
+}
+
+div[data-type="datetime"] div:first-child div.dropdown{
+  min-width: 98px;
+  display: inline-block;
+  margin-right: 3px;
+  margin-bottom: 10px;
+}
+div[data-type="datetime"] div:last-child div.dropdown{
+  min-width: 144px;
+  display: inline-block;
+  margin-right: 3px;
 }

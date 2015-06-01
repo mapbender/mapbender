@@ -1,12 +1,13 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Element\EventListener\LayertreeSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * 
+ * LayertreeAdminType
  */
 class LayertreeAdminType extends AbstractType
 {
@@ -34,6 +35,8 @@ class LayertreeAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $subscriber = new LayertreeSubscriber($builder->getFormFactory(), $options['application']);
+        $builder->addEventSubscriber($subscriber);
         $menuComponents = array(
             "layerremove" => "Remove layer",
             "opacity" => "Opacity",
@@ -43,37 +46,38 @@ class LayertreeAdminType extends AbstractType
 //            "kmlexport" => "KML export",
 //            "dimension" => "Dimension",
         );
-        $builder->add('target', 'target_element',
-                array(
+        $builder->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
-            ->add('type', 'choice',
-                array(
+            ->add('type', 'choice', array(
                 'required' => true,
                 'choices' => array(
-                    'dialog' => 'Dialog',
-                    'element' => 'Element')))
-            ->add('autoOpen', 'checkbox',
-                array(
+                    'element' => 'Element',
+                    'dialog' => 'Dialog')))
+            ->add('autoOpen', 'checkbox', array(
                 'required' => false))
-            ->add('displaytype', 'choice',
-                array(
+            ->add('useTheme', 'checkbox', array(
+                'required' => false))
+            ->add('displaytype', 'choice', array(
                 'required' => true,
                 'choices' => array('tree' => 'Tree')))
-            ->add('titlemaxlength', 'text', array('required' => true))
-            ->add('showBaseSource', 'checkbox',
-                array(
+            ->add('titlemaxlength', 'text', array(
+                'required' => true))
+            ->add('showBaseSource', 'checkbox', array(
                 'required' => false))
-            ->add('showHeader', 'checkbox',
-                array(
+            ->add('showHeader', 'checkbox', array(
                 'required' => false))
-            ->add('menu', 'choice',
-                array(
+            ->add('hideInfo', 'checkbox', array(
+                'required' => false))
+            ->add('hideNotToggleable', 'checkbox', array(
+                'required' => false))
+            ->add('hideSelect', 'checkbox', array(
+                'required' => false))
+            ->add('menu', 'choice', array(
                 'required' => false,
                 "multiple" => true,
                 'choices' => $menuComponents));
     }
-
 }

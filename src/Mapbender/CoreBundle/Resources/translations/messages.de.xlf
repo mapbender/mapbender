@@ -52,7 +52,7 @@
       </trans-unit>
       <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
         <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
-        <target>Der Diensr mit der ID %id% ist nicht vorhanden</target>
+        <target>Der Dienst mit der ID %id% ist nicht vorhanden</target>
       </trans-unit>
       <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
         <source>mb.core.legend.nolegend</source>
@@ -801,6 +801,146 @@
       <trans-unit id="44b1db86684ccd813cfea5e5d92461cb" resname="mb.core.layertree.label.dimension">
         <source>mb.core.layertree.label.dimension</source>
         <target>Dimension</target>
+      </trans-unit>
+      <trans-unit id="3973ffff84e82a5b904cca85555b9c21" resname="mb.core.admin.layertree.label.usetheme">
+        <source>mb.core.admin.layertree.label.usetheme</source>
+        <target>Thematischer Layer</target>
+      </trans-unit>
+      <trans-unit id="2c6f6a4b1fb50d114014cf535b03bda1" resname="mb.core.admin.layertree.label.themes">
+        <source>mb.core.admin.layertree.label.themes</source>
+        <target>Themen</target>
+      </trans-unit>
+      <trans-unit id="db777bdf84282626ab0204dc86f1dfcd" resname="mb.core.admin.layertree.label.theme.opened">
+        <source>mb.core.admin.layertree.label.theme.opened</source>
+        <target>Thema geöffnet/geschlossen</target>
+      </trans-unit>
+      <trans-unit id="0a5fe4c7ced865711f3ffcfe5d0e141a" resname="mb.core.admin.layertree.label.theme.activate">
+        <source>mb.core.admin.layertree.label.theme.activate</source>
+        <target>Aktivieren von Layers hinzufügen/entfernen</target>
+      </trans-unit>
+      <trans-unit id="403fb1af574e44f9fe64fd65c8622a30" resname="mb.core.redlining.dialog.btn.cancel">
+        <source>mb.core.redlining.dialog.btn.cancel</source>
+        <target>Schließen</target>
+      </trans-unit>
+      <trans-unit id="b4784e7cc4c33d0899a0a0a11a2f69ab" resname="mb.core.redlining.class.title">
+        <source>mb.core.redlining.class.title</source>
+        <target>Redlining</target>
+      </trans-unit>
+      <trans-unit id="d960dbce5b253406c2ed289fdcafd273" resname="mb.core.redlining.class.description">
+        <source>mb.core.redlining.class.description</source>
+        <target>Redlining Werkzeug</target>
+      </trans-unit>
+      <trans-unit id="15b5f2d8a1892f2f133b5da92896f230" resname="mb.core.redlining.tag.redlining">
+        <source>mb.core.redlining.tag.redlining</source>
+        <target>redlining</target>
+      </trans-unit>
+      <trans-unit id="0561206ab04fdb6a5d43b828edafadd2" resname="mb.core.redlining.tag.geometry">
+        <source>mb.core.redlining.tag.geometry</source>
+        <target>geometrie</target>
+      </trans-unit>
+      <trans-unit id="23c457112644bfcfed3864ffe9f5082a" resname="mb.core.redlining.geometrytype.point">
+        <source>mb.core.redlining.geometrytype.point</source>
+        <target>Punkt</target>
+      </trans-unit>
+      <trans-unit id="6a0f86ba63eae1dff8fb6744ef6c2e55" resname="mb.core.redlining.geometrytype.line">
+        <source>mb.core.redlining.geometrytype.line</source>
+        <target>Linie</target>
+      </trans-unit>
+      <trans-unit id="5541291a2a8778b492748eaa467845f5" resname="mb.core.redlining.geometrytype.polygon">
+        <source>mb.core.redlining.geometrytype.polygon</source>
+        <target>Polygon</target>
+      </trans-unit>
+      <trans-unit id="559d2c6711affc5637400c98a98a57c2" resname="mb.core.redlining.geometrytype.rectangle">
+        <source>mb.core.redlining.geometrytype.rectangle</source>
+        <target>Rechteck</target>
+      </trans-unit>
+      <trans-unit id="ec534f6f6bdbefd454d70b3fe5c7f582" resname="mb.core.redlining.geometrytype.text">
+        <source>mb.core.redlining.geometrytype.text</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="7bfdb38a998a282470bee1644ffaaa21" resname="mb.core.redlining.geometry.action.remove">
+        <source>mb.core.redlining.geometry.action.remove</source>
+        <target>Entfernen der Geometrie</target>
+      </trans-unit>
+      <trans-unit id="e08dd8632af42c56f03af8eadff0839f" resname="mb.core.redlining.geometry.action.edit">
+        <source>mb.core.redlining.geometry.action.edit</source>
+        <target>Editieren der Geometrie</target>
+      </trans-unit>
+      <trans-unit id="277124be4d6c4424f6f86f92cb07fb8d" resname="mb.core.redlining.geometry.action.zoom">
+        <source>mb.core.redlining.geometry.action.zoom</source>
+        <target>Zoom auf die Geometrie</target>
+      </trans-unit>
+      <trans-unit id="86260724aded581b31d37875b4c83c1f" resname="mb.core.redlining.geometrytype.text.label">
+        <source>mb.core.redlining.geometrytype.text.label</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="b99c3c9b8d4f75669761bcc882f6b06a" resname="mb.core.admin.featureinfo.label.showoriginal">
+        <source>mb.core.admin.featureinfo.label.showoriginal</source>
+        <target>Original Zeigen</target>
+      </trans-unit>
+      <trans-unit id="87bb95e7b202bb8aa890dac11956fa67" resname="mb.core.admin.featureinfo.label.onlyvalid">
+        <source>mb.core.admin.featureinfo.label.onlyvalid</source>
+        <target>Nur valide zeigen</target>
+      </trans-unit>
+      <trans-unit id="05f6e660c816d83676722100aa7ca0fb" resname="mb.core.admin.layertree.label.hidenottoggleable">
+        <source>mb.core.admin.layertree.label.hidenottoggleable</source>
+        <target>Nicht aufklappbare Ordner ausblenden</target>
+      </trans-unit>
+      <trans-unit id="012324b93835eb976d2a88819cd609ee" resname="mb.core.admin.layertree.label.hideselect">
+        <source>mb.core.admin.layertree.label.hideselect</source>
+        <target>Visibility bei Ordnern ausblenden</target>
+      </trans-unit>
+      <trans-unit id="d1368f78e4f1bdc29f696297a211fd1f" resname="mb.core.admin.layertree.label.hideinfo">
+        <source>mb.core.admin.layertree.label.hideinfo</source>
+        <target>Info ausblenden</target>
+      </trans-unit>
+      <trans-unit id="a2ed1e4126bd38fb077437ea098b4066" resname="mb.core.layertree.label.sourcevisibility_onoff">
+        <source>mb.core.layertree.label.sourcevisibility_onoff</source>
+        <target>Dienste anzeigen/ausblenden</target>
+      </trans-unit>
+      <trans-unit id="1af98208e92a1087f8c1fd9bacb6dd7e" resname="mb.core.layertree.label.allvisibility_on">
+        <source>mb.core.layertree.label.allvisibility_on</source>
+        <target>Alle Layer anzeigen</target>
+      </trans-unit>
+      <trans-unit id="7b01077c663fa706694fe8aa11d99d9e" resname="mb.core.admin.layertree.label.theme.useTheme">
+        <source>mb.core.admin.layertree.label.theme.useTheme</source>
+        <target>Thema anzeigen</target>
+      </trans-unit>
+      <trans-unit id="a8729045fe5b44678a0bc6e3bd728738" resname="mb.core.admin.layertree.label.theme.sourceVisibility">
+        <source>mb.core.admin.layertree.label.theme.sourceVisibility</source>
+        <target>Thema: Dienste-Sichtbarkeit</target>
+      </trans-unit>
+      <trans-unit id="7232f3e59dad7f7d89467eada5c254e8" resname="mb.core.admin.layertree.label.theme.allSelected">
+        <source>mb.core.admin.layertree.label.theme.allSelected</source>
+        <target>Thema: Layer-Sichtbarkeit</target>
+      </trans-unit>
+      <trans-unit id="e7fc5ac247221c68263af27adf77755f" resname="mb.core.admin.layertree.label.theme.label">
+        <source>mb.core.admin.layertree.label.theme.label</source>
+        <target>Themenname</target>
+      </trans-unit>
+      <trans-unit id="c15a053d4e20aee70d58215582648da6" resname="mb.core.featureinfo.error.noresult">
+        <source>mb.core.featureinfo.error.noresult</source>
+        <target>kein Ergebnis</target>
+      </trans-unit>
+      <trans-unit id="c093a9f43f4ac6e10fa05a048a82f32d" resname="mb.core.admin.printclient.label.legend">
+        <source>mb.core.admin.printclient.label.legend</source>
+        <target>Legende drucken</target>
+      </trans-unit>
+      <trans-unit id="0a0018ea0813e145104cea653eab6d17" resname="mb.core.printclient.label.legend">
+        <source>mb.core.printclient.label.legend</source>
+        <target>Legende drucken</target>
+      </trans-unit>
+      <trans-unit id="f22da785244a98eb26f463fe681cc872" resname="mb.geosource.image_error.datails">
+        <source>mb.geosource.image_error.datails</source>
+        <target>Die Karte kann nicht angezeigt werden.</target>
+      </trans-unit>
+      <trans-unit id="4115a32e09882121bb4a410859d5657e" resname="mb.geosource.image_error.exception">
+        <source>mb.geosource.image_error.exception</source>
+        <target>Ausnahmefehler: %exception%</target>
+      </trans-unit>
+      <trans-unit id="c02ac4b03faa03bd83e61ab066ea39f1" resname="mb.geosource.image_error.statuscode">
+        <source>mb.geosource.image_error.statuscode</source>
+        <target>HTTP Statuscode</target>
       </trans-unit>
     </body>
   </file>

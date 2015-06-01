@@ -19,7 +19,7 @@ class OdgParser
         while ($zip_entry = zip_read($open)) {
             if (zip_entry_name($zip_entry) == $file) {
                 zip_entry_open($open, $zip_entry);
-                $xml = zip_entry_read($zip_entry, 51200);
+                $xml = zip_entry_read($zip_entry, 204800);
                 break;
             }
         }
@@ -38,14 +38,11 @@ class OdgParser
         $width = $node->item(0)->getAttribute('svg:width');
         $height = $node->item(0)->getAttribute('svg:height');
 
-        $data = array();
-        $data['width'] = substr($width, 0, -2);
-        $data['height'] = substr($height, 0, -2);
+        $size = array();
+        $size['width'] = substr($width, 0, -2);
+        $size['height'] = substr($height, 0, -2);
 
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
-        $response->setContent(json_encode($data));
-        return $response;
+        return json_encode($size);
     }
 
     public function getConf($template)
@@ -58,9 +55,9 @@ class OdgParser
         $doc->loadXML($stylexml);
         $xpath = new \DOMXPath($doc);
         $node = $xpath->query("//style:page-layout-properties");
-        $orientation = $node->item(0)->getAttribute('style:print-orientation');
-        $data['orientation'] = $orientation;
-
+        $data['orientation'] = $node->item(0)->getAttribute('style:print-orientation');
+        $data['pageSize']['height'] = substr($node->item(0)->getAttribute('fo:page-height'), 0, -2) * 10;
+        $data['pageSize']['width'] = substr($node->item(0)->getAttribute('fo:page-width'), 0, -2) * 10;
 
         $contentxml = $this->readOdgFile($template, 'content.xml');
         $doc = new \DOMDocument();
@@ -78,10 +75,10 @@ class OdgParser
             $x = $node->getAttribute('svg:x');
             $y = $node->getAttribute('svg:y');
 
-            $data[$name]['width'] = substr($width, 0, -2);
-            $data[$name]['height'] = substr($height, 0, -2);
-            $data[$name]['x'] = substr($x, 0, -2);
-            $data[$name]['y'] = substr($y, 0, -2);
+            $data[$name]['width'] = substr($width, 0, -2) * 10;
+            $data[$name]['height'] = substr($height, 0, -2) * 10;
+            $data[$name]['x'] = substr($x, 0, -2) * 10;
+            $data[$name]['y'] = substr($y, 0, -2) * 10;
         }
 
         $contextnode = $doc->getElementsByTagName('drawing')->item(0);
@@ -96,10 +93,10 @@ class OdgParser
             $x = $node->getAttribute('svg:x');
             $y = $node->getAttribute('svg:y');
 
-            $data['fields'][$name]['width'] = substr($width, 0, -2);
-            $data['fields'][$name]['height'] = substr($height, 0, -2);
-            $data['fields'][$name]['x'] = substr($x, 0, -2);
-            $data['fields'][$name]['y'] = substr($y, 0, -2);
+            $data['fields'][$name]['width'] = substr($width, 0, -2) * 10;
+            $data['fields'][$name]['height'] = substr($height, 0, -2) * 10;
+            $data['fields'][$name]['x'] = substr($x, 0, -2) * 10;
+            $data['fields'][$name]['y'] = substr($y, 0, -2) * 10;
 
 
             $textnode = $xpath->query("draw:text-box/text:p/text:span", $node)->item(0);

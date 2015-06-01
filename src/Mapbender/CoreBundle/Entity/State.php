@@ -173,9 +173,9 @@ class State
         $json = json_decode($this->getJson(), true);
         if ($json && isset($json['sources']) && is_array($json['sources'])) {
             foreach ($json['sources'] as $source) {
-                $source['configuration']['options']['url'] = $signer->signUrl($source['configuration']['options']['url']);
+                $source['configuration']['options']['url'] =
+                    $signer->signUrl($source['configuration']['options']['url']);
             }
         }
     }
-
 }

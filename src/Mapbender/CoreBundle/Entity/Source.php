@@ -2,9 +2,8 @@
 
 namespace Mapbender\CoreBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\Utils;
 
 /**
  * Source entity
@@ -12,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Paul Schmidt
  *
  * @ORM\Entity
+ * @ UniqueEntity("uuid")
  * @ORM\Table(name="mb_core_source")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -20,6 +20,13 @@ use Doctrine\ORM\Mapping as ORM;
 abstract class Source
 {
 
+    const STATUS_OK = 'OK';
+    const STATUS_UNREACHABLE = 'UNREACHABLE';
+
+    const TYPE_WMS = "WMS";
+    const TYPE_WMTS = "WMTS";
+    const TYPE_TMS = "TMS";
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -27,6 +34,13 @@ abstract class Source
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @var string $uuid The unic id
+     * @ORM\Column(type="string", nullable=true)
+     * @ ORM\Column(type="string", length=36, nullable=false, unique=true)
+     */
+    protected $uuid;
 
     /**
      * @var string $title The source title
@@ -51,11 +65,43 @@ abstract class Source
      * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
+
+    /**
+     * @var string source status
+     * @ORM\Column(type="string", length=25, nullable=true)
+     */
+    protected $status = self::STATUS_OK;
+
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    protected $type;
     
     /**
-     * @var string source identifier 
+     * @var string source identifier
      */
     protected $identifier;
+
+    /**
+     *
+     * @param strign $type source type
+     */
+    public function __construct($type)
+    {
+        $this->type = $type;
+        $this->uuid = Utils::guidv4();
+    }
+
+    /**
+     * Set id
+     * @param integer $id source id
+     * @return Source
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     /**
      * Get id
@@ -65,6 +111,27 @@ abstract class Source
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Get uuid
+     *
+     * @return string
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * Set uuid
+     *
+     * @return Source
+     */
+    public function generateUuid()
+    {
+        $this->uuid = Utils::guidv4();
+        return $this;
     }
 
     /**
@@ -168,17 +235,38 @@ abstract class Source
     {
         return $this->valid;
     }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     * @return Source
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
     
     /**
      * Returns the source identifier
-     * 
      * @return string source indetifier
      */
     abstract public function getIdentifier();
     
     /**
      * Sets  the source identifier
-     * 
      * @param string $identifier the source identifier
      * @return Source the source
      */
@@ -199,13 +287,30 @@ abstract class Source
      *
      * @return String type
      */
-    abstract public function getType();
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Sets a source type
+     *
+     * @return String type
+     */
+    public function setType($type)
+    {
+        if ($type === self::TYPE_WMTS || $type === self::TYPE_WMS || $type === self::TYPE_TMS) {
+            $this->type = $type;
+        }
+    }
 
     /**
      * Returns a manager type
      *
      * @return String a manager type
      */
-    abstract public function getManagertype();
-
+    public function getManagertype()
+    {
+        return strtolower($this->getType());
+    }
 }

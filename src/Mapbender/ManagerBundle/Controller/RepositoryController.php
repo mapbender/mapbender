@@ -5,6 +5,7 @@
  *
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  */
+
 namespace Mapbender\ManagerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -13,8 +14,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\CoreBundle\Entity\Source;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -38,8 +37,7 @@ class RepositoryController extends Controller
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
 
         $em = $this->getDoctrine()->getManager();
-        $query = $em->createQuery(
-            "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
+        $query = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
 
         $allowed_sources = array();
@@ -79,7 +77,7 @@ class RepositoryController extends Controller
             'managers' => $managers
         );
     }
-    
+
     /**
      * Renders a list of importers
      *
@@ -98,11 +96,10 @@ class RepositoryController extends Controller
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$managertype];
-        
+
         $path = array('_controller' => $manager['bundle'] . ":" . "Repository:create");
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle(
-                $subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -121,8 +118,7 @@ class RepositoryController extends Controller
             "id" => $source->getId()
         );
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle(
-                $subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -172,8 +168,56 @@ class RepositoryController extends Controller
             "sourceId" => $source->getId()
         );
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle(
-                $subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+    }
+
+    /**
+     * Returns a Source update form.
+     *
+     * @ManagerRoute("/source/{sourceId}/updateform")
+     * @Method({"GET"})
+     * @Template
+     */
+    public function updateformAction($sourceId)
+    {
+        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
+            throw new AccessDeniedException();
+        }
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$source->getManagertype()];
+        return array(
+            'manager' => $manager,
+            'source' => $source
+        );
+    }
+
+    /**
+     * Updates a Source
+     *
+     * @ManagerRoute("/source/{sourceId}/update")
+     * @Method({"POST"})
+     * @Template
+     */
+    public function updateAction($sourceId)
+    {
+        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
+            throw new AccessDeniedException();
+        }
+
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$source->getManagertype()];
+        $path = array(
+            '_controller' => $manager['bundle'] . ":" . "Repository:update",
+            "sourceId" => $source->getId()
+        );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -192,22 +236,21 @@ class RepositoryController extends Controller
 
         $securityContext = $this->get('security.context');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!($securityContext->isGranted('EDIT', $sourceInst->getSource()) ||
-              $securityContext->isGranted('EDIT', $oid))) {
+        if (!($securityContext->isGranted('EDIT', $sourceInst->getSource())
+            || $securityContext->isGranted('EDIT', $oid))) {
             throw new AccessDeniedHttpException();
         }
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
-        
+
         $path = array(
             '_controller' => $manager['bundle'] . ":" . "Repository:instance",
             "slug" => $slug,
             "instanceId" => $sourceInst->getId()
         );
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle(
-                $subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -220,18 +263,16 @@ class RepositoryController extends Controller
         $layersetId_new = $this->get("request")->get("new_layersetId");
 
         $instance = $this->getDoctrine()
-            ->getRepository('MapbenderWmsBundle:WmsInstance')
+            ->getRepository('MapbenderCoreBundle:SourceInstance')
             ->findOneById($instanceId);
 
         if (!$instance) {
-            throw $this->createNotFoundException('The wms instance with"
-                ." the id "' . $instanceId . '" does not exist.');
+            throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
         }
         if (intval($number) === $instance->getWeight() && $layersetId === $layersetId_new) {
             return new Response(json_encode(array(
                     'error' => '',
-                    'result' => 'ok')), 200,
-                array('Content-Type' => 'application/json'));
+                    'result' => 'ok')), 200, array('Content-Type' => 'application/json'));
         }
 
         if ($layersetId === $layersetId_new) {
@@ -240,8 +281,8 @@ class RepositoryController extends Controller
             $em->persist($instance);
             $em->flush();
             $query = $em->createQuery(
-                "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
-                . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
+                "SELECT i FROM MapbenderCoreBundle:SourceInstance i WHERE i.layerset=:lsid ORDER BY i.weight ASC"
+            );
             $query->setParameters(array("lsid" => $layersetId));
             $instList = $query->getResult();
 
@@ -280,8 +321,8 @@ class RepositoryController extends Controller
 
             // order instances of the old layerset
             $query = $em->createQuery(
-                "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
-                . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
+                "SELECT i FROM MapbenderCoreBundle:SourceInstance i WHERE i.layerset=:lsid ORDER BY i.weight ASC"
+            );
             $query->setParameters(array("lsid" => $layersetId));
             $instList = $query->getResult();
 
@@ -295,8 +336,8 @@ class RepositoryController extends Controller
 
             // order instances of the new layerset
             $query = $em->createQuery(
-                "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
-                . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
+                "SELECT i FROM MapbenderCoreBundle:SourceInstance i WHERE i.layerset=:lsid ORDER BY i.weight ASC"
+            );
             $query->setParameters(array("lsid" => $layersetId_new));
             $instList = $query->getResult();
             $num = 0;
@@ -324,8 +365,7 @@ class RepositoryController extends Controller
 
         return new Response(json_encode(array(
                 'error' => '',
-                'result' => 'ok')), 200,
-            array(
+                'result' => 'ok')), 200, array(
             'Content-Type' => 'application/json'));
     }
 
@@ -349,8 +389,7 @@ class RepositoryController extends Controller
             "instanceId" => $sourceInst->getId()
         );
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle(
-                $subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -364,7 +403,7 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
-        
+
         $path = array(
             '_controller' => $manager['bundle'] . ":" . "Repository:instancelayerpriority",
             "slug" => $slug,
@@ -372,8 +411,6 @@ class RepositoryController extends Controller
             "instLayerId" => $instLayerId
         );
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle(
-                $subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
-
 }

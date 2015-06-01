@@ -19,27 +19,43 @@ class IconClassType extends AbstractType
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        $icons = array(
+
+            // Mapbender Icons
+            'icon-layer-tree'   => 'Layer tree',
+            'icon-feature-info' => 'Feature Info',
+            'icon-area-ruler'   => 'Area ruler',
+            'icon-polygone'     => 'Polygone',
+            'icon-line-ruler'   => 'Line ruler',
+            'icon-image-export' => 'Image Export',
+            'icon-legend'       => 'Legend',
+            'icon-about'        => 'About',
+
+            // FontAwesome
+            'iconAbout'         => 'About (FontAwesome)',
+            'iconAreaRuler'     => 'Area ruler (FontAwesome)',
+            'iconInfoActive'    => 'Feature info (FontAwesome)',
+            'iconGps'           => 'GPS (FontAwesome)',
+            'iconLegend'        => 'Legend (FontAwesome)',
+            'iconPrint'         => 'Print (FontAwesome)',
+            'iconSearch'        => 'Search (FontAwesome)',
+            'iconLayertree'     => 'Layer tree (FontAwesome)',
+            'iconWms'           => 'WMS (FontAwesome)',
+            'iconHelp'          => 'Help (FontAwesome)',
+            'iconWmcEditor'     => 'WMC Editor (FontAwesome)',
+            'iconWmcLoader'     => 'WMC Loader (FontAwesome)',
+            'iconCoordinates'   => 'Coordinates (FontAwesome)',
+            'iconGpsTarget'     => 'Gps Target (FontAwesome)',
+            'iconPoi'           => 'POI (FontAwesome)',
+            'iconImageExport'   => 'Image Export (FontAwesome)',
+            'iconSketch'        => 'Sketch (FontAwesome)');
+
+        asort($icons);
+
         $resolver->setDefaults(array(
             'empty_value' => 'Choose an option',
             'empty_data' => '',
-            'choices' => array(
-                'iconAbout' => 'About',
-                'iconAreaRuler' => 'Area ruler',
-                'iconInfoActive' => 'Feature info',
-                'iconGps' => 'GPS',
-                'iconLegend' => 'Legend',
-                'iconPrint' => 'Print',
-                'iconSearch' => 'Search',
-                'iconLayertree' => 'Layer tree',
-                'iconWms' => 'WMS',
-                'iconHelp' => 'Help',
-                'iconWmcEditor' => 'WMC Editor',
-                'iconWmcLoader' => 'WMC Loader',
-                'iconCoordinates' => 'Coordinates',
-                'iconGpsTarget' => 'Gps Target',
-                'iconPoi' => 'POI',
-                'iconImageExport' => 'Image Export',
-                'iconSketch' => 'Sketch'),
+            'choices' => $icons,
         ));
     }
 }

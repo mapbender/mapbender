@@ -1,4 +1,4 @@
-(function($) {
+(function($){
     OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
     $.widget("mapbender.mbMap", {
         options: {
@@ -8,28 +8,20 @@
                 height: 41,
                 xoffset: -6,
                 yoffset: -38
-            }
+            },
+            layersets: []
         },
         elementUrl: null,
         model: null,
         map: null,
         readyState: false,
         readyCallbacks: [],
-
         /**
          * Creates the map widget
          */
-        _create: function() {
-            // @TODO: This works around the fake layerset for now
-            if(this.options.layerset === null) {
-                var layersetIds = [];
-                $.each(Mapbender.configuration.layersets, function(key, val) {
-                    layersetIds.push(key);
-                });
-                this.option('layerset', layersetIds[0]);
-            }
+        _create: function(){
             var self = this,
-            me = $(this.element);
+                    me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
@@ -44,24 +36,24 @@
         /**
          * DEPRECATED
          */
-        "goto": function(options) {
+        "goto": function(options){
             this.map.center(options);
         },
-
         setExtent: function(extent){
             this.model.extent = extent;
         },
         setMaxExtent: function(extent, projection){
-            if(typeof projection === "string")
+            if(typeof projection === "string") {
                 this.model.mapMaxExtent = {
                     projection: this.model.getProj(projection),
                     extent: extent
                 };
-            else
+            } else {
                 this.model.mapMaxExtent = {
                     projection: projection,
                     extent: extent
                 };
+            }
         },
         /**
          *
@@ -69,43 +61,44 @@
         getMapState: function(){
             return this.model.getMapState();
         },
-
         sourceById: function(idObject){
             return this.model.getSource(idObject);
         },
-
         mqLayerBySourceId: function(idObject){
             var source = this.sourceById(idObject);
             return this.map.layersList[source.mqlid];
         },
-
         /**
          *
          */
         addSource: function(sourceDef){
-            this.model.addSource({add: {sourceDef: sourceDef, before: null, after: null}});
+            this.model.addSource({
+                add: {
+                    sourceDef: sourceDef,
+                    before: null,
+                    after: null
+                }
+            });
         },
         /**
          *
          */
         removeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.remove && toChangeObj.remove.sourceIdx){
+            if(toChangeObj && toChangeObj.remove && toChangeObj.remove.sourceIdx) {
                 this.model.removeSource(toChangeObj);
             }
         },
-
         /**
          *
          */
         removeSources: function(keepSources){
             this.model.removeSources(keepSources);
         },
-
         /**
          *
          */
         changeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.source && toChangeObj.type){
+            if(toChangeObj && toChangeObj.source && toChangeObj.type) {
                 this.model.changeSource(toChangeObj);
             }
         },
@@ -127,13 +120,13 @@
         /**
          * Returns a sourceTree from model.
          **/
-        getSourceTree: function() {
+        getSourceTree: function(){
             return this.model.sourceTree;
         },
         /**
          * Reterns the generated source id from model
          */
-        genereateSourceId: function() {
+        genereateSourceId: function(){
             return this.model.generateSourceId();
         },
         /**
@@ -148,54 +141,59 @@
         getModel: function(){
             return this.model;
         },
-
         getCenterOptions: function(){
-            return {center: this.map.olMap.getCenter(), zoom: this.map.olMap.getZoom()};
+            return {
+                center: this.map.olMap.getCenter(),
+                zoom: this.map.olMap.getZoom()
+            };
         },
-
         setCenter: function(options){
             if(typeof options.box !== 'undefined' && typeof options.position !== 'undefined' && typeof options.zoom !== 'undefined')
                 this.map.center(options);
-            else if(typeof options.center !== 'undefined' && typeof options.zoom !== 'undefined'){
+            else if(typeof options.center !== 'undefined' && typeof options.zoom !== 'undefined') {
                 this.map.olMap.updateSize();
                 this.map.olMap.setCenter(options.center, options.zoom);
             }
         },
-
         /*
          * Changes the map's projection.
          */
         changeProjection: function(srs){
             if(typeof srs === "string")
-                this.model.changeProjection({projection: this.model.getProj(srs)});
+                this.model.changeProjection({
+                    projection: this.model.getProj(
+                            srs)
+                });
             else
-                this.model.changeProjection({projection: srs});
+                this.model.changeProjection({
+                    projection: srs
+                });
         },
         /**
          * Zooms the map in
          */
-        zoomIn: function() {
+        zoomIn: function(){
             // TODO: MapQuery?
             this.map.olMap.zoomIn();
         },
         /**
          * Zooms the map out
          */
-        zoomOut: function() {
+        zoomOut: function(){
             // TODO: MapQuery?
             this.map.olMap.zoomOut();
         },
         /**
          * Zooms the map to max extent
          */
-        zoomToFullExtent: function() {
+        zoomToFullExtent: function(){
             // TODO: MapQuery?
             this.map.olMap.zoomToMaxExtent();
         },
         /**
          * Zooms the map to extent
          */
-        zoomToExtent: function(extent, closest) {
+        zoomToExtent: function(extent, closest){
             if(typeof closest === 'undefined')
                 closest = true;
             this.map.olMap.zoomToExtent(extent, closest);
@@ -203,7 +201,7 @@
         /**
          * Zooms the map to scale
          */
-        zoomToScale: function(scale, closest) {
+        zoomToScale: function(scale, closest){
             if(typeof closest === 'undefined')
                 closest = false;
             this.map.olMap.zoomToScale(scale, closest);
@@ -211,27 +209,27 @@
         /**
          *
          */
-        panMode: function() {
+        panMode: function(){
             this.map.mode('pan');
         },
         /**
          * Adds the popup
          */
-        addPopup: function(popup) {
+        addPopup: function(popup){
             //TODO: MapQuery
             this.map.olMap.addPopup(popup);
         },
         /**
          * Removes the popup
          */
-        removePopup: function(popup) {
+        removePopup: function(popup){
             //TODO: MapQuery
             this.map.olMap.removePopup(popup);
         },
         /**
          * Returns the scale list
          */
-        scales: function() {
+        scales: function(){
             var scales = [];
             for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
                 var res = this.map.olMap.getResolutionForZoom(i);
@@ -254,11 +252,10 @@
         zoomToLayer: function(options){
             this.model.zoomToLayer(options);
         },
-
         /**
          *
          */
-        ready: function(callback) {
+        ready: function(callback){
             if(this.readyState === true) {
                 callback();
             } else {
@@ -268,7 +265,7 @@
         /**
          *
          */
-        _ready: function() {
+        _ready: function(){
             for(callback in this.readyCallbacks) {
                 callback();
                 delete(this.readyCallbacks[callback]);
@@ -278,13 +275,13 @@
         /**
          * Turns on the highlight layer at map
          */
-        highlightOn: function(features, options) {
+        highlightOn: function(features, options){
             this.model.highlightOn(features, options);
         },
         /**
          * Turns off the highlight layer at map
          */
-        highlightOff: function(features) {
+        highlightOff: function(features){
             this.model.highlightOff(features);
         },
         /**
@@ -310,13 +307,16 @@
          * Loads the srs definitions from server
          */
         _loadSrsSuccess: function(response, textStatus, jqXHR){
-            if (response.data) {
-                for(var i = 0; i < response.data.length; i++){
+            if(response.data) {
+                for(var i = 0; i < response.data.length; i++) {
                     Proj4js.defs[response.data[i].name] = response.data[i].definition;
                     this.model.srsDefs.push(response.data[i]);
-                    this.fireModelEvent({name: 'srsadded', value: response.data[i]});
+                    this.fireModelEvent({
+                        name: 'srsadded',
+                        value: response.data[i]
+                    });
                 }
-            } else if(response.error){
+            } else if(response.error) {
                 Mapbender.error(Mapbender.trans(response.error));
             }
         },
@@ -330,6 +330,6 @@
 
 })(jQuery);
 
-$('body').delegate(':input', 'keydown', function(event) {
+$('body').delegate(':input', 'keydown', function(event){
     event.stopPropagation();
 });

@@ -58,7 +58,7 @@ $.widget("mapbender.mbZoomBar", {
 
         for(var i = 0; i < this.map.getNumZoomLevels(); i++) {
             var resolution = this.map.getResolutionForZoom(this.map.getNumZoomLevels() - i - 1);
-            var scale = Math.round(OpenLayers.Util.getScaleFromResolution(resolution, this.map.units));
+            var scale = /*Math.round(*/OpenLayers.Util.getScaleFromResolution(resolution, this.map.units)/*)*/;
             this.zoomslider.append($('<li class="iconZoomLevel" title="1:' + scale + '"></li>'));
         }
 

@@ -43,7 +43,7 @@ class Style
      * ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $styleUrl;
+    public $styleUlr;
 
     /**
      * Set name
@@ -166,7 +166,7 @@ class Style
      * @param OnlineResource $styleUlr
      * @return Style
      */
-    public function setStyleUlr(OnlineResource $styleUlr)
+    public function setStyleUlr(OnlineResource $styleUlr = NULL)
     {
         $this->styleUlr = $styleUlr;
 

@@ -8,12 +8,14 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Assetic\Asset\StringAsset;
 use Assetic\Filter\CssRewriteFilter;
+use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
+use Mapbender\CoreBundle\Asset\AssetFactory;
+use Mapbender\CoreBundle\Component\Application;
+use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Component\SecurityContext;
+use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
-use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
-use Mapbender\CoreBundle\Component\Application;
-use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
-use Mapbender\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -65,6 +67,59 @@ class ApplicationController extends Controller
             'trans' => $translation_url,
             'proxy' => $proxy_url,
             'metadata' => $metadata_url);
+    }
+
+    /**
+     * Compiling SASS/CSS controller.
+     *
+     * @Route("/application/{slug}/assets/css")
+     */
+    public function ccssAction($slug)
+    {
+        // Create virtual file system path required for url rewriting inside CSS files
+        $request = $this->getRequest();
+        $route = $this->container->get('router')->getRouteCollection()->get($request->get('_route'));
+        $targetPath = $request->server->get('SCRIPT_FILENAME') . $route->getPattern();
+
+        $targetPath = str_replace('{slug}', $slug, $targetPath);
+        $targetPath = $request->server->get('REQUEST_URI');
+        $sourcePath = $request->getBasePath();
+
+        if(empty($sourcePath)){
+                $sourcePath = ".";
+        }
+        // Collect all assets into one
+        $application = $this->getApplication($slug);
+        $refs = array_unique($application->getAssets('css'));
+        $custom = $application->getCustomCssAsset();
+        if($custom){
+            $refs[] = $custom;
+        }
+        $factory = new AssetFactory($this->container, $refs, 'css', $targetPath, $sourcePath);
+        $assets = $factory->getAssetCollection();
+
+        // Get last modified timestamp from assets as well as application (DB) or Symfony's cache creation (YAML)
+        $lastModified = \DateTime::createFromFormat('U', $assets->getLastModified());
+        if ($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
+            $lastModified = max($application->getEntity()->getUpdated(), $lastModified);
+        } else {
+            $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
+            $lastModified = max($cacheUpdateTime, $lastModified);
+        }
+
+        // Cut short if possible by returning an 304 if nothing has changed
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/css');
+        $response->setLastModified($lastModified);
+        $response->headers->set('X-Asset-Modification-Time', $lastModified->format('c'));
+        if ($response->isNotModified($this->get('request'))) {
+            return $response;
+        }
+
+        // Compile the collection with SASS
+        $response->setContent($factory->compile());
+
+        return $response;
     }
 
     /**
@@ -124,7 +179,7 @@ class ApplicationController extends Controller
             // And move everything into an StringAsset which gets added the
             // CssRewriteFilter
             $css = $assets->dump();
-            $assets = new StringAsset($css, array(), null, $source);
+            $assets = new StringAsset($css, array(), '', $source);
             $assets->load();
             $assets->setTargetPath($target);
             $assets->ensureFilter(new CssRewriteFilter());
@@ -187,7 +242,7 @@ class ApplicationController extends Controller
      * exception if it can not be found. This also checks access control and
      * therefore may throw an AuthorizationException.
      *
-     * @return Mapbender\CoreBundle\Component\Application
+     * @return Application
      */
     private function getApplication($slug)
     {
@@ -218,6 +273,14 @@ class ApplicationController extends Controller
 
         $application_entity = $application->getEntity();
         if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($application_entity->yaml_roles)) {
+
+            // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
+            if (!$securityContext->getToken()) {
+                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application_entity->yaml_roles)) {
+                    return;
+                }
+            }
+
             $passed = false;
             foreach ($application_entity->yaml_roles as $role) {
                 if ($securityContext->isGranted($role)) {
@@ -262,7 +325,7 @@ class ApplicationController extends Controller
 //        }
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
-        $manager = $managers[$instance->getSource()->getManagertype()];
+        $manager = $managers[$instance->getManagertype()];
 
         $path = array('_controller' => $manager['bundle'] . ":" . "Repository:metadata");
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
@@ -273,9 +336,9 @@ class ApplicationController extends Controller
     /**
      * Get SourceInstances via HTTP Basic Authentication
      *
-     * @Route("/application/{slug}/instance/{instanceId}/basicAuth")
+     * @Route("/application/{slug}/instance/{instanceId}/tunnel")
      */
-    public function instanceBasicAuthAction($slug, $instanceId)
+    public function instanceTunnelAction($slug, $instanceId)
     {
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
@@ -290,13 +353,25 @@ class ApplicationController extends Controller
 //            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
 //            throw new AccessDeniedException();
 //        }
-        $params = $this->getRequest()->getMethod() == 'POST' ?
-            $this->get("request")->request->all() : $this->get("request")->query->all();
-
+//        $params = $this->getRequest()->getMethod() == 'POST' ?
+//            $this->get("request")->request->all() : $this->get("request")->query->all();
+        $headers = array();
+        $postParams = $this->get("request")->request->all();
+        $getParams = $this->get("request")->query->all();
+        $user = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
+        $password = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
+        $instHandler = EntityHandler::createHandler($this->container, $instance);
+        $vendorspec = $instHandler->getSensitiveVendorSpecific();
+        /* overwrite vendorspecific parameters from handler with get/post parameters */
+        if (count($getParams)) {
+            $getParams = array_merge($vendorspec, $getParams);
+        }
+        if (count($postParams)) {
+            $postParams = array_merge($vendorspec, $postParams);
+        }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
         $proxy_query = ProxyQuery::createFromUrl(
-                $instance->getSource()->getGetMap()->getHttpGet(), $instance->getSource()->getUsername(),
-                $instance->getSource()->getPassword(), array(), $params);
+                $instance->getSource()->getGetMap()->getHttpGet(), $user, $password, $headers, $getParams, $postParams);
         $proxy = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response = new Response();

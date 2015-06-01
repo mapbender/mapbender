@@ -5,8 +5,9 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\CoreBundle\Component\ContainsKeyword;
-use Mapbender\CoreBundle\Component\SourceItem;
+use Mapbender\CoreBundle\Component\ContainingKeyword;
+use Mapbender\CoreBundle\Entity\SourceItem;
+use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\Attribution;
@@ -23,7 +24,7 @@ use Mapbender\CoreBundle\Component\Utils;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
-class WmsLayerSource extends SourceItem implements ContainsKeyword
+class WmsLayerSource extends SourceItem implements ContainingKeyword
 {
     /**
      * @var integer $id
@@ -47,7 +48,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
 
     /**
      * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent")
-     * @ORM\OrderBy({"id" = "asc"})
+     * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $sublayer;
 
@@ -175,6 +176,11 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      */
     protected $keywords;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $priority;
+
     public function __construct()
     {
         $this->sublayer = new ArrayCollection();
@@ -188,6 +194,17 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
         $this->srs = array();
         $this->identifier = array();
         $this->authority = array();
+    }
+
+    /**
+     * Sets an id
+     * @param integer $id
+     * @return WmsLayerSource
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**
@@ -250,11 +267,12 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
 
     /**
      *
-     * @return ArrayCollection
+     * @return WmsLayerSource
      */
     public function setSublayer($sublayer)
     {
         $this->sublayer = $sublayer;
+        return $this;
     }
 
     /**
@@ -484,10 +502,10 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      *
      * @return Object
      */
-    public function getLatlonBounds()
+    public function getLatlonBounds($inherit = TRUE)
     {
 //        //@TODO check layer inheritance if layer->latlonBounds === null
-        if ($this->latlonBounds === null && $this->getParent() !== null) {
+        if ($inherit && $this->latlonBounds === null && $this->getParent() !== null) {
             return $this->getParent()->getLatlonBounds();
         } else {
             return $this->latlonBounds;
@@ -565,12 +583,11 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      *
      * @return array
      */
-    public function getSrs()
+    public function getSrs($inherit = TRUE)
     {
 //        return $this->srs;
-        if ($this->getParent() !== null) { // add crses from parent
-            return array_merge(
-                $this->getParent()->getSrs(), $this->srs);
+        if ($inherit && $this->getParent() !== null) { // add crses from parent
+            return array_merge($this->getParent()->getSrs(), $this->srs);
         } else {
             return $this->srs;
         }
@@ -606,11 +623,10 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      *
      * @return Style[]
      */
-    public function getStyles()
+    public function getStyles($inherit = TRUE)
     {
-        if ($this->getParent() !== null) { // add styles from parent
-            return array_merge(
-                $this->getParent()->getStyles(), $this->styles);
+        if ($inherit && $this->getParent() !== null) { // add styles from parent
+            return array_merge($this->getParent()->getStyles(), $this->styles);
         } else {
             return $this->styles;
         }
@@ -783,11 +799,10 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      *
      * @return Authority
      */
-    public function getAuthority()
+    public function getAuthority($inherit = TRUE)
     {
-        if ($this->getParent() !== null && $this->getParent()->getAuthority() !== null) { // add crses from parent
-            return array_merge(
-                $this->getParent()->getAuthority(), $this->authority);
+        if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) {
+            return array_merge($this->getParent()->getAuthority(), $this->authority);
         } else {
             $this->authority;
         }
@@ -934,10 +949,10 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Set keywords
      *
-     * @param array $keywords
-     * @return Source
+     * @param ArrayCollection $keywords
+     * @return WmsLayerSource
      */
-    public function setKeywords($keywords)
+    public function setKeywords(ArrayCollection $keywords)
     {
         $this->keywords = $keywords;
         return $this;
@@ -946,7 +961,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get keywords
      *
-     * @return string
+     * @return ArrayCollection collection of keywords
      */
     public function getKeywords()
     {
@@ -954,19 +969,37 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     }
 
     /**
-     * @inheritdoc
+     * Add keywords
+     *
+     * @param WmsLayerSourceKeyword $keyword
+     * @return WmsLayerSource
      */
-    public function getType()
+    public function addKeyword(Keyword $keyword)
     {
-        return "WMS";
+        $this->keywords->add($keyword);
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * Set priority
+     *
+     * @param integer $priority
+     * @return WmsInstanceLayer
      */
-    public function getManagerType()
+    public function setPriority($priority)
     {
-        return "wms";
+        $this->priority = $priority !== null ? intval($priority) : $priority;
+        return $this;
+    }
+
+    /**
+     * Get priority
+     *
+     * @return integer
+     */
+    public function getPriority()
+    {
+        return $this->priority;
     }
 
     /**
@@ -981,5 +1014,4 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     {
         return (string) $this->id;
     }
-
 }

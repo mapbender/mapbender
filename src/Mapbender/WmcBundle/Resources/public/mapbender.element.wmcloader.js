@@ -21,6 +21,12 @@
                 var map = $('#' + this.options.target).data('mapbenderMbMap');
                 var wmcHandlier = new Mapbender.WmcHandler(map);
                 wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
+            } else if(typeof this.options.load !== 'undefined'
+                && typeof this.options.load.wmcurl !== 'undefined'){
+                var wmc_url = this.options.load.wmcurl;
+                var map = $('#' + this.options.target).data('mapbenderMbMap');
+                var wmcHandlier = new Mapbender.WmcHandler(map);
+                wmcHandlier.loadFromUrl(this.elementUrl + 'wmcfromurl', wmc_url);
             }
             this._trigger('ready');
             this._ready();

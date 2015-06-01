@@ -4,8 +4,8 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Mapbender\PrintBundle\Component\PrintService;
 
 /**
  * 
@@ -175,87 +175,78 @@ class PrintClient extends Element
      */
     public function httpAction($action)
     {
+        $request = $this->container->get('request');
+        $configuration = $this->getConfiguration();
         switch ($action) {
-            case 'direct':
-
-                $request = $this->container->get('request');
+            case 'print':
+//        print "<pre>";
+//        print_r($configuration);
+//        print "</pre>";
+//        die();
                 $data = $request->request->all();
 
-                foreach ($request->request->keys() as $key) {
-                    $request->request->remove($key);
-                }
                 // keys, remove
                 foreach ($data['layers'] as $idx => $layer) {
                     $data['layers'][$idx] = json_decode($layer, true);
                 }
-                
+
                 if (isset($data['overview'])){
                     foreach ($data['overview'] as $idx => $layer) {
                         $data['overview'][$idx] = json_decode($layer, true);
                     }
                 }
-                
-                if (isset($data['features'])){
-                    foreach ($data['features'] as $idx => $value) {
-                        $data['features'][$idx] = json_decode($value, true);
-                    }
+
+                if (isset($data['extent_feature'])){
+                    $data['extent_feature'] = json_decode($data['extent_feature'], true);
                 }
-                
-                if (isset($data['replace_pattern'])){
-                    foreach ($data['replace_pattern'] as $idx => $value) {
-                        $data['replace_pattern'][$idx] = json_decode($value, true);
-                    }
+
+                if (isset($data['legends'])){
+                    $data['legends'] = json_decode($data['legends'], true);
                 }
-                
-                if (isset($data['extent_feature'])){         
-                        $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
+
+                if (isset($configuration['replace_pattern'])){
+                    $data['replace_pattern'] = $configuration['replace_pattern'];
                 }
-                    
-                $content = json_encode($data);
 
-                // Forward to Printer Service URL using OWSProxy
-                $url = $this->container->get('router')->generate('mapbender_print_print_service',
-                    array(), true);
 
-                $path = array(
-                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                    'url' => $url,
-                    'content' => $content
-                );
-                $subRequest = $request->duplicate(array(), null, $path);
-                return $this->container->get('http_kernel')->handle(
-                        $subRequest, HttpKernelInterface::SUB_REQUEST);
+                $printservice = new PrintService($this->container);
 
-            case 'queued':
+                $displayInline = true;
+                $filename = 'mapbender_print.pdf';
+                if(array_key_exists('file_prefix', $configuration)) {
+                    $filename = $configuration['file_prefix'] . '_' . date("YmdHis") . '.pdf';
+                }
+                $response = new Response($printservice->doPrint($data), 200, array(
+                    'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
+                    'Content-Disposition' => 'attachment; filename=' . $filename
+                ));
 
-            case 'template':
-                $response = new Response();
-                $response->headers->set('Content-Type', 'application/json');
-                $request = $this->container->get('request');
-                $data = json_decode($request->getContent(), true);
-                $container = $this->container;
-                $odgParser = new OdgParser($container);
-                $size = $odgParser->getMapSize($data['template']);
-                $response->setContent($size->getContent());
                 return $response;
+
+            case 'getTemplateSize':
+                $template = $request->get('template');
+                $odgParser = new OdgParser($this->container);
+                $size = $odgParser->getMapSize($template);
+
+                return new Response($size);
         }
     }
     
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
-        if (is_string($configuration['scales'])) {
-            $configuration['scales'] = explode(',', $configuration['scales']);
+        if (is_string($formConfiguration['scales'])) {
+            $formConfiguration['scales'] = explode(',', $formConfiguration['scales']);
         }
-        return $configuration;
+        return $formConfiguration;
     }
 
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration)
+    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
     {
         if (is_string($configuration['scales'])) {
             $configuration['scales'] = explode(',', $configuration['scales']);
