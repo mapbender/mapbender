@@ -210,4 +210,20 @@ class HTMLElement extends Element
         }
         return $configuration;
     }
+
+    /**
+     * Get asset list and add JS file if 'jsSrc' keyword configured.
+     *
+     * @inheritdoc
+     */
+    public function getAssets()
+    {
+        $configuration = $this->getConfiguration();
+        $assets        = $this::listAssets();
+        if (isset($configuration['jsSrc'])) {
+            $assets['js'][] = $configuration['jsSrc'];
+        }
+        return $assets;
+    }
+
 }
