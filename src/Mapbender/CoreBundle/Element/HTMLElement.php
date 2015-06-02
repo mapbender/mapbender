@@ -221,7 +221,11 @@ class HTMLElement extends Element
         $configuration = $this->getConfiguration();
         $assets        = $this::listAssets();
         if (isset($configuration['jsSrc'])) {
-            $assets['js'][] = $configuration['jsSrc'];
+            if (is_array($configuration['jsSrc'])) {
+                $assets['js'] = array_merge($assets['js'], $configuration['jsSrc']);
+            } else {
+                $assets['js'][] = $configuration['jsSrc'];
+            }
         }
         return $assets;
     }
