@@ -267,6 +267,7 @@
                         modal: false,
                         closeButton: false,
                         closeOnESC: false,
+                        detachOnClose: false,
                         content: this.element.removeClass('hidden'),
                         resizable: true,
                         width: self.options.width,
@@ -288,9 +289,8 @@
                         self.state = 'closed';
                         if (self.options.deactivateOnClose) {
                             self.deactivate();
-                        } else {
-                            self._setContentEmpty();
                         }
+                        self.popup.$element.hide();
                     });
                     this.popup.$element.on('open', function() {
                         self.state = 'opened';
