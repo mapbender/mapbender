@@ -7,6 +7,7 @@
 
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Form\Type\ImportJobType;
@@ -103,10 +104,15 @@ class ImportHandler extends ExchangeHandler
                         $source = $this->denormalizer->handleData($item, $class);
                         $em->persist($source);
                     } else {
-                        $source = $sources[0];
-                        $this->denormalizer->addSourceToMapper($source);
+                        try {
+                            $result = array();
+                            $this->addSourceToMapper($sources[0], $item, $result);
+                            $this->mergeIntoMapper($result);
+                        } catch (\Exception $e) {
+                            $source = $this->denormalizer->handleData($item, $class);
+                            $em->persist($source);
+                        }
                     }
-                    $a = 0;
                 }
             }
         }
@@ -141,5 +147,69 @@ class ImportHandler extends ExchangeHandler
     private function importAcls($data)
     {
         // TODO
+    }
+
+    /**
+     * Adds entitiy with assoc. items to mapper.
+     *
+     * @param object $object source
+     */
+    private function addSourceToMapper($object, array $data, array &$result)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+        $em->refresh($object);
+        if (!$em->contains($object)) {
+             $em->merge($object);
+        }
+        $classMeta = $em->getClassMetadata($this->denormalizer->getRealClass($object));
+        $criteriaAfter  = $this->denormalizer->getIdentCriteria($object, $classMeta);
+        $criteriaBefore  = $this->denormalizer->getIdentCriteria($data, $classMeta);
+        $realClass = $this->denormalizer->getRealClass($object);
+        $result[$realClass][] =
+            array('before' => $criteriaBefore, 'after' => array( 'criteria' => $criteriaAfter, 'object' => $object));
+        foreach ($classMeta->getAssociationMappings() as $assocItem) {
+            $fieldName = $assocItem['fieldName'];
+            $getMethod = $this->denormalizer->getReturnMethod($fieldName, $classMeta->getReflectionClass());
+            if ($getMethod) {
+                $subObject = $getMethod->invoke($object);
+                $num = 0;
+                if ($subObject instanceof PersistentCollection) {
+                    if (!isset($data[$fieldName]) || count($data[$fieldName]) !== $subObject->count()) {
+                        throw new \Exception('no filed name at normalized data');
+                    }
+                    foreach ($subObject as $item) {
+                        if ($this->denormalizer->findSuperClass($item, 'Mapbender\CoreBundle\Entity\SourceItem')) {
+                            $subdata = $data[$fieldName][$num];
+                            if ($classDef = $this->denormalizer->getClassDifinition($subdata)) {
+                                $em->getRepository($classDef[0]);
+                                $meta     = $em->getClassMetadata($classDef[0]);
+                                $criteria = $this->denormalizer->getIdentCriteria($subdata, $meta);
+                                $od = null;
+                                if ($this->denormalizer->isReference($subdata, $criteria)) {
+                                    if ($od = $this->denormalizer->getFromMapper($classDef[0], $criteria)) {
+                                        ;
+                                    } elseif ($od = $this->denormalizer->getEntityData($classDef[0], $criteria)) {
+                                        ;
+                                    }
+                                }
+                                $this->addSourceToMapper($item, $od, $result);
+                                $num++;
+                            } else {
+                                throw new \Exception('no class definition at normalized data');
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private function mergeIntoMapper(array $mapper)
+    {
+        foreach ($mapper as $class => $content) {
+            foreach ($content as $item) {
+                $this->denormalizer->addToMapper($item['after']['object'], $item['before'], $item['after']['criteria']);
+            }
+        }
     }
 }

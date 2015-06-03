@@ -42,7 +42,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         $this->data   = $data;
     }
 
-    private function isReference($data, array $criteria)
+    public function isReference($data, array $criteria)
     {
         foreach ($data as $key => $value) {
             if (!isset($criteria[$key])) { # has other fields
@@ -52,7 +52,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         return false;
     }
 
-    private function getEntityData($class, array $criteria)
+    public function getEntityData($class, array $criteria)
     {
         if (!is_string($class)) {
             return null;
@@ -215,40 +215,6 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         }
         $this->mapper[$realClass][] =
             array('before' => $criteriaBefore, 'after' => array( 'criteria' => $criteriaAfter, 'object' => $object));
-    }
-
-    /**
-     * Adds entitiy with assoc. items to mapper.
-     *
-     * @param object $object source
-     */
-    public function addSourceToMapper($object)
-    {
-        if (!$object) {
-            return;
-        }
-        $this->em->refresh($object);
-        if (!$this->em->contains($object)) {
-             $this->em->merge($object);
-        }
-        $classMeta = $this->em->getClassMetadata($this->getRealClass($object));
-        $criteria  = $this->getIdentCriteria($object, $classMeta);
-        $this->addToMapper($object, $criteria, $criteria);
-
-        foreach ($classMeta->getAssociationMappings() as $assocItem) {
-            $fieldName = $assocItem['fieldName'];
-            $getMethod = $this->getReturnMethod($fieldName, $classMeta->getReflectionClass());
-            if ($getMethod) {
-                $subObject = $getMethod->invoke($object);
-                if ($subObject instanceof PersistentCollection) {
-                    foreach ($subObject as $item) {
-                        if ($this->findSuperClass($item, 'Mapbender\CoreBundle\Entity\SourceItem')) {
-                            $this->addSourceToMapper($item);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**
