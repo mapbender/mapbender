@@ -47,7 +47,7 @@ class Layerset
     protected $application;
 
     /**
-     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"refresh","persist", "remove"})
+     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"remove"})
      * @ORM\JoinColumn(name="instances", referencedColumnName="id")
      * @ORM\OrderBy({"weight" = "asc"})
      */
@@ -142,8 +142,7 @@ class Layerset
     /**
      * Set instances
      *
-     * @param  Doctrine\Common\Collections\Collection $instances
-     *                                                           Collection of the SourceInstances
+     * @param  Doctrine\Common\Collections\Collection $instances Collection of the SourceInstances
      * @return Layerset
      */
     public function setInstances($instances)

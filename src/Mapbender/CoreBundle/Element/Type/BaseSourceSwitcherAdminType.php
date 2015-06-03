@@ -2,14 +2,13 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * 
+ * BaseSourceSwitcher FormType
  */
 class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollection
 {
@@ -72,22 +71,19 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
         $builder
             ->add('title', 'text', array('required' => true))
             ->add('tooltip', 'text', array('required' => false))
-            ->add('display', 'choice',
-                array(
+            ->add('display', 'choice', array(
                 'required' => true,
                 'choices' => array(
                     "group" => "group",
                     "dropdown" => "dropdown",
                     "mobile" => "mobile")))
-            ->add('target', 'target_element',
-                  array(
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $application,
                 'property_path' => '[target]',
                 'required' => false));
         if (count($instances) > 0) {
-            $builder->add('instancesets', "collection",
-                          array(
+            $builder->add('instancesets', "collection", array(
                 'property_path' => '[instancesets]',
                 'type' => new InstanceSetAdminType(),
                 'allow_add' => true,
@@ -97,5 +93,4 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
             ));
         }
     }
-
 }

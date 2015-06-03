@@ -3,7 +3,6 @@
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Component\WmsMetadata;
@@ -34,7 +33,7 @@ class WmsInstance extends SourceInstance
     protected $source;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"refresh", "persist", "remove"})
+     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"refresh", "remove"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      * @ORM\OrderBy({"priority" = "asc"})
      */
@@ -157,12 +156,11 @@ class WmsInstance extends SourceInstance
 
     /**
      * Returns vendorspecifics
-     * 
      * @return array of DimensionIst
      */
     public function getVendorspecifics()
     {
-        if(!$this->vendorspecifics){
+        if (!$this->vendorspecifics) {
             $this->vendorspecifics = array();
         }
         return $this->vendorspecifics;
@@ -170,7 +168,6 @@ class WmsInstance extends SourceInstance
 
     /**
      * Sets vendorspecifics
-     * 
      * @param ArrayCollections $vendorspecifics array of DimensionIst
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */

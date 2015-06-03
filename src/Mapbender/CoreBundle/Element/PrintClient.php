@@ -3,12 +3,14 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\HttpFoundation\Response;
+use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Symfony\Component\HttpFoundation\Response;
 use Mapbender\PrintBundle\Component\PrintService;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
- * 
+ *
  */
 class PrintClient extends Element
 {
@@ -18,7 +20,7 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.printclient.class.title";
     }
@@ -26,7 +28,7 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.printclient.class.description";
     }
@@ -34,7 +36,7 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.printclient.tag.print",
@@ -48,7 +50,7 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array('js' => array('mapbender.element.printClient.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
@@ -100,10 +102,9 @@ class PrintClient extends Element
                 array('dpi' => "288", 'label' => "Document (288dpi)")),
             "rotatable" => true,
             "optional_fields" => array(
-                            "title" => array("label" => 'Title', "options" => array("required" => false)),
-                            "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
-                            "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))
-                            ),            
+                "title" => array("label" => 'Title', "options" => array("required" => false)),
+                "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
+                "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))),
             "replace_pattern" => null,
             "file_prefix" => 'mapbender3'
         );
@@ -161,13 +162,14 @@ class PrintClient extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:printclient.html.twig',
-                    array(
-                    'id' => $this->getId(),
-                    'title' => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()
-        ));
+        return $this->container->get('templating')->render(
+            'MapbenderCoreBundle:Element:printclient.html.twig',
+            array(
+                'id' => $this->getId(),
+                'title' => $this->getTitle(),
+                'configuration' => $this->getConfiguration()
+            )
+        );
     }
 
     /**
@@ -190,24 +192,31 @@ class PrintClient extends Element
                     $data['layers'][$idx] = json_decode($layer, true);
                 }
 
-                if (isset($data['overview'])){
+                if (isset($data['overview'])) {
                     foreach ($data['overview'] as $idx => $layer) {
                         $data['overview'][$idx] = json_decode($layer, true);
                     }
                 }
 
-                if (isset($data['extent_feature'])){
+                if (isset($data['features'])) {
+                    foreach ($data['features'] as $idx => $value) {
+                        $data['features'][$idx] = json_decode($value, true);
+                    }
+                }
+
+                if (isset($data['replace_pattern'])) {
+                    foreach ($data['replace_pattern'] as $idx => $value) {
+                        $data['replace_pattern'][$idx] = json_decode($value, true);
+                    }
+                }
+
+                if (isset($data['extent_feature'])) {
                     $data['extent_feature'] = json_decode($data['extent_feature'], true);
                 }
 
-                if (isset($data['legends'])){
+                if (isset($data['legends'])) {
                     $data['legends'] = json_decode($data['legends'], true);
                 }
-
-                if (isset($configuration['replace_pattern'])){
-                    $data['replace_pattern'] = $configuration['replace_pattern'];
-                }
-
 
                 $printservice = new PrintService($this->container);
 
@@ -231,7 +240,7 @@ class PrintClient extends Element
                 return new Response($size);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -246,12 +255,11 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         if (is_string($configuration['scales'])) {
             $configuration['scales'] = explode(',', $configuration['scales']);
         }
         return $configuration;
     }
-
 }

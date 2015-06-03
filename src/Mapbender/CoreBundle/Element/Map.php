@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -324,7 +325,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
             $configuration['extents'] = array(
@@ -340,11 +341,10 @@ class Map extends Element
         if (is_string($configuration['scales'])) {
             $configuration['scales'] = explode(',', $configuration['scales']);
         }
-        $lsClassName = 'Mapbender\CoreBundle\Entity\Layerset';
-        if (key_exists('layersets', $configuration) && key_exists($lsClassName, $idMapper)) {
-            $mapper = $idMapper[$lsClassName];
+
+        if (key_exists('layersets', $configuration)) {
             foreach ($configuration['layersets'] as &$layerset) {
-                $layerset = isset($mapper['map'][$layerset]) ? $mapper['map'][$layerset] : $layerset;
+                $layerset = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $layerset);
             }
         }
         return $configuration;

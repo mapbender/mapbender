@@ -17,7 +17,7 @@ use Mapbender\CoreBundle\Entity\Keyword;
 class WmsLayerSourceKeyword extends Keyword
 {
     /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="keywords", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="keywords")
      * @ORM\JoinColumn(name="reference_id", referencedColumnName="id")
      */
     protected $reference;
