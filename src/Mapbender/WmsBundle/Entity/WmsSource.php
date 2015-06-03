@@ -47,7 +47,7 @@ class WmsSource extends Source implements ContainingKeyword
 
     /**
      * @var Contact A contact.
-     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"remove"})
      */
     protected $contact;
 
@@ -186,21 +186,21 @@ class WmsSource extends Source implements ContainingKeyword
 
     /**
      * @var ArrayCollections A list of WMS layers
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="source", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="source", cascade={"remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $layers;
 
     /**
      * @var ArrayCollections A list of WMS keywords
-     * @ORM\OneToMany(targetEntity="WmsSourceKeyword",mappedBy="reference", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="WmsSourceKeyword",mappedBy="reference", cascade={"remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
 
     /**
      * @var ArrayCollections A list of WMS instances
-     * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="source", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="source", cascade={"remove"})
      */
     protected $instances;
 

@@ -1,5 +1,4 @@
 <?php
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,7 +8,6 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Form\Type\ImportJobType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,7 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ImportHandler extends ExchangeHandler
 {
-
     protected $denormalizer;
 
     /**
@@ -39,7 +36,6 @@ class ImportHandler extends ExchangeHandler
     public function createForm()
     {
         $this->checkGranted('CREATE', new Application());
-//        $allowed_apps = $this->getAllowedAppllications();
         $type = new ImportJobType();
         return $this->container->get('form.factory')->create($type, $this->job, array());
     }
@@ -49,7 +45,7 @@ class ImportHandler extends ExchangeHandler
      */
     public function bindForm()
     {
-        $form = $this->createForm();
+        $form    = $this->createForm();
         $request = $this->container->get('request');
         $form->bind($request);
         if ($form->isValid()) {
@@ -64,93 +60,86 @@ class ImportHandler extends ExchangeHandler
      */
     public function makeJob()
     {
-        $this->denormalizer = new ExchangeDenormalizer($this->container, $this->mapper);
-        $import = $this->job->getImportContent();
-        if (isset($import[self::CONTENT_SOURCE])) {
-            $this->importSources($import[self::CONTENT_SOURCE]);
-        }
-        if (isset($import[self::CONTENT_APP])) {
-            $this->importApps($import[self::CONTENT_APP]);
+        $import             = $this->job->getImportContent();
+        $this->denormalizer = new ExchangeDenormalizer($this->container, $this->mapper, $import);
+        $em = $this->container->get('doctrine')->getManager();
+        try {
+            $em->clear();
+            $em->getConnection()->beginTransaction();
+            $this->importSources($import);
+            $this->importApps($import);
+            $em->flush();
+            $em->getConnection()->commit();
+            $em->clear();
+        } catch (\Exception $e) {
+            $em->getConnection()->rollback();
+            $em->clear();
+            throw new ImportException($this->container->get('translator')
+                ->trans('mb.manager.import.application.failed', array()) . " -> " . $e->getMessage());
         }
         if (isset($import[self::CONTENT_ACL])) {
             $this->importAcls($import[self::CONTENT_ACL]);
         }
     }
 
-    private function importApps($data)
-    {
-        $em = $this->container->get('doctrine')->getManager();
-        foreach ($data as $item) {
-            try {
-                $em->getConnection()->beginTransaction();
-                $class = $this->denormalizer->getClassName($item);
-                $item[ExchangeSerializer::KEY_SLUG] = AppComponent::generateSlug($this->container,
-                        $item[ExchangeSerializer::KEY_SLUG], 'imp');
-                $app = $this->denormalizer->denormalize($item, $class);
-                $app->setScreenshot(null);
-                $this->denormalizer->generateElementConfiguration($app);
-                $em->getConnection()->commit();
-                $em->clear();
-            } catch (\Exception $e) {
-                $em->getConnection()->rollback();
-                throw new ImportException($this->container->get('translator')->trans(
-                    'mb.manager.import.application.failed', array()) . " -> " . $e->getMessage());
-            }
-        }
-    }
-
-    private function importAcls($data)
-    {
-        $em = $this->container->get('doctrine')->getManager();
-        try {
-            $em->getConnection()->beginTransaction();
-            foreach ($data as $item) {
-                $class = $this->denormalizer->getClassName($item);
-                $this->denormalizer->denormalize($item, $class);
-            }
-            $em->getConnection()->commit();
-            $em->clear();
-        } catch (\Exception $e) {
-            $em->getConnection()->rollback();
-            throw new ImportException($this->container->get('translator')->trans(
-                'mb.manager.import.acl.failed', array()) . " -> " . $e->getMessage());
-        }
-    }
-
+    /**
+     * Imports sources.
+     * @param array $data data to import
+     * @throws ImportException
+     */
     private function importSources($data)
     {
         $em = $this->container->get('doctrine')->getManager();
-        try {
-            $em->getConnection()->beginTransaction();
-            foreach ($data as $item) {
-                $source = isset($item[ExchangeSerializer::KEY_IDENTIFIER]) ?
-                    $this->findSource($item[ExchangeSerializer::KEY_IDENTIFIER]) : null;
-                $class = $this->denormalizer->getClassName($item);
-                if (!$source) {
-                    $source = $this->denormalizer->denormalize($item, $class);
-                    $em->persist($source);
-                    $em->flush();
-                } else {
-                    $this->denormalizer->mapSource($item, $class, $source);
+        foreach ($data as $class => $content) {
+            if ($this->denormalizer->findSuperClass($class, 'Mapbender\CoreBundle\Entity\Source')) {
+                foreach ($content as $item) {
+                    $classMeta = $em->getClassMetadata($class);
+                    $criteria  = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array('originUrl'));
+                    if (isset($criteria['id'])) {
+                        unset($criteria['id']);
+                    }
+                    $sources    = $this->denormalizer->findEntities($class, $criteria);
+                    if (count($sources) === 0) {
+                        $source = $this->denormalizer->handleData($item, $class);
+                        $em->persist($source);
+                    } else {
+                        $source = $sources[0];
+                        $this->denormalizer->addSourceToMapper($source);
+                    }
+                    $a = 0;
                 }
             }
-            $em->getConnection()->commit();
-            $em->clear();
-        } catch (\Exception $e) {
-            $em->getConnection()->rollback();
-            throw new ImportException($this->container->get('translator')->trans(
-                'mb.manager.import.source.failed', array()) . " -> " . $e->getMessage());
         }
     }
 
-    protected function findSource($identifier)
+    /**
+     * Imports applications.
+     * @param array $data data to import
+     * @throws ImportException
+     */
+    private function importApps($data)
     {
-        foreach ($this->getAllowedSources() as $sourceHelp) {
-            if ($sourceHelp->getIdentifier() === $identifier) {
-                return $sourceHelp;
+        $em = $this->container->get('doctrine')->getManager();
+        foreach ($data as $class => $content) { # add entities
+            if ($this->denormalizer->findSuperClass($class, 'Mapbender\CoreBundle\Entity\Application')) {
+                foreach ($content as $item) {
+                    $app = $this->denormalizer->handleData($item, $class);
+                    $app->setScreenshot(null)
+                        ->setSource(Application::SOURCE_DB);
+                    $em->persist($app);
+                    $this->denormalizer->generateElementConfiguration($app);
+                }
             }
         }
-        return null;
     }
 
+    /**
+     * Imports ACLs.
+     * @param array $data data to import
+     * @throws ImportException
+     */
+    private function importAcls($data)
+    {
+        // TODO
+    }
 }

@@ -1,5 +1,4 @@
 <?php
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,32 +7,22 @@
 
 namespace Mapbender\ManagerBundle\Component;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
-use Mapbender\CoreBundle\Component\EntityHandler;
-use Mapbender\CoreBundle\Component\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Entity\RegionProperties;
-use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
  * Description of ExchangeDenormalizer
  *
- * @author paul
+ * @author Paul Schmidt
  */
-class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInterface
+class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
 {
-
     /**
      *
      * @var array mapper entity id before import <-> entity id after import
@@ -41,134 +30,160 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
     protected $mapper;
 
     /**
-     * 
+     * Creates an instance.
      * @param ContainerInterface $container container
      * @param array $mapper mapper old id <-> new id (object)
      */
-    public function __construct(ContainerInterface $container, array $mapper)
+    public function __construct(ContainerInterface $container, array $mapper, array $data)
     {
         parent::__construct($container);
-        $this->em = $this->container->get('doctrine')->getManager();
+        $this->em     = $this->container->get('doctrine')->getManager();
         $this->mapper = $mapper;
+        $this->data   = $data;
     }
 
-    /**
-     * Adds class name and primary column name into mapper.
-     * 
-     * @param string $class class name to add into mapper
-     * @param string $idName primary column name
-     */
-    private function addClassToMapper($class, $idName)
+    private function isReference($data, array $criteria)
     {
-        if (!isset($this->mapper[$class])) {
-            $this->mapper[$class] = array(
-                self::KEY_PRIMARY => $idName,
-                self::KEY_MAP => array()
-            );
-        }
-    }
-
-    /**
-     * Adds ids into mappter.
-     * 
-     * @param string $class entity class name
-     * @param int $idBefore entity id before import
-     * @param int $idAfter entity id after import
-     */
-    private function addToMapper($class, $idBefore, $idAfter)
-    {
-        $this->mapper[$class][self::KEY_MAP][$idBefore] = $idAfter;
-    }
-
-    /**
-     * 
-     * @param string $class entity class name
-     * @return type
-     */
-    private function getPrimary($class)
-    {
-        return $this->mapper[$class][self::KEY_PRIMARY];
-    }
-
-    private function getOldId($class, $idAfter)
-    {
-        foreach ($this->mapper[$class][self::KEY_MAP] as $idBefore_ => $idAfter_) {
-            if ($idAfter === $idAfter_) {
-                return $idBefore_;
+        foreach ($data as $key => $value) {
+            if (!isset($criteria[$key])) { # has other fields
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
-    private function getIdAfter($class, $idBefore)
+    private function getEntityData($class, array $criteria)
     {
-        if (isset($this->mapper[$class][self::KEY_MAP][$idBefore])) {
-            return $this->mapper[$class][self::KEY_MAP][$idBefore];
-        } else {
+        if (!is_string($class)) {
             return null;
         }
-    }
-
-    private function findExistingEntity($class, $idBefore)
-    {
-        $idAfter = $this->getIdAfter($class, $idBefore);
-        if ($idAfter !== null) {
-            $criteria = array();
-            $criteria[$this->getPrimary($class)] = $idAfter;
-            return $this->em->getRepository($class)->findOneBy($criteria);
-        } else {
-            return null;
-        }
-    }
-
-    private function findIdName($fields)
-    {
-        foreach ($fields as $fieldName => $filedProps) {
-            if (isset($filedProps['Id'])) {
-                return $fieldName;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 
-     * @param type $data
-     * @param type $class
-     * @param \Mapbender\CoreBundle\Entity\Source $objectExists
-     */
-    public function mapSource($data, $class, $objectExists)
-    {
-        $reflectionClass = new \ReflectionClass($class);
-        $constructorArguments = $this->getClassConstructParams($data) ? : array();
-        $object = $reflectionClass->newInstanceArgs($constructorArguments);
-        $fields = ClassPropertiesParser::parseFields(get_class($object));
-        $idName = $this->findIdName($fields);
-        if ($idName) {
-            $this->addClassToMapper($class, $idName);
-        }
-        foreach ($fields as $fieldName => $fieldProps) {
-            if (!isset($fieldProps[self::KEY_GETTER])) {
-                continue;
-            }
-            $reflectionMethod = new \ReflectionMethod(get_class($objectExists), $fieldProps[self::KEY_GETTER]);
-            $fieldValue = $reflectionMethod->invoke($objectExists);
-            if ($fieldName === $idName) {
-                if (get_class($objectExists) === $class && isset($fieldProps[self::KEY_GETTER])) {
-                    $this->addToMapper($class, $data[$idName], $fieldValue);
-                }
-            } elseif (is_object($fieldValue)) {
-                if ($fieldValue instanceof PersistentCollection && isset($data[$fieldName])
-                    && is_array($data[$fieldName]) && $objectExists instanceof Source) {
-                    $coll = $fieldValue->toArray();
-                    for ($i = 0; $i < count($data[$fieldName]) && count($data[$fieldName]) === count($coll); $i++) {
-                        $this->mapSource($data[$fieldName][$i], $this->getClassName($data[$fieldName][$i]), $coll[$i]);
+        if (isset($this->data[$class])) {
+            foreach ($this->data[$class] as $item) {
+                $found = true;
+                foreach ($criteria as $key => $value) {
+                    if (!isset($item[$key]) || $item[$key] !== $value) {
+                        $found = false;
                     }
-                } elseif ($fieldValue instanceof Contact) {
-                    $this->mapSource($data[$fieldName], $this->getClassName($data[$fieldName]), $fieldValue);
+                }
+                if ($found) {
+                    return $item;
                 }
             }
         }
+        return null;
+    }
+
+    public function findEntities($class, array $criteria)
+    {
+        return $this->em->getRepository($class)->findBy($criteria);
+    }
+
+    public function handleData($data)
+    {
+        if (is_array($data) && $classDef = $this->getClassDifinition($data)) {
+            try {
+                $this->em->getRepository($classDef[0]);
+                $meta     = $this->em->getClassMetadata($classDef[0]);
+                $criteria = $this->getIdentCriteria($data, $meta);
+                if ($this->isReference($data, $criteria)) {
+                    if ($object = $this->getFromMapper($classDef[0], $criteria)) {
+                        return $object['object'];
+                    } elseif ($objectdata = $this->getEntityData($classDef[0], $criteria)) {
+                        $object        = $this->handleEntity($objectdata, $meta);
+                        return $object;
+                    }
+                    return null;
+                } else {
+                    $object        = $this->handleEntity($data, $meta);
+                    return $object;
+                }
+            } catch (MappingException $e) {
+                return $this->handleClass($data, new \ReflectionClass($classDef[0]));
+            }
+        } elseif (is_array($data)) {
+            $result = array();
+            if (ArrayUtil::isAssoc($data)) {
+                foreach ($data as $key => $item) {
+                    $result[$key] = $this->handleData($item);
+                }
+                return $result;
+            } else {
+                foreach ($data as $item) {
+                    $result[] = $this->handleData($item);
+                }
+            }
+            return $result;
+        } elseif ($data === null || is_integer($data) || is_float($data) || is_string($data) || is_bool($data)) {
+            return $data;
+        } else {
+            return null;
+        }
+    }
+
+    private function saveEntity($object, ClassMetadata $classMeta, $criteriaBefore)
+    {
+        $this->em->persist($object);
+        $criteriaAfter = $this->getIdentCriteria($object, $classMeta);
+        $this->addToMapper($object, $criteriaBefore, $criteriaAfter);
+    }
+
+    public function handleEntity(array $data, ClassMetadata $classMeta)
+    {
+        $criteriaBefore = $this->getIdentCriteria($data, $classMeta);
+        $args   = $this->getClassConstructParams($data) ? : array();
+        $object = $classMeta->getReflectionClass()->newInstanceArgs($args);
+        foreach ($classMeta->getFieldNames() as $fieldName) {
+            if (!in_array($fieldName, $classMeta->getIdentifier()) && isset($data[$fieldName])
+                && $setMethod = $this->getSetMethod($fieldName, $classMeta->getReflectionClass())) {
+                $value = $this->handleData($data[$fieldName]);
+                $fm    = $classMeta->getFieldMapping($fieldName);
+                if ($fm['unique']) {
+                    $value =
+                        EntityUtil::getUniqueValue($this->em, $classMeta->getName(), $fm['columnName'], $value, '_imp');
+                }
+                $setMethod->invoke($object, $value);
+            }
+        }
+        $this->saveEntity($object, $classMeta, $criteriaBefore);
+        foreach ($classMeta->getAssociationMappings() as $assocItem) {
+            $hasJoinColumns = isset($assocItem['joinColumns']);
+            $hasFieldName = isset($data[$assocItem['fieldName']]);
+            if (isset($data[$assocItem['fieldName']])
+                && $setMethod = $this->getSetMethod($assocItem['fieldName'], $classMeta->getReflectionClass())) {
+                $result = $this->handleData($data[$assocItem['fieldName']]);
+                if (is_array($result)) {
+                    if (count($result)) {
+                        $collection = new \Doctrine\Common\Collections\ArrayCollection($result);
+                        $setMethod->invoke($object, $collection);
+                        $this->em->persist($object);
+                    }
+                } else {
+                    $setMethod->invoke($object, $result);
+                    $this->em->persist($object);
+                }
+            }
+        }
+        return $object;
+    }
+
+    public function handleClass(array $data, \ReflectionClass $class)
+    {
+        $args = $this->getClassConstructParams($data) ? : array();
+        $object               = $class->newInstanceArgs($args);
+        foreach ($class->getProperties() as $property) { # only for mapbender classes
+            if (isset($data[$property->getName()]) && $setMethod = $this->getSetMethod($property->getName(), $class)) {
+                $value = $this->handleData($data[$property->getName()]);
+                if (is_array($value)) {
+                    $a = 0;
+                    if (count($value)) {
+                        $setMethod->invoke($object, $value);
+                    }
+                } else {
+                    $setMethod->invoke($object, $value);
+                }
+            }
+        }
+        return $object;
     }
 
     /**
@@ -176,256 +191,89 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
      */
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        $fields = ClassPropertiesParser::parseFields($class);
-        $fixedField = array();
-        $idName = $this->findIdName($fields);
-        $object = null;
-        if ($idName === null) {
-            $reflectionClass = new \ReflectionClass($class);
-            $constructorArguments = $this->getClassConstructParams($data) ? : array();
-            $object = $reflectionClass->newInstanceArgs($constructorArguments);
-        } else {
-            $object = $this->findOrCreateEntity($class, $data, $fields, $idName, $fixedField);
-        }
-        if ($object !== null) {
-            foreach ($fields as $fieldName => $fieldProps) {
-                if (!isset($fieldProps[self::KEY_SETTER]) || !isset($fieldProps[self::KEY_GETTER])
-                    || in_array($fieldName, $fixedField) || !key_exists($fieldName, $data)) {
-                    continue;
-                }
-                $fieldValue = $data[$fieldName];
-                if (is_array($fieldValue)) {
-                    if (ArrayUtil::isAssoc($fieldValue)) {
-                        $subObjectClassName = $this->getClassName($fieldValue);
-                        if ($subObjectClassName) {
-                            $subObject = $this->denormalize($fieldValue, $subObjectClassName);
-                            if ($object instanceof SourceInstance) {
-                                $this->handleSourceInstance($object, $subObject, $fieldName, $fieldValue, $fieldProps);
-                            } elseif ($object instanceof SourceInstanceItem) {
-                                $this->handleSourceInstanceItem($object, $subObject, $fieldName, $fieldValue,
-                                                                $fieldProps);
-                            } else {
-                                $this->handleCommon($object, $subObject, $fieldName, $fieldValue, $fieldProps);
-                            }
-                            unset($subObject);
-                            unset($subObjectClassName);
-                        } elseif ($object instanceof Element) {
-                            $this->handleElement($object, $fieldName, $fieldValue, $fieldProps);
-                        } elseif ($object instanceof RegionProperties) {
-                            $this->handleArray($object, $fieldName, $fieldValue, $fieldProps);
-                        } else {
-                            $a = 0;
-                        }
-                    } else {
-                        $getMethod = new \ReflectionMethod($class, $fieldProps[self::KEY_GETTER]);
-                        $getMethodResult = $getMethod->invoke($object);
-                        if ($getMethodResult !== null && $getMethodResult instanceof PersistentCollection) {
-                            $this->handleArrayCollection($object, $fieldName, $fieldValue, $fieldProps);
-                        } elseif ($getMethodResult !== null && is_array($getMethodResult)) {
-                            $this->handleArray($object, $fieldName, $fieldValue, $fieldProps);
-                        } else
-                        if ($object instanceof Element) {
-                            $this->handleElement($object, $fieldName, $fieldValue, $fieldProps);
-                        } else {
-                            $a = 0; # $fieldName configuration $object Element (all)
-                        }
-                        if ($getMethodResult) {
-                            unset($getMethodResult);
-                            unset($getMethod);
-                        }
-                    }
-                } else {
-                    $reflectionMethod = new \ReflectionMethod($class, $fieldProps[self::KEY_SETTER]);
-                    $reflectionMethod->invoke($object, $fieldValue);
-                }
-            }
-        }
-        return $object;
+        return $this->handleData($data);
     }
 
     /**
-     * Finds an existing entity or creates a new entity if an antity not exists.
-     * 
+     * Adds criteria to mapper.
+     *
+     * @param mixed $object object
+     * @param array $criteriaBefore criteria from data
+     * @param array $criteriaAfter criteria after save
+     * @return type
+     */
+    public function addToMapper($object, array $criteriaBefore, array $criteriaAfter)
+    {
+        $realClass = $this->getRealClass($object);
+        if (!isset($this->mapper[$realClass])) {
+            $this->mapper[$realClass] = array();
+        }
+        foreach ($this->mapper[$realClass] as $mapItem) {
+            if ($mapItem['before'] == $criteriaBefore) {
+                return;
+            }
+        }
+        $this->mapper[$realClass][] =
+            array('before' => $criteriaBefore, 'after' => array( 'criteria' => $criteriaAfter, 'object' => $object));
+    }
+
+    /**
+     * Adds entitiy with assoc. items to mapper.
+     *
+     * @param object $object source
+     */
+    public function addSourceToMapper($object)
+    {
+        if (!$object) {
+            return;
+        }
+        $this->em->refresh($object);
+        if (!$this->em->contains($object)) {
+             $this->em->merge($object);
+        }
+        $classMeta = $this->em->getClassMetadata($this->getRealClass($object));
+        $criteria  = $this->getIdentCriteria($object, $classMeta);
+        $this->addToMapper($object, $criteria, $criteria);
+
+        foreach ($classMeta->getAssociationMappings() as $assocItem) {
+            $fieldName = $assocItem['fieldName'];
+            $getMethod = $this->getReturnMethod($fieldName, $classMeta->getReflectionClass());
+            if ($getMethod) {
+                $subObject = $getMethod->invoke($object);
+                if ($subObject instanceof PersistentCollection) {
+                    foreach ($subObject as $item) {
+                        if ($this->findSuperClass($item, 'Mapbender\CoreBundle\Entity\SourceItem')) {
+                            $this->addSourceToMapper($item);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds object to mapper.
+     *
      * @param string $class class name
-     * @param array $data data
-     * @param array $fields fileds properties
-     * @param array $fixedField ids from fixed entities
-     * @return mixed an ORM Entity object
+     * @param int $criteriaBefore entity id before import
      */
-    private function findOrCreateEntity($class, $data, $fields, $idName, &$fixedField)
+    public function getFromMapper($class, $criteriaBefore)
     {
-        $fixedField[] = $idName;
-        $object = $this->findExistingEntity($class, $data[$idName]);
-        if ($object === null) { # not found -> create
-            $reflectionClass = new \ReflectionClass($class);
-            $constructorArguments = $this->getClassConstructParams($data) ? : array();
-            $object = $reflectionClass->newInstanceArgs($constructorArguments);
-            foreach ($fields as $fieldName => $fieldProps) { #set not null values
-                if (!isset($fieldProps['Column']) || !key_exists($fieldName, $data)) {
-                    continue;
-                }
-                $column = $fieldProps['Column'];
-                if (isset($column[self::KEY_UNIQUE]) && $column[self::KEY_UNIQUE] === 'true') {
-                    $val = EntityUtil::getUniqueValue($this->em, $class, $fieldName, $data[$fieldName], '');
-                    $reflectionMethod = new \ReflectionMethod($class, $fieldProps[self::KEY_SETTER]);
-                    $reflectionMethod->invoke($object, $val);
-                    $fixedField[] = $fieldName;
-                } elseif ($fieldName !== $idName && isset($fieldProps[self::KEY_SETTER])) {
-                    $exists = key_exists('nullable', $column);
-                    if (!$exists || ($exists && $column['nullable'] === 'false')) {
-                        if ($object instanceof Application) {
-                            $val = $data[$fieldName];
-                            if ($fieldName === 'template') {
-                                $tmplClass = new \ReflectionClass($data[$fieldName]);
-                            } elseif ($fieldName === 'updated') {
-                                $val = new \DateTime();
-                            }
-                            $reflectionMethod = new \ReflectionMethod($class, $fieldProps[self::KEY_SETTER]);
-                            $reflectionMethod->invoke($object, $val);
-                            $fixedField[] = $fieldName;
-                        } elseif ($data[$fieldName] !== null) {
-                            $reflectionMethod = new \ReflectionMethod($class, $fieldProps[self::KEY_SETTER]);
-                            $reflectionMethod->invoke($object, $data[$fieldName]);
-                            $fixedField[] = $fieldName;
-                        } else {
-                            throw new \Exception("not null field");
-                        }
-                    }
-                }
-            }
-            $this->addClassToMapper($class, $idName);
-            $this->em->persist($object);
-            $this->em->flush();
-            $reflectionMethod = new \ReflectionMethod($class, $fields[$idName][self::KEY_GETTER]);
-            $idValue = $reflectionMethod->invoke($object);
-            $this->addToMapper($class, $data[$idName], $idValue);
+        if (!isset($this->mapper[$class])) {
+            return null;
         }
-        return $object;
-    }
 
-    /**
-     * Handles an Element object.
-     * 
-     * @param Element $object an element
-     * @param string $fieldName field name
-     * @param mixed $fieldValue field value
-     * @param array $fieldProps field properties
-     */
-    private function handleElement(Element $object, $fieldName, $fieldValue, $fieldProps)
-    {
-        $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-        $reflectionMethod->invoke($object, $fieldValue);
-        $this->em->persist($object);
-        $this->em->flush();
-    }
-
-    /**
-     * 
-     * @param type $object 
-     * @param type $newObject
-     * @param string $fieldName field name
-     * @param mixed $fieldValue field value
-     * @param array $fieldProps field properties
-     */
-    private function handleCommon($object, $newObject, $fieldName, $fieldValue, $fieldProps)
-    {
-        $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-        if (EntityHandler::isEntity($this->container, $newObject)) {
-            $this->em->persist($newObject);
-            $this->em->flush();
-        }
-        $reflectionMethod->invoke($object, $newObject);
-        if (EntityHandler::isEntity($this->container, $object)) {
-            $this->em->persist($object);
-            $this->em->flush();
-        }
-    }
-
-    private function handleSourceInstance($object, $newObject, $fieldName, $fieldValue, $fieldProps)
-    {
-        if ($newObject instanceof Source) {
-            $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-            $reflectionMethod->invoke($object, $newObject);
-            $this->em->persist($object);
-            $this->em->flush();
-        } elseif ($newObject instanceof Layerset) {
-            $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-            $reflectionMethod->invoke($object, $newObject);
-            $this->em->persist($object);
-            $this->em->flush();
-        } else {
-            $a = 0;
-        }
-    }
-
-    private function handleSourceInstanceItem($object, $newObject, $fieldName, $fieldValue, $fieldProps)
-    {
-        $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-        $reflectionMethod->invoke($object, $newObject);
-        $this->em->persist($object);
-        $this->em->flush();
-    }
-
-    private function handleArrayCollection($object, $fieldName, $fieldValue, $fieldProps)
-    {
-        $collection = new ArrayCollection();
-        foreach ($fieldValue as $item) {
-            $newclassName = $this->getClassName($item);
-            if ($newclassName) {
-                $newObject = $this->denormalize($item, $newclassName);
-                $this->em->persist($newObject);
-                if ($object instanceof Layerset && $newObject instanceof SourceInstance) {
-//                    EntityHandler::createHandler($this->container, $newObject)->generateConfiguration();
-                    $this->em->persist($newObject);
-                }
-                $this->em->flush();
-                $collection->add($newObject);
-            } else {
-                $a = 0;
+        foreach ($this->mapper[$class] as $mapItem) {
+            if ($mapItem['before'] == $criteriaBefore) {
+                return $mapItem['after'];
             }
         }
-        $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-        $reflectionMethod->invoke($object, $collection);
-        $this->em->persist($object);
-        $this->em->flush();
-    }
-
-    /**
-     * 
-     * @param type $object
-     * @param type $fieldName
-     * @param type $fieldValue
-     * @param type $fieldProps
-     */
-    private function handleArray($object, $fieldName, $fieldValue, $fieldProps)
-    {
-        $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-        $newArr = array();
-        if (ArrayUtil::isAssoc($fieldValue)) {
-            foreach ($fieldValue as $key => $value) {
-                $newclassName = $this->getClassName($value);
-                if ($newclassName) {
-                    $newArr[$key] = $this->denormalize($value, $newclassName);
-                } else {
-                    $newArr[$key] = $value;
-                }
-            }
-        } else {
-            foreach ($fieldValue as $item) {
-                $newclassName = $this->getClassName($item);
-                if ($newclassName) {
-                    $newArr[] = $this->denormalize($item, $newclassName);
-                } else {
-                    $newArr[] = $item;
-                }
-            }
-        }
-        $reflectionMethod->invoke($object, $newArr);
+        return null;
     }
 
     /**
      * Handles a configuration item.
-     * 
+     *
      * @param mixed $value configuration item to handle
      * @return mixed handled item
      */
@@ -460,20 +308,25 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
 
     /**
      *  Generates an element configuration.
-     * 
+     *
      * @param \Mapbender\CoreBundle\Entity\Application $app
      */
     public function generateElementConfiguration(Application $app)
     {
         foreach ($app->getElements() as $element) {
-            $configuration = $element->getConfiguration();
-            foreach ($configuration as $key => $value) {
-                $configuration[$key] = $this->handleConfiguration($value);
-            }
             $elmClass = $element->getClass();
             $applComp = new ApplicationComponent($this->container, $element->getApplication(), array());
             $elmComp = new $elmClass($applComp, $this->container, $element);
-            $configuration = $elmComp->denormalizeConfiguration($configuration, $this->mapper);
+            $configuration = $element->getConfiguration();
+            foreach ($configuration as $key => $value) {
+                if ($key === 'target') { # dirty
+                    $target = $this->getFromMapper($this->getRealClass($element), array('id' => $value));
+                    $configuration[$key] = $target['criteria']['id'];
+                } else {
+                    $configuration[$key] = $this->handleConfiguration($value);
+                }
+            }
+            $configuration = $elmComp->denormalizeConfiguration($configuration, $this);
             $element->setConfiguration($configuration);
             $this->em->persist($element);
             $this->em->flush();
@@ -483,11 +336,25 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
     }
 
     /**
-     * {@inheritdoc}
+     *
+     * @inheritdoc
      */
-    public function supportsDenormalization($data, $type, $format = null)
+    public function getIdentFromMapper($className, $id, $isSuperClass = false)
     {
-        return true;
+        if ($isSuperClass) {
+            foreach ($this->mapper as $key => $value) {
+                if (class_exists($key) && $this->findSuperClass($key, $className)) {
+                    $result = $this->getFromMapper($key, array('id' => $id));
+                    if ($result && isset($result['criteria']) && isset($result['criteria']['id'])) {
+                        return $result['criteria']['id'];
+                    }
+                }
+            }
+            return null;
+        } else {
+            $result = $this->getFromMapper($className, array('id' => $id));
+            return $result && isset($result['criteria']) && isset($result['criteria']['id'])
+                ? $result['criteria']['id'] : null;
+        }
     }
-
 }

@@ -34,12 +34,12 @@ class Application
     /**
      * @var integer $source
      */
-    protected $source;
+    protected $source = self::SOURCE_DB;
 
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
      */
     protected $id;
 
@@ -70,19 +70,19 @@ class Application
     protected $template;
 
     /**
-     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     public $regionProperties;
 
     /**
-     * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"remove"})
      * @ORM\OrderBy({"weight" = "asc"})
      */
     protected $elements;
 
     /**
-     * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"remove"})
      */
     protected $layersets;
 

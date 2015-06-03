@@ -171,7 +171,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
 
     /**
      * @var ArrayCollections A list of WMS Layer keywords
-     * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;

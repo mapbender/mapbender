@@ -9,6 +9,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Util\ClassUtils;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -45,13 +46,14 @@ abstract class ExchangeHandler
 
     protected function getAllowedAppllications()
     {
-        $allowed_apps = EntityHandler::findAll(
-                $this->container, "Mapbender\CoreBundle\Entity\Application", array(), "EDIT");
+        $allowed_apps =
+            EntityHandler::findAll($this->container, "Mapbender\CoreBundle\Entity\Application", array(), "EDIT");
         return $allowed_apps;
     }
 
     protected function getAllowedApplicationSources(Application $app, $action = 'EDIT')
     {
+        
         $sources = new ArrayCollection();
         if (true === $this->isGranted($action, $app)) {
             foreach ($app->getLayersets() as $layerset) {
@@ -70,8 +72,8 @@ abstract class ExchangeHandler
     {
         $allowed_sources = new ArrayCollection();
         if ($this->isGranted("EDIT", "Mapbender\CoreBundle\Entity\Source")) {
-            $allowed_sources = EntityHandler::findAll(
-                    $this->container, "Mapbender\CoreBundle\Entity\Source", array(), "EDIT");
+            $allowed_sources =
+                EntityHandler::findAll($this->container, "Mapbender\CoreBundle\Entity\Source", array(), "EDIT");
         }
         return $allowed_sources;
     }
@@ -110,8 +112,8 @@ abstract class ExchangeHandler
 
     /**
      * Checks the grant for an action and an object
-     * 
-     * @param \Object $object the object 
+     *
+     * @param \Object $object the object
      * @throws AccessDeniedException
      */
     public function checkGranted($action, $object)
@@ -122,11 +124,11 @@ abstract class ExchangeHandler
             if (false === $this->securityContext->isGranted($action, $oid)) {
                 throw new AccessDeniedException();
             }
-        } else if ($action === "VIEW" && !$this->securityContext->isGranted($action, $object)) {
+        } elseif ($action === "VIEW" && !$this->securityContext->isGranted($action, $object)) {
             throw new AccessDeniedException();
-        } else if ($action === "EDIT" && !$this->securityContext->isGranted($action, $object)) {
+        } elseif ($action === "EDIT" && !$this->securityContext->isGranted($action, $object)) {
             throw new AccessDeniedException();
-        } else if ($action === "DELETE" && !$this->securityContext->isGranted($action, $object)) {
+        } elseif ($action === "DELETE" && !$this->securityContext->isGranted($action, $object)) {
             throw new AccessDeniedException();
         }
     }
@@ -135,7 +137,7 @@ abstract class ExchangeHandler
      * Checks the grant for an action and an object
      *
      * @param string $action action, for example "CREATE"
-     * @param \Object $object the object 
+     * @param \Object $object the object
      * @throws AccessDeniedException
      */
     public function isGranted($action, $object)

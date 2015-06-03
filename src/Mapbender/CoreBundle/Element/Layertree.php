@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
  *
@@ -130,11 +131,7 @@ class Layertree extends Element
     }
 
     /**
-     * Changes a element entity configuration while exporting.
-     *
-     * @param array $formConfiguration element entity configuration
-     * @param array $entityConfiguration element entity configuration
-     * @return array a configuration
+     * @inheritdoc
      */
     public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
@@ -142,17 +139,14 @@ class Layertree extends Element
     }
 
     /**
-     * Changes a element entity configuration while importing.
-     *
-     * @param array $configuration element entity configuration
-     * @param array $idMapper array with ids before denormalize and after denormalize.
-     * @return array a configuration
+     * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
-        foreach ($configuration['themes'] as &$theme) {
-            if (isset($idMapper['Mapbender\CoreBundle\Entity\Layerset']['map'][intval($theme['id'])])) {
-                $theme['id'] = $idMapper['Mapbender\CoreBundle\Entity\Layerset']['map'][intval($theme['id'])];
+        if (isset($configuration['themes'])) {
+            foreach ($configuration['themes'] as &$theme) {
+                $theme =
+                    $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', intval($theme['id']), true);
             }
         }
         return $configuration;

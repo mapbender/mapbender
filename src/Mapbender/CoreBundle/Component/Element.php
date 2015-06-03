@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\CoreBundle\Entity\Application as AppEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -487,7 +488,7 @@ abstract class Element
      * Changes a element entity configuration while exporting.
      *
      * @param array $formConfiguration element entity configuration
-     * @param array $formConfiguration element entity configuration
+     * @param array $entityConfiguration element entity configuration
      * @return array a configuration
      */
     public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
@@ -499,10 +500,10 @@ abstract class Element
      * Changes a element entity configuration while importing.
      *
      * @param array $configuration element entity configuration
-     * @param array $idMapper array with ids before denormalize and after denormalize.
+     * @param Mapper $mapper a mapper object
      * @return array a configuration
      */
-    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         return $configuration;
     }

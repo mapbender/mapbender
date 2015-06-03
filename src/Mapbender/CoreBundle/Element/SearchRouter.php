@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Element\Type\SearchRouterFormType;
 use Mapbender\CoreBundle\Element\Type\SearchRouterSelectType;
+use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -23,7 +24,7 @@ class SearchRouter extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.searchrouter.class.title";
     }
@@ -31,7 +32,7 @@ class SearchRouter extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.searchrouter.class.description";
     }
@@ -39,7 +40,7 @@ class SearchRouter extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.searchrouter.tag.search",
@@ -57,7 +58,7 @@ class SearchRouter extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array(
             'js' => array(
@@ -100,8 +101,13 @@ class SearchRouter extends Element
             $engine = new $conf['class']($this->container);
 
             $results = $engine->autocomplete(
-                $conf, $data->key, $data->value, $data->properties, $data->srs,
-                $data->extent);
+                $conf,
+                $data->key,
+                $data->value,
+                $data->properties,
+                $data->srs,
+                $data->extent
+            );
 
             $response->setContent(json_encode(array(
                 'key' => $data->key,
@@ -124,8 +130,7 @@ class SearchRouter extends Element
                 'form' => $form->getData(),
                 'autocomplete_keys' => get_object_vars($data->autocomplete_keys)
             );
-            $features = $engine->search(
-                $conf, $query, $request->get('srs'), $request->get('extent'));
+            $features = $engine->search($conf, $query, $request->get('srs'), $request->get('extent'));
 
             // Return GeoJSON FeatureCollection
             $response->setContent(json_encode(array(
@@ -144,8 +149,7 @@ class SearchRouter extends Element
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:search_router.html.twig',
-                    array('element' => $this));
+                ->render('MapbenderCoreBundle:Element:search_router.html.twig', array('element' => $this));
     }
 
     /**
@@ -158,8 +162,11 @@ class SearchRouter extends Element
         $configuration = $this->getConfiguration();
 
         $form = $this->container->get('form.factory')->createNamed(
-            'search_routes', new SearchRouterSelectType(), null,
-            array('routes' => $configuration['routes']));
+            'search_routes',
+            new SearchRouterSelectType(),
+            null,
+            array('routes' => $configuration['routes'])
+        );
 
         return $form->createView();
     }
@@ -193,7 +200,7 @@ class SearchRouter extends Element
     public function getFormViews()
     {
         $formViews = array();
-        foreach($this->getForms() as $form) {
+        foreach ($this->getForms() as $form) {
             $formViews[] = $form->createView();
         }
         return $formViews;
@@ -208,8 +215,8 @@ class SearchRouter extends Element
      */
     protected function setupForm($name, array $conf)
     {
-        $form = $this->container->get('form.factory')->createNamed(
-            $name, new SearchRouterFormType(), null, array('fields' => $conf));
+        $form = $this->container->get('form.factory')
+            ->createNamed($name, new SearchRouterFormType(), null, array('fields' => $conf));
 
         return $form;
     }
@@ -257,7 +264,7 @@ class SearchRouter extends Element
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         if (key_exists('dialog', $configuration)) {
             $configuration['asDialog'] = $configuration['dialog'];
@@ -277,5 +284,4 @@ class SearchRouter extends Element
         }
         return $configuration;
     }
-
 }

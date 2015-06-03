@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
  * Map's overview element
@@ -133,11 +134,7 @@ class BaseSourceSwitcher extends Element
     }
 
     /**
-     * Changes a element entity configuration while exporting.
-     *
-     * @param array $formConfiguration element entity configuration
-     * @param array $entityConfiguration element entity configuration
-     * @return array a configuration
+     * @inheritdoc
      */
     public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
@@ -145,42 +142,18 @@ class BaseSourceSwitcher extends Element
     }
 
     /**
-     * Changes a element entity configuration while importing.
-     *
-     * @param array $configuration element entity configuration
-     * @param array $idMapper array with ids before denormalize and after denormalize.
-     * @return array a configuration
+     * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
-        $instClasses = array();
-        foreach ($idMapper as $class => $content) {
-            if ($this->findSuperClass($class, 'Mapbender\CoreBundle\Entity\SourceInstance')) {
-                $instClasses[] = $class;
-            }
-        }
         foreach ($configuration['instancesets'] as $key => &$instanceset) {
             foreach ($instanceset['instances'] as &$instance) {
-                if ($instance && count($instClasses)) {
-                    foreach ($instClasses as $instClass) {
-                        if (isset($idMapper[$instClass]['map'][intval($instance)])) {
-                            $instance = $idMapper[$instClass]['map'][intval($instance)];
-                        }
-                    }
+                if ($instance) {
+                    $instance =
+                        $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\SourceInstance', $instance, true);
                 }
             }
         }
         return $configuration;
-    }
-
-    private function findSuperClass($classIs, $classToFind)
-    {
-        if ($classIs === $classToFind) {
-            return true;
-        } elseif ($super = get_parent_class($classIs)) {
-            return $this->findSuperClass($super, $classToFind);
-        } else {
-            return false;
-        }
     }
 }
