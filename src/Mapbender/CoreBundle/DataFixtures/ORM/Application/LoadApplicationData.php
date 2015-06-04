@@ -45,10 +45,108 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         $this->container = $container;
     }
 
+    public function load(ObjectManager $manager) {
+        $definitions = $this->container->getParameter('applications');
+        foreach ($definitions as $slug => $definition) {
+            $appMapper = new ApplicationYAMLMapper($this->container);
+            $application = $appMapper->getApplication($slug);
+            if ($application->getLayersets()->count() === 0) {
+                continue;
+            }
+            $this->mapper = array();
+            $appHandler = new Application($this->container, $application, array());
+
+            $application->setSlug(
+                EntityUtil::getUniqueValue($manager, get_class($application), 'slug', $application->getSlug() . '_yml', '')
+            );
+            $application->setTitle(
+                EntityUtil::getUniqueValue($manager, get_class($application), 'title', $application->getSlug() . ' YML', '')
+            );
+            $manager->getConnection()->beginTransaction();
+            $application->setSource(ApplicationEntity::SOURCE_DB);
+            $manager->persist($application->setUpdated(new \DateTime('now')));
+            $elms = array();
+            $lays = array();
+            $items = array();
+            foreach($application->getRegionProperties() as $prop) {
+                $manager->persist($prop);
+            }
+            foreach($application->getElements() as $elm) {
+                $elms[$elm->getId()] = $elm;
+                $manager->persist($elm);
+            }
+            foreach($application->getLayersets() as $set) {
+                $lays[$set->getId()] = $set;
+                $manager->persist($set);
+                foreach($set->getInstances() as $inst) {
+                    foreach($inst->getSource()->getLayers() as $lay) {
+                        $manager->persist($lay);
+                    }
+                    $manager->persist($inst->getSource());
+                    foreach($inst->getLayers() as $lay) {
+                        $manager->persist($lay);
+                    }
+                    $manager->persist($inst);
+                }
+            }
+            $manager->flush();
+            $this->updateElements($elms, $lays, $manager);
+            $manager->getConnection()->commit();
+            $appHandler->createAppWebDir($this->container, $application->getSlug());
+        }
+    }
+
+    private function updateElements(&$elms, &$lays, $manager) {
+        foreach ($elms as $element) {
+            $config = $element->getConfiguration();
+            if (isset($config['target'])) {
+                $elm = $elms[$config['target']];
+                $config['target'] = $elm->getId();
+                $element->setConfiguration($config);
+                $manager->persist($element);
+            }
+            if (isset($config['layersets'])) {
+                $layersets = array();
+                foreach ($config['layersets'] as $layerset) {
+                    $layerset = $lays[$layerset];
+                    $layersets[] = $layerset->getId();
+                }
+                $config['layersets'] = $layersets;
+                $element->setConfiguration($config);
+                $manager->persist($element);
+            }
+            if (isset($config['layerset'])) {
+                $layerset = $lays[$config['layerset']];
+                $config['layerset'] = $layerset->getId();
+                $element->setConfiguration($config);
+                $manager->persist($element);
+            }
+        }
+    }
+
+    private function findMatchingSource($manager, $source) {
+        $repo = $manager->getRepository(get_class($source));
+        foreach ($repo->findBy(array('originUrl' => $source->getOriginUrl())) as $fsource) {
+            if ($source->getLayers()->count() === $fsource->getLayers()->count()) {
+                $ok = true;
+                for ($i = 0; $i <  $source->getLayers()->count(); $i++) {
+                    if ($source->getLayers()->get($i)->getName() !== $source->getLayers()->get($i)->getName()) {
+                        $ok = false;
+                    }
+                }
+                if ($ok) {
+                    return $fsource;
+                    break;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * @inheritdoc
      */
-    public function load(ObjectManager $manager)
+    public function load2(ObjectManager $manager)
     {
         $definitions = $this->container->getParameter('applications');
         foreach ($definitions as $slug => $definition) {
@@ -161,7 +259,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         }
     }
 
-    private function saveElements(ObjectManager $manager, &$elements)
+    private function saveElements2(ObjectManager $manager, &$elements)
     {
         $num = 0;
         foreach ($elements as $element) {
