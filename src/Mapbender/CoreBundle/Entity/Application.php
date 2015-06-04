@@ -39,7 +39,7 @@ class Application
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue
      */
     protected $id;
 

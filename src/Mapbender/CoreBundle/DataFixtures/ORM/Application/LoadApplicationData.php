@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\EntityHandler;
@@ -67,12 +68,23 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             );
             $manager->getConnection()->beginTransaction();
             $application->setSource(ApplicationEntity::SOURCE_DB);
+            $layersets = $application->getLayersets();
+            $elements = $application->getElements();
+            $regions = $application->getRegionProperties();
+            $application->setLayersets(new ArrayCollection());
+            $application->setElements(new ArrayCollection());
+            $application->setRegionProperties(new ArrayCollection());
             $id = $application->getId();
-
-            $this->saveSources($manager, $application);
-            $this->saveLayersets($manager, $application);
-            $this->saveElements($manager, $application);
             $manager->persist($application->setUpdated(new \DateTime('now')));
+
+            $this->saveSources($manager, $layersets);
+            $application->setLayersets($layersets);
+            $manager->persist($application);
+            $this->saveLayersets($manager, $layersets);
+            $application->setLayersets($layersets);
+            $manager->persist($application);
+            $this->saveElements($manager, $elements);
+            $application->setElements($elements);
             $this->checkRegionProperties($manager, $application);
             $manager->flush();
             $this->addMapping($application, $id, $application);
@@ -80,7 +92,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             $appHandler->createAppWebDir($this->container, $application->getSlug());
         }
     }
-    
+
     private function addMapping($object, $id_old, $objWithNewId, $unique = true)
     {
         $class = is_object($object) ? get_class($object) : $object;
@@ -94,16 +106,24 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         }
     }
 
-    private function saveSources(ObjectManager $manager, ApplicationEntity $application)
+    private function saveSources(ObjectManager $manager, &$layersets)
     {
-        foreach ($application->getLayersets() as $layerset) {
+        foreach ($layersets as $layerset) {
+            $this->addMapping($layerset, $layerset->getId(), $layerset);
             foreach ($layerset->getInstances() as $instance) {
                 $instlayerOldIds = array();
                 foreach ($instance->getLayers() as $instlayer) {
                     $instlayerOldIds[] = $instlayer->getId();
+                    foreach($instlayer->getSourceInstance()->getLayerset()->getInstances() as $in) {
+                        $manager->persist($in);
+                    }
+                    $manager->persist($instlayer->getSourceInstance()->getLayerset());
+                    $manager->persist($instlayer->getSourceInstance());
+                    $manager->persist($instlayer);
                 }
                 $source = $instance->getSource();
                 $id = $source->getId();
+                $manager->persist($source);
                 $layerOldIds = array();
                 foreach ($source->getLayers() as $layer) {
                     $layerOldIds[] = $layer->getId();
@@ -126,13 +146,15 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 }
                 if (!$founded) {
                     $source->setContact(new Contact());
-                    EntityHandler::createHandler($this->container, $source)->save();
+                    $manager->persist($source->getContact());
                     $num = 0;
                     foreach ($source->getLayers() as $layer) {
+                        $manager->persist($layer);
                         $this->addMapping($layer, $layerOldIds[$num], $layer);
                         $num++;
                     }
                     $this->addMapping($source, $id, $source);
+                    $manager->persist($source);
                 } else {
                     $source = $founded;
                     $num = 0;
@@ -142,10 +164,16 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                     }
                     $this->addMapping($source, $id, $source);
                     $instance->setSource($source);
+                    $manager->persist($instance);
                     $num = 0;
                     foreach ($instance->getLayers() as $instlayer) {
+                        $item = $instlayer->getSourceItem();
+                        $itemid = $item->getId();
+                        $this->addMapping($item, $itemid, $item);
+                        $manager->persist($item);
+                        $manager->persist($instlayer);
                         $instlayer->setSourceItem(
-                            $this->mapper[get_class($instlayer->getSourceItem())][$instlayer->getSourceItem()->getId()]
+                            $this->mapper[get_class($item)][$itemid]
                         );
                         EntityHandler::createHandler($this->container, $instlayer)->save();
                         $this->addMapping($instlayer, $instlayerOldIds[$num], $instlayer);
@@ -155,26 +183,32 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         }
     }
 
-    private function saveLayersets(ObjectManager $manager, ApplicationEntity $application)
+    private function saveLayersets(ObjectManager $manager, &$layersets)
     {
-        foreach ($application->getLayersets() as $layerset) {
+        foreach ($layersets as $layerset) {
             $id = $layerset->getId();
             $manager->persist($layerset);
-            $this->addMapping($layerset, $id, $layerset);
+            foreach($layerset->getInstances() as $instance) {
+                foreach($instance->getLayers() as $layer) {
+                    $item = $layer->getSourceItem();
+                    $this->addMapping($item, $item->getId(), $item);
+                    $manager->persist($item);
+                }
+            }
         }
     }
 
-    private function saveElements(ObjectManager $manager, ApplicationEntity $application)
+    private function saveElements(ObjectManager $manager, $elements)
     {
         $elementIds = array();
         $num = 0;
-        foreach ($application->getElements() as $element) {
+        foreach ($elements as $element) {
 //            $elementIds[] = $element->getId();
             $id = $element->getId();
             $manager->persist($element);
             $this->addMapping($element, $id, $element);
         }
-        foreach ($application->getElements() as $element) {
+        foreach ($elements as $element) {
             $id = $element->getId();
             $config = $element->getConfiguration();
             if (isset($config['target'])) {
