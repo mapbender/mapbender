@@ -136,14 +136,6 @@ class BaseSourceSwitcher extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
-    {
-        return $formConfiguration;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         foreach ($configuration['instancesets'] as $key => &$instanceset) {

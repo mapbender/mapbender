@@ -240,30 +240,6 @@ class SearchRouter extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
-    {
-        if (key_exists('dialog', $formConfiguration)) {
-            $formConfiguration['asDialog'] = $formConfiguration['dialog'];
-            unset($formConfiguration['dialog']);
-        }
-        if (key_exists('timeout', $formConfiguration)) {
-            $formConfiguration['timeoutFactor'] = $formConfiguration['timeout'];
-            unset($formConfiguration['timeout']);
-        }
-        foreach ($formConfiguration['routes'] as $routekey => $routevalue) {
-            if (key_exists('configuration', $routevalue)) {
-                foreach ($formConfiguration['routes'][$routekey]['configuration'] as $key => $value) {
-                    $formConfiguration['routes'][$routekey][$key] = $value;
-                }
-                unset($formConfiguration['routes'][$routekey]['configuration']);
-            }
-        }
-        return $formConfiguration;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         if (key_exists('dialog', $configuration)) {

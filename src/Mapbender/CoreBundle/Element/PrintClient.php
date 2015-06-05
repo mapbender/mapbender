@@ -240,26 +240,4 @@ class PrintClient extends Element
                 return new Response($size);
         }
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
-    {
-        if (is_string($formConfiguration['scales'])) {
-            $formConfiguration['scales'] = explode(',', $formConfiguration['scales']);
-        }
-        return $formConfiguration;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
-    {
-        if (is_string($configuration['scales'])) {
-            $configuration['scales'] = explode(',', $configuration['scales']);
-        }
-        return $configuration;
-    }
 }

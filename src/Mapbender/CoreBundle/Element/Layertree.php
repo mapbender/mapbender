@@ -133,14 +133,6 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
-    {
-        return $formConfiguration;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         if (isset($configuration['themes'])) {

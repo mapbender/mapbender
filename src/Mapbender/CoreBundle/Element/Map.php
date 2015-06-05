@@ -317,14 +317,6 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
-    {
-        return $entityConfiguration;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
