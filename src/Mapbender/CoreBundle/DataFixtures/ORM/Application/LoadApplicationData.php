@@ -63,7 +63,12 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             }
             $this->persistLayersets($manager, $lays, $application->getLayersets(), $sourceLays);
             $manager->flush();
+            foreach($application->getRegionProperties() as $prop) {
+                $prop->setApplication($application);
+                $manager->persist($prop);
+            }
             $this->updateElements($elms, $lays, $manager);
+            $manager->flush();
             $manager->getConnection()->commit();
             $appHandler->createAppWebDir($this->container, $application->getSlug());
         }
