@@ -146,15 +146,22 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
             }
         }
 
+        $manager = $this->container->get('doctrine')->getManager();
         /* handle keywords */
         $updater->updateKeywords(
             $this->entity,
             $itemNew,
-            $this->container->get('doctrine')->getManager(),
+            $manager,
             'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword'
         );
-
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
-        $this->container->get('doctrine')->getManager()->flush();
+        $manager->persist($this->entity);
+        $manager->persist($this->entity->getSource()->getContact());
+        foreach($this->entity->getSource()->getKeywords() as $kwd) {
+            $manager->persist($kwd);
+        }
+        foreach($this->entity->getKeywords() as $kwd) {
+            $manager->persist($kwd);
+        }
+        $manager->flush();
     }
 }
