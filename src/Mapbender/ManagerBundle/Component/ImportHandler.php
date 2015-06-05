@@ -22,13 +22,16 @@ class ImportHandler extends ExchangeHandler
 {
     protected $denormalizer;
 
+    protected $toCopy;
+
     /**
      * @inheritdoc
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, $toCopy = false)
     {
         parent::__construct($container);
         $this->job = new ImportJob();
+        $this->toCopy = $toCopy;
     }
 
     /**
@@ -95,23 +98,31 @@ class ImportHandler extends ExchangeHandler
             if ($this->denormalizer->findSuperClass($class, 'Mapbender\CoreBundle\Entity\Source')) {
                 foreach ($content as $item) {
                     $classMeta = $em->getClassMetadata($class);
-                    $criteria  = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array('originUrl'));
-                    if (isset($criteria['id'])) {
-                        unset($criteria['id']);
-                    }
-                    $sources    = $this->denormalizer->findEntities($class, $criteria);
-                    if (count($sources) === 0) {
-                        $source = $this->denormalizer->handleData($item, $class);
-                        $em->persist($source);
-                    } else {
-                        try {
-                            $result = array();
-                            $this->addSourceToMapper($sources[0], $item, $result);
-                            $this->mergeIntoMapper($result);
-                        } catch (\Exception $e) {
+                    if (!$this->toCopy) {
+                        $criteria  = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array('originUrl'));
+                        if (isset($criteria['id'])) {
+                            unset($criteria['id']);
+                        }
+                        $sources    = $this->denormalizer->findEntities($class, $criteria);
+                        if (count($sources) === 0) {
                             $source = $this->denormalizer->handleData($item, $class);
                             $em->persist($source);
+                        } else {
+                            try {
+                                $result = array();
+                                $this->addSourceToMapper($sources[0], $item, $result);
+                                $this->mergeIntoMapper($result);
+                            } catch (\Exception $e) {
+                                $source = $this->denormalizer->handleData($item, $class);
+                                $em->persist($source);
+                            }
                         }
+                    } else {
+                        $criteria = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array());
+                        $sources  = $this->denormalizer->findEntities($class, $criteria);
+                        $result = array();
+                        $this->addSourceToMapper($sources[0], $item, $result);
+                        $this->mergeIntoMapper($result);
                     }
                 }
             }

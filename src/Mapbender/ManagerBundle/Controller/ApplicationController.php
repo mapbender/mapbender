@@ -149,7 +149,7 @@ class ApplicationController extends Controller
      */
     public function importAction()
     {
-        $impHandler = new ImportHandler($this->container, $this->getDoctrine()->getManager());
+        $impHandler = new ImportHandler($this->container, false);
         if ($this->getRequest()->getMethod() === 'GET') {
             $form = $impHandler->createForm();
             return array(
@@ -193,7 +193,7 @@ class ApplicationController extends Controller
         $expHandler = new ExportHandler($this->container);
         $expJob     = $expHandler->getJob();
         $expJob->getApplications()->add($tocopy);
-        $expJob->setAddSources(true);
+        $expJob->setAddSources(false);
 //        $expJob->setAddAcl(true);
 //        $job = $expHandler->getJob();
 //
@@ -203,7 +203,7 @@ class ApplicationController extends Controller
 
         $data = $expHandler->makeJob();
 
-        $impHandler = new ImportHandler($this->container, $this->getDoctrine()->getManager());
+        $impHandler = new ImportHandler($this->container, true);
         $importJob  = $impHandler->getJob();
         $importJob->setImportContent($data);
         $impHandler->makeJob();
