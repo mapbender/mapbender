@@ -27,7 +27,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function create($persist = true)
     {
-        
+
     }
 
     /**
@@ -85,9 +85,10 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function update(Source $sourceNew)
     {
-        $transaction = $this->container->get('doctrine')->getManager()->getConnection()->isTransactionActive();
+        $manager = $this->container->get('doctrine')->getManager();
+        $transaction = $manager->getConnection()->isTransactionActive();
         if (!$transaction) {
-            $this->container->get('doctrine')->getManager()->getConnection()->beginTransaction();
+            $manager->getConnection()->beginTransaction();
         }
         $updater = new WmsUpdater($this->entity);
         /* Update source attributes */
@@ -121,7 +122,6 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         $rootHandler->update($sourceNew->getRootlayer());
 
         $this->updateInstances();
-
         if (!$transaction) {
             $this->container->get('doctrine')->getManager()->getConnection()->commit();
         }
@@ -146,4 +146,5 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         $instList = $query->getResult();
         return $instList;
     }
+
 }
