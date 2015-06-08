@@ -99,23 +99,14 @@ class ImportHandler extends ExchangeHandler
                 foreach ($content as $item) {
                     $classMeta = $em->getClassMetadata($class);
                     if (!$this->toCopy) {
-                        $criteria  = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array('originUrl'));
+                        $criteria  = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array('onlineResource'));
                         if (isset($criteria['id'])) {
                             unset($criteria['id']);
                         }
                         $sources    = $this->denormalizer->findEntities($class, $criteria);
-                        if (count($sources) === 0) {
+                        if (!$this->findSourceToMapper($sources, $item, 0)) {
                             $source = $this->denormalizer->handleData($item, $class);
                             $em->persist($source);
-                        } else {
-                            try {
-                                $result = array();
-                                $this->addSourceToMapper($sources[0], $item, $result);
-                                $this->mergeIntoMapper($result);
-                            } catch (\Exception $e) {
-                                $source = $this->denormalizer->handleData($item, $class);
-                                $em->persist($source);
-                            }
                         }
                     } else {
                         $criteria = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array());
@@ -158,6 +149,26 @@ class ImportHandler extends ExchangeHandler
     private function importAcls($data)
     {
         // TODO
+    }
+
+    private function findSourceToMapper(array $sources, array $item, $idx = 0)
+    {
+        if (count($sources) === 0) {
+            return false;
+        }
+        try {
+            $result = array();
+            $this->addSourceToMapper($sources[$idx], $item, $result);
+            $this->mergeIntoMapper($result);
+            return true;
+        } catch (\Exception $e) {
+            $idx++;
+            if ($idx < count($sources)) {
+                $this->findSourceToMapper($sources[$idx], $item, $result);
+            } else {
+                return false;
+            }
+        }
     }
 
     /**

@@ -41,7 +41,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
         $manager->persist($this->entity);
         $manager->persist($this->entity->getContact());
-        foreach($this->entity->getKeywords() as $kwd) {
+        foreach ($this->entity->getKeywords() as $kwd) {
             $manager->persist($kwd);
         }
         $this->container->get('doctrine')->getManager()->flush();
