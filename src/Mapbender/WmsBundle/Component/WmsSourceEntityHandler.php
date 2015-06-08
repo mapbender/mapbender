@@ -35,10 +35,15 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function save()
     {
+        $manager = $this->container->get('doctrine')->getManager();
         if ($this->entity->getRootlayer()) {
             self::createHandler($this->container, $this->entity->getRootlayer())->save();
         }
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        $manager->persist($this->entity);
+        $manager->persist($this->entity->getContact());
+        foreach($this->entity->getKeywords() as $kwd) {
+            $manager->persist($kwd);
+        }
         $this->container->get('doctrine')->getManager()->flush();
     }
 
