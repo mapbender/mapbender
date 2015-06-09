@@ -44,7 +44,7 @@ class LayertreeAdminType extends AbstractType
             "metadata" => "Metadata",
 //            "legend" => "Legend",
 //            "kmlexport" => "KML export",
-//            "dimension" => "Dimension",
+            "dimension" => "Dimension",
         );
         $builder->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
