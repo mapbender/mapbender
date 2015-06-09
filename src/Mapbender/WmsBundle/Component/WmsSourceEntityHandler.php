@@ -122,7 +122,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             $this->container->get('doctrine')->getManager(),
             'Mapbender\WmsBundle\Entity\WmsSourceKeyword'
         );
-
+        $manager->persist($this->entity->getContact());
         $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $rootHandler->update($sourceNew->getRootlayer());
 

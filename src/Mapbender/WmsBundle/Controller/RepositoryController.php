@@ -162,7 +162,7 @@ class RepositoryController extends Controller
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
             $wmssource->setUsername($wmssource_req->getUsername());
             $wmssource->setPassword($wmssource_req->getPassword());
-            
+
             EntityHandler::createHandler($this->container, $wmssource)->save();
             // ACL
             $aclProvider    = $this->get('security.acl.provider');
@@ -175,7 +175,7 @@ class RepositoryController extends Controller
 
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
             $aclProvider->updateAcl($acl);
-            
+
             $this->getDoctrine()->getManager()->getConnection()->commit();
             $this->get('session')->getFlashBag()->set('success', "Your WMS has been created");
             return $this->redirect($this
@@ -294,7 +294,7 @@ class RepositoryController extends Controller
 
                 EntityHandler::createHandler($this->container, $wmsOrig)->save();
                 $this->getDoctrine()->getManager()->getConnection()->commit();
-                
+
                 $this->get('session')->getFlashBag()->set('success', 'Your wms source has been updated.');
                 return $this->redirect($this
                     ->generateUrl("mapbender_manager_repository_view", array("sourceId" => $wmsOrig->getId()), true));
