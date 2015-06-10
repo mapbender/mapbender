@@ -12,7 +12,6 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
  * Description of WmsSourceEntityHandler
@@ -25,7 +24,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     /**
      * @inheritdoc
      */
-    public function create($persist = true)
+    public function create()
     {
 
     }
@@ -41,16 +40,15 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
         $manager->persist($this->entity);
         $manager->persist($this->entity->getContact());
-        foreach($this->entity->getKeywords() as $kwd) {
+        foreach ($this->entity->getKeywords() as $kwd) {
             $manager->persist($kwd);
         }
-        $this->container->get('doctrine')->getManager()->flush();
     }
 
     /**
      * @inheritdoc
      */
-    public function createInstance(Layerset $layerset = NULL, $persist = true)
+    public function createInstance(Layerset $layerset = NULL)
     {
         $instance        = new WmsInstance();
         $instance->setSource($this->entity);
@@ -63,10 +61,6 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                 $instHandler = self::createHandler($this->container, $instanceAtLayerset);
                 $instHandler->getEntity()->setWeight($num);
                 $instHandler->generateConfiguration();
-                if ($persist) {
-                    $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
-                    $this->container->get('doctrine')->getManager()->flush();
-                }
                 $num++;
             }
         }
@@ -82,7 +76,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             self::createHandler($this->container, $this->entity->getRootlayer())->remove();
         }
         $this->container->get('doctrine')->getManager()->remove($this->entity);
-        $this->container->get('doctrine')->getManager()->flush();
+//        $this->container->get('doctrine')->getManager()->flush();
     }
 
     /**
@@ -110,7 +104,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                     $valueNew  = clone $value;
                     $this->container->get('doctrine')->getManager()->detach($valueNew);
                     $refMethod->invoke($this->entity, $valueNew);
-                } elseif(isset($properties[EntityUtil::TOSET])) {
+                } elseif (isset($properties[EntityUtil::TOSET])) {
                     $refMethod = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::TOSET]);
                     $refMethod->invoke($this->entity, $value);
                 }
@@ -151,5 +145,4 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         $instList = $query->getResult();
         return $instList;
     }
-
 }

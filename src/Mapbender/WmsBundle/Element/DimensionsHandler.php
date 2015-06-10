@@ -135,7 +135,8 @@ class DimensionsHandler extends Element
             foreach ($layerset->getInstances() as $instance) {
                 if (key_exists($instance->getId(), $instances)) {
                     $handler = EntityHandler::createHandler($this->container, $instance);
-                    $handler->mergeDimension($instances[$instance->getId()], true);
+                    $handler->mergeDimension($instances[$instance->getId()]);
+                    $handler->save();
                 }
             }
         }
