@@ -295,6 +295,7 @@ class RepositoryController extends Controller
                 $wmsOrig->setPassword($wmssource_req->getPassword());
 
                 EntityHandler::createHandler($this->container, $wmsOrig)->save();
+                $this->getDoctrine()->getManager()->flush();
                 $this->getDoctrine()->getManager()->getConnection()->commit();
 
                 $this->get('session')->getFlashBag()->set('success', 'Your wms source has been updated.');

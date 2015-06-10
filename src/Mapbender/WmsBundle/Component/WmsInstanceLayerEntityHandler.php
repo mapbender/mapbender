@@ -126,6 +126,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->setToggle(null);
             $this->entity->setAllowtoggle(null);
         }
+
+        $this->save();
     }
 
     /**
