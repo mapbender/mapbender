@@ -21,16 +21,15 @@ abstract class SourceEntityHandler extends EntityHandler
     
     /**
      * Creates a SourceInstance
-     * @param boolean $persist a flag to save the entity
      */
-    abstract public function create($persist = true);
+    abstract public function create();
         
     /**
      * Creates a SourceInstance
      * @param Layerset $layerset layerset
      * @param boolean $persist a flag to save the entity
      */
-    abstract public function createInstance(Layerset $layerset = null, $persist = true);
+    abstract public function createInstance(Layerset $layerset = null);
     
     /**
      * Update a source from a new source

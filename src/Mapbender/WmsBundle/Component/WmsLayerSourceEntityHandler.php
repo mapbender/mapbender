@@ -48,6 +48,9 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
      */
     public function remove()
     {
+        foreach ($this->entity->getKeywords() as $kwd) {
+            $this->container->get('doctrine')->getManager()->remove($kwd);
+        }
         $this->removeRecursively($this->entity);
     }
 
@@ -62,7 +65,6 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
             $this->removeRecursively($sublayer);
         }
         $this->container->get('doctrine')->getManager()->remove($wmslayer);
-        $this->container->get('doctrine')->getManager()->flush();
     }
 
     public function update(SourceItem $itemNew, WmsLayerUpdater $updater = null)
@@ -159,12 +161,11 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
         );
         $manager->persist($this->entity);
         $manager->persist($this->entity->getSource()->getContact());
-        foreach($this->entity->getSource()->getKeywords() as $kwd) {
+        foreach ($this->entity->getSource()->getKeywords() as $kwd) {
             $manager->persist($kwd);
         }
-        foreach($this->entity->getKeywords() as $kwd) {
+        foreach ($this->entity->getKeywords() as $kwd) {
             $manager->persist($kwd);
         }
-        $manager->flush();
     }
 }
