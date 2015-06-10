@@ -414,15 +414,15 @@ Mapbender.DimensionTime = Class({'extends': Mapbender.DimensionScalar}, {
 });
 
 TimeStr = Class({
-    years: null,
-    months: null,
-    days: null,
-    hours: null,
-    mins: null,
-    secs: null,
-    msecs: null,
-    vC: false,
-    utc: false,
+    'public string years': null,
+    'public string months': null,
+    'public string days': null,
+    'public string hours': null,
+    'public string mins': null,
+    'public string secs': null,
+    'public string msecs': null,
+    'public boolean vC': false,
+    'public boolean utc': false,
     __construct: function (datetimeStr) {
         var datetimeStr_ = '' + datetimeStr;
         this.years = null;
@@ -498,9 +498,9 @@ TimeStr = Class({
 });
 
 TimeISO8601 = Class({
-    utc: false,
-    time: null,
-    timeStr: null,
+    'public boolean utc': false,
+    'public object time': null,
+    'public object timeStr': null,
     __construct: function (date) {
         function convertDateFromISO(s) {
             s = s.split(/\D/);
@@ -518,6 +518,7 @@ TimeISO8601 = Class({
             this.timeStr = new TimeStr(date);
             this.utc = this.timeStr.utc;
             this.time = new Date(date);
+            var a = 0;
         } else if (typeof date === 'string') {
             this.timeStr = new TimeStr(new TimeStr(date).toISOString());
             this.utc = this.timeStr.utc;
@@ -622,12 +623,12 @@ TimeISO8601 = Class({
 
 
 PeriodISO8601 = Class({
-    years: null,
-    months: null,
-    days: null,
-    hours: null,
-    mins: null,
-    secs: null,
+    'public number years': null,
+    'public number months': null,
+    'public number days': null,
+    'public number hours': null,
+    'public number mins': null,
+    'public number secs': null,
     __construct: function (datetimeStr) {
         this.years = null;
         this.months = null;
