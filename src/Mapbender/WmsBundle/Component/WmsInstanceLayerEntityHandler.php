@@ -26,7 +26,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * @inheritdoc
      */
-    public function create(SourceInstance $instance, SourceItem $wmslayersource, $num = 0, $persist = true)
+    public function create(SourceInstance $instance, SourceItem $wmslayersource, $num = 0)
     {
         $this->entity->setSourceInstance($instance);
         $this->entity->setSourceItem($wmslayersource);
@@ -48,20 +48,11 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->setToggle(null);
             $this->entity->setAllowtoggle(null);
         }
-        if ($persist) {
-            $this->container->get('doctrine')->getManager()->persist($this->entity);
-            $this->container->get('doctrine')->getManager()->flush();
-        }
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
             $entityHandler = self::createHandler($this->container, new WmsInstanceLayer());
             $entityHandler->create($instance, $wmslayersourceSub, $num + 1, $persist);
             $entityHandler->getEntity()->setParent($this->entity);
             $this->entity->addSublayer($entityHandler->getEntity());
-            if ($persist) {
-                $this->container->get('doctrine')->getManager()->persist($this->entity);
-                $this->container->get('doctrine')->getManager()->persist($entityHandler->getEntity());
-                $this->container->get('doctrine')->getManager()->flush();
-            }
         }
     }
 
@@ -135,6 +126,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->setToggle(null);
             $this->entity->setAllowtoggle(null);
         }
+
+        $this->save();
     }
 
     /**

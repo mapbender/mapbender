@@ -129,7 +129,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     /**
      * @inheritdoc
      */
-    public function create($persist = true)
+    public function create()
     {
         $this->entity->setTitle($this->entity->getSource()->getTitle());
         $source = $this->entity->getSource();
@@ -147,23 +147,10 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setDimensions($dimensions);
 
         $this->entity->setWeight(-1);
-        if ($persist) {
-            $this->container->get('doctrine')->getManager()->persist($this->entity);
-            $this->container->get('doctrine')->getManager()->flush();
-        }
         $wmslayer_root = $this->entity->getSource()->getRootlayer();
 
         self::createHandler($this->container, new WmsInstanceLayer())->create($this->entity, $wmslayer_root);
 
-        $num = 0;
-        foreach ($this->entity->getLayerset()->getInstances() as $instance) {
-            $instHandler = self::createHandler($this->container, $instance);
-            $instHandler->getEntity()->setWeight($num);
-            $instHandler->generateConfiguration();
-            $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
-            $this->container->get('doctrine')->getManager()->flush();
-            $num++;
-        }
     }
 
     /**
@@ -174,8 +161,15 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         if ($this->entity->getRootlayer()) {
             self::createHandler($this->container, $this->entity->getRootlayer())->save();
         }
+        $num = 0;
+        foreach ($this->entity->getLayerset()->getInstances() as $instance) {
+            $instHandler = self::createHandler($this->container, $instance);
+            $instHandler->getEntity()->setWeight($num);
+            $instHandler->generateConfiguration();
+            $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
+            $num++;
+        }
         $this->container->get('doctrine')->getManager()->persist($this->entity);
-        $this->container->get('doctrine')->getManager()->flush();
     }
 
     /**
@@ -216,7 +210,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
         $this->generateConfiguration();
         $this->container->get('doctrine')->getManager()->persist($this->entity);
-        $this->container->get('doctrine')->getManager()->flush();
     }
 
     /**
@@ -322,6 +315,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $wmsconf->setIsBaseSource($this->entity->isBasesource());
 
         $options    = new WmsInstanceConfigurationOptions();
+        $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet());
         $dimensions = array();
         foreach ($this->entity->getDimensions() as $dimension) {
             if ($dimension->getActive()) {
@@ -342,8 +336,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
             }
         }
-        $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet())
-            ->setProxy($this->entity->getProxy())
+        $options->setProxy($this->entity->getProxy())
             ->setVisible($this->entity->getVisible())
             ->setFormat($this->entity->getFormat())
             ->setInfoformat($this->entity->getInfoformat())
@@ -370,7 +363,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         if (isset($layer['options']['legend'])) {
             if (isset($layer['options']['legend']['graphic'])) {
                 $layer['options']['legend']['graphic'] = $signer->signUrl($layer['options']['legend']['graphic']);
-            } else if (isset($layer['options']['legend']['url'])) {
+            } elseif (isset($layer['options']['legend']['url'])) {
                 $layer['options']['legend']['url'] = $signer->signUrl($layer['options']['legend']['url']);
             }
         }
@@ -419,7 +412,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         return $vsarr;
     }
 
-    public function mergeDimension($dimension, $persist = false)
+    public function mergeDimension($dimension)
     {
         $dimensions = $this->entity->getDimensions();
         foreach ($dimensions as $dim) {
@@ -429,10 +422,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             }
         }
         $this->entity->setDimensions($dimensions);
-        if ($persist) {
-            $this->container->get('doctrine')->getManager()->persist($this->entity);
-            $this->container->get('doctrine')->getManager()->flush();
-        }
     }
 
     private function getDimensionInst()
