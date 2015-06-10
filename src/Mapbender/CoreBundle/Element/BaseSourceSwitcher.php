@@ -49,7 +49,6 @@ class BaseSourceSwitcher extends Element
         return array(
             'tooltip' => "BaseSourceSwitcher",
             'target' => null,
-            'display'  => null,
             'instancesets' => array()
         );
     }
