@@ -55,7 +55,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
         $this->entity
             ->setId(ArrayUtil::hasSet($configuration, 'id', null))
-            ->setTitle(ArrayUtil::hasSet($configuration, 'id', ""))
+            ->setTitle(ArrayUtil::hasSet($configuration, 'title', ""))
             ->setWeight(ArrayUtil::hasSet($configuration, 'weight', 0))
             ->setLayerset(ArrayUtil::hasSet($configuration, 'layerset'))
             ->setProxy(ArrayUtil::hasSet($configuration, 'proxy', false))
@@ -64,7 +64,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setInfoformat(ArrayUtil::hasSet($configuration, 'info_format'))
             ->setTransparency(ArrayUtil::hasSet($configuration, 'transparent', true))
             ->setOpacity(ArrayUtil::hasSet($configuration, 'opacity', false))
-            ->setTiled(ArrayUtil::hasSet($configuration, 'tiled', false));
+            ->setTiled(ArrayUtil::hasSet($configuration, 'tiled', false))
+            ->setBaseSource(ArrayUtil::hasSet($configuration, 'isBaseSource', true));
 
         $num  = 0;
         $layersourceroot = new WmsLayerSource();
