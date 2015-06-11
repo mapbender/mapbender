@@ -1,18 +1,18 @@
 var Mapbender = Mapbender || {};
-Mapbender.IDimension = Interface({
-    'public getOptions': function(){},
-    'public getDefault': function(){},
-    'public setDefault': function(val){},
-    'public getStepsNum': function(){},
-    'public partFromValue': function(val){},
-    'public stepFromPart': function(part){},
-    'public stepFromValue': function(val){},
-    'public valueFromPart': function(part){},
-    'public valueFromStart': function(){},
-    'public valueFromEnd': function(){},
-    'public innerJoin': function(another){},
-    'public getInRange': function(min, max, value){}
-});
+//Mapbender.IDimension = Interface({
+//    'public getOptions': function(){},
+//    'public getDefault': function(){},
+//    'public setDefault': function(val){},
+//    'public getStepsNum': function(){},
+//    'public partFromValue': function(val){},
+//    'public stepFromPart': function(part){},
+//    'public stepFromValue': function(val){},
+//    'public valueFromPart': function(part){},
+//    'public valueFromStart': function(){},
+//    'public valueFromEnd': function(){},
+//    'public innerJoin': function(another){},
+//    'public getInRange': function(min, max, value){}
+//});
 Mapbender.Dimension = function (options) {
     if (options.type === 'interval' && options.name === 'time') {
         return new Mapbender.DimensionTime(options);
@@ -25,9 +25,9 @@ Mapbender.Dimension = function (options) {
     }
 };
 Mapbender.DimensionScalar = Class({//{implements: Mapbender.IDimension}, {
-    'protected object options': {},
-    'protected default_': null,
-    'protected number stepsNum': -1,
+    'public object options': {},
+    'public default_': null,
+    'public number stepsNum': -1,
     __construct: function (options, initDefault) {
             this.options = options;
         if (initDefault) {
