@@ -498,6 +498,9 @@
             }
         },
         _isThemeChecked: function($li){
+            if(this.options.useTheme === false) {
+                return true;
+            }
             var $lith = $li.parents('li.themeContainer:first');
             if($lith.length === 1){
                 var theme = {};
@@ -716,6 +719,7 @@
             return false;
         },
         _toggleSourceVisibility: function(e) {
+console.log('huhu')
             var self = this;
             var $sourceVsbl = $(e.target);
             var $li = $sourceVsbl.parents('li:first');
