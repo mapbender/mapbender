@@ -64,6 +64,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                 $num++;
             }
         }
+        $instanceHandler->generateConfiguration();
         return $instanceHandler->getEntity();
     }
 
