@@ -21,13 +21,15 @@ class WmsLayerUpdater extends WmsUpdater
 
     public function findLayer($layer, $layerList)
     {
-        $founded = array();
+        $found = array();
         foreach ($layerList as $layerTmp) {
-            if ($layer->getName() === $layerTmp->getName()) {
-                $founded[] = $layerTmp;
+            if ($layer->getName() != null && $layer->getName() === $layerTmp->getName() ||
+                ($layer->getName() == null && $layerTmp->getName() == null && $layer->getTitle() == $layerTmp->getTitle())) {
+                $found[] = $layerTmp;
+                return $found;
             }
         }
-        return $founded;
+        return $found;
     }
 
     public function cloneLayer(

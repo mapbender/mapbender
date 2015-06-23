@@ -887,13 +887,13 @@ class WmsSource extends Source implements ContainingKeyword
         $this->keywords->add($keyword);
         return $this;
     }
-    
+
     public function addInstance(WmsInstance $instance)
     {
         $this->instances->add($instance);
         return $this;
     }
-    
+
     /**
      * Remove layers
      *
@@ -903,7 +903,7 @@ class WmsSource extends Source implements ContainingKeyword
     {
         $this->layers->removeElement($layers);
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -911,7 +911,7 @@ class WmsSource extends Source implements ContainingKeyword
     {
         return $this->identifier ? $this->identifier : $this->originUrl;
     }
-    
+
     /**
      * @inheritdoc
      */

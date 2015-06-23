@@ -69,6 +69,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
 
     public function update(SourceItem $itemNew, WmsLayerUpdater $updater = null)
     {
+        $manager = $this->container->get('doctrine')->getManager();
         $updater = $updater ? $updater : new WmsLayerUpdater($this->entity);
         $mapper  = $updater->getMapper();
         /* handle simple properties */
@@ -90,64 +91,46 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
         }
         /* handle sublayer- layer. Name is a unique identifier for a wms layer. */
         /* remove missed layers */
+        $toRemove = array();
         foreach ($this->entity->getSublayer() as $layerOldSub) {
             $layerSublayer = $updater->findLayer($layerOldSub, $itemNew->getSublayer());
             if (count($layerSublayer) !== 1) {
-                self::createHandler($this->container, $layerOldSub)->remove();
+                $toRemove[] = $layerOldSub;
             }
         }
+
+        foreach($toRemove as $lay) {
+            $this->entity->getSublayer()->removeElement($lay);
+            self::createHandler($this->container, $lay)->remove();
+        }
+
         /* update founded layers, add new layers */
         foreach ($itemNew->getSublayer() as $subItemNew) {
             $subItemsOld = $updater->findLayer($subItemNew, $this->entity->getSublayer());
-            if ($subItemNew->getName() === null) { # remove all old layers with name===null and add $subItemNew
+            if (count($subItemsOld) === 0) { # add a new layer
+                $lay = $updater->cloneLayer(
+                    $this->entity->getSource(),
+                    $subItemNew,
+                    $this->container->get('doctrine')->getManager(),
+                    $this->entity
+                );
+                $manager->persist($lay);
+                $this->entity->addSubLayer($lay);
+            } elseif (count($subItemsOld) === 1) { # update a layer
+                $subItemsOld[0]->setPriority($subItemNew->getPriority());
+                self::createHandler($this->container, $subItemsOld[0])->update($subItemNew, $updater);
+            } else { # remove all old layers and add a new layer
                 foreach ($subItemsOld as $layerToRemove) {
                     self::createHandler($this->container, $layerToRemove)->remove();
                 }
-                $this->save();
-//                $this->container->get('doctrine')->getManager()->merge($this->entity);
-                $this->entity->addSubLayer(
-                    $updater->cloneLayer(
-                        $this->entity->getSource(),
-                        $subItemNew,
-                        $this->container->get('doctrine')->getManager(),
-                        $this->entity
-                    )
+                $lay = $updater->cloneLayer(
+                    $this->entity->getSource(),
+                    $subItemNew,
+                    $this->container->get('doctrine')->getManager(),
+                    $this->entity
                 );
-                $this->save();
-//                $this->container->get('doctrine')->getManager()->merge($this->entity);
-            } else {
-                if (count($subItemsOld) === 0) { # add a new layer
-                    $this->entity->addSubLayer(
-                        $updater->cloneLayer(
-                            $this->entity->getSource(),
-                            $subItemNew,
-                            $this->container->get('doctrine')->getManager(),
-                            $this->entity
-                        )
-                    );
-                    $this->save();
-//                    $this->container->get('doctrine')->getManager()->merge($this->entity);
-                } elseif (count($subItemsOld) === 1) { # update a layer
-                    $subItemsOld[0]->setPriority($subItemNew->getPriority());
-                    self::createHandler($this->container, $subItemsOld[0])->update($subItemNew, $updater);
-                    $this->save();
-                } else { # remove all old layers and add a new layer
-                    foreach ($subItemsOld as $layerToRemove) {
-                        self::createHandler($this->container, $layerToRemove)->remove();
-                    }
-                    $this->save();
-//                    $this->container->get('doctrine')->getManager()->merge($this->entity);
-                    $this->entity->addSubLayer(
-                        $updater->cloneLayer(
-                            $this->entity->getSource(),
-                            $subItemNew,
-                            $this->container->get('doctrine')->getManager(),
-                            $this->entity
-                        )
-                    );
-                    $this->save();
-//                    $this->container->get('doctrine')->getManager()->merge($this->entity);
-                }
+                $manager->persist($lay);
+                $this->entity->addSubLayer($lay);
             }
         }
 
@@ -160,12 +143,5 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
             'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword'
         );
         $manager->persist($this->entity);
-        $manager->persist($this->entity->getSource()->getContact());
-        foreach ($this->entity->getSource()->getKeywords() as $kwd) {
-            $manager->persist($kwd);
-        }
-        foreach ($this->entity->getKeywords() as $kwd) {
-            $manager->persist($kwd);
-        }
     }
 }

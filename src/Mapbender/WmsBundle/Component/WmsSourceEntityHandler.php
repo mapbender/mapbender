@@ -95,7 +95,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         $mapper  = $updater->getMapper();
         foreach ($mapper as $propertyName => $properties) {
             if ($propertyName === 'layers' || $propertyName === 'keywords' ||
-                $propertyName === 'id' || $propertyName === 'instances') {
+                $propertyName === 'id' || $propertyName === 'instances' || $propertyName === 'contact') {
                 continue;
             } else {
                 $getMeth = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::GETTER]);
@@ -117,7 +117,6 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             $this->container->get('doctrine')->getManager(),
             'Mapbender\WmsBundle\Entity\WmsSourceKeyword'
         );
-        $manager->persist($this->entity->getContact());
         $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $rootHandler->update($sourceNew->getRootlayer());
 
