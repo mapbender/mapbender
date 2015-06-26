@@ -133,7 +133,7 @@ class LayertreeSubscriber implements EventSubscriberInterface
         if ($mapEl) {
             $config = $mapEl->getConfiguration();
             foreach ($this->application->getLayersets() as $layerset) {
-                $sets = array_key_exists('layersets', $config) ? $config['layersets'] : $config['layerset'];
+                $sets = array_key_exists('layersets', $config) ? $config['layersets'] : array($config['layerset']);
                 if (in_array($layerset->getId(), $sets)) {
                     $themes[] = array(
                         'id' => $layerset->getId(),
