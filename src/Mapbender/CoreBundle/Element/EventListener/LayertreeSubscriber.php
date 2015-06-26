@@ -9,21 +9,21 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 
 /**
- * 
+ *
  */
 class LayertreeSubscriber implements EventSubscriberInterface
 {
 
     /**
      * A FormFactoryInterface 's Factory
-     * 
-     * @var \Symfony\Component\Form\FormFactoryInterface 
+     *
+     * @var \Symfony\Component\Form\FormFactoryInterface
      */
     private $factory;
 
     /**
      * The application
-     * 
+     *
      * @var application
      */
     private $application;
@@ -50,7 +50,7 @@ class LayertreeSubscriber implements EventSubscriberInterface
 
     /**
      * Checkt form fields by PRE_SUBMIT FormEvent
-     * 
+     *
      * @param FormEvent $event
      */
     public function preSubmit(FormEvent $event)
@@ -84,7 +84,7 @@ class LayertreeSubscriber implements EventSubscriberInterface
 
     /**
      * Checkt form fields by PRE_SET_DATA FormEvent
-     * 
+     *
      * @param FormEvent $event
      */
     public function preSetData(FormEvent $event)
@@ -133,7 +133,8 @@ class LayertreeSubscriber implements EventSubscriberInterface
         if ($mapEl) {
             $config = $mapEl->getConfiguration();
             foreach ($this->application->getLayersets() as $layerset) {
-                if (in_array($layerset->getId(), $config['layersets'])) {
+                $sets = array_key_exists('layersets', $config) ? $config['layersets'] : $config['layerset'];
+                if (in_array($layerset->getId(), $sets)) {
                     $themes[] = array(
                         'id' => $layerset->getId(),
                         'opened' => false,
