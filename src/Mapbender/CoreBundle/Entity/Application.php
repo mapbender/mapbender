@@ -73,7 +73,7 @@ class Application
      * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
-    public $regionProperties;
+    protected $regionProperties;
 
     /**
      * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"remove"})

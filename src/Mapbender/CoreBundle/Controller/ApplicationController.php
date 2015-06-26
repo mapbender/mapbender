@@ -12,7 +12,6 @@ use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
-use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -269,13 +268,14 @@ class ApplicationController extends Controller
      */
     public function checkApplicationAccess(Application $application)
     {
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
+        $token = $this->get('security.token_storage');
 
         $application_entity = $application->getEntity();
         if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($application_entity->yaml_roles)) {
 
             // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
-            if (!$securityContext->getToken()) {
+            if (!$token->getToken()) {
                 if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application_entity->yaml_roles)) {
                     return;
                 }
@@ -311,7 +311,7 @@ class ApplicationController extends Controller
     public function metadataAction($slug)
     {
         $securityContext = $this->get('security.context');
-        $sourceId = $this->container->get('request')->get("sourceId", null);
+        $sourceId = $this->container->get('request_stack')->get("sourceId", null);
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
         if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
@@ -328,7 +328,7 @@ class ApplicationController extends Controller
         $manager = $managers[$instance->getManagertype()];
 
         $path = array('_controller' => $manager['bundle'] . ":" . "Repository:metadata");
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        $subRequest = $this->container->get('request_stack')->duplicate(array(), null, $path);
         return $this->container->get('http_kernel')->handle(
                 $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
@@ -356,8 +356,8 @@ class ApplicationController extends Controller
 //        $params = $this->getRequest()->getMethod() == 'POST' ?
 //            $this->get("request")->request->all() : $this->get("request")->query->all();
         $headers = array();
-        $postParams = $this->get("request")->request->all();
-        $getParams = $this->get("request")->query->all();
+        $postParams = $this->get("request_stack")->request->all();
+        $getParams = $this->get("request_stack")->query->all();
         $user = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
         $password = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
         $instHandler = EntityHandler::createHandler($this->container, $instance);
