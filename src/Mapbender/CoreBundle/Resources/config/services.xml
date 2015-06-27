@@ -84,11 +84,6 @@
             <argument type="service" id="security.access.decision_manager" />
         </service>
 
-        <!-- Feature service -->
-        <service class="Mapbender\CoreBundle\Component\Features" id="features">
-            <argument type="service" id="service_container" />
-         </service>
-
     </services>
 </container>
 
