@@ -40,8 +40,8 @@ class ExportHandler extends ExchangeHandler
         $allowedApps = $this->getAllowedAppllications();
         $this->job->setApplications($allowedApps);
         $type = new ExportJobType();
-        return $this->container->get('form.factory')->create(
-                $type, $this->job, array('applications' => $this->job->getApplications()));
+        return $this->container->get('form.factory')
+            ->create($type, $this->job, array('applications' => $this->job->getApplications()));
     }
 
     /**
@@ -64,45 +64,41 @@ class ExportHandler extends ExchangeHandler
      */
     public function makeJob()
     {
-        $export = array();
-        $export[self::CONTENT_SOURCE] = $this->exportSources();
-        $export[self::CONTENT_APP] = $this->exportApps();
-//        # TODO  $export[ExchangeHandler::$CONTENT_ACL] = $this->exportAcls();
-        return $export;
+        $normalizer = new ExchangeNormalizer($this->container);
+        $this->exportSources($normalizer);
+        $this->exportApps($normalizer);
+        return $normalizer->getExport();
     }
 
     public function format($scr)
     {
         if ($this->job->getFormat() === ExchangeJob::FORMAT_JSON) {
             return json_encode($scr);
-        } else if ($this->job->getFormat() === ExchangeJob::FORMAT_YAML) {
+        } elseif ($this->job->getFormat() === ExchangeJob::FORMAT_YAML) {
             $dumper = new Dumper();
             $yaml = $dumper->dump($scr, 20);
             return $yaml;
         }
     }
 
-    private function exportApps()
+    private function exportApps($normalizer)
     {
-        $arr = array();
-        $normalizer = new ExchangeNormalizer($this->container);
+        $data = array();
         foreach ($this->job->getApplications() as $app) {
-            $arr_ = $normalizer->normalize($app);
-            $arr[] = $arr_;
+            $data[] = $normalizer->handleValue($app);
         }
-        return $arr;
+        return $data;
     }
 
     private function exportAcls()
     {
-        $arr = array();
+        throw new \Exception('"exportAcls" is not implemented yet');
         if ($this->job->getAcl()) {
             // TODO
         }
-        return $arr;
     }
 
-    private function exportSources()
+    private function exportSources($normalizer)
     {
         $data = array();
         $sources = new ArrayCollection();
@@ -118,12 +114,9 @@ class ExportHandler extends ExchangeHandler
                 }
             }
         }
-        $normalizer = new ExchangeNormalizer($this->container);
         foreach ($sources as $source) {
-            $arr = $normalizer->normalize($source);
-            $data[] = $arr;
+            $data[] = $normalizer->handleValue($source);
         }
         return $data;
     }
-
 }

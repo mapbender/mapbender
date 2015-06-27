@@ -13,19 +13,16 @@ class RequestInformation
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $httpGet;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $httpPost;
 
     /**
      * ORM\Column(type="array", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $formats = array();
 
     /**

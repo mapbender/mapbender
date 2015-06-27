@@ -3,7 +3,7 @@
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\ContainsKeyword;
+use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Keyword;
 
 /**
@@ -16,9 +16,8 @@ use Mapbender\CoreBundle\Entity\Keyword;
  */
 class WmsLayerSourceKeyword extends Keyword
 {
-    
     /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="keywords", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="keywords")
      * @ORM\JoinColumn(name="reference_id", referencedColumnName="id")
      */
     protected $reference;
@@ -26,21 +25,20 @@ class WmsLayerSourceKeyword extends Keyword
     /**
      * Set reference object
      *
-     * @return ContainsKeyword
+     * @return ContainingKeyword
      */
-    public function setReferenceObject(ContainsKeyword $wmssource)
+    public function setReferenceObject(ContainingKeyword $wmslayersource)
     {
-        $this->reference = $wmssource;
+        $this->reference = $wmslayersource;
     }
 
     /**
      * Get reference object
      *
-     * @return ContainsKeyword
+     * @return ContainingKeyword
      */
     public function getReferenceObject()
     {
         return $this->reference;
     }
-
 }

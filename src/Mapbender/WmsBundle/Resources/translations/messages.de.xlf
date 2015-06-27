@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="27c45a8d7df44b7de7adf685e204e80c" resname="mb.wms.wmsloader.error.url">
         <source>mb.wms.wmsloader.error.url</source>
-        <target>WMS laden: das WMS Capabilities Dokument konnten nicht geladen werden! Die Capabilities-URL ist nicht gültig.</target>
+        <target>WMS laden: das WMS Capabilities Dokument konnte nicht geladen werden! Die Capabilities-URL ist nicht gültig.</target>
       </trans-unit>
       <trans-unit id="6ff51d3832f0575b54225dea941a97ff" resname="mb.wms.wmsloader.error.service">
         <source>mb.wms.wmsloader.error.service</source>
@@ -460,7 +460,7 @@
       </trans-unit>
       <trans-unit id="62be339a16eb03f936fbf6f412dc717a" resname="mb.wms.wmsloader.repo.form.label.serviceurl">
         <source>mb.wms.wmsloader.repo.form.label.serviceurl</source>
-        <target>Dienste-URL</target>
+        <target>Dienst-URL</target>
       </trans-unit>
       <trans-unit id="3f7db4515f7b6274c1da02b1b151971a" resname="mb.wms.wmsloader.repo.form.label.username">
         <source>mb.wms.wmsloader.repo.form.label.username</source>
@@ -526,25 +526,13 @@
         <source>mb.wms.wmsloader.admin.label.declarative</source>
         <target>deklarativ verwenden</target>
       </trans-unit>
-      <trans-unit id="a0b566abaccf9a7b4c3e8d7a45660c4f" resname="mb.wms.source.image_error.datails">
-        <source>mb.wms.source.image_error.datails</source>
-        <target>Die Karte kann nicht angezeigt werden.</target>
-      </trans-unit>
-      <trans-unit id="04541f44b11f3f7128ed8f4fac7874a7" resname="mb.wms.source.image_error.exception">
-        <source>mb.wms.source.image_error.exception</source>
-        <target>Ausnahmefehler: %exception%</target>
-      </trans-unit>
-      <trans-unit id="e162f0ce53da6cde57332698cb2e8f4d" resname="mb.wms.source.image_error.statuscode">
-        <source>mb.wms.source.image_error.statuscode</source>
-        <target>HTTP Statuscode</target>
-      </trans-unit>
       <trans-unit id="3fc45286dbed3669423eea7520e5278f" resname="mb.wms.metadata.section.common">
         <source>mb.wms.metadata.section.common</source>
         <target>Allgemein</target>
       </trans-unit>
       <trans-unit id="c92e0e2df5db11fd510a0cd23bd2a1c5" resname="mb.wms.metadata.section.common.title">
         <source>mb.wms.metadata.section.common.title</source>
-        <target>Title</target>
+        <target>Titel</target>
       </trans-unit>
       <trans-unit id="7f29afe01b89b0f9806207ff2e7e6db4" resname="mb.wms.metadata.section.common.name">
         <source>mb.wms.metadata.section.common.name</source>
@@ -681,6 +669,42 @@
       <trans-unit id="539f26e0b34aa694b45f69692cad5d64" resname="mb.wms.wmsloader.repo.instancelayerform.label.id.description">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.id.description</source>
         <target>Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId</target>
+      </trans-unit>
+      <trans-unit id="f10e8560b3828ce53198437e5676c72f" resname="mb.wms.dimhandler.class.title">
+        <source>mb.wms.dimhandler.class.title</source>
+        <target>Dimensions-Handler</target>
+      </trans-unit>
+      <trans-unit id="42ebea14b3e8f8d6104b48330209866a" resname="mb.wms.dimhandler.class.description">
+        <source>mb.wms.dimhandler.class.description</source>
+        <target>Dimensions-Handler gruppiert und steuert in Der Karte Source Instanzen</target>
+      </trans-unit>
+      <trans-unit id="f488bc9686cf461f1f1799c055f4d70d" resname="mb.wms.dimhandler.tag.dimension">
+        <source>mb.wms.dimhandler.tag.dimension</source>
+        <target>Dimension</target>
+      </trans-unit>
+      <trans-unit id="5080c4d4ef665793e3628e2d61471406" resname="mb.wms.dimhandler.tag.handler">
+        <source>mb.wms.dimhandler.tag.handler</source>
+        <target>Handler</target>
+      </trans-unit>
+      <trans-unit id="f56702f4f808c0e89daddb78b7f51993" resname="mb.wms.dimensionsets.no_dimension">
+        <source>mb.wms.dimensionsets.no_dimension</source>
+        <target>Keine Dimension vorhanden.</target>
+      </trans-unit>
+      <trans-unit id="0e63672cec31c3116babef6b8277de36" resname="mb.wms.wmsloader.repo.instance.vendorspecific.label">
+        <source>mb.wms.wmsloader.repo.instance.vendorspecific.label</source>
+        <target>Vendor specific</target>
+      </trans-unit>
+      <trans-unit id="a0b566abaccf9a7b4c3e8d7a45660c4f" resname="mb.wms.source.image_error.datails">
+        <source>mb.wms.source.image_error.datails</source>
+        <target>__mb.wms.source.image_error.datails</target>
+      </trans-unit>
+      <trans-unit id="04541f44b11f3f7128ed8f4fac7874a7" resname="mb.wms.source.image_error.exception">
+        <source>mb.wms.source.image_error.exception</source>
+        <target>__mb.wms.source.image_error.exception</target>
+      </trans-unit>
+      <trans-unit id="e162f0ce53da6cde57332698cb2e8f4d" resname="mb.wms.source.image_error.statuscode">
+        <source>mb.wms.source.image_error.statuscode</source>
+        <target>__mb.wms.source.image_error.statuscode</target>
       </trans-unit>
     </body>
   </file>

@@ -27,7 +27,7 @@ class XmlValidator
     /**
      * @var string path to local directory for schemas, document type definitions.
      */
-    protected $dir;
+    protected $dir = null;
 
     /**
      * @var array Proxy connection parameters
@@ -36,7 +36,7 @@ class XmlValidator
 
     /**
      *
-     * @var array temp files to delete 
+     * @var array temp files to delete
      */
     protected $filesToDelete;
 
@@ -50,10 +50,10 @@ class XmlValidator
 
     /**
      * Validates a xml document
-     * 
+     *
      * @param \DOMDocument $doc a xml dicument
      * @return \DOMDocument the validated xml document
-     * @throws \Exception 
+     * @throws \Exception
      * @throws XmlParseException
      */
     public function validate(\DOMDocument $doc)
@@ -62,6 +62,7 @@ class XmlValidator
         if (isset($doc->doctype)) {// DTD
             $docH = new \DOMDocument();
             $filePath = $this->getFileName($doc->doctype->name, $doc->doctype->systemId);
+            $this->isDirExists($filePath);
             if (!is_file($filePath)) {
                 $proxy_query = ProxyQuery::createFromUrl($doc->doctype->systemId);
                 $proxy = new CommonProxy($this->proxy_config, $proxy_query);
@@ -90,7 +91,8 @@ class XmlValidator
             $schemaLocations = $this->addSchemas($doc);
             $imports = "";
             foreach ($schemaLocations as $namespace => $location) {
-                $imports .= sprintf('  <xsd:import namespace="%s" schemaLocation="%s" />' . "\n", $namespace, $location);
+                $imports .=
+                    sprintf('  <xsd:import namespace="%s" schemaLocation="%s" />' . "\n", $namespace, $location);
             }
 
             $source = <<<EOF
@@ -123,15 +125,15 @@ EOF
 
     /**
      * Returns namespaces and locations as array
-     * 
+     *
      * @param \DOMDocument $doc
      * @return array schema locations
      */
     private function addSchemas(\DOMDocument $doc)
     {
         $schemaLocations = array();
-        if ($element = $doc->documentElement->getAttributeNS('http://www.w3.org/2001/XMLSchema-instance',
-            'schemaLocation')) {
+        if ($element =
+            $doc->documentElement->getAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'schemaLocation')) {
             $items = preg_split('/\s+/', $element);
             for ($i = 1, $nb = count($items); $i < $nb; $i += 2) {
                 $this->addSchemaLocation($schemaLocations, $items[$i - 1], $items[$i]);
@@ -142,7 +144,7 @@ EOF
 
     /**
      * Adds namespace and location to schema location array.
-     * 
+     *
      * @param array $schemaLocations schema locations
      * @param string $ns namespace
      * @param string $path url
@@ -153,7 +155,7 @@ EOF
         if (stripos($path, "http:") === 0) {
             $this->addSchemaLocationReq($schemaLocations, $ns, $path);
             return true;
-        } else if (is_file($path)) {
+        } elseif (is_file($path)) {
             $schemaLocations[$ns] = $this->addFileSchema($path);
             return true;
         }
@@ -161,8 +163,8 @@ EOF
     }
 
     /**
-     * Loads an external xml schema, saves it local and adds a local path into a schemaLocation. 
-     * 
+     * Loads an external xml schema, saves it local and adds a local path into a schemaLocation.
+     *
      * @param array $schemaLocations schema locations
      * @param string $ns namespace
      * @param string $url path or url
@@ -189,6 +191,7 @@ EOF
                     $sl_ = $import->getAttribute("schemaLocation");
                     $this->addSchemaLocationReq($schemaLocations, $ns_, $sl_);
                 }
+                $this->isDirExists($fullFileName);
                 $doc->save($fullFileName);
             } catch (\Exception $e) {
                 throw $e;
@@ -199,7 +202,7 @@ EOF
 
     /**
      * Generates a file path
-     * 
+     *
      * @param string $ns namespace
      * @param string $url url
      * @return string file path
@@ -229,8 +232,8 @@ EOF
     }
 
     /**
-     * Creates the xsd schemas directory or checks it. 
-     * 
+     * Creates the xsd schemas directory or checks it.
+     *
      * @param string $orderFromWeb the path to xsd schemas directory (from "web" directory relative).
      * @return string | null the absoulute path to xsd schemas directory or null.
      */
@@ -239,7 +242,8 @@ EOF
         if ($orderFromWeb === null) {
             return null;
         }
-        $orderFromWeb = $this->normalizePath($this->container->get('kernel')->getRootDir() . '/../web/' . $orderFromWeb);
+        $orderFromWeb =
+            $this->normalizePath($this->container->get('kernel')->getRootDir() . '/../web/' . $orderFromWeb);
         if (!is_dir($orderFromWeb)) {
             if (mkdir($orderFromWeb)) {
                 return $orderFromWeb;
@@ -253,34 +257,28 @@ EOF
 
     /**
      * Creates a new file name form namespace and url
-     * 
+     *
      * @param string $ns namespace
      * @param string $url url
      * @return string filename from a namespace and a url
      */
     private function fileNameFromUrl($ns, $url)
     {
-        $maxlength = 255;
-        if (strlen($ns . $url) + 1 <= $maxlength) {
-            $nsName = preg_replace("/[^A-Za-z0-9]/", "_", $ns);
-            $urlName = preg_replace("/[^A-Za-z0-9]/", "_", $url);
+        $urlArr = parse_url($url);
+        if (!isset($urlArr['host'])) {
+            $nsArr = parse_url($ns);
+            $path   = $nsArr['host'] . $nsArr['path'];
+            $path   = (strrpos($path, "/") === strlen($path) - 1 ? $path : $path . "/") . $urlArr['path'];
         } else {
-            $maxnslength = 100;
-            $nsName = preg_replace("/[^A-Za-z0-9]/", "_", $ns);
-            $nsName = substr($nsName, strlen($nsName) >= $maxnslength ? strlen($nsName) - $maxnslength : 0, $maxnslength);
-
-            $maxurllength = $maxlength - strlen($nsName) - 1;
-
-            $urlName = preg_replace("/[^A-Za-z0-9]/", "_", $url);
-            $urlName = substr($urlName, strlen($urlName) >= $maxurllength ? strlen($urlName) - $maxurllength : 0,
-                $maxurllength);
+            $path   = $urlArr['host'] . $urlArr['path'];
         }
-        return $this->normalizePath($nsName . "_" . $urlName);
+        $aa = $this->normalizePath($path);
+        return $this->normalizePath($path);
     }
 
     /**
      * Normalizes a file path: repaces all strings "/ORDERNAME/.." with "".
-     *  
+     *
      * @param string $path
      * @return string a mormalized file path.
      */
@@ -290,13 +288,13 @@ EOF
         if (!strpos($path, "..")) {
             return preg_replace("/[\/\\\]/", DIRECTORY_SEPARATOR, $path);
         } else {
-            $this->normalizePath($path);
+            return $this->normalizePath($path);
         }
     }
 
     /**
      * Adds a schema "file:///" to file path.
-     * 
+     *
      * @param string $filePath a file path
      * @return string a file path as url
      */
@@ -310,4 +308,24 @@ EOF
         }
     }
 
+    /**
+     * Checks, if a file directory exists, otherwise creates a file directory.
+     * @param string $filePath the file path
+     * @return boolean true if directory exists
+     */
+    private function isDirExists($filePath)
+    {
+        if (file_exists($filePath)) {
+            if (is_file($filePath)) {
+                return true;
+            } elseif (is_dir($filePath)) {
+                return rmdir($filePath);
+            } else {
+                return true;
+            }
+        } else {
+            mkdir($filePath, 0777, true);
+            return $this->isDirExists($filePath);
+        }
+    }
 }

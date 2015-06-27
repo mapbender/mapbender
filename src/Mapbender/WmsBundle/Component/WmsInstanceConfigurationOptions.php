@@ -1,13 +1,12 @@
 <?php
-
-namespace Mapbender\WmsBundle\Component;
-
-use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
-
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
+namespace Mapbender\WmsBundle\Component;
+
+use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
 
 /**
  * Description of WmsInstanceConfiguration
@@ -17,30 +16,109 @@ use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
 class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 {
 
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
-    protected $vendor;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $format;
+
+    /**
+     * ORM\Column(type="string", nullable=true)
+     */
+    public $infoformat;
+
+    /**
+     * ORM\Column(type="boolean", nullable=true)
+     */
+    public $transparency;
+
+    /**
+     * ORM\Column(type="array", nullable=true)
+     */
+    protected $vendorspecifics;
+
+    /**
+     * ORM\Column(type="string", nullable=true)
+     */
     public $tiled;
 
     /**
      * ORM\Column(type="array", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $bbox;
     
     /**
      * ORM\Column(type="array", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $dimensions;
 
     public $buffer;
+
+    /**
+     * Sets a format
+     *
+     * @param string $format source format
+     * @return SierviceConfigurationOptions
+     */
+    public function setFormat($format)
+    {
+        $this->format = $format;
+        return $this;
+    }
+
+    /**
+     * Returns a format
+     *
+     * @return string format
+     */
+    public function getFormat()
+    {
+        return $this->format;
+    }
+
+    /**
+     * Sets a infoformat
+     *
+     * @param string $infoformat source infoformat
+     * @return SierviceConfigurationOptions
+     */
+    public function setInfoformat($infoformat)
+    {
+        $this->infoformat = $infoformat;
+        return $this;
+    }
+
+    /**
+     * Returns an infoformat
+     *
+     * @return string infoformat
+     */
+    public function getInfoformat()
+    {
+        return $this->infoformat;
+    }
+
+    /**
+     * Sets a transparency
+     *
+     * @param boolean $transparency source transparency
+     * @return SierviceConfigurationOptions
+     */
+    public function setTransparency($transparency)
+    {
+        $this->transparency = $transparency;
+        return $this;
+    }
+
+    /**
+     * Returns a transparency
+     *
+     * @return boolean transparency
+     */
+    public function getTransparency()
+    {
+        return $this->transparency;
+    }
 
     /**
      * Sets a tiled
@@ -86,14 +164,14 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         return $this->bbox;
     }
 
-    public function setVendor($val)
+    public function setVendorspecifics(array $vendorspecifics)
     {
-        $this->vendor = $val;
+        $this->vendorspecifics = $vendorspecifics;
     }
 
-    public function getVendor()
+    public function getVendorspecifics()
     {
-        return $this->vendor;
+        return $this->vendorspecifics;
     }
     
     public function getDimensions()
@@ -115,7 +193,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 
     public function getBuffer()
     {
-        if(null != $this->buffer) {
+        if (null != $this->buffer) {
             return $this->buffer;
         }
         return ($this->getTiled() ? 1 : 1.2);
@@ -137,7 +215,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "opacity" => $this->opacity,
             "tiled" => $this->tiled,
             "bbox" => $this->bbox,
-            "vendor" => $this->vendor,
+            "vendorspecifics" => $this->vendorspecifics,
             "dimensions" => $this->dimensions,
             "buffer" => $this->getBuffer(),
         );
@@ -178,10 +256,10 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             if (isset($options["bbox"])) {
                 $ico->bbox = $options["bbox"];
             }
-            if (isset($options["vendor"])) {
-                $ico->vendor = $options["vendor"];
+            if (isset($options["vendorspecifics"])) {
+                $ico->vendor = $options["vendorspecifics"];
             }
-            if(isset($options["buffer"])){
+            if (isset($options["buffer"])) {
                 $ico->vendor = $options["buffer"];
             }
         }

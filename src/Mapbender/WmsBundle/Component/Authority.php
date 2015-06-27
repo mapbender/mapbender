@@ -24,7 +24,7 @@ class Authority
 
     /**
      * Get url
-     * 
+     *
      * @return string
      */
     public function getUrl()
@@ -34,7 +34,7 @@ class Authority
 
     /**
      * Set url
-     * @param string $value 
+     * @param string $value
      * @return Authority
      */
     public function setUrl($value)
@@ -45,7 +45,7 @@ class Authority
 
     /**
      * Get name
-     * 
+     *
      * @return string
      */
     public function getName()
@@ -55,7 +55,7 @@ class Authority
 
     /**
      * Set name
-     * @param string $value 
+     * @param string $value
      * @return Authority
      */
     public function setName($value)
@@ -63,5 +63,4 @@ class Authority
         $this->name = $value;
         return $this;
     }
-
 }

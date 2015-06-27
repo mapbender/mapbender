@@ -162,21 +162,12 @@ class RegionProperties
     {
         $help = array();
         foreach ($this->properties as $prop) {
-            if ($prop !== $property)
+            if ($prop !== $property) {
                 $help[] = $prop;
+            }
         }
         $this->setProperties($help);
 
         return $this;
     }
-
-    public function copy()
-    {
-        $rp = new RegionProperties();
-        $rp->name = $this->name;
-        $rp->properties = $this->properties;
-
-        return $rp;
-    }
-
 }

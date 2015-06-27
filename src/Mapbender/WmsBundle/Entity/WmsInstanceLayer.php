@@ -4,13 +4,11 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\EntityManager;
-use Mapbender\CoreBundle\Component\SourceInstanceItem;
-use Mapbender\CoreBundle\Component\SourceItem;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
+use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
-use Mapbender\CoreBundle\Component\Utils;
 
 /**
  * WmsInstanceLayer class
@@ -51,7 +49,7 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * @ORM\OneToMany(targetEntity="WmsInstanceLayer",mappedBy="parent", cascade={"remove"})
-     * @ORM\OrderBy({"priority" = "asc"})
+     * @ORM\OrderBy({"priority" = "asc", "id" = "asc"})
      */
     protected $sublayer;
 
@@ -472,10 +470,11 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setPriority($priority)
     {
-        if ($priority !== null)
+        if ($priority !== null) {
             $this->priority = intval($priority);
-        else
+        } else {
             $this->priority = $priority;
+        }
         return $this;
     }
 
@@ -531,26 +530,4 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         return (string) $this->getId();
     }
-
-    /**
-     */
-    public function copy(EntityManager $em)
-    {
-        $inlay = new WmsInstanceLayer();
-        $inlay->title = $this->title;
-        $inlay->active = $this->active;
-        $inlay->allowselected = $this->allowselected;
-        $inlay->selected = $this->selected;
-        $inlay->info = $this->info;
-        $inlay->allowinfo = $this->allowinfo;
-        $inlay->toggle = $this->toggle;
-        $inlay->allowtoggle = $this->allowtoggle;
-        $inlay->allowreorder = $this->allowreorder;
-        $inlay->minScale = $this->minScale;
-        $inlay->maxScale = $this->maxScale;
-        $inlay->style = $this->style;
-        $inlay->priority = $this->priority;
-        return $inlay;
-    }
-
 }

@@ -19,7 +19,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @author Christian Wygoda
  *
  * @ORM\Entity
- * @ORM\Table(name="mb_core_layerset",uniqueConstraints={@UniqueConstraint(name="layerset_idx", columns={"application_id", "title"})})
+ * @ORM\Table(name="mb_core_layerset", uniqueConstraints={@UniqueConstraint(name="layerset_idx", columns={"application_id", "title"})})
  * @UniqueEntity(fields={"application", "title"}, message ="Duplicate entry for key 'title'.")
  */
 class Layerset
@@ -47,7 +47,7 @@ class Layerset
     protected $application;
 
     /**
-     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"refresh","persist", "remove"})
+     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"remove"})
      * @ORM\JoinColumn(name="instances", referencedColumnName="id")
      * @ORM\OrderBy({"weight" = "asc"})
      */
@@ -142,8 +142,7 @@ class Layerset
     /**
      * Set instances
      *
-     * @param  Doctrine\Common\Collections\Collection $instances
-     *                                                           Collection of the SourceInstances
+     * @param  Doctrine\Common\Collections\Collection $instances Collection of the SourceInstances
      * @return Layerset
      */
     public function setInstances($instances)
@@ -167,22 +166,4 @@ class Layerset
     {
         return (string) $this->getId();
     }
-
-    public function copy(EntityManager $em, &$instanceMap = array())
-    {
-        $ls = new Layerset();
-        $ls->title = $this->title;
-        $em->persist($ls);
-        foreach ($this->instances as $instance) {
-            $cloned = $instance->copy($em);
-            $cloned->setLayerset($ls);
-            $em->persist($cloned);
-            $ls->addInstance($cloned);
-            $em->persist($ls);
-            $instanceMap[strval($instance->getId())] = $cloned->getId();
-        }
-
-        return $ls;
-    }
-
 }

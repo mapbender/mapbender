@@ -68,7 +68,8 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\SimpleSearch',
             'Mapbender\CoreBundle\Element\Sketch',
             'Mapbender\CoreBundle\Element\SrsSelector',
-            'Mapbender\CoreBundle\Element\ZoomBar'
+            'Mapbender\CoreBundle\Element\ZoomBar',
+            'Mapbender\CoreBundle\Element\Redlining'
         );
     }
 
@@ -82,5 +83,4 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Entity\Element' => 'Element',
             'Mapbender\CoreBundle\Entity\Source' => 'Service Source');
     }
-
 }

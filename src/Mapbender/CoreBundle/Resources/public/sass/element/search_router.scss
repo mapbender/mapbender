@@ -1,20 +1,17 @@
-@import "libs/variables";
-@import "libs/mixins";
-@import "modules/button";
-@import "modules/text";
-
 $searchRouterInputWidth:100%;
 .mb-element-searchrouter{
   display: block;
 
   .labelInput{
     width:90px;
+    font-weight: normal;
+    margin-bottom: 0;
     /*float:left;*/
   }
   .dropdown, .input{
     /*float:left;*/
     width:$searchRouterInputWidth;
-    margin-bottom: $space;
+    margin-bottom: $space/2;
   }
   .dropdown{min-width:$searchRouterInputWidth;}
   .ui-helper-hidden-accessible{display: none;}

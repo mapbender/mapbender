@@ -6,12 +6,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
-use Assetic\Asset\AssetReference;
-use Assetic\Asset\FileAsset;
-use Assetic\FilterManager;
 use Assetic\Asset\StringAsset;
-use Assetic\Factory\AssetFactory;
-use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -152,9 +147,13 @@ class Application
         return $this->getTemplate()->render($format, $html, $css, $js, $trans);
     }
 
-    static public function listAssets()
+    /**
+     * Lists assets.
+     * @return array
+     */
+    public static function listAssets()
     {
-        $assets = array(
+        return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/stubs.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
@@ -162,12 +161,9 @@ class Application
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
             ),
-            'css' => array(
-            ),
-            'trans' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
-        ));
-        return $assets;
+            'css' => array(),
+            'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')
+        );
     }
 
     /**
@@ -212,7 +208,8 @@ class Application
                 if (isset($element_assets[$type])) {
                     foreach ($element_assets[$type] as $asset) {
                         if ($type === 'trans') {
-                            $elementTranslations = json_decode($this->container->get('templating')->render($asset), true);
+                            $elementTranslations =
+                                json_decode($this->container->get('templating')->render($asset), true);
                             $translations = array_merge($translations, $elementTranslations);
                         } else {
                             $this->addAsset($assets, $type, $this->getReference($element, $asset));
@@ -231,8 +228,8 @@ class Application
                     foreach ($layer_assets[$type] as $asset) {
                         if ($type === 'trans') {
                             if (!isset($layerTranslations[$asset])) {
-                                $layerTranslations[$asset] = json_decode($this->container->get('templating')->render($asset),
-                                    true);
+                                $layerTranslations[$asset] =
+                                    json_decode($this->container->get('templating')->render($asset), true);
                             }
                         } else {
                             $this->addAsset($assets, $type, $this->getReference($layer, $asset));
@@ -270,12 +267,15 @@ class Application
             }
         }
 
-        $application_entity = $this->getEntity();
-        if('css' === $type && $application_entity::SOURCE_DB === $application_entity->getSource()) {
-            $assets[] = new StringAsset($application_entity->getCustomCss());
-        }
-
         return $assets;
+    }
+    
+    public function getCustomCssAsset()
+    {
+        $entity = $this->getEntity();
+        if ($entity->getCustomCss()) {
+            return new StringAsset($entity->getCustomCss());
+        }
     }
 
     private function addAsset(&$manager, $type, $reference)
@@ -297,6 +297,7 @@ class Application
         $configuration['application'] = array(
             'title' => $this->entity->getTitle(),
             'urls' => $this->urls,
+            'publicOptions' => $this->entity->getPublicOptions(),
             'slug' => $this->getSlug());
 
         // Get all element configurations
@@ -311,16 +312,19 @@ class Application
 
         // Get all layer configurations
         $configuration['layersets'] = array();
+        $configuration['layersetmap'] = array();
         foreach ($this->getLayersets() as $layerset) {
-            $configuration['layersets'][$layerset->getId()] = array();
+            $idStr = '' . $layerset->getId();
+            $configuration['layersets'][$idStr] = array();
+            $configuration['layersetmap'][$idStr] = $layerset->getTitle() ? $layerset->getTitle() : $idStr;
             $num = 0;
             foreach ($layerset->layerObjects as $layer) {
                 $instHandler = EntityHandler::createHandler($this->container, $layer);
                 $layerconf = array($layer->getId() => array(
-                        'type' => $layer->getType(),
+                        'type' => strtolower($layer->getType()),
                         'title' => $layer->getTitle(),
                         'configuration' => $instHandler->getConfiguration($this->container->get('signer'))));
-                $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
+                $configuration['layersets'][$idStr][$num] = $layerconf;
                 $num++;
             }
         }
@@ -362,9 +366,14 @@ class Application
     private function getReference($object, $file)
     {
         // If it starts with an @ we assume it's already an assetic reference
-        if ($file[0] !== '@') {
+        $firstChar = $file[0];
+        if ($firstChar == "/" ) {
+            return "../../web/".substr($file,1);
+        } elseif ($firstChar == "." ) {
+            return $file;
+        } elseif ($firstChar !== '@') {
             $namespaces = explode('\\', get_class($object));
-            $bundle = sprintf('%s%s', $namespaces[0], $namespaces[1]);
+            $bundle     = sprintf('%s%s', $namespaces[0], $namespaces[1]);
             return sprintf('@%s/Resources/public/%s', $bundle, $file);
         } else {
             return $file;
@@ -409,7 +418,7 @@ class Application
             } catch (NotAllAclsFoundException $e) {
                 $acls = $e->getPartialResult();
             } catch (\Exception $e) {
-
+                ;
             }
             // Set up all elements (by region)
             $this->elements = array();
@@ -424,9 +433,10 @@ class Application
                             continue;
                         }
                     } catch (\Exception $e) {
-
+                        ;
                     }
-                } else if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($entity->yaml_roles)) {
+                } elseif ($application_entity::SOURCE_YAML === $application_entity->getSource()
+                    && count($entity->yaml_roles)) {
                     $passed = false;
                     foreach ($entity->yaml_roles as $role) {
                         if ($securityContext->isGranted($role)) {
@@ -453,15 +463,17 @@ class Application
 
             // Sort each region element's by weight
             foreach ($this->elements as $r => $elements) {
-                usort($elements,
-                    function($a, $b) {
-                    $wa = $a->getEntity()->getWeight();
-                    $wb = $b->getEntity()->getWeight();
-                    if ($wa == $wb) {
-                        return 0;
+                usort(
+                    $elements,
+                    function ($a, $b) {
+                        $wa = $a->getEntity()->getWeight();
+                        $wb = $b->getEntity()->getWeight();
+                        if ($wa == $wb) {
+                            return 0;
+                        }
+                        return ($wa < $wb) ? -1 : 1;
                     }
-                    return ($wa < $wb) ? -1 : 1;
-                });
+                );
             }
         }
 
@@ -510,10 +522,11 @@ class Application
     public static function generateSlug($container, $slug, $suffix = 'copy')
     {
         $application = $container->get('mapbender')->getApplicationEntity($slug);
-        if ($application === null)
+        if ($application === null) {
             return $slug;
-        else
+        } else {
             $count = 0;
+        }
         $rep = $container->get('doctrine')->getRepository('MapbenderCoreBundle:Application');
         do {
             $copySlug = $slug . "_" . $suffix . ($count > 0 ? '_' . $count : '');
@@ -669,13 +682,12 @@ class Application
      */
     public static function copyAppWebDir($container, $srcSslug, $destSlug)
     {
-        $src = Application::getAppWebDir($container, $srcSslug); #$this->getApplicationDir($tocopy->getSlug());
-        $dst = Application::getAppWebDir($container, $destSlug); #$this->getApplicationDir($cloned->getSlug());
+        $src = Application::getAppWebDir($container, $srcSslug);
+        $dst = Application::getAppWebDir($container, $destSlug);
         if ($src === null || $dst === null) {
             return false;
         }
         Utils::copyOrderRecursive($src, $dst);
         return true;
     }
-
 }

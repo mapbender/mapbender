@@ -1,15 +1,10 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 {% from "MapbenderWmsBundle:Repository:macros.html.twig" import requestinformation  %}
 
-{% block title %}{{ 'mb.wms.wmsloader.repo.view.title.wms' | trans }} {{ wms.title }}{% endblock %}
+{% block title %}{{ wms.type }} {{ wms.title }}{% endblock %}
 
 {% block css %}
   {{parent()}}
-  {% stylesheets filter="compass,cssrewrite"
-    "bundles/mapbendermanager/sass/manager/services.scss"
-  %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-  {% endstylesheets %}
 {% endblock %}
 
 {% block manager_js %}
@@ -28,6 +23,12 @@
     <li id="tabLayers" class="tab">{{"mb.wms.wmsloader.repo.view.label.layers" | trans }}</li>
   </ul>
   <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
+{#
+    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.id" | trans }}:</div><div class="metaText">{{ wms.id }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.uuid" | trans }}:</div><div class="metaText">{{ wms.uuid }}</div>
+    <div class="clearContainer"></div>
+#}
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.title" | trans }}:</div><div class="metaText">{{ wms.title }}</div>
     <div class="clearContainer"></div>
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.name" | trans }}:</div><div class="metaText">{{ wms.name }}</div>

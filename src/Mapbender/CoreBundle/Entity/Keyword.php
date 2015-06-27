@@ -65,12 +65,21 @@ abstract class Keyword
     {
         return $this->value;
     }
+
+    /**
+     * Returns a Source as String
+     *
+     * @return String Source as String
+     */
+    public function __toString()
+    {
+        return (string) $this->id;
+    }
     
     /**
      * Get sourceclass
      *
      * @return KeywordAble
      */
-    public abstract function getReferenceObject();
-
+    abstract public function getReferenceObject();
 }

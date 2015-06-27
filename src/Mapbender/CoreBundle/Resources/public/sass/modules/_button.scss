@@ -13,24 +13,25 @@
   cursor:pointer;
 }
 .button{
-  $buttonFirstColor:#6fb536;
-  $buttonSecondColor:#5fa229;
-
   padding:($space/4) ($space/2);
   line-height:$fontSize;
   margin:0px;
+  text-decoration: none;
 
   border:1px solid darken($buttonSecondColor, 5%);
   color:$lightFontColor;
   background-color:$buttonFirstColor;
   @extend .buttonCore;
+  @include transition(all, 0.3s, ease-in-out);
+
+  outline: none;
 
   &:hover{background-color:darken($buttonFirstColor, 5%);}
+  &:focus {
+    box-shadow: 0 0 5px $buttonFirstActiveColor;
+  }
 
   &.critical{
-    $buttonCriticalFirstColor:#d36565;
-    $buttonCriticalSecondColor:#b23a3a;
-
     border:1px solid darken($buttonCriticalSecondColor, 5%);
     color:$lightFontColor;
     background-color:$buttonCriticalFirstColor;

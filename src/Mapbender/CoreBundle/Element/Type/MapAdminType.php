@@ -9,7 +9,7 @@ use Mapbender\CoreBundle\Form\Type\ExtentType;
 use Mapbender\CoreBundle\Form\EventListener\MapFieldSubscriber;
 
 /**
- * 
+ * MapAdminType
  */
 class MapAdminType extends AbstractType
 {
@@ -37,20 +37,14 @@ class MapAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new MapFieldSubscriber($builder->getFormFactory());
+        $subscriber = new MapFieldSubscriber($builder->getFormFactory(), $options['application']);
         $builder->addEventSubscriber($subscriber);
         $builder
-            ->add('layerset', 'app_layerset',
-                array(
-                'application' => $options['application'],
-                'property_path' => '[layerset]',
-                'required' => true))
-            ->add('dpi', 'text', array(
+            ->add('dpi', 'number', array(
                 'label' => 'DPI'))
             ->add('srs', 'text', array(
                 'label' => 'SRS'))
-            ->add('units', 'choice',
-                array(
+            ->add('units', 'choice', array(
                 'label' => 'Map units',
                 'choices' => array(
                     'degrees' => 'Degrees',
@@ -58,26 +52,21 @@ class MapAdminType extends AbstractType
                     'ft' => 'Feet',
                     'mi' => 'Miles',
                     'inches' => 'Inches')))
-            ->add('extent_max', new ExtentType(),
-                array(
+            ->add('extent_max', new ExtentType(), array(
                 'label' => 'Max. extent',
                 'property_path' => '[extents][max]'))
-            ->add('extent_start', new ExtentType(),
-                array(
+            ->add('extent_start', new ExtentType(), array(
                 'label' => 'Start. extent',
                 'property_path' => '[extents][start]'))
-            ->add('scales', 'text',
-                array(
+            ->add('scales', 'text', array(
                 'label' => 'Scales (csv)',
                 'required' => true))
             ->add('maxResolution', 'text', array(
                 'label' => 'Max. resolution'))
             ->add('imgPath', 'text', array(
                 'label' => 'OL image path'))
-            ->add('otherSrs', 'text',
-                array(
+            ->add('otherSrs', 'text', array(
                 'label' => 'Other SRS',
                 'required' => false));
     }
-
 }

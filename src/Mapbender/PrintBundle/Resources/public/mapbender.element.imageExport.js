@@ -113,6 +113,45 @@
                     num++;
                 }
             }
+
+            // Iterating over all vector layers, not only the ones known to MapQuery
+            var geojsonFormat = new OpenLayers.Format.GeoJSON();
+            var vectorLayers = [];
+            for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
+                var layer = this.map.map.olMap.layers[i];
+                if('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || this.layer === layer) {
+                    continue;
+                }
+
+                var geometries = [];
+                for(var idx = 0; idx < layer.features.length; idx++) {
+                    var feature = layer.features[idx];
+                    if (!feature.onScreen(true)) continue
+
+
+                        var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
+
+                        if(feature.style !== null){
+                            geometry.style = feature.style;
+                        }else{
+                            geometry.style = layer.styleMap.createSymbolizer(feature);
+                        }
+                        geometries.push(geometry);
+
+                }
+
+                var lyrConf = {
+                    type: 'GeoJSON+Style',
+                    opacity: 1,
+                    geometries: geometries
+                };
+
+
+                vectorLayers.push(JSON.stringify(lyrConf))
+            }
+
+            var mapExtent = this.map.map.olMap.getExtent();
+
             if(num === 0){
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
             }else{
@@ -123,12 +162,16 @@
                     requests: layers,
                     format: format,
                     width: imageSize.w,
-                    height: imageSize.h
+                    height: imageSize.h,
+                    centerx: mapExtent.getCenterLonLat().lon,
+                    centery: mapExtent.getCenterLonLat().lat,
+                    extentwidth: mapExtent.getWidth(),
+                    extentheight: mapExtent.getHeight(),
+                    vectorLayers: vectorLayers
                 };
                 var form = $('<form method="POST" action="' + url + '"  />');
                 $('<input></input>').attr('type', 'hidden').attr('name', 'data').val(JSON.stringify(data)).appendTo(form);
                 form.appendTo($('body'));
-                form.attr('target', '_blank');
                 form.submit();
                 form.remove();
             }

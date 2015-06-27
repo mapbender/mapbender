@@ -2,10 +2,8 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Entity\Element as Entity;
-use Mapbender\CoreBundle\Entity\Application as AppEntity;
+use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
  * Map's overview element
@@ -18,7 +16,7 @@ class BaseSourceSwitcher extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.basesourceswitcher.class.title";
     }
@@ -26,7 +24,7 @@ class BaseSourceSwitcher extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.basesourceswitcher.class.Description";
     }
@@ -34,12 +32,13 @@ class BaseSourceSwitcher extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.basesourceswitcher.tag.base",
             "mb.core.basesourceswitcher.tag.source",
-            "mb.core.basesourceswitcher.tag.switcher");
+            "mb.core.basesourceswitcher.tag.switcher"
+        );
     }
 
     /**
@@ -81,7 +80,7 @@ class BaseSourceSwitcher extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array(
             'js' => array('mapbender.element.basesourceswitcher.js'),
@@ -123,72 +122,29 @@ class BaseSourceSwitcher extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:basesourceswitcher.html.twig',
-                    array(
-                    'id' => $this->getId(),
-                    "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+        return $this->container->get('templating')->render(
+            'MapbenderCoreBundle:Element:basesourceswitcher.html.twig',
+            array(
+                'id' => $this->getId(),
+                "title" => $this->getTitle(),
+                'configuration' => $this->getConfiguration()
+            )
+        );
     }
 
     /**
      * @inheritdoc
      */
-    public function copyConfiguration(EntityManager $em, AppEntity &$copiedApp, &$elementsMap, &$layersetMap)
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
-        $subElements = array();
-        $toOverwrite = array();
-        $sourcesets = array();
-        $form = Element::getElementForm($this->container, $this->application->getEntity(), $this->entity);
-        // overwrite 
-        foreach ($form['form']['configuration']->all() as $fieldName => $fieldValue) {
-            $norm = $fieldValue->getNormData();
-            if ($fieldName === 'sourcesets') {
-                $help = array();
-                foreach ($layersetMap as $layersetId => $layerset) {
-                    foreach ($layerset['instanceMap'] as $old => $new) {
-                        $help[$old] = $new;
-                    }
+        foreach ($configuration['instancesets'] as $key => &$instanceset) {
+            foreach ($instanceset['instances'] as &$instance) {
+                if ($instance) {
+                    $instance =
+                        $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\SourceInstance', $instance, true);
                 }
-                $sourcesets = $norm;
-                foreach ($norm as $key => $value) {
-                    $nsources = array();
-                    foreach ($value['sources'] as $instId) {
-                        if (key_exists(strval($instId), $help)) {
-                            $nsources[] = $help[strval($instId)];
-                        }
-                    }
-                    $sourcesets[$key]['sources'] = $nsources;
-                }
-            } else if ($norm instanceof Entity) { // Element only target ???
-                $subElements[$fieldName] = $norm->getId();
-
-                $fv = $form['form']->createView();
             }
         }
-        $copiedElm = $elementsMap[$this->entity->getId()];
-        if (count($toOverwrite) > 0) {
-            $configuration = $this->entity->getConfiguration();
-            foreach ($toOverwrite as $key => $value) {
-                $configuration[$key] = $value;
-            }
-            $copiedElm->setConfiguration($configuration);
-        }
-        if (count($subElements) > 0) {
-            foreach ($subElements as $name => $value) {
-                $configuration = $copiedElm->getConfiguration();
-                $targetId = null;
-                if ($value !== null) {
-                    $targetId = $elementsMap[$value]->getId();
-                }
-                $configuration[$name] = $targetId;
-                $copiedElm->setConfiguration($configuration);
-            }
-        }
-        $configuration = $copiedElm->getConfiguration();
-        $configuration['sourcesets'] = $sourcesets;
-        $copiedElm->setConfiguration($configuration);
-        return $copiedElm;
+        return $configuration;
     }
-
 }

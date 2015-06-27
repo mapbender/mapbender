@@ -18,6 +18,7 @@
     border:none;
     line-height:$lineHeight;
     cursor: pointer;
+    font-family: "Open Sans","Calluna Sans","Gill Sans MT",Calibri,"Trebuchet MS",sans-serif;
     &.iconDown:before{@include absolute(0 5px '' '');}
   }
   .dropdownList{

@@ -1,32 +1,36 @@
-@font-face {
-  font-family: 'FontAwesome'; //v.3.0.1
-  src: url($iconBasePath + '/fontawesome-webfont.eot?');
-  src: url($iconBasePath + '/fontawesome-webfont.eot?') format("embedded-opentype"),
-    url($iconBasePath + '/fontawesome-webfont.woff?') format("woff"),
-    url($iconBasePath + '/fontawesome-webfont.ttf?') format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
+@import url("components/font-awesome/css/font-awesome.min.css");
 [class^="icon"],
 [class*=" icon"],
-.icon{
+.icon {
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   font-family: 'FontAwesome';
 
-  // some resets
   cursor: pointer;
   display: inline;
   width: auto;
   height: auto;
   vertical-align: top;
+  &:before {
+    font-family: FontAwesome;
+  }
 }
-.iconBig{
+
+.iconBig {
   line-height: 20px;
-  &:before{
+  display: inline-block;
+  vertical-align: top;
+  padding-left: 23px;
+  //  height: 20px;
+  &:before {
     font-family: FontAwesome;
     font-size: 20px;
+    margin-top: -1px;
+    margin-left: -23px;
+    margin-bottom: -2px;
+    position: absolute;
+    display: block;
   }
 }
 
@@ -41,35 +45,6 @@
 @keyframes spin{
   0%{transform:rotate(0deg)}
   100%{transform:rotate(359deg)}
-}
-
-//
-// WATCHOUT:
-// firefox doesn't like the above 'icon' class selector.
-// So we choose here the ugly way...
-// What what in the butt... XD
-//
-.iconCheckboxActive, .iconCheckboxHalf, .iconCheckbox,
-.iconRadio, .iconRadioActive, .iconView, .iconHelp,
-.iconLinkButton, .iconDown, .iconRight, .iconLeft,
-.iconTop, .iconExpand, .iconExpandClosed, .iconMove,
-.iconAbout, .iconPrint, .iconGps, .iconLayertree,
-.iconLegend, .iconInfo, .iconInfoActive, .iconSearch,
-.iconWms, .iconOpen, .iconClose, .iconActivity,
-.iconCoordinates, .iconPrev, .iconNext, .iconZoomSelect,
-.iconZoomMin, .iconZoomIn, .iconZoomOut, .iconZoomLevel,
-.iconZoomLevelSelected, .iconAreaRuler, .iconFolder,
-.iconFolderActive, .iconTarget, .iconGroup, .iconAdd,
-.iconRemove, .iconOk, .iconEdit, .iconPublish,
-.iconPublishActive, .iconAppDefault, .iconCancel,
-.iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser,
-.iconSettings, .iconSignOut, .iconSignIn, .iconMore,
-.iconCopy, .iconKey, .iconWarning, .iconWarningCcl,
-.iconWarningSmpl, .iconEmail, .iconTwitter,
-.iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu,
-.iconOverview, .iconGpsTarget, .iconClock, .iconFile,
-.iconBolt, .iconStarO, .iconBars, .iconFileText {
-  &:before{font-family: FontAwesome;}
 }
 
 // all
@@ -137,6 +112,7 @@
 .iconBars:before{content:"\f0c9";}
 .iconFileText:before{content:"\f0f6";}
 .iconCancel:before{ content: "\f05c";}
+.iconCopyright:before{ content: "\f1f9";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}
@@ -159,3 +135,21 @@
 .iconKey:before{content:"\f084";}
 .iconTab:before{content:"\f114";}
 .iconTabActive:before{content:"\f07b" !important;}
+.iconReset:before{content:"\f021";}
+.iconPlay:before{content: "\f04b";}
+.iconStop:before{content: "\f04d";}
+
+@import url("components/mapbender-icons/style.css");
+[class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: 'mapbender-icons';
+}
+
+@mixin buttonFAIcon($content) {
+  margin-bottom: -1px;
+  content: $content;
+  font-size: $uiFontSize;
+  font-family: FontAwesome;
+  vertical-align: bottom;
+  display: inline-block;
+  margin-top: 1px;
+}

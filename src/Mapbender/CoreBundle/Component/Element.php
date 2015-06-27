@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\CoreBundle\Entity\Application as AppEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -89,7 +90,7 @@ abstract class Element
      *
      * @return string
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         throw new \RuntimeException('getClassTitle needs to be implemented');
     }
@@ -102,7 +103,7 @@ abstract class Element
      *
      * @return string
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         throw new \RuntimeException('getClassDescription needs to be implemented');
     }
@@ -115,7 +116,7 @@ abstract class Element
      *
      * @return array
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array();
     }
@@ -127,7 +128,7 @@ abstract class Element
      *
      * @return array
      */
-    static public function getDefaultConfiguration()
+    public static function getDefaultConfiguration()
     {
         return array();
     }
@@ -241,7 +242,7 @@ abstract class Element
      *
      * @return array
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array();
     }
@@ -366,7 +367,7 @@ abstract class Element
         foreach ($main as $key => $value) {
             if ($value === null) {
                 $result[$key] = null;
-            } else if (is_array($value)) {
+            } elseif (is_array($value)) {
                 if (isset($default[$key])) {
                     $result[$key] = Element::mergeArrays($default[$key], $main[$key], array());
                 } else {
@@ -395,55 +396,6 @@ abstract class Element
     }
 
     /**
-     * Creates a copy of the Element Entity configuration and updates it.
-     *
-     * @param \Doctrine\ORM\EntityManager $em EntitiyManager
-     * @param \Mapbender\CoreBundle\Entity\Application $copiedApp copied application entity
-     * @param array $elementsMap list with all copied elements
-     * @param type $layersetMap list with all copied instanes
-     * @return Entity Element with copied configuration
-     */
-    public function copyConfiguration(EntityManager $em, AppEntity &$copiedApp, &$elementsMap, &$layersetMap)
-    {
-        $subElements = array();
-        $toOverwrite = array();
-        $form = Element::getElementForm($this->container, $this->application->getEntity(), $this->entity);
-        // overwrite
-        foreach ($form['form']['configuration']->all() as $fieldName => $fieldValue) {
-            $norm = $fieldValue->getNormData();
-            if ($norm instanceof Entity) { // Element only target ???
-                $subElements[$fieldName] = $norm->getId();
-
-                $fv = $form['form']->createView();
-            } else if ($norm instanceof Layerset) { // Map
-                if (key_exists(strval($norm->getId()), $layersetMap)) {
-                    $toOverwrite[$fieldName] = $layersetMap[strval($norm->getId())]['layerset']->getId();
-                } else {
-                    $toOverwrite[$fieldName] = null;
-                }
-            }
-        }
-        $copiedElm = $elementsMap[$this->entity->getId()];
-        $configuration = $this->entity->getConfiguration();
-        foreach ($toOverwrite as $key => $value) {
-            $configuration[$key] = $value;
-        }
-        $copiedElm->setConfiguration($configuration);
-        if (count($subElements) > 0) {
-            foreach ($subElements as $name => $value) {
-                $configuration = $copiedElm->getConfiguration();
-                $targetId = null;
-                if ($value !== null) {
-                    $targetId = $elementsMap[$value]->getId();
-                }
-                $configuration[$name] = $targetId;
-                $copiedElm->setConfiguration($configuration);
-            }
-        }
-        return $copiedElm;
-    }
-
-    /**
      * Create form for given element
      *
      * @param string $class
@@ -460,23 +412,32 @@ abstract class Element
                 ->add('class', 'hidden')
                 ->add('region', 'hidden');
         }
-        $formType->add('acl', 'acl',
+        $formType->add(
+            'acl',
+            'acl',
             array(
-            'mapped' => false,
-            'data' => $element,
-            'create_standard_permissions' => false,
-            'permissions' => array(
-                1 => 'View'))
+                'mapped' => false,
+                'data' => $element,
+                'create_standard_permissions' => false,
+                'permissions' => array(
+                    1 => 'View'
+                )
+            )
         );
 
         // Get configuration form, either basic YAML one or special form
         $configurationFormType = $class::getType();
         if ($configurationFormType === null) {
-            $formType->add('configuration', new YAMLConfigurationType(),
+            $formType->add(
+                'configuration',
+                new YAMLConfigurationType(),
                 array(
-                'required' => false,
-                'attr' => array(
-                    'class' => 'code-yaml')));
+                    'required' => false,
+                    'attr' => array(
+                        'class' => 'code-yaml'
+                    )
+                )
+            );
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
             $formAssets = array(
                 'js' => array(
@@ -525,26 +486,25 @@ abstract class Element
 
     /**
      * Changes a element entity configuration while exporting.
-     * 
-     * @param array $configuration element entity configuration
+     *
+     * @param array $formConfiguration element entity configuration
+     * @param array $entityConfiguration element entity configuration
      * @return array a configuration
      */
-    public function normalizeConfiguration(array $configuration)
+    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
-        return $configuration;
+        return $formConfiguration;
     }
-
-    
 
     /**
      * Changes a element entity configuration while importing.
-     * 
+     *
      * @param array $configuration element entity configuration
+     * @param Mapper $mapper a mapper object
      * @return array a configuration
      */
-    public function denormalizeConfiguration(array $configuration)
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         return $configuration;
     }
-
 }

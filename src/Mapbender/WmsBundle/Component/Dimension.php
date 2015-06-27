@@ -3,12 +3,16 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Identifier class.
+ * Dimension class.
  *
  * @author Paul Schmidt
  */
 class Dimension
 {
+
+    const NAME_TIME = 'time';
+    const NAME_ELEVATION = 'elevation';
+    const NAME_PREFIX = 'dim_';
 
     /**
      * ORM\Column(type="string", nullable=false)
@@ -57,11 +61,11 @@ class Dimension
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $extent;
-    
+
     /**
      * Set name
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setName($value)
@@ -71,7 +75,7 @@ class Dimension
 
     /**
      * Get name
-     * 
+     *
      * @return string
      */
     public function getName()
@@ -81,8 +85,8 @@ class Dimension
 
     /**
      * Set units
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setUnits($value)
@@ -92,7 +96,7 @@ class Dimension
 
     /**
      * Get units
-     * 
+     *
      * @return string
      */
     public function getUnits()
@@ -102,8 +106,8 @@ class Dimension
 
     /**
      * Set unitSymbol
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setUnitSymbol($value)
@@ -113,7 +117,7 @@ class Dimension
 
     /**
      * Get unitSymbol
-     * 
+     *
      * @return string
      */
     public function getUnitSymbol()
@@ -123,8 +127,8 @@ class Dimension
 
     /**
      * Set default
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setDefault($value)
@@ -134,7 +138,7 @@ class Dimension
 
     /**
      * Get default
-     * 
+     *
      * @return string
      */
     public function getDefault()
@@ -144,8 +148,8 @@ class Dimension
 
     /**
      * Set multipleValues
-     * 
-     * @param boolean $value 
+     *
+     * @param boolean $value
      * @return Dimension
      */
     public function setMultipleValues($value)
@@ -159,7 +163,7 @@ class Dimension
 
     /**
      * Get multipleValues
-     * 
+     *
      * @return boolean
      */
     public function getMultipleValues()
@@ -169,8 +173,8 @@ class Dimension
 
     /**
      * Set nearestValue
-     * 
-     * @param boolean $value 
+     *
+     * @param boolean $value
      * @return Dimension
      */
     public function setNearestValue($value)
@@ -184,7 +188,7 @@ class Dimension
 
     /**
      * Get nearestValue
-     * 
+     *
      * @return boolean
      */
     public function getNearestValue()
@@ -194,8 +198,8 @@ class Dimension
 
     /**
      * Set current
-     * 
-     * @param boolean $value 
+     *
+     * @param boolean $value
      * @return Dimension
      */
     public function setCurrent($value)
@@ -209,7 +213,7 @@ class Dimension
 
     /**
      * Get current
-     * 
+     *
      * @return boolean
      */
     public function getCurrent()
@@ -219,8 +223,8 @@ class Dimension
 
     /**
      * Set extent
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setExtent($value)
@@ -230,7 +234,7 @@ class Dimension
 
     /**
      * Get extent
-     * 
+     *
      * @return Dimension
      */
     public function getExtent()
@@ -238,4 +242,18 @@ class Dimension
         return $this->extent;
     }
 
+    /**
+     * Generates a GET parameter name for this dimension.
+     * @return string parameter name
+     */
+    public function getParameterName()
+    {
+        if (strtolower($this->name) === self::NAME_TIME) {
+            return self::NAME_TIME;
+        } elseif (strtolower($this->name) === self::NAME_ELEVATION) {
+            return self::NAME_ELEVATION;
+        } else {
+            return self::NAME_PREFIX . $this->name;
+        }
+    }
 }

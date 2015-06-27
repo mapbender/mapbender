@@ -231,4 +231,3 @@ $.widget("mapbender.mbZoomBar", {
 });
 
 })(jQuery);
-

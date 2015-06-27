@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -16,7 +17,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.map.class.title";
     }
@@ -24,7 +25,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.mapabs.class.description";
     }
@@ -32,7 +33,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.map.tag.map",
@@ -45,9 +46,10 @@ class Map extends Element
      */
     public static function getDefaultConfiguration()
     {
+        /* "standardized rendering pixel size" for WMTS 0.28 mm × 0.28 mm -> DPI for WMTS: 90.714285714 */
         return array(
-            'layerset' => null,
-            'dpi' => 72,
+            'layersets' => array(),
+            'dpi' => 90.714,// DPI for WMTS: 90.714285714
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'units' => 'degrees',
@@ -70,7 +72,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array(
             'js' => array(
@@ -89,35 +91,19 @@ class Map extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-
-        if (isset($configuration["scales"])) {
-            $scales = array();
-            if (is_string($configuration["scales"])) { // from database
-                $scales = preg_split("/\s?[\,\;]\s?/", $configuration["scales"]);
-            } else if (is_array($configuration["scales"])) { // from twig
-                $scales = $configuration["scales"];
-            }
-            // sort scales high to low
-            $scales = array_map(
-                create_function('$value', 'return (int)$value;'), $scales);
-            arsort($scales, SORT_NUMERIC);
-            $configuration["scales"] = $scales;
-        }
-
         $extra = array();
-
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
-        $allsrs = array();
+        $allsrs        = array();
         if (is_int(stripos($configuration["srs"], "|"))) {
-            $srsHlp = preg_split("/\s?\|{1}\s?/", $configuration["srs"]);
+            $srsHlp               = preg_split("/\s?\|{1}\s?/", $configuration["srs"]);
             $configuration["srs"] = trim($srsHlp[0]);
-            $allsrs[] = array(
+            $allsrs[]             = array(
                 "name" => trim($srsHlp[0]),
                 "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
         } else {
             $configuration["srs"] = trim($configuration["srs"]);
-            $allsrs[] = array(
+            $allsrs[]             = array(
                 "name" => $configuration["srs"],
                 "title" => '');
         }
@@ -125,12 +111,12 @@ class Map extends Element
         if (isset($configuration["otherSrs"])) {
             if (is_array($configuration["otherSrs"])) {
                 $otherSrs = $configuration["otherSrs"];
-            } else if (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
+            } elseif (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
                 $otherSrs = preg_split("/\s?,\s?/", $configuration["otherSrs"]);
             }
             foreach ($otherSrs as $srs) {
                 if (is_int(stripos($srs, "|"))) {
-                    $srsHlp = preg_split("/\s?\|{1}\s?/", $srs);
+                    $srsHlp   = preg_split("/\s?\|{1}\s?/", $srs);
                     $allsrs[] = array(
                         "name" => trim($srsHlp[0]),
                         "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
@@ -141,9 +127,9 @@ class Map extends Element
                 }
             }
         }
-
+        $allsrs = array_unique($allsrs, SORT_REGULAR);
         $configuration["srsDefs"] = $this->getSrsDefinitions($allsrs);
-        $srs_req = $this->container->get('request')->get('srs');
+        $srs_req                  = $this->container->get('request')->get('srs');
         if ($srs_req) {
             $exists = false;
             foreach ($allsrs as $srsItem) {
@@ -153,10 +139,10 @@ class Map extends Element
                 }
             }
             if (!$exists) {
-                throw new \RuntimeException('The srs: "' . $srs_req
-                . '" does not supported.');
+                $this->container->get('logger')->error('The requested srs ' . $srs_req . ' is not supported by this application.');
+            } else {
+                $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
             }
-            $configuration = array_merge($configuration, array('targetsrs' => $srs_req));
         }
 
         $pois = $this->container->get('request')->get('poi');
@@ -166,7 +152,7 @@ class Map extends Element
                 $pois = array($pois);
             }
             foreach ($pois as $poi) {
-                $point = explode(',', $poi['point']);
+                $point           = explode(',', $poi['point']);
                 $extra['pois'][] = array(
                     'x' => floatval($point[0]),
                     'y' => floatval($point[1]),
@@ -189,14 +175,36 @@ class Map extends Element
             }
         }
 
-        $configuration['extra'] = $extra;
-
-        if (!isset($configuration['scales'])) {
-            throw new \RuntimeException('The scales does not defined.');
-        } else if (is_string($configuration['scales'])) {
-            $configuration['scales'] = preg_split(
-                "/\s?,\s?/", $configuration['scales']);
+        $center    = $this->container->get('request')->get('center');
+        $centerArr = $center !== null ? explode(',', $center) : null;
+        if ($center !== null && is_array($centerArr) && count($centerArr) === 2) {
+            $configuration["center"] = $centerArr;
         }
+
+        $configuration['extra'] = $extra;
+        if (!isset($configuration['layersets']) && isset($configuration['layerset'])) {# "layerset" deprecated start
+            $configuration['layersets'] = array($configuration['layerset']);
+        }# "layerset" deprecated end
+        if ($scale = $this->container->get('request')->get('scale')) {
+            $scale  = intval($scale);
+            $scales = $configuration['scales'];
+            if ($scale > $scales[0]) {
+                $scale = $scales[0];
+            } elseif ($scale < $scales[count($scales) - 1]) {
+                $scale = $scales[count($scales) - 1];
+            } else {
+                $tmp = null;
+                for ($idx = count($scales) - 2; ($idx >= 0 && count($scales) > 1); $idx--) {
+                    if ($scale >= $scales[$idx + 1] && $scale <= $scales[$idx]) {
+                        $tmp = (($scales[$idx] - $scales[$idx + 1]) / 2 >= $scale - $scales[$idx + 1]) ?
+                            $scales[$idx + 1] : $scales[$idx];
+                    }
+                }
+                $scale = $tmp ? $tmp : $scales[0];
+            }
+            $configuration['targetscale'] = $scale;
+        }
+
         return $configuration;
     }
 
@@ -246,17 +254,16 @@ class Map extends Element
 
     /**
      * Returns proj4js srs definitions from a GET parameter srs
-     * 
      * @return array srs definitions
      */
     protected function loadSrsDefinitions()
     {
         $srsList = $this->container->get('request')->get("srs", null);
-        $srses = preg_split("/\s?,\s?/", $srsList);
-        $allsrs = array();
+        $srses   = preg_split("/\s?,\s?/", $srsList);
+        $allsrs  = array();
         foreach ($srses as $srs) {
             if (is_int(stripos($srs, "|"))) {
-                $srsHlp = preg_split("/\s?\|{1}\s?/", $srs);
+                $srsHlp   = preg_split("/\s?\|{1}\s?/", $srs);
                 $allsrs[] = array(
                     "name" => trim($srsHlp[0]),
                     "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
@@ -276,7 +283,6 @@ class Map extends Element
 
     /**
      * Returns proj4js srs definitions from srs names
-     * 
      * @param array $srsNames srs names (array with "EPSG" codes)
      * @return array proj4js srs definitions
      */
@@ -288,7 +294,7 @@ class Map extends Element
             foreach ($srsNames as $srsName) {
                 $names[] = $srsName['name'];
             }
-            $em = $this->container->get("doctrine")->getManager();
+            $em    = $this->container->get("doctrine")->getManager();
             $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
                     . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
                 ->setParameter('name', $names);
@@ -311,7 +317,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
             $configuration['extents'] = array(
@@ -327,29 +333,12 @@ class Map extends Element
         if (is_string($configuration['scales'])) {
             $configuration['scales'] = explode(',', $configuration['scales']);
         }
-        return $configuration;
-    }
 
-    /**
-     * @inheritdoc
-     */
-    public function denormalizeConfiguration(array $configuration)
-    {
-        if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
-            $configuration['extents'] = array(
-                'start' => $configuration['extent_start'],
-                'max' => $configuration['extent_max']
-            );
-            unset($configuration['extent_start']);
-            unset($configuration['extent_max']);
-        }
-        if (is_string($configuration['otherSrs'])) {
-            $configuration['otherSrs'] = explode(',', $configuration['otherSrs']);
-        }
-        if (is_string($configuration['scales'])) {
-            $configuration['scales'] = explode(',', $configuration['scales']);
+        if (key_exists('layersets', $configuration)) {
+            foreach ($configuration['layersets'] as &$layerset) {
+                $layerset = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $layerset);
+            }
         }
         return $configuration;
     }
-
 }
