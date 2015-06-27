@@ -4,7 +4,6 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -50,7 +49,7 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * @ORM\OneToMany(targetEntity="WmsInstanceLayer",mappedBy="parent", cascade={"remove"})
-     * @ORM\OrderBy({"priority" = "asc"})
+     * @ORM\OrderBy({"priority" = "asc", "id" = "asc"})
      */
     protected $sublayer;
 

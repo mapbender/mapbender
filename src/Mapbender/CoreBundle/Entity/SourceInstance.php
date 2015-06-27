@@ -33,7 +33,7 @@ abstract class SourceInstance
     protected $title;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"persist","refresh"})
+     * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"refresh"})
      * @ORM\JoinColumn(name="layerset", referencedColumnName="id")
      */
     protected $layerset;
@@ -278,12 +278,6 @@ abstract class SourceInstance
      * @return array instance configuration
      */
     abstract public function getConfiguration();
-//
-//    /**
-//     * Copies a source instance
-//     * @param Manager $em
-//     */
-//    abstract public function copy(EntityManager $em);
 
     /**
      *

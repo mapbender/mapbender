@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
  *
@@ -95,7 +96,7 @@ class Layertree extends Element
             "displaytype" => null,
             "titlemaxlength" => intval(20),
             "autoOpen" => false,
-            "showBaseSource" => null,
+            "showBaseSource" => true,
             "showHeader" => false,
             "hideNotToggleable" => false,
             "hideSelect" => false,
@@ -127,5 +128,19 @@ class Layertree extends Element
     public static function getFormTemplate()
     {
         return 'MapbenderCoreBundle:ElementAdmin:layertree.html.twig';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
+    {
+        if (isset($configuration['themes'])) {
+            foreach ($configuration['themes'] as &$theme) {
+                $theme =
+                    $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', intval($theme['id']), true);
+            }
+        }
+        return $configuration;
     }
 }

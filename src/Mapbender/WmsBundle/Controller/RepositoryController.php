@@ -95,12 +95,14 @@ class RepositoryController extends Controller
             if (!isset($purl['scheme']) || !isset($purl['host'])) {
                 $this->get("logger")->debug("The url is not valid.");
                 $this->get('session')->getFlashBag()->set('error', "The url is not valid.");
-                return $this->redirect($this->generateUrl(
-                            "mapbender_manager_repository_new", array(), true));
+                return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
             }
             $proxy_config = $this->container->getParameter("owsproxy.proxy");
-            $proxy_query  = ProxyQuery::createFromUrl(trim($wmssource_req->getOriginUrl()),
-                    $wmssource_req->getUsername(), $wmssource_req->getPassword());
+            $proxy_query  = ProxyQuery::createFromUrl(
+                trim($wmssource_req->getOriginUrl()),
+                $wmssource_req->getUsername(),
+                $wmssource_req->getPassword()
+            );
             if ($proxy_query->getGetPostParamValue("request", true) === null) {
                 $proxy_query->addQueryParameter("request", "GetCapabilities");
             }
@@ -138,18 +140,15 @@ class RepositoryController extends Controller
             } catch (\Exception $e) {
                 $this->get("logger")->err($e->getMessage());
                 $this->get('session')->getFlashBag()->set('error', $e->getMessage());
-                return $this->redirect($this->generateUrl(
-                            "mapbender_manager_repository_new", array(), true));
+                return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
             }
 
             if (!$wmssource) {
                 $this->get("logger")->err('Could not parse data for url "'
                     .$wmssource_req->getOriginUrl().'"');
-                $this->get('session')->getFlashBag()->set('error',
-                    'Could not parse data for url "'
-                    .$wmssource_req->getOriginUrl().'"');
-                return $this->redirect($this->generateUrl(
-                            "mapbender_manager_repository_new", array(), true));
+                $this->get('session')->getFlashBag()
+                    ->set('error', 'Could not parse data for url "' . $wmssource_req->getOriginUrl() . '"');
+                return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
             }
             $wmsWithSameTitle = $this->getDoctrine()
                 ->getManager()
@@ -164,8 +163,9 @@ class RepositoryController extends Controller
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
             $wmssource->setUsername($wmssource_req->getUsername());
             $wmssource->setPassword($wmssource_req->getPassword());
-            
+
             EntityHandler::createHandler($this->container, $wmssource)->save();
+            $this->getDoctrine()->getManager()->flush();
             // ACL
             $aclProvider    = $this->get('security.acl.provider');
             $objectIdentity = ObjectIdentity::fromDomainObject($wmssource);
@@ -177,13 +177,11 @@ class RepositoryController extends Controller
 
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
             $aclProvider->updateAcl($acl);
-            
+
             $this->getDoctrine()->getManager()->getConnection()->commit();
             $this->get('session')->getFlashBag()->set('success', "Your WMS has been created");
-            return $this->redirect($this->generateUrl(
-                        "mapbender_manager_repository_view",
-                        array(
-                        "sourceId" => $wmssource->getId()), true));
+            return $this->redirect($this
+                ->generateUrl("mapbender_manager_repository_view", array("sourceId" => $wmssource->getId()), true));
         }
 
         return array(
@@ -233,8 +231,11 @@ class RepositoryController extends Controller
                 $wmsOrig      = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
                 $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
                 $proxy_config = $this->container->getParameter("owsproxy.proxy");
-                $proxy_query  = ProxyQuery::createFromUrl(trim($wmssource_req->getOriginUrl()),
-                        $wmssource_req->getUsername(), $wmssource_req->getPassword());
+                $proxy_query  = ProxyQuery::createFromUrl(
+                    trim($wmssource_req->getOriginUrl()),
+                    $wmssource_req->getUsername(),
+                    $wmssource_req->getPassword()
+                );
                 if ($proxy_query->getGetPostParamValue("request", true) === null) {
                     $proxy_query->addQueryParameter("request", "GetCapabilities");
                 }
@@ -253,14 +254,13 @@ class RepositoryController extends Controller
                 } catch (\Exception $e) {
                     $this->get("logger")->debug($e->getMessage());
                     $this->get('session')->getFlashBag()->set('error', $e->getMessage());
-                    return $this->redirect($this->generateUrl(
-                                "mapbender_manager_repository_index", array(), true));
+                    return $this->redirect($this->generateUrl("mapbender_manager_repository_index", array(), true));
                 }
 
                 if (!$wmssource) {
                     $this->get("logger")->debug('Could not parse data for url "'.$wmssource_req->getOriginUrl().'"');
-                    $this->get('session')->getFlashBag()->set('error',
-                        'Could not parse data for url "'.$wmssource_req->getOriginUrl().'"');
+                    $this->get('session')->getFlashBag()
+                        ->set('error', 'Could not parse data for url "'.$wmssource_req->getOriginUrl().'"');
                     return $this->redirect($this->generateUrl("mapbender_manager_repository_index", array(), true));
                 }
                 $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
@@ -271,8 +271,13 @@ class RepositoryController extends Controller
                 } catch (\Exception $e) {
                     $this->get("logger")->debug($e->getMessage());
                     $this->get('session')->getFlashBag()->set('error', $e->getMessage());
-                    return $this->redirect($this->generateUrl("mapbender_manager_repository_updateform",
-                                array("sourceId" => $wmsOrig->getId()), true));
+                    return $this->redirect(
+                        $this->generateUrl(
+                            "mapbender_manager_repository_updateform",
+                            array("sourceId" => $wmsOrig->getId()),
+                            true
+                        )
+                    );
                 }
 
                 $this->getDoctrine()->getManager()->persist($wmsOrig);
@@ -290,11 +295,17 @@ class RepositoryController extends Controller
                 $wmsOrig->setPassword($wmssource_req->getPassword());
 
                 EntityHandler::createHandler($this->container, $wmsOrig)->save();
+                $this->getDoctrine()->getManager()->flush();
                 $this->getDoctrine()->getManager()->getConnection()->commit();
-                
+
                 $this->get('session')->getFlashBag()->set('success', 'Your wms source has been updated.');
-                return $this->redirect($this->generateUrl("mapbender_manager_repository_view",
-                            array("sourceId" => $wmsOrig->getId()), true));
+                return $this->redirect(
+                    $this->generateUrl(
+                        "mapbender_manager_repository_view",
+                        array("sourceId" => $wmsOrig->getId()),
+                        true
+                    )
+                );
             } else {
                 return array(
                     "form" => $form->createView()
@@ -336,6 +347,8 @@ class RepositoryController extends Controller
         }
         $wmshandler = EntityHandler::createHandler($this->container, $wmssource);
         $wmshandler->remove();
+
+        $em->flush();
         $em->getConnection()->commit();
         $this->get('session')->getFlashBag()->set('success', "Your WMS has been deleted");
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
@@ -398,10 +411,9 @@ class RepositoryController extends Controller
                 $em->persist($entityHandler->getEntity());
                 $em->flush();
 
-                $this->get('session')->getFlashBag()->set(
-                    'success', 'Your Wms Instance has been changed.');
-                return $this->redirect($this->generateUrl(
-                            'mapbender_manager_application_edit', array("slug" => $slug)).'#layersets');
+                $this->get('session')->getFlashBag()->set('success', 'Your Wms Instance has been changed.');
+                return $this->redirect($this
+                    ->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)).'#layersets');
             } else { // edit
                 return array(
                     "form" => $form->createView(),
@@ -454,8 +466,8 @@ class RepositoryController extends Controller
         $em->persist($instLay);
         $em->flush();
         $query    = $em->createQuery(
-            "SELECT il FROM MapbenderWmsBundle:WmsInstanceLayer il"
-            ." WHERE il.wmsinstance=:wmsi ORDER BY il.priority ASC");
+            "SELECT il FROM MapbenderWmsBundle:WmsInstanceLayer il  WHERE il.wmsinstance=:wmsi ORDER BY il.priority ASC"
+        );
         $query->setParameters(array("wmsi" => $instanceId));
         $instList = $query->getResult();
 
@@ -508,9 +520,11 @@ class RepositoryController extends Controller
             ->getRepository("MapbenderWmsBundle:WmsInstance")
             ->find($instanceId);
         if (!$wmsinstance) {
-            return new Response(json_encode(array(
-                    'error' => 'The wms instance with the id "'.$instanceId.'" does not exist.')), 200,
-                array('Content-Type' => 'application/json'));
+            return new Response(
+                json_encode(array('error' => 'The wms instance with the id "'.$instanceId.'" does not exist.')),
+                200,
+                array('Content-Type' => 'application/json')
+            );
         } else {
             $enabled_before = $wmsinstance->getEnabled();
             $enabled        = $enabled === "true" ? true : false;
@@ -541,8 +555,8 @@ class RepositoryController extends Controller
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
         $securityContext = $this->get('security.context');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW',
-                $instance->getLayerset()->getApplication())) {
+        if (!$securityContext->isGranted('VIEW', $oid)
+            && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
         $layerName = $this->container->get('request')->get("layerName", null);
@@ -555,26 +569,4 @@ class RepositoryController extends Controller
         $response->headers->set('Content-Type', 'text/html');
         return $response;
     }
-//
-//    /**
-//     * Get Metadata for a wms service
-//     *
-//     * @ManagerRoute("/instance/wmsupdate")
-//     * @Method({ "GET" })
-//     */
-//    public function wmsupdateAction()
-//    {
-////        $sourceId = $this->container->get('request')->get("sourceId", null);
-//        $src           = $this->container->get("doctrine")
-//                ->getRepository('Mapbender\WmsBundle\Entity\WmsSource')->find(14);
-//        $target        = $this->container->get("doctrine")
-//                ->getRepository('Mapbender\WmsBundle\Entity\WmsSource')->find(14);
-//        $entityHandler = EntityHandler::createHandler($this->container, $src);
-//        $entityHandler->update($target);
-//
-////        $reflect = new \ReflectionClass($source);
-////        $props   = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
-////        $methods = $reflect->getMethods(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
-////        $a = 0;
-//    }
 }

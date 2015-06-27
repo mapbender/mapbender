@@ -293,29 +293,6 @@
             }
             return false;
         },
-        _updateTheme: function(sourceOpts) {
-            var source = this.model.findSource(sourceOpts);
-            var themeElm = $('li[data-sourceid="' + source[0].id + '"][data-type="' + this.consts.root + '"]').
-                parents('li[data-type="' + this.consts.theme + '"]:first');
-            if (themeElm.length === 1) {
-                var layerset = this.model.findLayerset({
-                    source: {
-                        origId: source[0].origId
-                    }
-                });
-                var themeChk = themeElm.find('input[name="sourceVisibility"]');
-                var themeVsblt = this._isThemeVisible(layerset);
-                if (themeVsblt !== themeChk.prop("checked")) {
-                    themeChk.prop("checked", themeVsblt);
-                    if (themeVsblt) {
-                        $('>.leaveContainer .checkWrapper', themeElm).addClass('iconCheckboxActive');
-                    } else {
-                        $('>.leaveContainer .checkWrapper', themeElm).removeClass('iconCheckboxActive');
-                    }
-                }
-            }
-
-        },
         _createThemeNode: function(layerset, theme) {
             var $li = $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
             if ($li.length === 1) {
@@ -382,7 +359,7 @@
             if (!config.selectable)
                 $li.find('input.layer-selected').prop('disabled', true);
             $li.find('input.layer-info').prop('checked', config.info ? true : false);
-            if (!config.infoable)
+            if (!config.infoable || config.infoable === '0')
                 $li.find('input.layer-info').prop('disabled', true);
             var infoHidden = false;
             if (this.options.hideInfo) {
@@ -519,7 +496,26 @@
             } else if (options.changed && options.changed.childRemoved) {
                 this._removeChild(options.changed);
             }
-            this._updateTheme(options.changed.sourceIdx);
+        },
+        _isThemeChecked: function($li){
+            if(this.options.useTheme === false) {
+                return true;
+            }
+            var $lith = $li.parents('li.themeContainer:first');
+            if($lith.length === 1){
+                var theme = {};
+                var lsid = $lith.attr('data-layersetid');
+                $.each(this.options.themes, function(idx, item) {
+                    if (item.id === lsid)
+                        theme = item;
+                });
+                if(theme.sourceVisibility){
+                    return $('input[name="sourceVisibility"]:first', $lith).prop('checked');
+                } else {
+                    return true;
+                }
+            }
+            return false;
         },
         _resetNodeOutOfScale: function($li, layerDef) {
             if (layerDef.state.outOfScale) {
@@ -567,6 +563,9 @@
                 for (var layerId in changed.children) {
                     var $li = $('li[data-id="' + layerId + '"]', this.element);
                     if ($li.length !== 0) {
+                        if ($li.attr("data-type") === this.consts.root && !this._isThemeChecked($li)){
+                            continue;
+                        }
                         if (changed.children[layerId].options) {
                             this._resetNodeSelected($li, changed.children[layerId].options);
                             this._resetNodeInfo($li, changed.children[layerId].options);
@@ -720,38 +719,27 @@
             return false;
         },
         _toggleSourceVisibility: function(e) {
+console.log('huhu')
             var self = this;
             var $sourceVsbl = $(e.target);
             var $li = $sourceVsbl.parents('li:first');
             $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
                 var $item = $(item);
-                var source = {
-                    id: $item.data('sourceid')
-                };
-                var options = {
-                    layers: {}
-                };
-                var value = {
+                var chk_selected = $('input[name="selected"]:first', $item);
+                self.model.changeSource({
+                    change: {
+                    sourceIdx: {
+                        id: $item.attr('data-sourceid')
+                    },
                     options: {
-                        treeOptions: {
-                            selected: true
+                        type: 'selected',
+                        configuration: {
+                            options: {
+                                visibility: $sourceVsbl.prop('checked') === false ? false : chk_selected.prop('checked')
+                            }
                         }
                     }
-                };
-                var chk_selected = $('input[name="selected"]:first', $item);
-                if ($sourceVsbl.prop('checked')) {
-                    $item.data('rootstate', chk_selected.prop('checked'));
-                    if (!chk_selected.prop('checked')) {
-                        options.layers[$item.attr('data-id')] = value;
-                        self.model.changeLayerState(source, options, false, true);
-                    }
-                } else {
-                    if (!$item.data('rootstate') && chk_selected.prop('checked')) {
-                        value.options.treeOptions.selected = false;
-                        options.layers[$item.attr('data-id')] = value;
-                        self.model.changeLayerState(source, options, false, true);
-                    }
-                }
+                }});
             });
             return false;
         },
@@ -793,6 +781,9 @@
                 options: {}
             };
             if ($li.attr('data-type') === this.consts.root) {
+                if(!this._isThemeChecked($li)) { // thematic layertree handling
+                    return false;
+                }
                 tochange.options = {
                     configuration: {
                         options: {

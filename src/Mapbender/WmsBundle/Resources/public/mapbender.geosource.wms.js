@@ -1,19 +1,21 @@
-/**
- * This prevents OpenLayers making GetMap requests when the LAYER parameter is empty.
- *
- * This is done by adding a test to the in-range calculation which tests the length of
- * the layers parameter.
- *
- * @return {Boolean} Whether the layer is in range or not
- */
-OpenLayers.Layer.WMS.prototype.calculateInRange = function(){
-    if(!this.params.LAYERS || 0 === this.params.LAYERS.length) {
-        // explicitely hide DOM element for this layer
-        this.display(false);
-        return false;
+if(window.OpenLayers) {
+    /**
+     * This prevents OpenLayers making GetMap requests when the LAYER parameter is empty.
+     *
+     * This is done by adding a test to the in-range calculation which tests the length of
+     * the layers parameter.
+     *
+     * @return {Boolean} Whether the layer is in range or not
+     */
+    OpenLayers.Layer.WMS.prototype.calculateInRange = function(){
+        if(!this.params.LAYERS || 0 === this.params.LAYERS.length) {
+            // explicitely hide DOM element for this layer
+            this.display(false);
+            return false;
+        }
+        ;
+        return OpenLayers.Layer.prototype.calculateInRange.apply(this, arguments);
     }
-    ;
-    return OpenLayers.Layer.prototype.calculateInRange.apply(this, arguments);
 }
 
 Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler },{

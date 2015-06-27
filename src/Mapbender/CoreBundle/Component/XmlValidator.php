@@ -265,7 +265,14 @@ EOF
     private function fileNameFromUrl($ns, $url)
     {
         $urlArr = parse_url($url);
-        $path   = $urlArr['host'] . $urlArr['path'];
+        if (!isset($urlArr['host'])) {
+            $nsArr = parse_url($ns);
+            $path   = $nsArr['host'] . $nsArr['path'];
+            $path   = (strrpos($path, "/") === strlen($path) - 1 ? $path : $path . "/") . $urlArr['path'];
+        } else {
+            $path   = $urlArr['host'] . $urlArr['path'];
+        }
+        $aa = $this->normalizePath($path);
         return $this->normalizePath($path);
     }
 
@@ -281,7 +288,7 @@ EOF
         if (!strpos($path, "..")) {
             return preg_replace("/[\/\\\]/", DIRECTORY_SEPARATOR, $path);
         } else {
-            $this->normalizePath($path);
+            return $this->normalizePath($path);
         }
     }
 

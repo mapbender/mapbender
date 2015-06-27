@@ -1,5 +1,4 @@
 <?php
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -21,16 +20,16 @@ use ReflectionProperty;
  */
 class EntityUtil
 {
-    const GET = 'get';
-    const SET = 'set';
-    const HAS = 'has';
-    const IS = 'is';
-    const GETTER = 'getter';
-    const SETTER = 'setter';
-    const TOSET = 'toset';
+    const GET        = 'get';
+    const SET        = 'set';
+    const HAS        = 'has';
+    const IS         = 'is';
+    const GETTER     = 'getter';
+    const SETTER     = 'setter';
+    const TOSET      = 'toset';
     const HAS_METHOD = 'hasMethod';
-    const IS_METHOD = 'isMethod';
-    
+    const IS_METHOD  = 'isMethod';
+
     /**
      * Returns an unique value for an unique field.
      *
@@ -120,12 +119,42 @@ class EntityUtil
         }
         return null;
     }
-    
+
     public static function getProperties($entity, $filter = null)
     {
-        $filter = $filter === null ? ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED : $filter;
-        $refClass =  new ReflectionClass(self::getRealClass($entity));
-        $props = $refClass->getProperties($filter);
+        $filter   = $filter === null ? ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED : $filter;
+        $refClass = new ReflectionClass(self::getRealClass($entity));
+        $props    = $refClass->getProperties($filter);
         return $props;
+    }
+
+    public static function getDataType($ormType)
+    {
+        switch ($ormType) {
+            case 'int':
+                return \PDO::PARAM_INT;
+            case 'integer':
+                return \PDO::PARAM_INT;
+            case 'string':
+                return \PDO::PARAM_STR;
+            case 'text':
+                return \PDO::PARAM_STR;
+            case 'boolean':
+                return \PDO::PARAM_BOOL;
+            case 'object':
+                return 'object';
+            case 'array':
+                return 'array';
+            case 'decimal':
+                return 'decimal';
+            case 'date':
+                return 'date';
+            case 'time':
+                return 'time';
+            case 'datetime':
+                return 'datetime';
+            default:
+                throw new \Exception('data type is not supported.');
+        }
     }
 }

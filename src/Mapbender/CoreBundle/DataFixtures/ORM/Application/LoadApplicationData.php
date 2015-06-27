@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\EntityHandler;
@@ -23,33 +24,16 @@ use Mapbender\CoreBundle\Utils\EntityUtil;
 class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
 {
 
-    /**
-     * Container
-     *
-     * @var ContainerInterface
-     */
     private $container;
 
-    /**
-     *
-     * @var array mapper old id- new id.
-     */
-    private $mapper = array();
-
-    /**
-     * @inheritdoc
-     */
     public function setContainer(ContainerInterface $container = NULL)
     {
         $this->container = $container;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function load(ObjectManager $manager)
-    {
+    public function load(ObjectManager $manager) {
         $definitions = $this->container->getParameter('applications');
+        $sourceLays = array();
         foreach ($definitions as $slug => $definition) {
             $appMapper = new ApplicationYAMLMapper($this->container);
             $application = $appMapper->getApplication($slug);
@@ -67,118 +51,66 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             );
             $manager->getConnection()->beginTransaction();
             $application->setSource(ApplicationEntity::SOURCE_DB);
-            $id = $application->getId();
-
-            $this->saveSources($manager, $application);
-            $this->saveLayersets($manager, $application);
-            $this->saveElements($manager, $application);
             $manager->persist($application->setUpdated(new \DateTime('now')));
-            $this->checkRegionProperties($manager, $application);
+            $elms = array();
+            $lays = array();
+            foreach($application->getRegionProperties() as $prop) {
+                $manager->persist($prop);
+            }
+            foreach($application->getElements() as $elm) {
+                $elms[$elm->getId()] = $elm;
+                $manager->persist($elm);
+            }
+            $this->persistLayersets($manager, $lays, $application->getLayersets(), $sourceLays);
             $manager->flush();
-            $this->addMapping($application, $id, $application);
+            foreach($application->getRegionProperties() as $prop) {
+                $prop->setApplication($application);
+                $manager->persist($prop);
+            }
+            $this->updateElements($elms, $lays, $manager);
+            $manager->flush();
             $manager->getConnection()->commit();
             $appHandler->createAppWebDir($this->container, $application->getSlug());
         }
     }
-    
-    private function addMapping($object, $id_old, $objWithNewId, $unique = true)
-    {
-        $class = is_object($object) ? get_class($object) : $object;
-        if (!isset($this->mapper[$class])) {
-            $this->mapper[$class] = array();
-        }
-        if (!$unique) {
-            $this->mapper[$class][$id_old] = $objWithNewId;
-        } elseif (!isset($this->mapper[$class][$id_old])) {
-            $this->mapper[$class][$id_old] = $objWithNewId;
-        }
-    }
 
-    private function saveSources(ObjectManager $manager, ApplicationEntity $application)
-    {
-        foreach ($application->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
-                $instlayerOldIds = array();
-                foreach ($instance->getLayers() as $instlayer) {
-                    $instlayerOldIds[] = $instlayer->getId();
-                }
-                $source = $instance->getSource();
-                $id = $source->getId();
-                $layerOldIds = array();
-                foreach ($source->getLayers() as $layer) {
-                    $layerOldIds[] = $layer->getId();
-                }
-                $founded = null;
-                $repo = $manager->getRepository(get_class($source));
-                foreach ($repo->findBy(array('originUrl' => $source->getOriginUrl())) as $fsource) {
-                    if ($source->getLayers()->count() === $fsource->getLayers()->count()) {
-                        $ok = true;
-                        for ($i = 0; $i <  $source->getLayers()->count(); $i++) {
-                            if ($source->getLayers()->get($i)->getName() !== $source->getLayers()->get($i)->getName()) {
-                                $ok = false;
-                            }
-                        }
-                        if ($ok) {
-                            $founded = $fsource;
-                            break;
-                        }
-                    }
-                }
-                if (!$founded) {
-                    $source->setContact(new Contact());
-                    EntityHandler::createHandler($this->container, $source)->save();
-                    $num = 0;
-                    foreach ($source->getLayers() as $layer) {
-                        $this->addMapping($layer, $layerOldIds[$num], $layer);
-                        $num++;
-                    }
-                    $this->addMapping($source, $id, $source);
+    private function persistLayersets($manager, &$lays, $sets, &$sourceLays) {
+        foreach($sets as $set) {
+            $lays[$set->getId()] = $set;
+            $manager->persist($set);
+            foreach($set->getInstances() as $inst) {
+                $src = $inst->getSource();
+                $srcId = $src->getId();
+                $matching = $this->findMatchingSource($manager, $src);
+                if($matching == null || !array_key_exists($srcId, $sourceLays)) {
+                    $sourceLays[$srcId] = array();
+                    $matching = null;
                 } else {
-                    $source = $founded;
-                    $num = 0;
-                    foreach ($source->getLayers() as $layer) {
-                        $this->addMapping($layer, $layerOldIds[$num], $layer);
-                        $num++;
-                    }
-                    $this->addMapping($source, $id, $source);
-                    $instance->setSource($source);
-                    $num = 0;
-                    foreach ($instance->getLayers() as $instlayer) {
-                        $instlayer->setSourceItem(
-                            $this->mapper[get_class($instlayer->getSourceItem())][$instlayer->getSourceItem()->getId()]
-                        );
-                        EntityHandler::createHandler($this->container, $instlayer)->save();
-                        $this->addMapping($instlayer, $instlayerOldIds[$num], $instlayer);
-                    }
+                    $inst->setSource($matching);
+                    $src = $matching;
                 }
+                foreach($src->getLayers() as $lay) {
+                    $manager->persist($lay);
+                }
+                $manager->persist($src);
+                foreach($inst->getLayers() as $lay) {
+                    if($matching != null) {
+                        $lay->setSourceItem($sourceLays[$srcId][$lay->getId()]->getSourceItem());
+                    } else {
+                        $sourceLays[$srcId][$lay->getId()] = $lay;
+                    }
+                    $manager->persist($lay);
+                }
+                $manager->persist($inst);
             }
         }
     }
 
-    private function saveLayersets(ObjectManager $manager, ApplicationEntity $application)
-    {
-        foreach ($application->getLayersets() as $layerset) {
-            $id = $layerset->getId();
-            $manager->persist($layerset);
-            $this->addMapping($layerset, $id, $layerset);
-        }
-    }
-
-    private function saveElements(ObjectManager $manager, ApplicationEntity $application)
-    {
-        $elementIds = array();
-        $num = 0;
-        foreach ($application->getElements() as $element) {
-//            $elementIds[] = $element->getId();
-            $id = $element->getId();
-            $manager->persist($element);
-            $this->addMapping($element, $id, $element);
-        }
-        foreach ($application->getElements() as $element) {
-            $id = $element->getId();
+    private function updateElements(&$elms, &$lays, $manager) {
+        foreach ($elms as $element) {
             $config = $element->getConfiguration();
             if (isset($config['target'])) {
-                $elm = $this->mapper[get_class($element)][$config['target']];
+                $elm = $elms[$config['target']];
                 $config['target'] = $elm->getId();
                 $element->setConfiguration($config);
                 $manager->persist($element);
@@ -186,7 +118,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             if (isset($config['layersets'])) {
                 $layersets = array();
                 foreach ($config['layersets'] as $layerset) {
-                    $layerset = $this->mapper['Mapbender\CoreBundle\Entity\Layerset'][$layerset];
+                    $layerset = $lays[$layerset];
                     $layersets[] = $layerset->getId();
                 }
                 $config['layersets'] = $layersets;
@@ -194,7 +126,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 $manager->persist($element);
             }
             if (isset($config['layerset'])) {
-                $layerset = $this->mapper['Mapbender\CoreBundle\Entity\Layerset'][$config['layerset']];
+                $layerset = $lays[$config['layerset']];
                 $config['layerset'] = $layerset->getId();
                 $element->setConfiguration($config);
                 $manager->persist($element);
@@ -202,30 +134,23 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         }
     }
 
-    private function checkRegionProperties(ObjectManager $manager, ApplicationEntity $application)
-    {
-        $templateClass = $application->getTemplate();
-        $templateProps = $templateClass::getRegionsProperties();
-        // add RegionProperties if defined
-        foreach ($templateProps as $regionName => $regionProps) {
-            $exists = false;
-            foreach ($application->getRegionProperties() as $regprops) {
-                if ($regprops->getName() === $regionName) {
-                    $regprops->setApplication($application);
-                    $manager->persist($regprops);
-                    $manager->persist($application);
-                    $exists = true;
+    private function findMatchingSource($manager, $source) {
+        $repo = $manager->getRepository(get_class($source));
+        foreach ($repo->findBy(array('originUrl' => $source->getOriginUrl())) as $fsource) {
+            if ($source->getLayers()->count() === $fsource->getLayers()->count()) {
+                $ok = true;
+                for ($i = 0; $i <  $source->getLayers()->count(); $i++) {
+                    if ($source->getLayers()->get($i)->getName() !== $source->getLayers()->get($i)->getName()) {
+                        $ok = false;
+                    }
+                }
+                if ($ok) {
+                    return $fsource;
                     break;
                 }
             }
-            if (!$exists) {
-                $regionProperties = new RegionProperties();
-                $application->addRegionProperties($regionProperties);
-                $regionProperties->setApplication($application);
-                $regionProperties->setName($regionName);
-                $manager->persist($regionProperties);
-                $manager->persist($application);
-            }
         }
+        return null;
     }
+
 }

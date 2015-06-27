@@ -26,7 +26,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * @inheritdoc
      */
-    public function create(SourceInstance $instance, SourceItem $wmslayersource, $num = 0, $persist = true)
+    public function create(SourceInstance $instance, SourceItem $wmslayersource, $num = 0)
     {
         $this->entity->setSourceInstance($instance);
         $this->entity->setSourceItem($wmslayersource);
@@ -48,21 +48,13 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->setToggle(null);
             $this->entity->setAllowtoggle(null);
         }
-        if ($persist) {
-            $this->container->get('doctrine')->getManager()->persist($this->entity);
-            $this->container->get('doctrine')->getManager()->flush();
-        }
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
             $entityHandler = self::createHandler($this->container, new WmsInstanceLayer());
-            $entityHandler->create($instance, $wmslayersourceSub, $num + 1, $persist);
+            $entityHandler->create($instance, $wmslayersourceSub, $num + 1);
             $entityHandler->getEntity()->setParent($this->entity);
             $this->entity->addSublayer($entityHandler->getEntity());
-            if ($persist) {
-                $this->container->get('doctrine')->getManager()->persist($this->entity);
-                $this->container->get('doctrine')->getManager()->persist($entityHandler->getEntity());
-                $this->container->get('doctrine')->getManager()->flush();
-            }
         }
+        return $this->entity;
     }
 
     /**
@@ -87,28 +79,58 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
+    private function isScheduledForRemoval($entity) {
+        $mgr = $this->container->get('doctrine')->getManager();
+        $uow = $mgr->getUnitOfWork();
+        $prop = new \ReflectionProperty(get_class($uow), 'entityDeletions');
+        $prop->setAccessible(true);
+        $list = $prop->getValue($uow);
+        $cls = $mgr->getClassMetadata(get_class($entity))->getName();
+
+        foreach($list as $obj) {
+            if($mgr->getClassMetadata(get_class($obj))->getName() === $cls
+               && $obj->getId() === $entity->getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * @inheritdoc
      */
     public function update(SourceInstance $instance, SourceItem $wmslayersource)
     {
+        $manager = $this->container->get('doctrine')->getManager();
         /* remove instance layers for missed layer sources */
+        $toRemove = array();
         foreach ($this->entity->getSublayer() as $wmsinstlayer) {
-            if (!$wmsinstlayer->getSourceItem()) {
-                self::createHandler($this->container, $wmsinstlayer)->remove();
+            if ($this->isScheduledForRemoval($wmsinstlayer->getSourceItem())) {
+                $toRemove[] = $wmsinstlayer;
             }
         }
 
+        foreach($toRemove as $rem) {
+            $this->entity->getSublayer()->removeElement($rem);
+            self::createHandler($this->container, $rem)->remove();
+        }
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
             $layer = $this->findLayer($wmslayersourceSub, $this->entity->getSublayer());
             if ($layer) {
                 self::createHandler($this->container, $layer)->update($instance, $wmslayersourceSub);
             } else {
-                self::createHandler($this->container, new WmsInstanceLayer())->create(
+                $obj = self::createHandler($this->container, new WmsInstanceLayer())->create(
                     $instance,
                     $wmslayersourceSub,
                     $wmslayersourceSub->getPriority()
                 );
+                $obj->setParent($this->entity);
+                $instance->getLayers()->add($obj);
+                $this->entity->getSublayer()->add($obj);
+                $manager->persist($obj);
+                foreach($obj->getSublayer() as $lay) {
+                    $manager->persist($lay);
+                }
             }
         }
         $this->entity->setPriority($wmslayersource->getPriority());
@@ -135,6 +157,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->setToggle(null);
             $this->entity->setAllowtoggle(null);
         }
+
+        $this->save();
     }
 
     /**

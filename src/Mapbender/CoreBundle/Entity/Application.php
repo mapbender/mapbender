@@ -34,7 +34,7 @@ class Application
     /**
      * @var integer $source
      */
-    protected $source;
+    protected $source = self::SOURCE_DB;
 
     /**
      * @ORM\Id
@@ -70,19 +70,19 @@ class Application
     protected $template;
 
     /**
-     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     public $regionProperties;
 
     /**
-     * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"remove"})
      * @ORM\OrderBy({"weight" = "asc"})
      */
     protected $elements;
 
     /**
-     * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"remove"})
      */
     protected $layersets;
 
@@ -115,6 +115,8 @@ class Application
      * @ORM\Column(type="text", nullable=true)
      */
     protected $custom_css;
+
+    protected $publicOptions = array();
 
     public function __construct()
     {
@@ -558,4 +560,21 @@ class Application
     {
         return $this->excludeFromList;
     }
+
+    /**
+     * @return array
+     */
+    public function getPublicOptions()
+    {
+        return $this->publicOptions;
+    }
+
+    /**
+     * @param array $publicOptions
+     */
+    public function setPublicOptions($publicOptions)
+    {
+        $this->publicOptions = $publicOptions;
+    }
+
 }

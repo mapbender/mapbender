@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
  * Map's overview element
@@ -14,7 +15,7 @@ class Overview extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.overview.class.title";
     }
@@ -22,7 +23,7 @@ class Overview extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.overview.class.description";
     }
@@ -30,7 +31,7 @@ class Overview extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.overview.tag.overview",
@@ -58,6 +59,16 @@ class Overview extends Element
     /**
      * @inheritdoc
      */
+    public function getConfiguration()
+    {
+        $configuration = parent::getConfiguration();
+        $configuration['target'] = strval($configuration['target']);
+        return $configuration;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getWidgetName()
     {
         return 'mapbender.mbOverview';
@@ -74,7 +85,7 @@ class Overview extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array(
             'js' => array('mapbender.element.overview.js'),
@@ -87,12 +98,14 @@ class Overview extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:overview.html.twig',
-                    array(
-                    'id' => $this->getId(),
-                    "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+        return $this->container->get('templating')->render(
+            'MapbenderCoreBundle:Element:overview.html.twig',
+            array(
+                'id' => $this->getId(),
+                "title" => $this->getTitle(),
+                'configuration' => $this->getConfiguration()
+            )
+        );
     }
 
     /**
@@ -103,4 +116,18 @@ class Overview extends Element
         return 'MapbenderManagerBundle:Element:overview.html.twig';
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function denormalizeConfiguration(array $configuration, Mapper $mapper)
+    {
+        if (isset($configuration['layerset'])) {
+            $configuration['layerset'] = $mapper->getIdentFromMapper(
+                'Mapbender\CoreBundle\Entity\Layerset',
+                intval($configuration['layerset']),
+                true
+            );
+        }
+        return $configuration;
+    }
 }

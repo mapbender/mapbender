@@ -178,6 +178,12 @@
                     if (this.options.onlyValid && this._isDataValid(data,
                         mimetype)) { // !onlyValid s. _triggerFeatureInfo
                         /* add a blank iframe and replace it's content */
+                        this._trigger('featureinfo', null, {
+                            action: "haveresult",
+                            title: this.element.attr(
+                                'title'),
+                            id: this.element.attr('id')
+                        });
                         var uuid = Mapbender.Util.UUID();
                         this._addContent(mqLayer, this._getIframeDeclaration(uuid, null));
                         var doc = document.getElementById(uuid).contentWindow.document;
@@ -191,6 +197,12 @@
                 case 'text/plain':
                 default:
                     if (this.options.onlyValid && this._isDataValid(data, mimetype)) {
+                        this._trigger('featureinfo', null, {
+                            action: "haveresult",
+                            title: this.element.attr(
+                                'title'),
+                            id: this.element.attr('id')
+                        });
                         this._addContent(mqLayer, '<pre>' + data + '</pre>');
                     } else {
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
@@ -203,6 +215,12 @@
                 case 'text/html':
                     data = this._cleanHtml(data);
                     if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
+                        this._trigger('featureinfo', null, {
+                            action: "haveresult",
+                            title: this.element.attr(
+                                'title'),
+                            id: this.element.attr('id')
+                        });
                         this._addContent(mqLayer, data);
                     } else {
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
@@ -211,6 +229,12 @@
                 case 'text/plain':
                 default:
                     if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
+                        this._trigger('featureinfo', null, {
+                            action: "haveresult",
+                            title: this.element.attr(
+                                'title'),
+                            id: this.element.attr('id')
+                        });
                         this._addContent(mqLayer, '<pre>' + data + '</pre>');
                     } else {
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
@@ -267,6 +291,7 @@
                         modal: false,
                         closeButton: false,
                         closeOnESC: false,
+                        detachOnClose: false,
                         content: this.element.removeClass('hidden'),
                         resizable: true,
                         width: self.options.width,
@@ -288,9 +313,8 @@
                         self.state = 'closed';
                         if (self.options.deactivateOnClose) {
                             self.deactivate();
-                        } else {
-                            self._setContentEmpty();
                         }
+                        self.popup.$element.hide();
                     });
                     this.popup.$element.on('open', function() {
                         self.state = 'opened';

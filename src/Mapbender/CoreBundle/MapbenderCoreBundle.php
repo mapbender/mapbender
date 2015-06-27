@@ -48,7 +48,6 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\AboutDialog',
             'Mapbender\CoreBundle\Element\ActivityIndicator',
             'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
-            'Mapbender\CoreBundle\Element\BaseSourceSwitcherDisplay',
             'Mapbender\CoreBundle\Element\Button',
             'Mapbender\CoreBundle\Element\CoordinatesDisplay',
             'Mapbender\CoreBundle\Element\Copyright',
@@ -84,5 +83,4 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Entity\Element' => 'Element',
             'Mapbender\CoreBundle\Entity\Source' => 'Service Source');
     }
-
 }
