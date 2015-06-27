@@ -59,7 +59,7 @@
             <call method="setCompass">
                 <argument>%assetic.filter.sass.compass%</argument>
             </call>
-			
+
             <!-- default option for SASSC -->
             <call method="setCacheLocation">
                 <argument>false</argument>
@@ -78,12 +78,6 @@
             </call>
         </service>
 
-        <!-- User management -->
-        <service id="security.context" class="Mapbender\CoreBundle\Component\SecurityContext">
-            <argument type="service" id="security.authentication.manager" />
-            <argument type="service" id="security.access.decision_manager" />
-        </service>
-
         <!-- Feature service -->
         <service class="Mapbender\CoreBundle\Component\Features" id="features">
             <argument type="service" id="service_container" />
@@ -91,4 +85,3 @@
 
     </services>
 </container>
-

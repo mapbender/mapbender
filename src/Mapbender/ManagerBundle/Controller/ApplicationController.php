@@ -46,7 +46,7 @@ class ApplicationController extends Controller
     public function indexAction()
     {
         /** @var Application $application */
-        $securityContext      = $this->get('security.context');
+        $securityContext      = $this->get('security.authorization_checker');
         $oid                  = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
         $applications         = $this->get('mapbender')->getApplicationEntities();
         $uploads_web_url      = AppComponent::getUploadsUrl($this->container);
@@ -760,7 +760,7 @@ class ApplicationController extends Controller
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
 
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $em              = $this->getDoctrine()->getManager();
         $query           = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources         = $query->getResult();
@@ -903,7 +903,7 @@ class ApplicationController extends Controller
      */
     private function checkGranted($action, $object)
     {
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         if ($action === "CREATE") {
             $oid = new ObjectIdentity('class', get_class($object));
             if (false === $securityContext->isGranted($action, $oid)) {

@@ -33,7 +33,7 @@ class RepositoryController extends Controller
      */
     public function indexAction($page)
     {
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
 
         $em = $this->getDoctrine()->getManager();
@@ -65,7 +65,7 @@ class RepositoryController extends Controller
      */
     public function newAction()
     {
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
 
         if (false === $securityContext->isGranted('CREATE', $oid)) {
@@ -87,7 +87,7 @@ class RepositoryController extends Controller
      */
     public function createAction($managertype)
     {
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
 
         if (false === $securityContext->isGranted('CREATE', $oid)) {
@@ -133,7 +133,7 @@ class RepositoryController extends Controller
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
 
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
 
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('DELETE', $source)) {
             throw new AccessDeniedException();
@@ -153,7 +153,7 @@ class RepositoryController extends Controller
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
 
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
 
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('DELETE', $source)) {
@@ -181,7 +181,7 @@ class RepositoryController extends Controller
     public function updateformAction($sourceId)
     {
         $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
             throw new AccessDeniedException();
@@ -204,7 +204,7 @@ class RepositoryController extends Controller
     public function updateAction($sourceId)
     {
         $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
             throw new AccessDeniedException();
@@ -234,7 +234,7 @@ class RepositoryController extends Controller
             throw $this->createNotFoundException('Instance does not exist');
         }
 
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_chekcer');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!($securityContext->isGranted('EDIT', $sourceInst->getSource())
             || $securityContext->isGranted('EDIT', $oid))) {

@@ -12,7 +12,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-//use 
+//use
 
 /**
  * Description of EntityHandler
@@ -165,7 +165,7 @@ class EntityHandler
         $em     = $container->get('doctrine')->getManager();
         $result = $em->getRepository($entityClass)->findAll($criteria);
         if ($accessControl) {
-            $securityContext = $container->get('security.context');
+            $securityContext = $container->get('security.authorization_checker');
             $tmp             = new ArrayCollection();
             foreach ($result as $obj) {
                 if (true === $securityContext->isGranted($accessControl, $obj)) {

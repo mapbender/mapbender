@@ -269,7 +269,7 @@ class Application
 
         return $assets;
     }
-    
+
     public function getCustomCssAsset()
     {
         $entity = $this->getEntity();
@@ -404,7 +404,7 @@ class Application
     public function getElements($region = null)
     {
         if ($this->elements === null) {
-            $securityContext = $this->container->get('security.context');
+            $securityContext = $this->container->get('security.authorization_checker');
             $aclProvider = $this->container->get('security.acl.provider');
 
             // preload acl in one single sql query

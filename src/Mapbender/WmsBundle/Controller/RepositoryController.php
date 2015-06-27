@@ -63,7 +63,7 @@ class RepositoryController extends Controller
      */
     public function viewAction(WmsSource $wms)
     {
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $wms)) {
             throw new AccessDeniedException();
@@ -81,7 +81,7 @@ class RepositoryController extends Controller
         $request       = $this->get('request');
         $wmssource_req = new WmsSource();
 
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (false === $securityContext->isGranted('CREATE', $oid)) {
             throw new AccessDeniedException();
@@ -171,7 +171,7 @@ class RepositoryController extends Controller
             $objectIdentity = ObjectIdentity::fromDomainObject($wmssource);
             $acl            = $aclProvider->createAcl($objectIdentity);
 
-            $securityContext  = $this->get('security.context');
+            $securityContext  = $this->get('security.token_storage');
             $user             = $securityContext->getToken()->getUser();
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
@@ -197,7 +197,7 @@ class RepositoryController extends Controller
     public function updateformAction($sourceId)
     {
         $source          = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
             throw new AccessDeniedException();
@@ -218,7 +218,7 @@ class RepositoryController extends Controller
     {
         $request         = $this->get('request');
         $source          = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
             throw new AccessDeniedException();
@@ -553,7 +553,7 @@ class RepositoryController extends Controller
         $sourceId        = $this->container->get('request')->get("sourceId", null);
         $instance        = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
         if (!$securityContext->isGranted('VIEW', $oid)
             && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {

@@ -31,7 +31,7 @@ class WelcomeController extends Controller {
      * @Template()
      */
     public function listAction() {
-        $securityContext = $this->get('security.context');
+        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
         $uploads_web_url = AppComponent::getUploadsUrl($this->container);
         $applications = $this->get('mapbender')->getApplicationEntities();
@@ -58,4 +58,3 @@ class WelcomeController extends Controller {
             );
     }
 }
-

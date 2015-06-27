@@ -41,7 +41,7 @@ abstract class ExchangeHandler
             ExchangeHandler::CONTENT_ACL => array(),
             ExchangeHandler::CONTENT_SOURCE => array()
         );
-        $this->securityContext = $this->container->get('security.context');
+        $this->securityContext = $this->container->get('security.authorization_checker');
     }
 
     protected function getAllowedAppllications()
@@ -53,7 +53,7 @@ abstract class ExchangeHandler
 
     protected function getAllowedApplicationSources(Application $app, $action = 'EDIT')
     {
-        
+
         $sources = new ArrayCollection();
         if (true === $this->isGranted($action, $app)) {
             foreach ($app->getLayersets() as $layerset) {
