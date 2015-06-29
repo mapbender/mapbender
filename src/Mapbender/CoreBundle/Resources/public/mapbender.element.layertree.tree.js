@@ -359,7 +359,7 @@
             if (!config.selectable)
                 $li.find('input.layer-selected').prop('disabled', true);
             $li.find('input.layer-info').prop('checked', config.info ? true : false);
-            if (!config.infoable || config.infoable === '0')
+            if (!config.infoable)
                 $li.find('input.layer-info').prop('disabled', true);
             var infoHidden = false;
             if (this.options.hideInfo) {
@@ -498,9 +498,6 @@
             }
         },
         _isThemeChecked: function($li){
-            if(this.options.useTheme === false) {
-                return true;
-            }
             var $lith = $li.parents('li.themeContainer:first');
             if($lith.length === 1){
                 var theme = {};
@@ -719,7 +716,6 @@
             return false;
         },
         _toggleSourceVisibility: function(e) {
-console.log('huhu')
             var self = this;
             var $sourceVsbl = $(e.target);
             var $li = $sourceVsbl.parents('li:first');
@@ -781,9 +777,6 @@ console.log('huhu')
                 options: {}
             };
             if ($li.attr('data-type') === this.consts.root) {
-                if(!this._isThemeChecked($li)) { // thematic layertree handling
-                    return false;
-                }
                 tochange.options = {
                     configuration: {
                         options: {
@@ -850,6 +843,7 @@ console.log('huhu')
                 })[0];
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
                     sourceId));
+                menu.off("click", ".checkWrapper");
                 var exitButton = menu.find('.exit-button');
                 var previousMenu = self.currentMenu;
 
@@ -961,7 +955,7 @@ console.log('huhu')
                             var dimHandler = Mapbender.Dimension(item);
                             var label = $('#layer-dimension-value-' + item.name, menu);
                             new Dragdealer('layer-dimension-' + item.name, {
-                                x: dimHandler.partFromValue(dimHandler.getValue()),
+                                x: dimHandler.partFromValue(dimHandler.getDefault()),
                                 horizontal: true,
                                 vertical: false,
                                 speed: 1,
@@ -987,6 +981,22 @@ console.log('huhu')
                     $('.layer-dimension-bar', menu).remove();
                     $('.layer-dimension-textfield', menu).remove();
                 }
+                menu.on("click", ".checkWrapper", function(){
+                    var me = $(this);
+                    var checkbox = me.find(".checkbox");
+                    if(checkbox.is(":disabled")){
+                        me.addClass("checkboxDisabled");
+                    }else{
+                        if(checkbox.is(":checked")){
+                            me.removeClass("iconCheckboxActive");
+                            checkbox.get(0).checked = false;
+                        }else{
+                            me.addClass("iconCheckboxActive");
+                            checkbox.get(0).checked = true;
+                        }
+                    }
+                    checkbox.trigger('change');
+                });
             }
 
             var $btnMenu = $(e.target);
