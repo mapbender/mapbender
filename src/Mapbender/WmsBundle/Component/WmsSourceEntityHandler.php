@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\CoreBundle\Entity\Contact;
 
 /**
  * Description of WmsSourceEntityHandler
@@ -39,7 +40,12 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             self::createHandler($this->container, $this->entity->getRootlayer())->save();
         }
         $manager->persist($this->entity);
-        $manager->persist($this->entity->getContact());
+        $cont = $this->entity->getContact();
+        if($cont == null) {
+            $cont = new Contact();
+            $this->entity->setContact($cont);
+        }
+        $manager->persist($cont);
         foreach ($this->entity->getKeywords() as $kwd) {
             $manager->persist($kwd);
         }
