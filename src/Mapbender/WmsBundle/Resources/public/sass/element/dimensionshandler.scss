@@ -14,7 +14,7 @@
 .toolBarItem .mb-element-dimensionshandler{
   /*position: relative;*/
   width: 140px;
-  height: 100%;
+  height:$space;
   @extend .iconBig;
   /*padding-top: 5px;*/
   padding-left: 0px;
@@ -41,13 +41,13 @@
       /*display:none;*/
       position: absolute;
       left: 0px;
-      top:-10px;
+      top:-$space/2;
     }
     .dimensionset-value{
       /*display:none;*/
       position: absolute;
       right: -5px;
-      top:-10px;
+      top:-$space/2;
     }
           
   }
