@@ -359,7 +359,7 @@
             if (!config.selectable)
                 $li.find('input.layer-selected').prop('disabled', true);
             $li.find('input.layer-info').prop('checked', config.info ? true : false);
-            if (!config.infoable)
+            if (!config.infoable || config.infoable === '0')
                 $li.find('input.layer-info').prop('disabled', true);
             var infoHidden = false;
             if (this.options.hideInfo) {
@@ -498,6 +498,9 @@
             }
         },
         _isThemeChecked: function($li){
+            if(this.options.useTheme === false) {
+                return true;
+            }
             var $lith = $li.parents('li.themeContainer:first');
             if($lith.length === 1){
                 var theme = {};
