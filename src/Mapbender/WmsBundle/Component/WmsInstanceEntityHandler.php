@@ -63,7 +63,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setFormat(ArrayUtil::hasSet($configuration, 'format', true))
             ->setInfoformat(ArrayUtil::hasSet($configuration, 'info_format'))
             ->setTransparency(ArrayUtil::hasSet($configuration, 'transparent', true))
-            ->setOpacity(ArrayUtil::hasSet($configuration, 'opacity', false))
+            ->setOpacity(ArrayUtil::hasSet($configuration, 'opacity', 100))
             ->setTiled(ArrayUtil::hasSet($configuration, 'tiled', false))
             ->setBaseSource(ArrayUtil::hasSet($configuration, 'isBaseSource', true));
 

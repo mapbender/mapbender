@@ -49,7 +49,7 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * @ORM\OneToMany(targetEntity="WmsInstanceLayer",mappedBy="parent", cascade={"remove"})
-     * @ORM\OrderBy({"priority" = "asc"})
+     * @ORM\OrderBy({"priority" = "asc", "id" = "asc"})
      */
     protected $sublayer;
 

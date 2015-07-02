@@ -21,7 +21,7 @@ class WmsUpdater extends ReflectionHandler
     public function keywordExists($keyword, $keywordList)
     {
         foreach ($keywordList as $keywordTemp) {
-            if ($keyword->getValue() === $keywordTemp->getValue()) {
+            if ($keyword->getValue() == $keywordTemp->getValue()) {
                 return true;
             }
         }
@@ -34,10 +34,8 @@ class WmsUpdater extends ReflectionHandler
         foreach ($sourceOld->getKeywords() as $keyword) {
             if (!$this->keywordExists($keyword, $sourceNew->getKeywords())) {
                 $entityManager->remove($keyword);
-                $entityManager->flush();
             }
         }
-        $entityManager->merge($sourceOld);
         foreach ($sourceNew->getKeywords() as $keyword) {
             if (!$this->keywordExists($keyword, $sourceOld->getKeywords())) {
                 $keywordNew = new $newKeywordClass();

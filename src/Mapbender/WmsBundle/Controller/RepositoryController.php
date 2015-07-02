@@ -347,6 +347,8 @@ class RepositoryController extends Controller
         }
         $wmshandler = EntityHandler::createHandler($this->container, $wmssource);
         $wmshandler->remove();
+
+        $em->flush();
         $em->getConnection()->commit();
         $this->get('session')->getFlashBag()->set('success', "Your WMS has been deleted");
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));

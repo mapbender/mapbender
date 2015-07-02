@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\CoreBundle\Entity\Contact;
 
 /**
  * Description of WmsSourceEntityHandler
@@ -39,7 +40,12 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             self::createHandler($this->container, $this->entity->getRootlayer())->save();
         }
         $manager->persist($this->entity);
-        $manager->persist($this->entity->getContact());
+        $cont = $this->entity->getContact();
+        if($cont == null) {
+            $cont = new Contact();
+            $this->entity->setContact($cont);
+        }
+        $manager->persist($cont);
         foreach ($this->entity->getKeywords() as $kwd) {
             $manager->persist($kwd);
         }
@@ -64,6 +70,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                 $num++;
             }
         }
+        $instanceHandler->generateConfiguration();
         return $instanceHandler->getEntity();
     }
 
@@ -94,7 +101,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         $mapper  = $updater->getMapper();
         foreach ($mapper as $propertyName => $properties) {
             if ($propertyName === 'layers' || $propertyName === 'keywords' ||
-                $propertyName === 'id' || $propertyName === 'instances') {
+                $propertyName === 'id' || $propertyName === 'instances' || $propertyName === 'contact') {
                 continue;
             } else {
                 $getMeth = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::GETTER]);
@@ -116,7 +123,6 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             $this->container->get('doctrine')->getManager(),
             'Mapbender\WmsBundle\Entity\WmsSourceKeyword'
         );
-        $manager->persist($this->entity->getContact());
         $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $rootHandler->update($sourceNew->getRootlayer());
 

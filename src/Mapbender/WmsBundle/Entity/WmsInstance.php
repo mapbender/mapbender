@@ -88,7 +88,7 @@ class WmsInstance extends SourceInstance
      * @ORM\Column(type="array", nullable=true)
      */
     protected $dimensions;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
