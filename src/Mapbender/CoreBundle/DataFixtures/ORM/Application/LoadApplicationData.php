@@ -7,6 +7,9 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\EntityHandler;
@@ -51,6 +54,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             );
             $manager->getConnection()->beginTransaction();
             $application->setSource(ApplicationEntity::SOURCE_DB);
+            $application->setPublished(true);
             $manager->persist($application->setUpdated(new \DateTime('now')));
             $elms = array();
             $lays = array();
@@ -68,10 +72,31 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 $manager->persist($prop);
             }
             $this->updateElements($elms, $lays, $manager);
+
             $manager->flush();
             $manager->getConnection()->commit();
+
+            $this->addViewRight($application);
+
             $appHandler->createAppWebDir($this->container, $application->getSlug());
         }
+    }
+
+    private function addViewRight($application) {
+        $aclProvider = $this->container->get('security.acl.provider');
+        $maskBuilder = new MaskBuilder();
+
+        $uoid = ObjectIdentity::fromDomainObject($application);
+        $maskBuilder->add('VIEW');
+        $umask = $maskBuilder->get();
+
+        try {
+            $acl = $aclProvider->findAcl($uoid);
+        } catch(\Exception $e) {
+            $acl = $aclProvider->createAcl($uoid);
+        }
+        $acl->insertObjectAce(new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'), $umask);
+        $aclProvider->updateAcl($acl);
     }
 
     private function persistLayersets($manager, &$lays, $sets, &$sourceLays) {

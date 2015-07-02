@@ -1,16 +1,19 @@
-.mb-element-printclient{
-  display:none;
+.mb-element-printclient {
+  $labelHeight: 23px;
+
+  display: none;
   overflow: visible;
 
-  .labelInput{
-    width:80px;
-   }
-   label {
+  label.labelInput {
+    width: 80px;
     font-weight: inherit;
     margin-bottom: inherit;
-   }
-  .input, .dropdown{
-    min-width:190px;
-    margin-bottom:$space/2;
+    line-height: $labelHeight;
+    height: $labelHeight;
+  }
+  .input, .dropdown {
+    min-width: 190px;
+    width: 100%;
+    margin-bottom: $space/2;
   }
 }

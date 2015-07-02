@@ -843,7 +843,6 @@
                 })[0];
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
                     sourceId));
-                menu.off("click", ".checkWrapper");
                 var exitButton = menu.find('.exit-button');
                 var previousMenu = self.currentMenu;
 
@@ -955,7 +954,7 @@
                             var dimHandler = Mapbender.Dimension(item);
                             var label = $('#layer-dimension-value-' + item.name, menu);
                             new Dragdealer('layer-dimension-' + item.name, {
-                                x: dimHandler.partFromValue(dimHandler.getDefault()),
+                                x: dimHandler.partFromValue(dimHandler.getValue()),
                                 horizontal: true,
                                 vertical: false,
                                 speed: 1,
@@ -981,22 +980,6 @@
                     $('.layer-dimension-bar', menu).remove();
                     $('.layer-dimension-textfield', menu).remove();
                 }
-                menu.on("click", ".checkWrapper", function(){
-                    var me = $(this);
-                    var checkbox = me.find(".checkbox");
-                    if(checkbox.is(":disabled")){
-                        me.addClass("checkboxDisabled");
-                    }else{
-                        if(checkbox.is(":checked")){
-                            me.removeClass("iconCheckboxActive");
-                            checkbox.get(0).checked = false;
-                        }else{
-                            me.addClass("iconCheckboxActive");
-                            checkbox.get(0).checked = true;
-                        }
-                    }
-                    checkbox.trigger('change');
-                });
             }
 
             var $btnMenu = $(e.target);

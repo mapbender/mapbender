@@ -69,7 +69,7 @@
     padding-bottom:$space;
     z-index:20;
     position:relative;
-
+    width: 100%;
     &.active{display:block;}
   }
 }
