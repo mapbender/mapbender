@@ -780,6 +780,9 @@
                 options: {}
             };
             if ($li.attr('data-type') === this.consts.root) {
+                if(!this._isThemeChecked($li)) { // thematic layertree handling
+                    return false;
+                }
                 tochange.options = {
                     configuration: {
                         options: {
