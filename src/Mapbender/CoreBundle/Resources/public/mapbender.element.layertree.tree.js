@@ -936,10 +936,28 @@
                         lastItem.after(chkbox);
                         var inpchkbox = chkbox.find('.checkbox');
                         inpchkbox.data('dimension', item);
+                        initCheckbox.call(inpchkbox);
+                        chkbox.on("click", function(){ // function "toggleCheckBox" from checkbox.js TODO remove
+                            var me = $(this);
+                            var checkbox = me.find(".checkbox");
+
+                            if(checkbox.is(":disabled")){
+                                me.addClass("checkboxDisabled");
+                            }else{
+                                if(checkbox.is(":checked")){
+                                    me.removeClass("iconCheckboxActive");
+                                    checkbox.get(0).checked = false;
+                                }else{
+                                    me.addClass("iconCheckboxActive");
+                                    checkbox.get(0).checked = true;
+                                }
+                            }
+
+                            checkbox.trigger('change');
+                        });
                         inpchkbox.on('change', function(e) {
                             self._callDimension(source, $(e.target));
                         });
-                        initCheckbox.call(inpchkbox);
                         title.attr('title', title.attr('title') + ' ' + item.name);
                         title.attr('id', title.attr('id') + item.name);
                         chkbox.after(title);
