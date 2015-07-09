@@ -558,6 +558,18 @@
         <source>mb.manager.admin.source.update</source>
         <target>Datenquelle aktualisieren</target>
       </trans-unit>
+      <trans-unit id="342f82f63e1fc77238c77063876cbe42" resname="mb.manager.admin.source.status.ok">
+        <source>mb.manager.admin.source.status.ok</source>
+        <target>Datenquelle OK</target>
+      </trans-unit>
+      <trans-unit id="0c0f0df6dc5f28f02f39891d3de00200" resname="mb.manager.admin.source.status.toupdate">
+        <source>mb.manager.admin.source.status.toupdate</source>
+        <target>Datenquelle inaktuell</target>
+      </trans-unit>
+      <trans-unit id="49ef61fc71caf417be9ba6e26049235a" resname="mb.manager.admin.source.status.unreachable">
+        <source>mb.manager.admin.source.status.unreachable</source>
+        <target>Datenquelle unerreichbar</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
