@@ -52,7 +52,15 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      */
     public $dimensions;
 
-    public $buffer;
+    /**
+     * ORM\Column(type="integer", options={"default" = 0})
+     */
+    public $buffer = 0;
+
+    /**
+     * ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
+     */
+    public $ratio = 1.25;
 
     /**
      * Sets a format
@@ -187,7 +195,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 
     public function setBuffer($buffer)
     {
-        $this->buffer = $buffer;
+        $this->buffer = intval($buffer);
         return $this;
     }
 
@@ -195,12 +203,23 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     {
         if (null != $this->buffer) {
             return $this->buffer;
+        } else {
+            return 1;
         }
-        return ($this->getTiled() ? 1 : 1.2);
     }
 
-    
-    /**
+    public function getRatio()
+    {
+        return $this->ratio;
+    }
+
+    public function setRatio($ratio)
+    {
+        $this->ratio = floatval($ratio);
+        return $this;
+    }
+
+        /**
      * @inheritdoc
      */
     public function toArray()
@@ -217,7 +236,8 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "bbox" => $this->bbox,
             "vendorspecifics" => $this->vendorspecifics,
             "dimensions" => $this->dimensions,
-            "buffer" => $this->getBuffer(),
+            "buffer" => $this->buffer,
+            "ratio" => $this->ratio,
         );
     }
 
@@ -262,8 +282,10 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             if (isset($options["buffer"])) {
                 $ico->vendor = $options["buffer"];
             }
+            if (isset($options["ratio"])) {
+                $ico->ratio = $options["ratio"];
+            }
         }
         return $ico;
     }
-
 }
