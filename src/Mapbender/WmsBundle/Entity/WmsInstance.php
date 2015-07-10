@@ -463,7 +463,7 @@ class WmsInstance extends SourceInstance
      */
     public function setRatio($ratio)
     {
-        $this->ratio = $ratio;
+        $this->ratio = floatval($ratio);
 
         return $this;
     }
@@ -486,7 +486,7 @@ class WmsInstance extends SourceInstance
      */
     public function setBuffer($buffer)
     {
-        $this->buffer = $buffer;
+        $this->buffer = intval($buffer);
         return $this;
     }
 
