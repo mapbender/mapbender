@@ -678,8 +678,14 @@ Mapbender.Geo.SourceHandler = Class({
             }
             return null;
         }
-        var extent = _layerExtent(source.configuration.children[0], layerId);
-        return extent ? extent : source.configuration.options.bbox;
+        var extents = _layerExtent(source.configuration.children[0], layerId);
+        for (srs in extents) {
+            return extents;
+        }
+        for (srs in source.configuration.options.bbox) {
+            return source.configuration.options.bbox;
+        }
+        return null;
     }
 });
 

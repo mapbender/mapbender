@@ -942,6 +942,10 @@
         <source>mb.geosource.image_error.statuscode</source>
         <target>HTTP Statuscode</target>
       </trans-unit>
+      <trans-unit id="76692e113f696d470e17262afa779745" resname="mb.core.layertree.contextmenu.nooption">
+        <source>mb.core.layertree.contextmenu.nooption</source>
+        <target>Layer verfügt über keine Kontextmenü-Option</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
