@@ -757,7 +757,8 @@ Mapbender.Model = {
             id: options.sourceId
         });
         if (sources.length === 1) {
-            return Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
+            var extent = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
+            return extent ? extent : null;
         }
         return null;
     },
