@@ -22,3 +22,30 @@
     left: 25px;
     right: 25px;
 }
+
+.featureinfoDialog{
+  .popupContent {
+    margin-bottom: 0px;
+    height: 100%;
+    .contentItem {
+      height: 100%;
+      .mb-element-featureinfo{
+        width:100%;
+        position:relative;
+        .featureInfoTabContainer.accordionContainer{
+          top:0px;
+          left:0px;
+          .accordion{
+            height:$fontSize*2;
+          }
+          .container{
+            display:none;
+          }
+          .container.active{
+            display:table-row;
+          }
+        }
+      }
+    }
+  }
+}
