@@ -15,14 +15,6 @@
 
 }
 
-.featureInfoTabContainer {
-    top: 25px;
-    bottom: 35px;
-    position: absolute;
-    left: 25px;
-    right: 25px;
-}
-
 .featureinfoDialog{
   .popupContent {
     margin-bottom: 0px;
@@ -43,6 +35,24 @@
           }
           .container.active{
             display:table-row;
+            .accordion-cell{
+              height:100%;
+              .accordion-wrapper{
+                height:100%;
+                display:block;
+                position:relative;
+                >iframe{height:98%;}
+                >.js-content-content{
+                  display:table-cell;
+                  position: absolute;
+                  bottom: 0;
+                  top: 0;
+                  overflow-y: auto;
+                  overflow-x: auto;
+                  width: 100%;
+                }
+              }
+            }
           }
         }
       }
