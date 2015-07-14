@@ -942,6 +942,10 @@
         <source>mb.core.admin.printclient.label.legend</source>
         <target>Print legend</target>
       </trans-unit>
+      <trans-unit id="76692e113f696d470e17262afa779745" resname="mb.core.layertree.contextmenu.nooption">
+        <source>mb.core.layertree.contextmenu.nooption</source>
+        <target>Layer has no context menu option</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
