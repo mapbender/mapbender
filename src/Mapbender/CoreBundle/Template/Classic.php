@@ -41,8 +41,7 @@ class Classic extends Template
     static public function listAssets()
     {
         $assets = array(
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
-                '@MapbenderCoreBundle/Resources/public/sass/template/classic.scss'),
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/template/classic.scss'),
             'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
             'trans' => array()
