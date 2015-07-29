@@ -656,6 +656,10 @@ class PrintService
         $groups = $this->user->getGroups();
         $group = $groups[0];  // more than one group?
         
+        if(!isset($group)){
+            return;
+        }
+        
         $dynImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png';
         if(file_exists ($dynImage)){
             $this->pdf->Image($dynImage,
@@ -677,7 +681,11 @@ class PrintService
         
         $groups = $this->user->getGroups();
         $group = $groups[0];  // more than one group?
-
+        
+        if(!isset($group)){
+            return;
+        }
+        
         $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
         $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
                 $this->conf['fields']['dynamic_text']['height'],
