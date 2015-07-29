@@ -36,14 +36,19 @@ class PrintService
         $this->tempDir = sys_get_temp_dir();
         // resource dir
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-
+        
+        // get user
+        $securityContext = $this->container->get('security.context');
+        $token = $securityContext->getToken();
+        $this->user = $token->getUser();
+        
         // data from client
         $this->data = $data;
 
         // template configuration from odg
         $odgParser = new OdgParser($this->container);
-        $this->conf = $conf = $odgParser->getConf($data['template']);
-
+        $this->conf = $conf = $odgParser->getConf($data['template']);       
+        
         // image size
         $this->imageWidth = round($conf['map']['width'] / 25.4 * $data['quality']);
         $this->imageHeight = round($conf['map']['height'] / 25.4 * $data['quality']);
@@ -355,6 +360,12 @@ class PrintService
             $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
             $pdf->SetXY($this->conf['fields'][$k]['x'],
                 $this->conf['fields'][$k]['y']);
+            
+            // continue if extent field is set
+            if(preg_match("/^extent/", $k)){
+                continue;
+            }
+            
             switch ($k) {
                 case 'date' :
                     $date = new \DateTime;
@@ -391,7 +402,24 @@ class PrintService
         if (isset($this->data['legends']) && !empty($this->data['legends'])){
             $this->addLegend();
         }
-
+        
+        // add coordinates
+        if (isset($this->conf['fields']['extent_ur_x']) && isset($this->conf['fields']['extent_ur_y']) 
+                && isset($this->conf['fields']['extent_ll_x']) && isset($this->conf['fields']['extent_ll_y']))
+        {
+            $this->addCoordinates();
+        }
+        
+        // add dynamic logo
+        if ($this->conf['dynamic_image']){
+            $this->addDynamicImage();
+        }
+        
+        // add dynamic text
+        if ($this->conf['fields']['dynamic_text']){
+            $this->addDynamicText();
+        }
+            
         return $pdf->Output(null, 'S');
     }
 
@@ -581,7 +609,82 @@ class PrintService
         $pdf->SetFillColor(0,0,0);
         $pdf->Rect($this->conf['scalebar']['x'] + 40  , $this->conf['scalebar']['y'], 10, 2, 'FD');
     }
+    
+    private function addCoordinates()
+    {
+        $pdf = $this->pdf;
+        
+        $corrFactor = 2;
+        $precision = 2;
+        // correction factor and round precision if WGS84
+        if($this->data['extent']['width'] < 1){
+             $corrFactor = 3;
+             $precision = 6;
+        }
+        
+        // upper right Y
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_y']['fontsize']);          
+        $pdf->Text($this->conf['fields']['extent_ur_y']['x'] + $corrFactor,
+                    $this->conf['fields']['extent_ur_y']['y'] + 3,
+                    round($this->data['extent_feature'][2]['y'], $precision));
 
+        // upper right X
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_x']['fontsize']);       
+        $pdf->RotatedText($this->conf['fields']['extent_ur_x']['x'] + 1,
+                    $this->conf['fields']['extent_ur_x']['y'],
+                    round($this->data['extent_feature'][2]['x'], $precision),-90);
+
+        // lower left Y
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ll_y']['fontsize']);          
+        $pdf->Text($this->conf['fields']['extent_ll_y']['x'],
+                    $this->conf['fields']['extent_ll_y']['y'] + 3,
+                    round($this->data['extent_feature'][0]['y'], $precision));
+
+        // lower left X
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ll_x']['fontsize']);
+        $pdf->RotatedText($this->conf['fields']['extent_ll_x']['x'] + 3,
+                    $this->conf['fields']['extent_ll_x']['y'] + 30,
+                    round($this->data['extent_feature'][0]['x'], $precision),90);
+    }
+    
+    private function addDynamicImage()
+    {
+        if($this->user == 'anon.'){
+            return;
+        }
+
+        $groups = $this->user->getGroups();
+        $group = $groups[0];  // more than one group?
+        
+        $dynImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png';
+        if(file_exists ($dynImage)){
+            $this->pdf->Image($dynImage,
+                            $this->conf['dynamic_image']['x'],
+                            $this->conf['dynamic_image']['y'],
+                            0,
+                            0,
+                            'png');
+            return;
+        }
+
+    }
+    
+    private function addDynamicText()
+    {
+        if($this->user == 'anon.'){
+            return;
+        }
+        
+        $groups = $this->user->getGroups();
+        $group = $groups[0];  // more than one group?
+
+        $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
+        $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
+                $this->conf['fields']['dynamic_text']['height'],
+                $group->getDescription());
+        
+    }    
+    
     private function getColor($color, $alpha, $image)
     {
         list($r, $g, $b) = CSSColorParser::parse($color);
