@@ -45,11 +45,11 @@ class PrintClientAdminType extends AbstractType
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
-            ->add('autoOpen', 'checkbox',array('required' => false))
             ->add('scales', 'text', array('required' => false))
             ->add('file_prefix', 'text', array('required' => false))
             ->add('rotatable', 'checkbox',array('required' => false))
             ->add('legend', 'checkbox',array('required' => false))
+            ->add('legend_default_behaviour', 'checkbox',array('required' => false))
             ->add('optional_fields', new YAMLConfigurationType(), array('required' => false,'attr' => array('class' => 'code-yaml')))
             ->add('replace_pattern', new YAMLConfigurationType(),array('required' => false,'attr' => array('class' => 'code-yaml')));
     }

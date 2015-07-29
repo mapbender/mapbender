@@ -1,8 +1,4 @@
 <div class="elementFormPrintClient elementForm">
-    <div class="left">
-        {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"mb.core.admin.printclient.label.autoopen"|trans}}</label>
-    </div>
-    <div class="clearContainer"></div>
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
@@ -12,6 +8,8 @@
     {{ form_widget(form.configuration.rotatable) }}<label for="{{form.configuration.rotatable.vars.id}}" class="labelCheck">{{"mb.core.admin.printclient.label.rotatable"|trans}}</label>
     <div class="clearContainer"></div>
     {{ form_widget(form.configuration.legend) }}<label for="{{form.configuration.legend.vars.id}}" class="labelCheck">{{"mb.core.admin.printclient.label.legend"|trans}}</label>
+    <div class="clearContainer"></div>
+    {{ form_widget(form.configuration.legend_default_behaviour) }}<label for="{{form.configuration.legend_default_behaviour.vars.id}}" class="labelCheck">{{"mb.core.admin.printclient.label.legend_default_behaviour"|trans}}</label>
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.file_prefix) }}{{ form_widget(form.configuration.file_prefix) }}
     <div class="clearContainer"></div>
@@ -39,6 +37,6 @@
         {{form_label(template.format)}}   {{ form_widget(template.format) }}
         <div class="clearContainer"></div>
     {% endfor %}
-	{{ form_label(form.configuration.optional_fields) }}{{ form_widget(form.configuration.optional_fields) }}
+    {{ form_label(form.configuration.optional_fields) }}{{ form_widget(form.configuration.optional_fields) }}
     {{ form_label(form.configuration.replace_pattern) }}{{ form_widget(form.configuration.replace_pattern) }}
 </div>
