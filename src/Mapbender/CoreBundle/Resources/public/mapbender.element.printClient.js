@@ -33,14 +33,13 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
             
-
-            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
+            $('select[name="scale_select"]', this.element)
                 .on('change', $.proxy(this._updateGeometry, this));
-            $('input[name="scale_text"], input[name="rotation"]', this.element)
+            $('input[name="rotation"]', this.element)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.element)
                 .on('change', $.proxy(this._getTemplateSize, this));
-            $('#formats input[required]').on('change invalid', this._checkFieldValidity);
+
             this._trigger('ready');
             this._ready();
         },
@@ -64,7 +63,7 @@
                         closeOnESC: false,
                         content: self.element,
                         width: 400,
-                        height: 460,
+                        height: 490,
                         cssClass: 'customPrintDialog',
                         buttons: {
                                 'cancel': {
@@ -92,9 +91,8 @@
             me.show();
             this.popupIsOpen = true;
             this._getTemplateSize();
-            this._loadPrintFormats();
             this._updateElements();
-            this._updateGeometry(true);
+            this._setScale();
         },
 
         close: function() {
@@ -109,110 +107,41 @@
             }
             this.callback ? this.callback.call() : this.callback = null;
         },
+        
+        _setScale: function() {
+            var select = $(this.element).find("select[name='scale_select']");
+            var styledSelect = select.parent().find(".dropdownValue.iconDown");
+            var scales = this.options.scales;
+            var currentScale = Math.round(this.map.map.olMap.getScale());
+            var selectValue;
 
-        _loadPrintFormats: function() {
-            var self = this;
-
-            var scale_text = $('input[name="scale_text"]', this.element),
-            scale_select = $('select[name="scale_select"]', this.element);
-            var list = scale_select.siblings(".dropdownList");
-            list.empty();
-            var valueContainer = scale_select.siblings(".dropdownValue");
-            var count = 0;
-            if(null === this.options.scales) {
-                var scale = 5000;
-                scale_text.val(scale).parent().show();
-                scale_select.empty().parent().hide()
-            } else {
-                scale_text.val('').parent().hide();
-                scale_select.empty();
-                for(key in this.options.scales) {
-                    var scale = this.options.scales[key];
-                    scale_select.append($('<option></option>', {
-                        'value': scale,
-                        'html': '1:' + scale,
-                        'class': "opt-" + count
-                    }));
-                    list.append($('<li></li>', {
-                        'html': '1:' + scale,
-                        'class': "item-" + count
-                    }));
-                    if(count == 0){
-                        valueContainer.text('1:' + scale);
-                    }
-                    ++count;
+            $.each(scales, function(idx, scale) {
+                if(scale >= currentScale){
+                    selectValue = scales[idx-1];
+                    return false;
                 }
-                scale_select.parent().show();
+            });
+            if(currentScale <= scales[0]){
+                selectValue = scales[0];
+            }
+            if(currentScale >= scales[scales.length-1]){
+                selectValue = scales[scales.length-1];
             }
 
-            var rotation = $('input[name="rotation"]', this.element);
-            var sliderDiv = $('#slider', this.element);
-            if(true === this.options.rotatable){
-                rotation.val(0).parent().show();
-                var slider = sliderDiv.slider({
-                    min: 0,
-                    max: 360,
-                    range: "min",
-                    step: 5,
-                    value: rotation.val(),
-                    slide: function( event, ui ) {
-                        rotation.val(ui.value);
-                        self._updateGeometry(false);
-                    }
-                });
-                $(rotation).keyup(function() {
-                    slider.slider( "value", this.value );
-                });
-            } else {
-                rotation.parent().hide();
-            }
-            // Copy extra fields
-            var opt_fields = this.options.optional_fields;
-            var hasAttr = false;
-            for(field in opt_fields){
-                hasAttr = true;
-                break;
-            }
-            if(hasAttr) {
-                var extra_fields = $('#extra_fields', this.element).empty();
+            select.val(selectValue);
+            styledSelect.html('1:'+selectValue);
 
-                for(var field in opt_fields){
-                    var span = '';
-                    if(opt_fields[field].options.required === true){
-                       span = '<span class="required">*</span>';
-                    }
-                    var wrapper = $('<div></div>');
-                    wrapper.append($('<label></label>', {
-                        'html': opt_fields[field].label+span,
-                        'class': 'labelInput'
-                    }));
-                    wrapper.append($('<input></input>', {
-                        'type': 'text',
-                        'class': 'input validationInput',
-                        'name': 'extra['+field+']',
-                        'style': 'margin-left: 3px'
-                    }));
-                    extra_fields.append(wrapper);
-                    if(opt_fields[field].options.required === true){
-                        $('input[name="extra['+field+']"]').attr("required", "required");
-                    }
-                }
-            }else{
-                //$('#extra_fields').hide();
-            }
-
+            this._updateGeometry(true);
         },
 
         _updateGeometry: function(reset) {
-            var template = this.element.find('select[name="template"]').val(),
-                width = this.width,
+            var width = this.width,
                 height = this.height,
                 scale = this._getPrintScale(),
                 rotationField = $('input[name="rotation"]');
 
             // remove all not numbers from input
             rotationField.val(rotationField.val().replace(/[^\d]+/,''));
-
 
             if (rotationField.val() === '' && this.rotateValue > '0'){
                 rotationField.val('0');
