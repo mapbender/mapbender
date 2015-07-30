@@ -654,7 +654,7 @@ class PrintService
         }
 
         $groups = $this->user->getGroups();
-        $group = $groups[0];  // more than one group?
+        $group = $groups[0];
         
         if(!isset($group)){
             return;
@@ -666,7 +666,7 @@ class PrintService
                             $this->conf['dynamic_image']['x'],
                             $this->conf['dynamic_image']['y'],
                             0,
-                            0,
+                            $this->conf['dynamic_image']['height'],
                             'png');
             return;
         }
@@ -680,7 +680,7 @@ class PrintService
         }
         
         $groups = $this->user->getGroups();
-        $group = $groups[0];  // more than one group?
+        $group = $groups[0];
         
         if(!isset($group)){
             return;
