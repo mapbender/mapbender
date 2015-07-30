@@ -948,7 +948,7 @@
       </trans-unit>
       <trans-unit id="68f999a910b044ad5ccab94273fd3a47" resname="mb.core.admin.printclient.label.legend_default_behaviour">
         <source>mb.core.admin.printclient.label.legend_default_behaviour</source>
-        <target>Legend checkbox checked</target>
+        <target>Legend checkbox activ</target>
       </trans-unit>
     </body>
   </file>
