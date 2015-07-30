@@ -20,7 +20,7 @@ class PrintService
     public function doPrint($data)
     {
         $this->setup($data);
-
+       
         if ($data['rotation'] == 0) {
             $this->createFinalMapImage();
         } else {
@@ -84,11 +84,11 @@ class PrintService
             $width = '&WIDTH=' . $this->imageWidth;
             $height =  '&HEIGHT=' . $this->imageHeight;
         }else{
-            // calculate needed bbox
-            $neededExtentWidth = round(abs(sin(deg2rad($rotation)) * $extentHeight) +
-                abs(cos(deg2rad($rotation)) * $extentWidth));
-            $neededExtentHeight = round(abs(sin(deg2rad($rotation)) * $extentWidth) +
-                abs(cos(deg2rad($rotation)) * $extentHeight));
+            // calculate needed bbox 
+            $neededExtentWidth = abs(sin(deg2rad($rotation)) * $extentHeight) +
+                abs(cos(deg2rad($rotation)) * $extentWidth);
+            $neededExtentHeight = abs(sin(deg2rad($rotation)) * $extentWidth) +
+                abs(cos(deg2rad($rotation)) * $extentHeight);
 
             $this->neededExtentWidth = $neededExtentWidth;
             $this->neededExtentHeight = $neededExtentHeight;
