@@ -6,6 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Mapbender\CoreBundle\Form\EventListener\PrintClientSubscriber;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
+use Mapbender\CoreBundle\Element\Type\PrintClientTemplateAdminType;
 
 /**
  * 
@@ -51,7 +52,13 @@ class PrintClientAdminType extends AbstractType
             ->add('legend', 'checkbox',array('required' => false))
             ->add('legend_default_behaviour', 'checkbox',array('required' => false))
             ->add('optional_fields', new YAMLConfigurationType(), array('required' => false,'attr' => array('class' => 'code-yaml')))
-            ->add('replace_pattern', new YAMLConfigurationType(),array('required' => false,'attr' => array('class' => 'code-yaml')));
+            ->add('replace_pattern', new YAMLConfigurationType(),array('required' => false,'attr' => array('class' => 'code-yaml')))
+            ->add('templates', 'collection', array(
+                'type' => new PrintClientTemplateAdminType(),
+                'allow_add' => true,
+                'allow_delete' => true,
+                'auto_initialize' => false,
+            ));
     }
 
 }

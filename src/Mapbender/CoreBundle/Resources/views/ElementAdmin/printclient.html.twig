@@ -29,14 +29,12 @@
         <span class="labelInput"></span>
     {% endfor %}
     <div class="clearContainer"></div>
-    {% for template in form.configuration.templates %}
-        {{form_label(template.template)}}   {{ form_widget(template.template) }}
-        <div class="clearContainer"></div>
-        {{form_label(template.label)}}   {{ form_widget(template.label) }}
-        <div class="clearContainer"></div>
-        {{form_label(template.format)}}   {{ form_widget(template.format) }}
-        <div class="clearContainer"></div>
-    {% endfor %}
+    <hr>
+    <br>
+    {{ form_label(form.configuration.templates) }}{{ form_widget(form.configuration.templates) }}
+    <hr>
+    <br>
     {{ form_label(form.configuration.optional_fields) }}{{ form_widget(form.configuration.optional_fields) }}
     {{ form_label(form.configuration.replace_pattern) }}{{ form_widget(form.configuration.replace_pattern) }}
+    
 </div>
