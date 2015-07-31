@@ -124,7 +124,7 @@
             if(currentScale <= scales[0]){
                 selectValue = scales[0];
             }
-            if(currentScale >= scales[scales.length-1]){
+            if(currentScale > scales[scales.length-1]){
                 selectValue = scales[scales.length-1];
             }
 
