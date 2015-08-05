@@ -13,9 +13,9 @@
         color: #ffffff;
         font-weight: normal;
         font-size: $uiFontSize;
-        padding: 3px 6px;
+        padding: 3px 15px 3px 6px;
+
         @include transition(all, 0.3s, ease-in-out);
-        white-space: nowrap;
         &:focus {
           box-shadow: 0 0 5px $buttonFirstActiveColor;
         }
@@ -29,11 +29,12 @@
         &.buttons.sorting_disabled {
           cursor: default;
         }
-
         &:after {
           clear: both;
           display: inline-block;
           float: right;
+          width: 0px;
+          white-space: normal;
           font-family: FontAwesome;
         }
         &.sorting:after {
