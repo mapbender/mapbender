@@ -560,8 +560,7 @@ class WmsInstance extends SourceInstance
                 '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js'),
             'css' => array(),
             'trans' => array(
-                'MapbenderCoreBundle::geosource.json.twig',
-                'MapbenderWmsBundle::wmsbundle.json.twig'
+                'MapbenderCoreBundle::geosource.json.twig'
             )
         );
     }
