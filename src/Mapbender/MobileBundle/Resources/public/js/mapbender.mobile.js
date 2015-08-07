@@ -59,4 +59,7 @@ $(function(){
         }
     });
     /* END close mobilePane if a map is centred after search */
+    /* START center notifyjs dialog */
+    $.notify.defaults({position: "top center"});
+    /* END center notifyjs dialog */
 });
