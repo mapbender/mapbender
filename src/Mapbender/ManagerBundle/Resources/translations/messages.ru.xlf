@@ -542,6 +542,26 @@
         <source>mb.manager.import.source.failed</source>
         <target>Источники не импортируются.</target>
       </trans-unit>
+      <trans-unit id="958dff877abe910c6e9037e99de76668" resname="form.manager.admin.application.export.application">
+        <source>form.manager.admin.application.export.application</source>
+        <target>Приложений</target>
+      </trans-unit>
+      <trans-unit id="85116f4217a9b12b1c0cf8fba44ce8a7" resname="mb.manager.admin.application.title">
+        <source>mb.manager.admin.application.title</source>
+        <target>Название</target>
+      </trans-unit>
+      <trans-unit id="5c9a6c78451dfba05fabf12c278b971f" resname="mb.manager.admin.application.url.title">
+        <source>mb.manager.admin.application.url.title</source>
+        <target>URL Название</target>
+      </trans-unit>
+      <trans-unit id="3b9871c4a4eadd4855d99e274e8e6bd9" resname="mb.manager.admin.application.description">
+        <source>mb.manager.admin.application.description</source>
+        <target>Описание</target>
+      </trans-unit>
+      <trans-unit id="0a71d5fdc736b4b42a67c19aadbe134e" resname="mb.manager.admin.application.template">
+        <source>mb.manager.admin.application.template</source>
+        <target>Шаблон</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
