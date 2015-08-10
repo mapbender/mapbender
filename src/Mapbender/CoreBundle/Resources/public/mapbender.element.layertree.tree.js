@@ -531,6 +531,9 @@
         },
         _resetNodeInfo: function($li, layerOptions) {
             var chk_info = $('input[name="info"]:first', $li);
+            if(layerOptions.treeOptions.info === '0') {
+                layerOptions.treeOptions.info = false;
+            }
             chk_info.prop('checked', layerOptions.treeOptions.info);
             chk_info.each(function(k, v) {
                 initCheckbox.call(v);
@@ -666,6 +669,7 @@
                 infoable: nodeConfig.options.treeOptions.allow.info,
                 reorderable: nodeConfig.options.treeOptions.allow.reorder
             };
+
             if (nodeConfig.children) {
                 conf["toggle"] = nodeConfig.options.treeOptions.toggle;
                 conf["toggleable"] = nodeConfig.options.treeOptions.allow.toggle;
@@ -719,7 +723,6 @@
             return false;
         },
         _toggleSourceVisibility: function(e) {
-console.log('huhu')
             var self = this;
             var $sourceVsbl = $(e.target);
             var $li = $sourceVsbl.parents('li:first');
@@ -902,7 +905,7 @@ console.log('huhu')
                         }
                     });
                 }
-                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0 
+                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0
                     && self.model.getLayerExtents({
                         sourceId: sourceId,
                         layerId: layerId
