@@ -4,6 +4,12 @@ env:
 
 language: php
 
+cache:
+    directories:
+        - $HOME/.composer
+
+sudo: false
+
 php:
   - 5.6
   - 5.5
@@ -29,7 +35,7 @@ before_script:
   - php app/console fom:user:resetroot --username root --password root --email root@root.de --silent
   - phantomjs --webdriver=9876 &
   - export PJSPORT=$(echo $!)
-  - sudo pip install selenium
+  - pip install --user selenium
 
 script: phpunit -c app/ --coverage-clover ../testresults/clover.xml
 

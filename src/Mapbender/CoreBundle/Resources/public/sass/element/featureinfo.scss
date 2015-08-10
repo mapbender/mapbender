@@ -15,10 +15,47 @@
 
 }
 
-.featureInfoTabContainer {
-    top: 25px;
-    bottom: 35px;
-    position: absolute;
-    left: 25px;
-    right: 25px;
+.featureinfoDialog{
+  .popupContent {
+    margin-bottom: 0px;
+    height: 100%;
+    .contentItem {
+      height: 100%;
+      .mb-element-featureinfo{
+        width:100%;
+        position:relative;
+        .featureInfoTabContainer.accordionContainer{
+          top:0px;
+          left:0px;
+          .accordion{
+            height:$fontSize*2;
+          }
+          .container{
+            display:none;
+          }
+          .container.active{
+            display:table-row;
+            .accordion-cell{
+              height:100%;
+              .accordion-wrapper{
+                height:100%;
+                display:block;
+                position:relative;
+                >iframe{height:98%;}
+                >.js-content-content{
+                  display:table-cell;
+                  position: absolute;
+                  bottom: 0;
+                  top: 0;
+                  overflow-y: auto;
+                  overflow-x: auto;
+                  width: 100%;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

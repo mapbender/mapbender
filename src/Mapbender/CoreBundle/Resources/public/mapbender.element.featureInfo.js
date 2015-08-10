@@ -294,6 +294,7 @@
                         detachOnClose: false,
                         content: this.element.removeClass('hidden'),
                         resizable: true,
+                        cssClass: 'featureinfoDialog',
                         width: self.options.width,
                         height: self.options.height,
                         buttons: {
@@ -314,7 +315,9 @@
                         if (self.options.deactivateOnClose) {
                             self.deactivate();
                         }
-                        self.popup.$element.hide();
+                        if (self.popup && self.popup.$element) {
+                            self.popup.$element.hide();
+                        }
                     });
                     this.popup.$element.on('open', function() {
                         self.state = 'opened';
