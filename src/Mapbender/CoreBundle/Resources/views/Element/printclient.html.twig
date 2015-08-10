@@ -1,63 +1,70 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
-    <div class="format-form">
-        <form id="formats" action="">
-            <div class="elementForm">
-                <div>
-                    <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
-                    <div class="dropdown">
-                      <select name="template" class="hiddenDropdown">
-                          {% for id, template in configuration.templates %}
-                            <option value="{{ id }}">{{ template.label }}</option>
-                          {% endfor %}
-                      </select>
-                      <div class="dropdownValue iconDown"></div>
-                      <ul class="dropdownList"></ul>
-                    </div>
-                </div>
-                <div class="clearContainer"></div>
-                <div>
-                    <label class="labelInput">{{ 'mb.core.printclient.label.quality' | trans }}</label>
-                    <div class="dropdown">
-                        <select name="quality" class="hiddenDropdown">
-                            {% for key , label in configuration.quality_levels %}
-                             <option value="{{ key }}">{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                      <div class="dropdownValue iconDown"></div>
-                      <ul class="dropdownList"></ul>
-                    </div>
-                </div>
-                <div class="clearContainer"></div>
-                <div>
-                    <label class="labelInput">{{ 'mb.core.printclient.label.scale' | trans }}</label>
-                    <div class="dropdown">
-                      <select name="scale_select" class="hiddenDropdown"></select>
-                      <div class="dropdownValue iconDown"></div>
-                      <ul class="dropdownList"></ul>
-                    </div>
-                </div>
-                <div class="clearContainer"></div>
-                <div>
-                  <input class="input" type="text" name="scale_text" size="8"/>
-                </div>
-                <div class="clearContainer"></div>
-                <div>
-                    <label class="labelInput" for="rotation">{{ 'mb.core.printclient.label.rotation' | trans }}</label>
-                    <input class="input" type="text" name="rotation"/>
-                </div>
-                <div class="clearContainer"></div>
-                <div id="extra_fields"></div>
-                <div class="clearContainer"></div>
-                {% if configuration.legend is defined and configuration.legend == 1 %}
-                    <div class="checkWrapper left iconCheckbox iconCheckboxActive " data-icon="iconCheckbox">
-                        <input class="checkbox" type="checkbox" name="printLegend" value="1" checked="checked">
-                    </div>
-                    <label class="labelCheck">{{ 'mb.core.printclient.label.legend' | trans }}</label>
-                {% endif %}
-                <div id="layers"></div>
-                <input type="submit" style="display: none"/>
-                <div class="clearContainer"></div>
+    <form id="formats" action="">
+        
+        <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
+        <div class="dropdown">
+            <select name="template" class="hiddenDropdown">
+                {% for id, template in configuration.templates %}
+                    <option value="{{ id }}">{{ template.label }}</option>
+                {% endfor %}
+            </select>
+            <div class="dropdownValue iconDown"></div>
+            <ul class="dropdownList"></ul>
+        </div>
+
+        <label class="labelInput">{{ 'mb.core.printclient.label.quality' | trans }}</label>
+        <div class="dropdown">
+            <select name="quality" class="hiddenDropdown">
+                {% for key , label in configuration.quality_levels %}
+                    <option value="{{ key }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <div class="dropdownValue iconDown"></div>
+            <ul class="dropdownList"></ul>
+        </div>
+
+        <label class="labelInput">{{ 'mb.core.printclient.label.scale' | trans }}</label>
+        <div class="dropdown">
+            <select name="scale_select" class="hiddenDropdown">
+                {% for key in configuration.scales %}
+                    <option value="{{ key }}">1:{{ key }}</option>
+                {% endfor %}
+            </select>
+            <div class="dropdownValue iconDown"></div>
+            <ul class="dropdownList"></ul>
+        </div>
+
+        {% if configuration.rotatable is defined and configuration.rotatable == 1 %}
+            <label class="labelInput" for="rotation">{{ 'mb.core.printclient.label.rotation' | trans }}</label>
+            <input class="input" type="text" name="rotation" value="0"/>
+        {% endif %}
+
+        {% if configuration.optional_fields is defined %}
+            {% set required = '' %}
+            {% for key,field in configuration.optional_fields %}
+                <label class="labelInput">{{ field.label }}
+                    {% if field.options.required == true %}
+                        <span class="required">*</span>
+                        {% set required = 'required=required' %}
+                    {% endif %}
+                </label>
+                <input type="text" class="input validationInput" name="extra[{{ key }}]" {{ required }}>
+            {% endfor %}
+        {% endif %}
+        
+        {% if configuration.legend is defined and configuration.legend == 1 %}
+            {% set legend_checked = 'checked' %}
+            {% if configuration.legend_default_behaviour is defined and configuration.legend_default_behaviour == 0 %}
+                {% set legend_checked = '' %}
+            {% endif %}    
+            <div class="checkWrapper left iconCheckbox iconCheckboxActive " data-icon="iconCheckbox">
+                <input class="checkbox" type="checkbox" name="printLegend" value="1" {{ legend_checked }}>
             </div>
-        </form>
-    </div>
+            <label class="labelCheck">{{ 'mb.core.printclient.label.legend' | trans }}</label>
+        {% endif %}
+        
+        <div id="layers"></div>
+        <input type="submit" style="display: none"/>
+    
+    </form>
 </div>

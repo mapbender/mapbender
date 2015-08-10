@@ -946,6 +946,10 @@
         <source>mb.core.layertree.contextmenu.nooption</source>
         <target>Layer verfügt über keine Kontextmenü-Option</target>
       </trans-unit>
+      <trans-unit id="68f999a910b044ad5ccab94273fd3a47" resname="mb.core.admin.printclient.label.legend_default_behaviour">
+        <source>mb.core.admin.printclient.label.legend_default_behaviour</source>
+        <target>Legenden Checkbox aktiv</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

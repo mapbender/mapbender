@@ -66,41 +66,36 @@ class PrintClient extends Element
     {
         return array(
             "target" => null,
-            "autoOpen" => false,
             "templates" => array(
                 array(
                     'template' => "a4portrait",
-                    "label" => "A4 Portrait",
-                    "format" => "a4")
+                    "label" => "A4 Portrait")
                 ,
                 array(
                     'template' => "a4landscape",
-                    "label" => "A4 Landscape",
-                    "format" => "a4")
+                    "label" => "A4 Landscape")
                 ,
                 array(
                     'template' => "a3portrait",
-                    "label" => "A3 Portrait",
-                    "format" => "a3")
+                    "label" => "A3 Portrait")
                 ,
                 array(
                     'template' => "a3landscape",
-                    "label" => "A3 Landscape",
-                    "format" => "a3")
+                    "label" => "A3 Landscape")
                 ,
                 array(
                     'template' => "a4_landscape_offical",
-                    "label" => "A4 Landscape offical",
-                    "format" => "a4"),
+                    "label" => "A4 Landscape offical"),
                 array(
                     'template' => "a2_landscape_offical",
-                    "label" => "A2 Landscape offical",
-                    "format" => "a2")
+                    "label" => "A2 Landscape offical")
             ),
             "scales" => array(500, 1000, 5000, 10000, 25000),
             "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
                 array('dpi' => "288", 'label' => "Document (288dpi)")),
             "rotatable" => true,
+            "legend" => true,
+            "legend_default_behaviour" => true,
             "optional_fields" => array(
                 "title" => array("label" => 'Title', "options" => array("required" => false)),
                 "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
@@ -181,13 +176,9 @@ class PrintClient extends Element
         $configuration = $this->getConfiguration();
         switch ($action) {
             case 'print':
-//        print "<pre>";
-//        print_r($configuration);
-//        print "</pre>";
-//        die();
+
                 $data = $request->request->all();
 
-                // keys, remove
                 foreach ($data['layers'] as $idx => $layer) {
                     $data['layers'][$idx] = json_decode($layer, true);
                 }
