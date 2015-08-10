@@ -892,7 +892,7 @@
       </trans-unit>
       <trans-unit id="0a5fe4c7ced865711f3ffcfe5d0e141a" resname="mb.core.admin.layertree.label.theme.activate">
         <source>mb.core.admin.layertree.label.theme.activate</source>
-        <target>__mb.core.admin.layertree.label.theme.activate</target>
+        <target>Enabling Layer Add / Remove</target>
       </trans-unit>
       <trans-unit id="c15a053d4e20aee70d58215582648da6" resname="mb.core.featureinfo.error.noresult">
         <source>mb.core.featureinfo.error.noresult</source>
