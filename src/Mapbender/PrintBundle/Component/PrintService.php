@@ -397,11 +397,6 @@ class PrintService
         if (isset($this->conf['scalebar']) ) {
             $this->addScaleBar();
         }
-
-        // add legend
-        if (isset($this->data['legends']) && !empty($this->data['legends'])){
-            $this->addLegend();
-        }
         
         // add coordinates
         if (isset($this->conf['fields']['extent_ur_x']) && isset($this->conf['fields']['extent_ur_y']) 
@@ -418,6 +413,11 @@ class PrintService
         // add dynamic text
         if ($this->conf['fields']['dynamic_text']){
             $this->addDynamicText();
+        }
+        
+        // add legend
+        if (isset($this->data['legends']) && !empty($this->data['legends'])){
+            $this->addLegend();
         }
             
         return $pdf->Output(null, 'S');
