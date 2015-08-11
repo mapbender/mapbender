@@ -41,7 +41,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
         $manager->persist($this->entity);
         $cont = $this->entity->getContact();
-        if($cont == null) {
+        if ($cont == null) {
             $cont = new Contact();
             $this->entity->setContact($cont);
         }
@@ -82,8 +82,10 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         if ($this->entity->getRootlayer()) {
             self::createHandler($this->container, $this->entity->getRootlayer())->remove();
         }
+        if ($this->entity->getContact()) {
+            $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
+        }
         $this->container->get('doctrine')->getManager()->remove($this->entity);
-//        $this->container->get('doctrine')->getManager()->flush();
     }
 
     /**

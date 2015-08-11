@@ -100,7 +100,7 @@ class ImportHandler extends ExchangeHandler
                     $classMeta = $em->getClassMetadata($class);
                     if (!$this->toCopy) {
                         $criteria = $this->denormalizer
-                            ->getIdentCriteria($item, $classMeta, true, array('onlineResource'));
+                            ->getIdentCriteria($item, $classMeta, true, array('title', 'type', 'name', 'onlineResource'));
                         if (isset($criteria['id'])) {
                             unset($criteria['id']);
                         }
