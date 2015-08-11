@@ -83,7 +83,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         if ($this->entity->getRootlayer()) {
             self::createHandler($this->container, $this->entity->getRootlayer())->remove();
         }
-        $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
+        if ($this->entity->getContact()) {
+            $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
+        }
         $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
@@ -117,7 +119,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
 
         $contact = clone $sourceNew->getContact();
         $this->container->get('doctrine')->getManager()->detach($contact);
-        $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
+        if ($this->entity->getContact()) {
+            $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
+        }
         $this->entity->setContact($contact);
 
         self::createHandler($this->container, $this->entity->getRootlayer())->update($sourceNew->getRootlayer());
