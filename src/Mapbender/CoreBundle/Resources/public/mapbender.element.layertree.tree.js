@@ -531,9 +531,6 @@
         },
         _resetNodeInfo: function($li, layerOptions) {
             var chk_info = $('input[name="info"]:first', $li);
-            if(layerOptions.treeOptions.info === '0') {
-                layerOptions.treeOptions.info = false;
-            }
             chk_info.prop('checked', layerOptions.treeOptions.info);
             chk_info.each(function(k, v) {
                 initCheckbox.call(v);
