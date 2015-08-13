@@ -133,7 +133,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 foreach ($src->getLayers() as $lay) {
                     $manager->persist($lay);
                 }
-                \Doctrine\Common\Util\Debug::dump($src, 3);
+
                 $manager->persist($src);
                 foreach ($inst->getLayers() as $lay) {
                     if ($matching != null) {
