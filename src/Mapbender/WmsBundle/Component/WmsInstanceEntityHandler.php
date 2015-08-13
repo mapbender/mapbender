@@ -91,6 +91,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $layersource = new WmsLayerSource();
             $layersource->setSource($source)
                 ->setName($layerDef["name"])
+                ->setTitle($layerDef['title'])
                 ->setParent($layersourceroot)
                 ->setId($this->entity->getId() . '_' . $num);
             if (isset($layerDef["legendurl"])) {

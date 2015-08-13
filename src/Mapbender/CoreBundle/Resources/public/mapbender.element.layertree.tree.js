@@ -634,6 +634,9 @@
             }
         },
         _subStringText: function(text) {
+            if(text === null) {
+                return '';
+            }
             if (text.length <= this.options.titlemaxlength) {
                 return text;
             } else {
