@@ -585,9 +585,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     public function getSrs($inherit = TRUE)
     {
-//        return $this->srs;
         if ($inherit && $this->getParent() !== null) { // add crses from parent
-            return array_merge($this->getParent()->getSrs(), $this->srs);
+            return array_unique(array_merge($this->getParent()->getSrs(), $this->srs));
         } else {
             return $this->srs;
         }

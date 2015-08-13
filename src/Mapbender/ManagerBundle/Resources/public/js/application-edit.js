@@ -824,5 +824,24 @@ $(function() {
             codeMirror.refresh();
             codeMirror.focus();
         });
-    })(jQuery)
+    })(jQuery);
+    // Prototype: activate tabs by loading
+    (function($) {
+        var activeTab = window.location.hash;
+        if (activeTab && activeTab !== '#') {
+            $(".tabContainer .tab"+activeTab+", .tabContainerAlt .tab"+activeTab).click();
+        } else {
+            activeTab = null;
+        }
+        $(".tabContainer, .tabContainerAlt").on('click', '.tab', function (){
+            activeTab = '#' + $(this).attr('id');
+        });
+        $('form[name="application"]').on('submit', function(){
+            if(activeTab) {
+                var newurl = $(this).attr('action');
+                $(this).attr('action', newurl + activeTab);
+            }
+            return true;
+        });
+    })(jQuery);
 });

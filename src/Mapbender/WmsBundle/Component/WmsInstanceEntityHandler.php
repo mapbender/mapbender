@@ -346,6 +346,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setTiled($this->entity->getTiled())
             ->setBbox($srses)
             ->setDimensions($dimensions)
+            ->setBuffer($this->entity->getBuffer())
+            ->setRatio($this->entity->getRatio())
             ->setVendorspecifics($vendorsecifics);
         $wmsconf->setOptions($options);
         $entityHandler = self::createHandler($this->container, $rootlayer);

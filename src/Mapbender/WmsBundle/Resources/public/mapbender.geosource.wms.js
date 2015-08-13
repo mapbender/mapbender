@@ -71,8 +71,8 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             minScale: rootLayer.minScale,
             maxScale: rootLayer.maxScale,
             transitionEffect: 'resize',
-            buffer: sourceDef.configuration.options.tiled ? sourceDef.configuration.options.buffer : null,
-            ratio: !sourceDef.configuration.options.tiled ? sourceDef.configuration.options.buffer : null
+            buffer: sourceDef.configuration.options.buffer ? parseInt(sourceDef.configuration.options.buffer) : 0, // int only for gridded mode
+            ratio: sourceDef.configuration.options.ratio ? parseFloat(sourceDef.configuration.options.ratio) : 1.0 // float only for single-tile mode
         };
         $.extend(mqLayerDef, this.defaultOptions);
         return mqLayerDef;

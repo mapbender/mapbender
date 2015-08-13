@@ -42,6 +42,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
             self::createHandler($this->container, $sublayer)->save();
         }
         foreach ($this->entity->getKeywords() as $kwd) {
+            $kwd->setReferenceObject($this->entity);
             $this->container->get('doctrine')->getManager()->persist($kwd);
         }
     }

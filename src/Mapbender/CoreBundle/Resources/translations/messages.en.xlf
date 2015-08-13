@@ -892,7 +892,7 @@
       </trans-unit>
       <trans-unit id="0a5fe4c7ced865711f3ffcfe5d0e141a" resname="mb.core.admin.layertree.label.theme.activate">
         <source>mb.core.admin.layertree.label.theme.activate</source>
-        <target>__mb.core.admin.layertree.label.theme.activate</target>
+        <target>Enabling Layer Add / Remove</target>
       </trans-unit>
       <trans-unit id="c15a053d4e20aee70d58215582648da6" resname="mb.core.featureinfo.error.noresult">
         <source>mb.core.featureinfo.error.noresult</source>
@@ -941,6 +941,14 @@
       <trans-unit id="c093a9f43f4ac6e10fa05a048a82f32d" resname="mb.core.admin.printclient.label.legend">
         <source>mb.core.admin.printclient.label.legend</source>
         <target>Print legend</target>
+      </trans-unit>
+      <trans-unit id="76692e113f696d470e17262afa779745" resname="mb.core.layertree.contextmenu.nooption">
+        <source>mb.core.layertree.contextmenu.nooption</source>
+        <target>Layer has no context menu option</target>
+      </trans-unit>
+      <trans-unit id="68f999a910b044ad5ccab94273fd3a47" resname="mb.core.admin.printclient.label.legend_default_behaviour">
+        <source>mb.core.admin.printclient.label.legend_default_behaviour</source>
+        <target>Legend checkbox activ</target>
       </trans-unit>
     </body>
   </file>

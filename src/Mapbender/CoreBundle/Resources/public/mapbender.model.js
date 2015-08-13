@@ -27,6 +27,10 @@ Mapbender.Model = {
             this.resolution = OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
         }
 
+        if(typeof this.mbMap.options.tileSize !== 'undefined') {
+            OpenLayers.Map.TILE_WIDTH = this.mbMap.options.tileSize;
+            OpenLayers.Map.TILE_HEIGHT = this.mbMap.options.tileSize;
+        }
         OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + this.mbMap.options.imgPath + '/';
 
         this.proj = this.getProj(this.mbMap.options.srs);
@@ -291,6 +295,9 @@ Mapbender.Model = {
         var l = $.extend({}, Mapbender.source[layerDef.type.toLowerCase()].create(layerDef), {
             mapbenderId: layerDef.id
         });
+        if(typeof this.mbMap.options.wmsTileDelay !== 'undefined') {
+            l.removeBackBufferDelay = this.mbMap.options.wmsTileDelay;
+        }
         return l;
     },
     generateSourceId: function() {
@@ -757,7 +764,8 @@ Mapbender.Model = {
             id: options.sourceId
         });
         if (sources.length === 1) {
-            return Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
+            var extent = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
+            return extent ? extent : null;
         }
         return null;
     },

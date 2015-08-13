@@ -99,7 +99,8 @@ class ImportHandler extends ExchangeHandler
                 foreach ($content as $item) {
                     $classMeta = $em->getClassMetadata($class);
                     if (!$this->toCopy) {
-                        $criteria  = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array('onlineResource'));
+                        $criteria = $this->denormalizer
+                            ->getIdentCriteria($item, $classMeta, true, array('onlineResource'));
                         if (isset($criteria['id'])) {
                             unset($criteria['id']);
                         }
@@ -164,7 +165,7 @@ class ImportHandler extends ExchangeHandler
         } catch (\Exception $e) {
             $idx++;
             if ($idx < count($sources)) {
-                $this->findSourceToMapper($sources[$idx], $item, $result);
+                $this->findSourceToMapper($sources, $item, $idx);
             } else {
                 return false;
             }

@@ -67,20 +67,12 @@ class PrintClientSubscriber implements EventSubscriberInterface
             $event->setData($data);
         }
 
-        if (key_exists("templates", $data)) {
-            $form->add($this->factory->createNamed(
-                    'templates', "collection", null, array(
-                    'property_path' => '[templates]',
-                    'auto_initialize' => false,
-                    'type' => new PrintClientTemplateAdminType(),
-                    'options' => array(
-            ))));
-        }
         if (key_exists("quality_levels", $data)) {
             $form->add($this->factory->createNamed(
                     'quality_levels', "collection", null, array(
                     'property_path' => '[quality_levels]',
                     'auto_initialize' => false,
+                    'required' => false,
                     'type' => new PrintClientQualityAdminType(),
                     'options' => array(
             ))));
@@ -105,21 +97,12 @@ class PrintClientSubscriber implements EventSubscriberInterface
             $event->setData($data);
         }
 
-        if (key_exists("templates", $data)) {
-            $form->add($this->factory->createNamed(
-                    'templates', "collection", null, array(
-                    'property_path' => '[templates]',
-                    'auto_initialize' => false,
-                    'type' => new PrintClientTemplateAdminType(),
-                    'options' => array(
-            ))));
-        }
-
         if (key_exists("quality_levels", $data)) {
             $form->add($this->factory->createNamed(
                     'quality_levels', "collection", null, array(
                     'property_path' => '[quality_levels]',
                     'auto_initialize' => false,
+                    'required' => false,
                     'type' => new PrintClientQualityAdminType(),
                     'options' => array(
             ))));
