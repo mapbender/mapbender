@@ -279,16 +279,7 @@ class RepositoryController extends Controller
                         )
                     );
                 }
-
                 $this->getDoctrine()->getManager()->persist($wmsOrig);
-                $wmsWithSameTitle = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository("MapbenderWmsBundle:WmsSource")
-                    ->findByTitle($wmsOrig->getTitle());
-
-                if (count($wmsWithSameTitle) > 0) {
-                    $wmsOrig->setAlias(count($wmsWithSameTitle));
-                }
 
                 $wmsOrig->setOriginUrl($wmssource_req->getOriginUrl());
                 $wmsOrig->setUsername($wmssource_req->getUsername());

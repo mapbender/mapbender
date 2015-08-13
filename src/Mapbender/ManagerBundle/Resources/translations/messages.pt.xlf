@@ -542,6 +542,18 @@
         <source>mb.core.entity.app.screenshotfile.resolution.error</source>
         <target>O ficheiro precisa de %screenshotHeight% x %screenshotWidth% pixel ou mais. O seu ficheiro tem %uploadWidth% x %uploadHeighth% pixel. </target>
       </trans-unit>
+      <trans-unit id="342f82f63e1fc77238c77063876cbe42" resname="mb.manager.admin.source.status.ok">
+        <source>mb.manager.admin.source.status.ok</source>
+        <target>Source OK</target>
+      </trans-unit>
+      <trans-unit id="0c0f0df6dc5f28f02f39891d3de00200" resname="mb.manager.admin.source.status.toupdate">
+        <source>mb.manager.admin.source.status.toupdate</source>
+        <target>Source not current anymore</target>
+      </trans-unit>
+      <trans-unit id="49ef61fc71caf417be9ba6e26049235a" resname="mb.manager.admin.source.status.unreachable">
+        <source>mb.manager.admin.source.status.unreachable</source>
+        <target>Source unreachable</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -7,6 +7,7 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
@@ -82,8 +83,10 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         if ($this->entity->getRootlayer()) {
             self::createHandler($this->container, $this->entity->getRootlayer())->remove();
         }
+        if ($this->entity->getContact()) {
+            $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
+        }
         $this->container->get('doctrine')->getManager()->remove($this->entity);
-//        $this->container->get('doctrine')->getManager()->flush();
     }
 
     /**
@@ -91,51 +94,51 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function update(Source $sourceNew)
     {
-        $manager = $this->container->get('doctrine')->getManager();
-        $transaction = $manager->getConnection()->isTransactionActive();
+        $em = $this->container->get('doctrine')->getManager();
+        $transaction = $em->getConnection()->isTransactionActive();
         if (!$transaction) {
-            $manager->getConnection()->beginTransaction();
+            $em->getConnection()->beginTransaction();
         }
-        $updater = new WmsUpdater($this->entity);
+//        $updater = new WmsUpdater($this->entity);
         /* Update source attributes */
-        $mapper  = $updater->getMapper();
-        foreach ($mapper as $propertyName => $properties) {
-            if ($propertyName === 'layers' || $propertyName === 'keywords' ||
-                $propertyName === 'id' || $propertyName === 'instances' || $propertyName === 'contact') {
-                continue;
-            } else {
-                $getMeth = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::GETTER]);
-                $value   = $getMeth->invoke($sourceNew);
-                if (is_object($value)) {
-                    $refMethod = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::TOSET]);
-                    $valueNew  = clone $value;
-                    $this->container->get('doctrine')->getManager()->detach($valueNew);
-                    $refMethod->invoke($this->entity, $valueNew);
-                } elseif (isset($properties[EntityUtil::TOSET])) {
-                    $refMethod = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::TOSET]);
-                    $refMethod->invoke($this->entity, $value);
+        $classMeta = $em->getClassMetadata(EntityUtil::getRealClass($this->entity));
+
+        foreach ($classMeta->getFieldNames() as $fieldName) {
+            if (!in_array($fieldName, $classMeta->getIdentifier())
+                    && ($getter = EntityUtil::getReturnMethod($fieldName, $classMeta->getReflectionClass()))
+                    && ($setter = EntityUtil::getSetMethod($fieldName, $classMeta->getReflectionClass()))) {
+                $value     = $getter->invoke($sourceNew);
+                $setter->invoke($this->entity, is_object($value) ? clone $value : $value);
+            } elseif (($getter = EntityUtil::getReturnMethod($fieldName, $classMeta->getReflectionClass()))
+                    && ($setter = EntityUtil::getSetMethod($fieldName, $classMeta->getReflectionClass()))) {
+                if (!$getter->invoke($this->entity) && ($new = $getter->invoke($sourceNew))) {
+                    $setter->invoke($this->entity, $new);
                 }
             }
         }
-        $updater->updateKeywords(
+
+        $contact = clone $sourceNew->getContact();
+        $this->container->get('doctrine')->getManager()->detach($contact);
+        if ($this->entity->getContact()) {
+            $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
+        }
+        $this->entity->setContact($contact);
+
+        self::createHandler($this->container, $this->entity->getRootlayer())->update($sourceNew->getRootlayer());
+
+        KeywordUpdater::updateKeywords(
             $this->entity,
             $sourceNew,
             $this->container->get('doctrine')->getManager(),
             'Mapbender\WmsBundle\Entity\WmsSourceKeyword'
         );
-        $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
-        $rootHandler->update($sourceNew->getRootlayer());
 
-        $this->updateInstances();
-        if (!$transaction) {
-            $this->container->get('doctrine')->getManager()->getConnection()->commit();
-        }
-    }
-
-    private function updateInstances()
-    {
         foreach ($this->getInstances() as $instance) {
             self::createHandler($this->container, $instance)->update();
+        }
+
+        if (!$transaction) {
+            $this->container->get('doctrine')->getManager()->getConnection()->commit();
         }
     }
 
