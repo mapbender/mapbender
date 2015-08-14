@@ -38,6 +38,8 @@
             parentInvisible: ''
         },
         _create: function() {
+            this.loadStarted = {};
+            this.sourceAtTree = {};
             if (!Mapbender.checkTarget("mbLayertree", this.options.target)) {
                 return;
             }
