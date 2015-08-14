@@ -109,15 +109,12 @@ Mapbender.WmcHandler = function(mapWidget, options){
         }
         this.mapWidget.removeSources(toKeepSources);
     };
-    
-    this._addWmcToMap = function(sources){
-        
-    };
 
     this._addWmcToMap = function(sources){
         for(var i = 0; i < sources.length; i++){
             var source = sources[i];
             if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && this.options.keepSources !== 'basesources')){
+                source.configuration.status = source.configuration.status ? source.configuration.status : 'ok';
                 this.mapWidget.addSource(source);
             }
         }
