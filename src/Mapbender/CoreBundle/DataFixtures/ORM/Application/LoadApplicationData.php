@@ -69,6 +69,8 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             $manager->getConnection()->beginTransaction();
             $application->setSource(ApplicationEntity::SOURCE_DB);
             $application->setPublished(true);
+            $application->setScreenshot(null);
+            $application->setScreenshotFile(null);
             $manager->persist($application->setUpdated(new \DateTime('now')));
             $elms = array();
             $lays = array();
