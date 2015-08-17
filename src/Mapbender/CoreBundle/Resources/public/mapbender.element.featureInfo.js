@@ -88,11 +88,7 @@
             var self = this;
             var x = e.xy.x;
             var y = e.xy.y;
-            var num = 0;
             var called = false;
-            if (this._isVisible()) {
-                this._setContentEmpty();
-            }
             this.queries = {};
             $('#js-error-featureinfo').addClass('hidden');
             $.each(this.target.getModel().getSources(), function(idx, src) {
@@ -101,15 +97,18 @@
                     var url = Mapbender.source[src.type].featureInfoUrl(mqLayer, x, y, $.proxy(self._setInfo, self));
                     if (url) {
                         self.queries[mqLayer.id] = url;
-//                        if (!self.options.onlyValid) {
+                        if (!self.options.onlyValid) {
                             self._addContent(mqLayer, 'wird geladen');
-//                        }
+                            this._open();
+                        }
                         called = true;
                         if (self.options.showOriginal && !self.options.onlyValid) {
                             self._addContent(mqLayer, self._getIframeDeclaration(Mapbender.Util.UUID(), url));
                         } else {
                             self._setInfo(mqLayer, url);
                         }
+                    } else {
+                        self._removeContent(mqLayer);
                     }
                 }
             });
@@ -176,6 +175,7 @@
             }
         },
         _showOriginal: function(mqLayer, data, mimetype, url) {
+            var self = this;
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
@@ -187,12 +187,15 @@
                                 'title'),
                             id: this.element.attr('id')
                         });
-                        var uuid = Mapbender.Util.UUID();
-                        this._addContent(mqLayer, this._getIframeDeclaration(uuid, null));
-                        var doc = document.getElementById(uuid).contentWindow.document;
-                        doc.open();
-                        doc.write(data);
-                        doc.close();
+                        this._open();
+                        window.setTimeout(function() {// fix popup open setTimeout 100
+                            var uuid = Mapbender.Util.UUID();
+                            self._addContent(mqLayer, self._getIframeDeclaration(uuid, null));
+                            var doc = document.getElementById(uuid).contentWindow.document;
+                            doc.open();
+                            doc.write(data);
+                            doc.close();
+                        }, 100);
                     } else {
                         this._removeContent(mqLayer);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
@@ -208,6 +211,7 @@
                             id: this.element.attr('id')
                         });
                         this._addContent(mqLayer, '<pre>' + data + '</pre>');
+                        this._open();
                     } else {
                         this._removeContent(mqLayer);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
@@ -227,8 +231,9 @@
                             id: this.element.attr('id')
                         });
                         this._addContent(mqLayer, data);
+                        this._open();
                     } else {
-                        this._setContentEmpty(mqLayer.id);
+                        this._removeContent(mqLayer);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
@@ -285,7 +290,7 @@
             }
             return this.contentManager;
         },
-        _getContext: function() {
+        _open: function() {
             var self = this;
             if (this.options.type === 'dialog') {
                 if (!this.popup || !this.popup.$element) {
@@ -342,6 +347,8 @@
                     this.popup.open();
                 }
             }
+        },
+        _getContext: function() {
             return this.element;
         },
         _selectorSelfAndSub: function(idStr, classSel) {
@@ -357,9 +364,9 @@
                 return;
             }
             this._setContentEmpty();
-            if (!this.options.deactivateOnClose && this.popup) {
-                this.popup.close();
-            }
+//            if (!this.options.deactivateOnClose && this.popup) {
+//                this.popup.close();
+//            }
          },
         _setContentEmpty: function(id) {
             var $context = this._getContext();
