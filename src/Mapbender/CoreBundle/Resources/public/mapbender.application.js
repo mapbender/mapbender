@@ -184,8 +184,9 @@ Mapbender.Util.Url = function(urlString){
     this.username = tmp.username;
     this.password = tmp.password;
     this.host = tmp.host;
+    this.hostname = tmp.hostname;
     this.port = tmp.port;
-    this.pathname = tmp.pathname;
+    this.pathname = tmp.pathname.charAt(0) === '/' ? tmp.pathname : '/' + tmp.pathname;
     this.parameters = OpenLayers.Util.getParameters(urlString);
     this.hash = tmp.hash;
     /**
@@ -193,7 +194,7 @@ Mapbender.Util.Url = function(urlString){
      * @returns {Boolean} true if url valid
      */
     this.isValid = function(){
-        return  !(!self.host || !self.protocol);// TODO ?
+        return  !(!self.hostname || !self.protocol);// TODO ?
     };
     /**
      * Gets an url object as string.
@@ -203,7 +204,7 @@ Mapbender.Util.Url = function(urlString){
         var str = self.protocol + (self.protocol === 'http:' || self.protocol === 'https:' || self.protocol === 'ftp:'
                 ? '//' : (self.protocol === 'file:' ? '///' : ''));// TODO for other protocols
         str += (!withoutUser && self.username ? self.username + ':' + (self.password ? self.password : '') + '@' : '');
-        str += self.host + (self.port ? ':' + self.port : '') + self.pathname;
+        str += self.hostname + (self.port ? ':' + self.port : '') + self.pathname;
         var params = '';
         if(typeof (self.parameters) === 'object') {
             for(key in self.parameters) {
