@@ -234,7 +234,7 @@ $pageWidth:$contentPaneWidth + $navWidth;
 .icon[data-state="success"]{
   @extend .iconOk;
 }
-[data-state="waiting"]{
+.icon[data-state="waiting"]{
   @extend .iconClock;
 }
 .icon[data-state="aborted"]{

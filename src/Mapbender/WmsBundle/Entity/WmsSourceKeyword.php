@@ -18,7 +18,7 @@ class WmsSourceKeyword extends Keyword
 {
     
     /**
-     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="keywords", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="keywords")
      * @ORM\JoinColumn(name="reference_id", referencedColumnName="id")
      */
     protected $reference;

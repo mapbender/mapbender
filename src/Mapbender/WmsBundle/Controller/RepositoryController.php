@@ -279,16 +279,7 @@ class RepositoryController extends Controller
                         )
                     );
                 }
-
                 $this->getDoctrine()->getManager()->persist($wmsOrig);
-                $wmsWithSameTitle = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository("MapbenderWmsBundle:WmsSource")
-                    ->findByTitle($wmsOrig->getTitle());
-
-                if (count($wmsWithSameTitle) > 0) {
-                    $wmsOrig->setAlias(count($wmsWithSameTitle));
-                }
 
                 $wmsOrig->setOriginUrl($wmssource_req->getOriginUrl());
                 $wmsOrig->setUsername($wmssource_req->getUsername());
@@ -413,7 +404,7 @@ class RepositoryController extends Controller
 
                 $this->get('session')->getFlashBag()->set('success', 'Your Wms Instance has been changed.');
                 return $this->redirect($this
-                    ->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)).'#layersets');
+                    ->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)).'#tabLayers');
             } else { // edit
                 return array(
                     "form" => $form->createView(),
