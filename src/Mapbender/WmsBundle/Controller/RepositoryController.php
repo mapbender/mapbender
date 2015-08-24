@@ -248,9 +248,18 @@ class RepositoryController extends Controller
                 try {
                     $browserResponse = $proxy->handle();
                     $content         = $browserResponse->getContent();
-                    $doc             = WmsCapabilitiesParser::createDocument($content);
-                    $wmsParser       = WmsCapabilitiesParser::getParser($doc);
-                    $wmssource       = $wmsParser->parse();
+                    $doc = WmsCapabilitiesParser::createDocument($content);
+                    try {
+                        $validator = new XmlValidator($this->container, $proxy_config, "xmlschemas/");
+                        $doc       = $validator->validate($doc);
+                        $wmsParser = WmsCapabilitiesParser::getParser($doc);
+                        $wmssource = $wmsParser->parse();
+                        $wmssource->setValid(true);
+                    } catch (\Exception $e) {
+                        $wmsParser = WmsCapabilitiesParser::getParser($doc);
+                        $wmssource = $wmsParser->parse();
+                        $wmssource->setValid(false);
+                    }
                 } catch (\Exception $e) {
                     $this->get("logger")->debug($e->getMessage());
                     $this->get('session')->getFlashBag()->set('error', $e->getMessage());
