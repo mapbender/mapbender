@@ -76,7 +76,7 @@ $.widget('mapbender.mbSimpleSearch', {
             if(self.options.result.icon_url) {
                 if(!self.marker) {
                     var addMarker = function() {
-                        var offset = (self.options.result.icon_offset || '').split(', ;');
+                        var offset = (self.options.result.icon_offset || '').split(',');
                         var x = parseInt(offset[0]);
 
                         var size = {
