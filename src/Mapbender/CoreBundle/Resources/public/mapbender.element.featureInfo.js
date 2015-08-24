@@ -99,7 +99,7 @@
                         self.queries[mqLayer.id] = url;
                         if (!self.options.onlyValid) {
                             self._addContent(mqLayer, 'wird geladen');
-                            this._open();
+                            self._open();
                         }
                         called = true;
                         if (self.options.showOriginal && !self.options.onlyValid) {
