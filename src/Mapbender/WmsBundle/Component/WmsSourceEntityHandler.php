@@ -42,7 +42,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
         $manager->persist($this->entity);
         $cont = $this->entity->getContact();
-        if($cont == null) {
+        if ($cont == null) {
             $cont = new Contact();
             $this->entity->setContact($cont);
         }
