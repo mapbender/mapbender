@@ -1,4 +1,32 @@
 # Changelog
+* **v3.0.5.1**
+    - Map: OpenLayers TileSize: You can set the tile-size for the map. Default: 256x256.
+    - Map: Delay before Tiles: For WMS-T, for example with temporal parameters (in future)
+    - Print: Show coordinates in PDF print
+    - Print: get print scale depending on map-scale
+    - Print: print legend_default_behaviour
+    - Print: add print templates with the + symbol
+    - Print: user-defined logo and text
+    - Layertree: loading symbol and exclamation mark symbol.
+    - Layertree: zoom Symbol not for layers without a BBOX information
+    - WMS Reload: FeatureInfo
+    - WMS Reload: some WMS couldn't be reloaded.
+    - Export/Import of application and miscellaneous bugfixes
+    - WMC-Editor and WMC-Load fixes.
+    - WMC from a Mapbender 3.0.4.1 application
+    - Tile buffer and BBOX buffer fixes
+    - FeatureInfo: Fixes in design and when shown as an Accordion Panel
+    - FeatureInfo: Print
+    - Wrong Jquery-UI link in layerset instance
+    - Save Layerset and Save Layout leaves you on the page
+    - Classic Template: SCSS corrections
+    - Mobile Template: Bootstrap message hides close button
+    - Mobile Template: close SearchRouter window
+    - Mobile Template: Mozilla Firefox Fixes on layout
+    - Backend: Layerset Filter and +-Buttons doesn't hide everything anymore
+    - composer.json upgrade version of joii to 3.1.2
+    - composer.json upgrade version of Digitizer to 1.0.*
+    - Documentation of the JS-UI Generator (Form-Generator): https://github.com/eSlider/vis-ui.js
 * **v3.0.5.0**
     - a map parameter "layerset" is renamed into "layersets" and represets a list of layersets
     - WMS Update
