@@ -55,7 +55,7 @@
 
     &.active{
       cursor:default;
-      background-color:darken(#6fb536, 10%);
+      background-color:darken($buttonFirstColor, 10%);
       color:$lightFontColor;
     }
   }
@@ -87,9 +87,9 @@
     }
     &.active{
       cursor:default;
-      background-color:darken(#6fb536, 10%);
+      background-color:darken($buttonFirstColor, 10%);
       color:$lightFontColor;
-      >div{background-color:darken(#6fb536, 10%);}          
+      >div{background-color:darken($buttonFirstColor, 10%);}          
     }
   }
   .container-accordion{

@@ -22,6 +22,7 @@ class EntityUtil
 {
     const GET        = 'get';
     const SET        = 'set';
+    const ADD        = 'add';
     const HAS        = 'has';
     const IS         = 'is';
     const GETTER     = 'getter';
@@ -155,6 +156,42 @@ class EntityUtil
                 return 'datetime';
             default:
                 throw new \Exception('data type is not supported.');
+        }
+    }
+
+    public static function getReturnMethod($fieldName, ReflectionClass $class)
+    {
+        $method = null;
+        if ($method = self::getMethodName($fieldName, self::GET, $class)) {
+            return $method;
+        } elseif ($method = self::getMethodName($fieldName, self::IS, $class)) {
+            return $method;
+        } elseif ($method = self::getMethodName($fieldName, self::HAS, $class)) {
+            return $method;
+        }
+    }
+
+    public static function getSetMethod($fieldName, ReflectionClass $class)
+    {
+        $method = null;
+        if ($method = self::getMethodName($fieldName, self::SET, $class)) {
+            return $method;
+        } elseif ($method = self::getMethodName($fieldName, self::ADD, $class)) {
+            return $method;
+        }
+    }
+
+    public static function getMethodName($fieldName, $prefix, ReflectionClass $class)
+    {
+        $methodHash = "";
+        foreach (preg_split("/_/", $fieldName) as $chunk) {
+            $chunk = ucwords($chunk);
+            $methodHash .= $chunk;
+        }
+        if ($class->hasMethod($prefix . $methodHash)) {
+            return $class->getMethod($prefix . $methodHash);
+        } else {
+            return null;
         }
     }
 }

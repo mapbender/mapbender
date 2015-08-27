@@ -344,25 +344,25 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         $extentList = $this->xpath->query("./Extent", $contextElm);
         if ($extentList !== null) {
             foreach ($extentList as $extentEl) {
-                $extent = new Extent();
-                $extent->setName($this->getValue("./@name", $extentEl));
-                $extent->setDefault($this->getValue("./@default", $extentEl));
-                $extent->setMultipleValues($this->getValue("./@multipleValues", $extentEl) !== null ?
-                        (bool) $this->getValue("./@name", $extentEl) : null);
-                $extent->setNearestValue($this->getValue("./@nearestValue", $extentEl) !== null ?
-                        (bool) $this->getValue("./@name", $extentEl) : null);
-                $extent->setCurrent($this->getValue("./@current", $extentEl) !== null ?
-                        (bool) $this->getValue("./@name", $extentEl) : null);
-                $extent->setExtentValue($this->getValue("./text()", $extentEl));
+                $extent = array();
+                $extent['name'] = $this->getValue("./@name", $extentEl);
+                $extent['default'] = $this->getValue("./@default", $extentEl);
+                $extent['multiplevalues'] = ($this->getValue("./@multipleValues", $extentEl) !== null ?
+                                             (bool) $this->getValue("./@name", $extentEl) : null);
+                $extent['nearestvalue'] = ($this->getValue("./@nearestValue", $extentEl) !== null ?
+                                           (bool) $this->getValue("./@name", $extentEl) : null);
+                $extent['current'] = ($this->getValue("./@current", $extentEl) !== null ?
+                                      (bool) $this->getValue("./@name", $extentEl) : null);
+                $extent['value'] = $this->getValue("./text()", $extentEl);
                 $found  = false;
                 foreach ($wmslayer->getDimension() as $dimension) {
-                    if ($dimension->getName() === $extent->getName()) {
+                    if ($dimension->getName() === $extent['name']) {
                         $found = true;
-                        $dimension->setDefault($extent->getDefault());
-                        $dimension->setMultipleValues($extent->getMultipleValues());
-                        $dimension->setNearestValue($extent->getNearestValue());
-                        $dimension->setCurrent($extent->getCurrent());
-                        $dimension->setExtent($extent->getExtentValue());
+                        $dimension->setDefault($extent['default']);
+                        $dimension->setMultipleValues($extent['multiplevalues']);
+                        $dimension->setNearestValue($extent['nearestvalue']);
+                        $dimension->setCurrent($extent['current']);
+                        $dimension->setExtent($extent['value']);
                     }
                 }
                 if (!$found && $wmslayer->getParent()) {

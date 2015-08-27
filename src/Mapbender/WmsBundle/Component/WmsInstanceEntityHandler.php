@@ -91,6 +91,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $layersource = new WmsLayerSource();
             $layersource->setSource($source)
                 ->setName($layerDef["name"])
+                ->setTitle($layerDef['title'])
                 ->setParent($layersourceroot)
                 ->setId($this->entity->getId() . '_' . $num);
             if (isset($layerDef["legendurl"])) {
@@ -205,7 +206,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $dimensions = $this->updateDimension($this->entity->getDimensions(), $this->getDimensionInst());
         $this->entity->setDimensions($dimensions);
 
-        # TODO vendorspecific ?
+        # TODO vendorspecific for layer specific parameters
         self::createHandler($this->container, $this->entity->getRootlayer())
             ->update($this->entity, $this->entity->getSource()->getRootlayer());
 
@@ -275,7 +276,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             }
         }
         $status = $this->entity->getSource()->getStatus();
-        $configuration['status'] = $status ? strtolower($status) : strtolower(Source::STATUS_OK);
+        $configuration['status'] = $status && $status === Source::STATUS_UNREACHABLE ? 'error' : 'ok';
         return $configuration;
     }
 

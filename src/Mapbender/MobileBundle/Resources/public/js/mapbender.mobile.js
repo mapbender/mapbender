@@ -43,5 +43,23 @@ $(function(){
     $('.mb-element-simplesearch input[type="text"]').on('mbautocomplete.selected', function(e){
         $('#mobilePaneClose').click();
     });
-
+    /* START close mobilePane if a map is centred after search */
+    var moved = false;
+    Mapbender.Model.mbMap.map.olMap.events.register('moveend', null, function(){
+        if ($('#mobilePane').attr('data-state')) {
+            moved = true;
+        } else {
+            moved = false;
+        }
+    });
+    $('.search-results').on('click', function(){
+        if(moved){
+            moved = false;
+            $('#mobilePaneClose').click();
+        }
+    });
+    /* END close mobilePane if a map is centred after search */
+    /* START center notifyjs dialog */
+    $.notify.defaults({position: "top left"});
+    /* END center notifyjs dialog */
 });

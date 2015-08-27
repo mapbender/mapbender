@@ -99,7 +99,12 @@ class ImportHandler extends ExchangeHandler
                 foreach ($content as $item) {
                     $classMeta = $em->getClassMetadata($class);
                     if (!$this->toCopy) {
-                        $criteria  = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array('onlineResource'));
+                        $criteria = $this->denormalizer->getIdentCriteria(
+                            $item,
+                            $classMeta,
+                            true,
+                            array('title', 'type', 'name', 'onlineResource')
+                        );
                         if (isset($criteria['id'])) {
                             unset($criteria['id']);
                         }
@@ -164,7 +169,7 @@ class ImportHandler extends ExchangeHandler
         } catch (\Exception $e) {
             $idx++;
             if ($idx < count($sources)) {
-                $this->findSourceToMapper($sources[$idx], $item, $result);
+                $this->findSourceToMapper($sources, $item, $idx);
             } else {
                 return false;
             }
@@ -196,7 +201,10 @@ class ImportHandler extends ExchangeHandler
                 $subObject = $getMethod->invoke($object);
                 $num = 0;
                 if ($subObject instanceof PersistentCollection) {
-                    if (!isset($data[$fieldName]) || count($data[$fieldName]) !== $subObject->count()) {
+                    if ($this->denormalizer
+                        ->findSuperClass($assocItem['targetEntity'], "Mapbender\CoreBundle\Entity\Keyword")) {
+                        continue;
+                    } elseif (!isset($data[$fieldName]) || count($data[$fieldName]) !== $subObject->count()) {
                         throw new \Exception('no filed name at normalized data');
                     }
                     foreach ($subObject as $item) {

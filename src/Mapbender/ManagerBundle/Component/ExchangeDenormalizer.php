@@ -148,8 +148,10 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $hasJoinColumns = isset($assocItem['joinColumns']);
             $hasFieldName = isset($data[$assocItem['fieldName']]);
+            // TODO fix add Mapbender\CoreBundle\Entity\Keyword with reference
             if (isset($data[$assocItem['fieldName']])
-                && $setMethod = $this->getSetMethod($assocItem['fieldName'], $classMeta->getReflectionClass())) {
+                && ($setMethod = $this->getSetMethod($assocItem['fieldName'], $classMeta->getReflectionClass()))
+                && !$this->findSuperClass($assocItem['targetEntity'], "Mapbender\CoreBundle\Entity\Keyword")) {
                 $result = $this->handleData($data[$assocItem['fieldName']]);
                 if (is_array($result)) {
                     if (count($result)) {
