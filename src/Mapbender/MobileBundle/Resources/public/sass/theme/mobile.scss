@@ -364,6 +364,7 @@ fieldset{
           opacity: 1;
 
           &:before{
+            font-family: "mapbender-icons", "FontAwesome" !important;
             color: $ciColor;
           }
 
