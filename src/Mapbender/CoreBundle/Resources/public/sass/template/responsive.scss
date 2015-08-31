@@ -19,13 +19,13 @@
   }
 
 //  &[data-state="open"]{
-    .infoContainerPane{max-height: 80px;}
-    .infoContainerTrigger{
-      bottom: $space*4;
-      border-bottom-right-radius:0;
-      border-bottom-left-radius:0;
-    }
-    .mb-element-overview{bottom: $space*5;}
+//    .infoContainerPane{max-height: 80px;}
+//    .infoContainerTrigger{
+//      bottom: $space*4;
+//      border-bottom-right-radius:0;
+//      border-bottom-left-radius:0;
+//    }
+//    .mb-element-overview{bottom: $space*5;}
     @include smartphones(){
       .mb-element-zoombar {
         bottom: $space*5;
@@ -57,8 +57,10 @@
       > span {
         border-radius: 3px;
         position: relative;
-        margin: -3px -5px -3px -2px;
         padding: 3px 3px 3px 25px;
+        margin-top: -3px;
+        margin-right: -3px;
+        margin-bottom: -3px;
       }
       &.toolBarItemActive {
         background-color: transparent;
