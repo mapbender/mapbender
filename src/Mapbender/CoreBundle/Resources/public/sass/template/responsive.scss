@@ -12,7 +12,13 @@
   width: 100%;
   @include absolute(0 0 0 0);
 
-  &[data-state="open"]{
+  > .logoContainer{
+    z-index: 10;
+    background:none;
+    @include absolute($space '' '' $space);
+  }
+
+//  &[data-state="open"]{
     .infoContainerPane{max-height: 80px;}
     .infoContainerTrigger{
       bottom: $space*4;
@@ -21,17 +27,36 @@
     }
     .mb-element-overview{bottom: $space*5;}
     @include smartphones(){
-      .mb-element-zoombar{bottom: $space*5;}
+      .mb-element-zoombar {
+        bottom: $space*5;
+        > .toolPane {
+          > .zoomSlider {
+            > .iconZoomOut {
+              padding-left: 31px !important;
+            }
+          }
+        }
+      }
+      .toolBar{
+        > .toolBarItem{
+          &.toolBarItemActive{
+            background-color: transparent;
+            > span{
+              background-color: #f9f9f9;
+            }
+          }
+          > .iconBig{
+            font-size: 0;
+            &:before{
+              padding-left: 5px;
+            }
+          }
+        }
+      }
     }
-  }
+//  }
 }
 
-/* -------------------------------------------------------------- LOGO */
-.logoContainer{
-  z-index: 10;
-  background:none;
-  @include absolute($space '' '' $space);
-}
 
 
 
@@ -78,12 +103,11 @@ li.toolBarMoreButton{
     $arrowSize: 8px;
     position: absolute;
     left: 50%;
-    border: solid transparent;
     content: '';
     height: 0;
     width: 0;
+    border: $arrowSize solid transparent;
     border-bottom-color: $firstColor;
-    border-width: $arrowSize;
     top: (-$arrowSize*2);
     margin-left: -$arrowSize;
   }
@@ -199,17 +223,21 @@ li.toolBarMoreButton{
   }
 }
 
-.mb-element-zoombar{
+.mb-element-zoombar {
   z-index: 30;
   @include transition(all .2s ease-in-out);
 
-  @include desktops(){
+  @include desktops() {
     @include absolute($space*4 $space '' '');
   }
 
-  @include smartphones(){
-    .zoomSliderLevels, .zoomBox, .pan, .history{display:none !important;}
-    .toolPane{padding:6px 10px;}
+  @include smartphones() {
+    .zoomSliderLevels, .zoomBox, .pan, .history {
+      display: none !important;
+    }
+    .toolPane {
+      padding: 6px 10px;
+    }
     @include absolute('' $space $space '');
     top: auto !important;
   }
