@@ -37,24 +37,41 @@
           }
         }
       }
-      .toolBar{
-        > .toolBarItem{
-          &.toolBarItemActive{
-            background-color: transparent;
-            > span{
-              background-color: #f9f9f9;
-            }
-          }
-          > .iconBig{
+      .toolBar {
+        > .toolBarItem {
+          > .iconBig {
             font-size: 0;
-            &:before{
+            &:before {
               padding-left: 5px;
             }
           }
         }
       }
     }
-//  }
+  //  }
+  .toolBar {
+    > .toolBarItem {
+      label{
+        margin-bottom: 0px;
+      }
+      > span {
+        border-radius: 3px;
+        position: relative;
+        margin: -3px -5px -3px -2px;
+        padding: 3px 3px 3px 25px;
+      }
+      &.toolBarItemActive {
+        background-color: transparent;
+        > span {
+          background-color: #f9f9f9;
+          opacity: 1;
+        }
+        &::before{
+          color: #fff;
+        }
+      }
+    }
+  }
 }
 
 
@@ -148,16 +165,6 @@ li.toolBarMoreButton{
   border-radius: 0;
 }
 
-
-
-
-
-
-
-
-
-
-/* ---------------------------------------------------------- CONTENT */
 .contentPane{
   overflow:hidden;
   @include absolute(0 0 0 0);
