@@ -295,7 +295,7 @@ class WmcParser110 extends WmcParser
             $children = array($rootLayHandler->generateConfiguration());
             $wmsconf->setChildren($children);
             return array(
-                'type' => $wmsinst->getType(),
+                'type' => strtolower($wmsinst->getType()),
                 'title' => $wmsinst->getTitle(),
                 'id' => $wmsinst->getId(),
                 'configuration' => $wmsconf->toArray());
@@ -337,7 +337,7 @@ class WmcParser110 extends WmcParser
             $children = array($rootLayHandler->generateConfiguration());
             $wmsconf->setChildren($children);
             return array(
-                'type' => $wmsinst->getType(),
+                'type' => strtolower($wmsinst->getType()),
                 'title' => $wmsinst->getTitle(),
                 'id' => $wmsinst->getId(),
                 'configuration' => $wmsconf->toArray());
