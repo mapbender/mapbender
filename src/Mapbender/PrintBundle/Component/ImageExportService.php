@@ -132,12 +132,12 @@ class ImageExportService
         if ($this->format == 'png') {
             header("Content-type: image/png");
             header("Content-Disposition: attachment; filename=export_" . $date . $time . ".png");
-            header('Content-Length: ' . filesize($file));
+            //header('Content-Length: ' . filesize($file));
             imagepng($image);
         } else {
             header("Content-type: image/jpeg");
             header("Content-Disposition: attachment; filename=export_" . $date . $time . ".jpg");
-            header('Content-Length: ' . filesize($file));
+            //header('Content-Length: ' . filesize($file));
             imagejpeg($image, null, 85);
         }
         unlink($this->finalimagename);

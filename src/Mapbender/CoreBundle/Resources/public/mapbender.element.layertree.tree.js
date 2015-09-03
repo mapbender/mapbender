@@ -38,6 +38,8 @@
             parentInvisible: ''
         },
         _create: function() {
+            this.loadStarted = {};
+            this.sourceAtTree = {};
             if (!Mapbender.checkTarget("mbLayertree", this.options.target)) {
                 return;
             }
@@ -634,6 +636,9 @@
             }
         },
         _subStringText: function(text) {
+            if(text === null) {
+                return '';
+            }
             if (text.length <= this.options.titlemaxlength) {
                 return text;
             } else {
@@ -666,6 +671,7 @@
                 infoable: nodeConfig.options.treeOptions.allow.info,
                 reorderable: nodeConfig.options.treeOptions.allow.reorder
             };
+
             if (nodeConfig.children) {
                 conf["toggle"] = nodeConfig.options.treeOptions.toggle;
                 conf["toggleable"] = nodeConfig.options.treeOptions.allow.toggle;
@@ -719,7 +725,6 @@
             return false;
         },
         _toggleSourceVisibility: function(e) {
-console.log('huhu')
             var self = this;
             var $sourceVsbl = $(e.target);
             var $li = $sourceVsbl.parents('li:first');
@@ -902,7 +907,7 @@ console.log('huhu')
                         }
                     });
                 }
-                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0 
+                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0
                     && self.model.getLayerExtents({
                         sourceId: sourceId,
                         layerId: layerId

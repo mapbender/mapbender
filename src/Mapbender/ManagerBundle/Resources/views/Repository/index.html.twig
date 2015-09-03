@@ -25,16 +25,21 @@
           <span class="smallerText">{{ source.id }}</span><br>
           <span class="smallerText">{{ source.type }}</span><br>
             {% if source.valid == true %}
-                <span class="iconStarO icon" title="{{"mb.manager.admin.source.valid"|trans}}"></span>
+                <span class="iconStarO icon" title="{{"mb.manager.admin.source.valid"|trans}}"></span><br>
             {% elseif source.valid is not null %}
-                <span class="iconWarningSmpl icon" title="{{"mb.manager.admin.source.notvalid"|trans}}"></span>
+                <span class="iconWarningSmpl icon" title="{{"mb.manager.admin.source.notvalid"|trans}}"></span><br>
+            {% endif %}
+            {% if source.status == 0 %}
+                <span class="iconOk icon" title="{{"mb.manager.admin.source.status.ok"|trans}}"></span>
+            {% elseif source.status == 1 %}
+                <span class="iconBan icon error" title="{{"mb.manager.admin.source.status.unreachable"|trans}}"></span>
+            {% elseif source.status == 2 %}
+                <span class="iconReset icon warning" title="{{"mb.manager.admin.source.status.toupdate"|trans}}"></span>
             {% endif %}
         </div>
         <div class="col2 box">
           <a href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
-          {% if source.description|trim|length > 0 %}
-            <div class="description">{{ source.description }}</div>
-          {% endif %}
+          <div class="description">{{ source.description }}</div>
           <div class="buttonGroup">
             <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
             {% if is_granted('EDIT', oid) or is_granted('EDIT', source) %}

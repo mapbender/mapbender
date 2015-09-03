@@ -17,6 +17,7 @@ use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Utils\EntityUtil;
+use Exception;
 
 /**
  * The class LoadApplicationData loads the applications from the "mapbender.yml"
@@ -29,12 +30,13 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
 
     private $container;
 
-    public function setContainer(ContainerInterface $container = NULL)
+    public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
-    public function load(ObjectManager $manager) {
+    public function load(ObjectManager $manager)
+    {
         $definitions = $this->container->getParameter('applications');
         $sourceLays = array();
         foreach ($definitions as $slug => $definition) {
@@ -47,27 +49,41 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             $appHandler = new Application($this->container, $application, array());
 
             $application->setSlug(
-                EntityUtil::getUniqueValue($manager, get_class($application), 'slug', $application->getSlug() . '_yml', '')
+                EntityUtil::getUniqueValue(
+                    $manager,
+                    get_class($application),
+                    'slug',
+                    $application->getSlug() . '_yml',
+                    ''
+                )
             );
             $application->setTitle(
-                EntityUtil::getUniqueValue($manager, get_class($application), 'title', $application->getSlug() . ' YML', '')
+                EntityUtil::getUniqueValue(
+                    $manager,
+                    get_class($application),
+                    'title',
+                    $application->getSlug() . ' YML',
+                    ''
+                )
             );
             $manager->getConnection()->beginTransaction();
             $application->setSource(ApplicationEntity::SOURCE_DB);
             $application->setPublished(true);
+            $application->setScreenshot(null);
+            $application->setScreenshotFile(null);
             $manager->persist($application->setUpdated(new \DateTime('now')));
             $elms = array();
             $lays = array();
-            foreach($application->getRegionProperties() as $prop) {
+            foreach ($application->getRegionProperties() as $prop) {
                 $manager->persist($prop);
             }
-            foreach($application->getElements() as $elm) {
+            foreach ($application->getElements() as $elm) {
                 $elms[$elm->getId()] = $elm;
                 $manager->persist($elm);
             }
             $this->persistLayersets($manager, $lays, $application->getLayersets(), $sourceLays);
             $manager->flush();
-            foreach($application->getRegionProperties() as $prop) {
+            foreach ($application->getRegionProperties() as $prop) {
                 $prop->setApplication($application);
                 $manager->persist($prop);
             }
@@ -82,7 +98,8 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         }
     }
 
-    private function addViewRight($application) {
+    private function addViewRight($application)
+    {
         $aclProvider = $this->container->get('security.acl.provider');
         $maskBuilder = new MaskBuilder();
 
@@ -92,34 +109,36 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
 
         try {
             $acl = $aclProvider->findAcl($uoid);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $acl = $aclProvider->createAcl($uoid);
         }
         $acl->insertObjectAce(new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'), $umask);
         $aclProvider->updateAcl($acl);
     }
 
-    private function persistLayersets($manager, &$lays, $sets, &$sourceLays) {
-        foreach($sets as $set) {
+    private function persistLayersets($manager, &$lays, $sets, &$sourceLays)
+    {
+        foreach ($sets as $set) {
             $lays[$set->getId()] = $set;
             $manager->persist($set);
-            foreach($set->getInstances() as $inst) {
+            foreach ($set->getInstances() as $inst) {
                 $src = $inst->getSource();
                 $srcId = $src->getId();
                 $matching = $this->findMatchingSource($manager, $src);
-                if($matching == null || !array_key_exists($srcId, $sourceLays)) {
+                if ($matching == null || !array_key_exists($srcId, $sourceLays)) {
                     $sourceLays[$srcId] = array();
                     $matching = null;
                 } else {
                     $inst->setSource($matching);
                     $src = $matching;
                 }
-                foreach($src->getLayers() as $lay) {
+                foreach ($src->getLayers() as $lay) {
                     $manager->persist($lay);
                 }
+
                 $manager->persist($src);
-                foreach($inst->getLayers() as $lay) {
-                    if($matching != null) {
+                foreach ($inst->getLayers() as $lay) {
+                    if ($matching != null) {
                         $lay->setSourceItem($sourceLays[$srcId][$lay->getId()]->getSourceItem());
                     } else {
                         $sourceLays[$srcId][$lay->getId()] = $lay;
@@ -131,7 +150,8 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         }
     }
 
-    private function updateElements(&$elms, &$lays, $manager) {
+    private function updateElements(&$elms, &$lays, $manager)
+    {
         foreach ($elms as $element) {
             $config = $element->getConfiguration();
             if (isset($config['target'])) {
@@ -159,7 +179,8 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         }
     }
 
-    private function findMatchingSource($manager, $source) {
+    private function findMatchingSource($manager, $source)
+    {
         $repo = $manager->getRepository(get_class($source));
         foreach ($repo->findBy(array('originUrl' => $source->getOriginUrl())) as $fsource) {
             if ($source->getLayers()->count() === $fsource->getLayers()->count()) {

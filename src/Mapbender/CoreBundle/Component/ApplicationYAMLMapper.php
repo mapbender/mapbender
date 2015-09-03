@@ -96,16 +96,15 @@ class ApplicationYAMLMapper
             $application->setCustomCss($definition['custom_css']);
         }
 
-        if(isset($definition['publicOptions'])){
+        if (isset($definition['publicOptions'])) {
             $application->setPublicOptions($definition['publicOptions']);
         }
 
-        if(isset($definition['publicOptions'])){
+        if (isset($definition['publicOptions'])) {
             $application->setPublicOptions($definition['publicOptions']);
         }
 
-        if(array_key_exists('extra_assets', $definition))
-        {
+        if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
         }
         if (key_exists('regionProperties', $definition)) {
@@ -203,9 +202,9 @@ class ApplicationYAMLMapper
         foreach ($definition['layersets'] as $id => $layerDefinitions) {
             $layerset = new Layerset();
             $layerset
-                    ->setId($id)
-                    ->setTitle('YAML - ' . $id)
-                    ->setApplication($application);
+                ->setId($id)
+                ->setTitle('YAML - ' . $id)
+                ->setApplication($application);
 
             $weight = 0;
             foreach ($layerDefinitions as $id => $layerDefinition) {

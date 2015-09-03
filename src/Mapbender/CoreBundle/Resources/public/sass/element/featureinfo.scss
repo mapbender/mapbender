@@ -55,6 +55,14 @@
             }
           }
         }
+        .featureInfoTabContainer {
+          height:100%;
+          >.container.active{
+            height:90%;
+            overflow:auto;
+            >iframe{height:98%;}
+          }
+        }
       }
     }
   }

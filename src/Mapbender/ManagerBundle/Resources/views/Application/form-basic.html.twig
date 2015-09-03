@@ -1,8 +1,7 @@
-{{ form_label(form.title) }}
+<label class="left labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.title" | trans}}:<span class="required">*</span></label>
 {{ form_widget(form.title) }}
 <div class="clearContainer"></div>
-
-{{ form_label(form.slug) }}
+<label class="left labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.url.title" | trans}}:<span class="required">*</span></label>
 {{ form_widget(form.slug) }}<br>
 <div class="clearContainer"></div>
 
@@ -31,7 +30,7 @@
 </div>
 <div class="clearContainer"></div>
 
-{{ form_label(form.description) }}
+<label class="left labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.description" | trans}}</label>
 {{ form_widget(form.description) }}
 
 {{ form_widget(form.removeScreenShot) }}

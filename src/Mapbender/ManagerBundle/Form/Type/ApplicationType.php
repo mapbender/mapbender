@@ -32,7 +32,6 @@ class ApplicationType extends AbstractType
                     'title' => 'The application title, as shown in the browser '
                     . 'title bar and in lists.')))
             ->add('slug', 'text', array(
-                'label' => 'URL title',
                 'attr' => array(
                     'title' => 'The URL title (slug) is based on the title and used in the '
                     . 'application URL.')))

@@ -18,7 +18,7 @@
         mapClickHandler: null,
         popup: null,
         context: null,
-        queries: [],
+        queries: {},
         state: null,
         contentManager: null,
         _create: function() {
@@ -30,13 +30,9 @@
         _setup: function() {
             this.target = $("#" + this.options.target).data("mapbenderMbMap");//.getModel();
             this.mapClickHandler = new OpenLayers.Handler.Click(this,
-                {
-                    'click': this._triggerFeatureInfo
-                },
-            {
-                map: $('#' + this.options.target).data(
-                    'mapQuery').olMap
-            });
+                {'click': this._triggerFeatureInfo},
+                {map: $('#' + this.options.target).data('mapQuery').olMap}
+            );
             if (this.options.autoActivate){
                 this.activate();
             }
@@ -71,8 +67,9 @@
             if (this.options.type === 'dialog') {// visible for dialog
                 if (this.state && this.state === 'opened') {
                     return true;
-                } else
+                } else {
                     return false;
+                }
             } else { // TODO visible for element ?
                 return true;
             }
@@ -91,22 +88,18 @@
             var self = this;
             var x = e.xy.x;
             var y = e.xy.y;
-            var num = 0;
             var called = false;
-
-            if (!self.options.onlyValid) {
-                this._setContentEmpty();
-            } else if (self.options.onlyValid && this._isVisible()) {
-                this._setContentEmpty();
-            }
+            this.queries = {};
             $('#js-error-featureinfo').addClass('hidden');
             $.each(this.target.getModel().getSources(), function(idx, src) {
                 var mqLayer = self.target.getModel().map.layersList[src.mqlid];
                 if (Mapbender.source[src.type]) {
                     var url = Mapbender.source[src.type].featureInfoUrl(mqLayer, x, y, $.proxy(self._setInfo, self));
                     if (url) {
+                        self.queries[mqLayer.id] = url;
                         if (!self.options.onlyValid) {
                             self._addContent(mqLayer, 'wird geladen');
+                            self._open();
                         }
                         called = true;
                         if (self.options.showOriginal && !self.options.onlyValid) {
@@ -114,6 +107,8 @@
                         } else {
                             self._setInfo(mqLayer, url);
                         }
+                    } else {
+                        self._removeContent(mqLayer);
                     }
                 }
             });
@@ -159,11 +154,19 @@
         _isDataValid: function(data, mimetype) {
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    var found = (/<body>(.+?)<\/body>/gi).exec(data.replace(/\r|\n/g, ""));
+                    var help = data.replace(/\r|\n/g, "");
+                    var found = (/<body>(.+?)<\/body>/gi).exec(help);
                     if (found && $.isArray(found) && found[1] && found[1].trim() !== '') {
+                        /* valid "text/html" response */
                         return true;
                     } else {
-                        return false;
+                        /* not valid "text/html" response, but ... */
+                        var found = (/<[a-zA-Z]+>[^<]+<\/[a-zA-Z]+>/gi).exec(help);
+                        if (found && $.isArray(found)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
                 case 'text/plain':
                     return data.trim() === '';
@@ -172,11 +175,11 @@
             }
         },
         _showOriginal: function(mqLayer, data, mimetype, url) {
+            var self = this;
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    if (this.options.onlyValid && this._isDataValid(data,
-                        mimetype)) { // !onlyValid s. _triggerFeatureInfo
+                    if (this.options.onlyValid && this._isDataValid(data, mimetype)) { // !onlyValid s. _triggerFeatureInfo
                         /* add a blank iframe and replace it's content */
                         this._trigger('featureinfo', null, {
                             action: "haveresult",
@@ -184,13 +187,17 @@
                                 'title'),
                             id: this.element.attr('id')
                         });
-                        var uuid = Mapbender.Util.UUID();
-                        this._addContent(mqLayer, this._getIframeDeclaration(uuid, null));
-                        var doc = document.getElementById(uuid).contentWindow.document;
-                        doc.open();
-                        doc.write(data);
-                        doc.close();
+                        this._open();
+                        window.setTimeout(function() {// fix popup open setTimeout 100
+                            var uuid = Mapbender.Util.UUID();
+                            self._addContent(mqLayer, self._getIframeDeclaration(uuid, null));
+                            var doc = document.getElementById(uuid).contentWindow.document;
+                            doc.open();
+                            doc.write(data);
+                            doc.close();
+                        }, 100);
                     } else {
+                        this._removeContent(mqLayer);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
@@ -204,7 +211,9 @@
                             id: this.element.attr('id')
                         });
                         this._addContent(mqLayer, '<pre>' + data + '</pre>');
+                        this._open();
                     } else {
+                        this._removeContent(mqLayer);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
@@ -222,7 +231,9 @@
                             id: this.element.attr('id')
                         });
                         this._addContent(mqLayer, data);
+                        this._open();
                     } else {
+                        this._removeContent(mqLayer);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
@@ -237,6 +248,7 @@
                         });
                         this._addContent(mqLayer, '<pre>' + data + '</pre>');
                     } else {
+                        this._setContentEmpty(mqLayer.id);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
@@ -256,9 +268,6 @@
             } catch (e) {
             }
             return data;
-        },
-        _wrapData: function(data, $wraper) {
-            return $wraper.append(data);
         },
         _getContentManager: function() {
             if (!this.contentManager) {
@@ -281,7 +290,7 @@
             }
             return this.contentManager;
         },
-        _getContext: function() {
+        _open: function() {
             var self = this;
             if (this.options.type === 'dialog') {
                 if (!this.popup || !this.popup.$element) {
@@ -334,18 +343,36 @@
                         });
                     }
                 }
-                this.popup.open();
+                if(self.state !== 'opened') {
+                    this.popup.open();
+                }
             }
+        },
+        _getContext: function() {
             return this.element;
         },
         _selectorSelfAndSub: function(idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
+         _removeContent: function(mqLayer) {
+            var $context = this._getContext();
+            var manager = this._getContentManager();
+            $(this._selectorSelfAndSub(manager.headerId(mqLayer.id), manager.headerContentSel), $context).remove();
+            $(this._selectorSelfAndSub(manager.contentId(mqLayer.id), manager.contentContentSel), $context).remove();
+            delete(this.queries[mqLayer.id]);
+            for (var prop in this.queries) {
+                return;
+            }
+            this._setContentEmpty();
+//            if (!this.options.deactivateOnClose && this.popup) {
+//                this.popup.close();
+//            }
+         },
         _setContentEmpty: function(id) {
             var $context = this._getContext();
             var manager = this._getContentManager();
             if (id) {
-                $(this._selectorSelfAndSub(manager.headerId(id), manager.headerContentSel), $context).text('');
+//                $(this._selectorSelfAndSub(manager.headerId(id), manager.headerContentSel), $context).text('');
                 $(this._selectorSelfAndSub(manager.contentId(id), manager.contentContentSel), $context).empty();
             } else {
                 $(manager.headerSel, manager.$headerParent).remove();
@@ -380,7 +407,7 @@
         },
         _printContent: function() {
             var $context = this._getContext();
-            var w = window.open("", "title", "attributes");
+            var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
             var el = $('.js-content-content.active,.active .js-content-content', $context);
             var printContent = "";
             if ($('> iframe', el).length === 1) {
@@ -390,10 +417,9 @@
                 printContent = el.html();
             }
             w.document.write(printContent);
-            w.setTimeout(function() {
-                w.print();
-            }, 1000);
+            w.print();
         },
+        
         /**
          *
          */
