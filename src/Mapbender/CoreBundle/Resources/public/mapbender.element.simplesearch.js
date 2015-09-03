@@ -29,7 +29,7 @@ $.widget('mapbender.mbSimpleSearch', {
             if(searchTerm.length >= self.autocomplete.options.minLength) {
                 self.autocomplete.find(searchTerm);
             }
-            event.preventDefault();
+            evt.preventDefault();
         });
 
         // On item selection in autocomplete, parse data and set map bbox
