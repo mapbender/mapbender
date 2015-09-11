@@ -5,11 +5,11 @@
             title: '',
             map: null,
             featureinfo: null,
-            highlightsource: [],
-            loadWms: []
+            highlight_source: true,
+            load_declarative_wms: true
         },
         map: null,
-        geomElmSelector: '.geometryElement',
+        geomElmSelector: '.geometryElement',//'[data-geometry][data-srid]',//
         loadWmsSelector: '[mb-action]',
         featureinfo: null,
         highlighter: {},
@@ -155,7 +155,7 @@
         },
         _featureInfoChanged: function(e, options) {
             if (options.action === 'activated_content') {
-                if(this.options.highlightsource){
+                if(this.options.highlight_source){
                     for (var key in this.highlighter) {
                         this.highlighter[key].offAll();
                     }
@@ -165,17 +165,17 @@
                         this._highLightOn(options.id, options.activated_content);
                     }
                 }
-                if(this.options.highlightsource){
+                if(this.options.load_declarative_wms){
                     this._loadWmsOn(options.id, options.activated_content);
                 }
             } else if (options.action === 'closedialog' || options.action === 'deactivate') {
-                if(this.options.highlightsource){
+                if(this.options.highlight_source){
                     this._featureInfoMouseEventsOff();
                     for (var key in this.highlighter) {
                         this.highlighter[key].offAll();
                     }
                 }
-                if(this.options.highlightsource){
+                if(this.options.load_declarative_wms){
                     this._loadWmsOff(options.id, options.activated_content);
                 }
             }

@@ -45,9 +45,7 @@ class FeatureInfoExtAdminType extends AbstractType
                 'application'   => $options['application'],
                 'property_path' => '[featureinfo]',
                 'required'      => false))
-            ->add('highlightSource', "checkbox", array(
-                'property_path'   => '[highlightsource]'))
-            ->add('loadWms', "checkbox", array(
-                'property_path'   => '[loadwms]'));
+            ->add('load_declarative_wms', "checkbox", array())
+            ->add('highlight_source', "checkbox", array());
     }
 }
