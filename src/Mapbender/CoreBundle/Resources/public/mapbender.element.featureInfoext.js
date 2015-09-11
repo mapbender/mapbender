@@ -9,7 +9,7 @@
             loadWms: []
         },
         map: null,
-        geomElmSelector: '[data-geometry][data-srid]',
+        geomElmSelector: '.geometryElement',
         loadWmsSelector: '[mb-action]',
         featureinfo: null,
         highlighter: {},
