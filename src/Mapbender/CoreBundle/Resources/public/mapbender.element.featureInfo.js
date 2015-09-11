@@ -28,6 +28,7 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
         _setup: function() {
+            var self = this;
             this.target = $("#" + this.options.target).data("mapbenderMbMap");//.getModel();
             this.mapClickHandler = new OpenLayers.Handler.Click(this,
                 {'click': this._triggerFeatureInfo},
@@ -36,6 +37,28 @@
             if (this.options.autoActivate){
                 this.activate();
             }
+            $(this.element).on('click', '.js-header', function(e) {
+                var active_contents = [];
+                $('.js-content.active:first', self.element).each(function(idx, item){ // only one tab is active
+                    if($('iframe:first', $(this)).length){
+                        var ifd = $('iframe:first', $(this)).contents().get(0);
+                        var iframe_document = $($('iframe:first', $(this)).contents().get(0));
+                        iframe_document.ready(function(){
+                            self._trigger('featureinfo', null, {
+                                action: "activated_content",
+                                id: self.element.attr('id'),
+                                activated_content: [$(item).attr('id')]
+                            });
+                        });
+                    } else {
+                        self._trigger('featureinfo', null, {
+                            action: "activated_content",
+                            id: self.element.attr('id'),
+                            activated_content: [$(item).attr('id')]
+                        });
+                    }
+                });
+            });
             this._trigger('ready');
             this._ready();
         },
@@ -51,6 +74,11 @@
             this.mapClickHandler.activate();
         },
         deactivate: function() {
+            this._trigger('featureinfo', null, {
+                action: "deactivate",
+                title: this.element.attr('title'),
+                id: this.element.attr('id')
+            });
             $('#' + this.options.target).removeClass('mb-feature-info-active');
             $(".toolBarItemActive").removeClass("toolBarItemActive");
             if (this.popup) {
@@ -190,11 +218,12 @@
                         this._open();
                         window.setTimeout(function() {// fix popup open setTimeout 100
                             var uuid = Mapbender.Util.UUID();
-                            self._addContent(mqLayer, self._getIframeDeclaration(uuid, null));
+                            self._addContent(mqLayer, self._getIframeDeclaration(uuid, null), false);
                             var doc = document.getElementById(uuid).contentWindow.document;
                             doc.open();
                             doc.write(data);
                             doc.close();
+                            $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
                         }, 100);
                     } else {
                         this._removeContent(mqLayer);
@@ -320,6 +349,11 @@
                         }
                     });
                     this.popup.$element.on('close', function() {
+                        self._trigger('featureinfo', null, {
+                            action: "closedialog",
+                            title:  self.element.attr('title'),
+                            id:     self.element.attr('id')
+                        });
                         self.state = 'closed';
                         if (self.options.deactivateOnClose) {
                             self.deactivate();
@@ -354,7 +388,7 @@
         _selectorSelfAndSub: function(idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
-         _removeContent: function(mqLayer) {
+        _removeContent: function(mqLayer) {
             var $context = this._getContext();
             var manager = this._getContentManager();
             $(this._selectorSelfAndSub(manager.headerId(mqLayer.id), manager.headerContentSel), $context).remove();
@@ -379,7 +413,7 @@
                 $(manager.contentSel, manager.$contentParent).remove();
             }
         },
-        _addContent: function(mqLayer, content) {
+        _addContent: function(mqLayer, content, click) {
             var $context = this._getContext();
             var manager = this._getContentManager();
             var $header = $('#' + manager.headerId(mqLayer.id), $context);
@@ -400,9 +434,9 @@
                 .empty().append(content);
             if (this.options.displayType === 'tabs' || this.options.displayType === 'accordion') {
                 initTabContainer($context);
-                $header.click();
-            } else if (this.options.displayType === 'tabs') {
-
+                if(click !== false){
+                    $header.click();
+                }
             }
         },
         _printContent: function() {
