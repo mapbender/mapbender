@@ -20,7 +20,7 @@ class WmsLoader extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.wms.wmsloader.class.title";
     }
@@ -28,7 +28,7 @@ class WmsLoader extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.wms.wmsloader.class.description";
     }
@@ -36,7 +36,7 @@ class WmsLoader extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array("mb.wms.wmsloader.wms", "mb.wms.wmsloader.loader");
     }
@@ -68,13 +68,12 @@ class WmsLoader extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         $files = array(
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                'mapbender.element.wmsloader.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js'),
+                'mapbender.element.wmsloader.js'),
             'css' => array('@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss'),
             'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));
         return $files;
@@ -92,9 +91,9 @@ class WmsLoader extends Element
             foreach ($all as $key => $value) {
                 if (strtolower($key) === "version" && stripos($wms_url, "version") === false) {
                     $wms_url .= "&version=" . $value;
-                } else if (strtolower($key) === "request" && stripos($wms_url, "request") === false) {
+                } elseif (strtolower($key) === "request" && stripos($wms_url, "request") === false) {
                     $wms_url .= "&request=" . $value;
-                } else if (strtolower($key) === "service" && stripos($wms_url, "service") === false) {
+                } elseif (strtolower($key) === "service" && stripos($wms_url, "service") === false) {
                     $wms_url .= "&service=" . $value;
                 }
             }
@@ -105,21 +104,6 @@ class WmsLoader extends Element
             $configuration['wms_id'] = $wmsId;
         }
         return $configuration;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getAssets()
-    {
-        $files = self::listAssets();
-
-        $config = $this->getConfiguration();
-        if (!(isset($config['useDeclarative']) && $config['useDeclarative'] === true)) {
-            $idx = array_search('@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js', $files['js']);
-            unset($files['js'][$idx]);
-        }
-        return $files;
     }
 
     /**
@@ -143,13 +127,14 @@ class WmsLoader extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')
-                ->render('MapbenderWmsBundle:Element:wmsloader.html.twig',
-                         array(
-                    'id' => $this->getId(),
-                    "title" => $this->getTitle(),
-                    'example_url' => $this->container->getParameter('wmsloader.example_url'),
-                    'configuration' => $this->getConfiguration()));
+        return $this->container->get('templating')->render(
+            'MapbenderWmsBundle:Element:wmsloader.html.twig',
+            array(
+                'id' => $this->getId(),
+                "title" => $this->getTitle(),
+                'example_url' => $this->container->getParameter('wmsloader.example_url'),
+                'configuration' => $this->getConfiguration())
+        );
     }
 
     /**
@@ -188,9 +173,11 @@ class WmsLoader extends Element
             'url' => urlencode($signedUrl)
         );
         $subRequest = $this->container->get('request')->duplicate(
-            array('url' => urlencode($signedUrl)), $this->container->get('request')->request->all(), $path);
-        return $this->container->get('http_kernel')->handle(
-                $subRequest, HttpKernelInterface::SUB_REQUEST);
+            array('url' => urlencode($signedUrl)),
+            $this->container->get('request')->request->all(),
+            $path
+        );
+        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -203,8 +190,11 @@ class WmsLoader extends Element
         $gc_url = urldecode($this->container->get('request')->get("url", null));
         $signer = $this->container->get('signer');
         $signedUrl = $signer->signUrl($gc_url);
-        return new Response(json_encode(array("success" => $signedUrl)), 200,
-                                        array('Content-Type' => 'application/json'));
+        return new Response(
+            json_encode(array("success" => $signedUrl)),
+            200,
+            array('Content-Type' => 'application/json')
+        );
     }
 
     /**
@@ -219,8 +209,11 @@ class WmsLoader extends Element
         foreach ($sources as &$source) {
             $source['configuration']['options']['url'] = $signer->signUrl($source['configuration']['options']['url']);
         }
-        return new Response(json_encode(array("success" => json_encode($sources))), 200,
-                                                                       array('Content-Type' => 'application/json'));
+        return new Response(
+            json_encode(array("success" => json_encode($sources))),
+            200,
+            array('Content-Type' => 'application/json')
+        );
     }
 
     /**
@@ -236,7 +229,8 @@ class WmsLoader extends Element
             $securityContext = $this->container->get('security.context');
             $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
             if (false !== $securityContext->isGranted('VIEW', $oid)) {
-                $instance = $this->container->get('doctrine')->getRepository("MapbenderWmsBundle:WmsInstance")->find($instanceid);
+                $instance = $this->container->get('doctrine')->getRepository("MapbenderWmsBundle:WmsInstance")
+                    ->find($instanceid);
                 $entityHandler = EntityHandler::createHandler($this->container, $instance);
                 $entityHandler->create(false);
                 $instConfig = array(
@@ -246,8 +240,10 @@ class WmsLoader extends Element
                 $instances[] = $instConfig;
             }
         }
-        return new Response(json_encode(array("success" => json_encode($instances))), 200,
-                                                                       array('Content-Type' => 'application/json'));
+        return new Response(
+            json_encode(array("success" => json_encode($instances))),
+            200,
+            array('Content-Type' => 'application/json')
+        );
     }
-
 }
