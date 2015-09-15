@@ -6,7 +6,8 @@ $(function(){
     var last, sub, lastSub, item;
 
     function handlePanPos(){
-        if(window.innerWidth > 600){
+        var width = window.outerWidth - window.innerWidth
+        if(width > 600){
             var menu = $('#toolbarMoreMenu');
             var pan = $('.mb-element-zoombar');
 
