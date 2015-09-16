@@ -216,7 +216,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             }
         }
         $this->mapper[$realClass][] =
-            array('before' => $criteriaBefore, 'after' => array( 'criteria' => $criteriaAfter, 'object' => $object));
+            array('before' => $criteriaBefore, 'after' => array('criteria' => $criteriaAfter, 'object' => $object));
     }
 
     /**
@@ -287,9 +287,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             $elmComp = new $elmClass($applComp, $this->container, $element);
             $configuration = $element->getConfiguration();
             foreach ($configuration as $key => $value) {
-                if ($key === 'target') { # dirty
-                    $target = $this->getFromMapper($this->getRealClass($element), array('id' => $value));
-                    $configuration[$key] = $target['criteria']['id'];
+                if ($key === 'target') {
+                    $configuration[$key] = $this->getIdentFromMapper($this->getRealClass($element), $value);
                 } else {
                     $configuration[$key] = $this->handleConfiguration($value);
                 }
@@ -313,16 +312,25 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             foreach ($this->mapper as $key => $value) {
                 if (class_exists($key) && $this->findSuperClass($key, $className)) {
                     $result = $this->getFromMapper($key, array('id' => $id));
-                    if ($result && isset($result['criteria']) && isset($result['criteria']['id'])) {
-                        return $result['criteria']['id'];
+                    if ($result && isset($result['criteria'])) {
+                        if (isset($result['criteria']['id'])) {
+                            return $result['criteria']['id'];
+                        } elseif (isset($result['object'])) {
+                            return $result['object']->getId();
+                        }
                     }
                 }
             }
             return null;
         } else {
             $result = $this->getFromMapper($className, array('id' => $id));
-            return $result && isset($result['criteria']) && isset($result['criteria']['id'])
-                ? $result['criteria']['id'] : null;
+            if ($result && isset($result['criteria']) && isset($result['criteria']['id'])) {
+                return $result['criteria']['id'];
+            } elseif (isset($result['object'])) {
+                return $result['object']->getId();
+            } else {
+                return null;
+            }
         }
     }
 }
