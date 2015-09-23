@@ -12,6 +12,8 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Form\Type\ImportJobType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  * Description of ImportHandler
@@ -75,14 +77,14 @@ class ImportHandler extends ExchangeHandler
             $em->flush();
             $em->getConnection()->commit();
             $em->clear();
+            if (isset($import[self::CONTENT_ACL])) {
+                $this->importAcls($import[self::CONTENT_ACL]);
+            }
         } catch (\Exception $e) {
             $em->getConnection()->rollback();
             $em->clear();
             throw new ImportException($this->container->get('translator')
                 ->trans('mb.manager.import.application.failed', array()) . " -> " . $e->getMessage());
-        }
-        if (isset($import[self::CONTENT_ACL])) {
-            $this->importAcls($import[self::CONTENT_ACL]);
         }
     }
 
@@ -136,11 +138,18 @@ class ImportHandler extends ExchangeHandler
         foreach ($data as $class => $content) { # add entities
             if ($this->denormalizer->findSuperClass($class, 'Mapbender\CoreBundle\Entity\Application')) {
                 foreach ($content as $item) {
-                    $app = $this->denormalizer->handleData($item, $class);
-                    $app->setScreenshot(null)
-                        ->setSource(Application::SOURCE_DB);
+                    $app         = $this->denormalizer->handleData($item, $class);
+                    $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
                     $em->persist($app);
                     $this->denormalizer->generateElementConfiguration($app);
+                    $aclManager  = $this->container->get('fom.acl.manager');
+                    $owner       = $this->container->get('security.context')->getToken()->getUser();
+                    $ownerAccess = array(
+                        array(
+                            'sid' => UserSecurityIdentity::fromAccount($owner),
+                            'mask' => MaskBuilder::MASK_OWNER)
+                    );
+                    $aclManager->setObjectACL($app, $ownerAccess, 'object');
                 }
             }
         }

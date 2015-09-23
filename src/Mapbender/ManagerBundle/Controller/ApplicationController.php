@@ -194,20 +194,12 @@ class ApplicationController extends Controller
         $expJob     = $expHandler->getJob();
         $expJob->getApplications()->add($tocopy);
         $expJob->setAddSources(false);
-//        $expJob->setAddAcl(true);
-//        $job = $expHandler->getJob();
-//
-//        $export = $expHandler->format($expHandler->makeJob());
-//
-//        die(print_r($expHandler->bindForm()));
-
         $data = $expHandler->makeJob();
 
         $impHandler = new ImportHandler($this->container, true);
         $importJob  = $impHandler->getJob();
         $importJob->setImportContent($data);
         $impHandler->makeJob();
-
         return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
     }
 
