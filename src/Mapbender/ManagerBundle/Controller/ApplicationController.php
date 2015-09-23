@@ -121,7 +121,7 @@ class ApplicationController extends Controller
                             'Content-disposition' => 'attachment; filename=export.json'
                         )
                     );
-                } else if ($job->getFormat() === ExchangeJob::FORMAT_YAML) {
+                } elseif ($job->getFormat() === ExchangeJob::FORMAT_YAML) {
                     return new Response(
                         $export,
                         200,
@@ -188,7 +188,7 @@ class ApplicationController extends Controller
     public function copydirectlyAction($slug)
     {
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted('OPERATOR', $tocopy);
+        $this->checkGranted('EDIT', $tocopy);
 
         $expHandler = new ExportHandler($this->container);
         $expJob     = $expHandler->getJob();
