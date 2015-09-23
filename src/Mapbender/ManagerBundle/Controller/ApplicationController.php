@@ -188,7 +188,7 @@ class ApplicationController extends Controller
     public function copydirectlyAction($slug)
     {
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted('CREATE', $tocopy);
+        $this->checkGranted('OPERATOR', $tocopy);
 
         $expHandler = new ExportHandler($this->container);
         $expJob     = $expHandler->getJob();
@@ -909,6 +909,10 @@ class ApplicationController extends Controller
             if (false === $securityContext->isGranted($action, $oid)) {
                 throw new AccessDeniedException();
             }
+        } elseif ($action === "MASTER" && !$securityContext->isGranted($action, $object)) {
+            throw new AccessDeniedException();
+        } elseif ($action === "OPERATOR" && !$securityContext->isGranted($action, $object)) {
+            throw new AccessDeniedException();
         } elseif ($action === "VIEW" && !$securityContext->isGranted($action, $object)) {
             throw new AccessDeniedException();
         } elseif ($action === "EDIT" && !$securityContext->isGranted($action, $object)) {
