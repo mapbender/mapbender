@@ -37,10 +37,10 @@ class FeatureInfoAdminType extends AbstractType
         $builder->add('tooltip', 'text', array('required' => false))
             ->add('type', 'choice', array(
                 'required' => true,
-                'choices'  => array('dialog' => 'Dialog', 'element' => 'Element')))
+                'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
             ->add('displayType', 'choice', array(
                 'required' => true,
-                'choices'  => array('tabs' => 'Tabs', 'accordion' => 'Accordion')))
+                'choices' => array('tabs' => 'Tabs', 'accordion' => 'Accordion')))
             ->add('autoActivate', 'checkbox', array('required' => false))
             ->add('printResult', 'checkbox', array('required' => false))
             ->add('deactivateOnClose', 'checkbox', array('required' => false))
@@ -50,7 +50,7 @@ class FeatureInfoAdminType extends AbstractType
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application'   => $options['application'],
                 'property_path' => '[target]',
-                'required'      => false))
+                'required' => false))
             ->add('width', 'integer', array('required' => true))
             ->add('height', 'integer', array('required' => true));
     }

@@ -34,7 +34,7 @@
                 {'click': this._triggerFeatureInfo},
                 {map: $('#' + this.options.target).data('mapQuery').olMap}
             );
-            if (this.options.autoActivate){
+            if (this.options.autoActivate || this.options.autoOpen){ // autoOpen old configuration
                 this.activate();
             }
             $(this.element).on('click', '.js-header', function(e) {

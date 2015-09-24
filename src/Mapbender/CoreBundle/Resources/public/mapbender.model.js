@@ -579,7 +579,11 @@ Mapbender.Model = {
             }
             this._layersHash[mqLayer.id] = layers.toString();
         }
-
+        if (this.map.olMap.tileManager) {
+            this.map.olMap.tileManager.clearTileQueue({
+                object: mqLayer.olLayer
+            });
+        }
         if(layers.length === 0) {
             mqLayer.olLayer.setVisibility(false);
             mqLayer.visible(false);
@@ -871,9 +875,8 @@ Mapbender.Model = {
                     if (mqLayer.olLayer instanceof OpenLayers.Layer.Grid) {
                         mqLayer.olLayer.clearGrid();
                     }
-                    var tileManager = this.map.olMap.tileManager;
-                    if (tileManager) {
-                        tileManager.clearTileQueue({
+                    if (this.map.olMap.tileManager) {
+                        this.map.olMap.tileManager.clearTileQueue({
                             object: mqLayer.olLayer
                         });
                     }

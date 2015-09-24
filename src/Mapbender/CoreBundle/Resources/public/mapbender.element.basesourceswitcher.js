@@ -25,12 +25,14 @@
             });
             this._hideSources();
             this._showActive();
+            this.element.find('.basesourcesetswitch:first').click();
         },
         _hideSources: function() {
             var me = $(this.element);
             var map = $('#' + this.options.target).data('mapbenderMbMap');
             var model = map.getModel();
             $.each(me.find('.basesourcesetswitch'), function(idx, elm) {
+                $(elm).attr("data-state", "");
                 var sourcesIds = $(elm).attr("data-sourceset").split(",");
                 for (var i = 0; i < sourcesIds.length; i++) {
                     if (sourcesIds[i] !== '') {
