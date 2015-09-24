@@ -44,7 +44,9 @@ class PrintService
         
         // data from client
         $this->data = $data;
-
+// print('<pre>');
+// print_r($data);
+// print('</pre>');
         // template configuration from odg
         $odgParser = new OdgParser($this->container);
         $this->conf = $conf = $odgParser->getConf($data['template']);       
@@ -805,6 +807,39 @@ class PrintService
 
             imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
         }
+    }
+	
+    private function drawMultiLineString($geometry, $image)
+    {
+        $color = $this->getColor(
+            $geometry['style']['strokeColor'],
+            $geometry['style']['strokeOpacity'],
+            $image);
+        imagesetthickness($image, $geometry['style']['strokeWidth']);
+	
+		foreach($geometry['coordinates'] as $coords) {
+		
+			for($i = 1; $i < count($coords); $i++) {
+
+				if($this->rotation == 0){
+					$from = $this->realWorld2mapPos(
+						$coords[$i - 1][0],
+						$coords[$i - 1][1]);
+					$to = $this->realWorld2mapPos(
+						$coords[$i][0],
+						$coords[$i][1]);
+				}else{
+					$from = $this->realWorld2rotatedMapPos(
+						$coords[$i - 1][0],
+						$coords[$i - 1][1]);
+					$to = $this->realWorld2rotatedMapPos(
+						$coords[$i][0],
+						$coords[$i][1]);
+				}
+
+				imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
+			}
+		}
     }
 
     private function drawPoint($geometry, $image)
