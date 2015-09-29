@@ -129,8 +129,8 @@ class ExchangeNormalizer extends ExchangeSerializer
                 $result[$key] = $this->handleValue($item);
             }
         } else {
-            foreach ($array as $item) {
-                $result[] = $this->handleValue($item);
+            while (list($idx, $item) = each($array)) {
+                $result[$idx] = $this->handleValue($item);
             }
         }
         return $result;
