@@ -108,8 +108,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                 }
                 return $result;
             } else {
-                foreach ($data as $item) {
-                    $result[] = $this->handleData($item);
+                while (list($idx, $item) = each($data)) {
+                    $result[$idx] = $this->handleData($item);
                 }
             }
             return $result;
@@ -264,8 +264,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                 }
             } else {
                 $help = array();
-                foreach ($value as $subvalue) {
-                    $help[] = $this->handleConfiguration($subvalue);
+                while (list($idx, $item) = each($value)) {
+                    $help[$idx] = $this->handleConfiguration($item);
                 }
                 return $help;
             }
