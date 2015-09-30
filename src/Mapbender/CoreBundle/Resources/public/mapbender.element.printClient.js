@@ -414,7 +414,7 @@
                         if(feature.style !== null){
                             geometry.style = feature.style;
                         }else{
-                            geometry.style = layer.styleMap.createSymbolizer(feature);
+							geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
                         }
                         geometries.push(geometry);
                     }
