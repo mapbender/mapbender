@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Form\Type\ImportJobType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
@@ -73,13 +74,16 @@ class ImportHandler extends ExchangeHandler
             $em->clear();
             $em->getConnection()->beginTransaction();
             $this->importSources($import);
-            $this->importApps($import);
+            $apps = $this->importApps($import);
             $em->flush();
+            foreach ($apps as $app) {
+                $this->addAcls($app);
+            }
             $em->getConnection()->commit();
             $em->clear();
-            if (isset($import[self::CONTENT_ACL])) {
-                $this->importAcls($import[self::CONTENT_ACL]);
-            }
+//            if (isset($import[self::CONTENT_ACL])) {
+//                $this->importAcls($import[self::CONTENT_ACL]);
+//            }
         } catch (\Exception $e) {
             $em->getConnection()->rollback();
             $em->clear();
@@ -134,6 +138,7 @@ class ImportHandler extends ExchangeHandler
      */
     private function importApps($data)
     {
+        $apps = array();
         $em = $this->container->get('doctrine')->getManager();
         foreach ($data as $class => $content) { # add entities
             if ($this->denormalizer->findSuperClass($class, 'Mapbender\CoreBundle\Entity\Application')) {
@@ -142,17 +147,43 @@ class ImportHandler extends ExchangeHandler
                     $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
                     $em->persist($app);
                     $this->denormalizer->generateElementConfiguration($app);
-                    $aclManager  = $this->container->get('fom.acl.manager');
-                    $owner       = $this->container->get('security.context')->getToken()->getUser();
-                    $ownerAccess = array(
-                        array(
-                            'sid' => UserSecurityIdentity::fromAccount($owner),
-                            'mask' => MaskBuilder::MASK_OWNER)
-                    );
-                    $aclManager->setObjectACL($app, $ownerAccess, 'object');
+                    $apps[] = $app;
                 }
             }
         }
+        return $apps;
+    }
+
+    private function addAcls($object)
+    {
+        $aces = array();
+        // add current user as owner for this object
+        $current_user       = $this->container->get('security.context')->getToken()->getUser();
+        $current_user_identity = UserSecurityIdentity::fromAccount($current_user);
+        $aces[] = array(
+            'sid' => $current_user_identity,
+            'mask' => MaskBuilder::MASK_OWNER
+        );
+        // copy ACEs from orig $object
+        if ($this->toCopy) {
+            $class = $this->denormalizer->getRealClass($object);
+            $classMeta = $this->container->get('doctrine')->getManager()->getClassMetadata($class);
+            $after_criteria = $this->denormalizer->getIdentCriteria($object, $classMeta, false, array());
+            $orig_criteria = $this->denormalizer->getBeforeFromAfter($class, $after_criteria);
+            $orig_object  = $this->denormalizer->findEntities($class, $orig_criteria);
+            $provider = $this->container->get('security.acl.provider');
+            $acl = $provider->findAcl(ObjectIdentity::fromDomainObject($orig_object[0]));
+            foreach ($acl->getObjectAces() as $ace) {
+                $user_sec_ident = $ace->getSecurityIdentity();
+                if (!$current_user_identity->equals($user_sec_ident)) {
+                    $aces[] = array(
+                        'sid' => $user_sec_ident,
+                        'mask' => $ace->getMask()
+                    );
+                }
+            }
+        }
+        $this->container->get('fom.acl.manager')->setObjectACL($object, $aces, 'object');
     }
 
     /**
@@ -225,7 +256,7 @@ class ImportHandler extends ExchangeHandler
                                 $criteria = $this->denormalizer->getIdentCriteria($subdata, $meta);
                                 $od = null;
                                 if ($this->denormalizer->isReference($subdata, $criteria)) {
-                                    if ($od = $this->denormalizer->getFromMapper($classDef[0], $criteria)) {
+                                    if ($od = $this->denormalizer->getAfterFromBefore($classDef[0], $criteria)) {
                                         ;
                                     } elseif ($od = $this->denormalizer->getEntityData($classDef[0], $criteria)) {
                                         ;
