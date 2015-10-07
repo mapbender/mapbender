@@ -118,6 +118,7 @@ class ImportHandler extends ExchangeHandler
                         if (!$this->findSourceToMapper($sources, $item, 0)) {
                             $source = $this->denormalizer->handleData($item, $class);
                             $em->persist($source);
+                            $em->flush();
                         }
                     } else {
                         $criteria = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array());
@@ -146,6 +147,7 @@ class ImportHandler extends ExchangeHandler
                     $app         = $this->denormalizer->handleData($item, $class);
                     $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
                     $em->persist($app);
+                    $em->flush();
                     $this->denormalizer->generateElementConfiguration($app);
                     $apps[] = $app;
                 }
@@ -273,7 +275,7 @@ class ImportHandler extends ExchangeHandler
             }
         }
     }
-    
+
     private function mergeIntoMapper(array $mapper)
     {
         foreach ($mapper as $class => $content) {
