@@ -49,13 +49,39 @@
             }
             return this.highlighter[key];
         },
+        _readGeometry: function(element){
+            if (element.data('geometry')) {
+                try {
+                    return OpenLayers.Geometry.fromWKT(element.data('geometry'));
+                } catch(e){
+                    Mapbender.error('Geometry cannot be created!');
+                    return null;
+                }
+            } else {
+                Mapbender.error('WKT-geometry cannot be found!');
+                return null;
+            }
+        },
+        _readProj: function(element){
+            if (element.data('srid')) {
+                try {
+                    return this.map.getModel().getProj(element.data('srid'));
+                } catch(e){
+                    Mapbender.error('Projection cannot be created!');
+                    return null;
+                }
+            } else {
+                Mapbender.error('Srid cannot be found!');
+                return null;
+            }
+        },
         _highLight: function(geometryElms, highLighterName, turn_on){
             var self = this;
             geometryElms.each(function(idx, item){
                 var el = $(item);
-                if (el.data('geometry') && el.data('srid')) {
-                    var geometry = OpenLayers.Geometry.fromWKT(el.data('geometry'));
-                    var proj = self.map.getModel().getProj(el.data('srid'));
+                var geometry = self._readGeometry(el);
+                var proj = self._readProj(el);
+                if (geometry && proj) {
                     if(turn_on){
                         self._getHighLighter(highLighterName).on(geometry, proj);
                     } else {
@@ -105,17 +131,17 @@
         },
         _showGeometry: function(e){
             var el = $(e.currentTarget);
-            if (el.data('geometry') && el.data('srid')) {
-                var geometry = OpenLayers.Geometry.fromWKT(el.data('geometry'));
-                var proj = this.map.getModel().getProj(el.data('srid'));
+            var geometry = this._readGeometry(el);
+            var proj = this._readProj(el);
+            if (geometry && proj) {
                 this._getHighLighter('mouse').on(geometry, proj);
             }
         },
         _hideGeometry: function(e){
             var el = $(e.currentTarget);
-            if (el.data('geometry') && el.data('srid')) {
-                var geometry = OpenLayers.Geometry.fromWKT(el.data('geometry'));
-                var proj = this.map.getModel().getProj(el.data('srid'));
+            var geometry = this._readGeometry(el);
+            var proj = this._readProj(el);
+            if (geometry && proj) {
                 this._getHighLighter('mouse').off(geometry, proj);
             }
         },
