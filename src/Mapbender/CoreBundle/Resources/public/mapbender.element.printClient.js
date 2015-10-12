@@ -117,6 +117,10 @@
 
             $.each(scales, function(idx, scale) {
                 if(scale >= currentScale){
+                    selectValue = scales[idx];
+                    return false;
+                }
+                if(scale > currentScale){
                     selectValue = scales[idx-1];
                     return false;
                 }
@@ -414,9 +418,14 @@
                         if(feature.style !== null){
                             geometry.style = feature.style;
                         }else{
-                            geometry.style = layer.styleMap.createSymbolizer(feature);
+                            geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
                         }
-                        geometries.push(geometry);
+                        // only visible features
+                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){                            
+                            geometries.push(geometry);
+                        } else if (geometry.style.label !== undefined){
+                            geometries.push(geometry);
+                        }
                     }
                 }
 
@@ -475,6 +484,10 @@
             }else{
                 //click hidden submit
                 form.find('input[type="submit"]').click();
+            }
+
+            if(this.options.autoClose){
+                this.popup.close();
             }
         },
 

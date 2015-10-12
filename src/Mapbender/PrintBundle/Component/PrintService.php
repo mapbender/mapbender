@@ -806,6 +806,39 @@ class PrintService
             imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
         }
     }
+	
+    private function drawMultiLineString($geometry, $image)
+    {
+        $color = $this->getColor(
+            $geometry['style']['strokeColor'],
+            $geometry['style']['strokeOpacity'],
+            $image);
+        imagesetthickness($image, $geometry['style']['strokeWidth']);
+	
+		foreach($geometry['coordinates'] as $coords) {
+		
+			for($i = 1; $i < count($coords); $i++) {
+
+				if($this->rotation == 0){
+					$from = $this->realWorld2mapPos(
+						$coords[$i - 1][0],
+						$coords[$i - 1][1]);
+					$to = $this->realWorld2mapPos(
+						$coords[$i][0],
+						$coords[$i][1]);
+				}else{
+					$from = $this->realWorld2rotatedMapPos(
+						$coords[$i - 1][0],
+						$coords[$i - 1][1]);
+					$to = $this->realWorld2rotatedMapPos(
+						$coords[$i][0],
+						$coords[$i][1]);
+				}
+
+				imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
+			}
+		}
+    }
 
     private function drawPoint($geometry, $image)
     {
@@ -822,7 +855,7 @@ class PrintService
             $color = $this->getColor('#ff0000', 1, $image);
             $bgcolor = $this->getColor('#ffffff', 1, $image);
             $fontPath = $this->resourceDir.'/fonts/';
-            $font = $fontPath . 'Trebuchet_MS.ttf';
+            $font = $fontPath . 'OpenSans-Bold.ttf';
             imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
