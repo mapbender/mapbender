@@ -418,10 +418,12 @@
                         if(feature.style !== null){
                             geometry.style = feature.style;
                         }else{
-							geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
+                            geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
                         }
                         // only visible features
-                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){
+                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){                            
+                            geometries.push(geometry);
+                        } else if (geometry.style.label !== undefined){
                             geometries.push(geometry);
                         }
                     }
