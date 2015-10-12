@@ -208,3 +208,11 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     font-weight: normal;
     line-height: inherit;
 }
+
+.olLayerGrid .olTileImage {
+  transition: opacity 0.5s linear;
+}
+
+.olTileImage {
+  transition: opacity 0.5s linear;
+}

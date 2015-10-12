@@ -56,7 +56,7 @@ class ApplicationController extends Controller
                 continue;
             }
             if ($securityContext->isGranted('VIEW', $application)) {
-                if (!$application->isPublished() && !$securityContext->isGranted('OWNER', $application)) {
+                if (!$application->isPublished() && !$securityContext->isGranted('EDIT', $application)) {
                     continue;
                 }
                 $allowed_applications[] = $application;
@@ -121,7 +121,7 @@ class ApplicationController extends Controller
                             'Content-disposition' => 'attachment; filename=export.json'
                         )
                     );
-                } else if ($job->getFormat() === ExchangeJob::FORMAT_YAML) {
+                } elseif ($job->getFormat() === ExchangeJob::FORMAT_YAML) {
                     return new Response(
                         $export,
                         200,
@@ -188,26 +188,18 @@ class ApplicationController extends Controller
     public function copydirectlyAction($slug)
     {
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted('CREATE', $tocopy);
+        $this->checkGranted('EDIT', $tocopy);
 
         $expHandler = new ExportHandler($this->container);
         $expJob     = $expHandler->getJob();
         $expJob->getApplications()->add($tocopy);
         $expJob->setAddSources(false);
-//        $expJob->setAddAcl(true);
-//        $job = $expHandler->getJob();
-//
-//        $export = $expHandler->format($expHandler->makeJob());
-//
-//        die(print_r($expHandler->bindForm()));
-
         $data = $expHandler->makeJob();
 
         $impHandler = new ImportHandler($this->container, true);
         $importJob  = $impHandler->getJob();
         $importJob->setImportContent($data);
         $impHandler->makeJob();
-
         return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
     }
 
@@ -909,6 +901,10 @@ class ApplicationController extends Controller
             if (false === $securityContext->isGranted($action, $oid)) {
                 throw new AccessDeniedException();
             }
+        } elseif ($action === "MASTER" && !$securityContext->isGranted($action, $object)) {
+            throw new AccessDeniedException();
+        } elseif ($action === "OPERATOR" && !$securityContext->isGranted($action, $object)) {
+            throw new AccessDeniedException();
         } elseif ($action === "VIEW" && !$securityContext->isGranted($action, $object)) {
             throw new AccessDeniedException();
         } elseif ($action === "EDIT" && !$securityContext->isGranted($action, $object)) {
