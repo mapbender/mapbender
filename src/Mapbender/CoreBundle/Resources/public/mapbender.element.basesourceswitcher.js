@@ -40,11 +40,15 @@
                 var sourcesIds = $(elm).attr("data-sourceset").split(",");
                 for (var i = 0; i < sourcesIds.length; i++) {
                     if (sourcesIds[i] !== '') {
-                        var source = model.getSource({origId: sourcesIds[i]});
-                        if (source) {
+                        var source_list = model.findSource({origId: sourcesIds[i]});
+                        if(source_list.length === 0){
+                            Mapbender.error(Mapbender.trans(
+                                    "mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
+                        }
+                        for (var j = 0; j < source_list.length; j++) {
                             var tochange = {
                                 change: {
-                                    sourceIdx: {id: source.id},
+                                    sourceIdx: {id: source_list[j].id},
                                     options: {
                                         configuration: {
                                             options: {visibility: false}
@@ -54,9 +58,6 @@
                                 }
                             };
                             model.changeSource(tochange);
-                        } else {
-                            Mapbender.error(Mapbender.trans(
-                                "mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
                         }
                     }
                 }
@@ -70,11 +71,11 @@
                 var sourcesIds = $(elm).attr("data-sourceset").split(",");
                 for (var i = 0; i < sourcesIds.length; i++) {
                     if (sourcesIds[i] !== '') {
-                        var source = model.getSource({origId: sourcesIds[i]});
-                        if (source) {
+                        var source_list = model.findSource({origId: sourcesIds[i]});
+                        for (var j = 0; j < source_list.length; j++) {
                             var tochange = {
                                 change: {
-                                    sourceIdx: {id: source.id},
+                                    sourceIdx: {id: source_list[j].id},
                                     options: {
                                         configuration: {
                                             options: {visibility: true}
