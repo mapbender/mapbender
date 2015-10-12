@@ -44,10 +44,7 @@ class PrintService
         
         // data from client
         $this->data = $data;
-// print('<pre>');
-// print_r($data);
-// print('</pre>');
-// die;
+
         // template configuration from odg
         $odgParser = new OdgParser($this->container);
         $this->conf = $conf = $odgParser->getConf($data['template']);       
