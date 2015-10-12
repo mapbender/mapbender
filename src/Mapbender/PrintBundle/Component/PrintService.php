@@ -858,7 +858,7 @@ class PrintService
             $color = $this->getColor('#ff0000', 1, $image);
             $bgcolor = $this->getColor('#ffffff', 1, $image);
             $fontPath = $this->resourceDir.'/fonts/';
-            $font = $fontPath . 'Trebuchet_MS.ttf';
+            $font = $fontPath . 'OpenSans-Bold.ttf';
             imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
