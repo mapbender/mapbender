@@ -116,7 +116,7 @@
             var selectValue;
 
             $.each(scales, function(idx, scale) {
-                if(scale >= currentScale){
+                if(scale == currentScale){
                     selectValue = scales[idx];
                     return false;
                 }
