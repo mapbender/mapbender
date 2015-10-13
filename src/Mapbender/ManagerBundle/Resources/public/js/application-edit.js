@@ -181,7 +181,7 @@ $(function() {
                             subContent = contentWrapper.find('.popupSubContent');
                         }
                         subContent.html(data.responseText);
-
+                        pop.find('.popupScroll').scrollTop(0);
                         var subTitle = subContent.find("#form_title").val();
                         $(".popupSubTitle").text(" - " + subTitle);
                         $(".popup").find(".buttonYes, .buttonBack").show();
