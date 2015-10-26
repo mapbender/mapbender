@@ -37,6 +37,10 @@ class SQLSearchEngine
         $connection = $this->container->get('doctrine.dbal.' . $connection . '_connection');
         $qb = $connection->createQueryBuilder();
 
+        if (!array_key_exists($key, $config['form'])) {
+            $key = '"' . $key . '"';
+        }
+
         $distinct = false;
         if(array_key_exists('attr', $config['form'][$key]['options'])
             && array_key_exists('data-autocomplete-distinct', $config['form'][$key]['options']['attr'])
@@ -100,9 +104,12 @@ class SQLSearchEngine
         $stmt = $connection->executeQuery($qb->getSql(), $params);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        array_walk($rows, function(&$row) use ($key, $keys, $config) {
+        array_walk($rows, function (&$row) use ($key, $keys, $config) {
             $value = array();
-            foreach($keys as $k) {
+            foreach ($keys as $k) {
+                if (!array_key_exists($k, $row)) {
+                    $k = trim($k, '"');
+                }
                 $value[] = $row[$k];
             }
 
@@ -158,7 +165,13 @@ class SQLSearchEngine
 
         // This function switches by compare configuration (exact, like, ilike, ...)
         $createExpr = function($key, $value) use ($cond, $config, $connection, &$params, $qb) {
-            $compare = array_key_exists('compare', $config['form'][$key]) ? $config['form'][$key]['compare'] : null;
+            if (array_key_exists($key, $config['form'])) {
+                $cfg = $config['form'][$key];
+            } else {
+                $cfg = $config['form']['"' . $key . '"'];
+            }
+
+            $compare = array_key_exists('compare', $cfg) ? $cfg['compare'] : null;
             switch($compare) {
                 case 'exact':
                     $cond->add($qb->expr()->eq('t.' . $key, ':' . $key));
@@ -223,23 +236,26 @@ class SQLSearchEngine
             if(null === $value) {
                 continue;
             }
+
+            if (!array_key_exists($key, $config['form'])) {
+                $cfg = $config['form']['"' . $key . '"'];
+            } else {
+                $cfg = $config['form'][$key];
+            }
             if(array_key_exists($key, $data['autocomplete_keys']))
             {
                 // Autocomplete value given, match to configured attribute
                 $cond->add($qb->expr()->eq(
-                                't.' . $config['form'][$key]['autocomplete-key'], $data['autocomplete_keys'][$key]));
-            } else if(array_key_exists('split', $config['form'][$key]))
-            {
+                    't.' . $cfg['autocomplete-key'], $data['autocomplete_keys'][$key]));
+            } elseif (array_key_exists('split', $cfg)) {
                 // Split
-                $keys = $config['form'][$key]['split'];
+                $keys = $cfg['split'];
                 $values = explode(' ', $value);
                 for($i = 0; $i < count($keys); $i++)
                 {
                     $createExpr($keys[$i], $value);
                 }
-            } else
-            {
-
+            } else {
                 $createExpr($key, $value);
             }
         }
