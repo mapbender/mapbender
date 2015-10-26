@@ -19,6 +19,15 @@
   <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
 {% endblock %}
 
+{% block mobilejs %}
+    <script language="JavaScript">
+        if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            var scaleFactor = {{ scaleFactor|default('0.7') }};
+            var density = "{{ density|default('240dpi') }}";
+            document.write('<meta name="viewport" content="width=device-width; initial-scale=' + scaleFactor + '; maximum-scale=' + scaleFactor + '; minimum-scale=' + scaleFactor + ' user-scalable=no;target-densityDpi=' + density + '"/>');
+        }
+    </script>
+{% endblock %}
 
 {% block frontend_content %}
   <div id="templateWrapper" class="templateWrapper">
