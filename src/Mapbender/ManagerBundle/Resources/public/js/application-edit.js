@@ -186,6 +186,7 @@ $(function() {
                         $(".popupSubTitle").text(" - " + subTitle);
                         $(".popup").find(".buttonYes, .buttonBack").show();
                         subContent.on('submit', 'form', submitHandler);
+                        subContent.closest(".popupScroll").scrollTop(0);
                     }
                 }
             });
