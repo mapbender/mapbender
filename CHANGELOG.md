@@ -1,4 +1,27 @@
 # Changelog
+* **v3.0.5.2**
+    - Copy applications: User-Rights and groups are copied. The user who copied the application becomes owner of the copied application.
+    - FOM: Changes in behaviour of wrong logins and user locking. It is only shown that the login failed, independent if the user exists or not.
+    - Fixed error message when creating a user with a too short password.
+    - Print: Fix of replace pattern.
+    - Print: Fix if a wrong configured WMS has special characters (%26) in the legend URL.
+    - Image export in Firefox.
+    - WMC Loader: Loading WMC and Behaviour of BaseSources.
+    - BaseSourceSwitcher: Tiles of a not visible service are not pre-fetched.
+    - BaseSourceSwitcher: If a group is defined, only one theme is switched on.
+    - SearchRouter: Fix of quotes for table-names.
+    - Copy applications: Fix of the search in the copied application.
+    - Simple Search: Catch the return key.
+    - FeatureInfo: Add WMS functionality and WMS Loader.
+    - Icon Polygon is visible in the toolbar of applications.
+    - Icons, which are not based on FontAwesome also work in the mobile application.
+    - Administration of the map element: The view of the configuration dialog in the backend starts on top.
+    - Administration data source: No form data auto-complete from the browser for username and password.
+    - Mobile application: Design in Firefox for Android.
+    - Update 3.0.4.x: FeatureInfo autoopen=true is kept.
+    - Doku: FOM UserBundle translation and additional information for failed user logins.
+    - Doku: URL parameter scale in map element.
+    - Doku: WMC Loader and KeepSources.
 * **v3.0.5.1**
     - Map: OpenLayers TileSize: You can set the tile-size for the map. Default: 256x256.
     - Map: Delay before Tiles: For WMS-T, for example with temporal parameters (in future)
