@@ -75,30 +75,25 @@
                 return null;
             }
         },
-        _highLight: function(geometryElms, highLighterName, turn_on){
+        _highLightOn: function(fi_el_id, container_id) {
             var self = this;
+            var baseSelector = '#' + fi_el_id + ' #' + container_id;
+            var geometryElms = [];
+            if(this.featureinfo.options.showOriginal) {
+                geometryElms = $(baseSelector + ' iframe').contents().find(this.geomElmSelector);
+            } else {
+                geometryElms = $(baseSelector + ' ' + this.geomElmSelector);
+            }
+            var geometries = [];
             geometryElms.each(function(idx, item){
                 var el = $(item);
                 var geometry = self._readGeometry(el);
                 var proj = self._readProj(el);
                 if (geometry && proj) {
-                    if(turn_on){
-                        self._getHighLighter(highLighterName).on(geometry, proj);
-                    } else {
-                        self._getHighLighter(highLighterName).off(geometry, proj);
-                    }
-                    
+                    geometries.push({geometry: geometry, srs: proj});
                 }
             });
-        },
-        _highLightOn: function(fi_el_id, container_id) {
-            var self = this;
-            var baseSelector = '#' + fi_el_id + ' #' + container_id;
-            if(this.featureinfo.options.showOriginal) {
-                self._highLight($(baseSelector + ' iframe').contents().find(self.geomElmSelector), container_id, true);
-            } else {
-                this._highLight($(baseSelector + ' ' + this.geomElmSelector), container_id, true);
-            }
+            self._getHighLighter(container_id).on(geometries);
         },
         _featureInfoMouseEventsOn: function(fi_el_id, container_id) {
             this.eventIdentifiers.featureinfo_mouse = {
@@ -134,7 +129,7 @@
             var geometry = this._readGeometry(el);
             var proj = this._readProj(el);
             if (geometry && proj) {
-                this._getHighLighter('mouse').on(geometry, proj);
+                this._getHighLighter('mouse').on([{geometry: geometry, srs: proj}]);
             }
         },
         _hideGeometry: function(e){
@@ -142,7 +137,7 @@
             var geometry = this._readGeometry(el);
             var proj = this._readProj(el);
             if (geometry && proj) {
-                this._getHighLighter('mouse').off(geometry, proj);
+                this._getHighLighter('mouse').off();
             }
         },
         _clickLoadWms: function(e){

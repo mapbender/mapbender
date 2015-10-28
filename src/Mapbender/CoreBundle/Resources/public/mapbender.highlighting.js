@@ -7,20 +7,20 @@ Mapbender.Highlighting = Mapbender.Highlighting || function(map, buffer) {
         this.buffer = 1.0;
     }
     this.features = [];
-    this.on = function(geometry, srs) {
-        var mapProj = this.mbMap.getModel().getCurrentProj();
-        if(srs.projCode !== mapProj.projCode) {
-            geometry = geometry.transform(srs, mapProj);
-        }
-        this.off();
-        if(this.mbMap.getModel().getMapExtent().toGeometry().intersects(geometry)) {
-            this.features.push(new OpenLayers.Feature.Vector(geometry));
-            if(this.features.length) {
-                this.mbMap.highlightOn(this.features, {
-                    clearFirst: false,
-                    "goto":     false
-                });
+    this.on = function(geometries) {
+        for(var i = 0; i < geometries.length; i++) {
+            var mapProj = this.mbMap.getModel().getCurrentProj();
+            var geometry = geometries[i].geometry;
+            if(geometries[i].srs.projCode !== mapProj.projCode) {
+                geometry = geometry.transform(geometries[i].srs, mapProj);
             }
+            this.features.push(new OpenLayers.Feature.Vector(geometry));
+        }
+        if(this.features.length) {
+            this.mbMap.highlightOn(this.features, {
+                clearFirst: false,
+                "goto":     false
+            });
         }
     };
     this.off = function() {
@@ -35,11 +35,6 @@ Mapbender.Highlighting = Mapbender.Highlighting || function(map, buffer) {
             this.features = [];
             this.foundedFeature = null;
         }
-        /*
-         if(this.foundedFeature){
-         this.mbMap.highlightOff(this.foundedFeature);
-         }
-         */
     };
     this.zoom = function(geometry, srs) {
         if(srs.projCode !== this.mbMap.getModel().getCurrentProj().projCode) {
