@@ -21,7 +21,8 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  *
  * @author Christian Wygoda
  */
-class WelcomeController extends Controller {
+class WelcomeController extends Controller
+{
     /**
      * List applications.
      *
@@ -30,21 +31,20 @@ class WelcomeController extends Controller {
      * @Route("/")
      * @Template()
      */
-    public function listAction() {
+    public function listAction()
+    {
         $securityContext = $this->get('security.context');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
         $uploads_web_url = AppComponent::getUploadsUrl($this->container);
         $applications = $this->get('mapbender')->getApplicationEntities();
         $allowed_applications = array();
-        foreach($applications as $application)
-        {
-            if($application->isExcludedFromList()){
+        foreach ($applications as $application) {
+            if ($application->isExcludedFromList()) {
                 continue;
             }
 
-            if($securityContext->isGranted('VIEW', $application))
-            {
-                if(!$application->isPublished() && !$securityContext->isGranted('EDIT', $application)) {
+            if ($securityContext->isGranted('VIEW', $application)) {
+                if (!$application->isPublished() && !$securityContext->isGranted('EDIT', $application)) {
                     continue;
                 }
                 $allowed_applications[] = $application;
@@ -54,8 +54,8 @@ class WelcomeController extends Controller {
         return array(
             'applications' => $allowed_applications,
             'uploads_web_url' => $uploads_web_url,
+            'create_permission' => $securityContext->isGranted('CREATE', $oid),
             'time' => new \DateTime()
-            );
+        );
     }
 }
-

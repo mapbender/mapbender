@@ -4,6 +4,8 @@
         options: {
         },
         scalebar: null,
+        loadStarted: null,
+        contextAddStart: false,
         _create: function() {
             if (!Mapbender.checkTarget("mbBaseSourceSwitcher", this.options.target)) {
                 return;
@@ -13,6 +15,7 @@
         },
         _setup: function() {
             var self = this;
+            this.loadStarted = {};
             $('.basesourcesetswitch:not(.basesourcegroup)', this.element).on('click', $.proxy(self._toggleMapset, self));
             $('.basesourcegroup', this.element).on('click', function(e) {
                 var bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
@@ -26,6 +29,7 @@
             this._hideSources();
             this._showActive();
             this.element.find('.basesourcesetswitch:first').click();
+            $(document).on('mbmapcontextaddstart', $.proxy(self._onContextAddStart, self));
         },
         _hideSources: function() {
             var me = $(this.element);
@@ -36,11 +40,15 @@
                 var sourcesIds = $(elm).attr("data-sourceset").split(",");
                 for (var i = 0; i < sourcesIds.length; i++) {
                     if (sourcesIds[i] !== '') {
-                        var source = model.getSource({origId: sourcesIds[i]});
-                        if (source) {
+                        var source_list = model.findSource({origId: sourcesIds[i]});
+                        if(source_list.length === 0){
+                            Mapbender.error(Mapbender.trans(
+                                    "mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
+                        }
+                        for (var j = 0; j < source_list.length; j++) {
                             var tochange = {
                                 change: {
-                                    sourceIdx: {id: source.id},
+                                    sourceIdx: {id: source_list[j].id},
                                     options: {
                                         configuration: {
                                             options: {visibility: false}
@@ -50,9 +58,6 @@
                                 }
                             };
                             model.changeSource(tochange);
-                        } else {
-                            Mapbender.error(Mapbender.trans(
-                                "mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
                         }
                     }
                 }
@@ -66,11 +71,11 @@
                 var sourcesIds = $(elm).attr("data-sourceset").split(",");
                 for (var i = 0; i < sourcesIds.length; i++) {
                     if (sourcesIds[i] !== '') {
-                        var source = model.getSource({origId: sourcesIds[i]});
-                        if (source) {
+                        var source_list = model.findSource({origId: sourcesIds[i]});
+                        for (var j = 0; j < source_list.length; j++) {
                             var tochange = {
                                 change: {
-                                    sourceIdx: {id: source.id},
+                                    sourceIdx: {id: source_list[j].id},
                                     options: {
                                         configuration: {
                                             options: {visibility: true}
@@ -99,6 +104,44 @@
             }
             this._showActive();
             return false;
+        },
+        _onSourceLoadStart: function(event, options) {
+            if (this.contextAddStart && options.source) {
+                this.loadStarted[options.source.id ] = true;
+            }
+        },
+        _onSourceLoadEnd: function(event, option) {
+            if (option.source && this.loadStarted[option.source.id]) {
+                delete(this.loadStarted[option.source.id]);
+                this._checkReset();
+            }
+        },
+        _onSourceLoadError: function(event, option) {
+            if (option.source && this.loadStarted[option.source.id]) {
+                delete(this.loadStarted[option.source.id]);
+                this._checkReset();
+            }
+        },
+        _onContextAddStart: function(e){
+            this.contextAddStart = true;
+            $(document).on('mbmapcontextaddend', $.proxy(this._onContextAddEnd, this));
+            $(document).on('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
+            $(document).on('mbmapsourceloadend', $.proxy(this._onSourceLoadEnd, this));
+            $(document).on('mbmapsourceloaderror', $.proxy(this._onSourceLoadError, this));
+        },
+        _onContextAddEnd: function(e){
+            this._checkReset();
+        },
+        _checkReset: function(){
+            for(var id in this.loadStarted){
+                return;
+            }
+            this.contextAddStart = false;
+            $(document).off('mbmapcontextaddend', $.proxy(this._onContextAddEnd, this));
+            $(document).off('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
+            $(document).off('mbmapsourceloadend', $.proxy(this._onSourceLoadEnd, this));
+            $(document).off('mbmapsourceloaderror', $.proxy(this._onSourceLoadError, this));
+            $('.basesourcesetswitch[data-state="active"]:not(.basesourcegroup)', this.element).click();
         },
         /**
          *

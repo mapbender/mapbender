@@ -195,9 +195,9 @@ class PrintClient extends Element
                     }
                 }
 
-                if (isset($data['replace_pattern'])) {
-                    foreach ($data['replace_pattern'] as $idx => $value) {
-                        $data['replace_pattern'][$idx] = json_decode($value, true);
+                if (isset($configuration['replace_pattern'])) {
+                    foreach ($configuration['replace_pattern'] as $idx => $value) {
+                        $data['replace_pattern'][$idx] = $value;
                     }
                 }
 

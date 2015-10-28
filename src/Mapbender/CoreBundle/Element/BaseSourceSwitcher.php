@@ -84,7 +84,8 @@ class BaseSourceSwitcher extends Element
     {
         return array(
             'js' => array('mapbender.element.basesourceswitcher.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss')
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss'),
+            'trans' => array('MapbenderCoreBundle:Element:basesourceswitcher.json.twig')
         );
     }
     

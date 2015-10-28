@@ -686,6 +686,7 @@ Mapbender.Model = {
                     });
                 }
             });
+            selectControl.handlers.feature.stopDown = false;
             this.map.olMap.addControl(selectControl);
             selectControl.activate();
         }
