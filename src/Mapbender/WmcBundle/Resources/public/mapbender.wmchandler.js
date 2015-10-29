@@ -93,6 +93,10 @@ Mapbender.WmcHandler = function(mapWidget, options){
     };
     
     this.removeFromMap = function(){
+        this.mapWidget.fireModelEvent({
+            name: 'contextremovestart',
+            value: null
+        });
         var model = this.mapWidget.getModel();
         var toKeepSources = {};
         if(this.options.keepSources === 'basesources'){
@@ -108,9 +112,17 @@ Mapbender.WmcHandler = function(mapWidget, options){
             }
         }
         this.mapWidget.removeSources(toKeepSources);
+        this.mapWidget.fireModelEvent({
+            name: 'contextremoveend',
+            value: null
+        });
     };
 
     this._addWmcToMap = function(sources){
+        this.mapWidget.fireModelEvent({
+            name: 'contextaddstart',
+            value: null
+        });
         for(var i = 0; i < sources.length; i++){
             var source = sources[i];
             if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && this.options.keepSources !== 'basesources')){
@@ -118,5 +130,9 @@ Mapbender.WmcHandler = function(mapWidget, options){
                 this.mapWidget.addSource(source);
             }
         }
+        this.mapWidget.fireModelEvent({
+            name: 'contextaddend',
+            value: null
+        });
     };
 };

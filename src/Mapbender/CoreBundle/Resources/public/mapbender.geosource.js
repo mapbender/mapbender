@@ -66,6 +66,9 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'abstract public function createSourceDefinitions': function(xml, options) {
     }, // to remove
+    'public function changeDefaultOptions': function(defaultOptions) {
+        $.extend(this.defaultOptions, defaultOptions);
+    },
     'public function fire': function(eventName) {
 
     },
