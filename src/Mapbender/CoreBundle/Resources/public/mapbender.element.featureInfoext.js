@@ -189,7 +189,7 @@
                 if(this.options.load_declarative_wms){
                     this._loadWmsOn(options.id, options.activated_content);
                 }
-            } else if (options.action === 'closedialog' || options.action === 'deactivate') {
+            } else if (options.action === 'closedialog' || options.action === 'deactivate' || options.action === 'clicked') {
                 if(this.options.highlight_source){
                     this._featureInfoMouseEventsOff();
                     for (var key in this.highlighter) {
@@ -222,4 +222,13 @@
             this.readyState = true;
         }
     });
+})(jQuery);
+
+(function($) {
+    if($.MapQuery){ // MpaQuery creates automatic Control.SelectFeature -> overwrite function _updateSelectFeatureControl
+        $.MapQuery.Map.prototype._updateSelectFeatureControl = function(a){ return; };
+    }
+    if(Mapbender.Model.highlightOptions && Mapbender.Model.highlightOptions.feature){
+        Mapbender.Model.highlightOptions.feature["stopClick"] = false;
+    }
 })(jQuery);

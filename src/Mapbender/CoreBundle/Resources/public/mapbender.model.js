@@ -11,6 +11,15 @@ Mapbender.Model = {
     mapStartExtent: null,
     layersMaxExtent: {},
     highlightLayer: null,
+    highlightOptions: {
+        layer: {
+            type: 'vector',
+            label: 'Highlight'
+        },
+        feature: {
+            stopDown: false
+        }
+    },
     baseId: 0,
     // Hash map query layers settings
     _layersHash: {},
@@ -669,10 +678,7 @@ Mapbender.Model = {
     highlightOn: function(features, options) {
         var self = this;
         if (!this.highlightLayer) {
-            this.highlightLayer = this.map.layers({
-                type: 'vector',
-                label: 'Highlight'
-            });
+            this.highlightLayer = this.map.layers(this.highlightOptions.layer);
             var selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
                 hover: true,
                 onSelect: function(feature) {
@@ -686,7 +692,9 @@ Mapbender.Model = {
                     });
                 }
             });
-            selectControl.handlers.feature.stopDown = false;
+            for(var name in this.highlightOptions.feature){
+                selectControl.handlers.feature[name] = this.highlightOptions.feature[name];
+            }
             this.map.olMap.addControl(selectControl);
             selectControl.activate();
         }

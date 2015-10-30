@@ -1,11 +1,12 @@
 var Mapbender = Mapbender || {};
-Mapbender.Highlighting = Mapbender.Highlighting || function(map, buffer) {
+Mapbender.Highlighting = Mapbender.Highlighting || function(map, buffer, style) {
     this.mbMap = map;
     if(buffer) {
         this.buffer = buffer;
     } else {
         this.buffer = 1.0;
     }
+    this.style = style ? style : null;
     this.features = [];
     this.on = function(geometries) {
         for(var i = 0; i < geometries.length; i++) {
@@ -14,7 +15,7 @@ Mapbender.Highlighting = Mapbender.Highlighting || function(map, buffer) {
             if(geometries[i].srs.projCode !== mapProj.projCode) {
                 geometry = geometry.transform(geometries[i].srs, mapProj);
             }
-            this.features.push(new OpenLayers.Feature.Vector(geometry));
+            this.features.push(new OpenLayers.Feature.Vector(geometry, {}, this.style));
         }
         if(this.features.length) {
             this.mbMap.highlightOn(this.features, {
