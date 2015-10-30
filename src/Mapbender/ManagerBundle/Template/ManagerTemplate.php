@@ -24,6 +24,7 @@ class ManagerTemplate extends Template
                                     "@MapbenderManagerBundle/Resources/public/sass/element/activityindicator.scss",
                                     "@MapbenderManagerBundle/Resources/public/sass/element/copyright.scss",
                                     "@MapbenderManagerBundle/Resources/public/sass/element/featureinfo.scss",
+                                    "@MapbenderManagerBundle/Resources/public/sass/element/featureinfoext.scss",
                                     "@MapbenderManagerBundle/Resources/public/sass/element/gpsposition.scss",
                                     "@MapbenderManagerBundle/Resources/public/sass/element/layertree.scss",
                                     "@MapbenderManagerBundle/Resources/public/sass/element/legend.scss",

@@ -18,6 +18,10 @@ Mapbender.Model = {
         },
         feature: {
             stopDown: false
+        },
+        style: {
+            feature: {},
+            hover: {}
         }
     },
     baseId: 0,
@@ -679,17 +683,22 @@ Mapbender.Model = {
         var self = this;
         if (!this.highlightLayer) {
             this.highlightLayer = this.map.layers(this.highlightOptions.layer);
-            var selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
+            var selectControl;
+            selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
                 hover: true,
                 onSelect: function(feature) {
                     self.mbMap._trigger('highlighthoverin', null, {
                         feature: feature
                     });
+                    feature.style = self.highlightOptions.style.hover;
+                    selectControl.highlight(feature);
                 },
                 onUnselect: function(feature) {
                     self.mbMap._trigger('highlighthoverout', null, {
                         feature: feature
                     });
+                    feature.style = self.highlightOptions.style.feature;
+                    selectControl.highlight(feature);
                 }
             });
             for(var name in this.highlightOptions.feature){

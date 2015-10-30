@@ -39,13 +39,15 @@
             if (!this.map || !this.featureinfo) {
                 return;
             }
+            Mapbender.Model.highlightOptions.style.feature = this.options.hits_style;
+            Mapbender.Model.highlightOptions.style.hover = this.options.hover_style;
             $(document).on('mbfeatureinfofeatureinfo', $.proxy(this._featureInfoChanged, this));
             this._trigger('ready');
             this._ready();
         },
         _getHighLighter: function(key) {
             if (!this.highlighter[key]) {
-                this.highlighter[key] = new Mapbender.Highlighting(this.map);
+                this.highlighter[key] = new Mapbender.Highlighting(this.map, {}, key === 'mouse' ? this.options.hover_style : this.options.hits_style);
             }
             return this.highlighter[key];
         },

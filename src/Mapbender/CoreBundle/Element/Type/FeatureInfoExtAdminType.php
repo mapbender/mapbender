@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Mapbender\CoreBundle\Form\Type\PaintType;
 
 /**
  *
@@ -46,6 +47,8 @@ class FeatureInfoExtAdminType extends AbstractType
                 'property_path' => '[featureinfo]',
                 'required'      => false))
             ->add('load_declarative_wms', "checkbox", array())
-            ->add('highlight_source', "checkbox", array());
+            ->add('highlight_source', "checkbox", array())
+            ->add('hits_style', new PaintType(), array('property_path' => '[hits_style]'))
+            ->add('hover_style', new PaintType(), array('property_path' => '[hover_style]'));
     }
 }

@@ -48,6 +48,18 @@ class FeatureInfoExt extends Element
             'tooltip' => 'Feature Info Extension',
             "map" => null,
             "featureinfo" => null,
+            "hover_style" =>  array(
+
+            ),
+            "hits_style" => array(
+//                'stroke' => array(
+//                    'color' => '#ff0000',
+//                    'opacity' => 1,
+//                    'width' => 1,
+//                    'linecap' => 'round',
+//                    'dashstyle' => 'solid'
+//                )
+            ),
             'highlight_source' => true,
             'load_declarative_wms' => true
         );
@@ -107,5 +119,4 @@ class FeatureInfoExt extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:featureinfoext.html.twig';
     }
-
 }
