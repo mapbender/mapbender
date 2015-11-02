@@ -48,20 +48,28 @@ class FeatureInfoExt extends Element
             'tooltip' => 'Feature Info Extension',
             "map" => null,
             "featureinfo" => null,
-            "hover_style" =>  array(
-
-            ),
-            "hits_style" => array(
-//                'stroke' => array(
-//                    'color' => '#ff0000',
-//                    'opacity' => 1,
-//                    'width' => 1,
-//                    'linecap' => 'round',
-//                    'dashstyle' => 'solid'
-//                )
-            ),
+            'load_declarative_wms' => true,
             'highlight_source' => true,
-            'load_declarative_wms' => true
+            "hits_style" => array(
+                'strokeColor' => '#99FF99',
+                'strokeOpacity' => 1,
+                'strokeWidth' => 1,
+                'strokeLinecap' => 'round',
+                'strokeDashstyle' => 'solid',
+                'fillColor' => "#99FF99",
+                'fillOpacity' => 0.4,
+                'pointRadius' => 6
+            ),
+            "hover_style" => array(
+                'strokeColor' => '#FF9999',
+                'strokeOpacity' => 1,
+                'strokeWidth' => 1,
+                'strokeLinecap' => 'round',
+                'strokeDashstyle' => 'solid',
+                'fillColor' => "#FF9999",
+                'fillOpacity' => 0.4,
+                'pointRadius' => 6
+            )
         );
     }
 
