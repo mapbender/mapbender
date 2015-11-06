@@ -70,14 +70,14 @@
                     this.popup.open(self.element);
                 }
             }
-            this.element.show();
+            this.element.removeClass('hidden');
             this.popupIsOpen = true;
             $('.redlining-tool', this.element).off('click');
             $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
         },
         close: function(){
             if(this.popup) {
-                this.element.hide().appendTo($('body'));
+                this.element.addClass('hidden').appendTo($('body'));
                 this._deactivateControl();
                 this.popupIsOpen = false;
                 if(this.popup.$element) {
