@@ -6,18 +6,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
-use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
-use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Utils\EntityUtil;
-use Exception;
 
 /**
  * The class LoadApplicationData loads the applications from the "mapbender.yml"
@@ -198,5 +193,4 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         }
         return null;
     }
-
 }

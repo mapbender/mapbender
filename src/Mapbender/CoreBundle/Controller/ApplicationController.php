@@ -378,5 +378,4 @@ class ApplicationController extends Controller
         $response->setContent($browserResponse->getContent());
         return $response;
     }
-
 }
