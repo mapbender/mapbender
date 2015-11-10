@@ -950,6 +950,14 @@
         <source>mb.core.layertree.contextmenu.nooption</source>
         <target>Layer has no context menu option</target>
       </trans-unit>
+      <trans-unit id="a5cb3721da1989997ae99c49bf560c0e" resname="mb.core.admin.redlining.label.auto_activate">
+        <source>mb.core.admin.redlining.label.auto_activate</source>
+        <target>Autoactivate</target>
+      </trans-unit>
+      <trans-unit id="d43fd752a42df0c371b25aabb8acdcae" resname="mb.core.admin.redlining.label.deactivate_on_close">
+        <source>mb.core.admin.redlining.label.deactivate_on_close</source>
+        <target>Deactivate on close</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
