@@ -828,12 +828,12 @@ $(function() {
     })(jQuery);
     (function($) {
         var tabkey = 'manager_active_tab';
-        if (window.sessionStorage && window.sessionStorage[tabkey]) {
+        if (typeof(Storage) !== "undefined" && window.sessionStorage && window.sessionStorage[tabkey]) {
             var id = window.sessionStorage[tabkey];
             $(".tabContainer .tab#" + id + ", .tabContainerAlt .tab#" + id).click();
         }
         $(".tabContainer, .tabContainerAlt").on('click', '.tab', function() {
-            if (window.sessionStorage) {
+            if (typeof(Storage) !== "undefined" && window.sessionStorage) {
                 window.sessionStorage.setItem(tabkey, $(this).attr('id'));
             }
         });
