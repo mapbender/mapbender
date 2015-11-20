@@ -73,11 +73,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         return null;
     }
 
-    public function findEntities($class, array $criteria = null)
+    public function findEntities($class, array $criteria)
     {
-        if (!$criteria) {
-            $criteria = array();
-        }
         return $this->em->getRepository($class)->findBy($criteria);
     }
 
@@ -126,6 +123,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     private function saveEntity($object, ClassMetadata $classMeta, $criteriaBefore)
     {
         $this->em->persist($object);
+        $this->em->flush();
         $criteriaAfter = $this->getIdentCriteria($object, $classMeta);
         $this->addToMapper($object, $criteriaBefore, $criteriaAfter);
     }
@@ -161,10 +159,12 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                         $collection = new \Doctrine\Common\Collections\ArrayCollection($result);
                         $setMethod->invoke($object, $collection);
                         $this->em->persist($object);
+                        $this->em->flush();
                     }
                 } else {
                     $setMethod->invoke($object, $result);
                     $this->em->persist($object);
+                    $this->em->flush();
                 }
             }
         }
