@@ -73,8 +73,11 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         return null;
     }
 
-    public function findEntities($class, array $criteria)
+    public function findEntities($class, array $criteria = null)
     {
+        if (!$criteria) {
+            $criteria = array();
+        }
         return $this->em->getRepository($class)->findBy($criteria);
     }
 
