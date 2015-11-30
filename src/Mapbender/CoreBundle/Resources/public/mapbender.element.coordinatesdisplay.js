@@ -19,6 +19,9 @@ $.widget("mapbender.mbCoordinatesDisplay", {
 
     _setup: function(){
         var self = this;
+        self.options.empty = self.options.empty ? self.options.empty : '';
+        self.options.prefix = self.options.prefix ? self.options.prefix : '';
+        self.options.separator = self.options.separator ? self.options.separator: ' ';
         var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
         var layers = mbMap.map.layers();
         for(var i = 0; i < layers.length; ++i) {
@@ -61,11 +64,11 @@ $.widget("mapbender.mbCoordinatesDisplay", {
             var options = {
                 id: $(self.element).attr('id'),
                 div: $($(self.element)[0]).find('#coordinatesdisplay')[0],
-                emptyString: self.options.empty,
-                prefix: self.options.prefix,
-                separator: self.options.separator,
+                emptyString: self.options.empty ? self.options.empty : '',
+                prefix: self.options.prefix ? self.options.prefix : '',
+                separator: self.options.separator ? self.options.separator: ' ',
                 suffix: self.options.suffix,
-                numDigits: self.options.numDigits,
+                numDigits: self.options.numDigits ? self.options.numDigits : 2,
                 displayProjection: srs.projection };
             mbMap.map.olMap.addControl(new OpenLayers.Control.MousePosition(options));
             this.crs = srs.projection.projCode;
