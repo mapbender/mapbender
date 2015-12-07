@@ -46,6 +46,11 @@ class PrintClientAdminType extends AbstractType
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
+            ->add('type', 'choice', array(
+                    'required' => true,
+                    'choices' => array(
+                        'dialog' => 'Dialog',
+                        'element' => 'Element')))
             ->add('scales', 'text', array('required' => false))
             ->add('file_prefix', 'text', array('required' => false))
             ->add('rotatable', 'checkbox',array('required' => false))

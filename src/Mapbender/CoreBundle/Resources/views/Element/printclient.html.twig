@@ -1,4 +1,11 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
+    
+    {% if configuration.type == 'element' %}
+        <input type="button" id="printToggle" active="false" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
+        <div class="printElement hidden">
+        <br>    
+    {% endif %}
+    
     <form id="formats" action="">
         
         <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
@@ -67,6 +74,10 @@
         
         <div id="layers"></div>
         <input type="submit" style="display: none"/>
+        <input type="button" class="printSubmit hidden" value="Print"/>
     
     </form>
+    {% if configuration.type == 'element' %}
+        </div>
+    {% endif %}    
 </div>
