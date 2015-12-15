@@ -77,17 +77,25 @@ class ApplicationController extends Controller
     public function ccssAction($slug)
     {
         // Create virtual file system path required for url rewriting inside CSS files
-        $request = $this->getRequest();
-        $route = $this->container->get('router')->getRouteCollection()->get($request->get('_route'));
-        $targetPath = $request->server->get('SCRIPT_FILENAME') . $route->getPattern();
+        $env          = $this->container->get("kernel")->getEnvironment();
+        $isProduction = $env == "prod";
+        $cacheFile    = $this->container->getParameter('kernel.root_dir') . "/cache/" . $env . "/" . $slug . ".min.css";
+        $needCache    = $isProduction && !file_exists($cacheFile);
 
-        $targetPath = str_replace('{slug}', $slug, $targetPath);
-        $targetPath = $request->server->get('REQUEST_URI');
-        $sourcePath = $request->getBasePath();
-
-        if(empty($sourcePath)){
-                $sourcePath = ".";
+        if ($isProduction && !$needCache) {
+            header('Content-Type: text/css', true);
+            readfile($cacheFile);
+            die();
         }
+
+        $request      = $this->getRequest();
+        $targetPath   = $request->server->get('REQUEST_URI');
+        $sourcePath   = $request->getBasePath();
+
+        if (empty($sourcePath)) {
+            $sourcePath = ".";
+        }
+
         // Collect all assets into one
         $application = $this->getApplication($slug);
         $refs = array_unique($application->getAssets('css'));
@@ -117,8 +125,13 @@ class ApplicationController extends Controller
         }
 
         // Compile the collection with SASS
-        $response->setContent($factory->compile());
+        $css = $factory->compile();
 
+        if ($isProduction && $needCache) {
+            file_put_contents($cacheFile, $css);
+        }
+
+        $response->setContent($css);
         return $response;
     }
 
