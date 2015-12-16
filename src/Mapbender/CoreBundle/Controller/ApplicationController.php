@@ -73,22 +73,32 @@ class ApplicationController extends Controller
      * Compiling SASS/CSS controller.
      *
      * @Route("/application/{slug}/assets/css")
+     * @param string $slug Application short name
+     * @return Response
      */
-    public function ccssAction($slug)
+    public function cssAction($slug)
     {
         // Create virtual file system path required for url rewriting inside CSS files
         $env          = $this->container->get("kernel")->getEnvironment();
         $isProduction = $env == "prod";
-        $cacheFile    = $this->container->getParameter('kernel.root_dir') . "/cache/" . $env . "/" . $slug . ".min.css";
+        $cacheFile    = $this->getCachedAssetPath($slug, $env, 'css');
         $needCache    = $isProduction && !file_exists($cacheFile);
+        $request      = $this->getRequest();
+        $response     = new Response();
+
+        $response->headers->set('Content-Type', 'text/css');
 
         if ($isProduction && !$needCache) {
-            header('Content-Type: text/css', true);
-            readfile($cacheFile);
-            die();
+            $modificationDate = new \DateTime();
+            $modificationDate->setTimestamp(filectime($cacheFile));
+            $response->setLastModified($modificationDate);
+            if ($response->isNotModified($request)) {
+                return $response;
+            }
+            $response->setContent(file_get_contents($cacheFile));
+            return $response;
         }
 
-        $request      = $this->getRequest();
         $targetPath   = $request->server->get('REQUEST_URI');
         $sourcePath   = $request->getBasePath();
 
@@ -116,11 +126,9 @@ class ApplicationController extends Controller
         }
 
         // Cut short if possible by returning an 304 if nothing has changed
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/css');
         $response->setLastModified($lastModified);
         $response->headers->set('X-Asset-Modification-Time', $lastModified->format('c'));
-        if ($response->isNotModified($this->get('request'))) {
+        if ($response->isNotModified($request)) {
             return $response;
         }
 
@@ -390,5 +398,16 @@ class ApplicationController extends Controller
         $response = new Response();
         $response->setContent($browserResponse->getContent());
         return $response;
+    }
+
+    /**
+     * @param $slug
+     * @param $env
+     * @param $type
+     * @return string
+     */
+    public function getCachedAssetPath($slug, $env, $type)
+    {
+        return $this->container->getParameter('kernel.root_dir') . "/cache/" . $env . "/" . $slug . ".min.".$type;
     }
 }

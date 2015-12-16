@@ -171,7 +171,7 @@ class Application
      * Filters can be applied later on with the ensureFilter method.
      *
      * @param string $type Can be 'css' or 'js' to indicate which assets to dump
-     * @return AsseticFactory
+     * @return array
      */
     public function getAssets($type)
     {
