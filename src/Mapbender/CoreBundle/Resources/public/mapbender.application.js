@@ -1,10 +1,3 @@
-$.ajaxPrefilter(function(options) {
-    if(options.crossDomain) {
-        options.url = Mapbender.configuration.application.urls.proxy + '?url=' + encodeURIComponent(encodeURIComponent(options.url));
-        options.crossDomain = false;
-    }
-});
-
 var Mapbender = Mapbender || {};
 
 Mapbender.ElementRegistry = function(){

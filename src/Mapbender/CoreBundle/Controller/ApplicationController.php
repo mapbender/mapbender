@@ -1,18 +1,11 @@
 <?php
 
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle\Controller;
 
-use Assetic\Asset\StringAsset;
-use Assetic\Filter\CssRewriteFilter;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
-use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -70,137 +63,65 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Compiling SASS/CSS controller.
-     *
-     * @Route("/application/{slug}/assets/css")
-     */
-    public function ccssAction($slug)
-    {
-        // Create virtual file system path required for url rewriting inside CSS files
-        $request = $this->getRequest();
-        $route = $this->container->get('router')->getRouteCollection()->get($request->get('_route'));
-        $targetPath = $request->server->get('SCRIPT_FILENAME') . $route->getPattern();
-
-        $targetPath = str_replace('{slug}', $slug, $targetPath);
-        $targetPath = $request->server->get('REQUEST_URI');
-        $sourcePath = $request->getBasePath();
-
-        if(empty($sourcePath)){
-                $sourcePath = ".";
-        }
-        // Collect all assets into one
-        $application = $this->getApplication($slug);
-        $refs = array_unique($application->getAssets('css'));
-        $custom = $application->getCustomCssAsset();
-        if($custom){
-            $refs[] = $custom;
-        }
-        $factory = new AssetFactory($this->container, $refs, 'css', $targetPath, $sourcePath);
-        $assets = $factory->getAssetCollection();
-
-        // Get last modified timestamp from assets as well as application (DB) or Symfony's cache creation (YAML)
-        $lastModified = \DateTime::createFromFormat('U', $assets->getLastModified());
-        if ($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
-            $lastModified = max($application->getEntity()->getUpdated(), $lastModified);
-        } else {
-            $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
-            $lastModified = max($cacheUpdateTime, $lastModified);
-        }
-
-        // Cut short if possible by returning an 304 if nothing has changed
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/css');
-        $response->setLastModified($lastModified);
-        $response->headers->set('X-Asset-Modification-Time', $lastModified->format('c'));
-        if ($response->isNotModified($this->get('request'))) {
-            return $response;
-        }
-
-        // Compile the collection with SASS
-        $response->setContent($factory->compile());
-
-        return $response;
-    }
-
-    /**
      * Asset controller.
      *
      * Dumps the assets for the given application and type. These are up to
      * date and this controller will be used during development mode.
      *
      * @Route("/application/{slug}/assets/{type}")
+     * @param string $slug Application slug name
+     * @param string $type Asset type
+     * @return Response
      */
     public function assetsAction($slug, $type)
     {
-        $response = new Response();
+        $response         = new Response();
+        $request          = $this->getRequest();
+        $env              = $this->container->get("kernel")->getEnvironment();
+        $isProduction     = $env == "prod";
+        $cacheFile        = $this->getCachedAssetPath($slug, $env, $type);
+        $needCache        = $isProduction && !file_exists($cacheFile);
+        $modificationDate = new \DateTime();
+        $application      = $this->getApplication($slug);
 
-        // Load required assets for application
-        $application = $this->getApplication($slug);
-        $cache = new ApplicationAssetCache($this->container, $application->getAssets($type), $type);
-        $useTimestamp = !$this->container->getParameter('mapbender.static_assets');
-        $assets = $cache->fill($slug, $useTimestamp);
+        $response->headers->set('Content-Type', $this->getMimeType($type));
 
-        // Determine last-modified timestamp for both DB- and YAML-based apps
-        $application_update_time = new \DateTime();
-        $application_entity = $this->getApplication($slug)->getEntity();
+        if ($isProduction && !$needCache) {
+            $modificationTs = filectime($cacheFile);
+            $isAppDbBased   = $application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB;
+            $modificationDate->setTimestamp($modificationTs);
 
-        $assets_mtime = 0;
-        foreach ($assets as $asset) {
-            $assets_mtime = max($assets_mtime, $asset->getLastModified());
+            if (!$isAppDbBased || ($isAppDbBased && $application->getEntity()->getUpdated() < $modificationDate)) {
+                $response->setLastModified($modificationDate);
+                $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
+                if ($response->isNotModified($request)) {
+                    return $response;
+                }
+                $response->setContent(file_get_contents($cacheFile));
+                return $response;
+            }
         }
-        $asset_modification_time = new \DateTime();
-        $asset_modification_time->setTimestamp($assets_mtime);
 
-        if ($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
-            $updateTime = max($application->getEntity()->getUpdated(), $asset_modification_time);
+        if ($type == "css") {
+            $sourcePath = $request->getBasePath();
+            $refs       = array_unique($application->getAssets('css'));
+            $custom     = $application->getCustomCssAsset();
+            if ($custom) {
+                $refs[] = $custom;
+            }
+            $factory = new AssetFactory($this->container, $refs, 'css', $request->server->get('REQUEST_URI'), empty($sourcePath) ? "." : $sourcePath);
+            $content = $factory->compile();
         } else {
-            $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
-            $updateTime = max($cacheUpdateTime, $asset_modification_time);
+            $cache   = new ApplicationAssetCache($this->container, $application->getAssets($type), $type);
+            $assets  = $cache->fill($slug, 0);
+            $content = $assets->dump();
         }
 
-        // runtime rewrite which takes into account if the action was called
-        // with app.php in the URL or not.
-        if ('css' === $type) {
-            // The target path assumed by the cache has been used by the
-            // cache's rewrite and all URLs in the cached assets are already
-            // rewritten for it. Now we rewrite from these normalized URLs to
-            // the final, runtime URLs and therefore the cache's target path
-            // is our source path.
-            $source = str_replace(array('{slug}', '{type}'), array($slug, $type), $assets->getTargetPath());
-
-            // Let's build the runtime target path
-            $request = $this->getRequest();
-            $webDir = str_replace('\\', '/',
-                                  realpath($this->container->get('kernel')->getRootDir() .
-                    '/../web/'));
-            $target = $webDir . substr(
-                    $request->getRequestUri(), strlen($request->getBasePath()));
-
-            // And move everything into an StringAsset which gets added the
-            // CssRewriteFilter
-            $css = $assets->dump();
-            $assets = new StringAsset($css, array(), '', $source);
-            $assets->load();
-            $assets->setTargetPath($target);
-            $assets->ensureFilter(new CssRewriteFilter());
+        if ($isProduction && $needCache) {
+            file_put_contents($cacheFile, $content);
         }
 
-        // Create HTTP 304 if possible
-        $response->setLastModified($updateTime);
-        $response->headers->set('X-Asset-Modification-Time', $asset_modification_time->format('c'));
-        if ($response->isNotModified($this->get('request'))) {
-            return $response;
-        }
-
-        // Dump assets to client
-        $mimetypes = array(
-            'css' => 'text/css',
-            'js' => 'application/javascript',
-            'trans' => 'application/javascript');
-
-        $response->headers->set('Content-Type', $mimetypes[$type]);
-        $response->setContent($assets->dump());
-        return $response;
+        return $response->setContent($content);
     }
 
     /**
@@ -379,4 +300,29 @@ class ApplicationController extends Controller
         return $response;
     }
 
+    /**
+     * @param $slug
+     * @param $env
+     * @param $type
+     * @return string
+     */
+    public function getCachedAssetPath($slug, $env, $type)
+    {
+        return $this->container->getParameter('kernel.root_dir') . "/cache/" . $env . "/" . $slug . ".min." . $type;
+    }
+
+    /**
+     * Get mime type
+     *
+     * @param string $type
+     * @return array
+     */
+    protected function getMimeType($type)
+    {
+        static $types = array(
+            'css'   => 'text/css',
+            'js'    => 'application/javascript',
+            'trans' => 'application/javascript');
+        return $types[$type];
+    }
 }

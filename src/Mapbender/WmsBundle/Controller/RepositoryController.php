@@ -412,8 +412,8 @@ class RepositoryController extends Controller
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->set('success', 'Your Wms Instance has been changed.');
-                return $this->redirect($this
-                    ->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)).'#tabLayers');
+                return $this
+                    ->redirect($this->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)));
             } else { // edit
                 return array(
                     "form" => $form->createView(),

@@ -49,7 +49,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setHttpGet(ArrayUtil::hasSet($configuration, 'url'));
         if (isset($configuration['info_format'])) {
             $source->setGetFeatureInfo(new RequestInformation());
-            $source->getGetFeatureInfo()->addFormat(ArrayUtil::hasSet($configuration, 'format', true))
+            $source->getGetFeatureInfo()->addFormat(ArrayUtil::hasSet($configuration, 'info_format', true))
                 ->setHttpGet(ArrayUtil::hasSet($configuration, 'url'));
         }
 

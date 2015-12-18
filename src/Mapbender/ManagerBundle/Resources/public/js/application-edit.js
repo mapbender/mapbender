@@ -826,23 +826,17 @@ $(function() {
             codeMirror.focus();
         });
     })(jQuery);
-    // Prototype: activate tabs by loading
     (function($) {
-        var activeTab = window.location.hash;
-        if (activeTab && activeTab !== '#') {
-            $(".tabContainer .tab"+activeTab+", .tabContainerAlt .tab"+activeTab).click();
-        } else {
-            activeTab = null;
+        var tabkey = 'manager_active_tab';
+        if (typeof(Storage) !== "undefined" && window.sessionStorage && window.sessionStorage[tabkey]) {
+            var id = window.sessionStorage[tabkey];
+            $(".tabContainer .tab#" + id + ", .tabContainerAlt .tab#" + id).click();
         }
-        $(".tabContainer, .tabContainerAlt").on('click', '.tab', function (){
-            activeTab = '#' + $(this).attr('id');
-        });
-        $('form[name="application"]').on('submit', function(){
-            if(activeTab) {
-                var newurl = $(this).attr('action');
-                $(this).attr('action', newurl + activeTab);
+        $(".tabContainer, .tabContainerAlt").on('click', '.tab', function() {
+            if (typeof(Storage) !== "undefined" && window.sessionStorage) {
+                window.sessionStorage.setItem(tabkey, $(this).attr('id'));
             }
-            return true;
         });
     })(jQuery);
 });
+
