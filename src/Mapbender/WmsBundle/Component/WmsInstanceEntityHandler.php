@@ -245,6 +245,9 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->generateConfiguration();
         }
         $configuration = $this->entity->getConfiguration();
+        if (count($configuration['children']) !== 1 || !isset($configuration['children'][0]['children'])) {
+            return null;
+        }
         $hide = false;
         $params = array();
         foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
