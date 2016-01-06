@@ -16,7 +16,6 @@ $searchRouterInputWidth:100%;
   .dropdown{min-width:$searchRouterInputWidth;}
   .ui-helper-hidden-accessible{display: none;}
   .search-results{
-    max-height:200px;
     overflow-y: auto;
   }
   th{
