@@ -5,6 +5,7 @@
     <parameters>
         <parameter id="version">3.0.2</parameter>
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
+        <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
     </parameters>
 
     <services>
@@ -43,11 +44,8 @@
             <tag name="twig.extension" />
         </service>
 
-        <service id="mapbender.assetic.filter.sass" class="%assetic.filter.sass.class%">
+        <service id="mapbender.assetic.filter.sass" class="%assetic.filter.scss.class%">
             <tag name="assetic.filter" alias="sass" />
-
-            <!-- SASS Compiler location path -->
-            <argument>%kernel.root_dir%/../vendor/eslider/sasscb/dist/sassc</argument>
 
             <argument>null</argument>
             <call method="setTimeout">
