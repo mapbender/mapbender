@@ -21,8 +21,6 @@
   @include opacity(0);
 }
 
-
-
 /* ---------------------------------------------------------- TOOLBAR */
 .logoContainer{background-image:url($headPatternUrl);}
 .toolBar{
@@ -55,6 +53,15 @@
       display: inline-block;
       text-wrap: avoid;
       white-space: nowrap;
+
+      > .mb-element-coordsdisplay {
+        display: block;
+        min-width: 160px;
+        > span{
+          float: left !important;
+        }
+      }
+
       > label{
         margin-bottom: 0;
       }
