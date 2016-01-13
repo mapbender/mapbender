@@ -950,6 +950,14 @@
         <source>mb.core.admin.printclient.label.legend_default_behaviour</source>
         <target>Legenden Checkbox aktiv</target>
       </trans-unit>
+      <trans-unit id="a5cb3721da1989997ae99c49bf560c0e" resname="mb.core.admin.redlining.label.auto_activate">
+        <source>mb.core.admin.redlining.label.auto_activate</source>
+        <target>Automatisches Aktivieren</target>
+      </trans-unit>
+      <trans-unit id="d43fd752a42df0c371b25aabb8acdcae" resname="mb.core.admin.redlining.label.deactivate_on_close">
+        <source>mb.core.admin.redlining.label.deactivate_on_close</source>
+        <target>Beim Schließen deaktivieren</target>
+      </trans-unit>
       <trans-unit id="46bf95e740f67ed7aefe520bf20a4e2e" resname="mb.core.printclient.btn.deactivate">
         <source>mb.core.printclient.btn.deactivate</source>
         <target>Druck deaktivieren</target>
