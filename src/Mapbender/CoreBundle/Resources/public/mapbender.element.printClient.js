@@ -347,7 +347,7 @@
 
             function _getLegends(layer) {
                 var legend = null;
-                if (layer.options.legend && layer.options.legend.url) {
+                if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected == true) {
                     legend = {};
                     legend[layer.options.title] = layer.options.legend.url;
                 }
