@@ -135,9 +135,9 @@
                         closeButton: true,
                         closeOnESC: false,
                         content: this.element,
-                        width: 450,
+                        width: this.options.width ? this.options.width : 450,
                         resizable: true,
-                        height: 500,
+                        height: this.options.height ? this.options.height : 500,
                         buttons: {
                             'cancel': {
                                 label: Mapbender.trans('mb.core.searchrouter.popup.btn.cancel'),
