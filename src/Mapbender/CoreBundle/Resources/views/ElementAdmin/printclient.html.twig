@@ -3,6 +3,8 @@
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
     <div class="clearContainer"></div>
+    {{ form_label(form.configuration.type) }}{{ form_widget(form.configuration.type) }}
+    <div class="clearContainer"></div>
     {{ form_label(form.configuration.scales) }}{{ form_widget(form.configuration.scales) }}
     <div class="clearContainer"></div>
     {{ form_widget(form.configuration.rotatable) }}<label for="{{form.configuration.rotatable.vars.id}}" class="labelCheck">{{"mb.core.admin.printclient.label.rotatable"|trans}}</label>
