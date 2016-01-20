@@ -385,7 +385,7 @@
                 var row = $('<tr></tr>');
                 row.data('feature', feature);
                 for(var header in headers){
-                    d = feature.get('properties')[header];
+                    var d = feature.get('properties')[header];
                     row.append($('<td>' + (d || '') + '</td>'));
                 }
                 tbody.append(row);
@@ -493,11 +493,15 @@
          */
         _resultCallback: function(event){
             var row = $(event.currentTarget),
-                feature = row.data('feature').getFeature(),
-                featureExtent = feature.geometry.getBounds(),
+                feature = $.extend({}, row.data('feature').getFeature()),
                 map = feature.layer.map,
-                callbackConf = this.options.routes[this.selected].results.callback;
-
+                callbackConf = this.options.routes[this.selected].results.callback,
+                srs = Mapbender.Model.getProj(this.searchModel.get("srs"));
+            var mapProj = Mapbender.Model.getCurrentProj();
+            if(srs.projCode !== mapProj.projCode) {
+                feature.geometry = feature.geometry.transform(srs, mapProj);
+            }
+            var featureExtent = feature.geometry.getBounds();
             // buffer, if needed
             if(callbackConf.options && callbackConf.options.buffer){
                 var radius = callbackConf.options.buffer;
