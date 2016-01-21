@@ -19,4 +19,8 @@
   .printSubmit {
     float: right;
   }
+
+  #printToggle.active {
+    background-color: #538e24;
+  }
 }
