@@ -41,6 +41,7 @@
                 .on('change', $.proxy(this._getTemplateSize, this));
         
             if (this.options.type === 'element') {
+                $(this.element).show();
                 $(this.element).on('click', '#printToggle', function(){
                     var active = $(this).attr('active');
                     $('.printElement', this.element).toggleClass('hidden');
