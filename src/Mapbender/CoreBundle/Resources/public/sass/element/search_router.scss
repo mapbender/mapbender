@@ -21,6 +21,7 @@ $searchRouterInputWidth:100%;
   th{
     @extend .subTitle;
     text-align:left;
+    padding-right: 3px;
   }
   td{padding-right:$space/2;}
   tr{@extend .linkButton}
