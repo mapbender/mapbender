@@ -1,6 +1,6 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
     
-    {% if configuration.type == 'element' %}
+    {%  if configuration['type'] is defined and configuration.type == 'element' %}
         <input type="button" id="printToggle" active="false" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
         <div class="printElement hidden">
         <br>    
@@ -77,7 +77,7 @@
         <input type="button" class="printSubmit hidden" value="{{ 'mb.core.printclient.popup.btn.ok' | trans }}"/>
     
     </form>
-    {% if configuration.type == 'element' %}
+    {% if configuration['type'] is defined and configuration.type == 'element' %}
         </div>
     {% endif %}    
 </div>
