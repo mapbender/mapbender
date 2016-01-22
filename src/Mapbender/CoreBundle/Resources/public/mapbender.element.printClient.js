@@ -41,23 +41,24 @@
                 .on('change', $.proxy(this._getTemplateSize, this));
         
             if (this.options.type === 'element') {
+                $(this.element).show();
                 $(this.element).on('click', '#printToggle', function(){
                     var active = $(this).attr('active');
-                    $('.printElement', this.element).toggleClass('hidden');
                     if(active === 'true') {// deactivate
-                        $(this).attr('active','false');
+                        $(this).attr('active','false').removeClass('active');
                         $(this).val(Mapbender.trans('mb.core.printclient.btn.activate'));
                         self._updateElements(false);
+                        $('.printSubmit', this.element).addClass('hidden');
                     }else{ // activate
-                        $(this).attr('active','true');
+                        $(this).attr('active','true').addClass('active');
                         $(this).val(Mapbender.trans('mb.core.printclient.btn.deactivate'));
                         self._getTemplateSize();
                         self._updateElements(true);
                         self._setScale();
+                        $('.printSubmit', this.element).removeClass('hidden');
                     }
                 });
-                $('.printSubmit', this.element).removeClass('hidden')
-                    .on('click', $.proxy(this._print, this));
+                $('.printSubmit', this.element).on('click', $.proxy(this._print, this));
             }
 
             this._trigger('ready');

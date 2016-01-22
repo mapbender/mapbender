@@ -125,6 +125,9 @@ class PrintClient extends Element
             }
             $config["quality_levels"] = $levels;
         }
+        if (!isset($config["type"])) {
+            $config["type"] = "dialog";
+        }
         return $config;
     }
 

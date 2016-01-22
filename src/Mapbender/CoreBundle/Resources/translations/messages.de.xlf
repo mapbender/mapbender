@@ -960,11 +960,11 @@
       </trans-unit>
       <trans-unit id="46bf95e740f67ed7aefe520bf20a4e2e" resname="mb.core.printclient.btn.deactivate">
         <source>mb.core.printclient.btn.deactivate</source>
-        <target>Druck deaktivieren</target>
+        <target>Druckrahmen deaktivieren</target>
       </trans-unit>
       <trans-unit id="b72436de7841d50d42eaf7b1db5aa09c" resname="mb.core.printclient.btn.activate">
         <source>mb.core.printclient.btn.activate</source>
-        <target>Druck aktivieren</target>
+        <target>Druckrahmen aktivieren</target>
       </trans-unit>
     </body>
   </file>
