@@ -371,7 +371,7 @@ class PrintService
         if (isset($this->conf['fields']) ) {
             foreach ($this->conf['fields'] as $k => $v) {
                 $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
-                $pdf->SetXY($this->conf['fields'][$k]['x'] - 1,
+                $pdf->SetXY($this->conf['fields'][$k]['x'],
                     $this->conf['fields'][$k]['y']);
 
                 // continue if extent field is set
