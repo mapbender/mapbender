@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Paul Schmidt
  *
- * @ORM\Entity(repositoryClass="RegionPropertiesRepository")
+ * @ORM\Entity
  * @ORM\Table(name="mb_core_regionproperties")
  */
 class RegionProperties
