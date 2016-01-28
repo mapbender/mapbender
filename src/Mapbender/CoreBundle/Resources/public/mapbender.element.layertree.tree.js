@@ -6,7 +6,7 @@
             autoOpen: false,
             useTheme: false,
             target: null,
-            titlemaxlength: 20,
+            titlemaxlength: 40,
             layerInfo: true, //!!!
             showBaseSource: true,
             showHeader: false,
@@ -307,6 +307,7 @@
             $li.attr('data-layersetid', layerset.id);
             $li.removeAttr('data-id');
             $li.removeAttr('data-sourceid');
+            layerset.title = "Test";
             $li.attr('data-type', this.consts.theme).attr('data-title', layerset.title);
             $li.addClass("themeContainer");
             if (theme.opened)
