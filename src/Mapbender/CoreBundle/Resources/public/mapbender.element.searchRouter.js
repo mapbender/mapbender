@@ -29,6 +29,15 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
 
+        /**
+         * Remove last search results
+         */
+        removeLastResults: function(){
+            var widget = this;
+            widget.searchModel.reset();
+            widget._getLayer().removeAllFeatures();
+        },
+
         _setup: function(){
             var self = this;
 
@@ -39,11 +48,11 @@
 
             // bind form reset to reset search model
             this.element.delegate('.search-forms form', 'reset', function(){
-                self.searchModel.reset();
-                self._getLayer().removeAllFeatures();
+                self.removeLastResults();
             });
             // bind form submit to send search model
             this.element.delegate('.search-forms form', 'submit', function(evt){
+                self.removeLastResults();
                 self.searchModel.submit(evt);
             });
             // bind result to result list and map view
@@ -382,7 +391,8 @@
             if(results.length > 0) $('.no-results', this.element).hide();
 
             results.each(function(feature, idx){
-                var row = $('<tr></tr>');
+                var row = $('<tr/>');
+                row.addClass(idx % 2 ? "even" : "odd");
                 row.data('feature', feature);
                 for(var header in headers){
                     var d = feature.get('properties')[header];
