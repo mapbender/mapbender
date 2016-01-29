@@ -18,7 +18,7 @@ $searchRouterInputWidth:100%;
   .ui-helper-hidden-accessible{display: none;}
   .search-results {
     overflow-y: auto;
-    overflow-x: hidden;
+    //overflow-x: hidden;
     > .result-counter{
       margin-bottom: 2px;
     }
