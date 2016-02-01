@@ -1,8 +1,53 @@
 @import "libs/variables";
 @import "libs/mixins";
 
-.elementFormSimpleSearch{
-  $label:110px;
-  .labelInput{width:$label;}
-  .inputWrapper, .dropdown{width:70%;}
+.sidePane, .toolBar {
+  .mb-element-simplesearch {
+    .autocompleteWrapper {
+      position: relative;
+      .autocompleteList {
+        position: absolute;
+        display: none;
+        z-index: 20000;
+        background-color: #FFF;
+        color: #858585;
+        cursor: pointer;
+        line-height: 29px;
+        width: 100%;
+        max-height: 250px;
+        overflow: auto;
+        border: solid 1px #c8c8c8;
+        border-top: none;
+        font-size: 11px;
+        overflow-x: hidden;
+        li {
+          display: block;
+          padding-left: 5px;
+          width: 100%;
+          text-align: left;
+          &:hover {
+            background-color: darken(#FFF, 10%);
+          }
+          &:last-child {
+            clear: both;
+          }
+        }
+      }
+    }
+  }
 }
+
+.sidePane .mb-element-simplesearch {
+  .autocompleteWrapper {
+    width: 100%;
+    input.searchterm {
+      width: 100%;
+    }
+  }
+}
+
+.mobilePane {
+
+}
+
+
