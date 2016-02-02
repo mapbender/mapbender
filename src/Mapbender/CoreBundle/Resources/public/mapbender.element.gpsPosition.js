@@ -30,21 +30,27 @@
         stack: [],
 
         _create: function () {
-            var self = this,
-                me = $(this.element);
+            var widget = this;
+            var element = $(widget.element);
+            var options = widget.options;
+            var target = options.target;
 
-            if (!Mapbender.checkTarget("mbGpsPosition", this.options.target)) {
+            if (!Mapbender.checkTarget("mbGpsPosition", target)) {
                 return;
             }
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
 
-            if (!this.options.average) {
-                this.options.average = 1;
+            Mapbender.elementRegistry.onElementReady(target, $.proxy(widget._setup, widget));
+
+            if (!options.average) {
+                options.average = 1;
             }
 
-            me.click(function () {
-                //me.parent().addClass("toolBarItemActive");
-                self.activate();
+            element.click(function () {
+                if(widget.isActive()) {
+                    widget.deactivate();
+                } else {
+                    widget.activate();
+                }
             });
         },
 
@@ -147,6 +153,14 @@
         },
 
         /**
+         * Is button active?
+         */
+        isActive: function() {
+            var widget = this;
+            return $(widget.element).parent().hasClass("toolBarItemActive");
+        },
+
+        /**
          * Toggle GPS positioning
          *
          * @returns {self}
@@ -163,8 +177,9 @@
          * @returns {self}
          */
         activate: function () {
-            var olmap = this.map.map.olMap,
-                self = this;
+            var widget = this;
+            var olmap = widget.map.map.olMap,
+                self = widget;
             if (navigator.geolocation) {
                 self.observer = navigator.geolocation.watchPosition(function success(position) {
                     var proj = new OpenLayers.Projection("EPSG:4326"),
@@ -197,12 +212,12 @@
                     Mapbender.error(msg);
                 }, { enableHighAccuracy: true, maximumAge: 0 });
 
-                $(this.element).parent().addClass("toolBarItemActive");
+                $(widget.element).parent().addClass("toolBarItemActive");
 
             } else {
                 Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
             }
-            return this;
+            return widget;
         },
         /**
          * Deactivate GPS positioning
