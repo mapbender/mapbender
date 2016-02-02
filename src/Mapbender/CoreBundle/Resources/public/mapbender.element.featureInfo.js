@@ -96,18 +96,16 @@
                 if (Mapbender.source[src.type]) {
                     var url = Mapbender.source[src.type].featureInfoUrl(mqLayer, x, y, $.proxy(self._setInfo, self));
                     if (url) {
-                        var n = url.indexOf("://");
-                        var url_ = n !== -1 ? url.substr(n+1) : url;
-                        self.queries[mqLayer.id] = url_;
+                        self.queries[mqLayer.id] = url;
                         if (!self.options.onlyValid) {
                             self._addContent(mqLayer, 'wird geladen');
                             self._open();
                         }
                         called = true;
                         if (self.options.showOriginal && !self.options.onlyValid) {
-                            self._addContent(mqLayer, self._getIframeDeclaration(Mapbender.Util.UUID(), url_));
+                            self._addContent(mqLayer, self._getIframeDeclaration(Mapbender.Util.UUID(), url));
                         } else {
-                            self._setInfo(mqLayer, url_);
+                            self._setInfo(mqLayer, url);
                         }
                     } else {
                         self._removeContent(mqLayer);
