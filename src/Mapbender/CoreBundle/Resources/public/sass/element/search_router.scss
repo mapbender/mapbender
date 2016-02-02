@@ -1,25 +1,29 @@
-$searchRouterInputWidth:100%;
-.mb-element-searchrouter{
+$searchRouterInputWidth: 100%;
+.mb-element-searchrouter {
   display: block;
 
-  .labelInput{
-    width:auto;
+  .labelInput {
+    width: auto;
     line-height: 14px;
     font-weight: normal;
     margin-bottom: 0;
     /*float:left;*/
   }
-  .dropdown, .input{
+  .dropdown, .input {
     /*float:left;*/
-    width:$searchRouterInputWidth;
+    width: $searchRouterInputWidth;
     margin-bottom: $space/2;
   }
-  .dropdown{min-width:$searchRouterInputWidth;}
-  .ui-helper-hidden-accessible{display: none;}
+  .dropdown {
+    min-width: $searchRouterInputWidth;
+  }
+  .ui-helper-hidden-accessible {
+    display: none;
+  }
   .search-results {
     overflow-y: auto;
     //overflow-x: hidden;
-    > .result-counter{
+    > .result-counter {
       margin-bottom: 2px;
     }
     > table {
@@ -62,38 +66,52 @@ $searchRouterInputWidth:100%;
       }
     }
   }
-  th{
+  th {
     @extend .subTitle;
-    text-align:left;
+    text-align: left;
     padding-right: 3px;
   }
-  td{padding-right:$space/2;}
-  tr{@extend .linkButton}
-  .search-forms > form > div > div {clear:both;} // the ugly and unflexible way
+  td {
+    padding-right: $space/2;
+  }
+  tr {
+    @extend .linkButton
+  }
+  .search-forms > form > div > div {
+    clear: both;
+  }
+  // the ugly and unflexible way
 
   .result-counter {
     text-align: right;
   }
-  .inputWrapper {width:$searchRouterInputWidth;}
+  .inputWrapper {
+    width: $searchRouterInputWidth;
+  }
 }
+
+// ui-autocomplete ui-front ui-menu ui-widget ui-widget-content search-router
 // dublicate ! > components
-.ui-autocomplete{
+
+//search-router
+
+.search-router.ui-autocomplete {
   z-index: 20000;
   background-color: #FFF;
-  color:$secondColor;
-  cursor:pointer;
-  line-height:$lineHeight;
+  color: $secondColor;
+  cursor: pointer;
+  line-height: $lineHeight;
   max-width: $searchRouterInputWidth;
   max-height: 200px;
   overflow: auto;
-  border:solid 1px lighten($thirdColor, 15%);
+  border: solid 1px lighten($thirdColor, 15%);
   font-size: $fontSize - 2;
 
-  li{
+  li {
     padding-left: 5px;
-    &:hover{
-      color:$ciColor;
-      background-color:$contentColor;
+    &:hover, &.ui-state-focus {
+      color: $ciColor;
+      background-color: $contentColor;
     }
   }
 }
