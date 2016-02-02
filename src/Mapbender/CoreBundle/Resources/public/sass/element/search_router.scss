@@ -21,8 +21,7 @@ $searchRouterInputWidth: 100%;
     display: none;
   }
   .search-results {
-    overflow-y: auto;
-    //overflow-x: hidden;
+    overflow: auto;
     > .result-counter {
       margin-bottom: 2px;
     }
@@ -41,15 +40,15 @@ $searchRouterInputWidth: 100%;
       }
       tr {
         border-bottom: 1px solid #d3d3d3;
-        &.odd {
-          background-color: #f1f1f1;
-        }
-        &.even {
-          background-color: #ffffff;
-        }
+        //&.odd {
+        //  background-color: #f1f1f1;
+        //}
+        //&.even {
+        //  background-color: #ffffff;
+        //}
         &:hover {
-          background-color: lighten(#578e2a, 30%);
-          color: #fff;
+          color: $ciColor;
+          background-color: $contentColor;
         }
         td {
           padding-left: 2px;
