@@ -46,7 +46,6 @@
             }
 
             element.click(function () {
-                console.log("click",widget.isActive());
                 if(widget.isActive()) {
                     widget.deactivate();
                 } else {
