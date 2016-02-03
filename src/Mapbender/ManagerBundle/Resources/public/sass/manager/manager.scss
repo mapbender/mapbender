@@ -54,24 +54,32 @@ $pageWidth:$contentPaneWidth + $navWidth;
                       url($headPatternUrl));
   hr{@include absolute('' 0 0 0);}
 }
-.accountBar{
-  color:$middleFontColor;
-  cursor:pointer;
-  padding:($space/4) ($space/2) ($space/4) ($space/2);
-  background-color:$contentColor;
+
+.accountBar {
+  color: $middleFontColor;
+  cursor: pointer;
+  padding: ($space/4) ($space/2) ($space/4) ($space/2);
+  background-color: $contentColor;
   @include absolute(0 0 '' '');
-}
-.accountMenu{
-  height:20px;
-  overflow: hidden;
-  position: relative;
-  @include transition(all 0.2s ease-in-out);
-  &.opened{height:65px;}
-  .iconDown{
-    padding-right:$space;
-    &:before{@include absolute('' 0 '' '');}
+  > .accountMenu {
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+    @include transition(all 0.2s ease-in-out);
+
+    &.opened {
+      height: 65px;
+    }
+    .iconDown {
+      padding-right: $space;
+      font-family: $fontFamily;
+      &:before {
+        @include absolute('' 0 '' '');
+      }
+    }
   }
 }
+
 
 
 
