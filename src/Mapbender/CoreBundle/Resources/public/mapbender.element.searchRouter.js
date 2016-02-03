@@ -234,6 +234,7 @@
          */
         _reset: function() {
             $('select#search_routes_route', this.element).change();
+            this.currentFeature = null;
         },
 
         /**
@@ -537,7 +538,8 @@
             if(srs.projCode !== mapProj.projCode) {
                 feature.geometry = feature.geometry.transform(srs, mapProj);
             }
-            var featureExtent = feature.geometry.getBounds();
+            var featureExtent = $.extend({},feature.geometry.getBounds());
+
             // buffer, if needed
             if(callbackConf.options && callbackConf.options.buffer){
                 var radius = callbackConf.options.buffer;
