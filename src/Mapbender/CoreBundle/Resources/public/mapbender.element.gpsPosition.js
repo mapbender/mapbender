@@ -51,6 +51,7 @@
                 } else {
                     widget.activate();
                 }
+                return false;
             });
         },
 
@@ -234,8 +235,8 @@
          * @param
          * @returns {self}
          */
-        deactivate: function () {
-            if (this.observer) {
+        deactivate: function() {
+            if(this.observer != null) {
                 navigator.geolocation.clearWatch(this.observer);
                 $(this.element).parent().removeClass("toolBarItemActive");
                 this.firstPosition = true;
