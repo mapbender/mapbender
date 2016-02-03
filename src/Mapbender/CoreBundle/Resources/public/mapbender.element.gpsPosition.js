@@ -46,6 +46,7 @@
             }
 
             element.click(function () {
+                console.log("click",widget.isActive());
                 if(widget.isActive()) {
                     widget.deactivate();
                 } else {
@@ -164,7 +165,7 @@
          */
         isActive: function() {
             var widget = this;
-            return !!widget.observer;
+            return widget.observer != null;
         },
 
         /**
@@ -236,7 +237,7 @@
          * @returns {self}
          */
         deactivate: function() {
-            if(this.observer != null) {
+            if(this.isActive()) {
                 navigator.geolocation.clearWatch(this.observer);
                 $(this.element).parent().removeClass("toolBarItemActive");
                 this.firstPosition = true;
