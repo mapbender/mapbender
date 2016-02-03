@@ -48,6 +48,7 @@
             var searchModel = widget.searchModel = new Mapbender.SearchModel(null, null, widget);
             var routeSelect = $('select#search_routes_route', element);
             var routeCount = 0;
+            var map = widget.map = $('#' + options.target).data('mapbenderMbMap').map.olMap;
 
             // bind form reset to reset search model
             element.delegate('.search-forms form', 'reset', function(){
@@ -77,8 +78,8 @@
             $('a[role="search_router_search"]', element)
                 .button()
                 .click(function(){
-                $('form[name="' + widget.selected + '"]', element).submit();
-            });
+                    $('form[name="' + widget.selected + '"]', element).submit();
+                });
 
             // Prevent map getting cursors keys
             element.bind('keydown', function(event){
@@ -119,11 +120,26 @@
                 });
             }
 
+            map.events.register("zoomend", this, function() {
+                widget.redraw();
+            });
+
             widget._trigger('ready');
             widget._ready();
 
             if(widget.options.autoOpen) {
                 widget.open();
+            }
+        },
+
+        /**
+         * Redraw current result layer selected feature
+         */
+        redraw: function() {
+            var widget = this;
+            var feature = widget.currentFeature ? widget.currentFeature : null;
+            if( widget.currentFeature) {
+                feature.layer.drawFeature(feature, 'select');
             }
         },
 
@@ -509,11 +525,14 @@
          * @param  jQuery.Event event Mouse event
          */
         _resultCallback: function(event){
+            var widget = this;
+            var options = widget.options;
+            var routes = options.routes;
             var row = $(event.currentTarget),
                 feature = $.extend({}, row.data('feature').getFeature()),
                 map = feature.layer.map,
-                callbackConf = this.options.routes[this.selected].results.callback,
-                srs = Mapbender.Model.getProj(this.searchModel.get("srs"));
+                callbackConf = routes[widget.selected].results.callback,
+                srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
             var mapProj = Mapbender.Model.getCurrentProj();
             if(srs.projCode !== mapProj.projCode) {
                 feature.geometry = feature.geometry.transform(srs, mapProj);
@@ -533,7 +552,7 @@
 
             // restrict zoom if needed
             if(callbackConf.options &&
-                (callbackConf.options.maxScale || callbackConf.options.minScale)){
+               (callbackConf.options.maxScale || callbackConf.options.minScale)){
 
                 var res = map.getResolutionForZoom(zoom);
                 var units = map.baseLayer.units;
@@ -565,7 +584,9 @@
             $.each(layer.selectedFeatures, function(idx, feature) {
                 layer.drawFeature(feature, 'default');
             });
-            layer.drawFeature(feature, 'select');
+
+            widget.currentFeature = feature;
+            widget.redraw();
             layer.selectedFeatures.push(feature);
         },
 
