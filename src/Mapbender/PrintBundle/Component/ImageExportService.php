@@ -18,34 +18,26 @@ class ImageExportService
         $this->tempdir = sys_get_temp_dir();
     }
 
-    /**
-     * Todo
-     *
-     */
     public function export($content)
     {
         $this->data = json_decode($content, true);
+
+        foreach ($this->data['requests'] as $i => $layer) {
+            if ($layer['type'] != 'wms') {
+                continue;
+            }
+            $this->requests[$i] = $layer['url'];
+        }
 
         if(isset($this->data['vectorLayers'])){
             foreach ($this->data['vectorLayers'] as $idx => $layer){
                 $this->data['vectorLayers'][$idx] = json_decode($this->data['vectorLayers'][$idx], true);
             }
         }
-//        print "<pre>";
-//        print_r($this->data);
-//        print "</pre>";
-//        die();
-        $this->format = $this->data['format'];
-        $this->requests = $this->data['requests'];
-        // resource dir
-        $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
+
         $this->getImages();
     }
 
-    /**
-     * Todo
-     *
-     */
     private function getImages()
     {
         $temp_names = array();
@@ -65,22 +57,21 @@ class ImageExportService
             $response = $this->container->get('http_kernel')->handle($subRequest,
                 HttpKernelInterface::SUB_REQUEST);
 
-            $tempdir = $this->tempdir;
-            $imagename = tempnam($tempdir, 'mb_imgexp');
+            $imagename = tempnam($this->tempdir, 'mb_imgexp');
             $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
-            $im = null;
+            $rawImage = null;
             switch (trim($response->headers->get('content-type'))) {
                 case 'image/png; mode=8bit' : 
                 case 'image/png' :
-                    $im = imagecreatefrompng($imagename);
+                    $rawImage = imagecreatefrompng($imagename);
                     break;
                 case 'image/jpeg' :
-                    $im = imagecreatefromjpeg($imagename);
+                    $rawImage = imagecreatefromjpeg($imagename);
                     break;
                 case 'image/gif' :
-                    $im = imagecreatefromgif($imagename);
+                    $rawImage = imagecreatefromgif($imagename);
                     break;
                 default:
                     continue;
@@ -88,64 +79,79 @@ class ImageExportService
                 //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
 
-            if ($im !== null) {
-                imagesavealpha($im, true);
-                imagepng($im, $imagename);
+            if ($rawImage !== null) {
+                $width = imagesx($rawImage);
+                $height = imagesy($rawImage);
 
-                $this->image_width = imagesx($im);
-                $this->image_height = imagesy($im);
+                // Make sure input image is truecolor with alpha, regardless of input mode!
+                $image = imagecreatetruecolor($width, $height);
+                imagealphablending($image, false);
+                imagesavealpha($image, true);
+                imagecopyresampled($image, $rawImage, 0, 0, 0, 0, $width, $height, $width, $height);
+
+                // Taking the painful way to alpha blending. Stupid PHP-GD
+                $opacity = floatVal($this->data['requests'][$k]['opacity']);
+                if(1.0 !== $opacity) {
+                    for ($x = 0; $x < $width; $x++) {
+                        for ($y = 0; $y < $height; $y++) {
+                            $colorIn = imagecolorsforindex($image, imagecolorat($image, $x, $y));
+                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
+
+                            $colorOut = imagecolorallocatealpha(
+                                $image,
+                                $colorIn['red'],
+                                $colorIn['green'],
+                                $colorIn['blue'],
+                                $alphaOut);
+                            imagesetpixel($image, $x, $y, $colorOut);
+                            imagecolordeallocate($image, $colorOut);
+                        }
+                    }
+                }
+                imagepng($image, $imagename);
             }
         }
 
         // create final merged image
-        $finalimagename = tempnam($tempdir, 'mb_imgexp_merged');
-        $finalImage = imagecreatetruecolor($this->image_width,
-            $this->image_height);
-        $bg = ImageColorAllocate($finalImage, 255, 255, 255);
-        imagefilledrectangle($finalImage, 0, 0, $this->image_width,
-            $this->image_height, $bg);
-        imagepng($finalImage, $finalimagename);
+        $finalImageName = tempnam($this->tempdir, 'mb_imgexp_merged');
+        $mergedImage = imagecreatetruecolor($width, $height);
+        $bg = ImageColorAllocate($mergedImage, 255, 255, 255);
+        imagefilledrectangle($mergedImage, 0, 0, $width, $height, $bg);
+        imagepng($mergedImage, $finalImageName);
         foreach ($temp_names as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
-                $dest = imagecreatefrompng($finalimagename);
+                $dest = imagecreatefrompng($finalImageName);
                 $src = imagecreatefrompng($temp_name);
-                imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
-                    $this->image_height);
-                imagepng($dest, $finalimagename);
+                imagecopy($dest, $src, 0, 0, 0, 0, $width, $height);
+                imagepng($dest, $finalImageName);
             }
             unlink($temp_name);
             finfo_close($finfo);
         }
 
-        $date = date("Ymd");
-        $time = date("His");
-
-        $this->finalimagename = $finalimagename;
-
         if (isset($this->data['vectorLayers'])) {
-            $this->drawFeatures();
+            $this->drawFeatures($finalImageName);
         }
 
-        $file = $this->finalimagename;
-        $image = imagecreatefrompng($file);
-        if ($this->format == 'png') {
+        $finalImage = imagecreatefrompng($finalImageName);
+        if ($this->data['format'] == 'png') {
             header("Content-type: image/png");
-            header("Content-Disposition: attachment; filename=export_" . $date . $time . ".png");
+            header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".png");
             //header('Content-Length: ' . filesize($file));
-            imagepng($image);
+            imagepng($finalImage);
         } else {
             header("Content-type: image/jpeg");
-            header("Content-Disposition: attachment; filename=export_" . $date . $time . ".jpg");
+            header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".jpg");
             //header('Content-Length: ' . filesize($file));
-            imagejpeg($image, null, 85);
+            imagejpeg($finalImage, null, 85);
         }
-        unlink($this->finalimagename);
+        unlink($finalImageName);
     }
 
-    private function drawFeatures()
+    private function drawFeatures($finalImageName)
     {
-        $image = imagecreatefrompng($this->finalimagename);
+        $image = imagecreatefrompng($finalImageName);
         imagesavealpha($image, true);
         imagealphablending($image, true);
 
@@ -161,7 +167,7 @@ class ImageExportService
                 $this->$renderMethodName($geometry, $image);
             }
         }
-        imagepng($image, $this->finalimagename);
+        imagepng($image, $finalImageName);
     }
 
     private function getColor($color, $alpha, $image)
@@ -271,8 +277,8 @@ class ImageExportService
             // draw label with white halo
             $color = $this->getColor('#ff0000', 1, $image);
             $bgcolor = $this->getColor('#ffffff', 1, $image);
-            $fontPath = $this->resourceDir.'/fonts/';
-            $font = $fontPath . 'Trebuchet_MS.ttf';
+            $fontPath = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle/fonts/';
+            $font = $fontPath . 'OpenSans-Bold.ttf';
             imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
