@@ -1,6 +1,9 @@
 # Changelog
 
 * **v3.0.5.3** - 2016-02-04
+    - fix on/off layer visibility
+    - Improve application manager button style
+    - Improve tool and zoom bar icon opacity
     - Set login menu default font family
     - Shrink mapbender logo
     - Remove console.log froim mapbender.element.gpsPosition.js
