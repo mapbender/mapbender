@@ -500,7 +500,7 @@
             }
         },
         _isThemeChecked: function($li){
-            if(this.options.useTheme === false) {
+            if(this.options.useTheme === false) { // a theme exists
                 return true;
             }
             var $lith = $li.parents('li.themeContainer:first');
@@ -516,6 +516,8 @@
                 } else {
                     return true;
                 }
+            } else if($lith.length === 0){ // no theme exists
+                return true;
             }
             return false;
         },
