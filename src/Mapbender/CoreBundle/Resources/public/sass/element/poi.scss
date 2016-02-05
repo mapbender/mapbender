@@ -1,6 +1,13 @@
 
-.mb-poi-popup textarea{
-    @extend .input;
+.mb-poi-popup textarea {
+  @extend .input;
+  width: 100%;
+  height: 90px;
+}
+
+.poi-link {
+  textarea {
     width: 100%;
-    height:90px;
+    height: 165px
+  }
 }

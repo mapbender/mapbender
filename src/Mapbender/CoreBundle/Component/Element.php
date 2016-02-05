@@ -52,7 +52,7 @@ abstract class Element
 
     /**
      * Container
-     * @var ContainterInterface The container
+     * @var ContainerInterface The container
      */
     protected $container;
 

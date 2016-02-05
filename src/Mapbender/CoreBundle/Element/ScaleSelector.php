@@ -47,7 +47,7 @@ class ScaleSelector extends Element
         return array(
             'js' => array('mapbender.element.scaleselector.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
-            'css' => array()
+            'css' => array('mapbender.element.scaleselector.scss')
         );
     }
 

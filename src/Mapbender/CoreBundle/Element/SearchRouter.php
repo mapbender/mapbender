@@ -58,6 +58,21 @@ class SearchRouter extends Element
     /**
      * @inheritdoc
      */
+    public static function getDefaultConfiguration()
+    {
+        return array(
+            'tooltip' => 'Search Router',
+            "dialog" => false,
+            "target" => null,
+            'timeoutFactor' => 3,
+            "width" => 700,
+            "height" => 500
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function listAssets()
     {
         return array(
@@ -200,9 +215,13 @@ class SearchRouter extends Element
     public function getFormViews()
     {
         $formViews = array();
-        foreach ($this->getForms() as $form) {
-            $formViews[] = $form->createView();
+        $forms     = $this->getForms();
+        if($forms){
+            foreach ($forms as $form) {
+                $formViews[] = $form->createView();
+            }
         }
+
         return $formViews;
     }
 

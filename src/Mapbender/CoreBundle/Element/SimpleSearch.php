@@ -47,7 +47,7 @@ class SimpleSearch extends Element
                 '@FOMCoreBundle/Resources/public/js/widgets/autocomplete.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.simplesearch.js',
                 ),
-            'css' => array(),
+            'css' => array("@MapbenderManagerBundle/Resources/public/sass/element/simplesearch.scss"),
             'trans' => array());
     }
 

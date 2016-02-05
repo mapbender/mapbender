@@ -18,7 +18,6 @@
         lastRotation: null,
         width: null,
         height: null,
-        popupIsOpen: true,
         rotateValue: 0,
 
         _create: function() {
@@ -30,6 +29,7 @@
         },
 
         _setup: function(){
+            var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
             
@@ -39,6 +39,27 @@
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.element)
                 .on('change', $.proxy(this._getTemplateSize, this));
+        
+            if (this.options.type === 'element') {
+                $(this.element).show();
+                $(this.element).on('click', '#printToggle', function(){
+                    var active = $(this).attr('active');
+                    if(active === 'true') {// deactivate
+                        $(this).attr('active','false').removeClass('active');
+                        $(this).val(Mapbender.trans('mb.core.printclient.btn.activate'));
+                        self._updateElements(false);
+                        $('.printSubmit', this.element).addClass('hidden');
+                    }else{ // activate
+                        $(this).attr('active','true').addClass('active');
+                        $(this).val(Mapbender.trans('mb.core.printclient.btn.deactivate'));
+                        self._getTemplateSize();
+                        self._updateElements(true);
+                        self._setScale();
+                        $('.printSubmit', this.element).removeClass('hidden');
+                    }
+                });
+                $('.printSubmit', this.element).on('click', $.proxy(this._print, this));
+            }
 
             this._trigger('ready');
             this._ready();
@@ -52,54 +73,51 @@
             this.callback = callback ? callback : null;
             var self = this;
             var me = $(this.element);
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            if(!this.popup || !this.popup.$element){
-                this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('title'),
-                        draggable: true,
-                        header: true,
-                        modal: false,
-                        closeButton: false,
-                        closeOnESC: false,
-                        content: self.element,
-                        width: 400,
-                        height: 490,
-                        cssClass: 'customPrintDialog',
-                        buttons: {
-                                'cancel': {
-                                    label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
-                                    cssClass: 'button buttonCancel critical right',
-                                    callback: function(){
-                                        self.close();
+            if (this.options.type === 'dialog') {
+                if(!this.popup || !this.popup.$element){
+                    this.popup = new Mapbender.Popup2({
+                            title: self.element.attr('title'),
+                            draggable: true,
+                            header: true,
+                            modal: false,
+                            closeButton: false,
+                            closeOnESC: false,
+                            content: self.element,
+                            width: 400,
+                            height: 490,
+                            cssClass: 'customPrintDialog',
+                            buttons: {
+                                    'cancel': {
+                                        label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
+                                        cssClass: 'button buttonCancel critical right',
+                                        callback: function(){
+                                            self.close();
+                                        }
+                                    },
+                                    'ok': {
+                                        label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
+                                        cssClass: 'button right',
+                                        callback: function(){
+                                            self._print();
+                                        }
                                     }
-                                },
-                                'ok': {
-                                    label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
-                                    cssClass: 'button right',
-                                    callback: function(){
-                                        self._print();
-                                    }
-                                }
-                        }
-                    });
-                this.popup.$element.on('close', $.proxy(this.close, this));
-             } else {
-                 if (this.popupIsOpen === false){
-                    this.popup.open(self.element);
-                 }
+                            }
+                        });
+                    this.popup.$element.on('close', $.proxy(this.close, this));
+                }else{
+                     return;
+                }
+                me.show();
+                this._getTemplateSize();
+                this._updateElements(true);
+                this._setScale();
             }
-            me.show();
-            this.popupIsOpen = true;
-            this._getTemplateSize();
-            this._updateElements();
-            this._setScale();
         },
 
         close: function() {
             if(this.popup){
                 this.element.hide().appendTo($('body'));
-                this.popupIsOpen = false;
-                this._updateElements();
+                this._updateElements(false);
                 if(this.popup.$element){
                     this.popup.destroy();
                 }
@@ -142,7 +160,7 @@
             var width = this.width,
                 height = this.height,
                 scale = this._getPrintScale(),
-                rotationField = $('input[name="rotation"]');
+                rotationField = $(this.element).find('input[name="rotation"]');
 
             // remove all not numbers from input
             rotationField.val(rotationField.val().replace(/[^\d]+/,''));
@@ -150,7 +168,7 @@
             if (rotationField.val() === '' && this.rotateValue > '0'){
                 rotationField.val('0');
             }
-            var rotation = $('input[name="rotation"]').val();
+            var rotation = rotationField.val();
             this.rotateValue = rotation;
 
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
@@ -163,9 +181,8 @@
 
             if(!(!isNaN(parseFloat(rotation)) && isFinite(rotation))) {
                 if(null !== this.lastRotation) {
-                    $('input[name="rotation"]').val(this.lastRotation).change();
+                    rotationField.val(this.lastRotation).change();
                 }
-                //return;
             }
             rotation= parseInt(-rotation);
 
@@ -228,10 +245,10 @@
             this.layer.redraw();
         },
 
-        _updateElements: function() {
+        _updateElements: function(active) {
             var self = this;
 
-            if(true === this.popupIsOpen){
+            if(true === active){
                 if(null === this.layer) {
                     this.layer = new OpenLayers.Layer.Vector("Print", {
                         styleMap: new OpenLayers.StyleMap({
@@ -251,7 +268,7 @@
                 this.control.activate();
 
                 this._updateGeometry(true);
-            } else {
+            }else{
                 if(null !== this.control) {
                     this.control.deactivate();
                     this.map.map.olMap.removeControl(this.control);
@@ -263,7 +280,7 @@
         },
 
         _getPrintScale: function() {
-            return $('select[name="scale_select"]').val();
+            return $(this.element).find('select[name="scale_select"]').val();
         },
 
         _getPrintExtent: function() {
@@ -331,7 +348,7 @@
 
             function _getLegends(layer) {
                 var legend = null;
-                if (layer.options.legend && layer.options.legend.url) {
+                if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected == true) {
                     legend = {};
                     legend[layer.options.title] = layer.options.legend.url;
                 }
@@ -469,7 +486,7 @@
                 }
             }
 
-            $('div#layers').empty();
+            $('div#layers', form).empty();
             fields.appendTo(form.find('div#layers'));
 
             // Post in neuen Tab (action bei form anpassen)
@@ -482,7 +499,7 @@
             if (lyrCount === 0){
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
-                //click hidden submit
+                // we click a hidden submit button to check the required fields
                 form.find('input[type="submit"]').click();
             }
 
