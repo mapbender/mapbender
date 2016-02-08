@@ -10,7 +10,6 @@ use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -28,38 +27,36 @@ class ApplicationController extends Controller
 
     /**
      * Get runtime URLs
+     * Hack to get proper urls when embedded in drupal
      *
      * @param string $slug
      * @return array
      */
     private function getUrls($slug)
     {
-        $base_url = $this->get('request')->getBaseUrl();
-        $element_url = $this->get('router')
-            ->generate('mapbender_core_application_element', array('slug' => $slug));
-        $translation_url = $this->get('router')
-            ->generate('mapbender_core_translation_trans');
-        $proxy_url = $this->get('router')
-            ->generate('owsproxy3_core_owsproxy_entrypoint');
-        $metadata_url = $this->get('router')
-            ->generate('mapbender_core_application_metadata', array('slug' => $slug));
+        $config        = array('slug' => $slug);
+        $router        = $this->get('router');
+        $searchSubject = 'mapbender';
+        $drupal_mark   = function_exists('mapbender_menu') ? '?q=mapbender' : $searchSubject;
 
-        // hack to get proper urls when embedded in drupal
-        $drupal_mark = function_exists('mapbender_menu') ? '?q=mapbender' : 'mapbender';
-        $base_url = str_replace('mapbender', $drupal_mark, $base_url);
-        $element_url = str_replace('mapbender', $drupal_mark, $element_url);
-        $translation_url = str_replace('mapbender', $drupal_mark, $translation_url);
-        $proxy_url = str_replace('mapbender', $drupal_mark, $proxy_url);
-        $metadata_url = str_replace('mapbender', $drupal_mark, $metadata_url);
+        $urls = array(
+            'base'     => $this->get('request')->getBaseUrl(),
+            'asset'    => $this->get('templating.helper.assets')->getUrl(null),
+            'element'  => $router->generate('mapbender_core_application_element', $config),
+            'trans'    => $router->generate('mapbender_core_translation_trans'),
+            'proxy'    => $router->generate('owsproxy3_core_owsproxy_entrypoint'),
+            'metadata' => $router->generate('mapbender_core_application_metadata', $config));
 
-        return array(
-            'base' => $base_url,
-            // @TODO: Can this be done less hack-ish?
-            'asset' => rtrim($this->get('templating.helper.assets')->getUrl('.'), '.'),
-            'element' => $element_url,
-            'trans' => $translation_url,
-            'proxy' => $proxy_url,
-            'metadata' => $metadata_url);
+        if ($searchSubject !== $drupal_mark) {
+            foreach ($urls as $k => $v) {
+                if ($k == "asset") {
+                    continue;
+                }
+                $urls[ $k ] = str_replace($searchSubject, $drupal_mark, $v);
+            }
+        }
+
+        return $urls;
     }
 
     /**
@@ -127,7 +124,8 @@ class ApplicationController extends Controller
     /**
      * Element action controller.
      *
-     * Passes the request to the element's httpAction.
+     * Passes the request to
+     * the element's httpAction.
      * @Route("/application/{slug}/element/{id}/{action}",
      *     defaults={ "id" = null, "action" = null },
      *     requirements={ "action" = ".+" })
@@ -143,17 +141,42 @@ class ApplicationController extends Controller
      * Main application controller.
      *
      * @Route("/application/{slug}.{_format}", defaults={ "_format" = "html" })
-     * @Template()
      */
     public function applicationAction($slug)
     {
-        $application = $this->getApplication($slug);
+        $env          = $this->container->get("kernel")->getEnvironment();
+        $isProduction = $env == "prod";
+        $response     = new Response();
+        $session      = $this->get("session");
+        $application  = $this->getApplication($slug);
 
-        // At this point, we are allowed to acces the application. In order
-        // to use the proxy in following request, we have to mark the session
-        $this->get("session")->set("proxyAllowed", true);
+        if ($isProduction) {
+            $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), $env, "html");
 
-        return new Response($application->render());
+            if (!is_file($cacheFile)) {
+                $content = $application->render();
+                file_put_contents($cacheFile, $content);
+                $session->set("proxyAllowed", true);
+                $response->setContent($content);
+            } else {
+                $modificationDate = new \DateTime();
+                $modificationDate->setTimestamp(filectime($cacheFile));
+                $isAppDbBased = $application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB;
+                if (!$isAppDbBased || ($isAppDbBased && $application->getEntity()->getUpdated() < $modificationDate)) {
+                    $response->setLastModified($modificationDate);
+                    $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
+                    if ($response->isNotModified($this->getRequest())) {
+                        return $response;
+                    }
+                }
+                $response->setContent(file_get_contents($cacheFile));
+            }
+        } else {
+            $session->set("proxyAllowed", true);
+            $response->setContent($application->render());
+        }
+
+        return $response;
     }
 
     /**
@@ -167,10 +190,9 @@ class ApplicationController extends Controller
      */
     private function getApplication($slug)
     {
-        $application = $this->get('mapbender')
-            ->getApplication($slug, $this->getUrls($slug));
+        $application = $this->get('mapbender')->getApplication($slug, $this->getUrls($slug));
 
-        if ($application === null) {
+        if (!$application) {
             throw new NotFoundHttpException(
             'The application can not be found.');
         }
