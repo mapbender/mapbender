@@ -29,7 +29,6 @@
     border:solid 1px lighten($errorColor, 40%);
 
     @include opacity(1);
-    @include transition(all 0.8s ease-in-out);
 
     &.hide{
       @include opacity(0);

@@ -171,7 +171,7 @@ class Application
      * Filters can be applied later on with the ensureFilter method.
      *
      * @param string $type Can be 'css' or 'js' to indicate which assets to dump
-     * @return AsseticFactory
+     * @return array
      */
     public function getAssets($type)
     {
@@ -320,12 +320,17 @@ class Application
             $num = 0;
             foreach ($layerset->layerObjects as $layer) {
                 $instHandler = EntityHandler::createHandler($this->container, $layer);
-                $layerconf = array($layer->getId() => array(
-                        'type' => strtolower($layer->getType()),
-                        'title' => $layer->getTitle(),
-                        'configuration' => $instHandler->getConfiguration($this->container->get('signer'))));
-                $configuration['layersets'][$idStr][$num] = $layerconf;
-                $num++;
+                $conf = $instHandler->getConfiguration($this->container->get('signer'));
+                if ($conf) {
+                    $configuration['layersets'][$idStr][$num] = array(
+                        $layer->getId() => array(
+                            'type' => strtolower($layer->getType()),
+                            'title' => $layer->getTitle(),
+                            'configuration' => $conf
+                        )
+                    );
+                    $num++;
+                }
             }
         }
 

@@ -55,6 +55,7 @@ class Map extends Element
             'units' => 'degrees',
             'wmsTileDelay' => 2500,
             'tileSize' => 256,
+            'minTileSize' => 128,
             'extents' => array(
                 'max' => array(0, 40, 20, 60),
                 'start' => array(5, 45, 15, 55)),
@@ -92,8 +93,9 @@ class Map extends Element
      */
     public function getConfiguration()
     {
-        $configuration = parent::getConfiguration();
-        $extra = array();
+        $defaultConfiguration = $this->getDefaultConfiguration();
+        $configuration        = parent::getConfiguration();
+        $extra                = array();
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
         $allsrs        = array();
@@ -205,6 +207,12 @@ class Map extends Element
                 $scale = $tmp ? $tmp : $scales[0];
             }
             $configuration['targetscale'] = $scale;
+        }
+
+        if (!isset($configuration["tileSize"])) {
+            $configuration["tileSize"] = $defaultConfiguration["tileSize"];
+        } elseif ($configuration["tileSize"] < $defaultConfiguration["minTileSize"]) {
+            $configuration["tileSize"] = $defaultConfiguration["minTileSize"];
         }
 
         return $configuration;

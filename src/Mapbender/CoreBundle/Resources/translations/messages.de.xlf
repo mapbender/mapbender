@@ -982,6 +982,22 @@
         <source>mb.core.featureinfoext.tag.extension</source>
         <target>extension</target>
       </trans-unit>
+      <trans-unit id="a5cb3721da1989997ae99c49bf560c0e" resname="mb.core.admin.redlining.label.auto_activate">
+        <source>mb.core.admin.redlining.label.auto_activate</source>
+        <target>Automatisches Aktivieren</target>
+      </trans-unit>
+      <trans-unit id="d43fd752a42df0c371b25aabb8acdcae" resname="mb.core.admin.redlining.label.deactivate_on_close">
+        <source>mb.core.admin.redlining.label.deactivate_on_close</source>
+        <target>Beim Schließen deaktivieren</target>
+      </trans-unit>
+      <trans-unit id="46bf95e740f67ed7aefe520bf20a4e2e" resname="mb.core.printclient.btn.deactivate">
+        <source>mb.core.printclient.btn.deactivate</source>
+        <target>Druckrahmen deaktivieren</target>
+      </trans-unit>
+      <trans-unit id="b72436de7841d50d42eaf7b1db5aa09c" resname="mb.core.printclient.btn.activate">
+        <source>mb.core.printclient.btn.activate</source>
+        <target>Druckrahmen aktivieren</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
