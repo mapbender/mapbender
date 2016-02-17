@@ -102,7 +102,7 @@
             var baseSelector = '#' + fi_el_id + ' #' + container_id;
             var geometryElms = [];
             if(this.featureinfo.options.showOriginal) {
-                geometryElms = $(baseSelector + ' iframe').contents().find(this.geomElmSelector);
+                geometryElms = $(this.geomElmSelector, $(baseSelector + ' iframe').contents());
             } else {
                 geometryElms = $(baseSelector + ' ' + this.geomElmSelector);
             }
@@ -117,18 +117,40 @@
             });
             self._getHighLighter(container_id).on(geometries);
         },
-        _featureInfoMouseEventsOn: function(fi_el_id, container_id) {
+        _featureInfoMouseEventsOn: function(options) {
+            var self = this;
+            var fi_el_id = options.id;
+            var container_id = options.activated_content;
             this.eventIdentifiers.featureinfo_mouse = {
                 fiid: fi_el_id,
                 cid: container_id
             };
             var baseSelector = '#' + fi_el_id + ' #' + container_id;
-            if(this.featureinfo.options.showOriginal) {
-                $(baseSelector + ' iframe').contents().find(this.geomElmSelector).on('mouseover', $.proxy(this._showGeometry, this));
-                $(baseSelector + ' iframe').contents().find(this.geomElmSelector).on('mouseout', $.proxy(this._hideGeometry, this));
+            if (this.featureinfo.options.showOriginal) {
+                var iframe = $(baseSelector + ' iframe').contents();
+                var interval = null;
+                interval = window.setInterval(function() {
+                    if (iframe) {
+                        if (iframe.get(0).readyState === 'complete') {
+                            window.clearInterval(interval);
+                            $(self.geomElmSelector, $(baseSelector + ' iframe').contents()).on('mouseover', $.proxy(
+                                self._showGeometry, self));
+                            $(self.geomElmSelector, $(baseSelector + ' iframe').contents()).on('mouseout', $.proxy(
+                                self._hideGeometry, self));
+                            for(var i = 0; i < options.activated_content.length; i++){
+                                self._highLightOn(options.id, options.activated_content);
+                            }
+                        }
+                    } else {
+                        window.clearInterval(interval);
+                    }
+                }, 50);
             } else {
                 $(baseSelector + ' ' + this.geomElmSelector).on('mouseover', $.proxy(this._showGeometry, this));
                 $(baseSelector + ' ' + this.geomElmSelector).on('mouseout', $.proxy(this._hideGeometry, this));
+                for(var i = 0; i < options.activated_content.length; i++){
+                    this._highLightOn(options.id, options.activated_content);
+                }
             }
         },
         _featureInfoMouseEventsOff: function() {
@@ -138,8 +160,8 @@
                 this.eventIdentifiers.featureinfo_mouse = {};
                 var baseSelector = '#' + fi_el_id + ' #' + container_id;
                 if(this.featureinfo.options.showOriginal) {
-                    $(baseSelector + ' iframe').contents().find(this.geomElmSelector).off('mouseover', $.proxy(this._showGeometry, this));
-                    $(baseSelector + ' iframe').contents().find(this.geomElmSelector).off('mouseout', $.proxy(this._hideGeometry, this));
+                    $(this.geomElmSelector, $(baseSelector + ' iframe').contents()).off('mouseover', $.proxy(this._showGeometry, this));
+                    $(this.geomElmSelector, $(baseSelector + ' iframe').contents()).off('mouseout', $.proxy(this._hideGeometry, this));
                 } else {
                     $(baseSelector + ' ' + this.geomElmSelector).off('mouseover', $.proxy(this._showGeometry, this));
                     $(baseSelector + ' ' + this.geomElmSelector).off('mouseout', $.proxy(this._hideGeometry, this));
@@ -203,10 +225,7 @@
                         this.highlighter[key].offAll();
                     }
                     this._featureInfoMouseEventsOff();
-                    this._featureInfoMouseEventsOn(options.id, options.activated_content);
-                    for(var i = 0; i < options.activated_content.length; i++){
-                        this._highLightOn(options.id, options.activated_content);
-                    }
+                    this._featureInfoMouseEventsOn(options);
                 }
                 if(this.options.load_declarative_wms){
                     this._loadWmsOn(options.id, options.activated_content);

@@ -285,7 +285,7 @@
         },
         _cleanHtml: function(data) {
             try {
-                if (data.search('<link') > -1 || data.search('<style') > -1) {
+                if (data.search(/<link/i) > -1 || data.search(/<style/i) > -1 || data.search(/<script/i) > -1) {
                     return data.replace(/document.writeln[^;]*;/g, '')
                         .replace(/\n|\r/g, '')
                         .replace(/<link[^>]*>/gi, '')
