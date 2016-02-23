@@ -183,6 +183,27 @@ class HTMLElement extends Element
                     }
                     $item["options"] = $options;
                 }
+
+                if (isset($item['service'])) {
+                    $serviceInfo = $item['service'];
+                    $serviceName = isset($serviceInfo['serviceName']) ? $serviceInfo['serviceName'] : 'default';
+                    $method      = isset($serviceInfo['method']) ? $serviceInfo['method'] : 'get';
+                    $args        = isset($serviceInfo['args']) ? $item['args'] : '';
+                    $service     = $this->container->get($serviceName);
+                    $options     = $service->$method($args);
+
+                    $item['options'] = $options;
+                }
+
+                if (isset($item['dataStore'])) {
+                    $dataStoreInfo = $item['dataStore'];
+                    $dataStore     = $this->container->get('data.source')->get($dataStoreInfo["id"]);
+                    $options       = array();
+                    foreach($dataStore->search() as $dataItem){
+                        $options[$dataItem->getId()] = $dataItem->getAttribute($dataStoreInfo["text"]);
+                    }
+                    $item['options'] = $options;
+                }
                 break;
         }
         return $item;
