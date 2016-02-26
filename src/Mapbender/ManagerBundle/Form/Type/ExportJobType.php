@@ -40,13 +40,10 @@ class ExportJobType extends AbstractType
                 array(
                 'class' => 'Mapbender\CoreBundle\Entity\Application',
                 'property' => 'title',
-                'multiple' => true,
-                'empty_value' => 'All applications',
-                'empty_data' => null,
+                'multiple' => false,
                 'choices' => $options['applications']
             ))
-            ->add('addSources', 'checkbox', array('required' => false))
-            ->add('addAcl', 'checkbox', array('required' => false))
+//            ->add('addAcl', 'checkbox', array('required' => false))
             ->add('format', 'choice',
                 array(
                 'required' => true,

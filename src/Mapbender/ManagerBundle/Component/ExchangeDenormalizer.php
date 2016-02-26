@@ -83,7 +83,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         if (is_array($data) && $classDef = $this->getClassDifinition($data)) {
             try {
                 $this->em->getRepository($classDef[0]);
-                $meta     = $this->em->getClassMetadata($classDef[0]);
+                $meta     = $this->getClassMetadata($classDef[0]);
                 $criteria = $this->getIdentCriteria($data, $meta);
                 if ($this->isReference($data, $criteria)) {
                     if ($object = $this->getAfterFromBefore($classDef[0], $criteria)) {
@@ -98,7 +98,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                     return $object;
                 }
             } catch (MappingException $e) {
-                return $this->handleClass($data, new \ReflectionClass($classDef[0]));
+                return $this->handleClass($data, $this->getReflectionClass($classDef[0]));
             }
         } elseif (is_array($data)) {
             $result = array();

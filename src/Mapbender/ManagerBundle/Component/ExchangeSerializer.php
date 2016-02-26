@@ -37,6 +37,10 @@ abstract class ExchangeSerializer
 
     protected $container;
 
+    protected $classMetadata;
+
+    protected $classReflection;
+
     /**
      *
      * @param ContainerInterface $container container
@@ -44,6 +48,25 @@ abstract class ExchangeSerializer
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+
+        $this->classMetadata = array();
+        $this->classReflection = array();
+    }
+
+    public function getClassMetadata($realClass)
+    {
+        if(!isset($this->classMetadata[$realClass])) {
+            $this->classMetadata[$realClass] = $this->em->getClassMetadata($realClass);
+        }
+        return $this->classMetadata[$realClass];
+    }
+
+    public function getReflectionClass($realClass)
+    {
+        if(!isset($this->classReflection[$realClass])) {
+            $this->classReflection[$realClass] = new \ReflectionClass($realClass);
+        }
+        return $this->classReflection[$realClass];
     }
 
     public function getContainer()
@@ -117,7 +140,7 @@ abstract class ExchangeSerializer
     public function createRealObject($object)
     {
         $objClass        = $this->getRealClass($object);
-        $reflectionClass = new \ReflectionClass($objClass);
+        $reflectionClass = $this->getReflectionClass($objClass);
         if (!$reflectionClass->getConstructor()) {
             return $reflectionClass->newInstanceArgs(array());
         } elseif (count($reflectionClass->getConstructor()->getParameters()) === 0) {
