@@ -1,5 +1,4 @@
 <?php
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -39,9 +38,9 @@ class ExportHandler extends ExchangeHandler
     {
         $allowedApps = $this->getAllowedAppllications();
         $this->job->setApplications($allowedApps);
-        $type = new ExportJobType();
+        $type        = new ExportJobType();
         return $this->container->get('form.factory')
-            ->create($type, $this->job, array('applications' => $this->job->getApplications()));
+                ->create($type, $this->job, array('applications' => $this->job->getApplications()));
     }
 
     /**
@@ -49,7 +48,7 @@ class ExportHandler extends ExchangeHandler
      */
     public function bindForm()
     {
-        $form = $this->createForm();
+        $form    = $this->createForm();
         $request = $this->container->get('request');
         $form->bind($request);
         if ($form->isValid()) {
@@ -64,10 +63,24 @@ class ExportHandler extends ExchangeHandler
      */
     public function makeJob()
     {
+        gc_enable();
         $normalizer = new ExchangeNormalizer($this->container);
+        $time = array(
+            'start' => microtime(true)
+        );
         $this->exportSources($normalizer);
+        $time['sources'] = microtime(true);
+        $time['sources'] = $time['sources'] . '/' . ($time['sources'] - $time['start']);
+        
+        gc_collect_cycles();
         $this->exportApps($normalizer);
-        return $normalizer->getExport();
+        $time['end'] = microtime(true);
+        $time['total'] = $time['end'] - $time['start'];
+        gc_collect_cycles();
+        $export = $normalizer->getExport();
+        $export['time'] = $time;
+//        die(print_r($time,1));
+        return $export;
     }
 
     public function format($scr)
@@ -76,18 +89,15 @@ class ExportHandler extends ExchangeHandler
             return json_encode($scr);
         } elseif ($this->job->getFormat() === ExchangeJob::FORMAT_YAML) {
             $dumper = new Dumper();
-            $yaml = $dumper->dump($scr, 20);
+            $yaml   = $dumper->dump($scr, 20);
             return $yaml;
         }
     }
 
     private function exportApps($normalizer)
     {
-        $data = array();
-        foreach ($this->job->getApplications() as $app) {
-            $data[] = $normalizer->handleValue($app);
-        }
-        return $data;
+        $normalizer->handleValue($this->job->getApplications());
+        gc_collect_cycles();
     }
 
     private function exportAcls()
@@ -100,23 +110,13 @@ class ExportHandler extends ExchangeHandler
 
     private function exportSources($normalizer)
     {
-        $data = array();
-        $sources = new ArrayCollection();
-        if ($this->job->getAddSources()) {
-            $sources = $this->getAllowedSources();
-        } else {
-            foreach ($this->job->getApplications() as $app) {
-                $help = $this->getAllowedApplicationSources($app);
-                foreach ($help as $src) {
-                    if ($src->getId() && !$sources->contains($src)) {
-                        $sources->add($src);
-                    }
-                }
+        $sources = array();
+        $help    = $this->getAllowedApplicationSources($this->job->getApplications());
+        foreach ($help as $src) {
+            if (!isset($sources[$src->getId()])) {
+                $normalizer->handleValue($src);
+                gc_collect_cycles();
             }
         }
-        foreach ($sources as $source) {
-            $data[] = $normalizer->handleValue($source);
-        }
-        return $data;
     }
 }
