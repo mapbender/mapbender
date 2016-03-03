@@ -17,7 +17,7 @@ class YAMLDataTransformer implements DataTransformerInterface
 {
     protected $indentLevel;
 
-    public function __construct($indentLevel = 2)
+    public function __construct($indentLevel = 10)
     {
         $this->indentLevel = $indentLevel;
     }
@@ -33,8 +33,8 @@ class YAMLDataTransformer implements DataTransformerInterface
         $dumper = new Dumper();
 
         try {
-            $yaml = $dumper->dump($array, $this->indentLevel);
-        } catch(DumpException $e) {
+            $yaml = $dumper->dump($array, $this->indentLevel, 0, true);
+        } catch (DumpException $e) {
             throw new TransformationFailedException();
         }
 
