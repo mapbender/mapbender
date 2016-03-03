@@ -1,16 +1,5 @@
 <form action="{{ path('mapbender_manager_application_import') }}" method="post" id="importForm" name="importForm" {{ form_enctype(form)}}  novalidate="novalidate" target="_blank">
   <div class="defaultForm elementForm">
-    <!--div class="left">
-        {{ form_widget(form.addApplications) }}<label for="{{form.addApplications.vars.id}}" class="labelCheck">{{"mb.manager.admin.application.import.addApplications"|trans}}</label>
-    </div>
-    <div class="clearContainer"></div>
-    <div class="left">
-        {{ form_widget(form.addAcl) }}<label for="{{form.addAcl.vars.id}}" class="labelCheck">{{"mb.manager.admin.application.import.addAcl"|trans}}</label>
-    </div>
-    <div class="clearContainer"></div>
-    <div class="left">
-        {{ form_widget(form.addSources) }}<label for="{{form.addSources.vars.id}}" class="labelCheck">{{"mb.manager.admin.application.import.addSources"|trans}}</label>
-    </div-->
     <div class="clearContainer"></div>
     {{ form_label(form.importFile) }}{{ form_widget(form.importFile) }}
     <div class="clearContainer"></div>

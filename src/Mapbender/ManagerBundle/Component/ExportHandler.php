@@ -7,7 +7,6 @@
 
 namespace Mapbender\ManagerBundle\Component;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\ManagerBundle\Component\ExchangeNormalizer;
 use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Form\Type\ExportJobType;
@@ -37,10 +36,9 @@ class ExportHandler extends ExchangeHandler
     public function createForm()
     {
         $allowedApps = $this->getAllowedAppllications();
-        $this->job->setApplications($allowedApps);
         $type        = new ExportJobType();
         return $this->container->get('form.factory')
-                ->create($type, $this->job, array('applications' => $this->job->getApplications()));
+                ->create($type, $this->job, array('application' => $allowedApps));
     }
 
     /**
@@ -96,7 +94,7 @@ class ExportHandler extends ExchangeHandler
 
     private function exportApps($normalizer)
     {
-        $normalizer->handleValue($this->job->getApplications());
+        $normalizer->handleValue($this->job->getApplication());
         gc_collect_cycles();
     }
 
@@ -111,7 +109,7 @@ class ExportHandler extends ExchangeHandler
     private function exportSources($normalizer)
     {
         $sources = array();
-        $help    = $this->getAllowedApplicationSources($this->job->getApplications());
+        $help    = $this->getAllowedApplicationSources($this->job->getApplication());
         foreach ($help as $src) {
             if (!isset($sources[$src->getId()])) {
                 $normalizer->handleValue($src);

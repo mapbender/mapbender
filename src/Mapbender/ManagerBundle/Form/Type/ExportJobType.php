@@ -27,7 +27,7 @@ class ExportJobType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'applications' => array()
+            'application' => array()
         ));
     }
 
@@ -36,7 +36,7 @@ class ExportJobType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('applications', 'entity',
+        $builder->add('application', 'entity',
                 array(
                 'class' => 'Mapbender\CoreBundle\Entity\Application',
                 'property' => 'title',
