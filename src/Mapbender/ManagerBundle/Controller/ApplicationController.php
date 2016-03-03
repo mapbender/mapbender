@@ -191,7 +191,7 @@ class ApplicationController extends Controller
 
         $expHandler = new ExportHandler($this->container);
         $expJob     = $expHandler->getJob();
-        $expJob->getApplications()->add($tocopy);
+        $expJob->setApplication($tocopy);
         $expJob->setAddSources(false);
         $data = $expHandler->makeJob();
 
