@@ -30,21 +30,28 @@
         stack: [],
 
         _create: function () {
-            var self = this,
-                me = $(this.element);
+            var widget = this;
+            var element = $(widget.element);
+            var options = widget.options;
+            var target = options.target;
 
-            if (!Mapbender.checkTarget("mbGpsPosition", this.options.target)) {
+            if (!Mapbender.checkTarget("mbGpsPosition", target)) {
                 return;
             }
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
 
-            if (!this.options.average) {
-                this.options.average = 1;
+            Mapbender.elementRegistry.onElementReady(target, $.proxy(widget._setup, widget));
+
+            if (!options.average) {
+                options.average = 1;
             }
 
-            me.click(function () {
-                //me.parent().addClass("toolBarItemActive");
-                self.activate();
+            element.click(function () {
+                if(widget.isActive()) {
+                    widget.deactivate();
+                } else {
+                    widget.activate();
+                }
+                return false;
             });
         },
 
@@ -59,7 +66,6 @@
             var self = this,
                 olmap = this.map.map.olMap,
                 markers,
-                size,
                 icon,
                 candidates = olmap.getLayersByName('Markers'),
 
@@ -75,11 +81,18 @@
                 olmap.removeLayer(markers);
                 markers.destroy();
             }
-            markers = new OpenLayers.Layer.Markers('Markers');
+
+            markers = new OpenLayers.Layer.Vector('Markers');
+            var point = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(position.lon, position.lat), null, {
+                strokeColor:   "#ff0000",
+                strokeWidth:   3,
+                strokeOpacity: 1,
+                strokeLinecap: "butt",
+                fillOpacity:   0,
+                pointRadius:   10
+            });
+            markers.addFeatures([point]);
             olmap.addLayer(markers);
-            size = new OpenLayers.Size(20, 20);
-            icon = new OpenLayers.Icon(Mapbender.configuration.application.urls.asset + 'bundles/mapbendercore/image/marker_fett.gif', size);
-            markers.addMarker(new OpenLayers.Marker(position, icon));
 
             // Accurancy
             if (!accuracy) {
@@ -147,15 +160,24 @@
         },
 
         /**
+         * Is button active?
+         */
+        isActive: function() {
+            var widget = this;
+            return widget.observer != null;
+        },
+
+        /**
          * Toggle GPS positioning
          *
          * @returns {self}
          */
         toggleTracking: function () {
-            if (this.observer) {
-                return this.deactivate();
+            var widget = this;
+            if (widget.isActive()) {
+                return widget.deactivate();
             }
-            return this.activate();
+            return widget.activate();
         },
         /**
          * Activate GPS positioning
@@ -163,10 +185,10 @@
          * @returns {self}
          */
         activate: function () {
-            var olmap = this.map.map.olMap,
-                self = this;
+            var widget = this;
+            var olmap = widget.map.map.olMap;
             if (navigator.geolocation) {
-                self.observer = navigator.geolocation.watchPosition(function success(position) {
+                widget.observer = navigator.geolocation.watchPosition(function success(position) {
                     var proj = new OpenLayers.Projection("EPSG:4326"),
                         newProj = olmap.getProjectionObject(),
                         p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
@@ -174,35 +196,38 @@
                     p.transform(proj, newProj);
 
                     // Averaging: Building a queue...
-                    self.stack.push(p);
-                    if (self.stack.length > self.options.average) {
-                        self.stack.splice(0, 1);
+                    widget.stack.push(p);
+                    if (widget.stack.length > widget.options.average) {
+                        widget.stack.splice(0, 1);
                     }
 
                     // ...and reducing it.
-                    p = _.reduce(self.stack, function (memo, p) {
-                        memo.lon += p.lon / self.stack.length;
-                        memo.lat += p.lat / self.stack.length;
+                    p = _.reduce(widget.stack, function (memo, p) {
+                        memo.lon += p.lon / widget.stack.length;
+                        memo.lat += p.lat / widget.stack.length;
                         return memo;
                     }, new OpenLayers.LonLat(0, 0));
 
-                    self._createMarker(p, position.coords.accuracy);
-                    self._centerMap(p);
-                    self._zoomMap(p, position.coords.accuracy);
+                    widget._createMarker(p, position.coords.accuracy);
+                    widget._centerMap(p);
+                    widget._zoomMap(p, position.coords.accuracy);
 
-                    if (self.firstPosition) {
-                        self.firstPosition = false;
+                    if (widget.firstPosition) {
+                        widget.firstPosition = false;
                     }
+
+
                 }, function error(msg) {
-                    Mapbender.error(msg);
+                    Mapbender.error("Es ist nicht möglich Ihre Position zu bestimmen.");
+                    widget.deactivate();
                 }, { enableHighAccuracy: true, maximumAge: 0 });
 
-                $(this.element).parent().addClass("toolBarItemActive");
+                $(widget.element).parent().addClass("toolBarItemActive");
 
             } else {
                 Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
             }
-            return this;
+            return widget;
         },
         /**
          * Deactivate GPS positioning
@@ -210,8 +235,8 @@
          * @param
          * @returns {self}
          */
-        deactivate: function () {
-            if (this.observer) {
+        deactivate: function() {
+            if(this.isActive()) {
                 navigator.geolocation.clearWatch(this.observer);
                 $(this.element).parent().removeClass("toolBarItemActive");
                 this.firstPosition = true;

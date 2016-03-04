@@ -921,11 +921,13 @@ class PrintService
     private function addLegend()
     {
         $this->pdf->addPage('P');
-        $this->pdf->SetFont('Arial', 'B', 14);
+        $this->pdf->SetFont('Arial', 'B', 11);
         $x = 5;
         $y = 10;
 
         foreach ($this->data['legends'] as $idx => $legendArray) {
+            $c = 1;
+            $arraySize = count($legendArray);
             foreach ($legendArray as $title => $legendUrl) {
 
                 if (preg_match('/request=GetLegendGraphic/i', $legendUrl) === 0) {
@@ -937,13 +939,13 @@ class PrintService
                     continue;
                 }
                 $size = getimagesize($image);
-                $tempY = round($size[1] * 25.4 / 72) + 10;
+                $tempY = round($size[1] * 25.4 / 96) + 10;
 
-                if($idx > 0){
+                if($c> 1){
                     if($y + $tempY > ($this->pdf->h)){
                         $x += 105;
                         $y = 10;
-                        if($x > ($this->pdf->w)-30){
+                        if($x > ($this->pdf->w)){
                             $this->pdf->addPage('P');
                             $x = 5;
                             $y = 10;
@@ -953,19 +955,21 @@ class PrintService
 
                 $this->pdf->setXY($x,$y);
                 $this->pdf->Cell(0,0,  utf8_decode($title));
-                $this->pdf->Image($image, $x, $y + 5, 0, 0, 'png', '', false, 0);
+                //$this->pdf->Image($image, $x, $y + 5, 0, 0, 'png', '', false, 0);
+                $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
 
-                $y += round($size[1] * 25.4 / 72) + 10;
-                if($y > ($this->pdf->h)-30){
+                $y += round($size[1] * 25.4 / 96) + 10;
+                if($y > ($this->pdf->h)){
                     $x += 105;
                     $y = 10;
                 }
-                if($x > ($this->pdf->w)-30){
+                if($x > ($this->pdf->w) && $c < $arraySize){
                     $this->pdf->addPage('P');
                     $x = 5;
                     $y = 10;
                 }
                 unlink($image);
+                $c++;
             }
         }
     }

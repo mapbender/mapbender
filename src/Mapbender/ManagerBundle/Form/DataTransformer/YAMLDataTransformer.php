@@ -4,9 +4,9 @@ namespace Mapbender\ManagerBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Exception\DumpException;
+use Symfony\Component\Yaml\Parser;
 
 /**
  * YAML <-> Array data transformer
@@ -17,7 +17,7 @@ class YAMLDataTransformer implements DataTransformerInterface
 {
     protected $indentLevel;
 
-    public function __construct($indentLevel = 2)
+    public function __construct($indentLevel = 10)
     {
         $this->indentLevel = $indentLevel;
     }
@@ -31,10 +31,11 @@ class YAMLDataTransformer implements DataTransformerInterface
     public function transform($array)
     {
         $dumper = new Dumper();
+        $dumper->setIndentation(2);
 
         try {
-            $yaml = $dumper->dump($array, $this->indentLevel);
-        } catch(DumpException $e) {
+            $yaml = $dumper->dump($array, $this->indentLevel, 0, true);
+        } catch (DumpException $e) {
             throw new TransformationFailedException();
         }
 

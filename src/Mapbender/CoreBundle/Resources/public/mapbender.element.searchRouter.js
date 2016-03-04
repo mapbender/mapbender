@@ -22,11 +22,14 @@
          * Widget creator
          */
         _create: function(){
-            if(!Mapbender.checkTarget("mbSearchRouter", this.options.target)){
+            var widget = this;
+            var options = widget.options;
+
+            if(!Mapbender.checkTarget("mbSearchRouter", options.target)){
                 return;
             }
-            var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.onElementReady(options.target, $.proxy(widget._setup, widget));
+            widget.callbackUrl = Mapbender.configuration.application.urls.element + '/' + widget.element.attr('id') + '/';
         },
 
         /**
@@ -39,60 +42,60 @@
         },
 
         _setup: function(){
-            var self = this;
-
-            // Prepare callback URL and Search Model
-            this.callbackUrl = Mapbender.configuration.application.urls.element +
-                '/' + this.element.attr('id') + '/';
-            this.searchModel = new Mapbender.SearchModel(null, null, this);
+            var widget = this;
+            var element = widget.element;
+            var options = widget.options;
+            var searchModel = widget.searchModel = new Mapbender.SearchModel(null, null, widget);
+            var routeSelect = $('select#search_routes_route', element);
+            var routeCount = 0;
+            var map = widget.map = $('#' + options.target).data('mapbenderMbMap').map.olMap;
 
             // bind form reset to reset search model
-            this.element.delegate('.search-forms form', 'reset', function(){
-                self.removeLastResults();
+            element.delegate('.search-forms form', 'reset', function(){
+                widget.removeLastResults();
             });
             // bind form submit to send search model
-            this.element.delegate('.search-forms form', 'submit', function(evt){
-                self.removeLastResults();
-                self.searchModel.submit(evt);
+            element.delegate('.search-forms form', 'submit', function(evt){
+                widget.removeLastResults();
+                widget.searchModel.submit(evt);
             });
+
             // bind result to result list and map view
-            this.searchModel.on('change:results', this._searchResults, this);
+            searchModel.on('change:results', widget._searchResults, widget);
+            searchModel.on('request', widget._setActive, widget);
+            searchModel.on('error sync', widget._setInactive, widget);
+            searchModel.on('error sync', widget._showResultState, widget);
 
-            this.searchModel.on('request', this._setActive, this);
-            this.searchModel.on('error sync', this._setInactive, this);
-            this.searchModel.on('error sync', this._showResultState, this);
-
-            this.resultCallbackProxy = $.proxy(this._resultCallback, this);
+            widget.resultCallbackProxy = $.proxy(widget._resultCallback, widget);
 
             // Prepare autocompletes
-            $('form input[data-autocomplete="on"]', this.element).each(
-                $.proxy(this._setupAutocomplete, this));
-            $('form input[data-autocomplete^="custom:"]', this.element).each(
-                $.proxy(this._setupCustomAutocomplete, this));
+            $('form input[data-autocomplete="on"]', element).each(
+                $.proxy(widget._setupAutocomplete, widget));
+            $('form input[data-autocomplete^="custom:"]', element).each(
+                $.proxy(widget._setupCustomAutocomplete, widget));
 
             // Prepare search button (trigger form submit)
-            $('a[role="search_router_search"]')
+            $('a[role="search_router_search"]', element)
                 .button()
                 .click(function(){
-                $('form[name="' + self.selected + '"]', self.element).submit();
-            });
+                    $('form[name="' + widget.selected + '"]', element).submit();
+                });
 
             // Prevent map getting cursors keys
-            this.element.bind('keydown', function(event){
+            element.bind('keydown', function(event){
                 event.stopPropagation();
             });
 
             // Listen to changes of search select (switching and forms resetting)
-            var routeSelect = $('select#search_routes_route', this.element);
-            routeSelect.change($.proxy(this._selectSearch, this));
-            Mapbender.elementRegistry.onElementReady(this.options.target, function(){
+
+            routeSelect.change($.proxy(widget._selectSearch, widget));
+            Mapbender.elementRegistry.onElementReady(options.target, function(){
                 routeSelect.change();
-                self._trigger('ready');
+                widget._trigger('ready');
             });
             // But if there's only one search, we actually don't need the select
-            var routeCount = 0;
-            for(route in this.options.routes){
-                if(this.options.routes.hasOwnProperty(route)){
+            for(var route in options.routes){
+                if(options.routes.hasOwnProperty(route)){
                     routeCount++;
                 }
             }
@@ -101,27 +104,42 @@
                     .next('hr').hide();
             }
 
-            if(!this.options.asDialog) {
-                this.element.on('click', '.search-action-buttons a', function(event) {
+            if(!options.asDialog) {
+                element.on('click', '.search-action-buttons a', function(event) {
                     event.preventDefault();
                     var target = $(event.target).attr('href');
-                    var targetBase = '#' + self.element.attr('id') + '/button/';
+                    var targetBase = '#' + widget.element.attr('id') + '/button/';
                     switch(target) {
                         case (targetBase + 'reset'):
-                            self._reset();
+                            widget._reset();
                             break;
                         case (targetBase + 'ok'):
-                            self._search();
+                            widget._search();
                             break;
                     }
                 });
             }
 
-            this._trigger('ready');
-            this._ready();
+            map.events.register("zoomend", this, function() {
+                widget.redraw();
+            });
 
-            if(this.options.autoOpen) {
-                this.open();
+            widget._trigger('ready');
+            widget._ready();
+
+            if(widget.options.autoOpen) {
+                widget.open();
+            }
+        },
+
+        /**
+         * Redraw current result layer selected feature
+         */
+        redraw: function() {
+            var widget = this;
+            var feature = widget.currentFeature ? widget.currentFeature : null;
+            if( widget.currentFeature) {
+                feature.layer.drawFeature(feature, 'select');
             }
         },
 
@@ -216,6 +234,7 @@
          */
         _reset: function() {
             $('select#search_routes_route', this.element).change();
+            this.currentFeature = null;
         },
 
         /**
@@ -225,20 +244,20 @@
          * @param  HTMLDomNode  input Input element
          */
         _setupAutocomplete: function(idx, input){
-            var self = this;
+            var widget = this;
             input = $(input);
-            input.autocomplete({
+            var ac = input.autocomplete({
                 delay: input.data('autocomplete-delay') || 500,
                 minLength: input.data('autocomplete-minlength') || 3,
-                search: $.proxy(this._autocompleteSearch, this),
-                open: function( event, ui ) {
-                    $(".ui-autocomplete").outerWidth(input.outerWidth());
+                search: $.proxy(widget._autocompleteSearch, widget),
+                open: function( event, ui, t) {
+                    $(event.target).data("uiAutocomplete").menu.element.outerWidth(input.outerWidth());
                 },
                 source: function(request, response){
-                    self._autocompleteSource(input, request, response);
+                    widget._autocompleteSource(input, request, response);
                 },
-                select: this._autocompleteSelect
-            }).keydown(this._autocompleteKeydown);
+                select: widget._autocompleteSelect
+            }).keydown(widget._autocompleteKeydown);
         },
 
         /**
@@ -308,9 +327,14 @@
          * @param  jQuery.Event event search event
          * @param  Object       ui    n/a
          */
-        _autocompleteSearch: function(event, ui){
-            var delay = $(event.target).autocomplete('option', 'delay'),
+        _autocompleteSearch: function(event, ui,t){
+            var input = $(event.target);
+            var autoCompleteMenu = $(input.data("uiAutocomplete").menu.element);
+            var delay = input.autocomplete('option', 'delay'),
                 diff = (new Date()) - this.lastSearch;
+
+            autoCompleteMenu.addClass("search-router");
+            console.log(autoCompleteMenu.attr("class"));
 
             if(diff <= delay * this.options.timeoutFactor){
                 event.preventDefault();
@@ -502,16 +526,20 @@
          * @param  jQuery.Event event Mouse event
          */
         _resultCallback: function(event){
+            var widget = this;
+            var options = widget.options;
+            var routes = options.routes;
             var row = $(event.currentTarget),
                 feature = $.extend({}, row.data('feature').getFeature()),
                 map = feature.layer.map,
-                callbackConf = this.options.routes[this.selected].results.callback,
-                srs = Mapbender.Model.getProj(this.searchModel.get("srs"));
+                callbackConf = routes[widget.selected].results.callback,
+                srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
             var mapProj = Mapbender.Model.getCurrentProj();
             if(srs.projCode !== mapProj.projCode) {
                 feature.geometry = feature.geometry.transform(srs, mapProj);
             }
-            var featureExtent = feature.geometry.getBounds();
+            var featureExtent = $.extend({},feature.geometry.getBounds());
+
             // buffer, if needed
             if(callbackConf.options && callbackConf.options.buffer){
                 var radius = callbackConf.options.buffer;
@@ -526,7 +554,7 @@
 
             // restrict zoom if needed
             if(callbackConf.options &&
-                (callbackConf.options.maxScale || callbackConf.options.minScale)){
+               (callbackConf.options.maxScale || callbackConf.options.minScale)){
 
                 var res = map.getResolutionForZoom(zoom);
                 var units = map.baseLayer.units;
@@ -558,7 +586,9 @@
             $.each(layer.selectedFeatures, function(idx, feature) {
                 layer.drawFeature(feature, 'default');
             });
-            layer.drawFeature(feature, 'select');
+
+            widget.currentFeature = feature;
+            widget.redraw();
             layer.selectedFeatures.push(feature);
         },
 

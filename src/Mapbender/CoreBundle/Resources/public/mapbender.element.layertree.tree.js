@@ -307,7 +307,6 @@
             $li.attr('data-layersetid', layerset.id);
             $li.removeAttr('data-id');
             $li.removeAttr('data-sourceid');
-            layerset.title = "Test";
             $li.attr('data-type', this.consts.theme).attr('data-title', layerset.title);
             $li.addClass("themeContainer");
             if (theme.opened)
@@ -501,7 +500,7 @@
             }
         },
         _isThemeChecked: function($li){
-            if(this.options.useTheme === false) {
+            if(this.options.useTheme === false) { // a theme exists
                 return true;
             }
             var $lith = $li.parents('li.themeContainer:first');
@@ -517,6 +516,8 @@
                 } else {
                     return true;
                 }
+            } else if($lith.length === 0){ // no theme exists
+                return true;
             }
             return false;
         },
