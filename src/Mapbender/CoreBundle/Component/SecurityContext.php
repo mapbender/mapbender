@@ -33,4 +33,19 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
         }
         return $user;
     }
+
+    /**
+     * Get current user role list
+     *
+     * @return array Role name list
+     */
+    public function getRolesAsArray()
+    {
+        $userRoles = $this->getToken()->getRoles();
+        $temp      = array();
+        foreach ($userRoles as $role) {
+            $temp[] = $role->getRole();
+        }
+        return $temp;
+    }
 }

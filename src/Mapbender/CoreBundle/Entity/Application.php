@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -118,10 +119,13 @@ class Application
 
     protected $publicOptions = array();
 
+    /**
+     * Application constructor.
+     */
     public function __construct()
     {
-        $this->elements = new ArrayCollection();
-        $this->layersets = new ArrayCollection();
+        $this->elements         = new ArrayCollection();
+        $this->layersets        = new ArrayCollection();
         $this->regionProperties = new ArrayCollection();
     }
 
@@ -129,6 +133,7 @@ class Application
      * Get entity source type
      *
      * @param int $source
+     * @return $this
      */
     public function setSource($source)
     {
@@ -172,6 +177,7 @@ class Application
      * Set title
      *
      * @param string $title
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -194,6 +200,7 @@ class Application
      * Set slug
      *
      * @param string $slug
+     * @return $this
      */
     public function setSlug($slug)
     {
@@ -216,6 +223,7 @@ class Application
      * Set description
      *
      * @param text $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -238,6 +246,7 @@ class Application
      * Set template
      *
      * @param string $template
+     * @return $this
      */
     public function setTemplate($template)
     {
@@ -259,7 +268,9 @@ class Application
     /**
      * Set region properties
      *
-     * @param array $template
+     * @param ArrayCollection $regionProperties
+     * @return $this
+     * @internal param array $template
      */
     public function setRegionProperties(ArrayCollection $regionProperties)
     {
@@ -271,7 +282,7 @@ class Application
     /**
      * Get region properties
      *
-     * @return array
+     * @return Collection
      */
     public function getRegionProperties()
     {
@@ -291,7 +302,7 @@ class Application
     /**
      * Add elements
      *
-     * @param Mapbender\CoreBundle\Entity\Element $elements
+     * @param Element $elements
      */
     public function addElements(Element $elements)
     {
@@ -301,7 +312,7 @@ class Application
     /**
      * Get elements
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getElements()
     {
@@ -345,7 +356,7 @@ class Application
     /**
      * Get layersets
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getLayersets()
     {
@@ -353,9 +364,10 @@ class Application
     }
 
     /**
-     * Set screenshot
+     * Set screen shot
      *
      * @param string $screenshot
+     * @return $this
      */
     public function setScreenshot($screenshot)
     {
@@ -378,6 +390,7 @@ class Application
      * Set screenshotFile
      *
      * @param file $screenshotFile
+     * @return $this
      */
     public function setScreenshotFile($screenshotFile)
     {
@@ -400,6 +413,7 @@ class Application
      * Set extra assets
      *
      * @param array $extra_assets
+     * @return $this
      */
     public function setExtraAssets(array $extra_assets = null)
     {
@@ -422,6 +436,7 @@ class Application
      * Set published
      *
      * @param boolean $published
+     * @return $this
      */
     public function setPublished($published)
     {
@@ -443,7 +458,8 @@ class Application
     /**
      * Set updated
      *
-     * @param DateTime $updated
+     * @param \DateTime $updated
+     * @return $this
      */
     public function setUpdated(\DateTime $updated)
     {
@@ -454,7 +470,7 @@ class Application
     /**
      * Get updated
      *
-     * @return DateTime
+     * @return \DateTime
      */
     public function getUpdated()
     {
@@ -464,7 +480,8 @@ class Application
     /**
      * Set custom_css
      *
-     * @param text $custom_css
+     * @param string $custom_css
+     * @return $this
      */
     public function setCustomCss($custom_css)
     {
@@ -475,13 +492,19 @@ class Application
     /**
      * Get custom_css
      *
-     * @return text
+     * @return string
      */
     public function getCustomCss()
     {
         return $this->custom_css;
     }
 
+    /**
+     * Get region elements
+     *
+     * @param null $region
+     * @return array|null
+     */
     public function getElementsByRegion($region = null)
     {
         if ($this->preparedElements === null) {
@@ -516,11 +539,21 @@ class Application
         }
     }
 
+    /**
+     * Get application ID
+     *
+     * @return string
+     */
     public function __toString()
     {
         return (string) $this->getId();
     }
 
+    /**
+     * Get region properties
+     *
+     * @return array
+     */
     public function getNamedRegionProperties()
     {
         $result = array();
@@ -531,8 +564,15 @@ class Application
         return $result;
     }
 
+    /**
+     * Get region properties
+     *
+     * @param $regionName
+     * @return null
+     */
     public function getPropertiesFromRegion($regionName)
     {
+        /** @var RegionProperties $regionProperties */
         foreach ($this->getRegionProperties() as $regionProperties) {
             if ($regionProperties->getName() === $regionName) {
                 return $regionProperties;
