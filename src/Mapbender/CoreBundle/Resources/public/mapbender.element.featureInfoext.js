@@ -127,24 +127,12 @@
             };
             var baseSelector = '#' + fi_el_id + ' #' + container_id;
             if (this.featureinfo.options.showOriginal) {
-                var iframe = $(baseSelector + ' iframe').contents();
-                var interval = null;
-                interval = window.setInterval(function() {
-                    if (iframe) {
-                        if (iframe.get(0).readyState === 'complete') {
-                            window.clearInterval(interval);
-                            $(self.geomElmSelector, $(baseSelector + ' iframe').contents()).on('mouseover', $.proxy(
-                                self._showGeometry, self));
-                            $(self.geomElmSelector, $(baseSelector + ' iframe').contents()).on('mouseout', $.proxy(
-                                self._hideGeometry, self));
-                            for(var i = 0; i < options.activated_content.length; i++){
-                                self._highLightOn(options.id, options.activated_content);
-                            }
-                        }
-                    } else {
-                        window.clearInterval(interval);
-                    }
-                }, 50);
+                var $iframe = $(baseSelector + ' iframe').contents();
+                $(self.geomElmSelector, $iframe).on('mouseover', $.proxy(self._showGeometry, self));
+                $(self.geomElmSelector, $iframe).on('mouseout', $.proxy(self._hideGeometry, self));
+                for(var i = 0; i < options.activated_content.length; i++){
+                    self._highLightOn(options.id, options.activated_content);
+                }
             } else {
                 $(baseSelector + ' ' + this.geomElmSelector).on('mouseover', $.proxy(this._showGeometry, this));
                 $(baseSelector + ' ' + this.geomElmSelector).on('mouseout', $.proxy(this._hideGeometry, this));
@@ -160,8 +148,9 @@
                 this.eventIdentifiers.featureinfo_mouse = {};
                 var baseSelector = '#' + fi_el_id + ' #' + container_id;
                 if(this.featureinfo.options.showOriginal) {
-                    $(this.geomElmSelector, $(baseSelector + ' iframe').contents()).off('mouseover', $.proxy(this._showGeometry, this));
-                    $(this.geomElmSelector, $(baseSelector + ' iframe').contents()).off('mouseout', $.proxy(this._hideGeometry, this));
+                    var $iframe = $(baseSelector + ' iframe').contents();
+                    $(this.geomElmSelector, $iframe).off('mouseover', $.proxy(this._showGeometry, this));
+                    $(this.geomElmSelector, $iframe).off('mouseout', $.proxy(this._hideGeometry, this));
                 } else {
                     $(baseSelector + ' ' + this.geomElmSelector).off('mouseover', $.proxy(this._showGeometry, this));
                     $(baseSelector + ' ' + this.geomElmSelector).off('mouseout', $.proxy(this._hideGeometry, this));
