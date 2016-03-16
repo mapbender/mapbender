@@ -12,6 +12,12 @@
     @extend .buttonCore;
     @include border-radius($radius);
   }
+
+  .olControlOverviewMapExtentRectangle {
+    cursor: move;
+    background-image: url("bundles/mapbendercore/mapquery/lib/openlayers/img/blank.gif");
+  }
+
   .olMap {
     background-color: white;
     @include transition(width .2s linear);
