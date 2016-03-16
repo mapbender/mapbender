@@ -8,6 +8,7 @@
         layersOrigExtents: {},
         mapOrigExtents: {},
         startproj: null,
+
         /**
          * Creates the overview
          */
@@ -18,92 +19,119 @@
             var self = this;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
+
         /**
          * Initializes the overview
          */
-        _setup: function(){
-            var self = this;
-            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            $(this.element).addClass(this.options.anchor);
-            var proj = mbMap.model.mapMaxExtent.projection;
-            var max_ext = mbMap.model.mapMaxExtent.extent;
-            this.startproj = proj;
-            var layers_overview = [];
-            $.each(Mapbender.configuration.layersets[self.options.layerset].reverse(),
-                function(idx, item){
-                    $.each(item, function(idx2, layerDef){
-                        if(layerDef.type === "wms"){
-                            var ls = "";
-                            var layers = Mapbender.source[layerDef.type].getLayersList(layerDef, layerDef.configuration.children[0], true);
-                            for(var i = 0; i < layers.layers.length; i++){
-                                ls += layers.layers[i].options.name !== "" ? "," + layers.layers[i].options.name : "";
-                            }
+        _setup:         function() {
+            var widget = this;
+            var options = widget.options;
+            var mbMap = $('#' + options.target).data('mapbenderMbMap');
+            var model = mbMap.model;
+            var element = $(widget.element);
+            var mapMaxExtent = model.mapMaxExtent;
+            var projection = mapMaxExtent.projection;
+            var maxExtent = mapMaxExtent.extent;
+            var overviewLayers = [];
+            var layerSet = Mapbender.configuration.layersets[options.layerset];
+            var overviewContainer = $('.overviewContainer', widget.element).get(0);
 
-                            // Add proxy if needed
-                            var url = layerDef.configuration.options.url;
-                            if(layerDef.configuration.options.proxy) {
-                                url = OpenLayers.ProxyHost + encodeURIComponent(url);
-                            }
-                            layers_overview.push(new OpenLayers.Layer.WMS(
-                                layerDef.title,
-                                url,
-                                {
-                                    layers: ls.substring(1),
-                                    format: layerDef.configuration.options.format,
-                                    transparent: layerDef.configuration.options.transparent
-                                },
-                            {
-                                isBaseLayer: idx === 0 ? true : false,
-                                opacity: layerDef.configuration.options.opacity,
-                                singleTile: true
-                            }
-                            ));
-                            self._addOrigLayerExtent(layerDef);
-                        }
+            widget.mapOrigExtents = {
+                max: {
+                    projection: projection,
+                    extent: maxExtent
+                }
+            };
+
+            widget.startproj = projection;
+
+            element.addClass(options.anchor);
+
+            $.each(layerSet.reverse(), function(idx, item) {
+                $.each(item, function(idx2, layerDef) {
+                    if(layerDef.type !== "wms") {
+                        return;
+                    }
+                    var wmsLayer = widget.createWmsLayer(layerDef, {
+                        isBaseLayer: idx === 0
                     });
+
+                    overviewLayers.push(wmsLayer);
+                    widget._addOrigLayerExtent(layerDef);
                 });
-            if(layers_overview.length === 0){
+            });
+
+            if(!overviewLayers.length){
                 Mapbender.info(Mapbender.trans("mb.core.overview.nolayer"));
                 return;
             }
-            this.mapOrigExtents = {
-                max: {
-                    projection: proj,
-                    extent: max_ext
-                }
-            };
-            var div = $('#mb-element-overview-map', self.element);
-            div = div.size() > 0 ? div.get(0) : undefined;
+
             var overviewOptions = {
-                layers: layers_overview,
-                div: div,
-                size: new OpenLayers.Size(self.options.width, self.options.height),
-                //maximized: self.options.maximized,
+                layers: overviewLayers,
+                div: overviewContainer,
+                size: new OpenLayers.Size(options.width, options.height),
+                //maximized: widget.options.maximized,
                 mapOptions: {
-                    maxExtent: max_ext,
-                    projection: proj,
+                    maxExtent: maxExtent,
+                    projection: projection,
                     theme: null
                 }
             };
-            if(this.options.fixed){
+
+            if(options.fixed){
                 $.extend(overviewOptions, {
                     minRatio: 1,
                     maxRatio: 1000000000
-//            ,autoPan: false
+                    // ,autoPan: false
                 });
             }
-            this.overview = new OpenLayers.Control.OverviewMap(overviewOptions);          
-            mbMap.map.olMap.addControl(this.overview);
-            $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
-            $(self.element).find('.toggleOverview').bind('click', $.proxy(this._openClose, this));
+
+            widget.overview = new OpenLayers.Control.OverviewMap(overviewOptions);
+
+            mbMap.map.olMap.addControl(widget.overview);
+
+            $(document).bind('mbmapsrschanged', $.proxy(widget._changeSrs, widget));
+            element.find('.toggleOverview').bind('click', $.proxy(widget._openClose, widget));
             
-            if(!this.options.maximized){
-                $(this.element).addClass("closed");
+            if(!options.maximized){
+                element.addClass("closed");
             }    
                 
-            this._trigger('ready');
-            this._ready();
+            widget._ready();
         },
+
+        /**
+         * Create WMS layer by definition
+         * @param layerDefinition
+         * @param options
+         * @returns {*}
+         */
+        createWmsLayer: function(layerDefinition, options) {
+            var ls = "";
+            var layerConfiguration = layerDefinition.configuration;
+            var layerOptions = layerConfiguration.options;
+            var layers = Mapbender.source[layerDefinition.type].getLayersList(layerDefinition, layerConfiguration.children[0], true);
+            var url = layerOptions.url;
+
+            for (var i = 0; i < layers.layers.length; i++) {
+                ls += layers.layers[i].options.name !== "" ? "," + layers.layers[i].options.name : "";
+            }
+
+            // Add proxy if needed
+            if(layerOptions.proxy) {
+                url = OpenLayers.ProxyHost + encodeURIComponent(url);
+            }
+
+            return new OpenLayers.Layer.WMS(layerDefinition.title, url, {
+                layers:      ls.substring(1),
+                format:      layerOptions.format,
+                transparent: layerOptions.transparent
+            }, $.extend({
+                opacity:    layerOptions.opacity,
+                singleTile: true
+            }, options));
+        },
+
         /**
          * Opens/closes the overview element
          */
@@ -116,7 +144,8 @@
                 }
             }, 300);
         },
-        /*
+
+        /**
          * Transforms an extent into 'projection' projection.
          */
         _transformExtent: function(extentObj, projection){
@@ -132,52 +161,61 @@
                 return null;
             }
         },
+
         /**
          * Cahnges the overview srs
          */
-        _changeSrs: function(event, srs){
-            var self = this;
-            var oldProj = this.overview.ovmap.projection;
-            var center = this.overview.ovmap.getCenter().transform(oldProj, srs.projection);
-            this.overview.ovmap.projection = srs.projection;
-            this.overview.ovmap.displayProjection = srs.projection;
-            this.overview.ovmap.units = srs.projection.proj.units;
+        _changeSrs: function(event, srs) {
+            var widget = this;
+            var overview = widget.overview;
+            var ovMap = overview.ovmap;
+            var oldProj = ovMap.projection;
+            var center = ovMap.getCenter().transform(oldProj, srs.projection);
 
-            this.overview.ovmap.maxExtent = this._transformExtent(
-                this.mapOrigExtents.max, srs.projection);
-            $.each(self.overview.ovmap.layers, function(idx, layer){
+            ovMap.projection = srs.projection;
+            ovMap.displayProjection = srs.projection;
+            ovMap.units = srs.projection.proj.units;
+            ovMap.maxExtent = widget._transformExtent(widget.mapOrigExtents.max, srs.projection);
+
+            $.each(ovMap.layers, function(idx, layer) {
                 layer.projection = srs.projection;
                 layer.units = srs.projection.proj.units;
-                if(!self.layersOrigExtents[layer.id]){
-                    self._addOrigLayerExtent(layer);
+                if(!widget.layersOrigExtents[layer.id]) {
+                    widget._addOrigLayerExtent(layer);
                 }
-                if(layer.maxExtent && layer.maxExtent != self.overview.ovmap.maxExtent){
-                    layer.maxExtent = self._transformExtent(
-                        self.layersOrigExtents[layer.id].max, srs.projection);
+                if(layer.maxExtent && layer.maxExtent != widget.overview.ovmap.maxExtent) {
+                    layer.maxExtent = widget._transformExtent(widget.layersOrigExtents[layer.id].max, srs.projection);
                 }
                 layer.initResolutions();
             });
-            this.overview.update();
-            this.overview.ovmap.setCenter(center, this.overview.ovmap.getZoom(), false, true);
+
+            overview.update();
+            ovMap.setCenter(center, ovMap.getZoom(), false, true);
         },
+
         /**
          * Adds a layer's original extent into the widget layersOrigExtent.
          */
-        _addOrigLayerExtent: function(layer){
-            if(layer.olLayer){
+        _addOrigLayerExtent: function(layer) {
+            var widget = this;
+            var extents = widget.layersOrigExtents;
+
+            if(layer.olLayer) {
                 layer = layer.olLayer;
             }
-            if(!this.layersOrigExtents[layer.id]){
-                this.layersOrigExtents[layer.id] = {
+            if(!extents[layer.id]) {
+                extents[layer.id] = {
                     max: {
-                        projection: this.startproj,
-                        extent: layer.maxExtent ? layer.maxExtent.clone() : null
+                        projection: widget.startproj,
+                        extent:     layer.maxExtent ? layer.maxExtent.clone() : null
                     }
                 };
             }
         },
+
         /**
-         *
+         * Puts callback on ready
+         * @param {function} callback Function this runs after widget is ready
          */
         ready: function(callback){
             if(this.readyState === true){
@@ -186,16 +224,21 @@
                 this.readyCallbacks.push(callback);
             }
         },
+
         /**
-         *
+         * Runs if widget is ready
          */
-        _ready: function(){
-            for(callback in this.readyCallbacks){
+        _ready: function() {
+            var widget = this;
+            widget._trigger('ready');
+
+            for (var callback in widget.readyCallbacks) {
                 callback();
-                delete(this.readyCallbacks[callback]);
+                delete(widget.readyCallbacks[callback]);
             }
-            this.readyState = true;
-        },
+            widget.readyState = true;
+        }
+
     });
 
 })(jQuery);
