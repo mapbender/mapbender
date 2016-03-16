@@ -9,6 +9,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\CoreBundle\Entity\Application;
 
 //use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
@@ -23,12 +24,12 @@ class ExchangeJob
     const FORMAT_YAML = 'yaml';
     protected $addAcl;
     protected $addSources;
-    protected $applications;
+    protected $application;
     protected $format;
 
     public function __construct($format = 'json')
     {
-        $this->applications = new ArrayCollection();
+        $this->application = null;
         $this->addAcl = false;
         $this->addSources = false;
         if(self::FORMAT_JSON !== $format && self::FORMAT_YAML !== $format){
@@ -49,14 +50,14 @@ class ExchangeJob
         return $this;
     }
 
-    public function getApplications()
+    public function getApplication()
     {
-        return $this->applications;
+        return $this->application;
     }
 
-    public function setApplications($applications)
+    public function setApplication(Application $application)
     {
-        $this->applications = $applications;
+        $this->application = $application;
         return $this;
     }
     public function getFormat()
@@ -70,7 +71,7 @@ class ExchangeJob
         return $this;
     }
 
-        public function getAddSources()
+    public function getAddSources()
     {
         return $this->addSources;
     }

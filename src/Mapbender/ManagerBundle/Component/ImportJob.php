@@ -16,7 +16,7 @@ namespace Mapbender\ManagerBundle\Component;
 class ImportJob extends ExchangeJob
 {
     
-    protected $addApplications;
+    protected $addApplication;
     
     protected $importFile;
     
@@ -25,18 +25,18 @@ class ImportJob extends ExchangeJob
     public function __construct($format = null)
     {
         parent::__construct($format);
-        $this->addApplications = true;
+        $this->addApplication = true;
         $this->importFile = null;
     }
     
-    public function getAddApplications()
+    public function getAddApplication()
     {
-        return $this->addApplications;
+        return $this->addApplication;
     }
 
-    public function setAddApplications($addApplications)
+    public function setAddApplication($addApplication)
     {
-        $this->addApplications = $addApplications;
+        $this->addApplication = $addApplication;
         return $this;
     }
     public function getImportFile()

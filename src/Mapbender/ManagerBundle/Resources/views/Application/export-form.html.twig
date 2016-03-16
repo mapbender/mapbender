@@ -1,17 +1,9 @@
 <form action="{{ path('mapbender_manager_application_export') }}" method="post" id="exportForm" name="exportForm" {{ form_enctype(form)}}  novalidate="novalidate" target="_blank">
   <div class="defaultForm elementForm">
-    <!--div class="left">
-        {{ form_widget(form.addAcl) }}<label for="{{form.addAcl.vars.id}}" class="labelCheck">{{"mb.manager.admin.application.export.addAcl"|trans}}</label>
-    </div>
-    <div class="clearContainer"></div-->
-    <div class="left">
-        {{ form_widget(form.addSources) }}<label for="{{form.addSources.vars.id}}" class="labelCheck">{{"mb.manager.admin.application.export.addSources"|trans}}</label>
-    </div>
-    <div class="clearContainer"></div>
     {{ form_label(form.format) }}{{ form_widget(form.format) }}
     <div class="clearContainer"></div>
-    <label class="left labelInput" for="{{ form.applications.vars.id }}">{{"form.manager.admin.application.export.application" | trans}}:<span class="required">*</span></label>
-    {{ form_widget(form.applications, { 'attr': { 'size': '10' }}) }}
+    <label class="left labelInput" for="{{ form.application.vars.id }}">{{"form.manager.admin.application.export.application" | trans}}:<span class="required">*</span></label>
+    {{ form_widget(form.application, { 'attr': { 'size': '10' }}) }}
     <div class="clearContainer"></div>
   </div>
   <div class="clearContainer"></div>
@@ -21,5 +13,4 @@
   </div>
   <div class="clearContainer"></div>
   {{ form_row(form._token) }}
-  {#{ form_rest(form) }#}
 </form>

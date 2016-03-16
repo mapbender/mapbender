@@ -103,7 +103,7 @@ class ImportHandler extends ExchangeHandler
         foreach ($data as $class => $content) {
             if ($this->denormalizer->findSuperClass($class, 'Mapbender\CoreBundle\Entity\Source')) {
                 foreach ($content as $item) {
-                    $classMeta = $em->getClassMetadata($class);
+                    $classMeta = $this->denormalizer->getClassMetadata($class);
                     if (!$this->toCopy) {
                         $criteria = $this->denormalizer->getIdentCriteria(
                             $item,
@@ -169,7 +169,7 @@ class ImportHandler extends ExchangeHandler
         // copy ACEs from orig $object
         if ($this->toCopy) {
             $class = $this->denormalizer->getRealClass($object);
-            $classMeta = $this->container->get('doctrine')->getManager()->getClassMetadata($class);
+            $classMeta = $this->denormalizer->getClassMetadata($class);
             $after_criteria = $this->denormalizer->getIdentCriteria($object, $classMeta, false, array());
             $orig_criteria = $this->denormalizer->getBeforeFromAfter($class, $after_criteria);
             $orig_object  = $this->denormalizer->findEntities($class, $orig_criteria);
@@ -230,7 +230,7 @@ class ImportHandler extends ExchangeHandler
         if (!$em->contains($object)) {
              $em->merge($object);
         }
-        $classMeta = $em->getClassMetadata($this->denormalizer->getRealClass($object));
+        $classMeta = $this->denormalizer->getClassMetadata($this->denormalizer->getRealClass($object));
         $criteriaAfter  = $this->denormalizer->getIdentCriteria($object, $classMeta);
         $criteriaBefore  = $this->denormalizer->getIdentCriteria($data, $classMeta);
         $realClass = $this->denormalizer->getRealClass($object);
@@ -254,7 +254,7 @@ class ImportHandler extends ExchangeHandler
                             $subdata = $data[$fieldName][$num];
                             if ($classDef = $this->denormalizer->getClassDifinition($subdata)) {
                                 $em->getRepository($classDef[0]);
-                                $meta     = $em->getClassMetadata($classDef[0]);
+                                $meta     = $this->denormalizer->getClassMetadata($classDef[0]);
                                 $criteria = $this->denormalizer->getIdentCriteria($subdata, $meta);
                                 $od = null;
                                 if ($this->denormalizer->isReference($subdata, $criteria)) {

@@ -110,9 +110,8 @@ class ApplicationController extends Controller
             );
         } elseif ($this->getRequest()->getMethod() === 'POST') {
             if ($expHandler->bindForm()) {
-                $job    = $expHandler->getJob();
                 $export = $expHandler->format($expHandler->makeJob());
-                if ($job->getFormat() === ExchangeJob::FORMAT_JSON) {
+                if ($expHandler->getJob()->getFormat() === ExchangeJob::FORMAT_JSON) {
                     return new Response(
                         $export,
                         200,
@@ -121,7 +120,7 @@ class ApplicationController extends Controller
                             'Content-disposition' => 'attachment; filename=export.json'
                         )
                     );
-                } elseif ($job->getFormat() === ExchangeJob::FORMAT_YAML) {
+                } elseif ($expHandler->getJob()->getFormat() === ExchangeJob::FORMAT_YAML) {
                     return new Response(
                         $export,
                         200,
@@ -192,7 +191,7 @@ class ApplicationController extends Controller
 
         $expHandler = new ExportHandler($this->container);
         $expJob     = $expHandler->getJob();
-        $expJob->getApplications()->add($tocopy);
+        $expJob->setApplication($tocopy);
         $expJob->setAddSources(false);
         $data = $expHandler->makeJob();
 

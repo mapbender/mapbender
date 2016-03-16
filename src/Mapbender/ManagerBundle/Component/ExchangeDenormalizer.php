@@ -29,6 +29,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     protected $mapper;
 
+    protected $doFlush;
+
     /**
      * Creates an instance.
      * @param ContainerInterface $container container
@@ -38,6 +40,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     {
         parent::__construct($container);
         $this->em     = $this->container->get('doctrine')->getManager();
+        $name = $this->em->getConnection()->getDatabasePlatform()->getName();
+        $this->doFlush = $name === 'sqlite' || $name === 'mysql' || $name === 'spatialite' ? true : false;
         $this->mapper = $mapper;
         $this->data   = $data;
     }
@@ -83,7 +87,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         if (is_array($data) && $classDef = $this->getClassDifinition($data)) {
             try {
                 $this->em->getRepository($classDef[0]);
-                $meta     = $this->em->getClassMetadata($classDef[0]);
+                $meta     = $this->getClassMetadata($classDef[0]);
                 $criteria = $this->getIdentCriteria($data, $meta);
                 if ($this->isReference($data, $criteria)) {
                     if ($object = $this->getAfterFromBefore($classDef[0], $criteria)) {
@@ -98,7 +102,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                     return $object;
                 }
             } catch (MappingException $e) {
-                return $this->handleClass($data, new \ReflectionClass($classDef[0]));
+                return $this->handleClass($data, $this->getReflectionClass($classDef[0]));
             }
         } elseif (is_array($data)) {
             $result = array();
@@ -123,7 +127,9 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     private function saveEntity($object, ClassMetadata $classMeta, $criteriaBefore)
     {
         $this->em->persist($object);
-        $this->em->flush();
+        if ($this->doFlush) {
+            $this->em->flush();
+        }
         $criteriaAfter = $this->getIdentCriteria($object, $classMeta);
         $this->addToMapper($object, $criteriaBefore, $criteriaAfter);
     }
@@ -159,12 +165,16 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                         $collection = new \Doctrine\Common\Collections\ArrayCollection($result);
                         $setMethod->invoke($object, $collection);
                         $this->em->persist($object);
-                        $this->em->flush();
+                        if ($this->doFlush) {
+                            $this->em->flush();
+                        }
                     }
                 } else {
                     $setMethod->invoke($object, $result);
                     $this->em->persist($object);
-                    $this->em->flush();
+                    if ($this->doFlush) {
+                        $this->em->flush();
+                    }
                 }
             }
         }
