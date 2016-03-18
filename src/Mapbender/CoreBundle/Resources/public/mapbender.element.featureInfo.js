@@ -50,7 +50,7 @@
                                 return;
                             }
                             if (num > 100) {
-                                Mapbender.error("Iframe can not be loaded!");
+                                window.console && console.warn("FeatureInfoIframe: the content can not be loaded!");
                                 return;
                             }
                             window.setTimeout(function(){
@@ -59,7 +59,6 @@
                         }
                         fireIfLoaded($(item), 0);
                     } else {
-                        console.log("tab clicked kein");
                         self._trigger('featureinfo', null, {
                             action: "activated_content",
                             id: self.element.attr('id'),
