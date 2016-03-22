@@ -352,7 +352,10 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setDimensions($dimensions)
             ->setBuffer($this->entity->getBuffer())
             ->setRatio($this->entity->getRatio())
-            ->setVendorspecifics($vendorsecifics);
+            ->setVendorspecifics($vendorsecifics)
+            ->setVersion($this->entity->getSource()->getVersion())
+            ->setExceptionformat($this->entity->getExceptionformat());
+
         $wmsconf->setOptions($options);
         $entityHandler = self::createHandler($this->container, $rootlayer);
         $wmsconf->setChildren(array($entityHandler->generateConfiguration()));

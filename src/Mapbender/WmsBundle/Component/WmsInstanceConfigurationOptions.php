@@ -20,6 +20,17 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     /**
      * ORM\Column(type="string", nullable=true)
      */
+    public $version;
+
+    /**
+     *
+     * ORM\Column(type="string", nullable=true)
+     */
+    public $exceptionformat;
+
+    /**
+     * ORM\Column(type="string", nullable=true)
+     */
     public $format;
 
     /**
@@ -61,6 +72,39 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
      */
     public $ratio = 1.25;
+    
+    /**
+     * Returns a version
+     * @return string version
+     */
+    function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Sets a wms version
+     * @param string $version version
+     */
+    function setVersion($version)
+    {
+        $this->version = $version;
+        return $this;
+    }
+
+
+    function getExceptionformat()
+    {
+        return $this->exceptionformat;
+    }
+
+    function setExceptionformat($exceptionformat)
+    {
+        $this->exceptionformat = $exceptionformat;
+        return $this;
+    }
+
+
 
     /**
      * Sets a format
@@ -175,6 +219,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     public function setVendorspecifics(array $vendorspecifics)
     {
         $this->vendorspecifics = $vendorspecifics;
+        return $this;
     }
 
     public function getVendorspecifics()
@@ -225,11 +270,13 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     public function toArray()
     {
         return array(
+            "version" => $this->version,
             "url" => $this->url,
             "proxy" => $this->proxy,
             "visible" => $this->visible,
             "format" => $this->format,
             "info_format" => $this->infoformat,
+            "exception_format" => $this->exceptionformat,
             "transparent" => $this->transparency,
             "opacity" => $this->opacity,
             "tiled" => $this->tiled,
@@ -284,6 +331,12 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             }
             if (isset($options["ratio"])) {
                 $ico->ratio = $options["ratio"];
+            }
+            if (isset($options["version"])) {
+                $ico->version = $options["version"];
+            }
+            if (isset($options["exception_format"])) {
+                $ico->exceptionformat = $options["exception_format"];
             }
         }
         return $ico;
