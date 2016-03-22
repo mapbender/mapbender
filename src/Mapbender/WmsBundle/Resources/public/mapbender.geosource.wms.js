@@ -58,6 +58,9 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
 
         var mqLayerDef = {
             type: 'wms',
+            wms_parameters: {
+                version: sourceDef.configuration.options.version
+            },
             label: sourceDef.title,
             url: finalUrl,
             transparent: sourceDef.configuration.options.transparent,
@@ -84,19 +87,25 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             SERVICE: 'WMS',
             REQUEST: 'GetFeatureInfo',
             VERSION: mqLayer.olLayer.params.VERSION,
-            EXCEPTIONS: "application/vnd.ogc.se_xml",
+            EXCEPTIONS: mqLayer.source.configuration.options.exception_format,//"application/vnd.ogc.se_xml",
             FORMAT: mqLayer.olLayer.params.FORMAT,
             INFO_FORMAT: mqLayer.source.configuration.options.info_format || "text/plain",
             FEATURE_COUNT: mqLayer.source.configuration.options.feature_count || 100,
-            SRS: mqLayer.olLayer.params.SRS,
             BBOX: mqLayer.map.center().box.join(','),
             WIDTH: $(mqLayer.map.element).width(),
             HEIGHT: $(mqLayer.map.element).height(),
-            X: x,
-            Y: y,
             LAYERS: mqLayer.olLayer.queryLayers.join(','),
             QUERY_LAYERS: mqLayer.olLayer.queryLayers.join(',')
         };
+        if(mqLayer.olLayer.params.VERSION === '1.3.0') {
+            param_tmp['I'] = x;
+            param_tmp['J'] = y;
+            param_tmp['CRS'] = mqLayer.olLayer.params.CRS;
+        } else {
+            param_tmp['X'] = x;
+            param_tmp['Y'] = y;
+            param_tmp['SRS'] =  mqLayer.olLayer.params.SRS;
+        }
         if(typeof (mqLayer.source.configuration.options.info_format) !== 'undefined') {
             param_tmp["INFO_FORMAT"] = mqLayer.source.configuration.options.info_format;
         }
