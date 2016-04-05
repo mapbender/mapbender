@@ -413,10 +413,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 }
             }
         }
-        if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
-            $value = $handler->getVendorSpecificValue(null);
-            if ($value) {
-                $vsarr[$vendorspec->getParameterName()] = $value;
+        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
+                $value = $handler->getVendorSpecificValue(null);
+                if ($value) {
+                    $vsarr[$vendorspec->getParameterName()] = $value;
+                }
             }
         }
         return $vsarr;
