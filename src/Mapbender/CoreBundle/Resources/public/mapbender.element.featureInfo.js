@@ -177,7 +177,8 @@
                 }
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
-                Mapbender.error(textStatus);
+                Mapbender.info(mqLayer.label + ' GetFeatureInfo: ' + errorThrown);
+                self._addContent(mqLayer, errorThrown);
             });
         },
         _isDataValid: function(data, mimetype) {
