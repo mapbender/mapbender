@@ -28,6 +28,7 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
         _setup: function() {
+            var self = this;
             this.target = $("#" + this.options.target).data("mapbenderMbMap");//.getModel();
             this.mapClickHandler = new OpenLayers.Handler.Click(this,
                 {'click': this._triggerFeatureInfo},
@@ -36,6 +37,36 @@
             if (this.options.autoActivate || this.options.autoOpen){ // autoOpen old configuration
                 this.activate();
             }
+            $(this.element).on('click', '.js-header', function(e) {
+                $('.js-content.active:first', self.element).each(function(idx, item){ // only one tab is active
+                    if($('iframe:first', $(item)).length){
+                        function fireIfLoaded($item, num){
+                            if($('iframe:first', $item).data('loaded')){
+                                self._trigger('featureinfo', null, {
+                                    action: "activated_content",
+                                    id: self.element.attr('id'),
+                                    activated_content: [$item.attr('id')]
+                                });
+                                return;
+                            }
+                            if (num > 100) {
+                                window.console && console.warn("FeatureInfoIframe: the content can not be loaded!");
+                                return;
+                            }
+                            window.setTimeout(function(){
+                                fireIfLoaded($item, num++);
+                            }, 100);
+                        }
+                        fireIfLoaded($(item), 0);
+                    } else {
+                        self._trigger('featureinfo', null, {
+                            action: "activated_content",
+                            id: self.element.attr('id'),
+                            activated_content: [$(item).attr('id')]
+                        });
+                    }
+                });
+            });
             this._trigger('ready');
             this._ready();
         },
@@ -51,6 +82,11 @@
             this.mapClickHandler.activate();
         },
         deactivate: function() {
+            this._trigger('featureinfo', null, {
+                action: "deactivate",
+                title: this.element.attr('title'),
+                id: this.element.attr('id')
+            });
             $('#' + this.options.target).removeClass('mb-feature-info-active');
             $(".toolBarItemActive").removeClass("toolBarItemActive");
             if (this.popup) {
@@ -102,11 +138,7 @@
                             self._open();
                         }
                         called = true;
-                        if (self.options.showOriginal && !self.options.onlyValid) {
-                            self._addContent(mqLayer, self._getIframeDeclaration(Mapbender.Util.UUID(), url));
-                        } else {
-                            self._setInfo(mqLayer, url);
-                        }
+                        self._setInfo(mqLayer, url);
                     } else {
                         self._removeContent(mqLayer);
                     }
@@ -133,10 +165,7 @@
                 url: Mapbender.configuration.application.urls.proxy,
                 contentType: contentType_,
                 data: {
-                    url: proxy ?
-                        url :
-                        encodeURIComponent(
-                            url)
+                    url: proxy ? url : encodeURIComponent(url)
                 }
             });
             request.done(function(data, textStatus, jqXHR) {
@@ -148,7 +177,8 @@
                 }
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
-                Mapbender.error(textStatus);
+                Mapbender.info(mqLayer.label + ' GetFeatureInfo: ' + errorThrown);
+                self._addContent(mqLayer, errorThrown);
             });
         },
         _isDataValid: function(data, mimetype) {
@@ -179,8 +209,8 @@
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    if (this.options.onlyValid && this._isDataValid(data, mimetype)) { // !onlyValid s. _triggerFeatureInfo
-                        /* add a blank iframe and replace it's content */
+                    if (! this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
+                        /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
                         this._trigger('featureinfo', null, {
                             action: "haveresult",
                             title: this.element.attr(
@@ -188,14 +218,17 @@
                             id: this.element.attr('id')
                         });
                         this._open();
-                        window.setTimeout(function() {// fix popup open setTimeout 100
-                            var uuid = Mapbender.Util.UUID();
-                            self._addContent(mqLayer, self._getIframeDeclaration(uuid, null));
-                            var doc = document.getElementById(uuid).contentWindow.document;
-                            doc.open();
-                            doc.write(data);
-                            doc.close();
-                        }, 100);
+                        var uuid = Mapbender.Util.UUID();
+                        var iframe = $(self._getIframeDeclaration(uuid, null));
+                        self._addContent(mqLayer, iframe);
+                        var doc = document.getElementById(uuid).contentWindow.document;
+                        iframe.on('load', function(){
+                            iframe.data('loaded', true);
+                            $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
+                        });
+                        doc.open();
+                        doc.write(data);
+                        doc.close();
                     } else {
                         this._removeContent(mqLayer);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
@@ -222,6 +255,7 @@
         _showEmbedded: function(mqLayer, data, mimetype) {
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
+                    var self = this;
                     data = this._cleanHtml(data);
                     if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
                         this._trigger('featureinfo', null, {
@@ -232,6 +266,7 @@
                         });
                         this._addContent(mqLayer, data);
                         this._open();
+                        $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
                     } else {
                         this._removeContent(mqLayer);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
@@ -256,9 +291,10 @@
         },
         _cleanHtml: function(data) {
             try {
-                if (data.search('<link') > -1 || data.search('<style') > -1) {
+                if (data.search(/<link/i) > -1 || data.search(/<style/i) > -1 || data.search(/<script/i) > -1) {
                     return data.replace(/document.writeln[^;]*;/g, '')
                         .replace(/\n|\r/g, '')
+                        .replace(/<!--[^>]*-->/g, '')
                         .replace(/<link[^>]*>/gi, '')
                         .replace(/<meta[^>]*>/gi, '')
                         .replace(/<title>*(?:[^<]*<\/title>)/gi, '')
@@ -320,6 +356,11 @@
                         }
                     });
                     this.popup.$element.on('close', function() {
+                        self._trigger('featureinfo', null, {
+                            action: "closedialog",
+                            title:  self.element.attr('title'),
+                            id:     self.element.attr('id')
+                        });
                         self.state = 'closed';
                         if (self.options.deactivateOnClose) {
                             self.deactivate();
@@ -354,7 +395,7 @@
         _selectorSelfAndSub: function(idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
-         _removeContent: function(mqLayer) {
+        _removeContent: function(mqLayer) {
             var $context = this._getContext();
             var manager = this._getContentManager();
             $(this._selectorSelfAndSub(manager.headerId(mqLayer.id), manager.headerContentSel), $context).remove();
@@ -364,9 +405,6 @@
                 return;
             }
             this._setContentEmpty();
-//            if (!this.options.deactivateOnClose && this.popup) {
-//                this.popup.close();
-//            }
          },
         _setContentEmpty: function(id) {
             var $context = this._getContext();
@@ -400,9 +438,27 @@
                 .empty().append(content);
             if (this.options.displayType === 'tabs' || this.options.displayType === 'accordion') {
                 initTabContainer($context);
-                $header.click();
-            } else if (this.options.displayType === 'tabs') {
-
+                if(this.options.displayType === 'tabs') {
+                    var $tabcont = $header.parents('.tabContainer:first');
+                    $('.tabs .tab', $tabcont).each(function(idx, item){
+                        $(item).removeClass('active');
+                    });
+                    $header.addClass('active');
+                    $('.container', $tabcont).each(function(idx, item){
+                        $(item).removeClass('active');
+                    });
+                    $('#container' + $header.attr('id').replace('tab', ''), $tabcont).addClass('active');
+                } else if (this.options.displayType === 'accordion') {
+                    var $tabcont = $header.parents('.accordionContainer:first');
+                    $('.accordion', $tabcont).each(function(idx, item){
+                        $(item).removeClass('active');
+                    });
+                    $header.addClass('active');
+                    $('.container', $tabcont).each(function(idx, item){
+                        $(item).removeClass('active');
+                    });
+                    $('#container' + $header.attr('id').replace('accordion', ''), $tabcont).addClass('active');
+                }
             }
         },
         _printContent: function() {
