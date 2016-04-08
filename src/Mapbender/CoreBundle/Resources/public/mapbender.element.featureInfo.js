@@ -70,6 +70,11 @@
             this._trigger('ready');
             this._ready();
         },
+        _contentRef: function(mqLayer){
+            var $context = this._getContext();
+            var manager = this._getContentManager();
+            return $('#' + manager.contentId(mqLayer.id), $context);
+        },
         /**
          * Default action for mapbender element
          */
@@ -117,8 +122,7 @@
         _triggerFeatureInfo: function(e) {
             this._trigger('featureinfo', null, {
                 action: "clicked",
-                title: this.element.attr(
-                    'title'),
+                title: this.element.attr('title'),
                 id: this.element.attr('id')
             });
             var self = this;
@@ -211,12 +215,6 @@
                 case 'text/html':
                     if (! this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
                         /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
-                        this._trigger('featureinfo', null, {
-                            action: "haveresult",
-                            title: this.element.attr(
-                                'title'),
-                            id: this.element.attr('id')
-                        });
                         this._open();
                         var uuid = Mapbender.Util.UUID();
                         var iframe = $(self._getIframeDeclaration(uuid, null));
@@ -225,6 +223,13 @@
                         iframe.on('load', function(){
                             iframe.data('loaded', true);
                             $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
+                            self._trigger('featureinfo', null, {
+                                action: "haveresult",
+                                title: self.element.attr('title'),
+                                content: self._contentRef(mqLayer).attr('id'),
+                                mqlid: mqLayer.id,
+                                id: self.element.attr('id')
+                        });
                         });
                         doc.open();
                         doc.write(data);
@@ -237,13 +242,14 @@
                 case 'text/plain':
                 default:
                     if (this.options.onlyValid && this._isDataValid(data, mimetype)) {
+                        this._addContent(mqLayer, '<pre>' + data + '</pre>');
                         this._trigger('featureinfo', null, {
                             action: "haveresult",
-                            title: this.element.attr(
-                                'title'),
+                            title: this.element.attr('title'),
+                            content: this._contentRef(mqLayer).attr('id'),
+                            mqlid: mqLayer.id,
                             id: this.element.attr('id')
                         });
-                        this._addContent(mqLayer, '<pre>' + data + '</pre>');
                         this._open();
                     } else {
                         this._removeContent(mqLayer);
@@ -258,13 +264,14 @@
                     var self = this;
                     data = this._cleanHtml(data);
                     if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
+                        this._addContent(mqLayer, data);
                         this._trigger('featureinfo', null, {
                             action: "haveresult",
-                            title: this.element.attr(
-                                'title'),
+                            title: this.element.attr('title'),
+                            content: this._contentRef(mqLayer).attr('id'),
+                            mqlid: mqLayer.id,
                             id: this.element.attr('id')
                         });
-                        this._addContent(mqLayer, data);
                         this._open();
                         $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
                     } else {
@@ -275,13 +282,14 @@
                 case 'text/plain':
                 default:
                     if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
+                        this._addContent(mqLayer, '<pre>' + data + '</pre>');
                         this._trigger('featureinfo', null, {
                             action: "haveresult",
-                            title: this.element.attr(
-                                'title'),
+                            title: this.element.attr('title'),
+                            content: this._contentRef(mqLayer).attr('id'),
+                            mqlid: mqLayer.id,
                             id: this.element.attr('id')
                         });
-                        this._addContent(mqLayer, '<pre>' + data + '</pre>');
                     } else {
                         this._setContentEmpty(mqLayer.id);
                         Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
