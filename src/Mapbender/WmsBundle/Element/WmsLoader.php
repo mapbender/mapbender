@@ -74,8 +74,7 @@ class WmsLoader extends Element
         $files = array(
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                'mapbender.element.wmsloader.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js'),
+                'mapbender.element.wmsloader.js'),
             'css' => array('@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss'),
             'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));
         return $files;
@@ -111,21 +110,6 @@ class WmsLoader extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
-    {
-        $files = self::listAssets();
-
-        $config = $this->getConfiguration();
-        if (!(isset($config['useDeclarative']) && $config['useDeclarative'] === true)) {
-            $idx = array_search('@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js', $files['js']);
-            unset($files['js'][$idx]);
-        }
-        return $files;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
         return 'Mapbender\WmsBundle\Element\Type\WmsLoaderAdminType';
@@ -144,12 +128,14 @@ class WmsLoader extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')
-            ->render('MapbenderWmsBundle:Element:wmsloader.html.twig', array(
+        return $this->container->get('templating')->render(
+            'MapbenderWmsBundle:Element:wmsloader.html.twig',
+            array(
                 'id' => $this->getId(),
                 "title" => $this->getTitle(),
                 'example_url' => $this->container->getParameter('wmsloader.example_url'),
-                'configuration' => $this->getConfiguration()));
+                'configuration' => $this->getConfiguration())
+        );
     }
 
     /**
@@ -157,6 +143,7 @@ class WmsLoader extends Element
      */
     public function httpAction($action)
     {
+        //TODO ACL ACCESS
         switch ($action) {
             case 'getInstances':
                 return $this->getInstances();
@@ -181,6 +168,7 @@ class WmsLoader extends Element
         $gc_url = urldecode($this->container->get('request')->get("url", null));
         $signer = $this->container->get('signer');
         $signedUrl = $signer->signUrl($gc_url);
+        $data = $this->container->get('request')->get('data', null);
         $path = array(
             '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint',
             'url' => urlencode($signedUrl)
@@ -203,8 +191,11 @@ class WmsLoader extends Element
         $gc_url = urldecode($this->container->get('request')->get("url", null));
         $signer = $this->container->get('signer');
         $signedUrl = $signer->signUrl($gc_url);
-        return new Response(json_encode(array("success" => $signedUrl)), 200, array(
-            'Content-Type' => 'application/json'));
+        return new Response(
+            json_encode(array("success" => $signedUrl)),
+            200,
+            array('Content-Type' => 'application/json')
+        );
     }
 
     /**
@@ -219,8 +210,11 @@ class WmsLoader extends Element
         foreach ($sources as &$source) {
             $source['configuration']['options']['url'] = $signer->signUrl($source['configuration']['options']['url']);
         }
-        return new Response(json_encode(array("success" => json_encode($sources))), 200, array(
-            'Content-Type' => 'application/json'));
+        return new Response(
+            json_encode(array("success" => json_encode($sources))),
+            200,
+            array('Content-Type' => 'application/json')
+        );
     }
 
     /**
@@ -236,8 +230,8 @@ class WmsLoader extends Element
             $securityContext = $this->container->get('security.context');
             $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
             if (false !== $securityContext->isGranted('VIEW', $oid)) {
-                $instance = $this->container->get('doctrine')
-                    ->getRepository("MapbenderWmsBundle:WmsInstance")->find($instanceid);
+                $instance = $this->container->get('doctrine')->getRepository("MapbenderWmsBundle:WmsInstance")
+                    ->find($instanceid);
                 $entityHandler = EntityHandler::createHandler($this->container, $instance);
                 $entityHandler->create(false);
                 $instConfig = array(
@@ -247,7 +241,10 @@ class WmsLoader extends Element
                 $instances[] = $instConfig;
             }
         }
-        return new Response(json_encode(array("success" => json_encode($instances))), 200, array(
-            'Content-Type' => 'application/json'));
+        return new Response(
+            json_encode(array("success" => json_encode($instances))),
+            200,
+            array('Content-Type' => 'application/json')
+        );
     }
 }

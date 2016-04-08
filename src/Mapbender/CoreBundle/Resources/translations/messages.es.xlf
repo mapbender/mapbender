@@ -946,6 +946,38 @@
         <source>mb.core.layertree.contextmenu.nooption</source>
         <target>Layer has no context menu option</target>
       </trans-unit>
+      <trans-unit id="5ae09a0d2b4de3e3cec75badb2f3a716" resname="mb.core.admin.featureinfoext.label.loaddeclarativewms">
+        <source>mb.core.admin.featureinfoext.label.loaddeclarativewms</source>
+        <target>Load of declarative sources</target>
+      </trans-unit>
+      <trans-unit id="6831d2087b8ded188ae25cedb9558e42" resname="mb.core.admin.featureinfoext.label.highlightsource">
+        <source>mb.core.admin.featureinfoext.label.highlightsource</source>
+        <target>Highlighting of featureinfo hits</target>
+      </trans-unit>
+      <trans-unit id="db527e8c06bf35b2226e68af756ca85a" resname="mb.core.featureinfoext.class.title">
+        <source>mb.core.featureinfoext.class.title</source>
+        <target>FeatureInfo extension</target>
+      </trans-unit>
+      <trans-unit id="28adb054dd12fabc7668549d9e6dda23" resname="mb.core.featureinfoext.class.description">
+        <source>mb.core.featureinfoext.class.description</source>
+        <target>FeatureInfo extension higlights featureifo hits in the map, loads declarative sources</target>
+      </trans-unit>
+      <trans-unit id="2923a0ecfabc189e13ac79e7403e65f2" resname="mb.core.featureinfoext.tag.featureinfo">
+        <source>mb.core.featureinfoext.tag.featureinfo</source>
+        <target>featureinfo</target>
+      </trans-unit>
+      <trans-unit id="5411542025d618b62b5eb3ad3f2852de" resname="mb.core.featureinfoext.tag.feature">
+        <source>mb.core.featureinfoext.tag.feature</source>
+        <target>feature</target>
+      </trans-unit>
+      <trans-unit id="f5466e9d3d7175d2ab186bed94d5a51a" resname="mb.core.featureinfoext.tag.info">
+        <source>mb.core.featureinfoext.tag.info</source>
+        <target>info</target>
+      </trans-unit>
+      <trans-unit id="f9b65b21017f4349d06ae5ff4b0dbb7d" resname="mb.core.featureinfoext.tag.extension">
+        <source>mb.core.featureinfoext.tag.extension</source>
+        <target>extension</target>
+      </trans-unit>
       <trans-unit id="a5cb3721da1989997ae99c49bf560c0e" resname="mb.core.admin.redlining.label.auto_activate">
         <source>mb.core.admin.redlining.label.auto_activate</source>
         <target>Autoactivate</target>

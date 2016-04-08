@@ -154,8 +154,10 @@
                     var source = sources[i];
                     var url_source = Mapbender.source.wms.removeSignature(source.configuration.options.url.toLowerCase());
                     if(decodeURIComponent(options.gcurl.asString().toLowerCase()).indexOf(decodeURIComponent(url_source)) === 0){
+                        window.console && console.info('A WMS with url:"' + options.gcurl.asString() + '" is already loaded!');
                         // source exists
                         mbMap.model.changeLayerState({id: source.id}, options, options.global.options.treeOptions.selected, options.global.mergeLayers);
+                        
                         return false;
                     }
                 }

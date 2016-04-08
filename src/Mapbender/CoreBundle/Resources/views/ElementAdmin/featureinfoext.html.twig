@@ -1,0 +1,20 @@
+<div class="elementForm defaultForm elementFormFeatureInfoExt">
+  <div class="left">
+    {{ form_widget(form.configuration.load_declarative_wms) }}<label for="{{form.configuration.load_declarative_wms.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfoext.label.loaddeclarativewms"|trans }}</label>
+  </div>
+  <div class="clearContainer"></div>
+  {{ form_label(form.title) }}{{ form_widget(form.title) }}
+  <div class="clearContainer"></div>
+  {{ form_label(form.configuration.map) }}{{ form_widget(form.configuration.map) }}
+  <div class="clearContainer"></div>
+  {{ form_label(form.configuration.featureinfo) }}{{ form_widget(form.configuration.featureinfo) }}
+  <div class="clearContainer"></div>
+  <div class="left">
+    {{ form_widget(form.configuration.highlight_source) }}<label for="{{form.configuration.highlight_source.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfoext.label.highlightsource"|trans }}</label>
+  </div>
+  <div class="clearContainer"></div>
+  {{ form_label(form.configuration.hits_style) }}{{ form_widget(form.configuration.hits_style) }}
+  <div class="clearContainer"></div>
+  {{ form_label(form.configuration.hover_style) }}{{ form_widget(form.configuration.hover_style) }}
+  <div class="clearContainer"></div>
+</div>

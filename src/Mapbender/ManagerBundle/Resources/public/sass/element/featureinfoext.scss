@@ -1,0 +1,30 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.elementFormFeatureInfoExt{
+  & > div > div {
+    clear: both;
+    padding-left: 20px;
+    label{
+      float: none !important;
+      margin: 0px !important;}
+    & > div {
+      padding-left: 20px;
+      & > div {
+        width: 130px !important;
+        display: inline-block;
+        label {
+          float: none !important;
+          width: 50px !important;
+          margin: 0px !important;
+          display: inline-block;}
+        .inputWrapper,.dropdown{
+          width: 70px !important;
+          min-width: 70px !important;
+          margin-right: 4px !important;
+        }
+      }
+    }
+  }
+  & div.left > div {padding-left: 0px;}
+}

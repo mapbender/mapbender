@@ -48,7 +48,7 @@ class FeatureInfoAdminType extends AbstractType
             ->add('onlyValid', 'checkbox', array('required' => false))
             ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
+                'application'   => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
             ->add('width', 'integer', array('required' => true))

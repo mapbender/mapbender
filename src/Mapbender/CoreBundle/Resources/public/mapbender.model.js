@@ -11,6 +11,19 @@ Mapbender.Model = {
     mapStartExtent: null,
     layersMaxExtent: {},
     highlightLayer: null,
+    highlightOptions: {
+        layer: {
+            type: 'vector',
+            label: 'Highlight'
+        },
+        feature: {
+            stopDown: false
+        },
+        style: {
+            feature: {},
+            hover: {}
+        }
+    },
     baseId: 0,
     // Hash map query layers settings
     _layersHash: {},
@@ -669,24 +682,28 @@ Mapbender.Model = {
     highlightOn: function(features, options) {
         var self = this;
         if (!this.highlightLayer) {
-            this.highlightLayer = this.map.layers({
-                type: 'vector',
-                label: 'Highlight'
-            });
-            var selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
+            this.highlightLayer = this.map.layers(this.highlightOptions.layer);
+            var selectControl;
+            selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
                 hover: true,
                 onSelect: function(feature) {
                     self.mbMap._trigger('highlighthoverin', null, {
                         feature: feature
                     });
+                    feature.style = self.highlightOptions.style.hover;
+                    selectControl.highlight(feature);
                 },
                 onUnselect: function(feature) {
                     self.mbMap._trigger('highlighthoverout', null, {
                         feature: feature
                     });
+                    feature.style = self.highlightOptions.style.feature;
+                    selectControl.highlight(feature);
                 }
             });
-            selectControl.handlers.feature.stopDown = false;
+            for(var name in this.highlightOptions.feature){
+                selectControl.handlers.feature[name] = this.highlightOptions.feature[name];
+            }
             this.map.olMap.addControl(selectControl);
             selectControl.activate();
         }

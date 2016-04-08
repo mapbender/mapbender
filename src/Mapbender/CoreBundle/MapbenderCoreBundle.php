@@ -55,6 +55,7 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\CoordinatesDisplay',
             'Mapbender\CoreBundle\Element\Copyright',
             'Mapbender\CoreBundle\Element\FeatureInfo',
+            'Mapbender\CoreBundle\Element\FeatureInfoExt',
             'Mapbender\CoreBundle\Element\GpsPosition',
             'Mapbender\CoreBundle\Element\HTMLElement',
             'Mapbender\CoreBundle\Element\Layertree',
