@@ -82,6 +82,11 @@
             <argument type="service" id="security.access.decision_manager" />
         </service>
 
+        <service id="mapbender.validator.css" class="Mapbender\CoreBundle\Validator\Constraints\ScssValidator">
+            <argument type="service" id="service_container" />
+            <tag name="validator.constraint_validator" alias="mapbender.validator.css" />
+        </service>
+
     </services>
 </container>
 
