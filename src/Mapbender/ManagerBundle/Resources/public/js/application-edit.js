@@ -812,8 +812,12 @@ $(function() {
             mode: 'css',
             keyMap: 'sublime',
             styleActiveLine: true,
-            matchBrackets: true,
             lineNumbers: true,
+            indentUnit: 2,
+            tabSize: 4,
+            indentWithTabs: false,
+            lineWrapping: true,
+            matchBrackets: true,
             theme: 'neo'
         });
 

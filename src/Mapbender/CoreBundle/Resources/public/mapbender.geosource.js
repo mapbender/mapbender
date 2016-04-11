@@ -596,6 +596,7 @@ Mapbender.Geo.SourceHandler = Class({
      * @param {object} source wms source
      * @param {object} changeOptions options in form of:
      * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
+     * @param {boolean | null} defaultSelected 
      * @param {boolean} mergeSelected
      * @returns {object} changes
      */
@@ -642,6 +643,9 @@ Mapbender.Geo.SourceHandler = Class({
             } else {
                 var layerOpts = changeOptions.layers[layer.options[[self.layerNameIdent]]]
                     || changeOptions.layers[layer.options.id];
+                if(!layerOpts && defaultSelected === null) {
+                    return;
+                }
                 var sel = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
                 if (mergeSelected) {
                     sel = sel || layer.options.treeOptions.selected;

@@ -79,12 +79,17 @@ $.widget('mapbender.mbPOI', {
                     y: this.mbMap.options.poiIcon.yoffset
                 }));
         this.poiMarkerLayer.addMarker(poiMarker);
-
+        var proj = this.mbMap.map.olMap.getProjectionObject();
+        var deci = 0;
+        if(proj.proj.units === 'degrees' || proj.proj.units === 'dd') {
+            deci = 5;
+        }
         this.popup.subtitle(
-            '<b>' + Math.round(coordinates.world.x,0) + ',' +Math.round(coordinates.world.y,0) + ' @ 1:' + mbMap.model.getScale() + '</b>');
+            '<b>' + coordinates.world.x.toFixed(deci) + ',' + coordinates.world.y.toFixed(deci) + ' @ 1:' + mbMap.model.getScale() + '</b>');
         this.poi = {
-            point: Math.round(coordinates.world.x,0) + ',' + Math.round(coordinates.world.y,0),
-            scale: mbMap.model.getScale()
+            point: coordinates.world.x.toFixed(deci) + ',' + coordinates.world.y.toFixed(deci),
+            scale: mbMap.model.getScale(),
+            srs: proj.projCode
         };
     },
 
