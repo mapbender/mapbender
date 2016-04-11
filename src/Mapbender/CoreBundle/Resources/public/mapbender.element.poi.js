@@ -88,7 +88,8 @@ $.widget('mapbender.mbPOI', {
             '<b>' + coordinates.world.x.toFixed(deci) + ',' + coordinates.world.y.toFixed(deci) + ' @ 1:' + mbMap.model.getScale() + '</b>');
         this.poi = {
             point: coordinates.world.x.toFixed(deci) + ',' + coordinates.world.y.toFixed(deci),
-            scale: mbMap.model.getScale()
+            scale: mbMap.model.getScale(),
+            srs: proj.projCode
         };
     },
 
