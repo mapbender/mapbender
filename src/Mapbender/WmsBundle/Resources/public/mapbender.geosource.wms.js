@@ -58,6 +58,9 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
 
         var mqLayerDef = {
             type: 'wms',
+            wms_parameters: {
+                version: sourceDef.configuration.options.version
+            },
             label: sourceDef.title,
             url: finalUrl,
             transparent: sourceDef.configuration.options.transparent,
@@ -80,31 +83,22 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         if(!mqLayer.visible() || mqLayer.olLayer.queryLayers.length === 0) {
             return false;
         }
-        var param_tmp = {
-            SERVICE: 'WMS',
-            REQUEST: 'GetFeatureInfo',
-            VERSION: mqLayer.olLayer.params.VERSION,
-            EXCEPTIONS: "application/vnd.ogc.se_xml",
-            FORMAT: mqLayer.olLayer.params.FORMAT,
-            INFO_FORMAT: mqLayer.source.configuration.options.info_format || "text/plain",
-            FEATURE_COUNT: mqLayer.source.configuration.options.feature_count || 100,
-            SRS: mqLayer.olLayer.params.SRS,
-            BBOX: mqLayer.map.center().box.join(','),
-            WIDTH: $(mqLayer.map.element).width(),
-            HEIGHT: $(mqLayer.map.element).height(),
-            X: x,
-            Y: y,
-            LAYERS: mqLayer.olLayer.queryLayers.join(','),
-            QUERY_LAYERS: mqLayer.olLayer.queryLayers.join(',')
-        };
-        if(typeof (mqLayer.source.configuration.options.info_format) !== 'undefined') {
-            param_tmp["INFO_FORMAT"] = mqLayer.source.configuration.options.info_format;
-        }
-        var params = $.param(param_tmp);
-        // this clever shit was taken from $.ajax
-        var requestUrl = Mapbender.Util.removeProxy(mqLayer.olLayer.url);
-        requestUrl += (/\?/.test(mqLayer.options.url) ? '&' : '?') + params;
-        return requestUrl;
+        var wmsgfi = new OpenLayers.Control.WMSGetFeatureInfo({
+            url: Mapbender.Util.removeProxy(mqLayer.olLayer.url), 
+            layers: [mqLayer.olLayer],
+            queryVisible: true
+        });
+        wmsgfi.map = mqLayer.map.olMap;
+        var reqObj = wmsgfi.buildWMSOptions(
+            Mapbender.Util.removeProxy(mqLayer.olLayer.url),
+            [mqLayer.olLayer],
+            {x: x, y: y},
+            mqLayer.olLayer.params.FORMAT
+        );
+        reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = mqLayer.olLayer.queryLayers;
+        reqObj.params['EXCEPTIONS'] = mqLayer.source.configuration.options.exception_format;
+        var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
+        return reqUrl;
     },
 
     createSourceDefinitions: function(xml, options){

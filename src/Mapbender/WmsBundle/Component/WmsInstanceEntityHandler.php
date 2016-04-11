@@ -43,6 +43,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $source = $this->entity->getSource();
         $source->setId(ArrayUtil::hasSet($configuration, 'id', ""))
             ->setTitle(ArrayUtil::hasSet($configuration, 'id', ""));
+        $source->setVersion(ArrayUtil::hasSet($configuration, 'version', "1.1.1"));
         $source->setOriginUrl(ArrayUtil::hasSet($configuration, 'url'));
         $source->setGetMap(new RequestInformation());
         $source->getGetMap()->addFormat(ArrayUtil::hasSet($configuration, 'format', true))
@@ -352,7 +353,10 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setDimensions($dimensions)
             ->setBuffer($this->entity->getBuffer())
             ->setRatio($this->entity->getRatio())
-            ->setVendorspecifics($vendorsecifics);
+            ->setVendorspecifics($vendorsecifics)
+            ->setVersion($this->entity->getSource()->getVersion())
+            ->setExceptionformat($this->entity->getExceptionformat());
+
         $wmsconf->setOptions($options);
         $entityHandler = self::createHandler($this->container, $rootlayer);
         $wmsconf->setChildren(array($entityHandler->generateConfiguration()));
@@ -410,10 +414,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 }
             }
         }
-        if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
-            $value = $handler->getVendorSpecificValue(null);
-            if ($value) {
-                $vsarr[$vendorspec->getParameterName()] = $value;
+        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
+                $value = $handler->getVendorSpecificValue(null);
+                if ($value) {
+                    $vsarr[$vendorspec->getParameterName()] = $value;
+                }
             }
         }
         return $vsarr;
