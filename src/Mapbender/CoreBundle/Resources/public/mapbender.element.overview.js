@@ -123,6 +123,7 @@
             }
 
             return new OpenLayers.Layer.WMS(layerDefinition.title, url, {
+                version:     layerOptions.version,
                 layers:      ls.substring(1),
                 format:      layerOptions.format,
                 transparent: layerOptions.transparent
