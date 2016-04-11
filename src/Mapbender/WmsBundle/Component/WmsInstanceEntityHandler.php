@@ -43,6 +43,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $source = $this->entity->getSource();
         $source->setId(ArrayUtil::hasSet($configuration, 'id', ""))
             ->setTitle(ArrayUtil::hasSet($configuration, 'id', ""));
+        $source->setVersion(ArrayUtil::hasSet($configuration, 'version', "1.1.1"));
         $source->setOriginUrl(ArrayUtil::hasSet($configuration, 'url'));
         $source->setGetMap(new RequestInformation());
         $source->getGetMap()->addFormat(ArrayUtil::hasSet($configuration, 'format', true))
