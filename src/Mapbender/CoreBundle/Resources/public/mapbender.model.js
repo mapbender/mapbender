@@ -226,9 +226,9 @@ Mapbender.Model = {
     },
     getProj: function(srscode) {
         var proj = null;
-        for (var i = 0; i < this.srsDefs.length; i++) {
-            if (this.srsDefs[i].name === srscode) {
-                proj = new OpenLayers.Projection(this.srsDefs[i].name);
+        for(var name in Proj4js.defs){
+            if(srscode === name){
+                proj = new OpenLayers.Projection(name);
                 if (!proj.proj.units) {
                     proj.proj.units = 'degrees';
                 }
