@@ -1,0 +1,15 @@
+(function ($) {
+    if(Mapbender.configuration){
+        $(Mapbender.setup);
+    } else {
+        $.ajax({
+            url: '{{ path('mapbender_core_application_configuration', {'slug': application.slug})  | raw }}',
+            contentType: 'json'
+        }).done(function (data, textStatus, jqXHR) {
+            Mapbender.configuration = data;
+            $(Mapbender.setup);
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            Mapbender.info("Load application's configuration: " + errorThrown);
+        });
+    }
+})(jQuery);

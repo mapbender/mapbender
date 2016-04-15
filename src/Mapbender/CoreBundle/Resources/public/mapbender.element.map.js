@@ -1,5 +1,4 @@
 (function($){
-    OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
     $.widget("mapbender.mbMap", {
         options: {
             poiIcon: {
@@ -20,6 +19,7 @@
          * Creates the map widget
          */
         _create: function(){
+            OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
             var self = this,
                     me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
