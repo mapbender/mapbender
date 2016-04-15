@@ -26,7 +26,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     {
         /** @var User $user */
         $user = $this->getToken()->getUser();
-        if (!is_object($user) && is_string($user) && $user == 'anon.') {
+        if (!$this->isUserLoggedIn()) {
             $user = new User();
             $user->setUsername("anon.");
         }
@@ -46,5 +46,16 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
             $temp[] = $role->getRole();
         }
         return $temp;
+    }
+
+    /**
+     * Is user logged in?
+     *
+     * @return bool
+     */
+    public function isUserLoggedIn()
+    {
+        $user = $this->getToken()->getUser();
+        return is_object($user);
     }
 }
