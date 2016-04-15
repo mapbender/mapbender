@@ -2,8 +2,9 @@
     if(Mapbender.configuration){
         $(Mapbender.setup);
     } else {
+        var url = '{{ path('mapbender_core_application_configuration', {'slug': application.slug})  | raw }}';
         $.ajax({
-            url: '{{ path('mapbender_core_application_configuration', {'slug': application.slug})  | raw }}',
+            url: url + window.location.search,
             contentType: 'json'
         }).done(function (data, textStatus, jqXHR) {
             Mapbender.configuration = data;
