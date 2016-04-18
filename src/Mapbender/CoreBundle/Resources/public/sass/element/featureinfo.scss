@@ -33,8 +33,19 @@
           .container{
             display:none;
           }
-          .container.active{
-            display:table-row;
+          .container.active {
+            display: table-row;
+            table {
+              width: 100%;
+              border: 1px solid #E7E5E5;
+              th {
+                background-color: #ddd;
+              }
+              th, td {
+                padding-left: 5px;
+              }
+            }
+
             .accordion-cell{
               height:100%;
               .accordion-wrapper{
