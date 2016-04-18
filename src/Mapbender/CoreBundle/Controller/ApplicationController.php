@@ -151,23 +151,40 @@ class ApplicationController extends Controller
         $application  = $this->getApplication($slug);
 
         if ($isProduction) {
-            $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), $env, "html");
 
-            if (!is_file($cacheFile)) {
+            // Render YAML application
+            if ($application->getEntity()->getSource() !== ApplicationEntity::SOURCE_DB) {
+                $session->set("proxyAllowed", true);
+                $response->setContent($application->render());
+                return $response;
+            }
+
+            $cacheFile        = $this->getCachedAssetPath($slug . "-" . session_id(), $env, "html");
+            $hasCache         = is_file($cacheFile);
+            // If no cache or DB application is update, but cache is deprecated
+            if (!$hasCache || $application->getEntity()->getUpdated()->getTimestamp() > filectime($cacheFile)) {
                 $content = $application->render();
                 file_put_contents($cacheFile, $content);
                 $session->set("proxyAllowed", true);
                 $response->setContent($content);
+
+                // Update application and remove assets cache
+                if($hasCache){
+                    foreach(array(
+                                $this->getCachedAssetPath($slug,$env,'css'),
+                                $this->getCachedAssetPath($slug,$env,'js')) as $assetFileSrc){
+                        if(is_file($assetFileSrc)){
+                            unlink($assetFileSrc);
+                        }
+                    }
+                }
             } else {
                 $modificationDate = new \DateTime();
                 $modificationDate->setTimestamp(filectime($cacheFile));
-                $isAppDbBased = $application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB;
-                if (!$isAppDbBased || ($isAppDbBased && $application->getEntity()->getUpdated() < $modificationDate)) {
-                    $response->setLastModified($modificationDate);
-                    $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
-                    if ($response->isNotModified($this->getRequest())) {
-                        return $response;
-                    }
+                $response->setLastModified($modificationDate);
+                $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
+                if ($response->isNotModified($this->getRequest())) {
+                    return $response;
                 }
                 $response->setContent(file_get_contents($cacheFile));
             }
