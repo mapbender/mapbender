@@ -45,7 +45,8 @@ class ApplicationController extends Controller
             'element'  => $router->generate('mapbender_core_application_element', $config),
             'trans'    => $router->generate('mapbender_core_translation_trans'),
             'proxy'    => $router->generate('owsproxy3_core_owsproxy_entrypoint'),
-            'metadata' => $router->generate('mapbender_core_application_metadata', $config));
+            'metadata' => $router->generate('mapbender_core_application_metadata', $config),
+            'config'   => $router->generate('mapbender_core_application_configuration', $config));
 
         if ($searchSubject !== $drupal_mark) {
             foreach ($urls as $k => $v) {
@@ -217,6 +218,22 @@ class ApplicationController extends Controller
         $this->checkApplicationAccess($application);
 
         return $application;
+    }
+
+    /**
+     * Main application controller.
+     *
+     * @Route("/application/{slug}/config")
+     */
+    public function configurationAction($slug)
+    {
+        $config  = $this->getApplication($slug)->getConfiguration();
+        $this->get("session")->set("proxyAllowed", true);
+        return new Response(
+            $config,
+            200,
+            array('Content-Type' => 'text/json')
+        );
     }
 
     /**

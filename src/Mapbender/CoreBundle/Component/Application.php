@@ -267,6 +267,13 @@ class Application
             }
         }
 
+        if($type === 'js') {
+            $app_loader = new StringAsset($this->container->get('templating')->render(
+                '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig',
+                array('application' => $this)));
+            $this->addAsset($assets, $type, $app_loader);
+        }
+
         return $assets;
     }
     

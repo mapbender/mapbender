@@ -377,13 +377,13 @@ Mapbender.Model = {
         var params = OpenLayers.Util.getParameters(source.configuration.options.url);
         var url;
         if (options.add) {
-            for (name in options.add) {
+            for (var name in options.add) {
                 params[name] = options.add[name];
             }
             url = OpenLayers.Util.urlAppend(
                 source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
         } else if (options.remove) {
-            for (name in options.remove) {
+            for (var name in options.remove) {
                 if (params[name]) {
                     delete(params[name]);
                 }
@@ -406,7 +406,7 @@ Mapbender.Model = {
         var sources = [];
         var findSource = function(object, options) {
             var found = null;
-            for (key in options) {
+            for (var key in options) {
                 if (object[key]) {
                     if (typeof object[key] === 'object') {
                         var res = findSource(object[key], options[key]);
@@ -438,7 +438,7 @@ Mapbender.Model = {
         }
     },
     findLayerset: function(options) {
-        for (layersetId in Mapbender.configuration.layersets) {
+        for (var layersetId in Mapbender.configuration.layersets) {
             var layerset = Mapbender.configuration.layersets[layersetId];
             for (var i = 0; i < layerset.length; i++) {
                 if (options.source && layerset[i][options.source.origId]) {
@@ -748,7 +748,7 @@ Mapbender.Model = {
             } else {
                 var ext = null;
                 var extProj = null;
-                for (srs in extents) {
+                for (var srs in extents) {
                     extProj = this.getProj(srs);
                     if (extProj !== null) {
                         ext = OpenLayers.Bounds.fromArray(extents[srs]);
@@ -1235,7 +1235,7 @@ Mapbender.Model = {
             if (layer.options.configuration) {
                 var bboxes = layer.options.configuration.configuration.options.bbox;
                 /* TODO? add "if" for source type 'wms' etc. */
-                for (srs in bboxes) {
+                for (var srs in bboxes) {
                     if (this.getProj(srs)) {
                         proj = this.getProj(srs);
                         maxExt = OpenLayers.Bounds.fromArray(bboxes[srs]);

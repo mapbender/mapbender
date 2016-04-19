@@ -28,6 +28,7 @@
 
             select.change($.proxy(widget._zoomToScale, widget));
             $('option[value="' + scale + '"]', select).attr('selected', true);
+            initDropdown.call(this.element.get(0));
             widget._updateScale();
             mbMap.map.olMap.events.register('zoomend', widget, $.proxy(widget._updateScale, widget));
             widget._trigger('ready');
