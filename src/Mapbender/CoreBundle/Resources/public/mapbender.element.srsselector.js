@@ -25,7 +25,7 @@
             $("#" + $(this.element).attr('id') + " select").html(options);
             this.op_sel = "#" + $(this.element).attr('id') + " select option";
             $(this.op_sel + '[value="'+mbMap.map.olMap.getProjection()+'"]').prop("selected", true);
-            $(this.op_sel + '[value="'+mbMap.map.olMap.getProjection()+'"]').click();
+            initDropdown.call(this.element.get(0));
             $("#" + $(this.element).attr('id') + " select").on('change', $.proxy(self._switchSrs, self));
             $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
             $(document).on('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
@@ -97,7 +97,7 @@
                 }
             }else if($.type(crs) === "object"){
                 var res = false;
-                for(idx in crs){
+                for(var idx in crs){
                     var crsName;
                     if(typeof(idx) === 'number'){
                         crsName = crs[idx];
@@ -123,7 +123,7 @@
                 }
             }else if($.type(crs) === "object"){
                 var res = false;
-                for(idx in crs){
+                for(var idx in crs){
                     var crsName;
                     if(typeof(idx) === 'number'){
                         crsName = crs[idx];
@@ -150,7 +150,7 @@
                 }
             }else if($.type(crs) === "object"){
                 var res = false;
-                for(idx in crs){
+                for(var idx in crs){
                     var crsName;
                     if(typeof(idx) === 'number'){
                         crsName = crs[idx];
@@ -177,7 +177,7 @@
                 }
             }else if($.type(crs) === "object"){
                 $.each($(this.op_sel), function(idx_, option){
-                    for(idx in crs){
+                    for(var idx in crs){
                         var crsName;
                         if(typeof(idx) === 'number'){
                             crsName = crs[idx];
@@ -244,7 +244,7 @@
          *
          */
         _ready: function(){
-            for(callback in this.readyCallbacks){
+            for(var callback in this.readyCallbacks){
                 callback();
                 delete(this.readyCallbacks[callback]);
             }
