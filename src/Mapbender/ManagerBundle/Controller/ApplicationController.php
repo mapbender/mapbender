@@ -665,6 +665,7 @@ class ApplicationController extends Controller
         }
         $form->bind($this->get('request'));
         if ($form->isValid()) {
+            $this->getDoctrine()->getManager()->persist($application->setUpdated(new \DateTime('now')));
             $this->getDoctrine()->getManager()->persist($layerset);
             $this->getDoctrine()->getManager()->flush();
             $this->get("logger")->debug("Layerset saved");
@@ -713,6 +714,7 @@ class ApplicationController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
             $em->remove($layerset);
+            $this->getDoctrine()->getManager()->persist($application->setUpdated(new \DateTime('now')));
             $em->flush();
             $em->getConnection()->commit();
             $this->get("logger")->debug('The layerset "' . $layerset->getId() . '"has been deleted.');

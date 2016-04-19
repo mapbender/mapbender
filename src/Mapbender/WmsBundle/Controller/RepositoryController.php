@@ -367,7 +367,6 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $em          = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
-        $instance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
         $insthandler = EntityHandler::createHandler($this->container, $instance);
         $insthandler->remove();
         $em->flush();
@@ -400,7 +399,6 @@ class RepositoryController extends Controller
                     $em->refresh($layer);
                 }
                 $em->persist($wmsinstance);
-                $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
                 $em->flush();
                 $em->getConnection()->commit();
                 $wmsinstance   = $this->getDoctrine()
@@ -408,7 +406,7 @@ class RepositoryController extends Controller
                     ->find($wmsinstance->getId());
                 $entityHandler = EntityHandler::createHandler($this->container, $wmsinstance);
                 $entityHandler->generateConfiguration();
-                $em->persist($entityHandler->getEntity());
+                $entityHandler->save();
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->set('success', 'Your Wms Instance has been changed.');
@@ -529,7 +527,8 @@ class RepositoryController extends Controller
             $enabled_before = $wmsinstance->getEnabled();
             $enabled        = $enabled === "true" ? true : false;
             $wmsinstance->setEnabled($enabled);
-            $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
+            $this->getDoctrine()->getManager()->persist(
+                $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime('now')));
             $this->getDoctrine()->getManager()->persist($wmsinstance);
             $this->getDoctrine()->getManager()->flush();
             return new Response(json_encode(array(
