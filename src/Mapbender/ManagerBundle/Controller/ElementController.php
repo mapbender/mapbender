@@ -147,7 +147,7 @@ class ElementController extends Controller
             $elements = $query->getResult();
             $element->setWeight(count($elements) + 1);
             $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
+            $this->getDoctrine()->getManager()->persist($application->setUpdated(new \DateTime('now')));
             $em->persist($element);
             $em->flush();
             $entity_class = $element->getClass();
@@ -220,7 +220,7 @@ class ElementController extends Controller
         if ($form['form']->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
+            $em->persist($application->setUpdated(new \DateTime('now')));
             $em->persist($element);
             $em->flush();
 
@@ -369,6 +369,7 @@ class ElementController extends Controller
             $em->persist($elm);
         }
         $em->remove($element);
+        $em->persist($application->setUpdated(new \DateTime('now')));
         $em->flush();
 
         $this->get('session')->getFlashBag()->set('success',
@@ -517,6 +518,7 @@ class ElementController extends Controller
             $enabled = $enabled === "true" ? true : false;
             $element->setEnabled($enabled);
             $em = $this->getDoctrine()->getManager();
+            $em->persist($element->getApplication()->setUpdated(new \DateTime('now')));
             $em->persist($element);
             $em->flush();
             return new Response(json_encode(array(

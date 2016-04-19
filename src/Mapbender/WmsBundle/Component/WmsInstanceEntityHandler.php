@@ -172,8 +172,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
             $num++;
         }
+        $this->container->get('doctrine')->getManager()->persist(
+            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->persist($this->entity);
     }
+    
 
     /**
      * @inheritdoc
@@ -182,6 +185,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     {
         $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $layerHandler->remove();
+        $this->container->get('doctrine')->getManager()->persist(
+            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
@@ -212,6 +217,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->update($this->entity, $this->entity->getSource()->getRootlayer());
 
         $this->generateConfiguration();
+        $this->container->get('doctrine')->getManager()->persist(
+            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->persist($this->entity);
     }
 
