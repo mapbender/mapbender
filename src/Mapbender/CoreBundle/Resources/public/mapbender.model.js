@@ -79,7 +79,7 @@ Mapbender.Model = {
         this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
         this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
         this._addLayerMaxExtent(this.map.layersList.mapquery0);
-
+        this.map.olMap.tileManager = null; // fix WMS tiled setVisibility(false) for outer scale
         this.setView(true);
         this.parseURL();
         if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
