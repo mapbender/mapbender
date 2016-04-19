@@ -114,14 +114,14 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         if(typeof (capabilities.capability) !== 'undefined') {
             var rootlayer = capabilities.capability.nestedLayers[0];
             var bboxOb = {}, bboxSrs = null, bboxBounds = null;
-            for(bbox in rootlayer.bbox) {
+            for(var bbox in rootlayer.bbox) {
                 if(options.model.getProj(bbox) !== null) {
                     bboxOb[bbox] = rootlayer.bbox[bbox].bbox;
                     bboxSrs = bbox;
                     bboxBounds = OpenLayers.Bounds.fromArray(bboxOb[bbox]);
                 }
             }
-            for(srs in rootlayer.srs) {
+            for(var srs in rootlayer.srs) {
                 if(rootlayer.srs[srs] === true && typeof bboxOb[srs] === 'undefined' && options.model.getProj(
                         srs) !== null && bboxBounds !== null) {
                     var oldProj = options.model.getProj(bboxSrs);
@@ -163,6 +163,7 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
                 configuration: {
                     isBaseSource: false,
                     options: {
+                        version: capabilities.version,
                         bbox: bboxOb,
                         format: format,
                         info_format: infoformat,
