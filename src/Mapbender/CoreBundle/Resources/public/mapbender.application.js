@@ -200,7 +200,7 @@ Mapbender.Util.Url = function(urlString){
         str += self.hostname + (self.port ? ':' + self.port : '') + self.pathname;
         var params = '';
         if(typeof (self.parameters) === 'object') {
-            for(key in self.parameters) {
+            for(var key in self.parameters) {
                 params += '&' + key + '=' + self.parameters[key];
             }
         }
@@ -213,7 +213,7 @@ Mapbender.Util.Url = function(urlString){
      * @returns parameter value or null
      */
     this.getParameter = function(name, ignoreCase){
-        for(key in self.parameters) {
+        for(var key in self.parameters) {
             if(key === name || (ignoreCase && key.toLowerCase() === name.toLowerCase())) {
                 return self.parameters[key];
             }
