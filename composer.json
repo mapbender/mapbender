@@ -1,0 +1,19 @@
+{
+    "name": "mapbender/mapbender",
+    "description": "Mapbender core library",
+    "keywords": ["mapbender", "library"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {"name": "Andreas Schmitz"}
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-0": {"Mapbender\\": "."}
+    }
+}
