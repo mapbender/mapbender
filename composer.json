@@ -5,7 +5,10 @@
     "type": "library",
     "license": "MIT",
     "authors": [
-        {"name": "Andreas Schmitz"}
+        {"name": "Andreas Schmitz"},
+        {"name": "Paul Schmidt"},
+        {"name": "Andriy Oblivantsev"},
+        {"name": "Stefan Winkelmann"}
     ],
     "require": {
         "php": ">=5.3.3"
