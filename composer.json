@@ -11,7 +11,8 @@
         {"name": "Stefan Winkelmann"}
     ],
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.3.3",
+        "mapbender/mapquery": "1.0.x"
     },
     "config": {
         "bin-dir": "bin"
