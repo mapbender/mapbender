@@ -43,8 +43,8 @@ class HTMLElement extends Element
     public static function listAssets()
     {
         return array(
-            'js'  => array('/bundles/mapbendercore/mapbender.element.htmlelement.js'),
-            'css' => array('/bundles/mapbendercore/sass/element/htmlelement.scss')
+            'js'  => array('@MapbenderCoreBundle/Resources/public/mapbender.element.htmlelement.js'),
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/htmlelement.scss')
         );
     }
 
