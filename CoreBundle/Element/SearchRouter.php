@@ -81,7 +81,7 @@ class SearchRouter extends Element
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 '/components/json2/json2.js',
-                'vendor/backbone.js',
+                '/components/backbone/backbone-min.js',
                 'mapbender.element.searchRouter.Feature.js',
                 'mapbender.element.searchRouter.Search.js',
                 'mapbender.element.searchRouter.js'),
