@@ -17,7 +17,7 @@ class Mobile extends Template
      */
     public static function getTitle()
     {
-        return 'Mapbender Mobile template';
+        return 'Mobile';
     }
 
     /**
