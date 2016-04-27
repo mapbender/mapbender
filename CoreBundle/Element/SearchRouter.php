@@ -80,7 +80,7 @@ class SearchRouter extends Element
                 '@MapbenderCoreBundle/Resources/public/mapquery/lib/openlayers/OpenLayers.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
-                'vendor/json2.js',
+                '/components/json2/json2.js',
                 'vendor/backbone.js',
                 'mapbender.element.searchRouter.Feature.js',
                 'mapbender.element.searchRouter.Search.js',
