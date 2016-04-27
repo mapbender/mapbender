@@ -17,6 +17,6 @@
         "bin-dir": "bin"
     },
     "autoload": {
-        "psr-0": {"Mapbender\\": "."}
+        "psr-4": {"Mapbender\\": "."}
     }
 }
