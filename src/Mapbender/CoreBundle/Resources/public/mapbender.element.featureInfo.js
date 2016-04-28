@@ -223,6 +223,7 @@
                         iframe.on('load', function(){
                             iframe.data('loaded', true);
                             $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
+                            iframe.contents().find("body").css("background","transparent");
                             self._trigger('featureinfo', null, {
                                 action: "haveresult",
                                 title: self.element.attr('title'),
