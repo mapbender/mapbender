@@ -1,3 +1,9 @@
+/*
+ * !!! Add to documentation after pull request:
+ * Configuration: each route, add into parameter "class_options" an option "srs: EPSG:XXXX"
+ * Configuration: each route, set for an icon either an abs. url (http://XXX) or  a rel. url ('bundles/mapbendercore/image/pin_red.png')
+ */
+
 (function($){
 
     $.widget('mapbender.mbSearchRouter', {
@@ -29,22 +35,40 @@
                 return;
             }
             Mapbender.elementRegistry.onElementReady(options.target, $.proxy(widget._setup, widget));
-            widget.callbackUrl = Mapbender.configuration.application.urls.element + '/' + widget.element.attr('id') + '/';
-        },
-
-        /**
-         * Remove last search results
-         */
-        removeLastResults: function(){
-            var widget = this;
-            widget.searchModel.reset();
-            widget._getLayer().removeAllFeatures();
         },
 
         _setup: function(){
             var widget = this;
+            widget.callbackUrl = Mapbender.configuration.application.urls.element + '/' + widget.element.attr('id') + '/';
             var element = widget.element;
             var options = widget.options;
+            var srsList = [];
+            var help = {};
+            for (var key in widget.options.routes) {
+                // check if srs loaded
+                if (widget.options.routes[key].class_options.srs) {
+                    var srs = widget.options.routes[key].class_options.srs;
+                    var proj = Mapbender.Model.getProj(srs);
+                    // notice if a projection is not loaded
+                    if (!proj && !help[srs]) {
+                        help[srs] = srs;
+                        srsList.push(srs);
+                    }
+                }
+                var res = widget.options.routes[key].results;
+                if(res && res.styleMap){
+                    for(var key in res.styleMap){
+                        var sm = res.styleMap[key];
+                        if(sm['externalGraphic'] && sm['externalGraphic'].indexOf('http') !== 0){
+                            sm['externalGraphic'] = Mapbender.configuration.application.urls.asset + sm['externalGraphic'];
+                        }
+                    }
+                }
+            }
+            // load projections
+            if (srsList.length) {
+                $('#' + options.target).data('mapbenderMbMap').loadSrs(srsList);
+            }
             var searchModel = widget.searchModel = new Mapbender.SearchModel(null, null, widget);
             var routeSelect = $('select#search_routes_route', element);
             var routeCount = 0;
@@ -87,12 +111,8 @@
             });
 
             // Listen to changes of search select (switching and forms resetting)
-
             routeSelect.change($.proxy(widget._selectSearch, widget));
-            Mapbender.elementRegistry.onElementReady(options.target, function(){
-                routeSelect.change();
-                widget._trigger('ready');
-            });
+            routeSelect.change();
             // But if there's only one search, we actually don't need the select
             for(var route in options.routes){
                 if(options.routes.hasOwnProperty(route)){
@@ -130,6 +150,15 @@
             if(widget.options.autoOpen) {
                 widget.open();
             }
+        },
+
+        /**
+         * Remove last search results
+         */
+        removeLastResults: function(){
+            var widget = this;
+            widget.searchModel.reset();
+            widget._getLayer().removeAllFeatures();
         },
 
         /**
@@ -533,7 +562,7 @@
                 feature = $.extend({}, row.data('feature').getFeature()),
                 map = feature.layer.map,
                 callbackConf = routes[widget.selected].results.callback,
-                srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
+                srs = Mapbender.Model.getProj(routes[widget.selected].class_options.srs);
             var mapProj = Mapbender.Model.getCurrentProj();
             if(srs.projCode !== mapProj.projCode) {
                 feature.geometry = feature.geometry.transform(srs, mapProj);
