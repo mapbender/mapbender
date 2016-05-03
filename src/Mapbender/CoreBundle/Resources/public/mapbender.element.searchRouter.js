@@ -1,6 +1,5 @@
 /*
  * !!! Add to documentation after pull request:
- * Configuration: each route, add into parameter "class_options" an option "srs: EPSG:XXXX"
  * Configuration: each route, set for an icon either an abs. url (http://XXX) or  a rel. url ('bundles/mapbendercore/image/pin_red.png')
  */
 
