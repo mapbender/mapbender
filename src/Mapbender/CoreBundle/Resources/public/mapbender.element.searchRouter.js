@@ -561,8 +561,8 @@
             var row = $(event.currentTarget),
                 feature = $.extend({}, row.data('feature').getFeature()),
                 map = feature.layer.map,
-                callbackConf = routes[widget.selected].results.callback,
-                srs = Mapbender.Model.getProj(routes[widget.selected].class_options.srs);
+                callbackConf = routes[widget.selected].results.callback;
+            var srs = Mapbender.Model.getProj('EPSG:' + feature.attributes.srid);
             var mapProj = Mapbender.Model.getCurrentProj();
             if(srs.projCode !== mapProj.projCode) {
                 feature.geometry = feature.geometry.transform(srs, mapProj);

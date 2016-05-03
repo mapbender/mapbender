@@ -153,7 +153,8 @@ class SQLSearchEngine
                         }, $config['class_options']['attributes']));
         // Add geometry to SELECT
         // // @todo: Platform independency (ST_AsGeoJSON)
-        $select .= ', ST_AsGeoJSON(' . $config['class_options']['geometry_attribute'] . ') as geom';
+        $select .= ', ST_AsGeoJSON(' . $config['class_options']['geometry_attribute'] . ') as geom'
+            . ',ST_SRID(' . $config['class_options']['geometry_attribute'] . ') as srid';
 
         $qb->select($select);
         // Add FROM
@@ -242,7 +243,7 @@ class SQLSearchEngine
             } else {
                 $cfg = $config['form'][$key];
             }
-            if(array_key_exists($key, $data['autocomplete_keys']))
+            if (array_key_exists($key, $data['autocomplete_keys']))
             {
                 // Autocomplete value given, match to configured attribute
                 $cond->add($qb->expr()->eq(
@@ -271,7 +272,8 @@ class SQLSearchEngine
                     $feature = array(
                         'type' => 'Feature',
                         'properties' => $row,
-                        'geometry' => json_decode($row['geom'])
+                        'geometry' => json_decode($row['geom']),
+                        'srid' => $row['srid']
                     );
                     unset($feature['properties']['geom']);
                     $row = $feature;
