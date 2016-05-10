@@ -127,50 +127,43 @@ class WmsSource extends Source implements ContainingKeyword
      * @var RequestInformation A request information for the GetCapabilities operation
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $getCapabilities = null;
+    protected $getCapabilities = null;
 
     /**
      * @var RequestInformation A request information for the GetMap operation
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $getMap = null;
+    protected $getMap = null;
 
     /**
      * @var RequestInformation A request information for the GetFeatureInfo operation
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $getFeatureInfo = null;
+    protected $getFeatureInfo = null;
 
     /**
      * @var RequestInformation A request information for the DescribeLayer operation
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $describeLayer = null;
+    protected $describeLayer = null;
 
     /**
      * @var RequestInformation A request information for the GetLegendGraphic operation
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $getLegendGraphic = null;
+    protected $getLegendGraphic = null;
 
     /**
      * @var RequestInformation A request information for the GetStyles operation
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $getStyles = null;
+    protected $getStyles = null;
 
     /**
      * @var RequestInformation A request information for the PutStyles operation
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $putStyles = null;
+    protected $putStyles = null;
 
     /**
      * @var string a user name
@@ -185,22 +178,22 @@ class WmsSource extends Source implements ContainingKeyword
     protected $password = null;
 
     /**
-     * @var ArrayCollections A list of WMS layers
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="source", cascade={"remove"})
+     * @var ArrayCollection A list of WMS layers
+     * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsLayerSource",mappedBy="source", cascade={"remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $layers;
 
     /**
-     * @var ArrayCollections A list of WMS keywords
+     * @var ArrayCollection A list of WMS keywords
      * @ORM\OneToMany(targetEntity="WmsSourceKeyword",mappedBy="reference", cascade={"remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
 
     /**
-     * @var ArrayCollections A list of WMS instances
-     * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="source", cascade={"remove"})
+     * @var ArrayCollection A list of WMS instances
+     * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsInstance",mappedBy="source", cascade={"remove"})
      */
     protected $instances;
 
