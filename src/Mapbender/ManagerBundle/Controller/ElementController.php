@@ -7,10 +7,14 @@
  */
 namespace Mapbender\ManagerBundle\Controller;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Mapbender\CoreBundle\Component\Element As ComponentElement;
@@ -242,67 +246,54 @@ class ElementController extends Controller
     }
 
     /**
+     * Display and handle element access rights
+     *
      * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"})
      * @Template("MapbenderManagerBundle:Element:security.html.twig")
      */
     public function securityAction($slug, $id)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
-
-        $element = $this->getDoctrine()
-            ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+        /** @var Form $form */
+        /** @var EntityManager $em */
+        /** @var Connection $connection */
+        $doctrine = $this->getDoctrine();
+        $em       = $doctrine->getManager();
+        $element  = $doctrine->getRepository('MapbenderCoreBundle:Element')->findOneById($id);
 
         if (!$element) {
-            throw $this->createNotFoundException('The element with the id "'
-                . $id . '" does not exist.');
+            throw $this->createNotFoundException("The element with the id \"$id\" does not exist.");
         }
+
         $em->detach($element); // prevent element from being stored with default config/stored again
-        if ($this->getRequest()->getMethod() === 'POST') {
-            $form = ComponentElement::getElementForm($this->container,
-                    $application, $element, true);
-            $request = $this->getRequest();
-            $form['form']->bind($request);
-            if ($form['form']->isValid()) {
-                $em->getConnection()->beginTransaction();
-                try {
-                    $application->setUpdated(new \DateTime('now'));
-                    $em->persist($application);
 
-                    $aclManager = $this->get('fom.acl.manager');
-                    $aclManager->setObjectACLFromForm($element,
-                        $form['form']->get('acl'), 'object');
-                    $em->flush();
-                    $em->getConnection()->commit();
-                    $this->get('session')->getFlashBag()->set('success',
-                        "Your element's access has been changed.");
-                } catch (\Exception $e) {
-                    $this->get('session')->getFlashBag()->set('error',
-                        "There was an error trying to change your element's access.");
-                    $em->getConnection()->rollback();
-                    $em->close();
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $connection  = $em->getConnection();
+        $request     = $this->getRequest();
+        $formData    = ComponentElement::getElementForm($this->container, $application, $element, true);
+        $form        = $formData["form"];
 
-                    if ($this->container->getParameter('kernel.debug')) {
-                        throw($e);
-                    }
+        if ($request->getMethod() === 'POST' && $form->submit($request)->isValid()) {
+            $connection->beginTransaction();
+            try {
+                $application->setUpdated(new \DateTime('now'));
+                $em->persist($application);
+                $aclManager = $this->get('fom.acl.manager');
+                $aclManager->setObjectACLFromForm($element, $form->get('acl'), 'object');
+                $em->flush();
+                $connection->commit();
+                $this->get('session')->getFlashBag()->set('success', "Your element's access has been changed.");
+            } catch (\Exception $e) {
+                $this->get('session')->getFlashBag()->set('error', "There was an error trying to change your element's access.");
+                $connection->rollback();
+                $em->close();
+                if ($this->container->getParameter('kernel.debug')) {
+                    throw($e);
                 }
-            } else {
-                return array(
-                    'form' => $form['form']->createView(),
-                    'theme' => $form['theme'],
-                    'assets' => $form['assets']);
             }
-        } else {
-
-            $form = ComponentElement::getElementForm($this->container,
-                    $application, $element, true);
-            return array(
-                'form' => $form['form']->createView(),
-                'theme' => $form['theme'],
-                'assets' => $form['assets']);
         }
+
+        $formData["form"] = $form->createView();
+        return $formData;
     }
 
     /**
