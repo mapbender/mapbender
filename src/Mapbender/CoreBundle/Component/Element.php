@@ -399,7 +399,7 @@ abstract class Element
      * Create form for given element
      *
      * @param string $class
-     * @return dsd
+     * @return array
      */
     public static function getElementForm($container, $application, Entity $element, $onlyAcl = false)
     {
