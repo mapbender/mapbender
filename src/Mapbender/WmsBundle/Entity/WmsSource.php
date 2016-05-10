@@ -178,21 +178,21 @@ class WmsSource extends Source implements ContainingKeyword
     protected $password = null;
 
     /**
-     * @var ArrayCollections A list of WMS layers
+     * @var ArrayCollection A list of WMS layers
      * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsLayerSource",mappedBy="source", cascade={"remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $layers;
 
     /**
-     * @var ArrayCollections A list of WMS keywords
+     * @var ArrayCollection A list of WMS keywords
      * @ORM\OneToMany(targetEntity="WmsSourceKeyword",mappedBy="reference", cascade={"remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
 
     /**
-     * @var ArrayCollections A list of WMS instances
+     * @var ArrayCollection A list of WMS instances
      * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsInstance",mappedBy="source", cascade={"remove"})
      */
     protected $instances;
