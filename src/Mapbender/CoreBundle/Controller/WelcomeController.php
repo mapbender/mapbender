@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\Application as AppComponent;
+use Mapbender\CoreBundle\Component\SecurityContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -28,25 +29,26 @@ class WelcomeController extends Controller
      */
     public function listAction()
     {
-        $securityContext      = $this->get('security.context');
-        $oid                  = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-        $applications         = $this->get('mapbender')->getApplicationEntities();
-        $allowed_applications = array();
+        /** @var SecurityContext $securityContext */
+        $securityContext     = $this->get('security.context');
+        $oid                 = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+        $applications        = $this->get('mapbender')->getApplicationEntities();
+        $allowedApplications = array();
         foreach ($applications as $application) {
             if ($application->isExcludedFromList()) {
                 continue;
             }
 
-            if ($securityContext->isGranted('VIEW', $application)) {
-                if (!$application->isPublished() && !$securityContext->isGranted('EDIT', $application)) {
+            if ($securityContext->isUserAllowedToView($application)) {
+                if (!$application->isPublished() && !$securityContext->isUserAllowedToEdit($application)) {
                     continue;
                 }
-                $allowed_applications[] = $application;
+                $allowedApplications[] = $application;
             }
         }
 
         return array(
-            'applications'      => $allowed_applications,
+            'applications'      => $allowedApplications,
             'uploads_web_url'   => AppComponent::getUploadsUrl($this->container),
             'create_permission' => $securityContext->isGranted('CREATE', $oid),
             'time'              => new \DateTime()
