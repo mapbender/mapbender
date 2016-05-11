@@ -1,10 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\ORM\PersistentCollection;
@@ -15,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Description of ImportHandler
@@ -42,9 +37,12 @@ class ImportHandler extends ExchangeHandler
      */
     public function createForm()
     {
-        $this->checkGranted('CREATE', new Application());
-        $type = new ImportJobType();
-        return $this->container->get('form.factory')->create($type, $this->job, array());
+        if (!$this->securityContext->isUserAllowedToCreate(new Application())) {
+            throw new AccessDeniedException();
+        }
+        return $this->container
+            ->get('form.factory')
+            ->create(new ImportJobType(), $this->job, array());
     }
 
     /**
@@ -52,14 +50,10 @@ class ImportHandler extends ExchangeHandler
      */
     public function bindForm()
     {
-        $form    = $this->createForm();
-        $request = $this->container->get('request');
-        $form->bind($request);
-        if ($form->isValid()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this
+            ->createForm()
+            ->submit($this->container->get('request'))
+            ->isValid();
     }
 
     /**

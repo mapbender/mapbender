@@ -1,17 +1,12 @@
 <?php
-
-/**
- * Mapbender application management
- *
- * @author Christian Wygoda <christian.wygoda@wheregroup.com>
- */
-
 namespace Mapbender\ManagerBundle\Controller;
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
@@ -25,6 +20,7 @@ use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -32,12 +28,18 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Yaml\Parser;
 
+/**
+ * Mapbender application management
+ *
+ * @author  Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author  Andreas Schmitz <andreas.schmitz@wheregroup.com>
+ * @author  Paul Schmitd <paul.schmidt@wheregroup.com>
+ * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
+ */
 class ApplicationController extends Controller
 {
-
     /**
-     * Render a list of applications the current logged in user has access
-     * to.
+     * Render a list of applications the current logged in user has access to.
      *
      * @ManagerRoute("/applications")
      * @Method("GET")
@@ -55,8 +57,8 @@ class ApplicationController extends Controller
             if ($application->isExcludedFromList()) {
                 continue;
             }
-            if ($securityContext->isGranted('VIEW', $application)) {
-                if (!$application->isPublished() && !$securityContext->isGranted('EDIT', $application)) {
+            if ($securityContext->isGranted(SecurityContext::PERMISSION_VIEW, $application)) {
+                if (!$application->isPublished() && !$securityContext->isUserAllowedToEdit($application)) {
                     continue;
                 }
                 $allowed_applications[] = $application;
@@ -65,7 +67,7 @@ class ApplicationController extends Controller
 
         return array(
             'applications' => $allowed_applications,
-            'create_permission' => $securityContext->isGranted('CREATE', $oid),
+            'create_permission' => $securityContext->isGranted(SecurityContext::PERMISSION_CREATE, $oid),
             'uploads_web_url' => $uploads_web_url,
             'time' => new \DateTime()
         );
@@ -83,7 +85,7 @@ class ApplicationController extends Controller
         $application = new Application();
 
         // ACL access check
-        $this->checkGranted('CREATE', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_CREATE, $application);
 
         $form = $this->createApplicationForm($application);
 
@@ -187,7 +189,7 @@ class ApplicationController extends Controller
     public function copydirectlyAction($slug)
     {
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted('EDIT', $tocopy);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $tocopy);
 
         $expHandler = new ExportHandler($this->container);
         $expJob     = $expHandler->getJob();
@@ -214,7 +216,7 @@ class ApplicationController extends Controller
         $application      = new Application();
         $uploadScreenshot = new UploadScreenshot();
         // ACL access check
-        $this->checkGranted('CREATE', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_CREATE, $application);
 
         $form       = $this->createApplicationForm($application);
         $request    = $this->getRequest();
@@ -291,47 +293,57 @@ class ApplicationController extends Controller
      * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
      * @Template
+     * @param string $slug Application name
+     * @return array
+     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
      */
     public function editAction($slug)
     {
+        /** @var Element $element */
+        /** @var Application $application */
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-
         // ACL access check
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
         $em            = $this->getDoctrine()->getManager();
         // add RegionProperties if defined
         $this->checkRegionProperties($application);
         $form          = $this->createApplicationForm($application);
+        $em            = $this->getDoctrine()->getManager();
+        $query         = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
+        $sources       = $query->getResult();
+        $aclProvider   = $this->container->get('security.acl.provider');
+        $baseUrl       = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+        $screenshotUrl = $application->getScreenshot();
 
-        $em      = $this->getDoctrine()->getManager();
-        $query   = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
-        $sources = $query->getResult();
-
-        $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-
-
-
-        if ($application->getScreenshot() == null) {
-            $screenshot_url = $application->getScreenshot();
-        } else {
-            $app_web_url    = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-            $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
+        if (!$screenshotUrl) {
+            $screenshotUrl = $baseUrl . "/" . $application->getScreenshot();
         }
+        //
+        ////var_dump(get_class($application->getElements()));
+        //foreach ($application->getElements() as $element) {
+        //    //$element->getApplication();
+        //
+        //    //var_dump($element);
+        //    //die("HERE");
+        //    $aclProvider->findAcl(ObjectIdentity::fromDomainObject($element));
+        //    var_dump($element);die();
+        //}
+        //$acl         = $aclProvider->findAcl(ObjectIdentity::fromDomainObject($entity));
 
         return array(
-            'application' => $application,
-            'regions' => $templateClass::getRegions(),
-            'slug' => $slug,
-            'available_elements' => $this->getElementList(),
-            'sources' => $sources,
-            'form' => $form->createView(),
-            'form_name' => $form->getName(),
-            'template_name' => $templateClass::getTitle(),
-            'screenshot' => $screenshot_url,
+            'application'         => $application,
+            'regions'             => $templateClass::getRegions(),
+            'slug'                => $slug,
+            'available_elements'  => $this->getElementList(),
+            'sources'             => $sources,
+            'form'                => $form->createView(),
+            'form_name'           => $form->getName(),
+            'template_name'       => $templateClass::getTitle(),
+            'screenshot'          => $screenshotUrl,
             'screenshot_filename' => $application->getScreenshot(),
-            'time' => new \DateTime());
+            'time'                => new \DateTime());
     }
 
     /**
@@ -346,7 +358,7 @@ class ApplicationController extends Controller
         $application      = $this->get('mapbender')->getApplicationEntity($slug);
         $old_slug         = $application->getSlug();
         // ACL access check
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
         $templateClassOld = $application->getTemplate();
         $form             = $this->createApplicationForm($application);
         $request          = $this->getRequest();
@@ -478,7 +490,7 @@ class ApplicationController extends Controller
         throw new \Exception('check the action copyform');
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
-        $this->checkGranted('CREATE', $tocopy);
+        $this->checkGranted(SecurityContext::PERMISSION_CREATE, $tocopy);
 
         $form = $this->createForm(new ApplicationCopyType(), $tocopy);
 
@@ -496,7 +508,7 @@ class ApplicationController extends Controller
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
         // ACL access check
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
 
         $em = $this->getDoctrine()->getManager();
 
@@ -547,7 +559,7 @@ class ApplicationController extends Controller
         }
 
         // ACL access check
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
 
         $id = $application->getId();
         return array(
@@ -566,7 +578,7 @@ class ApplicationController extends Controller
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
         // ACL access check
-        $this->checkGranted('DELETE', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_DELETE, $application);
 
         try {
             $em          = $this->getDoctrine()->getManager();
@@ -605,7 +617,7 @@ class ApplicationController extends Controller
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
         $layerset    = new Layerset();
         $layerset->setApplication($application);
 
@@ -628,7 +640,7 @@ class ApplicationController extends Controller
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
         $layerset    = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
@@ -652,7 +664,7 @@ class ApplicationController extends Controller
     public function saveLayersetAction($slug, $layersetId = null)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
         if ($layersetId === null) { // new object
             $layerset = new Layerset();
             $form     = $this->createForm(new LayersetType(), $layerset);
@@ -686,7 +698,7 @@ class ApplicationController extends Controller
     public function confirmDeleteLayersetAction($slug, $layersetId)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
         $layerset    = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
@@ -706,7 +718,7 @@ class ApplicationController extends Controller
     public function deleteLayersetAction($slug, $layersetId)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
         $layerset    = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
@@ -739,7 +751,7 @@ class ApplicationController extends Controller
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
 
         $layerset = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
@@ -753,7 +765,7 @@ class ApplicationController extends Controller
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $allowed_sources = array();
         foreach ($sources as $source) {
-            if ($securityContext->isGranted('EDIT', $oid) || $securityContext->isGranted('EDIT', $source)) {
+            if ($securityContext->isGranted(SecurityContext::PERMISSION_EDIT, $oid) || $securityContext->isGranted(SecurityContext::PERMISSION_EDIT, $source)) {
                 $allowed_sources[] = $source;
             }
         }
@@ -773,7 +785,7 @@ class ApplicationController extends Controller
     {
         $application    = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
         $source         = EntityHandler::find($this->container, "MapbenderCoreBundle:Source", $sourceId);
         $layerset       = EntityHandler::find($this->container, "MapbenderCoreBundle:Layerset", $layersetId);
         $eHandler       = EntityHandler::createHandler($this->container, $source);
@@ -801,7 +813,7 @@ class ApplicationController extends Controller
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
-        $this->checkGranted('EDIT', $application);
+        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
         $sourceInst  = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:SourceInstance")
             ->find($instanceId);
@@ -871,6 +883,9 @@ class ApplicationController extends Controller
 
     /**
      * Creates the form for the delete confirmation page
+     *
+     * @param $id
+     * @return Form
      */
     private function createDeleteForm($id)
     {
@@ -883,7 +898,7 @@ class ApplicationController extends Controller
      * Checks the grant for an action and an object
      *
      * @param string $action action "CREATE"
-     * @param \Object $object the object
+     * @param object $object the object
      * @throws AccessDeniedException
      */
     private function checkGranted($action, $object)
@@ -907,21 +922,33 @@ class ApplicationController extends Controller
         }
     }
 
-    private function setRegionProperties($application, $form)
+    /**
+     * Merge application, form and template default properties
+     *
+     * @param Application $application
+     * @param Form        $form
+     */
+    private function setRegionProperties(Application $application, Form $form)
     {
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
+        $applicationRegionProperties = $application->getRegionProperties();
         foreach ($templateProps as $regionName => $regionProperties) {
-            foreach ($application->getRegionProperties() as $regionProperty) {
+            foreach ($applicationRegionProperties as $regionProperty) {
                 if ($regionProperty->getName() === $regionName) {
                     $regprops = $form->get($regionName)->getData();
-                    $regionProperty->setProperties($regprops ? $regionProperties[$regprops] : array());
+                    $regionProperty->setProperties($regprops ? $regionProperties[ $regprops ] : array());
                 }
             }
         }
     }
 
-    private function checkRegionProperties($application)
+    /**
+     * Update application region properties if they'r changed
+     *
+     * @param $application
+     */
+    private function checkRegionProperties(Application $application)
     {
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
