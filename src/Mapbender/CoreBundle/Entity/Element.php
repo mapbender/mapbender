@@ -68,6 +68,9 @@ class Element
      */
     protected $weight;
 
+    /** @var array */
+    protected $yamlRoles;
+
     /**
      * Element constructor.
      */
@@ -271,5 +274,21 @@ class Element
     public function __toString()
     {
         return (string) $this->id;
+    }
+
+    /**
+     * @return array
+     */
+    public function getYamlRoles()
+    {
+        return $this->yamlRoles;
+    }
+
+    /**
+     * @param array $yamlRoles
+     */
+    public function setYamlRoles($yamlRoles)
+    {
+        $this->yamlRoles = $yamlRoles;
     }
 }

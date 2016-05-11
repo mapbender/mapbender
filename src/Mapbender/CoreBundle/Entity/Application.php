@@ -3,39 +3,42 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Validator\Constraints\Scss;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Applicaton entity
+ * Application entity
  *
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  *
- * @ORM\Entity
  * @UniqueEntity("title")
  * @UniqueEntity("slug")
+ * @ORM\Entity
  * @ORM\Table(name="mb_core_application")
  * @ORM\HasLifecycleCallbacks
  */
 class Application
 {
-
+    /** YAML based application type */
     const SOURCE_YAML = 1;
+
+    /** Databased application type */
     const SOURCE_DB = 2;
 
-    /**
-     * @var Exclude form application menu list
-     */
+    /**  @var bool Exclude form application menu list */
     protected $excludeFromList = false;
-    private $preparedElements;
-    private $screenshotPath;
 
-    /**
-     * @var integer $source
-     */
+    /** @var array YAML roles */
+    protected $yamlRoles;
+
+    /** @var  Element[]|ArrayCollection */
+    private $preparedElements;
+
+    /** @var integer $source Application source type (self::SOURCE_*) */
     protected $source = self::SOURCE_DB;
 
     /**
@@ -72,18 +75,21 @@ class Application
     protected $template;
 
     /**
+     * @var RegionProperties[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $regionProperties;
 
     /**
+     * @var Element[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"remove"})
      * @ORM\OrderBy({"weight" = "asc"})
      */
     protected $elements;
 
     /**
+     * @var Layerset[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"remove"})
      */
     protected $layersets;
@@ -119,6 +125,9 @@ class Application
      */
     protected $custom_css;
 
+    /**
+     * @var array Public options array, this never stored in DB and only for YAML application.
+     */
     protected $publicOptions = array();
 
     /**
@@ -147,7 +156,7 @@ class Application
     /**
      * Get type
      *
-     * @return type
+     * @return string
      */
     public function getSource()
     {
@@ -157,6 +166,7 @@ class Application
     /**
      * Set id
      *
+     * @param $id
      * @return Application
      */
     public function setId($id)
@@ -224,7 +234,7 @@ class Application
     /**
      * Set description
      *
-     * @param text $description
+     * @param string $description
      * @return $this
      */
     public function setDescription($description)
@@ -237,7 +247,7 @@ class Application
     /**
      * Get description
      *
-     * @return text
+     * @return string
      */
     public function getDescription()
     {
@@ -284,7 +294,7 @@ class Application
     /**
      * Get region properties
      *
-     * @return Collection
+     * @return RegionProperties[]|ArrayCollection
      */
     public function getRegionProperties()
     {
@@ -294,7 +304,7 @@ class Application
     /**
      * Get region properties
      *
-     * @return array
+     * @param RegionProperties $regionProperties
      */
     public function addRegionProperties(RegionProperties $regionProperties)
     {
@@ -302,19 +312,19 @@ class Application
     }
 
     /**
-     * Add elements
+     * Add element
      *
-     * @param Element $elements
+     * @param Element $element
      */
-    public function addElements(Element $elements)
+    public function addElement(Element $element)
     {
-        $this->elements[] = $elements;
+        $this->elements[] = $element;
     }
 
     /**
      * Get elements
      *
-     * @return Collection
+     * @return Element[]
      */
     public function getElements()
     {
@@ -325,7 +335,7 @@ class Application
      * Set elements
      *
      * @param ArrayCollection $elements elements
-     * @return Application
+     * @return $this
      */
     public function setElements(ArrayCollection $elements)
     {
@@ -358,7 +368,7 @@ class Application
     /**
      * Get layersets
      *
-     * @return Collection
+     * @return Layerset[]
      */
     public function getLayersets()
     {
@@ -391,7 +401,7 @@ class Application
     /**
      * Set screenshotFile
      *
-     * @param file $screenshotFile
+     * @param $screenshotFile
      * @return $this
      */
     public function setScreenshotFile($screenshotFile)
@@ -403,8 +413,6 @@ class Application
 
     /**
      * Get screenshotFile
-     *
-     * @return file
      */
     public function getScreenshotFile()
     {
@@ -505,7 +513,7 @@ class Application
      * Get region elements
      *
      * @param null $region
-     * @return array|null
+     * @return Element[]|null
      */
     public function getElementsByRegion($region = null)
     {
@@ -523,7 +531,7 @@ class Application
             foreach ($this->preparedElements as $elementRegion => $elements) {
                 usort(
                     $elements,
-                    function ($a, $b) {
+                    function (Element $a, Element $b) {
                         return $a->getWeight() - $b->getWeight();
                     }
                 );
@@ -596,7 +604,7 @@ class Application
     }
 
     /**
-     * @return Exclude
+     * @return bool
      */
     public function isExcludedFromList()
     {
@@ -617,6 +625,42 @@ class Application
     public function setPublicOptions($publicOptions)
     {
         $this->publicOptions = $publicOptions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getYamlRoles()
+    {
+        return $this->yamlRoles;
+    }
+
+    /**
+     * @param array $yamlRoles
+     */
+    public function setYamlRoles($yamlRoles)
+    {
+        $this->yamlRoles = $yamlRoles;
+    }
+
+    /**
+     * Is the application based on YAML configuration?
+     *
+     * @return bool
+     */
+    public function isYamlBased()
+    {
+        return $this->source == self::SOURCE_YAML;
+    }
+
+    /**
+     * Is the application based on Database configuration?
+     *
+     * @return bool
+     */
+    public function isDbBased()
+    {
+        return $this->source == self::SOURCE_DB;
     }
 
 }
