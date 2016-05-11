@@ -20,7 +20,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 /**
  * Application controller.
  *
- * @author Christian Wygoda
+ * @author  Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author  Andreas Schmitz <andreas.schmitz@wheregroup.com>
+ * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
 class ApplicationController extends Controller
 {
@@ -249,17 +252,17 @@ class ApplicationController extends Controller
         $securityContext = $this->get('security.context');
 
         $application_entity = $application->getEntity();
-        if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($application_entity->yaml_roles)) {
+        if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($application_entity->getYamlRoles())) {
 
             // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
             if (!$securityContext->getToken()) {
-                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application_entity->yaml_roles)) {
+                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application_entity->getYamlRoles())) {
                     return;
                 }
             }
 
             $passed = false;
-            foreach ($application_entity->yaml_roles as $role) {
+            foreach ($application_entity->getYamlRoles() as $role) {
                 if ($securityContext->isGranted($role)) {
                     $passed = true;
                     break;

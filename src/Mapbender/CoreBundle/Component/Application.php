@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component;
 use Assetic\Asset\StringAsset;
 use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Entity\Application as Entity;
+use Mapbender\CoreBundle\Entity\Layerset;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -512,7 +513,7 @@ class Application
     /**
      * Returns all layer sets
      *
-     * @return array Layer sets
+     * @return Layerset[] Layer sets
      */
     public function getLayersets()
     {
