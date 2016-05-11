@@ -1,12 +1,8 @@
 <?php
-
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle\Component;
 
 use Assetic\Asset\StringAsset;
+use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -27,7 +23,6 @@ use Symfony\Component\Security\Acl\Exception\NotAllAclsFoundException;
  */
 class Application
 {
-
     /**
      * @var ContainerInterface $container The container
      */
@@ -54,15 +49,20 @@ class Application
     protected $urls;
 
     /**
+     * @var Entity
+     */
+    protected $entity;
+
+    /**
      * @param ContainerInterface $container The container
-     * @param Entity $entity The configuration entity
-     * @param array $urls Array of runtime URLs
+     * @param Entity             $entity    The configuration entity
+     * @param array              $urls      Array of runtime URLs
      */
     public function __construct(ContainerInterface $container, Entity $entity, array $urls)
     {
         $this->container = $container;
-        $this->entity = $entity;
-        $this->urls = $urls;
+        $this->entity    = $entity;
+        $this->urls      = $urls;
     }
 
     /*************************************************************************
@@ -74,7 +74,7 @@ class Application
     /**
      * Get the configuration entity.
      *
-     * @return object $entity
+     * @return Entity $entity
      */
     public function getEntity()
     {
@@ -136,10 +136,11 @@ class Application
     /**
      * Render the application
      *
-     * @param string format Output format, defaults to HTML
-     * @param boolean $html Whether to render the HTML itself
-     * @param boolean $css  Whether to include the CSS links
-     * @param boolean $js   Whether to include the JavaScript
+     * @param string  $format Output format, defaults to HTML
+     * @param boolean $html   Whether to render the HTML itself
+     * @param boolean $css    Whether to include the CSS links
+     * @param boolean $js     Whether to include the JavaScript
+     * @param bool    $trans
      * @return string $html The rendered HTML
      */
     public function render($format = 'html', $html = true, $css = true, $js = true, $trans = true)
@@ -177,24 +178,25 @@ class Application
     {
         if ($type !== 'css' && $type !== 'js' && $type !== 'trans') {
             throw new \RuntimeException('Asset type \'' . $type .
-            '\' is unknown.');
+                '\' is unknown.');
         }
 
         // Add all assets to an asset manager first to avoid duplication
         //$assets = new LazyAssetManager($this->container->get('assetic.asset_factory'));
-        $assets = array();
+        $assets            = array();
+        $translations      = array();
+        $layerTranslations = array();
+        $templating        = $this->container->get('templating');
+        $_assets           = $this::listAssets();
 
-        $_assets = $this::listAssets();
         foreach ($_assets[$type] as $asset) {
             $this->addAsset($assets, $type, $asset);
         }
 
         // Load all elements assets
-        $translations = array();
-
         foreach ($this->getTemplate()->getAssets($type) as $asset) {
             if ($type === 'trans') {
-                $elementTranslations = json_decode($this->container->get('templating')->render($asset), true);
+                $elementTranslations = json_decode($templating->render($asset), true);
                 $translations = array_merge($translations, $elementTranslations);
             } else {
                 $file = $this->getReference($this->template, $asset);
@@ -209,7 +211,7 @@ class Application
                     foreach ($element_assets[$type] as $asset) {
                         if ($type === 'trans') {
                             $elementTranslations =
-                                json_decode($this->container->get('templating')->render($asset), true);
+                                json_decode($templating->render($asset), true);
                             $translations = array_merge($translations, $elementTranslations);
                         } else {
                             $this->addAsset($assets, $type, $this->getReference($element, $asset));
@@ -219,7 +221,6 @@ class Application
             }
         }
 
-        $layerTranslations = array();
         // Load all layer assets
         foreach ($this->getLayersets() as $layerset) {
             foreach ($layerset->layerObjects as $layer) {
@@ -229,7 +230,7 @@ class Application
                         if ($type === 'trans') {
                             if (!isset($layerTranslations[$asset])) {
                                 $layerTranslations[$asset] =
-                                    json_decode($this->container->get('templating')->render($asset), true);
+                                    json_decode($templating->render($asset), true);
                             }
                         } else {
                             $this->addAsset($assets, $type, $this->getReference($layer, $asset));
@@ -250,7 +251,7 @@ class Application
         // and layer assets for application specific styling for example
         foreach ($this->getTemplate()->getLateAssets($type) as $asset) {
             if ($type === 'trans') {
-                $elementTranslations = json_decode($this->container->get('templating')->render($asset), true);
+                $elementTranslations = json_decode($templating->render($asset), true);
                 $translations = array_merge($translations, $elementTranslations);
             } else {
                 $file = $this->getReference($this->template, $asset);
@@ -268,7 +269,7 @@ class Application
         }
 
         if($type === 'js') {
-            $app_loader = new StringAsset($this->container->get('templating')->render(
+            $app_loader = new StringAsset($templating->render(
                 '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig',
                 array('application' => $this)));
             $this->addAsset($assets, $type, $app_loader);
@@ -276,7 +277,10 @@ class Application
 
         return $assets;
     }
-    
+
+    /**
+     * @return StringAsset
+     */
     public function getCustomCssAsset()
     {
         $entity = $this->getEntity();
@@ -285,6 +289,12 @@ class Application
         }
     }
 
+    /**
+     * @param $manager
+     * @param $type
+     * @param $reference
+     * @return array
+     */
     private function addAsset(&$manager, $type, $reference)
     {
         $manager[] = $reference;
@@ -354,9 +364,10 @@ class Application
      */
     public function getElement($id)
     {
-        $elements = $this->getElements();
-        foreach ($elements as $region => $element_list) {
-            foreach ($element_list as $element) {
+        /** @var Element[] $elements */
+        $regions = $this->getElements();
+        foreach ($regions as $region => $elements) {
+            foreach ($elements as $element) {
                 if ($id == $element->getId()) {
                     return $element;
                 }
@@ -399,29 +410,28 @@ class Application
      */
     public function getTemplate()
     {
-        if ($this->template === null) {
-            $template = $this->entity->getTemplate();
+        if (!$this->template) {
+            $template       = $this->entity->getTemplate();
             $this->template = new $template($this->container, $this);
         }
         return $this->template;
     }
 
     /**
-     * Get elements, optionally by region
+     * Get region elements, optionally by region
      *
-     * @param string $region Region to get elements for. If null, all elements
-     * are returned.
-     * @return array
+     * @param string $region Region to get elements for. If null, all elements  are returned.
+     * @return PersistentCollection
      */
     public function getElements($region = null)
     {
         if ($this->elements === null) {
             $securityContext = $this->container->get('security.context');
-            $aclProvider = $this->container->get('security.acl.provider');
 
             // preload acl in one single sql query
-            $oids = array();
-            $acls;
+            $oids        = array();
+            $aclProvider = $this->container->get('security.acl.provider');
+            $acls        = null;
             foreach ($this->entity->getElements() as $entity) {
                 $oids[] = ObjectIdentity::fromDomainObject($entity);
             }
@@ -432,11 +442,12 @@ class Application
             } catch (\Exception $e) {
                 ;
             }
+
             // Set up all elements (by region)
             $this->elements = array();
             foreach ($this->entity->getElements() as $entity) {
                 $application_entity = $this->getEntity();
-                if ($application_entity::SOURCE_DB === $application_entity->getSource()) {
+                if ($application_entity->isDbBased()) {
                     try {
                         // If no ACL exists, an exception is thrown
                         $acl = $aclProvider->findAcl(ObjectIdentity::fromDomainObject($entity));
@@ -447,10 +458,10 @@ class Application
                     } catch (\Exception $e) {
                         ;
                     }
-                } elseif ($application_entity::SOURCE_YAML === $application_entity->getSource()
-                    && count($entity->yaml_roles)) {
+                } elseif ($application_entity->isYamlBased()
+                    && count($entity->getYamlRoles())) {
                     $passed = false;
-                    foreach ($entity->yaml_roles as $role) {
+                    foreach ($entity->getYamlRoles() as $role) {
                         if ($securityContext->isGranted($role)) {
                             $passed = true;
                             break;
@@ -474,10 +485,11 @@ class Application
             }
 
             // Sort each region element's by weight
+            /** @var Element[] $elements */
             foreach ($this->elements as $r => $elements) {
                 usort(
                     $elements,
-                    function ($a, $b) {
+                    function (Element $a, Element $b) {
                         $wa = $a->getEntity()->getWeight();
                         $wb = $b->getEntity()->getWeight();
                         if ($wa == $wb) {
@@ -498,27 +510,27 @@ class Application
     }
 
     /**
-     * Returns all layersets
+     * Returns all layer sets
      *
-     * @return array the layersets
+     * @return array Layer sets
      */
     public function getLayersets()
     {
         if ($this->layers === null) {
             // Set up all elements (by region)
             $this->layers = array();
-            foreach ($this->entity->getLayersets() as $layerset) {
-                $layerset->layerObjects = array();
-                foreach ($layerset->getInstances() as $instance) {
-                    if ($this->getEntity()->getSource() === Entity::SOURCE_YAML) {
-                        $layerset->layerObjects[] = $instance;
+            foreach ($this->entity->getLayersets() as $layerSet) {
+                $layerSet->layerObjects = array();
+                foreach ($layerSet->getInstances() as $instance) {
+                    if ($this->getEntity()->isYamlBased()) {
+                        $layerSet->layerObjects[] = $instance;
                     } else {
                         if ($instance->getEnabled()) {
-                            $layerset->layerObjects[] = $instance;
+                            $layerSet->layerObjects[] = $instance;
                         }
                     }
                 }
-                $this->layers[$layerset->getId()] = $layerset;
+                $this->layers[ $layerSet->getId() ] = $layerSet;
             }
         }
         return $this->layers;
@@ -528,13 +540,14 @@ class Application
      * Checks and generates a valid slug.
      *
      * @param ContainerInterface $container container
-     * @param string $slug slug to check
+     * @param string             $slug      slug to check
+     * @param string             $suffix
      * @return string a valid generated slug
      */
     public static function generateSlug($container, $slug, $suffix = 'copy')
     {
         $application = $container->get('mapbender')->getApplicationEntity($slug);
-        if ($application === null) {
+        if (!$application) {
             return $slug;
         } else {
             $count = 0;
@@ -551,6 +564,7 @@ class Application
      * Returns the public "uploads" directory.
      *
      * @param ContainerInterface $container Container
+     * @param bool               $webRelative
      * @return string the path to uploads dir or null.
      */
     public static function getUploadsDir($container, $webRelative = false)
@@ -576,17 +590,14 @@ class Application
      * Returns the application's public directory.
      *
      * @param ContainerInterface $container Container
-     * @param string $slug application's slug
-     * @return boolean true if the application's directories are created or
-     * exist otherwise false.
+     * @param string             $slug      application's slug
+     * @return boolean true if the application's directories are created or exist otherwise false.
      */
     public static function getAppWebDir($container, $slug)
     {
-        if (Application::createAppWebDir($container, $slug)) {
-            return Application::getUploadsDir($container, $slug) . "/" . $slug;
-        } else {
-            return null;
-        }
+        return Application::createAppWebDir($container, $slug)
+            ? Application::getUploadsDir($container, $slug) . "/" . $slug
+            : null;
     }
 
     /**
