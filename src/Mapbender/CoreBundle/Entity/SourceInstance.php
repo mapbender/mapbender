@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\SourceMetadata;
 
 /**
  * @author Karim Malhas
+ * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_core_sourceinstance")
@@ -73,7 +74,7 @@ abstract class SourceInstance
     /**
      * Returns a title
      *
-     * @param String title
+     * @return string
      */
     public function getTitle()
     {
@@ -158,6 +159,7 @@ abstract class SourceInstance
      * Sets a weight
      *
      * @param integer $weight
+     * @return $this
      */
     public function setWeight($weight)
     {
@@ -237,7 +239,7 @@ abstract class SourceInstance
     /**
      * Returns a basesource
      *
-     * @return basesource
+     * @return bool
      */
     public function isBasesource()
     {
@@ -286,6 +288,9 @@ abstract class SourceInstance
     abstract public function getMetadata();
 
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return (string) $this->getId();
