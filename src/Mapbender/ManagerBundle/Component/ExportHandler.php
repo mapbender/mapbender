@@ -26,7 +26,7 @@ class ExportHandler extends ExchangeHandler
      */
     public function createForm()
     {
-        $allowedApps = $this->getAllowedAppllications();
+        $allowedApps = $this->getAllowedApplications();
         $type        = new ExportJobType();
         return $this->container->get('form.factory')
                 ->create($type, $this->job, array('application' => $allowedApps));
@@ -72,6 +72,10 @@ class ExportHandler extends ExchangeHandler
         return $export;
     }
 
+    /**
+     * @param $scr
+     * @return string
+     */
     public function format($scr)
     {
         if ($this->job->getFormat() === ExchangeJob::FORMAT_JSON) {
@@ -83,29 +87,29 @@ class ExportHandler extends ExchangeHandler
         }
     }
 
-    private function exportApps($normalizer)
+    /**
+     * @param $normalizer
+     */
+    private function exportApps(ExchangeNormalizer $normalizer)
     {
         $normalizer->handleValue($this->job->getApplication());
         gc_collect_cycles();
     }
 
-    private function exportAcls()
+    /**
+     * @param $normalizer
+     */
+    private function exportSources(ExchangeNormalizer $normalizer)
     {
-        throw new \Exception('"exportAcls" is not implemented yet');
-        if ($this->job->getAcl()) {
-            // TODO
-        }
-    }
-
-    private function exportSources($normalizer)
-    {
-        $sources = array();
-        $help    = $this->getAllowedApplicationSources($this->job->getApplication());
+        $sources     = array();
+        $application = $this->job->getApplication();
+        $help        = $this->getAllowedApplicationSources($application);
         foreach ($help as $src) {
-            if (!isset($sources[$src->getId()])) {
-                $normalizer->handleValue($src);
-                gc_collect_cycles();
+            if (isset($sources[ $src->getId() ])) {
+                continue;
             }
+            $normalizer->handleValue($src);
+            gc_collect_cycles();
         }
     }
 
