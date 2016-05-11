@@ -1,14 +1,6 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\ManagerBundle\Component;
 
-use Mapbender\ManagerBundle\Component\ExchangeNormalizer;
-use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Form\Type\ExportJobType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Dumper;
@@ -20,7 +12,6 @@ use Symfony\Component\Yaml\Dumper;
  */
 class ExportHandler extends ExchangeHandler
 {
-
     /**
      * @inheritdoc
      */
@@ -69,7 +60,7 @@ class ExportHandler extends ExchangeHandler
         $this->exportSources($normalizer);
         $time['sources'] = microtime(true);
         $time['sources'] = $time['sources'] . '/' . ($time['sources'] - $time['start']);
-        
+
         gc_collect_cycles();
         $this->exportApps($normalizer);
         $time['end'] = microtime(true);
@@ -116,5 +107,13 @@ class ExportHandler extends ExchangeHandler
                 gc_collect_cycles();
             }
         }
+    }
+
+    /**
+     * @return ExchangeJob
+     */
+    public function getJob()
+    {
+        return parent::getJob();
     }
 }
