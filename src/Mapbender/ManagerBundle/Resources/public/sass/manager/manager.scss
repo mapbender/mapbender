@@ -118,9 +118,32 @@ $containerBorderRadius: 8px !default;
   width:$navWidth;
   @include absolute(0 '' '' 0);
 
-  .navigation {
+  > .navigation {
     background-color: $contentColor;
     border-bottom-left-radius: $containerBorderRadius;
+    padding: 10px;
+    .navItem {
+      display: block;
+      &.activeItem {
+        > a {
+          &:before {
+            content: "\f0dd";
+          }
+          //color: #fff;
+        }
+
+      }
+      > a {
+        display: block;
+        padding: 2px 10px;
+        &:hover, &:focus {
+          background-color: #E0DDDD;
+          color: #000;
+          @include transition(all 0.3s linear);
+
+        }
+      }
+    }
   }
   .logo{
     max-height:120px;
@@ -139,15 +162,12 @@ $containerBorderRadius: 8px !default;
   border-bottom:solid 1px $thirdColor;
   @include absolute($bannerHeight 0 '' 0);
 
-  &>.navItem {display:block;}
   & > .activeItem{
-    .navLevel2 > .navItem{display:block;}
   }
 }
 .navLevel2, .navLevel3{margin-left:$space/2;}
 .navLevel2{
   & > .activeItem{
-    .navLevel3 > .navItem{display:block;}
   }
 }
 .navItem{
