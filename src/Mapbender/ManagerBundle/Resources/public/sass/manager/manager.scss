@@ -21,7 +21,7 @@ $bannerHeight:170px;
 $contentPaneWidth:800px;
 $navWidth:200px;
 $pageWidth:$contentPaneWidth + $navWidth;
-
+$containerBorderRadius: 8px !default;
 
 @mixin opacityAlpha($alpha) {
   /* Required for IE 5, 6, 7 */
@@ -85,6 +85,8 @@ $pageWidth:$contentPaneWidth + $navWidth;
   cursor: pointer;
   padding: ($space/4) ($space/2) ($space/4) ($space/2);
   background-color: $contentColor;
+  border-bottom-left-radius: $containerBorderRadius;
+  border-bottom-right-radius: $containerBorderRadius;
   @include absolute(0 0 '' '');
   > .accountMenu {
     height: 20px;
@@ -116,7 +118,10 @@ $pageWidth:$contentPaneWidth + $navWidth;
   width:$navWidth;
   @include absolute(0 '' '' 0);
 
-  .navigation{background-color:$contentColor;}
+  .navigation {
+    background-color: $contentColor;
+    border-bottom-left-radius: $containerBorderRadius;
+  }
   .logo{
     max-height:120px;
     @include absolute($space '' '' ($space + $space/2));
@@ -199,7 +204,7 @@ $pageWidth:$contentPaneWidth + $navWidth;
     padding: $space;
     margin: 0px;
     background: $contentColor url($contentPatternUrl);
-
+    border-radius: $containerBorderRadius;
     form{
       &:after{
         content: "";
