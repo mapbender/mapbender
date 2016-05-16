@@ -226,6 +226,32 @@ $containerBorderRadius: 8px !default;
     background: $contentColor url($contentPatternUrl);
     border-radius: $containerBorderRadius;
     form{
+
+      .tabs {
+        > .tab {
+          height: 32px;
+          background-color: #ECECEC;
+          padding-top: 5px;
+          &:first-child {
+            border-top-left-radius: 5px;
+          }
+          &:last-child {
+            border-top-right-radius: 5px;
+          }
+
+          &.active {
+            background-color: #fff;
+          }
+          margin-right: -1px;
+        }
+      }
+
+      .containerBaseData{
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        border-top-right-radius: 5px
+      }
+
       &:after{
         content: "";
         display: block;
