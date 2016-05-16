@@ -125,15 +125,7 @@ $elementBorderRadius: $containerBorderRadius - 2px;
     padding: 10px;
     .navItem {
       display: block;
-      &.activeItem {
-        > a {
-          &:before {
-            content: "\f0dd";
-          }
-          //color: #fff;
-        }
 
-      }
       > a {
         display: block;
         padding: 2px 10px;
