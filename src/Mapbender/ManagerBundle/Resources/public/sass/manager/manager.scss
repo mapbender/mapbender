@@ -225,31 +225,44 @@ $containerBorderRadius: 8px !default;
     margin: 0px;
     background: $contentColor url($contentPatternUrl);
     border-radius: $containerBorderRadius;
-    form{
 
-      .tabs {
-        > .tab {
-          height: 32px;
-          background-color: #ECECEC;
-          padding-top: 5px;
-          &:first-child {
-            border-top-left-radius: 5px;
-          }
-          &:last-child {
-            border-top-right-radius: 5px;
-          }
+    form {
+      > .tabContainer {
+        .tabs {
+          > .tab {
+            height: 32px;
+            background-color: #ECECEC;
+            padding-top: 5px;
+            &:first-child {
+              border-top-left-radius: 5px;
+            }
+            &:last-child {
+              border-top-right-radius: 5px;
+            }
+            bottom: -1px;
 
-          &.active {
-            background-color: #fff;
+            &:hover, &:focus {
+              padding-top: 5px;
+              bottom: 0;
+              background-color: #f9f9f9;
+              &.active {
+              }
+            }
+            &.active {
+              bottom: 0px;
+              height: 35px;
+              margin-bottom: -3px;
+              background-color: #f9f9f9;
+            }
+            margin-right: -1px;
           }
-          margin-right: -1px;
         }
-      }
 
-      .containerBaseData{
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        border-top-right-radius: 5px
+        > .container{
+          border-bottom-left-radius: 5px;
+          border-bottom-right-radius: 5px;
+          border-top-right-radius: 5px;
+        }
       }
 
       &:after{
