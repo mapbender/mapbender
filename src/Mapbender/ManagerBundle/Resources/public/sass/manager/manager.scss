@@ -189,42 +189,45 @@ $containerBorderRadius: 8px !default;
   }
 }
 
-
-
-
-
-// ------------------------------------------------------------------ PAGE RIGHT
-.rightPane{
-  width:$contentPaneWidth;
+.rightPane {
+  width: $contentPaneWidth;
   @include absolute(0 0 '' $navWidth);
 }
 
+.contentPane {
+  $top: $space*5;
+  $containerBorderRadius: 5px;
+  $elementBorderRadius: $containerBorderRadius - 2px;
 
-
-
-
-// ----------------------------------------------------------------- PAGE CENTER
-.contentPane{
-  $top:$space*5;
-  .iconBig{
-    &:before{
+  .iconBig {
+    &:before {
       @include opacityAlpha(0.7);
     }
-    &:hover{
-      &:before{
+    &:hover {
+      &:before {
         @include opacityAlpha(1);
       }
     }
   }
-  padding-top:$top + $space;
+  padding-top: $top + $space;
 
-  & > .content{
+  & > .content {
     min-height: 600px;
     position: relative;
     padding: $space;
     margin: 0px;
     background: $contentColor url($contentPatternUrl);
     border-radius: $containerBorderRadius;
+
+    textarea, input[type=text], input[type=submit], a.button, div.dropdown{
+      border-radius: $elementBorderRadius;
+    }
+
+    ul.dropdownList{
+      border-bottom-left-radius: $elementBorderRadius;
+      border-bottom-right-radius: $elementBorderRadius;
+      margin-top: -3px;
+    }
 
     form {
       > .tabContainer {
@@ -234,10 +237,10 @@ $containerBorderRadius: 8px !default;
             background-color: #ECECEC;
             padding-top: 5px;
             &:first-child {
-              border-top-left-radius: 5px;
+              border-top-left-radius: $containerBorderRadius;
             }
             &:last-child {
-              border-top-right-radius: 5px;
+              border-top-right-radius: $containerBorderRadius;
             }
             bottom: -1px;
 
@@ -258,10 +261,10 @@ $containerBorderRadius: 8px !default;
           }
         }
 
-        > .container{
-          border-bottom-left-radius: 5px;
-          border-bottom-right-radius: 5px;
-          border-top-right-radius: 5px;
+        > .container {
+          border-bottom-left-radius: $containerBorderRadius;
+          border-bottom-right-radius: $containerBorderRadius;
+          border-top-right-radius: $containerBorderRadius;
         }
       }
 
