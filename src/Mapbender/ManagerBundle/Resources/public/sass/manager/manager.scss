@@ -229,44 +229,45 @@ $containerBorderRadius: 8px !default;
       margin-top: -3px;
     }
 
-    form {
-      > .tabContainer {
-        .tabs {
-          > .tab {
-            height: 32px;
-            background-color: #ECECEC;
-            padding-top: 5px;
-            &:first-child {
-              border-top-left-radius: $containerBorderRadius;
-            }
-            &:last-child {
-              border-top-right-radius: $containerBorderRadius;
-            }
-            bottom: -1px;
-
-            &:hover, &:focus {
-              padding-top: 5px;
-              bottom: 0;
-              background-color: #f9f9f9;
-              &.active {
-              }
-            }
-            &.active {
-              bottom: 0px;
-              height: 35px;
-              margin-bottom: -3px;
-              background-color: #f9f9f9;
-            }
-            margin-right: -1px;
+   .tabContainer {
+      .tabs {
+        > .tab {
+          height: 32px;
+          background-color: #ECECEC;
+          padding-top: 5px;
+          &:first-child {
+            border-top-left-radius: $containerBorderRadius;
           }
-        }
+          &:last-child {
+            border-top-right-radius: $containerBorderRadius;
+          }
+          bottom: -1px;
 
-        > .container {
-          border-bottom-left-radius: $containerBorderRadius;
-          border-bottom-right-radius: $containerBorderRadius;
-          border-top-right-radius: $containerBorderRadius;
+          &:hover, &:focus {
+            padding-top: 5px;
+            bottom: 0;
+            background-color: #f9f9f9;
+            &.active {
+            }
+          }
+          &.active {
+            bottom: 0px;
+            height: 35px;
+            margin-bottom: -3px;
+            background-color: #f9f9f9;
+          }
+          margin-right: -1px;
         }
       }
+
+      > .container {
+        border-bottom-left-radius: $containerBorderRadius;
+        border-bottom-right-radius: $containerBorderRadius;
+        border-top-right-radius: $containerBorderRadius;
+      }
+    }
+
+    form {
 
       &:after{
         content: "";
