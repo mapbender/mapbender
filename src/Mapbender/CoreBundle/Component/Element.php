@@ -1,22 +1,13 @@
 <?php
 
-/**
- * TODO: License
- * TODO: How how handle access constraints. My idea would be to check in the
- *       constructor and throw an exception. The application then should catch
- *       the exception and handle it.
- */
-
 namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\ORM\EntityManager;
-use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element as Entity;
-use Mapbender\CoreBundle\Entity\Application as AppEntity;
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -325,7 +316,7 @@ abstract class Element
      * Override this method to provide a custom configuration form instead of
      * the default YAML form.
      *
-     * @return Symfony\Component\FormTypeInterface
+     * @return FormTypeInterface
      */
     public static function getType()
     {
@@ -398,8 +389,12 @@ abstract class Element
     /**
      * Create form for given element
      *
-     * @param string $class
+     * @param        $container
+     * @param        $application
+     * @param Entity $element
+     * @param bool   $onlyAcl
      * @return array
+     * @internal param string $class
      */
     public static function getElementForm($container, $application, Entity $element, $onlyAcl = false)
     {
