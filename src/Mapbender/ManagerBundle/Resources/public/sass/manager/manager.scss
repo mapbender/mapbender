@@ -373,3 +373,8 @@ div[data-type="datetime"] div:last-child div.dropdown{
   display: inline-block;
   margin-right: 3px;
 }
+
+.secureElement.has:before {
+  color: $buttonCriticalSecondColor;
+  font-weight: bold;
+}
