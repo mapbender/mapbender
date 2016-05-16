@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 use Mapbender\CoreBundle\Component\Element as ComponentElement;
+use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Form\Type\BaseElementType;
 use Mapbender\CoreBundle\Validator\Constraints\ContainsElementTarget;
@@ -16,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Acl\Domain\Acl;
 
 /**
  * Class ElementController
@@ -247,12 +249,16 @@ class ElementController extends Controller
      *
      * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"})
      * @Template("MapbenderManagerBundle:Element:security.html.twig")
+     * @param $slug string Application short name
+     * @param $id int Element ID
+     * @return array Response
+     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
     public function securityAction($slug, $id)
     {
-        /** @var Form $form */
         /** @var EntityManager $entityManager */
-        /** @var Connection $connection */
+        /** @var Element $element */
         $doctrine          = $this->getDoctrine();
         $entityManager     = $doctrine->getManager();
         $elementRepository = $doctrine->getRepository('MapbenderCoreBundle:Element');
@@ -264,20 +270,23 @@ class ElementController extends Controller
 
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
+        /** @var Form $form */
+        /** @var Form $aclForm */
+        /** @var Connection  */
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         $connection  = $entityManager->getConnection();
         $request     = $this->getRequest();
         $response    = ComponentElement::getElementForm($this->container, $application, $element, true);
         $form        = $response["form"];
-        $aclManager  = $this->get('fom.acl.manager');
-        $acl         = $form->get('acl');
+        $aclForm     = $form->get('acl');
 
         if ($request->getMethod() === 'POST' && $form->submit($request)->isValid()) {
             $connection->beginTransaction();
             try {
+                $aclManager  = $this->get('fom.acl.manager');
                 $application->setUpdated(new \DateTime('now'));
                 $entityManager->persist($application);
-                $aclManager->setObjectACLFromForm($element, $acl, 'object');
+                $aclManager->setObjectACLFromForm($element, $aclForm, 'object');
                 $entityManager->flush();
                 $connection->commit();
                 $this->get('session')->getFlashBag()->set('success', "Your element's access has been changed.");
