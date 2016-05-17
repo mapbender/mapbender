@@ -3,6 +3,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\SecurityContext;
@@ -28,8 +29,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Yaml\Parser;
+use Tree\Fixture\User;
 
 /**
  * Mapbender application management
@@ -309,25 +313,22 @@ class ApplicationController extends Controller
     {
         /** @var Element $element */
         /** @var Application $application */
+        /** @var EntityManager $em */
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-        // ACL access check
+
         $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
-        $templateClass = $application->getTemplate();
-        //$templateProps = $templateClass::getRegionsProperties();
-        //$em            = $this->getDoctrine()->getManager();
-        // add RegionProperties if defined
         $this->checkRegionProperties($application);
+
+        $templateClass = $application->getTemplate();
         $form          = $this->createApplicationForm($application);
         $em            = $this->getDoctrine()->getManager();
         $query         = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources       = $query->getResult();
-        //$aclProvider   = $this->container->get('security.acl.provider');
-        $aclManager    = $this->get("fom.acl.manager");
         $baseUrl       = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-        $screenshotUrl = $application->getScreenshot();
+        $screenShotUrl = $application->getScreenshot();
 
-        if (!$screenshotUrl) {
-            $screenshotUrl = $baseUrl . "/" . $application->getScreenshot();
+        if (!$screenShotUrl) {
+            $screenShotUrl = $baseUrl . "/" . $application->getScreenshot();
         }
 
         return array(
@@ -340,7 +341,7 @@ class ApplicationController extends Controller
             'form'                => $form->createView(),
             'form_name'           => $form->getName(),
             'template_name'       => $templateClass::getTitle(),
-            'screenshot'          => $screenshotUrl,
+            'screenshot'          => $screenShotUrl,
             'screenshot_filename' => $application->getScreenshot(),
             'time'                => new \DateTime());
     }
