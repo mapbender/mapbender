@@ -122,34 +122,29 @@ class ApplicationController extends Controller
     public function exportAction()
     {
         $expHandler = new ExportHandler($this->container);
-        if ($expHandler->bindForm()) {
-            $job    = $expHandler->makeJob();
-            $export = $expHandler->format($job);
-            if ($expHandler->getJob()->getFormat() === ExchangeJob::FORMAT_JSON) {
-                return new Response(
-                    $export,
-                    200,
-                    array(
-                        'Content-Type'        => 'application/json',
-                        'Content-disposition' => 'attachment; filename=export.json'
-                    )
-                );
-            } elseif ($expHandler->getJob()->getFormat() === ExchangeJob::FORMAT_YAML) {
-                return new Response(
-                    $export,
-                    200,
-                    array(
-                        'Content-Type'        => 'text/plain',
-                        'Content-disposition' => 'attachment; filename=export.yaml'
-                    )
-                );
-            }
-        } else {
-            $form = $expHandler->createForm();
-            return array(
-                'form' => $form->createView()
-            );
+        if (!$expHandler->bindForm()) {
+            return $this->exportFormAction();
         }
+
+        $job      = $expHandler->makeJob();
+        $export   = $expHandler->format($job);
+        $response = new Response($export, 200);
+        $job      = $expHandler->getJob();
+
+        if ($job->isFormatAnJson()) {
+            $response->headers->add(array(
+                'Content-Type'        => 'application/json',
+                'Content-disposition' => 'attachment; filename=export.json'
+            ));
+            return $response;
+        } elseif ($job->isFormatAnYaml()) {
+            $response->headers->add(array(
+                'Content-Type'        => 'text/plain',
+                'Content-disposition' => 'attachment; filename=export.yaml'
+            ));
+            return $response;
+        }
+
         throw new AccessDeniedException("mb.manager.controller.application.method_not_supported");
     }
 

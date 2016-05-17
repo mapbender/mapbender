@@ -105,4 +105,24 @@ class ExchangeJob
         $this->addSources = $addSources;
         return $this;
     }
+
+    /**
+     * Is format an JSON
+     *
+     * @return bool
+     */
+    public function isFormatAnJson()
+    {
+        return $this->format == self::FORMAT_JSON;
+    }
+
+    /**
+     * Is format an YAML
+     *
+     * @return bool
+     */
+    public function isFormatAnYaml()
+    {
+        return $this->format == self::FORMAT_YAML;
+    }
 }
