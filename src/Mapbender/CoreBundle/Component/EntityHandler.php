@@ -1,10 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -84,8 +78,7 @@ class EntityHandler
         $entityBundleFolder = substr($entityClass, 0, strpos($entityClass, '\\Entity\\'));
         $entityName         = $reflect->getShortName();
         foreach ($bundles as $type => $bundle) {
-            $bundleClass = get_class($bundle);
-            if (strpos($bundleClass, $entityBundleFolder) === 0) {
+            if (strpos( get_class($bundle), $entityBundleFolder) === 0) {
                 $handlerClass = $entityBundleFolder . '\\Component\\' . $entityName . 'EntityHandler';
                 if (class_exists($handlerClass)) {
                     return new $handlerClass($container, $entity);
