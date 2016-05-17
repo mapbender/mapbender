@@ -1,6 +1,9 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application;
@@ -47,29 +50,27 @@ class ApplicationController extends Controller
      */
     public function indexAction()
     {
-        /** @var Application $application */
-        $securityContext      = $this->get('security.context');
-        $oid                  = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-        $applications         = $this->get('mapbender')->getApplicationEntities();
-        $uploads_web_url      = AppComponent::getUploadsUrl($this->container);
-        $allowed_applications = array();
+        $applications        = $this->get('mapbender')->getApplicationEntities();
+        $uploads_web_url     = AppComponent::getUploadsUrl($this->container);
+        $allowedApplications = array();
+        $securityContext     = $this->getContext();
         foreach ($applications as $application) {
             if ($application->isExcludedFromList()) {
                 continue;
             }
-            if ($securityContext->isGranted(SecurityContext::PERMISSION_VIEW, $application)) {
+            if ($securityContext->isUserAllowedToView($application)) {
                 if (!$application->isPublished() && !$securityContext->isUserAllowedToEdit($application)) {
                     continue;
                 }
-                $allowed_applications[] = $application;
+                $allowedApplications[] = $application;
             }
         }
 
         return array(
-            'applications' => $allowed_applications,
-            'create_permission' => $securityContext->isGranted(SecurityContext::PERMISSION_CREATE, $oid),
-            'uploads_web_url' => $uploads_web_url,
-            'time' => new \DateTime()
+            'applications'      => $allowedApplications,
+            'create_permission' => $securityContext->isUserAllowedToCreate(new Application()),
+            'uploads_web_url'   => $uploads_web_url,
+            'time'              => new \DateTime()
         );
     }
 
@@ -84,15 +85,16 @@ class ApplicationController extends Controller
     {
         $application = new Application();
 
-        // ACL access check
-        $this->checkGranted(SecurityContext::PERMISSION_CREATE, $application);
+        if (!$this->getContext()->isUserAllowedToCreate($application)) {
+            throw new AccessDeniedException();
+        }
 
         $form = $this->createApplicationForm($application);
 
         return array(
-            'application' => $application,
-            'form' => $form->createView(),
-            'form_name' => $form->getName(),
+            'application'         => $application,
+            'form'                => $form->createView(),
+            'form_name'           => $form->getName(),
             'screenshot_filename' => null);
     }
 
@@ -354,8 +356,10 @@ class ApplicationController extends Controller
         $uploadScreenshot = new UploadScreenshot();
         $application      = $this->get('mapbender')->getApplicationEntity($slug);
         $old_slug         = $application->getSlug();
+
         // ACL access check
         $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
+
         $templateClassOld = $application->getTemplate();
         $form             = $this->createApplicationForm($application);
         $request          = $this->getRequest();
@@ -601,8 +605,6 @@ class ApplicationController extends Controller
         return new Response();
     }
 
-    /* Layerset block start */
-
     /**
      * Create a form for a new layerset
      *
@@ -734,10 +736,6 @@ class ApplicationController extends Controller
         return $this->redirect($this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)));
     }
 
-    /* Layerset block end */
-
-    /* Instance block start */
-
     /**
      * Add a new SourceInstance to the Layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/list")
@@ -827,36 +825,35 @@ class ApplicationController extends Controller
         return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
-    /* Instance block end */
-
     /**
      * Create the application form, set extra options needed
+     *
+     * @param Application $application
+     * @return Form
      */
     private function createApplicationForm(Application $application)
     {
-        $available_templates = array();
+        $availableTemplates = array();
+        $availableProperties = array();
+
         foreach ($this->get('mapbender')->getTemplates() as $templateClassName) {
-            $available_templates[$templateClassName] = $templateClassName::getTitle();
+            $availableTemplates[$templateClassName] = $templateClassName::getTitle();
         }
-        asort($available_templates);
-        $available_properties = array();
+        asort($availableTemplates);
         if ($application->getTemplate() !== null) {
             $templateClassName    = $application->getTemplate();
-            $available_properties = $templateClassName::getRegionsProperties();
+            $availableProperties = $templateClassName::getRegionsProperties();
         }
-        $fields           = ClassPropertiesParser::parseFields(get_class($application), false);
-        $maxFileSize      = 2097152;
-        $screenshotWidth  = 200;
-        $screenshotHeight = 200;
+
         return $this->createForm(
             new ApplicationType(),
             $application,
             array(
-                'available_templates' => $available_templates,
-                'available_properties' => $available_properties,
-                'maxFileSize' => $maxFileSize,
-                'screenshotWidth' => $screenshotWidth,
-                'screenshotHeight' => $screenshotHeight
+                'available_templates'  => $availableTemplates,
+                'available_properties' => $availableProperties,
+                'maxFileSize'          => 2097152,
+                'screenshotWidth'      => 200,
+                'screenshotHeight'     => 200
             )
         );
     }
@@ -900,21 +897,7 @@ class ApplicationController extends Controller
      */
     private function checkGranted($action, $object)
     {
-        $securityContext = $this->get('security.context');
-        if ($action === "CREATE") {
-            $oid = new ObjectIdentity('class', get_class($object));
-            if (false === $securityContext->isGranted($action, $oid)) {
-                throw new AccessDeniedException();
-            }
-        } elseif ($action === "MASTER" && !$securityContext->isGranted($action, $object)) {
-            throw new AccessDeniedException();
-        } elseif ($action === "OPERATOR" && !$securityContext->isGranted($action, $object)) {
-            throw new AccessDeniedException();
-        } elseif ($action === "VIEW" && !$securityContext->isGranted($action, $object)) {
-            throw new AccessDeniedException();
-        } elseif ($action === "EDIT" && !$securityContext->isGranted($action, $object)) {
-            throw new AccessDeniedException();
-        } elseif ($action === "DELETE" && !$securityContext->isGranted($action, $object)) {
+        if (!$this->getContext()->checkGranted($action, $object, false)) {
             throw new AccessDeniedException();
         }
     }
@@ -970,5 +953,13 @@ class ApplicationController extends Controller
                 $em->flush();
             }
         }
+    }
+
+    /**
+     * @return SecurityContext
+     */
+    protected  function getContext()
+    {
+        return $this->get('security.context');
     }
 }
