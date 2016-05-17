@@ -213,6 +213,8 @@ ul.dropdownList{
         padding-top: 5px;
         bottom: 0;
         background-color: #f9f9f9;
+        outline: none;
+        box-shadow: 0px -1px 1px #000;
         &.active {
         }
       }
