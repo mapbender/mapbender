@@ -75,22 +75,22 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
         $permissionGranted = true;
         switch ($action) {
             case self::PERMISSION_MASTER:
-                $permissionGranted = !$this->isUserAnMaster($object);
+                $permissionGranted = $this->isUserAnMaster($object);
                 break;
             case self::PERMISSION_OPERATOR:
-                $permissionGranted = !$this->isUserAnOperator($object);
+                $permissionGranted = $this->isUserAnOperator($object);
                 break;
             case self::PERMISSION_CREATE:
-                $permissionGranted = !$this->isUserAllowedToCreate($object);
+                $permissionGranted = $this->isUserAllowedToCreate($object);
                 break;
             case self::PERMISSION_VIEW:
-                $permissionGranted = !$this->isUserAllowedToView($object);
+                $permissionGranted = $this->isUserAllowedToView($object);
                 break;
             case self::PERMISSION_EDIT:
-                $permissionGranted = !$this->isUserAllowedToEdit($object);
+                $permissionGranted = $this->isUserAllowedToEdit($object);
                 break;
             case self::PERMISSION_DELETE:
-                $permissionGranted = !$this->isUserAllowedToDelete($object);
+                $permissionGranted = $this->isUserAllowedToDelete($object);
                 break;
         }
 
