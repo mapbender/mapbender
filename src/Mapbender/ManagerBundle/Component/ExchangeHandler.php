@@ -67,7 +67,7 @@ abstract class ExchangeHandler
     protected function getAllowedApplicationSources(Application $app, $action = SecurityContext::PERMISSION_EDIT)
     {
         $sources = new ArrayCollection();
-        if ($this->securityContext->checkGranted($action, $app, $action)) {
+        if ($this->securityContext->checkGranted($action, $app)) {
             foreach ($app->getLayersets() as $layerSet) {
                 foreach ($layerSet->getInstances() as $instance) {
                     $source = $instance->getSource();
