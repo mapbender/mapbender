@@ -97,47 +97,58 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Shows a form for exporting applications. Returns serialized applications.
+     * Shows a form for exporting applications.
      *
      * @ManagerRoute("/application/export")
-     * @Template
+     * @Method("GET")
+     * @Template("MapbenderManagerBundle:Application:export.html.twig")
+     */
+    public function exportFormAction()
+    {
+        $expHandler = new ExportHandler($this->container);
+        $form       = $expHandler->createForm();
+        return array(
+            'form' => $form->createView()
+        );
+    }
+
+    /**
+     * Returns serialized application.
+     *
+     * @ManagerRoute("/application/export")
+     * @Method("POST")
+     * @Template()
      */
     public function exportAction()
     {
         $expHandler = new ExportHandler($this->container);
-        if ($this->getRequest()->getMethod() === 'GET') {
+        if ($expHandler->bindForm()) {
+            $job    = $expHandler->makeJob();
+            $export = $expHandler->format($job);
+            if ($expHandler->getJob()->getFormat() === ExchangeJob::FORMAT_JSON) {
+                return new Response(
+                    $export,
+                    200,
+                    array(
+                        'Content-Type'        => 'application/json',
+                        'Content-disposition' => 'attachment; filename=export.json'
+                    )
+                );
+            } elseif ($expHandler->getJob()->getFormat() === ExchangeJob::FORMAT_YAML) {
+                return new Response(
+                    $export,
+                    200,
+                    array(
+                        'Content-Type'        => 'text/plain',
+                        'Content-disposition' => 'attachment; filename=export.yaml'
+                    )
+                );
+            }
+        } else {
             $form = $expHandler->createForm();
             return array(
                 'form' => $form->createView()
             );
-        } elseif ($this->getRequest()->getMethod() === 'POST') {
-            if ($expHandler->bindForm()) {
-                $export = $expHandler->format($expHandler->makeJob());
-                if ($expHandler->getJob()->getFormat() === ExchangeJob::FORMAT_JSON) {
-                    return new Response(
-                        $export,
-                        200,
-                        array(
-                            'Content-Type' => 'application/json',
-                            'Content-disposition' => 'attachment; filename=export.json'
-                        )
-                    );
-                } elseif ($expHandler->getJob()->getFormat() === ExchangeJob::FORMAT_YAML) {
-                    return new Response(
-                        $export,
-                        200,
-                        array(
-                            'Content-Type' => 'text/plain',
-                            'Content-disposition' => 'attachment; filename=export.yaml'
-                        )
-                    );
-                }
-            } else {
-                $form = $expHandler->createForm();
-                return array(
-                    'form' => $form->createView()
-                );
-            }
         }
         throw new AccessDeniedException("mb.manager.controller.application.method_not_supported");
     }
