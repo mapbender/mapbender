@@ -23,8 +23,13 @@ abstract class ExchangeHandler
 
     /** @var SecurityContext */
     protected $securityContext;
+
+    /** @var ContainerInterface  */
     protected $container;
+
+    /** @var  ImportJob */
     protected $job;
+
     protected $mapper;
 
     /**
@@ -83,7 +88,7 @@ abstract class ExchangeHandler
     /**
      * Get allowed sources
      *
-     * @return array|ArrayCollection
+     * @return Source[]|ArrayCollection
      */
     protected function getAllowedSources()
     {
@@ -115,6 +120,10 @@ abstract class ExchangeHandler
         return $this->container;
     }
 
+
+    /**
+     * @return ImportJob
+     */
     public function getJob()
     {
         return $this->job;
