@@ -1,21 +1,17 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Mapbender\CoreBundle\Component\SecurityContext;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Component\SecurityContext;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
-use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
-use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
@@ -25,15 +21,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Yaml\Parser;
-use Tree\Fixture\User;
 
 /**
  * Mapbender application management
@@ -112,9 +104,10 @@ class ApplicationController extends Controller
     public function exportFormAction()
     {
         $expHandler = new ExportHandler($this->container);
-        $form       = $expHandler->createForm();
         return array(
-            'form' => $form->createView()
+            'form' => $expHandler
+                ->createForm()
+                ->createView()
         );
     }
 
@@ -128,67 +121,71 @@ class ApplicationController extends Controller
     public function exportAction()
     {
         $expHandler = new ExportHandler($this->container);
+
         if (!$expHandler->bindForm()) {
             return $this->exportFormAction();
         }
 
-        $job      = $expHandler->makeJob();
-        $export   = $expHandler->format($job);
-        $response = new Response($export, 200);
-        $job      = $expHandler->getJob();
+        $job     = $expHandler->getJob();
+        $headers = null;
 
         if ($job->isFormatAnJson()) {
-            $response->headers->add(array(
+            $headers = array(
                 'Content-Type'        => 'application/json',
                 'Content-disposition' => 'attachment; filename=export.json'
-            ));
-            return $response;
+            );
         } elseif ($job->isFormatAnYaml()) {
-            $response->headers->add(array(
+            $headers = array(
                 'Content-Type'        => 'text/plain',
                 'Content-disposition' => 'attachment; filename=export.yaml'
-            ));
-            return $response;
+            );
+        } else {
+            throw new AccessDeniedException("mb.manager.controller.application.method_not_supported");
         }
 
-        throw new AccessDeniedException("mb.manager.controller.application.method_not_supported");
+        return new Response(
+            $expHandler->format($expHandler->makeJob()),
+            200,
+            $headers);
     }
 
     /**
-     * Shows a form for importing applications. Imports serialized applications.
+     * Shows a form for importing applications.
+     *
+     * @ManagerRoute("/application/import")
+     * @Template("MapbenderManagerBundle:Application:import.html.twig")
+     * @Method("GET")
+     */
+    public function importFormAction()
+    {
+        $impHandler = new ImportHandler($this->container, false);
+        return array(
+            'form' => $impHandler
+                ->createForm()
+                ->createView()
+        );
+    }
+
+    /**
+     * Imports serialized application.
      *
      * @ManagerRoute("/application/import")
      * @Template
+     * @Method("POST")
      */
     public function importAction()
     {
         $impHandler = new ImportHandler($this->container, false);
-        if ($this->getRequest()->getMethod() === 'GET') {
-            $form = $impHandler->createForm();
-            return array(
-                'form' => $form->createView()
-            );
-        } elseif ($this->getRequest()->getMethod() === 'POST') {
-            if ($impHandler->bindForm()) {
-                $job     = $impHandler->getJob();
-                $scFile  = $job->getImportFile();
-                $time    = new \DateTime('now');
-                $scFile->move(sys_get_temp_dir(), $time->getTimestamp());
-                $tmpfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $time->getTimestamp();
-                $yaml    = new Parser();
-                $content = $yaml->parse(file_get_contents($tmpfile));
-                unlink($tmpfile);
-                $job->setImportContent($content);
-                $impHandler->makeJob();
-                return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
-            } else {
-                $form = $impHandler->createForm();
-                return array(
-                    'form' => $form->createView()
-                );
-            }
+
+        if (!$impHandler->bindForm()) {
+            return $this->importFormAction();
         }
-        throw new AccessDeniedException("mb.manager.controller.application.method_not_supported");
+
+        $impHandler->makeJob();
+
+        return $this->redirect(
+            $this->generateUrl('mapbender_manager_application_index')
+        );
     }
 
     /**
@@ -197,19 +194,25 @@ class ApplicationController extends Controller
      * @ManagerRoute("/application/{slug}/copydirectly", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:form-basic.html.twig")
+     * @param $slug
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Mapbender\ManagerBundle\Component\Exception\ImportException
      */
-    public function copydirectlyAction($slug)
+    public function copyDirectlyAction($slug)
     {
-        $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $tocopy);
+        $sourceApplication = $this->get('mapbender')->getApplicationEntity($slug);
+
+        if (!$this->getContext()->isUserAllowedToCreate($sourceApplication)) {
+            throw new AccessDeniedException();
+        }
 
         $expHandler = new ExportHandler($this->container);
-        $expJob     = $expHandler->getJob();
-        $expJob->setApplication($tocopy);
-        $expJob->setAddSources(false);
-        $data = $expHandler->makeJob();
-
         $impHandler = new ImportHandler($this->container, true);
+        $expJob     = $expHandler->getJob();
+        $data       = $expHandler->makeJob();
+        $expJob->setApplication($sourceApplication);
+        $expJob->setAddSources(false);
+
         $importJob  = $impHandler->getJob();
         $importJob->setImportContent($data);
         $impHandler->makeJob();
@@ -227,8 +230,10 @@ class ApplicationController extends Controller
     {
         $application      = new Application();
         $uploadScreenshot = new UploadScreenshot();
-        // ACL access check
-        $this->checkGranted(SecurityContext::PERMISSION_CREATE, $application);
+
+        if (!$this->getContext()->isUserAllowedToCreate($application)) {
+            throw new AccessDeniedException();
+        }
 
         $form       = $this->createApplicationForm($application);
         $request    = $this->getRequest();
@@ -779,17 +784,27 @@ class ApplicationController extends Controller
      */
     public function addInstanceAction($slug, $layersetId, $sourceId, Request $request)
     {
-        $application    = $this->get('mapbender')->getApplicationEntity($slug);
-        // ACL access check
-        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
-        $source         = EntityHandler::find($this->container, "MapbenderCoreBundle:Source", $sourceId);
-        $layerset       = EntityHandler::find($this->container, "MapbenderCoreBundle:Layerset", $layersetId);
-        $eHandler       = EntityHandler::createHandler($this->container, $source);
-        $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
-        $sourceInstance = $eHandler->createInstance($layerset);
-        EntityHandler::createHandler($this->container, $sourceInstance)->save();
-        $this->getDoctrine()->getManager()->flush();
-        $this->getDoctrine()->getManager()->getConnection()->commit();
+        /** @var Connection $connection */
+        /** @var SecurityContext $securityContext */
+        $application     = $this->get('mapbender')->getApplicationEntity($slug);
+        $securityContext = $this->get("security.context");
+
+        if ($securityContext->isUserAllowedToEdit($application)) {
+            throw new AccessDeniedException();
+        };
+
+        $doctrine      = $this->getDoctrine();
+        $entityManager = $doctrine->getManager();
+        $connection    = $entityManager->getConnection();
+        $container     = $this->container;
+        $source        = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $layerSet      = $entityManager->getRepository("MapbenderCoreBundle:Layerset")->find($layersetId);
+        $eHandler      = EntityHandler::createHandler($container, $source);
+        $connection->beginTransaction();
+        $sourceInstance = $eHandler->createInstance($layerSet);
+        EntityHandler::createHandler($container, $sourceInstance)->save();
+        $entityManager->flush();
+        $connection->commit();
         $this->get("logger")
             ->debug('A new instance "' . $sourceInstance->getId() . '"has been created. Please edit it!');
         $this->get('session')->getFlashBag()->set('success', 'A new instance has been created. Please edit it!');
@@ -895,6 +910,7 @@ class ApplicationController extends Controller
      * @param string $action action "CREATE"
      * @param object $object the object
      * @throws AccessDeniedException
+     * @deprecated
      */
     private function checkGranted($action, $object)
     {
