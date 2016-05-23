@@ -29,8 +29,7 @@ class WelcomeController extends Controller
      */
     public function listAction()
     {
-        /** @var SecurityContext $securityContext */
-        $securityContext     = $this->get('security.context');
+        $securityContext     = $this->getContext();
         $applications        = $this->get('mapbender')->getApplicationEntities();
         $allowedApplications = array();
 
@@ -54,5 +53,24 @@ class WelcomeController extends Controller
             'create_permission' => $securityContext->isUserAllowedToCreate(new Application()),
             'time'              => new \DateTime()
         );
+    }
+
+    /**
+     * @return SecurityContext
+     */
+    protected function getContext()
+    {
+        return $this->get('security.context');
+    }
+
+    /**
+     * Translate string;
+     *
+     * @param string $key Key name
+     * @return string
+     */
+    protected function translate($key)
+    {
+        return $this->get('translator')->trans($key);
     }
 }
