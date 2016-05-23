@@ -1,0 +1,14 @@
+mb.application.created: Your application has been created.
+mb.application.create.directory.failure: Application directory can't be created.
+mb.application.saved: Your application has been updated
+mb.application.partially.saved.failure: Your application has been updated but the application's directories can not be created.
+mb.application.save.failure: There was an error trying to save your application.
+mb.application.remove.failure: Your application has been already deleted.
+mb.application.removed: Your application has been deleted.
+mb.application.partially.removed.failure:  Your application has been deleted but the application's directories can not be removed.
+mb.application.remove.deny.failure: Your application couldn't be deleted.
+mb.layerset.created: Your layerset has been created.
+mb.layerset.title.unique.failure: Layerset title is already used.
+mb.layerset.removed: Your layerset has been deleted.
+mb.layerset.remove.failure: Your layerset can't be deleted.
+mb.source.instance.created: A new instance has been created. Please edit it.

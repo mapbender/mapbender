@@ -1,0 +1,14 @@
+mb.application.created: Ihre Anwendung wurde erstellt.
+mb.application.create.directory.failure: Application Verzeichniss kann nich erstellt werden.
+mb.application.saved: Ihre Anwendung wurde gespeichert.
+mb.application.partially.saved.failure: Ihre Anwendung wurde aktualisiert aber das Applikationsverzeichnis konnte nicht erstellt werden.
+mb.application.save.failure: Beim Speichern Ihrer Anwendung ist ein Fehler aufgetreten.
+mb.application.remove.failure: Ihre Anwendung wurde schon gelöscht.
+mb.application.removed: Ihre Anwendung wurde gelöscht.
+mb.application.partially.removed.failure: Ihre Anwendung wurde gelöscht, aber das Anwendungsverzeichnis konnte nicht entfernt werden.
+mb.application.remove.deny.failure: Ihre Anwendung konnte nicht gelöscht werden.
+mb.layerset.created: Ihr Layerset wurde erstellt.
+mb.layerset.title.unique.failure: Der Layerset Titel wird schon benutzt.
+mb.layerset.removed: Ihr Layerset wurde gelöscht.
+mb.layerset.remove.failure: Ihr Layerset kann nicht gelöscht werden.
+mb.source.instance.created: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
