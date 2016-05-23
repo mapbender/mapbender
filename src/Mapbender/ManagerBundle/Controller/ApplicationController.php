@@ -229,24 +229,24 @@ class ApplicationController extends Controller
     public function createAction()
     {
         $application      = new Application();
-        $uploadScreenshot = new UploadScreenshot();
+        $uploadScreenShot = new UploadScreenshot();
 
         if (!$this->getContext()->isUserAllowedToCreate($application)) {
             throw new AccessDeniedException();
         }
 
-        $form       = $this->createApplicationForm($application);
-        $request    = $this->getRequest();
-        $parameters = $request->request->get('application');
-
-        $screenshot_url = null;
+        $form          = $this->createApplicationForm($application);
+        $request       = $this->getRequest();
+        $parameters    = $request->request->get('application');
+        $screenShotUrl = null;
 
         $form->bind($request);
+
         if ($form->isValid()) {
             $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
             $app_web_url   = AppComponent::getAppWebUrl($this->container, $application->getSlug());
             $application->setUpdated(new \DateTime('now'));
-            $em            = $this->getDoctrine()->getManager();
+            $em = $this->getDoctrine()->getManager();
 
             $em->getConnection()->beginTransaction();
             $em->persist($application);
@@ -257,30 +257,27 @@ class ApplicationController extends Controller
 
             $scFile = $application->getScreenshotFile();
 
-            if ($scFile !== null && $parameters['removeScreenShot'] !== '1'
-                && $parameters['uploadScreenShot'] !== '1') {
-                $uploadScreenshot->upload($app_directory, $scFile, $application);
-                $app_web_url    = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-                $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
+            if ($scFile !== null
+                && $parameters['removeScreenShot'] !== '1'
+                && $parameters['uploadScreenShot'] !== '1'
+            ) {
+                $uploadScreenShot->upload($app_directory, $scFile, $application);
+                $app_web_url   = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+                $screenShotUrl = $app_web_url . "/" . $application->getScreenshot();
             }
+
             $em->persist($application);
             $em->flush();
 
             $templateClass = $application->getTemplate();
             $templateProps = $templateClass::getRegionsProperties();
+
             foreach ($templateProps as $regionName => $regionProps) {
-                $regionProperties = new RegionProperties();
-                $application->addRegionProperties($regionProperties);
-                $regionProperties->setApplication($application);
-                $regionProperties->setName($regionName);
-                foreach ($regionProps as $propName => $propValue) {
-                    if (array_key_exists('state', $propValue) && $propValue['state']) {
-                        $regionProperties->addProperty($propName);
-                    }
-                }
-                $em->persist($regionProperties);
-                $em->flush();
+                $application->addRegionProperties(
+                    $this->createRegionProperties($application, $regionName, $regionProps)
+                );
             }
+
             $em->persist($application);
             $em->flush();
             $aclManager = $this->get('fom.acl.manager');
@@ -298,10 +295,10 @@ class ApplicationController extends Controller
         }
 
         return array(
-            'application' => $application,
-            'form' => $form->createView(),
-            'form_name' => $form->getName(),
-            'screenshot_filename' => $screenshot_url);
+            'application'         => $application,
+            'form'                => $form->createView(),
+            'form_name'           => $form->getName(),
+            'screenshot_filename' => $screenShotUrl);
     }
 
     /**
@@ -960,12 +957,9 @@ class ApplicationController extends Controller
                 }
             }
             if (!$exists) {
-                $regionProperties = new RegionProperties();
-                $application->addRegionProperties($regionProperties);
-                $regionProperties->setApplication($application);
-                $regionProperties->setName($regionName);
-                $em->persist($regionProperties);
-                $em->flush();
+                $application->addRegionProperties(
+                    $this->createRegionProperties($application, $regionName)
+                );
                 $em->persist($application);
                 $em->flush();
             }
@@ -973,10 +967,41 @@ class ApplicationController extends Controller
     }
 
     /**
+     * Create application region properties
+     *
+     * @param Application $application
+     * @param             $regionName
+     * @param             $initValues
+     * @return RegionProperties
+     */
+    protected function createRegionProperties(Application $application, $regionName, array $initValues = null)
+    {
+        $em         = $this->getDoctrine()->getManager();
+        $properties = new RegionProperties();
+
+        $properties->setApplication($application);
+        $properties->setName($regionName);
+
+        if ($initValues) {
+            foreach ($initValues as $name => $value) {
+                if (array_key_exists('state', $value) && $value['state']) {
+                    $properties->addProperty($name);
+                }
+            }
+        }
+
+        $em->persist($properties);
+        $em->flush();
+
+        return $properties;
+    }
+
+    /**
      * @return SecurityContext
      */
-    protected  function getContext()
+    protected function getContext()
     {
         return $this->get('security.context');
     }
+
 }

@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -249,20 +250,23 @@ class ApplicationController extends Controller
      */
     public function checkApplicationAccess(Application $application)
     {
+        /** @var SecurityContext $securityContext */
         $securityContext = $this->get('security.context');
+        $application     = $application->getEntity();
 
-        $application_entity = $application->getEntity();
-        if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($application_entity->getYamlRoles())) {
+        if ($application->isYamlBased()
+            && count($application->getYamlRoles())
+        ) {
 
             // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
             if (!$securityContext->getToken()) {
-                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application_entity->getYamlRoles())) {
+                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application->getYamlRoles())) {
                     return;
                 }
             }
 
             $passed = false;
-            foreach ($application_entity->getYamlRoles() as $role) {
+            foreach ($application->getYamlRoles() as $role) {
                 if ($securityContext->isGranted($role)) {
                     $passed = true;
                     break;
@@ -273,12 +277,13 @@ class ApplicationController extends Controller
             }
         }
 
-        $granted = $securityContext->isGranted('VIEW', $application_entity);
-        if (false === $granted) {
+        if (!$securityContext->isUserAllowedToView($application)) {
             throw new AccessDeniedException('You are not granted view permissions for this application.');
         }
 
-        if (!$application_entity->isPublished() and ! $securityContext->isGranted('EDIT', $application_entity)) {
+        if (!$application->isPublished()
+            && !$securityContext->isUserAllowedToEdit($application)
+        ) {
             throw new AccessDeniedException('This application is not published at the moment');
         }
     }
