@@ -4,10 +4,9 @@ namespace Mapbender\CoreBundle\Controller;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * Welcome controller.
