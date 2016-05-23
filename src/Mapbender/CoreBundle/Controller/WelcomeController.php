@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\SecurityContext;
+use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -22,7 +23,7 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 class WelcomeController extends Controller
 {
     /**
-     * List applications.
+     * Render user application list.
      *
      * @Route("/")
      * @Template()
@@ -31,16 +32,17 @@ class WelcomeController extends Controller
     {
         /** @var SecurityContext $securityContext */
         $securityContext     = $this->get('security.context');
-        $oid                 = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
         $applications        = $this->get('mapbender')->getApplicationEntities();
         $allowedApplications = array();
+
         foreach ($applications as $application) {
             if ($application->isExcludedFromList()) {
                 continue;
             }
 
             if ($securityContext->isUserAllowedToView($application)) {
-                if (!$application->isPublished() && !$securityContext->isUserAllowedToEdit($application)) {
+                if (!$application->isPublished()
+                    && !$securityContext->isUserAllowedToEdit($application)) {
                     continue;
                 }
                 $allowedApplications[] = $application;
@@ -50,7 +52,7 @@ class WelcomeController extends Controller
         return array(
             'applications'      => $allowedApplications,
             'uploads_web_url'   => AppComponent::getUploadsUrl($this->container),
-            'create_permission' => $securityContext->isGranted('CREATE', $oid),
+            'create_permission' => $securityContext->isUserAllowedToCreate(new Application()),
             'time'              => new \DateTime()
         );
     }

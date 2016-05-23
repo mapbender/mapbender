@@ -7,6 +7,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
+use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -35,7 +36,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * @author  Paul Schmitd <paul.schmidt@wheregroup.com>
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
-class ApplicationController extends Controller
+class ApplicationController extends WelcomeController
 {
     /**
      * Render a list of applications the current logged in user has access to.
@@ -46,28 +47,7 @@ class ApplicationController extends Controller
      */
     public function indexAction()
     {
-        $applications        = $this->get('mapbender')->getApplicationEntities();
-        $uploads_web_url     = AppComponent::getUploadsUrl($this->container);
-        $allowedApplications = array();
-        $securityContext     = $this->getContext();
-        foreach ($applications as $application) {
-            if ($application->isExcludedFromList()) {
-                continue;
-            }
-            if ($securityContext->isUserAllowedToView($application)) {
-                if (!$application->isPublished() && !$securityContext->isUserAllowedToEdit($application)) {
-                    continue;
-                }
-                $allowedApplications[] = $application;
-            }
-        }
-
-        return array(
-            'applications'      => $allowedApplications,
-            'create_permission' => $securityContext->isUserAllowedToCreate(new Application()),
-            'uploads_web_url'   => $uploads_web_url,
-            'time'              => new \DateTime()
-        );
+        return $this->listAction();
     }
 
     /**
@@ -1004,4 +984,14 @@ class ApplicationController extends Controller
         return $this->get('security.context');
     }
 
+    /**
+     * Translate string;
+     *
+     * @param string $key Key name
+     * @return string
+     */
+    protected function translate($key)
+    {
+        $this->get('translator')->trans($key);
+    }
 }
