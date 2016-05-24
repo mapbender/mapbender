@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="de8b0c7081e586c1705003fe9fea9fc7" resname="mb.manager.admin.messagebox.only_region_elements">
         <source>mb.manager.admin.messagebox.only_region_elements</source>
-        <target>Только для этого региона, доступные элементы отображаются</target>
+        <target>Доступные элементы отображаются только для этого региона.</target>
       </trans-unit>
       <trans-unit id="79cb83f673b2d8f5be94ec2d05986614" resname="mb.manager.admin.overview.maximize">
         <source>mb.manager.admin.overview.maximize</source>
@@ -46,17 +46,21 @@
         <source>mb.manager.admin.element.btn.cancel</source>
         <target>Отменить</target>
       </trans-unit>
+      <trans-unit id="710cfe4cacf662f4262c7cc34ee86101" resname="Only for this region available elements are displayed.">
+        <source>Only for this region available elements are displayed.</source>
+        <target>Доступные элементы отображаются только для этого региона.</target>
+      </trans-unit>
       <trans-unit id="20bbe30e6fcefd2ab10c780590b458af" resname="mb.core.admin.button.show_label">
         <source>mb.core.admin.button.show_label</source>
         <target>Показать отметку</target>
       </trans-unit>
       <trans-unit id="6fcdb0613955e001b3bdf56504f57270" resname="mb.manager.admin.map.max_extent">
         <source>mb.manager.admin.map.max_extent</source>
-        <target>Макс. экстент</target>
+        <target>Макс. область</target>
       </trans-unit>
       <trans-unit id="b1e5013a3b0d19ed28d955b11429bb06" resname="mb.manager.admin.map.start_extent">
         <source>mb.manager.admin.map.start_extent</source>
-        <target>Старт экстент</target>
+        <target>Начало области</target>
       </trans-unit>
       <trans-unit id="49ead166f1617a1c075be9feb88ef264" resname="mb.core.element.be.button.show_label">
         <source>mb.core.element.be.button.show_label</source>
@@ -72,7 +76,7 @@
       </trans-unit>
       <trans-unit id="a4a9f946292d7a63d77cb8ccee87878f" resname="mb.manager.admin.element.requirements">
         <source>mb.manager.admin.element.requirements</source>
-        <target>Обязательные поля помечены с темными метками, а необязательные поля имеют легкие отметки.</target>
+        <target>Обязательные поля помечены темными метками, а необязательные - светлые.</target>
       </trans-unit>
       <trans-unit id="ad2306a37f4b7183ae0f35becc37a64b" resname="mb.manager.admin.element.base_data">
         <source>mb.manager.admin.element.base_data</source>
@@ -88,15 +92,15 @@
       </trans-unit>
       <trans-unit id="a896f1255096f3296f5c69259b4c96df" resname="mb.manager.admin.zoombar.draggable">
         <source>mb.manager.admin.zoombar.draggable</source>
-        <target>Перетаскиваемывий</target>
+        <target>Перетаскиваемый</target>
       </trans-unit>
       <trans-unit id="154a2657aaa83a07817e8912d27526d1" resname="mb.manager.admin.instance.delete.confirm">
         <source>mb.manager.admin.instance.delete.confirm</source>
-        <target><![CDATA[Вы действительно хотите удалить экземпляр с названием <span class="italic">%instance_title%</span>?]]></target>
+        <target><![CDATA[Вы действительно хотите удалить образец с названием <span class="italic">%instance_title%</span>?]]></target>
       </trans-unit>
       <trans-unit id="417ef5ea406e9bb1aa8233eb78555abe" resname="mb.manager.admin.application.import.addApplications">
         <source>mb.manager.admin.application.import.addApplications</source>
-        <target>Приложений</target>
+        <target>Приложения</target>
       </trans-unit>
       <trans-unit id="b2a733728235bb0267b7c85c2432d27f" resname="mb.manager.admin.application.import.addAcl">
         <source>mb.manager.admin.application.import.addAcl</source>
@@ -108,7 +112,7 @@
       </trans-unit>
       <trans-unit id="4db8a68cd0721c0161a58a84e343ca0f" resname="mb.manager.admin.application.import.btn.import">
         <source>mb.manager.admin.application.import.btn.import</source>
-        <target>Импортировать</target>
+        <target>Импорт</target>
       </trans-unit>
       <trans-unit id="8dc19f75927b90dc117dd7b1005f4c4a" resname="mb.manager.admin.application.import.btn.cancel">
         <source>mb.manager.admin.application.import.btn.cancel</source>
@@ -116,7 +120,7 @@
       </trans-unit>
       <trans-unit id="0956c95cd7247b67ada1981fa3f484bf" resname="mb.manager.managerbundle.export_application">
         <source>mb.manager.managerbundle.export_application</source>
-        <target>Экспортировать</target>
+        <target>Экспорт</target>
       </trans-unit>
       <trans-unit id="2f6c5cb78939cee2618a0d784dd42d54" resname="mb.manager.admin.application.new">
         <source>mb.manager.admin.application.new</source>
@@ -128,11 +132,11 @@
       </trans-unit>
       <trans-unit id="7996c7e820e6b0e5fa6b09b62aaa3332" resname="mb.manager.admin.application.security">
         <source>mb.manager.admin.application.security</source>
-        <target>Защита</target>
+        <target>Безопасность</target>
       </trans-unit>
       <trans-unit id="1ff8d550246f91947a85478752fcfed0" resname="mb.manager.admin.application.create_use">
         <source>mb.manager.admin.application.create_use</source>
-        <target>Создание нового приложения, предоставляя основную информацию, а затем использовать режим редактирования, чтобы добавить элементы и слои.</target>
+        <target>Заполните основную информацию при создании нового приложения, а затем используйте режим редактирования, чтобы добавить элементы и слои.</target>
       </trans-unit>
       <trans-unit id="5fcfe9aa6c70d504a8f444cb334920a6" resname="mb.manager.admin.application.btn.create">
         <source>mb.manager.admin.application.btn.create</source>
@@ -152,7 +156,7 @@
       </trans-unit>
       <trans-unit id="3b026dc345fecbb0cdeb1e1e66273bb5" resname="mb.manager.admin.layerset.id_description">
         <source>mb.manager.admin.layerset.id_description</source>
-        <target>Id в виде SourceId/InstanceId</target>
+        <target>Id в форме SourceId/InstanceId</target>
       </trans-unit>
       <trans-unit id="03c37885863a75b058bceeae4e0d1c4c" resname="mb.manager.admin.layerset.id">
         <source>mb.manager.admin.layerset.id</source>
@@ -168,7 +172,7 @@
       </trans-unit>
       <trans-unit id="aa78e761b99d501ca9989772053e3787" resname="mb.manager.admin.instance.add">
         <source>mb.manager.admin.instance.add</source>
-        <target>Добавить экземпляр</target>
+        <target>Добавить образец</target>
       </trans-unit>
       <trans-unit id="b407f3fb8e29fe4ba09addade70fd8b2" resname="mb.manager.admin.layerset.edit">
         <source>mb.manager.admin.layerset.edit</source>
@@ -180,27 +184,27 @@
       </trans-unit>
       <trans-unit id="03c53b3342906e565c05aa932f7bf5f6" resname="mb.manager.admin.instance.show_hide">
         <source>mb.manager.admin.instance.show_hide</source>
-        <target>Экземпляр вкл/выкл</target>
+        <target>Вкл/выкл образец</target>
       </trans-unit>
       <trans-unit id="ca921f2e9160cc3844966d959d41c162" resname="mb.manager.admin.instance.edit">
         <source>mb.manager.admin.instance.edit</source>
-        <target>Редактировать Экземпляр</target>
+        <target>Редактировать образец</target>
       </trans-unit>
       <trans-unit id="7741119ee75b435238402736a3c1f271" resname="mb.manager.admin.instance.delete">
         <source>mb.manager.admin.instance.delete</source>
-        <target>Удалить Экземпляр</target>
+        <target>Удалить образец</target>
       </trans-unit>
       <trans-unit id="8ae43937492cbc973c8ef1f7fe034343" resname="mb.manager.admin.instance.no_instance_added">
         <source>mb.manager.admin.instance.no_instance_added</source>
-        <target>Нет Экземпляра</target>
+        <target>Образец не добавлен</target>
       </trans-unit>
       <trans-unit id="1e8a29d2a317f436725eaa1f260a6f55" resname="mb.manager.admin.instance.no_layer_added">
         <source>mb.manager.admin.instance.no_layer_added</source>
-        <target>Слои не добавлены</target>
+        <target>Слой не добавлен</target>
       </trans-unit>
       <trans-unit id="714e556d4c409f479889bfee8e32854b" resname="mb.manager.admin.applications">
         <source>mb.manager.admin.applications</source>
-        <target>Приложение</target>
+        <target>Приложения</target>
       </trans-unit>
       <trans-unit id="61e1a73c5a6ce8d413195569ec0cf8db" resname="mb.manager.admin.filter.application">
         <source>mb.manager.admin.filter.application</source>
@@ -208,7 +212,7 @@
       </trans-unit>
       <trans-unit id="669651088ad7fc7c1cc4602f45204e07" resname="mb.manager.admin.application.view">
         <source>mb.manager.admin.application.view</source>
-        <target>Показать приложение</target>
+        <target>Обзор</target>
       </trans-unit>
       <trans-unit id="88522cb91444f891b78bbd45319509a7" resname="mb.manager.admin.application.view_this">
         <source>mb.manager.admin.application.view_this</source>
@@ -224,7 +228,7 @@
       </trans-unit>
       <trans-unit id="7dcd24ad4908e215e8a68a36a8a8d6c1" resname="mb.manager.admin.application.public.on_off">
         <source>mb.manager.admin.application.public.on_off</source>
-        <target>Приложение вкл/выкл</target>
+        <target>Вкл/выкл публикацию приложения</target>
       </trans-unit>
       <trans-unit id="abecec6eeb7bcd272c906e9bfb6de23b" resname="mb.manager.admin.application.delete">
         <source>mb.manager.admin.application.delete</source>
@@ -244,19 +248,19 @@
       </trans-unit>
       <trans-unit id="55e18fb3b32d459c43c4108aa49ed8a2" resname="mb.manager.admin.application.security.public">
         <source>mb.manager.admin.application.security.public</source>
-        <target>публиковать</target>
+        <target>активированы</target>
       </trans-unit>
       <trans-unit id="7d61128cc95ad7927ef6f836feb88197" resname="mb.manager.admin.filter.source">
         <source>mb.manager.admin.filter.source</source>
-        <target>Фильтр источник</target>
+        <target>Фильтр источников</target>
       </trans-unit>
       <trans-unit id="2baeb9ca4bc58fe89fa3284be858890d" resname="mb.manager.admin.source.valid">
         <source>mb.manager.admin.source.valid</source>
-        <target>Источник действительны</target>
+        <target>Источник действительный</target>
       </trans-unit>
       <trans-unit id="4dc2095208f7942a6870ad5153701bc9" resname="mb.manager.admin.source.notvalid">
         <source>mb.manager.admin.source.notvalid</source>
-        <target>Источник не действительны</target>
+        <target>Источник не действительный</target>
       </trans-unit>
       <trans-unit id="9d74c4df1bed8b409f8b88b02eebc115" resname="mb.manager.admin.source.no_source">
         <source>mb.manager.admin.source.no_source</source>
@@ -288,7 +292,7 @@
       </trans-unit>
       <trans-unit id="8fb52a0f54dd2e74422f53a4df60444c" resname="mb.manager.admin.application.layouts">
         <source>mb.manager.admin.application.layouts</source>
-        <target>Образцы</target>
+        <target>Панели инструментов</target>
       </trans-unit>
       <trans-unit id="30fc1d2c4ec7fc35b97556d846390b77" resname="mb.manager.admin.application.layersets">
         <source>mb.manager.admin.application.layersets</source>
@@ -308,11 +312,11 @@
       </trans-unit>
       <trans-unit id="8c8173e8ee2b47284d02906130e77bad" resname="mb.manager.admin.application.upload.tooltip">
         <source>mb.manager.admin.application.upload.tooltip</source>
-        <target>Пожалуйста, нажмите, чтобы загрузить скриншот</target>
+        <target>Нажмите, чтобы загрузить скриншот</target>
       </trans-unit>
       <trans-unit id="cae4b6bbf2a2d496be9bf327a1955ab4" resname="mb.manager.admin.application.upload.button">
         <source>mb.manager.admin.application.upload.button</source>
-        <target>Выберите файл:</target>
+        <target>Выбрать файл:</target>
       </trans-unit>
       <trans-unit id="fd5de98877bbdf4173112e0623ef1163" resname="mb.manager.admin.application.upload.label">
         <source>mb.manager.admin.application.upload.label</source>
@@ -320,7 +324,7 @@
       </trans-unit>
       <trans-unit id="65b1b8ec796958dee755f045045ec4c5" resname="mb.manager.admin.template">
         <source>mb.manager.admin.template</source>
-        <target>Образец</target>
+        <target>Шаблон</target>
       </trans-unit>
       <trans-unit id="e4f28b83d54309a77cb59795e1216b1d" resname="mb.manager.admin.element.title">
         <source>mb.manager.admin.element.title</source>
@@ -336,7 +340,7 @@
       </trans-unit>
       <trans-unit id="1abc6b6b6adf29b611a5ff28b75fec56" resname="mb.manager.admin.element.show_hide">
         <source>mb.manager.admin.element.show_hide</source>
-        <target>Элемент вкл/выкл</target>
+        <target>Вкл/выкл элемент</target>
       </trans-unit>
       <trans-unit id="59e6a75c4ff6f194dbf0a63f6b40d970" resname="mb.manager.admin.element.edit">
         <source>mb.manager.admin.element.edit</source>
@@ -344,7 +348,7 @@
       </trans-unit>
       <trans-unit id="625ae31ac53006c57eb433ff1743031a" resname="mb.manager.managerbundle.acl_element">
         <source>mb.manager.managerbundle.acl_element</source>
-        <target>Acl элемент </target>
+        <target>Acl элемент</target>
       </trans-unit>
       <trans-unit id="f5cbce523ee9eabac86ea8316bf8e38d" resname="mb.manager.be.element.delete">
         <source>mb.manager.be.element.delete</source>
@@ -352,7 +356,7 @@
       </trans-unit>
       <trans-unit id="f421912e27fc54853a6a714460b371b8" resname="mb.manager.admin.element.no_element_added.">
         <source>mb.manager.admin.element.no_element_added.</source>
-        <target>Нет элементов.</target>
+        <target>Элемент не добавлен</target>
       </trans-unit>
       <trans-unit id="c4c6bf3442aaab7c9eb080249b6a3109" resname="mb.manager.admin.source.update">
         <source>mb.manager.admin.source.update</source>
@@ -400,7 +404,7 @@
       </trans-unit>
       <trans-unit id="3684fd04231e86892a900ae7821e8f6d" resname="mb.manager.components.popup.edit_element.btn.ok">
         <source>mb.manager.components.popup.edit_element.btn.ok</source>
-        <target>Обновит</target>
+        <target>Обновить</target>
       </trans-unit>
       <trans-unit id="7745b9323c961884b97667adc45b5275" resname="mb.manager.components.popup.edit_element.btn.cancel">
         <source>mb.manager.components.popup.edit_element.btn.cancel</source>
@@ -408,11 +412,11 @@
       </trans-unit>
       <trans-unit id="f39ba72f59f8ae5fc5c575cf4e7bbcee" resname="mb.manager.components.popup.delete_element.subtitle">
         <source>mb.manager.components.popup.delete_element.subtitle</source>
-        <target>Элемент</target>
+        <target>элемент</target>
       </trans-unit>
       <trans-unit id="5b036acf05d1e478b58e642289a3c284" resname="mb.manager.components.popup.delete_element.title">
         <source>mb.manager.components.popup.delete_element.title</source>
-        <target>Подтверждение удаления</target>
+        <target>Подтвердить удаление</target>
       </trans-unit>
       <trans-unit id="4a4f9a17c42a94ebf57a58e89188120f" resname="mb.manager.components.popup.delete_element.btn.ok">
         <source>mb.manager.components.popup.delete_element.btn.ok</source>
@@ -460,7 +464,7 @@
       </trans-unit>
       <trans-unit id="c50f832b52a6007ebc0c8aa54bd8915b" resname="mb.manager.components.popup.delete_instance.title">
         <source>mb.manager.components.popup.delete_instance.title</source>
-        <target>Подтверждение удаления</target>
+        <target>Подтвердить удаления</target>
       </trans-unit>
       <trans-unit id="ee955fdf95caee0ac5d3dfbc3fe18602" resname="mb.manager.components.popup.delete_instance.btn.ok">
         <source>mb.manager.components.popup.delete_instance.btn.ok</source>
@@ -490,13 +494,17 @@
         <source>mb.manager.components.popup.element_acl.btn.remove</source>
         <target>Удалить</target>
       </trans-unit>
+      <trans-unit id="8bf0ac9ea9e7843388def8c0416156c8" resname="mb.core.admin.about_dialog.show_label">
+        <source>mb.core.admin.about_dialog.show_label</source>
+        <target>Показать надпись на кнопке</target>
+      </trans-unit>
       <trans-unit id="dbd9bf9785be4d2e41fdea56c53c6219" resname="mb.manager.upload.label_delete">
         <source>mb.manager.upload.label_delete</source>
-        <target>Скриншот удалены</target>
+        <target>Скриншот удален</target>
       </trans-unit>
       <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
         <source>mb.core.entity.app.screenshotfile.error</source>
-        <target>Файл слишком большой (% uploadFileSize% байт). Разрешено максимальный размер% MaxFileSize% байт</target>
+        <target>Файл слишком большой (% uploadFileSize% байт). Допускается максимальный размер% MaxFileSize% байт.</target>
       </trans-unit>
       <trans-unit id="8b893357eea2f8e824f5e4bb613b3496" resname="mb.core.entity.app.screenshotfile.format_error">
         <source>mb.core.entity.app.screenshotfile.format_error</source>
@@ -504,15 +512,15 @@
       </trans-unit>
       <trans-unit id="16f74a89b0e7be78f76edfe1108dc053" resname="mb.core.entity.app.screenshotfile.resolution.error">
         <source>mb.core.entity.app.screenshotfile.resolution.error</source>
-        <target>Может быть выбран только файлы изображений с %screenshotHeight% х %screenshotWidth% пикселей и выше. Ваш файл %uploadWidth% х %uploadHeighth% пикселей.</target>
+        <target>Минимально возможное изображение должно быть равно или больше чем %screenshotHeight% х %screenshotWidth% пикселей. Загруженное Вами соответствует размеру в %uploadWidth% х %uploadHeighth%.</target>
       </trans-unit>
       <trans-unit id="5aaf56d5c062631aa17d768dacd06850" resname="mb.manager.managerbundle.applications">
         <source>mb.manager.managerbundle.applications</source>
-        <target>Приложений</target>
+        <target>Приложения</target>
       </trans-unit>
       <trans-unit id="d46554dab34c8039119a3a1ae130931f" resname="mb.manager.managerbundle.new_application">
         <source>mb.manager.managerbundle.new_application</source>
-        <target>Новая приложение</target>
+        <target>Новое приложение</target>
       </trans-unit>
       <trans-unit id="ae787e5a22c25053f852d0d02fb966db" resname="mb.manager.managerbundle.sources">
         <source>mb.manager.managerbundle.sources</source>
@@ -524,15 +532,15 @@
       </trans-unit>
       <trans-unit id="fc73409cc94d703de1cf50d3801da59e" resname="mb.manager.template.region.tabs.label">
         <source>mb.manager.template.region.tabs.label</source>
-        <target>Закладки</target>
+        <target>Вкладки</target>
       </trans-unit>
       <trans-unit id="0475b124fc415027ca6a776af40a4062" resname="mb.manager.template.region.accordion.label">
         <source>mb.manager.template.region.accordion.label</source>
-        <target>Аккордеон</target>
+        <target>Accordion</target>
       </trans-unit>
       <trans-unit id="8831631476c3e9b5b0428bf0c075b980" resname="mb.manager.import.application.failed">
         <source>mb.manager.import.application.failed</source>
-        <target>Приложения не импортируются.</target>
+        <target>Приложение не может быть импортировано.</target>
       </trans-unit>
       <trans-unit id="9aef31f26d2f42c82d7b936c0386fe3e" resname="mb.manager.import.acl.failed">
         <source>mb.manager.import.acl.failed</source>
@@ -540,11 +548,11 @@
       </trans-unit>
       <trans-unit id="9c0cce2c5e9cf4ee90fbc62f697167ac" resname="mb.manager.import.source.failed">
         <source>mb.manager.import.source.failed</source>
-        <target>Источники не импортируются.</target>
+        <target>Источник не может быть импортирован.</target>
       </trans-unit>
       <trans-unit id="958dff877abe910c6e9037e99de76668" resname="form.manager.admin.application.export.application">
         <source>form.manager.admin.application.export.application</source>
-        <target>Приложений</target>
+        <target>Приложения</target>
       </trans-unit>
       <trans-unit id="85116f4217a9b12b1c0cf8fba44ce8a7" resname="mb.manager.admin.application.title">
         <source>mb.manager.admin.application.title</source>
@@ -552,7 +560,7 @@
       </trans-unit>
       <trans-unit id="5c9a6c78451dfba05fabf12c278b971f" resname="mb.manager.admin.application.url.title">
         <source>mb.manager.admin.application.url.title</source>
-        <target>URL Название</target>
+        <target>URL заголовок</target>
       </trans-unit>
       <trans-unit id="3b9871c4a4eadd4855d99e274e8e6bd9" resname="mb.manager.admin.application.description">
         <source>mb.manager.admin.application.description</source>
@@ -564,15 +572,15 @@
       </trans-unit>
       <trans-unit id="342f82f63e1fc77238c77063876cbe42" resname="mb.manager.admin.source.status.ok">
         <source>mb.manager.admin.source.status.ok</source>
-        <target>Source OK</target>
+        <target>Источник OK</target>
       </trans-unit>
       <trans-unit id="0c0f0df6dc5f28f02f39891d3de00200" resname="mb.manager.admin.source.status.toupdate">
         <source>mb.manager.admin.source.status.toupdate</source>
-        <target>Source not current anymore</target>
+        <target>Источник больше не является текущим</target>
       </trans-unit>
       <trans-unit id="49ef61fc71caf417be9ba6e26049235a" resname="mb.manager.admin.source.status.unreachable">
         <source>mb.manager.admin.source.status.unreachable</source>
-        <target>Source unreachable</target>
+        <target>Источник недоступен</target>
       </trans-unit>
     </body>
   </file>
