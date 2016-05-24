@@ -272,10 +272,10 @@ class ApplicationController extends WelcomeController
         $connection->commit();
         $flashBag = $this->get('session')->getFlashBag();
         if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
-            $flashBag->set('success', $this->translate('mb.application.created'));
+            $flashBag->set('success', $this->translate('mb.application.create.success'));
         } else {
             $connection->rollBack();
-            $flashBag->set('error', $this->translate('mb.application.create.directory.failure'));
+            $flashBag->set('error', $this->translate('mb.application.create.failure.create.directory'));
         }
         return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
 
@@ -411,14 +411,14 @@ class ApplicationController extends WelcomeController
                 $aclManager = $this->get('fom.acl.manager');
                 $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
                 $connection->commit();
-                $flashBug->set('success', $this->translate('mb.application.saved'));
+                $flashBug->set('success', $this->translate('mb.application.save.success'));
             } else {
-                $flashBug->set( 'error', $this->translate('mb.application.partially.saved.failure'));
+                $flashBug->set( 'error', $this->translate('mb.application.save.failure.create.directory'));
                 $connection->rollback();
                 $em->close();
             }
         } catch (\Exception $e) {
-            $flashBug->set('error', $this->translate('mb.application.save.failure'));
+            $flashBug->set('error', $this->translate('mb.application.save.failure.general'));
             $connection->rollback();
             $em->close();
 
@@ -511,7 +511,7 @@ class ApplicationController extends WelcomeController
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         if ($application === null) {
             $flashBag = $this->get('session')->getFlashBag();
-            $flashBag->set('error', $this->translate('mb.application.remove.failure'));
+            $flashBag->set('error', $this->translate('mb.application.remove.failure.already.removed'));
             return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
         }
 
@@ -544,22 +544,22 @@ class ApplicationController extends WelcomeController
         try {
             $em          = $this->getDoctrine()->getManager();
             $aclProvider = $this->get('security.acl.provider');
-            $em->getConnection()->beginTransaction();
             $oid         = ObjectIdentity::fromDomainObject($application);
+            $em->getConnection()->beginTransaction();
             $aclProvider->deleteAcl($oid);
             $em->remove($application);
             $em->flush();
             $em->commit();
             if (AppComponent::removeAppWebDir($this->container, $slug)) {
-                $flashBag->set('success', $this->translate('mb.application.removed'));
+                $flashBag->set('success', $this->translate('mb.application.remove.success'));
             } else {
                 $flashBag->set(
                     'error',
-                   $this->translate('mb.application.partially.removed.failure')
+                    $this->translate('mb.application.failure.remove.directory')
                 );
             }
         } catch (Exception $e) {
-            $flashBag->set('error', $this->translate('mb.application.remove.deny.failure'));
+            $flashBag->set('error', $this->translate('mb.application.remove.failure.general'));
         }
 
         return new Response();
@@ -648,10 +648,10 @@ class ApplicationController extends WelcomeController
             $objectManager->persist($layerset);
             $objectManager->flush();
             $this->get("logger")->debug("Layerset saved");
-            $flashBag->set('success', "Your layerset has been saved");
+            $flashBag->set('success', $this->translate('mb.layerset.create.success'));
             return $this->redirect($this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)));
         }
-        $flashBag->set('error', $this->translate('mb.layerset.title.unique.failure'));
+        $flashBag->set('error', $this->translate('mb.layerset.create.failure.unique.title'));
         return $this->redirect($this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)));
     }
 
@@ -698,7 +698,7 @@ class ApplicationController extends WelcomeController
             $em->flush();
             $em->getConnection()->commit();
             $this->get("logger")->debug('The layerset "' . $layerset->getId() . '"has been deleted.');
-            $flashBag->set('success', $this->translate('mb.layerset.removed'));
+            $flashBag->set('success', $this->translate('mb.layerset.remove.success'));
         } else {
             $flashBag->set('error',  $this->translate('mb.layerset.remove.failure'));
         }
@@ -786,7 +786,7 @@ class ApplicationController extends WelcomeController
         $this->get("logger")
             ->debug('A new instance "' . $sourceInstance->getId() . '"has been created. Please edit it!');
         $flashBag = $this->get('session')->getFlashBag();
-        $flashBag->set('success', $this->translate('mb.source.instance.created'));
+        $flashBag->set('success', $this->translate('mb.source.instance.create.success'));
         return $this->redirect($this->generateUrl(
             "mapbender_manager_repository_instance",
             array("slug" => $slug, "instanceId" => $sourceInstance->getId())

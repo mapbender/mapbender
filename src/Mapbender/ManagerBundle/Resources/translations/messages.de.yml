@@ -1,0 +1,29 @@
+mb:
+  application:
+    create:
+      success: Ihre Anwendung wurde erstellt.
+      failure:
+        create.directory: Application Verzeichniss kann nich erstellt werden.
+    save:
+      success: Ihre Anwendung wurde gespeichert.
+      failure:
+        general: Beim Speichern Ihrer Anwendung ist ein Fehler aufgetreten.
+        create.directory: Ihre Anwendung wurde aktualisiert aber das Applikationsverzeichnis konnte nicht erstellt werden.
+    remove:
+      success: Ihre Anwendung wurde gelöscht.
+      failure:
+        general: Ihre Anwendung konnte nicht gelöscht werden.
+        already.removed: Ihre Anwendung wurde schon gelöscht.
+        remove.directory: Ihre Anwendung wurde gelöscht, aber das Anwendungsverzeichnis konnte nicht entfernt werden.
+  layerset:
+    create:
+      success: Ihr Layerset wurde erstellt.
+      failure:
+        unique.title: Der Layerset Titel wird schon benutzt.
+    remove:
+      success: Ihr Layerset wurde gelöscht.
+      failure: Ihr Layerset kann nicht gelöscht werden.
+  source:
+    instance:
+      create:
+        success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.

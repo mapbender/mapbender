@@ -1,0 +1,29 @@
+mb:
+  application:
+    create:
+      success: Приложение создано.
+      failure:
+        create.directory: Невозможно создать директорию приложения.
+    save:
+      success: Приложение сохранено.
+      failure:
+        general: Произошла ошибка при сохранении приложения.
+        create.directory: Приложение было сохранено, но невозможно создать для него директорию.
+    remove:
+      success: Приложение удалено.
+      failure:
+        general: Невозможно удалить приложение.
+        already.removed:  Приложение уже удалено.
+        remove.directory: Не возможно создать директорию приложения.
+  layerset:
+    create:
+      success: Набор слоев создан.
+      failure:
+        unique.title: Такой заголовок уже используется.
+    remove:
+      success: Набор слоев удален.
+      failure: Произошла ошибка при удалении набора слоев.
+  source:
+    instance:
+      create:
+        success: Новый образец был создан, но его нужно отредактировать.
