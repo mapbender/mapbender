@@ -45,13 +45,16 @@ $(function(){
     });
     /* START close mobilePane if a map is centred after search */
     var moved = false;
-    Mapbender.Model.mbMap.map.olMap.events.register('moveend', null, function(){
-        if ($('#mobilePane').attr('data-state')) {
-            moved = true;
-        } else {
-            moved = false;
-        }
+    Mapbender.elementRegistry.onElementReady("map", function() {
+        Mapbender.Model.mbMap.map.olMap.events.register('moveend', null, function() {
+            if($('#mobilePane').attr('data-state')) {
+                moved = true;
+            } else {
+                moved = false;
+            }
+        });
     });
+
     $('.search-results').on('click', function(){
         if(moved){
             moved = false;
