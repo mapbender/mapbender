@@ -19,7 +19,7 @@ mb:
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: 'узнайте больше о Mapbender3'
+        learnmore: 'Посетите наш Mapbender3'
         linktitle: 'Посетите наш официальный сайт Mapbender3'
         website: сайт
       class:
@@ -107,7 +107,7 @@ mb:
         quality: Качество
         scale: Масштаб
         rotation: Вращение
-        legend: 'Распечатать Легенду'
+        legend: 'Легенда'
       popup:
         btn:
           ok: Печать
@@ -313,7 +313,7 @@ mb:
         label:
           autoopen: Авто-открытие
           rotatable: Поворачиваемые
-          legend: 'Распечатать Легенду'
+          legend: 'Легенда'
       copyright:
         label:
           autoopen: Авто-открытие

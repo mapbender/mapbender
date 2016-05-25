@@ -1,0 +1,18 @@
+mb:
+  print:
+    imageexport:
+      class:
+        title: 'Exportar imagem'
+        description: 'Exporta o mapa atual como uma imagem. Os Formatos possíveis são png e jpeg. '
+      tag:
+        image: Imagem
+        export: Exportação
+        jpeg: jpeg
+        png: png
+      popup:
+        btn:
+          ok: Exportar
+          cancel: Cancelar
+      info:
+        noactivelayer: 'Nenhuma camada ativa!'
+      chooseformat: 'Escolher formato de exportação'
