@@ -13,9 +13,11 @@
 * For the latter the GD 2.x extension is required.
 *******************************************************************************/
 namespace Mapbender\PrintBundle\Component;
-use \FPDF_FPDI;
 
-class PDF_ImageAlpha extends FPDF_FPDI{
+/**
+ * Generate PDF's
+ */
+class PDF_ImageAlpha extends \FPDI{
 
 //Private properties
 var $tmpFiles = array();
@@ -24,9 +26,12 @@ var $tmpFiles = array();
 *                                                                              *
 *                               Public methods                                 *
 *                                                                              *
-*******************************************************************************/
-function Image($file,$x=NULL,$y=NULL,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=0)
-{
+ *******************************************************************************/
+public function Image(
+	$file, $x = '', $y = '', $w = 0, $h = 0, $type = '', $link = '', $align = '', $resize = false,
+	$dpi = 300, $palign = '', $isMask = false, $maskImg = false, $border = 0, $fitbox = false,
+	$hidden = false, $fitonpage = false, $alt = false, $altimgs = array()
+) {
 	//Put an image on the page
 	if(!isset($this->images[$file]))
 	{
@@ -137,12 +142,14 @@ function ImagePngWithAlpha($file,$x,$y,$w=0,$h=0,$link='')
 	$this->Image($tmp_plain,$x,$y,$w,$h,'PNG',$link, false, $maskImg);
 }
 
-function Close()
-{
-	parent::Close();
-	// clean up tmp files
-	foreach($this->tmpFiles as $tmp) @unlink($tmp);
-}
+	function Close()
+	{
+		parent::Close();
+		// clean up tmp files
+		foreach ($this->tmpFiles as $tmp) {
+			@unlink($tmp);
+		}
+	}
 
 /*******************************************************************************
 *                                                                              *
@@ -303,7 +310,7 @@ function Rotate($angle,$x=-1,$y=-1)
 		$c=cos($angle);
 		$s=sin($angle);
 		$cx=$x*$this->k;
-		$cy=($this->h-$y)*$this->k;
+		$cy=($this-$y)*$this->k;
 		$this->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',$c,$s,-$s,$c,$cx,$cy,-$cx,-$cy));
 	}
 }
@@ -333,4 +340,36 @@ function RotatedImage($file, $x, $y, $w, $h, $angle)
     $this->Image($file, $x, $y, $w, $h);
     $this->Rotate(0);
 }
+
+	/**
+	 * @return mixed
+	 */
+	public function getHeight()
+	{
+		return $this->h;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getWidth()
+	{
+		return $this->w;
+	}
+
+	/**
+	 * Writes the references of XObject resources to the document.
+	 *
+	 * Overwritten to add the the templates to the XObject resource dictionary.
+	 */
+	public function _putxobjectdict()
+	{
+		foreach ($this->images as $image) {
+			$this->_put('/I' . $image['i'] . ' ' . $image['n'] . ' 0 R');
+		}
+
+		foreach ($this->_tpls as $tplIdx => $tpl) {
+			$this->_out(sprintf('%s%d %d 0 R', $this->tplPrefix, $tplIdx, isset($tpl['n']) ? $tpl['n'] : null));
+		}
+	}
 }
