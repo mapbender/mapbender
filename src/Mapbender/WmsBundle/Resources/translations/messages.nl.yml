@@ -1,0 +1,235 @@
+mb:
+  wms:
+    wmsloader:
+      error:
+        url: 'WMSLoader: WMS capabilities kunnen niet geladen worden! De capabilities url is niet valide.'
+        service: 'WMSLoader: De service %service% is niet supported!'
+        operation: 'WMSLoader: de WMS Operation %operation% is niet supported!'
+        version: 'WMSLoader: the WMS version %version% is not supported!'
+        load: 'WMSLoader: wms capabilities kan niet geladen worden!'
+      dialog:
+        btn:
+          cancel: Cancel
+          load: Laad
+        label:
+          example: Voorbeeld
+          wmsurl: 'Service URL'
+          wmsuser: User
+          wmspass: Pass
+      class:
+        title: 'WMS loader'
+        description: 'Laad een WMS via de getCapabilities-Request'
+      tag:
+        wms: wms
+        loader: loader
+      repo:
+        instancelayerform:
+          label:
+            layerstitle: 'Laag titel'
+            minscale: Minschaal
+            maxsclase: Maxschaal
+            active: actief
+            allowselecttoc: 'Sta selecteren van TOC toe'
+            selectedtoc: 'Geselecteerd op TOC'
+            allowinfotoc: 'Sta kenmerkinfo toe op TOC'
+            infotoc: 'Kenmerkinfo op TOC'
+            allowtoggletoc: 'Sta Toggle bij TOC toe'
+            toggletoc: 'Toggle op TOC'
+            allowreordertoc: 'Sta herorder bij TOC toe'
+            moreinfo: 'Meer informatie'
+            id:
+              title: ID
+              description: __mb.wms.wmsloader.repo.instancelayerform.label.id.description
+            layersname: 'Laag naam'
+            style: Stijl
+        preview:
+          title:
+            servicerepository: 'Service Repository'
+          label:
+            load: Load
+        view:
+          title:
+            wms: WMS
+          label:
+            backtoservicelist: 'Terug naar Service List'
+            metadata: Metadata
+            contact: Contact
+            details: Details
+            layers: Lagen
+            title: Titel
+            name: Naam
+            version: Versie
+            originurl: 'Oorspronkelijke URL'
+            abstract: Abstract
+            onlineresource: 'Online Resource'
+            exceptionformats: 'Exception Formats'
+            fees: Fees
+            accessconstraints: 'Access Constraints'
+            person: Persoon
+            organization: Organisatie
+            position: Positie
+            telephone: Telefoon
+            facsimile: Faxnummer
+            email: Email
+            address: Adres
+            addresstype: 'Adres type'
+            city: Plaats
+            state: Provincie
+            postcode: Postcode
+            country: Land
+          message:
+            cautionscalehint: 'Pas op: Scale calculations are subject to limited Scale Hint resolution in WMS 1.1.1!'
+        instancelayer:
+          title:
+            servicerepository: 'Service Repository'
+          label:
+            wmsinstancelayers: 'WMS Instance Layers'
+          btn:
+            save: Bewaar
+        macros:
+          label:
+            formats: Formaten
+        instance:
+          title:
+            wmsinstance: 'WMS instance'
+          btn:
+            save: Bewaar
+            cancel: Cancel
+          label:
+            originurl: 'Oorspronkelijke URL'
+            visible: Zichtbaar
+            proxy: Proxy
+            transparency: Doorzichtigheid
+            tiled: Tiled
+            title: Titel
+            minsc: Minschaal
+            maxsc: Maxschaal
+            active: actief
+            select: selecteer
+            info: info
+            toggle: toggle
+            reorder: herorder
+            allow: 'sta toe'
+            'on': aan
+            save2: Bewaar
+            cancel2: Cancel
+            buffer: __mb.wms.wmsloader.repo.instance.label.buffer
+            ratio: __mb.wms.wmsloader.repo.instance.label.ratio
+            basesource: __mb.wms.wmsloader.repo.instance.label.basesource
+          vendorspecific:
+            label: __mb.wms.wmsloader.repo.instance.vendorspecific.label
+        layer:
+          label:
+            name: Naam
+            title: Titel
+            abstract: Abstract
+            queryable: Zoekbaar
+            cascaded: Gecascadeerd
+            opaque: Opaque
+            nosubset: NoSubset
+            fixedwidth: FixedWidth
+            fixedheight: FixedHeight
+            latlonbounds: LatLonBounds
+            boundingbox: BoundingBox
+            srs: SRS
+            styles: Stijlen
+            legendurl: 'Legenda URL'
+            stylesheeturl: 'Stylesheet URL'
+            styleurl: 'Stijl URL'
+            scale: Schaal
+            min: Min
+            max: Max
+            scalehint: 'Schaal hint'
+            attribution: Attribution
+            onlineresource: 'Online bron'
+            logourl: 'Logo URL'
+            identifier: Identifier
+            authority: Autoriteit
+            url: URL
+            value: Waarde
+            metadataurl: 'Metadata URL'
+            dimension: Dimensie
+            extent: Extent
+            dataurl: 'Data URL'
+            featurelisturl: 'Kenmerklijst URL'
+        form:
+          label:
+            ogcwms: 'OGC WMS'
+            serviceurl: 'Service URL'
+            username: 'Gebruikers naam'
+            password: Wachtwoord
+            load: Laad
+            cancel: Cancel
+            onlyvalid: __mb.wms.wmsloader.repo.form.label.onlyvalid
+        new:
+          label:
+            addservice: 'Voeg Service toe'
+      admin:
+        label:
+          autoopen: 'Auto open'
+          splitlayers: 'Split lagen'
+          declarative: 'Use declarative'
+    source:
+      image_error:
+        datails: 'De map kan niet getoond worden.'
+        exception: 'Afwijking: %exception%'
+        statuscode: 'HTTP status code'
+    dimensionsets:
+      no_dimension: 'no dimension'
+    dimhandler:
+      class:
+        title: __mb.wms.dimhandler.class.title
+        description: __mb.wms.dimhandler.class.description
+      tag:
+        dimension: __mb.wms.dimhandler.tag.dimension
+        handler: __mb.wms.dimhandler.tag.handler
+    repository:
+      parser:
+        couldnotparse: 'Could not parse CapabilitiesDocument'
+        not_supported_document: 'Not supported CapabilitiesDocument'
+        not_supported_version: 'The WMS version is not supported'
+        not_valid_dtd: 'A WMS document is not valid (DTD).'
+        not_valid_xsd: 'A WMS document is not valid (XSD).'
+    metadata:
+      section:
+        common:
+          common: Common
+          title: Title
+          name: Name
+          version: Version
+          originUrl: 'Origin Url'
+          description: Description
+          onlineResource: OnlineResource
+          exceptionFormats: 'Exception formats'
+        useconditions:
+          title: 'Terms of use'
+          fees: Fees
+          accessconstraints: 'Access constraints'
+        contact:
+          title: Contact
+          person: Person
+          position: Position
+          organization: Organization
+          voiceTelephone: Telephone
+          facsimileTelephone: Facsimile
+          electronicMailAddress: Email
+          address: Address
+          addressType: 'Address type'
+          addressCity: City
+          addressStateOrProvince: 'State or province'
+          addressPostCode: 'Post code'
+          addressCountry: Country
+        items:
+          layer: Layer
+          title: Title
+          name: Name
+          srs: SRS
+          bbox: BoundingBox
+  wmc:
+    wmsloader:
+      class:
+        title: 'Wms Loader'
+        description: 'Opens a dialog in which a WMS can be loaded via the getCapabilities-Request'
+      tag:
+        wms: wms
+        loader: loader

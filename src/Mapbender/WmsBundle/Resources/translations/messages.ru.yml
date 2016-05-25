@@ -1,0 +1,220 @@
+mb:
+  wms:
+    wmsloader:
+      error:
+        url: 'WMSLoader: возможности WMS не загружен! Capabilities URL, не является действительным.'
+        service: 'WMSLoader: служба% сервис% не поддерживается!'
+        operation: 'WMSLoader: WMS Операция %работа% не поддерживается!'
+        version: 'WMSLoader:WMS версия %version% не поддерживаются!'
+        load: 'WMSLoader: WMS Capabilities не загружен!'
+      dialog:
+        btn:
+          cancel: Отменить
+          load: Загрузить
+        label:
+          example: Пример
+          wmsurl: 'Сервис URL'
+          wmsuser: Пользователь
+          wmspass: Пароль
+      repo:
+        form:
+          label:
+            ogcwms: 'OGC WMS'
+            serviceurl: 'Сервис URL'
+            username: 'Имя пользователя'
+            password: Пароль
+            load: Загрузить
+            cancel: Отменить
+            onlyvalid: 'Действительно только'
+        new:
+          label:
+            addservice: 'Добавить сервис'
+        instance:
+          title:
+            wmsinstance: 'WMS экземпляр'
+          btn:
+            save: Сохранить
+            cancel: Отменить
+          label:
+            originurl: 'Оригинал URL'
+            buffer: 'Кафель буфер'
+            ratio: 'BBOX фактор'
+            visible: Видимый
+            basesource: 'База Источник'
+            proxy: Прокси
+            transparency: Прозрачность
+            tiled: Плиточный
+            title: Название
+            minsc: Minsc
+            maxsc: Maxsc
+            active: Активный
+            select: Выбрать
+            info: Информация
+            toggle: Переключатель
+            reorder: 'Изменения порядка'
+            allow: Позволять
+            'on': Включи
+            save2: Сохранить
+            cancel2: Отменить
+          vendorspecific:
+            label: 'Vendor определенный'
+        macros:
+          label:
+            formats: Формиат
+        view:
+          label:
+            backtoservicelist: 'Назад к списку услуг'
+            metadata: Метаданные
+            contact: Контакт
+            details: Подробности
+            layers: Слои
+            title: Название
+            name: Имя
+            version: Версия
+            originurl: '>Оригинал URL'
+            abstract: Абстрактный
+            onlineresource: 'Интернет ресурс'
+            exceptionformats: 'Формат Исключение'
+            fees: Сборы
+            accessconstraints: 'Ограничения доступа'
+            person: Человек
+            organization: Организация
+            position: Позиция
+            telephone: Телефон
+            facsimile: Телефакс
+            email: E-mail
+            address: Адрес
+            addresstype: 'Тип Адреса'
+            city: Город
+            state: Государство
+            postcode: 'Почтовые индекс'
+            country: Страна
+          message:
+            cautionscalehint: 'Внимание: расчеты Scale подлежат ограниченное разрешение шкалы в WMS 1.1.1!'
+        instancelayer:
+          title:
+            servicerepository: 'Обслуживание репозитория'
+          label:
+            wmsinstancelayers: 'Слои WMS экземпляра'
+          btn:
+            save: Сохранить
+        preview:
+          title:
+            servicerepository: 'Обслуживание репозитория'
+          label:
+            load: Загрузить
+        layer:
+          label:
+            name: Имя
+            title: Название
+            abstract: Абстрактный
+            queryable: Queryable
+            cascaded: Каскадная
+            opaque: Непрозрачный
+            nosubset: 'Нет подгруппы'
+            fixedwidth: 'Фиксированная ширина'
+            fixedheight: 'Фиксированная Высота'
+            latlonbounds: LatLonBounds
+            boundingbox: BoundingBox
+            srs: SRS
+            styles: Styles
+            legendurl: 'Легенда URL'
+            stylesheeturl: 'Stylesheet URL'
+            styleurl: 'Style URL'
+            scale: Шкала
+            min: Минимальный
+            max: максимальная
+            scalehint: 'Масштаб Примечание'
+            attribution: Атрибуция
+            onlineresource: 'Интернет ресурсов'
+            logourl: 'Logo URL'
+            identifier: Идентификатор
+            authority: Полномочия
+            url: URL
+            value: Значение
+            metadataurl: 'Метаданные URL'
+            dimension: Измерение
+            extent: Экстент
+            dataurl: 'Data URL'
+            featurelisturl: 'Featurelist URL'
+        instancelayerform:
+          label:
+            layerstitle: 'Название слоя'
+            minscale: 'Минимальная шкала'
+            maxsclase: 'Максимальная Шкала'
+            active: Активный
+            allowselecttoc: 'Разрешить Выберите в TOC'
+            selectedtoc: 'Выбранный на TOC'
+            allowinfotoc: 'Allow FeatureInfo at TOC'
+            infotoc: 'FeatureInfo at TOC'
+            allowtoggletoc: 'Allow Toggle at TOC'
+            toggletoc: 'Toggle at TOC'
+            allowreordertoc: 'Разрешить Упорядочить по ТОС'
+            moreinfo: 'Больше информации'
+            id:
+              title: Id
+              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+            layersname: 'Имя слоя'
+            style: Style
+      admin:
+        label:
+          autoopen: 'Автоматический открыт'
+          splitlayers: 'Разделение слои'
+          declarative: 'Используйте декларативный'
+      class:
+        title: 'WMS loader'
+        description: 'Загружает WMS через GetCapabilities-Request'
+      tag:
+        wms: WMS
+        loader: загрузчик
+    dimensionsets:
+      no_dimension: 'нет размерность'
+    dimhandler:
+      class:
+        title: 'Размеры проводник'
+        description: 'Размеры обработчики группы и называет размерность поддерживается экземпляров на карту'
+      tag:
+        dimension: размерность
+        handler: проводник
+    repository:
+      parser:
+        couldnotparse: 'Не удалось проанализировать CapabilitiesDocument'
+        not_supported_document: 'Не поддерживается CapabilitiesDocument'
+        not_supported_version: 'Версия WMS не поддерживается'
+        not_valid_dtd: 'Документ WMS не действует (DTD)'
+        not_valid_xsd: 'Документ WMS не действует (XSD)'
+    metadata:
+      section:
+        common:
+          common: общий
+          title: Название
+          name: Имя
+          version: версия
+          originUrl: 'Оригинал URL'
+          description: описание
+          onlineResource: 'Интернет ресурс'
+          exceptionFormats: 'Исключение форматы'
+        useconditions:
+          title: 'условия использования'
+          fees: сборы
+          accessconstraints: 'ограничения доступа'
+        contact:
+          title: контакт
+          person: Человек
+          position: позиция
+          organization: организация
+          voiceTelephone: телефон
+          facsimileTelephone: Телефакс
+          electronicMailAddress: E-mail
+          address: адрес
+          addressType: 'тип адреса'
+          addressCity: Город
+          addressStateOrProvince: 'штат или провинция'
+          addressPostCode: 'Почтовый индекс'
+          addressCountry: страна
+        items:
+          layer: Слой
+          title: название
+          name: Имя
+          srs: SRS
+          bbox: BoundingBox

@@ -1,0 +1,234 @@
+mb:
+  wms:
+    wmsloader:
+      admin:
+        label:
+          autoopen: 'Auto abrir'
+          splitlayers: 'Partir las capas'
+          declarative: 'Uso declarativo'
+      class:
+        title: 'WMS cargador'
+        description: 'Cargar un WMS via getCapabilities-Request'
+      tag:
+        wms: wms
+        loader: cargar
+      dialog:
+        label:
+          example: Ejemplo
+          wmsurl: 'Servicio URL'
+          wmsuser: User
+          wmspass: Password
+        btn:
+          cancel: Cancelar
+          load: Cargar
+      error:
+        url: 'WMSLoader: Las capacidades del WMS no pueden ser cargadas! Las características de la url no son válidadas.'
+        service: 'WMSLoader: el servicio %service% no es soportado!'
+        operation: 'WMSLoader: La Operación WMS %operation%  no es soportada!'
+        version: 'WMSLoader: la versión WMS no es soportada!'
+        load: 'WMSLoader: las características del wms no pueden ser cargadas!'
+      repo:
+        preview:
+          title:
+            servicerepository: 'Repositorio de Servicio'
+          label:
+            load: Cargar
+        view:
+          title:
+            wms: WMS
+          label:
+            backtoservicelist: 'Regresar al Listado de Servicio'
+            metadata: Metadata
+            contact: Contacto
+            details: Detalles
+            layers: Capas
+            title: Título
+            name: Nombre
+            version: Versión
+            originurl: 'Origen del URL'
+            abstract: Abstracto
+            onlineresource: 'Recurso en línea'
+            exceptionformats: 'Formatos de Excepción'
+            fees: Cuotas
+            accessconstraints: 'Restricciones de Acceso'
+            person: Persona
+            organization: Organización
+            position: Posición
+            telephone: Teléfono
+            facsimile: Facsímil
+            email: Email
+            address: Dirección
+            addresstype: 'Tipo Dirección'
+            city: Ciudad
+            state: Estado
+            postcode: 'Código Postal'
+            country: País
+          message:
+            cautionscalehint: 'Precaución: Calculos de escala están sujetos a limitaciones de resolución ScaleHint en WMS 1.1.1!'
+        macros:
+          label:
+            formats: Formatos
+        new:
+          label:
+            addservice: 'Agregar Servicio'
+        instance:
+          title:
+            wmsinstance: 'WMS instancia'
+          btn:
+            save: Guardar
+            cancel: Cancelar
+          label:
+            originurl: 'Origen URL'
+            visible: Visible
+            basesource: 'Fuente WMS'
+            proxy: Proxy
+            transparency: Transparencia
+            tiled: Tiled
+            title: Título
+            minsc: Minsc
+            maxsc: Maxsc
+            active: activo
+            select: seleccionar
+            info: info
+            toggle: cambiar
+            reorder: reordenar
+            allow: permitir
+            'on': 'on'
+            save2: Guardar
+            cancel2: Cancelar
+            ratio: 'BBOX factor'
+            buffer: 'Tile buffer'
+          vendorspecific:
+            label: 'Vendor specific'
+        form:
+          label:
+            ogcwms: 'OGC WMS'
+            serviceurl: 'Servicio URL'
+            username: Usuario
+            password: Clave
+            load: Cargar
+            cancel: Cancelar
+            onlyvalid: 'Only valid'
+        instancelayerform:
+          label:
+            layerstitle: 'Título de las Capas'
+            minscale: Minscale
+            maxsclase: Maxsclase
+            active: activo
+            allowselecttoc: 'Permitir Seleccionar en TOC'
+            selectedtoc: 'Seleccionado en TOC'
+            allowinfotoc: 'Permitir FeatureInfo en TOC'
+            infotoc: 'FeatureInfo en TOC'
+            allowtoggletoc: 'Permitir Toggle en TOC'
+            toggletoc: 'Toggle en TOC'
+            allowreordertoc: 'Permitir Reordenar en TOC'
+            moreinfo: 'Más información'
+            id:
+              title: ID
+              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+            layersname: 'Nombre de las Capas'
+            style: Estilo
+        instancelayer:
+          title:
+            servicerepository: 'Repositorio de Servicio'
+          label:
+            wmsinstancelayers: 'WMS Capa de Instancia'
+          btn:
+            save: Guardar
+        layer:
+          label:
+            name: Nombre
+            title: Título
+            abstract: Abstracto
+            queryable: Consultable
+            cascaded: 'En cascada'
+            opaque: Opaco
+            nosubset: NoSubconjunto
+            fixedwidth: FixedWidth
+            fixedheight: FixedHeight
+            latlonbounds: LatLonBounds
+            boundingbox: BoundingBox
+            srs: SRS
+            styles: Estilos
+            legendurl: 'Leyenda URL'
+            stylesheeturl: 'Hoja de Estilos URL'
+            styleurl: 'Estilos URL'
+            scale: Escala
+            min: Min
+            max: Max
+            scalehint: Scalehint
+            attribution: Atribución
+            onlineresource: 'Recurso en línea'
+            logourl: 'Logo URL'
+            identifier: Identificador
+            authority: Autoridad
+            url: URL
+            value: Valor
+            metadataurl: 'Metadata URL'
+            dimension: Dimensión
+            extent: Extención
+            dataurl: 'Datos URL'
+            featurelisturl: 'Featurelist URL'
+    repository:
+      parser:
+        couldnotparse: 'Could not parse'
+        not_supported_document: 'Not supported document'
+        not_supported_version: 'Not supported version'
+        not_valid_dtd: 'Dtd not valid'
+        not_valid_xsd: 'XSD not valid'
+    metadata:
+      section:
+        common:
+          common: Common
+          title: Title
+          name: Name
+          version: Version
+          originUrl: 'Origin Url'
+          description: Description
+          onlineResource: OnlineResource
+          exceptionFormats: 'Exception formats'
+        useconditions:
+          title: 'Terms of use'
+          fees: Fees
+          accessconstraints: 'Access constraints'
+        contact:
+          title: Contact
+          person: Person
+          position: Position
+          organization: Organization
+          voiceTelephone: Telephone
+          facsimileTelephone: Facsimile
+          electronicMailAddress: Email
+          address: Address
+          addressType: 'Address type'
+          addressCity: City
+          addressStateOrProvince: 'State or province'
+          addressPostCode: 'Post code'
+          addressCountry: Country
+        items:
+          layer: Layer
+          title: Title
+          name: Name
+          srs: SRS
+          bbox: BoundingBox
+    repo:
+      instance:
+        label:
+          dimensions: Dimensions
+    dimhandler:
+      class:
+        title: 'Dimensions handler'
+        description: 'DimensionsHandler groups and calls the dimension supported instances at the map'
+      tag:
+        dimension: dimension
+        handler: handler
+    dimensionsets:
+      no_dimension: 'no dimension'
+  wmc:
+    wmsloader:
+      class:
+        title: 'Wms Cargador'
+        description: 'Abre un diálogo el el cual un WMS puede ser cargado via getCapabilities-Request'
+      tag:
+        wms: wms
+        loader: cargador
