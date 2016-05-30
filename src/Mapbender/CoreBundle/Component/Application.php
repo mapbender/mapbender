@@ -146,7 +146,8 @@ class Application
      */
     public function render($format = 'html', $html = true, $css = true, $js = true, $trans = true)
     {
-        return $this->getTemplate()->render($format, $html, $css, $js, $trans);
+        $template = $this->getTemplate();
+        return $template->render($format, $html, $css, $js, $trans);
     }
 
     /**
@@ -486,22 +487,8 @@ class Application
                 }
                 $this->elements[$r][] = $element;
             }
+            $this->sortElementsByWidth();
 
-            // Sort each region element's by weight
-            /** @var Element[] $elements */
-            foreach ($this->elements as $r => $elements) {
-                usort(
-                    $elements,
-                    function (Element $a, Element $b) {
-                        $wa = $a->getEntity()->getWeight();
-                        $wb = $b->getEntity()->getWeight();
-                        if ($wa == $wb) {
-                            return 0;
-                        }
-                        return ($wa < $wb) ? -1 : 1;
-                    }
-                );
-            }
         }
 
         if ($region) {
@@ -715,5 +702,27 @@ class Application
         }
         Utils::copyOrderRecursive($src, $dst);
         return true;
+    }
+
+    /**
+     * Sort region elements by width
+     */
+    protected function sortElementsByWidth()
+    {
+        // Sort each region element's by weight
+        /** @var Element[] $elements */
+        foreach ($this->elements as $r => $elements) {
+            usort(
+                $elements,
+                function (Element $a, Element $b) {
+                    $wa = $a->getEntity()->getWeight();
+                    $wb = $b->getEntity()->getWeight();
+                    if ($wa == $wb) {
+                        return 0;
+                    }
+                    return ($wa < $wb) ? -1 : 1;
+                }
+            );
+        }
     }
 }

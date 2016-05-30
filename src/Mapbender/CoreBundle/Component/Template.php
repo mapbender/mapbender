@@ -12,17 +12,25 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class Template
 {
     protected $container;
+
+    /** @var Application */
     protected $application;
 
     /** @var string Bundle public resource path */
     private static $resourcePath;
 
 
+    /**
+     * Template constructor.
+     *
+     * @param ContainerInterface $container
+     * @param Application        $application
+     */
     public function __construct(ContainerInterface $container, Application $application)
     {
-        self::$resourcePath     = '@'. $this->getBundleName().'/Resources/public';
-        $this->container = $container;
-        $this->application = $application;
+        self::$resourcePath = '@' . $this->getBundleName() . '/Resources/public';
+        $this->container    = $container;
+        $this->application  = $application;
     }
 
     /**
@@ -38,6 +46,9 @@ abstract class Template
         throw new \RuntimeException('getTitle must be implemented in subclasses');
     }
 
+    /**
+     * @return array
+     */
     static public function listAssets()
     {
         return array();
@@ -121,7 +132,8 @@ abstract class Template
      *
      * @return string
      */
-    public static function getResourcePath() {
+    public static function getResourcePath()
+    {
         return self::$resourcePath;
     }
 }
