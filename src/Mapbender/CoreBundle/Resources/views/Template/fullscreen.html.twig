@@ -22,17 +22,20 @@
 {% block frontend_content %}
 
   <div id="templateWrapper" class="templateWrapper sidePaneOpened">
-    <div class="logoContainer">
-      <img class="logo" height="40" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
-    </div>
+    {% if fom.server_logo is defined %}
+      <div class="logoContainer">
+        <img class="logo" height="40" src="{{ asset(fom.server_logo) }}"/>
+      </div>
+    {% endif %}
 
+
+    {% if application.elements.toolbar is defined %}
     <ul id="toolbar" class="toolBar itemsRight top">
-      {% if application.elements.toolbar is defined %}
-        {% for element in application.elements.toolbar %}
+        {% for element in application.elements('toolbar') %}
           <li class="toolBarItem">{{ element.render() | raw }}</li>
         {% endfor %}
-      {% endif %}
     </ul>
+    {% endif %}
 
     {# Right sidepane definition #}
     {% set name = 'sidepane' %}
@@ -55,13 +58,13 @@
       {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
     </div>
 
+    {% if application.elements.footer is defined %}
     <ul id="footer" class="toolBar itemsRight bottom">
-      {% if application.elements.footer is defined %}
-        {% for element in application.elements.footer %}
+        {% for element in application.elements('footer')%}
           <li class="toolBarItem">{{ element.render() | raw }}</li>
         {% endfor %}
-      {% endif %}
     </ul>
+    {% endif %}
   </div>
 
 {% endblock %}
