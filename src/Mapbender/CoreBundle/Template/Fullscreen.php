@@ -99,13 +99,15 @@ class Fullscreen extends Template
         $applicationEntity    = $application->getEntity();
         $templating           = $this->container->get('templating');
 
+        $parameters = array(
+            'html'                 => $html,
+            'css'                  => $css,
+            'js'                   => $js,
+            'application'          => $application,
+            'region_props'         => $applicationEntity->getNamedRegionProperties(),
+            'default_region_props' => $this->getRegionsProperties());
+
         return $templating
-            ->render('MapbenderCoreBundle:Template:fullscreen.html.twig', array(
-                'html'                 => $html,
-                'css'                  => $css,
-                'js'                   => $js,
-                'application'          => $application,
-                'region_props'         => $applicationEntity->getNamedRegionProperties(),
-                'default_region_props' => $this->getRegionsProperties()));
+            ->render('MapbenderCoreBundle:Template:fullscreen.html.twig', $parameters);
     }
 }
