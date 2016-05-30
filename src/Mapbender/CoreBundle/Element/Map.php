@@ -269,7 +269,7 @@ class Map extends Element
     protected function loadSrsDefinitions()
     {
         $srsList = $this->container->get('request')->get("srs", null);
-        $srses   = preg_split("/\s?,\s?/", $srsList);
+        $srses   = is_array($srsList) ? $srsList : preg_split("/(\s?,\s?)?/", $srsList); // is $srsList a csv ?
         $allsrs  = array();
         foreach ($srses as $srs) {
             if (is_int(stripos($srs, "|"))) {

@@ -1,9 +1,14 @@
 <div class="elementFormSearchRouter elementForm">
+    <div class="left">
+        {{ form_widget(form.configuration.dialog) }} {{ form_label(form.configuration.dialog) }}
+    </div>
+    <div class="left">
+        {{ form_widget(form.configuration.cleanOnClose) }} {{ form_label(form.configuration.cleanOnClose) }}
+    </div>
+    <div class="clearContainer"></div>
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.dialog) }}{{ form_widget(form.configuration.dialog) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.timeout) }}{{ form_widget(form.configuration.timeout) }}
     <div class="clearContainer"></div>

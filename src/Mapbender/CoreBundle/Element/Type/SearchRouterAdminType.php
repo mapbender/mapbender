@@ -39,6 +39,8 @@ class SearchRouterAdminType extends AbstractType
                 'required' => false))
             ->add('dialog', 'checkbox', array(
                 'property_path' => '[asDialog]'))
+            ->add('cleanOnClose', 'checkbox', array(
+                'required' => false))
             ->add('timeout', 'integer', array(
                 'label' => 'Timeout factor',
                 'property_path' => '[timeoutFactor]'))
@@ -51,5 +53,4 @@ class SearchRouterAdminType extends AbstractType
                 'auto_initialize' => false,))
             ->addViewTransformer(new SearchRouterRouteTransformer()));
     }
-
 }

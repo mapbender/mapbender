@@ -7,12 +7,10 @@
 
     $.widget('mapbender.mbSearchRouter', {
         options: {
-            asDialog: true,     // Display as jQuery UI dialog
-            timeoutFactor: 2    // use delay * timeoutFactor before showing
-                                // autocomplete again after a search has been
-                                // started
+            asDialog: true,         // Display as jQuery UI dialog
+            timeoutFactor: 2,       // use delay * timeoutFactor before showing
+            cleanOnClose: false,    // remove all search results, reset a serach form by searchProuter close
         },
-
         callbackUrl: null,
         selected: null,
         highlightLayer: null,
@@ -22,7 +20,8 @@
         searchModel: null,
         autocompleteModel: null,
         popup: null,
-
+        highlighter: {},
+        currentStyle: null,
         /**
          * Widget creator
          */
@@ -64,14 +63,15 @@
                     }
                 }
             }
-            // load projections
+            /* load projections */
             if (srsList.length) {
                 $('#' + options.target).data('mapbenderMbMap').loadSrs(srsList);
             }
             var searchModel = widget.searchModel = new Mapbender.SearchModel(null, null, widget);
             var routeSelect = $('select#search_routes_route', element);
             var routeCount = 0;
-            var map = widget.map = $('#' + options.target).data('mapbenderMbMap').map.olMap;
+            widget.mbMap = $('#' + options.target).data('mapbenderMbMap');
+            var map = widget.map = widget.mbMap.map.olMap;
 
             // bind form reset to reset search model
             element.delegate('.search-forms form', 'reset', function(){
@@ -119,8 +119,7 @@
                 }
             }
             if(routeCount === 1){
-                $('#search_routes_route_control_group').hide()
-                    .next('hr').hide();
+                $('#search_routes_route_control_group').hide().next('hr').hide();
             }
 
             if(!options.asDialog) {
@@ -138,6 +137,8 @@
                     }
                 });
             }
+
+            $(document).bind('mbmapsrschanged', $.proxy(this._srschanged, this));
 
             map.events.register("zoomend", this, function() {
                 widget.redraw();
@@ -157,7 +158,7 @@
         removeLastResults: function(){
             var widget = this;
             widget.searchModel.reset();
-            widget._getLayer().removeAllFeatures();
+//            widget._getLayer().removeAllFeatures();
         },
 
         /**
@@ -234,6 +235,9 @@
                 }
             }
             this.callback ? this.callback.call() : this.callback = null;
+            if(this.options.cleanOnClose) {
+                this._reset();
+            }
         },
 
         /**
@@ -255,6 +259,7 @@
             });
 
             $('.search-results', this.element).empty();
+            this.currentStyle = this._createStyleMap(this.options.routes[this.selected].results.styleMap);
         },
 
         /**
@@ -263,8 +268,9 @@
         _reset: function() {
             $('select#search_routes_route', this.element).change();
             this.currentFeature = null;
+            this._removeResults();
         },
-
+        
         /**
          * Set up autocomplete widgets for all inputs with data-autcomplete="on"
          *
@@ -433,16 +439,17 @@
         _searchResultsTable: function(model, results, options){
             var headers = this.options.routes[this.selected].results.headers,
                 table = $('.search-results table', this.element),
-                tbody = $('<tbody></tbody>'),
-                layer = this._getLayer(true);
+                tbody = $('<tbody></tbody>');
 
             $('tbody', table).remove();
-            layer.removeAllFeatures();
-            features = [];
 
             if(results.length > 0) $('.no-results', this.element).hide();
-
+            
+            var first_srs = null;
             results.each(function(feature, idx){
+                if(!first_srs){
+                    first_srs = 'EPSG:' + feature.attributes.srid;
+                }
                 var row = $('<tr/>');
                 row.addClass(idx % 2 ? "even" : "odd");
                 row.data('feature', feature);
@@ -451,12 +458,14 @@
                     row.append($('<td>' + (d || '') + '</td>'));
                 }
                 tbody.append(row);
-
-                features.push(feature.getFeature());
             });
-
+            if (!Mapbender.Model.getProj(first_srs)) {
+                this.mbMap.loadSrs([first_srs]);
+            }
             table.append(tbody);
-            layer.addFeatures(features);
+            
+            $('.search-results tr', this.element).on('mouseover', $.proxy(this._mouseOver, this));
+            $('.search-results tr', this.element).on('mouseout', $.proxy(this._mouseOut, this));
         },
 
         _showResultState: function() {
@@ -508,27 +517,27 @@
                 extendDefault: o.extendDefault
             });
         },
-
-        /**
-         * Get highlight layer. Will construct one if neccessary.
-         * @TODO: Backbonify (view)
-         *
-         * @return OpenLayers.Layer.Vector Highlight layer
-         */
-        _getLayer: function(forceRebuild){
-            if(this.highlightLayer === null || forceRebuild){
-                this.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight', {
-                    styleMap: this._createStyleMap(this.options.routes[this.selected].results.styleMap)
-                });
-            }
-
-            if(this.highlightLayer.map === null){
-                var map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
-                map.addLayer(this.highlightLayer);
-            }
-
-            return this.highlightLayer;
-        },
+//
+//        /**
+//         * Get highlight layer. Will construct one if neccessary.
+//         * @TODO: Backbonify (view)
+//         *
+//         * @return OpenLayers.Layer.Vector Highlight layer
+//         */
+//        _getLayer: function(forceRebuild){
+//            if(this.highlightLayer === null || forceRebuild){
+//                this.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight', {
+//                    styleMap: this._createStyleMap(this.options.routes[this.selected].results.styleMap)
+//                });
+//            }
+//
+//            if(this.highlightLayer.map === null){
+//                var map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
+//                map.addLayer(this.highlightLayer);
+//            }
+//
+//            return this.highlightLayer;
+//        },
 
         /**
          * Set up result callback (zoom on click for example)
@@ -554,70 +563,55 @@
          * @param  jQuery.Event event Mouse event
          */
         _resultCallback: function(event){
-            var widget = this;
-            var options = widget.options;
-            var routes = options.routes;
-            var row = $(event.currentTarget),
-                feature = $.extend({}, row.data('feature').getFeature()),
-                map = feature.layer.map,
-                callbackConf = routes[widget.selected].results.callback;
+            var feature = $(event.currentTarget).data('feature').getFeature().clone();
             var srs = Mapbender.Model.getProj('EPSG:' + feature.attributes.srid);
-            var mapProj = Mapbender.Model.getCurrentProj();
-            if(srs.projCode !== mapProj.projCode) {
-                feature.geometry = feature.geometry.transform(srs, mapProj);
+            var results = this.options.routes[this.selected].results;
+            var c_options = results.callback && results.callback.options ? results.callback.options : null;
+            feature.style = this.currentStyle.styles.select.defaultStyle;
+            var highlighter = this._getHighLighter('center');
+            var zoomOptions = {
+                buffer: c_options && c_options.buffer ? c_options.buffer : null,
+                minScale: c_options && c_options.minScale ? c_options.minScale : null,
+                maxScale: c_options && c_options.maxScale ? c_options.maxScale : null
+            };
+            if(event.ctrlKey){
+                highlighter.add(feature, srs).show().zoom(feature.geometry, srs, zoomOptions);
+            } else {
+                highlighter.remove().add(feature, srs).show().zoom(feature.geometry, srs, zoomOptions);
             }
-            var featureExtent = $.extend({},feature.geometry.getBounds());
-
-            // buffer, if needed
-            if(callbackConf.options && callbackConf.options.buffer){
-                var radius = callbackConf.options.buffer;
-                featureExtent.top += radius;
-                featureExtent.right += radius;
-                featureExtent.bottom -= radius;
-                featureExtent.left -= radius;
+        },
+        
+        _srschanged: function(event, srs){
+            srs = { projection: this.mbMap.map.olMap.getProjectionObject() };
+            for(var key in this.highlighter){
+                this.highlighter[key].hide().transform(srs).show();
             }
-
-            // get zoom for buffered extent
-            var zoom = map.getZoomForExtent(featureExtent);
-
-            // restrict zoom if needed
-            if(callbackConf.options &&
-               (callbackConf.options.maxScale || callbackConf.options.minScale)){
-
-                var res = map.getResolutionForZoom(zoom);
-                var units = map.baseLayer.units;
-                var scale = OpenLayers.Util.getScaleFromResolution(res, units);
-
-
-                if(callbackConf.options.maxScale){
-                    var maxRes = OpenLayers.Util.getResolutionFromScale(
-                        callbackConf.options.maxScale, map.baseLayer.units);
-                    if(Math.round(res) < maxRes){
-                        zoom = map.getZoomForResolution(maxRes);
-                    }
-                }
-
-                if(callbackConf.options.minScale){
-                    var minRes = OpenLayers.Util.getResolutionFromScale(
-                        callbackConf.options.minScale, map.baseLayer.units);
-                    if(Math.round(res) > minRes){
-                        zoom = map.getZoomForResolution(minRes);
-                    }
-                }
+        },
+        
+        _getHighLighter: function(key) {
+            if (!this.highlighter[key]) {
+                this.highlighter[key] = new Mapbender.SimpleHighlighting(this.mbMap, 1.0, key === 'mouseover' ? this.options.hover_style : this.options.hits_style);
             }
+            return this.highlighter[key];
+        },
 
-            // finally, zoom
-            map.setCenter(featureExtent.getCenterLonLat(), zoom);
-
-            // And highlight new feature
-            var layer = feature.layer;
-            $.each(layer.selectedFeatures, function(idx, feature) {
-                layer.drawFeature(feature, 'default');
-            });
-
-            widget.currentFeature = feature;
-            widget.redraw();
-            layer.selectedFeatures.push(feature);
+        _mouseOver: function(event){
+            var feature = $(event.currentTarget).data('feature').getFeature().clone();
+            var srs = Mapbender.Model.getProj('EPSG:' + feature.attributes.srid);
+            feature.style = this.currentStyle.styles.default.defaultStyle;
+            var highlighter = this._getHighLighter('mouse');
+            highlighter.add(feature, srs).show();
+        },
+        _mouseOut: function(e){
+            this._getHighLighter('mouse').remove();
+        },
+        
+        _removeResults: function(){
+            for(var key in this.highlighter){
+                this.highlighter[key].hide().remove();
+            }
+            $('.search-results tr', this.element).off('mouseover', $.proxy(this._mouseOver, this));
+            $('.search-results tr', this.element).off('mouseout', $.proxy(this._mouseOut, this));
         },
 
         /**

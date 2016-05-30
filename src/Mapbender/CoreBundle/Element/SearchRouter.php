@@ -65,6 +65,7 @@ class SearchRouter extends Element
             "dialog" => false,
             "target" => null,
             'timeoutFactor' => 3,
+            'cleanOnClose' => false,
             "width" => 700,
             "height" => 500
         );
@@ -84,7 +85,8 @@ class SearchRouter extends Element
                 'vendor/backbone.js',
                 'mapbender.element.searchRouter.Feature.js',
                 'mapbender.element.searchRouter.Search.js',
-                'mapbender.element.searchRouter.js'),
+                'mapbender.element.searchRouter.js',
+                'mapbender.highlighting.js'),
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss'),
             'trans' => array('MapbenderCoreBundle:Element:search_router.json.twig'));
     }

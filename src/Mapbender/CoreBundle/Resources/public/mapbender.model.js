@@ -663,12 +663,10 @@ Mapbender.Model = {
             }
         });
     },
-    /**
-     *
-     */
-    highlightOn: function(features, options) {
-        var self = this;
+    
+    createHighlightLayer: function() {
         if (!this.highlightLayer) {
+            var self = this;
             this.highlightLayer = this.map.layers({
                 type: 'vector',
                 label: 'Highlight'
@@ -690,6 +688,13 @@ Mapbender.Model = {
             this.map.olMap.addControl(selectControl);
             selectControl.activate();
         }
+    },
+    /**
+     *
+     */
+    highlightOn: function(features, options) {
+        var self = this;
+        this.createHighlightLayer();
         var o = $.extend({}, {
             clearFirst: true,
             "goto": true
