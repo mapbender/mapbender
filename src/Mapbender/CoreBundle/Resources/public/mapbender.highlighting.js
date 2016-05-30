@@ -2,6 +2,7 @@ var Mapbender = Mapbender || {};
 Mapbender.SimpleHighlighting = Mapbender.SimpleHighlighting || function(map, defaultBuffer, defaultStyle) {
     var shl = this;
     this.mbMap = map;
+    this.mbMap.getModel().createHighlightLayer();
     if(defaultBuffer) {
         this.defaultBuffer = defaultBuffer;
     } else {
@@ -59,12 +60,14 @@ Mapbender.SimpleHighlighting = Mapbender.SimpleHighlighting || function(map, def
     };
     this.transform = function(srs){
         for(var i = 0; i < this.features.length; i++) {
-            this.features[i].geometry = _transform(this.srs, srs);
+            this.features[i].geometry = _transform(this.features[i].geometry, this.srs, srs);
         }
         this.srs = srs;
+        return this;
     };
-    this.zoom = function(geometry, srs, zoomOptions) {
-        var geometry = _transform(geometry, srs, this.mbMap.getModel().getCurrentProj(), true);
+    this.zoom = function(zoomOptions) {
+        var allGeomExtent = this.mbMap.getModel().highlightLayer.olLayer.getDataExtent(); // highlightLayer existst
+        var geometry = allGeomExtent.toGeometry();
         var zoomLevel = null;
         var centroid = null;
         if(zoomOptions.buffer){
@@ -103,5 +106,6 @@ Mapbender.SimpleHighlighting = Mapbender.SimpleHighlighting || function(map, def
             centroid = geometry.getCentroid();
         }
         this.mbMap.map.olMap.setCenter(new OpenLayers.LonLat(centroid.x, centroid.y), zoomLevel);
+        return this;
     };
 };

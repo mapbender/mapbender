@@ -368,7 +368,6 @@
                 diff = (new Date()) - this.lastSearch;
 
             autoCompleteMenu.addClass("search-router");
-            console.log(autoCompleteMenu.attr("class"));
 
             if(diff <= delay * this.options.timeoutFactor){
                 event.preventDefault();
@@ -575,9 +574,9 @@
                 maxScale: c_options && c_options.maxScale ? c_options.maxScale : null
             };
             if(event.ctrlKey){
-                highlighter.add(feature, srs).show().zoom(feature.geometry, srs, zoomOptions);
+                highlighter.add(feature, srs).show().zoom(zoomOptions);
             } else {
-                highlighter.remove().add(feature, srs).show().zoom(feature.geometry, srs, zoomOptions);
+                highlighter.remove().add(feature, srs).show().zoom(zoomOptions);
             }
         },
         
