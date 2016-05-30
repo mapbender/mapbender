@@ -367,14 +367,16 @@ class Application
     {
         /** @var Element[] $elements */
         $regions = $this->getElements();
+        $r       = null;
         foreach ($regions as $region => $elements) {
             foreach ($elements as $element) {
                 if ($id == $element->getId()) {
-                    return $element;
+                    $r = $element;
+                    break;
                 }
             }
         }
-        throw new NotFoundHttpException();
+        return $r;
     }
 
     /**

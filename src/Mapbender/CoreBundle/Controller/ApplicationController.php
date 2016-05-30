@@ -137,7 +137,12 @@ class ApplicationController extends Controller
      */
     public function elementAction($slug, $id, $action)
     {
-        $element = $this->getApplication($slug)->getElement($id);
+        $application = $this->getApplication($slug);
+        $element     = $application->getElement($id);
+
+        if(!$element){
+            throw new NotFoundHttpException();
+        }
 
         return $element->httpAction($action);
     }
