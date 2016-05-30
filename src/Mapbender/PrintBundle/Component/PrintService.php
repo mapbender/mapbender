@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Component\SecurityContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -13,6 +14,23 @@ use OwsProxy3\CoreBundle\Component\CommonProxy;
  */
 class PrintService
 {
+    /** @var PDF_ImageAlpha */
+    protected $pdf;
+    protected $tempdir;
+    protected $conf;
+    protected $data;
+    protected $rotation;
+    protected $resourceDir;
+    protected $finalImageName;
+    protected $user;
+    protected $tempDir;
+    protected $mapRequests;
+    protected $imageWidth;
+    protected $imageHeight;
+    protected $neededExtentWidth;
+    protected $neededExtentHeight;
+    protected $neededImageWidth;
+    protected $neededImageHeight;
 
     public function __construct($container)
     {
@@ -40,9 +58,10 @@ class PrintService
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         
         // get user
+        /** @var SecurityContext $securityContext */
         $securityContext = $this->container->get('security.context');
-        $token = $securityContext->getToken();
-        $this->user = $token->getUser();
+        $token           = $securityContext->getToken();
+        $this->user      = $token->getUser();
         
         // data from client
         $this->data = $data;
@@ -420,12 +439,14 @@ class PrintService
         }
         
         // add dynamic logo
-        if ($this->conf['dynamic_image']){
+        if (isset($this->conf['dynamic_image']) && $this->conf['dynamic_image']){
             $this->addDynamicImage();
         }
         
         // add dynamic text
-        if ($this->conf['fields']['dynamic_text']){
+        if (isset($this->conf['fields'])
+            && isset($this->conf['fields']['dynamic_text'])
+            && $this->conf['fields']['dynamic_text']){
             $this->addDynamicText();
         }
         
@@ -439,8 +460,9 @@ class PrintService
 
     private function addNorthArrow()
     {
-        $rotation = $this->rotation;
         $northarrow = $this->resourceDir . '/images/northarrow.png';
+        $rotation = $this->rotation;
+        $rotatedImageName = null;
 
         if($rotation != 0){
             $image = imagecreatefrompng($northarrow);
@@ -470,7 +492,7 @@ class PrintService
                             $this->conf['northarrow']['width'],
                             $this->conf['northarrow']['height'],
                             'png');
-        if($rotation != 0){
+        if($rotatedImageName){
             unlink($rotatedImageName);
         }
     }
@@ -942,10 +964,10 @@ class PrintService
                 $tempY = round($size[1] * 25.4 / 96) + 10;
 
                 if($c> 1){
-                    if($y + $tempY > ($this->pdf->h)){
+                    if($y + $tempY > ($this->pdf->getHeight())){
                         $x += 105;
                         $y = 10;
-                        if($x > ($this->pdf->w)){
+                        if($x > ($this->pdf->getWidth())){
                             $this->pdf->addPage('P');
                             $x = 5;
                             $y = 10;
@@ -959,11 +981,11 @@ class PrintService
                 $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
 
                 $y += round($size[1] * 25.4 / 96) + 10;
-                if($y > ($this->pdf->h)){
+                if($y > ($this->pdf->getHeight())){
                     $x += 105;
                     $y = 10;
                 }
-                if($x > ($this->pdf->w) && $c < $arraySize){
+                if($x > ($this->pdf->getWidth()) && $c < $arraySize){
                     $this->pdf->addPage('P');
                     $x = 5;
                     $y = 10;

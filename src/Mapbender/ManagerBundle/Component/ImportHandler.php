@@ -128,7 +128,9 @@ class ImportHandler extends ExchangeHandler
 
     /**
      * Imports applications.
+     *
      * @param array $data data to import
+     * @return array
      * @throws ImportException
      */
     private function importApps($data)
@@ -150,6 +152,10 @@ class ImportHandler extends ExchangeHandler
         return $apps;
     }
 
+    /**
+     * @param $object
+     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
+     */
     private function addAcls($object)
     {
         $aces = array();
@@ -186,12 +192,19 @@ class ImportHandler extends ExchangeHandler
      * Imports ACLs.
      * @param array $data data to import
      * @throws ImportException
+     * @todo implement this.
      */
     private function importAcls($data)
     {
-        // TODO
+
     }
 
+    /**
+     * @param array $sources
+     * @param array $item
+     * @param int   $idx
+     * @return bool
+     */
     private function findSourceToMapper(array $sources, array $item, $idx = 0)
     {
         if (count($sources) === 0) {
@@ -216,6 +229,9 @@ class ImportHandler extends ExchangeHandler
      * Adds entitiy with assoc. items to mapper.
      *
      * @param object $object source
+     * @param array  $data
+     * @param array  $result
+     * @throws \Exception
      */
     private function addSourceToMapper($object, array $data, array &$result)
     {
@@ -270,6 +286,9 @@ class ImportHandler extends ExchangeHandler
         }
     }
 
+    /**
+     * @param array $mapper
+     */
     private function mergeIntoMapper(array $mapper)
     {
         foreach ($mapper as $class => $content) {

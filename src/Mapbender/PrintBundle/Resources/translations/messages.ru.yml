@@ -1,0 +1,20 @@
+mb:
+  print:
+    imageexport:
+      popup:
+        btn:
+          ok: Экспорт
+          cancel: Отменить
+      info:
+        noactivelayer: 'Нет активного слоя!'
+      chooseformat: Формат
+      class:
+        title: 'Экспорт изображения'
+        description: |
+          Позволяет экспортировать текущее отображение карты.
+          Доступны PNG и JPEG форматы.
+      tag:
+        image: Изображение
+        export: Экспорт
+        jpeg: jpeg
+        png: png

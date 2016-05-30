@@ -3,10 +3,10 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\SecurityContext;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Mapbender\CoreBundle\Entity\Application;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * Welcome controller.
@@ -22,25 +22,25 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 class WelcomeController extends Controller
 {
     /**
-     * List applications.
+     * Render user application list.
      *
      * @Route("/")
      * @Template()
      */
     public function listAction()
     {
-        /** @var SecurityContext $securityContext */
-        $securityContext     = $this->get('security.context');
-        $oid                 = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+        $securityContext     = $this->getContext();
         $applications        = $this->get('mapbender')->getApplicationEntities();
         $allowedApplications = array();
+
         foreach ($applications as $application) {
             if ($application->isExcludedFromList()) {
                 continue;
             }
 
             if ($securityContext->isUserAllowedToView($application)) {
-                if (!$application->isPublished() && !$securityContext->isUserAllowedToEdit($application)) {
+                if (!$application->isPublished()
+                    && !$securityContext->isUserAllowedToEdit($application)) {
                     continue;
                 }
                 $allowedApplications[] = $application;
@@ -50,8 +50,27 @@ class WelcomeController extends Controller
         return array(
             'applications'      => $allowedApplications,
             'uploads_web_url'   => AppComponent::getUploadsUrl($this->container),
-            'create_permission' => $securityContext->isGranted('CREATE', $oid),
+            'create_permission' => $securityContext->isUserAllowedToCreate(new Application()),
             'time'              => new \DateTime()
         );
+    }
+
+    /**
+     * @return SecurityContext
+     */
+    protected function getContext()
+    {
+        return $this->get('security.context');
+    }
+
+    /**
+     * Translate string;
+     *
+     * @param string $key Key name
+     * @return string
+     */
+    protected function translate($key)
+    {
+        return $this->get('translator')->trans($key);
     }
 }

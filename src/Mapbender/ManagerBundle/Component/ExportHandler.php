@@ -73,16 +73,18 @@ class ExportHandler extends ExchangeHandler
     }
 
     /**
-     * @param $scr
+     * Encode array to given format (YAML|JSON).
+     *
+     * @param $data
      * @return string
      */
-    public function format($scr)
+    public function format($data)
     {
         if ($this->job->getFormat() === ExchangeJob::FORMAT_JSON) {
-            return json_encode($scr);
+            return json_encode($data);
         } elseif ($this->job->getFormat() === ExchangeJob::FORMAT_YAML) {
             $dumper = new Dumper();
-            $yaml   = $dumper->dump($scr, 20);
+            $yaml   = $dumper->dump($data, 20);
             return $yaml;
         }
     }
