@@ -425,6 +425,7 @@
                     this._prepareResultTable(container);
                 }
                 this._searchResultsTable(model, results, options);
+                this._removeResults();
             }
         },
 
