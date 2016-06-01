@@ -677,7 +677,7 @@ class Application
     protected function getEntityOIDs($entities)
     {
         $oids = array();
-        if (!is_array($entities) && $entities instanceof \Traversable) {
+        if (!is_array($entities) && !$entities instanceof \Traversable) {
             $entities = array($entities);
         }
         foreach ($entities as $entity) {
