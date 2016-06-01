@@ -428,74 +428,18 @@ class Application
      */
     public function getElements($region = null)
     {
-        if ($this->elements === null) {
-            $securityContext = $this->container->get('security.context');
-
-            // preload acl in one single sql query
-            $oids        = array();
-            $aclProvider = $this->container->get('security.acl.provider');
-            $acls        = null;
-            foreach ($this->entity->getElements() as $entity) {
-                $oids[] = ObjectIdentity::fromDomainObject($entity);
-            }
-            try {
-                $aclProvider->findAcls($oids);
-            } catch (NotAllAclsFoundException $e) {
-                $acls = $e->getPartialResult();
-            } catch (\Exception $e) {
-                ;
-            }
-
-            // Set up all elements (by region)
-            $this->elements = array();
-            foreach ($this->entity->getElements() as $entity) {
-                $application_entity = $this->getEntity();
-                if ($application_entity->isDbBased()) {
-                    try {
-                        // If no ACL exists, an exception is thrown
-                        $acl = $aclProvider->findAcl(ObjectIdentity::fromDomainObject($entity));
-                        // An empy ACL may exist, too
-                        if (count($acl->getObjectAces()) > 0 && !$securityContext->isGranted('VIEW', $entity)) {
-                            continue;
-                        }
-                    } catch (\Exception $e) {
-                        ;
-                    }
-                } elseif ($application_entity->isYamlBased()
-                    && count($entity->getYamlRoles())) {
-                    $passed = false;
-                    foreach ($entity->getYamlRoles() as $role) {
-                        if ($securityContext->isGranted($role)) {
-                            $passed = true;
-                            break;
-                        }
-                    }
-                    if (!$passed) {
-                        continue;
-                    }
-                }
-                $class = $entity->getClass();
-                if (!$entity->getEnabled()) {
-                    continue;
-                }
-                $element = new $class($this, $this->container, $entity);
-                $r = $entity->getRegion();
-
-                if (!array_key_exists($r, $this->elements)) {
-                    $this->elements[$r] = array();
-                }
-                $this->elements[$r][] = $element;
-            }
-            $this->sortElementsByWidth();
-
+        if (!$this->elements) {
+            $this->initializeElements();
         }
 
         if ($region) {
-            return array_key_exists($region, $this->elements) ?
-                $this->elements[$region] : array();
+            $hasRegionElements = array_key_exists($region, $this->elements);
+            $elements          = $hasRegionElements ? $this->elements[ $region ] : array();
         } else {
-            return $this->elements;
+            $elements = $this->elements;
         }
+
+        return $elements;
     }
 
     /**
@@ -723,5 +667,99 @@ class Application
                 }
             );
         }
+    }
+
+    /**
+     * @param $entities entity or entity
+     * @return int[]
+     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
+     */
+    protected function getEntityOIDs($entities)
+    {
+        $oids = array();
+        if (!is_array($entities) && $entities instanceof \Traversable) {
+            $entities = array($entities);
+        }
+        foreach ($entities as $entity) {
+            $oids[] = ObjectIdentity::fromDomainObject($entity);
+        }
+        return $oids;
+    }
+
+    /**
+     * Get entities ACL
+     *
+     * @param $entities
+     * @return \Symfony\Component\Security\Acl\Dbal\MutableAclProvider
+     */
+    protected function getEntitiesAcls($entities)
+    {
+        $oids        = $this->getEntityOIDs($entities);
+        $aclProvider = $this->container->get('security.acl.provider');
+        $acls        = null;
+
+        try {
+            $aclProvider->findAcls($oids);
+        } catch (NotAllAclsFoundException $e) {
+            $acls = $e->getPartialResult();
+        } catch (\Exception $e) {
+            ;
+        }
+
+        return $acls;
+    }
+
+    /**
+     * Initialize elements
+     */
+    protected function initializeElements()
+    {
+        $securityContext = $this->container->get('security.context');
+        $application     = $this->entity;
+        $elements        = $application->getElements();
+        $acls            = $this->getEntitiesAcls($elements);
+        $aclProvider     = $this->container->get('security.acl.provider');
+        $this->elements  = array();
+
+        foreach ($elements as $element) {
+            $applicationEntity = $this->getEntity();
+            if ($applicationEntity->isDbBased()) {
+                try {
+                    // If no ACL exists, an exception is thrown
+                    $acl = $aclProvider->findAcl(ObjectIdentity::fromDomainObject($element));
+                    // An empy ACL may exist, too
+                    if (count($acl->getObjectAces()) > 0 && !$securityContext->isGranted('VIEW', $element)) {
+                        continue;
+                    }
+                } catch (\Exception $e) {
+                    ;
+                }
+            } elseif ($applicationEntity->isYamlBased()
+                && count($element->getYamlRoles())
+            ) {
+                $passed = false;
+                foreach ($element->getYamlRoles() as $role) {
+                    if ($securityContext->isGranted($role)) {
+                        $passed = true;
+                        break;
+                    }
+                }
+                if (!$passed) {
+                    continue;
+                }
+            }
+            $class = $element->getClass();
+            if (!$element->getEnabled()) {
+                continue;
+            }
+            $element = new $class($this, $this->container, $element);
+            $r       = $element->getRegion();
+
+            if (!array_key_exists($r, $this->elements)) {
+                $this->elements[ $r ] = array();
+            }
+            $this->elements[ $r ][] = $element;
+        }
+        $this->sortElementsByWidth();
     }
 }
