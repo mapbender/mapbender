@@ -25,8 +25,10 @@ before_script:
   - git submodule update --init --recursive
   - cd application
   - cp app/config/parameters.yml.dist app/config/parameters.yml
+  - php5dismod xdebug
   - composer self-update
   - composer update
+  - php5enmod xdebug
   - rm -rf mapbender
   - ln -s ../../mapbender
   - php app/console doctrine:database:create
