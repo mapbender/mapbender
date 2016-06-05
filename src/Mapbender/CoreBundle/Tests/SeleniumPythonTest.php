@@ -31,12 +31,13 @@ class SeleniumPythonTest extends SharedApplicationWebTestCase
     public function testSelenium($module)
     {
         `killall phantomjs`;
+        `phantomjs --webdriver=9876`;
         putenv('TEST_WEB_SERVER_HOST=' . TEST_WEB_SERVER_HOST);
         putenv('TEST_WEB_SERVER_PORT=' . TEST_WEB_SERVER_PORT);
         putenv('TEST_SCREENSHOT_PATH=' . TEST_SCREENSHOT_PATH);
 
         $process = new Process('python ' . $module);
-        $process->setTimeout(3600);
+        $process->setTimeout(1000);
         $process->run();
         $this->assertEquals(true, $process->isSuccessful(), $process->getErrorOutput());
     }
