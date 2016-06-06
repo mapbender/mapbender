@@ -37,10 +37,8 @@ try:
     wd.find_element_by_id("user_password_second").send_keys("test1234")
     wd.find_element_by_css_selector("input.button").click()
     wd.find_element_by_css_selector("span.iconRemove.iconSmall").click()
-    wd.save_screenshot(get_sreenshot_path('test'))  # Changed
     wd.find_element_by_link_text("Delete").click()
     logout(wd)
-    wd.save_screenshot(get_sreenshot_path('success'))  # Changed
     wd.execute_script('window.close();')
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))

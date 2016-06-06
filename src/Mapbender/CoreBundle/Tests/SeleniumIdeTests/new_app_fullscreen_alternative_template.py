@@ -28,6 +28,7 @@ try:
     if not ("testing fullscreen alternative template" in wd.find_element_by_tag_name("html").text):
         raise Exception("find_element_by_tag_name failed: testing fullscreen alternative template")
     logout(wd)
+    wd.execute_script('window.close();')
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
     wd.quit()
