@@ -41,6 +41,7 @@ try:
     wd.find_element_by_link_text("Delete").click()
     logout(wd)
     wd.save_screenshot(get_sreenshot_path('success'))  # Changed
+    wd.execute_script('window.close();')
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
     wd.quit()
