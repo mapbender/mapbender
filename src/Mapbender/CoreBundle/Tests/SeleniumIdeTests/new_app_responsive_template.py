@@ -28,11 +28,13 @@ try:
     if not ("testing responsive template" in wd.find_element_by_tag_name("html").text):
         raise Exception("find_element_by_tag_name failed: testing responsive template")
     logout(wd)
+    wd.execute_script('window.close();')
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
     wd.quit()
     raise e
 finally:
+    wd.execute_script('window.close();')
     wd.quit()
     if not success:
         raise Exception("Test failed.")

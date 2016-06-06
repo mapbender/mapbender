@@ -45,6 +45,7 @@ except Exception as e:  # Changed ff
     wd.quit()
     raise e
 finally:
+    wd.execute_script('window.close();')
     wd.quit()
     if not success:
         raise Exception("Test failed.")
