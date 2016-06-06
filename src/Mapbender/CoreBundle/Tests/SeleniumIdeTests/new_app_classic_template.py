@@ -3,7 +3,7 @@
 from lib.user import login
 from lib.logout import logout
 from lib.utils import get_sreenshot_path, create_webdriver  # Changed
-
+from subprocess import call
 
 success = True
 wd = create_webdriver()
@@ -27,13 +27,10 @@ try:
     if not ("testing classic template" in wd.find_element_by_tag_name("html").text):
         raise Exception("find_element_by_tag_name failed: testing classic template")
     logout(wd)
-    wd.execute_script('window.close();')
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
-    wd.quit()
     raise e
 finally:
-    wd.execute_script('window.close();')
-    wd.quit()
+    call(['killall', 'phantomjs'])
     if not success:
         raise Exception("Test failed.")
