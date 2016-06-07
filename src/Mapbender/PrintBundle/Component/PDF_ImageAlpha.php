@@ -45,8 +45,7 @@ class PDF_ImageAlpha extends \FPDI
                 $type = substr($file, $pos + 1);
             }
             $type = strtolower($type);
-            $mqr  = get_magic_quotes_runtime();
-            set_magic_quotes_runtime(0);
+
             if ($type == 'jpg' || $type == 'jpeg') {
                 $info = $this->_parsejpg($file);
             } elseif ($type == 'png') {
@@ -62,7 +61,6 @@ class PDF_ImageAlpha extends \FPDI
                 }
                 $info = $this->$mtd($file);
             }
-            set_magic_quotes_runtime($mqr);
 
             if ($isMask) {
                 $info['cs'] = "DeviceGray"; // try to force grayscale (instead of indexed)
