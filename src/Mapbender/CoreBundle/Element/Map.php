@@ -160,7 +160,7 @@ class Map extends Element
                 $extra['pois'][] = array(
                     'x' => floatval($point[0]),
                     'y' => floatval($point[1]),
-                    'label' => isset($poi['label']) ? $poi['label'] : null,
+                    'label' => isset($poi['label']) ? htmlentities($poi['label']) : null,
                     'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
             }
