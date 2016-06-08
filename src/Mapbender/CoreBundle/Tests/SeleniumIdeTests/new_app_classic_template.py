@@ -3,7 +3,7 @@
 from lib.user import login
 from lib.logout import logout
 from lib.utils import get_sreenshot_path, create_webdriver  # Changed
-from subprocess import call
+from subprocess import call, check_output
 
 success = True
 wd = create_webdriver()
@@ -17,6 +17,7 @@ def is_alert_present(wd):
         return False
 
 try:
+    print check_output(["curl", "http://localhost:8000"])
     login(wd)
     wd.find_element_by_link_text("New application").click()
     wd.find_element_by_id("application_title").send_keys("testing classic template")
