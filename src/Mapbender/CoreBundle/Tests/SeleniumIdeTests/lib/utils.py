@@ -3,6 +3,7 @@ import __main__
 from selenium.webdriver.phantomjs.webdriver import WebDriver
 from os import getenv, makedirs
 from os.path import basename, dirname, exists
+from subprocess import call
 
 def get_url(path):
     """Build full URL to test server based on path and env vars"""
@@ -23,8 +24,8 @@ def get_sreenshot_path(suffix):
         makedirs(dirname(path))
     return path
 
-
 def create_webdriver():
+    call(["ls", "-l", "%(path)s/application/node_modules/phantomjs/bin/phantomjs"])
     wd = WebDriver('%(path)s/application/node_modules/phantomjs/bin/phantomjs' % {
         'path': getenv('TRAVIS_BUILD_DIR')
     })
