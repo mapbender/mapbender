@@ -1,27 +1,29 @@
 <?php
 
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
+use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Mapbender - The central Mapbender3 service. Provides metadata about
+ * Mapbender - The central Mapbender3 service(core). Provides metadata about
  * available elements, layers and templates.
  *
  * @author Christian Wygoda
+ * @author Andriy Oblivantsev
  */
-class Mapbender {
+class Mapbender
+{
+    /** @var ContainerInterface  */
     private $container;
-    private $elements = array();
-    private $layers = array();
-    private $templates = array();
+
+    /** @var Element[] */
+    private $elements           = array();
+    private $layers             = array();
+    private $templates          = array();
     private $repositoryManagers = array();
 
     /**
