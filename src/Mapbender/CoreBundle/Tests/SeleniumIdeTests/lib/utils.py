@@ -25,7 +25,7 @@ def get_sreenshot_path(suffix):
     return path
 
 def create_webdriver():
-    call(["ls", "-l", "%(path)s/application/node_modules/phantomjs/bin/phantomjs" % { 'path': getenv('TRAVIS_BUILD_DIR'] })
+    call(["ls", "-l", "%(path)s/application/node_modules/phantomjs/bin/phantomjs" % { 'path': getenv('TRAVIS_BUILD_DIR') }])
     wd = WebDriver('%(path)s/application/node_modules/phantomjs/bin/phantomjs' % {
         'path': getenv('TRAVIS_BUILD_DIR')
     })
