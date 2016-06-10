@@ -1,7 +1,7 @@
 <form action="{{path('mapbender_manager_repository_create', {'managertype': constant('Mapbender\\CoreBundle\\Entity\\Source::TYPE_WMS')|lower})}}" method="post" novalidate="novalidate" autocomplete="false">
   {# This only option to prevent browser auto fill inputs. Sad but true. More info: #4814 #}
-  <input style="display:none;" type="text" name="somefakename" />
-  <input style="display:none;" type="password" name="anotherfakename" />
+  <input style="display:block; position:absolute; top:-1000px; left:-1000px" type="text" name="somefakename" />
+  <input style="display:block; position:absolute; top:-1000px; left:-1000px" type="password" name="anotherfakename" />
 
   {{ form_widget(form.onlyvalid) }}<label for="{{form.onlyvalid.vars['id']}}" class="labelCheck">{{"mb.wms.wmsloader.repo.form.label.onlyvalid"|trans}}</label>
   <div class="clearContainer"></div>
