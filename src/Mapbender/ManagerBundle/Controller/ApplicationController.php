@@ -221,7 +221,7 @@ class ApplicationController extends WelcomeController
         $screenShotUrl = null;
 
         if (!$form->submit($request)->isValid()) {
-            array(
+            return array(
                 'application'         => $application,
                 'form'                => $form->createView(),
                 'form_name'           => $form->getName(),
@@ -241,7 +241,6 @@ class ApplicationController extends WelcomeController
         $this->checkRegionProperties($application);
         $aclManager = $this->get('fom.acl.manager');
         $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-
         $scFile = $application->getScreenshotFile();
 
         if ($scFile !== null
