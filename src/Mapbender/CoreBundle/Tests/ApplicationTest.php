@@ -39,40 +39,15 @@ class ApplicationTest extends TestBase
 
     public function testLoginForm()
     {
-        $client = $this->getSharedClient()->request('GET', '/user/login');
+        $client = $this->getClient()->request('GET', '/user/login');
         $this->assertTrue($client->filter('html:contains("Login")')->count() > 0);
     }
 
     public function testMapbenderUserAppAbility()
     {
-        $client   = $this->getSharedClient();
+        $client   = $this->getClient();
         $crawler  = $client->request('GET', '/application/mapbender_user');
         $response = $client->getResponse();
         $this->assertTrue($response->isSuccessful());
-    }
-
-    /**
-     * @return \Symfony\Bundle\FrameworkBundle\Client
-     */
-    protected function getSharedClient()
-    {
-        static $client = null;
-        return !$client ? $client = static::createClient() : $client;
-    }
-
-    /**
-     * @return Mapbender
-     */
-    protected function getCore()
-    {
-        return $this->getContainer()->get("mapbender");
-    }
-
-    /**
-     * @return null|\Symfony\Component\DependencyInjection\ContainerInterface
-     */
-    protected function getContainer()
-    {
-        return $this->getSharedClient()->getContainer();
     }
 }

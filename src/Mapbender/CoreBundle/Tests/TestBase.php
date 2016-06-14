@@ -2,10 +2,10 @@
 
 namespace Mapbender\CoreBundle\Tests;
 
-use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Mapbender;
+use Symfony\Bundle\FrameworkBundle\Console\Application as CmdApplication;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Console\Input\StringInput;
 
 /**
  * Class ApplicationTest
@@ -17,26 +17,65 @@ class TestBase extends WebTestCase
 {
     public function setUp()
     {
-        \ComposerBootstrap::allowWriteLogs()
+        static $kernel = null;
+
+        if ($kernel) {
+            return;
+        }
 
         $kernel = $this->getContainer()->get("kernel");
+        $isTestEnv = $kernel->getEnvironment() == "test";
 
-        self::runCommand('cache:clear --no-debug');
-        self::runCommand('cache:warmup --no-debug');
-        self::runCommand('doctrine:database:drop --force');
-        self::runCommand('doctrine:database:create');
-        self::runCommand('doctrine:schema:create');
-        self::runCommand('fom:user:resetroot --username=root --password=root --email=root@example.com --silent');
-        self::runCommand('doctrine:fixtures:load --fixtures=./mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Epsg/ --append');
+        $stdClass = $this->getContainer()->get("doctrineD");
+
+        if ($isTestEnv) {
+            //\ComposerBootstrap::allowWriteLogs();
+            //\ComposerBootstrap::clearCache();
+            $this->runCommand('doctrine:database:drop --force');
+            $this->runCommand('doctrine:database:create');
+            $this->runCommand('doctrine:schema:create');
+            $this->runCommand('fom:user:resetroot --username=root --password=root --email=root@example.com --silent');
+            $this->runCommand('doctrine:fixtures:load --fixtures=./mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Epsg/ --append');
+        }
+    }
+
+    /** @var CmdApplication Command application */
+    protected $application;
+
+    /**
+     * Get CMD application
+     *
+     * @return mixed
+     */
+    protected function getApplication()
+    {
+        if (!$this->application) {
+            $this->application = new CmdApplication($this->getClient()->getKernel());
+            $this->application->setAutoExit(false);
+        }
+        return $this->application;
+    }
+
+
+    /**
+     * @param $command
+     * @return mixed
+     */
+    protected function runCommand($command)
+    {
+        $command     = sprintf('%s --quiet', $command);
+        $application = $this->getApplication();
+        return $application->run(new StringInput($command));
     }
 
     /**
+     * @param array $options
      * @return \Symfony\Bundle\FrameworkBundle\Client
      */
-    protected function getSharedClient()
+    protected function getClient(array $options = array())
     {
         static $client = null;
-        return !$client ? $client = static::createClient() : $client;
+        return $client ? $client : $client = static::createClient($options);
     }
 
     /**
@@ -52,6 +91,6 @@ class TestBase extends WebTestCase
      */
     protected function getContainer()
     {
-        return $this->getSharedClient()->getContainer();
+        return $this->getClient()->getContainer();
     }
 }
