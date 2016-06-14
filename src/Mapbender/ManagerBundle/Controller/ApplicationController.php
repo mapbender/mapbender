@@ -188,10 +188,10 @@ class ApplicationController extends WelcomeController
 
         $expHandler = new ExportHandler($this->container);
         $impHandler = new ImportHandler($this->container, true);
-        $expJob     = $expHandler->getJob();
+        $expJob     = $expHandler->getJob()
+            ->setApplication($sourceApplication)
+            ->setAddSources(false);
         $data       = $expHandler->makeJob();
-        $expJob->setApplication($sourceApplication);
-        $expJob->setAddSources(false);
 
         $importJob  = $impHandler->getJob();
         $importJob->setImportContent($data);
@@ -220,7 +220,7 @@ class ApplicationController extends WelcomeController
         $parameters    = $request->request->get('application');
         $screenShotUrl = null;
 
-        if (!$form->submit($request)->isValid()) {
+        if (!$form->submit($parameters)->isValid()) {
             return array(
                 'application'         => $application,
                 'form'                => $form->createView(),
