@@ -151,6 +151,8 @@ class ApplicationController extends Controller
      * Main application controller.
      *
      * @Route("/application/{slug}.{_format}", defaults={ "_format" = "html" })
+     * @param string $slug Application
+     * @return Response
      */
     public function applicationAction($slug)
     {
