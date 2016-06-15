@@ -390,8 +390,9 @@ class PrintService
 
         // fill text fields
         if (isset($this->conf['fields']) ) {
-            foreach ($this->conf['fields'] as $k => $v) {
-                $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
+            foreach ($this->conf['fields'] as $k => $fontConfiguration) {
+                $fontsize = isset($fontConfiguration['fontsize']) ? $fontConfiguration['fontsize']: 20;
+                $pdf->SetFont('Arial', '',$fontsize);
                 $pdf->SetXY($this->conf['fields'][$k]['x'] - 1,
                     $this->conf['fields'][$k]['y']);
 
