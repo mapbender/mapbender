@@ -84,16 +84,17 @@ class ApplicationController extends Controller
         $cacheFile        = $this->getCachedAssetPath($slug, $env, $type);
         $needCache        = $isProduction && !file_exists($cacheFile);
         $modificationDate = new \DateTime();
-        $application      = $this->getApplication($slug);
+        $appEntity        = $this->get('mapbender')->getApplicationEntity($slug);
 
         $response->headers->set('Content-Type', $this->getMimeType($type));
 
+
         if ($isProduction && !$needCache) {
             $modificationTs = filectime($cacheFile);
-            $isAppDbBased   = $application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB;
+            $isAppDbBased   = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
             $modificationDate->setTimestamp($modificationTs);
 
-            if (!$isAppDbBased || ($isAppDbBased && $application->getEntity()->getUpdated() < $modificationDate)) {
+            if (!$isAppDbBased || ($isAppDbBased && $appEntity->getUpdated() < $modificationDate)) {
                 $response->setLastModified($modificationDate);
                 $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
                 if ($response->isNotModified($request)) {
@@ -104,6 +105,7 @@ class ApplicationController extends Controller
             }
         }
 
+        $application = $this->get('mapbender')->getApplication($slug, array());
         if ($type == "css") {
             $sourcePath = $request->getBasePath();
             $refs       = array_unique($application->getAssets('css'));
