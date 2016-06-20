@@ -715,8 +715,6 @@ class Application
 
         if ($aclManager->hasObjectAclEntries($element)) {
             $isGranted = $securityContext->isGranted($permission, $element);
-            var_dump($securityContext->getRolesAsArray());
-            var_dump($isGranted);
         }
 
         if ($applicationEntity->isYamlBased() && count($element->getYamlRoles())) {
