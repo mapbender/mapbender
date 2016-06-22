@@ -519,7 +519,9 @@ Mapbender.Model = {
         var result = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
         if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
-            mqLayer.olLayer.redraw();
+            mqLayer.olLayer.removeBackBuffer();
+            mqLayer.olLayer.createBackBuffer();
+            mqLayer.olLayer.redraw(true);
         }
         return result.changed;
     },
