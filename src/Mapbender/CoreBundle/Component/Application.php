@@ -706,7 +706,7 @@ class Application
      * @param string $permission SecurityContext::PERMISSION_
      * @return bool
      */
-    public function isElementGranted(Element $element, $permission = SecurityContext::PERMISSION_VIEW)
+    public function isElementGranted(ElementEntity $element, $permission = SecurityContext::PERMISSION_VIEW)
     {
         $applicationEntity = $this->getEntity();
         $securityContext   = $this->container->get('security.context');
