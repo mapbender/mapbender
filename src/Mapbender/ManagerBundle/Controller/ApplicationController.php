@@ -712,24 +712,16 @@ class ApplicationController extends Controller
             ->find($layersetId);
         if ($layerset !== null) {
             $em = $this->getDoctrine()->getManager();
-
             $em->getConnection()->beginTransaction();
-
             $em->remove($layerset);
             $em->flush();
             $em->getConnection()->commit();
-
-            $this->get("logger")->debug('The layerset "'
-                . $layerset->getId() . '"has been deleted.');
+            $this->get("logger")->debug('The layerset "' . $layerset->getId() . '"has been deleted.');
             $this->get('session')->getFlashBag()->set('success', 'Your layerset has been deleted.');
-            return $this->redirect(
-                $this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)) . "#layersets"
-            );
+        } else {
+            $this->get('session')->getFlashBag()->set('error', 'Your layerset con not be delete.');
         }
-        $this->get('session')->getFlashBag()->set('error', 'Your layerset con not be delete.');
-        return $this->redirect(
-            $this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)) . "#layersets"
-        );
+        return $this->redirect($this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)));
     }
 
     /* Layerset block end */

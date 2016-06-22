@@ -1,9 +1,4 @@
 <?php
-
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -46,8 +41,11 @@ class RegionProperties
      * @ORM\Column(type="array", nullable=true)
      * @Assert\NotBlank()
      */
-    public $properties;
+    protected $properties;
 
+    /**
+     * RegionProperties constructor.
+     */
     public function __construct()
     {
         $this->properties = array();
@@ -57,6 +55,7 @@ class RegionProperties
      * Set id. DANGER
      *
      * @param integer $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -79,6 +78,7 @@ class RegionProperties
      * Set name
      *
      * @param string $name
+     * @return $this
      */
     public function setName($name)
     {
@@ -101,6 +101,7 @@ class RegionProperties
      * Set Application
      *
      * @param Application $application
+     * @return $this
      */
     public function setApplication(Application $application)
     {
@@ -123,6 +124,7 @@ class RegionProperties
      * Set properties
      *
      * @param array $properties
+     * @return $this
      */
     public function setProperties(array $properties = array())
     {
@@ -144,6 +146,7 @@ class RegionProperties
     /**
      * Get properties
      *
+     * @param $property
      * @return array
      */
     public function addProperty($property)
@@ -156,6 +159,7 @@ class RegionProperties
     /**
      * Get properties
      *
+     * @param $property
      * @return array
      */
     public function removeProperty($property)

@@ -1,7 +1,18 @@
 (function($){
 
     $.widget("mapbender.mbRedlining", {
-        options: {},
+        options: {
+            target: null,
+            display_type: 'dialog',
+            auto_activate: false,
+            deactivate_on_close: true,
+            geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
+            paintstyles: {
+                'strokeColor': '#ff0000',
+                'fillColor': '#ff0000',
+                'strokeWidth': '3'
+            }
+        },
         map: null,
         layer: null,
         activeControl: null,
@@ -21,28 +32,55 @@
             this.rowTemplate = this.element.find('.geometry-table tr').remove();
             var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
             this.map.removeControl(selectControl[0]);
-
-            var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], {
-                'strokeColor': '#ff0000',
-                'fillColor': '#ff0000',
-                'strokeWidth': '3'
-            }));
-
-            var styleMap = new OpenLayers.StyleMap({'default': defaultStyle}, {extendDefault: true});
-
-            this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
-            this.map.addLayer(this.layer);
-
+            if(this.options.auto_activate || this.options.display_type === 'element'){
+                this.activate();
+            }
             this._trigger('ready');
             this._ready();
         },
         defaultAction: function(callback){
-            this.open(callback);
+            this.activate(callback);
         },
-        open: function(callback){
+        activate: function(callback){
             this.callback = callback ? callback : null;
+            
+            var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], this.options.paintstyles));
+            var styleMap = new OpenLayers.StyleMap({'default': defaultStyle}, {extendDefault: true});
+            this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
+            this.map.addLayer(this.layer);
+            if (this.options.display_type === 'dialog'){
+                this._open();
+            } else {
+                this.element.removeClass('hidden');
+            }
+            $('.geometry-table tr', this.element).remove();
+            $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
+        },
+        deactivate: function(){
+            if (this.options.display_type === 'dialog'){
+                this._close();
+            }
+            if (this.options.display_type === 'dialog' && this.options.deactivate_on_close){
+                this.map.removeLayer(this.layer);
+                this.callback ? this.callback.call() : this.callback = null;
+            }
+            $('.redlining-tool', this.element).off('click');
+        },
+        /**
+         * deprecated
+         * @param {array} callback
+         */
+        open: function(callback){
+            this.activate(callback);
+        },
+        /**
+         * deprecated
+         */
+        close: function(){
+            this.deactivate();
+        },
+        _open: function(){
             var self = this;
-//            var me = $(this.element);
             if(!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('data-title'),
@@ -59,46 +97,35 @@
                             label: Mapbender.trans('mb.core.redlining.dialog.btn.cancel'),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
-                                self.close();
+                                self.deactivate();
                             }
                         }
                     }
                 });
-                this.popup.$element.on('close', $.proxy(this.close, this));
+                this.popup.$element.on('close', $.proxy(this.deactivate, this));
             } else {
-                if(this.popupIsOpen === false) {
                     this.popup.open(self.element);
-                }
             }
-            this.element.show();
-            this.popupIsOpen = true;
-            $('.redlining-tool', this.element).off('click');
-            $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
+            this.element.removeClass('hidden');
         },
-        close: function(){
+        _close: function(){
             if(this.popup) {
-                this.element.hide().appendTo($('body'));
+                this.element.addClass('hidden').appendTo($('body'));
                 this._deactivateControl();
-                this.popupIsOpen = false;
                 if(this.popup.$element) {
                     this.popup.destroy();
                 }
                 this.popup = null;
             }
-            this.callback ? this.callback.call() : this.callback = null;
         },
         _newControl: function(e){
             var self = this;
-
             if($(e.target).hasClass('active') === true) {
                 this._deactivateControl();
                 return;
             }
-
             this._deactivateControl();
-
             $(e.target).addClass('active');
-
             switch(e.target.name)
             {
                 case 'point':
@@ -152,7 +179,6 @@
                                 }
                             });
                     break;
-
             }
             this.map.addControl(this.activeControl);
             this.activeControl.activate();
@@ -160,7 +186,7 @@
         },
         removeFeature: function(feature){
             this.layer.destroyFeatures([feature]);
-       },
+        },
         _deactivateControl: function(){
             if(this.activeControl !== null) {
                 this.activeControl.deactivate();
@@ -218,9 +244,7 @@
         },
         _setFeatureStyle: function(){
             var style = OpenLayers.Util.applyDefaults(null, OpenLayers.Feature.Vector.style['default']);
-
             var label = $('input[name=label-text]', this.element).val();
-
             style.label = label;
             style.labelAlign = 'lm';
             style.labelXOffset = 0;
@@ -231,11 +255,9 @@
             style.fontSize = "16px";
             style.fontFamily = "Trebuchet MS, sans-serif";
             style.fontWeight = "bold";
-
             style.activate = function(){
                 style.fillOpacity = 1;
             };
-
             return style;
         },
         /**

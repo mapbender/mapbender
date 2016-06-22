@@ -152,11 +152,13 @@ $.widget('mapbender.mbPOI', {
             var ta = $('<div/>', {
                 html: $('.output', this.element).html()
             });
+            ta.addClass("poi-link");
             $('textarea', ta).val(body);
             new Mapbender.Popup2({
                 destroyOnClose: true,
                 modal: true,
                 title: this.element.attr('title'),
+                height: 350,
                 content: ta,
                 buttons: {}
             });

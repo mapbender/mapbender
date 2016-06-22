@@ -40,10 +40,10 @@ Mapbender.Model = {
             this.resolution = OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
         }
 
-        if(typeof this.mbMap.options.tileSize !== 'undefined') {
-            OpenLayers.Map.TILE_WIDTH = this.mbMap.options.tileSize;
-            OpenLayers.Map.TILE_HEIGHT = this.mbMap.options.tileSize;
-        }
+        var tileSize = this.mbMap.options.tileSize;
+        OpenLayers.Map.TILE_WIDTH = tileSize;
+        OpenLayers.Map.TILE_HEIGHT = tileSize;
+
         OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + this.mbMap.options.imgPath + '/';
 
         this.proj = this.getProj(this.mbMap.options.srs);
@@ -92,6 +92,7 @@ Mapbender.Model = {
         this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
         this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
         this._addLayerMaxExtent(this.map.layersList.mapquery0);
+        this.map.olMap.tileManager = null; // fix WMS tiled setVisibility(false) for outer scale
 
         this.setView(true);
         this.parseURL();

@@ -49,7 +49,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setHttpGet(ArrayUtil::hasSet($configuration, 'url'));
         if (isset($configuration['info_format'])) {
             $source->setGetFeatureInfo(new RequestInformation());
-            $source->getGetFeatureInfo()->addFormat(ArrayUtil::hasSet($configuration, 'format', true))
+            $source->getGetFeatureInfo()->addFormat(ArrayUtil::hasSet($configuration, 'info_format', true))
                 ->setHttpGet(ArrayUtil::hasSet($configuration, 'url'));
         }
 
@@ -245,6 +245,9 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->generateConfiguration();
         }
         $configuration = $this->entity->getConfiguration();
+        if (!$this->isConfigurationValid($configuration)) {
+            return null;
+        }
         $hide = false;
         $params = array();
         foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
@@ -469,5 +472,39 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $dimensions[] = $dimension;
         }
         return $dimensions;
+    }
+
+    /**
+     * Checks if a configuraiton is valid.
+     * @param array $configuration configuration of an instance or a layer
+     * @param boolean $isLayer if it is a layer's configurationis it a layer's configuration?
+     * @return boolean true if a configuration is valid otherwise false
+     */
+    private function isConfigurationValid(array $configuration, $isLayer = false)
+    {
+        if (!$isLayer) {
+            // TODO another tests for instance configuration
+            /* check if root exists and has children */
+            if (count($configuration['children']) !== 1 || !isset($configuration['children'][0]['children'])) {
+                return false;
+            } else {
+                foreach ($configuration['children'][0]['children'] as $childConfig) {
+                    if ($this->isConfigurationValid($childConfig, true)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            if (isset($configuration['children'])) { // > 2 simple layers -> OK.
+                foreach ($configuration['children'] as $childConfig) {
+                    if ($this->isConfigurationValid($childConfig, true)) {
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

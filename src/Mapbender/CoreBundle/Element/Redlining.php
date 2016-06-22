@@ -3,8 +3,6 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -15,7 +13,7 @@ class Redlining extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.redlining.class.title";
     }
@@ -23,7 +21,7 @@ class Redlining extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.redlining.class.description";
     }
@@ -31,7 +29,7 @@ class Redlining extends Element
     /**
      * @inheritdoc
      */
-    static public function getTags()
+    public static function getTags()
     {
         return array('mb.core.redlining.tag.redlining', 'mb.core.redlining.tag.geometry');
     }
@@ -47,14 +45,17 @@ class Redlining extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
-        return array('js' => array( 'mapbender.element.redlining.js',
-                                    '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                                    '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
-                    'css' => array('sass/element/redlining.scss'),
-                    'trans' => array('MapbenderCoreBundle:Element:redlining.json.twig')
-                );
+        return array(
+            'js' => array(
+                'mapbender.element.redlining.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'
+            ),
+            'css' => array('sass/element/redlining.scss'),
+            'trans' => array('MapbenderCoreBundle:Element:redlining.json.twig')
+        );
     }
 
     /**
@@ -64,6 +65,9 @@ class Redlining extends Element
     {
         return array(
             "target" => null,
+            "display_type" => null,
+            "auto_activate" => false,
+            "deactivate_on_close" => true,
             "geometrytypes" => array( "point", "line", "polygon", "text")
         );
     }
@@ -98,12 +102,13 @@ class Redlining extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:redlining.html.twig', array(
-                    'id' => $this->getId(),
-                    'title' => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()
-        ));
+        return $this->container->get('templating')->render(
+            'MapbenderCoreBundle:Element:redlining.html.twig',
+            array(
+                'id' => $this->getId(),
+                'title' => $this->getTitle(),
+                'configuration' => $this->getConfiguration()
+            )
+        );
     }
-
 }

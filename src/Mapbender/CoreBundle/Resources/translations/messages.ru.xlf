@@ -974,6 +974,14 @@
         <source>mb.core.featureinfoext.tag.extension</source>
         <target>extension</target>
       </trans-unit>
+      <trans-unit id="a5cb3721da1989997ae99c49bf560c0e" resname="mb.core.admin.redlining.label.auto_activate">
+        <source>mb.core.admin.redlining.label.auto_activate</source>
+        <target>Автоактивирование</target>
+      </trans-unit>
+      <trans-unit id="d43fd752a42df0c371b25aabb8acdcae" resname="mb.core.admin.redlining.label.deactivate_on_close">
+        <source>mb.core.admin.redlining.label.deactivate_on_close</source>
+        <target>Деактивировать при закрытии</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

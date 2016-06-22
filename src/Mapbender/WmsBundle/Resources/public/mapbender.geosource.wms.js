@@ -13,7 +13,6 @@ if(window.OpenLayers) {
             this.display(false);
             return false;
         }
-        ;
         return OpenLayers.Layer.prototype.calculateInRange.apply(this, arguments);
     }
 }
@@ -186,11 +185,12 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             function readCapabilities(layer, parent, options){
                 // @ TODO getLegendGraphic ?
                 var legend = null, minScale_ = null, maxScale_ = null;
-                if(layer.styles.length !== 0 && layer.styles[0].legend) {
+                if(layer.styles.length !== 0 && layer.styles[layer.styles.length - 1].legend) {
                     legend = {};
-                    legend.url = layer.styles[0].legend.href
-                    legend.width = layer.styles[0].legend.width;
-                    legend.height = layer.styles[0].legend.height;
+                    // get style  from self or parent (layer.styles.length - 1)
+                    legend.url = layer.styles[layer.styles.length - 1].legend.href;
+                    legend.width = layer.styles[layer.styles.length - 1].legend.width;
+                    legend.height = layer.styles[layer.styles.length - 1].legend.height;
                 }
                 minScale_ = layer.minScale ? Math.round(layer.minScale) : parent && parent.options.minScale
                         ? parent.options.minScale : null;

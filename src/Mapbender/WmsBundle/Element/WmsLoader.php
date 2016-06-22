@@ -3,10 +3,11 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Mapbender\CoreBundle\Component\EntityHandler;
 
 /**
  * WmsLoader
@@ -234,9 +235,9 @@ class WmsLoader extends Element
                 $entityHandler = EntityHandler::createHandler($this->container, $instance);
                 $entityHandler->create(false);
                 $instConfig = array(
-                        'type' => $entityHandler->getEntity()->getType(),
-                        'title' => $entityHandler->getEntity()->getTitle(),
-                        'configuration' => $entityHandler->getConfiguration($this->container->get('signer')));
+                    'type' => $entityHandler->getEntity()->getType(),
+                    'title' => $entityHandler->getEntity()->getTitle(),
+                    'configuration' => $entityHandler->getConfiguration($this->container->get('signer')));
                 $instances[] = $instConfig;
             }
         }

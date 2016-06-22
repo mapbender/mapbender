@@ -27,6 +27,11 @@ class ApplicationAssetCache
         $this->force = $force;
     }
 
+    /**
+     * @param string|null $slug Application name
+     * @param bool|false $useTimestamp
+     * @return AssetCollection
+     */
     public function fill($slug = null, $useTimestamp = false)
     {
         $static_assets_cache_path = $this->container->getParameter('mapbender.static_assets_cache_path');

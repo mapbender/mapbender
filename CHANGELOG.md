@@ -1,4 +1,97 @@
 # Changelog
+
+* **v3.0.5.3** - 2016-02-04
+    - fix on/off layer visibility
+    - Improve application manager button style
+    - Improve tool and zoom bar icon opacity
+    - Set login menu default font family
+    - Shrink mapbender logo
+    - Remove console.log froim mapbender.element.gpsPosition.js
+    - Merge export alpha layers as image
+    - Fix deactivate GPS button in Firefox
+    - Fix search router zoom to feature twice
+    - Redraw search router selected feature after zoom
+    - print: fixed legend size
+    - imageexport: fixed opacity
+    - Fix and refactor GPS locator widget
+    - Fix deactivate gps button
+    - Fix simple search side pane styling
+    - fix featureinfo url
+    - Fix simple search admin type styles
+    - Fix set layer name
+    - Improve search router style for mobile template
+    - Disable wrap search router table header text
+    - Fix  search router horizontal scroll and remove result styles
+    - Refactor search router
+    - Improve SimpleSearch element styling
+    - Fix HTTP/HTTPS feature info requests
+    - Fix check map tileSize option
+    - Add search route horizontal scrolling
+    - Fix search router reset last results and improve styles
+    - Improve poi link dialog style
+    - Disable error message fade effect
+    - Remove TODOs.rst because becomes outdated
+    - Fix search router element input label (title)
+    - Improve scale and srs selector styles
+    - Fix import/export region properties
+    - Set layer tree title max length = 40
+    - set protocol into featureinfo url from browser
+    - Fix RegionProperties entity property visibility
+    - Change Application $regionProperties property to protected
+    - Merge pull request #394 from mapbender/feature/print-sidepane
+    - print: sidepane-print changed button style and behaviour
+    - Merge branch 'release/3.0.5' into feature/print-sidepane
+    - print: bugfix type parameter
+    - Improve SearchRouter table header padding
+    - Merge branch 'release/3.0.5' into feature/print-sidepane
+    - print: fixed sidepane usage
+    - Remove normalize.css becourse bootstrap alredy include them
+    - Remove using normalize.css because bootstrap.css already includes them
+    - Hotfix print twig template generation
+    - fix transform a clicked feature geometry to map srs
+    - Fix result table selection checkbox  position and selected row color
+    - add default values for SearchRouter
+    - add with/height for SearchRouter dialog
+    - Merge pull request #393 from mapbender/hotfix/print-legend
+    - Merge pull request #384 from mapbender/feature/print-sidepane
+    - merged
+    - print: added missing translations
+    - print: added missing button label
+    - print: fixed legend bug
+    - print: fixed dynamic text position
+    - Merge pull request #392 from mapbender/feature/redlining-without-dialog
+    - fix wms layer get legend from self, formate code
+    - Fix coordinates width  at bottom menu
+    - Remove CSS transition animation for map tile load
+    - Fix annotation typo
+    - Fix HTML element assets paths
+    - fix max height for searchRouter result
+    - Merge branch 'release/3.0.5' into feature/redlining-without-dialog
+    - fix a layer validation for an instance
+    - fix: add only valid instances into layerset configuration
+    - fix layertree: remove theme by missing sources
+    - Fixes sass compiler fails on Linux 32-bit #389
+    - CP#5164: GPS accuracy fix
+    - Improve assets generation and caching mechanic and fixes: #388.
+    - Improve CSS cache modification check
+    - Cache CSS for production environment
+    - printclient: sidepane usage
+    - Merge pull request #383 from mapbender/hotfix/application-copy-sqlite-5018
+    - Merge pull request #382 from mapbender/release/3.0.5
+    - Merge pull request #381 from mapbender/hotfix/print-optionalfields
+    - printclient: fixed required input fields
+    - fix coordinatesdisplay: set default values for options
+    - fix application copy for sqlite: add 'flush' after 'persist'
+    - Fix copy application
+    - add check if Storage suported
+    - fix set active tab after form saving
+    - add translations for redlining
+    - display type 'element' for a redlining element
+    - fix show/hide redlining
+    - fix import application from mapbender.yml
+    - Remove global $.ajax proxy rewriting
+    - Merge pull request #376 from mapbender/develop
+
 * **v3.0.5.2**
     - Copy applications: User-Rights and groups are copied. The user who copied the application becomes owner of the copied application.
     - FOM: Changes in behaviour of wrong logins and user locking. It is only shown that the login failed, independent if the user exists or not.

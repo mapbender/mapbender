@@ -15,13 +15,36 @@
 @import "modules/result_table";
 @import "modules/digitizing_tool_set";
 
+@mixin opacityAlpha($alpha) {
+  /* Required for IE 5, 6, 7 */
+  /* ...or something to trigger hasLayout, like zoom: 1; */
+
+  /* Theoretically for IE 8 & 9 (more valid) */
+  /* ...but not required as filter works too */
+  /* should come BEFORE filter */
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=$alpha*100);
+
+  /* This works in IE 8 & 9 too */
+  /* ... but also 5, 6, 7 */
+  filter: alpha(opacity=$alpha*100);
+
+  /* Older than Firefox 0.9 */
+  -moz-opacity:$alpha;
+
+  /* Safari 1.x (pre WebKit!) */
+  -khtml-opacity: $alpha;
+
+  /* Modern!
+  /* Firefox 0.9+, Safari 2?, Chrome any?
+  /* Opera 9+, IE 9+ */
+  opacity: $alpha;
+}
+
 /* ------------------------------------------------------------- MISC */
 .mb-hiddenCheckbox{
   position: absolute;
   @include opacity(0);
 }
-
-
 
 /* ---------------------------------------------------------- TOOLBAR */
 .logoContainer{background-image:url($headPatternUrl);}
@@ -30,13 +53,30 @@
 
   &.top{
     padding:$space/4 $space/2 $space/4 $space/2;
-    .toolBarItem{
-      display:inline-block;
+    .toolBarItem {
+      display: inline-block;
       text-wrap: avoid;
       white-space: nowrap;
       padding: 5px;
-      > label {
+
+      &.toolBarItemActive {
+        > label, > span {
+          @include opacityAlpha(1);
+          &:before{
+            @include opacityAlpha(1);
+          }
+        }
+      }
+      > label, > span {
         margin-bottom: 0;
+        &:before{
+          @include opacityAlpha(0.7);
+        }
+        &:hover{
+          &:before{
+            @include opacityAlpha(1);
+          }
+        }
       }
     }
     border-bottom:solid 1px darken($contentColor, 20%);
@@ -55,6 +95,15 @@
       display: inline-block;
       text-wrap: avoid;
       white-space: nowrap;
+
+      > .mb-element-coordsdisplay {
+        display: block;
+        min-width: 160px;
+        > span{
+          float: left !important;
+        }
+      }
+
       > label{
         margin-bottom: 0;
       }
@@ -207,12 +256,4 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     margin-bottom: 0;
     font-weight: normal;
     line-height: inherit;
-}
-
-.olLayerGrid .olTileImage {
-  transition: opacity 0.5s linear;
-}
-
-.olTileImage {
-  transition: opacity 0.5s linear;
 }

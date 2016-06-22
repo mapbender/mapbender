@@ -6,7 +6,7 @@
             autoOpen: false,
             useTheme: false,
             target: null,
-            titlemaxlength: 20,
+            titlemaxlength: 40,
             layerInfo: true, //!!!
             showBaseSource: true,
             showHeader: false,
@@ -500,7 +500,7 @@
             }
         },
         _isThemeChecked: function($li){
-            if(this.options.useTheme === false) {
+            if(this.options.useTheme === false) { // a theme exists
                 return true;
             }
             var $lith = $li.parents('li.themeContainer:first');
@@ -516,6 +516,8 @@
                 } else {
                     return true;
                 }
+            } else if($lith.length === 0){ // no theme exists
+                return true;
             }
             return false;
         },
@@ -604,7 +606,12 @@
         },
         _onSourceRemoved: function(event, removed) {
             if (removed && removed.source && removed.source.id) {
+                var $source = $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element);
+                var $theme = $source.parents('.themeContainer:first');
                 $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element).remove();
+                if ($theme.length && $theme.find('.serviceContainer').length === 0){
+                    $theme.remove();
+                }
                 this._setSourcesCount();
             }
         },

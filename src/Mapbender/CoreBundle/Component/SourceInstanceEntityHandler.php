@@ -36,7 +36,8 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function update();
     
     /**
-     * Returns the instance configuration with signed urls.
+     * Returns the instance configuration with signed urls or null if an instance configuration isn't valid.
+     * @return array instance configuration or null
      */
     abstract public function getConfiguration(Signer $signer);
     
