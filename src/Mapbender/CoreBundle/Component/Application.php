@@ -703,7 +703,7 @@ class Application
      * If there is no ACL's or roles then ever granted
      *
      * @param Element|ElementEntity $element
-     * @param string                $permission SecurityContext::PERMISSION_
+     * @param string $permission SecurityContext::PERMISSION_
      * @return bool
      */
     public function isElementGranted(Element $element, $permission = SecurityContext::PERMISSION_VIEW)
