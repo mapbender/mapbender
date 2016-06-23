@@ -1,13 +1,13 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
     
     {%  if configuration['type'] is defined and configuration.type == 'element' %}
-        <input type="button" class="button" id="printToggle" active="false" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
-        <br>    
+        <input type="button" class="button" id="printToggle" active="false" value="{{ 'mb.print.client.btn.activate' | trans }}"/>
+        <br>
     {% endif %}
-    
+
     <form id="formats" action="">
-        
-        <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
+
+        <label class="labelInput">{{ 'mb.print.client.label.template' | trans }}</label>
         <div class="dropdown">
             <select name="template" class="hiddenDropdown">
                 {% for id, template in configuration.templates %}
@@ -18,7 +18,7 @@
             <ul class="dropdownList"></ul>
         </div>
 
-        <label class="labelInput">{{ 'mb.core.printclient.label.quality' | trans }}</label>
+        <label class="labelInput">{{ 'mb.print.client.label.quality' | trans }}</label>
         <div class="dropdown">
             <select name="quality" class="hiddenDropdown">
                 {% for key , label in configuration.quality_levels %}
@@ -29,7 +29,7 @@
             <ul class="dropdownList"></ul>
         </div>
 
-        <label class="labelInput">{{ 'mb.core.printclient.label.scale' | trans }}</label>
+        <label class="labelInput">{{ 'mb.print.client.label.scale' | trans }}</label>
         <div class="dropdown">
             <select name="scale_select" class="hiddenDropdown">
                 {% for key in configuration.scales %}
@@ -41,7 +41,7 @@
         </div>
 
         {% if configuration.rotatable is defined and configuration.rotatable == 1 %}
-            <label class="labelInput" for="rotation">{{ 'mb.core.printclient.label.rotation' | trans }}</label>
+            <label class="labelInput" for="rotation">{{ 'mb.print.client.label.rotation' | trans }}</label>
             <input class="input" type="text" name="rotation" value="0"/>
 	    {% else %}
 			<input class="input" type="text" name="rotation" value="0" style="display: none"/>
@@ -59,21 +59,21 @@
                 <input type="text" class="input validationInput" name="extra[{{ key }}]" {{ required }}>
             {% endfor %}
         {% endif %}
-        
+
         {% if configuration.legend is defined and configuration.legend == 1 %}
             {% set legend_checked = 'checked' %}
             {% if configuration.legend_default_behaviour is defined and configuration.legend_default_behaviour == 0 %}
                 {% set legend_checked = '' %}
-            {% endif %}    
+            {% endif %}
             <div class="checkWrapper left iconCheckbox iconCheckboxActive " data-icon="iconCheckbox">
                 <input class="checkbox" type="checkbox" name="printLegend" value="1" {{ legend_checked }}>
             </div>
-            <label class="labelCheck">{{ 'mb.core.printclient.label.legend' | trans }}</label>
+            <label class="labelCheck">{{ 'mb.print.client.label.legend' | trans }}</label>
         {% endif %}
-        
+
         <div id="layers"></div>
         <input type="submit" style="display: none"/>
-        <input type="button" class="button printSubmit hidden" value="{{ 'mb.core.printclient.popup.btn.ok' | trans }}"/>
+        <input type="button" class="button printSubmit hidden" value="{{ 'mb.print.client.popup.btn.ok' | trans }}"/>
     
     </form>
 </div>

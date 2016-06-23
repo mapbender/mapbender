@@ -32,11 +32,6 @@ mb:
           deactivateonclose: 'Desativar ao fechar'
           showoriginal: 'Mostrar original'
           onlyvalid: 'Mostrar válido somente'
-      printclient:
-        label:
-          autoopen: 'Abrir automaticamente'
-          rotatable: 'Pode girar'
-          legend: 'Imprimir legenda'
       copyright:
         label:
           autoopen: 'Abrir automaticamente'
@@ -217,31 +212,6 @@ mb:
         btn:
           ok: Fechar
           cancel: Cancelar
-    printclient:
-      class:
-        title: Impressão
-        description: 'Diálogo de Impressão'
-      tag:
-        print: Impressão
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
-      popup:
-        btn:
-          ok: Imprimir
-          cancel: Cancelar
-      info:
-        noactivelayer: 'Nenhuma camada ativa'
-      form:
-        required: 'Por favor, preencha este campo.'
-      label:
-        template: Padrão
-        quality: Qualidade
-        scale: Escala
-        rotation: Rotação
-        legend: 'Imprimir legenda'
     ruler:
       class:
         title: 'Medição de linha/área'

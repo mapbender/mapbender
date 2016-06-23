@@ -1,5 +1,5 @@
 (function($){
-
+'HERE WE GOGO!';
     $.widget("mapbender.mbImageExport", {
         options: {},
         map: null,

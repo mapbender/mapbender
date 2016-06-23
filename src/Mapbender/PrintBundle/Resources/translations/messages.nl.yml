@@ -1,4 +1,11 @@
 mb:
+  core:
+    admin:
+      printclient:
+        label:
+          autoopen: 'Auto open'
+          rotatable: Draaibaar
+          legend: legend
   print:
     imageexport:
       popup:
@@ -16,3 +23,28 @@ mb:
         export: export
         jpeg: jpeg
         png: png
+    client:
+      popup:
+        btn:
+          ok: Print
+          cancel: Cancel
+      info:
+        noactivelayer: 'Geen active laag!'
+      form:
+        required: 'Vul dit veld in graag'
+      label:
+        template: Sjabloon
+        quality: Kwaliteit
+        scale: Schaal
+        rotation: Roteren
+        legend: legend
+      class:
+        title: 'Print client'
+        description: 'Renders a Print dialog'
+      tag:
+        print: print
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg

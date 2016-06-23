@@ -46,12 +46,12 @@
                     var active = $(this).attr('active');
                     if(active === 'true') {// deactivate
                         $(this).attr('active','false').removeClass('active');
-                        $(this).val(Mapbender.trans('mb.core.printclient.btn.activate'));
+                        $(this).val(Mapbender.trans('mb.print.client.btn.activate'));
                         self._updateElements(false);
                         $('.printSubmit', this.element).addClass('hidden');
                     }else{ // activate
                         $(this).attr('active','true').addClass('active');
-                        $(this).val(Mapbender.trans('mb.core.printclient.btn.deactivate'));
+                        $(this).val(Mapbender.trans('mb.print.client.btn.deactivate'));
                         self._getTemplateSize();
                         self._updateElements(true);
                         self._setScale();
@@ -88,14 +88,14 @@
                             cssClass: 'customPrintDialog',
                             buttons: {
                                     'cancel': {
-                                        label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
+                                        label: Mapbender.trans('mb.print.client.popup.btn.cancel'),
                                         cssClass: 'button buttonCancel critical right',
                                         callback: function(){
                                             self.close();
                                         }
                                     },
                                     'ok': {
-                                        label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
+                                        label: Mapbender.trans('mb.print.client.popup.btn.ok'),
                                         cssClass: 'button right',
                                         callback: function(){
                                             self._print();
@@ -497,7 +497,7 @@
             form.attr('method', 'post');
 
             if (lyrCount === 0){
-                Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
+                Mapbender.info(Mapbender.trans('mb.print.client.info.noactivelayer'));
             }else{
                 // we click a hidden submit button to check the required fields
                 form.find('input[type="submit"]').click();

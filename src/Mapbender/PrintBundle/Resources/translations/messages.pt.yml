@@ -1,4 +1,11 @@
 mb:
+  core:
+    admin:
+      printclient:
+        label:
+          autoopen: 'Abrir automaticamente'
+          rotatable: 'Pode girar'
+          legend: 'Imprimir legenda'
   print:
     imageexport:
       class:
@@ -16,3 +23,28 @@ mb:
       info:
         noactivelayer: 'Nenhuma camada ativa!'
       chooseformat: 'Escolher formato de exportação'
+    client:
+      class:
+        title: Impressão
+        description: 'Diálogo de Impressão'
+      tag:
+        print: Impressão
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg
+      popup:
+        btn:
+          ok: Imprimir
+          cancel: Cancelar
+      info:
+        noactivelayer: 'Nenhuma camada ativa'
+      form:
+        required: 'Por favor, preencha este campo.'
+      label:
+        template: Padrão
+        quality: Qualidade
+        scale: Escala
+        rotation: Rotação
+        legend: 'Imprimir legenda'

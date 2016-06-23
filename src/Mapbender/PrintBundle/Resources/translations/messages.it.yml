@@ -1,4 +1,12 @@
 mb:
+  core:
+    admin:
+      printclient:
+        label:
+          autoopen: Autoopen
+          rotatable: Rotatable
+          legend: 'Print legend'
+          legend_default_behaviour: 'Legend checkbox activ'
   print:
     imageexport:
       popup:
@@ -16,3 +24,31 @@ mb:
         export: esporta
         jpeg: jpeg
         png: png
+    client:
+      label:
+        template: Template
+        quality: Quality
+        scale: Scale
+        rotation: Rotation
+        legend: 'Print legend'
+      popup:
+        btn:
+          ok: Print
+          cancel: Cancel
+      info:
+        noactivelayer: 'No active layer!'
+      form:
+        required: 'Please fill out this field'
+      class:
+        title: 'Print client'
+        description: 'Renders a Print dialog'
+      tag:
+        print: print
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg
+      btn:
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'

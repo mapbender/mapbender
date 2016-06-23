@@ -101,13 +101,6 @@ mb:
         line: __mb.core.ruler.tag.line
         area: __mb.core.ruler.tag.area
         measure: __mb.core.ruler.tag.measure
-    printclient:
-      label:
-        template: __mb.core.printclient.label.template
-        quality: __mb.core.printclient.label.quality
-        scale: __mb.core.printclient.label.scale
-        rotation: __mb.core.printclient.label.rotation
-        legend: __mb.core.printclient.label.legend
       popup:
         btn:
           ok: __mb.core.printclient.popup.btn.ok
@@ -309,11 +302,6 @@ mb:
           deactivateonclose: __mb.core.admin.featureinfo.label.deactivateonclose
           showoriginal: 'Show original'
           onlyvalid: 'Only valid'
-      printclient:
-        label:
-          autoopen: __mb.core.admin.printclient.label.autoopen
-          rotatable: __mb.core.admin.printclient.label.rotatable
-          legend: __mb.core.admin.printclient.label.legend
       copyright:
         label:
           autoopen: __mb.core.admin.copyright.label.autoopen

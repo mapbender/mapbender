@@ -85,34 +85,6 @@ mb:
         line: Linie
         area: Fläche
         measure: Messen
-    printclient:
-      label:
-        template: Vorlage
-        quality: Qualität
-        scale: Maßstab
-        rotation: Drehung
-        legend: 'Legende drucken'
-      popup:
-        btn:
-          ok: Drucken
-          cancel: Abbrechen
-      info:
-        noactivelayer: 'Keine aktive Ebene!'
-      form:
-        required: 'Bitte füllen Sie dieses Feld aus'
-      class:
-        title: Druck
-        description: 'Druck Dialog'
-      tag:
-        print: Druck
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
-      btn:
-        deactivate: 'Druckrahmen deaktivieren'
-        activate: 'Druckrahmen aktivieren'
     overview:
       nolayer: 'Die Übersicht enthält keine Ebene.'
       class:
@@ -305,12 +277,6 @@ mb:
           autoopen: 'Automatisches Öffnen'
           showoriginal: 'Original Zeigen'
           onlyvalid: 'Nur valide zeigen'
-      printclient:
-        label:
-          autoopen: 'Automatisches Öffnen'
-          rotatable: Drehbar
-          legend: 'Legende drucken'
-          legend_default_behaviour: 'Legenden Checkbox aktiv'
       copyright:
         label:
           autoopen: 'Automatisches Öffnen'

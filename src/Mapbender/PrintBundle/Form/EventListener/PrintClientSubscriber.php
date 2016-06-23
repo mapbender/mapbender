@@ -1,13 +1,12 @@
 <?php
 
-namespace Mapbender\CoreBundle\Form\EventListener;
+namespace Mapbender\PrintBundle\Form\EventListener;
 
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormFactoryInterface;
+use Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Mapbender\CoreBundle\Element\Type\PrintClientTemplateAdminType;
-use Mapbender\CoreBundle\Element\Type\PrintClientQualityAdminType;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * 

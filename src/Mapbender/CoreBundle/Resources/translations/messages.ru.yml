@@ -101,31 +101,6 @@ mb:
         line: линия
         area: область
         measure: мера
-    printclient:
-      label:
-        template: Шаблон
-        quality: Качество
-        scale: Масштаб
-        rotation: Вращение
-        legend: 'Легенда'
-      popup:
-        btn:
-          ok: Печать
-          cancel: Отмена
-      info:
-        noactivelayer: 'Нет активного слоя!'
-      form:
-        required: 'Пожалуйста, заполните это поле'
-      class:
-        title: Печать
-        description: 'Отображает диалоговое окно печати'
-      tag:
-        print: печать
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
     overview:
       nolayer: 'Обзор элемента не имеет слоя.'
       class:
@@ -309,11 +284,6 @@ mb:
           deactivateonclose: 'Деактивировать при закрытии'
           showoriginal: 'Показать оригинал'
           onlyvalid: 'Только действительные'
-      printclient:
-        label:
-          autoopen: Авто-открытие
-          rotatable: Поворачиваемые
-          legend: 'Легенда'
       copyright:
         label:
           autoopen: Авто-открытие

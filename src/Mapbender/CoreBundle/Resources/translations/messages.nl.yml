@@ -4,11 +4,6 @@ mb:
       copyright:
         label:
           autoopen: 'Auto open'
-      printclient:
-        label:
-          autoopen: 'Auto open'
-          rotatable: Draaibaar
-          legend: __mb.core.admin.printclient.label.legend
       layertree:
         label:
           showbasesources: 'Toon basis capaciteit'
@@ -101,31 +96,6 @@ mb:
         feature: kenmerk
         info: info
         dialog: dialoog
-    printclient:
-      popup:
-        btn:
-          ok: Print
-          cancel: Cancel
-      info:
-        noactivelayer: 'Geen active laag!'
-      form:
-        required: 'Vul dit veld in graag'
-      label:
-        template: Sjabloon
-        quality: Kwaliteit
-        scale: Schaal
-        rotation: Roteren
-        legend: __mb.core.printclient.label.legend
-      class:
-        title: 'Print client'
-        description: 'Renders a Print dialog'
-      tag:
-        print: print
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
     zoombar:
       panup: 'shuif omhoog'
       panright: 'shuif rechts'

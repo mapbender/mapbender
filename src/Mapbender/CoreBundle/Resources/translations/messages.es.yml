@@ -101,31 +101,6 @@ mb:
         line: línea
         area: área
         measure: medida
-    printclient:
-      label:
-        template: Plantilla
-        quality: Calidad
-        scale: Escala
-        rotation: Rotación
-        legend: __mb.core.printclient.label.legend
-      popup:
-        btn:
-          ok: Imprimir
-          cancel: Cancelar
-      info:
-        noactivelayer: 'No hay capa activa!'
-      form:
-        required: 'Por favor rellene este campo'
-      class:
-        title: 'Cliente de Impresión'
-        description: 'Renders un diálogo de Impresión'
-      tag:
-        print: imprimir
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
     overview:
       nolayer: 'El elemento overview no tiene capa.'
       class:
@@ -309,11 +284,6 @@ mb:
           deactivateonclose: 'Desactivar al cerrar'
           showoriginal: 'Show original'
           onlyvalid: 'Only valid'
-      printclient:
-        label:
-          autoopen: Autoabrir
-          rotatable: Rotable
-          legend: __mb.core.admin.printclient.label.legend
       copyright:
         label:
           autoopen: Autoabrir

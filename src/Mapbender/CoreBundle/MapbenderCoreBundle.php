@@ -9,8 +9,8 @@
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * CoreBundle.
@@ -62,7 +62,6 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Map',
             'Mapbender\CoreBundle\Element\Overview',
             'Mapbender\CoreBundle\Element\POI',
-            'Mapbender\CoreBundle\Element\PrintClient',
             'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\ScaleBar',
             'Mapbender\CoreBundle\Element\ScaleDisplay',
