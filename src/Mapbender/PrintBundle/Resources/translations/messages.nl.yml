@@ -1,11 +1,4 @@
 mb:
-  core:
-    admin:
-      printclient:
-        label:
-          autoopen: 'Auto open'
-          rotatable: Draaibaar
-          legend: legend
   print:
     imageexport:
       popup:
@@ -48,3 +41,7 @@ mb:
         gif: gif
         jpg: jpg
         jpeg: jpeg
+    admin:
+      autoopen: 'Auto open'
+      rotatable: Draaibaar
+      legend: legend

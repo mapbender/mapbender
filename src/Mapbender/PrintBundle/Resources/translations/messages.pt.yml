@@ -1,11 +1,4 @@
 mb:
-  core:
-    admin:
-      printclient:
-        label:
-          autoopen: 'Abrir automaticamente'
-          rotatable: 'Pode girar'
-          legend: 'Imprimir legenda'
   print:
     imageexport:
       class:
@@ -47,4 +40,8 @@ mb:
         quality: Qualidade
         scale: Escala
         rotation: Rotação
+        legend: 'Imprimir legenda'
+      admin:
+        autoopen: 'Abrir automaticamente'
+        rotatable: 'Pode girar'
         legend: 'Imprimir legenda'

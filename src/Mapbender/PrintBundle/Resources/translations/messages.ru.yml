@@ -1,11 +1,4 @@
 mb:
-  core:
-    admin:
-      printclient:
-        label:
-          autoopen: Авто-открытие
-          rotatable: Поворачиваемые
-          legend: 'Легенда'
   print:
     imageexport:
       popup:
@@ -50,3 +43,7 @@ mb:
         gif: gif
         jpg: jpg
         jpeg: jpeg
+      admin:
+        autoopen: Авто-открытие
+        rotatable: Поворачиваемые
+        legend: 'Легенда'

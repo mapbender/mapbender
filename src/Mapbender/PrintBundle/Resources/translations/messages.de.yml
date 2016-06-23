@@ -1,12 +1,4 @@
 mb:
-  core:
-    admin:
-    printclient:
-      label:
-        autoopen: 'Automatisches Öffnen'
-        rotatable: Drehbar
-        legend: 'Legende drucken'
-        legend_default_behaviour: 'Legenden Checkbox aktiv'
   print:
     imageexport:
       chooseformat: 'Exportformat auswählen'
@@ -52,3 +44,8 @@ mb:
       btn:
         deactivate: 'Druckrahmen deaktivieren'
         activate: 'Druckrahmen aktivieren'
+      admin:
+        autoopen: 'Automatisches Öffnen'
+        rotatable: Drehbar
+        legend: 'Legende drucken'
+        legend_default_behaviour: 'Legenden Checkbox aktiv'

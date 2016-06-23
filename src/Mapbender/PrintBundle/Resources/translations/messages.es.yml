@@ -1,11 +1,4 @@
 mb:
-  core:
-    admin:
-      printclient:
-        label:
-          autoopen: Autoabrir
-          rotatable: Rotable
-          legend: __mb.core.admin.printclient.label.legend
   print:
     imageexport:
       class:
@@ -48,3 +41,7 @@ mb:
         gif: gif
         jpg: jpg
         jpeg: jpeg
+      admin:
+        autoopen: Autoabrir
+        rotatable: Rotable
+        legend: Legend
