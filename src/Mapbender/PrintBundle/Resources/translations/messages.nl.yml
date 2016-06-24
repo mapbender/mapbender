@@ -41,7 +41,10 @@ mb:
         gif: gif
         jpg: jpg
         jpeg: jpeg
-    admin:
-      autoopen: 'Auto open'
-      rotatable: Draaibaar
-      legend: legend
+      btn:
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'
+      admin:
+        autoopen: 'Auto open'
+        rotatable: Draaibaar
+      l egend: legend

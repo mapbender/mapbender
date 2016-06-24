@@ -41,6 +41,9 @@ mb:
         scale: Escala
         rotation: Rotação
         legend: 'Imprimir legenda'
+      btn:
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'
       admin:
         autoopen: 'Abrir automaticamente'
         rotatable: 'Pode girar'

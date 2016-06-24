@@ -41,6 +41,9 @@ mb:
         gif: gif
         jpg: jpg
         jpeg: jpeg
+      btn:
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'
       admin:
         autoopen: Autoabrir
         rotatable: Rotable

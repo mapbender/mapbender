@@ -43,6 +43,9 @@ mb:
         gif: gif
         jpg: jpg
         jpeg: jpeg
+      btn:
+        deactivate: Выключить
+        activate: Включить
       admin:
         autoopen: Авто-открытие
         rotatable: Поворачиваемые
