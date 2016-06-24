@@ -98,17 +98,22 @@ class OdgParser
             $data['fields'][$name]['x'] = substr($x, 0, -2) * 10;
             $data['fields'][$name]['y'] = substr($y, 0, -2) * 10;
 
-
+            $textparagraph = $xpath->query("draw:text-box/text:p", $node)->item(0);
             $textnode = $xpath->query("draw:text-box/text:p/text:span", $node)->item(0);
-            if ($textnode) {
+
+            $style = $textparagraph->getAttribute('text:style-name');
+            if(!$style){
                 $style = $textnode->getAttribute('text:style-name');
-                $stylenode = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties');
-                $fontsize = $stylenode->item(0)->getAttribute('fo:font-size');
-                $font = $stylenode->item(0)->getAttribute('fo:font-family');
-                $data['fields'][$name]['fontsize'] = $fontsize;
-                $data['fields'][$name]['font'] = $font;
             }
+
+            $stylenode = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties');
+            $fontsize = $stylenode->item(0)->getAttribute('fo:font-size');
+            $font = $stylenode->item(0)->getAttribute('fo:font-family');
+
+            $data['fields'][$name]['fontsize'] = $fontsize;
+            $data['fields'][$name]['font'] = $font;
         }
+
         return $data;
     }
 
