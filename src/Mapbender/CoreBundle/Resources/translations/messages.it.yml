@@ -1,18 +1,5 @@
 mb:
   core:
-    aboutdialog:
-      content:
-        versionprefix: __mb.core.aboutdialog.content.versionprefix
-        learnmore: __mb.core.aboutdialog.content.learnmore
-        linktitle: __mb.core.aboutdialog.content.linktitle
-        website: __mb.core.aboutdialog.content.website
-      class:
-        title: __mb.core.aboutdialog.class.title
-        description: __mb.core.aboutdialog.class.description
-      tag:
-        help: __mb.core.aboutdialog.tag.help
-        info: __mb.core.aboutdialog.tag.info
-        about: __mb.core.aboutdialog.tag.about
     simplesearch:
       input:
         search: __mb.core.simplesearch.input.search

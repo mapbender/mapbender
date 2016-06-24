@@ -1,0 +1,15 @@
+mb:
+  core:
+    aboutdialog:
+      content:
+        versionprefix: v.
+        learnmore: 'learn more about Mapbender3'
+        linktitle: 'Visit our official Mapbender3 website'
+        website: website
+      class:
+        title: 'About dialog'
+        description: 'Shows an about dialog'
+      tag:
+        help: help
+        info: info
+        about: about

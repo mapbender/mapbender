@@ -1,18 +1,5 @@
 mb:
   core:
-    aboutdialog:
-      content:
-        versionprefix: Version
-        learnmore: 'Lernen Sie Mapbender3 kennen '
-        linktitle: 'Besuchen Sie die offizielle Mapbender3 Webseite.'
-        website: '- zur Webseite'
-      class:
-        title: Über-Mapbender-Dialog
-        description: 'Der Über-Mapbender-Dialog zeigt Informationen zu Mapbender an.'
-      tag:
-        help: Hilfe
-        info: Info
-        about: Info-Dialog
     simplesearch:
       input:
         search: Suchen

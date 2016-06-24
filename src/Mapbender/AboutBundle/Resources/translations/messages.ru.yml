@@ -1,0 +1,15 @@
+mb:
+  core:
+    aboutdialog:
+      content:
+        versionprefix: v.
+        learnmore: 'Посетите наш Mapbender3'
+        linktitle: 'Посетите наш официальный сайт Mapbender3'
+        website: сайт
+      class:
+        title: 'Раздел о программе'
+        description: 'Показать раздел о программе'
+      tag:
+        help: справка
+        info: инфо
+        about: 'о программе'
