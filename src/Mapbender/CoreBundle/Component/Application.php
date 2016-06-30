@@ -5,7 +5,7 @@ use Assetic\Asset\StringAsset;
 use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Entity\Application as Entity;
-use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -366,7 +366,7 @@ class Application
      */
     public function getElement($id)
     {
-        /** @var Element[] $elements */
+        /** @var ElementEntity[] $elements */
         $regions = $this->getElements();
         $r       = null;
         foreach ($regions as $region => $elements) {
@@ -702,11 +702,11 @@ class Application
      *
      * If there is no ACL's or roles then ever granted
      *
-     * @param Element $element
+     * @param ElementEntity $element
      * @param string  $permission SecurityContext::PERMISSION_
      * @return bool
      */
-    public function isElementGranted(Element $element, $permission = SecurityContext::PERMISSION_VIEW)
+    public function isElementGranted(ElementEntity $element, $permission = SecurityContext::PERMISSION_VIEW)
     {
         $applicationEntity = $this->getEntity();
         $securityContext   = $this->container->get('security.context');
