@@ -137,19 +137,11 @@
             if (extent.containsLonLat(point) === false) // point is in extent?
             {
                 if (this.options.follow) {
-                    console.debug("this.options.follow");
                     olmap.panTo(point);
                 } else if (this.firstPosition && this.options.centerOnFirstPosition) {
                     olmap.panTo(point);
-                    console.debug('got first position');
-                } else {
-                    console.debug("else");
-                }
-
-            } else { // point is in extent?
-                // don't have to do nothing.
+                } 
             }
-            
         },
 
         _zoomMap: function (point, accuracy) {
