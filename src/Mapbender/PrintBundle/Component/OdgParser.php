@@ -1,16 +1,24 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
-use Symfony\Component\HttpFoundation\Response;
-
 class OdgParser
 {
 
+    /**
+     * OdgParser constructor.
+     *
+     * @param $container
+     */
     public function __construct($container)
     {
         $this->container = $container;
     }
 
+    /**
+     * @param $template
+     * @param $file
+     * @return string
+     */
     private function readOdgFile($template, $file)
     {
         $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
@@ -27,6 +35,10 @@ class OdgParser
         return $xml;
     }
 
+    /**
+     * @param $template
+     * @return string
+     */
     public function getMapSize($template)
     {
         $xml = $this->readOdgFile($template, 'content.xml');
@@ -45,6 +57,12 @@ class OdgParser
         return json_encode($size);
     }
 
+    /**
+     * Get print configuration
+     *
+     * @param $template
+     * @return array
+     */
     public function getConf($template)
     {
         $data = array();
@@ -88,33 +106,34 @@ class OdgParser
             if ($name == '') {
                 continue;
             }
-            $width = $node->getAttribute('svg:width');
+            $width  = $node->getAttribute('svg:width');
             $height = $node->getAttribute('svg:height');
-            $x = $node->getAttribute('svg:x');
-            $y = $node->getAttribute('svg:y');
+            $x      = $node->getAttribute('svg:x');
+            $y      = $node->getAttribute('svg:y');
+            $field  = array(
+                'fontsize' => "10",
+                'font'     => 'Arial',
+                'width'    => substr($width, 0, -2) * 10,
+                'height'   => substr($height, 0, -2) * 10,
+                'x'        => substr($x, 0, -2) * 10,
+                'y'        => substr($y, 0, -2) * 10,
+            );
 
-            $data['fields'][$name]['width'] = substr($width, 0, -2) * 10;
-            $data['fields'][$name]['height'] = substr($height, 0, -2) * 10;
-            $data['fields'][$name]['x'] = substr($x, 0, -2) * 10;
-            $data['fields'][$name]['y'] = substr($y, 0, -2) * 10;
+            // Recognize font name and size
+            $textParagraph = $xpath->query("draw:text-box/text:p", $node)->item(0);
+            $textNode      = $xpath->query("draw:text-box/text:p/text:span", $node)->item(0);
+            if ($textParagraph && $textNode) {
+                $style = $textParagraph->getAttribute('text:style-name');
+                if (!$style) {
+                    $style = $textNode->getAttribute('text:style-name');
+                }
 
-            $textparagraph = $xpath->query("draw:text-box/text:p", $node)->item(0);
-            $textnode = $xpath->query("draw:text-box/text:p/text:span", $node)->item(0);
-
-            $style = $textparagraph->getAttribute('text:style-name');
-            if(!$style){
-                $style = $textnode->getAttribute('text:style-name');
+                $styleNode         = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties');
+                $field['font']     = $styleNode->item(0)->getAttribute('fo:fontName-family');
+                $field['fontsize'] = $styleNode->item(0)->getAttribute('fo:fontName-size');
             }
-
-            $stylenode = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties');
-            $fontsize = $stylenode->item(0)->getAttribute('fo:font-size');
-            $font = $stylenode->item(0)->getAttribute('fo:font-family');
-
-            $data['fields'][$name]['fontsize'] = $fontsize;
-            $data['fields'][$name]['font'] = $font;
+            $data['fields'][ $name ] = $field;
         }
-
         return $data;
     }
-
 }
