@@ -368,7 +368,7 @@ class PrintService
         $pageCount = $pdf->setSourceFile($pdfFile);
         $tplidx = $pdf->importPage(1);
         $pdf->SetAutoPageBreak(false);
-        $pdf->addPage($orientation);
+        $pdf->addPage($orientation, $format);
         $pdf->useTemplate($tplidx);
 
         // add final map image
@@ -390,9 +390,8 @@ class PrintService
 
         // fill text fields
         if (isset($this->conf['fields']) ) {
-            foreach ($this->conf['fields'] as $k => $fontConfiguration) {
-                $fontsize = isset($fontConfiguration['fontsize']) ? $fontConfiguration['fontsize']: 20;
-                $pdf->SetFont('Arial', '',$fontsize);
+            foreach ($this->conf['fields'] as $k => $v) {
+                $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
                 $pdf->SetXY($this->conf['fields'][$k]['x'] - 1,
                     $this->conf['fields'][$k]['y']);
 

@@ -123,14 +123,13 @@ class OdgParser
             $textParagraph = $xpath->query("draw:text-box/text:p", $node)->item(0);
             $textNode      = $xpath->query("draw:text-box/text:p/text:span", $node)->item(0);
             if ($textParagraph && $textNode) {
-                $style = $textParagraph->getAttribute('text:style-name');
+                $style = $textNode->getAttribute('text:style-name');
                 if (!$style) {
-                    $style = $textNode->getAttribute('text:style-name');
+                    $style = $textParagraph->getAttribute('text:style-name');
                 }
 
                 $styleNode         = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties');
-                $field['font']     = $styleNode->item(0)->getAttribute('fo:fontName-family');
-                $field['fontsize'] = $styleNode->item(0)->getAttribute('fo:fontName-size');
+                $field['fontsize'] = $styleNode->item(0)->getAttribute('fo:font-size');
             }
             $data['fields'][ $name ] = $field;
         }
