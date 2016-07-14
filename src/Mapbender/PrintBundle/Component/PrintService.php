@@ -416,7 +416,7 @@ class PrintService
                         if (isset($this->data['extra'][$k])) {
                             $pdf->MultiCell($this->conf['fields'][$k]['width'],
                                 $this->conf['fields'][$k]['height'],
-                                $this->data['extra'][$k]);
+                                utf8_decode($this->data['extra'][$k]));
                         }
                         break;
                 }
