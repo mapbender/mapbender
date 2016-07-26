@@ -1,0 +1,15 @@
+mb:
+  core:
+    aboutdialog:
+      content:
+        versionprefix: v.
+        learnmore: 'aprende mas sobre Mapbender3'
+        linktitle: 'Visita nuestri sitio oficial de Mapbender3'
+        website: website
+      class:
+        title: 'Diálogo Acerca de'
+        description: 'Mostrar un diálogo acerca de'
+      tag:
+        help: ayuda
+        info: info
+        about: 'acerca de'

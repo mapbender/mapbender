@@ -16,7 +16,6 @@ mb:
         feature: __mb.core.featureinfo.tag.feature
         info: __mb.core.featureinfo.tag.info
         dialog: __mb.core.featureinfo.tag.dialog
-    aboutdialog:
       content:
         versionprefix: __mb.core.aboutdialog.content.versionprefix
         learnmore: __mb.core.aboutdialog.content.learnmore

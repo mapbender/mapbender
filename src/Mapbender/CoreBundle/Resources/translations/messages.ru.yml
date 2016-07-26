@@ -16,19 +16,6 @@ mb:
         feature: характеристика
         info: инфо
         dialog: Раздел
-    aboutdialog:
-      content:
-        versionprefix: v.
-        learnmore: 'Посетите наш Mapbender3'
-        linktitle: 'Посетите наш официальный сайт Mapbender3'
-        website: сайт
-      class:
-        title: 'Раздел о программе'
-        description: 'Показать раздел о программе'
-      tag:
-        help: справка
-        info: инфо
-        about: 'о программе'
     simplesearch:
       input:
         search: Поиск

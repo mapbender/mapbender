@@ -1,0 +1,15 @@
+mb:
+  core:
+    aboutdialog:
+      content:
+        versionprefix: v.
+        learnmore: 'Leer mer over Mapbender3'
+        linktitle: 'Bezoek onze officiele official Mapbender3 website'
+        website: website
+      class:
+        title: 'Over de dialoog'
+        description: 'Toon de dialoog'
+      tag:
+        help: Help
+        info: Info
+        about: Over

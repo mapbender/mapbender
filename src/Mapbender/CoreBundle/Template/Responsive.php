@@ -83,8 +83,7 @@ class Responsive extends Template
      */
     public static function getElementWhitelist()
     {
-        return array('toolbar' => array('Mapbender\CoreBundle\Element\Button',
-                'Mapbender\CoreBundle\Element\AboutDialog'),
+        return array('toolbar' => array('Mapbender\CoreBundle\Element\Button'),
             'content' => array('Mapbender\CoreBundle\Element\ActivityIndicator',
                 'Mapbender\CoreBundle\Element\CoordinatesDisplay',
                 'Mapbender\CoreBundle\Element\Copyright',
@@ -101,7 +100,7 @@ class Responsive extends Template
                 'Mapbender\CoreBundle\Element\Sketch',
                 'Mapbender\CoreBundle\Element\SrsSelector',
                 'Mapbender\CoreBundle\Element\ZoomBar'),
-            'infocontainer' => array('Mapbender\CoreBundle\Element\AboutDialog',
+            'infocontainer' => array(
                 'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
                 'Mapbender\CoreBundle\Element\CoordinatesDisplay',
                 'Mapbender\CoreBundle\Element\Copyright',

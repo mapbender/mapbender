@@ -1,12 +1,12 @@
 <?php
-namespace Mapbender\CoreBundle\Element\Type;
+namespace Mapbender\AboutBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * 
+ *
  */
 class AboutDialogAdminType extends AbstractType
 {
