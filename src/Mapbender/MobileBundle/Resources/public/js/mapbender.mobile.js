@@ -49,19 +49,18 @@ $(function(){
         var paneTitle = $('.contentTitle', pane);
         var hasPane = pane.size();
 
-        if(!hasPane) {
-            return false;
-        }
-
         if(buttonOptions.click) {
             if(buttonOptions.click && buttonOptions.click.length > 0 && buttonOptions.click.charAt(0) === '#') {
-                return;
+                return false;
             } else if(buttonOptions.click) {
                 window.open(buttonOptions.click, '_blank');
-                return;
+                return false;
             }
         }
 
+        if(!hasPane) {
+            return false;
+        }
 
         // hide frames
         $.each(paneContent.children(), function(idx, item) {
