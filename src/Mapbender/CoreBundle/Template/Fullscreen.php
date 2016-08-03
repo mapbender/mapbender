@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class Fullscreen extends Template
 {
+    public $twigTemplate = 'MapbenderCoreBundle:Template:fullscreen.html.twig';
 
     /**
      * @inheritdoc
@@ -95,19 +96,18 @@ class Fullscreen extends Template
      */
     public function render($format = 'html', $html = true, $css = true, $js = true)
     {
-        $application          = $this->application;
-        $applicationEntity    = $application->getEntity();
-        $templating           = $this->container->get('templating');
+        $application       = $this->application;
+        $applicationEntity = $application->getEntity();
+        $templating        = $this->container->get('templating');
 
-        $parameters = array(
-            'html'                 => $html,
-            'css'                  => $css,
-            'js'                   => $js,
-            'application'          => $application,
-            'region_props'         => $applicationEntity->getNamedRegionProperties(),
-            'default_region_props' => $this->getRegionsProperties());
-
-        return $templating
-            ->render('MapbenderCoreBundle:Template:fullscreen.html.twig', $parameters);
+        return $templating->render($this->twigTemplate, array(
+                'html'                 => $html,
+                'css'                  => $css,
+                'js'                   => $js,
+                'application'          => $application,
+                'region_props'         => $applicationEntity->getNamedRegionProperties(),
+                'default_region_props' => $this->getRegionsProperties()
+            )
+        );
     }
 }
