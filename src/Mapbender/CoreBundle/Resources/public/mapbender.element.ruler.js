@@ -99,6 +99,7 @@
             var self = this,
                     olMap = this.map.data('mapQuery').olMap;
             olMap.addControl(this.control);
+            this.control.geodesic = this._isGeodesic();
             this.control.activate();
 
             this._reset();
