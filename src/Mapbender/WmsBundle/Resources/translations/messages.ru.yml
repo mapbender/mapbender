@@ -186,7 +186,7 @@ mb:
     metadata:
       section:
         common:
-          common: общий
+          _title: общий
           title: Название
           name: Имя
           version: версия
@@ -195,11 +195,11 @@ mb:
           onlineResource: 'Интернет ресурс'
           exceptionFormats: 'Исключение форматы'
         useconditions:
-          title: 'условия использования'
+          _title: 'условия использования'
           fees: сборы
           accessconstraints: 'ограничения доступа'
         contact:
-          title: контакт
+          _title: контакт
           person: Человек
           position: позиция
           organization: организация
@@ -213,7 +213,7 @@ mb:
           addressPostCode: 'Почтовый индекс'
           addressCountry: страна
         items:
-          layer: Слой
+          _title: Слой
           title: название
           name: Имя
           srs: SRS

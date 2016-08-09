@@ -179,7 +179,7 @@ mb:
     metadata:
       section:
         common:
-          common: Common
+          _title: Common
           title: Title
           name: Name
           version: Version
@@ -188,11 +188,11 @@ mb:
           onlineResource: OnlineResource
           exceptionFormats: ExceptionFormats
         useconditions:
-          title: Useconditions
+          _title: Useconditions
           fees: Fees
           accessconstraints: Accessconstraints
         contact:
-          title: Contact
+          _title: Contact
           person: Person
           position: position
           organization: organization
@@ -206,7 +206,7 @@ mb:
           addressPostCode: addressPostCode
           addressCountry: addressCountry
         items:
-          layer: Layer
+          _title: Layer
           title: Title
           name: Name
           srs: SRS
