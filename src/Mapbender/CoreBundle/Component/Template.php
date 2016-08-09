@@ -19,7 +19,7 @@ abstract class Template
     protected $application;
 
     /** @var string Bundle public resource path */
-    private static $resourcePath;
+    protected static $resourcePath;
 
     /** @var string Application title */
     protected static $title;
@@ -48,7 +48,7 @@ abstract class Template
      */
     public function __construct(ContainerInterface $container, Application $application)
     {
-        self::$resourcePath = '@' . $this->getBundleName() . '/Resources/public';
+        static::$resourcePath = '@' . $this->getBundleName() . '/Resources/public';
         $this->container    = $container;
         $this->application  = $application;
     }
@@ -63,7 +63,7 @@ abstract class Template
      */
     static public function getTitle()
     {
-        return self::$title;
+        return static::$title;
     }
 
     /**
@@ -114,7 +114,7 @@ abstract class Template
      */
     static public function getRegions()
     {
-        return self::$regions;
+        return static::$regions;
     }
 
     /**
@@ -138,7 +138,7 @@ abstract class Template
                 'js'                   => $js,
                 'application'          => $application,
                 'region_props'         => $applicationEntity->getNamedRegionProperties(),
-                'default_region_props' => $this->getRegionsProperties()
+                'default_region_props' => static::getRegionsProperties()
             )
         );
     }
@@ -150,7 +150,7 @@ abstract class Template
      */
     public static function getRegionsProperties()
     {
-        return self::$regionsProperties;
+        return static::$regionsProperties;
     }
 
     /**
@@ -171,7 +171,7 @@ abstract class Template
      */
     public static function getResourcePath()
     {
-        return self::$resourcePath;
+        return static::$resourcePath;
     }
 
     /**
@@ -187,7 +187,7 @@ abstract class Template
      */
     public static function setTitle($title)
     {
-        self::$title = $title;
+        static::$title = $title;
     }
 
     /**
