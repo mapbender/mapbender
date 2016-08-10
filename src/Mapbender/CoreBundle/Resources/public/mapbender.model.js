@@ -108,8 +108,12 @@ Mapbender.Model = {
         }
         if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
             $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
+                var coord = new OpenLayers.LonLat(poi.x, poi.y);
+                if(poi.srs) {
+                    coord = coord.transform(self.getProj(poi.srs), self.getCurrentProj());
+                }
                 pois.push({
-                    position: new OpenLayers.LonLat(poi.x, poi.y),
+                    position: coord,
                     label: poi.label,
                     scale: poi.scale
                 });

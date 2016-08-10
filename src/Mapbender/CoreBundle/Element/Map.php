@@ -49,7 +49,7 @@ class Map extends Element
         /* "standardized rendering pixel size" for WMTS 0.28 mm × 0.28 mm -> DPI for WMTS: 90.714285714 */
         return array(
             'layersets' => array(),
-            'dpi' => 72,// DPI for WMTS: 90.714285714
+            'dpi' => 72, // DPI for WMTS: 90.714285714
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'units' => 'degrees',
@@ -97,8 +97,8 @@ class Map extends Element
         $configuration        = parent::getConfiguration();
         $extra                = array();
         // @TODO: Move into DataTransformer of MapAdminType
-        $configuration = array_merge(array('extra' => $extra), $configuration);
-        $allsrs        = array();
+        $configuration        = array_merge(array('extra' => $extra), $configuration);
+        $allsrs               = array();
         if (is_int(stripos($configuration["srs"], "|"))) {
             $srsHlp               = preg_split("/\s?\|{1}\s?/", $configuration["srs"]);
             $configuration["srs"] = trim($srsHlp[0]);
@@ -131,7 +131,7 @@ class Map extends Element
                 }
             }
         }
-        $allsrs = array_unique($allsrs, SORT_REGULAR);
+        $allsrs                   = array_unique($allsrs, SORT_REGULAR);
         $configuration["srsDefs"] = $this->getSrsDefinitions($allsrs);
         $srs_req                  = $this->container->get('request')->get('srs');
         if ($srs_req) {
@@ -143,7 +143,8 @@ class Map extends Element
                 }
             }
             if (!$exists) {
-                $this->container->get('logger')->error('The requested srs ' . $srs_req . ' is not supported by this application.');
+                $this->container->get('logger')->error(
+                    'The requested srs ' . $srs_req . ' is not supported by this application.');
             } else {
                 $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
             }
@@ -156,13 +157,17 @@ class Map extends Element
                 $pois = array($pois);
             }
             foreach ($pois as $poi) {
-                $point           = explode(',', $poi['point']);
-                $extra['pois'][] = array(
+                $point = explode(',', $poi['point']);
+                $help  = array(
                     'x' => floatval($point[0]),
                     'y' => floatval($point[1]),
                     'label' => isset($poi['label']) ? htmlentities($poi['label']) : null,
                     'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
+                if ($poi['srs']) {
+                    $help['srs'] = $poi['srs'];
+                }
+                $extra['pois'][] = $help;
             }
         }
 
