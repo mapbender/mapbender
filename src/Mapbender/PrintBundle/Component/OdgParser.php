@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Symfony\Component\Config\Definition\Exception\Exception;
+
 class OdgParser
 {
 
@@ -23,6 +25,11 @@ class OdgParser
     {
         $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $odgfile = $resource_dir . '/templates/' . $template . '.odg';
+
+        if(!is_file($odgfile)){
+            throw new Exception("Print template '$template' doesn't exists.");
+        }
+
         $open = zip_open($odgfile);
         while ($zip_entry = zip_read($open)) {
             if (zip_entry_name($zip_entry) == $file) {
