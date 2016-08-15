@@ -221,7 +221,7 @@
 
 
                 }, function error(msg) {
-                    Mapbender.error("Es ist nicht möglich Ihre Position zu bestimmen.");
+                    Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.nosignal"));
                     widget.deactivate();
                 }, { enableHighAccuracy: true, maximumAge: 0 });
 
