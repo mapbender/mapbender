@@ -82,17 +82,26 @@
 
   .iconZoomLevel {
     font-size: 10px;
-    line-height: 10px;
     position: relative;
     display: block;
-    margin-top: 2px;
-    margin-bottom: 8px;
-    &:not(:first-child):after {
-      content: '';
-      height: 9px;
-      border-left: dotted 1px white;
-      @include absolute(-9px '' '' 19px);
-      top: -8px;
+    margin-top: 0px;
+    margin-left: 15px;
+    width: 10px;
+    line-height: 10px;
+    height: 10px;
+    position: relative;
+    margin-bottom: 9px;
+    &:not(:last-child):after {
+      position: absolute;
+      content: "\f142";
+      font-family: FontAwesome;
+      line-height: 10px;
+      display: block;
+      //margin-bottom: -3px;
+      width: 3px;
+      text-align: left;
+      margin-left: 4px;
+
     }
   }
   
@@ -101,7 +110,7 @@
       display:block;
       height: 17px;
       padding-left: 35px !important;
-      margin-top: -3px;
+      margin-top: 3px;
   }
 }
 
