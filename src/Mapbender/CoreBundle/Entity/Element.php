@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -12,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ElementRepository")
  * @ORM\Table(name="mb_core_element")
  */
 class Element
@@ -291,4 +290,6 @@ class Element
     {
         $this->yamlRoles = $yamlRoles;
     }
+
+    public function getDescription() { }
 }
