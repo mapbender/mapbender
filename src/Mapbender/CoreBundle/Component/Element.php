@@ -2,12 +2,11 @@
 
 namespace Mapbender\CoreBundle\Component;
 
-use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -20,7 +19,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 abstract class Element
 {
-
     /**
      * Extended API. The ext_api defins, if an element can be used as a target
      * element.
@@ -35,23 +33,29 @@ abstract class Element
      */
     public static $merge_configurations = true;
 
-    /**
-     * Application
-     * @var Application An application object
-     */
+    /** @var Application Application component */
     protected $application;
 
-    /**
-     * Container
-     * @var ContainerInterface The container
-     */
+    /** @var ContainerInterface Symfony container */
     protected $container;
 
-    /**
-     * Entity
-     * @var Entity The configuration storage entity
-     */
+    /**  @var Entity The configuration storage entity */
     protected $entity;
+
+    /** @var array Class name parts */
+    protected $classNameParts;
+
+    /** @var array Element fefault configuration */
+    protected static $defaultConfiguration = array();
+
+    /** @var string Element description translation subject */
+    protected static $description  = "mb.core.element.class.description";
+
+    /** @var string Element title translation subject */
+    protected static $tags = array();
+
+    /** @var string[] Element tag translation subjects */
+    protected static $title = "mb.core.element.class.title";
 
     /**
      * The constructor. Every element needs an application to live within and
@@ -62,9 +66,10 @@ abstract class Element
      */
     public function __construct(Application $application, ContainerInterface $container, Entity $entity)
     {
-        $this->application = $application;
-        $this->container = $container;
-        $this->entity = $entity;
+        $this->classNameParts = explode('\\', get_called_class());
+        $this->application    = $application;
+        $this->container      = $container;
+        $this->entity         = $entity;
     }
 
     /*************************************************************************
@@ -83,7 +88,7 @@ abstract class Element
      */
     public static function getClassTitle()
     {
-        throw new \RuntimeException('getClassTitle needs to be implemented');
+        return static::$title;
     }
 
     /**
@@ -96,7 +101,7 @@ abstract class Element
      */
     public static function getClassDescription()
     {
-        throw new \RuntimeException('getClassDescription needs to be implemented');
+        return static::$description;
     }
 
     /**
@@ -109,7 +114,7 @@ abstract class Element
      */
     public static function getClassTags()
     {
-        return array();
+        return static::$tags;
     }
 
     /**
@@ -121,7 +126,7 @@ abstract class Element
      */
     public static function getDefaultConfiguration()
     {
-        return array();
+        return static::$defaultConfiguration;
     }
 
     /*************************************************************************
@@ -216,7 +221,12 @@ abstract class Element
      *
      * @return string
      */
-    abstract public function render();
+    public function render()
+    {
+        $parts    = $this->classNameParts;
+        $template = $parts[0] . $parts[1] . ":" . $parts[2] . ":" . static::getTemplateName($parts[3]) . ".html.twig";
+        return $this->container->get('templating')->render($template, array('element' => $this));
+    }
 
     /**
      * Get the element assets.
@@ -263,6 +273,7 @@ abstract class Element
      */
     public function getConfiguration()
     {
+
 //        $configuration = $this->entity->getConfiguration();
 
         $configuration = $this->entity->getConfiguration();
@@ -284,7 +295,10 @@ abstract class Element
      *
      * @return string
      */
-    abstract public function getWidgetName();
+    public function getWidgetName()
+    {
+        return 'mapbender.mb' . end($this->classNameParts);
+    }
 
     /**
      * Handle element Ajax requests.
@@ -299,6 +313,15 @@ abstract class Element
         throw new NotFoundHttpException('This element has no Ajax handler.');
     }
 
+    /**
+     * Translate subject by key
+     *
+     * @param       $key
+     * @param array $parameters
+     * @param null  $domain
+     * @param null  $locale
+     * @return string
+     */
     public function trans($key, array $parameters = array(), $domain = null, $locale = null)
     {
         return $this->container->get('translator')->trans($key, $parameters);
@@ -316,11 +339,12 @@ abstract class Element
      * Override this method to provide a custom configuration form instead of
      * the default YAML form.
      *
-     * @return FormTypeInterface
+     * @return string Administration type class name
      */
     public static function getType()
     {
-        return null;
+        $clsInfo = explode('\\', get_called_class());
+        return $clsInfo[0] . '\\' . $clsInfo[1] . '\\' . $clsInfo[2] . '\\Type\\' . $clsInfo[3] . 'AdminType';
     }
 
     /**
@@ -330,9 +354,9 @@ abstract class Element
      */
     public static function getFormTemplate()
     {
-        return null;
+        $clsInfo = explode('\\', get_called_class());
+        return $clsInfo[0] .  $clsInfo[1] . ':' . $clsInfo[2] . 'Admin:' . static::getTemplateName($clsInfo[3]) . '.html.twig';
     }
-
     /**
      * Get the form assets.
      *
@@ -398,6 +422,7 @@ abstract class Element
      */
     public static function getElementForm($container, $application, Entity $element, $onlyAcl = false)
     {
+        /** @var Element $class */
         $class = $element->getClass();
 
         // Create base form shared by all elements
@@ -461,7 +486,7 @@ abstract class Element
     /**
      * Create default element
      *
-     * @param string $class
+     * @param Element $class
      * @param string $region
      * @return \Mapbender\CoreBundle\Entity\Element
      */
@@ -501,5 +526,18 @@ abstract class Element
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         return $configuration;
+    }
+
+    /**
+     * Get template name by class name
+     *
+     * @param $className
+     * @return mixed
+     */
+    protected static function getTemplateName($className)
+    {
+        $className[0] = strtolower($className[0]);
+        $className    = preg_replace("/[A-Z]/e", '"_".strtolower("$0")', $className);
+        return $className;
     }
 }
