@@ -1,6 +1,7 @@
 import __main__
 #from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.phantomjs.webdriver import WebDriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from os import getenv, makedirs
 from os.path import basename, dirname, exists
 
@@ -25,7 +26,8 @@ def get_sreenshot_path(suffix):
 
 
 def create_webdriver():
-    wd = WebDriver()
+    pjs_url = “http://127.0.0.1:9876/wd/hub“
+    wd = WebDriver.Remote(desired_capabilities = DesiredCapabilities.PHANTOMJS.copy())
     wd.implicitly_wait(60)
     wd.set_window_size(1400,1000)
     return wd
