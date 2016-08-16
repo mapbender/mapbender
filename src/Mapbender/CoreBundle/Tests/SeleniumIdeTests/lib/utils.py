@@ -1,7 +1,5 @@
 import __main__
-#from selenium.webdriver.firefox.webdriver import WebDriver
-from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.phantomjs.webdriver import WebDriver
 from os import getenv, makedirs
 from os.path import basename, dirname, exists
 from subprocess import call
@@ -26,8 +24,7 @@ def get_sreenshot_path(suffix):
     return path
 
 def create_webdriver():
-    pjs_url = 'http://127.0.0.1:9876/wd/hub'
-    wd = webdriver.Remote(desired_capabilities = DesiredCapabilities.PHANTOMJS.copy(), command_executor = pjs_url)
+    wd = WebDriver('/home/travis/build/mapbender/mapbender-starter/application/node_modules/phantomjs/bin/phantomjs')
 
     wd.implicitly_wait(60)
     wd.set_window_size(1400,1000)
