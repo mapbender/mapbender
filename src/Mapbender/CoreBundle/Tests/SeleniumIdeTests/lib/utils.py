@@ -26,7 +26,7 @@ def get_sreenshot_path(suffix):
     return path
 
 def create_webdriver():
-    pjs_url = “http://127.0.0.1:9876/wd/hub“
+    pjs_url = 'http://127.0.0.1:9876/wd/hub'
     wd = WebDriver.Remote(desired_capabilities = DesiredCapabilities.PHANTOMJS.copy(), command_executor = url)
 
     wd.implicitly_wait(60)
