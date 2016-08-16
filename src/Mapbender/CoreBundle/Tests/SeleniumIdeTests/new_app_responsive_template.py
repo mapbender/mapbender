@@ -32,6 +32,5 @@ except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
     raise e
 finally:
-    call(['killall', 'phantomjs'])
     if not success:
         raise Exception("Test failed.")
