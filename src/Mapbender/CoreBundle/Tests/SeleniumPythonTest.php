@@ -3,9 +3,9 @@
 namespace Mapbender\CoreBundle\Tests;
 
 use Symfony\Component\Process\Process;
-use FOM\Component\Test\SharedApplicationWebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class SeleniumPythonTest extends SharedApplicationWebTestCase
+class SeleniumPythonTest extends WebTestCase
 {
     public function setUp()
     {
