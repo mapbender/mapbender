@@ -391,6 +391,8 @@ class PrintService
         // fill text fields
         if (isset($this->conf['fields']) ) {
             foreach ($this->conf['fields'] as $k => $v) {
+                list($r, $g, $b) = CSSColorParser::parse($this->conf['fields'][$k]['color']);
+                $pdf->SetTextColor($r,$g,$b);
                 $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
                 $pdf->SetXY($this->conf['fields'][$k]['x'] - 1,
                     $this->conf['fields'][$k]['y']);
