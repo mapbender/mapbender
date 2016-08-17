@@ -420,7 +420,7 @@
             var geojsonFormat = new OpenLayers.Format.GeoJSON();
             for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
                 var layer = this.map.map.olMap.layers[i];
-                if('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || this.layer === layer) {
+                if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
                     continue;
                 }
 
