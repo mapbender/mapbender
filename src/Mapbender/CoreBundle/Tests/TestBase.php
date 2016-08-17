@@ -26,7 +26,7 @@ class TestBase extends WebTestCase
         $kernel = $this->getContainer()->get("kernel");
         $isTestEnv = $kernel->getEnvironment() == "test";
 
-        $stdClass = $this->getContainer()->get("doctrineD");
+        $stdClass = $this->getContainer()->get("doctrine");
 
         if ($isTestEnv) {
             //\ComposerBootstrap::allowWriteLogs();

@@ -3,7 +3,7 @@
 from lib.user import login
 from lib.logout import logout
 from lib.utils import get_sreenshot_path, create_webdriver  # Changed
-
+from subprocess import call
 
 success = True
 wd = create_webdriver()
@@ -30,9 +30,7 @@ try:
     logout(wd)
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
-    wd.quit()
     raise e
 finally:
-    wd.quit()
     if not success:
         raise Exception("Test failed.")
