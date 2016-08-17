@@ -188,10 +188,10 @@ class ApplicationController extends WelcomeController
 
         $expHandler = new ExportHandler($this->container);
         $impHandler = new ImportHandler($this->container, true);
-        $expJob     = $expHandler->getJob();
+        $expJob     = $expHandler->getJob()
+            ->setApplication($sourceApplication)
+            ->setAddSources(false);
         $data       = $expHandler->makeJob();
-        $expJob->setApplication($sourceApplication);
-        $expJob->setAddSources(false);
 
         $importJob  = $impHandler->getJob();
         $importJob->setImportContent($data);
@@ -220,8 +220,8 @@ class ApplicationController extends WelcomeController
         $parameters    = $request->request->get('application');
         $screenShotUrl = null;
 
-        if (!$form->submit($request)->isValid()) {
-            array(
+        if (!$form->submit($parameters)->isValid()) {
+            return array(
                 'application'         => $application,
                 'form'                => $form->createView(),
                 'form_name'           => $form->getName(),
@@ -241,7 +241,6 @@ class ApplicationController extends WelcomeController
         $this->checkRegionProperties($application);
         $aclManager = $this->get('fom.acl.manager');
         $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-
         $scFile = $application->getScreenshotFile();
 
         if ($scFile !== null
@@ -293,39 +292,17 @@ class ApplicationController extends WelcomeController
      */
     public function editAction($slug)
     {
-        /** @var Element $element */
         /** @var Application $application */
-        /** @var EntityManager $em */
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
-        $this->checkRegionProperties($application);
-
-        $templateClass = $application->getTemplate();
-        $form          = $this->createApplicationForm($application);
-        $em            = $this->getDoctrine()->getManager();
-        $query         = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
-        $sources       = $query->getResult();
-        $baseUrl       = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-        $screenShotUrl = $application->getScreenshot();
-
-        if (!$screenShotUrl) {
-            $screenShotUrl = $baseUrl . "/" . $application->getScreenshot();
+        if (!$this->getContext()->isUserAllowedToEdit($application)) {
+            throw new AccessDeniedException();
         }
 
-        return array(
-            'aclManager'          => $this->get("fom.acl.manager"),
-            'application'         => $application,
-            'regions'             => $templateClass::getRegions(),
-            'slug'                => $slug,
-            'available_elements'  => $this->getElementList(),
-            'sources'             => $sources,
-            'form'                => $form->createView(),
-            'form_name'           => $form->getName(),
-            'template_name'       => $templateClass::getTitle(),
-            'screenshot'          => $screenShotUrl,
-            'screenshot_filename' => $application->getScreenshot(),
-            'time'                => new \DateTime());
+        $this->checkRegionProperties($application);
+        $form = $this->createApplicationForm($application);
+
+        return $this->prepareApplicationUpdate($form, $application);
     }
 
     /**
@@ -339,51 +316,26 @@ class ApplicationController extends WelcomeController
     {
         /** @var EntityManager $em */
         /** @var Connection $connection */
-        $uploadScreenshot = new UploadScreenshot();
         $application      = $this->get('mapbender')->getApplicationEntity($slug);
 
         if (!$this->getContext()->isUserAllowedToEdit($application)) {
             throw new AccessDeniedException();
         }
 
-        $old_slug         = $application->getSlug();
+        $oldSlug          = $application->getSlug();
         $templateClassOld = $application->getTemplate();
         $form             = $this->createApplicationForm($application);
         $request          = $this->getRequest();
-        $parameters       = $request->request->get('application');
-        $screenShotUrl    = "";
-        $app_web_url      = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-        $em               = $this->getDoctrine()->getManager();
 
         if (!$form->submit($request)->isValid()) {
             $application->setTemplate($templateClassOld);
             $application->setSlug($slug);
-
-            if ($application->getScreenshot() !== null) {
-                $screenShotUrl = $app_web_url . "/" . $application->getScreenshot();
-            }
-
-            $templateClass       = $application->getTemplate();
-            $query               = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
-            $sources             = $query->getResult();
-            $screenshot_filename = $application->getScreenshot();
-
-            return array(
-                'application'         => $application,
-                'regions'             => $templateClass::getRegions(),
-                'slug'                => $slug,
-                'available_elements'  => $this->getElementList(),
-                'sources'             => $sources,
-                'form'                => $form->createView(),
-                'form_name'           => $form->getName(),
-                'template_name'       => $templateClass::getTitle(),
-                'screenshot'          => $screenShotUrl,
-                'screenshot_filename' => $screenshot_filename,
-                'time'                => new \DateTime()
-            );
+            return $this->prepareApplicationUpdate($form, $application);
         }
 
+        $em         = $this->getDoctrine()->getManager();
         $connection = $em->getConnection();
+
         $connection->beginTransaction();
         $application->setUpdated(new \DateTime('now'));
         $application->setTemplate($templateClassOld);
@@ -394,16 +346,20 @@ class ApplicationController extends WelcomeController
         $em->persist($application);
         $em->flush();
 
-        $flashBug = $this->get('session')->getFlashBag();
+        $flashBug  = $this->get('session')->getFlashBag();
+        $container = $this->container;
         try {
-            if (AppComponent::createAppWebDir($this->container, $application->getSlug(), $old_slug)) {
-                $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
-                $scFile        = $application->getScreenshotFile();
+            if (AppComponent::createAppWebDir($container, $application->getSlug(), $oldSlug)) {
+                $uploadPath = AppComponent::getAppWebDir($container, $application->getSlug());
+                $scFile     = $application->getScreenshotFile();
                 if ($scFile) {
                     $fileType = getimagesize($scFile);
+                    $parameters = $request->request->get('application');
                     if ($parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1'
-                        && strpos($fileType['mime'], 'image') !== false) {
-                        $uploadScreenshot->upload($app_directory, $scFile, $application);
+                        && strpos($fileType['mime'], 'image') !== false
+                    ) {
+                        $uploadScreenShot = new UploadScreenshot();
+                        $uploadScreenShot->upload($uploadPath, $scFile, $application);
                     }
                 }
                 $em->persist($application);
@@ -413,7 +369,7 @@ class ApplicationController extends WelcomeController
                 $connection->commit();
                 $flashBug->set('success', $this->translate('mb.application.save.success'));
             } else {
-                $flashBug->set( 'error', $this->translate('mb.application.save.failure.create.directory'));
+                $flashBug->set('error', $this->translate('mb.application.save.failure.create.directory'));
                 $connection->rollback();
                 $em->close();
             }
@@ -422,7 +378,7 @@ class ApplicationController extends WelcomeController
             $connection->rollback();
             $em->close();
 
-            if ($this->container->getParameter('kernel.debug')) {
+            if ($container->getParameter('kernel.debug')) {
                 throw($e);
             }
         }
@@ -720,7 +676,7 @@ class ApplicationController extends WelcomeController
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        if (!$this->getContext()->isUserAllowedToCreate($application)) {
+        if (!$this->getContext()->isUserAllowedToEdit($application)) {
             throw new AccessDeniedException();
         }
 
@@ -983,5 +939,41 @@ class ApplicationController extends WelcomeController
         $em->flush();
 
         return $properties;
+    }
+
+    /**
+     * @param Form        $form
+     * @param Application $application
+     * @return array
+     */
+    protected function prepareApplicationUpdate(Form $form, $application)
+    {
+        /** @var Element $element */
+        /** @var EntityManager $em */
+        $slug          = $application->getSlug();
+        $templateClass = $application->getTemplate();
+        $em            = $this->getDoctrine()->getManager();
+        $query         = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
+        $sources       = $query->getResult();
+        $baseUrl       = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+        $screenShotUrl = $application->getScreenshot();
+
+        if (!$screenShotUrl) {
+            $screenShotUrl = $baseUrl . "/" . $application->getScreenshot();
+        }
+
+        return array(
+            'application'         => $application,
+            'aclManager'          => $this->get("fom.acl.manager"),
+            'regions'             => $templateClass::getRegions(),
+            'slug'                => $slug,
+            'available_elements'  => $this->getElementList(),
+            'sources'             => $sources,
+            'form'                => $form->createView(),
+            'form_name'           => $form->getName(),
+            'template_name'       => $templateClass::getTitle(),
+            'screenshot'          => $screenShotUrl,
+            'screenshot_filename' => $application->getScreenshot(),
+            'time'                => new \DateTime());
     }
 }

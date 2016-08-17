@@ -108,8 +108,12 @@ Mapbender.Model = {
         }
         if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
             $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
+                var coord = new OpenLayers.LonLat(poi.x, poi.y);
+                if(poi.srs) {
+                    coord = coord.transform(self.getProj(poi.srs), self.getCurrentProj());
+                }
                 pois.push({
-                    position: new OpenLayers.LonLat(poi.x, poi.y),
+                    position: coord,
                     label: poi.label,
                     scale: poi.scale
                 });
@@ -519,7 +523,9 @@ Mapbender.Model = {
         var result = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
         if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
-            mqLayer.olLayer.redraw();
+            mqLayer.olLayer.removeBackBuffer();
+            mqLayer.olLayer.createBackBuffer();
+            mqLayer.olLayer.redraw(true);
         }
         return result.changed;
     },

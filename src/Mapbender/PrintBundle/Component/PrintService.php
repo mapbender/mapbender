@@ -350,23 +350,25 @@ class PrintService
 
     private function buildPdf()
     {
-        require_once('PDF_ImageAlpha.php');
+        require_once('PDF_Extensions.php');
 
         // set format
         if($this->conf['orientation'] == 'portrait'){
             $format = array($this->conf['pageSize']['width'],$this->conf['pageSize']['height']);
+            $orientation = 'P';
         }else{
             $format = array($this->conf['pageSize']['height'],$this->conf['pageSize']['width']);
+            $orientation = 'L';
         }
 
-        $this->pdf = $pdf = new PDF_ImageAlpha($this->conf['orientation'], 'mm', $format);
+        $this->pdf = $pdf = new PDF_Extensions();
 
         $template = $this->data['template'];
         $pdfFile = $this->resourceDir . '/templates/' . $template . '.pdf';
         $pageCount = $pdf->setSourceFile($pdfFile);
         $tplidx = $pdf->importPage(1);
         $pdf->SetAutoPageBreak(false);
-        $pdf->addPage();
+        $pdf->addPage($orientation, $format);
         $pdf->useTemplate($tplidx);
 
         // add final map image
@@ -414,7 +416,7 @@ class PrintService
                         if (isset($this->data['extra'][$k])) {
                             $pdf->MultiCell($this->conf['fields'][$k]['width'],
                                 $this->conf['fields'][$k]['height'],
-                                $this->data['extra'][$k]);
+                                utf8_decode($this->data['extra'][$k]));
                         }
                         break;
                 }
@@ -659,28 +661,28 @@ class PrintService
         }
         
         // upper right Y
-        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_y']['fontsize']);          
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_y']['fontsize']);
         $pdf->Text($this->conf['fields']['extent_ur_y']['x'] + $corrFactor,
                     $this->conf['fields']['extent_ur_y']['y'] + 3,
                     round($this->data['extent_feature'][2]['y'], $precision));
 
         // upper right X
-        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_x']['fontsize']);       
-        $pdf->RotatedText($this->conf['fields']['extent_ur_x']['x'] + 1,
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_x']['fontsize']);
+        $pdf->TextWithDirection($this->conf['fields']['extent_ur_x']['x'] + 1,
                     $this->conf['fields']['extent_ur_x']['y'],
-                    round($this->data['extent_feature'][2]['x'], $precision),-90);
+                    round($this->data['extent_feature'][2]['x'], $precision),'D');
 
         // lower left Y
-        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ll_y']['fontsize']);          
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ll_y']['fontsize']);
         $pdf->Text($this->conf['fields']['extent_ll_y']['x'],
                     $this->conf['fields']['extent_ll_y']['y'] + 3,
                     round($this->data['extent_feature'][0]['y'], $precision));
 
         // lower left X
         $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ll_x']['fontsize']);
-        $pdf->RotatedText($this->conf['fields']['extent_ll_x']['x'] + 3,
+        $pdf->TextWithDirection($this->conf['fields']['extent_ll_x']['x'] + 3,
                     $this->conf['fields']['extent_ll_x']['y'] + 30,
-                    round($this->data['extent_feature'][0]['x'], $precision),90);
+                    round($this->data['extent_feature'][0]['x'], $precision),'U');
     }
     
     private function addDynamicImage()

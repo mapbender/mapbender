@@ -342,6 +342,10 @@ fieldset{
   border-top: 3px solid $ciColor2;
   color: $darkFontColor;
 
+  label{
+    font-weight: normal;
+  }
+
   [class^="icon"]:before,[class*=" icon"]:before{
     color: darken($ciColor2, 20%);
     font-size: 24px !important;

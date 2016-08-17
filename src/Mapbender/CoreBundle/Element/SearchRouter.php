@@ -60,13 +60,16 @@ class SearchRouter extends Element
      */
     public static function getDefaultConfiguration()
     {
+        $title = static::getClassTitle();
         return array(
-            'tooltip' => 'Search Router',
-            "dialog" => false,
-            "target" => null,
+            'tooltip'       => $title,
+            'title'         => $title,
+            "target"        => null,
             'timeoutFactor' => 3,
-            "width" => 700,
-            "height" => 500
+            "width"         => 700,
+            "height"        => 500,
+            "dialog"        => false, // for what???
+            "asDialog"      => false,
         );
     }
 

@@ -136,6 +136,8 @@ mb:
         button: Button
       error:
         notsupported: 'O serviço Geolocation não é suportado por pelo seu browser.'
+        nosignal: Kurrentli seu posible música losate a posição legal.
+
     layertree:
       class:
         title: 'Árvore de camadas'

@@ -244,6 +244,7 @@ mb:
     gpsposition:
       error:
         notsupported: 'Sorry maar de geo locatie service wordt niet ondersteund door deze browser.'
+        nosignal: Kurrentli zijn muziek posible losate de rechtspositie.
       class:
         title: 'GPS Positie'
         description: 'Renders een knop om de GPS positie te tonen'

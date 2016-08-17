@@ -3,11 +3,11 @@ namespace Mapbender\CoreBundle\Component;
 
 use Assetic\Asset\StringAsset;
 use Doctrine\ORM\PersistentCollection;
+use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Entity\Application as Entity;
+use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Exception\NotAllAclsFoundException;
 
 /**
  * Application is the main Mapbender3 class.
@@ -151,19 +151,20 @@ class Application
 
     /**
      * Lists assets.
+     *
      * @return array
      */
     public static function listAssets()
     {
         return array(
-            'js' => array(
+            'js'    => array(
                 '@MapbenderCoreBundle/Resources/public/stubs.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
             ),
-            'css' => array(),
+            'css'   => array(),
             'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')
         );
     }
@@ -190,7 +191,7 @@ class Application
         $templating        = $this->container->get('templating');
         $_assets           = $this::listAssets();
 
-        foreach ($_assets[$type] as $asset) {
+        foreach ($_assets[ $type ] as $asset) {
             $this->addAsset($assets, $type, $asset);
         }
 
@@ -198,7 +199,7 @@ class Application
         foreach ($this->getTemplate()->getAssets($type) as $asset) {
             if ($type === 'trans') {
                 $elementTranslations = json_decode($templating->render($asset), true);
-                $translations = array_merge($translations, $elementTranslations);
+                $translations        = array_merge($translations, $elementTranslations);
             } else {
                 $file = $this->getReference($this->template, $asset);
                 $this->addAsset($assets, $type, $file);
@@ -208,12 +209,12 @@ class Application
         foreach ($this->getElements() as $region => $elements) {
             foreach ($elements as $element) {
                 $element_assets = $element->getAssets();
-                if (isset($element_assets[$type])) {
-                    foreach ($element_assets[$type] as $asset) {
+                if (isset($element_assets[ $type ])) {
+                    foreach ($element_assets[ $type ] as $asset) {
                         if ($type === 'trans') {
                             $elementTranslations =
                                 json_decode($templating->render($asset), true);
-                            $translations = array_merge($translations, $elementTranslations);
+                            $translations        = array_merge($translations, $elementTranslations);
                         } else {
                             $this->addAsset($assets, $type, $this->getReference($element, $asset));
                         }
@@ -226,11 +227,11 @@ class Application
         foreach ($this->getLayersets() as $layerset) {
             foreach ($layerset->layerObjects as $layer) {
                 $layer_assets = $layer->getAssets();
-                if (isset($layer_assets[$type])) {
-                    foreach ($layer_assets[$type] as $asset) {
+                if (isset($layer_assets[ $type ])) {
+                    foreach ($layer_assets[ $type ] as $asset) {
                         if ($type === 'trans') {
-                            if (!isset($layerTranslations[$asset])) {
-                                $layerTranslations[$asset] =
+                            if (!isset($layerTranslations[ $asset ])) {
+                                $layerTranslations[ $asset ] =
                                     json_decode($templating->render($asset), true);
                             }
                         } else {
@@ -253,7 +254,7 @@ class Application
         foreach ($this->getTemplate()->getLateAssets($type) as $asset) {
             if ($type === 'trans') {
                 $elementTranslations = json_decode($templating->render($asset), true);
-                $translations = array_merge($translations, $elementTranslations);
+                $translations        = array_merge($translations, $elementTranslations);
             } else {
                 $file = $this->getReference($this->template, $asset);
                 $this->addAsset($assets, $type, $file);
@@ -263,13 +264,13 @@ class Application
         // Load extra assets given by application
         $extra_assets = $this->getEntity()->getExtraAssets();
         if (is_array($extra_assets) && array_key_exists($type, $extra_assets)) {
-            foreach ($extra_assets[$type] as $asset) {
+            foreach ($extra_assets[ $type ] as $asset) {
                 $asset = trim($asset);
                 $this->addAsset($assets, $type, $asset);
             }
         }
 
-        if($type === 'js') {
+        if ($type === 'js') {
             $app_loader = new StringAsset($templating->render(
                 '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig',
                 array('application' => $this)));
@@ -313,37 +314,37 @@ class Application
         $configuration = array();
 
         $configuration['application'] = array(
-            'title' => $this->entity->getTitle(),
-            'urls' => $this->urls,
+            'title'         => $this->entity->getTitle(),
+            'urls'          => $this->urls,
             'publicOptions' => $this->entity->getPublicOptions(),
-            'slug' => $this->getSlug());
+            'slug'          => $this->getSlug());
 
         // Get all element configurations
         $configuration['elements'] = array();
         foreach ($this->getElements() as $region => $elements) {
             foreach ($elements as $element) {
-                $configuration['elements'][$element->getId()] = array(
-                    'init' => $element->getWidgetName(),
+                $configuration['elements'][ $element->getId() ] = array(
+                    'init'          => $element->getWidgetName(),
                     'configuration' => $element->getConfiguration());
             }
         }
 
         // Get all layer configurations
-        $configuration['layersets'] = array();
+        $configuration['layersets']   = array();
         $configuration['layersetmap'] = array();
         foreach ($this->getLayersets() as $layerset) {
-            $idStr = '' . $layerset->getId();
-            $configuration['layersets'][$idStr] = array();
-            $configuration['layersetmap'][$idStr] = $layerset->getTitle() ? $layerset->getTitle() : $idStr;
-            $num = 0;
+            $idStr                                  = '' . $layerset->getId();
+            $configuration['layersets'][ $idStr ]   = array();
+            $configuration['layersetmap'][ $idStr ] = $layerset->getTitle() ? $layerset->getTitle() : $idStr;
+            $num                                    = 0;
             foreach ($layerset->layerObjects as $layer) {
                 $instHandler = EntityHandler::createHandler($this->container, $layer);
-                $conf = $instHandler->getConfiguration($this->container->get('signer'));
+                $conf        = $instHandler->getConfiguration($this->container->get('signer'));
                 if ($conf) {
-                    $configuration['layersets'][$idStr][$num] = array(
+                    $configuration['layersets'][ $idStr ][ $num ] = array(
                         $layer->getId() => array(
-                            'type' => strtolower($layer->getType()),
-                            'title' => $layer->getTitle(),
+                            'type'          => strtolower($layer->getType()),
+                            'title'         => $layer->getTitle(),
                             'configuration' => $conf
                         )
                     );
@@ -353,7 +354,7 @@ class Application
         }
 
         // Convert to asset
-        $asset = new StringAsset(json_encode((object) $configuration));
+        $asset = new StringAsset(json_encode((object)$configuration));
         return $asset->dump();
     }
 
@@ -361,7 +362,7 @@ class Application
      * Return the element with the given id
      *
      * @param string $id The element id
-     * @return Element
+     * @return ElementComponent
      */
     public function getElement($id)
     {
@@ -393,9 +394,9 @@ class Application
     {
         // If it starts with an @ we assume it's already an assetic reference
         $firstChar = $file[0];
-        if ($firstChar == "/" ) {
-            return "../../web/".substr($file,1);
-        } elseif ($firstChar == "." ) {
+        if ($firstChar == "/") {
+            return "../../web/" . substr($file, 1);
+        } elseif ($firstChar == ".") {
             return $file;
         } elseif ($firstChar !== '@') {
             $namespaces = explode('\\', get_class($object));
@@ -423,79 +424,31 @@ class Application
     /**
      * Get region elements, optionally by region
      *
-     * @param string $region Region to get elements for. If null, all elements  are returned.
-     * @return PersistentCollection
+     * @param string $regionName Region to get elements for. If null, all elements  are returned.
+     * @return PersistentCollection Regions
      */
-    public function getElements($region = null)
+    public function getElements($regionName = null)
     {
-        if ($this->elements === null) {
-            $securityContext = $this->container->get('security.context');
-
-            // preload acl in one single sql query
-            $oids        = array();
-            $aclProvider = $this->container->get('security.acl.provider');
-            $acls        = null;
-            foreach ($this->entity->getElements() as $entity) {
-                $oids[] = ObjectIdentity::fromDomainObject($entity);
+        $regions = null;
+        if (!$this->elements) {
+            $regions = $this->getGrantedRegionElementCollections();
+            foreach ($regions as $_regionName => $elements) {
+                $_elements               = $this->sortElementsByWidth($elements);
+                $regions[ $_regionName ] = $elements;
             }
-            try {
-                $aclProvider->findAcls($oids);
-            } catch (NotAllAclsFoundException $e) {
-                $acls = $e->getPartialResult();
-            } catch (\Exception $e) {
-                ;
-            }
-
-            // Set up all elements (by region)
-            $this->elements = array();
-            foreach ($this->entity->getElements() as $entity) {
-                $application_entity = $this->getEntity();
-                if ($application_entity->isDbBased()) {
-                    try {
-                        // If no ACL exists, an exception is thrown
-                        $acl = $aclProvider->findAcl(ObjectIdentity::fromDomainObject($entity));
-                        // An empy ACL may exist, too
-                        if (count($acl->getObjectAces()) > 0 && !$securityContext->isGranted('VIEW', $entity)) {
-                            continue;
-                        }
-                    } catch (\Exception $e) {
-                        ;
-                    }
-                } elseif ($application_entity->isYamlBased()
-                    && count($entity->getYamlRoles())) {
-                    $passed = false;
-                    foreach ($entity->getYamlRoles() as $role) {
-                        if ($securityContext->isGranted($role)) {
-                            $passed = true;
-                            break;
-                        }
-                    }
-                    if (!$passed) {
-                        continue;
-                    }
-                }
-                $class = $entity->getClass();
-                if (!$entity->getEnabled()) {
-                    continue;
-                }
-                $element = new $class($this, $this->container, $entity);
-                $r = $entity->getRegion();
-
-                if (!array_key_exists($r, $this->elements)) {
-                    $this->elements[$r] = array();
-                }
-                $this->elements[$r][] = $element;
-            }
-            $this->sortElementsByWidth();
-
+            $this->elements = $regions;
         }
 
-        if ($region) {
-            return array_key_exists($region, $this->elements) ?
-                $this->elements[$region] : array();
+        $keys = array_keys($this->elements);
+
+        if ($regionName) {
+            $hasRegionElements = array_key_exists($regionName, $this->elements);
+            $regions           = $hasRegionElements ? $this->elements[ $regionName ] : array();
         } else {
-            return $this->elements;
+            $regions = $this->elements;
         }
+
+        return $regions;
     }
 
     /**
@@ -560,7 +513,7 @@ class Application
     {
         $uploads_dir = $container->get('kernel')->getRootDir() . '/../web/'
             . $container->getParameter("mapbender.uploads_dir");
-        $ok = true;
+        $ok          = true;
         if (!is_dir($uploads_dir)) {
             $ok = mkdir($uploads_dir);
         }
@@ -593,10 +546,10 @@ class Application
      * Creates or checks if the application's public directory is created or exist.
      *
      * @param ContainerInterface $container Container
-     * @param string $slug application's slug
-     * @param string $old_slug the old application's slug.
+     * @param string             $slug      application's slug
+     * @param string             $old_slug  the old application's slug.
      * @return boolean true if the application's directories are created or
-     * exist otherwise false.
+     *                                      exist otherwise false.
      */
     public static function createAppWebDir($container, $slug, $old_slug = null)
     {
@@ -631,7 +584,7 @@ class Application
      * Removes application's public directoriy.
      *
      * @param ContainerInterface $container Container
-     * @param string $slug application's slug
+     * @param string             $slug      application's slug
      * @return boolean true if the directories are removed or not exist otherwise false
      */
     public static function removeAppWebDir($container, $slug)
@@ -652,7 +605,7 @@ class Application
      * Returns an url to application's public directory.
      *
      * @param ContainerInterface $container Container
-     * @param string $slug application's slug
+     * @param string             $slug      application's slug
      * @return string a url to wmc directory or to file with "$filename"
      */
     public static function getAppWebUrl($container, $slug)
@@ -688,8 +641,8 @@ class Application
      * Copies an application web order.
      *
      * @param ContainerInterface $container Container
-     * @param string $srcSslug source application slug
-     * @param string $destSlug destination application slug
+     * @param string             $srcSslug  source application slug
+     * @param string             $destSlug  destination application slug
      * @return boolean true if the application  order has been copied otherwise false.
      */
     public static function copyAppWebDir($container, $srcSslug, $destSlug)
@@ -705,23 +658,74 @@ class Application
 
     /**
      * Sort region elements by width
+     *
+     * @param $elements
+     * @return ElementComponent[]
      */
-    protected function sortElementsByWidth()
+    protected function sortElementsByWidth($elements)
     {
-        // Sort each region element's by weight
-        /** @var Element[] $elements */
-        foreach ($this->elements as $r => $elements) {
-            usort(
-                $elements,
-                function (Element $a, Element $b) {
-                    $wa = $a->getEntity()->getWeight();
-                    $wb = $b->getEntity()->getWeight();
-                    if ($wa == $wb) {
-                        return 0;
-                    }
-                    return ($wa < $wb) ? -1 : 1;
-                }
-            );
+        return usort($elements, function (ElementComponent $a, ElementComponent $b) {
+            $wa = $a->getEntity()->getWeight();
+            $wb = $b->getEntity()->getWeight();
+            if ($wa == $wb) {
+                return 0;
+            }
+            return ($wa < $wb) ? -1 : 1;
+        });
+    }
+
+
+
+    /**
+     * Get granted elements
+     */
+    protected function getGrantedRegionElementCollections()
+    {
+        $application = $this->entity;
+        $elements    = array();
+        foreach ($application->getElements() as $elementEntity) {
+            if (!$elementEntity->getEnabled() || !$this->isElementGranted($elementEntity)) {
+                continue;
+            }
+
+            /** @var \Mapbender\CoreBundle\Element\Button $class */
+            $class                     = $elementEntity->getClass();
+            $elementComponent          = new $class($this, $this->container, $elementEntity);
+            $regionName                = $elementEntity->getRegion();
+            $elements[ $regionName ][] = $elementComponent;
         }
+        return $elements;
+    }
+
+    /**
+     * Is element granted?
+     *
+     * If there is no ACL's or roles then ever granted
+     *
+     * @param Element|ElementEntity $element
+     * @param string $permission SecurityContext::PERMISSION_
+     * @return bool
+     */
+    public function isElementGranted(ElementEntity $element, $permission = SecurityContext::PERMISSION_VIEW)
+    {
+        $applicationEntity = $this->getEntity();
+        $securityContext   = $this->container->get('security.context');
+        $aclManager        = $this->container->get("fom.acl.manager");
+        $isGranted         = true;
+
+        if ($aclManager->hasObjectAclEntries($element)) {
+            $isGranted = $securityContext->isGranted($permission, $element);
+        }
+
+        if ($applicationEntity->isYamlBased() && count($element->getYamlRoles())) {
+            foreach ($element->getYamlRoles() as $role) {
+                if ($securityContext->isGranted($role)) {
+                    $isGranted = true;
+                    break;
+                }
+            }
+        }
+
+        return $isGranted;
     }
 }

@@ -149,6 +149,7 @@ mb:
     gpsposition:
       error:
         notsupported: __mb.core.gpsposition.error.notsupported
+        nosignal: Attualmente non è possibile localizzare la Sua posizione.
       class:
         title: __mb.core.gpsposition.class.title
         description: __mb.core.gpsposition.class.description
