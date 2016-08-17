@@ -18,7 +18,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchRouter extends Element
 {
-    protected static $title       = "mb.core.searchrouter.class.title";
+    const FEATURE_DEFAULT_COLOR   = "#33CCFF";
+    const FEATURE_SELECT_COLOR    = "#ff0000";
+    const FEATURE_OPACITY         = 0.8;
+    const FEATURE_BUFFER          = 1000;
+    const GEOM_FIELD_NAME         = "geom";
+    const DEFAULT_SEARCH_ENGINE   = "Mapbender\\CoreBundle\\Component\\SQLSearchEngine";
+    const DEFAULT_CONNECTION_NAME = "default";
+    const DEFAULT_ROUTE_TITLE     = "mb.core.searchrouter.tag.search";
+
+    /** @var string Element title */
+    protected static $title = "mb.core.searchrouter.class.title";
+
+    /** @var string Element description */
     protected static $description = "mb.core.searchrouter.class.description";
 
     /** @var string Element title translation subject */
@@ -32,15 +44,58 @@ class SearchRouter extends Element
         'tooltip'       => "mb.core.searchrouter.class.title",
         'title'         => "mb.core.searchrouter.class.title",
         "target"        => null,
+        // Alternative "timeout" option is deprecated
         'timeoutFactor' => 3,
         "width"         => 700,
         "height"        => 500,
-        "dialog"        => false, // for what???
-        "asDialog"      => false,
+        "routes"        => array(),
+        // Alternative "dialog" is deprecated
+        "asDialog"      => false
     );
 
     /** @var Form[] Element search forms */
     protected $forms;
+
+    /**
+     * Default route configuration
+     *
+     * @var array
+     */
+    protected static $defaultRouteConfiguration = array(
+        "title"         => self::DEFAULT_ROUTE_TITLE,
+        "class"         => self::DEFAULT_SEARCH_ENGINE,
+        "class_options" => array(
+            "connection"         => self::DEFAULT_CONNECTION_NAME,
+            "relation"           => "geometries",
+            "attributes"         => array("*"),
+            "geometry_attribute" => self::GEOM_FIELD_NAME,
+        ),
+        "results"       => array(
+            "view"     => "table",
+            "count"    => "true",
+            "headers"  => array(),
+            "callback" => array(
+                "event"   => "click",
+                "options" => array(
+                    "buffer"   => self::FEATURE_BUFFER,
+                    "minScale" => null,
+                    "maxScale" => null
+                )
+            )
+        ),
+        "styleMap"      => array(
+            "default" => array(
+                "strokeColor" => self::FEATURE_DEFAULT_COLOR,
+                "fillColor"   => self::FEATURE_DEFAULT_COLOR,
+                "fillOpacity" => self::FEATURE_OPACITY
+            ),
+            "select"  => array(
+                "strokeColor" => self::FEATURE_SELECT_COLOR,
+                "fillColor"   => self::FEATURE_SELECT_COLOR,
+                "fillOpacity" => self::FEATURE_OPACITY
+            ),
+        )
+    );
 
     /**
      * @inheritdoc
@@ -86,8 +141,8 @@ class SearchRouter extends Element
             if (!array_key_exists($target, $conf['routes'])) {
                 throw new NotFoundHttpException();
             }
-            $conf = $conf['routes'][$target];
-            $engine = new $conf['class']($this->container);
+            $conf    = $conf['routes'][ $target ];
+            $engine  = new $conf['class']($this->container);
             $results = $engine->autocomplete(
                 $conf,
                 $data->key,
@@ -200,10 +255,10 @@ class SearchRouter extends Element
         }
         foreach ($configuration['routes'] as $routekey => $routevalue) {
             if (key_exists('configuration', $routevalue)) {
-                foreach ($configuration['routes'][$routekey]['configuration'] as $key => $value) {
-                    $configuration['routes'][$routekey][$key] = $value;
+                foreach ($configuration['routes'][ $routekey ]['configuration'] as $key => $value) {
+                    $configuration['routes'][ $routekey ][ $key ] = $value;
                 }
-                unset($configuration['routes'][$routekey]['configuration']);
+                unset($configuration['routes'][ $routekey ]['configuration']);
             }
         }
         return $configuration;
@@ -221,5 +276,23 @@ class SearchRouter extends Element
             'type'     => 'FeatureCollection',
             'features' => $features
         );
+    }
+
+    /**
+     * Get the publicly exposed configuration, usually directly derived from
+     * the configuration field of the configuration entity. If you, for
+     * example, store passwords in your element configuration, you should
+     * override this method to return a cleaned up version of your
+     * configuration which can safely be exposed in the client.
+     *
+     * @return array
+     */
+    public function getConfiguration()
+    {
+        $configuration = parent::getConfiguration();
+        foreach ($configuration["routes"] as $k => $route) {
+            $configuration[ $k ] = static::mergeArrays(static::$defaultRouteConfiguration, $route, array());
+        }
+        return $configuration;
     }
 }
