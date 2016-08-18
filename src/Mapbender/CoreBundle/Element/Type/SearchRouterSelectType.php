@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Element\SearchRouter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -10,7 +11,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class SearchRouterSelectType extends AbstractType
 {
-
     /**
      * @inheritdoc
      */
@@ -24,8 +24,7 @@ class SearchRouterSelectType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'routes' => array()));
+        $resolver->setDefaults(SearchRouter::getDefaultConfiguration());
     }
 
     /**
@@ -35,17 +34,16 @@ class SearchRouterSelectType extends AbstractType
     {
         $routes = array();
         foreach ($options['routes'] as $name => $conf) {
-            $routes[$name] = $conf['title'];
+            $routes[ $name ] = $conf['title'];
         }
 
         $builder->add('route', 'choice', array(
-            'choices' => $routes,
-            'mapped' => false,
-            'mapped' => false,
+            'choices'  => $routes,
+            'mapped'   => false,
             'multiple' => false,
             'expanded' => false,
-            'attr' => array(
-                'autocomplete' => 'off')));
+            'attr'     => array(
+                'autocomplete' => 'off'
+            )));
     }
-
 }
