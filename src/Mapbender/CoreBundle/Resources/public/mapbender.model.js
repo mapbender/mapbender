@@ -1076,7 +1076,8 @@ Mapbender.Model = {
             layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
                 id: tomove.layerId
             });
-            this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
+            var targetIdx = layerToMove.idx > afterLayer.idx ? beforeLayer.idx + 1 : beforeLayer.idx;
+            this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, targetIdx, before, after);
         } else if (before && before.source.id.toString() === tomove.source.id.toString()) {
 //            window.console && console.log("move layer into last pos");
             var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {
