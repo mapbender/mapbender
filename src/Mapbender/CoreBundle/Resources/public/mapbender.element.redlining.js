@@ -43,17 +43,17 @@
         },
         activate: function(callback){
             this.callback = callback ? callback : null;
-            
-            var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], this.options.paintstyles));
-            var styleMap = new OpenLayers.StyleMap({'default': defaultStyle}, {extendDefault: true});
-            this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
-            this.map.addLayer(this.layer);
+            if (!this.layer) {
+                var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], this.options.paintstyles));
+                var styleMap = new OpenLayers.StyleMap({'default': defaultStyle}, {extendDefault: true});
+                this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
+                this.map.addLayer(this.layer);
+            }
             if (this.options.display_type === 'dialog'){
                 this._open();
             } else {
                 this.element.removeClass('hidden');
             }
-            $('.geometry-table tr', this.element).remove();
             $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
         },
         deactivate: function(){
@@ -61,7 +61,7 @@
                 this._close();
             }
             if (this.options.display_type === 'dialog' && this.options.deactivate_on_close){
-                this.map.removeLayer(this.layer);
+                this._removeAllFeatures();
                 this.callback ? this.callback.call() : this.callback = null;
             }
             $('.redlining-tool', this.element).off('click');
@@ -169,13 +169,20 @@
                             });
                     break;
                 case 'text':
+                    $('input[name=label-text]', this.element).val('');
                     $('#redlining-text-wrapper', this.element).removeClass('hidden');
                     this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
                             OpenLayers.Handler.Point, {
-                                featureAdded: function(e){
-                                    e.style = self._setFeatureStyle();
-                                    self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.text'));
-                                    self.layer.redraw();
+                                featureAdded: function (e) {
+                                    if ($('input[name=label-text]', self.element).val().trim() === '') {
+                                        Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
+                                        self.removeFeature(e);
+                                    } else {
+                                        e.style = self._generateTextStyle($('input[name=label-text]', this.element).val());
+                                        self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.text'));
+                                        self.layer.redraw();
+                                        $('input[name=label-text]', this.element).val('');
+                                    }
                                 }
                             });
                     break;
@@ -184,8 +191,12 @@
             this.activeControl.activate();
 
         },
-        removeFeature: function(feature){
-            this.layer.destroyFeatures([feature]);
+//        removeFeature: function(feature){
+//            this.layer.destroyFeatures([feature]);
+//        },
+        _removeAllFeatures: function(){
+            $('.geometry-table tr', this.element).remove();
+            this.map.removeLayer(this.layer);
         },
         _deactivateControl: function(){
             if(this.activeControl !== null) {
@@ -203,14 +214,17 @@
         _addToGeomList: function(feature, name){
             var self = this;
             var activeTool = $('.redlining-tool.active', this.element).attr('name');
-
-            if(activeTool !== 'text') {
-                name = name + ' ' + this.geomCounter;
-                this.geomCounter++;
-            }
             var row = this.rowTemplate.clone();
             row.attr("data-id", feature.id);
-            $('.geometry-name', row).text(name);
+            var _name = name;
+            if(activeTool === 'text') {
+                _name += (feature.style && feature.style.label ? ' (' + feature.style.label + ')' : '');
+                row.attr("data-label", feature.style.label);
+            } else {
+                _name += ' ' + this.geomCounter;
+                this.geomCounter++;
+            }
+            $('.geometry-name', row).text(_name);
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
             $('.geometry-remove', $geomtable).off('click');
@@ -231,6 +245,9 @@
         _modifyFeature: function(e){
             this._deactivateControl();
             var feature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
+            if(feature.style && feature.style.label) {
+                feature.style = this._setTextEdit(feature.style);
+            }
             this.activeControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true});
             this.map.addControl(this.activeControl);
             this.activeControl.selectFeature(feature);
@@ -242,22 +259,25 @@
             var bounds = feature.geometry.getBounds();
             this.map.zoomToExtent(bounds);
         },
-        _setFeatureStyle: function(){
+        _generateTextStyle: function(label){
             var style = OpenLayers.Util.applyDefaults(null, OpenLayers.Feature.Vector.style['default']);
-            var label = $('input[name=label-text]', this.element).val();
-            style.label = label;
+            if (label) {
+                style.label = label;
+            }
             style.labelAlign = 'lm';
-            style.labelXOffset = 0;
-            style.pointRadius = 10;
-            style.fillOpacity = 0;
-            style.strokeOpacity = 0;
-            style.fontColor = "red";
-            style.fontSize = "16px";
-            style.fontFamily = "Trebuchet MS, sans-serif";
-            style.fontWeight = "bold";
-            style.activate = function(){
-                style.fillOpacity = 1;
-            };
+            style.labelXOffset = 10;
+            style.pointRadius = 6;
+            style.fillOpacity = 0.4;
+            style.strokeOpacity = 1;
+            style.strokeWidth = 2;
+            return this._setTextDefault(style);
+        },
+        _setTextDefault: function(style){
+            style.fillColor = style.strokeColor = style.fontColor = 'red';
+            return style;
+        },
+        _setTextEdit: function(style){
+            style.fillColor = style.strokeColor = style.fontColor = 'blue';
             return style;
         },
         /**
