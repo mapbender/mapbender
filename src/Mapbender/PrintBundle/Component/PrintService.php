@@ -391,6 +391,8 @@ class PrintService
         // fill text fields
         if (isset($this->conf['fields']) ) {
             foreach ($this->conf['fields'] as $k => $v) {
+                list($r, $g, $b) = CSSColorParser::parse($this->conf['fields'][$k]['color']);
+                $pdf->SetTextColor($r,$g,$b);
                 $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
                 $pdf->SetXY($this->conf['fields'][$k]['x'] - 1,
                     $this->conf['fields'][$k]['y']);
@@ -781,37 +783,39 @@ class PrintService
 
     private function drawMultiPolygon($geometry, $image)
     {
-        foreach($geometry['coordinates'][0] as $ring) {
-            if(count($ring) < 3) {
-                continue;
-            }
-
-            $points = array();
-            foreach($ring as $c) {
-                if($this->rotation == 0){
-                    $p = $this->realWorld2mapPos($c[0], $c[1]);
-                }else{
-                    $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+        foreach($geometry['coordinates'] as $element) {
+            foreach($element as $ring) {
+                if(count($ring) < 3) {
+                    continue;
                 }
-                $points[] = floatval($p[0]);
-                $points[] = floatval($p[1]);
-            }
-            imagesetthickness($image, 0);
-            // Filled area
-            if($geometry['style']['fillOpacity'] > 0){
+
+                $points = array();
+                foreach($ring as $c) {
+                    if($this->rotation == 0){
+                        $p = $this->realWorld2mapPos($c[0], $c[1]);
+                    }else{
+                        $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+                    }
+                    $points[] = floatval($p[0]);
+                    $points[] = floatval($p[1]);
+                }
+                imagesetthickness($image, 0);
+                // Filled area
+                if($geometry['style']['fillOpacity'] > 0){
+                    $color = $this->getColor(
+                        $geometry['style']['fillColor'],
+                        $geometry['style']['fillOpacity'],
+                        $image);
+                    imagefilledpolygon($image, $points, count($ring), $color);
+                }
+                // Border
                 $color = $this->getColor(
-                    $geometry['style']['fillColor'],
-                    $geometry['style']['fillOpacity'],
+                    $geometry['style']['strokeColor'],
+                    $geometry['style']['strokeOpacity'],
                     $image);
-                imagefilledpolygon($image, $points, count($ring), $color);
+                imagesetthickness($image, $geometry['style']['strokeWidth']);
+                imagepolygon($image, $points, count($ring), $color);
             }
-            // Border
-            $color = $this->getColor(
-                $geometry['style']['strokeColor'],
-                $geometry['style']['strokeOpacity'],
-                $image);
-            imagesetthickness($image, $geometry['style']['strokeWidth']);
-            imagepolygon($image, $points, count($ring), $color);
         }
     }
 

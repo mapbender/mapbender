@@ -118,7 +118,6 @@ class OdgParser
             $x      = $node->getAttribute('svg:x');
             $y      = $node->getAttribute('svg:y');
             $field  = array(
-                'fontsize' => "10",
                 'font'     => 'Arial',
                 'width'    => substr($width, 0, -2) * 10,
                 'height'   => substr($height, 0, -2) * 10,
@@ -129,14 +128,17 @@ class OdgParser
             // Recognize font name and size
             $textParagraph = $xpath->query("draw:text-box/text:p", $node)->item(0);
             $textNode      = $xpath->query("draw:text-box/text:p/text:span", $node)->item(0);
-            if ($textParagraph && $textNode) {
+            if ($textNode) {
                 $style = $textNode->getAttribute('text:style-name');
-                if (!$style) {
-                    $style = $textParagraph->getAttribute('text:style-name');
-                }
-
-                $styleNode         = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties');
-                $field['fontsize'] = $styleNode->item(0)->getAttribute('fo:font-size');
+            } elseif ($textParagraph) {
+                $style = $textParagraph->getAttribute('text:style-name');
+            }
+            if ($style) {
+                $styleNode = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties')->item(0);
+                $fontsize = $styleNode->getAttribute('fo:font-size');
+                $field['fontsize'] = $fontsize != '' ? $fontsize : '10pt';
+                $color = $styleNode->getAttribute('fo:color');
+                $field['color'] = $color != '' ? $color : '#000000';
             }
             $data['fields'][ $name ] = $field;
         }
