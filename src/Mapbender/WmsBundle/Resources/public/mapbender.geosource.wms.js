@@ -99,6 +99,7 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             mqLayer.olLayer.params.FORMAT
         );
         reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = mqLayer.olLayer.queryLayers;
+        reqObj.params['STYLES'] = [];
         reqObj.params['EXCEPTIONS'] = mqLayer.source.configuration.options.exception_format;
         var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
         return reqUrl;
