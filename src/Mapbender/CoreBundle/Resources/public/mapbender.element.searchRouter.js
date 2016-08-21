@@ -41,7 +41,7 @@
             widget._getLayer().removeAllFeatures();
         },
 
-        _setup: function(){
+        _setup:         function(){
             var widget = this;
             var element = widget.element;
             var options = widget.options;
@@ -78,7 +78,7 @@
             $('a[role="search_router_search"]', element)
                 .button()
                 .click(function(){
-                    $('form[name="' + widget.selected + '"]', element).submit();
+                    widget.getCurrentForm().submit();
                 });
 
             // Prevent map getting cursors keys
@@ -432,18 +432,22 @@
         },
 
         _showResultState: function() {
-            var table = $('.search-results table', this.element);
-            var counter = $('.result-counter', this.element);
+            var widget = this;
+            var element = widget.element;
+            var table = $('.search-results table', element);
+            var counter = $('.result-counter', element);
 
             if(0 === counter.length) {
-                counter = $('<div></div>', {'class': 'result-counter'}).prependTo($('.search-results', this.element));
+                counter = $('<div/>', {'class': 'result-counter'})
+                  .prependTo($('.search-results', element));
             }
 
-            var results = this.searchModel.get('results');
+            var results = widget.searchModel.get('results');
 
             if(results.length > 0) {
                 counter.text(Mapbender.trans('mb.core.searchrouter.result_counter', {
-                    count: results.length}));
+                    count: results.length
+                }));
                 table.show();
             } else {
                 table.hide();
@@ -482,41 +486,63 @@
         },
 
         /**
+         * Get current route configuration
+         *
+         * @returns object route configuration
+         */
+        getCurrentRoute: function() {
+            var widget = this;
+            var options = widget.options;
+            return options.routes[widget.selected];
+        },
+
+        /**
          * Get highlight layer. Will construct one if neccessary.
          * @TODO: Backbonify (view)
          *
          * @return OpenLayers.Layer.Vector Highlight layer
          */
-        _getLayer: function(forceRebuild){
-            if(this.highlightLayer === null || forceRebuild){
-                this.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight', {
-                    styleMap: this._createStyleMap(this.options.routes[this.selected].results.styleMap)
-                });
+        _getLayer: function(forceRebuild) {
+            var widget = this;
+            var options = widget.options;
+            var map = $('#' + options.target).data('mapbenderMbMap').map.olMap;
+            var layer = widget.highlightLayer;
+
+            if(!forceRebuild && layer) {
+                return layer;
             }
 
-            if(this.highlightLayer.map === null){
-                var map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
-                map.addLayer(this.highlightLayer);
+            if(forceRebuild && layer) {
+                map.removeLayer(layer);
+                widget.highlightLayer = null;
             }
 
-            return this.highlightLayer;
+            var route = widget.getCurrentRoute();
+            var styleMap = widget._createStyleMap(route.results.styleMap);
+            layer = widget.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight', {
+                styleMap: styleMap
+            });
+            map.addLayer(layer);
+
+            return layer;
         },
 
         /**
          * Set up result callback (zoom on click for example)
          */
         _setupResultCallback: function(){
-            var anchor = $('.search-results', this.element);
-            if(this.resultCallbackEvent !== null){
-                anchor.undelegate('tbody tr', this.resultCallbackEvent,
-                    this.resultCallbackProxy);
-                this.resultCallbackEvent = null;
+            var widget = this;
+            var anchor = $('.search-results', widget.element);
+            if(widget.resultCallbackEvent !== null){
+                anchor.undelegate('tbody tr', widget.resultCallbackEvent,
+                    widget.resultCallbackProxy);
+                widget.resultCallbackEvent = null;
             }
 
-            var event = this.options.routes[this.selected].results.callback.event;
+            var event = widget.options.routes[widget.selected].results.callback.event;
             if(typeof event === 'string'){
-                anchor.delegate('tbody tr', event, this.resultCallbackProxy);
-                this.resultCallbackEvent = event;
+                anchor.delegate('tbody tr', event, widget.resultCallbackProxy);
+                widget.resultCallbackEvent = event;
             }
         },
 
@@ -528,11 +554,10 @@
         _resultCallback: function(event){
             var widget = this;
             var options = widget.options;
-            var routes = options.routes;
             var row = $(event.currentTarget),
                 feature = $.extend({}, row.data('feature').getFeature()),
                 map = feature.layer.map,
-                callbackConf = routes[widget.selected].results.callback,
+                callbackConf = widget.getCurrentRoute().results.callback,
                 srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
             var mapProj = Mapbender.Model.getCurrentProj();
             if(srs.projCode !== mapProj.projCode) {
@@ -596,22 +621,34 @@
          *
          */
         ready: function(callback){
-            if(this.readyState === true){
+            var widget = this;
+            if(widget.readyState === true){
                 callback();
             }else{
-                this.readyCallbacks.push(callback);
+                widget.readyCallbacks.push(callback);
             }
         },
 
         /**
-         *
+         * Execute callbacks on element ready
          */
-        _ready: function(){
-            for(callback in this.readyCallbacks){
+        _ready: function() {
+            var widget = this;
+            for (var callback in widget.readyCallbacks) {
                 callback();
-                delete(this.readyCallbacks[callback]);
+                delete(widget.readyCallbacks[callback]);
             }
-            this.readyState = true;
+            widget.readyState = true;
+        },
+
+        /**
+         * Get current form
+         *
+         * @returns {*|HTMLElement}
+         */
+        getCurrentForm: function() {
+            var widget = this;
+            return $('form[name="' + widget.selected + '"]', widget.element);
         }
     });
 })(jQuery);
