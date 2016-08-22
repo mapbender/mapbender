@@ -89,7 +89,8 @@ class WmsMetadata extends SourceMetadata
     {
         $layer_items = array();
         $layer_items[] = array("name" => SourceMetadata::getNotNull($layer->getSourceItem()->getName()));
-        $layer_items[] = array("title" => SourceMetadata::getNotNull($layer->getTitle()));
+        $layer_items[] = array("title" => SourceMetadata::getNotNull(
+            $layer->getSourceItem()->getTitle()) . ' (' . $layer->getTitle() . ')');
         $bbox = $layer->getSourceItem()->getLatlonBounds();
         $layer_items[] = array("bbox" => SourceMetadata::getNotNull($bbox->getSrs() . " " .
                 $bbox->getMinx() . "," . $bbox->getMiny() . "," . $bbox->getMaxx() . "," . $bbox->getMaxy()));
