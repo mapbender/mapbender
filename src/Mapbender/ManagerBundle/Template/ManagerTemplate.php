@@ -34,7 +34,7 @@ class ManagerTemplate extends Template
                                     "@MapbenderManagerBundle/Resources/public/sass/element/search_router.scss",
                                     "@MapbenderManagerBundle/Resources/public/sass/element/zoombar.scss",
                                     "@MapbenderManagerBundle/Resources/public/sass/element/basesourceswitcher.scss",
-                                    "@MapbenderManagerBundle/Resources/public/sass/element/simplesearch.scss",
+                                    "@MapbenderManagerBundle/Resources/public/sass/element/simple_search.scss",
                                     "@MapbenderManagerBundle/Resources/public/sass/manager/services.scss",
 
     );
