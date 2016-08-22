@@ -956,7 +956,7 @@ class ApplicationController extends WelcomeController
         $query         = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources       = $query->getResult();
         $baseUrl       = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-        $screenShotUrl = $application->getScreenshot();
+        $screenShotUrl = AppComponent::getUploadsUrl($this->container) . "/" . $application->getSlug() . "/" . $application->getScreenshot();
 
         if (!$screenShotUrl) {
             $screenShotUrl = $baseUrl . "/" . $application->getScreenshot();
