@@ -35,6 +35,9 @@ mb:
       class:
         title: 'Simple Search'
         description: 'Single field search on JSON sources (e.g. Solr)'
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
     searchrouter:
       popup:
         btn:

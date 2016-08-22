@@ -225,7 +225,14 @@ abstract class Element
     {
         $parts    = $this->classNameParts;
         $template = $parts[0] . $parts[1] . ":" . $parts[2] . ":" . static::getTemplateName($parts[3]) . ".html.twig";
-        return $this->container->get('templating')->render($template, array('element' => $this));
+
+        return $this->container->get('templating')->render($template,
+            array(
+                'element'       => $this,
+                'id'            => $this->getId(),
+                'title'         => $this->getTitle(),
+                'configuration' => $this->getConfiguration()
+            ));
     }
 
     /**
@@ -357,6 +364,7 @@ abstract class Element
         $clsInfo = explode('\\', get_called_class());
         return $clsInfo[0] .  $clsInfo[1] . ':' . $clsInfo[2] . 'Admin:' . static::getTemplateName($clsInfo[3]) . '.html.twig';
     }
+
     /**
      * Get the form assets.
      *

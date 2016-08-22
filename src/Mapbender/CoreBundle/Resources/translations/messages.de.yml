@@ -19,6 +19,9 @@ mb:
       class:
         title: 'Einfache Suche'
         description: 'Einfeldsuche über JSON-Daten (z.B. Solr)'
+      error:
+        geometry:
+          missing: Der ausgewählte Eintrag enthält keine Geometrie.
     searchrouter:
       popup:
         btn:

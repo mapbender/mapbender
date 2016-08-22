@@ -233,6 +233,9 @@ mb:
       class:
         title: 'Simpele zoek'
         description: 'Enkel zoekveld voor JSON bronnen (e.g. Solr)'
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
     overview:
       nolayer: 'Het overzichtselement heeft geen laag.'
       class:

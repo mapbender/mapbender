@@ -35,6 +35,9 @@ mb:
       class:
         title: 'Búsqueda Simple'
         description: 'Campo de búsqueda sencillo en base JSON (e.g. Solr)'
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
     searchrouter:
       popup:
         btn:

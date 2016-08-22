@@ -19,6 +19,9 @@ mb:
       class:
         title: __mb.core.simplesearch.class.title
         description: __mb.core.simplesearch.class.description
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
     searchrouter:
       popup:
         btn:
