@@ -544,8 +544,14 @@ abstract class Element
      */
     protected static function getTemplateName($className)
     {
-        $className[0] = strtolower($className[0]);
-        $className    = preg_replace("/[A-Z]/e", '"_".strtolower("$0")', $className);
+        $className = preg_replace_callback(
+            '/[A-Z]{1}[^A-Z]+/',
+            function ($match) {
+                return "_".strtolower($match[0]);
+            },
+            $className
+        );
+        $className = substr($className,1);
         return $className;
     }
 }
