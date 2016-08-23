@@ -17,7 +17,7 @@
         layer: null,
         activeControl: null,
         selectedFeature: null,
-        geomCounter: 1,
+        geomCounter: 0,
         rowTemplate: null,
         _create: function(){
             if(!Mapbender.checkTarget("mbRedlining", this.options.target)) {
@@ -176,10 +176,10 @@
                                 featureAdded: function (e) {
                                     if ($('input[name=label-text]', self.element).val().trim() === '') {
                                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
-                                        self.removeFeature(e);
+                                        self._removeFeature(e);
                                     } else {
                                         e.style = self._generateTextStyle($('input[name=label-text]', this.element).val());
-                                        self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.text'));
+                                        self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
                                         self.layer.redraw();
                                         $('input[name=label-text]', this.element).val('');
                                     }
@@ -191,40 +191,49 @@
             this.activeControl.activate();
 
         },
-//        removeFeature: function(feature){
-//            this.layer.destroyFeatures([feature]);
-//        },
+        _removeFeature: function(feature){
+            this.layer.destroyFeatures([feature]);
+        },
         _removeAllFeatures: function(){
             $('.geometry-table tr', this.element).remove();
             this.map.removeLayer(this.layer);
         },
         _deactivateControl: function(){
+            if(this.selectedFeature) {
+                this.activeControl.unselectFeature(this.selectedFeature);
+                if (this.selectedFeature.style && this.selectedFeature.style.label) {
+                    $('input[name=label-text]', this.element).off('keyup', $.proxy(this._writeText, this));
+                    this.selectedFeature.style = this._setTextDefault(this.selectedFeature.style);
+                    this.layer.redraw();
+                }
+                this.selectedFeature = null;
+            }
             if(this.activeControl !== null) {
                 this.activeControl.deactivate();
                 this.activeControl.destroy();
                 this.map.removeControl(this.activeControl);
                 this.activeControl = null;
             }
-            this._deactivateButton();
             $('#redlining-text-wrapper', this.element).addClass('hidden');
+            this._deactivateButton();
         },
         _deactivateButton: function(){
             $('.redlining-tool', this.element).removeClass('active');
         },
-        _addToGeomList: function(feature, name){
+        
+        _getGeomLabel: function(feature, typeLabel, featureType){
+            if(featureType === 'text') {
+                return typeLabel + (feature.style && feature.style.label ? ' (' + feature.style.label + ')' : '');
+            } else {
+                return typeLabel + ' ' + (++this.geomCounter);
+            }
+        },
+        _addToGeomList: function(feature, typeLabel){
             var self = this;
             var activeTool = $('.redlining-tool.active', this.element).attr('name');
             var row = this.rowTemplate.clone();
             row.attr("data-id", feature.id);
-            var _name = name;
-            if(activeTool === 'text') {
-                _name += (feature.style && feature.style.label ? ' (' + feature.style.label + ')' : '');
-                row.attr("data-label", feature.style.label);
-            } else {
-                _name += ' ' + this.geomCounter;
-                this.geomCounter++;
-            }
-            $('.geometry-name', row).text(_name);
+            $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel, activeTool));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
             $('.geometry-remove', $geomtable).off('click');
@@ -237,20 +246,23 @@
         _removeFromGeomList: function(e){
             this._deactivateControl();
             var $tr = $(e.target).parents("tr:first");
-            var feature = this.layer.getFeatureById($tr.attr('data-id'));
-            this.removeFeature(feature);
+            this.selectedFeature = this.layer.getFeatureById($tr.attr('data-id'));
+            this._removeFeature(this.selectedFeature);
             $tr.remove();
-            this.geomCounter--;
+            this.selectedFeature = null;
         },
         _modifyFeature: function(e){
             this._deactivateControl();
-            var feature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
-            if(feature.style && feature.style.label) {
-                feature.style = this._setTextEdit(feature.style);
+            this.selectedFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
+            if(this.selectedFeature.style && this.selectedFeature.style.label) {
+                this.selectedFeature.style = this._setTextEdit(this.selectedFeature.style);
+                $('input[name=label-text]', this.element).val(this.selectedFeature.style.label);
+                $('#redlining-text-wrapper', this.element).removeClass('hidden');
+                $('input[name=label-text]', this.element).on('keyup', $.proxy(this._writeText, this));
             }
             this.activeControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true});
             this.map.addControl(this.activeControl);
-            this.activeControl.selectFeature(feature);
+            this.activeControl.selectFeature(this.selectedFeature);
             this.activeControl.activate();
         },
         _zoomToFeature: function(e){
@@ -279,6 +291,20 @@
         _setTextEdit: function(style){
             style.fillColor = style.strokeColor = style.fontColor = 'blue';
             return style;
+        },
+        
+        _writeText: function(e) {
+            if (this.selectedFeature && this.selectedFeature.style && this.selectedFeature.style.label) {
+                var value;
+                if ((value = $('input[name=label-text]', this.element).val().trim()) === '') {
+                    Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
+                } else {
+                    this.selectedFeature.style.label = value;
+                    var label = this._getGeomLabel(this.selectedFeature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'), 'text');
+                    $('.geometry-table tr[data-id="'+this.selectedFeature.id+'"] .geometry-name', this.element).text(label);
+                    this.layer.redraw();
+                }
+            }
         },
         /**
          *
