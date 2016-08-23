@@ -68,6 +68,8 @@ class TargetElementType extends AbstractType
             'element_class' => null,
             'class' => 'MapbenderCoreBundle:Element',
             'property' => 'title',
+            'empty_value' => 'Choose an option',
+            'empty_data' => '',
             'query_builder' => function(Options $options) use ($type) {
                 $builderName = preg_replace("/[^\w]/", "", $options['property_path']);
                 $repository = $type->getContainer()->get('doctrine')->getRepository($options['class']);
@@ -137,4 +139,3 @@ class TargetElementType extends AbstractType
             }
 
         }
-        
