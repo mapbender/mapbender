@@ -52,7 +52,11 @@
                 height:100%;
                 display:block;
                 position:relative;
-                >iframe{height:98%;}
+                >iframe{
+                    height:98%;
+                    width: 98%;
+                    position: absolute;
+                }
                 >.js-content-content{
                   display:table-cell;
                   position: absolute;
