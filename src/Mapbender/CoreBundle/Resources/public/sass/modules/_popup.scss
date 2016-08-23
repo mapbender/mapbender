@@ -1,7 +1,7 @@
 .overlay{
   background:url($imageBasePath + '/overlay.png');
   @include opacity(0);
-  @include transition(opacity 0.4s ease-in-out);
+  //@include transition(opacity 0.4s ease-in-out);
 }
 .popupHead{
   @extend .title;
@@ -33,7 +33,7 @@
       right: solid 1px $thirdColor;
       bottom: solid 5px $thirdColor;
   }
-  @include transition(margin 0.4s ease-in-out);
+  //@include transition(margin 0.4s ease-in-out);
 
   &.popupOverflow{
     .popupContent, .popupSubContent{overflow:visible;}
