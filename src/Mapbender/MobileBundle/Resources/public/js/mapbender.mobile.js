@@ -14,7 +14,6 @@ $(function(){
         },
 
         _setOption: function(key, value) {
-            debugger;
             this._super(key, value);
         },
 
