@@ -4,6 +4,11 @@ namespace Mapbender\CoreBundle\Command;
 
 use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 
+/**
+ * Class ElementGenerator
+ *
+ * @deprecated should be removed in release/3.0.6
+ */
 class ElementGenerator extends Generator
 {
     public function create($container, $bundle, $bundleDir, $bundleNamespace, $className, $type)

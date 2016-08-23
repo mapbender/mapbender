@@ -10,6 +10,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 
+/**
+ * Class GenerateElementCommand
+ *
+ * @deprecated should be removed in release/3.0.6
+ */
 class GenerateElementCommand extends ContainerAwareCommand {
     private $generator;
 
