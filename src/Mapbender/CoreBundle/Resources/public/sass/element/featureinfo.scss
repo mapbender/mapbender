@@ -75,7 +75,11 @@
           >.container.active{
             height:90%;
             overflow:auto;
-            >iframe{height:98%;}
+            >iframe{
+                height:98%;
+                width: 98%;
+                position: absolute;
+            }
           }
         }
       }
