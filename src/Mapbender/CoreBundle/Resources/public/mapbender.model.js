@@ -201,6 +201,9 @@ Mapbender.Model = {
 
             this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
             $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
+                if(!Mapbender.configuration.layersets[layersetId]) {
+                    return;
+                }
                 $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
                     $.each(defArr, function(idx, layerDef) {
                         layerDef['origId'] = idx;
