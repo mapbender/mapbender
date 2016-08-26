@@ -24,7 +24,7 @@ def get_sreenshot_path(suffix):
     return path
 
 def create_webdriver():
-    wd = WebDriver('/home/travis/build/mapbender/mapbender-starter/application/node_modules/phantomjs/bin/phantomjs')
+    wd = WebDriver('/home/travis/build/mapbender/mapbender-starter/application/bin/phantomjs')
 
     wd.set_window_size(1400,1000)
     wd.implicitly_wait(300)
