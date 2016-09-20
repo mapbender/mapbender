@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Validator\Constraints\Scss;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -111,6 +112,7 @@ class Application
 
     /**
      * @Assert\File(maxSize="2097152")
+     * @var File
      */
     protected $screenshotFile;
 
@@ -413,6 +415,7 @@ class Application
 
     /**
      * Get screenshotFile
+     * @return File
      */
     public function getScreenshotFile()
     {
