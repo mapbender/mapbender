@@ -210,12 +210,13 @@ $pageWidth: $contentPaneWidth + $navWidth;
 
 textarea, input[type=text], input[type=submit], input[type=password],  a.button, button, div.dropdown {
   border-radius: $elementBorderRadius;
-  color: $lightFontColor;
+}
+a.button{
+  color: $firstColor;
   &:hover{
     color: $lightFontColor;
   }
 }
-
 ul.dropdownList{
   border-bottom-left-radius: $elementBorderRadius;
   border-bottom-right-radius: $elementBorderRadius;
