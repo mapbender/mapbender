@@ -1,2 +1,3 @@
-
-.sideContent .mb-button, {@extend .button;}
+.sideContent .mb-button {
+  @extend .button;
+}

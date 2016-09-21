@@ -10,11 +10,7 @@ namespace Mapbender\ManagerBundle\Template;
 class LoginTemplate extends ManagerTemplate
 {
     protected static $translations = array();
-
-    protected static $css = array(
-        '@MapbenderManagerBundle/Resources/public/sass/manager/applications.scss',
-        '@MapbenderManagerBundle/Resources/public/sass/manager/manager.scss',
-        '@FOMUserBundle/Resources/public/sass/user/login.scss',
-        '@FOMUserBundle/Resources/public/sass/user/user_control.scss'
+    protected static $css          = array(
+        '@MapbenderManagerBundle/Resources/public/sass/manager/login.scss'
     );
 }

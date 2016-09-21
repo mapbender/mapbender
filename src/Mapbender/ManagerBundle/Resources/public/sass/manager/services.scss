@@ -1,11 +1,3 @@
-//$rootPath: "../../../mapbendercore/";
-
-@import "libs/variables";
-@import "libs/mixins";
-@import "libs/icons";
-@import "modules/text";
-@import "element/mbslider";
-
 // ------------------------------------------------------------- SERVICES
 .listFilterInput{
   margin-bottom:$space;
@@ -20,8 +12,6 @@
     min-height: $fontSize*7;
   }
 }
-
-
 // ---------------------------------------------------------- ADD SERVICE
 .serviceAddBox{
   $labelWidth:120px;
@@ -35,12 +25,6 @@
     width: $inputWidth;
   }
 }
-
-
-
-
-
-
 // --------------------------------------------------------- VIEW SERVICE
 .serviceContainer{
   .labelText{float:left;}
@@ -125,11 +109,6 @@
     word-wrap: break-word;
   }
 }
-
-
-
-
-
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
   .linkButton{display:inline-block;}

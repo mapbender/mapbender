@@ -13,26 +13,6 @@ class ManagerTemplate extends Template
 {
     protected static $css = array(
         '@MapbenderManagerBundle/Resources/public/sass/manager/applications.scss',
-        '@MapbenderManagerBundle/Resources/public/sass/manager/manager.scss',
-        "@FOMUserBundle/Resources/public/sass/user/user_control.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/form.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/yaml.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/button.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/activityindicator.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/copyright.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/featureinfo.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/gpsposition.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/layertree.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/legend.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/map.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/overview.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/printclient.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/scalebar.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/search_router.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/zoombar.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/basesourceswitcher.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/element/simple_search.scss",
-        "@MapbenderManagerBundle/Resources/public/sass/manager/services.scss",
     );
 
     protected static $js = array(
