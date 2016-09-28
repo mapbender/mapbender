@@ -159,19 +159,27 @@
         },
         _setInfo: function(mqLayer, url) {
             var self = this;
-            var proxy = mqLayer.source.configuration.options.proxy;
             var contentType_ = "";
             if (typeof (mqLayer.source.configuration.options.info_charset) !== 'undefined') {
                 contentType_ += contentType_.length > 0 ? ";"
                     : "" + mqLayer.source.configuration.options.info_charset;
             }
-            var request = $.ajax({
-                url: Mapbender.configuration.application.urls.proxy,
-                contentType: contentType_,
-                data: {
-                    url: proxy ? url : encodeURIComponent(url)
-                }
-            });
+            var _ajaxreq = null;
+            if (mqLayer.source.configuration.options.tunnel) {
+                 _ajaxreq = {
+                    url: url,
+                    contentType: contentType_
+                };
+            } else {
+                _ajaxreq = {
+                    url: Mapbender.configuration.application.urls.proxy,
+                    contentType: contentType_,
+                    data: {
+                        url: mqLayer.source.configuration.options.proxy ? url : encodeURIComponent(url)
+                    }
+                };
+            }
+            var request = $.ajax(_ajaxreq);
             request.done(function(data, textStatus, jqXHR) {
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 if (self.options.showOriginal) {
