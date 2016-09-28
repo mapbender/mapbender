@@ -377,11 +377,13 @@ class ApplicationController extends Controller
                         $url = $instance->getSource()->getGetFeatureInfo()->getHttpGet();
                     } elseif (strtolower($value) === 'getlegendgraphic') {
                         $url = $instance->getSource()->getGetLegendGraphic()->getHttpGet();
-                    } else {
-                        throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
                     }
+                    break;
                 }
             }
+        }
+        if (!$url) {
+            throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
         }
         $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
