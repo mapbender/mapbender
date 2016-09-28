@@ -31,6 +31,7 @@ class PrintService
     protected $neededExtentHeight;
     protected $neededImageWidth;
     protected $neededImageHeight;
+    protected $tunnelRoute;
 
     /**
      * @var array Default geometry style
@@ -59,6 +60,10 @@ class PrintService
 
     private function setup($data)
     {
+
+        $collection    = $this->container->get('router')->getRouteCollection();
+        $tunnelroute   = $collection->get('mapbender_core_application_instancetunnel');
+        $this->tunnelRoute = $tunnelroute->compile();
         // temp dir
         $this->tempDir = sys_get_temp_dir();
         // resource dir
@@ -275,22 +280,27 @@ class PrintService
 
     private function getImages($width, $height)
     {
-        $logger = $this->container->get("logger");
-        $imageNames = array();
-
+        $logger        = $this->container->get("logger");
+        $imageNames    = array();
         foreach ($this->mapRequests as $i => $request) {
-
             $logger->debug("Print Request Nr.: " . $i . ' ' . $request);
+            $path = parse_url($request, PHP_URL_PATH);
+            if (($s    = substr($path, strrpos($path, $this->tunnelRoute->getStaticPrefix()))) !== false) {
+                $attributes = $this->container->get('router')->match($s);
+                $gets       = array();
+                parse_str(parse_url($request, PHP_URL_QUERY), $gets);
+                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+            } else {
+                $attributes = array(
+                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
+                );
+                $subRequest = new Request(array(
+                    'url' => $request
+                    ), array(), $attributes, array(), array(), array(), '');
+            }
+            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
 
-            $attributes = array();
-            $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
-            $subRequest = new Request(array(
-                'url' => $request
-                ), array(), $attributes, array(), array(), array(), '');
-            $response = $this->container->get('http_kernel')->handle($subRequest,
-                HttpKernelInterface::SUB_REQUEST);
-
-            $imageName = tempnam($this->tempDir, 'mb_print');
+            $imageName    = tempnam($this->tempDir, 'mb_print');
             $imageNames[] = $imageName;
 
             file_put_contents($imageName, $response->getContent());
@@ -330,20 +340,16 @@ class PrintService
 
                 // Taking the painful way to alpha blending. Stupid PHP-GD
                 $opacity = floatVal($this->data['layers'][$i]['opacity']);
-                if(1.0 !== $opacity) {
-                    $width = imagesx($image);
+                if (1.0 !== $opacity) {
+                    $width  = imagesx($image);
                     $height = imagesy($image);
                     for ($x = 0; $x < $width; $x++) {
                         for ($y = 0; $y < $height; $y++) {
-                            $colorIn = imagecolorsforindex($image, imagecolorat($image, $x, $y));
+                            $colorIn  = imagecolorsforindex($image, imagecolorat($image, $x, $y));
                             $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
 
                             $colorOut = imagecolorallocatealpha(
-                                $image,
-                                $colorIn['red'],
-                                $colorIn['green'],
-                                $colorIn['blue'],
-                                $alphaOut);
+                                $image, $colorIn['red'], $colorIn['green'], $colorIn['blue'], $alphaOut);
                             imagesetpixel($image, $x, $y, $colorOut);
                             imagecolordeallocate($image, $colorOut);
                         }
@@ -553,14 +559,23 @@ class PrintService
             $url .= $bbox . $width . $height;
 
             $logger->debug("Print Overview Request Nr.: " . $i . ' ' . $url);
-            $attributes = array();
-            $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
-            $subRequest = new Request(array(
-                'url' => $url
-                ), array(), $attributes, array(), array(), array(), '');
-            $response = $this->container->get('http_kernel')->handle($subRequest,
-                HttpKernelInterface::SUB_REQUEST);
+            
+            $path = parse_url($url, PHP_URL_PATH);
+            if (($s    = substr($path, strrpos($path, $this->tunnelRoute->getStaticPrefix()))) !== false) {
+                $attributes = $this->container->get('router')->match($s);
+                $gets       = array();
+                parse_str(parse_url($url, PHP_URL_QUERY), $gets);
+                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+            } else {
+                $attributes = array(
+                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
+                );
+                $subRequest = new Request(array(
+                    'url' => $url
+                    ), array(), $attributes, array(), array(), array(), '');
+            }
 
+            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
             $imageName = tempnam($this->tempdir, 'mb_print');
             $tempNames[] = $imageName;
 
@@ -994,7 +1009,7 @@ class PrintService
             $arraySize = count($legendArray);
             foreach ($legendArray as $title => $legendUrl) {
 
-                if (preg_match('/request=GetLegendGraphic/i', $legendUrl) === 0) {
+                if (preg_match('/request=GetLegendGraphic/i', urldecode($legendUrl)) === 0) {
                     continue;
                 }
 
@@ -1040,17 +1055,29 @@ class PrintService
 
     private function getLegendImage($unsignedUrl)
     {
+        
         $unsignedUrl = urldecode($unsignedUrl);
-        $signer = $this->container->get('signer');
-        $url = $signer->signUrl($unsignedUrl);
+        $path = parse_url($unsignedUrl, PHP_URL_PATH);
+        if (($s    = substr($path, strrpos($path, $this->tunnelRoute->getStaticPrefix()))) !== false) {
+            $attributes = $this->container->get('router')->match($s);
+            $gets       = array();
+            parse_str(parse_url($unsignedUrl, PHP_URL_QUERY), $gets);
+            $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            $imagename = tempnam($this->tempdir, 'mb_printlegend');
+            file_put_contents($imagename, $response->getContent());
+        } else {
+            $signer = $this->container->get('signer');
+            $url = $signer->signUrl($unsignedUrl);
 
-        $proxy_config = $this->container->getParameter("owsproxy.proxy");
-        $proxy_query = ProxyQuery::createFromUrl($url);
-        $proxy = new CommonProxy($proxy_config, $proxy_query);
-        $browserResponse = $proxy->handle();
+            $proxy_config = $this->container->getParameter("owsproxy.proxy");
+            $proxy_query = ProxyQuery::createFromUrl($url);
+            $proxy = new CommonProxy($proxy_config, $proxy_query);
+            $browserResponse = $proxy->handle();
 
-        $imagename = tempnam($this->tempdir, 'mb_printlegend');
-        file_put_contents($imagename, $browserResponse->getContent());
+            $imagename = tempnam($this->tempdir, 'mb_printlegend');
+            file_put_contents($imagename, $browserResponse->getContent());
+        }
 
         return $imagename;
     }
