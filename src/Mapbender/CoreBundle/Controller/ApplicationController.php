@@ -10,8 +10,10 @@ use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use OwsProxy3\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -389,6 +391,13 @@ class ApplicationController extends Controller
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response        = new Response();
+
+        $cookies_req = $this->get("request")->cookies;
+        Utils::setHeadersFromBrowserResponse($response, $browserResponse);
+        foreach ($cookies_req as $key => $value) {
+            $response->headers->removeCookie($key);
+            $response->headers->setCookie(new Cookie($key, $value));
+        }
         $response->setContent($browserResponse->getContent());
         return $response;
     }
