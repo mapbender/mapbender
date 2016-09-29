@@ -1103,11 +1103,15 @@ class PrintService
 
         $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
 
-        $groups = $this->user->getGroups();
-        $group = $groups[0];
+        if($this->user == 'anon.'){
+            
+        }else{
+          $groups = $this->user->getGroups();
+          $group = $groups[0]; 
         
-        if(!isset($group)){
-            $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
+          if(isset($group)){
+              $legendpageImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png'; 
+          }
         }
 
         if(file_exists ($legendpageImage)){
