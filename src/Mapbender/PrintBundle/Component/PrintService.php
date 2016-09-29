@@ -31,7 +31,7 @@ class PrintService
     protected $neededExtentHeight;
     protected $neededImageWidth;
     protected $neededImageHeight;
-    protected $tunnelRoute;
+    protected $urlHostPath;
 
     public function __construct($container)
     {
@@ -53,10 +53,7 @@ class PrintService
 
     private function setup($data)
     {
-
-        $collection    = $this->container->get('router')->getRouteCollection();
-        $tunnelroute   = $collection->get('mapbender_core_application_instancetunnel');
-        $this->tunnelRoute = $tunnelroute->compile();
+        $this->urlHostPath = $this->container->get('request')->getHttpHost() . $this->container->get('request')->getBaseURL();
         // temp dir
         $this->tempDir = sys_get_temp_dir();
         // resource dir
@@ -275,21 +272,22 @@ class PrintService
     {
         $logger        = $this->container->get("logger");
         $imageNames    = array();
-        foreach ($this->mapRequests as $i => $request) {
-            $logger->debug("Print Request Nr.: " . $i . ' ' . $request);
-            $path = parse_url($request, PHP_URL_PATH);
-            if (($s    = substr($path, strrpos($path, $this->tunnelRoute->getStaticPrefix()))) !== false) {
-                $attributes = $this->container->get('router')->match($s);
+        foreach ($this->mapRequests as $i => $url) {
+            $logger->debug("Print Request Nr.: " . $i . ' ' . $url);
+            // find urls from this host (tunnel connection for secured services)
+            $parsed   = parse_url($url);
+            $hostpath = $parsed['host'] . $parsed['path'];
+            $pos      = strpos($hostpath, $this->urlHostPath);
+            if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
+                $attributes = $this->container->get('router')->match($routeStr);
                 $gets       = array();
-                parse_str(parse_url($request, PHP_URL_QUERY), $gets);
+                parse_str($parsed['query'], $gets);
                 $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
             } else {
                 $attributes = array(
                     '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
                 );
-                $subRequest = new Request(array(
-                    'url' => $request
-                    ), array(), $attributes, array(), array(), array(), '');
+                $subRequest = new Request(array('url' => $url), array(), $attributes, array(), array(), array(), '');
             }
             $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
 
@@ -314,7 +312,7 @@ class PrintService
                     print_r("Unsupported mimetype image/bmp");
                     break;
                 default:
-                    $logger->debug("ERROR! PrintRequest failed: " . $request);
+                    $logger->debug("ERROR! PrintRequest failed: " . $url);
                     $logger->debug($response->getContent());
                     print_r('an error has occurred. see log for more details <br>');
                     print_r($response->getContent());
@@ -535,20 +533,20 @@ class PrintService
             $url .= $bbox . $width . $height;
 
             $logger->debug("Print Overview Request Nr.: " . $i . ' ' . $url);
-            
-            $path = parse_url($url, PHP_URL_PATH);
-            if (($s    = substr($path, strrpos($path, $this->tunnelRoute->getStaticPrefix()))) !== false) {
-                $attributes = $this->container->get('router')->match($s);
+
+            $parsed   = parse_url($url);
+            $hostpath = $parsed['host'] . $parsed['path'];
+            $pos      = strpos($hostpath, $this->urlHostPath);
+            if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
+                $attributes = $this->container->get('router')->match($routeStr);
                 $gets       = array();
-                parse_str(parse_url($url, PHP_URL_QUERY), $gets);
+                parse_str($parsed['query'], $gets);
                 $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
             } else {
                 $attributes = array(
                     '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
                 );
-                $subRequest = new Request(array(
-                    'url' => $url
-                    ), array(), $attributes, array(), array(), array(), '');
+                $subRequest = new Request(array('url' => $url), array(), $attributes, array(), array(), array(), '');
             }
 
             $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
@@ -944,14 +942,14 @@ class PrintService
         imagesavealpha($image, true);
         imagealphablending($image, true);
 
-        foreach($this->data['layers'] as $idx => $layer) {
-            if('GeoJSON+Style' !== $layer['type']) {
+        foreach ($this->data['layers'] as $idx => $layer) {
+            if ('GeoJSON+Style' !== $layer['type']) {
                 continue;
             }
 
-            foreach($layer['geometries'] as $geometry) {
+            foreach ($layer['geometries'] as $geometry) {
                 $renderMethodName = 'draw' . $geometry['type'];
-                if(!method_exists($this, $renderMethodName)) {
+                if (!method_exists($this, $renderMethodName)) {
                     continue;
                     //throw new \RuntimeException('Can not draw geometries of type "' . $geometry['type'] . '".');
                 }
@@ -969,7 +967,7 @@ class PrintService
         $y = 10;
 
         foreach ($this->data['legends'] as $idx => $legendArray) {
-            $c = 1;
+            $c         = 1;
             $arraySize = count($legendArray);
             foreach ($legendArray as $title => $legendUrl) {
 
@@ -981,14 +979,14 @@ class PrintService
                 if (false === @imagecreatefromstring(@file_get_contents($image))) {
                     continue;
                 }
-                $size = getimagesize($image);
+                $size  = getimagesize($image);
                 $tempY = round($size[1] * 25.4 / 96) + 10;
 
-                if($c> 1){
-                    if($y + $tempY > ($this->pdf->getHeight())){
+                if ($c > 1) {
+                    if ($y + $tempY > ($this->pdf->getHeight())) {
                         $x += 105;
                         $y = 10;
-                        if($x > ($this->pdf->getWidth())){
+                        if ($x > ($this->pdf->getWidth())) {
                             $this->pdf->addPage('P');
                             $x = 5;
                             $y = 10;
@@ -996,17 +994,18 @@ class PrintService
                     }
                 }
 
-                $this->pdf->setXY($x,$y);
-                $this->pdf->Cell(0,0,  utf8_decode($title));
+                $this->pdf->setXY($x, $y);
+                $this->pdf->Cell(0, 0, utf8_decode($title));
                 //$this->pdf->Image($image, $x, $y + 5, 0, 0, 'png', '', false, 0);
-                $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
+                $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false,
+                    0);
 
                 $y += round($size[1] * 25.4 / 96) + 10;
-                if($y > ($this->pdf->getHeight())){
+                if ($y > ($this->pdf->getHeight())) {
                     $x += 105;
                     $y = 10;
                 }
-                if($x > ($this->pdf->getWidth()) && $c < $arraySize){
+                if ($x > ($this->pdf->getWidth()) && $c < $arraySize) {
                     $this->pdf->addPage('P');
                     $x = 5;
                     $y = 10;
@@ -1017,26 +1016,25 @@ class PrintService
         }
     }
 
-    private function getLegendImage($unsignedUrl)
+    private function getLegendImage($url)
     {
-        
-        $unsignedUrl = urldecode($unsignedUrl);
-        $path = parse_url($unsignedUrl, PHP_URL_PATH);
-        if (($s    = substr($path, strrpos($path, $this->tunnelRoute->getStaticPrefix()))) !== false) {
-            $attributes = $this->container->get('router')->match($s);
+
+        $url      = urldecode($url);
+        $parsed   = parse_url($url);
+        $hostpath = $parsed['host'] . $parsed['path'];
+        $pos      = strpos($hostpath, $this->urlHostPath);
+        if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
+            $attributes = $this->container->get('router')->match($routeStr);
             $gets       = array();
-            parse_str(parse_url($unsignedUrl, PHP_URL_QUERY), $gets);
+            parse_str($parsed['query'], $gets);
             $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
-            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-            $imagename = tempnam($this->tempdir, 'mb_printlegend');
+            $response   = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            $imagename  = tempnam($this->tempdir, 'mb_printlegend');
             file_put_contents($imagename, $response->getContent());
         } else {
-            $signer = $this->container->get('signer');
-            $url = $signer->signUrl($unsignedUrl);
-
-            $proxy_config = $this->container->getParameter("owsproxy.proxy");
-            $proxy_query = ProxyQuery::createFromUrl($url);
-            $proxy = new CommonProxy($proxy_config, $proxy_query);
+            $proxy_config    = $this->container->getParameter("owsproxy.proxy");
+            $proxy_query     = ProxyQuery::createFromUrl($url);
+            $proxy           = new CommonProxy($proxy_config, $proxy_query);
             $browserResponse = $proxy->handle();
 
             $imagename = tempnam($this->tempdir, 'mb_printlegend');
@@ -1046,56 +1044,55 @@ class PrintService
         return $imagename;
     }
 
-    private function realWorld2mapPos($rw_x,$rw_y)
+    private function realWorld2mapPos($rw_x, $rw_y)
     {
-        $quality = $this->data['quality'];
-        $mapWidth = $this->data['extent']['width'];
+        $quality   = $this->data['quality'];
+        $mapWidth  = $this->data['extent']['width'];
         $mapHeight = $this->data['extent']['height'];
-        $centerx = $this->data['center']['x'];
-        $centery = $this->data['center']['y'];
-        $minX = $centerx - $mapWidth * 0.5;
-        $minY = $centery - $mapHeight * 0.5;
-        $maxX = $centerx + $mapWidth * 0.5;
-        $maxY = $centery + $mapHeight * 0.5;
-        $extentx = $maxX - $minX ;
-	$extenty = $maxY - $minY ;
-        $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['map']['width']  / 25.4 * $quality) ;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['map']['height']  / 25.4 * $quality);
+        $centerx   = $this->data['center']['x'];
+        $centery   = $this->data['center']['y'];
+        $minX      = $centerx - $mapWidth * 0.5;
+        $minY      = $centery - $mapHeight * 0.5;
+        $maxX      = $centerx + $mapWidth * 0.5;
+        $maxY      = $centery + $mapHeight * 0.5;
+        $extentx   = $maxX - $minX;
+        $extenty   = $maxY - $minY;
+        $pixPos_x  = (($rw_x - $minX) / $extentx) * round($this->conf['map']['width'] / 25.4 * $quality);
+        $pixPos_y  = (($maxY - $rw_y) / $extenty) * round($this->conf['map']['height'] / 25.4 * $quality);
 
-	return array($pixPos_x, $pixPos_y);
+        return array($pixPos_x, $pixPos_y);
     }
 
-    private function realWorld2ovMapPos($ovWidth, $ovHeight, $rw_x,$rw_y)
+    private function realWorld2ovMapPos($ovWidth, $ovHeight, $rw_x, $rw_y)
     {
-        $quality = $this->data['quality'];
-        $centerx = $this->data['center']['x'];
-        $centery = $this->data['center']['y'];
-        $minX = $centerx - $ovWidth * 0.5;
-        $minY = $centery - $ovHeight * 0.5;
-        $maxX = $centerx + $ovWidth * 0.5;
-        $maxY = $centery + $ovHeight * 0.5;
-        $extentx = $maxX - $minX ;
-	$extenty = $maxY - $minY ;
-        $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['overview']['width'] / 25.4 * $quality) ;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['overview']['height'] / 25.4 * $quality);
+        $quality  = $this->data['quality'];
+        $centerx  = $this->data['center']['x'];
+        $centery  = $this->data['center']['y'];
+        $minX     = $centerx - $ovWidth * 0.5;
+        $minY     = $centery - $ovHeight * 0.5;
+        $maxX     = $centerx + $ovWidth * 0.5;
+        $maxY     = $centery + $ovHeight * 0.5;
+        $extentx  = $maxX - $minX;
+        $extenty  = $maxY - $minY;
+        $pixPos_x = (($rw_x - $minX) / $extentx) * round($this->conf['overview']['width'] / 25.4 * $quality);
+        $pixPos_y = (($maxY - $rw_y) / $extenty) * round($this->conf['overview']['height'] / 25.4 * $quality);
 
-	return array($pixPos_x, $pixPos_y);
+        return array($pixPos_x, $pixPos_y);
     }
 
-    private function realWorld2rotatedMapPos($rw_x,$rw_y)
+    private function realWorld2rotatedMapPos($rw_x, $rw_y)
     {
-        $centerx = $this->data['center']['x'];
-        $centery = $this->data['center']['y'];
-        $minX = $centerx - $this->neededExtentWidth * 0.5;
-        $minY = $centery - $this->neededExtentHeight * 0.5;
-        $maxX = $centerx + $this->neededExtentWidth * 0.5;
-        $maxY = $centery + $this->neededExtentHeight * 0.5;
-        $extentx = $maxX - $minX ;
-	$extenty = $maxY - $minY ;
-        $pixPos_x = (($rw_x - $minX)/$extentx) * $this->neededImageWidth;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * $this->neededImageHeight;
+        $centerx  = $this->data['center']['x'];
+        $centery  = $this->data['center']['y'];
+        $minX     = $centerx - $this->neededExtentWidth * 0.5;
+        $minY     = $centery - $this->neededExtentHeight * 0.5;
+        $maxX     = $centerx + $this->neededExtentWidth * 0.5;
+        $maxY     = $centery + $this->neededExtentHeight * 0.5;
+        $extentx  = $maxX - $minX;
+        $extenty  = $maxY - $minY;
+        $pixPos_x = (($rw_x - $minX) / $extentx) * $this->neededImageWidth;
+        $pixPos_y = (($maxY - $rw_y) / $extenty) * $this->neededImageHeight;
 
-	return array($pixPos_x, $pixPos_y);
+        return array($pixPos_x, $pixPos_y);
     }
-
 }
