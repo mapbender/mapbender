@@ -230,6 +230,7 @@ abstract class Element
             array(
                 'element'       => $this,
                 'id'            => $this->getId(),
+                'entity'        => $this->entity,
                 'title'         => $this->getTitle(),
                 'configuration' => $this->getConfiguration()
             ));
@@ -545,7 +546,7 @@ abstract class Element
     protected static function getTemplateName($className)
     {
         $className = preg_replace_callback(
-            '/[A-Z]{1}[^A-Z]+/',
+            '/[A-Z]+[^A-Z]+/',
             function ($match) {
                 return "_".strtolower($match[0]);
             },
