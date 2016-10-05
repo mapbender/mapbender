@@ -22,6 +22,7 @@ class ManagerTemplate extends Template
         '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
         '/components/vis-ui.js/vis-ui.js-built.js',
         '/bundles/fosjsrouting/js/router.js',
+        '@MapbenderManagerBundle/Resources/public/js/code-mirror.yaml.plugin.js',
         '@MapbenderManagerBundle/Resources/public/js/SymfonyAjaxManager.js',
 
         '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
@@ -44,4 +45,4 @@ class ManagerTemplate extends Template
     {
         return "";
     }
-} 
+}
