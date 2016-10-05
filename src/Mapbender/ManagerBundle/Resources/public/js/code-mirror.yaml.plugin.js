@@ -117,4 +117,34 @@ $(function() {
         };
     });
     CodeMirror.defineMIME("text/x-yaml", "yaml");
+
+    CodeMirror.initTextAreaAsYaml = function(textArea) {
+
+        var yamlEditor = CodeMirror.fromTextArea(textArea, {
+            mode:            "text/x-yaml",
+            styleActiveLine: true,
+            lineNumbers:     true,
+            indentUnit:      2,
+            tabSize:         4,
+            indentWithTabs:  false,
+            lineWrapping:    true
+        });
+
+        yamlEditor.setOption("extraKeys", {
+            Tab: function(cm) {
+                if(cm.somethingSelected()) {
+                    cm.indentSelection("add");
+                } else {
+                    cm.replaceSelection(cm.getOption("indentWithTabs") ? "\t" : Array(cm.getOption("indentUnit") + 1).join(" "), "end", "+input");
+                }
+            }
+        });
+
+        yamlEditor.on("change", function(obj, changedObject) {
+            var value = obj.getValue().replace(/\t/g, "    ");
+            $(textArea).val(value);
+        });
+
+        return yamlEditor;
+    }
 });
