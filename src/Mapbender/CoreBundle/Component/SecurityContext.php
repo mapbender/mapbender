@@ -34,6 +34,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
         if (!$this->isUserLoggedIn()) {
             $user = new User();
             $user->setUsername(static::USER_ANONYMOUS_ID);
+            $user->setId(static::USER_ANONYMOUS_ID);
         }
         return $user;
     }
