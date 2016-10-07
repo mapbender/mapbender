@@ -32,15 +32,6 @@
     display: inline-block;
     font-size: 0;
     text-rendering: auto;
-
-    &:after {
-      content: "\f00d";
-      display: block;
-      font-size: 23px;
-      line-height: 18px;
-      padding-left: 2px;
-      font-family: "FontAwesome";
-    }
   }
 
   $borderRadius: 0px;
