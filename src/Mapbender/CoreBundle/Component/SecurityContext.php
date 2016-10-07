@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  *
  * @package   FOM\UserBundle\Component
  * @author    Andriy Oblivantsev <eslider@gmail.com>
+ * @author    Mohamed Tahrioui <mohamed.tahrioui@wheregroup.com>
  * @copyright 2015 by WhereGroup GmbH & Co. KG
  */
 class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
@@ -19,6 +20,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     const PERMISSION_DELETE   = "DELETE";
     const PERMISSION_EDIT     = "EDIT";
     const PERMISSION_VIEW     = "VIEW";
+    const USER_ANONYMOUS_ID = "anon.";
 
     /**
      * Get current logged user by the token
@@ -31,7 +33,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
         $user = $this->getToken()->getUser();
         if (!$this->isUserLoggedIn()) {
             $user = new User();
-            $user->setUsername("anon.");
+            $user->setUsername(static::USER_ANONYMOUS_ID);
         }
         return $user;
     }
