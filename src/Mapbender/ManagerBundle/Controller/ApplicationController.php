@@ -43,7 +43,7 @@ class ApplicationController extends WelcomeController
      *
      * @ManagerRoute("/applications")
      * @Method("GET")
-     * @Template
+     * @Template("MapbenderCoreBundle:Welcome:list.html.twig")
      */
     public function indexAction()
     {
