@@ -169,6 +169,12 @@
       > ul.modal-header {
         background-color: #B6D39E;
         > li {
+          &:first-child > a{
+            border-left: 0 !important;
+          }
+          &:last-child> a{
+            border-right: 0 !important;
+          }
           margin-bottom: 0px;
           border: none;
           margin-right: -1px;
