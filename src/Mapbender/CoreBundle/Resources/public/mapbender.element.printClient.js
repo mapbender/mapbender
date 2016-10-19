@@ -19,6 +19,7 @@
         width: null,
         height: null,
         rotateValue: 0,
+        overwriteTemplates: false,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -122,6 +123,11 @@
                     this.popup.destroy();
                 }
                 this.popup = null;
+                // reset template select if overwritten
+                if(this.overwriteTemplates){
+                    this._overwriteTemplateSelect(this.options.templates);
+                    this.overwriteTemplates = false;
+                }
             }
             this.callback ? this.callback.call() : this.callback = null;
         },
@@ -524,6 +530,65 @@
                     self._updateGeometry();
                 }
             });
+        },
+
+        printDigitizerFeature: function(schemaName,featureId){
+            // add hidden fields to submit featureId and schemaName
+            var form = $('form#formats', this.element);
+            form.append( $('<input />', {
+                type: 'hidden',
+                name: 'digitizer_feature[id]',
+                value: featureId
+            })).append( $('<input />', {
+                type: 'hidden',
+                name: 'digitizer_feature[schemaName]',
+                value: schemaName
+            }));
+
+            this._getDigitizerTemplates(schemaName);
+        },
+
+        _getDigitizerTemplates: function(schemaName) {
+            var self = this;
+
+            var url =  this.elementUrl + 'getDigitizerTemplates';
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {schemaName: schemaName},
+                success: function(data) {
+                    self._overwriteTemplateSelect(data);
+                    // open changed dialog
+                    self.open();
+                }
+            });
+        },
+
+        _overwriteTemplateSelect: function(templates) {
+            var templateSelect = $('select[name=template]', this.element);
+            var templateList = templateSelect.siblings(".dropdownList");
+            var valueContainer = templateSelect.siblings(".dropdownValue");
+
+            templateSelect.empty();
+            templateList.empty();
+
+            var count = 0;
+            $.each(templates, function(key,template) {
+                templateSelect.append($('<option></option>', {
+                    'value': template.template,
+                    'html': template.label,
+                    'class': "opt-" + count
+                }));
+                templateList.append($('<li></li>', {
+                    'html': template.label,
+                    'class': "item-" + count
+                }));
+                if(count == 0){
+                    valueContainer.text(template.label);
+                }
+                ++count;
+            });
+            this.overwriteTemplates = true;
         },
 
         /**

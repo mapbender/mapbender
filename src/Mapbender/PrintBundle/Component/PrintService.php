@@ -68,8 +68,8 @@ class PrintService
 
         // template configuration from odg
         $odgParser = new OdgParser($this->container);
-        $this->conf = $conf = $odgParser->getConf($data['template']);       
-        
+        $this->conf = $conf = $odgParser->getConf($data['template']);
+
         // image size
         $this->imageWidth = round($conf['map']['width'] / 25.4 * $data['quality']);
         $this->imageHeight = round($conf['map']['height'] / 25.4 * $data['quality']);
@@ -388,6 +388,12 @@ class PrintService
             $this->addNorthArrow();
         }
 
+        // get digitizer feature
+        if (isset($this->data['digitizer_feature'])) {
+            $dfData = $this->data['digitizer_feature'];
+            $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
+        }
+
         // fill text fields
         if (isset($this->conf['fields']) ) {
             foreach ($this->conf['fields'] as $k => $v) {
@@ -419,6 +425,17 @@ class PrintService
                             $pdf->MultiCell($this->conf['fields'][$k]['width'],
                                 $this->conf['fields'][$k]['height'],
                                 utf8_decode($this->data['extra'][$k]));
+                        }
+
+                        // fill digitizer feature fields
+                        if(preg_match("/^feature./", $k)){
+                            if($feature == false){
+                                continue;
+                            }
+                            $attribute = substr(strrchr($k, "."), 1);
+                            $pdf->MultiCell($this->conf['fields'][$k]['width'],
+                                $this->conf['fields'][$k]['height'],
+                                $feature->getAttribute($attribute));
                         }
                         break;
                 }
@@ -731,8 +748,16 @@ class PrintService
                 $this->conf['fields']['dynamic_text']['height'],
                 $group->getDescription());
         
-    }    
-    
+    }
+
+    private function getFeature($schemaName, $featureId)
+    {
+        $featureTypeService = $this->container->get('features');
+        $featureType = $featureTypeService->get($schemaName);
+        $feature = $featureType->get($featureId);
+        return $feature;
+    }
+
     private function getColor($color, $alpha, $image)
     {
         list($r, $g, $b) = CSSColorParser::parse($color);
