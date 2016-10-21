@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 /**
  * Class SecurityContext
  *
@@ -20,7 +21,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     const PERMISSION_DELETE   = "DELETE";
     const PERMISSION_EDIT     = "EDIT";
     const PERMISSION_VIEW     = "VIEW";
-    const USER_ANONYMOUS_ID = "anon.";
+    const USER_ANONYMOUS_ID   = "anon.";
 
     /**
      * Get current logged user by the token
@@ -34,7 +35,6 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
         if (!$this->isUserLoggedIn()) {
             $user = new User();
             $user->setUsername(static::USER_ANONYMOUS_ID);
-            $user->setId(static::USER_ANONYMOUS_ID);
         }
         return $user;
     }
