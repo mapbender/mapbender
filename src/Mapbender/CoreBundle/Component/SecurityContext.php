@@ -21,8 +21,8 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     const PERMISSION_DELETE   = "DELETE";
     const PERMISSION_EDIT     = "EDIT";
     const PERMISSION_VIEW     = "VIEW";
-    const USER_ANONYMOUS_ID   = "anon.";
-
+    const USER_ANONYMOUS_ID   = 0;
+    const USER_ANONYMOUS_NAME = "anon.";
     /**
      * Get current logged user by the token
      *
@@ -34,7 +34,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
         $user = $this->getToken()->getUser();
         if (!$this->isUserLoggedIn()) {
             $user = new User();
-            $user->setUsername(static::USER_ANONYMOUS_ID);
+            $user->setUsername(static::USER_ANONYMOUS_NAME);
         }
         return $user;
     }
