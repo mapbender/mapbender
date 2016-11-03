@@ -118,3 +118,11 @@
     }
   }
 }
+
+.accordionContainer .mb-element .accordionContainer div.accordion-cell {
+    display: block !important;
+}
+
+.accordionContainer .mb-element .accordionContainer {
+    padding: 0 8px 0 8px;
+}

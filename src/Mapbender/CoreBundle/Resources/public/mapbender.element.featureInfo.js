@@ -396,6 +396,8 @@
                 if(self.state !== 'opened') {
                     this.popup.open();
                 }
+            } else {
+                this.element.removeClass('hidden');
             }
         },
         _getContext: function() {
