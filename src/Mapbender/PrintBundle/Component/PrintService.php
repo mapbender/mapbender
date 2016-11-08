@@ -32,6 +32,13 @@ class PrintService
     protected $neededImageWidth;
     protected $neededImageHeight;
 
+    /**
+     * @var array Default geometry style
+     */
+    protected $defaultStyle = array(
+        "strokeWidth" => 1
+    );
+
     public function __construct($container)
     {
         $this->container = $container;
@@ -772,6 +779,7 @@ class PrintService
 
     private function drawPolygon($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $ring) {
             if(count($ring) < 3) {
                 continue;
@@ -788,26 +796,27 @@ class PrintService
                 $points[] = floatval($p[1]);
             }
             imagesetthickness($image, 0);
-            // Filled area
-            if($geometry['style']['fillOpacity'] > 0){
+
+            if($style['fillOpacity'] > 0){
                 $color = $this->getColor(
-                    $geometry['style']['fillColor'],
-                    $geometry['style']['fillOpacity'],
+                    $style['fillColor'],
+                    $style['fillOpacity'],
                     $image);
                 imagefilledpolygon($image, $points, count($ring), $color);
             }
             // Border
             $color = $this->getColor(
-                $geometry['style']['strokeColor'],
-                $geometry['style']['strokeOpacity'],
+                $style['strokeColor'],
+                $style['strokeOpacity'],
                 $image);
-            imagesetthickness($image, $geometry['style']['strokeWidth']);
+            imagesetthickness($image, $style['strokeWidth']);
             imagepolygon($image, $points, count($ring), $color);
         }
     }
 
     private function drawMultiPolygon($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $element) {
             foreach($element as $ring) {
                 if(count($ring) < 3) {
@@ -826,19 +835,19 @@ class PrintService
                 }
                 imagesetthickness($image, 0);
                 // Filled area
-                if($geometry['style']['fillOpacity'] > 0){
+                if($style['fillOpacity'] > 0){
                     $color = $this->getColor(
-                        $geometry['style']['fillColor'],
-                        $geometry['style']['fillOpacity'],
+                        $style['fillColor'],
+                        $style['fillOpacity'],
                         $image);
                     imagefilledpolygon($image, $points, count($ring), $color);
                 }
                 // Border
                 $color = $this->getColor(
-                    $geometry['style']['strokeColor'],
-                    $geometry['style']['strokeOpacity'],
+                    $style['strokeColor'],
+                    $style['strokeOpacity'],
                     $image);
-                imagesetthickness($image, $geometry['style']['strokeWidth']);
+                imagesetthickness($image, $style['strokeWidth']);
                 imagepolygon($image, $points, count($ring), $color);
             }
         }
@@ -846,11 +855,12 @@ class PrintService
 
     private function drawLineString($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         $color = $this->getColor(
-            $geometry['style']['strokeColor'],
-            $geometry['style']['strokeOpacity'],
+            $style['strokeColor'],
+            $style['strokeOpacity'],
             $image);
-        imagesetthickness($image, $geometry['style']['strokeWidth']);
+        imagesetthickness($image, $style['strokeWidth']);
 
         for($i = 1; $i < count($geometry['coordinates']); $i++) {
 
@@ -876,11 +886,12 @@ class PrintService
 	
     private function drawMultiLineString($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         $color = $this->getColor(
-            $geometry['style']['strokeColor'],
-            $geometry['style']['strokeOpacity'],
+            $style['strokeColor'],
+            $style['strokeOpacity'],
             $image);
-        imagesetthickness($image, $geometry['style']['strokeWidth']);
+        imagesetthickness($image, $style['strokeWidth']);
 	
 		foreach($geometry['coordinates'] as $coords) {
 		
@@ -1094,6 +1105,17 @@ class PrintService
 	$pixPos_y = (($maxY - $rw_y)/$extenty) * $this->neededImageHeight;
 
 	return array($pixPos_x, $pixPos_y);
+    }
+
+    /**
+     * Get geometry style
+     *
+     * @param string $geometry Geometry
+     * @return array Style
+     */
+    private function getStyle($geometry)
+    {
+        return array_merge($this->defaultStyle, $geometry['style']);
     }
 
 }
