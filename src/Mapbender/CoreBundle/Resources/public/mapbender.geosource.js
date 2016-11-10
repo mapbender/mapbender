@@ -66,6 +66,9 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'abstract public function createSourceDefinitions': function(xml, options) {
     }, // to remove
+    'public function changeDefaultOptions': function(defaultOptions) {
+        $.extend(this.defaultOptions, defaultOptions);
+    },
     'public function fire': function(eventName) {
 
     },
@@ -74,6 +77,30 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'public function postCreate': function(olLayer) {
 
+    },
+//    _addProxy: function(url){
+//        return OpenLayers.ProxyHost + encodeURIComponent(url);
+//    },
+//    _removeProxy: function(url){
+//        if(url.indexOf(OpenLayers.ProxyHost) === 0) {
+//            return decodeURIComponent(url.substring(OpenLayers.ProxyHost.length));
+//        }
+//        return url;
+//    },
+    'public function removeSignature': function(url){
+        var pos = -1;
+        pos = url.indexOf("_signature");
+        if(pos !== -1) {
+            var url_new = url.substring(0, pos);
+            if(url_new.lastIndexOf('&') === url_new.length - 1) {
+                url_new = url_new.substring(0, url_new.lastIndexOf('&'));
+            }
+            if(url_new.lastIndexOf('?') === url_new.length - 1) {
+                url_new = url_new.substring(0, url_new.lastIndexOf('?'));
+            }
+            return url_new;
+        }
+        return url;
     },
     'public function changeProjection': function(source, projection) {
     },
@@ -439,6 +466,8 @@ Mapbender.Geo.SourceHandler = Class({
                 ],
                 infolayers: [
                 ],
+                styles: [
+                ],
                 changed: {
                     sourceIdx: {
                         id: source.id
@@ -533,6 +562,7 @@ Mapbender.Geo.SourceHandler = Class({
                     && layer.options[self.layerNameIdent].length > 0) {
                     layer.state.visibility = true;
                     result.layers.push(layer.options[self.layerNameIdent]);
+                    result.styles.push(layer.options.style ? layer.options.style : '');
                     if (layer.options.treeOptions.info === true) {
                         result.infolayers.push(layer.options[self.layerNameIdent]);
                     }
@@ -569,6 +599,7 @@ Mapbender.Geo.SourceHandler = Class({
      * @param {object} source wms source
      * @param {object} changeOptions options in form of:
      * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
+     * @param {boolean | null} defaultSelected 
      * @param {boolean} mergeSelected
      * @returns {object} changes
      */
@@ -615,6 +646,9 @@ Mapbender.Geo.SourceHandler = Class({
             } else {
                 var layerOpts = changeOptions.layers[layer.options[[self.layerNameIdent]]]
                     || changeOptions.layers[layer.options.id];
+                if(!layerOpts && defaultSelected === null) {
+                    return;
+                }
                 var sel = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
                 if (mergeSelected) {
                     sel = sel || layer.options.treeOptions.selected;
@@ -678,8 +712,14 @@ Mapbender.Geo.SourceHandler = Class({
             }
             return null;
         }
-        var extent = _layerExtent(source.configuration.children[0], layerId);
-        return extent ? extent : source.configuration.options.bbox;
+        var extents = _layerExtent(source.configuration.children[0], layerId);
+        for (srs in extents) {
+            return extents;
+        }
+        for (srs in source.configuration.options.bbox) {
+            return source.configuration.options.bbox;
+        }
+        return null;
     }
 });
 

@@ -14,10 +14,6 @@
     right: 0;
     bottom: 0;
     opacity: 0.4;
-    -o-user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: -moz-none;
-    -khtml-user-select: none;
     -ms-user-select: none;
     user-select: none;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
@@ -32,6 +28,11 @@
     box-sizing: content-box !important;
   }
 
+  .ui-dialog-titlebar-close {
+    display: inline-block;
+    font-size: 0;
+    text-rendering: auto;
+  }
 
   $borderRadius: 0px;
   z-index: 22;
@@ -66,6 +67,21 @@
     }
 
     .ui-dialog-titlebar-buttonpane{
+      button.close {
+        margin: 1px;
+        .ui-icon-closethick:before {
+          font-family: FontAwesome;
+          font-size: 23px;
+          display: inline-block;
+          content: "\f00d";
+          font-weight: bold;
+          margin-top: -2px;
+          margin-bottom: 2px;
+        }
+        .ui-button-icon-space {
+          display: none;
+        }
+      }
       a{
         @extend .btn;
         @extend .button;
@@ -115,6 +131,7 @@
             font-size: 18px;
             margin-top: -3px;
           }
+
           /** restore to normal **/
           &.ui-icon-newwin:after{
             content: "\f063";
@@ -152,6 +169,12 @@
       > ul.modal-header {
         background-color: #B6D39E;
         > li {
+          &:first-child > a{
+            border-left: 0 !important;
+          }
+          &:last-child> a{
+            border-right: 0 !important;
+          }
           margin-bottom: 0px;
           border: none;
           margin-right: -1px;

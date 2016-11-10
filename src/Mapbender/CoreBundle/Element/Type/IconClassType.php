@@ -25,7 +25,7 @@ class IconClassType extends AbstractType
             'icon-layer-tree'   => 'Layer tree',
             'icon-feature-info' => 'Feature Info',
             'icon-area-ruler'   => 'Area ruler',
-            'icon-polygone'     => 'Polygone',
+            'icon-polygon'      => 'Polygon',
             'icon-line-ruler'   => 'Line ruler',
             'icon-image-export' => 'Image Export',
             'icon-legend'       => 'Legend',

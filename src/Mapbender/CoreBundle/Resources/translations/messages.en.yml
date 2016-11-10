@@ -1,0 +1,388 @@
+mb:
+  core:
+    featureinfo:
+      error:
+        nolayer: 'No feature info layer exists.'
+        unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
+        noresult: 'no result'
+      popup:
+        btn:
+          ok: Close
+      class:
+        title: FeatureInfo
+        description: FeatureInfo
+      tag:
+        featureinfo: featureinfo
+        feature: feature
+        info: info
+        dialog: dialog
+    aboutdialog:
+      content:
+        versionprefix: v.
+        learnmore: 'learn more about Mapbender3'
+        linktitle: 'Visit our official Mapbender3 website'
+        website: website
+      class:
+        title: 'About dialog'
+        description: 'Shows an about dialog'
+      tag:
+        help: help
+        info: info
+        about: about
+    simplesearch:
+      input:
+        search: Search
+      class:
+        title: 'Simple Search'
+        description: 'Single field search on JSON sources (e.g. Solr)'
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
+    searchrouter:
+      popup:
+        btn:
+          ok: Search
+          cancel: Close
+          reset: Reset
+      no_results: 'No results found.'
+      result_counter: 'Results: %count%'
+      class:
+        title: 'Search router'
+        description: 'Configurable search routing element'
+      tag:
+        search: search
+        router: router
+    poi:
+      sharepoi: 'Share POI'
+      text:
+        snippet: 'You can use the following snippet in an email to send the POI'
+      popup:
+        btn:
+          ok: Ok
+          cancel: Cancel
+      class:
+        title: POI
+        description: 'Create a POI for sharing'
+      tag:
+        poi: poi
+        point: point
+        interest: interest
+      label:
+        text: Text
+    basesourceswitcher:
+      error:
+        sourcenotavailable: 'A source with id %id% is not available'
+      class:
+        title: 'Base source switcher'
+        Description: 'Change the map''s background sources'
+      tag:
+        base: base
+        source: source
+        switcher: switcher
+      form:
+        mesage: 'No basesource set is defined.'
+    legend:
+      nolegend: 'No legend available'
+      popup:
+        btn:
+          ok: Close
+      class:
+        title: Legend
+        description: 'The legend shows the legend of the map''s layers'
+      tag:
+        layer: layer
+        legend: legend
+    ruler:
+      popup:
+        btn:
+          ok: Close
+      create_error: 'Ruler: Type must be line or area.'
+      class:
+        title: 'Line/Area Ruler'
+        description: 'Ruler to draw a line/area and display length/area in a dialog'
+      tag:
+        line: line
+        area: area
+        measure: measure
+    printclient:
+      label:
+        template: Template
+        quality: Quality
+        scale: Scale
+        rotation: Rotation
+        legend: 'Print legend'
+      popup:
+        btn:
+          ok: Print
+          cancel: Cancel
+      info:
+        noactivelayer: 'No active layer!'
+      form:
+        required: 'Please fill out this field'
+      class:
+        title: 'Print client'
+        description: 'Renders a Print dialog'
+      tag:
+        print: print
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg
+      btn:
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'
+    overview:
+      nolayer: 'The overview element has no layer.'
+      class:
+        title: Overview
+        description: 'Renders a small overview map'
+      tag:
+        overview: overview
+        map: map
+    sketch:
+      circle:
+        radius:
+          label: Radius
+          error: 'Radius is not valid'
+        form:
+          button:
+            'yes': 'Yes'
+            cancel: Cancel
+      class:
+        title: Sketch
+        description: 'Adds a vector layer in the map and enables geometry objects to draw.'
+      tag:
+        sketch: sketch
+        circle: circle
+    metadata:
+      popup:
+        title: Metadaten
+        btn:
+          ok: Close
+    gpsposition:
+      error:
+        notsupported: I'm sorry, but geolocation services are not supported by your browser.
+        nosignal: Currently it's not posible to locate your position.
+      class:
+        title: 'GPS Position'
+        description: 'Renders a button to show the GPS Position'
+      tag:
+        gpsposition: 'GPS Position'
+        gps: GPS
+        position: position
+        button: button
+    layertree:
+      confirm:
+        allremove: 'Really all sources delete?'
+      popup:
+        btn:
+          ok: Close
+      const:
+        outofscale: 'Layer out of scale'
+        outofbounds: 'Layer out of bounds'
+        parentinvisible: 'Parent layer invisible'
+      tooltip:
+        sublayers_openclose: 'Sublayers open/close'
+        removelayer: 'Remove layer'
+        menu:
+          close: Close
+      label:
+        visibility_onoff: 'Visibility on/off'
+        featureinfo_onoff: 'Featureinfo on/off'
+        opacity: Opacity
+        zoomtolayer: 'Zoom to layer'
+        metadata: Metadata
+        sources: Sources
+        deleteallsources: 'Remove all sources'
+        legend: Legend
+        kmlexport: 'Kml export'
+        dimension_onoff: 'On/Off Dimension'
+        dimension: Dimension
+        sourcevisibility_onoff: 'Show sources'
+        allvisibility_on: 'Show all layers'
+      class:
+        title: 'Layer tree'
+        description: 'Tree of map''s layers'
+      tag:
+        layertree: layertree
+        layer: layer
+        tree: tree
+      contextmenu:
+        nooption: 'Layer has no context menu option'
+    zoombar:
+      panup: 'Pan up'
+      panright: 'Pan right'
+      pandown: 'Pan down'
+      panleft: 'Pan left'
+      goback: 'Go back'
+      goforward: 'Go forward'
+      zoombybox: 'Zoom by box'
+      zoombyworld: 'Zoom by world'
+      zoomin: Zoomin
+      zoomout: Zoomout
+      class:
+        title: 'Navigation toolbar'
+        description: 'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
+      tag:
+        zoom: zoom
+        pan: pan
+        control: control
+        navigation: navigation
+        panel: panel
+    activityindicator:
+      class:
+        title: 'Activity indicator'
+        description: 'Shows HTTP activity'
+      tag:
+        activity: activity
+        indicator: indicator
+    button:
+      class:
+        title: Button
+        description: Button
+      tag:
+        button: button
+    coordinatesdisplay:
+      class:
+        title: 'Coordinates display'
+        description: 'The coordinates display shows your mouse position in map coordinates.'
+      tag:
+        coordinates: coordinates
+        display: display
+        mouse: mouse
+        position: position
+    copyright:
+      class:
+        title: Copyright
+        description: 'Shows terms of use'
+      tag:
+        copyright: Copyright
+        dialog: dialog
+    map:
+      class:
+        title: Map
+      tag:
+        map: map
+        mapquery: MapQuery
+        openlayers: OpenLayers
+      srsnotfound: 'SRS properties for %srslist% are not found'
+    mapabs:
+      class:
+        description: 'MapQuery/OpenLayers based map'
+    scalebar:
+      class:
+        title: 'Scale bar'
+        description: 'The scalebar displays a small line indicator representing the current map scale.'
+      tag:
+        scale: scale
+        bar: bar
+    scaledisplay:
+      class:
+        title: 'Scale display'
+        description: 'Displays the current map scale'
+      tag:
+        scale: scale
+        display: display
+    scaleselector:
+      class:
+        title: 'Scale selector'
+        description: 'Displays and changes a map scale'
+      tag:
+        scale: scale
+        selector: selector
+    srsselector:
+      class:
+        title: 'SRS selector'
+        description: 'The spatial reference system selector changes the map''s spatial reference system'
+      tag:
+        srs: SRS
+        selector: selector
+    admin:
+      poi:
+        label:
+          usemailto: 'Use Mailto'
+      legend:
+        label:
+          autoopen: Autoopen
+          hideemptylayers: 'Hide empty layers'
+          generatelegendurl: 'Generate legend url'
+          showsourcetitle: 'Show source title'
+          showlayertitle: 'Show layer title'
+          showgroupedlayertitle: 'Show grouped layer title'
+      featureinfo:
+        label:
+          autoopen: Autoopen
+          deactivateonclose: 'Deactivate on close'
+          showoriginal: 'Show original'
+          onlyvalid: 'Only valid'
+      printclient:
+        label:
+          autoopen: Autoopen
+          rotatable: Rotatable
+          legend: 'Print legend'
+          legend_default_behaviour: 'Legend checkbox activ'
+      copyright:
+        label:
+          autoopen: Autoopen
+      layertree:
+        label:
+          showbasesources: 'Show base sources'
+          autoopen: Autoopen
+          showheader: 'Show header'
+          showlayerremove: 'Show layer remove'
+          usetheme: 'Thematic layer'
+          themes: Themes
+          theme:
+            opened: opened
+            activate: 'Enabling Layer Add / Remove'
+            useTheme: 'Theme show'
+            sourceVisibility: 'Theme: source visibility'
+            allSelected: 'Theme: layer visibility'
+            label: 'theme name'
+          hidenottoggleable: 'Hide not toggleable'
+          hideselect: 'Hide visibility by folders'
+          hideinfo: 'Hide info'
+      redlining:
+        label:
+          auto_activate: Autoactivate
+          deactivate_on_close: 'Deactivate on close'
+    htmlelement:
+      class:
+        title: HTML
+        description: 'Add some HTML'
+      tag:
+        html: HTML
+    entity:
+      app:
+        screenshotfile:
+          error: Errorrror
+    redlining:
+      geometrytype:
+        point: Point
+        line: Line
+        polygon: Polygon
+        rectangle: Rectangle
+        text:
+          title: Text
+          label: Text
+      geometry:
+        action:
+          remove: 'Remove geometry'
+          edit: 'Edit geometry'
+          zoom: 'Zoom to geometryoom'
+      dialog:
+        btn:
+          cancel: Close
+      class:
+        title: Redlining
+        description: 'Redlining tool'
+      tag:
+        redlining: redlining
+        geometry: geometry
+  geosource:
+    image_error:
+      datails: 'The map cannot be displayed.'
+      exception: 'Exception: %exception%'
+      statuscode: 'HTTP status code'
+Search: Search

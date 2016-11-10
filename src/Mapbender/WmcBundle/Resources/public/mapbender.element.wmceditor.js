@@ -40,6 +40,14 @@
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
+            var width = self.element.attr('width');
+            var height = self.element.attr('height');
+            if(!width) {
+                width = 480;
+            }
+            if(!height) {
+                height = 500;
+            }
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
@@ -60,8 +68,8 @@
                                 $(".removeWmc", self.popup.$element).on("click", $.proxy(self._loadRemoveForm, self));
                             }})],
                     destroyOnClose: true,
-                    width: 480,
-                    height: 500,
+                    width: width,
+                    height: height,
                     resizable: true,
                     buttons: {
                         'cancel': {

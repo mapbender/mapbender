@@ -1,0 +1,388 @@
+mb:
+  core:
+    aboutdialog:
+      content:
+        versionprefix: Version
+        learnmore: 'Lernen Sie Mapbender3 kennen '
+        linktitle: 'Besuchen Sie die offizielle Mapbender3 Webseite.'
+        website: '- zur Webseite'
+      class:
+        title: Über-Mapbender-Dialog
+        description: 'Der Über-Mapbender-Dialog zeigt Informationen zu Mapbender an.'
+      tag:
+        help: Hilfe
+        info: Info
+        about: Info-Dialog
+    simplesearch:
+      input:
+        search: Suchen
+      class:
+        title: 'Einfache Suche'
+        description: 'Einfeldsuche über JSON-Daten (z.B. Solr)'
+      error:
+        geometry:
+          missing: Der ausgewählte Eintrag enthält keine Geometrie.
+    searchrouter:
+      popup:
+        btn:
+          ok: Suchen
+          cancel: Schließen
+          reset: Zurücksetzen
+      no_results: 'Keine Ergebnisse gefunden.'
+      result_counter: 'Ergebnisse: %count%'
+      class:
+        title: Suchen
+        description: 'Ermöglicht die Konfiguration von individuellen Suchen'
+      tag:
+        search: Suchen
+        router: Router
+    poi:
+      sharepoi: 'Treffpunkt vereinbaren'
+      text:
+        snippet: 'Sie können den folgenden Link in einer E-Mail verschicken. Der Link öffnet die Anwendung und zeigt den Treffpunkt an.'
+      popup:
+        btn:
+          ok: Ok
+          cancel: Abbrechen
+      class:
+        title: 'MeetingPoint (POI)'
+        description: 'Element über das eine Treffpunkt generiert und verschickt werden kann.'
+      tag:
+        poi: 'MeetingPoint (POI)'
+        point: Punkt
+        interest: Interessse
+      label:
+        text: 'Bearbeiten Sie den Text'
+    basesourceswitcher:
+      error:
+        sourcenotavailable: 'Der Dienst mit der ID %id% ist nicht vorhanden'
+      class:
+        title: 'Hintergrund wechseln'
+        Description: 'Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.'
+      tag:
+        base: base
+        source: source
+        switcher: switcher
+      form:
+        mesage: 'Keine Hintergrund Definitionen vorhanden.'
+    legend:
+      nolegend: 'Keine Legende verfügbar.'
+      popup:
+        btn:
+          ok: Schließen
+      class:
+        title: Legende
+        description: 'Zeigt die Legende zu den aktiven Themen der Karte an.'
+      tag:
+        layer: Themen
+        legend: Legende
+    ruler:
+      popup:
+        btn:
+          ok: Schließen
+      create_error: 'Messen: Der Geometrietyp muss eine Linie oder eine Fläche sein.'
+      class:
+        title: Linien-/Flächenmessung
+        description: 'Messung: Es wird eine Linie/Fläche gezeichnet, um deren Länge/Fläche in einem Dialog anzuzeigen.'
+      tag:
+        line: Linie
+        area: Fläche
+        measure: Messen
+    printclient:
+      label:
+        template: Vorlage
+        quality: Qualität
+        scale: Maßstab
+        rotation: Drehung
+        legend: 'Legende drucken'
+      popup:
+        btn:
+          ok: Drucken
+          cancel: Abbrechen
+      info:
+        noactivelayer: 'Keine aktive Ebene!'
+      form:
+        required: 'Bitte füllen Sie dieses Feld aus'
+      class:
+        title: Druck
+        description: 'Druck Dialog'
+      tag:
+        print: Druck
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg
+      btn:
+        deactivate: 'Druckrahmen deaktivieren'
+        activate: 'Druckrahmen aktivieren'
+    overview:
+      nolayer: 'Die Übersicht enthält keine Ebene.'
+      class:
+        title: 'Übersicht (overview)'
+        description: 'Zeigt eine kleine Übersichtskarte (overview) an.'
+      tag:
+        overview: Übersicht
+        map: 'Karte (overview)'
+    sketch:
+      circle:
+        radius:
+          label: Radius
+          error: 'Der Radius ist nicht gültig.'
+        form:
+          button:
+            'yes': Übernehmen
+            cancel: Abbrechen
+      class:
+        title: Skizzen
+        description: 'Es wird eine Vektorebene in der Karte hinzugefügt, über die Geometrieobjekte temporär gezeichnet werden.'
+      tag:
+        sketch: Skizzen
+        circle: Kreis
+    featureinfo:
+      error:
+        nolayer: 'Informationsebene existiert nicht.'
+        unknownoption: 'Unbekannte Option %key% für %namespace%.%widgetname%.'
+        noresult: 'kein Ergebnis'
+      popup:
+        btn:
+          ok: Schließen
+      class:
+        title: Information
+        description: Information
+      tag:
+        featureinfo: Information
+        feature: Objekt
+        info: Info
+        dialog: Dialog
+    gpsposition:
+      error:
+        notsupported: 'Entschuldigung! Der Geolocation Dienst wird Ihrem Browser nicht unterstützt.'
+        nosignal: Es ist nicht möglich Ihre Position zu bestimmen.
+      class:
+        title: GPS-Position
+        description: 'Übergibt einen Button um die GPS-Position anzuzeigen.'
+      tag:
+        gpsposition: GPS-Position
+        gps: GPS
+        position: Position
+        button: Button
+    layertree:
+      confirm:
+        allremove: 'Sollen wirklich alle Dienste gelöscht werden?'
+      popup:
+        btn:
+          ok: Schließen
+      const:
+        outofscale: 'Ebene außerhalb des Maßstabs'
+        outofbounds: 'Ebene außerhalb der BoundingBox'
+        parentinvisible: 'Eltern Ebene nicht sichtbar'
+      tooltip:
+        sublayers_openclose: öffnen/schließen
+        removelayer: 'Ebene entfernen'
+        menu:
+          close: Schließen
+      label:
+        visibility_onoff: 'Sichtbarkeit an/aus'
+        featureinfo_onoff: 'Information an/aus'
+        opacity: Deckkraft
+        zoomtolayer: 'Zoom auf Ebene'
+        metadata: Metadaten
+        sources: Quellen
+        deleteallsources: 'Alle Dienste entfernen'
+        legend: Legende
+        kmlexport: 'KML Export'
+        dimensions: Dimensions
+        dimension_onoff: 'An/Aus Dimension'
+        dimension: Dimension
+        sourcevisibility_onoff: 'Dienste anzeigen/ausblenden'
+        allvisibility_on: 'Alle Layer anzeigen'
+      class:
+        title: Ebenenbaum
+        description: 'Baum der Karten-Ebenen'
+      tag:
+        layertree: Ebenenbaum
+        layer: Ebenen
+        tree: Baum
+      contextmenu:
+        nooption: 'Layer verfügt über keine Kontextmenü-Option'
+    zoombar:
+      panup: 'Nach oben verschieben'
+      panright: 'Nach rechts verschieben'
+      pandown: 'Nach unten verschieben'
+      panleft: 'Nach links verschieben'
+      goback: Zurück
+      goforward: Vor
+      zoombybox: 'Ausschnitt aufziehen'
+      zoombyworld: 'Zoom auf gesamte Ausdehnung'
+      zoomin: Hineinzoomen
+      zoomout: Herauszoomen
+      class:
+        title: Navigationswerkzeug
+        description: 'Das Navigationswerkzeug bietet Zoomen und Verschieben an, ähnlich wie bei OpenLayers.'
+      tag:
+        zoom: Zoom
+        pan: Verschieben
+        control: Kontrolle
+        navigation: Navigation
+        panel: Panel
+    activityindicator:
+      class:
+        title: Aktivitätsanzeige
+        description: 'Zeigt HTTP-Aktivität an.'
+      tag:
+        activity: Aktivität
+        indicator: Indikator
+    button:
+      class:
+        title: Button
+        description: 'Button '
+      tag:
+        button: Button
+    coordinatesdisplay:
+      class:
+        title: Koordinatenanzeige
+        description: 'Die Koordinatenanzeige zeigt die Mausposition in den Kartenkoordinaten an.'
+      tag:
+        coordinates: Koordinaten
+        display: Anzeige
+        mouse: Maus
+        position: Position
+    copyright:
+      class:
+        title: Copyright
+        description: 'Zeigt Nutzungsbedingungen an.'
+      tag:
+        copyright: Copyright
+        dialog: Dialog
+    map:
+      class:
+        title: 'Karte (map)'
+      tag:
+        map: Karte
+        mapquery: MapQuery
+        openlayers: OpenLayers
+      srsnotfound: 'SRS Eigenschaften für %srslist% wurden nicht gefunden.'
+    mapabs:
+      class:
+        description: 'Die Karte basiert auf MapQuery/OpenLayers'
+    scalebar:
+      class:
+        title: Maßstabsleiste
+        description: 'Maßstabsleiste, die den aktuellen Maßstab anzeigt.'
+      tag:
+        scale: Maßstab
+        bar: Leiste
+    scaledisplay:
+      class:
+        title: Maßstabsanzeige
+        description: 'Der aktuelle Maßstab wird angezeigt.'
+      tag:
+        scale: Maßstab
+        display: Anzeige
+    scaleselector:
+      class:
+        title: Maßstabsauswahl
+        description: 'Auswahlbox mit verfügbaren Maßstäben zum Wechseln des Maßstabs. Zeigt den aktuellen Maßstab an.'
+      tag:
+        scale: Maßstab
+        selector: Auswahl
+    srsselector:
+      class:
+        title: 'SRS Auswahl'
+        description: 'Nach der Auswahl eines räumlichen Referenzsystems (SRS) ändert sich das SRS in der Karte.'
+      tag:
+        srs: SRS
+        selector: Auswahl
+    admin:
+      legend:
+        label:
+          autoopen: 'Automatisches Öffnen'
+          hideemptylayers: 'Ebenen ohne Objekte ausblenden'
+          generatelegendurl: 'Legenden-URL generieren'
+          showsourcetitle: 'Titel der Datenquelle anzeigen'
+          showlayertitle: 'Titel der Ebene anzeigen'
+          showgroupedlayertitle: 'Titel der gruppierten Ebene anzeigen'
+      featureinfo:
+        label:
+          deactivateonclose: 'Beim Schließen deaktivieren'
+          autoopen: 'Automatisches Öffnen'
+          showoriginal: 'Original Zeigen'
+          onlyvalid: 'Nur valide zeigen'
+      printclient:
+        label:
+          autoopen: 'Automatisches Öffnen'
+          rotatable: Drehbar
+          legend: 'Legende drucken'
+          legend_default_behaviour: 'Legenden Checkbox aktiv'
+      copyright:
+        label:
+          autoopen: 'Automatisches Öffnen'
+      layertree:
+        label:
+          showbasesources: 'BaseSources anzeigen'
+          autoopen: 'Automatisches Öffnen'
+          showheader: 'Header anzeigen'
+          showlayerremove: '"Layer entfernen" anzeigen'
+          usetheme: 'Thematischer Layer'
+          themes: Themen
+          theme:
+            opened: 'Thema geöffnet/geschlossen'
+            activate: 'Aktivieren von Layers hinzufügen/entfernen'
+            useTheme: 'Thema anzeigen'
+            sourceVisibility: 'Thema: Dienste-Sichtbarkeit'
+            allSelected: 'Thema: Layer-Sichtbarkeit'
+            label: Themenname
+          hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
+          hideselect: 'Visibility bei Ordnern ausblenden'
+          hideinfo: 'Info ausblenden'
+      poi:
+        label:
+          usemailto: 'Use mailto'
+      redlining:
+        label:
+          auto_activate: 'Automatisches Aktivieren'
+          deactivate_on_close: 'Beim Schließen deaktivieren'
+    htmlelement:
+      class:
+        title: HTML
+        description: 'HTML hinzufügen'
+      tag:
+        html: HTML
+    metadata:
+      popup:
+        title: Metadaten
+        btn:
+          ok: Schließen
+    entity:
+      app:
+        screenshotfile:
+          error: 'Die Datei ist zu groß. Die maximal zulässige Größe beträgt %limit% bytes.'
+    redlining:
+      dialog:
+        btn:
+          cancel: Schließen
+      class:
+        title: Redlining
+        description: 'Redlining Werkzeug'
+      tag:
+        redlining: redlining
+        geometry: geometrie
+      geometrytype:
+        point: Punkt
+        line: Linie
+        polygon: Polygon
+        rectangle: Rechteck
+        text:
+          title: Text
+          label: Text
+      geometry:
+        action:
+          remove: 'Entfernen der Geometrie'
+          edit: 'Editieren der Geometrie'
+          zoom: 'Zoom auf die Geometrie'
+  geosource:
+    image_error:
+      datails: 'Die Karte kann nicht angezeigt werden.'
+      exception: 'Ausnahmefehler: %exception%'
+      statuscode: 'HTTP Statuscode'

@@ -1,11 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -29,22 +22,35 @@ class ExchangeNormalizer extends ExchangeSerializer
     protected $inProcess;
 
     /**
-     *
      * @param ContainerInterface $container container
      */
     public function __construct(ContainerInterface $container)
     {
+        gc_enable();
         parent::__construct($container);
         $this->em = $this->container->get('doctrine')->getManager();
+        $this->em
+            ->getConnection()
+            ->getConfiguration()
+            ->setSQLLogger(null);
+
         $this->export = array();
         $this->inProcess = array();
     }
 
+    /**
+     * @return array
+     */
     public function getExport()
     {
         return $this->export;
     }
 
+    /**
+     * @param array   $objectData
+     * @param  object $classMeta
+     * @return bool
+     */
     private function isInProcess(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
@@ -64,17 +70,26 @@ class ExchangeNormalizer extends ExchangeSerializer
         return false;
     }
 
+    /**
+     * @param array  $objectData
+     * @param object $classMeta
+     */
     private function addInProcess(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
-        if (!isset($this->inProcess[$class])) {
-            $this->inProcess[$class] = array();
+        if (!isset($this->inProcess[ $class ])) {
+            $this->inProcess[ $class ] = array();
         }
         if (!$this->isInProcess($objectData, $classMeta)) {
-            $this->inProcess[$class][] = $objectData;
+            $this->inProcess[ $class ][] = $objectData;
         }
     }
 
+    /**
+     * @param array  $objectData
+     * @param object $classMeta
+     * @return bool
+     */
     private function isExported(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
@@ -94,6 +109,10 @@ class ExchangeNormalizer extends ExchangeSerializer
         return false;
     }
 
+    /**
+     * @param array  $objectData
+     * @param object $classMeta
+     */
     private function addExport(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
@@ -105,11 +124,15 @@ class ExchangeNormalizer extends ExchangeSerializer
         }
     }
 
+    /**
+     * @param object             $object
+     * @param ClassMetadata|null $classMeta
+     * @return array
+     */
     private function handleIdentParams($object, ClassMetadata $classMeta = null)
     {
         if (!$classMeta) {
-            $realClass = $this->getRealClass($object);
-            $classMeta = $this->em->getClassMetadata($realClass);
+            $classMeta = $this->getClassMetadata($this->getRealClass($object));
         }
         $params = $this->getIdentCriteria($object, $classMeta);
         return $this->createInstanceIdent($object, $params);
@@ -129,13 +152,17 @@ class ExchangeNormalizer extends ExchangeSerializer
                 $result[$key] = $this->handleValue($item);
             }
         } else {
-            foreach ($array as $item) {
-                $result[] = $this->handleValue($item);
+            while (list($idx, $item) = each($array)) {
+                $result[$idx] = $this->handleValue($item);
             }
         }
         return $result;
     }
 
+    /**
+     * @param $value
+     * @return array|string
+     */
     public function handleValue($value)
     {
         if ($value === null || is_integer($value) || is_float($value) || is_string($value) || is_bool($value)) {
@@ -146,17 +173,27 @@ class ExchangeNormalizer extends ExchangeSerializer
             $realClass = $this->getRealClass($value);
             try {
                 $this->em->getRepository($realClass);
-                return $this->normalizeEntity($value, $this->em->getClassMetadata($realClass));
+                return $this->normalizeEntity($value, $this->getClassMetadata($realClass));
             } catch (MappingException $e) {
-                return $this->normalizeObject($value, new \ReflectionClass($realClass));
+                return $this->normalizeObject($value, $this->getReflectionClass($realClass));
             }
         } else {
             return 'unsupported';
         }
     }
 
+    /**
+     * @param object $object
+     * @param ClassMetadata $classMeta
+     * @return array
+     */
     public function normalizeEntity($object, ClassMetadata $classMeta)
     {
+        $this->em
+            ->getConnection()
+            ->getConfiguration()
+            ->setSQLLogger(null);
+        gc_enable();
         $this->em->refresh($object);
         $data = $this->handleIdentParams($object, $classMeta);
         $this->addInProcess($data, $classMeta);
@@ -178,7 +215,7 @@ class ExchangeNormalizer extends ExchangeSerializer
                         $ident = $this->handleIdentParams($item);
                         $data[$fieldName][] = $ident;
                         $itemRealClass = $this->getRealClass($item);
-                        $itemClassMeta = $this->em->getClassMetadata($itemRealClass);
+                        $itemClassMeta = $this->getClassMetadata($itemRealClass);
                         if (!$this->isInProcess($ident, $itemClassMeta)) {
                             $this->normalizeEntity($item, $itemClassMeta);
                         }
@@ -186,7 +223,7 @@ class ExchangeNormalizer extends ExchangeSerializer
                 } else {
                     $data[$fieldName] = $this->handleIdentParams($subObject);
                     $subObjectRealClass = $this->getRealClass($subObject);
-                    $subObjectClassMeta = $this->em->getClassMetadata($subObjectRealClass);
+                    $subObjectClassMeta = $this->getClassMetadata($subObjectRealClass);
                     if (!$this->isInProcess($data[$fieldName], $subObjectClassMeta)) {
                         $this->normalizeEntity($subObject, $subObjectClassMeta);
                     }
@@ -194,6 +231,7 @@ class ExchangeNormalizer extends ExchangeSerializer
             }
         }
         $this->addExport($data, $classMeta);
+        gc_collect_cycles();
         return $data;
     }
 
@@ -205,6 +243,7 @@ class ExchangeNormalizer extends ExchangeSerializer
                 $data[$property->getName()] = $this->handleValue($getMethod->invoke($object));
             }
         }
+        gc_collect_cycles();
         return $data;
     }
 }

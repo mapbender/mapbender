@@ -56,51 +56,51 @@
   </div>
   <div id="containerContact" class="container serviceContainer serviceContactContainer">
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.person" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.person }}</div>
+    <div class="metaText">{{  wms.contact ? wms.contact.person : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.organization" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.organization }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.organization : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.position" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.position }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.position : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.telephone" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.voiceTelephone }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.voiceTelephone : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.facsimile" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.facsimileTelephone }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.facsimileTelephone : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.email" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.electronicMailAddress }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.electronicMailAddress : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.address" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.address }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.address : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.addresstype" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.addressType }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.addressType : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.city" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.addressCity }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.addressCity : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.state" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.addressStateOrProvince }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.addressStateOrProvince : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.postcode" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.addressPostcode }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.addressPostcode : '' }}</div>
     <div class="clearContainer"></div>
 
     <div class="labelText">{{ "mb.wms.wmsloader.repo.view.label.country" | trans }}:</div>
-    <div class="metaText">{{ wms.contact.addressCountry }}</div>
+    <div class="metaText">{{ wms.contact ? wms.contact.addressCountry : '' }}</div>
     <div class="clearContainer"></div>
   </div>
   <div id="containerService" class="container serviceContainer serviceServiceContainer">

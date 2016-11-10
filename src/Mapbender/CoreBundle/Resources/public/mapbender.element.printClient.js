@@ -18,8 +18,8 @@
         lastRotation: null,
         width: null,
         height: null,
-        popupIsOpen: true,
         rotateValue: 0,
+        overwriteTemplates: false,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -30,17 +30,38 @@
         },
 
         _setup: function(){
+            var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
             
-
-            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
+            $('select[name="scale_select"]', this.element)
                 .on('change', $.proxy(this._updateGeometry, this));
-            $('input[name="scale_text"], input[name="rotation"]', this.element)
+            $('input[name="rotation"]', this.element)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.element)
                 .on('change', $.proxy(this._getTemplateSize, this));
-            $('#formats input[required]').on('change invalid', this._checkFieldValidity);
+        
+            if (this.options.type === 'element') {
+                $(this.element).show();
+                $(this.element).on('click', '#printToggle', function(){
+                    var active = $(this).attr('active');
+                    if(active === 'true') {// deactivate
+                        $(this).attr('active','false').removeClass('active');
+                        $(this).val(Mapbender.trans('mb.core.printclient.btn.activate'));
+                        self._updateElements(false);
+                        $('.printSubmit', this.element).addClass('hidden');
+                    }else{ // activate
+                        $(this).attr('active','true').addClass('active');
+                        $(this).val(Mapbender.trans('mb.core.printclient.btn.deactivate'));
+                        self._getTemplateSize();
+                        self._updateElements(true);
+                        self._setScale();
+                        $('.printSubmit', this.element).removeClass('hidden');
+                    }
+                });
+                $('.printSubmit', this.element).on('click', $.proxy(this._print, this));
+            }
+
             this._trigger('ready');
             this._ready();
         },
@@ -53,171 +74,107 @@
             this.callback = callback ? callback : null;
             var self = this;
             var me = $(this.element);
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            if(!this.popup || !this.popup.$element){
-                this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('title'),
-                        draggable: true,
-                        header: true,
-                        modal: false,
-                        closeButton: false,
-                        closeOnESC: false,
-                        content: self.element,
-                        width: 400,
-                        height: 460,
-                        cssClass: 'customPrintDialog',
-                        buttons: {
-                                'cancel': {
-                                    label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
-                                    cssClass: 'button buttonCancel critical right',
-                                    callback: function(){
-                                        self.close();
+            if (this.options.type === 'dialog') {
+                if(!this.popup || !this.popup.$element){
+                    this.popup = new Mapbender.Popup2({
+                            title: self.element.attr('title'),
+                            draggable: true,
+                            header: true,
+                            modal: false,
+                            closeButton: false,
+                            closeOnESC: false,
+                            content: self.element,
+                            width: 400,
+                            height: 490,
+                            cssClass: 'customPrintDialog',
+                            buttons: {
+                                    'cancel': {
+                                        label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
+                                        cssClass: 'button buttonCancel critical right',
+                                        callback: function(){
+                                            self.close();
+                                        }
+                                    },
+                                    'ok': {
+                                        label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
+                                        cssClass: 'button right',
+                                        callback: function(){
+                                            self._print();
+                                        }
                                     }
-                                },
-                                'ok': {
-                                    label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
-                                    cssClass: 'button right',
-                                    callback: function(){
-                                        self._print();
-                                    }
-                                }
-                        }
-                    });
-                this.popup.$element.on('close', $.proxy(this.close, this));
-             } else {
-                 if (this.popupIsOpen === false){
-                    this.popup.open(self.element);
-                 }
+                            }
+                        });
+                    this.popup.$element.on('close', $.proxy(this.close, this));
+                }else{
+                     return;
+                }
+                me.show();
+                this._getTemplateSize();
+                this._updateElements(true);
+                this._setScale();
             }
-            me.show();
-            this.popupIsOpen = true;
-            this._getTemplateSize();
-            this._loadPrintFormats();
-            this._updateElements();
-            this._updateGeometry(true);
         },
 
         close: function() {
             if(this.popup){
                 this.element.hide().appendTo($('body'));
-                this.popupIsOpen = false;
-                this._updateElements();
+                this._updateElements(false);
                 if(this.popup.$element){
                     this.popup.destroy();
                 }
                 this.popup = null;
+                // reset template select if overwritten
+                if(this.overwriteTemplates){
+                    this._overwriteTemplateSelect(this.options.templates);
+                    this.overwriteTemplates = false;
+                }
             }
             this.callback ? this.callback.call() : this.callback = null;
         },
+        
+        _setScale: function() {
+            var select = $(this.element).find("select[name='scale_select']");
+            var styledSelect = select.parent().find(".dropdownValue.iconDown");
+            var scales = this.options.scales;
+            var currentScale = Math.round(this.map.map.olMap.getScale());
+            var selectValue;
 
-        _loadPrintFormats: function() {
-            var self = this;
-
-            var scale_text = $('input[name="scale_text"]', this.element),
-            scale_select = $('select[name="scale_select"]', this.element);
-            var list = scale_select.siblings(".dropdownList");
-            list.empty();
-            var valueContainer = scale_select.siblings(".dropdownValue");
-            var count = 0;
-            if(null === this.options.scales) {
-                var scale = 5000;
-                scale_text.val(scale).parent().show();
-                scale_select.empty().parent().hide()
-            } else {
-                scale_text.val('').parent().hide();
-                scale_select.empty();
-                for(key in this.options.scales) {
-                    var scale = this.options.scales[key];
-                    scale_select.append($('<option></option>', {
-                        'value': scale,
-                        'html': '1:' + scale,
-                        'class': "opt-" + count
-                    }));
-                    list.append($('<li></li>', {
-                        'html': '1:' + scale,
-                        'class': "item-" + count
-                    }));
-                    if(count == 0){
-                        valueContainer.text('1:' + scale);
-                    }
-                    ++count;
+            $.each(scales, function(idx, scale) {
+                if(scale == currentScale){
+                    selectValue = scales[idx];
+                    return false;
                 }
-                scale_select.parent().show();
-            }
-
-            var rotation = $('input[name="rotation"]', this.element);
-            var sliderDiv = $('#slider', this.element);
-            if(true === this.options.rotatable){
-                rotation.val(0).parent().show();
-                var slider = sliderDiv.slider({
-                    min: 0,
-                    max: 360,
-                    range: "min",
-                    step: 5,
-                    value: rotation.val(),
-                    slide: function( event, ui ) {
-                        rotation.val(ui.value);
-                        self._updateGeometry(false);
-                    }
-                });
-                $(rotation).keyup(function() {
-                    slider.slider( "value", this.value );
-                });
-            } else {
-                rotation.parent().hide();
-            }
-            // Copy extra fields
-            var opt_fields = this.options.optional_fields;
-            var hasAttr = false;
-            for(field in opt_fields){
-                hasAttr = true;
-                break;
-            }
-            if(hasAttr) {
-                var extra_fields = $('#extra_fields', this.element).empty();
-
-                for(var field in opt_fields){
-                    var span = '';
-                    if(opt_fields[field].options.required === true){
-                       span = '<span class="required">*</span>';
-                    }
-                    var wrapper = $('<div></div>');
-                    wrapper.append($('<label></label>', {
-                        'html': opt_fields[field].label+span,
-                        'class': 'labelInput'
-                    }));
-                    wrapper.append($('<input></input>', {
-                        'type': 'text',
-                        'class': 'input validationInput',
-                        'name': 'extra['+field+']',
-                        'style': 'margin-left: 3px'
-                    }));
-                    extra_fields.append(wrapper);
-                    if(opt_fields[field].options.required === true){
-                        $('input[name="extra['+field+']"]').attr("required", "required");
-                    }
+                if(scale > currentScale){
+                    selectValue = scales[idx-1];
+                    return false;
                 }
-            }else{
-                //$('#extra_fields').hide();
+            });
+            if(currentScale <= scales[0]){
+                selectValue = scales[0];
+            }
+            if(currentScale > scales[scales.length-1]){
+                selectValue = scales[scales.length-1];
             }
 
+            select.val(selectValue);
+            styledSelect.html('1:'+selectValue);
+
+            this._updateGeometry(true);
         },
 
         _updateGeometry: function(reset) {
-            var template = this.element.find('select[name="template"]').val(),
-                width = this.width,
+            var width = this.width,
                 height = this.height,
                 scale = this._getPrintScale(),
-                rotationField = $('input[name="rotation"]');
+                rotationField = $(this.element).find('input[name="rotation"]');
 
             // remove all not numbers from input
             rotationField.val(rotationField.val().replace(/[^\d]+/,''));
 
-
             if (rotationField.val() === '' && this.rotateValue > '0'){
                 rotationField.val('0');
             }
-            var rotation = $('input[name="rotation"]').val();
+            var rotation = rotationField.val();
             this.rotateValue = rotation;
 
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
@@ -230,9 +187,8 @@
 
             if(!(!isNaN(parseFloat(rotation)) && isFinite(rotation))) {
                 if(null !== this.lastRotation) {
-                    $('input[name="rotation"]').val(this.lastRotation).change();
+                    rotationField.val(this.lastRotation).change();
                 }
-                //return;
             }
             rotation= parseInt(-rotation);
 
@@ -295,10 +251,10 @@
             this.layer.redraw();
         },
 
-        _updateElements: function() {
+        _updateElements: function(active) {
             var self = this;
 
-            if(true === this.popupIsOpen){
+            if(true === active){
                 if(null === this.layer) {
                     this.layer = new OpenLayers.Layer.Vector("Print", {
                         styleMap: new OpenLayers.StyleMap({
@@ -318,7 +274,7 @@
                 this.control.activate();
 
                 this._updateGeometry(true);
-            } else {
+            }else{
                 if(null !== this.control) {
                     this.control.deactivate();
                     this.map.map.olMap.removeControl(this.control);
@@ -330,7 +286,7 @@
         },
 
         _getPrintScale: function() {
-            return $('select[name="scale_select"]').val();
+            return $(this.element).find('select[name="scale_select"]').val();
         },
 
         _getPrintExtent: function() {
@@ -398,7 +354,7 @@
 
             function _getLegends(layer) {
                 var legend = null;
-                if (layer.options.legend && layer.options.legend.url) {
+                if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected == true) {
                     legend = {};
                     legend[layer.options.title] = layer.options.legend.url;
                 }
@@ -470,7 +426,7 @@
             var geojsonFormat = new OpenLayers.Format.GeoJSON();
             for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
                 var layer = this.map.map.olMap.layers[i];
-                if('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || this.layer === layer) {
+                if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
                     continue;
                 }
 
@@ -485,9 +441,14 @@
                         if(feature.style !== null){
                             geometry.style = feature.style;
                         }else{
-                            geometry.style = layer.styleMap.createSymbolizer(feature);
+                            geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
                         }
-                        geometries.push(geometry);
+                        // only visible features
+                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){                            
+                            geometries.push(geometry);
+                        } else if (geometry.style.label !== undefined){
+                            geometries.push(geometry);
+                        }
                     }
                 }
 
@@ -531,7 +492,7 @@
                 }
             }
 
-            $('div#layers').empty();
+            $('div#layers', form).empty();
             fields.appendTo(form.find('div#layers'));
 
             // Post in neuen Tab (action bei form anpassen)
@@ -544,8 +505,12 @@
             if (lyrCount === 0){
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
-                //click hidden submit
+                // we click a hidden submit button to check the required fields
                 form.find('input[type="submit"]').click();
+            }
+
+            if(this.options.autoClose){
+                this.popup.close();
             }
         },
 
@@ -565,6 +530,65 @@
                     self._updateGeometry();
                 }
             });
+        },
+
+        printDigitizerFeature: function(schemaName,featureId){
+            // add hidden fields to submit featureId and schemaName
+            var form = $('form#formats', this.element);
+            form.append( $('<input />', {
+                type: 'hidden',
+                name: 'digitizer_feature[id]',
+                value: featureId
+            })).append( $('<input />', {
+                type: 'hidden',
+                name: 'digitizer_feature[schemaName]',
+                value: schemaName
+            }));
+
+            this._getDigitizerTemplates(schemaName);
+        },
+
+        _getDigitizerTemplates: function(schemaName) {
+            var self = this;
+
+            var url =  this.elementUrl + 'getDigitizerTemplates';
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {schemaName: schemaName},
+                success: function(data) {
+                    self._overwriteTemplateSelect(data);
+                    // open changed dialog
+                    self.open();
+                }
+            });
+        },
+
+        _overwriteTemplateSelect: function(templates) {
+            var templateSelect = $('select[name=template]', this.element);
+            var templateList = templateSelect.siblings(".dropdownList");
+            var valueContainer = templateSelect.siblings(".dropdownValue");
+
+            templateSelect.empty();
+            templateList.empty();
+
+            var count = 0;
+            $.each(templates, function(key,template) {
+                templateSelect.append($('<option></option>', {
+                    'value': template.template,
+                    'html': template.label,
+                    'class': "opt-" + count
+                }));
+                templateList.append($('<li></li>', {
+                    'html': template.label,
+                    'class': "item-" + count
+                }));
+                if(count == 0){
+                    valueContainer.text(template.label);
+                }
+                ++count;
+            });
+            this.overwriteTemplates = true;
         },
 
         /**

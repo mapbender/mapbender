@@ -3,11 +3,10 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Mapbender\PrintBundle\Component\PrintService;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  *
@@ -66,41 +65,36 @@ class PrintClient extends Element
     {
         return array(
             "target" => null,
-            "autoOpen" => false,
             "templates" => array(
                 array(
                     'template' => "a4portrait",
-                    "label" => "A4 Portrait",
-                    "format" => "a4")
+                    "label" => "A4 Portrait")
                 ,
                 array(
                     'template' => "a4landscape",
-                    "label" => "A4 Landscape",
-                    "format" => "a4")
+                    "label" => "A4 Landscape")
                 ,
                 array(
                     'template' => "a3portrait",
-                    "label" => "A3 Portrait",
-                    "format" => "a3")
+                    "label" => "A3 Portrait")
                 ,
                 array(
                     'template' => "a3landscape",
-                    "label" => "A3 Landscape",
-                    "format" => "a3")
+                    "label" => "A3 Landscape")
                 ,
                 array(
                     'template' => "a4_landscape_offical",
-                    "label" => "A4 Landscape offical",
-                    "format" => "a4"),
+                    "label" => "A4 Landscape offical"),
                 array(
                     'template' => "a2_landscape_offical",
-                    "label" => "A2 Landscape offical",
-                    "format" => "a2")
+                    "label" => "A2 Landscape offical")
             ),
             "scales" => array(500, 1000, 5000, 10000, 25000),
             "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
                 array('dpi' => "288", 'label' => "Document (288dpi)")),
             "rotatable" => true,
+            "legend" => true,
+            "legend_default_behaviour" => true,
             "optional_fields" => array(
                 "title" => array("label" => 'Title', "options" => array("required" => false)),
                 "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
@@ -129,6 +123,9 @@ class PrintClient extends Element
                 $levels[$level['dpi']] = $level['label'];
             }
             $config["quality_levels"] = $levels;
+        }
+        if (!isset($config["type"])) {
+            $config["type"] = "dialog";
         }
         return $config;
     }
@@ -181,13 +178,9 @@ class PrintClient extends Element
         $configuration = $this->getConfiguration();
         switch ($action) {
             case 'print':
-//        print "<pre>";
-//        print_r($configuration);
-//        print "</pre>";
-//        die();
+
                 $data = $request->request->all();
 
-                // keys, remove
                 foreach ($data['layers'] as $idx => $layer) {
                     $data['layers'][$idx] = json_decode($layer, true);
                 }
@@ -204,9 +197,9 @@ class PrintClient extends Element
                     }
                 }
 
-                if (isset($data['replace_pattern'])) {
-                    foreach ($data['replace_pattern'] as $idx => $value) {
-                        $data['replace_pattern'][$idx] = json_decode($value, true);
+                if (isset($configuration['replace_pattern'])) {
+                    foreach ($configuration['replace_pattern'] as $idx => $value) {
+                        $data['replace_pattern'][$idx] = $value;
                     }
                 }
 
@@ -238,6 +231,17 @@ class PrintClient extends Element
                 $size = $odgParser->getMapSize($template);
 
                 return new Response($size);
+
+            case 'getDigitizerTemplates':
+                $featureType = $request->get('schemaName');
+                $featureTypeConfig = $this->container->getParameter('featureTypes');
+                $templates = $featureTypeConfig[$featureType]['print']['templates'];
+
+                if (!isset($templates)) {
+                    throw new \Exception('Template configuration missing');
+                }
+
+                return new JsonResponse($templates);
         }
     }
 }

@@ -8,21 +8,53 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Base class for all application templates.
  *
  * @author Christian Wygoda
+ * @author Andriy Oblivantsev
  */
 abstract class Template
 {
+    /** @var ContainerInterface */
     protected $container;
+
+    /** @var Application */
     protected $application;
 
     /** @var string Bundle public resource path */
-    private static $resourcePath;
+    protected static $resourcePath;
 
+    /** @var string Application title */
+    protected static $title;
 
+    /** @var string Application TWIG template path */
+    protected $twigTemplate;
+
+    /** @var array Late assets */
+    protected $lateAssets = array(
+        'js'    => array(),
+        'css'   => array(),
+        'trans' => array(),
+    );
+
+    /** @var array Region properties */
+    protected static $regionsProperties = array();
+
+    /**  @var array Region names */
+    protected static $regions = array();
+
+    protected static $css          = array();
+    protected static $js           = array();
+    protected static $translations = array();
+
+    /**
+     * Template constructor.
+     *
+     * @param ContainerInterface $container
+     * @param Application        $application
+     */
     public function __construct(ContainerInterface $container, Application $application)
     {
-        self::$resourcePath     = '@'. $this->getBundleName().'/Resources/public';
-        $this->container = $container;
-        $this->application = $application;
+        static::$resourcePath = '@' . $this->getBundleName() . '/Resources/public';
+        $this->container    = $container;
+        $this->application  = $application;
     }
 
     /**
@@ -35,12 +67,19 @@ abstract class Template
      */
     static public function getTitle()
     {
-        throw new \RuntimeException('getTitle must be implemented in subclasses');
+        return static::$title;
     }
 
+    /**
+     * @return array
+     */
     static public function listAssets()
     {
-        return array();
+        return array(
+            'css'   => static::$css,
+            'js'    => static::$js,
+            'trans' => static::$translations
+        );
     }
 
     /**
@@ -60,19 +99,20 @@ abstract class Template
      */
     public function getAssets($type)
     {
-        $assets = self::listAssets();
-        return array_key_exists($type, $assets) ? $assets[$type] : array();
+        $assets = $this::listAssets();
+        return array_key_exists($type, $assets) ? $assets[ $type ] : array();
     }
 
     /**
      * Get assets for late including. These will be appended to the asset output last.
      * Remember to list them in listAssets!
+     *
      * @param string $type Asset type to list, can be 'css' or 'js'
      * @return array
      */
     public function getLateAssets($type)
     {
-        return array();
+        return $this->lateAssets[ $type ];
     }
 
     /**
@@ -82,19 +122,34 @@ abstract class Template
      */
     static public function getRegions()
     {
-        throw new \RuntimeException('getTitle must be implemented in subclasses');
+        return static::$regions;
     }
 
     /**
      * Render the application
      *
-     * @param string $format Output format, defaults to HTML
-     * @param boolean $html Whether to render the HTML itself
-     * @param boolean $css  Whether to include the CSS links
-     * @param boolean $js   Whether to include the JavaScript
+     * @param string  $format Output format, defaults to HTML
+     * @param boolean $html   Whether to render the HTML itself
+     * @param boolean $css    Whether to include the CSS links
+     * @param boolean $js     Whether to include the JavaScript
      * @return string $html The rendered HTML
      */
-    abstract public function render($format = 'html', $html = true, $css = true, $js = true);
+    public function render($format = 'html', $html = true, $css = true, $js = true)
+    {
+        $application       = $this->application;
+        $applicationEntity = $application->getEntity();
+        $templateRender    = $this->container->get('templating');
+
+        return $templateRender->render($this->twigTemplate, array(
+                'html'                 => $html,
+                'css'                  => $css,
+                'js'                   => $js,
+                'application'          => $application,
+                'region_props'         => $applicationEntity->getNamedRegionProperties(),
+                'default_region_props' => static::getRegionsProperties()
+            )
+        );
+    }
 
     /**
      * Get the available regions properties.
@@ -103,7 +158,7 @@ abstract class Template
      */
     public static function getRegionsProperties()
     {
-        return array();
+        return static::$regionsProperties;
     }
 
     /**
@@ -111,7 +166,8 @@ abstract class Template
      *
      * @return string Bundle name
      */
-    public function getBundleName() {
+    public function getBundleName()
+    {
         $reflection = new \ReflectionClass(get_class($this));
         return preg_replace('/\\\\|Template$/', '', $reflection->getNamespaceName());
     }
@@ -121,8 +177,44 @@ abstract class Template
      *
      * @return string
      */
-    public static function getResourcePath() {
-        return self::$resourcePath;
+    public static function getResourcePath()
+    {
+        return static::$resourcePath;
+    }
+
+    /**
+     * @param Application $twigTemplate
+     */
+    public function setTwigTemplate($twigTemplate)
+    {
+        $this->twigTemplate = $twigTemplate;
+    }
+
+    /**
+     * @param $title string Title
+     */
+    public static function setTitle($title)
+    {
+        static::$title = $title;
+    }
+
+    /**
+     * @return string TWIG template path
+     */
+    public function getTwigTemplate()
+    {
+        return $this->twigTemplate;
+    }
+
+    /**
+     * Add and merge unique assets
+     *
+     * @param       $type
+     * @param array $assets
+     */
+    public static function addAndMergeUniqueAssets($type, array $assets)
+    {
+        static::${$type} = array_values(array_unique(array_merge(static::${$type}, $assets)));
     }
 }
 

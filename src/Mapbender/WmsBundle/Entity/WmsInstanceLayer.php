@@ -36,7 +36,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     protected $sourceInstance;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="id", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmsLayerSource", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmslayersource", referencedColumnName="id")
      */
     protected $sourceItem;
@@ -118,6 +118,9 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     protected $priority;
 
+    /**
+     * WmsInstanceLayer constructor.
+     */
     public function __construct()
     {
         $this->sublayer = new ArrayCollection();
@@ -325,6 +328,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * Set toggle
      *
      * @param string $toggle
+     * @return $this
      */
     public function setToggle($toggle)
     {
@@ -368,6 +372,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * Set allowtoggle
      *
      * @param boolean $allowtoggle
+     * @return $this
      */
     public function setAllowtoggle($allowtoggle)
     {
@@ -389,6 +394,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * Set allowreorder
      *
      * @param boolean $allowreorder
+     * @return $this
      */
     public function setAllowreorder($allowreorder)
     {

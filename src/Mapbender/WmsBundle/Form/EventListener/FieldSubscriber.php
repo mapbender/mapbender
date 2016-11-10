@@ -15,14 +15,14 @@ class FieldSubscriber implements EventSubscriberInterface
 
     /**
      * A FieldSubscriber's Factory
-     * 
-     * @var \Symfony\Component\Form\FormFactoryInterface 
+     *
+     * @var \Symfony\Component\Form\FormFactoryInterface
      */
     private $factory;
 
     /**
      * Creates an instance
-     * 
+     *
      * @param \Symfony\Component\Form\FormFactoryInterface $factory
      */
     public function __construct(FormFactoryInterface $factory)
@@ -32,7 +32,7 @@ class FieldSubscriber implements EventSubscriberInterface
 
     /**
      * Returns defined events
-     * 
+     *
      * @return array events
      */
     public static function getSubscribedEvents()
@@ -42,7 +42,7 @@ class FieldSubscriber implements EventSubscriberInterface
 
     /**
      * Presets a form data
-     * 
+     *
      * @param FormEvent $event
      * @return type
      */

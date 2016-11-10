@@ -75,26 +75,30 @@ Mapbender.WmcHandler = function(mapWidget, options){
         if(wmcProj === null){
             Mapbender.error(Mapbender.trans(Mapbender.trans("mb.wmc.element.wmchandler.error_srs", {"srs": state.extent.srs})));
         }else if(wmcProj.projCode === mapProj.projCode){
+            this.mapWidget.removeSources(toKeepSources);
             if(!this.options.keepExtent){
                 var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
                 this.mapWidget.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr), true);
             }
-            this.mapWidget.removeSources(toKeepSources);
             this._addWmcToMap(state.sources);
         }else{
+            this.mapWidget.removeSources(toKeepSources);
             model.changeProjection({projection: wmcProj});
             if(!this.options.keepExtent){
                 var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
                 this.mapWidget.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr), true);
             }
-            this.mapWidget.removeSources(toKeepSources);
             this._addWmcToMap(state.sources);
         }
     };
     
     this.removeFromMap = function(){
-        var model = this.mapWidget.getModel(),
-                toKeepSources = {};
+        this.mapWidget.fireModelEvent({
+            name: 'contextremovestart',
+            value: null
+        });
+        var model = this.mapWidget.getModel();
+        var toKeepSources = {};
         if(this.options.keepSources === 'basesources'){
             for(var i = 0; i < model.sourceTree.length; i++){
                 var source = model.sourceTree[i];
@@ -108,18 +112,27 @@ Mapbender.WmcHandler = function(mapWidget, options){
             }
         }
         this.mapWidget.removeSources(toKeepSources);
-    };
-    
-    this._addWmcToMap = function(sources){
-        
+        this.mapWidget.fireModelEvent({
+            name: 'contextremoveend',
+            value: null
+        });
     };
 
     this._addWmcToMap = function(sources){
+        this.mapWidget.fireModelEvent({
+            name: 'contextaddstart',
+            value: null
+        });
         for(var i = 0; i < sources.length; i++){
             var source = sources[i];
             if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && this.options.keepSources !== 'basesources')){
+                source.configuration.status = source.configuration.status ? source.configuration.status : 'ok';
                 this.mapWidget.addSource(source);
             }
         }
+        this.mapWidget.fireModelEvent({
+            name: 'contextaddend',
+            value: null
+        });
     };
 };

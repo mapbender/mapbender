@@ -29,14 +29,19 @@ $.widget('mapbender.mbSimpleSearch', {
             if(searchTerm.length >= self.autocomplete.options.minLength) {
                 self.autocomplete.find(searchTerm);
             }
-            event.preventDefault();
+            evt.preventDefault();
         });
 
         // On item selection in autocomplete, parse data and set map bbox
         var format = new OpenLayers.Format[this.options.geom_format]();
         searchInput.on('mbautocomplete.selected', function(evt, evtData) {
-            var feature = format.read(evtData.data[self.options.geom_attribute]);
 
+            if(!evtData.data[self.options.geom_attribute]) {
+                $.notify( Mapbender.trans("mb.core.simplesearch.error.geometry.missing"));
+                return;
+            }
+
+            var feature = format.read(evtData.data[self.options.geom_attribute]);
             var olMap = Mapbender.Model.map.olMap;
             var bounds = feature.geometry.getBounds();
 
@@ -76,7 +81,7 @@ $.widget('mapbender.mbSimpleSearch', {
             if(self.options.result.icon_url) {
                 if(!self.marker) {
                     var addMarker = function() {
-                        var offset = (self.options.result.icon_offset || '').split(', ;');
+                        var offset = (self.options.result.icon_offset || '').split(new RegExp('[, ;]'));
                         var x = parseInt(offset[0]);
 
                         var size = {

@@ -94,7 +94,7 @@ class Layertree extends Element
             "target" => null,
             "type" => null,
             "displaytype" => null,
-            "titlemaxlength" => intval(20),
+            "titlemaxlength" => intval(40),
             "autoOpen" => false,
             "showBaseSource" => true,
             "showHeader" => false,
@@ -136,9 +136,10 @@ class Layertree extends Element
     public function denormalizeConfiguration(array $configuration, Mapper $mapper)
     {
         if (isset($configuration['themes'])) {
-            foreach ($configuration['themes'] as &$theme) {
-                $theme =
-                    $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', intval($theme['id']), true);
+            for ($i = 0; $i < count($configuration['themes']); $i++) {
+                $helpId = intval($configuration['themes'][$i]['id']);
+                $id = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $helpId, true);
+                $configuration['themes'][$i]['id'] = strval($id);
             }
         }
         return $configuration;

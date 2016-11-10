@@ -13,7 +13,6 @@ if(window.OpenLayers) {
             this.display(false);
             return false;
         }
-        ;
         return OpenLayers.Layer.prototype.calculateInRange.apply(this, arguments);
     }
 }
@@ -59,6 +58,9 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
 
         var mqLayerDef = {
             type: 'wms',
+            wms_parameters: {
+                version: sourceDef.configuration.options.version
+            },
             label: sourceDef.title,
             url: finalUrl,
             transparent: sourceDef.configuration.options.transparent,
@@ -71,9 +73,12 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             minScale: rootLayer.minScale,
             maxScale: rootLayer.maxScale,
             transitionEffect: 'resize',
-            buffer: sourceDef.configuration.options.tiled ? sourceDef.configuration.options.buffer : null,
-            ratio: !sourceDef.configuration.options.tiled ? sourceDef.configuration.options.buffer : null
+            buffer: sourceDef.configuration.options.buffer ? parseInt(sourceDef.configuration.options.buffer) : 0, // int only for gridded mode
+            ratio: sourceDef.configuration.options.ratio ? parseFloat(sourceDef.configuration.options.ratio) : 1.0 // float only for single-tile mode
         };
+        if (sourceDef.configuration.options.exception_format) {
+            mqLayerDef.wms_parameters.exceptions = sourceDef.configuration.options.exception_format;
+        }
         $.extend(mqLayerDef, this.defaultOptions);
         return mqLayerDef;
     },
@@ -81,31 +86,23 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         if(!mqLayer.visible() || mqLayer.olLayer.queryLayers.length === 0) {
             return false;
         }
-        var param_tmp = {
-            SERVICE: 'WMS',
-            REQUEST: 'GetFeatureInfo',
-            VERSION: mqLayer.olLayer.params.VERSION,
-            EXCEPTIONS: "application/vnd.ogc.se_xml",
-            FORMAT: mqLayer.olLayer.params.FORMAT,
-            INFO_FORMAT: mqLayer.source.configuration.options.info_format || "text/plain",
-            FEATURE_COUNT: mqLayer.source.configuration.options.feature_count || 100,
-            SRS: mqLayer.olLayer.params.SRS,
-            BBOX: mqLayer.map.center().box.join(','),
-            WIDTH: $(mqLayer.map.element).width(),
-            HEIGHT: $(mqLayer.map.element).height(),
-            X: x,
-            Y: y,
-            LAYERS: mqLayer.olLayer.queryLayers.join(','),
-            QUERY_LAYERS: mqLayer.olLayer.queryLayers.join(',')
-        };
-        if(typeof (mqLayer.source.configuration.options.info_format) !== 'undefined') {
-            param_tmp["INFO_FORMAT"] = mqLayer.source.configuration.options.info_format;
-        }
-        var params = $.param(param_tmp);
-        // this clever shit was taken from $.ajax
-        var requestUrl = Mapbender.Util.removeProxy(mqLayer.olLayer.url);
-        requestUrl += (/\?/.test(mqLayer.options.url) ? '&' : '?') + params;
-        return requestUrl;
+        var wmsgfi = new OpenLayers.Control.WMSGetFeatureInfo({
+            url: Mapbender.Util.removeProxy(mqLayer.olLayer.url), 
+            layers: [mqLayer.olLayer],
+            queryVisible: true
+        });
+        wmsgfi.map = mqLayer.map.olMap;
+        var reqObj = wmsgfi.buildWMSOptions(
+            Mapbender.Util.removeProxy(mqLayer.olLayer.url),
+            [mqLayer.olLayer],
+            {x: x, y: y},
+            mqLayer.olLayer.params.FORMAT
+        );
+        reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = mqLayer.olLayer.queryLayers;
+        reqObj.params['STYLES'] = [];
+        reqObj.params['EXCEPTIONS'] = mqLayer.source.configuration.options.exception_format;
+        var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
+        return reqUrl;
     },
 
     createSourceDefinitions: function(xml, options){
@@ -121,14 +118,14 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         if(typeof (capabilities.capability) !== 'undefined') {
             var rootlayer = capabilities.capability.nestedLayers[0];
             var bboxOb = {}, bboxSrs = null, bboxBounds = null;
-            for(bbox in rootlayer.bbox) {
+            for(var bbox in rootlayer.bbox) {
                 if(options.model.getProj(bbox) !== null) {
                     bboxOb[bbox] = rootlayer.bbox[bbox].bbox;
                     bboxSrs = bbox;
                     bboxBounds = OpenLayers.Bounds.fromArray(bboxOb[bbox]);
                 }
             }
-            for(srs in rootlayer.srs) {
+            for(var srs in rootlayer.srs) {
                 if(rootlayer.srs[srs] === true && typeof bboxOb[srs] === 'undefined' && options.model.getProj(
                         srs) !== null && bboxBounds !== null) {
                     var oldProj = options.model.getProj(bboxSrs);
@@ -170,6 +167,7 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
                 configuration: {
                     isBaseSource: false,
                     options: {
+                        version: capabilities.version,
                         bbox: bboxOb,
                         format: format,
                         info_format: infoformat,
@@ -186,11 +184,12 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             function readCapabilities(layer, parent, options){
                 // @ TODO getLegendGraphic ?
                 var legend = null, minScale_ = null, maxScale_ = null;
-                if(layer.styles.length !== 0 && layer.styles[0].legend) {
+                if(layer.styles.length !== 0 && layer.styles[layer.styles.length - 1].legend) {
                     legend = {};
-                    legend.url = layer.styles[0].legend.href
-                    legend.width = layer.styles[0].legend.width;
-                    legend.height = layer.styles[0].legend.height;
+                    // get style  from self or parent (layer.styles.length - 1)
+                    legend.url = layer.styles[layer.styles.length - 1].legend.href;
+                    legend.width = layer.styles[layer.styles.length - 1].legend.width;
+                    legend.height = layer.styles[layer.styles.length - 1].legend.height;
                 }
                 minScale_ = layer.minScale ? Math.round(layer.minScale) : parent && parent.options.minScale
                         ? parent.options.minScale : null;

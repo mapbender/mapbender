@@ -181,11 +181,12 @@ $(function() {
                             subContent = contentWrapper.find('.popupSubContent');
                         }
                         subContent.html(data.responseText);
-
+                        pop.find('.popupScroll').scrollTop(0);
                         var subTitle = subContent.find("#form_title").val();
                         $(".popupSubTitle").text(" - " + subTitle);
                         $(".popup").find(".buttonYes, .buttonBack").show();
                         subContent.on('submit', 'form', submitHandler);
+                        subContent.closest(".popupScroll").scrollTop(0);
                     }
                 }
             });
@@ -811,8 +812,12 @@ $(function() {
             mode: 'css',
             keyMap: 'sublime',
             styleActiveLine: true,
-            matchBrackets: true,
             lineNumbers: true,
+            indentUnit: 2,
+            tabSize: 4,
+            indentWithTabs: false,
+            lineWrapping: true,
+            matchBrackets: true,
             theme: 'neo'
         });
 
@@ -824,5 +829,18 @@ $(function() {
             codeMirror.refresh();
             codeMirror.focus();
         });
-    })(jQuery)
+    })(jQuery);
+    (function($) {
+        var tabkey = 'manager_active_tab';
+        if (typeof(Storage) !== "undefined" && window.sessionStorage && window.sessionStorage[tabkey]) {
+            var id = window.sessionStorage[tabkey];
+            $(".tabContainer .tab#" + id + ", .tabContainerAlt .tab#" + id).click();
+        }
+        $(".tabContainer, .tabContainerAlt").on('click', '.tab', function() {
+            if (typeof(Storage) !== "undefined" && window.sessionStorage) {
+                window.sessionStorage.setItem(tabkey, $(this).attr('id'));
+            }
+        });
+    })(jQuery);
 });
+

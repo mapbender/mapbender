@@ -2,7 +2,7 @@ from .utils import get_url
 
 
 def login(wd, name='root', password='root'):
-    wd.get(get_url("app_test.php/"))
+    wd.get(get_url("/"))
     wd.find_element_by_link_text("Login").click()
     wd.find_element_by_id("username").click()
     wd.find_element_by_id("username").clear()

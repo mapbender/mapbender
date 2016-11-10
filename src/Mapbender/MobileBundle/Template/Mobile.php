@@ -27,7 +27,7 @@ class Mobile extends Template
     {
         $assets = array(
             'css' => array(
-                '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
+//                '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
             ),
             'js' => array(
                 '/components/underscore/underscore-min.js',
@@ -66,7 +66,9 @@ class Mobile extends Template
     public function getLateAssets($type)
     {
         $assets = array(
-            'css' => array('@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'),
+            'css' => array(
+                '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
+            ),
             'js' => array(),
             'trans' => array()
         );

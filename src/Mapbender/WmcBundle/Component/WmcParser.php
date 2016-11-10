@@ -2,8 +2,8 @@
 
 namespace Mapbender\WmcBundle\Component;
 
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
+use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\WmcBundle\Component\Exception\WmcException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -114,7 +114,7 @@ abstract class WmcParser
             throw new WmcException("Not supported Wmc Document");
         }
 
-        if ($validate && !@$this->doc->validate()) {
+        if ($validate && !@$doc->validate()) {
             // TODO logging
         }
 
@@ -146,7 +146,7 @@ abstract class WmcParser
      * Returns a wmc parser
      *
      * @param \DOMDocument $doc the WMC document
-     * @return \Mapbender\WmsBundle\Component\WmcParser110
+     * @return \Mapbender\WmcBundle\Component\WmcParser110
      * @throws NotSupportedVersionException if a version is not supported
      */
     public static function getParser(ContainerInterface $container, \DOMDocument $doc)

@@ -19,6 +19,7 @@ use Symfony\Component\Finder\SplFileInfo;
  * @package   Mapbender\CoreBundle\Command
  * @author    Andriy Oblivantsev <eslider@gmail.com>
  * @copyright 2014 by WhereGroup GmbH & Co. KG
+ * @deprecated should be removed in release/3.0.6
  */
 class TranslationGeneratorCommand extends ContainerAwareCommand {
 

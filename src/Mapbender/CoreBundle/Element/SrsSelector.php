@@ -57,7 +57,7 @@ class SrsSelector extends Element
                 'mapbender.element.srsselector.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 'proj4js/proj4js-compressed.js'),
-            'css' => array()
+            'css' => array("mapbender.element.srsselector.scss")
         );
     }
 

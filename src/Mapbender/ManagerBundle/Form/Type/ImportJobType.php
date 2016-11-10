@@ -35,9 +35,9 @@ class ImportJobType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('addApplications', 'checkbox', array('required' => false))
-            ->add('addSources', 'checkbox', array('required' => false))
-            ->add('addAcl', 'checkbox', array('required' => false))
+//            ->add('addApplication', 'checkbox', array('required' => false))
+//            ->add('addSources', 'checkbox', array('required' => false))
+//            ->add('addAcl', 'checkbox', array('required' => false))
             ->add('importFile', 'file', array('required' => true));
     }
 

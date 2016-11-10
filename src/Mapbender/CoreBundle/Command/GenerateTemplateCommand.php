@@ -10,6 +10,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 
+/**
+ * Class GenerateTemplateCommand
+ *
+ * @deprecated should be removed in release/3.0.6
+ */
 class GenerateTemplateCommand extends ContainerAwareCommand {
     protected function getGenerator() {
         if($this->generator === null) {

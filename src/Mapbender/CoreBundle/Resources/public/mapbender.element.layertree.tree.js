@@ -6,7 +6,7 @@
             autoOpen: false,
             useTheme: false,
             target: null,
-            titlemaxlength: 20,
+            titlemaxlength: 40,
             layerInfo: true, //!!!
             showBaseSource: true,
             showHeader: false,
@@ -38,6 +38,8 @@
             parentInvisible: ''
         },
         _create: function() {
+            this.loadStarted = {};
+            this.sourceAtTree = {};
             if (!Mapbender.checkTarget("mbLayertree", this.options.target)) {
                 return;
             }
@@ -498,7 +500,7 @@
             }
         },
         _isThemeChecked: function($li){
-            if(this.options.useTheme === false) {
+            if(this.options.useTheme === false) { // a theme exists
                 return true;
             }
             var $lith = $li.parents('li.themeContainer:first');
@@ -514,6 +516,8 @@
                 } else {
                     return true;
                 }
+            } else if($lith.length === 0){ // no theme exists
+                return true;
             }
             return false;
         },
@@ -602,7 +606,12 @@
         },
         _onSourceRemoved: function(event, removed) {
             if (removed && removed.source && removed.source.id) {
+                var $source = $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element);
+                var $theme = $source.parents('.themeContainer:first');
                 $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element).remove();
+                if ($theme.length && $theme.find('.serviceContainer').length === 0){
+                    $theme.remove();
+                }
                 this._setSourcesCount();
             }
         },
@@ -634,6 +643,9 @@
             }
         },
         _subStringText: function(text) {
+            if(text === null) {
+                return '';
+            }
             if (text.length <= this.options.titlemaxlength) {
                 return text;
             } else {
@@ -666,6 +678,7 @@
                 infoable: nodeConfig.options.treeOptions.allow.info,
                 reorderable: nodeConfig.options.treeOptions.allow.reorder
             };
+
             if (nodeConfig.children) {
                 conf["toggle"] = nodeConfig.options.treeOptions.toggle;
                 conf["toggleable"] = nodeConfig.options.treeOptions.allow.toggle;
@@ -844,6 +857,7 @@
         _toggleMenu: function(e) {
             var self = this;
             function createMenu($element, sourceId, layerId) {
+                var atLeastOne = false;
                 var source = self.model.findSource({
                     id: sourceId
                 })[0];
@@ -867,6 +881,7 @@
                 });
 
                 var removeButton = menu.find('.layer-remove-btn');
+                atLeastOne = removeButton.length > 0;
                 removeButton.on('click', $.proxy(self._removeSource, self));
 
                 if ($element.parents('li:first').attr('data-type') !== self.consts.root) {
@@ -881,6 +896,7 @@
                 });
 
                 if ($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0) {
+                    atLeastOne = true;
                     $('.layer-opacity-handle').attr('unselectable', 'on');
                     new Dragdealer('layer-opacity', {
                         x: source.configuration.options.opacity,
@@ -898,19 +914,22 @@
                         }
                     });
                 }
-                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0) {
-                    if (self.model.getLayerExtents({
+                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0
+                    && self.model.getLayerExtents({
                         sourceId: sourceId,
                         layerId: layerId
                     })) {
-                        $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
-                    }
+                    atLeastOne = true;
+                    $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
+                } else {
+                    $('.layer-zoom', menu).remove();
                 }
 
                 if ($.inArray("metadata", self.options.menu) === -1 || menu.find(
                     '.layer-metadata').length === 0 || isNaN(parseInt(source.origId))) {
                     $('.layer-metadata', menu).remove();
                 } else {
+                    atLeastOne = true;
                     var layer = self.model.findLayer({
                         id: sourceId
                     },
@@ -925,6 +944,7 @@
                 var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
                 if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
                     && source.configuration.children[0].options.id === layerId && dims.length > 0) {
+                    atLeastOne = true;
                     var lastItem = $('.layer-dimension-checkbox', menu).prev();
                     var dimCheckbox = $('.layer-dimension-checkbox', menu).remove();
                     var dimTitle = $('.layer-dimension-title', menu).remove();
@@ -1003,6 +1023,10 @@
                     $('.layer-dimension-title', menu).remove();
                     $('.layer-dimension-bar', menu).remove();
                     $('.layer-dimension-textfield', menu).remove();
+                }
+                if(!atLeastOne) {
+                    self.closeMenu(menu);
+                    Mapbender.info(Mapbender.trans('mb.core.layertree.contextmenu.nooption'));
                 }
             }
 

@@ -248,9 +248,18 @@ class RepositoryController extends Controller
                 try {
                     $browserResponse = $proxy->handle();
                     $content         = $browserResponse->getContent();
-                    $doc             = WmsCapabilitiesParser::createDocument($content);
-                    $wmsParser       = WmsCapabilitiesParser::getParser($doc);
-                    $wmssource       = $wmsParser->parse();
+                    $doc = WmsCapabilitiesParser::createDocument($content);
+                    try {
+                        $validator = new XmlValidator($this->container, $proxy_config, "xmlschemas/");
+                        $doc       = $validator->validate($doc);
+                        $wmsParser = WmsCapabilitiesParser::getParser($doc);
+                        $wmssource = $wmsParser->parse();
+                        $wmssource->setValid(true);
+                    } catch (\Exception $e) {
+                        $wmsParser = WmsCapabilitiesParser::getParser($doc);
+                        $wmssource = $wmsParser->parse();
+                        $wmssource->setValid(false);
+                    }
                 } catch (\Exception $e) {
                     $this->get("logger")->debug($e->getMessage());
                     $this->get('session')->getFlashBag()->set('error', $e->getMessage());
@@ -279,16 +288,7 @@ class RepositoryController extends Controller
                         )
                     );
                 }
-
                 $this->getDoctrine()->getManager()->persist($wmsOrig);
-                $wmsWithSameTitle = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository("MapbenderWmsBundle:WmsSource")
-                    ->findByTitle($wmsOrig->getTitle());
-
-                if (count($wmsWithSameTitle) > 0) {
-                    $wmsOrig->setAlias(count($wmsWithSameTitle));
-                }
 
                 $wmsOrig->setOriginUrl($wmssource_req->getOriginUrl());
                 $wmsOrig->setUsername($wmssource_req->getUsername());
@@ -367,7 +367,6 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $em          = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
-        $instance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
         $insthandler = EntityHandler::createHandler($this->container, $instance);
         $insthandler->remove();
         $em->flush();
@@ -400,7 +399,6 @@ class RepositoryController extends Controller
                     $em->refresh($layer);
                 }
                 $em->persist($wmsinstance);
-                $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
                 $em->flush();
                 $em->getConnection()->commit();
                 $wmsinstance   = $this->getDoctrine()
@@ -408,13 +406,14 @@ class RepositoryController extends Controller
                     ->find($wmsinstance->getId());
                 $entityHandler = EntityHandler::createHandler($this->container, $wmsinstance);
                 $entityHandler->generateConfiguration();
-                $em->persist($entityHandler->getEntity());
+                $entityHandler->save();
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->set('success', 'Your Wms Instance has been changed.');
-                return $this->redirect($this
-                    ->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)).'#layersets');
+                return $this
+                    ->redirect($this->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)));
             } else { // edit
+                $this->get('session')->getFlashBag()->set('warning', 'Your Wms Instance is not valid.');
                 return array(
                     "form" => $form->createView(),
                     "slug" => $slug,
@@ -529,7 +528,8 @@ class RepositoryController extends Controller
             $enabled_before = $wmsinstance->getEnabled();
             $enabled        = $enabled === "true" ? true : false;
             $wmsinstance->setEnabled($enabled);
-            $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
+            $this->getDoctrine()->getManager()->persist(
+                $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime('now')));
             $this->getDoctrine()->getManager()->persist($wmsinstance);
             $this->getDoctrine()->getManager()->flush();
             return new Response(json_encode(array(

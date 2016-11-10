@@ -28,14 +28,18 @@ class SearchRouterFormType extends AbstractType
             'fields' => array()));
     }
 
+    private function escapeName($name)
+    {
+        return str_replace('"', '', $name);
+    }
+
     /**
      * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         foreach ($options['fields']['form'] as $name => $conf) {
-            $builder->add($name, $conf['type'], $conf['options']);
+            $builder->add($this->escapeName($name), $conf['type'], $conf['options']);
         }
     }
-
 }

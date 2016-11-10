@@ -19,6 +19,9 @@ $.widget("mapbender.mbCoordinatesDisplay", {
 
     _setup: function(){
         var self = this;
+        self.options.empty = self.options.empty ? self.options.empty : '';
+        self.options.prefix = self.options.prefix ? self.options.prefix : '';
+        self.options.separator = self.options.separator ? self.options.separator: ' ';
         var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
         var layers = mbMap.map.layers();
         for(var i = 0; i < layers.length; ++i) {
@@ -30,6 +33,8 @@ $.widget("mapbender.mbCoordinatesDisplay", {
             }
         }
         $(document).bind('mbmapsrschanged', $.proxy(self._reset, self));
+        self.options.numDigits = isNaN(parseInt(self.options.numDigits)) ? 0 : parseInt(self.options.numDigits);
+        self.options.numDigits = self.options.numDigits < 0 ? 0 : self.options.numDigits;
         this._reset();
         this._trigger('ready');
         this._ready();
@@ -39,15 +44,16 @@ $.widget("mapbender.mbCoordinatesDisplay", {
         var self = this;
         var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
         srs = { projection: mbMap.map.olMap.getProjectionObject()};
-        if(this.crs != null && this.crs == srs.projection.projCode)
+        if(this.crs != null && this.crs == srs.projection.projCode){
             return;
+        }
+        var isdeg = mbMap.map.olMap.units === 'degrees';
         if(typeof(self.options.formatoutput) !== 'undefined'){
-            var isdeg = mbMap.map.olMap.units === 'degrees';
             mbMap.map.olMap.addControl(new OpenLayers.Control.MousePosition({
                 id: $(self.element).attr('id'),
                 element: $(self.element)[0],
                 emptyString: self.options.empty,
-                numDigits: self.options.numDigits,
+                numDigits: isdeg ? 5 + self.options.numDigits : self.options.numDigits,
                 formatOutput: function(pos) {
                     var out = self.options.displaystring.replace("$lon$",pos.lon.toFixed(isdeg ? 5 : 0));
                     return out.replace("$lat$", pos.lat.toFixed(isdeg ? 5 : 0));
@@ -61,11 +67,11 @@ $.widget("mapbender.mbCoordinatesDisplay", {
             var options = {
                 id: $(self.element).attr('id'),
                 div: $($(self.element)[0]).find('#coordinatesdisplay')[0],
-                emptyString: self.options.empty,
-                prefix: self.options.prefix,
-                separator: self.options.separator,
+                emptyString: self.options.empty ? self.options.empty : '',
+                prefix: self.options.prefix ? self.options.prefix : '',
+                separator: self.options.separator ? self.options.separator: ' ',
                 suffix: self.options.suffix,
-                numDigits: self.options.numDigits,
+                numDigits: isdeg ? 5 + self.options.numDigits : self.options.numDigits,
                 displayProjection: srs.projection };
             mbMap.map.olMap.addControl(new OpenLayers.Control.MousePosition(options));
             this.crs = srs.projection.projCode;

@@ -1,8 +1,11 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Component\SecurityContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use OwsProxy3\CoreBundle\Component\CommonProxy;
 
 /**
  * Mapbender3 Print Service.
@@ -11,6 +14,30 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class PrintService
 {
+    /** @var PDF_ImageAlpha */
+    protected $pdf;
+    protected $tempdir;
+    protected $conf;
+    protected $data;
+    protected $rotation;
+    protected $resourceDir;
+    protected $finalImageName;
+    protected $user;
+    protected $tempDir;
+    protected $mapRequests;
+    protected $imageWidth;
+    protected $imageHeight;
+    protected $neededExtentWidth;
+    protected $neededExtentHeight;
+    protected $neededImageWidth;
+    protected $neededImageHeight;
+
+    /**
+     * @var array Default geometry style
+     */
+    protected $defaultStyle = array(
+        "strokeWidth" => 1
+    );
 
     public function __construct($container)
     {
@@ -20,7 +47,7 @@ class PrintService
     public function doPrint($data)
     {
         $this->setup($data);
-
+       
         if ($data['rotation'] == 0) {
             $this->createFinalMapImage();
         } else {
@@ -36,7 +63,13 @@ class PrintService
         $this->tempDir = sys_get_temp_dir();
         // resource dir
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-
+        
+        // get user
+        /** @var SecurityContext $securityContext */
+        $securityContext = $this->container->get('security.context');
+        $token           = $securityContext->getToken();
+        $this->user      = $token->getUser();
+        
         // data from client
         $this->data = $data;
 
@@ -79,11 +112,11 @@ class PrintService
             $width = '&WIDTH=' . $this->imageWidth;
             $height =  '&HEIGHT=' . $this->imageHeight;
         }else{
-            // calculate needed bbox
-            $neededExtentWidth = round(abs(sin(deg2rad($rotation)) * $extentHeight) +
-                abs(cos(deg2rad($rotation)) * $extentWidth));
-            $neededExtentHeight = round(abs(sin(deg2rad($rotation)) * $extentWidth) +
-                abs(cos(deg2rad($rotation)) * $extentHeight));
+            // calculate needed bbox 
+            $neededExtentWidth = abs(sin(deg2rad($rotation)) * $extentHeight) +
+                abs(cos(deg2rad($rotation)) * $extentWidth);
+            $neededExtentHeight = abs(sin(deg2rad($rotation)) * $extentWidth) +
+                abs(cos(deg2rad($rotation)) * $extentHeight);
 
             $this->neededExtentWidth = $neededExtentWidth;
             $this->neededExtentHeight = $neededExtentHeight;
@@ -164,7 +197,7 @@ class PrintService
 
         foreach ($imageNames as $imageName) {
             // Note: suppressing the errors IS bad, bad PHP wants us to do it that way
-            $src = imagecreatefrompng($imageName);
+                $src = imagecreatefrompng($imageName);
             // Check that imagecreatefrompng did yield something
             if ($src) {
                 $dest = $finalImage;
@@ -273,9 +306,19 @@ class PrintService
                 case 'image/gif' :
                     $rawImage = imagecreatefromgif($imageName);
                     break;
+                case 'image/bmp' :
+                    $logger->debug("Unsupported mimetype image/bmp");
+                    print_r("Unsupported mimetype image/bmp");
+                    break;
                 default:
-                    $logger->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
-                    continue;
+                    $logger->debug("ERROR! PrintRequest failed: " . $request);
+                    $logger->debug($response->getContent());
+                    print_r('an error has occurred. see log for more details <br>');
+                    print_r($response->getContent());
+                    foreach ($imageNames as $i => $imageName) {
+                        unlink($imageName);
+                    }
+                    exit;
             }
 
             if ($rawImage !== null) {
@@ -314,23 +357,25 @@ class PrintService
 
     private function buildPdf()
     {
-        require_once('PDF_ImageAlpha.php');
+        require_once('PDF_Extensions.php');
 
         // set format
         if($this->conf['orientation'] == 'portrait'){
             $format = array($this->conf['pageSize']['width'],$this->conf['pageSize']['height']);
+            $orientation = 'P';
         }else{
             $format = array($this->conf['pageSize']['height'],$this->conf['pageSize']['width']);
+            $orientation = 'L';
         }
 
-        $this->pdf = $pdf = new PDF_ImageAlpha($this->conf['orientation'], 'mm', $format);
+        $this->pdf = $pdf = new PDF_Extensions();
 
         $template = $this->data['template'];
         $pdfFile = $this->resourceDir . '/templates/' . $template . '.pdf';
         $pageCount = $pdf->setSourceFile($pdfFile);
         $tplidx = $pdf->importPage(1);
         $pdf->SetAutoPageBreak(false);
-        $pdf->addPage();
+        $pdf->addPage($orientation, $format);
         $pdf->useTemplate($tplidx);
 
         // add final map image
@@ -350,30 +395,57 @@ class PrintService
             $this->addNorthArrow();
         }
 
+        // get digitizer feature
+        if (isset($this->data['digitizer_feature'])) {
+            $dfData = $this->data['digitizer_feature'];
+            $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
+        }
+
         // fill text fields
-        foreach ($this->conf['fields'] as $k => $v) {
-            $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
-            $pdf->SetXY($this->conf['fields'][$k]['x'],
-                $this->conf['fields'][$k]['y']);
-            switch ($k) {
-                case 'date' :
-                    $date = new \DateTime;
-                    $pdf->Cell($this->conf['fields']['date']['width'],
-                        $this->conf['fields']['date']['height'],
-                        $date->format('d.m.Y'));
-                    break;
-                case 'scale' :
-                    $pdf->Cell($this->conf['fields']['scale']['width'],
-                        $this->conf['fields']['scale']['height'],
-                        '1 : ' . $this->data['scale_select']);
-                    break;
-                default:
-                    if (isset($this->data['extra'][$k])) {
-                        $pdf->MultiCell($this->conf['fields'][$k]['width'],
-                            $this->conf['fields'][$k]['height'],
-                            $this->data['extra'][$k]);
-                    }
-                    break;
+        if (isset($this->conf['fields']) ) {
+            foreach ($this->conf['fields'] as $k => $v) {
+                list($r, $g, $b) = CSSColorParser::parse($this->conf['fields'][$k]['color']);
+                $pdf->SetTextColor($r,$g,$b);
+                $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
+                $pdf->SetXY($this->conf['fields'][$k]['x'] - 1,
+                    $this->conf['fields'][$k]['y']);
+
+                // continue if extent field is set
+                if(preg_match("/^extent/", $k)){
+                    continue;
+                }
+
+                switch ($k) {
+                    case 'date' :
+                        $date = new \DateTime;
+                        $pdf->Cell($this->conf['fields']['date']['width'],
+                            $this->conf['fields']['date']['height'],
+                            $date->format('d.m.Y'));
+                        break;
+                    case 'scale' :
+                        $pdf->Cell($this->conf['fields']['scale']['width'],
+                            $this->conf['fields']['scale']['height'],
+                            '1 : ' . $this->data['scale_select']);
+                        break;
+                    default:
+                        if (isset($this->data['extra'][$k])) {
+                            $pdf->MultiCell($this->conf['fields'][$k]['width'],
+                                $this->conf['fields'][$k]['height'],
+                                utf8_decode($this->data['extra'][$k]));
+                        }
+
+                        // fill digitizer feature fields
+                        if(preg_match("/^feature./", $k)){
+                            if($feature == false){
+                                continue;
+                            }
+                            $attribute = substr(strrchr($k, "."), 1);
+                            $pdf->MultiCell($this->conf['fields'][$k]['width'],
+                                $this->conf['fields'][$k]['height'],
+                                $feature->getAttribute($attribute));
+                        }
+                        break;
+                }
             }
         }
 
@@ -386,19 +458,39 @@ class PrintService
         if (isset($this->conf['scalebar']) ) {
             $this->addScaleBar();
         }
-
+        
+        // add coordinates
+        if (isset($this->conf['fields']['extent_ur_x']) && isset($this->conf['fields']['extent_ur_y']) 
+                && isset($this->conf['fields']['extent_ll_x']) && isset($this->conf['fields']['extent_ll_y']))
+        {
+            $this->addCoordinates();
+        }
+        
+        // add dynamic logo
+        if (isset($this->conf['dynamic_image']) && $this->conf['dynamic_image']){
+            $this->addDynamicImage();
+        }
+        
+        // add dynamic text
+        if (isset($this->conf['fields'])
+            && isset($this->conf['fields']['dynamic_text'])
+            && $this->conf['fields']['dynamic_text']){
+            $this->addDynamicText();
+        }
+        
         // add legend
         if (isset($this->data['legends']) && !empty($this->data['legends'])){
             $this->addLegend();
         }
-
+            
         return $pdf->Output(null, 'S');
     }
 
     private function addNorthArrow()
     {
-        $rotation = $this->rotation;
         $northarrow = $this->resourceDir . '/images/northarrow.png';
+        $rotation = $this->rotation;
+        $rotatedImageName = null;
 
         if($rotation != 0){
             $image = imagecreatefrompng($northarrow);
@@ -428,7 +520,7 @@ class PrintService
                             $this->conf['northarrow']['width'],
                             $this->conf['northarrow']['height'],
                             'png');
-        if($rotation != 0){
+        if($rotatedImageName){
             unlink($rotatedImageName);
         }
     }
@@ -581,6 +673,97 @@ class PrintService
         $pdf->SetFillColor(0,0,0);
         $pdf->Rect($this->conf['scalebar']['x'] + 40  , $this->conf['scalebar']['y'], 10, 2, 'FD');
     }
+    
+    private function addCoordinates()
+    {
+        $pdf = $this->pdf;
+        
+        $corrFactor = 2;
+        $precision = 2;
+        // correction factor and round precision if WGS84
+        if($this->data['extent']['width'] < 1){
+             $corrFactor = 3;
+             $precision = 6;
+        }
+        
+        // upper right Y
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_y']['fontsize']);
+        $pdf->Text($this->conf['fields']['extent_ur_y']['x'] + $corrFactor,
+                    $this->conf['fields']['extent_ur_y']['y'] + 3,
+                    round($this->data['extent_feature'][2]['y'], $precision));
+
+        // upper right X
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_x']['fontsize']);
+        $pdf->TextWithDirection($this->conf['fields']['extent_ur_x']['x'] + 1,
+                    $this->conf['fields']['extent_ur_x']['y'],
+                    round($this->data['extent_feature'][2]['x'], $precision),'D');
+
+        // lower left Y
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ll_y']['fontsize']);
+        $pdf->Text($this->conf['fields']['extent_ll_y']['x'],
+                    $this->conf['fields']['extent_ll_y']['y'] + 3,
+                    round($this->data['extent_feature'][0]['y'], $precision));
+
+        // lower left X
+        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ll_x']['fontsize']);
+        $pdf->TextWithDirection($this->conf['fields']['extent_ll_x']['x'] + 3,
+                    $this->conf['fields']['extent_ll_x']['y'] + 30,
+                    round($this->data['extent_feature'][0]['x'], $precision),'U');
+    }
+    
+    private function addDynamicImage()
+    {
+        if($this->user == 'anon.'){
+            return;
+        }
+
+        $groups = $this->user->getGroups();
+        $group = $groups[0];
+        
+        if(!isset($group)){
+            return;
+        }
+        
+        $dynImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png';
+        if(file_exists ($dynImage)){
+            $this->pdf->Image($dynImage,
+                            $this->conf['dynamic_image']['x'],
+                            $this->conf['dynamic_image']['y'],
+                            0,
+                            $this->conf['dynamic_image']['height'],
+                            'png');
+            return;
+        }
+
+    }
+    
+    private function addDynamicText()
+    {
+        if($this->user == 'anon.'){
+            return;
+        }
+        
+        $groups = $this->user->getGroups();
+        $group = $groups[0];
+        
+        if(!isset($group)){
+            return;
+        }
+        
+        $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
+        $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
+                $this->conf['fields']['dynamic_text']['height'],
+                $group->getDescription());
+        
+    }
+
+    private function getFeature($schemaName, $featureId)
+    {
+        $featureTypeService = $this->container->get('features');
+        $featureType = $featureTypeService->get($schemaName);
+        $feature = $featureType->get($featureId);
+        return $feature;
+    }
 
     private function getColor($color, $alpha, $image)
     {
@@ -596,6 +779,7 @@ class PrintService
 
     private function drawPolygon($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $ring) {
             if(count($ring) < 3) {
                 continue;
@@ -612,67 +796,71 @@ class PrintService
                 $points[] = floatval($p[1]);
             }
             imagesetthickness($image, 0);
-            // Filled area
-            if($geometry['style']['fillOpacity'] > 0){
+
+            if($style['fillOpacity'] > 0){
                 $color = $this->getColor(
-                    $geometry['style']['fillColor'],
-                    $geometry['style']['fillOpacity'],
+                    $style['fillColor'],
+                    $style['fillOpacity'],
                     $image);
                 imagefilledpolygon($image, $points, count($ring), $color);
             }
             // Border
             $color = $this->getColor(
-                $geometry['style']['strokeColor'],
-                $geometry['style']['strokeOpacity'],
+                $style['strokeColor'],
+                $style['strokeOpacity'],
                 $image);
-            imagesetthickness($image, $geometry['style']['strokeWidth']);
+            imagesetthickness($image, $style['strokeWidth']);
             imagepolygon($image, $points, count($ring), $color);
         }
     }
 
     private function drawMultiPolygon($geometry, $image)
     {
-        foreach($geometry['coordinates'][0] as $ring) {
-            if(count($ring) < 3) {
-                continue;
-            }
-
-            $points = array();
-            foreach($ring as $c) {
-                if($this->rotation == 0){
-                    $p = $this->realWorld2mapPos($c[0], $c[1]);
-                }else{
-                    $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+        $style = $this->getStyle($geometry);
+        foreach($geometry['coordinates'] as $element) {
+            foreach($element as $ring) {
+                if(count($ring) < 3) {
+                    continue;
                 }
-                $points[] = floatval($p[0]);
-                $points[] = floatval($p[1]);
-            }
-            imagesetthickness($image, 0);
-            // Filled area
-            if($geometry['style']['fillOpacity'] > 0){
+
+                $points = array();
+                foreach($ring as $c) {
+                    if($this->rotation == 0){
+                        $p = $this->realWorld2mapPos($c[0], $c[1]);
+                    }else{
+                        $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+                    }
+                    $points[] = floatval($p[0]);
+                    $points[] = floatval($p[1]);
+                }
+                imagesetthickness($image, 0);
+                // Filled area
+                if($style['fillOpacity'] > 0){
+                    $color = $this->getColor(
+                        $style['fillColor'],
+                        $style['fillOpacity'],
+                        $image);
+                    imagefilledpolygon($image, $points, count($ring), $color);
+                }
+                // Border
                 $color = $this->getColor(
-                    $geometry['style']['fillColor'],
-                    $geometry['style']['fillOpacity'],
+                    $style['strokeColor'],
+                    $style['strokeOpacity'],
                     $image);
-                imagefilledpolygon($image, $points, count($ring), $color);
+                imagesetthickness($image, $style['strokeWidth']);
+                imagepolygon($image, $points, count($ring), $color);
             }
-            // Border
-            $color = $this->getColor(
-                $geometry['style']['strokeColor'],
-                $geometry['style']['strokeOpacity'],
-                $image);
-            imagesetthickness($image, $geometry['style']['strokeWidth']);
-            imagepolygon($image, $points, count($ring), $color);
         }
     }
 
     private function drawLineString($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         $color = $this->getColor(
-            $geometry['style']['strokeColor'],
-            $geometry['style']['strokeOpacity'],
+            $style['strokeColor'],
+            $style['strokeOpacity'],
             $image);
-        imagesetthickness($image, $geometry['style']['strokeWidth']);
+        imagesetthickness($image, $style['strokeWidth']);
 
         for($i = 1; $i < count($geometry['coordinates']); $i++) {
 
@@ -695,6 +883,40 @@ class PrintService
             imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
         }
     }
+	
+    private function drawMultiLineString($geometry, $image)
+    {
+        $style = $this->getStyle($geometry);
+        $color = $this->getColor(
+            $style['strokeColor'],
+            $style['strokeOpacity'],
+            $image);
+        imagesetthickness($image, $style['strokeWidth']);
+	
+		foreach($geometry['coordinates'] as $coords) {
+		
+			for($i = 1; $i < count($coords); $i++) {
+
+				if($this->rotation == 0){
+					$from = $this->realWorld2mapPos(
+						$coords[$i - 1][0],
+						$coords[$i - 1][1]);
+					$to = $this->realWorld2mapPos(
+						$coords[$i][0],
+						$coords[$i][1]);
+				}else{
+					$from = $this->realWorld2rotatedMapPos(
+						$coords[$i - 1][0],
+						$coords[$i - 1][1]);
+					$to = $this->realWorld2rotatedMapPos(
+						$coords[$i][0],
+						$coords[$i][1]);
+				}
+
+				imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
+			}
+		}
+    }
 
     private function drawPoint($geometry, $image)
     {
@@ -711,7 +933,7 @@ class PrintService
             $color = $this->getColor('#ff0000', 1, $image);
             $bgcolor = $this->getColor('#ffffff', 1, $image);
             $fontPath = $this->resourceDir.'/fonts/';
-            $font = $fontPath . 'Trebuchet_MS.ttf';
+            $font = $fontPath . 'OpenSans-Bold.ttf';
             imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
@@ -763,11 +985,13 @@ class PrintService
     private function addLegend()
     {
         $this->pdf->addPage('P');
-        $this->pdf->SetFont('Arial', 'B', 14);
+        $this->pdf->SetFont('Arial', 'B', 11);
         $x = 5;
         $y = 10;
 
         foreach ($this->data['legends'] as $idx => $legendArray) {
+            $c = 1;
+            $arraySize = count($legendArray);
             foreach ($legendArray as $title => $legendUrl) {
 
                 if (preg_match('/request=GetLegendGraphic/i', $legendUrl) === 0) {
@@ -779,13 +1003,13 @@ class PrintService
                     continue;
                 }
                 $size = getimagesize($image);
-                $tempY = round($size[1] * 25.4 / 72) + 10;
+                $tempY = round($size[1] * 25.4 / 96) + 10;
 
-                if($idx > 0){
-                    if($y + $tempY > ($this->pdf->h)){
+                if($c> 1){
+                    if($y + $tempY > ($this->pdf->getHeight())){
                         $x += 105;
                         $y = 10;
-                        if($x > ($this->pdf->w)-30){
+                        if($x > ($this->pdf->getWidth())){
                             $this->pdf->addPage('P');
                             $x = 5;
                             $y = 10;
@@ -795,38 +1019,38 @@ class PrintService
 
                 $this->pdf->setXY($x,$y);
                 $this->pdf->Cell(0,0,  utf8_decode($title));
-                $this->pdf->Image($image, $x, $y + 5, 0, 0, 'png', '', false, 0);
+                //$this->pdf->Image($image, $x, $y + 5, 0, 0, 'png', '', false, 0);
+                $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
 
-                $y += round($size[1] * 25.4 / 72) + 10;
-                if($y > ($this->pdf->h)-30){
+                $y += round($size[1] * 25.4 / 96) + 10;
+                if($y > ($this->pdf->getHeight())){
                     $x += 105;
                     $y = 10;
                 }
-                if($x > ($this->pdf->w)-30){
+                if($x > ($this->pdf->getWidth()) && $c < $arraySize){
                     $this->pdf->addPage('P');
                     $x = 5;
                     $y = 10;
                 }
                 unlink($image);
+                $c++;
             }
         }
     }
 
     private function getLegendImage($unsignedUrl)
     {
+        $unsignedUrl = urldecode($unsignedUrl);
         $signer = $this->container->get('signer');
         $url = $signer->signUrl($unsignedUrl);
 
-        $attributes = array();
-        $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
-        $subRequest = new Request(array(
-            'url' => $url
-            ), array(), $attributes, array(), array(), array(), '');
-        $response = $this->container->get('http_kernel')->handle($subRequest,
-            HttpKernelInterface::SUB_REQUEST);
+        $proxy_config = $this->container->getParameter("owsproxy.proxy");
+        $proxy_query = ProxyQuery::createFromUrl($url);
+        $proxy = new CommonProxy($proxy_config, $proxy_query);
+        $browserResponse = $proxy->handle();
 
         $imagename = tempnam($this->tempdir, 'mb_printlegend');
-        file_put_contents($imagename, $response->getContent());
+        file_put_contents($imagename, $browserResponse->getContent());
 
         return $imagename;
     }
@@ -881,6 +1105,17 @@ class PrintService
 	$pixPos_y = (($maxY - $rw_y)/$extenty) * $this->neededImageHeight;
 
 	return array($pixPos_x, $pixPos_y);
+    }
+
+    /**
+     * Get geometry style
+     *
+     * @param string $geometry Geometry
+     * @return array Style
+     */
+    private function getStyle($geometry)
+    {
+        return array_merge($this->defaultStyle, $geometry['style']);
     }
 
 }

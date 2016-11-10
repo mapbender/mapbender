@@ -1,4 +1,3 @@
-@import url("components/normalize-css/normalize.css");
 @import url("components/open-sans/open-sans.css");
 @import url("components/bootstrap/css/bootstrap.min.css");
 
@@ -104,7 +103,7 @@ body {
 
   textarea,
   select,
-  input,
+  input
   {
     &:-webkit-autofill {
       background-color: #E0FBCF;

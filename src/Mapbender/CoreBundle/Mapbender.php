@@ -1,27 +1,29 @@
 <?php
 
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
+use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Mapbender - The central Mapbender3 service. Provides metadata about
+ * Mapbender - The central Mapbender3 service(core). Provides metadata about
  * available elements, layers and templates.
  *
  * @author Christian Wygoda
+ * @author Andriy Oblivantsev
  */
-class Mapbender {
+class Mapbender
+{
+    /** @var ContainerInterface  */
     private $container;
-    private $elements = array();
-    private $layers = array();
-    private $templates = array();
+
+    /** @var Element[] */
+    private $elements           = array();
+    private $layers             = array();
+    private $templates          = array();
     private $repositoryManagers = array();
 
     /**
@@ -59,7 +61,8 @@ class Mapbender {
      *
      * @return array
      */
-    public function getElements() {
+    public function getElements()
+    {
         return $this->elements;
     }
 
@@ -81,7 +84,8 @@ class Mapbender {
      *
      * @return array
      */
-    public function getLayers() {
+    public function getLayers()
+    {
         return $this->layers;
     }
 
@@ -93,7 +97,8 @@ class Mapbender {
      *
      * @return array
      */
-    public function getTemplates() {
+    public function getTemplates()
+    {
         return $this->templates;
     }
 
@@ -106,9 +111,10 @@ class Mapbender {
      *
      * @return Application
      */
-    public function getApplication($slug, $urls) {
+    public function getApplication($slug, $urls)
+    {
         $entity = $this->getApplicationEntity($slug);
-        if(!$entity) {
+        if (!$entity) {
             return null;
         }
 
@@ -118,34 +124,35 @@ class Mapbender {
     /**
      * Get application entities
      *
-     * @return array
+     * @return Entity[]
      */
-    public function getApplicationEntities() {
-        $entities = array();
-
-        $yamlMapper = new ApplicationYAMLMapper($this->container);
-        $yamlEntities = $yamlMapper->getApplications();
-        foreach($yamlEntities as $entity) {
-            if(!$entity->isPublished()) {
+    public function getApplicationEntities()
+    {
+        /** @var Entity[] $dbApplications */
+        $applications = array();
+        $yamlMapper   = new ApplicationYAMLMapper($this->container);
+        $registry     = $this->container->get('doctrine');
+        foreach ($yamlMapper->getApplications() as $application) {
+            if (!$application->isPublished()) {
                 continue;
             }
-            $entities[$entity->getSlug()] = $entity;
+            $applications[ $application->getSlug() ] = $application;
         }
-	$dbEntities = $this->container->get('doctrine')->getManager()
-	    ->createQuery("SELECT a From MapbenderCoreBundle:Application a  ORDER BY a.title ASC")
-	    ->getResult();
-        foreach($dbEntities as $entity) {
-            $entity->setSource(Entity::SOURCE_DB);
-            $entities[$entity->getSlug()] = $entity;
+        $dbApplications = $registry->getManager()
+            ->createQuery("SELECT a From MapbenderCoreBundle:Application a  ORDER BY a.title ASC")
+            ->getResult();
+        foreach ($dbApplications as $application) {
+            $application->setSource(Entity::SOURCE_DB);
+            $applications[ $application->getSlug() ] = $application;
         }
 
-        return $entities;
+        return $applications;
     }
 
     /**
      * Get application entity for given slug
      *
-     * @return Entity
+     * @return Entity|null
      */
     public function getApplicationEntity($slug) {
         $entity = $this->container->get('doctrine')
@@ -159,7 +166,7 @@ class Mapbender {
         $yamlMapper = new ApplicationYAMLMapper($this->container);
         $entity = $yamlMapper->getApplication($slug);
         if(!$entity || !$entity->isPublished()) {
-            return;
+            return null;
         }
         return $entity;
     }

@@ -1,21 +1,17 @@
 <?php
 
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Element configuration entity
  *
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ElementRepository")
  * @ORM\Table(name="mb_core_element")
  */
 class Element
@@ -71,6 +67,12 @@ class Element
      */
     protected $weight;
 
+    /** @var array */
+    protected $yamlRoles;
+
+    /**
+     * Element constructor.
+     */
     public function __construct()
     {
         $this->enabled = true;
@@ -83,6 +85,9 @@ class Element
      * Probably the only place where this should be used is in the
      * ApplicationYAMLMapper class. Maybe this could be done using a proxy
      * class instead?
+     *
+     * @param $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -105,6 +110,7 @@ class Element
      * Set title
      *
      * @param string $title
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -127,6 +133,7 @@ class Element
      * Set class
      *
      * @param string $class
+     * @return $this
      */
     public function setClass($class)
     {
@@ -149,6 +156,7 @@ class Element
      * Set configuration
      *
      * @param array $configuration
+     * @return $this
      */
     public function setConfiguration($configuration)
     {
@@ -171,6 +179,7 @@ class Element
      * Set region
      *
      * @param string $region
+     * @return $this
      */
     public function setRegion($region)
     {
@@ -193,6 +202,7 @@ class Element
      * Set enabled
      *
      * @param boolean $enabled
+     * @return $this
      */
     public function setEnabled($enabled)
     {
@@ -215,6 +225,7 @@ class Element
      * Set weight
      *
      * @param integer $weight
+     * @return $this
      */
     public function setWeight($weight)
     {
@@ -236,7 +247,8 @@ class Element
     /**
      * Set application
      *
-     * @param Mapbender\CoreBundle\Entity\Application $application
+     * @param \Mapbender\CoreBundle\Entity\Application $application
+     * @return $this
      */
     public function setApplication(Application $application)
     {
@@ -248,15 +260,36 @@ class Element
     /**
      * Get application
      *
-     * @return Mapbender\CoreBundle\Entity\Application
+     * @return \Mapbender\CoreBundle\Entity\Application
      */
     public function getApplication()
     {
         return $this->application;
     }
 
+    /**
+     * @return string Element ID
+     */
     public function __toString()
     {
         return (string) $this->id;
     }
+
+    /**
+     * @return array
+     */
+    public function getYamlRoles()
+    {
+        return $this->yamlRoles;
+    }
+
+    /**
+     * @param array $yamlRoles
+     */
+    public function setYamlRoles($yamlRoles)
+    {
+        $this->yamlRoles = $yamlRoles;
+    }
+
+    public function getDescription() { }
 }

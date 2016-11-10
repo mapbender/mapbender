@@ -1,19 +1,13 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Util\ClassUtils;
 use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Source;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -23,16 +17,26 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 abstract class ExchangeHandler
 {
-
-    const CONTENT_APP = 'aplication';
-    const CONTENT_ACL = 'acl';
+    const CONTENT_APP    = 'aplication';
+    const CONTENT_ACL    = 'acl';
     const CONTENT_SOURCE = 'source';
 
+    /** @var SecurityContext */
     protected $securityContext;
+
+    /** @var ContainerInterface  */
     protected $container;
+
+    /** @var  ImportJob */
     protected $job;
+
     protected $mapper;
 
+    /**
+     * ExchangeHandler constructor.
+     *
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -44,22 +48,35 @@ abstract class ExchangeHandler
         $this->securityContext = $this->container->get('security.context');
     }
 
-    protected function getAllowedAppllications()
+    /**
+     * Get current user allowed applications
+     *
+     * @return Application[]|ArrayCollection
+     */
+    protected function getAllowedApplications()
     {
-        $allowed_apps =
-            EntityHandler::findAll($this->container, "Mapbender\CoreBundle\Entity\Application", array(), "EDIT");
-        return $allowed_apps;
+        return EntityHandler::findAll(
+            $this->container,
+            'Mapbender\CoreBundle\Entity\Application',
+            array(),
+            SecurityContext::PERMISSION_EDIT);
     }
 
-    protected function getAllowedApplicationSources(Application $app, $action = 'EDIT')
+    /**
+     * Get current user allowed application sources
+     *
+     * @param Application $app
+     * @param string      $action
+     * @return Source[]|ArrayCollection
+     */
+    protected function getAllowedApplicationSources(Application $app, $action = SecurityContext::PERMISSION_EDIT)
     {
-        
         $sources = new ArrayCollection();
-        if (true === $this->isGranted($action, $app)) {
-            foreach ($app->getLayersets() as $layerset) {
-                foreach ($layerset->getInstances() as $instance) {
+        if ($this->securityContext->checkGranted($action, $app)) {
+            foreach ($app->getLayersets() as $layerSet) {
+                foreach ($layerSet->getInstances() as $instance) {
                     $source = $instance->getSource();
-                    if ($this->isGranted('EDIT', $source)) {
+                    if ($this->getSecurityContext()->isUserAllowedToEdit($source)) {
                         $sources->add($source);
                     }
                 }
@@ -68,42 +85,72 @@ abstract class ExchangeHandler
         return $sources;
     }
 
+    /**
+     * Get allowed sources
+     *
+     * @return Source[]|ArrayCollection
+     */
     protected function getAllowedSources()
     {
-        $allowed_sources = new ArrayCollection();
-        if ($this->isGranted("EDIT", "Mapbender\CoreBundle\Entity\Source")) {
-            $allowed_sources =
-                EntityHandler::findAll($this->container, "Mapbender\CoreBundle\Entity\Source", array(), "EDIT");
+        $allowedSources = new ArrayCollection();
+        $sourceClass    = 'Mapbender\CoreBundle\Entity\Source';
+        if ($this->securityContext->isUserAllowedToCreate($sourceClass)) {
+            $allowedSources = EntityHandler::findAll(
+                $this->container,
+                $sourceClass,
+                array(),
+                SecurityContext::PERMISSION_CREATE);
         }
-        return $allowed_sources;
+        return $allowedSources;
     }
 
+    /**
+     * @return SecurityContext
+     */
     public function getSecurityContext()
     {
         return $this->securityContext;
     }
 
+    /**
+     * @return ContainerInterface
+     */
     public function getContainer()
     {
         return $this->container;
     }
 
+
+    /**
+     * @return ImportJob
+     */
     public function getJob()
     {
         return $this->job;
     }
 
+    /**
+     * @param $job
+     * @return $this
+     */
     public function setJob($job)
     {
         $this->job = $job;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getMapper()
     {
         return $this->mapper;
     }
 
+    /**
+     * @param $mapper
+     * @return $this
+     */
     public function setMapper($mapper)
     {
         $this->mapper = $mapper;
@@ -113,43 +160,14 @@ abstract class ExchangeHandler
     /**
      * Checks the grant for an action and an object
      *
+     * @param string  $action action, for example "CREATE"
      * @param \Object $object the object
-     * @throws AccessDeniedException
-     */
-    public function checkGranted($action, $object)
-    {
-        $gr = $this->securityContext->isGranted($action, $object);
-        if ($action === "CREATE") {
-            $oid = new ObjectIdentity('class', get_class($object));
-            if (false === $this->securityContext->isGranted($action, $oid)) {
-                throw new AccessDeniedException();
-            }
-        } elseif ($action === "VIEW" && !$this->securityContext->isGranted($action, $object)) {
-            throw new AccessDeniedException();
-        } elseif ($action === "EDIT" && !$this->securityContext->isGranted($action, $object)) {
-            throw new AccessDeniedException();
-        } elseif ($action === "DELETE" && !$this->securityContext->isGranted($action, $object)) {
-            throw new AccessDeniedException();
-        }
-    }
-
-    /**
-     * Checks the grant for an action and an object
-     *
-     * @param string $action action, for example "CREATE"
-     * @param \Object $object the object
+     * @return bool
      * @throws AccessDeniedException
      */
     public function isGranted($action, $object)
     {
-        try {
-            $this->checkGranted($action, $object);
-            return true;
-        } catch (AccessDeniedException $e) {
-            return false;
-        } catch (\Exception $e) {
-            return false;
-        }
+        return $this->securityContext->checkGranted($action, $object, false);
     }
 
     /**

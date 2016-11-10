@@ -84,7 +84,8 @@ class BaseSourceSwitcher extends Element
     {
         return array(
             'js' => array('mapbender.element.basesourceswitcher.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss')
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss'),
+            'trans' => array('MapbenderCoreBundle:Element:basesourceswitcher.json.twig')
         );
     }
     
@@ -98,18 +99,21 @@ class BaseSourceSwitcher extends Element
             unset($configuration['instancesets']);
         }
         $configuration['groups'] = array();
+        if (!isset($confHelp['instancesets']) || !is_array($confHelp['instancesets'])) {
+            $confHelp['instancesets'] = array();
+        }
         foreach ($confHelp['instancesets'] as $instanceset) {
             if (isset($instanceset['group']) && $instanceset['group'] !== '') {
                 if (!isset($configuration['groups'][$instanceset['group']])) {
                     $configuration['groups'][$instanceset['group']] = array();
                 }
                 $configuration['groups'][$instanceset['group']][] = array(
-                    'title' => $instanceset['title'],
+                    'title'   => $instanceset['title'],
                     'sources' => $instanceset['instances']
                 );
             } else {
                 $configuration['groups'][$instanceset['title']] = array(
-                    'title' => $instanceset['title'],
+                    'title'   => $instanceset['title'],
                     'sources' => $instanceset['instances']
                 );
             }

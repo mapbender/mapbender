@@ -2,18 +2,15 @@
 
 namespace Mapbender\CoreBundle\Command;
 
-use Symfony\Component\Console\Input\InputOption;
+use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
-
 
 /**
- * Reset root account.
  *
  * @author Christian Wygoda
+ * @deprecated should be removed in release/3.0.6
  */
 class DumpMapbenderAssetsCommand extends ContainerAwareCommand
 {
@@ -72,11 +69,12 @@ EOT
      * Build an Assetic reference path from a given objects bundle name(space)
      * and the filename/path within that bundles Resources/public folder.
      *
-     * @todo: This is duplicated from Component\Application
+     * @todo     : This is duplicated from Component\Application
      *
-     * @param object $object
+     * @param        $class
      * @param string $file
      * @return string
+     * @internal param object $object
      */
     private function getReference($class, $file)
     {

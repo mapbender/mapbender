@@ -10,7 +10,7 @@
       {% elseif source.valid is not null %}
       <span class="iconWarningSmpl icon" title="{{"mb.manager.admin.source.notvalid"|trans}}"></span>
       {% endif %}
-      <span class="subTitle">{{ source.title }}</span>
+      <span class="subTitle">{{ source.id }} / {{ source.title }}</span>
       <span>{{ source.alias }}</span>
       <span class="iconOk iconBig"></span>
       <div class="description">{{ source.description | trans }}</div>

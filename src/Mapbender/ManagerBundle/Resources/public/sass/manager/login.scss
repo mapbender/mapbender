@@ -1,0 +1,98 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "libs/icons";
+
+@import 'bundles/mapbendermanager/sass/manager/manager.scss';
+
+$boxWidth:340px;
+
+
+.head{
+  position: relative;
+  border-top:solid 5px darken($firstColor, 10%);
+  background-image:url($headPatternUrl);
+  @include background(linear-gradient(rgba(255,255,255,.1),
+                                      rgba(255,255,255,0)),
+                      url($headPatternUrl));
+}
+.dekoSeperator{@include absolute('' 0 0 0);}
+
+.authWrapper {
+
+  a{
+    text-decoration: none;
+  }
+
+  @include absolute(15% 0 '' 0);
+}
+.logo{max-height:120px;}
+.head{height:300px;}
+
+.labelInput {
+  display: block;
+  width: 100%;
+}
+.input{margin-bottom:$space/2;}
+.logoContainer{
+  text-align:center;
+  display:block;
+  @include relative(-280px '' '' '');
+}
+.linkButton{
+  margin-right:$space/2;
+  margin-top:5px;
+}
+
+.loginBox {
+  padding: $space;
+  margin: 0 auto;
+  width: $boxWidth;
+  background-image: url($contentPatternUrl);
+  border: {
+    top: solid 1px $secondColor;
+    left: solid 1px $thirdColor;
+    right: solid 1px $thirdColor;
+    bottom: solid 5px $thirdColor;
+    radius: $containerBorderRadius;
+  }
+  @include relative(-260px '' '' '');
+
+  &.login {
+    $labelWidth: 60px;
+    .labelInput {
+      width: $labelWidth;
+    }
+    .input {
+      width: $boxWidth - $labelWidth - $space*3;
+    }
+  }
+
+  &.forgot {
+    $labelWidth: 135px;
+    .labelInput {
+      width: 100%;
+      margin-bottom: -5px;
+    }
+    .inputWrapper {
+      width: 100%;
+      .input {
+        width: 100%;
+      }
+    }
+  }
+
+  &.register {
+    $labelWidth: 125px;
+    .labelInput {
+      width: $labelWidth;
+    }
+    .input {
+      width: $boxWidth - $labelWidth - $space*3;
+    }
+  }
+
+  &.resetBox .labelInput {
+    width: 68px;
+    display: inline-block;
+  }
+}

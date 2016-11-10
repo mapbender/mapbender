@@ -108,8 +108,9 @@
                 }
 
                 if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function'){
-                    var temp = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
-                    layers[num] = temp['url'];
+                    var layerConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
+                    layerConf.opacity = sources[i].configuration.options.opacity;
+                    layers[num] = layerConf;
                     num++;
                 }
             }
@@ -119,7 +120,7 @@
             var vectorLayers = [];
             for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
                 var layer = this.map.map.olMap.layers[i];
-                if('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || this.layer === layer) {
+                if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
                     continue;
                 }
 
@@ -127,17 +128,19 @@
                 for(var idx = 0; idx < layer.features.length; idx++) {
                     var feature = layer.features[idx];
                     if (!feature.onScreen(true)) continue
-
-
                         var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
 
                         if(feature.style !== null){
                             geometry.style = feature.style;
                         }else{
-                            geometry.style = layer.styleMap.createSymbolizer(feature);
+                            geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
                         }
-                        geometries.push(geometry);
-
+                        // only visible features
+                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){
+                            geometries.push(geometry);
+                        } else if (geometry.style.label !== undefined){
+                            geometries.push(geometry);
+                        }
                 }
 
                 var lyrConf = {
@@ -145,7 +148,6 @@
                     opacity: 1,
                     geometries: geometries
                 };
-
 
                 vectorLayers.push(JSON.stringify(lyrConf))
             }

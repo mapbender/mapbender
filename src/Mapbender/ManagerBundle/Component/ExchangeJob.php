@@ -1,19 +1,10 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\ManagerBundle\Component;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
-//use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Mapbender\CoreBundle\Entity\Application;
 
 /**
- * Job class 
+ * Job class
  *
  * @author Paul Schmidt
  */
@@ -23,62 +14,115 @@ class ExchangeJob
     const FORMAT_YAML = 'yaml';
     protected $addAcl;
     protected $addSources;
-    protected $applications;
+    protected $application;
     protected $format;
 
+    /**
+     * ExchangeJob constructor.
+     *
+     * @param string $format
+     */
     public function __construct($format = 'json')
     {
-        $this->applications = new ArrayCollection();
-        $this->addAcl = false;
-        $this->addSources = false;
-        if(self::FORMAT_JSON !== $format && self::FORMAT_YAML !== $format){
+        $this->application = null;
+        $this->addAcl      = false;
+        $this->addSources  = false;
+        if (self::FORMAT_JSON !== $format && self::FORMAT_YAML !== $format) {
             $this->format = self::FORMAT_JSON;
         } else {
             $this->format = $format;
         }
     }
 
+    /**
+     * @return bool
+     */
     public function getAddAcl()
     {
         return $this->addAcl;
     }
 
+    /**
+     * @param $addAcl
+     * @return $this
+     */
     public function setAddAcl($addAcl)
     {
         $this->addAcl = $addAcl;
         return $this;
     }
 
-    public function getApplications()
+    /**
+     * @return Application|null
+     */
+    public function getApplication()
     {
-        return $this->applications;
+        return $this->application;
     }
 
-    public function setApplications($applications)
+    /**
+     * @param Application $application
+     * @return $this
+     */
+    public function setApplication(Application $application)
     {
-        $this->applications = $applications;
+        $this->application = $application;
         return $this;
     }
+
+    /**
+     * @return string
+     */
     public function getFormat()
     {
         return $this->format;
     }
 
+    /**
+     * @param $format
+     * @return $this
+     */
     public function setFormat($format)
     {
         $this->format = $format;
         return $this;
     }
 
-        public function getAddSources()
+    /**
+     * @return bool
+     */
+    public function getAddSources()
     {
         return $this->addSources;
     }
 
+    /**
+     * @param $addSources
+     * @return $this
+     */
     public function setAddSources($addSources)
     {
         $this->addSources = $addSources;
         return $this;
     }
 
+    /**
+     * Is format an JSON
+     *
+     * @return bool
+     */
+    public function isFormatAnJson()
+    {
+        return $this->format == self::FORMAT_JSON;
+    }
+
+    /**
+     * Is format an YAML
+     *
+     * @return bool
+     */
+    public function isFormatAnYaml()
+    {
+        return $this->format == self::FORMAT_YAML;
+    }
 }

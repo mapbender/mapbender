@@ -26,7 +26,7 @@ class SearchRouterAdminType extends AbstractType
     {
         $resolver->setDefaults(array(
             'application' => null,
-            'routes' => array()));
+            'routes' => array(),));
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -42,12 +42,14 @@ class SearchRouterAdminType extends AbstractType
             ->add('timeout', 'integer', array(
                 'label' => 'Timeout factor',
                 'property_path' => '[timeoutFactor]'))
+            ->add('width', 'integer', array('required' => true))
+            ->add('height', 'integer', array('required' => true))
             ->add($builder->create('routes', 'collection', array(
                 'type' => new SearchRouterRouteAdminType(),
                 'allow_add' => true,
                 'allow_delete' => true,
-                'auto_initialize' => false,
-            ))->addViewTransformer(new SearchRouterRouteTransformer()));
+                'auto_initialize' => false,))
+            ->addViewTransformer(new SearchRouterRouteTransformer()));
     }
 
 }

@@ -1,13 +1,7 @@
 <?php
 
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle\Controller;
 
-use Assetic\Asset\StringAsset;
-use Assetic\Filter\CssRewriteFilter;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
@@ -17,7 +11,6 @@ use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -28,98 +21,47 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 /**
  * Application controller.
  *
- * @author Christian Wygoda
+ * @author  Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author  Andreas Schmitz <andreas.schmitz@wheregroup.com>
+ * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
 class ApplicationController extends Controller
 {
 
     /**
      * Get runtime URLs
+     * Hack to get proper urls when embedded in drupal
      *
      * @param string $slug
      * @return array
      */
     private function getUrls($slug)
     {
-        $base_url = $this->get('request')->getBaseUrl();
-        $element_url = $this->get('router')
-            ->generate('mapbender_core_application_element', array('slug' => $slug));
-        $translation_url = $this->get('router')
-            ->generate('mapbender_core_translation_trans');
-        $proxy_url = $this->get('router')
-            ->generate('owsproxy3_core_owsproxy_entrypoint');
-        $metadata_url = $this->get('router')
-            ->generate('mapbender_core_application_metadata', array('slug' => $slug));
+        $config        = array('slug' => $slug);
+        $router        = $this->get('router');
+        $searchSubject = 'mapbender';
+        $drupal_mark   = function_exists('mapbender_menu') ? '?q=mapbender' : $searchSubject;
 
-        // hack to get proper urls when embedded in drupal
-        $drupal_mark = function_exists('mapbender_menu') ? '?q=mapbender' : 'mapbender';
-        $base_url = str_replace('mapbender', $drupal_mark, $base_url);
-        $element_url = str_replace('mapbender', $drupal_mark, $element_url);
-        $translation_url = str_replace('mapbender', $drupal_mark, $translation_url);
-        $proxy_url = str_replace('mapbender', $drupal_mark, $proxy_url);
-        $metadata_url = str_replace('mapbender', $drupal_mark, $metadata_url);
+        $urls = array(
+            'base'     => $this->get('request')->getBaseUrl(),
+            'asset'    => $this->get('templating.helper.assets')->getUrl(null),
+            'element'  => $router->generate('mapbender_core_application_element', $config),
+            'trans'    => $router->generate('mapbender_core_translation_trans'),
+            'proxy'    => $router->generate('owsproxy3_core_owsproxy_entrypoint'),
+            'metadata' => $router->generate('mapbender_core_application_metadata', $config),
+            'config'   => $router->generate('mapbender_core_application_configuration', $config));
 
-        return array(
-            'base' => $base_url,
-            // @TODO: Can this be done less hack-ish?
-            'asset' => rtrim($this->get('templating.helper.assets')->getUrl('.'), '.'),
-            'element' => $element_url,
-            'trans' => $translation_url,
-            'proxy' => $proxy_url,
-            'metadata' => $metadata_url);
-    }
-
-    /**
-     * Compiling SASS/CSS controller.
-     *
-     * @Route("/application/{slug}/assets/css")
-     */
-    public function ccssAction($slug)
-    {
-        // Create virtual file system path required for url rewriting inside CSS files
-        $request = $this->getRequest();
-        $route = $this->container->get('router')->getRouteCollection()->get($request->get('_route'));
-        $targetPath = $request->server->get('SCRIPT_FILENAME') . $route->getPattern();
-
-        $targetPath = str_replace('{slug}', $slug, $targetPath);
-        $targetPath = $request->server->get('REQUEST_URI');
-        $sourcePath = $request->getBasePath();
-
-        if(empty($sourcePath)){
-                $sourcePath = ".";
-        }
-        // Collect all assets into one
-        $application = $this->getApplication($slug);
-        $refs = array_unique($application->getAssets('css'));
-        $custom = $application->getCustomCssAsset();
-        if($custom){
-            $refs[] = $custom;
-        }
-        $factory = new AssetFactory($this->container, $refs, 'css', $targetPath, $sourcePath);
-        $assets = $factory->getAssetCollection();
-
-        // Get last modified timestamp from assets as well as application (DB) or Symfony's cache creation (YAML)
-        $lastModified = \DateTime::createFromFormat('U', $assets->getLastModified());
-        if ($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
-            $lastModified = max($application->getEntity()->getUpdated(), $lastModified);
-        } else {
-            $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
-            $lastModified = max($cacheUpdateTime, $lastModified);
+        if ($searchSubject !== $drupal_mark) {
+            foreach ($urls as $k => $v) {
+                if ($k == "asset") {
+                    continue;
+                }
+                $urls[ $k ] = str_replace($searchSubject, $drupal_mark, $v);
+            }
         }
 
-        // Cut short if possible by returning an 304 if nothing has changed
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/css');
-        $response->setLastModified($lastModified);
-        $response->headers->set('X-Asset-Modification-Time', $lastModified->format('c'));
-        if ($response->isNotModified($this->get('request'))) {
-            return $response;
-        }
-
-        // Compile the collection with SASS
-        $response->setContent($factory->compile());
-
-        return $response;
+        return $urls;
     }
 
     /**
@@ -129,91 +71,80 @@ class ApplicationController extends Controller
      * date and this controller will be used during development mode.
      *
      * @Route("/application/{slug}/assets/{type}")
+     * @param string $slug Application slug name
+     * @param string $type Asset type
+     * @return Response
      */
     public function assetsAction($slug, $type)
     {
-        $response = new Response();
+        $response         = new Response();
+        $request          = $this->getRequest();
+        $env              = $this->container->get("kernel")->getEnvironment();
+        $isProduction     = $env == "prod";
+        $cacheFile        = $this->getCachedAssetPath($slug, $env, $type);
+        $needCache        = $isProduction && !file_exists($cacheFile);
+        $modificationDate = new \DateTime();
+        $appEntity        = $this->get('mapbender')->getApplicationEntity($slug);
 
-        // Load required assets for application
-        $application = $this->getApplication($slug);
-        $cache = new ApplicationAssetCache($this->container, $application->getAssets($type), $type);
-        $useTimestamp = !$this->container->getParameter('mapbender.static_assets');
-        $assets = $cache->fill($slug, $useTimestamp);
+        $response->headers->set('Content-Type', $this->getMimeType($type));
 
-        // Determine last-modified timestamp for both DB- and YAML-based apps
-        $application_update_time = new \DateTime();
-        $application_entity = $this->getApplication($slug)->getEntity();
 
-        $assets_mtime = 0;
-        foreach ($assets as $asset) {
-            $assets_mtime = max($assets_mtime, $asset->getLastModified());
+        if ($isProduction && !$needCache) {
+            $modificationTs = filectime($cacheFile);
+            $isAppDbBased   = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
+            $modificationDate->setTimestamp($modificationTs);
+
+            if (!$isAppDbBased || ($isAppDbBased && $appEntity->getUpdated() < $modificationDate)) {
+                $response->setLastModified($modificationDate);
+                $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
+                if ($response->isNotModified($request)) {
+                    return $response;
+                }
+                $response->setContent(file_get_contents($cacheFile));
+                return $response;
+            }
         }
-        $asset_modification_time = new \DateTime();
-        $asset_modification_time->setTimestamp($assets_mtime);
 
-        if ($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
-            $updateTime = max($application->getEntity()->getUpdated(), $asset_modification_time);
+        $application = $this->get('mapbender')->getApplication($slug, array());
+        if ($type == "css") {
+            $sourcePath = $request->getBasePath();
+            $refs       = array_unique($application->getAssets('css'));
+            $custom     = $application->getCustomCssAsset();
+            if ($custom) {
+                $refs[] = $custom;
+            }
+            $factory = new AssetFactory($this->container, $refs, 'css', $request->server->get('REQUEST_URI'), empty($sourcePath) ? "." : $sourcePath);
+            $content = $factory->compile();
         } else {
-            $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
-            $updateTime = max($cacheUpdateTime, $asset_modification_time);
+            $cache   = new ApplicationAssetCache($this->container, $application->getAssets($type), $type);
+            $assets  = $cache->fill($slug, 0);
+            $content = $assets->dump();
         }
 
-        // runtime rewrite which takes into account if the action was called
-        // with app.php in the URL or not.
-        if ('css' === $type) {
-            // The target path assumed by the cache has been used by the
-            // cache's rewrite and all URLs in the cached assets are already
-            // rewritten for it. Now we rewrite from these normalized URLs to
-            // the final, runtime URLs and therefore the cache's target path
-            // is our source path.
-            $source = str_replace(array('{slug}', '{type}'), array($slug, $type), $assets->getTargetPath());
-
-            // Let's build the runtime target path
-            $request = $this->getRequest();
-            $webDir = str_replace('\\', '/',
-                                  realpath($this->container->get('kernel')->getRootDir() .
-                    '/../web/'));
-            $target = $webDir . substr(
-                    $request->getRequestUri(), strlen($request->getBasePath()));
-
-            // And move everything into an StringAsset which gets added the
-            // CssRewriteFilter
-            $css = $assets->dump();
-            $assets = new StringAsset($css, array(), '', $source);
-            $assets->load();
-            $assets->setTargetPath($target);
-            $assets->ensureFilter(new CssRewriteFilter());
+        if ($isProduction && $needCache) {
+            file_put_contents($cacheFile, $content);
         }
 
-        // Create HTTP 304 if possible
-        $response->setLastModified($updateTime);
-        $response->headers->set('X-Asset-Modification-Time', $asset_modification_time->format('c'));
-        if ($response->isNotModified($this->get('request'))) {
-            return $response;
-        }
-
-        // Dump assets to client
-        $mimetypes = array(
-            'css' => 'text/css',
-            'js' => 'application/javascript',
-            'trans' => 'application/javascript');
-
-        $response->headers->set('Content-Type', $mimetypes[$type]);
-        $response->setContent($assets->dump());
-        return $response;
+        return $response->setContent($content);
     }
 
     /**
      * Element action controller.
      *
-     * Passes the request to the element's httpAction.
+     * Passes the request to
+     * the element's httpAction.
      * @Route("/application/{slug}/element/{id}/{action}",
      *     defaults={ "id" = null, "action" = null },
      *     requirements={ "action" = ".+" })
      */
     public function elementAction($slug, $id, $action)
     {
-        $element = $this->getApplication($slug)->getElement($id);
+        $application = $this->getApplication($slug);
+        $element     = $application->getElement($id);
+
+        if(!$element){
+            throw new NotFoundHttpException();
+        }
 
         return $element->httpAction($action);
     }
@@ -222,17 +153,61 @@ class ApplicationController extends Controller
      * Main application controller.
      *
      * @Route("/application/{slug}.{_format}", defaults={ "_format" = "html" })
-     * @Template()
+     * @param string $slug Application
+     * @return Response
      */
     public function applicationAction($slug)
     {
-        $application = $this->getApplication($slug);
+        $env          = $this->container->get("kernel")->getEnvironment();
+        $isProduction = $env == "prod";
+        $response     = new Response();
+        $session      = $this->get("session");
+        $application  = $this->getApplication($slug);
 
-        // At this point, we are allowed to acces the application. In order
-        // to use the proxy in following request, we have to mark the session
-        $this->get("session")->set("proxyAllowed", true);
+        if ($isProduction) {
 
-        return new Response($application->render());
+            // Render YAML application
+            if ($application->getEntity()->getSource() !== ApplicationEntity::SOURCE_DB) {
+                $session->set("proxyAllowed", true);
+                $response->setContent($application->render());
+                return $response;
+            }
+
+            $cacheFile        = $this->getCachedAssetPath($slug . "-" . session_id(), $env, "html");
+            $hasCache         = is_file($cacheFile);
+            // If no cache or DB application is update, but cache is deprecated
+            if (!$hasCache || $application->getEntity()->getUpdated()->getTimestamp() > filectime($cacheFile)) {
+                $content = $application->render();
+                file_put_contents($cacheFile, $content);
+                $session->set("proxyAllowed", true);
+                $response->setContent($content);
+
+                // Update application and remove assets cache
+                if($hasCache){
+                    foreach(array(
+                                $this->getCachedAssetPath($slug,$env,'css'),
+                                $this->getCachedAssetPath($slug,$env,'js')) as $assetFileSrc){
+                        if(is_file($assetFileSrc)){
+                            unlink($assetFileSrc);
+                        }
+                    }
+                }
+            } else {
+                $modificationDate = new \DateTime();
+                $modificationDate->setTimestamp(filectime($cacheFile));
+                $response->setLastModified($modificationDate);
+                $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
+                if ($response->isNotModified($this->getRequest())) {
+                    return $response;
+                }
+                $response->setContent(file_get_contents($cacheFile));
+            }
+        } else {
+            $session->set("proxyAllowed", true);
+            $response->setContent($application->render());
+        }
+
+        return $response;
     }
 
     /**
@@ -246,10 +221,9 @@ class ApplicationController extends Controller
      */
     private function getApplication($slug)
     {
-        $application = $this->get('mapbender')
-            ->getApplication($slug, $this->getUrls($slug));
+        $application = $this->get('mapbender')->getApplication($slug, $this->getUrls($slug));
 
-        if ($application === null) {
+        if (!$application) {
             throw new NotFoundHttpException(
             'The application can not be found.');
         }
@@ -257,6 +231,22 @@ class ApplicationController extends Controller
         $this->checkApplicationAccess($application);
 
         return $application;
+    }
+
+    /**
+     * Main application controller.
+     *
+     * @Route("/application/{slug}/config")
+     */
+    public function configurationAction($slug)
+    {
+        $config  = $this->getApplication($slug)->getConfiguration();
+        $this->get("session")->set("proxyAllowed", true);
+        return new Response(
+            $config,
+            200,
+            array('Content-Type' => 'text/json')
+        );
     }
 
     /**
@@ -269,20 +259,23 @@ class ApplicationController extends Controller
      */
     public function checkApplicationAccess(Application $application)
     {
+        /** @var SecurityContext $securityContext */
         $securityContext = $this->get('security.context');
+        $application     = $application->getEntity();
 
-        $application_entity = $application->getEntity();
-        if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($application_entity->yaml_roles)) {
+        if ($application->isYamlBased()
+            && count($application->getYamlRoles())
+        ) {
 
             // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
             if (!$securityContext->getToken()) {
-                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application_entity->yaml_roles)) {
+                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application->getYamlRoles())) {
                     return;
                 }
             }
 
             $passed = false;
-            foreach ($application_entity->yaml_roles as $role) {
+            foreach ($application->getYamlRoles() as $role) {
                 if ($securityContext->isGranted($role)) {
                     $passed = true;
                     break;
@@ -293,12 +286,13 @@ class ApplicationController extends Controller
             }
         }
 
-        $granted = $securityContext->isGranted('VIEW', $application_entity);
-        if (false === $granted) {
+        if (!$securityContext->isUserAllowedToView($application)) {
             throw new AccessDeniedException('You are not granted view permissions for this application.');
         }
 
-        if (!$application_entity->isPublished() and ! $securityContext->isGranted('EDIT', $application_entity)) {
+        if (!$application->isPublished()
+            && !$securityContext->isUserAllowedToEdit($application)
+        ) {
             throw new AccessDeniedException('This application is not published at the moment');
         }
     }
@@ -379,4 +373,29 @@ class ApplicationController extends Controller
         return $response;
     }
 
+    /**
+     * @param $slug
+     * @param $env
+     * @param $type
+     * @return string
+     */
+    public function getCachedAssetPath($slug, $env, $type)
+    {
+        return $this->container->getParameter('kernel.root_dir') . "/cache/" . $env . "/" . $slug . ".min." . $type;
+    }
+
+    /**
+     * Get mime type
+     *
+     * @param string $type
+     * @return array
+     */
+    protected function getMimeType($type)
+    {
+        static $types = array(
+            'css'   => 'text/css',
+            'js'    => 'application/javascript',
+            'trans' => 'application/javascript');
+        return $types[$type];
+    }
 }

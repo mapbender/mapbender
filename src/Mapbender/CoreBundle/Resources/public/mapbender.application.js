@@ -1,44 +1,39 @@
-$.ajaxPrefilter(function(options) {
-    if(options.crossDomain) {
-        options.url = Mapbender.configuration.application.urls.proxy + '?url=' + encodeURIComponent(encodeURIComponent(options.url));
-        options.crossDomain = false;
-    }
-});
+"use strict";
 
 var Mapbender = Mapbender || {};
 
 Mapbender.ElementRegistry = function(){
-    this.readyElements = {};
-    this.readyCallbacks = {};
-
-    this.onElementReady = function(targetId, callback){
+    var registry = this;
+    registry.readyElements = {};
+    registry.readyCallbacks = {};
+    registry.onElementReady = function(targetId, callback){
         if(true === callback) {
             // Register as ready
-            this.readyElements[targetId] = true;
+            registry.readyElements[targetId] = true;
             // Execute all callbacks registered so far
-            if('undefined' !== typeof this.readyCallbacks[targetId]) {
-                for(var idx in this.readyCallbacks[targetId]) {
-                    this.readyCallbacks[targetId][idx]();
+            if('undefined' !== typeof registry.readyCallbacks[targetId]) {
+                for(var idx in registry.readyCallbacks[targetId]) {
+                    registry.readyCallbacks[targetId][idx]();
                 }
                 // Finally, remove readyCallback list, so they may be garbage
                 // collected if no one else is keeping them
-                delete this.readyCallbacks[targetId];
+                delete registry.readyCallbacks[targetId];
             }
         } else if('function' === typeof callback) {
-            if(true === this.readyElements[targetId]) {
+            if(true === registry.readyElements[targetId]) {
                 // If target is ready already, execute callback right away
                 callback();
             } else {
                 // Register callback for targetId for later execution
-                this.readyCallbacks[targetId] = this.readyCallbacks[targetId] || [];
-                this.readyCallbacks[targetId].push(callback);
+                registry.readyCallbacks[targetId] = registry.readyCallbacks[targetId] || [];
+                registry.readyCallbacks[targetId].push(callback);
             }
         } else {
             throw 'ElementRegistry.onElementReady callback must be function or undefined!';
         }
     };
 
-    this.listWidgets = function(){
+    registry.listWidgets = function(){
         var list = {};
         var elements = $(".mb-element");
         $.each(elements, function(idx, el){
@@ -63,37 +58,50 @@ Mapbender.elementRegistry = new Mapbender.ElementRegistry();
  * @param data elemenent configurations data object
  */
 Mapbender.initElement = function(id, data) {
-    // Split for namespace and widget name
-    var widget = data.init.split('.');
+    var widgetId = '#' + id;
+    var widgetElement = $(widgetId);
+    var hasElement = widgetElement.size() > 0;
+
+    if(!hasElement) {
+        console.log("Element '" + widgetId + "' isn't available.");
+        return;
+    }
+
+    var widgetInfo = data.init.split('.');
+    var widgetName = widgetInfo[1];
+    var nameSpace = widgetInfo[0];
+    var readyEvent = widgetName.toLowerCase() + 'ready';
+    var mapbenderWidgets = $[nameSpace];
+    var mapbenderWidget = mapbenderWidgets[widgetName];
 
     // Register for ready event to operate ElementRegistry
-    var readyEvent = widget[1].toLowerCase() + 'ready';
-    $('#' + id).one(readyEvent, function(event) {
-        for (var i in Mapbender.configuration.elements) {
-            var conf = Mapbender.configuration.elements[i], widget = conf.init.split('.'), readyEvent = widget[1].toLowerCase() + 'ready';
+    widgetElement.one(readyEvent, function(event) {
+        var elements = Mapbender.configuration.elements;
+        for (var i in elements) {
+            var conf = elements[i];
+            var widget = conf.init.split('.');
+            var widgetName = widget[1];
+            var readyEvent = widgetName.toLowerCase() + 'ready';
             if(readyEvent === event.type) {
                 Mapbender.elementRegistry.onElementReady(i, true);
             }
         }
     });
 
-    // This way we call by namespace and widget name
-    // The namespace is kinda useless, as $.widget creates a function with
-    // the widget name directly in the jQuery object, too. Still, let's be
-    // futureproof.
-    $[widget[0]][widget[1]](data.configuration, '#' + id);
+    // Initialize element
+    mapbenderWidget(data.configuration, widgetId);
 };
 
 Mapbender.isDebugMode = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
-
+Mapbender.source = Mapbender.source || {};
 Mapbender.setup = function(){
 
     // Initialize all elements by calling their init function with their options
     $.each(Mapbender.configuration.elements, function(id, data){
-        //if(Mapbender.isDebugMode){
-        //    Mapbender.initElement(id,data);
-        //    return;
-        //}
+        if(Mapbender.isDebugMode){
+            Mapbender.initElement(id,data);
+            return;
+        }
         try {
             Mapbender.initElement(id,data);
         } catch(e) {
@@ -184,8 +192,9 @@ Mapbender.Util.Url = function(urlString){
     this.username = tmp.username;
     this.password = tmp.password;
     this.host = tmp.host;
+    this.hostname = tmp.hostname;
     this.port = tmp.port;
-    this.pathname = tmp.pathname;
+    this.pathname = tmp.pathname.charAt(0) === '/' ? tmp.pathname : '/' + tmp.pathname;
     this.parameters = OpenLayers.Util.getParameters(urlString);
     this.hash = tmp.hash;
     /**
@@ -193,7 +202,7 @@ Mapbender.Util.Url = function(urlString){
      * @returns {Boolean} true if url valid
      */
     this.isValid = function(){
-        return  !(!self.host || !self.protocol);// TODO ?
+        return  !(!self.hostname || !self.protocol);// TODO ?
     };
     /**
      * Gets an url object as string.
@@ -203,10 +212,10 @@ Mapbender.Util.Url = function(urlString){
         var str = self.protocol + (self.protocol === 'http:' || self.protocol === 'https:' || self.protocol === 'ftp:'
                 ? '//' : (self.protocol === 'file:' ? '///' : ''));// TODO for other protocols
         str += (!withoutUser && self.username ? self.username + ':' + (self.password ? self.password : '') + '@' : '');
-        str += self.host + (self.port ? ':' + self.port : '') + self.pathname;
+        str += self.hostname + (self.port ? ':' + self.port : '') + self.pathname;
         var params = '';
         if(typeof (self.parameters) === 'object') {
-            for(key in self.parameters) {
+            for(var key in self.parameters) {
                 params += '&' + key + '=' + self.parameters[key];
             }
         }
@@ -219,7 +228,7 @@ Mapbender.Util.Url = function(urlString){
      * @returns parameter value or null
      */
     this.getParameter = function(name, ignoreCase){
-        for(key in self.parameters) {
+        for(var key in self.parameters) {
             if(key === name || (ignoreCase && key.toLowerCase() === name.toLowerCase())) {
                 return self.parameters[key];
             }
@@ -262,4 +271,4 @@ Mapbender.Util.removeSignature = function(url) {
 // This calls on document.ready and won't be called when inserted dynamically
 // into a existing page. In such case, Mapbender.setup has to be called
 // explicitely, see mapbender.application.json.js
-$(Mapbender.setup);
+/* load application configuration see application.config.loader.js.twig */

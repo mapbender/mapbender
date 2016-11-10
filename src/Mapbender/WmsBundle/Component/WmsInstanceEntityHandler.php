@@ -43,13 +43,14 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $source = $this->entity->getSource();
         $source->setId(ArrayUtil::hasSet($configuration, 'id', ""))
             ->setTitle(ArrayUtil::hasSet($configuration, 'id', ""));
+        $source->setVersion(ArrayUtil::hasSet($configuration, 'version', "1.1.1"));
         $source->setOriginUrl(ArrayUtil::hasSet($configuration, 'url'));
         $source->setGetMap(new RequestInformation());
         $source->getGetMap()->addFormat(ArrayUtil::hasSet($configuration, 'format', true))
             ->setHttpGet(ArrayUtil::hasSet($configuration, 'url'));
         if (isset($configuration['info_format'])) {
             $source->setGetFeatureInfo(new RequestInformation());
-            $source->getGetFeatureInfo()->addFormat(ArrayUtil::hasSet($configuration, 'format', true))
+            $source->getGetFeatureInfo()->addFormat(ArrayUtil::hasSet($configuration, 'info_format', true))
                 ->setHttpGet(ArrayUtil::hasSet($configuration, 'url'));
         }
 
@@ -91,6 +92,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $layersource = new WmsLayerSource();
             $layersource->setSource($source)
                 ->setName($layerDef["name"])
+                ->setTitle($layerDef['title'])
                 ->setParent($layersourceroot)
                 ->setId($this->entity->getId() . '_' . $num);
             if (isset($layerDef["legendurl"])) {
@@ -170,8 +172,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
             $num++;
         }
+        $this->container->get('doctrine')->getManager()->persist(
+            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->persist($this->entity);
     }
+    
 
     /**
      * @inheritdoc
@@ -180,6 +185,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     {
         $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $layerHandler->remove();
+        $this->container->get('doctrine')->getManager()->persist(
+            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
@@ -205,11 +212,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $dimensions = $this->updateDimension($this->entity->getDimensions(), $this->getDimensionInst());
         $this->entity->setDimensions($dimensions);
 
-        # TODO vendorspecific ?
+        # TODO vendorspecific for layer specific parameters
         self::createHandler($this->container, $this->entity->getRootlayer())
             ->update($this->entity, $this->entity->getSource()->getRootlayer());
 
         $this->generateConfiguration();
+        $this->container->get('doctrine')->getManager()->persist(
+            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->persist($this->entity);
     }
 
@@ -244,6 +253,9 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->generateConfiguration();
         }
         $configuration = $this->entity->getConfiguration();
+        if (!$this->isConfigurationValid($configuration)) {
+            return null;
+        }
         $hide = false;
         $params = array();
         foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
@@ -267,6 +279,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
             $configuration['options']['url'] = UrlUtil::validateUrl($url, $params, array());
+            // remove ows proxy for a tunnel connection
+            $configuration['options']['proxy'] = false;
         } elseif ($signer) {
             $configuration['options']['url'] = UrlUtil::validateUrl($configuration['options']['url'], $params, array());
             $configuration['options']['url'] = $signer->signUrl($configuration['options']['url']);
@@ -275,7 +289,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             }
         }
         $status = $this->entity->getSource()->getStatus();
-        $configuration['status'] = $status ? strtolower($status) : strtolower(Source::STATUS_OK);
+        $configuration['status'] = $status && $status === Source::STATUS_UNREACHABLE ? 'error' : 'ok';
         return $configuration;
     }
 
@@ -346,7 +360,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setTiled($this->entity->getTiled())
             ->setBbox($srses)
             ->setDimensions($dimensions)
-            ->setVendorspecifics($vendorsecifics);
+            ->setBuffer($this->entity->getBuffer())
+            ->setRatio($this->entity->getRatio())
+            ->setVendorspecifics($vendorsecifics)
+            ->setVersion($this->entity->getSource()->getVersion())
+            ->setExceptionformat($this->entity->getExceptionformat());
+
         $wmsconf->setOptions($options);
         $entityHandler = self::createHandler($this->container, $rootlayer);
         $wmsconf->setChildren(array($entityHandler->generateConfiguration()));
@@ -404,10 +423,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 }
             }
         }
-        if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
-            $value = $handler->getVendorSpecificValue(null);
-            if ($value) {
-                $vsarr[$vendorspec->getParameterName()] = $value;
+        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
+                $value = $handler->getVendorSpecificValue(null);
+                if ($value) {
+                    $vsarr[$vendorspec->getParameterName()] = $value;
+                }
             }
         }
         return $vsarr;
@@ -466,5 +487,39 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $dimensions[] = $dimension;
         }
         return $dimensions;
+    }
+
+    /**
+     * Checks if a configuraiton is valid.
+     * @param array $configuration configuration of an instance or a layer
+     * @param boolean $isLayer if it is a layer's configurationis it a layer's configuration?
+     * @return boolean true if a configuration is valid otherwise false
+     */
+    private function isConfigurationValid(array $configuration, $isLayer = false)
+    {
+        if (!$isLayer) {
+            // TODO another tests for instance configuration
+            /* check if root exists and has children */
+            if (count($configuration['children']) !== 1 || !isset($configuration['children'][0]['children'])) {
+                return false;
+            } else {
+                foreach ($configuration['children'][0]['children'] as $childConfig) {
+                    if ($this->isConfigurationValid($childConfig, true)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            if (isset($configuration['children'])) { // > 2 simple layers -> OK.
+                foreach ($configuration['children'] as $childConfig) {
+                    if ($this->isConfigurationValid($childConfig, true)) {
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

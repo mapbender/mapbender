@@ -1,16 +1,6 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\ManagerBundle\Component;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\ManagerBundle\Component\ExchangeNormalizer;
-use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Form\Type\ExportJobType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Dumper;
@@ -22,7 +12,6 @@ use Symfony\Component\Yaml\Dumper;
  */
 class ExportHandler extends ExchangeHandler
 {
-
     /**
      * @inheritdoc
      */
@@ -37,11 +26,10 @@ class ExportHandler extends ExchangeHandler
      */
     public function createForm()
     {
-        $allowedApps = $this->getAllowedAppllications();
-        $this->job->setApplications($allowedApps);
-        $type = new ExportJobType();
+        $allowedApps = $this->getAllowedApplications();
+        $type        = new ExportJobType();
         return $this->container->get('form.factory')
-            ->create($type, $this->job, array('applications' => $this->job->getApplications()));
+                ->create($type, $this->job, array('application' => $allowedApps));
     }
 
     /**
@@ -49,7 +37,7 @@ class ExportHandler extends ExchangeHandler
      */
     public function bindForm()
     {
-        $form = $this->createForm();
+        $form    = $this->createForm();
         $request = $this->container->get('request');
         $form->bind($request);
         if ($form->isValid()) {
@@ -64,59 +52,74 @@ class ExportHandler extends ExchangeHandler
      */
     public function makeJob()
     {
+        gc_enable();
         $normalizer = new ExchangeNormalizer($this->container);
+        $time = array(
+            'start' => microtime(true)
+        );
         $this->exportSources($normalizer);
+        $time['sources'] = microtime(true);
+        $time['sources'] = $time['sources'] . '/' . ($time['sources'] - $time['start']);
+
+        gc_collect_cycles();
         $this->exportApps($normalizer);
-        return $normalizer->getExport();
+        $time['end'] = microtime(true);
+        $time['total'] = $time['end'] - $time['start'];
+        gc_collect_cycles();
+        $export = $normalizer->getExport();
+        $export['time'] = $time;
+//        die(print_r($time,1));
+        return $export;
     }
 
-    public function format($scr)
+    /**
+     * Encode array to given format (YAML|JSON).
+     *
+     * @param $data
+     * @return string
+     */
+    public function format($data)
     {
         if ($this->job->getFormat() === ExchangeJob::FORMAT_JSON) {
-            return json_encode($scr);
+            return json_encode($data);
         } elseif ($this->job->getFormat() === ExchangeJob::FORMAT_YAML) {
             $dumper = new Dumper();
-            $yaml = $dumper->dump($scr, 20);
+            $yaml   = $dumper->dump($data, 20);
             return $yaml;
         }
     }
 
-    private function exportApps($normalizer)
+    /**
+     * @param $normalizer
+     */
+    private function exportApps(ExchangeNormalizer $normalizer)
     {
-        $data = array();
-        foreach ($this->job->getApplications() as $app) {
-            $data[] = $normalizer->handleValue($app);
-        }
-        return $data;
+        $normalizer->handleValue($this->job->getApplication());
+        gc_collect_cycles();
     }
 
-    private function exportAcls()
+    /**
+     * @param $normalizer
+     */
+    private function exportSources(ExchangeNormalizer $normalizer)
     {
-        throw new \Exception('"exportAcls" is not implemented yet');
-        if ($this->job->getAcl()) {
-            // TODO
-        }
-    }
-
-    private function exportSources($normalizer)
-    {
-        $data = array();
-        $sources = new ArrayCollection();
-        if ($this->job->getAddSources()) {
-            $sources = $this->getAllowedSources();
-        } else {
-            foreach ($this->job->getApplications() as $app) {
-                $help = $this->getAllowedApplicationSources($app);
-                foreach ($help as $src) {
-                    if ($src->getId() && !$sources->contains($src)) {
-                        $sources->add($src);
-                    }
-                }
+        $sources     = array();
+        $application = $this->job->getApplication();
+        $help        = $this->getAllowedApplicationSources($application);
+        foreach ($help as $src) {
+            if (isset($sources[ $src->getId() ])) {
+                continue;
             }
+            $normalizer->handleValue($src);
+            gc_collect_cycles();
         }
-        foreach ($sources as $source) {
-            $data[] = $normalizer->handleValue($source);
-        }
-        return $data;
+    }
+
+    /**
+     * @return ExchangeJob
+     */
+    public function getJob()
+    {
+        return parent::getJob();
     }
 }

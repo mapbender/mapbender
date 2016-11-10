@@ -27,7 +27,7 @@ class WmsInstance extends SourceInstance
     protected $configuration;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="instance", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="Mapbender\WmsBundle\Entity\WmsSource", inversedBy="instances", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
     protected $source;
@@ -463,7 +463,7 @@ class WmsInstance extends SourceInstance
      */
     public function setRatio($ratio)
     {
-        $this->ratio = $ratio;
+        $this->ratio = floatval($ratio);
 
         return $this;
     }
@@ -486,7 +486,7 @@ class WmsInstance extends SourceInstance
      */
     public function setBuffer($buffer)
     {
-        $this->buffer = $buffer;
+        $this->buffer = intval($buffer);
         return $this;
     }
 
@@ -560,8 +560,7 @@ class WmsInstance extends SourceInstance
                 '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js'),
             'css' => array(),
             'trans' => array(
-                'MapbenderCoreBundle::geosource.json.twig',
-                'MapbenderWmsBundle::wmsbundle.json.twig'
+                'MapbenderCoreBundle::geosource.json.twig'
             )
         );
     }

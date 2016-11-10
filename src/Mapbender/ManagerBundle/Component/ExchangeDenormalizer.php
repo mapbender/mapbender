@@ -29,6 +29,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
      */
     protected $mapper;
 
+    protected $doFlush;
+
     /**
      * Creates an instance.
      * @param ContainerInterface $container container
@@ -38,6 +40,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     {
         parent::__construct($container);
         $this->em     = $this->container->get('doctrine')->getManager();
+        $name = $this->em->getConnection()->getDatabasePlatform()->getName();
+        $this->doFlush = $name === 'sqlite' || $name === 'mysql' || $name === 'spatialite' ? true : false;
         $this->mapper = $mapper;
         $this->data   = $data;
     }
@@ -83,10 +87,10 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         if (is_array($data) && $classDef = $this->getClassDifinition($data)) {
             try {
                 $this->em->getRepository($classDef[0]);
-                $meta     = $this->em->getClassMetadata($classDef[0]);
+                $meta     = $this->getClassMetadata($classDef[0]);
                 $criteria = $this->getIdentCriteria($data, $meta);
                 if ($this->isReference($data, $criteria)) {
-                    if ($object = $this->getFromMapper($classDef[0], $criteria)) {
+                    if ($object = $this->getAfterFromBefore($classDef[0], $criteria)) {
                         return $object['object'];
                     } elseif ($objectdata = $this->getEntityData($classDef[0], $criteria)) {
                         $object        = $this->handleEntity($objectdata, $meta);
@@ -98,7 +102,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                     return $object;
                 }
             } catch (MappingException $e) {
-                return $this->handleClass($data, new \ReflectionClass($classDef[0]));
+                return $this->handleClass($data, $this->getReflectionClass($classDef[0]));
             }
         } elseif (is_array($data)) {
             $result = array();
@@ -108,8 +112,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                 }
                 return $result;
             } else {
-                foreach ($data as $item) {
-                    $result[] = $this->handleData($item);
+                while (list($idx, $item) = each($data)) {
+                    $result[$idx] = $this->handleData($item);
                 }
             }
             return $result;
@@ -123,6 +127,9 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     private function saveEntity($object, ClassMetadata $classMeta, $criteriaBefore)
     {
         $this->em->persist($object);
+        if ($this->doFlush) {
+            $this->em->flush();
+        }
         $criteriaAfter = $this->getIdentCriteria($object, $classMeta);
         $this->addToMapper($object, $criteriaBefore, $criteriaAfter);
     }
@@ -148,18 +155,26 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $hasJoinColumns = isset($assocItem['joinColumns']);
             $hasFieldName = isset($data[$assocItem['fieldName']]);
+            // TODO fix add Mapbender\CoreBundle\Entity\Keyword with reference
             if (isset($data[$assocItem['fieldName']])
-                && $setMethod = $this->getSetMethod($assocItem['fieldName'], $classMeta->getReflectionClass())) {
+                && ($setMethod = $this->getSetMethod($assocItem['fieldName'], $classMeta->getReflectionClass()))
+                && !$this->findSuperClass($assocItem['targetEntity'], "Mapbender\CoreBundle\Entity\Keyword")) {
                 $result = $this->handleData($data[$assocItem['fieldName']]);
                 if (is_array($result)) {
                     if (count($result)) {
                         $collection = new \Doctrine\Common\Collections\ArrayCollection($result);
                         $setMethod->invoke($object, $collection);
                         $this->em->persist($object);
+                        if ($this->doFlush) {
+                            $this->em->flush();
+                        }
                     }
                 } else {
                     $setMethod->invoke($object, $result);
                     $this->em->persist($object);
+                    if ($this->doFlush) {
+                        $this->em->flush();
+                    }
                 }
             }
         }
@@ -214,16 +229,16 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             }
         }
         $this->mapper[$realClass][] =
-            array('before' => $criteriaBefore, 'after' => array( 'criteria' => $criteriaAfter, 'object' => $object));
+            array('before' => $criteriaBefore, 'after' => array('criteria' => $criteriaAfter, 'object' => $object));
     }
 
     /**
-     * Adds object to mapper.
+     * Returns an imported object.
      *
      * @param string $class class name
      * @param int $criteriaBefore entity id before import
      */
-    public function getFromMapper($class, $criteriaBefore)
+    public function getAfterFromBefore($class, $criteriaBefore)
     {
         if (!isset($this->mapper[$class])) {
             return null;
@@ -232,6 +247,26 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         foreach ($this->mapper[$class] as $mapItem) {
             if ($mapItem['before'] == $criteriaBefore) {
                 return $mapItem['after'];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns an original object.
+     *
+     * @param string $class class name
+     * @param int $criteriaAfter entity id after import
+     */
+    public function getBeforeFromAfter($class, $criteriaAfter)
+    {
+        if (!isset($this->mapper[$class])) {
+            return null;
+        }
+
+        foreach ($this->mapper[$class] as $mapItem) {
+            if ($mapItem['after']['criteria'] == $criteriaAfter) {
+                return $mapItem['before'];
             }
         }
         return null;
@@ -262,8 +297,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                 }
             } else {
                 $help = array();
-                foreach ($value as $subvalue) {
-                    $help[] = $this->handleConfiguration($subvalue);
+                while (list($idx, $item) = each($value)) {
+                    $help[$idx] = $this->handleConfiguration($item);
                 }
                 return $help;
             }
@@ -286,7 +321,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             $configuration = $element->getConfiguration();
             foreach ($configuration as $key => $value) {
                 if ($key === 'target') { # dirty
-                    $target = $this->getFromMapper($this->getRealClass($element), array('id' => $value));
+                    $target = $this->getAfterFromBefore($this->getRealClass($element), array('id' => $value));
                     $configuration[$key] = $target['criteria']['id'];
                 } else {
                     $configuration[$key] = $this->handleConfiguration($value);
@@ -310,7 +345,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         if ($isSuperClass) {
             foreach ($this->mapper as $key => $value) {
                 if (class_exists($key) && $this->findSuperClass($key, $className)) {
-                    $result = $this->getFromMapper($key, array('id' => $id));
+                    $result = $this->getAfterFromBefore($key, array('id' => $id));
                     if ($result && isset($result['criteria']) && isset($result['criteria']['id'])) {
                         return $result['criteria']['id'];
                     }
@@ -318,7 +353,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             }
             return null;
         } else {
-            $result = $this->getFromMapper($className, array('id' => $id));
+            $result = $this->getAfterFromBefore($className, array('id' => $id));
             return $result && isset($result['criteria']) && isset($result['criteria']['id'])
                 ? $result['criteria']['id'] : null;
         }

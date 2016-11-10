@@ -7,6 +7,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -39,12 +40,11 @@ class ApplicationYAMLMapper
     /**
      * Get all YAML applications
      *
-     * @return array
+     * @return Application[]
      */
     public function getApplications()
     {
-        $definitions = $this->container->getParameter('applications');
-
+        $definitions  = $this->container->getParameter('applications');
         $applications = array();
         foreach ($definitions as $slug => $def) {
             $application = $this->getApplication($slug);
@@ -96,16 +96,15 @@ class ApplicationYAMLMapper
             $application->setCustomCss($definition['custom_css']);
         }
 
-        if(isset($definition['publicOptions'])){
+        if (isset($definition['publicOptions'])) {
             $application->setPublicOptions($definition['publicOptions']);
         }
 
-        if(isset($definition['publicOptions'])){
+        if (isset($definition['publicOptions'])) {
             $application->setPublicOptions($definition['publicOptions']);
         }
 
-        if(array_key_exists('extra_assets', $definition))
-        {
+        if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
         }
         if (key_exists('regionProperties', $definition)) {
@@ -172,19 +171,13 @@ class ApplicationYAMLMapper
                             ->setApplication($application);
 
                     // set Roles
-                    $element->yaml_roles = array();
-                    if (array_key_exists('roles', $elementDefinition)) {
-                        $element->yaml_roles = $elementDefinition['roles'];
-                    }
-                    $application->addElements($element);
+                    $element->setYamlRoles(array_key_exists('roles', $elementDefinition) ? $elementDefinition['roles'] : array());
+                    $application->addElement($element);
                 }
             }
         }
 
-        $application->yaml_roles = array();
-        if (array_key_exists('roles', $definition)) {
-            $application->yaml_roles = $definition['roles'];
-        }
+        $application->setYamlRoles(array_key_exists('roles', $definition) ? $definition['roles'] : array());
 
         if (!isset($definition['layersets'])) {
             $definition['layersets'] = array();
@@ -203,9 +196,9 @@ class ApplicationYAMLMapper
         foreach ($definition['layersets'] as $id => $layerDefinitions) {
             $layerset = new Layerset();
             $layerset
-                    ->setId($id)
-                    ->setTitle('YAML - ' . $id)
-                    ->setApplication($application);
+                ->setId($id)
+                ->setTitle('YAML - ' . $id)
+                ->setApplication($application);
 
             $weight = 0;
             foreach ($layerDefinitions as $id => $layerDefinition) {

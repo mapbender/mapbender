@@ -5,7 +5,7 @@
   overflow: visible;
 
   label.labelInput {
-    width: 80px;
+    width: auto;
     font-weight: inherit;
     margin-bottom: inherit;
     line-height: $labelHeight;
@@ -15,5 +15,12 @@
     min-width: 190px;
     width: 100%;
     margin-bottom: $space/2;
+  }
+  .printSubmit {
+    float: right;
+  }
+
+  #printToggle.active {
+    background-color: #538e24;
   }
 }
