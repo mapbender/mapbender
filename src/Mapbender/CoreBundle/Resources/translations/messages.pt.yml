@@ -136,6 +136,8 @@ mb:
         button: Button
       error:
         notsupported: 'O serviço Geolocation não é suportado por pelo seu browser.'
+        nosignal: Kurrentli seu posible música losate a posição legal.
+
     layertree:
       class:
         title: 'Árvore de camadas'
@@ -337,6 +339,9 @@ mb:
         description: 'Pesquisa simples sobre dados de JSON (p. ex. Solr)'
       input:
         search: Procurar
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
     htmlelement:
       class:
         title: HTML

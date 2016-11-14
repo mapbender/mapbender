@@ -1,8 +1,3 @@
-@import "libs/variables";
-@import "libs/mixins";
-@import "libs/normalize";
-@import "libs/icons";
-
 @import "modules/base";
 @import "modules/text";
 @import "modules/layout";
@@ -16,15 +11,20 @@
 @import "modules/radiobutton";
 @import "modules/dropdown";
 @import "modules/table";
+@import "modules/popup_dialog";
+@import "element/mbslider";
 
-$bannerHeight:170px;
-$contentPaneWidth:800px;
-$navWidth:200px;
-$pageWidth:$contentPaneWidth + $navWidth;
+
+@import url("components/open-sans/open-sans.css");
+@import url("components/bootstrap/css/bootstrap.min.css");
+
+
+$bannerHeight: 170px;
+$contentPaneWidth: 800px;
+$navWidth: 200px;
+$pageWidth: $contentPaneWidth + $navWidth;
 
 @mixin opacityAlpha($alpha) {
-  /* Required for IE 5, 6, 7 */
-  /* ...or something to trigger hasLayout, like zoom: 1; */
 
   /* Theoretically for IE 8 & 9 (more valid) */
   /* ...but not required as filter works too */
@@ -35,12 +35,6 @@ $pageWidth:$contentPaneWidth + $navWidth;
   /* ... but also 5, 6, 7 */
   filter: alpha(opacity=$alpha*100);
 
-  /* Older than Firefox 0.9 */
-  -moz-opacity:$alpha;
-
-  /* Safari 1.x (pre WebKit!) */
-  -khtml-opacity: $alpha;
-
   /* Modern!
   /* Firefox 0.9+, Safari 2?, Chrome any?
   /* Opera 9+, IE 9+ */
@@ -49,10 +43,39 @@ $pageWidth:$contentPaneWidth + $navWidth;
 
 // ------------------------------------------------------------------------ PAGE
 .page{
-  position:relative;
   top:-$bannerHeight;
   margin: 0 auto;
   width:$pageWidth;
+}
+.popupContainer,
+.page{
+  position:relative;
+  a {
+    text-decoration: none;
+    &:hover{
+      color: $darkFontColor;
+    }
+  }
+  @media (min-width: 992px){
+    .container {
+      width: auto;
+    }
+  }
+  @media (min-width: 768px){
+    .container {
+      width: auto;
+    }
+  }
+
+  .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+    border-top: none;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
 }
 .iconBig, .iconSmall{
   color:$darkFontColor;
@@ -185,10 +208,15 @@ $pageWidth:$contentPaneWidth + $navWidth;
   @include absolute(0 0 '' $navWidth);
 }
 
-textarea, input[type=text], input[type=submit], a.button, div.dropdown{
+textarea, input[type=text], input[type=submit], input[type=password],  a.button, button, div.dropdown {
   border-radius: $elementBorderRadius;
 }
-
+a.button{
+  color: $firstColor;
+  &:hover{
+    color: $lightFontColor;
+  }
+}
 ul.dropdownList{
   border-bottom-left-radius: $elementBorderRadius;
   border-bottom-right-radius: $elementBorderRadius;

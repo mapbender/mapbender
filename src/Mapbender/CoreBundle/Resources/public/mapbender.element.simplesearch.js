@@ -35,8 +35,13 @@ $.widget('mapbender.mbSimpleSearch', {
         // On item selection in autocomplete, parse data and set map bbox
         var format = new OpenLayers.Format[this.options.geom_format]();
         searchInput.on('mbautocomplete.selected', function(evt, evtData) {
-            var feature = format.read(evtData.data[self.options.geom_attribute]);
 
+            if(!evtData.data[self.options.geom_attribute]) {
+                $.notify( Mapbender.trans("mb.core.simplesearch.error.geometry.missing"));
+                return;
+            }
+
+            var feature = format.read(evtData.data[self.options.geom_attribute]);
             var olMap = Mapbender.Model.map.olMap;
             var bounds = feature.geometry.getBounds();
 

@@ -76,6 +76,9 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             buffer: sourceDef.configuration.options.buffer ? parseInt(sourceDef.configuration.options.buffer) : 0, // int only for gridded mode
             ratio: sourceDef.configuration.options.ratio ? parseFloat(sourceDef.configuration.options.ratio) : 1.0 // float only for single-tile mode
         };
+        if (sourceDef.configuration.options.exception_format) {
+            mqLayerDef.wms_parameters.exceptions = sourceDef.configuration.options.exception_format;
+        }
         $.extend(mqLayerDef, this.defaultOptions);
         return mqLayerDef;
     },
@@ -96,6 +99,7 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             mqLayer.olLayer.params.FORMAT
         );
         reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = mqLayer.olLayer.queryLayers;
+        reqObj.params['STYLES'] = [];
         reqObj.params['EXCEPTIONS'] = mqLayer.source.configuration.options.exception_format;
         var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
         return reqUrl;

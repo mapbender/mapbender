@@ -2,15 +2,26 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ * Class SQLSearchEngine
+ *
+ * @package Mapbender\CoreBundle\Component
+ */
 class SQLSearchEngine
 {
-
+    /** @var  ContainerInterface */
     protected $container;
 
-    public function __construct($container)
+    /**
+     * SQLSearchEngine constructor.
+     *
+     * @param $container
+     */
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -22,20 +33,20 @@ class SQLSearchEngine
      * @todo Make case invariant configurable
      * @todo Limit results
      *
-     * @param  Array  $config     Search configuration
+     * @param  array  $config     Search configuration
      * @param  String $key        Autocomplete field nme
      * @param  String $value      Autocomplete value
      * @param  Object $properties All form values
      * @param  String $srs        Current map SRS
-     * @param  Array  $extent     Current map extent
-     * @return Array              Autocomplete suggestions
+     * @param  array  $extent     Current map extent
+     * @return array              Autocomplete suggestions
      */
     public function autocomplete($config, $key, $value, $properties, $srs, $extent)
     {
         // First, get DBAL connection service, either given one or default one
-        $connection = $config['class_options']['connection'] ? : 'default';
-        $connection = $this->container->get('doctrine.dbal.' . $connection . '_connection');
-        $qb = $connection->createQueryBuilder();
+        /** @var Connection $connection */
+        $connection     = $this->getConnection($config);
+        $qb             = $connection->createQueryBuilder();
 
         if (!array_key_exists($key, $config['form'])) {
             $key = '"' . $key . '"';
@@ -133,18 +144,18 @@ class SQLSearchEngine
      * @todo Make case invariant configurable
      * @todo Paging
      *
-     * @param  Array $config Search configuration
-     * @param  Array $data   Form data
-     * @param  String $srs   Search extent SRS
-     * @param  Array $extent Search extent
-     * @return Array         Search results
+     * @param  array  $config Search configuration
+     * @param  array  $data   Form data
+     * @param  string $srs    Search extent SRS
+     * @param  array  $extent Search extent
+     * @return array         Search results
      */
     public function search($config, $data, $srs, $extent)
     {
         // First, get DBAL connection service, either given one or default one
-        $connection = $config['class_options']['connection'] ? : 'default';
-        $connection = $this->container->get('doctrine.dbal.' . $connection . '_connection');
-        $qb = $connection->createQueryBuilder();
+
+        $connection     = $this->getConnection($config);
+        $qb             = $connection->createQueryBuilder();
 
         // Build SELECT
         $select = implode(', ', array_map(function($attribute)
@@ -278,6 +289,16 @@ class SQLSearchEngine
                 });
 
         return $rows;
+    }
+
+    /**
+     * @param $config
+     * @return   Connection $connection
+     */
+    protected function getConnection($config)
+    {
+        $connectionName = $config['class_options']['connection'] ?: 'default';
+        return $this->container->get('doctrine.dbal.' . $connectionName . '_connection');
     }
 
 }

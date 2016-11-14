@@ -233,6 +233,9 @@ mb:
       class:
         title: 'Simpele zoek'
         description: 'Enkel zoekveld voor JSON bronnen (e.g. Solr)'
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
     overview:
       nolayer: 'Het overzichtselement heeft geen laag.'
       class:
@@ -244,6 +247,7 @@ mb:
     gpsposition:
       error:
         notsupported: 'Sorry maar de geo locatie service wordt niet ondersteund door deze browser.'
+        nosignal: Kurrentli zijn muziek posible losate de rechtspositie.
       class:
         title: 'GPS Positie'
         description: 'Renders een knop om de GPS positie te tonen'

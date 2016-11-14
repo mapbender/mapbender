@@ -34,7 +34,10 @@ mb:
         search: Поиск
       class:
         title: 'Простой Поиск'
-        description: 'Одно поле поиска на json источников (например Solr)'
+        description: 'Поле поиска источников (например Solr)'
+      error:
+        geometry:
+          missing: Выбраный объект не содержит геометрии.
     searchrouter:
       popup:
         btn:
@@ -157,6 +160,7 @@ mb:
     gpsposition:
       error:
         notsupported: 'Извините, но геолокационные сервисы не поддерживаются вашим браузером.'
+        nosignal: Невозможно определить ваше местоположение.
       class:
         title: GPS-положение
         description: 'Отображает кнопку, чтобы показать позицию GPS'

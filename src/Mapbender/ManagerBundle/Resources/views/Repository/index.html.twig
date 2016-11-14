@@ -29,13 +29,6 @@
             {% elseif source.valid is not null %}
                 <span class="iconWarningSmpl icon" title="{{"mb.manager.admin.source.notvalid"|trans}}"></span><br>
             {% endif %}
-            {% if source.status == 0 %}
-                <span class="iconOk icon" title="{{"mb.manager.admin.source.status.ok"|trans}}"></span>
-            {% elseif source.status == 1 %}
-                <span class="iconBan icon error" title="{{"mb.manager.admin.source.status.unreachable"|trans}}"></span>
-            {% elseif source.status == 2 %}
-                <span class="iconReset icon warning" title="{{"mb.manager.admin.source.status.toupdate"|trans}}"></span>
-            {% endif %}
         </div>
         <div class="col2 box">
           <a href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>

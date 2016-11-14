@@ -19,6 +19,9 @@ mb:
       class:
         title: 'Einfache Suche'
         description: 'Einfeldsuche über JSON-Daten (z.B. Solr)'
+      error:
+        geometry:
+          missing: Der ausgewählte Eintrag enthält keine Geometrie.
     searchrouter:
       popup:
         btn:
@@ -155,6 +158,7 @@ mb:
     gpsposition:
       error:
         notsupported: 'Entschuldigung! Der Geolocation Dienst wird Ihrem Browser nicht unterstützt.'
+        nosignal: Es ist nicht möglich Ihre Position zu bestimmen.
       class:
         title: GPS-Position
         description: 'Übergibt einen Button um die GPS-Position anzuzeigen.'

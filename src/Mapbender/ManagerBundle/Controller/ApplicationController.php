@@ -43,7 +43,7 @@ class ApplicationController extends WelcomeController
      *
      * @ManagerRoute("/applications")
      * @Method("GET")
-     * @Template
+     * @Template("MapbenderCoreBundle:Welcome:list.html.twig")
      */
     public function indexAction()
     {
@@ -676,7 +676,7 @@ class ApplicationController extends WelcomeController
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        if (!$this->getContext()->isUserAllowedToCreate($application)) {
+        if (!$this->getContext()->isUserAllowedToEdit($application)) {
             throw new AccessDeniedException();
         }
 
@@ -956,7 +956,7 @@ class ApplicationController extends WelcomeController
         $query         = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources       = $query->getResult();
         $baseUrl       = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-        $screenShotUrl = $application->getScreenshot();
+        $screenShotUrl = AppComponent::getUploadsUrl($this->container) . "/" . $application->getSlug() . "/" . $application->getScreenshot();
 
         if (!$screenShotUrl) {
             $screenShotUrl = $baseUrl . "/" . $application->getScreenshot();

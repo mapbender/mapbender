@@ -179,7 +179,7 @@ mb:
     metadata:
       section:
         common:
-          common: Allgemein
+          _title: Allgemein
           title: Titel
           name: Name
           version: Version
@@ -188,7 +188,7 @@ mb:
           onlineResource: OnlineResource
           exceptionFormats: Ausnahmeformate
         contact:
-          title: Kontakt
+          _title: Kontakt
           person: Person
           position: Position
           organization: Organization
@@ -202,13 +202,13 @@ mb:
           addressPostCode: PLZ
           addressCountry: Staat
         items:
-          layer: Ebene
+          _title: Ebene
           title: Titel
           name: Name
           srs: SRS
           bbox: BoundingBox
         useconditions:
-          title: Nutzungsbedingungen
+          _title: Nutzungsbedingungen
           fees: Gebühren
           accessconstraints: Zugangsbeschränkungen
       popup:

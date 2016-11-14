@@ -108,8 +108,12 @@ Mapbender.Model = {
         }
         if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
             $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
+                var coord = new OpenLayers.LonLat(poi.x, poi.y);
+                if(poi.srs) {
+                    coord = coord.transform(self.getProj(poi.srs), self.getCurrentProj());
+                }
                 pois.push({
-                    position: new OpenLayers.LonLat(poi.x, poi.y),
+                    position: coord,
                     label: poi.label,
                     scale: poi.scale
                 });
@@ -197,6 +201,9 @@ Mapbender.Model = {
 
             this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
             $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
+                if(!Mapbender.configuration.layersets[layersetId]) {
+                    return;
+                }
                 $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
                     $.each(defArr, function(idx, layerDef) {
                         layerDef['origId'] = idx;
@@ -518,8 +525,10 @@ Mapbender.Model = {
         var source = this.getSource(toChangeOpts.sourceIdx);
         var result = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
-        if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
-            mqLayer.olLayer.redraw();
+        if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers, result.styles)) {
+            mqLayer.olLayer.removeBackBuffer();
+            mqLayer.olLayer.createBackBuffer();
+            mqLayer.olLayer.redraw(true);
         }
         return result.changed;
     },
@@ -536,7 +545,7 @@ Mapbender.Model = {
                 }
             });
             var mqLayer = self.map.layersList[source.mqlid];
-            if (self._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
+            if (self._resetSourceVisibility(mqLayer, result.layers, result.infolayers, result.styles)) {
                 mqLayer.olLayer.redraw();
             }
             for (var child in result.changed.children) {
@@ -571,7 +580,7 @@ Mapbender.Model = {
      * @returns {boolean}
      * @private
      */
-    _resetSourceVisibility: function(mqLayer, layers, infolayers) {
+    _resetSourceVisibility: function(mqLayer, layers, infolayers, styles) {
         mqLayer.olLayer.queryLayers = infolayers;
         if(mqLayer.hasOwnProperty("id")) {
             if(this._layersHash.hasOwnProperty(mqLayer.id) && this._layersHash[mqLayer.id] == layers.toString()) {
@@ -584,6 +593,7 @@ Mapbender.Model = {
                 object: mqLayer.olLayer
             });
         }
+        mqLayer.olLayer.params.STYLES = styles;
         if(layers.length === 0) {
             mqLayer.olLayer.setVisibility(false);
             mqLayer.visible(false);
@@ -1069,7 +1079,8 @@ Mapbender.Model = {
             layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
                 id: tomove.layerId
             });
-            this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
+            var targetIdx = layerToMove.idx > afterLayer.idx ? beforeLayer.idx + 1 : beforeLayer.idx;
+            this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, targetIdx, before, after);
         } else if (before && before.source.id.toString() === tomove.source.id.toString()) {
 //            window.console && console.log("move layer into last pos");
             var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {

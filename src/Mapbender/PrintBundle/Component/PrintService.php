@@ -32,6 +32,13 @@ class PrintService
     protected $neededImageWidth;
     protected $neededImageHeight;
 
+    /**
+     * @var array Default geometry style
+     */
+    protected $defaultStyle = array(
+        "strokeWidth" => 1
+    );
+
     public function __construct($container)
     {
         $this->container = $container;
@@ -68,8 +75,8 @@ class PrintService
 
         // template configuration from odg
         $odgParser = new OdgParser($this->container);
-        $this->conf = $conf = $odgParser->getConf($data['template']);       
-        
+        $this->conf = $conf = $odgParser->getConf($data['template']);
+
         // image size
         $this->imageWidth = round($conf['map']['width'] / 25.4 * $data['quality']);
         $this->imageHeight = round($conf['map']['height'] / 25.4 * $data['quality']);
@@ -368,7 +375,7 @@ class PrintService
         $pageCount = $pdf->setSourceFile($pdfFile);
         $tplidx = $pdf->importPage(1);
         $pdf->SetAutoPageBreak(false);
-        $pdf->addPage($orientation);
+        $pdf->addPage($orientation, $format);
         $pdf->useTemplate($tplidx);
 
         // add final map image
@@ -388,11 +395,18 @@ class PrintService
             $this->addNorthArrow();
         }
 
+        // get digitizer feature
+        if (isset($this->data['digitizer_feature'])) {
+            $dfData = $this->data['digitizer_feature'];
+            $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
+        }
+
         // fill text fields
         if (isset($this->conf['fields']) ) {
-            foreach ($this->conf['fields'] as $k => $fontConfiguration) {
-                $fontsize = isset($fontConfiguration['fontsize']) ? $fontConfiguration['fontsize']: 20;
-                $pdf->SetFont('Arial', '',$fontsize);
+            foreach ($this->conf['fields'] as $k => $v) {
+                list($r, $g, $b) = CSSColorParser::parse($this->conf['fields'][$k]['color']);
+                $pdf->SetTextColor($r,$g,$b);
+                $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
                 $pdf->SetXY($this->conf['fields'][$k]['x'] - 1,
                     $this->conf['fields'][$k]['y']);
 
@@ -417,7 +431,18 @@ class PrintService
                         if (isset($this->data['extra'][$k])) {
                             $pdf->MultiCell($this->conf['fields'][$k]['width'],
                                 $this->conf['fields'][$k]['height'],
-                                $this->data['extra'][$k]);
+                                utf8_decode($this->data['extra'][$k]));
+                        }
+
+                        // fill digitizer feature fields
+                        if(preg_match("/^feature./", $k)){
+                            if($feature == false){
+                                continue;
+                            }
+                            $attribute = substr(strrchr($k, "."), 1);
+                            $pdf->MultiCell($this->conf['fields'][$k]['width'],
+                                $this->conf['fields'][$k]['height'],
+                                $feature->getAttribute($attribute));
                         }
                         break;
                 }
@@ -730,8 +755,16 @@ class PrintService
                 $this->conf['fields']['dynamic_text']['height'],
                 $group->getDescription());
         
-    }    
-    
+    }
+
+    private function getFeature($schemaName, $featureId)
+    {
+        $featureTypeService = $this->container->get('features');
+        $featureType = $featureTypeService->get($schemaName);
+        $feature = $featureType->get($featureId);
+        return $feature;
+    }
+
     private function getColor($color, $alpha, $image)
     {
         list($r, $g, $b) = CSSColorParser::parse($color);
@@ -746,6 +779,7 @@ class PrintService
 
     private function drawPolygon($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $ring) {
             if(count($ring) < 3) {
                 continue;
@@ -762,67 +796,71 @@ class PrintService
                 $points[] = floatval($p[1]);
             }
             imagesetthickness($image, 0);
-            // Filled area
-            if($geometry['style']['fillOpacity'] > 0){
+
+            if($style['fillOpacity'] > 0){
                 $color = $this->getColor(
-                    $geometry['style']['fillColor'],
-                    $geometry['style']['fillOpacity'],
+                    $style['fillColor'],
+                    $style['fillOpacity'],
                     $image);
                 imagefilledpolygon($image, $points, count($ring), $color);
             }
             // Border
             $color = $this->getColor(
-                $geometry['style']['strokeColor'],
-                $geometry['style']['strokeOpacity'],
+                $style['strokeColor'],
+                $style['strokeOpacity'],
                 $image);
-            imagesetthickness($image, $geometry['style']['strokeWidth']);
+            imagesetthickness($image, $style['strokeWidth']);
             imagepolygon($image, $points, count($ring), $color);
         }
     }
 
     private function drawMultiPolygon($geometry, $image)
     {
-        foreach($geometry['coordinates'][0] as $ring) {
-            if(count($ring) < 3) {
-                continue;
-            }
-
-            $points = array();
-            foreach($ring as $c) {
-                if($this->rotation == 0){
-                    $p = $this->realWorld2mapPos($c[0], $c[1]);
-                }else{
-                    $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+        $style = $this->getStyle($geometry);
+        foreach($geometry['coordinates'] as $element) {
+            foreach($element as $ring) {
+                if(count($ring) < 3) {
+                    continue;
                 }
-                $points[] = floatval($p[0]);
-                $points[] = floatval($p[1]);
-            }
-            imagesetthickness($image, 0);
-            // Filled area
-            if($geometry['style']['fillOpacity'] > 0){
+
+                $points = array();
+                foreach($ring as $c) {
+                    if($this->rotation == 0){
+                        $p = $this->realWorld2mapPos($c[0], $c[1]);
+                    }else{
+                        $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+                    }
+                    $points[] = floatval($p[0]);
+                    $points[] = floatval($p[1]);
+                }
+                imagesetthickness($image, 0);
+                // Filled area
+                if($style['fillOpacity'] > 0){
+                    $color = $this->getColor(
+                        $style['fillColor'],
+                        $style['fillOpacity'],
+                        $image);
+                    imagefilledpolygon($image, $points, count($ring), $color);
+                }
+                // Border
                 $color = $this->getColor(
-                    $geometry['style']['fillColor'],
-                    $geometry['style']['fillOpacity'],
+                    $style['strokeColor'],
+                    $style['strokeOpacity'],
                     $image);
-                imagefilledpolygon($image, $points, count($ring), $color);
+                imagesetthickness($image, $style['strokeWidth']);
+                imagepolygon($image, $points, count($ring), $color);
             }
-            // Border
-            $color = $this->getColor(
-                $geometry['style']['strokeColor'],
-                $geometry['style']['strokeOpacity'],
-                $image);
-            imagesetthickness($image, $geometry['style']['strokeWidth']);
-            imagepolygon($image, $points, count($ring), $color);
         }
     }
 
     private function drawLineString($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         $color = $this->getColor(
-            $geometry['style']['strokeColor'],
-            $geometry['style']['strokeOpacity'],
+            $style['strokeColor'],
+            $style['strokeOpacity'],
             $image);
-        imagesetthickness($image, $geometry['style']['strokeWidth']);
+        imagesetthickness($image, $style['strokeWidth']);
 
         for($i = 1; $i < count($geometry['coordinates']); $i++) {
 
@@ -848,11 +886,12 @@ class PrintService
 	
     private function drawMultiLineString($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         $color = $this->getColor(
-            $geometry['style']['strokeColor'],
-            $geometry['style']['strokeOpacity'],
+            $style['strokeColor'],
+            $style['strokeOpacity'],
             $image);
-        imagesetthickness($image, $geometry['style']['strokeWidth']);
+        imagesetthickness($image, $style['strokeWidth']);
 	
 		foreach($geometry['coordinates'] as $coords) {
 		
@@ -1066,6 +1105,17 @@ class PrintService
 	$pixPos_y = (($maxY - $rw_y)/$extenty) * $this->neededImageHeight;
 
 	return array($pixPos_x, $pixPos_y);
+    }
+
+    /**
+     * Get geometry style
+     *
+     * @param string $geometry Geometry
+     * @return array Style
+     */
+    private function getStyle($geometry)
+    {
+        return array_merge($this->defaultStyle, $geometry['style']);
     }
 
 }

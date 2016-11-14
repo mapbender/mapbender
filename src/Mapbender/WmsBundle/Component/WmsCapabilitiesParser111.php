@@ -36,7 +36,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
      */
     public function parse()
     {
-        $wms  = new WmsSource();
+        $wms = new WmsSource();
         $root = $this->doc->documentElement;
 
         $wms->setVersion($this->getValue("./@version", $root));
@@ -50,7 +50,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
             } elseif ($capabilityEl->localName === "Layer") {
                 $rootlayer = new WmsLayerSource();
                 $wms->addLayer($rootlayer);
-                $layer     = $this->parseLayer($wms, $rootlayer, $capabilityEl);
+                $layer = $this->parseLayer($wms, $rootlayer, $capabilityEl);
             } elseif ($capabilityEl->localName === "UserDefinedSymbolization") {
                 $this->parseUserDefinedSymbolization($wms, $capabilityEl);
             }
@@ -74,7 +74,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         $wms->setDescription($this->getValue("./Abstract/text()", $contextElm));
 
         $keywordElList = $this->xpath->query("./KeywordList/Keyword", $contextElm);
-        $keywords      = new ArrayCollection();
+        $keywords = new ArrayCollection();
         foreach ($keywordElList as $keywordEl) {
             $keyword = new WmsSourceKeyword();
             $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
@@ -166,7 +166,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
     private function parseOperationRequestInformation(\DOMElement $contextElm)
     {
         $requestImformation = new RequestInformation();
-        $tempList           = $this->xpath->query("./Format", $contextElm);
+        $tempList = $this->xpath->query("./Format", $contextElm);
         if ($tempList !== null) {
             foreach ($tempList as $item) {
                 $requestImformation->addFormat($this->getValue("./text()", $item));
@@ -243,7 +243,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         $wmslayer->setAbstract($this->getValue("./Abstract/text()", $contextElm));
 
         $keywordElList = $this->xpath->query("./KeywordList/Keyword", $contextElm);
-        $keywords      = new ArrayCollection();
+        $keywords = new ArrayCollection();
         foreach ($keywordElList as $keywordEl) {
             $keyword = new WmsLayerSourceKeyword();
             $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
@@ -284,10 +284,10 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         }
         $attributionEl = $this->getValue("./Attribution", $contextElm);
         if ($attributionEl !== null) {
-            $attribution    = new Attribution();
+            $attribution = new Attribution();
             $attribution->setTitle($this->getValue("./Title/text()", $attributionEl));
             $attribution->setOnlineResource($this->getValue("./OnlineResource/@xlink:href", $attributionEl));
-            $logoUrl        = new LegendUrl();
+            $logoUrl = new LegendUrl();
             $logoUrl->setHeight($this->getValue("./LogoURL/@height", $attributionEl));
             $logoUrl->setWidth($this->getValue("./LogoURL/@width", $attributionEl));
             $onlineResource = new OnlineResource();
@@ -298,7 +298,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
             $wmslayer->setAttribution($attribution);
         }
 
-        $authorityList  = $this->xpath->query("./AuthorityURL", $contextElm);
+        $authorityList = $this->xpath->query("./AuthorityURL", $contextElm);
         $identifierList = $this->xpath->query("./Identifier", $contextElm);
         if ($authorityList !== null) {
             foreach ($authorityList as $authorityEl) {
@@ -320,7 +320,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         $metadataUrlList = $this->xpath->query("./MetadataURL", $contextElm);
         if ($metadataUrlList !== null) {
             foreach ($metadataUrlList as $metadataUrlEl) {
-                $metadataUrl    = new MetadataUrl();
+                $metadataUrl = new MetadataUrl();
                 $onlineResource = new OnlineResource();
                 $onlineResource->setFormat($this->getValue("./Format/text()", $metadataUrlEl));
                 $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href", $metadataUrlEl));
@@ -348,13 +348,13 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
                 $extent['name'] = $this->getValue("./@name", $extentEl);
                 $extent['default'] = $this->getValue("./@default", $extentEl);
                 $extent['multiplevalues'] = ($this->getValue("./@multipleValues", $extentEl) !== null ?
-                                             (bool) $this->getValue("./@name", $extentEl) : null);
+                    (bool)$this->getValue("./@name", $extentEl) : null);
                 $extent['nearestvalue'] = ($this->getValue("./@nearestValue", $extentEl) !== null ?
-                                           (bool) $this->getValue("./@name", $extentEl) : null);
+                    (bool)$this->getValue("./@name", $extentEl) : null);
                 $extent['current'] = ($this->getValue("./@current", $extentEl) !== null ?
-                                      (bool) $this->getValue("./@name", $extentEl) : null);
+                    (bool)$this->getValue("./@name", $extentEl) : null);
                 $extent['value'] = $this->getValue("./text()", $extentEl);
-                $found  = false;
+                $found = false;
                 foreach ($wmslayer->getDimension() as $dimension) {
                     if ($dimension->getName() === $extent['name']) {
                         $found = true;
@@ -411,7 +411,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
 
                 $legendUrlEl = $this->getValue("./LegendURL", $item);
                 if ($legendUrlEl !== null) {
-                    $legendUrl      = new LegendUrl();
+                    $legendUrl = new LegendUrl();
                     $legendUrl->setWidth($this->getValue("./@width", $legendUrlEl));
                     $legendUrl->setHeight($this->getValue("./@height", $legendUrlEl));
                     $onlineResource = new OnlineResource();
@@ -441,20 +441,14 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         }
         $scaleHintEl = $this->getValue("./ScaleHint", $contextElm);
         if ($scaleHintEl !== null) {
-            $scaleHint = new MinMax();
-            $min       = $this->getValue("./@min", $scaleHintEl);
-            $scaleHint->setMin($min !== null ? floatval($min) : null);
-            $max       = $this->getValue("./@max", $scaleHintEl);
-            $scaleHint->setMax($max !== null ? floatval($max) : null);
-            $wmslayer->setScaleHint($scaleHint);
-            $minScale  = ($scaleHint->getMin() / sqrt(2.0)) * $this->resolution /
-                2.54 * 100;
-            $maxScale  = ($scaleHint->getMax() / sqrt(2.0)) * $this->resolution /
-                2.54 * 100;
-            $scale     = new MinMax();
-            $scale->setMax(round($maxScale));
-            $scale->setMin(round($minScale));
-            $wmslayer->setScale($scale);
+            $minScaleHint = $this->getValue("./@min", $scaleHintEl);
+            $maxScaleHint = $this->getValue("./@max", $scaleHintEl);
+            $minScaleHint = $minScaleHint !== null ? floatval($minScaleHint) : null;
+            $maxScaleHint = $maxScaleHint !== null ? floatval($maxScaleHint) : null;
+            $minScale = !$minScaleHint ? null : round(($minScaleHint / sqrt(2.0)) * $this->resolution / 2.54 * 100);
+            $maxScale = !$maxScaleHint ? null : round(($maxScaleHint / sqrt(2.0)) * $this->resolution / 2.54 * 100);
+            $wmslayer->setScaleHint(new MinMax($minScaleHint, $maxScaleHint));
+            $wmslayer->setScale(new MinMax($minScale, $maxScale));
         }
 
         $tempList = $this->xpath->query("./Layer", $contextElm);

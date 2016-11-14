@@ -19,6 +19,9 @@ mb:
       class:
         title: __mb.core.simplesearch.class.title
         description: __mb.core.simplesearch.class.description
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
     searchrouter:
       popup:
         btn:
@@ -149,6 +152,7 @@ mb:
     gpsposition:
       error:
         notsupported: __mb.core.gpsposition.error.notsupported
+        nosignal: Attualmente non è possibile localizzare la Sua posizione.
       class:
         title: __mb.core.gpsposition.class.title
         description: __mb.core.gpsposition.class.description

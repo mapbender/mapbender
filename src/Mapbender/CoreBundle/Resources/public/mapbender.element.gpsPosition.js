@@ -134,10 +134,13 @@
         _centerMap: function (point) {
             var olmap = this.map.map.olMap,
                 extent = olmap.getExtent();
-            if (extent.containsLonLat(point) === false || true === this.options.follow) {
-                olmap.panTo(point);
-            } else if (this.firstPosition && this.options.centerOnFirstPosition) {
-                olmap.panTo(point);
+            if (extent.containsLonLat(point) === false) // point is in extent?
+            {
+                if (this.options.follow) {
+                    olmap.panTo(point);
+                } else if (this.firstPosition && this.options.centerOnFirstPosition) {
+                    olmap.panTo(point);
+                } 
             }
         },
 
@@ -218,7 +221,7 @@
 
 
                 }, function error(msg) {
-                    Mapbender.error("Es ist nicht möglich Ihre Position zu bestimmen.");
+                    Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.nosignal"));
                     widget.deactivate();
                 }, { enableHighAccuracy: true, maximumAge: 0 });
 
