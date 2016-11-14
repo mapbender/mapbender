@@ -6,19 +6,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
-use Mapbender\CoreBundle\Entity\SourceItem;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\WmsBundle\Component\IdentifierAuthority;
+use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\Identifier;
+use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
-use Mapbender\CoreBundle\Component\Utils;
 
 /**
  * @ORM\Entity
@@ -88,12 +88,12 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * @ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $latlonBounds;
+    protected $latlonBounds;
     /**
      * @ORM\Column(type="array", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $boundingBoxes;
+    protected $boundingBoxes;
     /**
      * @ORM\Column(type="array", nullable=true)
      */
@@ -106,27 +106,27 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * @ORM\Column(type="object",nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $scale;
+    protected $scale;
     /**
      * @ORM\Column(type="object",nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $scaleHint;
+    protected $scaleHint;
     /**
      * @ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $attribution;
+    protected $attribution;
     /**
      * @ORM\Column(type="array",nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $identifier;
+    protected $identifier;
     /**
      * @ORM\Column(type="array",nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $authority;
+    protected $authority;
     /**
      * @ORM\Column(type="array", nullable=true)
      */
