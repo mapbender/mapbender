@@ -13,6 +13,8 @@
     <div class="clearContainer"></div>
     {{ form_widget(form.configuration.legend_default_behaviour) }}<label for="{{form.configuration.legend_default_behaviour.vars.id}}" class="labelCheck">{{"mb.core.admin.printclient.label.legend_default_behaviour"|trans}}</label>
     <div class="clearContainer"></div>
+    {{ form_label(form.configuration.renderMode) }}{{ form_widget(form.configuration.renderMode) }}
+    <div class="clearContainer"></div>
     {{ form_label(form.configuration.file_prefix) }}{{ form_widget(form.configuration.file_prefix) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.quality_levels) }}

@@ -4,9 +4,19 @@
         <input type="button" class="button" id="printToggle" active="false" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
         <br>    
     {% endif %}
+
+    {% if configuration.renderMode is defined and configuration.renderMode == 'queued' %}
+    <div class="tab-container">
+        <ul class="tabs">
+            <li><a href="#tabs-1" class="settings">Einstellungen</a></li>
+            <li><a href="#tabs-2" class="own-queue">Druckaufträge</a></li>
+            <li><a href="#tabs-3" class="all-queues">Globale Druckaufträge</a></li>
+        </ul>
+    <div id="tabs-1" class="print-form">
+    {% endif %}
     
     <form id="formats" action="">
-        
+
         <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
         <div class="dropdown">
             <select name="template" class="hiddenDropdown">
@@ -64,16 +74,49 @@
             {% set legend_checked = 'checked' %}
             {% if configuration.legend_default_behaviour is defined and configuration.legend_default_behaviour == 0 %}
                 {% set legend_checked = '' %}
-            {% endif %}    
+            {% endif %}
             <div class="checkWrapper left iconCheckbox iconCheckboxActive " data-icon="iconCheckbox">
                 <input class="checkbox" type="checkbox" name="printLegend" value="1" {{ legend_checked }}>
             </div>
             <label class="labelCheck">{{ 'mb.core.printclient.label.legend' | trans }}</label>
         {% endif %}
-        
+
         <div id="layers"></div>
         <input type="submit" style="display: none"/>
         <input type="button" class="button printSubmit hidden" value="{{ 'mb.core.printclient.popup.btn.ok' | trans }}"/>
     
     </form>
+
+    {% if configuration.renderMode is defined and configuration.renderMode == 'queued' %}        
+    </div >
+
+        <div id="tabs-2" class="own-queues">
+            <table>
+                <thead>
+                <tr>
+                    <th class="id">Id</th>
+                    <th>Datum</th>
+                    <th class="status">Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+
+        <div id="tabs-3" class="all-queues">
+            <table>
+                <thead>
+                <tr>
+                    <th class="id">Id</th>
+                    <th>Datum</th>
+                    <th>Benutzer</th>
+                    <th class="status">Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+
+    </div>
+    {% endif %}
 </div>
