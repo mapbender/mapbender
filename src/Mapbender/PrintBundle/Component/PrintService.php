@@ -68,7 +68,7 @@ class PrintService
         /** @var SecurityContext $securityContext */
         $securityContext = $this->container->get('security.context');
         $token           = $securityContext->getToken();
-        $this->user      = $token->getUser();
+        $this->user = $token ? $token->getUser() : 'anon.';
         
         // data from client
         $this->data = $data;
