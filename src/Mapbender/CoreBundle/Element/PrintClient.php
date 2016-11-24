@@ -199,10 +199,8 @@ class PrintClient extends Element
             case 'queued':
                 $data = $this->preparePrintData($request);
                 $user = $this->container->get('mapbender.print.queue_manager')->getCurrentUser();
-                $data['renderMode'] = $configuration['renderMode'];
                 $data['userId'] = $user ? $user->getId() : null;
-                $data['anonymous'] = $configuration['anonymous'];
-                
+
                 $content = $this->container->get('signer')->dump(new SignerToken($data));
                 $duplicate = $request->duplicate(array(), null, array('content' => $content));
                 $duplicate->initialize(array(), array(), array(), array(), array(), array(), $content);
