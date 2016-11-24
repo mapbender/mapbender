@@ -82,27 +82,39 @@
             this.activate(callback);
         },
         activate: function(callback) {
-            this.callback = callback ? callback : null;
-            $('#' + this.options.target).addClass('mb-feature-info-active');
-            this.mapClickHandler.activate();
+            var widget = this;
+            var options = widget.options;
+            var mapElement = $('#' + options.target);
+
+            widget.callback = callback ? callback : null;
+            mapElement.addClass('mb-feature-info-active');
+            widget.mapClickHandler.activate();
         },
         deactivate: function() {
-            this._trigger('featureinfo', null, {
+            var widget = this;
+            var element = widget.element;
+            var options = widget.options;
+            var mapElement = $('#' + options.target);
+
+            widget._trigger('featureinfo', null, {
                 action: "deactivate",
-                title: this.element.attr('title'),
-                id: this.element.attr('id')
+                title: element.attr('title'),
+                id: element.attr('id')
             });
-            $('#' + this.options.target).removeClass('mb-feature-info-active');
+
+            mapElement.removeClass('mb-feature-info-active');
+
             $(".toolBarItemActive").removeClass("toolBarItemActive");
-            if (this.popup) {
-                if (this.popup.$element) {
-                    $('body').append(this.element.addClass('hidden'));
-                    this.popup.destroy();
+            if (widget.popup) {
+                if (widget.popup.$element) {
+                    $('body').append(element.addClass('hidden'));
+                    widget.popup.destroy();
                 }
-                this.popup = null;
+                widget.popup = null;
             }
-            this.mapClickHandler.deactivate();
-            this.callback ? this.callback.call() : this.callback = null;
+
+            widget.mapClickHandler.deactivate();
+            widget.callback ? widget.callback.call() : widget.callback = null;
         },
         _isVisible: function() {
             if (this.options.type === 'dialog') {// visible for dialog
@@ -344,65 +356,70 @@
             return this.contentManager;
         },
         _open: function() {
-            var self = this;
-            if (this.options.type === 'dialog') {
-                if (!this.popup || !this.popup.$element) {
-                    this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('data-title'),
+            var widget = this;
+            var options = widget.options;
+            if (options.type === 'dialog') {
+                if (!widget.popup || !widget.popup.$element) {
+                    widget.popup = new Mapbender.Popup2({
+                        title: widget.element.attr('data-title'),
                         draggable: true,
                         modal: false,
                         closeButton: false,
                         closeOnESC: false,
                         detachOnClose: false,
-                        content: this.element.removeClass('hidden'),
+                        content: widget.element.removeClass('hidden'),
                         resizable: true,
                         cssClass: 'featureinfoDialog',
-                        width: self.options.width,
-                        height: self.options.height,
+                        width: options.width,
+                        height: options.height,
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
                                 cssClass: 'button buttonCancel critical right',
                                 callback: function() {
                                     this.close();
-                                    if (self.options.deactivateOnClose) {
-                                        self.deactivate();
+                                    if (widget.options.deactivateOnClose) {
+                                        widget.deactivate();
                                     }
                                 }
                             }
                         }
                     });
-                    this.popup.$element.on('close', function() {
-                        self._trigger('featureinfo', null, {
+                    widget.popup.$element.on('close', function() {
+                        widget._trigger('featureinfo', null, {
                             action: "closedialog",
-                            title:  self.element.attr('title'),
-                            id:     self.element.attr('id')
+                            title:  widget.element.attr('title'),
+                            id:     widget.element.attr('id')
                         });
-                        self.state = 'closed';
-                        if (self.options.deactivateOnClose) {
-                            self.deactivate();
+                        if (widget.options.deactivateOnClose) {
+                            widget.deactivate();
                         }
-                        if (self.popup && self.popup.$element) {
-                            self.popup.$element.hide();
+                        if (widget.popup && widget.popup.$element) {
+                            widget.popup.$element.hide();
                         }
+                        widget.state = 'closed';
                     });
-                    this.popup.$element.on('open', function() {
-                        self.state = 'opened';
+                    widget.popup.$element.on('open', function() {
+                        widget.state = 'opened';
                     });
-                    if (this.options.printResult === true) {
-                        this.popup.addButtons({
+                    if (options.printResult === true) {
+                        widget.popup.addButtons({
                             'print': {
                                 label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
                                 cssClass: 'button right',
                                 callback: function() {
-                                    self._printContent();
+                                    widget._printContent();
                                 }
                             }
                         });
                     }
                 }
-                if(self.state !== 'opened') {
-                    this.popup.open();
+                if(widget.state !== 'opened') {
+                    widget.popup.open();
+                }
+
+                if(widget.popup && widget.popup.$element){
+                    widget.popup.$element.show();
                 }
             }
         },
