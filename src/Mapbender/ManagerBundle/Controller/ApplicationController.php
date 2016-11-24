@@ -182,7 +182,7 @@ class ApplicationController extends WelcomeController
     {
         $sourceApplication = $this->get('mapbender')->getApplicationEntity($slug);
 
-        if (!$this->getContext()->isUserAllowedToCreate($sourceApplication)) {
+        if (!$this->getContext()->isUserAllowedToEdit($sourceApplication)) {
             throw new AccessDeniedException();
         }
 
