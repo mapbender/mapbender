@@ -116,7 +116,8 @@ class PrintController extends Controller
      */
     public function exportAction()
     {
-        return (new ImageExportService($this->container))->export($this->get('request')->getContent());
+        $imageExportService = new ImageExportService($this->container);
+        return $imageExportService->export($this->get('request')->getContent());
     }
 
     /**

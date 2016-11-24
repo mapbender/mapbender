@@ -151,9 +151,10 @@ class PrintQueueManager extends EntitiesServiceBase
     {
         // try to detect user...
         $user = isset($payload['userId'])? $this->getUserById($payload['userId']):null;
+        $printQueue = new PrintQueue();
 
         return $this->persist(
-            (new PrintQueue())->setIdSalt(self::genSalt())
+            $printQueue->setIdSalt(self::genSalt())
                 ->setUser($user)
                 ->setQueued(new \DateTime())
                 ->setPayload($payload)
@@ -171,7 +172,8 @@ class PrintQueueManager extends EntitiesServiceBase
      */
     public function remove($entity, $flush = true)
     {
-        (new Filesystem())->remove($this->getPdfPath($entity));
+        $filesystem = new Filesystem();
+        $filesystem->remove($this->getPdfPath($entity));
         parent::remove($entity, $flush);
     }
 

@@ -43,7 +43,9 @@ class MapbenderPrintExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         // load service and parameters from XML
-        (new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config')))->load('services.xml');
+        $fileLocator = new FileLocator(__DIR__ . '/../Resources/config');
+        $xmlFileLoader = new XmlFileLoader($container, $fileLocator);
+        $xmlFileLoader->load('services.xml');
 
         // override parameters
         foreach($this->parameters as $key) {
