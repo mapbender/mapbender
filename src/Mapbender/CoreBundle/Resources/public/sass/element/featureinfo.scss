@@ -1,18 +1,22 @@
-.mb-element-featureinfo{
+.mb-element-featureinfo {
+  height: 100%;
+  iframe.featureInfoFrame {
+    width: 100%;
     height: 100%;
-  iframe.featureInfoFrame{
-      width: 100%;
-      height: 100%;
-      border-width: 0px;
+    border-width: 0px;
   }
-  .accordionContainer > .container{display:none}
-  .accordionContainer > .container.active{display:block}
-
-  .container {
-      width: 100%;
-      height: 100%;
+  > .accordionContainer {
+    > .container {
+      display: none;
+      &.active {
+        display: block !important;
+        height: 90% !important;
+        width: 100%;
+        padding: 0;
+        overflow: auto;
+      }
+    }
   }
-
 }
 
 .featureinfoDialog{
@@ -53,18 +57,17 @@
                 display:block;
                 position:relative;
                 >iframe{
-                    height:98%;
-                    width: 98%;
-                    position: absolute;
+                    height:100%;
+                    width:100%;
                 }
                 >.js-content-content{
-                  display:table-cell;
                   position: absolute;
                   bottom: 0;
                   top: 0;
                   overflow-y: auto;
                   overflow-x: auto;
                   width: 100%;
+                  display: block;
                 }
               }
             }
@@ -76,8 +79,8 @@
             height:90%;
             overflow:auto;
             >iframe{
-                height:98%;
-                width: 98%;
+                //height:98%;
+                //width: 98%;
                 position: absolute;
             }
           }
