@@ -1,25 +1,18 @@
-.mb-element-featureinfo {
+.mb-element-featureinfo{
   height: 100%;
-  iframe.featureInfoFrame {
+  iframe.featureInfoFrame{
     width: 100%;
     height: 100%;
     border-width: 0px;
   }
-  > .accordionContainer {
-    > .container {
-      display: none;
-      &.active {
-        height: auto;
-        position: absolute;
-        top: 34px;
-        bottom: 0;
-        display: block !important;
-        width: 100%;
-        padding: 0;
-        overflow: auto;
-      }
-    }
+  .accordionContainer > .container{display:none}
+  .accordionContainer > .container.active{display:block}
+
+  .container {
+    width: 100%;
+    height: 100%;
   }
+
 }
 
 .featureinfoDialog{
@@ -60,17 +53,18 @@
                 display:block;
                 position:relative;
                 >iframe{
-                    height:100%;
-                    width:100%;
+                  height:98%;
+                  width: 98%;
+                  position: absolute;
                 }
                 >.js-content-content{
+                  display:table-cell;
                   position: absolute;
                   bottom: 0;
                   top: 0;
                   overflow-y: auto;
                   overflow-x: auto;
                   width: 100%;
-                  display: block;
                 }
               }
             }
@@ -82,9 +76,9 @@
             height:90%;
             overflow:auto;
             >iframe{
-                //height:98%;
-                //width: 98%;
-                position: absolute;
+              height:98%;
+              width: 98%;
+              position: absolute;
             }
           }
         }
