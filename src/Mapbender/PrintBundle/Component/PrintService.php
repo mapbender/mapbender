@@ -990,6 +990,9 @@ class PrintService
                     if($y + $tempY + 10 > ($this->pdf->getHeight()) && $legend_conf == false){
                         $x += 105;
                         $y = 10;
+                        if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                           $this->addLegendpage_image();
+                        } 
                         if($x + 20 > ($this->pdf->getWidth())){
                             $this->pdf->addPage('P');
                             $x = 5;
