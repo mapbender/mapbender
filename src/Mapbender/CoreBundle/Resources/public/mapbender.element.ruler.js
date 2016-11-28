@@ -165,6 +165,8 @@
         _reset: function(){
             this.segments.empty();
             this.total.empty();
+            this.segments.append('<li/>');
+
         },
         _handleModify: function(event){
             if(event.measure === 0.0){
@@ -172,6 +174,10 @@
             }
 
             var measure = this._getMeasureFromEvent(event);
+            if(this.control.immediate){
+                this._updateView(measure);
+
+            }
             if($('body').data('mapbenderMbPopup')){
                 $("body").mbPopup('setContent', measure);
             }
@@ -186,7 +192,8 @@
             if(this.options.type === 'area'){
                 this.segments.html($('<li/>', { html: measure }));
             } else if(this.options.type === 'line'){
-                this.segments.append($('<li/>', { html: measure }));
+                this._updateView(measure);
+                this.segments.append($('<li/>'));
             }
         },
         _handleFinal: function(event){
@@ -208,6 +215,14 @@
             }
 
             return measure;
+        },
+        /**
+         * Updates the shown distance/area in the popup
+         * @param {String} measure
+         */
+
+        _updateView : function(measure){
+            this.segments.children('li').last().html(measure);
         },
         /**
          *
