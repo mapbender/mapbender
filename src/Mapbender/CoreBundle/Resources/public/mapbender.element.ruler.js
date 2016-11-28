@@ -76,10 +76,9 @@
             });
 
             this.container = $('<div/>');
+            this.total = $('<div/>').appendTo(this.container);
             this.segments = $('<ul/>').appendTo(this.container);
 
-            this.total = $('<div/>').appendTo(this.container);
-            
             $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
             
             this._trigger('ready');
@@ -173,11 +172,13 @@
                 return;
             }
 
-            var measure = this._getMeasureFromEvent(event);
-            if(this.control.immediate){
-                this._updateView(measure);
+            var widget = this;
+            var measure = widget._getMeasureFromEvent(event);
 
+            if(widget.control.immediate){
+                widget.segments.children('li').first().html(measure);
             }
+
             if($('body').data('mapbenderMbPopup')){
                 $("body").mbPopup('setContent', measure);
             }
@@ -192,8 +193,9 @@
             if(this.options.type === 'area'){
                 this.segments.html($('<li/>', { html: measure }));
             } else if(this.options.type === 'line'){
-                this._updateView(measure);
-                this.segments.append($('<li/>'));
+                var measureElement = $('<li/>');
+                measureElement.html(measure);
+                this.segments.prepend(measureElement);
             }
         },
         _handleFinal: function(event){
@@ -216,14 +218,7 @@
 
             return measure;
         },
-        /**
-         * Updates the shown distance/area in the popup
-         * @param {String} measure
-         */
 
-        _updateView : function(measure){
-            this.segments.children('li').last().html(measure);
-        },
         /**
          *
          */
