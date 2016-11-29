@@ -21,30 +21,38 @@
         queries: {},
         state: null,
         contentManager: null,
+
         _create: function() {
             if (!Mapbender.checkTarget("mbFeatureInfo", this.options.target)) {
                 return;
             }
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
+
         _setup: function() {
-            var self = this;
-            this.target = $("#" + this.options.target).data("mapbenderMbMap");//.getModel();
-            this.mapClickHandler = new OpenLayers.Handler.Click(this,
-                {'click': this._triggerFeatureInfo},
-                {map: $('#' + this.options.target).data('mapQuery').olMap}
-            );
-            if (this.options.autoActivate || this.options.autoOpen){ // autoOpen old configuration
-                this.activate();
+            var widget = this;
+            var options = widget.options;
+            var mapElement = $("#" + options.target);
+            var widgetElement = widget.element;
+            widget.target = mapElement.data("mapbenderMbMap");//.getModel();
+            widget.mapClickHandler = new OpenLayers.Handler.Click(widget,
+                {'click': widget._triggerFeatureInfo},
+                {map: mapElement.data('mapQuery').olMap});
+
+            widgetElement.addClass('display-as-' + options.displayType);
+
+            if (options.autoActivate || options.autoOpen){ // autoOpen old configuration
+                widget.activate();
             }
-            $(this.element).on('click', '.js-header', function(e) {
-                $('.js-content.active:first', self.element).each(function(idx, item){ // only one tab is active
+
+            widgetElement.on('click', '.js-header', function(e) {
+                $('.js-content.active:first', widgetElement).each(function(idx, item){ // only one tab is active
                     if($('iframe:first', $(item)).length){
                         function fireIfLoaded($item, num){
                             if($('iframe:first', $item).data('loaded')){
-                                self._trigger('featureinfo', null, {
+                                widget._trigger('featureinfo', null, {
                                     action: "activated_content",
-                                    id: self.element.attr('id'),
+                                    id: widgetElement.attr('id'),
                                     activated_content: [$item.attr('id')]
                                 });
                                 return;
@@ -59,16 +67,16 @@
                         }
                         fireIfLoaded($(item), 0);
                     } else {
-                        self._trigger('featureinfo', null, {
+                        widget._trigger('featureinfo', null, {
                             action: "activated_content",
-                            id: self.element.attr('id'),
+                            id: widgetElement.attr('id'),
                             activated_content: [$(item).attr('id')]
                         });
                     }
                 });
             });
-            this._trigger('ready');
-            this._ready();
+            widget._trigger('ready');
+            widget._ready();
         },
         _contentRef: function(mqLayer){
             var $context = this._getContext();
