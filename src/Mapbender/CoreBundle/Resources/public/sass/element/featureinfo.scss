@@ -158,21 +158,30 @@
       }
 
       &.display-as-accordion {
-        > .tabContainer {
-          > .tabs {
-            > li {
-              &.active {
-              }
+
+        // Accordion holder
+        > .accordionContainer {
+
+          // Header
+          > .accordion {
+            &.active {
             }
           }
+
+          // Content
           > .container {
+            display: none;
+
             &.active {
               display: table-row;
+
+              iframe.featureInfoFrame {
+                height: 98%;
+              }
             }
           }
         }
       }
-
     }
   }
 }
