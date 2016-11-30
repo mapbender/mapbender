@@ -24,7 +24,9 @@
   <div id="templateWrapper" class="templateWrapper sidePaneOpened">
     {% if fom.server_logo is defined %}
       <div class="logoContainer">
+        {% block logo %}
         <img class="logo" height="40" src="{{ asset(fom.server_logo) }}"/>
+        {% endblock %}
       </div>
     {% endif %}
 
