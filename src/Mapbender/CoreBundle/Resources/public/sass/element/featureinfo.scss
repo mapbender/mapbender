@@ -143,6 +143,11 @@
             &.active {
               display: block;
               padding: 20px;
+              position: absolute;
+              left: 0;
+              right: 0;
+              top: 34px;
+              height: 90%;
               iframe.featureInfoFrame {
                 height: 100%;
                 width: 100%;
