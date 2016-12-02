@@ -58,17 +58,13 @@ class PrintController extends Controller
         $type    = $token['request']['type'];
         $userId  = $token['userId'];
         $manager = $this->get('mapbender.print.queue_manager');
-        $user    = $manager->getUserById($userId);
+//        $user    = $manager->getUserById($userId);
         $queues  = array();
 
         if ($type == 'own') {
-            if ($user) {
-                $queues = $manager->getUserQueueInfos($user->getId());
-            }
+                $queues = $manager->getUserQueueInfos($userId);
         } else {
-            if ($user && $user->isAdmin()) {
                 $queues = $manager->getUserQueueInfos();
-            }
         }
 
         return new JsonResponse(array('data' => $queues));

@@ -198,8 +198,7 @@ class PrintClient extends Element
 
             case 'queued':
                 $data = $this->preparePrintData($request);
-                $user = $this->container->get('mapbender.print.queue_manager')->getCurrentUser();
-                $data['userId'] = $user ? $user->getId() : null;
+                $data['userId'] = $this->getCurrentUserId();
 
                 $content = $this->container->get('signer')->dump(new SignerToken($data));
                 $duplicate = $request->duplicate(array(), null, array('content' => $content));
@@ -286,8 +285,7 @@ class PrintClient extends Element
 
     public function getCurrentUserId()
     {
-        $token = $this->container->get('security.context')->getToken();
-        $user  = $token ? $token->getUser() : null;
-        return $user && $user instanceof User ? $user->getId() : null;
+        $user = $this->container->get('security.context')->getUser();
+        return $user ? $user->getId() : null;
     }
 }

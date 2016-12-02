@@ -150,12 +150,12 @@ class PrintQueueManager extends EntitiesServiceBase
     public function add(array $payload)
     {
         // try to detect user...
-        $user = isset($payload['userId'])? $this->getUserById($payload['userId']):null;
+        $userId = $payload['userId'];
         $printQueue = new PrintQueue();
 
         return $this->persist(
             $printQueue->setIdSalt(self::genSalt())
-                ->setUser($user)
+                ->setUserId($userId)
                 ->setQueued(new \DateTime())
                 ->setPayload($payload)
                 ->setPriority($this->priorityVoter->getPriority($payload))
@@ -325,17 +325,14 @@ class PrintQueueManager extends EntitiesServiceBase
 
         $dateFields    = array('queued', 'created', 'started');
         $queryBuilder = $this->createQueryBuilder()
-            ->select('q.id, q.queued, q.created, q.started, q.priority, q.idSalt, u.username')
-            ->innerJoin('q.user', 'u')
+            ->select('q.id, q.queued, q.created, q.started, q.priority, q.idSalt')
             ->orderBy('q.priority', 'DESC')
             ->addOrderBy('q.queued', 'ASC');
 
         if ($userId) {
-            /** @var User $user */
-            $user = $this->getUserById($userId);
             $queryBuilder
-                ->where('q.user = :user')
-                ->setParameter('user', $user);
+                ->where('q.userId = :userId')
+                ->setParameter('userId', $userId);
         }
 
         $queueInfoList = $queryBuilder->getQuery()->getResult();

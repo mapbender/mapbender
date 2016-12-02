@@ -39,11 +39,9 @@ class PrintQueue
     /**
      * User ID or if anonymous then null
      *
-     * @var User
-     * @ORM\ManyToOne(targetEntity="FOM\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @ORM\Column(type="string", length=255)
      */
-    protected $user;
+    protected $userId;
 
     /**
      * The element configuration
@@ -170,22 +168,22 @@ class PrintQueue
     /**
      * Get user
      *
-     * @return User
+     * @return UserId
      */
-    public function getUser()
+    public function getUserId()
     {
-        return $this->user;
+        return $this->userId;
     }
 
     /**
      * Set user
      *
-     * @param User $user
+     * @param UserId $userId
      * @return $this
      */
-    public function setUser(User $user = null )
+    public function setUserId($userId)
     {
-        $this->user = $user;
+        $this->userId = $userId;
         return $this;
     }
 
