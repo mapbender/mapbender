@@ -366,7 +366,7 @@ class Application
      */
     public function getElement($id)
     {
-        /** @var ElementEntity[] $elements */
+        /** @var Element[] $elements */
         $regions = $this->getElements();
         $r       = null;
         foreach ($regions as $region => $elements) {
@@ -702,8 +702,8 @@ class Application
      *
      * If there is no ACL's or roles then ever granted
      *
-     * @param ElementEntity $element
-     * @param string  $permission SecurityContext::PERMISSION_
+     * @param Element|ElementEntity $element
+     * @param string $permission SecurityContext::PERMISSION_
      * @return bool
      */
     public function isElementGranted(ElementEntity $element, $permission = SecurityContext::PERMISSION_VIEW)
