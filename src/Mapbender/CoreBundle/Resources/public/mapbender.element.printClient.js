@@ -771,15 +771,19 @@
         printDigitizerFeature: function(schemaName,featureId){
             // add hidden fields to submit featureId and schemaName
             var form = $('form#formats', this.element);
-            form.append( $('<input />', {
-                type: 'hidden',
-                name: 'digitizer_feature[id]',
-                value: featureId
-            })).append( $('<input />', {
-                type: 'hidden',
-                name: 'digitizer_feature[schemaName]',
-                value: schemaName
-            }));
+
+            if(!form.has('input[name="digitizer_feature[id]"]').length) {
+                form.append($('<input />', {
+                    type: 'hidden',
+                    name: 'digitizer_feature[id]'
+                })).append($('<input />', {
+                    type: 'hidden',
+                    name: 'digitizer_feature[schemaName]'
+                }));
+            }
+
+            $('input[name="digitizer_feature[id]"]', form).val(featureId);
+            $('input[name="digitizer_feature[schemaName]"]', form).val(schemaName);
 
             this._getDigitizerTemplates(schemaName);
         },
