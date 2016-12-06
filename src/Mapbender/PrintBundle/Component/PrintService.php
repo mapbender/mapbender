@@ -946,6 +946,7 @@ class PrintService
 
     private function drawPoint($geometry, $image)
     {
+        $style = $this->getStyle($geometry);
         $c = $geometry['coordinates'];
 
         if($this->rotation == 0){
@@ -954,7 +955,7 @@ class PrintService
             $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
         }
 
-        if(isset($geometry['style']['label'])){
+        if(isset($style['label'])){
             // draw label with white halo
             $color = $this->getColor('#ff0000', 1, $image);
             $bgcolor = $this->getColor('#ffffff', 1, $image);
@@ -964,24 +965,24 @@ class PrintService
             imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0]+1, $p[1], $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0], $p[1], $color, $font, $geometry['style']['label']);
-            return;
+            imagettftext($image, 14, 0, $p[0], $p[1], $color, $font, $style['label']);
+            //return;
         }
 
-        $radius = $geometry['style']['pointRadius'];
+        $radius = $style['pointRadius'];
         // Filled circle
-        if($geometry['style']['fillOpacity'] > 0){
+        if($style['fillOpacity'] > 0){
             $color = $this->getColor(
-                $geometry['style']['fillColor'],
-                $geometry['style']['fillOpacity'],
+                $style['fillColor'],
+                $style['fillOpacity'],
                 $image);
             imagefilledellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
         }
         // Circle border
         if ($style['strokeWidth'] > 0) {
             $color = $this->getColor(
-                $geometry['style']['strokeColor'],
-                $geometry['style']['strokeOpacity'],
+                $style['strokeColor'],
+                $style['strokeOpacity'],
                 $image);
             imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
         }
