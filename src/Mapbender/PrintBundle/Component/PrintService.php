@@ -453,6 +453,9 @@ class PrintService
             }
         }
 
+        // reset text color to default black
+        $pdf->SetTextColor(0,0,0);
+
         // add overview map
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
             $this->addOverviewMap();
@@ -818,12 +821,14 @@ class PrintService
                 imagefilledpolygon($image, $points, count($ring), $color);
             }
             // Border
-            $color = $this->getColor(
-                $style['strokeColor'],
-                $style['strokeOpacity'],
-                $image);
-            imagesetthickness($image, $style['strokeWidth']);
-            imagepolygon($image, $points, count($ring), $color);
+            if ($style['strokeWidth'] > 0) {
+                $color = $this->getColor(
+                    $style['strokeColor'],
+                    $style['strokeOpacity'],
+                    $image);
+                imagesetthickness($image, $style['strokeWidth']);
+                imagepolygon($image, $points, count($ring), $color);
+            }
         }
     }
 
@@ -856,12 +861,14 @@ class PrintService
                     imagefilledpolygon($image, $points, count($ring), $color);
                 }
                 // Border
-                $color = $this->getColor(
-                    $style['strokeColor'],
-                    $style['strokeOpacity'],
-                    $image);
-                imagesetthickness($image, $style['strokeWidth']);
-                imagepolygon($image, $points, count($ring), $color);
+                if ($style['strokeWidth'] > 0) {
+                    $color = $this->getColor(
+                        $style['strokeColor'],
+                        $style['strokeOpacity'],
+                        $image);
+                    imagesetthickness($image, $style['strokeWidth']);
+                    imagepolygon($image, $points, count($ring), $color);
+                }
             }
         }
     }
@@ -873,6 +880,9 @@ class PrintService
             $style['strokeColor'],
             $style['strokeOpacity'],
             $image);
+        if ($style['strokeWidth'] == 0) {
+            return;
+        }
         imagesetthickness($image, $style['strokeWidth']);
 
         for($i = 1; $i < count($geometry['coordinates']); $i++) {
@@ -904,6 +914,9 @@ class PrintService
             $style['strokeColor'],
             $style['strokeOpacity'],
             $image);
+        if ($style['strokeWidth'] == 0) {
+            return;
+        }
         imagesetthickness($image, $style['strokeWidth']);
 	
 		foreach($geometry['coordinates'] as $coords) {
@@ -965,11 +978,13 @@ class PrintService
             imagefilledellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
         }
         // Circle border
-        $color = $this->getColor(
-            $geometry['style']['strokeColor'],
-            $geometry['style']['strokeOpacity'],
-            $image);
-        imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+        if ($style['strokeWidth'] > 0) {
+            $color = $this->getColor(
+                $geometry['style']['strokeColor'],
+                $geometry['style']['strokeOpacity'],
+                $image);
+            imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+        }
     }
 
     private function drawFeatures()
