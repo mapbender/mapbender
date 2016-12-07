@@ -242,7 +242,7 @@
                                     return val;
                                 }
                                 var link = '';
-                                if(row.status == 'fertig') {
+                                if(row.status == 'ready') {
                                     link += '<a href="' + assetBasePath + val + '" class="button pdf" target="' + val + '" title="' + openTitle + '"></a>';
                                 } else {
                                     link += '<i class="progress"></i>';
