@@ -30,8 +30,7 @@ class PrintQueue
     /**
      * Salt is a short random string to generate queue token.
      *
-     * @ORM\Column(name="salt", type="string", length=10, unique=true)
-     * @Assert\Regex(pattern="/^[0-9\-\_a-zA-Z]+$/",message="The salt value is wrong.")
+     * @ORM\Column(name="salt", type="string", length=255, unique=true)
      * @Assert\NotBlank()
      */
     protected $idSalt;

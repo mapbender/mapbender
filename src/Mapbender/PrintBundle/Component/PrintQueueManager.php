@@ -151,10 +151,11 @@ class PrintQueueManager extends EntitiesServiceBase
     {
         // try to detect user...
         $userId = $payload['userId'];
+        $filename = $payload['filename'];
         $printQueue = new PrintQueue();
 
         return $this->persist(
-            $printQueue->setIdSalt(self::genSalt())
+            $printQueue->setIdSalt($filename)
                 ->setUserId($userId)
                 ->setQueued(new \DateTime())
                 ->setPayload($payload)
