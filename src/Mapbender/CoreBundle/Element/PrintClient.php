@@ -2,14 +2,14 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use FOM\UserBundle\Entity\User;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\PrintBundle\Component\OdgParser;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Mapbender\PrintBundle\Component\PrintService;
 use Mapbender\PrintBundle\Controller\PrintController;
 use Mapbender\PrintBundle\Element\Token\SignerToken;
-use FOM\UserBundle\Entity\User;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -198,7 +198,8 @@ class PrintClient extends Element
 
             case 'queued':
                 $data = $this->preparePrintData($request);
-                $data['userId'] = $this->getCurrentUserId();
+                $user = $this->container->get('mapbender.print.queue_manager')->getCurrentUser();
+                $data['userId'] = $user ? $user->getId() : null;
 
                 $content = $this->container->get('signer')->dump(new SignerToken($data));
                 $duplicate = $request->duplicate(array(), null, array('content' => $content));
@@ -285,7 +286,8 @@ class PrintClient extends Element
 
     public function getCurrentUserId()
     {
-        $user = $this->container->get('security.context')->getUser();
-        return $user ? $user->getId() : null;
+        $token = $this->container->get('security.context')->getToken();
+        $user  = $token ? $token->getUser() : null;
+        return $user && $user instanceof User ? $user->getId() : null;
     }
 }
