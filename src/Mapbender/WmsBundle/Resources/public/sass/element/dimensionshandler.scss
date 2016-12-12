@@ -1,23 +1,57 @@
-@import "libs/variables";
-@import "libs/mixins";
-@import "modules/text";
-@import "modules/input";
-
-.mb-element-dimensionshandler {
-    width:150px;
-    //display:block;
-    height: 30px;
-    //top: 1px;
-    //margin-top: -10px;
-}
 .mb-element-dimensionshandler{
     .dimensionset{
         position: relative;
         padding: 0 $space/4 0 $space/4;
-        text-align:center;
     }
 /*    .dimensionset-title{ }*/
     .dimensionset-value{
+        position: absolute;
+        padding-right: $space/4;
         right: 0px;
     }
+}
+
+.toolBarItem .mb-element-dimensionshandler{
+  /*position: relative;*/
+  width: 140px;
+  height:$space;
+  @extend .iconBig;
+  /*padding-top: 5px;*/
+  padding-left: 0px;
+  /*div{display:none;}*/
+  .dimensionset{
+    height: 100%;
+    width:100%;
+    .mb-slider.ui-slider {
+      position:absolute;
+      bottom:4px;
+      left:0px;
+      width:100%;
+      border: 2px solid lighten($middleFontColor, 20%) !important;
+      height: 8px;
+      .ui-slider-handle{
+        border: 2px solid $middleFontColor !important;
+        background-color: lighten($middleFontColor, 20%) !important;
+        height:14px;
+        width: 10px;
+        top: -5px;
+      }
+    }
+    .dimensionset-title{
+      /*display:none;*/
+      position: absolute;
+      left: 0px;
+      top:-$space/2;
+    }
+    .dimensionset-value{
+      /*display:none;*/
+      position: absolute;
+      right: -5px;
+      top:-$space/2;
+    }
+
+  }
+/*  .dimensionset:hover{
+    .dimensionset-title,.dimensionset-value{display:block;}
+  }*/
 }

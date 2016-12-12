@@ -55,11 +55,15 @@ class DimensionsHandlerAdminType extends AbstractType implements ExtendedCollect
                 $configuration = $element->getConfiguration();
                 if ($appl_element->getId() === intval($configuration["target"])) {
                     $mapconfig = $appl_element->getConfiguration();
+                    if (!isset($mapconfig['layersets']) && isset($mapconfig['layerset'])
+                        && $mapconfig['layerset'] === null && is_int($mapconfig['layerset'])) {
+                        $mapconfig['layersets'] = array(intval($mapconfig['layerset']));
+                    }
                     foreach ($application->getLayersets() as $layerset_) {
-                        if (intval($mapconfig['layerset']) === $layerset_->getId()) {
-                            foreach($layerset_->getInstances() as $instance){
-                                if($instance instanceof WmsInstance && count($instance->getDimensions()) > 0){
-                                    foreach($instance->getDimensions() as $dimension){
+                        if (in_array($layerset_->getId(), $mapconfig['layersets'])) {
+                            foreach ($layerset_->getInstances() as $instance) {
+                                if ($instance instanceof WmsInstance && count($instance->getDimensions()) > 0) {
+                                    foreach ($instance->getDimensions() as $dimension) {
                                         $dimensions[$instance->getId() . ""][] = $dimension;
                                     }
                                 }
@@ -71,8 +75,7 @@ class DimensionsHandlerAdminType extends AbstractType implements ExtendedCollect
                 }
             }
         }
-        $builder->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element',
+        $builder->add('tooltip', 'text', array('required' => false))->add('target', 'target_element',
                   array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
