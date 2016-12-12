@@ -1,40 +1,43 @@
-.mb-element-featureinfo{
+.mb-element-featureinfo {
+  height: 100%;
+  iframe.featureInfoFrame {
+    width: 100%;
     height: 100%;
-  iframe.featureInfoFrame{
-      width: 100%;
-      height: 100%;
-      border-width: 0px;
+    border-width: 0;
   }
-  .accordionContainer > .container{display:none}
-  .accordionContainer > .container.active{display:block}
+  .accordionContainer > .container {
+    display: none;
+    &.active {
+      display: block
+    }
+  }
 
   .container {
-      width: 100%;
-      height: 100%;
+    width: 100%;
+    height: 100%;
   }
-
 }
 
-.featureinfoDialog{
+.featureinfoDialog {
   .popupContent {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     height: 100%;
     .contentItem {
       height: 100%;
-      .mb-element-featureinfo{
-        width:100%;
-        position:relative;
-        .featureInfoTabContainer.accordionContainer{
-          top:0px;
-          left:0px;
-          .accordion{
-            height:$fontSize*2;
+      .mb-element-featureinfo {
+        width: 100%;
+        position: relative;
+        .featureInfoTabContainer.accordionContainer {
+          top: 0;
+          left: 0;
+          .accordion {
+            height: $fontSize*2;
           }
-          .container{
-            display:none;
+          .container {
+            display: none;
           }
           .container.active {
-            display: table-row;
+
             table {
               width: 100%;
               border: 1px solid #E7E5E5;
@@ -46,19 +49,19 @@
               }
             }
 
-            .accordion-cell{
-              height:100%;
-              .accordion-wrapper{
-                height:100%;
-                display:block;
-                position:relative;
-                >iframe{
-                    height:98%;
-                    width: 98%;
-                    position: absolute;
+            .accordion-cell {
+              height: 100%;
+              .accordion-wrapper {
+                height: 100%;
+                display: block;
+                position: relative;
+                > iframe {
+                  height: 98%;
+                  width: 98%;
+                  position: absolute;
                 }
-                >.js-content-content{
-                  display:table-cell;
+                > .js-content-content {
+                  display: table-cell;
                   position: absolute;
                   bottom: 0;
                   top: 0;
@@ -70,15 +73,116 @@
             }
           }
         }
-        .featureInfoTabContainer {
-          height:100%;
-          >.container.active{
-            height:90%;
-            overflow:auto;
-            >iframe{
-                height:98%;
-                width: 98%;
+        //.featureInfoTabContainer {
+        //  height: 100%;
+        //  > .container.active {
+        //    height: 90%;
+        //    overflow: auto;
+        //    > iframe {
+        //      height: 98%;
+        //      width: 98%;
+        //      position: absolute;
+        //    }
+        //  }
+        //}
+      }
+    }
+  }
+}
+
+// Mobile
+.mobilePane {
+  .mb-element-featureinfo {
+    height: 90%;
+    > .tabContainer {
+      height: 100%;
+      position: relative;
+      > .tabs {
+        display: block;
+        > li.tab {
+          margin-right: -1px;
+          font-size: 13px;
+          color: #707070;
+          background-color: #fff;
+          &.active{
+            bottom: -1px;
+          }
+        }
+        &:after {
+          clear: both;
+        }
+      }
+
+      // container js-content js-content-content active
+      > .container {
+        > &.active {
+          bottom: -1px;
+          > iframe {
+
+          }
+        }
+      }
+    }
+  }
+}
+
+// Popup
+.popupContent {
+  > .contentItem {
+    > .mb-element-featureinfo {
+
+      &.display-as-tabs {
+        > .tabContainer {
+          > .tabs {
+            > li {
+              &.active {
+              }
+            }
+          }
+          > .container {
+            &.active {
+              display: block;
+              padding: 20px;
+              position: absolute;
+              left: 0;
+              right: 0;
+              top: 34px;
+              height: 90%;
+              iframe.featureInfoFrame {
+                height: 100%;
+                width: 100%;
                 position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+              }
+            }
+          }
+        }
+      }
+
+      &.display-as-accordion {
+
+        // Accordion holder
+        > .accordionContainer {
+
+          // Header
+          > .accordion {
+            &.active {
+            }
+          }
+
+          // Content
+          > .container {
+            display: none;
+
+            &.active {
+              display: table-row;
+
+              iframe.featureInfoFrame {
+                height: 98%;
+              }
             }
           }
         }

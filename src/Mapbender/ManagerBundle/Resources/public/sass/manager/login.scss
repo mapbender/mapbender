@@ -1,98 +1,153 @@
 @import "libs/variables";
 @import "libs/mixins";
 @import "libs/icons";
-
 @import 'bundles/mapbendermanager/sass/manager/manager.scss';
 
-$boxWidth:340px;
+// Mobile resonsive
+@media only screen and (max-width: 1024px) {
+  $fontSize: 0.9em;
+  .authWrapper {
 
-
-.head{
-  position: relative;
-  border-top:solid 5px darken($firstColor, 10%);
-  background-image:url($headPatternUrl);
-  @include background(linear-gradient(rgba(255,255,255,.1),
-                                      rgba(255,255,255,0)),
-                      url($headPatternUrl));
-}
-.dekoSeperator{@include absolute('' 0 0 0);}
-
-.authWrapper {
-
-  a{
-    text-decoration: none;
-  }
-
-  @include absolute(15% 0 '' 0);
-}
-.logo{max-height:120px;}
-.head{height:300px;}
-
-.labelInput {
-  display: block;
-  width: 100%;
-}
-.input{margin-bottom:$space/2;}
-.logoContainer{
-  text-align:center;
-  display:block;
-  @include relative(-280px '' '' '');
-}
-.linkButton{
-  margin-right:$space/2;
-  margin-top:5px;
-}
-
-.loginBox {
-  padding: $space;
-  margin: 0 auto;
-  width: $boxWidth;
-  background-image: url($contentPatternUrl);
-  border: {
-    top: solid 1px $secondColor;
-    left: solid 1px $thirdColor;
-    right: solid 1px $thirdColor;
-    bottom: solid 5px $thirdColor;
-    radius: $containerBorderRadius;
-  }
-  @include relative(-260px '' '' '');
-
-  &.login {
-    $labelWidth: 60px;
-    .labelInput {
-      width: $labelWidth;
+    top: 2% !important;
+    > .logoContainer {
+      .logo {
+        height: 60px;
+      }
     }
-    .input {
-      width: $boxWidth - $labelWidth - $space*3;
-    }
-  }
 
-  &.forgot {
-    $labelWidth: 135px;
-    .labelInput {
-      width: 100%;
-      margin-bottom: -5px;
-    }
-    .inputWrapper {
-      width: 100%;
-      .input {
-        width: 100%;
+
+    > .loginBox {
+
+      > .contentTitle {
+        margin-bottom: 10px;
+        font-size: $fontSize * 2;
+      }
+
+      > form {
+        > .labelInput {
+          margin-top: 0.7em;
+          font-size: $fontSize * 1.1;
+          margin-bottom: 0.4em;
+        }
+
+        > .labelText {
+          font-size: $fontSize;
+          line-height: $fontSize;
+          margin-bottom: 0.2em;
+        }
+
+        > .inputWrapper > input,
+        > input {
+          font-size: $fontSize * 1.4;
+          line-height: 2em;
+          height: auto;
+          padding-top: 0;
+          padding-bottom: 0;
+          vertical-align: middle;
+        }
+
+        > .linkButton, > .button {
+          font-size: $fontSize;
+          height: auto;
+          line-height: 270%;
+          vertical-align: middle;
+          display: inline-block;
+          padding-top: 0;
+          padding-bottom: 0;
+        }
       }
     }
   }
+}
 
-  &.register {
-    $labelWidth: 125px;
-    .labelInput {
-      width: $labelWidth;
+.authWrapper {
+  @include transition(all 0.6s ease-in-out);
+
+  position: absolute;
+  top: 15%;
+  right: 0;
+  left: 0;
+
+  @include transition(all 0.6s ease-in-out);
+
+  > .head {
+    position: absolute;
+    width: 100%;
+    border-top: solid 5px darken($firstColor, 10%);
+    background-image: url($headPatternUrl);
+    height: 300px;
+    min-width: auto;
+
+    @include background(
+        linear-gradient(rgba(255, 255, 255, .1), rgba(255, 255, 255, 0)), url($headPatternUrl));
+
+    > .dekoSeperator {
+      @include absolute('' 0 0 0);
+    }
+  }
+
+  > .loginBox {
+    position: relative;
+    padding: $space;
+    width: 90%;
+    max-width: 340px;
+    background-image: url($contentPatternUrl);
+    margin: 15px auto 0;
+    border: {
+      top: solid 1px $secondColor;
+      left: solid 1px $thirdColor;
+      right: solid 1px $thirdColor;
+      bottom: solid 5px $thirdColor;
+      radius: $containerBorderRadius;
+    }
+
+    > .contentTitle {
+      margin-bottom: 10px;
+
     }
     .input {
-      width: $boxWidth - $labelWidth - $space*3;
+      width: 100% !important;
+    }
+    .labelInput {
+      width: 100% !important;
+      line-height: 10px;
+    }
+
+    .inputWrapper {
+      display: block;
+      width: 100%;
     }
   }
 
-  &.resetBox .labelInput {
-    width: 68px;
-    display: inline-block;
+  a {
+    text-decoration: none;
   }
+
+  .logoContainer {
+    text-align: center;
+    display: block;
+    position: relative;
+    margin-top: 20px;
+    height: auto;
+    .logo {
+      max-height: 120px;
+
+    }
+  }
+
+  .labelInput {
+    display: block;
+    width: 100%;
+    margin-bottom: 2px;
+  }
+  .input {
+    margin-bottom: $space/2;
+  }
+
+  .linkButton {
+    margin-right: $space/2;
+  }
+
+
 }
+
