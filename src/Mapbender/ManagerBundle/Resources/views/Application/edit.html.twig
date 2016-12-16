@@ -61,7 +61,9 @@
         {% include 'MapbenderManagerBundle:Application:form-css.html.twig' %}
       </div>
       <div id="containerSecurity" class="container containerSecurity">
-        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+        {% block securityTab %}
+          {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+        {% endblock %}
       </div>
     </div>
     <div class="clearContainer"></div>

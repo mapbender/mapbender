@@ -27,14 +27,16 @@
                 <div class="messageBox hint">
                     {{"mb.manager.admin.application.create_use" | trans }}
                 </div>
-           </div> 
+           </div>
             <div class="clearContainer"></div>
 
-        
+
       </div>
-     
+
       <div id="containerSecurity" class="container">
-        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+        {% block securityTab %}
+          {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+        {% endblock %}
       </div>
     </div>
 
