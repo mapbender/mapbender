@@ -49,7 +49,7 @@ class Map extends Element
         /* "standardized rendering pixel size" for WMTS 0.28 mm × 0.28 mm -> DPI for WMTS: 90.714285714 */
         return array(
             'layersets' => array(),
-            'dpi' => 72, // DPI for WMTS: 90.714285714
+            'dpi' => 90.714, // DPI for WMTS: 90.714285714
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'units' => 'degrees',
