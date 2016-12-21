@@ -274,7 +274,7 @@ class Application
             $app_loader = new StringAsset($templating->render(
                 '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig',
                 array('application' => $this)));
-            $this->addAsset($assets, $type, $app_loader);
+            array_splice($assets, 0, 0, array($app_loader));
         }
 
         return $assets;
