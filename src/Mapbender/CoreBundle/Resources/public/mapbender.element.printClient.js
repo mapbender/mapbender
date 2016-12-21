@@ -34,14 +34,14 @@
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
-            
+
             $('select[name="scale_select"]', this.element)
                 .on('change', $.proxy(this._updateGeometry, this));
             $('input[name="rotation"]', this.element)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.element)
                 .on('change', $.proxy(this._getTemplateSize, this));
-        
+
             if (this.options.type === 'element') {
                 $(this.element).show();
                 $(this.element).on('click', '#printToggle', function(){
@@ -325,7 +325,7 @@
                 data: {id: id}
             });
         },
-        
+
         _setScale: function() {
             var select = $(this.element).find("select[name='scale_select']");
             var styledSelect = select.parent().find(".dropdownValue.iconDown");
@@ -564,7 +564,7 @@
                     }
                 }
                 return legend;
-            } 
+            }
             var legends = [];
 
             for (var i = 0; i < sources.length; i++) {
@@ -582,7 +582,9 @@
                     var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
                     if (visLayers.layers.length > 0) {
                         var prevLayers = layer.olLayer.params.LAYERS;
+                        var prevStyles = layer.olLayer.params.STYLES;
                         layer.olLayer.params.LAYERS = visLayers.layers;
+                        layer.olLayer.params.STYLES = visLayers.styles;
 
                         var opacity = sources[i].configuration.options.opacity;
                         var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
@@ -595,6 +597,7 @@
                             weight: this.map.map.olMap.getLayerIndex(layer.olLayer)
                         }));
                         layer.olLayer.params.LAYERS = prevLayers;
+                        layer.olLayer.params.STYLES = prevStyles;
                         lyrCount++;
 
                         if (sources[i].type === 'wms') {
@@ -615,7 +618,7 @@
                     value: JSON.stringify(legends)
                 }));
             }
-            
+
             // Iterating over all vector layers, not only the ones known to MapQuery
             var geojsonFormat = new OpenLayers.Format.GeoJSON();
             for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
@@ -628,7 +631,7 @@
                 for(var idx = 0; idx < layer.features.length; idx++) {
                     var feature = layer.features[idx];
                     if (!feature.onScreen(true)) continue
-                    
+
                     if(this.feature.geometry.intersects(feature.geometry)){
                         var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
 
@@ -638,7 +641,7 @@
                             geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
                         }
                         // only visible features
-                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){                            
+                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){
                             geometries.push(geometry);
                         } else if (geometry.style.label !== undefined){
                             geometries.push(geometry);
