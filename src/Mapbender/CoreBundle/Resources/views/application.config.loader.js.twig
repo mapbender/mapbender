@@ -1,5 +1,5 @@
 (function ($) {
-    if(Mapbender.configuration){
+    if(Mapbender && Mapbender.configuration){
         $(Mapbender.setup);
     } else {
         var url = '{{ path('mapbender_core_application_configuration', {'slug': application.slug})  | raw }}';
