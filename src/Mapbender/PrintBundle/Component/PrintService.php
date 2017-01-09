@@ -283,7 +283,8 @@ class PrintService
             $logger->debug("Print Request Nr.: " . $i . ' ' . $url);
             // find urls from this host (tunnel connection for secured services)
             $parsed   = parse_url($url);
-            $hostpath = $parsed['host'] . $parsed['path'];
+            $host = isset($parsed['host']) ? $parsed['host'] : $this->container->get('request')->getHttpHost();
+            $hostpath = $host . $parsed['path'];
             $pos      = strpos($hostpath, $this->urlHostPath);
             if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
                 $attributes = $this->container->get('router')->match($routeStr);
@@ -1073,7 +1074,8 @@ class PrintService
 
         $url      = urldecode($url);
         $parsed   = parse_url($url);
-        $hostpath = $parsed['host'] . $parsed['path'];
+        $host = isset($parsed['host']) ? $parsed['host'] : $this->container->get('request')->getHttpHost();
+        $hostpath = $host . $parsed['path'];
         $pos      = strpos($hostpath, $this->urlHostPath);
         if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
             $attributes = $this->container->get('router')->match($routeStr);
