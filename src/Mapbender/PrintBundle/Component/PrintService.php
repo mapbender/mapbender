@@ -967,6 +967,9 @@ class PrintService
           $height = $this->pdf->getHeight();
           $width = $this->pdf->getWidth();
           $legend_conf = false;
+          if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+             $this->addLegendpage_image();
+           }
         }
 
         foreach ($this->data['legends'] as $idx => $legendArray) {
@@ -1065,7 +1068,7 @@ class PrintService
                       $y += round($size[1] * 25.4 / 96) + 10;
                       if($y > ($this->pdf->getHeight())){
                           $x += 105;
-                          $y = 10;
+                          $y = 10; 
                       }
                       if($x + 20 > ($this->pdf->getWidth()) && $c < $arraySize){
                           $this->pdf->addPage('P');
@@ -1139,11 +1142,11 @@ class PrintService
         $maxX = $centerx + $mapWidth * 0.5;
         $maxY = $centery + $mapHeight * 0.5;
         $extentx = $maxX - $minX ;
-	$extenty = $maxY - $minY ;
+    $extenty = $maxY - $minY ;
         $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['map']['width']  / 25.4 * $quality) ;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['map']['height']  / 25.4 * $quality);
+    $pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['map']['height']  / 25.4 * $quality);
 
-	return array($pixPos_x, $pixPos_y);
+    return array($pixPos_x, $pixPos_y);
     }
 
     private function realWorld2ovMapPos($ovWidth, $ovHeight, $rw_x,$rw_y)
@@ -1156,11 +1159,11 @@ class PrintService
         $maxX = $centerx + $ovWidth * 0.5;
         $maxY = $centery + $ovHeight * 0.5;
         $extentx = $maxX - $minX ;
-	$extenty = $maxY - $minY ;
+    $extenty = $maxY - $minY ;
         $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['overview']['width'] / 25.4 * $quality) ;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['overview']['height'] / 25.4 * $quality);
+    $pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['overview']['height'] / 25.4 * $quality);
 
-	return array($pixPos_x, $pixPos_y);
+    return array($pixPos_x, $pixPos_y);
     }
 
     private function realWorld2rotatedMapPos($rw_x,$rw_y)
@@ -1172,11 +1175,11 @@ class PrintService
         $maxX = $centerx + $this->neededExtentWidth * 0.5;
         $maxY = $centery + $this->neededExtentHeight * 0.5;
         $extentx = $maxX - $minX ;
-	$extenty = $maxY - $minY ;
+    $extenty = $maxY - $minY ;
         $pixPos_x = (($rw_x - $minX)/$extentx) * $this->neededImageWidth;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * $this->neededImageHeight;
+    $pixPos_y = (($maxY - $rw_y)/$extenty) * $this->neededImageHeight;
 
-	return array($pixPos_x, $pixPos_y);
+    return array($pixPos_x, $pixPos_y);
     }
 
 }
