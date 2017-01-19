@@ -399,13 +399,13 @@ class PrintService
         $pdf->Rect($mapUlX, $mapUlY, $mapWidth, $mapHeight);
         unlink($this->finalImageName);
 
+        if ($hasTransparentBg == true){
+            $pdf->useTemplate($tplidx);
+        }
+
         // add northarrow
         if (isset($this->conf['northarrow'])) {
             $this->addNorthArrow();
-        }
-
-        if ($hasTransparentBg == true){
-            $pdf->useTemplate($tplidx);
         }
 
         // get digitizer feature
