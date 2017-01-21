@@ -15,8 +15,17 @@ Mapbender.Model = {
     // Hash map query layers settings
     _layersHash: {},
     init: function(mbMap) {
-        this.mbMap = mbMap;
         var self = this;
+
+        // need to monkey patch here in order to get next zoom in movestart event
+        // prevents duplicate loads of WMS where a layer is going out of scale
+        var zoomTo = OpenLayers.Map.prototype.zoomTo;
+        OpenLayers.Map.prototype.zoomTo = function(zoom) {
+            self.nextZoom = zoom;
+            zoomTo.apply(this, arguments);
+        };
+        
+        this.mbMap = mbMap;
 
         this.srsDefs = this.mbMap.options.srsDefs;
         for (var i = 0; i < this.srsDefs.length; i++) {
@@ -198,6 +207,7 @@ Mapbender.Model = {
             $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
             // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
             // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
+            this.map.olMap.events.register('movestart', this, $.proxy(this._preCheckChanges, this));
 
             this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
             $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
@@ -516,6 +526,9 @@ Mapbender.Model = {
      * Returns the current map's scale
      */
     getScale: function() {
+        if (this.nextZoom) {
+            return this.map.olMap.scales[this.nextZoom];
+        }
         return Math.round(this.map.olMap.getScale());
     },
     /**
@@ -532,7 +545,12 @@ Mapbender.Model = {
         }
         return result.changed;
     },
-    _checkChanges: function(e) {
+
+    _preCheckChanges: function(e) {
+        this._checkChanges(e, true);
+    },
+    
+    _checkChanges: function(e, isPreEvent) {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
             var result = Mapbender.source[source.type].changeOptions(
@@ -546,7 +564,9 @@ Mapbender.Model = {
             });
             var mqLayer = self.map.layersList[source.mqlid];
             if (self._resetSourceVisibility(mqLayer, result.layers, result.infolayers, result.styles)) {
-                mqLayer.olLayer.redraw();
+                if (!isPreEvent) {
+                    mqLayer.olLayer.redraw();
+                }
             }
             for (var child in result.changed.children) {
                 if (result.changed.children[child].state
