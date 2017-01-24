@@ -412,6 +412,7 @@
                         content: ('<ul>' + html + '</ul>'),
                         width: 350,
                         height: 500,
+                        cssClass: 'customLegend',
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans('mb.core.legend.popup.btn.ok'),
