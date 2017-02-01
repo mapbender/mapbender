@@ -105,18 +105,29 @@ class BaseSourceSwitcher extends Element
         foreach ($confHelp['instancesets'] as $instanceset) {
             if (isset($instanceset['group']) && $instanceset['group'] !== '') {
                 if (!isset($configuration['groups'][$instanceset['group']])) {
-                    $configuration['groups'][$instanceset['group']] = array();
+                    $configuration['groups'][$instanceset['group']] = array(
+                        'type'  => 'group',
+                        'items' => array(),
+                    );
                 }
-                $configuration['groups'][$instanceset['group']][] = array(
+                $configuration['groups'][$instanceset['group']]['items'][] = array(
                     'title'   => $instanceset['title'],
                     'sources' => $instanceset['instances']
                 );
             } else {
                 $configuration['groups'][$instanceset['title']] = array(
+                    'type'    => 'item',
                     'title'   => $instanceset['title'],
                     'sources' => $instanceset['instances']
                 );
             }
+        }
+        foreach ($configuration['groups'] as &$firstGroup) {
+            $firstGroup['active'] = true;
+            if ($firstGroup['type'] == 'group' && $firstGroup['items']) {
+                $firstGroup['items'][0]['active'] = true;
+            }
+            break;
         }
         return $configuration;
     }
@@ -150,5 +161,68 @@ class BaseSourceSwitcher extends Element
             }
         }
         return $configuration;
+    }
+
+    /**
+     * Returns an array with 'active' and 'inactive' lists of source ids, in the initial state after loading.
+     *
+     * return int[][]
+     */
+    public function getDefaultSourceVisibility()
+    {
+        $rv = array(
+            'active' => array(),
+            'inactive' => array(),
+        );
+        $config = $this->getConfiguration();
+
+        foreach ($config['groups'] as $menuItem) {
+            $destKey = (!empty($menuItem['active'])) ? 'active' : 'inactive';
+            switch ($menuItem['type']) {
+                case 'item':
+                    $rv[$destKey] = array_merge($rv[$destKey], $menuItem['sources']);
+                    break;
+                case 'group':
+                    $rv[$destKey] = array_merge($rv[$destKey], $menuItem['items'][0]['sources']);
+                    break;
+                default:
+                    throw new \RuntimeException("Unexpected menu item type " . var_export($menuItem['type'], true));
+            }
+        }
+        return $rv;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function updateAppConfig($config)
+    {
+        $controlledSourceIds = $this->getDefaultSourceVisibility();
+
+        /**
+         * @todo: evaluate "target" (e.g. main map vs overview map) and only process
+         *        layers bound to that target
+         */
+        foreach ($config['layersets'] as &$layerList) {
+            foreach ($layerList as &$layerMap) {
+                foreach ($layerMap as $layerId => &$layerDef) {
+                    if (in_array($layerId, $controlledSourceIds['active'])) {
+                        $setActive = true;
+                    } elseif (in_array($layerId, $controlledSourceIds['inactive'])) {
+                        $setActive = false;
+                    } else {
+                        // layer is not controllable through BSS, leave its config alone
+                        continue;
+                    }
+                    $layerDef['configuration']['options']['visible'] = $setActive;
+                    if (!empty($layerDef['configuration']['children'])) {
+                        foreach ($layerDef['configuration']['children'] as &$chDef) {
+                            $chDef['options']['treeOptions']['selected'] = $setActive;
+                        }
+                    }
+                }
+            }
+        }
+        return $config;
     }
 }
