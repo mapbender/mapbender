@@ -382,7 +382,7 @@ class PrintService
         $pdf->SetAutoPageBreak(false);
         $pdf->addPage($orientation, $format);
 
-        $hasTransparentBg = $this->checkPdfBackground($pdf, $pdfFile);
+        $hasTransparentBg = $this->checkPdfBackground($pdf);
         if ($hasTransparentBg == false){
             $pdf->useTemplate($tplidx);
         }
@@ -1169,8 +1169,9 @@ class PrintService
         return array_merge($this->defaultStyle, $geometry['style']);
     }
 
-    private function checkPdfBackground($pdf, $pdfFile) {
+    private function checkPdfBackground($pdf) {
         $pdfArray = (array) $pdf;
+        $pdfFile = $pdfArray['currentFilename'];
         $pdfSubArray = (array) $pdfArray['parsers'][$pdfFile];
         $prefix = chr(0) . '*' . chr(0);
         $pdfSubArray2 = $pdfSubArray[$prefix . '_root'][1][1];
