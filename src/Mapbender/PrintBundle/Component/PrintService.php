@@ -309,6 +309,12 @@ class PrintService
                 case 'image/png' :
                     $rawImage = imagecreatefrompng($imageName);
                     break;
+                case 'image/png8' :
+                    $rawImage = imagecreatefrompng($imageName);
+                    break;
+                case 'image/png; mode=24bit' :
+                    $rawImage = imagecreatefrompng($imageName);
+                    break;
                 case 'image/jpeg' :
                     $rawImage = imagecreatefromjpeg($imageName);
                     break;
