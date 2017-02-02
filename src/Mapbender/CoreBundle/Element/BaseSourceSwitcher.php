@@ -176,17 +176,22 @@ class BaseSourceSwitcher extends Element
         );
         $config = $this->getConfiguration();
 
-        foreach ($config['groups'] as $menuItem) {
-            $destKey = (!empty($menuItem['active'])) ? 'active' : 'inactive';
-            switch ($menuItem['type']) {
+        foreach ($config['groups'] as $menuEntry) {
+            switch ($menuEntry['type']) {
                 case 'item':
-                    $rv[$destKey] = array_merge($rv[$destKey], $menuItem['sources']);
+                    // wrap single item as array
+                    $menuItems = array($menuEntry);
                     break;
                 case 'group':
-                    $rv[$destKey] = array_merge($rv[$destKey], $menuItem['items'][0]['sources']);
+                    // process submenu items
+                    $menuItems = $menuEntry['items'];
                     break;
                 default:
-                    throw new \RuntimeException("Unexpected menu item type " . var_export($menuItem['type'], true));
+                    throw new \RuntimeException("Unexpected menu item type " . var_export($menuEntry['type'], true));
+            }
+            foreach ($menuItems as $menuItem) {
+                $destKey = (!empty($menuItem['active'])) ? 'active' : 'inactive';
+                $rv[$destKey] = array_merge($rv[$destKey], $menuItem['sources']);
             }
         }
         return $rv;
