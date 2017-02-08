@@ -555,4 +555,16 @@ abstract class Element
         $className = substr($className,1);
         return $className;
     }
+
+    /**
+     * Hook function for embedded elements to influence the effective application config on initial load.
+     * We (can) use this for BaseSourceSwitchter (deactivates layers), SuggestMap element reloading state etc.
+     *
+     * @param array
+     * @return array
+     */
+    public function updateAppConfig($configIn)
+    {
+        return $configIn;
+    }
 }
