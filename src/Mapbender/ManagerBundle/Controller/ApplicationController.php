@@ -691,8 +691,8 @@ class ApplicationController extends WelcomeController
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $allowed_sources = array();
         foreach ($sources as $source) {
-            if ($securityContext->isGranted(SecurityContext::PERMISSION_EDIT, $oid)
-                || $securityContext->isGranted(SecurityContext::PERMISSION_EDIT, $source)
+            if ($securityContext->isGranted(SecurityContext::PERMISSION_VIEW, $oid)
+                || $securityContext->isGranted(SecurityContext::PERMISSION_VIEW, $source)
             ) {
                 $allowed_sources[] = $source;
             }
