@@ -15,8 +15,17 @@ Mapbender.Model = {
     // Hash map query layers settings
     _layersHash: {},
     init: function(mbMap) {
-        this.mbMap = mbMap;
         var self = this;
+
+        // need to monkey patch here in order to get next zoom in movestart event
+        // prevents duplicate loads of WMS where a layer is going out of scale
+        var zoomTo = OpenLayers.Map.prototype.zoomTo;
+        OpenLayers.Map.prototype.zoomTo = function(zoom) {
+            self.nextZoom = zoom;
+            zoomTo.apply(this, arguments);
+        };
+        
+        this.mbMap = mbMap;
 
         this.srsDefs = this.mbMap.options.srsDefs;
         for (var i = 0; i < this.srsDefs.length; i++) {
@@ -108,8 +117,12 @@ Mapbender.Model = {
         }
         if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
             $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
+                var coord = new OpenLayers.LonLat(poi.x, poi.y);
+                if(poi.srs) {
+                    coord = coord.transform(self.getProj(poi.srs), self.getCurrentProj());
+                }
                 pois.push({
-                    position: new OpenLayers.LonLat(poi.x, poi.y),
+                    position: coord,
                     label: poi.label,
                     scale: poi.scale
                 });
@@ -194,9 +207,13 @@ Mapbender.Model = {
             $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
             // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
             // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
+            this.map.olMap.events.register('movestart', this, $.proxy(this._preCheckChanges, this));
 
             this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
             $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
+                if(!Mapbender.configuration.layersets[layersetId]) {
+                    return;
+                }
                 $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
                     $.each(defArr, function(idx, layerDef) {
                         layerDef['origId'] = idx;
@@ -509,6 +526,9 @@ Mapbender.Model = {
      * Returns the current map's scale
      */
     getScale: function() {
+        if (this.nextZoom) {
+            return this.map.olMap.scales[this.nextZoom];
+        }
         return Math.round(this.map.olMap.getScale());
     },
     /**
@@ -518,12 +538,19 @@ Mapbender.Model = {
         var source = this.getSource(toChangeOpts.sourceIdx);
         var result = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
-        if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
-            mqLayer.olLayer.redraw();
+        if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers, result.styles)) {
+            mqLayer.olLayer.removeBackBuffer();
+            mqLayer.olLayer.createBackBuffer();
+            mqLayer.olLayer.redraw(true);
         }
         return result.changed;
     },
-    _checkChanges: function(e) {
+
+    _preCheckChanges: function(e) {
+        this._checkChanges(e, true);
+    },
+    
+    _checkChanges: function(e, isPreEvent) {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
             var result = Mapbender.source[source.type].changeOptions(
@@ -536,8 +563,10 @@ Mapbender.Model = {
                 }
             });
             var mqLayer = self.map.layersList[source.mqlid];
-            if (self._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
-                mqLayer.olLayer.redraw();
+            if (self._resetSourceVisibility(mqLayer, result.layers, result.infolayers, result.styles)) {
+                if (!isPreEvent) {
+                    mqLayer.olLayer.redraw();
+                }
             }
             for (var child in result.changed.children) {
                 if (result.changed.children[child].state
@@ -571,7 +600,7 @@ Mapbender.Model = {
      * @returns {boolean}
      * @private
      */
-    _resetSourceVisibility: function(mqLayer, layers, infolayers) {
+    _resetSourceVisibility: function(mqLayer, layers, infolayers, styles) {
         mqLayer.olLayer.queryLayers = infolayers;
         if(mqLayer.hasOwnProperty("id")) {
             if(this._layersHash.hasOwnProperty(mqLayer.id) && this._layersHash[mqLayer.id] == layers.toString()) {
@@ -584,6 +613,7 @@ Mapbender.Model = {
                 object: mqLayer.olLayer
             });
         }
+        mqLayer.olLayer.params.STYLES = styles;
         if(layers.length === 0) {
             mqLayer.olLayer.setVisibility(false);
             mqLayer.visible(false);
@@ -1069,7 +1099,8 @@ Mapbender.Model = {
             layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
                 id: tomove.layerId
             });
-            this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
+            var targetIdx = layerToMove.idx > afterLayer.idx ? beforeLayer.idx + 1 : beforeLayer.idx;
+            this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, targetIdx, before, after);
         } else if (before && before.source.id.toString() === tomove.source.id.toString()) {
 //            window.console && console.log("move layer into last pos");
             var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {

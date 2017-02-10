@@ -1,11 +1,4 @@
 <?php
-
-/**
- * Mapbender layerset management
- *
- * @author Christian Wygoda <christian.wygoda@wheregroup.com>
- */
-
 namespace Mapbender\ManagerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -19,11 +12,16 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
+ *  Mapbender repository controller
+ *
+ * @author  Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author  Andreas Schmitz <andreas.schmitz@wheregroup.com>
+ * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  * @ManagerRoute("/repository")
  */
 class RepositoryController extends Controller
 {
-
     /**
      * Renders the layer service repository.
      *
@@ -83,7 +81,7 @@ class RepositoryController extends Controller
      *
      * @ManagerRoute("/create/{managertype}")
      * @Method({ "POST" })
-     * @Template
+     * @Template()
      */
     public function createAction($managertype)
     {
@@ -236,8 +234,8 @@ class RepositoryController extends Controller
 
         $securityContext = $this->get('security.context');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!($securityContext->isGranted('EDIT', $sourceInst->getSource())
-            || $securityContext->isGranted('EDIT', $oid))) {
+        if (!($securityContext->isGranted('VIEW', $sourceInst->getSource())
+            || $securityContext->isGranted('VIEW', $oid))) {
             throw new AccessDeniedHttpException();
         }
 

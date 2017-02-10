@@ -1,13 +1,13 @@
 import __main__
-#from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.phantomjs.webdriver import WebDriver
 from os import getenv, makedirs
 from os.path import basename, dirname, exists
+from subprocess import call
 
 def get_url(path):
     """Build full URL to test server based on path and env vars"""
     return 'http://%(host)s:%(port)s/%(path)s' % {
-        'host': getenv('TEST_WEB_SERVER_HOST', 'http://localhost'),
+        'host': getenv('TEST_WEB_SERVER_HOST', '127.0.0.1'),
         'port': getenv('TEST_WEB_SERVER_PORT', 8000),
         'path': path
     }
@@ -23,9 +23,9 @@ def get_sreenshot_path(suffix):
         makedirs(dirname(path))
     return path
 
-
 def create_webdriver():
-    wd = WebDriver()
-    wd.implicitly_wait(60)
+    wd = WebDriver('/home/travis/build/mapbender/mapbender-starter/application/bin/phantomjs')
+
     wd.set_window_size(1400,1000)
+    wd.implicitly_wait(300)
     return wd

@@ -14,7 +14,6 @@ class MinMax
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $min = null;
-
     /**
      * ORM\Column(type="float", nullable=true)
      */
@@ -34,7 +33,7 @@ class MinMax
 
     /**
      * Get min
-     * 
+     *
      * @return float
      */
     public function getMin()
@@ -55,7 +54,7 @@ class MinMax
 
     /**
      * Get max
-     * 
+     *
      * @return float
      */
     public function getMax()
@@ -77,8 +76,8 @@ class MinMax
     public function getInRange($value)
     {
         $value_ = $value;
-        $value_ = $this->getMin() ? ($value_ && $value_ < $this->getMin() ? $this->getMin() : $value_) : $value_;
-        $value_ = $this->getMax() ? ($value_ && $value_ > $this->getMax() ? $this->getMax() : $value_) : $value_;
+        $value_ = $this->min !== null ? ($value_ && $value_ < $this->min ? $this->min : $value_) : $value_;
+        $value_ = $this->max !== null ? ($value_ && $value_ > $this->max ? $this->max : $value_) : $value_;
         return $value_;
     }
 

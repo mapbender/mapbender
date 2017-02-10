@@ -1,11 +1,8 @@
 <?php
 
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,6 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * Layerset configuration entity
  *
+ * @property array layerObjects
  * @author Christian Wygoda
  *
  * @ORM\Entity
@@ -53,6 +51,9 @@ class Layerset
      */
     protected $instances;
 
+    /**
+     * Layerset constructor.
+     */
     public function __construct()
     {
         $this->instances = new ArrayCollection();
@@ -65,6 +66,9 @@ class Layerset
      * Probably the only place where this should be used is in the
      * ApplicationYAMLMapper class. Maybe this could be done using a proxy
      * class instead?
+     *
+     * @param $id
+     * @return $this
      */
     public function setId($id)
     {
@@ -89,6 +93,7 @@ class Layerset
      * Set title
      *
      * @param string $title
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -111,6 +116,7 @@ class Layerset
      * Set application
      *
      * @param Application $application
+     * @return $this
      */
     public function setApplication(Application $application)
     {
@@ -142,7 +148,7 @@ class Layerset
     /**
      * Set instances
      *
-     * @param  Doctrine\Common\Collections\Collection $instances Collection of the SourceInstances
+     * @param  Collection $instances Collection of the SourceInstances
      * @return Layerset
      */
     public function setInstances($instances)
@@ -155,13 +161,16 @@ class Layerset
     /**
      * Get instances
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return SourceInstance[]|Collection
      */
     public function getInstances()
     {
         return $this->instances;
     }
 
+    /**
+     * @return string Layerset ID
+     */
     public function __toString()
     {
         return (string) $this->getId();

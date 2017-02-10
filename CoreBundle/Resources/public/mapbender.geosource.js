@@ -7,7 +7,6 @@ var Mapbender = Mapbender || {};
  */
 Mapbender.Event = {};
 Mapbender.Event.Dispatcher = Class({
-    abstract: true
 }, {
     'private object listeners': {},
     on: function(name, callback) {
@@ -53,7 +52,6 @@ Mapbender.Event.Dispatcher = Class({
  */
 Mapbender.Geo = {};
 Mapbender.Geo.SourceHandler = Class({
-    abstract: true,
     'extends': Mapbender.Event.Dispatcher
 }, {
     'private string layerNameIdent': 'name',
@@ -466,6 +464,8 @@ Mapbender.Geo.SourceHandler = Class({
                 ],
                 infolayers: [
                 ],
+                styles: [
+                ],
                 changed: {
                     sourceIdx: {
                         id: source.id
@@ -560,6 +560,7 @@ Mapbender.Geo.SourceHandler = Class({
                     && layer.options[self.layerNameIdent].length > 0) {
                     layer.state.visibility = true;
                     result.layers.push(layer.options[self.layerNameIdent]);
+                    result.styles.push(layer.options.style ? layer.options.style : '');
                     if (layer.options.treeOptions.info === true) {
                         result.infolayers.push(layer.options[self.layerNameIdent]);
                     }

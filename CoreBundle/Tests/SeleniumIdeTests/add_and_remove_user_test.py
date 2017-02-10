@@ -3,6 +3,7 @@ from selenium.webdriver.phantomjs.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from subprocess import call
 
 from lib.user import login
 from lib.logout import logout
@@ -37,15 +38,11 @@ try:
     wd.find_element_by_id("user_password_second").send_keys("test1234")
     wd.find_element_by_css_selector("input.button").click()
     wd.find_element_by_css_selector("span.iconRemove.iconSmall").click()
-    wd.save_screenshot(get_sreenshot_path('test'))  # Changed
     wd.find_element_by_link_text("Delete").click()
     logout(wd)
-    wd.save_screenshot(get_sreenshot_path('success'))  # Changed
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
-    wd.quit()
     raise e
 finally:
-    wd.quit()
     if not success:
         raise Exception("Test failed.")

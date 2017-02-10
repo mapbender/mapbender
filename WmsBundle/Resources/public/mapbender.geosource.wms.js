@@ -31,11 +31,11 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             rootLayer.options.treeOptions.allow.selected = false;
         }
 
-        function _setProperties(layer, parent, id, num, proxy){
+        function _setProperties(layer, parent, id, num, options){
             /* set unic id for a layer */
             layer.options.origId = layer.options.id;
             layer.options.id = parent ? parent.options.id + "_" + num : id + "_" + num;
-            if(proxy && layer.options.legend) {
+            if(options.proxy && layer.options.legend && !options.tunnel) {
                 if(layer.options.legend.graphic) {
                     layer.options.legend.graphic = Mapbender.Util.addProxy(layer.options.legend.graphic);
                 } else if(layer.options.legend.url) {
@@ -44,15 +44,15 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             }
             if(layer.children) {
                 for(var i = 0; i < layer.children.length; i++) {
-                    _setProperties(layer.children[i], layer, id, i, proxy);
+                    _setProperties(layer.children[i], layer, id, i, options);
                 }
             }
         }
-        _setProperties(rootLayer, null, sourceDef.id, 0, sourceDef.configuration.options.proxy);
-
+        
+        _setProperties(rootLayer, null, sourceDef.id, 0, sourceDef.configuration.options);
         var finalUrl = sourceDef.configuration.options.url;
-
-        if(sourceDef.configuration.options.proxy === true) {
+        
+        if(sourceDef.configuration.options.proxy === true && !sourceDef.configuration.options.tunnel) {
             finalUrl = Mapbender.Util.addProxy(finalUrl);
         }
 
@@ -76,6 +76,9 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             buffer: sourceDef.configuration.options.buffer ? parseInt(sourceDef.configuration.options.buffer) : 0, // int only for gridded mode
             ratio: sourceDef.configuration.options.ratio ? parseFloat(sourceDef.configuration.options.ratio) : 1.0 // float only for single-tile mode
         };
+        if (sourceDef.configuration.options.exception_format) {
+            mqLayerDef.wms_parameters.exceptions = sourceDef.configuration.options.exception_format;
+        }
         $.extend(mqLayerDef, this.defaultOptions);
         return mqLayerDef;
     },
@@ -96,6 +99,7 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             mqLayer.olLayer.params.FORMAT
         );
         reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = mqLayer.olLayer.queryLayers;
+        reqObj.params['STYLES'] = [];
         reqObj.params['EXCEPTIONS'] = mqLayer.source.configuration.options.exception_format;
         var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
         return reqUrl;

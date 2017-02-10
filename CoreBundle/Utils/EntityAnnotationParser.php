@@ -1,8 +1,4 @@
 <?php
-
-/*
- */
-
 namespace Mapbender\CoreBundle\Utils;
 
 /**

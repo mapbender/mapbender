@@ -6,11 +6,14 @@ use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use OwsProxy3\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -20,7 +23,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 /**
  * Application controller.
  *
- * @author Christian Wygoda
+ * @author  Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author  Andreas Schmitz <andreas.schmitz@wheregroup.com>
+ * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
 class ApplicationController extends Controller
 {
@@ -80,16 +86,17 @@ class ApplicationController extends Controller
         $cacheFile        = $this->getCachedAssetPath($slug, $env, $type);
         $needCache        = $isProduction && !file_exists($cacheFile);
         $modificationDate = new \DateTime();
-        $application      = $this->getApplication($slug);
+        $appEntity        = $this->get('mapbender')->getApplicationEntity($slug);
 
         $response->headers->set('Content-Type', $this->getMimeType($type));
 
+
         if ($isProduction && !$needCache) {
             $modificationTs = filectime($cacheFile);
-            $isAppDbBased   = $application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB;
+            $isAppDbBased   = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
             $modificationDate->setTimestamp($modificationTs);
 
-            if (!$isAppDbBased || ($isAppDbBased && $application->getEntity()->getUpdated() < $modificationDate)) {
+            if (!$isAppDbBased || ($isAppDbBased && $appEntity->getUpdated() < $modificationDate)) {
                 $response->setLastModified($modificationDate);
                 $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
                 if ($response->isNotModified($request)) {
@@ -100,6 +107,7 @@ class ApplicationController extends Controller
             }
         }
 
+        $application = $this->get('mapbender')->getApplication($slug, array());
         if ($type == "css") {
             $sourcePath = $request->getBasePath();
             $refs       = array_unique($application->getAssets('css'));
@@ -133,7 +141,12 @@ class ApplicationController extends Controller
      */
     public function elementAction($slug, $id, $action)
     {
-        $element = $this->getApplication($slug)->getElement($id);
+        $application = $this->getApplication($slug);
+        $element     = $application->getElement($id);
+
+        if(!$element){
+            throw new NotFoundHttpException();
+        }
 
         return $element->httpAction($action);
     }
@@ -142,6 +155,8 @@ class ApplicationController extends Controller
      * Main application controller.
      *
      * @Route("/application/{slug}.{_format}", defaults={ "_format" = "html" })
+     * @param string $slug Application
+     * @return Response
      */
     public function applicationAction($slug)
     {
@@ -246,20 +261,23 @@ class ApplicationController extends Controller
      */
     public function checkApplicationAccess(Application $application)
     {
+        /** @var SecurityContext $securityContext */
         $securityContext = $this->get('security.context');
+        $application     = $application->getEntity();
 
-        $application_entity = $application->getEntity();
-        if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($application_entity->yaml_roles)) {
+        if ($application->isYamlBased()
+            && count($application->getYamlRoles())
+        ) {
 
             // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
             if (!$securityContext->getToken()) {
-                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application_entity->yaml_roles)) {
+                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application->getYamlRoles())) {
                     return;
                 }
             }
 
             $passed = false;
-            foreach ($application_entity->yaml_roles as $role) {
+            foreach ($application->getYamlRoles() as $role) {
                 if ($securityContext->isGranted($role)) {
                     $passed = true;
                     break;
@@ -270,12 +288,13 @@ class ApplicationController extends Controller
             }
         }
 
-        $granted = $securityContext->isGranted('VIEW', $application_entity);
-        if (false === $granted) {
+        if (!$securityContext->isUserAllowedToView($application)) {
             throw new AccessDeniedException('You are not granted view permissions for this application.');
         }
 
-        if (!$application_entity->isPublished() and ! $securityContext->isGranted('EDIT', $application_entity)) {
+        if (!$application->isPublished()
+            && !$securityContext->isUserAllowedToEdit($application)
+        ) {
             throw new AccessDeniedException('This application is not published at the moment');
         }
     }
@@ -317,7 +336,7 @@ class ApplicationController extends Controller
      */
     public function instanceTunnelAction($slug, $instanceId)
     {
-        $instance = $this->container->get("doctrine")
+        $instance        = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         $securityContext = $this->get('security.context');
 
@@ -332,13 +351,13 @@ class ApplicationController extends Controller
 //        }
 //        $params = $this->getRequest()->getMethod() == 'POST' ?
 //            $this->get("request")->request->all() : $this->get("request")->query->all();
-        $headers = array();
-        $postParams = $this->get("request")->request->all();
-        $getParams = $this->get("request")->query->all();
-        $user = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
-        $password = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
+        $headers     = array();
+        $postParams  = $this->get("request")->request->all();
+        $getParams   = $this->get("request")->query->all();
+        $user        = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
+        $password    = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
         $instHandler = EntityHandler::createHandler($this->container, $instance);
-        $vendorspec = $instHandler->getSensitiveVendorSpecific();
+        $vendorspec  = $instHandler->getSensitiveVendorSpecific();
         /* overwrite vendorspecific parameters from handler with get/post parameters */
         if (count($getParams)) {
             $getParams = array_merge($vendorspec, $getParams);
@@ -347,11 +366,38 @@ class ApplicationController extends Controller
             $postParams = array_merge($vendorspec, $postParams);
         }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
-        $proxy_query = ProxyQuery::createFromUrl(
-                $instance->getSource()->getGetMap()->getHttpGet(), $user, $password, $headers, $getParams, $postParams);
-        $proxy = new CommonProxy($proxy_config, $proxy_query);
+        if (isset($getParams['legendurl'])) {
+            $url = $getParams['legendurl'];
+            unset($getParams['legendurl']);
+        } else {
+            foreach ($getParams as $key => $value) {
+                if (strtolower($key) === 'request') {
+                    // TODO implement for other ogc services
+                    if (strtolower($value) === 'getmap') {
+                        $url = $instance->getSource()->getGetMap()->getHttpGet();
+                    } elseif (strtolower($value) === 'getfeatureinfo') {
+                        $url = $instance->getSource()->getGetFeatureInfo()->getHttpGet();
+                    } elseif (strtolower($value) === 'getlegendgraphic') {
+                        $url = $instance->getSource()->getGetLegendGraphic()->getHttpGet();
+                    }
+                    break;
+                }
+            }
+        }
+        if (!$url) {
+            throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
+        }
+        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
+        $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
-        $response = new Response();
+        $response        = new Response();
+
+        $cookies_req = $this->get("request")->cookies;
+        Utils::setHeadersFromBrowserResponse($response, $browserResponse);
+        foreach ($cookies_req as $key => $value) {
+            $response->headers->removeCookie($key);
+            $response->headers->setCookie(new Cookie($key, $value));
+        }
         $response->setContent($browserResponse->getContent());
         return $response;
     }

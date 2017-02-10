@@ -1,0 +1,384 @@
+mb:
+  core:
+    featureinfo:
+      error:
+        nolayer: 'No existe feature info de la capa.'
+        unknownoption: 'Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.'
+        noresult: 'no result'
+      popup:
+        btn:
+          ok: Cerrar
+      class:
+        title: FeatureInfo
+        description: FeatureInfo
+      tag:
+        featureinfo: featureinfo
+        feature: feature
+        info: info
+        dialog: diálogo
+    aboutdialog:
+      content:
+        versionprefix: v.
+        learnmore: 'aprende mas sobre Mapbender3'
+        linktitle: 'Visita nuestri sitio oficial de Mapbender3'
+        website: website
+      class:
+        title: 'Diálogo Acerca de'
+        description: 'Mostrar un diálogo acerca de'
+      tag:
+        help: ayuda
+        info: info
+        about: 'acerca de'
+    simplesearch:
+      input:
+        search: Buscar
+      class:
+        title: 'Búsqueda Simple'
+        description: 'Campo de búsqueda sencillo en base JSON (e.g. Solr)'
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
+    searchrouter:
+      popup:
+        btn:
+          ok: Buscar
+          cancel: Cerrar
+          reset: Reiniciar
+      no_results: 'No results'
+      result_counter: 'Results: %count%'
+      class:
+        title: 'Buscar ruteador'
+        description: 'Búsqueda configurable del elemeteo de ruteo'
+      tag:
+        search: búsqueda
+        router: ruteador
+    poi:
+      sharepoi: 'Compartir POI'
+      text:
+        snippet: 'Puedes usar el siguiente fragmento en un email para enviar el POI'
+      popup:
+        btn:
+          ok: Aceptar
+          cancel: Cancelar
+      class:
+        title: POI
+        description: 'Crear un POI para compartir'
+      tag:
+        poi: poi
+        point: punto
+        interest: interés
+      label:
+        text: Texto
+    basesourceswitcher:
+      error:
+        sourcenotavailable: 'Una fuente con id %id% no está habilitado'
+      class:
+        title: 'Base source switcher'
+        Description: 'Change the map''s background sources'
+      tag:
+        base: base
+        source: destino
+        switcher: switcher
+      form:
+        mesage: 'No fuentebase seteada esta definida.'
+    legend:
+      nolegend: 'No hay leyenda disponible'
+      popup:
+        btn:
+          ok: Cerrar
+      class:
+        title: Leyenda
+        description: 'La leyenda muestra la leyenda de las capas del mapa'
+      tag:
+        layer: capa
+        legend: leyenda
+    ruler:
+      popup:
+        btn:
+          ok: Cerrar
+      create_error: 'Regla: Tipo debe ser línea o área.'
+      class:
+        title: 'Regla Línear/Área'
+        description: 'Regla para dibujar una línea/área y presentar la longitud/área en un diálogo'
+      tag:
+        line: línea
+        area: área
+        measure: medida
+    printclient:
+      label:
+        template: Plantilla
+        quality: Calidad
+        scale: Escala
+        rotation: Rotación
+        legend: __mb.core.printclient.label.legend
+      popup:
+        btn:
+          ok: Imprimir
+          cancel: Cancelar
+      info:
+        noactivelayer: 'No hay capa activa!'
+      form:
+        required: 'Por favor rellene este campo'
+      class:
+        title: 'Cliente de Impresión'
+        description: 'Renders un diálogo de Impresión'
+      tag:
+        print: imprimir
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg
+    overview:
+      nolayer: 'El elemento overview no tiene capa.'
+      class:
+        title: Overview
+        description: 'Renders un pequeño mapa overview'
+      tag:
+        overview: overview
+        map: mapa
+    sketch:
+      circle:
+        radius:
+          label: Radio
+          error: 'Radio no es válido'
+        form:
+          button:
+            'yes': Si
+            cancel: Cancelar
+      class:
+        title: Sketch
+        description: 'Añadir una capa vector en el mapa y habilitar los objetos geometría para dibujar.'
+      tag:
+        sketch: sketch
+        circle: circulo
+    metadata:
+      popup:
+        title: Metadata
+        btn:
+          ok: Close
+    gpsposition:
+      error:
+        notsupported: 'Lo siento, pero los servicios de geolocalización no son soportados por su navegador.'
+        nosignal: Actualmente no es posible localizar su posición.
+      class:
+        title: 'Posición GPS'
+        description: 'Renders un botón para mostrar la Posición del GPS'
+      tag:
+        gpsposition: 'Posición GPS'
+        gps: GPS
+        position: posición
+        button: botón
+    layertree:
+      confirm:
+        allremove: '¿Realmente borrar todas las fuentes?'
+      popup:
+        btn:
+          ok: Cerrar
+      const:
+        outofscale: 'Capa fuera de la escala'
+        outofbounds: 'Capa fuera de límites'
+        parentinvisible: 'Capa pariente invisible'
+      tooltip:
+        sublayers_openclose: 'Subcapas abrit/cerrar'
+        removelayer: 'Remover capa'
+        menu:
+          close: Close
+      label:
+        visibility_onoff: 'Visibilidad prender/apagar'
+        featureinfo_onoff: 'Featureinfo prender/apagar'
+        opacity: Opacity
+        zoomtolayer: 'Aumento a la capa'
+        metadata: Metadata
+        sources: Fuentes
+        deleteallsources: 'Quitar todas las fuentes'
+        legend: Leyenda
+        kmlexport: 'Exportar Kml'
+        dimension_onoff: 'On/Off Dimension'
+        dimension: Dimension
+        sourcevisibility_onoff: 'Show sources'
+        allvisibility_on: 'Show all layers'
+      class:
+        title: 'Árbol de capa'
+        description: 'Árbol de las capas del mapa'
+      tag:
+        layertree: árbolcapas
+        layer: capa
+        tree: árbol
+      contextmenu:
+        nooption: 'Layer has no context menu option'
+    zoombar:
+      panup: 'Mover arriba'
+      panright: 'Mover derecha'
+      pandown: 'Mover abajo'
+      panleft: 'Mover izquierda'
+      goback: Atrás
+      goforward: Adelante
+      zoombybox: 'Acercamiento por recuadro'
+      zoombyworld: 'Acercamiento global'
+      zoomin: Acercar
+      zoomout: Alejar
+      class:
+        title: 'Barra de navegación'
+        description: 'El elemento de barra de navegación provee un control flotante para la panorámica y acercamiento, similar al control de PanZoomBar de OpenLayers'
+      tag:
+        zoom: acercamiento
+        pan: panorama
+        control: control
+        navigation: navegación
+        panel: panel
+    activityindicator:
+      class:
+        title: 'Indicador de actividad'
+        description: 'Mostrar actividad HTTP'
+      tag:
+        activity: actividad
+        indicator: indicador
+    button:
+      class:
+        title: Botón
+        description: Botón
+      tag:
+        button: botón
+    coordinatesdisplay:
+      class:
+        title: 'Mostrar coordenadas'
+        description: 'Las coordenadas mostradas muestran tu posición del mouse en coordenadas del mapa.'
+      tag:
+        coordinates: coordenadas
+        display: muestra
+        mouse: mouse
+        position: posición
+    copyright:
+      class:
+        title: 'Derechos de Autor'
+        description: 'Muestra términos de uso'
+      tag:
+        copyright: 'Derechos de Autor'
+        dialog: diálogo
+    map:
+      class:
+        title: Mapa
+      tag:
+        map: mapa
+        mapquery: MapQuery
+        openlayers: OpenLayers
+      srsnotfound: 'Propiedades SRS para %srslist% no se encontraron'
+    mapabs:
+      class:
+        description: 'MapQuery/OpenLayers mapa basado'
+    scalebar:
+      class:
+        title: 'Barra de escala'
+        description: 'La barra de escala muestra un indicador de línea pequeño representando la escala actual del mapa.'
+      tag:
+        scale: escala
+        bar: barra
+    scaledisplay:
+      class:
+        title: 'Mostrar la escala'
+        description: 'Muestra la escala actual del mapa'
+      tag:
+        scale: Escala
+        display: mostrar
+    scaleselector:
+      class:
+        title: 'Selector de escala'
+        description: 'Muestra y cambia la escala del mapa'
+      tag:
+        scale: escala
+        selector: selector
+    srsselector:
+      class:
+        title: 'SRS selector'
+        description: 'El selector del sistema de referencia espacial cambia el sistema de referecia espacial del mapa'
+      tag:
+        srs: SRS
+        selector: selector
+    admin:
+      poi:
+        label:
+          usemailto: 'Usar Email a'
+      legend:
+        label:
+          autoopen: Autoabrir
+          hideemptylayers: 'Ocultar capas vacías'
+          generatelegendurl: 'Generar leyenda url'
+          showsourcetitle: 'Mostrar título de fuente'
+          showlayertitle: 'Mostrar título de capa'
+          showgroupedlayertitle: 'Mostrar titulo de capa agrupado'
+      featureinfo:
+        label:
+          autoopen: Autoabrir
+          deactivateonclose: 'Desactivar al cerrar'
+          showoriginal: 'Show original'
+          onlyvalid: 'Only valid'
+      printclient:
+        label:
+          autoopen: Autoabrir
+          rotatable: Rotable
+          legend: __mb.core.admin.printclient.label.legend
+      copyright:
+        label:
+          autoopen: Autoabrir
+      layertree:
+        label:
+          showbasesources: 'Mostar fuentes bases'
+          autoopen: Autoabrir
+          showheader: 'Mostrar encabezado'
+          showlayerremove: 'Mostrar quitar capa'
+          usetheme: 'Thematic layer'
+          themes: Themes
+          theme:
+            opened: opened
+            activate: 'Add activate'
+            useTheme: 'Theme show'
+            sourceVisibility: 'Theme: source visibility'
+            allSelected: 'Theme: layer visibility'
+            label: 'theme name'
+          hidenottoggleable: 'Hide not toggleable'
+          hideselect: 'Hide visibility by folders'
+          hideinfo: 'Hide info'
+      redlining:
+        label:
+          auto_activate: Autoactivate
+          deactivate_on_close: 'Deactivate on close'
+    entity:
+      app:
+        screenshotfile:
+          error: 'Screenshotfile error'
+    htmlelement:
+      class:
+        title: Title
+        description: Description
+      tag:
+        html: html
+    redlining:
+      geometrytype:
+        point: Point
+        line: Line
+        polygon: Polygon
+        rectangle: Rectangle
+        text:
+          title: Text
+          label: Text
+      geometry:
+        action:
+          remove: 'Remove geometry'
+          edit: 'Edit geometry'
+          zoom: 'Zoom to geometryoom'
+      dialog:
+        btn:
+          cancel: Close
+      class:
+        title: Redlining
+        description: 'Redlining tool'
+      tag:
+        redlining: redlining
+        geometry: geometry
+  geosource:
+    image_error:
+      datails: 'El mapa no puede ser presentado.'
+      exception: 'Excepción: %exception%'
+      statuscode: 'HTTP código de estado'
+Search: Buscar

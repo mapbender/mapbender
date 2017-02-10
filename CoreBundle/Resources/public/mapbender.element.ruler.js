@@ -33,6 +33,7 @@
          * Initializes the overview
          */
         _setup: function(){
+            this.map = $('#' + this.options.target);
             var sm = $.extend(true, {}, OpenLayers.Feature.Vector.style, {
                 'default': this.options.style
             });
@@ -63,7 +64,8 @@
                     }
                 },
                 persist: this.options.persist,
-                immediate: this.options.immediate
+                immediate: this.options.immediate,
+                geodesic: this._isGeodesic()
             });
 
             this.control.events.on({
@@ -73,12 +75,12 @@
                 'measuremodify': this._handleModify
             });
 
-            this.map = $('#' + this.options.target);
-
             this.container = $('<div/>');
+            this.total = $('<div/>').appendTo(this.container);
             this.segments = $('<ul/>').appendTo(this.container);
 
-            this.total = $('<div/>').appendTo(this.container);
+            $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
+            
             this._trigger('ready');
             this._ready();
         },
@@ -96,6 +98,7 @@
             var self = this,
                     olMap = this.map.data('mapQuery').olMap;
             olMap.addControl(this.control);
+            this.control.geodesic = this._isGeodesic();
             this.control.activate();
 
             this._reset();
@@ -146,16 +149,36 @@
             this.popup = null;
             this.callback ? this.callback.call() : this.callback = null;
         },
+        _isGeodesic: function(){
+            var mapProj = this.map.data('mapQuery').olMap.getProjectionObject();
+            return mapProj.proj.units === 'degrees' || mapProj.proj.units === 'dd';
+        },
+        _mapSrsChanged: function(event, srs){
+            if (this.control.active) { // change geodesic if a control is active
+                this.control.geodesic = this._isGeodesic();
+                this.control.deactivate();
+                this.control.activate();
+                this._reset();
+            }
+        },
         _reset: function(){
             this.segments.empty();
             this.total.empty();
+            this.segments.append('<li/>');
+
         },
         _handleModify: function(event){
             if(event.measure === 0.0){
                 return;
             }
 
-            var measure = this._getMeasureFromEvent(event);
+            var widget = this;
+            var measure = widget._getMeasureFromEvent(event);
+
+            if(widget.control.immediate){
+                widget.segments.children('li').first().html(measure);
+            }
+
             if($('body').data('mapbenderMbPopup')){
                 $("body").mbPopup('setContent', measure);
             }
@@ -170,7 +193,9 @@
             if(this.options.type === 'area'){
                 this.segments.html($('<li/>', { html: measure }));
             } else if(this.options.type === 'line'){
-                this.segments.append($('<li/>', { html: measure }));
+                var measureElement = $('<li/>');
+                measureElement.html(measure);
+                this.segments.prepend(measureElement);
             }
         },
         _handleFinal: function(event){
@@ -193,6 +218,7 @@
 
             return measure;
         },
+
         /**
          *
          */

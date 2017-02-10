@@ -27,9 +27,11 @@ class WmcEditorAdminType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'application' => null
-        ));
+        $resolver->setDefaults(
+            array(
+                'application' => null
+            )
+        );
     }
 
     /**
@@ -38,20 +40,29 @@ class WmcEditorAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element',
+            ->add(
+                'target',
+                'target_element',
                 array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application' => $options['application'],
-                'property_path' => '[target]',
-                'required' => false));
-//        $builder->add('accessGroups', 'fom_groups',
-//            array(
-//            'return_entity' => false,
-//            'user_groups' => false,
-//            'property_path' => '[accessGroups]',
-//            'required' => false,
-//            'multiple' => true,
-//            'empty_value' => 'Choose an option',));
+                    'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                    'application' => $options['application'],
+                    'property_path' => '[target]',
+                    'required' => false
+                )
+            )
+            ->add(
+                'width',
+                'integer',
+                array(
+                    'required' => false
+                )
+            )
+            ->add(
+                'height',
+                'integer',
+                array(
+                    'required' => false
+                )
+            );
     }
-
 }

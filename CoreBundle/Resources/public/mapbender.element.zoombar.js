@@ -56,10 +56,11 @@ $.widget("mapbender.mbZoomBar", {
             .hide()
             .empty();
 
-        for(var i = 0; i < this.map.getNumZoomLevels(); i++) {
-            var resolution = this.map.getResolutionForZoom(this.map.getNumZoomLevels() - i - 1);
+        var levelsNumber = this.map.getNumZoomLevels();
+        for(var i = 0; i < levelsNumber; i++) {
+            var resolution = this.map.getResolutionForZoom(levelsNumber - i - 1);
             var scale = Math.round(OpenLayers.Util.getScaleFromResolution(resolution, this.map.units));
-            this.zoomslider.append($('<li class="iconZoomLevel" title="1:' + scale + '"></li>'));
+            this.zoomslider.append($('<li class="iconZoomLevel" title="1:' + scale + '"/>'));
         }
 
         this.zoomslider.find('li').last()

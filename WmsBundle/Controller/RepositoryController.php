@@ -413,6 +413,7 @@ class RepositoryController extends Controller
                 return $this
                     ->redirect($this->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)));
             } else { // edit
+                $this->get('session')->getFlashBag()->set('warning', 'Your Wms Instance is not valid.');
                 return array(
                     "form" => $form->createView(),
                     "slug" => $slug,

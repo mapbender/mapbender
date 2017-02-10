@@ -2,10 +2,13 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\SQLSearchEngine;
 use Mapbender\CoreBundle\Element\Type\SearchRouterFormType;
 use Mapbender\CoreBundle\Element\Type\SearchRouterSelectType;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -15,60 +18,84 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchRouter extends Element
 {
-    /**
-     *
-     * @var type
-     */
+    const FEATURE_DEFAULT_COLOR   = "#33CCFF";
+    const FEATURE_SELECT_COLOR    = "#ff0000";
+    const FEATURE_OPACITY         = 0.8;
+    const FEATURE_BUFFER          = 1000;
+    const GEOM_FIELD_NAME         = "geom";
+    const DEFAULT_SEARCH_ENGINE   = "Mapbender\\CoreBundle\\Component\\SQLSearchEngine";
+    const DEFAULT_CONNECTION_NAME = "default";
+    const DEFAULT_ROUTE_TITLE     = "mb.core.searchrouter.tag.search";
+
+    /** @var string Element title */
+    protected static $title = "mb.core.searchrouter.class.title";
+
+    /** @var string Element description */
+    protected static $description = "mb.core.searchrouter.class.description";
+
+    /** @var string Element title translation subject */
+    protected static $tags = array(
+        "mb.core.searchrouter.tag.search",
+        "mb.core.searchrouter.tag.router"
+    );
+
+    /** @var array Element default configuration */
+    protected static $defaultConfiguration = array(
+        'tooltip'       => "mb.core.searchrouter.class.title",
+        'title'         => "mb.core.searchrouter.class.title",
+        "target"        => null,
+        // Alternative "timeout" option is deprecated
+        'timeoutFactor' => 3,
+        "width"         => 700,
+        "height"        => 500,
+        "routes"        => array(),
+        // Alternative "dialog" is deprecated
+        "asDialog"      => false
+    );
+
+    /** @var Form[] Element search forms */
     protected $forms;
 
     /**
-     * @inheritdoc
+     * Default route configuration
+     *
+     * @var array
      */
-    public static function getClassTitle()
-    {
-        return "mb.core.searchrouter.class.title";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getClassDescription()
-    {
-        return "mb.core.searchrouter.class.description";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.searchrouter.tag.search",
-            "mb.core.searchrouter.tag.router");
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getWidgetName()
-    {
-        return 'mapbender.mbSearchRouter';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getDefaultConfiguration()
-    {
-        return array(
-            'tooltip' => 'Search Router',
-            "dialog" => false,
-            "target" => null,
-            'timeoutFactor' => 3,
-            "width" => 700,
-            "height" => 500
-        );
-    }
+    protected static $defaultRouteConfiguration = array(
+        "title"         => self::DEFAULT_ROUTE_TITLE,
+        "class"         => self::DEFAULT_SEARCH_ENGINE,
+        "class_options" => array(
+            "connection"         => self::DEFAULT_CONNECTION_NAME,
+            "relation"           => "geometries",
+            "attributes"         => array("*"),
+            "geometry_attribute" => self::GEOM_FIELD_NAME,
+        ),
+        "results"       => array(
+            "view"     => "table",
+            "count"    => "true",
+            "headers"  => array(),
+            "callback" => array(
+                "event"   => "click",
+                "options" => array(
+                    "buffer"   => self::FEATURE_BUFFER,
+                    "minScale" => null,
+                    "maxScale" => null
+                )
+            )
+        ),
+        "styleMap"      => array(
+            "default" => array(
+                "strokeColor" => self::FEATURE_DEFAULT_COLOR,
+                "fillColor"   => self::FEATURE_DEFAULT_COLOR,
+                "fillOpacity" => self::FEATURE_OPACITY
+            ),
+            "select"  => array(
+                "strokeColor" => self::FEATURE_SELECT_COLOR,
+                "fillColor"   => self::FEATURE_SELECT_COLOR,
+                "fillOpacity" => self::FEATURE_OPACITY
+            ),
+        )
+    );
 
     /**
      * @inheritdoc
@@ -76,7 +103,7 @@ class SearchRouter extends Element
     public static function listAssets()
     {
         return array(
-            'js' => array(
+            'js'    => array(
                 '@MapbenderCoreBundle/Resources/public/mapquery/lib/openlayers/OpenLayers.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
@@ -85,7 +112,7 @@ class SearchRouter extends Element
                 'mapbender.element.searchRouter.Feature.js',
                 'mapbender.element.searchRouter.Search.js',
                 'mapbender.element.searchRouter.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss'),
+            'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss'),
             'trans' => array('MapbenderCoreBundle:Element:search_router.json.twig'));
     }
 
@@ -94,12 +121,14 @@ class SearchRouter extends Element
      */
     public function httpAction($action)
     {
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
+        /** @var SQLSearchEngine $engine */
+        $response = new JsonResponse();
+        //$response->headers->set('Content-Type', 'application/json');
         $request = $this->container->get('request');
 
         list($target, $action) = explode('/', $action);
         $conf = $this->getConfiguration();
+
         if (!array_key_exists($target, $conf['routes'])) {
             throw new NotFoundHttpException();
         }
@@ -112,9 +141,8 @@ class SearchRouter extends Element
             if (!array_key_exists($target, $conf['routes'])) {
                 throw new NotFoundHttpException();
             }
-            $conf = $conf['routes'][$target];
-            $engine = new $conf['class']($this->container);
-
+            $conf    = $conf['routes'][ $target ];
+            $engine  = new $conf['class']($this->container);
             $results = $engine->autocomplete(
                 $conf,
                 $data->key,
@@ -124,34 +152,31 @@ class SearchRouter extends Element
                 $data->extent
             );
 
-            $response->setContent(json_encode(array(
-                'key' => $data->key,
-                'value' => $data->value,
+            $response->setData(array(
+                'key'        => $data->key,
+                'value'      => $data->value,
                 'properties' => $data->properties,
-                'results' => $results
-            )));
+                'results'    => $results
+            ));
             return $response;
         }
 
         if ('search' === $action) {
-            $this->setupForms();
-            $form = $this->forms[$target];
+            $this->getForms();
             $data = json_decode($request->getContent());
-            $form->bind(get_object_vars($data->properties));
-
-            $conf = $conf['routes'][$target];
-            $engine = new $conf['class']($this->container);
-            $query = array(
-                'form' => $form->getData(),
-                'autocomplete_keys' => get_object_vars($data->autocomplete_keys)
-            );
+            $form = $this->forms[ $target ];
+            $form->submit(get_object_vars($data->properties));
+            $conf     = $conf['routes'][ $target ];
+            $engine   = new $conf['class']($this->container);
+            $query    = array(
+                'form'              => $form->getData(),
+                'autocomplete_keys' => get_object_vars($data->autocomplete_keys));
             $features = $engine->search($conf, $query, $request->get('srs'), $request->get('extent'));
+            $result   = $this->getFeatureCollection($features);
+            $response->setData(array_merge($result, array(
+                'query' => $query['form']
+            )));
 
-            // Return GeoJSON FeatureCollection
-            $response->setContent(json_encode(array(
-                'type' => 'FeatureCollection',
-                'features' => $features,
-                'query' => $query['form'])));
             return $response;
         }
 
@@ -159,101 +184,60 @@ class SearchRouter extends Element
     }
 
     /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:search_router.html.twig', array('element' => $this));
-    }
-
-    /**
      * Create form for selecting search route (= search form) to display.
      *
-     * @return Symfony\Component\Form\Form Search route select form
+     * @return Form Search route select form
      */
     public function getRouteSelectForm()
     {
         $configuration = $this->getConfiguration();
-
-        $form = $this->container->get('form.factory')->createNamed(
+        $formFactory   = $this->container->get('form.factory');
+        $form          = $formFactory->createNamed(
             'search_routes',
             new SearchRouterSelectType(),
             null,
             array('routes' => $configuration['routes'])
         );
-
         return $form->createView();
     }
 
     /**
-     * Set up all search forms.
-     */
-    protected function setupForms()
-    {
-        if (null === $this->forms) {
-            $configuration = $this->getConfiguration();
-            foreach ($configuration['routes'] as $name => $conf) {
-                $this->forms[$name] = $this->setupForm($name, $conf);
-            }
-        }
-    }
-
-    /**
      * Get all forms.
-     * @return array Search forms
+     *
+     * @return Form[] Search forms
      */
     public function getForms()
     {
-        if (null === $this->forms) {
-            $this->setupForms();
+        if (!$this->forms) {
+            $configuration = $this->getConfiguration();
+            $formFactory   = $this->container->get('form.factory');
+            foreach ($configuration['routes'] as $name => $conf) {
+                $this->forms[ $name ] = $formFactory->createNamed(
+                    $name,
+                    new SearchRouterFormType(),
+                    null, // data
+                    array('fields' => $conf)
+                );
+            }
         }
-
         return $this->forms;
     }
 
+    /**
+     * Get form views
+     *
+     * @return FormView[]
+     */
     public function getFormViews()
     {
         $formViews = array();
         $forms     = $this->getForms();
-        if($forms){
+        if ($forms) {
             foreach ($forms as $form) {
                 $formViews[] = $form->createView();
             }
         }
-
         return $formViews;
-    }
-
-    /**
-     * Set up a single form.
-     *
-     * @param  string $name Form name for FormBuilder
-     * @param  array  $conf Search form configuration
-     * @return [type]       Form
-     */
-    protected function setupForm($name, array $conf)
-    {
-        $form = $this->container->get('form.factory')
-            ->createNamed($name, new SearchRouterFormType(), null, array('fields' => $conf));
-
-        return $form;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getType()
-    {
-        return 'Mapbender\CoreBundle\Element\Type\SearchRouterAdminType';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getFormTemplate()
-    {
-        return 'MapbenderCoreBundle:ElementAdmin:search_router.html.twig';
     }
 
     /**
@@ -271,11 +255,44 @@ class SearchRouter extends Element
         }
         foreach ($configuration['routes'] as $routekey => $routevalue) {
             if (key_exists('configuration', $routevalue)) {
-                foreach ($configuration['routes'][$routekey]['configuration'] as $key => $value) {
-                    $configuration['routes'][$routekey][$key] = $value;
+                foreach ($configuration['routes'][ $routekey ]['configuration'] as $key => $value) {
+                    $configuration['routes'][ $routekey ][ $key ] = $value;
                 }
-                unset($configuration['routes'][$routekey]['configuration']);
+                unset($configuration['routes'][ $routekey ]['configuration']);
             }
+        }
+        return $configuration;
+    }
+
+    /**
+     * GeoJSON FeatureCollection
+     *
+     * @param array $features
+     * @return array
+     */
+    protected function getFeatureCollection(&$features)
+    {
+        return array(
+            'type'     => 'FeatureCollection',
+            'features' => $features
+        );
+    }
+
+    /**
+     * Get the publicly exposed configuration, usually directly derived from
+     * the configuration field of the configuration entity. If you, for
+     * example, store passwords in your element configuration, you should
+     * override this method to return a cleaned up version of your
+     * configuration which can safely be exposed in the client.
+     *
+     * @return array
+     */
+    public function getConfiguration()
+    {
+        $configuration = parent::getConfiguration();
+        $routes        = &$configuration["routes"];
+        foreach ($routes as $k => $route) {
+            $routes[ $k ] = static::mergeArrays(static::$defaultRouteConfiguration, $route, array());
         }
         return $configuration;
     }

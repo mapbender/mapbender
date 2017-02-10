@@ -3,13 +3,13 @@
 namespace Mapbender\CoreBundle\Tests;
 
 use Symfony\Component\Process\Process;
-use FOM\Component\Test\SharedApplicationWebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-
-class SeleniumPythonTest extends SharedApplicationWebTestCase
+class SeleniumPythonTest extends WebTestCase
 {
-    public function setUp() {
-        if(PHP_MINOR_VERSION == 3) {
+    public function setUp()
+    {
+        if (PHP_MINOR_VERSION == 3) {
             $this->markTestIncomplete('This test does not run on PHP 5.3.');
             return;
         }
@@ -19,7 +19,7 @@ class SeleniumPythonTest extends SharedApplicationWebTestCase
     {
         $data = array();
         $glob = glob(dirname(__FILE__) . '/SeleniumIdeTests/*.py');
-        foreach($glob as $file) {
+        foreach ($glob as $file) {
             $data[] = array($file);
         }
         return $data;
@@ -35,8 +35,9 @@ class SeleniumPythonTest extends SharedApplicationWebTestCase
         putenv('TEST_SCREENSHOT_PATH=' . TEST_SCREENSHOT_PATH);
 
         $process = new Process('python ' . $module);
-        $process->setTimeout(3600);  // @todo: Move into phpunit.xml via env or so
+        $process->setTimeout(1000);
         $process->run();
+
         $this->assertEquals(true, $process->isSuccessful(), $process->getErrorOutput());
     }
 }

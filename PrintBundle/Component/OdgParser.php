@@ -1,20 +1,35 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class OdgParser
 {
 
+    /**
+     * OdgParser constructor.
+     *
+     * @param $container
+     */
     public function __construct($container)
     {
         $this->container = $container;
     }
 
+    /**
+     * @param $template
+     * @param $file
+     * @return string
+     */
     private function readOdgFile($template, $file)
     {
         $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $odgfile = $resource_dir . '/templates/' . $template . '.odg';
+
+        if(!is_file($odgfile)){
+            throw new Exception("Print template '$template' doesn't exists.");
+        }
+
         $open = zip_open($odgfile);
         while ($zip_entry = zip_read($open)) {
             if (zip_entry_name($zip_entry) == $file) {
@@ -27,6 +42,10 @@ class OdgParser
         return $xml;
     }
 
+    /**
+     * @param $template
+     * @return string
+     */
     public function getMapSize($template)
     {
         $xml = $this->readOdgFile($template, 'content.xml');
@@ -45,6 +64,12 @@ class OdgParser
         return json_encode($size);
     }
 
+    /**
+     * Get print configuration
+     *
+     * @param $template
+     * @return array
+     */
     public function getConf($template)
     {
         $data = array();
@@ -88,28 +113,35 @@ class OdgParser
             if ($name == '') {
                 continue;
             }
-            $width = $node->getAttribute('svg:width');
+            $width  = $node->getAttribute('svg:width');
             $height = $node->getAttribute('svg:height');
-            $x = $node->getAttribute('svg:x');
-            $y = $node->getAttribute('svg:y');
+            $x      = $node->getAttribute('svg:x');
+            $y      = $node->getAttribute('svg:y');
+            $field  = array(
+                'font'     => 'Arial',
+                'width'    => substr($width, 0, -2) * 10,
+                'height'   => substr($height, 0, -2) * 10,
+                'x'        => substr($x, 0, -2) * 10,
+                'y'        => substr($y, 0, -2) * 10,
+            );
 
-            $data['fields'][$name]['width'] = substr($width, 0, -2) * 10;
-            $data['fields'][$name]['height'] = substr($height, 0, -2) * 10;
-            $data['fields'][$name]['x'] = substr($x, 0, -2) * 10;
-            $data['fields'][$name]['y'] = substr($y, 0, -2) * 10;
-
-
-            $textnode = $xpath->query("draw:text-box/text:p/text:span", $node)->item(0);
-            if ($textnode) {
-                $style = $textnode->getAttribute('text:style-name');
-                $stylenode = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties');
-                $fontsize = $stylenode->item(0)->getAttribute('fo:font-size');
-                $font = $stylenode->item(0)->getAttribute('fo:font-family');
-                $data['fields'][$name]['fontsize'] = $fontsize;
-                $data['fields'][$name]['font'] = $font;
+            // Recognize font name and size
+            $textParagraph = $xpath->query("draw:text-box/text:p", $node)->item(0);
+            $textNode      = $xpath->query("draw:text-box/text:p/text:span", $node)->item(0);
+            if ($textNode) {
+                $style = $textNode->getAttribute('text:style-name');
+            } elseif ($textParagraph) {
+                $style = $textParagraph->getAttribute('text:style-name');
             }
+            if ($style) {
+                $styleNode = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties')->item(0);
+                $fontsize = $styleNode->getAttribute('fo:font-size');
+                $color = $styleNode->getAttribute('fo:color');
+            }
+            $field['fontsize'] = $fontsize != '' ? $fontsize : '10pt';
+            $field['color'] = $color != '' ? $color : '#000000';
+            $data['fields'][ $name ] = $field;
         }
         return $data;
     }
-
 }

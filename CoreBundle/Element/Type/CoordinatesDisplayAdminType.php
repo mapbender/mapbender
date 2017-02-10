@@ -43,7 +43,7 @@ class CoordinatesDisplayAdminType extends AbstractType
                     'left-bottom' => 'left-bottom',
                     'right-top' => 'right-top',
                     'right-bottom' => 'right-bottom')))
-            ->add('numDigits', 'text', array('required' => true))
+            ->add('numDigits', 'integer', array('required' => true))
             ->add('label', 'checkbox', array('required' => false))
             ->add('target', 'target_element',
                 array(

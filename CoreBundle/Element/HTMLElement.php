@@ -11,31 +11,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class HTMLElement extends Element
 {
-
-    /**
-     * @inheritdoc
-     */
-    public static function getClassTitle()
-    {
-        return "mb.core.htmlelement.class.title";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getClassDescription()
-    {
-        return "mb.core.htmlelement.class.description";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getClassTags()
-    {
-        return array(
-            "mb.core.htmlelement.tag.html");
-    }
+    protected static $title                = "mb.core.htmlelement.class.title";
+    protected static $description          = "mb.core.htmlelement.class.description";
+    protected static $tags                 = array(
+        "mb.core.htmlelement.tag.html"
+    );
+    protected static $defaultConfiguration = array(
+        'classes' => 'html-element-inline',
+        'content' => ''
+    );
 
     /**
      * @inheritdoc
@@ -46,57 +30,6 @@ class HTMLElement extends Element
             'js'  => array('@MapbenderCoreBundle/Resources/public/mapbender.element.htmlelement.js'),
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/htmlelement.scss')
         );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getType()
-    {
-        return 'Mapbender\CoreBundle\Element\Type\HTMLElementAdminType';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getDefaultConfiguration()
-    {
-        return array(
-            'classes' => 'html-element-inline',
-            'content' =>  ''
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getWidgetName()
-    {
-        return 'mapbender.mbHTMLElement';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:htmlelement.html.twig',
-            array(
-                'id'            => $this->getId(),
-                'entity'        => $this->entity,
-                'application'   => $this->application,
-                'configuration' => $this->getConfiguration()
-            )
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getFormTemplate()
-    {
-        return 'MapbenderCoreBundle:ElementAdmin:htmlelement.html.twig';
     }
 
     /**
@@ -144,7 +77,7 @@ class HTMLElement extends Element
             $items = $this->prepareItem($items);
         } else {
             foreach ($items as $key => $item) {
-                $items[$key] = $this->prepareItem($item);
+                $items[ $key ] = $this->prepareItem($item);
             }
         }
         return $items;
@@ -179,7 +112,7 @@ class HTMLElement extends Element
                     /** @var Connection $dbal */
                     $dbal = $this->container->get("doctrine.dbal.{$connectionName}_connection");
                     foreach ($dbal->fetchAll($sql) as $option) {
-                        $options[current($option)] = end($option);
+                        $options[ current($option) ] = end($option);
                     }
                     $item["options"] = $options;
                 }
@@ -199,8 +132,8 @@ class HTMLElement extends Element
                     $dataStoreInfo = $item['dataStore'];
                     $dataStore     = $this->container->get('data.source')->get($dataStoreInfo["id"]);
                     $options       = array();
-                    foreach($dataStore->search() as $dataItem){
-                        $options[$dataItem->getId()] = $dataItem->getAttribute($dataStoreInfo["text"]);
+                    foreach ($dataStore->search() as $dataItem) {
+                        $options[ $dataItem->getId() ] = $dataItem->getAttribute($dataStoreInfo["text"]);
                     }
                     $item['options'] = $options;
                 }
@@ -248,7 +181,13 @@ class HTMLElement extends Element
                 $assets['js'][] = $configuration['jsSrc'];
             }
         }
+        if (isset($configuration['css'])) {
+            if (is_array($configuration['css'])) {
+                $assets['css'] = array_merge($assets['css'], $configuration['css']);
+            } else {
+                $assets['css'][] = $configuration['css'];
+            }
+        }
         return $assets;
     }
-
 }

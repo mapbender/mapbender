@@ -152,7 +152,7 @@ $.widget('mapbender.mbPOI', {
         if(this.options.useMailto) {
             var mailto_link = 'mailto:?body=' + escape(body);
             win = window.open(mailto_link,'emailWindow');
-            if (win && win.open &&!win.closed) win.close();
+            window.setTimeout(function() {if (win && win.open &&!win.closed) win.close();}, 100);
         } else {
             var ta = $('<div/>', {
                 html: $('.output', this.element).html()

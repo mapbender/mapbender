@@ -27,8 +27,8 @@
             <td class="moreColumn">
               <span class="iconMore" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}">
                 <div class="infoMsgBox hide">
-                  <span class="hide layer-priority">{{ form_widget(form_layer.priority) }}</span
-                  <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id"|trans }}</span> <span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans }}">{{layer.sourceInstance.source.id}}-{{layer.sourceItem.id}}/{{layer.sourceInstance.id}}-{{layer.id}}</span><br>
+                  <span class="hide layer-priority">{{ form_widget(form_layer.priority) }}</span>
+                  <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.title"|trans }}</span> <span class="smallText" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.id.description"|trans }}">{{layer.sourceInstance.source.id}}-{{layer.sourceItem.id}}/{{layer.sourceInstance.id}}-{{layer.id}}</span><br>
                   <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</span><span class="smallText">{{ form_layer.vars.data.sourceItem.name}}</span>
                   <br>
                   <span class="labelText">{{"mb.wms.wmsloader.repo.instancelayerform.label.style"|trans}}</span>{{ form_widget(form_layer.style) }}

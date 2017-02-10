@@ -1,92 +1,116 @@
-//$rootPath: "../../../mapbendercore/";
-
 @import "libs/variables";
 @import "libs/mixins";
 @import "libs/icons";
-@import "element/mbslider";
+
+@import 'bundles/mapbendermanager/sass/manager/manager.scss';
+
+@import "bundles/mapbendermanager/sass/element/form.scss";
+@import "bundles/mapbendermanager/sass/element/yaml.scss";
+@import "bundles/mapbendermanager/sass/element/button.scss";
+@import "bundles/mapbendermanager/sass/element/activityindicator.scss";
+@import "bundles/mapbendermanager/sass/element/copyright.scss";
+@import "bundles/mapbendermanager/sass/element/featureinfo.scss";
+@import "bundles/mapbendermanager/sass/element/gpsposition.scss";
+@import "bundles/mapbendermanager/sass/element/layertree.scss";
+@import "bundles/mapbendermanager/sass/element/legend.scss";
+@import "bundles/mapbendermanager/sass/element/map.scss";
+@import "bundles/mapbendermanager/sass/element/overview.scss";
+@import "bundles/mapbendermanager/sass/element/printclient.scss";
+@import "bundles/mapbendermanager/sass/element/scalebar.scss";
+@import "bundles/mapbendermanager/sass/element/search_router.scss";
+@import "bundles/mapbendermanager/sass/element/zoombar.scss";
+@import "bundles/mapbendermanager/sass/element/basesourceswitcher.scss";
+@import "bundles/mapbendermanager/sass/element/simple_search.scss";
+@import "bundles/mapbendermanager/sass/manager/services.scss";
+@import "bundles/mapbendermanager/sass/manager/user_control.scss";
 
 // ------------------------------------------------------- APPLICATIONS
-.screenshot_upload{
-    padding: 0px;
+.screenshot_upload {
+  padding: 0px;
+  position: relative;
+  min-width: 300px;
+
+  .label {
+    margin: 0px;
+    padding: 2px;
+    font-size: 12px;
+    white-space: nowrap;
     position: relative;
-    min-width: 300px;
 
-    .label{
-        margin: 0px;
-        padding: 2px;
-        font-size: 12px;
-        white-space: nowrap;
-        position: relative;
-
-        .left{
-            min-width: 100px;
-            width: 100px;
-        }
-        .right{
-            min-width: 200px;
-            width: 200px;
-        }
+    .left {
+      min-width: 100px;
+      width: 100px;
     }
-
-    .input{
-        border: 0px;
-        padding: 5px;
+    .right {
+      min-width: 200px;
+      width: 200px;
     }
+  }
 
-    .inputWrapper{
-        position: absolute;
-        left: 0;
+  .input {
+    border: 0px;
+    padding: 5px;
+  }
 
-        input[type=file]{
-            display: block;
-            float: left;
-            width: 100px;
-            font-size: 20px;
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-            filter: alpha(opacity=0);
-            -moz-opacity: 0;
-            -khtml-opacity: 0;
-            opacity: 0;
-            cursor:pointer;
-        }
-        &:after{
-            clear: both;
-        }
+  .inputWrapper {
+    position: absolute;
+    left: 0;
+
+    input[type=file] {
+      display: block;
+      float: left;
+      width: 100px;
+      font-size: 20px;
+      -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+      filter: alpha(opacity=0);
+      -moz-opacity: 0;
+      -khtml-opacity: 0;
+      opacity: 0;
+      cursor: pointer;
     }
-    .upload_button{
-        $buttonFirstColor:#6fb536;
-        $buttonSecondColor:#5fa229;
-
-        margin:0px;
-        padding-left: 10px;
-        padding-right: 10px;
-
-        border:1px solid darken($buttonSecondColor, 5%);
-        color:$lightFontColor;
-        background-color:$buttonFirstColor;
-        &.hover,            
-        &:hover{
-            background-color:darken($buttonFirstColor, 5%);
-
-        }
+    &:after {
+      clear: both;
     }
-
-
-    .upload{
-        font-size: 30px;
-    }
-    &:after{
-        clear: both;
-    }}
-
-
-
-
-
-.upload_label{
+  }
+  .upload_label{
     overflow: hidden;
+    height: 24px;
+    line-height: 24px;
+    vertical-align: middle;
+    padding: 0px 0px 0px 5px;
+    font-size: 11px;
+    font-weight: normal;
+  }
+  .upload_button {
+    $buttonFirstColor: #6fb536;
+    $buttonSecondColor: #5fa229;
+    line-height: 24px;
+    vertical-align: top;
+    height: 24px;
+    margin: 0px;
+    font-size: 11px;
+    padding: 0px 10px;
+    font-weight: normal;
+    cursor: pointer;
 
+    border: 1px solid darken($buttonSecondColor, 5%);
+    color: $lightFontColor;
+    background-color: $buttonFirstColor;
+    &.hover,
+    &:hover {
+      background-color: darken($buttonFirstColor, 5%);
+
+    }
+  }
+
+  .upload {
+    font-size: 30px;
+  }
+  &:after {
+    clear: both;
+  }
 }
+
 .listFilterInput{
   margin-bottom:$space;
   width:250px;
@@ -101,7 +125,7 @@
   .col1{width:$col1Width;
     padding:0px;
     display:table;
-          
+
     &.default{
       border: 1px solid #a2a2a2;
       background-color:#404040;
@@ -114,7 +138,7 @@
       margin:0;
       height: 120px;
       width: 120px;
-            
+
       img{
          max-height: 100%;
          max-width: 100%;
@@ -161,7 +185,7 @@
     width:200px;
     height:200px;
     margin-right: 50px;
-    
+
     border: 1px solid #c0c0c0;
     background-color: #f9f9f9;
     display: table;
@@ -189,7 +213,7 @@
       right: 20px;
       margin-right: 50px;
     }
-    
+
     div.cell_edit{
         display: table-cell;
         vertical-align:middle;
@@ -206,7 +230,7 @@
          display: block;
          margin: 0 auto;
         }
-      }    
+      }
   }
 
   .labelInput{

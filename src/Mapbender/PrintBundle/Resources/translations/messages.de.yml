@@ -1,0 +1,18 @@
+mb:
+  print:
+    imageexport:
+      chooseformat: 'Exportformat auswählen'
+      popup:
+        btn:
+          ok: Exportieren
+          cancel: Abbrechen
+      info:
+        noactivelayer: 'Keine aktive Ebene!'
+      class:
+        title: Bildexport
+        description: 'Mit dem Bildexport kann die aktuelle Kartenansicht als Bild exportiert werden. Das Bild kann als png oder jpeg abgespeichert werden.'
+      tag:
+        image: Bild
+        export: Export
+        jpeg: jpeg
+        png: png

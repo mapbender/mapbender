@@ -1,10 +1,9 @@
-@import "libs/variables";
-@import "libs/mixins";
-
-.elementFormBaseSourceSwitcher{
-  .collectionItem{
+.elementFormBaseSourceSwitcher {
+  .collectionItem {
     position: relative;
     margin-bottom: $space;
   }
-  .iconRemove{@include absolute(0 30px '' '');}
+  .iconRemove {
+    @include absolute(0 30px '' '');
+  }
 }

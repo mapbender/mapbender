@@ -118,8 +118,9 @@
     <li>
       <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.scale" | trans }}:</span>
       <span class="metaText">
-        {{ "mb.wms.wmsloader.repo.layer.label.min" | trans }}:{{ '%d'|format(layer.scale.min) }}<br/>
-        {{ "mb.wms.wmsloader.repo.layer.label.max" | trans }}:{{ '%d'|format(layer.scale.max) }}</span>
+          {{ "mb.wms.wmsloader.repo.layer.label.min" | trans }}:{% if layer.scale.min is not null %}{{ '%d'|format(layer.scale.min) }}{% endif %}<br/>
+        {{ "mb.wms.wmsloader.repo.layer.label.max" | trans }}:{% if layer.scale.max is not null %}{{ '%d'|format(layer.scale.max) }}{% endif %}
+      </span>
 
     </li>
   {% endif %}
@@ -127,8 +128,8 @@
   <li>
     <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.scalehint" | trans }}:</span>
     <span class="metaText">
-      {{ "mb.wms.wmsloader.repo.layer.label.min" | trans }}:{{ layer.scaleHint.min }}<br/>
-      {{ "mb.wms.wmsloader.repo.layer.label.max" | trans }}:{{ layer.scaleHint.max }}
+      {{ "mb.wms.wmsloader.repo.layer.label.min" | trans }}:{% if layer.scaleHint.min is not null %}{{ layer.scaleHint.min }}{% endif %}<br/>
+      {{ "mb.wms.wmsloader.repo.layer.label.max" | trans }}:{% if layer.scaleHint.max is not null %}{{ layer.scaleHint.max }}{% endif %}
     </span>
   </li>
   {% endif %}

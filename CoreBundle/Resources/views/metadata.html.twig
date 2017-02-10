@@ -26,7 +26,7 @@
         <div class="tabContainerAlt metadataContainer">
             <ul class="tabs">
             {% for section in metadata.sections %}
-                {% set vt=prefix~section.title %}
+                {% set vt=prefix~section.title~ "._title" %}
                 <li id="tab{{loop.index}}" class="tab{% if loop.first %} active{% endif %}">{{ vt | trans}}</li>
             {% endfor %}
             </ul>
@@ -45,30 +45,32 @@
         </div>
         {% elseif metadata.container == 'accordion' %}
         <div class="accordionContainer metadataContainer">
-        {% for section in metadata.sections %}
-            {% set vt=prefix~section.title %}
-            <div id="accordion{{loop.index}}" class="accordion{% if loop.first %} active{% endif %}"><div class="tablecell">{{ vt | trans}}</div></div>
-            <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
-                <div class="accordion-cell">
-                    <div class="accordion-wrapper">
-                        <div>
-                    {% if section.title == 'items' %}
-                        {% include "MapbenderCoreBundle::metadata_item.html.twig"  with {'items': section.items, 'itemLevel': 1 }%}
-                    {% else %}
-                    {% for item in section.items %}
-                        {% for key,val in item %}
-                        {% set vt=prefix~section.title~'.'~key %}
-                        <div class="labelText">{{ vt | trans}}:</div>
-                        <div class="metaText">{{val}}</div>
-                        <div class="clearContainer"></div>
-                        {% endfor %}
-                    {% endfor %}
-                    {% endif %}
+            {% for section in metadata.sections %}
+                {% set vt=prefix~section.title~ "._title" %}
+                <div id="accordion{{ loop.index }}" class="accordion{% if loop.first %} active{% endif %}">
+                    <div class="tablecell">{{ vt | trans }}</div>
+                </div>
+                <div id="container{{ loop.index }}" class="container-accordion{% if loop.first %} active{% endif %}">
+                    <div class="accordion-cell">
+                        <div class="accordion-wrapper">
+                            <div>
+                                {% if section.title == 'items' %}
+                                    {% include "MapbenderCoreBundle::metadata_item.html.twig"  with {'items': section.items, 'itemLevel': 1 } %}
+                                {% else %}
+                                    {% for item in section.items %}
+                                        {% for key,val in item %}
+                                            {% set vt=prefix~section.title~'.'~key %}
+                                            <div class="labelText">{{ vt  | trans }}:</div>
+                                            <div class="metaText">{{ val }}</div>
+                                            <div class="clearContainer"></div>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
                         </div>
-                    </div> 
-                </div> 
-            </div>   
-        {% endfor %}        
+                    </div>
+                </div>
+            {% endfor %}
         </div>
         {% else %}
         <div class="metadataContainer">

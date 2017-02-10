@@ -1,10 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\ORM\PersistentCollection;
@@ -15,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Description of ImportHandler
@@ -42,9 +37,12 @@ class ImportHandler extends ExchangeHandler
      */
     public function createForm()
     {
-        $this->checkGranted('CREATE', new Application());
-        $type = new ImportJobType();
-        return $this->container->get('form.factory')->create($type, $this->job, array());
+        if (!$this->securityContext->isUserAllowedToCreate(new Application())) {
+            throw new AccessDeniedException();
+        }
+        return $this->container
+            ->get('form.factory')
+            ->create(new ImportJobType(), $this->job, array());
     }
 
     /**
@@ -52,14 +50,10 @@ class ImportHandler extends ExchangeHandler
      */
     public function bindForm()
     {
-        $form    = $this->createForm();
-        $request = $this->container->get('request');
-        $form->bind($request);
-        if ($form->isValid()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this
+            ->createForm()
+            ->submit($this->container->get('request'))
+            ->isValid();
     }
 
     /**
@@ -134,7 +128,9 @@ class ImportHandler extends ExchangeHandler
 
     /**
      * Imports applications.
+     *
      * @param array $data data to import
+     * @return array
      * @throws ImportException
      */
     private function importApps($data)
@@ -156,6 +152,10 @@ class ImportHandler extends ExchangeHandler
         return $apps;
     }
 
+    /**
+     * @param $object
+     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
+     */
     private function addAcls($object)
     {
         $aces = array();
@@ -192,12 +192,19 @@ class ImportHandler extends ExchangeHandler
      * Imports ACLs.
      * @param array $data data to import
      * @throws ImportException
+     * @todo implement this.
      */
     private function importAcls($data)
     {
-        // TODO
+
     }
 
+    /**
+     * @param array $sources
+     * @param array $item
+     * @param int   $idx
+     * @return bool
+     */
     private function findSourceToMapper(array $sources, array $item, $idx = 0)
     {
         if (count($sources) === 0) {
@@ -222,6 +229,9 @@ class ImportHandler extends ExchangeHandler
      * Adds entitiy with assoc. items to mapper.
      *
      * @param object $object source
+     * @param array  $data
+     * @param array  $result
+     * @throws \Exception
      */
     private function addSourceToMapper($object, array $data, array &$result)
     {
@@ -276,6 +286,9 @@ class ImportHandler extends ExchangeHandler
         }
     }
 
+    /**
+     * @param array $mapper
+     */
     private function mergeIntoMapper(array $mapper)
     {
         foreach ($mapper as $class => $content) {

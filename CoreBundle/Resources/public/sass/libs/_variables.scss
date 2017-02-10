@@ -49,3 +49,6 @@ $selectColor: #F7F79A;
 $mandatoryColor: #DCAF18;
 $warnFontColor: #B4AD2D;
 $errorFontColor: #E12F2F;
+
+$containerBorderRadius: 5px !default;
+$elementBorderRadius: $containerBorderRadius - 2px;

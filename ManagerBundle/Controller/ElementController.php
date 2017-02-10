@@ -1,35 +1,44 @@
 <?php
-
-/**
- * Mapbender application management
- *
- * @author Christian Wygoda <christian.wygoda@wheregroup.com>
- */
 namespace Mapbender\ManagerBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Mapbender\CoreBundle\Component\Element As ComponentElement;
+use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
+use Mapbender\CoreBundle\Component\Element as ComponentElement;
+use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Form\Type\BaseElementType;
-use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Mapbender\CoreBundle\Validator\Constraints\ContainsElementTarget;
 use Mapbender\CoreBundle\Validator\Constraints\ContainsElementTargetValidator;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Acl\Domain\Acl;
 
+/**
+ * Class ElementController
+ *
+ * @package Mapbender\ManagerBundle\Controller
+ *
+ * @author  Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author  Andreas Schmitz <andreas.schmitz@wheregroup.com>
+ * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
+ */
 class ElementController extends Controller
 {
-
     /**
      * Show element class selection
      *
      * @ManagerRoute("/application/{slug}/element/select")
      * @Method({"GET","POST"})
      * @Template
+     * @param string $slug
+     * @return array
      */
     public function selectAction($slug)
     {
@@ -84,37 +93,31 @@ class ElementController extends Controller
      * @ManagerRoute("/application/{slug}/element/new")
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Element:edit.html.twig")
+     * @param string $slug
+     * @return array Response
      */
     public function newAction($slug)
     {
+        /** @var \Mapbender\CoreBundle\Component\Element $elementComponent */
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-
-        // Get class for element
-        $class = $this->getRequest()->get('class');
+        $class       = $this->getRequest()->get('class'); // Get class for element
 
         if (!class_exists($class)) {
             throw new \RuntimeException('An Element class "' . $class
-            . '" does not exist.');
+                . '" does not exist.');
         }
 
-        // Get first region (by default)
-        $template = $application->getTemplate();
-        $regions = $template::getRegions();
-        $region = $this->get('request')->get('region');
+        $template             = $application->getTemplate();
+        $region               = $this->get('request')->get('region');
+        $applicationComponent = new ApplicationComponent($this->container, $application, array());
+        $elementComponent     = new $class($applicationComponent, $this->container, ComponentElement::getDefaultElement($class, $region));
 
-        $appl = new \Mapbender\CoreBundle\Component\Application($this->container,
-            $application, array());
+        $elementComponent->getEntity()->setTitle($elementComponent->trans($elementComponent->getClassTitle()));
 
-        $elmComp = new $class($appl, $this->container,
-            ComponentElement::getDefaultElement($class, $region));
-        $elmComp->getEntity()->setTitle($elmComp->trans($elmComp->getClassTitle()));
-        $form = ComponentElement::getElementForm($this->container, $application,
-                $elmComp->getEntity());
+        $response         = ComponentElement::getElementForm($this->container, $application, $elementComponent->getEntity());
+        $response["form"] = $response['form']->createView();
 
-        return array(
-            'form' => $form['form']->createView(),
-            'theme' => $form['theme'],
-            'assets' => $form['assets']);
+        return $response;
     }
 
     /**
@@ -133,11 +136,11 @@ class ElementController extends Controller
                 $data['region']);
         $element->setApplication($application);
         $form = ComponentElement::getElementForm($this->container, $application,
-                $element);
+            $element);
         $form['form']->bind($this->get('request'));
 
         if ($form['form']->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $em    = $this->getDoctrine()->getManager();
             $query = $em->createQuery(
                 "SELECT e FROM MapbenderCoreBundle:Element e"
                 . " WHERE e.region=:reg AND e.application=:app");
@@ -151,7 +154,7 @@ class ElementController extends Controller
             $em->persist($element);
             $em->flush();
             $entity_class = $element->getClass();
-            $appl = new \Mapbender\CoreBundle\Component\Application($this->container,
+            $appl = new ApplicationComponent($this->container,
                 $application, array());
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
@@ -225,7 +228,7 @@ class ElementController extends Controller
             $em->flush();
 
             $entity_class = $element->getClass();
-            $appl = new \Mapbender\CoreBundle\Component\Application($this->container,
+            $appl = new ApplicationComponent($this->container,
                 $application, array());
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
@@ -242,67 +245,63 @@ class ElementController extends Controller
     }
 
     /**
+     * Display and handle element access rights
+     *
      * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"})
      * @Template("MapbenderManagerBundle:Element:security.html.twig")
+     * @param $slug string Application short name
+     * @param $id int Element ID
+     * @return array Response
+     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
     public function securityAction($slug, $id)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
-
-        $element = $this->getDoctrine()
-            ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+        /** @var EntityManager $entityManager */
+        /** @var Element $element */
+        $doctrine          = $this->getDoctrine();
+        $entityManager     = $doctrine->getManager();
+        $elementRepository = $doctrine->getRepository('MapbenderCoreBundle:Element');
+        $element           = $elementRepository->findOneById($id);
 
         if (!$element) {
-            throw $this->createNotFoundException('The element with the id "'
-                . $id . '" does not exist.');
+            throw $this->createNotFoundException("The element with the id \"$id\" does not exist.");
         }
-        $em->detach($element); // prevent element from being stored with default config/stored again
-        if ($this->getRequest()->getMethod() === 'POST') {
-            $form = ComponentElement::getElementForm($this->container,
-                    $application, $element, true);
-            $request = $this->getRequest();
-            $form['form']->bind($request);
-            if ($form['form']->isValid()) {
-                $em->getConnection()->beginTransaction();
-                try {
-                    $application->setUpdated(new \DateTime('now'));
-                    $em->persist($application);
 
-                    $aclManager = $this->get('fom.acl.manager');
-                    $aclManager->setObjectACLFromForm($element,
-                        $form['form']->get('acl'), 'object');
-                    $em->flush();
-                    $em->getConnection()->commit();
-                    $this->get('session')->getFlashBag()->set('success',
-                        "Your element's access has been changed.");
-                } catch (\Exception $e) {
-                    $this->get('session')->getFlashBag()->set('error',
-                        "There was an error trying to change your element's access.");
-                    $em->getConnection()->rollback();
-                    $em->close();
+        $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
-                    if ($this->container->getParameter('kernel.debug')) {
-                        throw($e);
-                    }
+        /** @var Form $form */
+        /** @var Form $aclForm */
+        /** @var Connection  */
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $connection  = $entityManager->getConnection();
+        $request     = $this->getRequest();
+        $response    = ComponentElement::getElementForm($this->container, $application, $element, true);
+        $form        = $response["form"];
+        $aclForm     = $form->get('acl');
+
+        if ($request->getMethod() === 'POST' && $form->submit($request)->isValid()) {
+            $connection->beginTransaction();
+            try {
+                $aclManager  = $this->get('fom.acl.manager');
+                $application->setUpdated(new \DateTime('now'));
+                $entityManager->persist($application);
+                $aclManager->setObjectACLFromForm($element, $aclForm, 'object');
+                $entityManager->flush();
+                $connection->commit();
+                $this->get('session')->getFlashBag()->set('success', "Your element's access has been changed.");
+            } catch (\Exception $e) {
+                $this->get('session')->getFlashBag()->set('error', "There was an error trying to change your element's access.");
+                $connection->rollback();
+                $entityManager->close();
+                if ($this->container->getParameter('kernel.debug')) {
+                    throw($e);
                 }
-            } else {
-                return array(
-                    'form' => $form['form']->createView(),
-                    'theme' => $form['theme'],
-                    'assets' => $form['assets']);
             }
-        } else {
-
-            $form = ComponentElement::getElementForm($this->container,
-                    $application, $element, true);
-            return array(
-                'form' => $form['form']->createView(),
-                'theme' => $form['theme'],
-                'assets' => $form['assets']);
         }
+
+        $response["form"] = $form->createView();
+        return $response;
     }
 
     /**

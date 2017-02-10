@@ -11,11 +11,13 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class ImageExportService
 {
+    protected $urlHostPath;
 
     public function __construct($container)
     {
         $this->container = $container;
         $this->tempdir = sys_get_temp_dir();
+        $this->urlHostPath = $this->container->get('request')->getHttpHost() . $this->container->get('request')->getBaseURL();
     }
 
     public function export($content)
@@ -49,13 +51,22 @@ class ImageExportService
             $url .= $width . $height;
             
             $this->container->get("logger")->debug("Image Export Request Nr.: " . $k . ' ' . $url);
-            $attributes = array();
-            $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
-            $subRequest = new Request(array(
-                'url' => $url
-                ), array(), $attributes, array(), array(), array(), '');
-            $response = $this->container->get('http_kernel')->handle($subRequest,
-                HttpKernelInterface::SUB_REQUEST);
+
+            $parsed   = parse_url($url);
+            $hostpath = $parsed['host'] . $parsed['path'];
+            $pos      = strpos($hostpath, $this->urlHostPath);
+            if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
+                $attributes = $this->container->get('router')->match($routeStr);
+                $gets       = array();
+                parse_str($parsed['query'], $gets);
+                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+            } else {
+                $attributes = array(
+                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
+                );
+                $subRequest = new Request(array('url' => $url), array(), $attributes, array(), array(), array(), '');
+            }
+            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
 
             $imagename = tempnam($this->tempdir, 'mb_imgexp');
             $temp_names[] = $imagename;
@@ -63,8 +74,13 @@ class ImageExportService
             file_put_contents($imagename, $response->getContent());
             $rawImage = null;
             switch (trim($response->headers->get('content-type'))) {
-                case 'image/png; mode=8bit' : 
                 case 'image/png' :
+                    $rawImage = imagecreatefrompng($imagename);
+                    break;
+                case 'image/png8' :
+                    $rawImage = imagecreatefrompng($imagename);
+                    break;
+                case 'image/png; mode=24bit' :
                     $rawImage = imagecreatefrompng($imagename);
                     break;
                 case 'image/jpeg' :

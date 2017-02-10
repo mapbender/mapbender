@@ -5,20 +5,20 @@ $(function () {
             var text = extent ? extent[0] + '/' + extent[1] + '/' + extent[2] + ' - ' + default_ : '';
             $('input[data-name="display"]', $div.parents('.collectionItem:first')).val(text);
             $('input[data-name="extent"]', $div).val(extent ? JSON.stringify(extent) : '');
-//            $('input[data-name="origextent"]', $div).val(!dimension ? "" : JSON.stringify(dimension.options.origextent));
+//            $('input[data-name="origextent"]', $div).val(!dimension ? "" : JSON.stringify(dimension.getOptions().origextent));
             $('input[data-name="default"]', $div).val(default_ ? default_ : '');
         },
         setVals: function ($div, dimension) {
-            $('input[data-name="extent"]', $div).val(!dimension ? "" : JSON.stringify(dimension.options.extent));
-            $('input[data-name="origextent"]', $div).val(!dimension ? "" : JSON.stringify(dimension.options.origextent));
-            $('input[data-name="type"]', $div).val(!dimension ? "" : dimension.options.type);
-            $('input[data-name="current"]', $div).val(!dimension ? "" : dimension.options.current);
-            $('input[data-name="nearestValue"]', $div).val(!dimension ? "" : dimension.options.nearestValue);
-            $('input[data-name="multipleValues"]', $div).val(!dimension ? "" : dimension.options.multipleValues);
-            $('input[data-name="default"]', $div).val(!dimension ? "" : dimension.options['default']);
-            $('input[data-name="unitSymbol"]', $div).val(!dimension ? "" : dimension.options.unitSymbol);
-            $('input[data-name="units"]', $div).val(!dimension ? "" : dimension.options.units);
-            $('input[data-name="name"]', $div).val(!dimension ? "" : dimension.options.name);
+            $('input[data-name="extent"]', $div).val(!dimension ? "" : JSON.stringify(dimension.getOptions().extent));
+            $('input[data-name="origextent"]', $div).val(!dimension ? "" : JSON.stringify(dimension.getOptions().origextent));
+            $('input[data-name="type"]', $div).val(!dimension ? "" : dimension.getOptions().type);
+            $('input[data-name="current"]', $div).val(!dimension ? "" : dimension.getOptions().current);
+            $('input[data-name="nearestValue"]', $div).val(!dimension ? "" : dimension.getOptions().nearestValue);
+            $('input[data-name="multipleValues"]', $div).val(!dimension ? "" : dimension.getOptions().multipleValues);
+            $('input[data-name="default"]', $div).val(!dimension ? "" : dimension.getOptions()['default']);
+            $('input[data-name="unitSymbol"]', $div).val(!dimension ? "" : dimension.getOptions().unitSymbol);
+            $('input[data-name="units"]', $div).val(!dimension ? "" : dimension.getOptions().units);
+            $('input[data-name="name"]', $div).val(!dimension ? "" : dimension.getOptions().name);
         },
         groupedFromVals: function ($div) {
             var dim = {
@@ -74,9 +74,11 @@ $(function () {
             var $div = $select.parents('.collectionItem:first').find('input[data-extent="group-dimension-extent"]').parent();
             if ($select.val() && $select.val().length > 0) {
                 var grouped = $last ? this.generateGrouped($select, $last) : this.groupedFromVals($div);
-                var options = $.extend(true, {}, grouped.options);
-                grouped.options.extent = grouped.options.origextent;
-                grouped = Mapbender.Dimension(grouped.options);
+                var gopts = grouped.getOptions();
+                var options = $.extend(true, {}, gopts);
+                gopts.extent = gopts.origextent;
+                grouped.setOptions(gopts);
+                grouped = Mapbender.Dimension(grouped.getOptions());
                 $div.addClass('sliderDiv').addClass('mb-slider');
                 var rangeMin = grouped.partFromValue(options.extent[0]);// * 100;
                 var rangeMax = grouped.partFromValue(options.extent[1]);// * 10
@@ -89,7 +91,7 @@ $(function () {
                     steps: grouped.getStepsNum(),
                     values: [rangeMin * 100, rangeMax * 100], // [0,100],
                     slide: function (event, ui) {
-                        var extent = [grouped.valueFromPart(ui.values[0] / 100), grouped.valueFromPart(ui.values[1] / 100), grouped.options.extent[2]];
+                        var extent = [grouped.valueFromPart(ui.values[0] / 100), grouped.valueFromPart(ui.values[1] / 100), grouped.getOptions().extent[2]];
                         grouped.setDefault(grouped.getInRange(extent[0], extent[1], grouped.getDefault()));
                         self.updateExtents($div, extent, grouped.getDefault());
                     }

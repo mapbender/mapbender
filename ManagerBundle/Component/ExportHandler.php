@@ -1,14 +1,6 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\ManagerBundle\Component;
 
-use Mapbender\ManagerBundle\Component\ExchangeNormalizer;
-use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Form\Type\ExportJobType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Dumper;
@@ -20,7 +12,6 @@ use Symfony\Component\Yaml\Dumper;
  */
 class ExportHandler extends ExchangeHandler
 {
-
     /**
      * @inheritdoc
      */
@@ -35,7 +26,7 @@ class ExportHandler extends ExchangeHandler
      */
     public function createForm()
     {
-        $allowedApps = $this->getAllowedAppllications();
+        $allowedApps = $this->getAllowedApplications();
         $type        = new ExportJobType();
         return $this->container->get('form.factory')
                 ->create($type, $this->job, array('application' => $allowedApps));
@@ -69,7 +60,7 @@ class ExportHandler extends ExchangeHandler
         $this->exportSources($normalizer);
         $time['sources'] = microtime(true);
         $time['sources'] = $time['sources'] . '/' . ($time['sources'] - $time['start']);
-        
+
         gc_collect_cycles();
         $this->exportApps($normalizer);
         $time['end'] = microtime(true);
@@ -81,40 +72,54 @@ class ExportHandler extends ExchangeHandler
         return $export;
     }
 
-    public function format($scr)
+    /**
+     * Encode array to given format (YAML|JSON).
+     *
+     * @param $data
+     * @return string
+     */
+    public function format($data)
     {
         if ($this->job->getFormat() === ExchangeJob::FORMAT_JSON) {
-            return json_encode($scr);
+            return json_encode($data);
         } elseif ($this->job->getFormat() === ExchangeJob::FORMAT_YAML) {
             $dumper = new Dumper();
-            $yaml   = $dumper->dump($scr, 20);
+            $yaml   = $dumper->dump($data, 20);
             return $yaml;
         }
     }
 
-    private function exportApps($normalizer)
+    /**
+     * @param $normalizer
+     */
+    private function exportApps(ExchangeNormalizer $normalizer)
     {
         $normalizer->handleValue($this->job->getApplication());
         gc_collect_cycles();
     }
 
-    private function exportAcls()
+    /**
+     * @param $normalizer
+     */
+    private function exportSources(ExchangeNormalizer $normalizer)
     {
-        throw new \Exception('"exportAcls" is not implemented yet');
-        if ($this->job->getAcl()) {
-            // TODO
+        $sources     = array();
+        $application = $this->job->getApplication();
+        $help        = $this->getAllowedApplicationSources($application);
+        foreach ($help as $src) {
+            if (isset($sources[ $src->getId() ])) {
+                continue;
+            }
+            $normalizer->handleValue($src);
+            gc_collect_cycles();
         }
     }
 
-    private function exportSources($normalizer)
+    /**
+     * @return ExchangeJob
+     */
+    public function getJob()
     {
-        $sources = array();
-        $help    = $this->getAllowedApplicationSources($this->job->getApplication());
-        foreach ($help as $src) {
-            if (!isset($sources[$src->getId()])) {
-                $normalizer->handleValue($src);
-                gc_collect_cycles();
-            }
-        }
+        return parent::getJob();
     }
 }

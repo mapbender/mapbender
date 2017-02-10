@@ -11,6 +11,7 @@
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/lib/codemirror.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/code-mirror.yaml.plugin.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/mode/css/css.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/keymap/sublime.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/addon/selection/active-line.js') }}"></script>
@@ -28,7 +29,7 @@
         <li id="tabLayout" class="tab">{{"mb.manager.admin.application.layouts" | trans }}</li>
         <li id="tabLayers" class="tab">{{"mb.manager.admin.application.layersets" | trans }}</li>
         <li id="tabCustomCss" class="tab">{{"mb.manager.admin.application.custom_css" | trans }}</li>
-        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security" | trans }}</li>
+        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData">
         <div class="left">{% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}</div>
@@ -60,7 +61,9 @@
         {% include 'MapbenderManagerBundle:Application:form-css.html.twig' %}
       </div>
       <div id="containerSecurity" class="container containerSecurity">
-        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+        {% block securityTab %}
+          {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+        {% endblock %}
       </div>
     </div>
     <div class="clearContainer"></div>

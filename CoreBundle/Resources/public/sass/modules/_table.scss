@@ -3,8 +3,7 @@
   background-color:$contentColor;
 
   td{
-    padding:$space/4;
-    padding-left:$space/2;
+    padding: 0px $space/2;
   }
   thead{border-bottom: solid 5px darken($contentColor, 15%);}
   th{

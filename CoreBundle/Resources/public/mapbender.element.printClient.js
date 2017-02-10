@@ -19,6 +19,7 @@
         width: null,
         height: null,
         rotateValue: 0,
+        overwriteTemplates: false,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -32,14 +33,14 @@
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
-            
+
             $('select[name="scale_select"]', this.element)
                 .on('change', $.proxy(this._updateGeometry, this));
             $('input[name="rotation"]', this.element)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.element)
                 .on('change', $.proxy(this._getTemplateSize, this));
-        
+
             if (this.options.type === 'element') {
                 $(this.element).show();
                 $(this.element).on('click', '#printToggle', function(){
@@ -122,10 +123,15 @@
                     this.popup.destroy();
                 }
                 this.popup = null;
+                // reset template select if overwritten
+                if(this.overwriteTemplates){
+                    this._overwriteTemplateSelect(this.options.templates);
+                    this.overwriteTemplates = false;
+                }
             }
             this.callback ? this.callback.call() : this.callback = null;
         },
-        
+
         _setScale: function() {
             var select = $(this.element).find("select[name='scale_select']");
             var styledSelect = select.parent().find(".dropdownValue.iconDown");
@@ -364,7 +370,7 @@
                     }
                 }
                 return legend;
-            } 
+            }
             var legends = [];
 
             for (var i = 0; i < sources.length; i++) {
@@ -382,7 +388,9 @@
                     var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
                     if (visLayers.layers.length > 0) {
                         var prevLayers = layer.olLayer.params.LAYERS;
+                        var prevStyles = layer.olLayer.params.STYLES;
                         layer.olLayer.params.LAYERS = visLayers.layers;
+                        layer.olLayer.params.STYLES = visLayers.styles;
 
                         var opacity = sources[i].configuration.options.opacity;
                         var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
@@ -395,6 +403,7 @@
                             weight: this.map.map.olMap.getLayerIndex(layer.olLayer)
                         }));
                         layer.olLayer.params.LAYERS = prevLayers;
+                        layer.olLayer.params.STYLES = prevStyles;
                         lyrCount++;
 
                         if (sources[i].type === 'wms') {
@@ -415,12 +424,12 @@
                     value: JSON.stringify(legends)
                 }));
             }
-            
+
             // Iterating over all vector layers, not only the ones known to MapQuery
             var geojsonFormat = new OpenLayers.Format.GeoJSON();
             for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
                 var layer = this.map.map.olMap.layers[i];
-                if('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || this.layer === layer) {
+                if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
                     continue;
                 }
 
@@ -428,7 +437,7 @@
                 for(var idx = 0; idx < layer.features.length; idx++) {
                     var feature = layer.features[idx];
                     if (!feature.onScreen(true)) continue
-                    
+
                     if(this.feature.geometry.intersects(feature.geometry)){
                         var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
 
@@ -438,7 +447,7 @@
                             geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
                         }
                         // only visible features
-                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){                            
+                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){
                             geometries.push(geometry);
                         } else if (geometry.style.label !== undefined){
                             geometries.push(geometry);
@@ -524,6 +533,69 @@
                     self._updateGeometry();
                 }
             });
+        },
+
+        printDigitizerFeature: function(schemaName,featureId){
+            // add hidden fields to submit featureId and schemaName
+            var form = $('form#formats', this.element);
+
+            if(!form.has('input[name="digitizer_feature[id]"]').length) {
+                form.append($('<input />', {
+                    type: 'hidden',
+                    name: 'digitizer_feature[id]'
+                })).append($('<input />', {
+                    type: 'hidden',
+                    name: 'digitizer_feature[schemaName]'
+                }));
+            }
+
+            $('input[name="digitizer_feature[id]"]', form).val(featureId);
+            $('input[name="digitizer_feature[schemaName]"]', form).val(schemaName);
+
+            this._getDigitizerTemplates(schemaName);
+        },
+
+        _getDigitizerTemplates: function(schemaName) {
+            var self = this;
+
+            var url =  this.elementUrl + 'getDigitizerTemplates';
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {schemaName: schemaName},
+                success: function(data) {
+                    self._overwriteTemplateSelect(data);
+                    // open changed dialog
+                    self.open();
+                }
+            });
+        },
+
+        _overwriteTemplateSelect: function(templates) {
+            var templateSelect = $('select[name=template]', this.element);
+            var templateList = templateSelect.siblings(".dropdownList");
+            var valueContainer = templateSelect.siblings(".dropdownValue");
+
+            templateSelect.empty();
+            templateList.empty();
+
+            var count = 0;
+            $.each(templates, function(key,template) {
+                templateSelect.append($('<option></option>', {
+                    'value': template.template,
+                    'html': template.label,
+                    'class': "opt-" + count
+                }));
+                templateList.append($('<li></li>', {
+                    'html': template.label,
+                    'class': "item-" + count
+                }));
+                if(count == 0){
+                    valueContainer.text(template.label);
+                }
+                ++count;
+            });
+            this.overwriteTemplates = true;
         },
 
         /**

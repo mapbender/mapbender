@@ -1,7 +1,7 @@
 {% set application = {'slug': 'manager'} %}
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ "mb.manager.admin.application.new" | trans}}{% endblock %}
+{% block title %}{{ "mb.manager.admin.application.new.title" | trans}}{% endblock %}
 
 {% block js %}
   {{parent()}}
@@ -14,7 +14,7 @@
     <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
       <ul class="tabs">
         <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
-        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security" | trans }}</li>
+        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData">
           <div class="left">
@@ -27,14 +27,16 @@
                 <div class="messageBox hint">
                     {{"mb.manager.admin.application.create_use" | trans }}
                 </div>
-           </div> 
+           </div>
             <div class="clearContainer"></div>
 
-        
+
       </div>
-     
+
       <div id="containerSecurity" class="container">
-        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+        {% block securityTab %}
+          {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+        {% endblock %}
       </div>
     </div>
 

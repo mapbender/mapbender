@@ -1,11 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -29,7 +22,6 @@ class ExchangeNormalizer extends ExchangeSerializer
     protected $inProcess;
 
     /**
-     *
      * @param ContainerInterface $container container
      */
     public function __construct(ContainerInterface $container)
@@ -46,11 +38,19 @@ class ExchangeNormalizer extends ExchangeSerializer
         $this->inProcess = array();
     }
 
+    /**
+     * @return array
+     */
     public function getExport()
     {
         return $this->export;
     }
 
+    /**
+     * @param array   $objectData
+     * @param  object $classMeta
+     * @return bool
+     */
     private function isInProcess(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
@@ -70,17 +70,26 @@ class ExchangeNormalizer extends ExchangeSerializer
         return false;
     }
 
+    /**
+     * @param array  $objectData
+     * @param object $classMeta
+     */
     private function addInProcess(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
-        if (!isset($this->inProcess[$class])) {
-            $this->inProcess[$class] = array();
+        if (!isset($this->inProcess[ $class ])) {
+            $this->inProcess[ $class ] = array();
         }
         if (!$this->isInProcess($objectData, $classMeta)) {
-            $this->inProcess[$class][] = $objectData;
+            $this->inProcess[ $class ][] = $objectData;
         }
     }
 
+    /**
+     * @param array  $objectData
+     * @param object $classMeta
+     * @return bool
+     */
     private function isExported(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
@@ -100,6 +109,10 @@ class ExchangeNormalizer extends ExchangeSerializer
         return false;
     }
 
+    /**
+     * @param array  $objectData
+     * @param object $classMeta
+     */
     private function addExport(array $objectData, $classMeta)
     {
         $class = $classMeta->getReflectionClass()->getName();
@@ -111,6 +124,11 @@ class ExchangeNormalizer extends ExchangeSerializer
         }
     }
 
+    /**
+     * @param object             $object
+     * @param ClassMetadata|null $classMeta
+     * @return array
+     */
     private function handleIdentParams($object, ClassMetadata $classMeta = null)
     {
         if (!$classMeta) {
@@ -141,6 +159,10 @@ class ExchangeNormalizer extends ExchangeSerializer
         return $result;
     }
 
+    /**
+     * @param $value
+     * @return array|string
+     */
     public function handleValue($value)
     {
         if ($value === null || is_integer($value) || is_float($value) || is_string($value) || is_bool($value)) {
@@ -160,6 +182,11 @@ class ExchangeNormalizer extends ExchangeSerializer
         }
     }
 
+    /**
+     * @param object $object
+     * @param ClassMetadata $classMeta
+     * @return array
+     */
     public function normalizeEntity($object, ClassMetadata $classMeta)
     {
         $this->em

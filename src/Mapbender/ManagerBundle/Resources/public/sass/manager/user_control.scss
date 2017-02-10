@@ -1,0 +1,100 @@
+//$rootPath: "../../../mapbendercore/";
+// --------------------------------------------------------- USER/GROUP
+.userControlTable{margin-top:$space;}
+.tableUserGroups{
+  width:300px;
+  .description{
+    width:150px;
+    text-align: right;
+    padding:0px;
+  }
+  .iconCheckboxActive, .iconCheckbox{
+    @extend .iconOk;
+    @extend .iconBig;
+    &:before{
+      float:right;
+      margin-top:7px;
+      margin-right:$space/2;
+    }
+  }
+
+  td{
+    cursor:pointer;
+    padding:0px;
+    &:hover{
+      .checkWrapper{@include opacity(0.4);}
+      .checkWrapper.iconCheckboxActive{@include opacity(1);}
+    }
+  }
+  .tdContentWrapper{
+    position:relative;
+    padding:0px;
+    padding-left: 25px;
+    padding-top: 3px;
+    display:block;
+  }
+  .checkWrapper{
+    .checkbox{
+      width:100%;
+      @include opacity(0);
+    }
+
+    width: 100%;
+    @include opacity(0);
+    @include pos(0,0,'','');
+
+    &.iconCheckboxActive{@include opacity(1);}
+  }
+}
+.userGroupTabContainer{
+  margin-bottom: $space;
+
+  .containerBaseData, .containerProfile{
+    .labelInput{
+      float:left;
+      display: block;
+      margin-bottom: $space/2;
+    }
+    .input, .dropdown{min-width:250px;}
+    textarea{height:150px;}
+  }
+
+  .validationInput[disabled] {
+    background: #eeeeee;
+  }
+}
+.groupTabContainer .containerBaseData .labelInput{width:90px;}
+.userTabContainer{
+  .containerBaseData .labelInput{width:130px;}
+  .containerProfile .labelInput{width:90px;}
+}
+
+
+
+
+
+// ----------------------------------------------------------- SECURITY
+.aclTabContainer{
+  margin-bottom:$space;
+
+  .containerBaseData{
+    .labelInput{
+      width:80px;
+      float:left;
+      display: block;
+      margin-bottom: $space/2;
+    }
+    textarea, input{width: 300px;}
+    textarea{height:100px;}
+    .messageBox{
+      width:270px;
+      @include pos($space,$space,'','');
+    }
+  }
+  .containerLayout{
+    .dropdown{
+      min-width:270px;
+      margin-left:$space;
+    }
+  }
+}
