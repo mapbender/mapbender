@@ -1,9 +1,0 @@
-<form id="wmc-state-load" action="{{ url('mapbender_core_application_element', {'slug': app.request.get('slug'), 'id': id, 'action': 'loadxml'}) }}" method="post" target="_blank" title="Load WMC">
-    <div class="elementFormToolbar elementForm">
-        {{ form_widget(form.state) }}
-        <div class="clearContainer"></div>
-        {{ form_row(form._token) }}
-        <input type="submit" class="button right" name="{{ 'mb.wmc.wmcloader.state.load' | trans }}" />
-        <div class="clearContainer"></div>
-    </div>
-</form>

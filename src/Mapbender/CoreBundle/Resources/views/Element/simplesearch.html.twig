@@ -1,9 +1,0 @@
-<form id="{{ id }}" class="mb-element mb-element-simplesearch" action="{{ path('mapbender_core_application_element', {'slug': app.request.get('slug'), 'id': id}) }}" method="post" title="{{ configuration.tooltip|default(title)|trans }}">
-    <div class="autocompleteWrapper inputWrapper">
-        <input type="text" class="searchterm input"/>
-        <div class="autocompleteList"></div>
-    </div>
-{% if configuration.delay == 0 %}
-    <input type="submit" value="{{'mb.core.simplesearch.input.search'|trans }}"/>
-{% endif %}
-</form>

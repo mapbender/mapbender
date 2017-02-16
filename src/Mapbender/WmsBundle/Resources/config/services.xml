@@ -1,9 +1,0 @@
-<?xml version="1.0" ?>
-<container xmlns="http://symfony.com/schema/dic/services"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-    <parameters>
-        <parameter key="wmsloader.example_url">http://wms.wheregroup.com/cgi-bin/mapbender_user.xml?VERSION=1.1.1&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS</parameter>
-    </parameters>
-</container>
-

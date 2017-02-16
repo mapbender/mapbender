@@ -1,9 +1,0 @@
-<div id="{{ id }}" class="mb-element mb-element-dimensionshandler" title="{{ title |trans }}">
-{% for key,dimensionset in configuration.dimensionsets %}
-  <div id="{{key}}" class="dimensionset">
-    <span class="dimensionset-title">{{dimensionset.title}}</span>
-    <span class="dimensionset-value"></span>
-    <div id="dimensionset-{{key}}" class="mb-slider"></div>
-  </div>
-{% endfor %}
-</div>

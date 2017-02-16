@@ -1,8 +1,0 @@
-@import "libs/variables";
-@import "libs/mixins";
-
-.elementFormSearchRouter{
-  $label:90px;
-  max-height: $popupMaxHeight;
-  .labelInput{width:$label;}
-}

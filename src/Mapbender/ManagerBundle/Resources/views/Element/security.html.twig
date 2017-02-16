@@ -1,9 +1,0 @@
-<a id="addElmPermission" href="{{ path('fom_user_acl_overview') }}" class="iconAdd iconBig right"
-   title="{{ 'mb.manager.managerbundle.add_user_group'|trans }}"></a>
-<form id="elementSecurity"
-      action="{{ path('mapbender_manager_element_security', { 'slug': app.request.get('slug'), 'id': app.request.get('id') }) }}"
-      method="post" {{ form_enctype(form) }} novalidate="novalidate">
-    {{ form_row(form._token) }}
-    <div class="clearContainer"></div>
-    {{ form_widget(form.acl) }}
-</form>

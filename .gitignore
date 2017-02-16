@@ -1,1 +1,2 @@
-src/Mapbender/*/Resources/translations/*.xlf~
+# IDEA Project Files
+.idea/
