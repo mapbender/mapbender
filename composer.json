@@ -5,7 +5,8 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "components/codemirror": "5.13.x"
     },
     "autoload": {
         "psr-4": {"Mapbender\\": "src/Mapbender"}
