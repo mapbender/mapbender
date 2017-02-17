@@ -1,3 +1,0 @@
-[submodule "src/Mapbender/ManagerBundle/Resources/public/codemirror2"]
-	path = src/Mapbender/ManagerBundle/Resources/public/codemirror2
-	url = http://marijnhaverbeke.nl/git/codemirror2
