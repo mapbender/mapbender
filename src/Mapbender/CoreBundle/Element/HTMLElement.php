@@ -39,15 +39,15 @@ class HTMLElement extends Element
     {
         return array(
             'js'  => array(
-                'components/codemirror/lib/codemirror.js',
-                'components/codemirror/mode/xml/xml.js',
-                'components/codemirror/keymap/sublime.js',
-                'components/codemirror/addon/selection/active-line.js',
+                'bundles/mapbendermanager/codemirror/src/codemirror.js',
+                'bundles/mapbendermanager/codemirror/mode/xml/xml.js',
+                'bundles/mapbendermanager/codemirror/keymap/sublime.js',
+                'bundles/mapbendermanager/codemirror/addon/selection/active-line.js',
                 'bundles/mapbendercore/mapbender.admin.htmlelement.js',
             ),
             'css' => array(
-                'components/codemirror/lib/codemirror.css',
-                'components/codemirror/theme/neo.css',
+                'bundles/mapbendermanager/codemirror/lib/codemirror.css',
+                'bundles/mapbendermanager/codemirror/theme/neo.css',
             )
         );
     }
