@@ -103,7 +103,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is current user an master?
+     * Is current user an object master?
      *
      * @param $object
      * @return bool
@@ -114,7 +114,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is current user an master?
+     * Is current user an object operator?
      *
      * @param $object
      * @return bool
@@ -125,7 +125,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is user allowed to create?
+     * Is current user allowed to create object?
      *
      * @param $object
      * @return bool
@@ -137,7 +137,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is current user an master?
+     * Is current user allowed to delete object?
      *
      * @param $object
      * @return bool
@@ -148,7 +148,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is current user an master?
+     * Is current user allowed to edit object?
      *
      * @param $object
      * @return bool
@@ -159,7 +159,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is current user an master?
+     * Is current user allowed to view object?
      *
      * @param $object
      * @return bool
