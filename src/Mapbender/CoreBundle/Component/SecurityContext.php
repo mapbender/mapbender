@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Component;
 
 use FOM\UserBundle\Entity\User;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -133,8 +132,8 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
      */
     public function isUserAllowedToCreate($object)
     {
-        $oid = new ObjectIdentity('class', get_class($object));
-        return $this->isGranted($oid, $object);
+        //$oid = new ObjectIdentity('class', get_class($object));
+        return $this->isGranted(self::PERMISSION_CREATE, $object);
     }
 
     /**

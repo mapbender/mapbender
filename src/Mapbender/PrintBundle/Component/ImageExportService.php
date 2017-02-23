@@ -74,8 +74,13 @@ class ImageExportService
             file_put_contents($imagename, $response->getContent());
             $rawImage = null;
             switch (trim($response->headers->get('content-type'))) {
-                case 'image/png; mode=8bit' : 
                 case 'image/png' :
+                    $rawImage = imagecreatefrompng($imagename);
+                    break;
+                case 'image/png8' :
+                    $rawImage = imagecreatefrompng($imagename);
+                    break;
+                case 'image/png; mode=24bit' :
                     $rawImage = imagecreatefrompng($imagename);
                     break;
                 case 'image/jpeg' :

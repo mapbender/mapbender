@@ -38,18 +38,7 @@
             this._ready();
         },
         _updateScale: function(){
-            var scale;
-            if(this.scaledisplay.geodesic === true) {
-                var units = this.scaledisplay.map.getUnits();
-                if(!units) {
-                    return;
-                }
-                var inches = OpenLayers.INCHES_PER_UNIT;
-                scale = (this.scaledisplay.map.getGeodesicPixelSize().w || 0.000001) *
-                        inches["km"] * OpenLayers.DOTS_PER_INCH;
-            } else {
-                scale = this.scaledisplay.map.getScale();
-            }
+            var scale = this.scaledisplay.map.getScale();
             if (!scale) {
                 return;
             }
@@ -70,7 +59,6 @@
          * Cahnges the scale bar srs
          */
         _changeSrs: function(event, srs){
-            this.scaledisplay.geodesic = srs.projection.units = 'degrees' ? true : false;
             this.scaledisplay.updateScale();
         },
         /**
