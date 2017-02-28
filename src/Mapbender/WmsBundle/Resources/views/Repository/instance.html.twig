@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block js %}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendercore/vendor/joii.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('components/joii/dist/joii.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/mapbender.wms.dimension.js') }}"></script>
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
@@ -71,6 +71,14 @@
         <div class="clear"></div>
       </div>
       <div class="extendedGroup">
+        {% if form.dimensions is not null and form.dimensions | length > 0 %}
+        <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
+        <div id="dimension-content" class="on-off-content hidden">
+          {% for dim in form.dimensions %}
+            {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
+          {% endfor %}
+        </div>
+        {% endif %}
         <div id="vendorspecific" class="on-off on-off-title">{{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}</div>
         <div id="vendorspecific-content" class="vendorspecific-content on-off-content hidden">
         {{ form_widget(form.vendorspecifics) }}

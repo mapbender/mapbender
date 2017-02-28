@@ -136,10 +136,10 @@ class OdgParser
             if ($style) {
                 $styleNode = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties')->item(0);
                 $fontsize = $styleNode->getAttribute('fo:font-size');
-                $field['fontsize'] = $fontsize != '' ? $fontsize : '10pt';
                 $color = $styleNode->getAttribute('fo:color');
-                $field['color'] = $color != '' ? $color : '#000000';
             }
+            $field['fontsize'] = $fontsize != '' ? $fontsize : '10pt';
+            $field['color'] = $color != '' ? $color : '#000000';
             $data['fields'][ $name ] = $field;
         }
         return $data;

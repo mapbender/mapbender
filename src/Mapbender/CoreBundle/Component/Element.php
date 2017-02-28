@@ -230,6 +230,7 @@ abstract class Element
             array(
                 'element'       => $this,
                 'id'            => $this->getId(),
+                'entity'        => $this->entity,
                 'title'         => $this->getTitle(),
                 'configuration' => $this->getConfiguration()
             ));
@@ -469,11 +470,11 @@ abstract class Element
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
             $formAssets = array(
                 'js' => array(
-                    'bundles/mapbendermanager/codemirror/lib/codemirror.js',
-                    'bundles/mapbendermanager/codemirror/mode/yaml/yaml.js',
+                    'components/codemirror/lib/codemirror.js',
+                    'components/codemirror/mode/yaml/yaml.js',
                     'bundles/mapbendermanager/js/form-yaml.js'),
                 'css' => array(
-                    'bundles/mapbendermanager/codemirror/lib/codemirror.css'));
+                    'components/codemirror/lib/codemirror.css'));
         } else {
             $type = new $configurationFormType();
             $options = array('application' => $application);
@@ -545,7 +546,7 @@ abstract class Element
     protected static function getTemplateName($className)
     {
         $className = preg_replace_callback(
-            '/[A-Z]{1}[^A-Z]+/',
+            '/[A-Z]+[^A-Z]+/',
             function ($match) {
                 return "_".strtolower($match[0]);
             },

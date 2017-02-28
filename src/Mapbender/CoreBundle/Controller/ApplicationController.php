@@ -10,8 +10,10 @@ use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use OwsProxy3\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -334,7 +336,7 @@ class ApplicationController extends Controller
      */
     public function instanceTunnelAction($slug, $instanceId)
     {
-        $instance = $this->container->get("doctrine")
+        $instance        = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         $securityContext = $this->get('security.context');
 
@@ -349,13 +351,13 @@ class ApplicationController extends Controller
 //        }
 //        $params = $this->getRequest()->getMethod() == 'POST' ?
 //            $this->get("request")->request->all() : $this->get("request")->query->all();
-        $headers = array();
-        $postParams = $this->get("request")->request->all();
-        $getParams = $this->get("request")->query->all();
-        $user = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
-        $password = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
+        $headers     = array();
+        $postParams  = $this->get("request")->request->all();
+        $getParams   = $this->get("request")->query->all();
+        $user        = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
+        $password    = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
         $instHandler = EntityHandler::createHandler($this->container, $instance);
-        $vendorspec = $instHandler->getSensitiveVendorSpecific();
+        $vendorspec  = $instHandler->getSensitiveVendorSpecific();
         /* overwrite vendorspecific parameters from handler with get/post parameters */
         if (count($getParams)) {
             $getParams = array_merge($vendorspec, $getParams);
@@ -364,11 +366,38 @@ class ApplicationController extends Controller
             $postParams = array_merge($vendorspec, $postParams);
         }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
-        $proxy_query = ProxyQuery::createFromUrl(
-                $instance->getSource()->getGetMap()->getHttpGet(), $user, $password, $headers, $getParams, $postParams);
-        $proxy = new CommonProxy($proxy_config, $proxy_query);
+        if (isset($getParams['legendurl'])) {
+            $url = $getParams['legendurl'];
+            unset($getParams['legendurl']);
+        } else {
+            foreach ($getParams as $key => $value) {
+                if (strtolower($key) === 'request') {
+                    // TODO implement for other ogc services
+                    if (strtolower($value) === 'getmap') {
+                        $url = $instance->getSource()->getGetMap()->getHttpGet();
+                    } elseif (strtolower($value) === 'getfeatureinfo') {
+                        $url = $instance->getSource()->getGetFeatureInfo()->getHttpGet();
+                    } elseif (strtolower($value) === 'getlegendgraphic') {
+                        $url = $instance->getSource()->getGetLegendGraphic()->getHttpGet();
+                    }
+                    break;
+                }
+            }
+        }
+        if (!$url) {
+            throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
+        }
+        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
+        $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
-        $response = new Response();
+        $response        = new Response();
+
+        $cookies_req = $this->get("request")->cookies;
+        Utils::setHeadersFromBrowserResponse($response, $browserResponse);
+        foreach ($cookies_req as $key => $value) {
+            $response->headers->removeCookie($key);
+            $response->headers->setCookie(new Cookie($key, $value));
+        }
         $response->setContent($browserResponse->getContent());
         return $response;
     }

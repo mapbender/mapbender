@@ -24,18 +24,20 @@ class MetadataUrl
 
     /**
      * Creates a MetadataUrl object from parameters
+     *
      * @param array $parameters
+     * @return MetadataUrl
      */
     public static function create($parameters)
     {
-        $obj = new MetadataUrl();
+        $metadataUrl = new MetadataUrl();
         if (isset($parameters["type"])) {
-            $this->type = $parameters["type"];
+            $metadataUrl->type = $parameters["type"];
         }
         if (isset($parameters["url"])) {
-            $this->url = $parameters["url"];
+            $metadataUrl->url = $parameters["url"];
         }
-        return $obj;
+        return $metadataUrl;
     }
 
     /**

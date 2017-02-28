@@ -18,12 +18,17 @@ function SymfonyAjaxManager(ajaxUrl) {
             var errorMessage = "";
             var errorDom = $(xhr.responseText);
 
-            if(errorDom.size() && errorDom.is(".sf-reset")) {
-                errorMessage += "\n" + errorDom.find(".block_exception h2").text() + "\n";
-                errorMessage += "Trace:\n";
-                _.each(errorDom.find(".traces li"), function(li) {
-                    errorMessage += $(li).text() + "\n";
-                });
+            if(errorDom.size()) {
+                if(errorDom.is(".sf-reset")) {
+                    errorMessage += "\n" + errorDom.find(".block_exception h2").text() + "\n";
+                    errorMessage += "Trace:\n";
+                    _.each(errorDom.find(".traces li"), function(li) {
+                        errorMessage += $(li).text() + "\n";
+                    });
+
+                } else if(errorDom.is("title")) {
+                    errorMessage = errorDom.closest("title").text();
+                }
 
             } else {
                 errorMessage += JSON.stringify(xhr.responseText);

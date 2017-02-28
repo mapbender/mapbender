@@ -32,15 +32,6 @@
     display: inline-block;
     font-size: 0;
     text-rendering: auto;
-
-    &:after {
-      content: "\f00d";
-      display: block;
-      font-size: 23px;
-      line-height: 18px;
-      padding-left: 2px;
-      font-family: "FontAwesome";
-    }
   }
 
   $borderRadius: 0px;
@@ -76,6 +67,21 @@
     }
 
     .ui-dialog-titlebar-buttonpane{
+      button.close {
+        margin: 1px;
+        .ui-icon-closethick:before {
+          font-family: FontAwesome;
+          font-size: 23px;
+          display: inline-block;
+          content: "\f00d";
+          font-weight: bold;
+          margin-top: -2px;
+          margin-bottom: 2px;
+        }
+        .ui-button-icon-space {
+          display: none;
+        }
+      }
       a{
         @extend .btn;
         @extend .button;
@@ -125,6 +131,7 @@
             font-size: 18px;
             margin-top: -3px;
           }
+
           /** restore to normal **/
           &.ui-icon-newwin:after{
             content: "\f063";
@@ -162,6 +169,12 @@
       > ul.modal-header {
         background-color: #B6D39E;
         > li {
+          &:first-child > a{
+            border-left: 0 !important;
+          }
+          &:last-child> a{
+            border-right: 0 !important;
+          }
           margin-bottom: 0px;
           border: none;
           margin-right: -1px;

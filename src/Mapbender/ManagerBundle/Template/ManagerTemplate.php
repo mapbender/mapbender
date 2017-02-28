@@ -44,4 +44,4 @@ class ManagerTemplate extends Template
     {
         return "";
     }
-} 
+}

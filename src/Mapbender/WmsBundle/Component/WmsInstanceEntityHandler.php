@@ -280,7 +280,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             );
             $configuration['options']['url'] = UrlUtil::validateUrl($url, $params, array());
             // remove ows proxy for a tunnel connection
-            $configuration['options']['proxy'] = false;
+            $configuration['options']['tunnel'] = true;
         } elseif ($signer) {
             $configuration['options']['url'] = UrlUtil::validateUrl($configuration['options']['url'], $params, array());
             $configuration['options']['url'] = $signer->signUrl($configuration['options']['url']);

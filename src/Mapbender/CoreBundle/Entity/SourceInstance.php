@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Entity;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 
@@ -53,7 +52,7 @@ abstract class SourceInstance
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $basesource = true;
+    protected $basesource = false;
 
     /**
      *

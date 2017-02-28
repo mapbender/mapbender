@@ -1,4 +1,9 @@
 .mb-element-overview {
+  -webkit-user-select: none; /* Chrome all / Safari all */
+  -moz-user-select: none; /* Firefox all */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Likely future */
+
   .toggleOverview {
     $buttonFirstColor: #6fb536;
     $buttonSecondColor: #5fa229;
@@ -15,7 +20,7 @@
 
   .olControlOverviewMapExtentRectangle {
     cursor: move;
-    background-image: url("bundles/mapbendercore/mapquery/lib/openlayers/img/blank.gif");
+    background-image: url("components/mapquery/lib/openlayers/img/blank.gif");
   }
 
   .olMap {

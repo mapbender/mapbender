@@ -43,7 +43,7 @@ class ApplicationController extends WelcomeController
      *
      * @ManagerRoute("/applications")
      * @Method("GET")
-     * @Template
+     * @Template("MapbenderCoreBundle:Welcome:list.html.twig")
      */
     public function indexAction()
     {
@@ -182,7 +182,7 @@ class ApplicationController extends WelcomeController
     {
         $sourceApplication = $this->get('mapbender')->getApplicationEntity($slug);
 
-        if (!$this->getContext()->isUserAllowedToCreate($sourceApplication)) {
+        if (!$this->getContext()->isUserAllowedToEdit($sourceApplication)) {
             throw new AccessDeniedException();
         }
 
@@ -691,8 +691,8 @@ class ApplicationController extends WelcomeController
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $allowed_sources = array();
         foreach ($sources as $source) {
-            if ($securityContext->isGranted(SecurityContext::PERMISSION_EDIT, $oid)
-                || $securityContext->isGranted(SecurityContext::PERMISSION_EDIT, $source)
+            if ($securityContext->isGranted(SecurityContext::PERMISSION_VIEW, $oid)
+                || $securityContext->isGranted(SecurityContext::PERMISSION_VIEW, $source)
             ) {
                 $allowed_sources[] = $source;
             }

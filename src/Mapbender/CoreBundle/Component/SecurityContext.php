@@ -2,13 +2,14 @@
 namespace Mapbender\CoreBundle\Component;
 
 use FOM\UserBundle\Entity\User;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 /**
  * Class SecurityContext
  *
  * @package   FOM\UserBundle\Component
  * @author    Andriy Oblivantsev <eslider@gmail.com>
+ * @author    Mohamed Tahrioui <mohamed.tahrioui@wheregroup.com>
  * @copyright 2015 by WhereGroup GmbH & Co. KG
  */
 class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
@@ -19,7 +20,8 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     const PERMISSION_DELETE   = "DELETE";
     const PERMISSION_EDIT     = "EDIT";
     const PERMISSION_VIEW     = "VIEW";
-
+    const USER_ANONYMOUS_ID   = 0;
+    const USER_ANONYMOUS_NAME = "anon.";
     /**
      * Get current logged user by the token
      *
@@ -31,7 +33,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
         $user = $this->getToken()->getUser();
         if (!$this->isUserLoggedIn()) {
             $user = new User();
-            $user->setUsername("anon.");
+            $user->setUsername(static::USER_ANONYMOUS_NAME);
         }
         return $user;
     }
@@ -101,7 +103,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is current user an master?
+     * Is current user an object master?
      *
      * @param $object
      * @return bool
@@ -112,7 +114,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is current user an master?
+     * Is current user an object operator?
      *
      * @param $object
      * @return bool
@@ -123,19 +125,19 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is user allowed to create?
+     * Is current user allowed to create object?
      *
      * @param $object
      * @return bool
      */
     public function isUserAllowedToCreate($object)
     {
-        $oid = new ObjectIdentity('class', get_class($object));
-        return $this->isGranted($oid, $object);
+        //$oid = new ObjectIdentity('class', get_class($object));
+        return $this->isGranted(self::PERMISSION_CREATE, $object);
     }
 
     /**
-     * Is current user an master?
+     * Is current user allowed to delete object?
      *
      * @param $object
      * @return bool
@@ -146,7 +148,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is current user an master?
+     * Is current user allowed to edit object?
      *
      * @param $object
      * @return bool
@@ -157,7 +159,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Is current user an master?
+     * Is current user allowed to view object?
      *
      * @param $object
      * @return bool

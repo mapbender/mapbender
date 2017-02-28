@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Description of WmsInstanceLayerEntityHandler
@@ -241,7 +242,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
             if ($legendurl !== null) {
                 $configuration["legend"] = array(
-                    "url" => $legendurl->getOnlineResource()->getHref(),
+                    "url" => $this->checkLegendViaTunnel($legendurl->getOnlineResource()->getHref()),
                     "width" => intval($legendurl->getWidth()),
                     "height" => intval($legendurl->getHeight())
                 );
@@ -260,7 +261,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 . "&sld_version=1.1.0";
             $legendgraphic = Utils::getHttpUrl($url, $params);
             $configuration["legend"] = array(
-                "graphic" => $legendgraphic
+                "graphic" => $this->checkLegendViaTunnel($legendgraphic)
             );
         }
         $configuration["treeOptions"] = array(
@@ -292,5 +293,21 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             }
         }
         return null;
+    }
+
+    private function checkLegendViaTunnel($url)
+    {
+        if ($this->entity->getSourceInstance()->getSource()->getUsername()) {
+            return $this->container->get('router')->generate(
+                'mapbender_core_application_instancetunnel',
+                array(
+                    'slug' => $this->entity->getSourceInstance()->getLayerset()->getApplication()->getSlug(),
+                    'instanceId' => $this->entity->getSourceInstance()->getId(),
+                    'legendurl' => $url),
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+        } else {
+            return $url;
+        }
     }
 }
