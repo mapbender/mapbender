@@ -1028,13 +1028,31 @@ class PrintService
 
     private function addLegend()
     {
-        $this->pdf->addPage('P');
-        $this->pdf->SetFont('Arial', 'B', 11);
-        $x = 5;
-        $y = 10;
+        if(isset($this->conf['legend']) && $this->conf['legend']){
+          // print legend on first
+          $height = $this->conf['legend']['height'];
+          $width = $this->conf['legend']['width'];
+          $x_start_position = $this->conf['legend']['x'];
+          $y_start_position = $this->conf['legend']['y'];
+          $x = $x_start_position + 5;
+          $y = $y_start_position + 5;
+          $legend_conf = true;
+        }else{
+          // print legend on second page
+          $this->pdf->addPage('P');
+          $this->pdf->SetFont('Arial', 'B', 11);
+          $x = 5;
+          $y = 10;
+          $height = $this->pdf->getHeight();
+          $width = $this->pdf->getWidth();
+          $legend_conf = false;
+          if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+             $this->addLegendpage_image();
+           }
+        }
 
         foreach ($this->data['legends'] as $idx => $legendArray) {
-            $c         = 1;
+            $c = 1;
             $arraySize = count($legendArray);
             foreach ($legendArray as $title => $legendUrl) {
 
@@ -1046,37 +1064,102 @@ class PrintService
                 if (false === @imagecreatefromstring(@file_get_contents($image))) {
                     continue;
                 }
-                $size  = getimagesize($image);
+                $size = getimagesize($image);
                 $tempY = round($size[1] * 25.4 / 96) + 10;
 
-                if ($c > 1) {
-                    if ($y + $tempY > ($this->pdf->getHeight())) {
+                if($c> 1){
+                    // print legend on second page
+                    if($y + $tempY + 10 > ($this->pdf->getHeight()) && $legend_conf == false){
                         $x += 105;
                         $y = 10;
-                        if ($x > ($this->pdf->getWidth())) {
+                        if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                           $this->addLegendpage_image();
+                        } 
+                        if($x + 20 > ($this->pdf->getWidth())){
                             $this->pdf->addPage('P');
                             $x = 5;
                             $y = 10;
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                               $this->addLegendpage_image();
+                            } 
                         }
+                    }
+
+                    // print legend on first page
+                    if(($y-$y_start_position) + $tempY + 10 > $height && $width > 100 && $legend_conf == true){
+                        $x += $x + 105;
+                        $y = $y_start_position + 5;
+                        if($x - $x_start_position + 20 > $width){
+                            $this->pdf->addPage('P');
+                            $x = 5;
+                            $y = 10;
+                            $legend_conf = false;
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                               $this->addLegendpage_image();
+                            } 
+                        }
+                    }else if (($y-$y_start_position) + $tempY + 10 > $height && $legend_conf == true){
+                            $this->pdf->addPage('P');
+                            $x = 5;
+                            $y = 10;
+                            $legend_conf = false;
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                               $this->addLegendpage_image();
+                            } 
                     }
                 }
 
-                $this->pdf->setXY($x, $y);
-                $this->pdf->Cell(0, 0, utf8_decode($title));
-                //$this->pdf->Image($image, $x, $y + 5, 0, 0, 'png', '', false, 0);
-                $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false,
-                    0);
 
-                $y += round($size[1] * 25.4 / 96) + 10;
-                if ($y > ($this->pdf->getHeight())) {
-                    $x += 105;
-                    $y = 10;
-                }
-                if ($x > ($this->pdf->getWidth()) && $c < $arraySize) {
-                    $this->pdf->addPage('P');
-                    $x = 5;
-                    $y = 10;
-                }
+                if ($legend_conf == true) {
+                    // add legend in legend region on first page
+                    // To Be doneCell(0,0,  utf8_decode($title));
+                    $this->pdf->setXY($x,$y);
+                    $this->pdf->Cell(0,0,  utf8_decode($title));
+                    $this->pdf->Image($image,
+                                $x,
+                                $y +5 ,
+                                ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
+
+                        $y += round($size[1] * 25.4 / 96) + 10;
+                        if(($y - $y_start_position + 10 ) > $height && $width > 100){
+                            $x +=  105;
+                            $y = $y_start_position + 10;
+                        }
+                        if(($x - $x_start_position + 10) > $width && $c < $arraySize ){
+                            $this->pdf->addPage('P');
+                            $x = 5;
+                            $y = 10;
+                            $this->pdf->SetFont('Arial', 'B', 11);
+                            $height = $this->pdf->getHeight();
+                            $width = $this->pdf->getWidth();
+                            $legend_conf = false;
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                               $this->addLegendpage_image();
+                            } 
+                        }
+
+                  }else{
+                      // print legend on second page
+                      $this->pdf->setXY($x,$y);
+                      $this->pdf->Cell(0,0,  utf8_decode($title));
+                      $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
+
+                      $y += round($size[1] * 25.4 / 96) + 10;
+                      if($y > ($this->pdf->getHeight())){
+                          $x += 105;
+                          $y = 10; 
+                      }
+                      if($x + 20 > ($this->pdf->getWidth()) && $c < $arraySize){
+                          $this->pdf->addPage('P');
+                          $x = 5;
+                          $y = 10;
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                               $this->addLegendpage_image();
+                            } 
+                      }
+                       
+                  }
+
                 unlink($image);
                 $c++;
             }
@@ -1110,6 +1193,32 @@ class PrintService
         }
 
         return $imagename;
+    }
+
+    private function addLegendpage_image()
+    {
+
+        $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
+
+        if($this->user == 'anon.'){
+            
+        }else{
+          $groups = $this->user->getGroups();
+          $group = $groups[0]; 
+        
+          if(isset($group)){
+              $legendpageImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png'; 
+          }
+        }
+
+        if(file_exists ($legendpageImage)){
+            $this->pdf->Image($legendpageImage,
+                            $this->conf['legendpage_image']['x'],
+                            $this->conf['legendpage_image']['y'],
+                            0,
+                            $this->conf['legendpage_image']['height'],
+                            'png');
+        }
     }
 
     private function realWorld2mapPos($rw_x, $rw_y)
