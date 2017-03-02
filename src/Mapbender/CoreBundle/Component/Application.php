@@ -352,6 +352,18 @@ class Application
                 }
             }
         }
+        // Let (active, visible) Elements update the Application config
+        // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
+        // visible state of the frontend.
+        $configBeforeElement = $configAfterElements = $configuration;
+        foreach ($this->getElements() as $elementList) {
+            foreach ($elementList as $elementInstance) {
+                /** @var \Mapbender\CoreBundle\Component\Element $elementInstance */
+                $configAfterElements = $configBeforeElement = $elementInstance->updateAppConfig($configBeforeElement);
+            }
+        }
+
+        $configuration = $configAfterElements;
 
         // Convert to asset
         $asset = new StringAsset(json_encode((object)$configuration));
