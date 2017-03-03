@@ -6,10 +6,21 @@
     "license": "MIT",
     "require": {
         "php": ">=5.3.0",
-        "eslider/sasscb":  "3.1.x",
 
+        "arsgeografica/signing": "1.1.x",
+        "setasign/fpdi-fpdf": "1.6.*",
+
+        "eslider/sasscb":  "3.1.x",
+        "igosuki/compass-mixins": "0.x",
+        "mapbender/mapbender-icons": "1.x",
+
+        "friendsofsymfony/jsrouting-bundle": "1.5.x",
+        "viscreation/vis-ui.js": "0.0.x",
+        "components/joii": "3.x",
         "components/codemirror": "5.13.x",
-        "components/underscore": "1.x"
+        "components/underscore": "1.x",
+        "fontfacekit/open-sans": "1.4.x",
+        "mapbender/mapquery": "1.1.x"
     },
     "autoload": {
         "psr-4": {"Mapbender\\": "src/Mapbender"}
