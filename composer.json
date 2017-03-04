@@ -20,7 +20,7 @@
         "components/codemirror": "5.13.x",
         "components/underscore": "1.x",
         "fontfacekit/open-sans": "1.4.x",
-        "mapbender/mapquery": "1.1.x"
+        "mapbender/mapquery": "1.x"
     },
     "autoload": {
         "psr-4": {"Mapbender\\": "src/Mapbender"}
