@@ -124,6 +124,7 @@ class ApplicationController extends Controller
         }
 
         if ($isProduction && $needCache) {
+            @mkdir(dirname($cacheFile), 0755, true);
             file_put_contents($cacheFile, $content);
         }
 
@@ -180,6 +181,7 @@ class ApplicationController extends Controller
             // If no cache or DB application is update, but cache is deprecated
             if (!$hasCache || $application->getEntity()->getUpdated()->getTimestamp() > filectime($cacheFile)) {
                 $content = $application->render();
+                @mkdir(dirname($cacheFile), 0755, true);
                 file_put_contents($cacheFile, $content);
                 $session->set("proxyAllowed", true);
                 $response->setContent($content);
