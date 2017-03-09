@@ -15,14 +15,13 @@ namespace Mapbender\CoreBundle\Utils;
 class ArrayUtil
 {
 
+    /**
+     * @param $array array input to test
+     * @return bool
+     */
     public static function isAssoc($array)
     {
-        foreach (array_keys($array) as $key) {
-            if (!is_int($key)) {
-                return true;
-            }
-        }
-        return false;
+        return array_keys($array) !== range(0, count($array) - 1);
     }
 
     public static function getValueFromArray(array $list, $value = null, $default = 0)

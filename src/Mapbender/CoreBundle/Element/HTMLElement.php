@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Element;
 use Doctrine\DBAL\Connection;
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * HTMLElement.
@@ -53,17 +54,6 @@ class HTMLElement extends Element
     }
 
     /**
-     * Is associative array given?
-     *
-     * @param $arr
-     * @return bool
-     */
-    protected static function isAssoc(&$arr)
-    {
-        return array_keys($arr) !== range(0, count($arr) - 1);
-    }
-
-    /**
      * Prepare elements recursive.
      *
      * @param $items
@@ -73,7 +63,7 @@ class HTMLElement extends Element
     {
         if (!is_array($items)) {
             return $items;
-        } elseif (self::isAssoc($items)) {
+        } elseif (ArrayUtil::isAssoc($items)) {
             $items = $this->prepareItem($items);
         } else {
             foreach ($items as $key => $item) {
