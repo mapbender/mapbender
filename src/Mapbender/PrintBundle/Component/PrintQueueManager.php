@@ -342,7 +342,7 @@ class PrintQueueManager extends EntitiesServiceBase
             foreach ($dateFields as $name) {
                 $queueInfo[$name] = self::dateTimeToTimestamp($queueInfo[$name]);
             }
-            $queueInfo['status']   = $queueInfo['created'] ? 'fertig' : ($queueInfo['started'] ? 'in Bearbeitung' : 'Warteschlage');
+            $queueInfo['status']   = $queueInfo['created'] ? 'fertig' : ($queueInfo['started'] ? 'in Bearbeitung' : 'Warteschlange');
 
         }
 
