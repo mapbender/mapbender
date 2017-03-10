@@ -63,6 +63,7 @@ abstract class Element
      *
      * @param Application $application The application object
      * @param ContainerInterface $container The container object
+     * @param Entity            $entity
      */
     public function __construct(Application $application, ContainerInterface $container, Entity $entity)
     {

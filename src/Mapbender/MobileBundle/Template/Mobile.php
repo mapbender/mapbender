@@ -27,37 +27,20 @@ class Mobile extends Template
     {
         $assets = array(
             'css' => array(
-//                '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
-            ),
-            'js' => array(
-                '/components/underscore/underscore-min.js',
-                '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
-                '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
-                '@MapbenderMobileBundle/Resources/public/js/mobile.js'
-            ),
-            'trans' => array(),
-        );
-
-        return $assets;
-    }
-
-    public function getAssets($type)
-    {
-        $assets = array(
-            'css' => array(
-//                '@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss'
+//                '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss',
+//                '@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
             ),
             'js' => array(
                 '/components/underscore/underscore-min.js',
                 '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
                 '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
                 '@MapbenderMobileBundle/Resources/public/js/mobile.js',
-                '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js'
+                '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js',
             ),
             'trans' => array(),
         );
 
-        return $assets[$type];
+        return $assets;
     }
 
     /**

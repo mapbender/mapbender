@@ -54,6 +54,16 @@ class HTMLElement extends Element
     }
 
     /**
+     * @deprecated use ArrayUtil::isAssoc directly
+     * @param $arr
+     * @return bool
+     */
+    protected static function isAssoc($arr)
+    {
+        return ArrayUtil::isAssoc($arr);
+    }
+
+    /**
      * Prepare elements recursive.
      *
      * @param $items
