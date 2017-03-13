@@ -150,6 +150,19 @@ class Application
     }
 
     /**
+     *
+     * @return string[]
+     */
+    public function getValidAssetTypes()
+    {
+        return array(
+            'js',
+            'css',
+            'trans',
+        );
+    }
+
+    /**
      * Lists assets.
      *
      * @return array
@@ -178,7 +191,7 @@ class Application
      */
     public function getAssets($type)
     {
-        if ($type !== 'css' && $type !== 'js' && $type !== 'trans') {
+        if (!\in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \RuntimeException('Asset type \'' . $type .
                 '\' is unknown.');
         }

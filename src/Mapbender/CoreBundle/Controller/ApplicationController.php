@@ -79,6 +79,10 @@ class ApplicationController extends Controller
      */
     public function assetsAction($slug, $type)
     {
+        $application      = $this->getApplication($slug);
+        if (!$application || !in_array($type, $application->getValidAssetTypes(), true)) {
+            throw new NotFoundHttpException();
+        }
         $response         = new Response();
         $request          = $this->getRequest();
         $env              = $this->container->get("kernel")->getEnvironment();
@@ -86,7 +90,7 @@ class ApplicationController extends Controller
         $cacheFile        = $this->getCachedAssetPath($slug, $env, $type);
         $needCache        = $isProduction && !file_exists($cacheFile);
         $modificationDate = new \DateTime();
-        $appEntity        = $this->get('mapbender')->getApplicationEntity($slug);
+        $appEntity        = $application->getEntity();
 
         $response->headers->set('Content-Type', $this->getMimeType($type));
 
@@ -107,7 +111,6 @@ class ApplicationController extends Controller
             }
         }
 
-        $application = $this->get('mapbender')->getApplication($slug, array());
         if ($type == "css") {
             $sourcePath = $request->getBasePath();
             $refs       = array_unique($application->getAssets('css'));
