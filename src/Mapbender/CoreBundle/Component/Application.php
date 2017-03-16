@@ -460,13 +460,10 @@ class Application
         if (!$this->elements) {
             $regions = $this->getGrantedRegionElementCollections();
             foreach ($regions as $_regionName => $elements) {
-                $_elements               = $this->sortElementsByWidth($elements);
                 $regions[ $_regionName ] = $elements;
             }
             $this->elements = $regions;
         }
-
-        $keys = array_keys($this->elements);
 
         if ($regionName) {
             $hasRegionElements = array_key_exists($regionName, $this->elements);
@@ -684,10 +681,11 @@ class Application
     }
 
     /**
-     * Sort region elements by width
+     * Do absolutely nothing
      *
      * @param $elements
-     * @return ElementComponent[]
+     * @return boolean
+     * @deprecated
      */
     protected function sortElementsByWidth($elements)
     {
