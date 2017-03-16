@@ -96,7 +96,7 @@ class ApplicationController extends Controller
 
 
         if ($isProduction && !$needCache) {
-            $modificationTs = filectime($cacheFile);
+            $modificationTs = filemtime($cacheFile);
             $isAppDbBased   = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
             $modificationDate->setTimestamp($modificationTs);
 
@@ -182,7 +182,7 @@ class ApplicationController extends Controller
             $cacheFile        = $this->getCachedAssetPath($slug . "-" . session_id(), $env, "html");
             $hasCache         = is_file($cacheFile);
             // If no cache or DB application is update, but cache is deprecated
-            if (!$hasCache || $application->getEntity()->getUpdated()->getTimestamp() > filectime($cacheFile)) {
+            if (!$hasCache || $application->getEntity()->getUpdated()->getTimestamp() > filemtime($cacheFile)) {
                 $content = $application->render();
                 @mkdir(dirname($cacheFile), 0755, true);
                 file_put_contents($cacheFile, $content);
@@ -201,7 +201,7 @@ class ApplicationController extends Controller
                 }
             } else {
                 $modificationDate = new \DateTime();
-                $modificationDate->setTimestamp(filectime($cacheFile));
+                $modificationDate->setTimestamp(filemtime($cacheFile));
                 $response->setLastModified($modificationDate);
                 $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
                 if ($response->isNotModified($this->getRequest())) {
@@ -415,7 +415,7 @@ class ApplicationController extends Controller
      */
     public function getCachedAssetPath($slug, $env, $type)
     {
-        return $this->container->getParameter('kernel.root_dir') . "/cache/" . $env . "/" . $slug . ".min." . $type;
+        return $this->container->getParameter('kernel.cache_dir') . "/" . $slug . ".min." . $type;
     }
 
     /**
