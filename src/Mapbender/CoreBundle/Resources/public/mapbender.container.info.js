@@ -8,7 +8,8 @@
  */
 function MapbenderContainerInfo(widget, options) {
     var self = this;
-    var element = $(widget.element);
+    var element = (typeof widget === 'object') ? $(widget.element) : $('#' + widget);
+
     var toolBar = element.closest(".toolBar");
     var contentPane = element.closest(".contentPane");
     var sidePane = element.closest(".sidePane");
@@ -82,11 +83,11 @@ function MapbenderContainerInfo(widget, options) {
 
                 if(state === "active") {
                     if(options.onactive) {
-                        options.onactive();
+                        options.onactive(element);
                     }
                 } else {
                     if(options.oninactive) {
-                        options.oninactive();
+                        options.oninactive(element);
                     }
                 }
 
