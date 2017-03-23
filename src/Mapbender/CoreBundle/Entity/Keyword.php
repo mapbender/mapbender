@@ -27,7 +27,7 @@ abstract class Keyword
 
     /**
      * @var string $title The source title
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="text", nullable=false)
      */
     protected $value;
 
@@ -73,7 +73,7 @@ abstract class Keyword
     {
         return (string) $this->id;
     }
-    
+
     /**
      * Get sourceclass
      *
