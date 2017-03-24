@@ -48,7 +48,7 @@ class PrintService
     public function doPrint($data)
     {
         $this->setup($data);
-       
+
         if ($data['rotation'] == 0) {
             $this->createFinalMapImage();
         } else {
@@ -65,13 +65,13 @@ class PrintService
         $this->tempDir = sys_get_temp_dir();
         // resource dir
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-        
+
         // get user
         /** @var SecurityContext $securityContext */
         $securityContext = $this->container->get('security.context');
         $token           = $securityContext->getToken();
         $this->user      = $token->getUser();
-        
+
         // data from client
         $this->data = $data;
 
@@ -114,7 +114,7 @@ class PrintService
             $width = '&WIDTH=' . $this->imageWidth;
             $height =  '&HEIGHT=' . $this->imageHeight;
         }else{
-            // calculate needed bbox 
+            // calculate needed bbox
             $neededExtentWidth = abs(sin(deg2rad($rotation)) * $extentHeight) +
                 abs(cos(deg2rad($rotation)) * $extentWidth);
             $neededExtentHeight = abs(sin(deg2rad($rotation)) * $extentWidth) +
@@ -287,10 +287,25 @@ class PrintService
             $hostpath = $host . $parsed['path'];
             $pos      = strpos($hostpath, $this->urlHostPath);
             if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-                $attributes = $this->container->get('router')->match($routeStr);
-                $gets       = array();
-                parse_str($parsed['query'], $gets);
-                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+                try {
+                    $attributes = $this->container->get('router')->match($routeStr);
+                    $gets       = array();
+                    parse_str($parsed['query'], $gets);
+                    $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+                } catch (\Exception $e) {
+                    $attributes = array(
+                        '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
+                    );
+                    $subRequest = new Request(
+                        array('url' => $url),
+                        array(),
+                        $attributes,
+                        array(),
+                        array(),
+                        array(),
+                        ''
+                    );
+                }
             } else {
                 $attributes = array(
                     '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
@@ -480,26 +495,26 @@ class PrintService
         if (isset($this->conf['scalebar']) ) {
             $this->addScaleBar();
         }
-        
+
         // add coordinates
-        if (isset($this->conf['fields']['extent_ur_x']) && isset($this->conf['fields']['extent_ur_y']) 
+        if (isset($this->conf['fields']['extent_ur_x']) && isset($this->conf['fields']['extent_ur_y'])
                 && isset($this->conf['fields']['extent_ll_x']) && isset($this->conf['fields']['extent_ll_y']))
         {
             $this->addCoordinates();
         }
-        
+
         // add dynamic logo
         if (isset($this->conf['dynamic_image']) && $this->conf['dynamic_image']){
             $this->addDynamicImage();
         }
-        
+
         // add dynamic text
         if (isset($this->conf['fields'])
             && isset($this->conf['fields']['dynamic_text'])
             && $this->conf['fields']['dynamic_text']){
             $this->addDynamicText();
         }
-        
+
         // add legend
         if (isset($this->data['legends']) && !empty($this->data['legends'])){
             $this->addLegend();
@@ -580,10 +595,25 @@ class PrintService
             $hostpath = $parsed['host'] . $parsed['path'];
             $pos      = strpos($hostpath, $this->urlHostPath);
             if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-                $attributes = $this->container->get('router')->match($routeStr);
-                $gets       = array();
-                parse_str($parsed['query'], $gets);
-                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+                try {
+                    $attributes = $this->container->get('router')->match($routeStr);
+                    $gets       = array();
+                    parse_str($parsed['query'], $gets);
+                    $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+                } catch (\Exception $e) {
+                    $attributes = array(
+                        '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
+                    );
+                    $subRequest = new Request(
+                        array('url' => $url),
+                        array(),
+                        $attributes,
+                        array(),
+                        array(),
+                        array(),
+                        ''
+                    );
+                }
             } else {
                 $attributes = array(
                     '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
@@ -704,11 +734,11 @@ class PrintService
         $pdf->SetFillColor(0,0,0);
         $pdf->Rect($this->conf['scalebar']['x'] + 40  , $this->conf['scalebar']['y'], 10, 2, 'FD');
     }
-    
+
     private function addCoordinates()
     {
         $pdf = $this->pdf;
-        
+
         $corrFactor = 2;
         $precision = 2;
         // correction factor and round precision if WGS84
@@ -716,7 +746,7 @@ class PrintService
              $corrFactor = 3;
              $precision = 6;
         }
-        
+
         // upper right Y
         $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_y']['fontsize']);
         $pdf->Text($this->conf['fields']['extent_ur_y']['x'] + $corrFactor,
@@ -741,7 +771,7 @@ class PrintService
                     $this->conf['fields']['extent_ll_x']['y'] + 30,
                     round($this->data['extent_feature'][0]['x'], $precision),'U');
     }
-    
+
     private function addDynamicImage()
     {
         if($this->user == 'anon.'){
@@ -750,11 +780,11 @@ class PrintService
 
         $groups = $this->user->getGroups();
         $group = $groups[0];
-        
+
         if(!isset($group)){
             return;
         }
-        
+
         $dynImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png';
         if(file_exists ($dynImage)){
             $this->pdf->Image($dynImage,
@@ -767,25 +797,25 @@ class PrintService
         }
 
     }
-    
+
     private function addDynamicText()
     {
         if($this->user == 'anon.'){
             return;
         }
-        
+
         $groups = $this->user->getGroups();
         $group = $groups[0];
-        
+
         if(!isset($group)){
             return;
         }
-        
+
         $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
         $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
                 $this->conf['fields']['dynamic_text']['height'],
                 $group->getDescription());
-        
+
     }
 
     private function getFeature($schemaName, $featureId)
@@ -921,7 +951,7 @@ class PrintService
             imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
         }
     }
-	
+
     private function drawMultiLineString($geometry, $image)
     {
         $style = $this->getStyle($geometry);
@@ -933,9 +963,9 @@ class PrintService
             return;
         }
         imagesetthickness($image, $style['strokeWidth']);
-	
+
 		foreach($geometry['coordinates'] as $coords) {
-		
+
 			for($i = 1; $i < count($coords); $i++) {
 
 				if($this->rotation == 0){
@@ -1092,22 +1122,27 @@ class PrintService
         $hostpath = $host . $parsed['path'];
         $pos      = strpos($hostpath, $this->urlHostPath);
         if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-            $attributes = $this->container->get('router')->match($routeStr);
-            $gets       = array();
-            parse_str($parsed['query'], $gets);
-            $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
-            $response   = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-            $imagename  = tempnam($this->tempdir, 'mb_printlegend');
-            file_put_contents($imagename, $response->getContent());
-        } else {
-            $proxy_config    = $this->container->getParameter("owsproxy.proxy");
-            $proxy_query     = ProxyQuery::createFromUrl($url);
-            $proxy           = new CommonProxy($proxy_config, $proxy_query);
-            $browserResponse = $proxy->handle();
-
-            $imagename = tempnam($this->tempdir, 'mb_printlegend');
-            file_put_contents($imagename, $browserResponse->getContent());
+            try {
+                $attributes = $this->container->get('router')->match($routeStr);
+                $gets       = array();
+                parse_str($parsed['query'], $gets);
+                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+                $response   = $this->container->get('http_kernel')
+                    ->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+                $imagename  = tempnam($this->tempdir, 'mb_printlegend');
+                file_put_contents($imagename, $response->getContent());
+                return $imagename;
+            } catch (\Exception $e) {
+                // use owsproxy instead
+            }
         }
+        $proxy_config    = $this->container->getParameter("owsproxy.proxy");
+        $proxy_query     = ProxyQuery::createFromUrl($url);
+        $proxy           = new CommonProxy($proxy_config, $proxy_query);
+        $browserResponse = $proxy->handle();
+
+        $imagename = tempnam($this->tempdir, 'mb_printlegend');
+        file_put_contents($imagename, $browserResponse->getContent());
 
         return $imagename;
     }
