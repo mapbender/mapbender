@@ -400,6 +400,7 @@ $tabSize: 32px;
 .sidePane {
   width: 10px;
   z-index: 20;
+  display: none;
 
   &.notCollapsable {
     .sidePaneTabs {
