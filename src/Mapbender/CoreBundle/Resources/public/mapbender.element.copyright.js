@@ -21,7 +21,7 @@
         },
         open: function(callback) {
             var widget = this;
-            var options = options;
+            var options = widget.options;
             var element = widget.element;
             var width = options.popupWidth ? options.popupWidth : 350;
             var height = options.popupHeight ? options.popupHeight : 350;
