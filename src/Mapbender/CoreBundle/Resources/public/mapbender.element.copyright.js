@@ -19,19 +19,24 @@
         defaultAction: function(callback){
             this.open(callback);
         },
-        open: function(callback){
-            this.callback = callback ? callback : null;
-            var self = this;
-            if(!this.popup || !this.popup.$element){
-               this.popup = new Mapbender.Popup2({
-                    title: self.element.attr('title'),
-                    modal: true,
-                    closeButton: true,
+        open: function(callback) {
+            var widget = this;
+            var options = widget.options;
+            var element = widget.element;
+            var width = options.popupWidth ? options.popupWidth : 350;
+            var height = options.popupHeight ? options.popupHeight : 350;
+
+            widget.callback = callback ? callback : null;
+            if(!widget.popup || !widget.popup.$element){
+                widget.popup = new Mapbender.Popup2({
+                    title:               element.attr('title'),
+                    modal:               true,
+                    closeButton:         true,
                     closeOnOutsideClick: true,
-                    content: [ $.ajax({url: self.elementUrl + 'content'})],
-                    width: 350,
-                    height: 170,
-                    buttons: {
+                    content:             [ $.ajax({url: widget.elementUrl + 'content'})],
+                    width:               width,
+                    height:              height,
+                    buttons:             {
                         'ok': {
                             label: 'OK',
                             cssClass: 'button right',
@@ -42,7 +47,7 @@
                     }
                 });
             } else {
-                this.popup.open();
+                widget.popup.open();
             }
         },
         close: function(){
