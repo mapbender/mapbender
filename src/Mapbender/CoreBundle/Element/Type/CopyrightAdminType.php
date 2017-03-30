@@ -36,6 +36,8 @@ class CopyrightAdminType extends AbstractType
     {
         $builder->add('tooltip', 'text', array('required' => false))
             ->add('autoOpen', 'checkbox', array('required' => false))
+            ->add('popupWidth', 'text', array('required' => true))
+            ->add('popupHeight', 'text', array('required' => true))
             ->add('content', 'textarea', array('required' => true));
     }
 
