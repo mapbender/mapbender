@@ -28,7 +28,7 @@ mb:
       tag:
         help: Hilfe
         info: Info
-        about: Info-printclDialog
+        about: Info-Dialog
     simplesearch:
       input:
         search: Suchen
