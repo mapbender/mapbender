@@ -263,7 +263,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             if ($handler->isVendorSpecificValueValid()) {
                 if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE ||
                     ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE && !$vendorspec->getHidden())) {
-                    $user = $this->container->get('security.context')->getToken()->getUser();
+                    $user = $this->container->get('security.token_storage')->getToken()->getUser();
                     $params = array_merge($params, $handler->getKvpConfiguration($user));
                 } else {
                     $hide = true;
@@ -400,7 +400,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function getSensitiveVendorSpecific()
     {
         $vsarr = array();
-        $user = $this->container->get('security.context')->getToken()->getUser();
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
         if ($user instanceof AdvancedUserInterface) {
             foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
                 $handler = new VendorSpecificHandler($vendorspec);

@@ -233,7 +233,7 @@ class WmsLoader extends Element
         $instances = array();
         $instancesIds = explode(',', $instancesId);
         foreach ($instancesIds as $instanceid) {
-            $securityContext = $this->container->get('security.context');
+            $securityContext = $this->container->get('security.authorization_checker');
             $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
             if (false !== $securityContext->isGranted('VIEW', $oid)) {
                 $instance = $this->container->get('doctrine')
