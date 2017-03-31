@@ -8,6 +8,7 @@
             type: 'dialog',
             displayType: 'tabs',
             printResult: false,
+            printAllResults: false,
             showOriginal: false,
             onlyValid: false,
             width: 700,
@@ -413,7 +414,7 @@
                     if (options.printResult === true) {
                         widget.popup.addButtons({
                             'print': {
-                                label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
+                                label: Mapbender.trans('mb.core.featureinfo.popup.btn.print'),
                                 cssClass: 'button right',
                                 callback: function() {
                                     widget._printContent();
@@ -421,6 +422,17 @@
                             }
                         });
                     }
+                    if (options.printAllResults === true) {
+                        widget.popup.addButtons({
+                            'printAll': {
+                                label: Mapbender.trans('mb.core.featureinfo.popup.btn.printall'),
+                                cssClass: 'button right',
+                                callback: function() {
+                                    widget._printContent(true);
+                                }
+                            }
+                        });
+                    }                    
                 }
                 if(widget.state !== 'opened') {
                     widget.popup.open();
@@ -503,17 +515,21 @@
                 }
             }
         },
-        _printContent: function() {
+
+        _printContent: function(all) {
             var $context = this._getContext();
             var w = window.open("", "title", "attributes,scrollbars=yes,menubar=yes");
-            var el = $('.js-content-content.active,.active .js-content-content', $context);
+            var sel = all ? '' : '.active';
+            var el = $('.js-content-content' + sel + ',' + sel + ' .js-content-content', $context);
             var printContent = "";
-            if ($('> iframe', el).length === 1) {
-                var a = document.getElementById($('iframe', el).attr('id'));
-                printContent = a.contentWindow.document.documentElement.innerHTML;
-            } else {
-                printContent = el.html();
-            }
+            $.each(el, function(_, elem) {
+              if ($('> iframe', elem).length === 1) {
+                  var a = document.getElementById($('iframe', elem).attr('id'));
+                  printContent += a.contentWindow.document.documentElement.innerHTML;
+              } else {
+                  printContent += $(elem).html();
+              }
+            });
             w.document.write(printContent);
             w.print();
         },
