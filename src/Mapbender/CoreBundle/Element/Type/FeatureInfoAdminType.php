@@ -43,6 +43,7 @@ class FeatureInfoAdminType extends AbstractType
                 'choices' => array('tabs' => 'Tabs', 'accordion' => 'Accordion')))
             ->add('autoActivate', 'checkbox', array('required' => false))
             ->add('printResult', 'checkbox', array('required' => false))
+            ->add('printAllResults', 'checkbox', array('required' => false))            
             ->add('deactivateOnClose', 'checkbox', array('required' => false))
             ->add('showOriginal', 'checkbox', array('required' => false))
             ->add('onlyValid', 'checkbox', array('required' => false))
