@@ -8,6 +8,8 @@ mb:
       popup:
         btn:
           ok: Close
+          print: Print
+          printall: 'Print all results'
       class:
         title: FeatureInfo
         description: FeatureInfo
@@ -114,7 +116,7 @@ mb:
       popup:
         btn:
           ok: Print
-          cancel: Cancel
+          cancel: Cancel       
       info:
         noactivelayer: 'No active layer!'
       form:
