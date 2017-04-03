@@ -1,16 +1,9 @@
 <?php
-
-/*
- * This file is part of the Mapbender 3 project.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * CoreBundle.
