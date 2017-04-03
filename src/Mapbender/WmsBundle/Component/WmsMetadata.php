@@ -1,16 +1,8 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
  * 

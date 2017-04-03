@@ -1,14 +1,18 @@
 <?php
-
 namespace Mapbender\CoreBundle\Asset;
-
 
 use Assetic\Asset\AssetCache;
 use Assetic\Asset\AssetInterface;
 use Assetic\Cache\CacheInterface;
 use Assetic\Filter\FilterInterface;
 
-
+/**
+ * Class NamedAssetCache
+ *
+ * @package Mapbender\CoreBundle\Asset
+ * @author Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
+ */
 class NamedAssetCache extends AssetCache
 {
     private $name;
@@ -18,6 +22,16 @@ class NamedAssetCache extends AssetCache
     private $useTimestamp;
     private $force;
 
+    /**
+     * NamedAssetCache constructor.
+     *
+     * @param AssetInterface $name
+     * @param AssetInterface $asset
+     * @param CacheInterface $cache
+     * @param null           $suffix
+     * @param bool           $useTimestamp
+     * @param bool           $force
+     */
     public function __construct($name, AssetInterface $asset, CacheInterface $cache, $suffix = null, $useTimestamp = false, $force = false)
     {
         $this->name = $name;
@@ -86,17 +100,6 @@ class NamedAssetCache extends AssetCache
             $cacheKey .= $asset->getLastModified();
         }
 
-        // This has to be disabled as stupid compass does magic and gets configured differently when
-        // running in CLI yielding a different cache key...
-        /*
-        foreach ($asset->getFilters() as $filter) {
-            if ($filter instanceof HashableInterface) {
-                $cacheKey .= $filter->hash();
-            } else {
-                $cacheKey .= serialize($filter);
-            }
-        }
-        */
 
         if ($values = $asset->getValues()) {
             asort($values);

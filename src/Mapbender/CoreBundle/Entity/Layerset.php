@@ -1,19 +1,16 @@
 <?php
-
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\EntityManager;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\UniqueConstraint;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Layerset configuration entity
  *
- * @property array layerObjects
  * @author Christian Wygoda
  *
  * @ORM\Entity
@@ -50,6 +47,9 @@ class Layerset
      * @ORM\OrderBy({"weight" = "asc"})
      */
     protected $instances;
+
+    /** @var \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]  */
+    public $layerObjects;
 
     /**
      * Layerset constructor.

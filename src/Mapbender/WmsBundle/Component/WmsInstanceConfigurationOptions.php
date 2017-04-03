@@ -1,9 +1,4 @@
 <?php
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
@@ -15,7 +10,6 @@ use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
  */
 class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 {
-
 
     /**
      * ORM\Column(type="string", nullable=true)
@@ -84,7 +78,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 
     /**
      * Sets a wms version
+     *
      * @param string $version version
+     * @return $this
      */
     function setVersion($version)
     {
@@ -93,11 +89,18 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     }
 
 
+    /**
+     * @return string
+     */
     function getExceptionformat()
     {
         return $this->exceptionformat;
     }
 
+    /**
+     * @param string $exceptionformat
+     * @return $this
+     */
     function setExceptionformat($exceptionformat)
     {
         $this->exceptionformat = $exceptionformat;
@@ -110,7 +113,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * Sets a format
      *
      * @param string $format source format
-     * @return SierviceConfigurationOptions
+     * @return $this
      */
     public function setFormat($format)
     {
@@ -129,14 +132,14 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     }
 
     /**
-     * Sets a infoformat
+     * Sets a info format
      *
-     * @param string $infoformat source infoformat
-     * @return SierviceConfigurationOptions
+     * @param string $infoFormat source infoformat
+     * @return $this
      */
-    public function setInfoformat($infoformat)
+    public function setInfoformat($infoFormat)
     {
-        $this->infoformat = $infoformat;
+        $this->infoformat = $infoFormat;
         return $this;
     }
 
@@ -154,7 +157,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * Sets a transparency
      *
      * @param boolean $transparency source transparency
-     * @return SierviceConfigurationOptions
+     * @return $this
      */
     public function setTransparency($transparency)
     {
@@ -176,7 +179,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * Sets a tiled
      *
      * @param boolean $tiled source tiled
-     * @return WmsInstanceConfiguration
+     * @return $this
      */
     public function setTiled($tiled)
     {
@@ -198,7 +201,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * Sets a bbox
      *
      * @param array $bbox source bbox
-     * @return WmsInstanceConfiguration
+     * @return $this
      */
     public function setBbox($bbox)
     {
@@ -216,34 +219,55 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         return $this->bbox;
     }
 
+    /**
+     * @param array $vendorspecifics
+     * @return $this
+     */
     public function setVendorspecifics(array $vendorspecifics)
     {
         $this->vendorspecifics = $vendorspecifics;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getVendorspecifics()
     {
         return $this->vendorspecifics;
     }
-    
+
+    /**
+     * @return mixed
+     */
     public function getDimensions()
     {
         return $this->dimensions;
     }
 
+    /**
+     * @param array $dimensions
+     * @return $this
+     */
     public function setDimensions(array $dimensions)
     {
         $this->dimensions = $dimensions;
         return $this;
     }
 
+    /**
+     * @param $buffer
+     * @return $this
+     */
     public function setBuffer($buffer)
     {
         $this->buffer = intval($buffer);
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getBuffer()
     {
         if (null != $this->buffer) {
@@ -253,18 +277,25 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         }
     }
 
+    /**
+     * @return float
+     */
     public function getRatio()
     {
         return $this->ratio;
     }
 
+    /**
+     * @param float $ratio
+     * @return $this
+     */
     public function setRatio($ratio)
     {
         $this->ratio = floatval($ratio);
         return $this;
     }
 
-        /**
+    /**
      * @inheritdoc
      */
     public function toArray()
@@ -324,10 +355,10 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
                 $ico->bbox = $options["bbox"];
             }
             if (isset($options["vendorspecifics"])) {
-                $ico->vendor = $options["vendorspecifics"];
+                $ico->vendorspecifics = $options["vendorspecifics"];
             }
             if (isset($options["buffer"])) {
-                $ico->vendor = $options["buffer"];
+                $ico->buffer = $options["buffer"];
             }
             if (isset($options["ratio"])) {
                 $ico->ratio = $options["ratio"];

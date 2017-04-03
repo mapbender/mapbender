@@ -1,8 +1,4 @@
 <?php
-
-/*
- */
-
 namespace Mapbender\CoreBundle\Utils;
 
 /**
@@ -17,6 +13,7 @@ class ClassPropertiesParser
     /**
      * @param string $className
      *
+     * @param bool   $onlyAnnotation Parse only annotation?
      * @return array
      */
     public static function parseFields($className, $onlyAnnotation = true)

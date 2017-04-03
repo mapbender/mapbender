@@ -1,19 +1,15 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\WmsBundle\Component;
 
+use Doctrine\ORM\Query;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
+use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
  * Description of WmsSourceEntityHandler
@@ -22,6 +18,8 @@ use Mapbender\CoreBundle\Entity\Contact;
  */
 class WmsSourceEntityHandler extends SourceEntityHandler
 {
+    /** @var  WmsSource */
+    protected $entity;
 
     /**
      * @inheritdoc
@@ -55,11 +53,11 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     /**
      * @inheritdoc
      */
-    public function createInstance(Layerset $layerset = NULL)
+    public function createInstance(Layerset $layerSet = NULL)
     {
         $instance        = new WmsInstance();
         $instance->setSource($this->entity);
-        $instance->setLayerset($layerset);
+        $instance->setLayerset($layerSet);
         $instanceHandler = self::createHandler($this->container, $instance);
         $instanceHandler->create();
         if ($instanceHandler->getEntity()->getLayerset()) {
@@ -90,7 +88,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     }
 
     /**
-     * @inheritdoc
+     * Update a source from a new source
+     *
+     * @param WmsSource|Source $sourceNew
      */
     public function update(Source $sourceNew)
     {
@@ -147,11 +147,11 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function getInstances()
     {
-        $query    = $this->container->get('doctrine')->getManager()->createQuery(
-            "SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.source=:sid"
-        );
-        $query->setParameters(array("sid" => $this->entity->getId()));
-        $instList = $query->getResult();
-        return $instList;
+        /** @var Query $query */
+        $objectManager = $this->container->get('doctrine')->getManager();
+        $query         = $objectManager->createQuery("SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.source=:sid");
+        return $query->setParameters(
+            array("sid" => $this->entity->getId())
+        )->getResult();
     }
 }

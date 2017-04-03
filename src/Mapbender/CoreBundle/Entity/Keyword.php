@@ -1,9 +1,7 @@
 <?php
-
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\KeywordAble;
 
 /**
  * Source entity
@@ -79,7 +77,7 @@ abstract class Keyword
     /**
      * Get sourceclass
      *
-     * @return KeywordAble
+     * @return mixed
      */
     abstract public function getReferenceObject();
 }

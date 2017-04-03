@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Component;
 
 /**
@@ -9,82 +8,72 @@ namespace Mapbender\CoreBundle\Component;
  */
 class BoundingBox
 {
-
     /**
-     * @var srs Spatial reference system
-     * 
+     * @var string srs Spatial reference system
+     *
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $srs;
 
     /**
-     * @var minx Minimum X of the Bounding Box
+     * @var float minx Minimum X of the Bounding Box
      * ORM\Column(type="float", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $minx;
 
     /**
-     * @var miny Minimum Y of the Bounding Box
+     * @var float miny Minimum Y of the Bounding Box
      * ORM\Column(type="float", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $miny;
 
     /**
-     * @var maxx Maximum X of the Bounding Box
+     * @var float maxx Maximum X of the Bounding Box
      * ORM\Column(type="float", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $maxx;
 
     /**
-     * @var maxy Maximum Y of the Bounding Box
+     * @var float maxy Maximum Y of the Bounding Box
      * ORM\Column(type="float", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $maxy;
 
     /**
      * Creates a BoundingBox from parameters
-     * 
+     *
      * @param array $parameters
+     * @return BoundingBox
      */
     public static function create(array $parameters)
     {
-        try
-        {
-            return new BoundingBox(
-                            isset($parameters["srs"]) ? $parameters["srs"] : null,
-                            isset($parameters["minx"]) ? $parameters["minx"] : null,
-                            isset($parameters["miny"]) ? $parameters["miny"] : null,
-                            isset($parameters["maxx"]) ? $parameters["maxx"] : null,
-                            isset($parameters["maxy"]) ? $parameters["maxy"] : null
-            );
-        } catch(\Exception $e)
-        {
-            return null;
-        }
+        return new BoundingBox(
+            isset($parameters["srs"]) ? $parameters["srs"] : null,
+            isset($parameters["minx"]) ? $parameters["minx"] : null,
+            isset($parameters["miny"]) ? $parameters["miny"] : null,
+            isset($parameters["maxx"]) ? $parameters["maxx"] : null,
+            isset($parameters["maxy"]) ? $parameters["maxy"] : null
+        );
     }
 
     /**
      * Creates a BoundingBox
      * 
-     * @param type $srs srs
-     * @param type $minx minx
-     * @param type $miny miny
-     * @param type $maxx maxx
-     * @param type $maxy maxy
+     * @param string $srs  srs
+     * @param float $minX minx
+     * @param float $minY miny
+     * @param float $maxX maxx
+     * @param float $maxY maxy
      */
-    public function __construct($srs = null, $minx = null, $miny = null,
-            $maxx = null, $maxy = null)
+    public function __construct(
+        $srs = null, $minX = null, $minY = null,
+        $maxX = null, $maxY = null)
     {
         $this->srs = $srs;
-        $this->minx = $minx;
-        $this->miny = $miny;
-        $this->maxx = $maxx;
-        $this->maxy = $maxy;
+        $this->minx = $minX;
+        $this->miny = $minY;
+        $this->maxx = $maxX;
+        $this->maxy = $maxY;
     }
 
     /**

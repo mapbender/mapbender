@@ -1,9 +1,7 @@
 <?php
-
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\State;
-use Mapbender\CoreBundle\Component\BoundingBox;
 
 /**
  * Description of State

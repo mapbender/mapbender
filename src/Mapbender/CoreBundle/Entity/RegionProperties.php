@@ -147,7 +147,7 @@ class RegionProperties
      * Get properties
      *
      * @param $property
-     * @return array
+     * @return $this
      */
     public function addProperty($property)
     {
@@ -160,7 +160,7 @@ class RegionProperties
      * Get properties
      *
      * @param $property
-     * @return array
+     * @return $this
      */
     public function removeProperty($property)
     {

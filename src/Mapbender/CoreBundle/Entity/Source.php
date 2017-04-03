@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -84,7 +83,7 @@ abstract class Source
 
     /**
      *
-     * @param strign $type source type
+     * @param string $type source type
      */
     public function __construct($type)
     {
@@ -293,15 +292,19 @@ abstract class Source
     }
 
     /**
-     * Sets a source type
+     * Sets source type.
+     * Possible types available from Source::TYPE_*
      *
-     * @return String type
+     * @param string $type Set type. Possible types available from Source::TYPE_*
+     * @return $this
      */
     public function setType($type)
     {
         if ($type === self::TYPE_WMTS || $type === self::TYPE_WMS || $type === self::TYPE_TMS) {
             $this->type = $type;
         }
+
+        return $this;
     }
 
     /**

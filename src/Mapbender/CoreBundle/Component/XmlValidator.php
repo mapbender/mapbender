@@ -1,15 +1,10 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * XmlValidator class to validate xml documents.
@@ -20,7 +15,7 @@ class XmlValidator
 {
     /**
      *
-     * @var type container
+     * @var ContainerInterface container
      */
     protected $container;
 
@@ -40,11 +35,18 @@ class XmlValidator
      */
     protected $filesToDelete;
 
+    /**
+     * XmlValidator constructor.
+     *
+     * @param  ContainerInterface $container
+     * @param array               $proxy_config
+     * @param  null|string        $orderFromWeb Path relative to web folder
+     */
     public function __construct($container, array $proxy_config, $orderFromWeb = null)
     {
-        $this->container = $container;
-        $this->dir = $this->createDir($orderFromWeb);
-        $this->proxy_config = $proxy_config;
+        $this->container     = $container;
+        $this->dir           = $this->createDir($orderFromWeb);
+        $this->proxy_config  = $proxy_config;
         $this->filesToDelete = array();
     }
 

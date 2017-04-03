@@ -1,14 +1,5 @@
 <?php
-
 namespace Mapbender\CoreBundle\Component;
-
-use Mapbender\CoreBundle\Component\InstanceConfiguration;
-use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  * Description of SourceConfiguration
@@ -17,37 +8,37 @@ use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
  */
 abstract class InstanceConfiguration
 {
-
     /**
      * ORM\Column(type="string", nullable=true)
+     * @var string
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $type;
 
     /**
      * ORM\Column(type="string", nullable=ture)
+     * @var string
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $title;
 
     /**
      * ORM\Column(type="text", nullable=true)
+     * @var string
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $options;
 
     /**
      * ORM\Column(type="text", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $children;
     
     /**
      * ORM\Column(type="boolean", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $isBaseSource = true;
 
+    /**
+     * InstanceConfiguration constructor.
+     */
     public function __construct()
     {
         $this->options = array();
@@ -56,8 +47,9 @@ abstract class InstanceConfiguration
 
     /**
      * Sets a type
-     * 
-     * @return SierviceConfiguration 
+     *
+     * @param string $type
+     * @return $this
      */
     public function setType($type)
     {
@@ -97,8 +89,6 @@ abstract class InstanceConfiguration
         return $this->title;
     }
 
-    
-    
     /**
      * Sets a isBaseSource
      * 
@@ -132,7 +122,7 @@ abstract class InstanceConfiguration
     /**
      * Returns options
      * 
-     * @return ServiceConfigurationOptions
+     * @return string
      */
     public abstract function getOptions();
 
@@ -169,7 +159,7 @@ abstract class InstanceConfiguration
         if($options && is_array($options))
         {
             if(isset($options['type']) && $options['type'] === 'wms'){
-                return WmsInstanceConfiguration::fromArray($options);
+                return \Mapbender\WmsBundle\Component\WmsInstanceConfiguration::fromArray($options);
             }
         }
         return null;

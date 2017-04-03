@@ -3,8 +3,9 @@ namespace Mapbender\WmcBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\State;
-use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\LegendUrl;
+use Mapbender\WmsBundle\Component\OnlineResource;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -53,13 +54,13 @@ class Wmc
     protected $abstract;
 
     /**
-     * @var string A description url
+     * @var LegendUrl A description url
      * @ORM\Column(type="object", nullable=true)
      */
     public $logourl;
 
     /**
-     * @var string A description url
+     * @var OnlineResource A description url
      * @ORM\Column(type="object", nullable=true)
      */
     public $descriptionurl;
@@ -71,25 +72,25 @@ class Wmc
     private $screenshotPath;
 
     /**
-     * @var screenshot
+     * @var File screenshot
      * @Assert\File(maxSize="6000000")
      */
     private $screenshot;
 
     /**
-     * @var Contact A contact.
+     * @var \Mapbender\CoreBundle\Entity\Contact A contact.
      * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist","remove"})
      */
     protected $contact;
 
     /**
-     * @var wmc document
+     * @var File XML document as file
      * @Assert\File(maxSize="6000000")
      */
     private $xml;
 
     /**
-     * @var document public
+     * @var boolean public
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $public = false;
@@ -98,7 +99,7 @@ class Wmc
      * Set id
      *
      * @param integer $id
-     * @return State
+     * @return $this
      */
     public function setId($id)
     {
@@ -116,6 +117,10 @@ class Wmc
         return $this->id;
     }
 
+    /**
+     * @param \Mapbender\CoreBundle\Entity\State $state
+     * @return $this
+     */
     public function setState($state)
     {
         $this->state = $state;
@@ -127,12 +132,19 @@ class Wmc
         return $this->state;
     }
 
+    /**
+     * @param array|\Mapbender\CoreBundle\Entity\Keyword[] $keywords
+     * @return $this
+     */
     public function setKeywords($keywords)
     {
         $this->keywords = $keywords;
         return $this;
     }
 
+    /**
+     * @return array|\Mapbender\CoreBundle\Entity\Keyword[]
+     */
     public function getKeywords()
     {
         return $this->keywords;
@@ -142,7 +154,7 @@ class Wmc
      * Set abstract
      *
      * @param string $abstract
-     * @return Source
+     * @return $this
      */
     public function setAbstract($abstract)
     {
@@ -173,9 +185,9 @@ class Wmc
     }
 
     /**
-     * Get logourl
+     * Get logo URL
      *
-     * @return LegendUrl 
+     * @return LegendUrl
      */
     public function getLogourl()
     {
@@ -183,21 +195,21 @@ class Wmc
     }
 
     /**
-     * Set descriptionurl
+     * Set description URL
      *
-     * @param OnlineResource $descriptionurl
+     * @param OnlineResource $descriptionURL
      * @return Wmc
      */
-    public function setDescriptionurl(OnlineResource $descriptionurl)
+    public function setDescriptionurl(OnlineResource $descriptionURL)
     {
-        $this->descriptionurl = $descriptionurl;
+        $this->descriptionurl = $descriptionURL;
         return $this;
     }
 
     /**
      * Get descriptionurl
      *
-     * @return OnlineResource 
+     * @return OnlineResource
      */
     public function getDescriptionurl()
     {
@@ -207,12 +219,12 @@ class Wmc
     /**
      * Set screenshotPath
      *
-     * @param string $screenshotPath
-     * @return Source
+     * @param string $screenShotPath
+     * @return $this
      */
-    public function setScreenshotPath($screenshotPath)
+    public function setScreenshotPath($screenShotPath)
     {
-        $this->screenshotPath = $screenshotPath;
+        $this->screenshotPath = $screenShotPath;
         return $this;
     }
 
@@ -246,6 +258,7 @@ class Wmc
 
     /**
      * @param string $version
+     * @return $this
      */
     public function setVersion($version)
     {
@@ -265,6 +278,7 @@ class Wmc
 
     /**
      * @param string $wmcid
+     * @return $this
      */
     public function setWmcid($wmcid)
     {
@@ -276,7 +290,7 @@ class Wmc
      * Set contact
      *
      * @param string $contact
-     * @return WmsSource
+     * @return $this
      */
     public function setContact($contact)
     {
@@ -313,9 +327,9 @@ class Wmc
     }
 
     /**
-     * Get screenshot
+     * Get screen shot file
      *
-     * @return string
+     * @return File
      */
     public function getScreenshot()
     {
@@ -326,6 +340,7 @@ class Wmc
      * Set public
      *
      * @param boolean $public
+     * @return $this
      */
     public function setPublic($public)
     {
@@ -336,20 +351,27 @@ class Wmc
     /**
      * Get public
      *
-     * @param boolean
+     * @return boolean
      */
     public function getPublic()
     {
         return $this->public;
     }
 
-    public static function create($state = null, $logoUrl = null,
-        $descriptionUrl = null)
+    /**
+     * Create WMC entity
+     *
+     * @param State|null                    $state
+     * @param OnlineResource|LegendUrl|null $logoUrl
+     * @param OnlineResource|null           $descriptionUrl
+     * @return $this
+     */
+    public static function create($state = null, $logoUrl = null, $descriptionUrl = null)
     {
         $state = $state === null ? new State() : $state;
-        $wmc = new Wmc();
+        $wmc   = new Wmc();
         $wmc->setState($state);
-        $logoUrl = $logoUrl === null ? LegendUrl::create() : logoUrl;
+        $logoUrl = $logoUrl === null ? LegendUrl::create() : $logoUrl;
         if ($logoUrl !== null) {
             $wmc->setLogourl($logoUrl);
         }
@@ -359,5 +381,4 @@ class Wmc
         }
         return $wmc;
     }
-
 }

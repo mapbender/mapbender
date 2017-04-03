@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -48,6 +47,9 @@ class State
      */
     protected $json;
 
+    /**
+     * State constructor.
+     */
     public function __construct()
     {
 
@@ -168,6 +170,11 @@ class State
         return $this->json;
     }
 
+    /**
+     * Sign state sources
+     *
+     * @param Signer $signer
+     */
     public function signSources(Signer $signer)
     {
         $json = json_decode($this->getJson(), true);

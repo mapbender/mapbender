@@ -13,13 +13,11 @@ class Authority
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $url;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $name;
 
     /**

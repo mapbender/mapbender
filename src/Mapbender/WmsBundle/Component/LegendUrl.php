@@ -8,23 +8,19 @@ namespace Mapbender\WmsBundle\Component;
  */
 class LegendUrl
 {
-
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $onlineResource;
 
     /**
      * ORM\Column(type="integer", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $width;
 
     /**
      * ORM\Column(type="integer", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $height;
     
     /**
@@ -109,21 +105,29 @@ class LegendUrl
         return $this->height;
     }
 
+    /**
+     * Create legend URL
+     *
+     * @param null $width
+     * @param null $height
+     * @param null $onlineResource
+     * @return LegendUrl|null
+     */
     public static function create($width = null, $height = null,
-            $onlineResource = null)
+        $onlineResource = null)
     {
+        /** @var LegendUrl $legendURL */
+        $legendURL      = null;
         $onlineResource = $onlineResource === null ? OnlineResource::create() : $onlineResource;
-        if($onlineResource === null)
-        {
-            $lurl = null;
-        } else
-        {
-            $lurl = new LegendUrl();
-            $lurl->setWidth($width);
-            $lurl->setHeight($height);
-            $lurl->setOnlineResource($onlineResource);
+
+        if (!$onlineResource) {
+            $legendURL = new LegendUrl();
+            $legendURL->setWidth($width);
+            $legendURL->setHeight($height);
+            $legendURL->setOnlineResource($onlineResource);
         }
-        return $lurl;
+
+        return $legendURL;
     }
 
 }

@@ -13,56 +13,47 @@ class DimTime extends Dimension
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $name;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $units;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $unitSymbol;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $default;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $multipleValues = false;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $nearestValue = false;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $current = false;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $extentValue;
 
     /**
      * Set name
      *
      * @param string $value
-     * @return Dimension
      */
     public function setName($value)
     {
@@ -83,7 +74,6 @@ class DimTime extends Dimension
      * Set units
      *
      * @param string $value
-     * @return Dimension
      */
     public function setUnits($value)
     {
@@ -104,7 +94,6 @@ class DimTime extends Dimension
      * Set unitSymbol
      *
      * @param string $value
-     * @return Dimension
      */
     public function setUnitSymbol($value)
     {
@@ -125,7 +114,6 @@ class DimTime extends Dimension
      * Set default
      *
      * @param string $value
-     * @return Dimension
      */
     public function setDefault($value)
     {
@@ -150,7 +138,6 @@ class DimTime extends Dimension
      * Set multipleValues
      *
      * @param boolean $value
-     * @return Dimension
      */
     public function setMultipleValues($value)
     {
@@ -175,7 +162,6 @@ class DimTime extends Dimension
      * Set nearestValue
      *
      * @param boolean $value
-     * @return Dimension
      */
     public function setNearestValue($value)
     {
@@ -200,7 +186,6 @@ class DimTime extends Dimension
      * Set current
      *
      * @param boolean $value
-     * @return Dimension
      */
     public function setCurrent($value)
     {
@@ -225,7 +210,6 @@ class DimTime extends Dimension
      * Set extentValue
      *
      * @param string $value
-     * @return Dimension
      */
     public function setExtentValue($value)
     {
