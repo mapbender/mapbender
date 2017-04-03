@@ -232,7 +232,7 @@ class RepositoryController extends Controller
             throw $this->createNotFoundException('Instance does not exist');
         }
 
-        $securityContext = $this->get('security.authorization_chekcer');
+        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!($securityContext->isGranted('VIEW', $sourceInst->getSource())
             || $securityContext->isGranted('VIEW', $oid))) {
