@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -291,5 +290,10 @@ class Element
         $this->yamlRoles = $yamlRoles;
     }
 
-    public function getDescription() { }
+    /**
+     * @return string|null
+     */
+    public function getDescription() {
+        return '';
+    }
 }
