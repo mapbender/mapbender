@@ -2,9 +2,13 @@
 
 namespace Mapbender\CoreBundle;
 
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -17,13 +21,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class Mapbender
 {
-    /** @var ContainerInterface  */
+    /** @var ContainerInterface */
     private $container;
 
     /** @var Element[] */
-    private $elements           = array();
-    private $layers             = array();
-    private $templates          = array();
+    private $elements = array();
+
+    /** @var array */
+    private $layers = array();
+
+    /** @var Template[] */
+    private $templates = array();
+
+    /** @var array */
     private $repositoryManagers = array();
 
     /**
@@ -34,22 +44,21 @@ class Mapbender
      *
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container) {
+    public function __construct(ContainerInterface $container)
+    {
         $this->container = $container;
         $bundles = $container->get('kernel')->getBundles();
-        foreach($bundles as $bundle) {
-            if(is_subclass_of($bundle,
-                'Mapbender\CoreBundle\Component\MapbenderBundle')) {
 
-                $this->elements = array_merge($this->elements,
-                    $bundle->getElements());
-                $this->layer =  array_merge($this->layers,
-                    $bundle->getLayers());
-                $this->templates = array_merge($this->templates,
-                    $bundle->getTemplates());
-                $this->repositoryManagers = array_merge($this->repositoryManagers,
-                    $bundle->getRepositoryManagers());
+        /** @var MapbenderBundle $bundle */
+        foreach ($bundles as $bundle) {
+            if (!is_subclass_of($bundle, 'Mapbender\CoreBundle\Component\MapbenderBundle')) {
+                continue;
             }
+
+            $this->elements           = array_merge($this->elements, $bundle->getElements());
+            $this->layer              = array_merge($this->layers, $bundle->getLayers());
+            $this->templates          = array_merge($this->templates, $bundle->getTemplates());
+            $this->repositoryManagers = array_merge($this->repositoryManagers, $bundle->getRepositoryManagers());
         }
     }
 
@@ -59,7 +68,7 @@ class Mapbender
      * Element classes need to be declared in each bundle's main class getElement
      * method.
      *
-     * @return array
+     * @return Element[]
      */
     public function getElements()
     {
@@ -95,7 +104,7 @@ class Mapbender
      * Template classes need to be declared in each bundle's main class
      * getTemplates method.
      *
-     * @return array
+     * @return Template[]
      */
     public function getTemplates()
     {
@@ -109,7 +118,9 @@ class Mapbender
      * applications with the same slug exist, the database one will
      * override the YAML one.
      *
-     * @return Application
+     * @param string $slug
+     * @param array $urls Array of runtime URLs
+     * @return Application Application component
      */
     public function getApplication($slug, $urls)
     {
@@ -124,11 +135,12 @@ class Mapbender
     /**
      * Get application entities
      *
-     * @return Entity[]
+     * @return \Mapbender\CoreBundle\Entity\Application[]
      */
     public function getApplicationEntities()
     {
-        /** @var Entity[] $dbApplications */
+        /** @var \Mapbender\CoreBundle\Entity\Application $application */
+        /** @var Application[] $dbApplications */
         $applications = array();
         $yamlMapper   = new ApplicationYAMLMapper($this->container);
         $registry     = $this->container->get('doctrine');
@@ -152,22 +164,32 @@ class Mapbender
     /**
      * Get application entity for given slug
      *
-     * @return Entity|null
+     * @param string $slug
+     * @return \Mapbender\CoreBundle\Entity\Application
      */
-    public function getApplicationEntity($slug) {
-        $entity = $this->container->get('doctrine')
-            ->getRepository('MapbenderCoreBundle:Application')
-            ->findOneBySlug($slug);
-        if($entity) {
-            $entity->setSource(Entity::SOURCE_DB);
-            return $entity;
+    public function getApplicationEntity($slug)
+    {
+        /** @var \Mapbender\CoreBundle\Entity\Application $entity */
+        $registry   = $this->container->get('doctrine');
+        $repository = $registry->getRepository('MapbenderCoreBundle:Application');
+
+        if ($repository instanceof EntityRepository) {
+            /** @var EntityRepository $repository  Sometimes findOneBySlug method is there, but this is a magic */
+            $entity = $repository->findOneBySlug($slug);
         }
 
-        $yamlMapper = new ApplicationYAMLMapper($this->container);
-        $entity = $yamlMapper->getApplication($slug);
-        if(!$entity || !$entity->isPublished()) {
+        if ($entity) {
+            $entity->setSource(Entity::SOURCE_DB);
+        } else {
+            /** @var ObjectRepository $repository */
+            $yamlMapper = new ApplicationYAMLMapper($this->container);
+            $entity     = $yamlMapper->getApplication($slug);
+        }
+
+        if (!$entity || !$entity->isPublished()) {
             return null;
         }
+
         return $entity;
     }
 
