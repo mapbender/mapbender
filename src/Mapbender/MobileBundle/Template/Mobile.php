@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\MobileBundle\Template;
 
 use Mapbender\CoreBundle\Component\Application;
@@ -11,93 +10,44 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class Mobile extends Template
 {
+    /** @var string Application title */
+    protected static $title = 'Mapbender Mobile template';
 
-    /**
-     * @inheritdoc
-     */
-    public static function getTitle()
-    {
-        return 'Mapbender Mobile template';
-    }
+    /** @var string Application TWIG template path */
+    protected $twigTemplate = 'MapbenderMobileBundle:Template:mobile.html.twig';
 
-    /**
-     * @inheritdoc
-     */
-    public static function listAssets()
-    {
-        $assets = array(
-            'css' => array(
-//                '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
-            ),
-            'js' => array(
-                '/components/underscore/underscore-min.js',
-                '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
-                '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
-                '@MapbenderMobileBundle/Resources/public/js/mobile.js'
-            ),
-            'trans' => array(),
-        );
+    /** @var array Late assets */
+    protected $lateAssets = array(
+        'js'    => array(),
+        'css'   => array(
+            '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
+        ),
+        'trans' => array(),
+    );
 
-        return $assets;
-    }
+    protected static $js  = array(
+        '/components/underscore/underscore-min.js',
+        '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
+        '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
+        '@MapbenderMobileBundle/Resources/public/js/mobile.js',
+        '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js'
+    );
 
-    public function getAssets($type)
-    {
-        $assets = array(
-            'css' => array(
-//                '@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss'
-            ),
-            'js' => array(
-                '/components/underscore/underscore-min.js',
-                '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
-                '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
-                '@MapbenderMobileBundle/Resources/public/js/mobile.js',
-                '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js'
-            ),
-            'trans' => array(),
-        );
-
-        return $assets[$type];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getLateAssets($type)
-    {
-        $assets = array(
-            'css' => array(
-                '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
-            ),
-            'js' => array(),
-            'trans' => array()
-        );
-        return $assets[$type];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getRegions()
-    {
-        return array('footer', 'content', 'mobilePane');
-    }
+    /**  @var array Region names */
+    protected static $regions = array('footer', 'content', 'mobilePane');
 
     /**
      * @inheritdoc
      */
     public function render($format = 'html', $html = true, $css = true, $js = true)
     {
-        $uploads_dir = Application::getAppWebDir($this->container, $this->application->getSlug());
-        $templating = $this->container->get('templating');
-        return $templating->render(
-            'MapbenderMobileBundle:Template:mobile.html.twig',
-            array(
-                'html' => $html,
-                'css' => $css,
-                'js' => $js,
+        $templateEngine = $this->container->get('templating');
+        return $templateEngine->render($this->twigTemplate, array(
+                'html'        => $html,
+                'css'         => $css,
+                'js'          => $js,
                 'application' => $this->application,
-                'uploads_dir' => $uploads_dir
+                'uploads_dir' => Application::getAppWebDir($this->container, $this->application->getSlug())
             )
         );
     }
