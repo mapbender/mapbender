@@ -133,7 +133,7 @@ abstract class Template
      * @param boolean $js     Whether to include the JavaScript
      * @return string $html The rendered HTML
      */
-    public function render($format = 'html', $html = true, $css = true, $js = true, $trans = true)
+    public function render($format = 'html', $html = true, $css = true, $js = true)
     {
         $application       = $this->application;
         $applicationEntity = $application->getEntity();
@@ -143,7 +143,6 @@ abstract class Template
                 'html'                 => $html,
                 'css'                  => $css,
                 'js'                   => $js,
-                'trans'                   => $trans,
                 'application'          => $application,
                 'region_props'         => $applicationEntity->getNamedRegionProperties(),
                 'default_region_props' => static::getRegionsProperties()
