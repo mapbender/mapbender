@@ -61,8 +61,9 @@ abstract class Element
      * The constructor. Every element needs an application to live within and
      * the container to do useful things.
      *
-     * @param Application $application The application object
-     * @param ContainerInterface $container The container object
+     * @param Application        $application Application entity
+     * @param ContainerInterface $container   Container service
+     * @param Entity             $entity
      */
     public function __construct(Application $application, ContainerInterface $container, Entity $entity)
     {

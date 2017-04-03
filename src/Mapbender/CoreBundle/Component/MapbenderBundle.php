@@ -1,9 +1,4 @@
 <?php
-
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle\Component;
 
 use FOM\ManagerBundle\Component\ManagerBundle;
@@ -17,10 +12,8 @@ use FOM\ManagerBundle\Component\ManagerBundle;
  *
  * @author Christian Wygoda
  */
-class MapbenderBundle
-        extends ManagerBundle
+class MapbenderBundle extends ManagerBundle
 {
-
     /**
      * Return list of element classes provided by this bundle.
      * Each entry in the array is a fully qualified class name.

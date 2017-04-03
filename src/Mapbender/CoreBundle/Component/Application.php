@@ -65,12 +65,6 @@ class Application
         $this->urls      = $urls;
     }
 
-    /*************************************************************************
-     *                                                                       *
-     *                    Configuration entity handling                      *
-     *                                                                       *
-     *************************************************************************/
-
     /**
      * Get the configuration entity.
      *
@@ -80,12 +74,6 @@ class Application
     {
         return $this->entity;
     }
-
-    /*************************************************************************
-     *                                                                       *
-     *             Shortcut functions for leaner Twig templates              *
-     *                                                                       *
-     *************************************************************************/
 
     /**
      * Get the application ID
@@ -311,13 +299,15 @@ class Application
      */
     public function getConfiguration()
     {
-        $configuration = array();
-
-        $configuration['application'] = array(
-            'title'         => $this->entity->getTitle(),
-            'urls'          => $this->urls,
-            'publicOptions' => $this->entity->getPublicOptions(),
-            'slug'          => $this->getSlug());
+        /** @var Element[] $elements */
+        /** @var \Mapbender\CoreBundle\Component\Element $elementInstance */
+        $configuration = array(
+            'application' => array(
+                'title'         => $this->entity->getTitle(),
+                'urls'          => $this->urls,
+                'publicOptions' => $this->entity->getPublicOptions(),
+                'slug'          => $this->getSlug())
+        );
 
         // Get all element configurations
         $configuration['elements'] = array();
@@ -358,7 +348,6 @@ class Application
         $configBeforeElement = $configAfterElements = $configuration;
         foreach ($this->getElements() as $elementList) {
             foreach ($elementList as $elementInstance) {
-                /** @var \Mapbender\CoreBundle\Component\Element $elementInstance */
                 $configAfterElements = $configBeforeElement = $elementInstance->updateAppConfig($configBeforeElement);
             }
         }

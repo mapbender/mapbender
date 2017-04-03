@@ -1,18 +1,12 @@
 <?php
-
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
-use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
-//use Mapbender\CoreBundle\Entity\Layer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

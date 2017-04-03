@@ -4,9 +4,8 @@ namespace Mapbender\CoreBundle\Component;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
-//use 
 
 /**
  * Description of EntityHandler
@@ -21,7 +20,7 @@ class EntityHandler
     protected $container;
 
     /**
-     * @var mixed|SourceInstance entity
+     * @var SourceInstanceItem entity
      */
     protected $entity;
 

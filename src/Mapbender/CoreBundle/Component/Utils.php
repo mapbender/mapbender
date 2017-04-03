@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -14,8 +13,8 @@ class Utils
 
     /**
      * Checks the variable $booleanOrNull and returns the boolean or null.
-     * @param type $booleanOrNull
-     * @param type $nullable
+     * @param boolean|null $booleanOrNull
+     * @param boolean $nullable
      * @return boolean if $nullable is false, otherwise boolean or null.
      */
     public static function getBool($booleanOrNull, $nullable = false)

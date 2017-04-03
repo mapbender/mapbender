@@ -1,9 +1,4 @@
 <?php
-
-/**
- * TODO: License
- */
-
 namespace Mapbender\CoreBundle\Component;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +18,11 @@ class ProxyService
     protected $proxy_conf;
     protected $noproxy;
 
+    /**
+     * ProxyService constructor.
+     *
+     * @param $proxy_conf
+     */
     public function __construct($proxy_conf)
     {
         if($proxy_conf['host'] !== null)
@@ -92,17 +92,9 @@ class ProxyService
 
             if($contentType[0] == 'application/xml')
             {
-//                curl_setopt($ch, CURLOPT_HTTPHEADER, $request->headers
-//                    ->get('Content-Type'));
                 $content = $request->getContent();
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: ' . $contentType[0]));
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getContent());
-                /*
-                  $xml = file_get_contents('php://input');
-                  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                  'Content-type: application/xml'));
-                  curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
-                 */
             } else
             {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getParameters());
@@ -167,6 +159,4 @@ class ProxyService
         return new Response($content, $status['http_code'], array(
                     'Content-Type' => $status['content_type']));
     }
-
 }
-

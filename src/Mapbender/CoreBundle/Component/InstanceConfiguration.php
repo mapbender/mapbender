@@ -1,14 +1,7 @@
 <?php
-
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Component\InstanceConfiguration;
 use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  * Description of SourceConfiguration
@@ -17,37 +10,34 @@ use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
  */
 abstract class InstanceConfiguration
 {
-
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $type;
 
     /**
      * ORM\Column(type="string", nullable=ture)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $title;
 
     /**
      * ORM\Column(type="text", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $options;
 
     /**
      * ORM\Column(type="text", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $children;
     
     /**
      * ORM\Column(type="boolean", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $isBaseSource = true;
 
+    /**
+     * InstanceConfiguration constructor.
+     */
     public function __construct()
     {
         $this->options = array();
@@ -56,8 +46,9 @@ abstract class InstanceConfiguration
 
     /**
      * Sets a type
-     * 
-     * @return SierviceConfiguration 
+     *
+     * @param string $type
+     * @return $this
      */
     public function setType($type)
     {
@@ -97,8 +88,6 @@ abstract class InstanceConfiguration
         return $this->title;
     }
 
-    
-    
     /**
      * Sets a isBaseSource
      * 
