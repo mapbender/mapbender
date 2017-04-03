@@ -1,10 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
@@ -22,6 +16,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 {
+
+
+    /**
+     * @var  \Mapbender\CoreBundle\Entity\Source entity
+     */
+    protected $entity;
+
     /**
      * @inheritdoc
      */

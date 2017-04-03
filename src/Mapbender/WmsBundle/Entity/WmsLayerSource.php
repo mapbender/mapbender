@@ -6,19 +6,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
-use Mapbender\CoreBundle\Entity\SourceItem;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\WmsBundle\Component\IdentifierAuthority;
+use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\Identifier;
+use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
-use Mapbender\CoreBundle\Component\Utils;
 
 /**
  * @ORM\Entity
@@ -144,7 +144,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     protected $featureListUrl;
     /**
-     * @var ArrayCollections A list of WMS Layer keywords
+     * @var ArrayCollection A list of WMS Layer keywords
      * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
@@ -154,6 +154,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     protected $priority;
 
+    /**
+     * WmsLayerSource constructor.
+     */
     public function __construct()
     {
         $this->sublayer = new ArrayCollection();
@@ -210,7 +213,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Set parent
      *
-     * @param Object $parent
+     * @param WmsLayerSource $parent
      * @return WmsLayerSource
      */
     public function setParent(WmsLayerSource $parent = null)

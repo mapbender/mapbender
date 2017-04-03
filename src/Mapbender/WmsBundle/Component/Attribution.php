@@ -12,19 +12,16 @@ class Attribution
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $title;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $onlineResource;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $logoUrl;
 
     /**
@@ -77,7 +74,9 @@ class Attribution
 
     /**
      * Set logoUrl
-     * @param string $value
+     *
+     * @param LegendUrl $value
+     * @return $this
      */
     public function setLogoUrl(LegendUrl $value)
     {
