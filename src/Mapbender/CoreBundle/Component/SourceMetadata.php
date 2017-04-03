@@ -107,7 +107,7 @@ abstract class SourceMetadata
     
     /**
      * Contenttype (s. CONTENTTYPE_HTML, CONTENTTYPE_ELEMENT)
-     * @var type
+     * @var string
      */
     protected $contenttype;
 
@@ -117,10 +117,16 @@ abstract class SourceMetadata
      */
     protected $data;
 
-    public function __construct($container = null, $contenttype = null)
+    /**
+     * SourceMetadata constructor.
+     *
+     * @param string|null $container String from SourceMetadata::$CONTAINER_*
+     * @param string|null $contentType
+     */
+    public function __construct($container = null, $contentType = null)
     {
         $this->setContainer($container);
-        $this->setContenttype($contenttype);
+        $this->setContenttype($contentType);
         $this->resetData();
     }
 
@@ -301,6 +307,12 @@ abstract class SourceMetadata
         return $this->data;
     }
 
+    /**
+     * Add section by name
+     *
+     * @param string $sectionName
+     * @param array  $items
+     */
     protected function addMetadataSection($sectionName, array $items)
     {
         $this->data['sections'][] = array(
@@ -309,6 +321,13 @@ abstract class SourceMetadata
         );
     }
 
+    /**
+     * Get not null
+     *
+     * @param mixed $sourceValue
+     * @param null  $instanceValue
+     * @return null|string
+     */
     public static function getNotNull($sourceValue, $instanceValue = null)
     {
         if ($instanceValue !== null && $sourceValue !== null) {
