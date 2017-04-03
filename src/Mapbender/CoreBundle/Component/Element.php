@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
@@ -423,10 +424,10 @@ abstract class Element
     /**
      * Create form for given element
      *
-     * @param        $container
-     * @param        $application
-     * @param Entity $element
-     * @param bool   $onlyAcl
+     * @param ContainerInterface $container
+     * @param Application        $application
+     * @param Entity             $element
+     * @param bool               $onlyAcl
      * @return array
      * @internal param string $class
      */
