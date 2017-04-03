@@ -225,7 +225,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get parent
      *
-     * @return Object
+     * @return WmsLayerSource
      */
     public function getParent()
     {
@@ -636,26 +636,24 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     public function getScaleRecursive()
     {
-        if ($this->scale !== null) {
-            if ($this->scale->getMin() === null || $this->scale->getMax() === null) {
-                if ($parent_scale = $this->getParent()->getScale()) {
-                    return new MinMax(
-                        $this->scale->getMin() !== null ? $this->scale->getMin() : $parent_scale->getMin(),
-                        $this->scale->getMax() !== null ? $this->scale->getMax() : $parent_scale->getMax()
-                    );
-                } else {
-                    return $this->scale;
-                }
-            } else {
-                return $this->scale;
-            }
+        $scale  = $this->getScale();
+        $parent = $this->getParent();
+
+        if (!$scale && $parent) {
+            $scale = $parent->getScale();
         } else {
-            if ($this->getParent() !== null) {
-                return $this->getParent()->getScale();
-            } else {
-                return null;
+            $hasMin = $scale->getMin() !== null;
+            $hasMax = $scale->getMax() !== null;
+            if ((!$hasMin || !$hasMax) && $parent) {
+                $parentScale = $parent->getScale();
+                $scale       = new MinMax(
+                    $hasMin ? $scale->getMin() : $parentScale->getMin(),
+                    $hasMax ? $scale->getMax() : $parentScale->getMax()
+                );
             }
         }
+
+        return $scale;
     }
 
     /**

@@ -12,12 +12,10 @@ class MinMax
     /**
      * ORM\Column(type="float", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $min = null;
     /**
      * ORM\Column(type="float", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $max = null;
 
     /**
@@ -44,7 +42,7 @@ class MinMax
     /**
      * Set min
      * @param float $min
-     * @return MinMax
+     * @return $this
      */
     public function setMin($min)
     {
@@ -65,7 +63,7 @@ class MinMax
     /**
      * Set max
      * @param float $max
-     * @return MinMax
+     * @return $this
      */
     public function setMax($max)
     {
@@ -73,6 +71,10 @@ class MinMax
         return $this;
     }
 
+    /**
+     * @param $value
+     * @return float|null
+     */
     public function getInRange($value)
     {
         $value_ = $value;
@@ -81,6 +83,11 @@ class MinMax
         return $value_;
     }
 
+    /**
+     * @param $value1
+     * @param $value2
+     * @return MinMax
+     */
     public static function create($value1, $value2)
     {
         if (null === $value1) {
