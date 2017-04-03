@@ -295,7 +295,7 @@ class Application
      * Get the configuration (application, elements, layers) as an StringAsset.
      * Filters can be applied later on with the ensureFilter method.
      *
-     * @return StringAsset The configuration asset object
+     * @return string Configuration as JSON string
      */
     public function getConfiguration()
     {
@@ -306,7 +306,11 @@ class Application
                 'title'         => $this->entity->getTitle(),
                 'urls'          => $this->urls,
                 'publicOptions' => $this->entity->getPublicOptions(),
-                'slug'          => $this->getSlug())
+                'slug'          => $this->getSlug()),
+            'elements'    => array(),
+            'layersets'   => array(),
+            // Layer titles
+            'layersetmap' => array(),
         );
 
         // Get all element configurations
@@ -320,28 +324,32 @@ class Application
         }
 
         // Get all layer configurations
-        $configuration['layersets']   = array();
-        $configuration['layersetmap'] = array();
-        foreach ($this->getLayersets() as $layerset) {
-            $idStr                                  = '' . $layerset->getId();
-            $configuration['layersets'][ $idStr ]   = array();
-            $configuration['layersetmap'][ $idStr ] = $layerset->getTitle() ? $layerset->getTitle() : $idStr;
-            $num                                    = 0;
-            foreach ($layerset->layerObjects as $layer) {
+        foreach ($this->getLayersets() as $layerSet) {
+            $layerId       = '' . $layerSet->getId();
+            $layerSetTitle = $layerSet->getTitle() ? $layerSet->getTitle() : $layerId;
+            $layerSets     = array();
+
+            foreach ($layerSet->layerObjects as $layer) {
                 $instHandler = EntityHandler::createHandler($this->container, $layer);
                 $conf        = $instHandler->getConfiguration($this->container->get('signer'));
-                if ($conf) {
-                    $configuration['layersets'][ $idStr ][ $num ] = array(
-                        $layer->getId() => array(
-                            'type'          => strtolower($layer->getType()),
-                            'title'         => $layer->getTitle(),
-                            'configuration' => $conf
-                        )
-                    );
-                    $num++;
+
+                if (!$conf) {
+                    continue;
                 }
+
+                $layerSets[] = array(
+                    $layer->getId() => array(
+                        'type'          => strtolower($layer->getType()),
+                        'title'         => $layer->getTitle(),
+                        'configuration' => $conf
+                    )
+                );
             }
+
+            $configuration['layersets'][ $layerId ]   = $layerSets;
+            $configuration['layersetmap'][ $layerId ] = $layerSetTitle;
         }
+
         // Let (active, visible) Elements update the Application config
         // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
         // visible state of the frontend.
@@ -434,13 +442,11 @@ class Application
         if (!$this->elements) {
             $regions = $this->getGrantedRegionElementCollections();
             foreach ($regions as $_regionName => $elements) {
-                $_elements               = $this->sortElementsByWidth($elements);
+                //$_elements               = $this->sortElementsByWidth($elements);
                 $regions[ $_regionName ] = $elements;
             }
             $this->elements = $regions;
         }
-
-        $keys = array_keys($this->elements);
 
         if ($regionName) {
             $hasRegionElements = array_key_exists($regionName, $this->elements);
