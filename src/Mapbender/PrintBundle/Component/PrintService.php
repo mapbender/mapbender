@@ -784,7 +784,7 @@ class PrintService
         $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
         $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
                 $this->conf['fields']['dynamic_text']['height'],
-                $group->getDescription());
+                utf8_decode($group->getDescription()));
         
     }
 
