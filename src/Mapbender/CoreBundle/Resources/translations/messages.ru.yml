@@ -380,4 +380,3 @@ mb:
       datails: 'Карта не отображается'
       exception: 'Ошибка: %exception%'
       statuscode: HTTP-Код
-Search: Поиск
