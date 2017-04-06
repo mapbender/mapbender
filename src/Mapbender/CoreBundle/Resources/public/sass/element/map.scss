@@ -5,10 +5,14 @@
     width:100%;
     height:100%;
     z-index: 1;
-    -webkit-user-select: none;  /* Chrome all / Safari all */
-    -moz-user-select: none;     /* Firefox all */
-    -ms-user-select: none;      /* IE 10+ */
-    user-select: none;          /* Likely future */
+    /* disable map tile selection on the lowest level possible
+       => no effect on text selection in e.g. .olPopup (nested inside map viewport */
+    .olLayerDiv {
+      -webkit-user-select: none;  /* Chrome all / Safari all */
+      -moz-user-select: none;     /* Firefox all */
+      -ms-user-select: none;      /* IE 10+ */
+      user-select: none;          /* Likely future */
+    }
     @include absolute(0 0 0 0);
   }
 }
