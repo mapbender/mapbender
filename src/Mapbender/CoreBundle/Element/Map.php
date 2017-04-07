@@ -162,7 +162,12 @@ class Map extends Element
                     'x' => floatval($point[0]),
                     'y' => floatval($point[1]),
                     'label' => isset($poi['label']) ? htmlentities($poi['label']) : null,
-                    'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
+                    'scale' => isset($poi['scale']) ? intval($poi['scale']) : null,
+                    'icon' => isset($poi['icon']) ? $poi['icon'] : null,
+                    'icon_width' => isset($poi['icon_width']) ? intval($poi['icon_width']) : null,
+                    'icon_height' => isset($poi['icon_height']) ? intval($poi['icon_height']) : null,
+                    'icon_xoffset' => isset($poi['icon_xoffset']) ? intval($poi['icon_xoffset']) : null,
+                    'icon_yoffset' => isset($poi['icon_yoffset']) ? intval($poi['icon_yoffset']) : null
                 );
                 if ($poi['srs']) {
                     $help['srs'] = $poi['srs'];

@@ -124,7 +124,12 @@ Mapbender.Model = {
                 pois.push({
                     position: coord,
                     label: poi.label,
-                    scale: poi.scale
+                    scale: poi.scale,
+                    icon: poi.icon,
+                    icon_width: poi.icon_width,
+                    icon_height: poi.icon_height,
+                    icon_xoffset: poi.icon_xoffset,
+                    icon_yoffset: poi.icon_yoffset
                 });
             });
         }
@@ -135,7 +140,7 @@ Mapbender.Model = {
             poiPopups = [];
         if (pois.length) {
             poiMarkerLayer = new OpenLayers.Layer.Markers();
-            poiIcon = new OpenLayers.Icon(
+            poiIconDefault = new OpenLayers.Icon(
                 Mapbender.configuration.application.urls.asset + this.mbMap.options.poiIcon.image,
                 {
                     w: this.mbMap.options.poiIcon.width,
@@ -148,6 +153,40 @@ Mapbender.Model = {
             );
         }
         $.each(pois, function(idx, poi) {
+            
+            if (poi.icon) {
+               poiUrl = poi.icon;
+               if (poi.icon_width && poi.icon_height){
+                   iconWidth = poi.icon_width;
+                   iconHeight = poi.icon_height;
+               }else{
+
+               }
+               if (poi.icon_xoffset && poi.icon_yoffset){
+                   iconXOffset = poi.icon_xoffset;
+                   iconYOffset = poi.icon_yoffset;                   
+               }else{
+                   iconXOffset = 10;
+                   iconYOffset = 10; 
+               }
+             
+                poiIcon = new OpenLayers.Icon(
+                poi.icon,
+                {
+                    w: iconWidth,
+                    h: iconHeight
+                },
+                {
+                   x: iconXOffset,
+                   y: iconYOffset
+                }
+             );
+ 
+            }else{
+                poiIcon = poiIconDefault;
+            }
+            
+            
             if (!bbox) {
                 if (!poiBox)
                     poiBox = new OpenLayers.Bounds();
