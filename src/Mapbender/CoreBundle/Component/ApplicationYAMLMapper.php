@@ -137,7 +137,7 @@ class ApplicationYAMLMapper
                     $entity_class = $elementDefinition['class'];
                     $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
                     if (!class_exists($entity_class)) {
-                        throw new \RuntimeException('Unknown Element class ' . $entity_class);
+                        continue;
                     }
                     $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());
 
