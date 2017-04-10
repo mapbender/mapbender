@@ -698,6 +698,10 @@ class Application
 
             /** @var \Mapbender\CoreBundle\Element\Button $class */
             $class                     = $elementEntity->getClass();
+            if (!class_exists($class)) {
+                continue;
+            }
+
             $elementComponent          = new $class($this, $this->container, $elementEntity);
             $regionName                = $elementEntity->getRegion();
             $elements[ $regionName ][] = $elementComponent;
