@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,16 +20,23 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ApplicationYAMLMapper
 {
-
+    /** @var LoggerInterface  */
+    protected $logger;
     /**
      * The service container
      * @var ContainerInterface
      */
     private $container;
 
+    /**
+     * ApplicationYAMLMapper constructor.
+     *
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->logger = $this->container->get("logger");
     }
 
     /**
@@ -137,6 +145,14 @@ class ApplicationYAMLMapper
                     $entity_class = $elementDefinition['class'];
                     $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
                     if (!class_exists($entity_class)) {
+                        $this->logger->notice("Element isn't exists ", array(
+                            'className'   => $entity_class,
+                            'application' => array(
+                                'id'    => $application->getId(),
+                                'title' => $application->getTitle(),
+                                'slug'  => $application->getSlug(),
+                            )
+                        ));
                         continue;
                     }
                     $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());
