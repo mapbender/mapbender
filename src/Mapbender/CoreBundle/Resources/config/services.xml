@@ -78,8 +78,8 @@
 
         <!-- User management -->
         <service id="security.context" class="Mapbender\CoreBundle\Component\SecurityContext">
-            <argument type="service" id="security.authentication.manager" />
-            <argument type="service" id="security.access.decision_manager" />
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="security.authorization_checker" />
         </service>
 
         <service id="mapbender.validator.css" class="Mapbender\CoreBundle\Validator\Constraints\ScssValidator">
@@ -88,4 +88,3 @@
         </service>
     </services>
 </container>
-

@@ -29,8 +29,6 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
     }
 
     public function apply(Request $request, ConfigurationInterface $configuration) {
-        // TODO: needs a security context
-
         $this->configuration = $configuration;
         $class = $configuration->getClass();
         $options = $this->getOptions($configuration);
