@@ -504,7 +504,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * @inheritdoc
+     * @return WmsInstance
      */
     public function getSourceInstance()
     {
