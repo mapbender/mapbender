@@ -85,7 +85,7 @@ class EntityHandler
     /**
      * @param ContainerInterface $container
      * @param  Source|SourceInstance|object $entity
-     * @return SourceInstanceEntityHandler|null
+     * @return \Mapbender\WmsBundle\Component\WmsInstanceEntityHandler|SourceInstanceEntityHandler|null
      */
     public static function createHandler(ContainerInterface $container, $entity)
     {
