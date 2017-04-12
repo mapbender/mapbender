@@ -19,7 +19,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 
 
     /**
-     * @var \Mapbender\WmsBundle\Entity\WmsSource entity
+     * @var \Mapbender\WmsBundle\Entity\WmsInstanceLayer entity
      */
     protected $entity;
 
