@@ -95,7 +95,9 @@ mb:
       template: Vorlage
       application:
         view: 'Anwendung anzeigen'
-        edit: 'Anwendung bearbeiten'
+        edit:
+          title: 'Anwendung bearbeiten'
+          base_data: 'Basisdaten'
         layouts: Layouts
         layersets: Layerset
         custom_css: CSS
