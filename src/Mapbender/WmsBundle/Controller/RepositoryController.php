@@ -100,8 +100,8 @@ class RepositoryController extends Controller
             $proxy_config = $this->container->getParameter("owsproxy.proxy");
             $proxy_query  = ProxyQuery::createFromUrl(
                 trim($wmssource_req->getOriginUrl()),
-                $wmssource_req->getUsername(),
-                $wmssource_req->getPassword()
+                rawurlencode($wmssource_req->getUsername()),
+                rawurlencode($wmssource_req->getPassword())
             );
             if ($proxy_query->getGetPostParamValue("request", true) === null) {
                 $proxy_query->addQueryParameter("request", "GetCapabilities");
@@ -161,8 +161,8 @@ class RepositoryController extends Controller
             $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
 
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
-            $wmssource->setUsername($wmssource_req->getUsername());
-            $wmssource->setPassword($wmssource_req->getPassword());
+            $wmssource->setUsername(rawurlencode($wmssource_req->getUsername()));
+            $wmssource->setPassword(rawurlencode($wmssource_req->getPassword()));
 
             EntityHandler::createHandler($this->container, $wmssource)->save();
             $this->getDoctrine()->getManager()->flush();
