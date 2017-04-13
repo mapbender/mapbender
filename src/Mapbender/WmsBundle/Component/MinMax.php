@@ -12,11 +12,11 @@ class MinMax
     /**
      * ORM\Column(type="float", nullable=true)
      */
-    public $min = null;
+    public $min;
     /**
      * ORM\Column(type="float", nullable=true)
      */
-    public $max = null;
+    public $max;
 
     /**
      *
@@ -25,8 +25,8 @@ class MinMax
      */
     public function __construct($min = null, $max = null)
     {
-        $this->min = $min;
-        $this->max = $max;
+        $this->setMin($min);
+        $this->setMax($max);
     }
 
     /**
@@ -36,38 +36,48 @@ class MinMax
      */
     public function getMin()
     {
-        return $this->min;
+        $value = $this->min;
+        if ($value == INF) {
+            $value = null;
+        }
+        return $value === null ? null : floatval($value);
     }
 
     /**
      * Set min
-     * @param float $min
+     *
+     * @param float|null $value
      * @return $this
      */
-    public function setMin($min)
+    public function setMin($value)
     {
-        $this->min = $min;
+        $this->min = $value === null ? null : floatval($value);
         return $this;
     }
 
     /**
      * Get max
      *
-     * @return float
+     * @return float|null
      */
     public function getMax()
     {
-        return $this->max;
+        $value = $this->max;
+        if ($value == INF) {
+            $value = null;
+        }
+        return $value === null ? null : floatval($value);
     }
 
     /**
      * Set max
-     * @param float $max
+     *
+     * @param float|null $value
      * @return $this
      */
-    public function setMax($max)
+    public function setMax($value)
     {
-        $this->max = $max;
+        $this->max = $value === null ? null : floatval($value);
         return $this;
     }
 
@@ -80,7 +90,7 @@ class MinMax
         $value_ = $value;
         $value_ = $this->min !== null ? ($value_ && $value_ < $this->min ? $this->min : $value_) : $value_;
         $value_ = $this->max !== null ? ($value_ && $value_ > $this->max ? $this->max : $value_) : $value_;
-        return $value_;
+        return $value_ === null ? null : floatval($value_);
     }
 
     /**

@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -24,37 +25,45 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     protected $entity;
 
     /**
-     * @inheritdoc
+     * Creates a SourceInstanceItem
+     *
+     * @param WmsSource|SourceInstance  $instance
+     * @param WmsLayerSource|SourceItem $layerSource
+     * @param int                       $num
+     * @return WmsInstanceLayer
+     * @internal param  $item
      */
-    public function create(SourceInstance $instance, SourceItem $wmslayersource, $num = 0)
+    public function create(SourceInstance $instance, SourceItem $layerSource, $num = 0)
     {
-        $this->entity->setSourceInstance($instance);
-        $this->entity->setSourceItem($wmslayersource);
-        $this->entity->setTitle($wmslayersource->getTitle());
-        // @TODO min max from scaleHint
-        $this->entity->setMinScale($wmslayersource->getScaleRecursive() !== null ?
-            $wmslayersource->getScaleRecursive()->getMin() : null);
-        $this->entity->setMaxScale($wmslayersource->getScaleRecursive() !== null ?
-            $wmslayersource->getScaleRecursive()->getMax() : null);
-        $queryable = $wmslayersource->getQueryable();
-        $this->entity->setInfo(Utils::getBool($queryable));
-        $this->entity->setAllowinfo(Utils::getBool($queryable));
-        $this->entity->setPriority($num);
-        $instance->addLayer($this->entity);
-        if ($wmslayersource->getSublayer()->count() > 0) {
-            $this->entity->setToggle(false);
-            $this->entity->setAllowtoggle(true);
+        /** @var WmsLayerSource $instanceLayer */
+        $instanceLayer = $this->entity;
+
+        $instanceLayer->setSourceInstance($instance);
+        $instanceLayer->setSourceItem($layerSource);
+        $instanceLayer->setTitle($layerSource->getTitle());
+
+        $instanceLayer->setMinScale($layerSource->getMinScale());
+        $instanceLayer->setMaxScale($layerSource->getMaxScale());
+
+        $queryable = $layerSource->getQueryable();
+        $instanceLayer->setInfo(Utils::getBool($queryable));
+        $instanceLayer->setAllowinfo(Utils::getBool($queryable));
+        $instanceLayer->setPriority($num);
+        $instance->addLayer($instanceLayer);
+        if ($layerSource->getSublayer()->count() > 0) {
+            $instanceLayer->setToggle(false);
+            $instanceLayer->setAllowtoggle(true);
         } else {
-            $this->entity->setToggle(null);
-            $this->entity->setAllowtoggle(null);
+            $instanceLayer->setToggle(null);
+            $instanceLayer->setAllowtoggle(null);
         }
-        foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
+        foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
             $entityHandler = self::createHandler($this->container, new WmsInstanceLayer());
             $entityHandler->create($instance, $wmslayersourceSub, $num + 1);
-            $entityHandler->getEntity()->setParent($this->entity);
-            $this->entity->addSublayer($entityHandler->getEntity());
+            $entityHandler->getEntity()->setParent($instanceLayer);
+            $instanceLayer->addSublayer($entityHandler->getEntity());
         }
-        return $this->entity;
+        return $instanceLayer;
     }
 
     /**
