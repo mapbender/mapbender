@@ -6,6 +6,7 @@
         <parameter id="version">3.0.2</parameter>
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
         <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
+        <parameter key="logout.success.handler.class">Mapbender\CoreBundle\Component\LogoutSuccessHandler</parameter>
     </parameters>
 
     <services>
@@ -80,6 +81,11 @@
         <service id="security.context" class="Mapbender\CoreBundle\Component\SecurityContext">
             <argument type="service" id="security.authentication.manager" />
             <argument type="service" id="security.access.decision_manager" />
+        </service>
+
+        <service id="mapbender_core_logout_success_handler" class="%logout.success.handler.class%">
+            <argument type="service" id="router" />            
+            <argument type="service" id="service_container" />
         </service>
 
         <service id="mapbender.validator.css" class="Mapbender\CoreBundle\Validator\Constraints\ScssValidator">

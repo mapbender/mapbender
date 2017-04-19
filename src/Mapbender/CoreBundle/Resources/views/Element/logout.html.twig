@@ -1,0 +1,7 @@
+<div id="{{ id }}" class="mb-element mb-element-logout" title="{{ title|trans }}">
+    {% if app.user %}
+    <a href="{{ path('fom_user_login_logout') }}" class="my-exit-button mb-button  iconBig iconExit">
+        {{ app.user.username }}
+    </a>
+    {% endif %}
+</div>
