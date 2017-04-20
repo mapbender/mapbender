@@ -16,7 +16,7 @@
 
         "friendsofsymfony/jsrouting-bundle": "1.5.x",
         "viscreation/vis-ui.js": "0.0.x",
-        "components/joii": "3.x",
+        "wheregroup/joii": "3.x",
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
         "fontfacekit/open-sans": "1.4.x",
