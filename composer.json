@@ -11,7 +11,7 @@
         "setasign/fpdi-fpdf": "1.6.*",
 
         "eslider/sasscb":  "3.1.x",
-        "igosuki/compass-mixins": "0.x",
+        "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "1.x",
 
         "friendsofsymfony/jsrouting-bundle": "1.5.x",
