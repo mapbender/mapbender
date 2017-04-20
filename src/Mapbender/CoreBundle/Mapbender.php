@@ -186,10 +186,6 @@ class Mapbender
             $entity     = $yamlMapper->getApplication($slug);
         }
 
-        if (!$entity || !$entity->isPublished()) {
-            return null;
-        }
-
         return $entity;
     }
 
