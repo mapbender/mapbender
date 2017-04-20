@@ -19,7 +19,7 @@
         "wheregroup/joii": "3.x",
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
-        "wheheregroup/open-sans": "1.x",
+        "wheregroup/open-sans": "1.x",
         "mapbender/mapquery": "1.x"
     },
     "autoload": {
