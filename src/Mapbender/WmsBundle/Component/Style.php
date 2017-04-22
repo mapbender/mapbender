@@ -12,38 +12,32 @@ class Style
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $name = "";
+    protected $name = "";
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $title = "";
+    protected $title = "";
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $abstract = "";
+    protected $abstract = "";
 
     /**
      * ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $legendUrl;
+    protected $legendUrl;
 
     /**
      * ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $styleSheetUrl;
+    protected $styleSheetUrl;
 
     /**
      * ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $styleUlr;
+    protected $styleUlr;
 
     /**
      * Set name
