@@ -321,7 +321,7 @@ mb:
           autoopen: Autoopen
           rotatable: Rotatable
           legend: 'Print legend'
-          legend_default_behaviour: 'Legend checkbox activ'
+          legend_default_behaviour: 'Legend checkbox active'
       copyright:
         label:
           autoopen: Autoopen
