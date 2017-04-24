@@ -215,7 +215,7 @@ class WmsInstance extends SourceInstance
     /**
      * Get layers
      *
-     * @return ArrayCollection
+     * @return \Mapbender\WmsBundle\Entity\WmsInstanceLayer[]|ArrayCollection
      */
     public function getLayers()
     {
