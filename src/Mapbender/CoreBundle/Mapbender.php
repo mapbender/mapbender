@@ -255,7 +255,7 @@ class Mapbender
     }
 
     /** @var \Mapbender\WmsBundle\Entity\WmsInstanceLayer[][]|ArrayCollection */
-    protected $sourceLays = array();
+    protected $sourceLayers = array();
 
     /**
      * Import YAML application
@@ -275,8 +275,8 @@ class Mapbender
         $application          = $applicationComponent->getEntity();
         $newSlug              = $newSlug ? $newSlug : EntityUtil::getUniqueValue($manager, get_class($application), 'slug', $application->getSlug() . '_yml', '');
         $newTitle             = $newTitle ? $newTitle : EntityUtil::getUniqueValue($manager, get_class($application), 'title', $application->getSlug() . ' YAML', '');
-        $elements = array();
-        $lays     = array();
+        $elements             = array();
+        $lays                 = array();
 
         $application->setSlug($newSlug);
         $application->setTitle($newTitle);
@@ -321,8 +321,8 @@ class Mapbender
                 $srcId         = $source->getId();
                 $foundedSource = $this->findMatchingSource($source);
 
-                if ($foundedSource == null || !isset($this->sourceLays[ $srcId ])) {
-                    $this->sourceLays[ $srcId ] = array();
+                if ($foundedSource == null || !isset($this->sourceLayers[ $srcId ])) {
+                    $this->sourceLayers[ $srcId ] = array();
                     $foundedSource              = null;
                 } else {
                     $inst->setSource($foundedSource);
@@ -335,7 +335,7 @@ class Mapbender
 
                 $manager->persist($source);
 
-                $wmsInstanceLayer = &$this->sourceLays[ $srcId ];
+                $wmsInstanceLayer = &$this->sourceLayers[ $srcId ];
 
                 foreach ($inst->getLayers() as $lay) {
                     if ($foundedSource != null) {
@@ -376,6 +376,32 @@ class Mapbender
                 $layerSet           = $lays[ $config['layerset'] ];
                 $config['layerset'] = $layerSet->getId();
             }
+
+            if ($element->getClass() === 'Mapbender\CoreBundle\Element\BaseSourceSwitcher') {
+                if ($config['instancesets']) {
+                    foreach ($config['instancesets'] as $instanceSetId => &$instanceSet) {
+                        $instances = array();
+                        foreach ($instanceSet["instances"] as $instanceNamedId) {
+                            foreach ($application->getLayersets() as $appInstanceSet) {
+                                foreach ($appInstanceSet->getInstances() as $appInstance) {
+                                    $instances = array();
+                                    // hack: Title becomes original UID by import
+                                    if ($appInstance->getSource()->getTitle() == $instanceNamedId) {
+                                        $instances[] = $appInstance->getId();
+                                        break;
+                                    }
+                                }
+
+                            }
+
+                        }
+                        $instanceSet["instances"] = $instances;
+                    }
+                    $in = "10";
+                }
+            }
+
+
             $element->setConfiguration($config);
             $manager->persist($element);
         }
@@ -394,30 +420,70 @@ class Mapbender
      */
     private function findMatchingSource(Source $source)
     {
+        $requiredHash = static::genServiceHash($source->getOriginUrl(), array(
+            'version' => $source->getVersion(),
+            'service' => $source->getType()
+        ));
+
         /** @var \Mapbender\WmsBundle\Entity\WmsSource|Source $dbSource */
         foreach ($this
                      ->getManager()
                      ->getRepository(get_class($source))
-                     ->findBy(
-                         array(
-                             'originUrl' => $source->getOriginUrl()
-                         )
-                     ) as $dbSource) {
+                     ->findAll() as $dbSource) {
+            $dbHash = static::genServiceHash($dbSource->getOriginUrl(), array(
+                'version' => $dbSource->getVersion(),
+                'service' => $source->getType()
+            ));
 
-            $dbLayers = $dbSource->getLayers();
-            $layers   = $source->getLayers();
-            if ($dbLayers->count() !== $layers->count()) {
-                continue;
-            }
+            //echo "Compare hashes: \n"
+            //    . "NEW: $requiredHash : ".$source->getId() ." . " . $source->getOriginUrl() . "&version=".$source->getVersion()." \n"
+            //    . "DB:  $dbHash : ".$source->getId() ."  " . $dbSource->getOriginUrl() . "&version=".$dbSource->getVersion()."\n";
 
-            foreach ($layers as $layer) {
-                foreach ($dbLayers as $dbLayer) {
-                    var_dump($dbLayer->getTitle());
-                    if ($dbLayer->getTitle() == $layer->getTitle()) {
-                        return $dbSource;
-                    }
-                }
+            if ($dbHash == $requiredHash) {
+                return $dbSource;
             }
         }
+    }
+
+
+    /**
+     * Gen unique WMS service hash
+     *
+     * @param string $url
+     * @param array  $queryVars
+     * @return string
+     */
+    public static function genServiceHash($url, array $queryVars = array())
+    {
+        $queryParams = array();
+        $baseUrl   = $url;
+        $query     = '';
+
+        if (strpos('?', $url)) {
+            list($baseUrl, $query) = explode('?', $url);
+        }
+
+        parse_str($query, $queryParams);
+
+        foreach ($queryParams as $key => $value) {
+            $queryVars[ mb_strtolower($key) ] = trim($value);
+        }
+
+        // remove default request
+        unset($queryVars["request"]);
+
+        if (!isset($queryVars["service"])) {
+            $queryVars["service"] = "WMS";
+        }
+
+        if (!isset($queryVars["version"])) {
+            $queryVars["version"] = "1.1.1";
+        }
+
+        $details     = parse_url($baseUrl);
+
+        asort($queryVars);
+
+        return md5($details['host'] . $details["path"] . "?" . http_build_query($queryVars));
     }
 }
