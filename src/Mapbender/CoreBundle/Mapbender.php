@@ -397,7 +397,6 @@ class Mapbender
                         }
                         $instanceSet["instances"] = $instances;
                     }
-                    $in = "10";
                 }
             }
 
