@@ -15,7 +15,6 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
  *
  * @author Paul Schmidt
  *
- * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
  */
 class WmsInstanceLayer extends SourceInstanceItem
