@@ -277,6 +277,8 @@ class Mapbender
         $newTitle             = $newTitle ? $newTitle : EntityUtil::getUniqueValue($manager, get_class($application), 'title', $application->getSlug() . ' YAML', '');
         $elements             = array();
         $lays                 = array();
+        $translator           = $this->container->get("translator");
+
 
         $application->setSlug($newSlug);
         $application->setTitle($newTitle);
@@ -307,6 +309,8 @@ class Mapbender
          */
         foreach ($application->getElements() as $elm) {
             $elements[ $elm->getId() ] = $elm;
+            $title                     = $translator->trans($elm->getTitle());
+            $elm->setTitle($title);
             $manager->persist($elm);
         }
 
