@@ -88,6 +88,11 @@ class DimensionInst extends Dimension
     {
         $array = is_string($extent) ? explode(",", $extent) : $extent;
         $res   = array();
+
+        if (!$extent) {
+            return $res;
+        }
+
         if (count($array) === 1) {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
