@@ -18,8 +18,10 @@ class MetadataUrl
      */
     public $type;
 
-    /** @var string */
-    protected $url;
+    /**
+     * @var string
+     */
+    public $url;
 
     /**
      * Creates a MetadataUrl object from parameters
