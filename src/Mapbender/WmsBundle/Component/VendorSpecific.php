@@ -17,12 +17,12 @@ class VendorSpecific extends DimensionInst
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $vstype;
+    public $vstype;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $hidden = false;
+    public $hidden = false;
 
     public function getVstype()
     {

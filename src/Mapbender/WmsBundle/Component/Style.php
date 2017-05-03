@@ -12,32 +12,32 @@ class Style
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $name = "";
+    public $name = "";
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $title = "";
+    public $title = "";
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $abstract = "";
+    public $abstract = "";
 
     /**
      * ORM\Column(type="object", nullable=true)
      */
-    protected $legendUrl;
+    public $legendUrl;
 
     /**
      * ORM\Column(type="object", nullable=true)
      */
-    protected $styleSheetUrl;
+    public $styleSheetUrl;
 
     /**
      * ORM\Column(type="object", nullable=true)
      */
-    protected $styleUlr;
+    public $styleUlr;
 
     /**
      * Set name
