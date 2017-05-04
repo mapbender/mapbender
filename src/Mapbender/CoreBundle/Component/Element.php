@@ -230,6 +230,7 @@ abstract class Element
                 'id'            => $this->getId(),
                 'entity'        => $this->entity,
                 'title'         => $this->getTitle(),
+                'application'   => $this->application,
                 'configuration' => $this->getConfiguration()
             ));
     }
