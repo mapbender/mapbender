@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class GenerateElementCommand
  *
- * @deprecated should be removed in release/3.0.6
+ * @deprecated should be removed in release/3.0.7
  */
 class GenerateElementCommand extends ContainerAwareCommand {
     private $generator;

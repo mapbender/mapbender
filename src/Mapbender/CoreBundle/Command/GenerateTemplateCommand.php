@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class GenerateTemplateCommand
  *
- * @deprecated should be removed in release/3.0.6
+ * @deprecated should be removed in release/3.0.7
  */
 class GenerateTemplateCommand extends ContainerAwareCommand {
 

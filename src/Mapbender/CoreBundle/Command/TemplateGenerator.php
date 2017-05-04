@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Class TemplateGenerator
  *
- * @deprecated should be removed in release/3.0.6
+ * @deprecated should be removed in release/3.0.7
  */
 class TemplateGenerator extends Generator
 {

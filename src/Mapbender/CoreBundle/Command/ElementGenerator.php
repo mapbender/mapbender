@@ -7,7 +7,7 @@ use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 /**
  * Class ElementGenerator
  *
- * @deprecated should be removed in release/3.0.6
+ * @deprecated should be removed in release/3.0.7
  */
 class ElementGenerator extends Generator
 {
