@@ -1,6 +1,6 @@
 # Changelog
 
-* **v3.0.6.0** - 2017-05-02
+* **v3.0.6.0** - 2017-05-05
 
     - Fix transalate element titles by import Closes: https://github.com/mapbender/mapbender-starter/issues/46
     - Add WmsInstanceLayer to fix import applications
