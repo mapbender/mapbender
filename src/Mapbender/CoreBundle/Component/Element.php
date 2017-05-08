@@ -39,7 +39,7 @@ abstract class Element
     /** @var ContainerInterface Symfony container */
     protected $container;
 
-    /**  @var Entity The configuration storage entity */
+    /**  @var Entity Element configuration storage entity */
     protected $entity;
 
     /** @var array Class name parts */
@@ -61,8 +61,9 @@ abstract class Element
      * The constructor. Every element needs an application to live within and
      * the container to do useful things.
      *
-     * @param Application $application The application object
-     * @param ContainerInterface $container The container object
+     * @param Application        $application Application component
+     * @param ContainerInterface $container   Container service
+     * @param Entity             $entity
      */
     public function __construct(Application $application, ContainerInterface $container, Entity $entity)
     {
@@ -232,6 +233,7 @@ abstract class Element
                 'id'            => $this->getId(),
                 'entity'        => $this->entity,
                 'title'         => $this->getTitle(),
+                'application'   => $this->application,
                 'configuration' => $this->getConfiguration()
             ));
     }
@@ -422,10 +424,10 @@ abstract class Element
     /**
      * Create form for given element
      *
-     * @param        $container
-     * @param        $application
-     * @param Entity $element
-     * @param bool   $onlyAcl
+     * @param ContainerInterface $container
+     * @param Application        $application
+     * @param Entity             $element
+     * @param bool               $onlyAcl
      * @return array
      * @internal param string $class
      */
@@ -470,11 +472,11 @@ abstract class Element
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
             $formAssets = array(
                 'js' => array(
-                    'bundles/mapbendermanager/codemirror/lib/codemirror.js',
-                    'bundles/mapbendermanager/codemirror/mode/yaml/yaml.js',
+                    'components/codemirror/lib/codemirror.js',
+                    'components/codemirror/mode/yaml/yaml.js',
                     'bundles/mapbendermanager/js/form-yaml.js'),
                 'css' => array(
-                    'bundles/mapbendermanager/codemirror/lib/codemirror.css'));
+                    'components/codemirror/lib/codemirror.css'));
         } else {
             $type = new $configurationFormType();
             $options = array('application' => $application);
@@ -554,5 +556,17 @@ abstract class Element
         );
         $className = substr($className,1);
         return $className;
+    }
+
+    /**
+     * Hook function for embedded elements to influence the effective application config on initial load.
+     * We (can) use this for BaseSourceSwitchter (deactivates layers), SuggestMap element reloading state etc.
+     *
+     * @param array
+     * @return array
+     */
+    public function updateAppConfig($configIn)
+    {
+        return $configIn;
     }
 }

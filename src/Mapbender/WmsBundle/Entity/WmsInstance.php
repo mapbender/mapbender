@@ -6,8 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Component\WmsMetadata;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
-use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
  * WmsInstance class
@@ -104,6 +102,9 @@ class WmsInstance extends SourceInstance
      */
     protected $ratio = 1.25;
 
+    /**
+     * WmsInstance constructor.
+     */
     public function __construct()
     {
         $this->layers     = new ArrayCollection();
@@ -155,20 +156,20 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * Returns vendorspecifics
-     * @return array of DimensionIst
+     * @return VendorSpecific[]|DimensionInst[]
      */
     public function getVendorspecifics()
     {
         if (!$this->vendorspecifics) {
             $this->vendorspecifics = array();
         }
+
         return $this->vendorspecifics;
     }
 
     /**
      * Sets vendorspecifics
-     * @param ArrayCollections $vendorspecifics array of DimensionIst
+     * @param ArrayCollection $vendorspecifics array of DimensionIst
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
     public function setVendorspecifics(array $vendorspecifics)
@@ -181,6 +182,7 @@ class WmsInstance extends SourceInstance
      * Set configuration
      *
      * @param array $configuration
+     * @return $this
      */
     public function setConfiguration($configuration)
     {
@@ -213,7 +215,7 @@ class WmsInstance extends SourceInstance
     /**
      * Get layers
      *
-     * @return array
+     * @return \Mapbender\WmsBundle\Entity\WmsInstanceLayer[]|ArrayCollection
      */
     public function getLayers()
     {

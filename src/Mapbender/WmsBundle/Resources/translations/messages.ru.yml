@@ -25,7 +25,7 @@ mb:
             password: Пароль
             load: Загрузить
             cancel: Отменить
-            onlyvalid: 'Действительно только'
+            onlyvalid: 'Валидировать'
         new:
           label:
             addservice: 'Добавить сервис'

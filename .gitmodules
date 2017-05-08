@@ -1,6 +1,0 @@
-[submodule "src/Mapbender/CoreBundle/Resources/public/mapquery"]
-	path = src/Mapbender/CoreBundle/Resources/public/mapquery
-	url = https://github.com/mapbender/mapquery.git
-[submodule "src/Mapbender/ManagerBundle/Resources/public/codemirror2"]
-	path = src/Mapbender/ManagerBundle/Resources/public/codemirror2
-	url = http://marijnhaverbeke.nl/git/codemirror2

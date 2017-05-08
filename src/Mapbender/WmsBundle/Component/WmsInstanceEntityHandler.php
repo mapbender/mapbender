@@ -1,11 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Signer;
@@ -13,13 +6,10 @@ use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
-use Mapbender\WmsBundle\Component\Dimension;
-use Mapbender\WmsBundle\Component\DimensionInst;
-use Mapbender\WmsBundle\Component\VendorSpecific;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\WmsBundle\Component\RequestInformation;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
@@ -263,7 +253,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             if ($handler->isVendorSpecificValueValid()) {
                 if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE ||
                     ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE && !$vendorspec->getHidden())) {
-                    $user = $this->container->get('security.context')->getToken()->getUser();
+                    $user = $this->container->get('security.token_storage')->getToken()->getUser();
                     $params = array_merge($params, $handler->getKvpConfiguration($user));
                 } else {
                     $hide = true;
@@ -400,7 +390,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function getSensitiveVendorSpecific()
     {
         $vsarr = array();
-        $user = $this->container->get('security.context')->getToken()->getUser();
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
         if ($user instanceof AdvancedUserInterface) {
             foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
                 $handler = new VendorSpecificHandler($vendorspec);
@@ -446,6 +436,9 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setDimensions($dimensions);
     }
 
+    /**
+     * @return array
+     */
     private function getDimensionInst()
     {
         $dimensions = array();
@@ -460,6 +453,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         return $dimensions;
     }
 
+    /**
+     * @param \Mapbender\WmsBundle\Component\DimensionInst $dimension
+     * @param  DimensionInst[]                             $dimensionList
+     * @return null
+     */
     private function findDimension(DimensionInst $dimension, $dimensionList)
     {
         foreach ($dimensionList as $help) {
@@ -473,6 +471,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         return null;
     }
 
+    /**
+     * @param array $dimensionsOld
+     * @param array $dimensionsNew
+     * @return array
+     */
     private function updateDimension(array $dimensionsOld, array $dimensionsNew)
     {
         $dimensions = array();

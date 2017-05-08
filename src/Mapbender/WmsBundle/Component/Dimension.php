@@ -17,56 +17,47 @@ class Dimension
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $name;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $units;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $unitSymbol;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $default;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $multipleValues = false;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $nearestValue = false;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $current = false;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $extent;
 
     /**
      * Set name
      *
      * @param string $value
-     * @return Dimension
      */
     public function setName($value)
     {
@@ -87,7 +78,6 @@ class Dimension
      * Set units
      *
      * @param string $value
-     * @return Dimension
      */
     public function setUnits($value)
     {
@@ -108,7 +98,6 @@ class Dimension
      * Set unitSymbol
      *
      * @param string $value
-     * @return Dimension
      */
     public function setUnitSymbol($value)
     {
@@ -129,7 +118,6 @@ class Dimension
      * Set default
      *
      * @param string $value
-     * @return Dimension
      */
     public function setDefault($value)
     {
@@ -138,8 +126,6 @@ class Dimension
 
     /**
      * Get default
-     *
-     * @return string
      */
     public function getDefault()
     {
@@ -150,7 +136,6 @@ class Dimension
      * Set multipleValues
      *
      * @param boolean $value
-     * @return Dimension
      */
     public function setMultipleValues($value)
     {
@@ -175,7 +160,6 @@ class Dimension
      * Set nearestValue
      *
      * @param boolean $value
-     * @return Dimension
      */
     public function setNearestValue($value)
     {
@@ -200,7 +184,6 @@ class Dimension
      * Set current
      *
      * @param boolean $value
-     * @return Dimension
      */
     public function setCurrent($value)
     {
@@ -225,7 +208,6 @@ class Dimension
      * Set extent
      *
      * @param string $value
-     * @return Dimension
      */
     public function setExtent($value)
     {

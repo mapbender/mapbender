@@ -71,10 +71,10 @@ mb:
         text: Text
     basesourceswitcher:
       error:
-        sourcenotavailable: 'A source with id %id% is not available'
+        sourcenotavailable: 'A source with id %id% is not available.'
       class:
         title: 'Base source switcher'
-        Description: 'Change the map''s background sources'
+        Description: 'Change the map''s background sources.'
       tag:
         base: base
         source: source
@@ -82,7 +82,7 @@ mb:
       form:
         mesage: 'No basesource set is defined.'
     legend:
-      nolegend: 'No legend available'
+      nolegend: 'No legend available.'
       popup:
         btn:
           ok: Close
@@ -157,13 +157,13 @@ mb:
         circle: circle
     metadata:
       popup:
-        title: Metadaten
+        title: Metadata
         btn:
           ok: Close
     gpsposition:
       error:
         notsupported: I'm sorry, but geolocation services are not supported by your browser.
-        nosignal: Currently it's not posible to locate your position.
+        nosignal: Currently it's not possible to locate your position.
       class:
         title: 'GPS Position'
         description: 'Renders a button to show the GPS Position'
@@ -196,7 +196,7 @@ mb:
         sources: Sources
         deleteallsources: 'Remove all sources'
         legend: Legend
-        kmlexport: 'Kml export'
+        kmlexport: 'KML export'
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Show sources'
@@ -321,7 +321,7 @@ mb:
           autoopen: Autoopen
           rotatable: Rotatable
           legend: 'Print legend'
-          legend_default_behaviour: 'Legend checkbox activ'
+          legend_default_behaviour: 'Legend checkbox active'
       copyright:
         label:
           autoopen: Autoopen
@@ -385,4 +385,3 @@ mb:
       datails: 'The map cannot be displayed.'
       exception: 'Exception: %exception%'
       statuscode: 'HTTP status code'
-Search: Search

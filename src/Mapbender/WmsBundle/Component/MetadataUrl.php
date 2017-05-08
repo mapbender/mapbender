@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Component;
 
 /**
@@ -9,18 +8,20 @@ namespace Mapbender\WmsBundle\Component;
  */
 class MetadataUrl
 {
-
     /**
      * ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $onlineResource;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $type;
+
+    /**
+     * @var string
+     */
+    public $url;
 
     /**
      * Creates a MetadataUrl object from parameters
@@ -42,7 +43,7 @@ class MetadataUrl
 
     /**
      * Get type
-     * 
+     *
      * @return string
      */
     public function getType()
@@ -52,7 +53,8 @@ class MetadataUrl
 
     /**
      * Set type
-     * @param string $value 
+     *
+     * @param string $value
      * @return MetadataUrl
      */
     public function setType($value)
@@ -62,8 +64,8 @@ class MetadataUrl
     }
 
     /**
-     * Get onlineResource
-     * 
+     * Get online resource
+     *
      * @return OnlineResource
      */
     public function getOnlineResource()
@@ -72,7 +74,8 @@ class MetadataUrl
     }
 
     /**
-     * Set onlineResource
+     * Set online resource
+     *
      * @param OnlineResource $onlineResource
      * @return MetadataUrl
      */

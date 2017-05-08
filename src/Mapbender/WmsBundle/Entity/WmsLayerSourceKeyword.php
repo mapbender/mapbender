@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -25,11 +24,12 @@ class WmsLayerSourceKeyword extends Keyword
     /**
      * Set reference object
      *
+     * @param ContainingKeyword $wmsLayerSource
      * @return ContainingKeyword
      */
-    public function setReferenceObject(ContainingKeyword $wmslayersource)
+    public function setReferenceObject(ContainingKeyword $wmsLayerSource)
     {
-        $this->reference = $wmslayersource;
+        $this->reference = $wmsLayerSource;
     }
 
     /**

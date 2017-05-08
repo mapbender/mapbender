@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Form\DataTransformer;
 
 use Mapbender\CoreBundle\Utils\ArrayObject;
@@ -14,19 +13,18 @@ class ObjectArrayTransformer implements DataTransformerInterface
 {
 
     /**
-     *
      * @var string a class name
      */
-    private $classname;
+    private $className;
 
     /**
      * Creates an instance.
      * 
-     * @param string $classname an entity class name
+     * @param string $className an entity class name
      */
-    public function __construct($classname)
+    public function __construct($className)
     {
-        $this->classname = $classname;
+        $this->className = $className;
     }
 
     /**
@@ -47,14 +45,14 @@ class ObjectArrayTransformer implements DataTransformerInterface
      * Transforms an array into an object
      *
      * @param array $data array with data for an object of the 'classname'
-     * @return object of the 'classname'
+     * @return object|string
      */
     public function reverseTransform($data)
     {
         if (null === $data) {
             return "";
         }
-        return ArrayObject::arrayToObject($this->classname, $data);
+        return ArrayObject::arrayToObject($this->className, $data);
     }
 
 }

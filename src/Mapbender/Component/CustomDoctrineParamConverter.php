@@ -1,16 +1,13 @@
 <?php
-
 namespace Mapbender\Component;
-use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
+use Doctrine\ORM\Mapping\MappingException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Doctrine\ORM\Mapping\MappingException;
-
-
 
 /**
+ * @deprecated: would be deleted in next release
  * @Author: Karim Malhas <karim@malhas.de>
  * @package: bkg
  * This Class overides the default Doctrine ParamConverter to allow routes like this:
@@ -32,8 +29,6 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
     }
 
     public function apply(Request $request, ConfigurationInterface $configuration) {
-        // TODO: needs a security context
-
         $this->configuration = $configuration;
         $class = $configuration->getClass();
         $options = $this->getOptions($configuration);

@@ -6,19 +6,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
-use Mapbender\CoreBundle\Entity\SourceItem;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\WmsBundle\Component\IdentifierAuthority;
+use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\Identifier;
+use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
-use Mapbender\CoreBundle\Component\Utils;
 
 /**
  * @ORM\Entity
@@ -87,13 +87,11 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $latlonBounds;
+    protected $latlonBounds;
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $boundingBoxes;
+    protected $boundingBoxes;
     /**
      * @ORM\Column(type="array", nullable=true)
      */
@@ -105,28 +103,28 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * @ORM\Column(type="object",nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $scale;
+    protected $scale;
+
     /**
      * @ORM\Column(type="object",nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $scaleHint;
+    protected $scaleHint;
+
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $attribution;
+    protected $attribution;
+
     /**
      * @ORM\Column(type="array",nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $identifier;
+    protected $identifier;
+
     /**
      * @ORM\Column(type="array",nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $authority;
+    protected $authority;
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
@@ -144,7 +142,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     protected $featureListUrl;
     /**
-     * @var ArrayCollections A list of WMS Layer keywords
+     * @var ArrayCollection A list of WMS Layer keywords
      * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
@@ -154,6 +152,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     protected $priority;
 
+    /**
+     * WmsLayerSource constructor.
+     */
     public function __construct()
     {
         $this->sublayer = new ArrayCollection();
@@ -210,7 +211,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Set parent
      *
-     * @param Object $parent
+     * @param WmsLayerSource $parent
      * @return WmsLayerSource
      */
     public function setParent(WmsLayerSource $parent = null)
@@ -222,7 +223,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get parent
      *
-     * @return Object
+     * @return WmsLayerSource
      */
     public function getParent()
     {
@@ -627,32 +628,61 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Get scale
+     * Get minimum scale hint
+     *
+     * @param bool $recursive Try to get value from parent
+     * @return float|null
+     */
+    public function getMinScale($recursive = true)
+    {
+        $value = null;
+        $scale = $this->getScale();
+
+        if ($scale) {
+            $value = $scale->getMin();
+        }
+
+        if ($recursive && $value === null && $this->getParent()) {
+            $value = $this->getParent()->getMinScale($recursive);
+        }
+
+        $value === null ? null : floatval($value);
+
+        return $value;
+    }
+
+    /**
+     * Get maximum scale hint
+     *
+     * @param bool $recursive Try to get value from parent
+     * @return float|null
+     */
+    public function getMaxScale($recursive = true)
+    {
+        $value = null;
+        $scale = $this->getScale();
+
+        if ($scale) {
+            $value = $scale->getMax();
+        }
+
+        if ($recursive && $value === null && $this->getParent()) {
+            $value = $this->getParent()->getMinScale($recursive);
+        }
+
+        $value === null ? null : floatval($value);
+
+        return $value;
+    }
+
+    /**
+     * Get scale hint
      *
      * @return MinMax
      */
     public function getScaleRecursive()
     {
-        if ($this->scale !== null) {
-            if ($this->scale->getMin() === null || $this->scale->getMax() === null) {
-                if ($parent_scale = $this->getParent()->getScale()) {
-                    return new MinMax(
-                        $this->scale->getMin() !== null ? $this->scale->getMin() : $parent_scale->getMin(),
-                        $this->scale->getMax() !== null ? $this->scale->getMax() : $parent_scale->getMax()
-                    );
-                } else {
-                    return $this->scale;
-                }
-            } else {
-                return $this->scale;
-            }
-        } else {
-            if ($this->getParent() !== null) {
-                return $this->getParent()->getScale();
-            } else {
-                return null;
-            }
-        }
+        return new MinMax($this->getMinScale(), $this->getMaxScale());
     }
 
     /**

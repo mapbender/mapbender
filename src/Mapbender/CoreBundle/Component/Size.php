@@ -1,11 +1,5 @@
 <?php
-
 namespace Mapbender\CoreBundle\Component;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  * Description of Size
@@ -18,19 +12,17 @@ class Size
     /**
      * ORM\Column(type="integer", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $width = 0;
 
     /**
      * ORM\Column(type="integer", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $height = 0;
 
     /**
      * 
-     * @param type $width width
-     * @param type $height height
+     * @param integer $width Width
+     * @param integer $height Height
      */
     public function __construct($width = null, $height = null)
     {

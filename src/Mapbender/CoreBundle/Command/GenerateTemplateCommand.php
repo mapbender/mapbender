@@ -1,21 +1,24 @@
 <?php
-
 namespace Mapbender\CoreBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
 
 /**
  * Class GenerateTemplateCommand
  *
- * @deprecated should be removed in release/3.0.6
+ * @deprecated should be removed in release/3.0.7
  */
 class GenerateTemplateCommand extends ContainerAwareCommand {
+
+    /** @var  TemplateGenerator */
+    protected $generator;
+
+    /**
+     * @return TemplateGenerator
+     */
     protected function getGenerator() {
         if($this->generator === null) {
             $this->generator = new TemplateGenerator();
@@ -40,11 +43,18 @@ EOT
             ->setDescription('Generates a Mapbender application template');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    /**
+     * Execute command
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $bundleNamespace = $input->getArgument('bundle');
-        $className = $input->getArgument('classname');
-        $type = $input->getOption('type');
-
+        $className       = $input->getArgument('classname');
+        $type            = $input->getOption('type');
 
         //TODO: Does this work?
         if (preg_match('[^A-Za-z0-9]', $className)) {

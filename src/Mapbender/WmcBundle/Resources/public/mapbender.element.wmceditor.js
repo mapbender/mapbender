@@ -42,12 +42,6 @@
             var self = this;
             var width = self.element.attr('width');
             var height = self.element.attr('height');
-            if(!width) {
-                width = 480;
-            }
-            if(!height) {
-                height = 500;
-            }
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),

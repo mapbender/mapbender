@@ -1,20 +1,13 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Component\Exception\NotUpdateableException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\SourceItemEntityHandler;
+use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\CoreBundle\Entity\SourceItem;
 
 /**
  * Description of WmsSourceHandler
@@ -23,6 +16,9 @@ use Mapbender\CoreBundle\Entity\SourceItem;
  */
 class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
 {
+
+    /** @var  WmsLayerSource */
+    protected $entity;
 
     /**
      * @inheritdoc
@@ -57,8 +53,10 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
 
     /**
      * Recursively remove a nested Layerstructure
-     * @param WmsLayerSource
-     * @param EntityManager
+     *
+     * @param WmsLayerSource $wmslayer
+     * @internal param $WmsLayerSource
+     * @internal param $EntityManager
      */
     private function removeRecursively(WmsLayerSource $wmslayer)
     {

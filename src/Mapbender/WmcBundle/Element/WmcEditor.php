@@ -99,7 +99,14 @@ class WmcEditor extends Element
      */
     public function getConfiguration()
     {
-        return parent::getConfiguration();
+        $configuration = parent::getConfiguration();
+        if(!isset ($configuration["width"])) {
+            $configuration["width"] = 480;
+        }
+        if(!isset ($configuration["height"])) {
+            $configuration["height"] = 500;
+        }
+        return $configuration;
     }
 
     /**

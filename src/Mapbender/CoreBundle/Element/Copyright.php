@@ -72,6 +72,8 @@ class Copyright extends Element
             'titel' => 'Copyright',
             'autoOpen' => false,
             'content' => null,
+            'popupWidth'    => 300,
+            'popupHeight'   => 170,
         );
     }
 

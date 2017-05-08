@@ -8,7 +8,6 @@ use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\RequestInformation;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -178,7 +177,7 @@ class WmsSource extends Source implements ContainingKeyword
     protected $password = null;
 
     /**
-     * @var ArrayCollection A list of WMS layers
+     * @var WmsLayerSource[]|ArrayCollection A list of WMS layers
      * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsLayerSource",mappedBy="source", cascade={"remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
@@ -197,6 +196,9 @@ class WmsSource extends Source implements ContainingKeyword
      */
     protected $instances;
 
+    /**
+     * WmsSource constructor.
+     */
     public function __construct()
     {
         parent::__construct(Source::TYPE_WMS);
@@ -229,7 +231,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get originUrl
      *
-     * @return string
+     * 
      */
     public function getOriginUrl()
     {
@@ -251,7 +253,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get name
      *
-     * @return string
+     * 
      */
     public function getName()
     {
@@ -273,7 +275,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get version
      *
-     * @return string
+     * 
      */
     public function getVersion()
     {
@@ -295,7 +297,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get onlineResource
      *
-     * @return string
+     * 
      */
     public function getOnlineResource()
     {
@@ -317,7 +319,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get contact
      *
-     * @return string
+     * 
      */
     public function getContact()
     {
@@ -327,7 +329,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Set fees
      *
-     * @param text $fees
+     * @param string $fees
      * @return WmsSource
      */
     public function setFees($fees)
@@ -339,7 +341,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get fees
      *
-     * @return text
+     * @return string
      */
     public function getFees()
     {
@@ -349,7 +351,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Set accessConstraints
      *
-     * @param text $accessConstraints
+     * @param string $accessConstraints
      * @return WmsSource
      */
     public function setAccessConstraints($accessConstraints)
@@ -361,7 +363,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get accessConstraints
      *
-     * @return text
+     * @return string
      */
     public function getAccessConstraints()
     {
@@ -603,7 +605,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Set getCapabilities
      *
-     * @param Object $getCapabilities
+     * @param RequestInformation $getCapabilities
      * @return WmsSource
      */
     public function setGetCapabilities(RequestInformation $getCapabilities = NULL)
@@ -615,7 +617,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getCapabilities
      *
-     * @return Object
+     * @return RequestInformation
      */
     public function getGetCapabilities()
     {
@@ -637,7 +639,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getMap
      *
-     * @return Object
+     * @return RequestInformation
      */
     public function getGetMap()
     {
@@ -659,7 +661,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getFeatureInfo
      *
-     * @return Object
+     * @return RequestInformation
      */
     public function getGetFeatureInfo()
     {
@@ -681,7 +683,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get describeLayer
      *
-     * @return Object
+     * @return RequestInformation
      */
     public function getDescribeLayer()
     {
@@ -703,7 +705,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getLegendGraphic
      *
-     * @return Object
+     * @return RequestInformation
      */
     public function getGetLegendGraphic()
     {
@@ -725,7 +727,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getStyles
      *
-     * @return Object
+     * @return RequestInformation
      */
     public function getGetStyles()
     {
@@ -747,7 +749,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get putStyles
      *
-     * @return Object
+     * @return RequestInformation
      */
     public function getPutStyles()
     {
@@ -757,7 +759,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Set username
      *
-     * @param text $username
+     * @param string $username
      * @return WmsSource
      */
     public function setUsername($username)
@@ -769,7 +771,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get username
      *
-     * @return text
+     * @return stirng
      */
     public function getUsername()
     {
@@ -779,7 +781,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Set password
      *
-     * @param text $password
+     * @param string $password
      * @return WmsSource
      */
     public function setPassword($password)
@@ -791,7 +793,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get password
      *
-     * @return text
+     * 
      */
     public function getPassword()
     {
@@ -813,7 +815,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get layers
      *
-     * @return array
+     * @return ArrayCollection|WmsLayerSource[]
      */
     public function getLayers()
     {
@@ -872,7 +874,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Add keyword
      *
-     * @param WmsSourceKeyword $keyword
+     * @param Keyword|WmsSourceKeyword $keyword
      * @return Source
      */
     public function addKeyword(Keyword $keyword)
@@ -881,6 +883,12 @@ class WmsSource extends Source implements ContainingKeyword
         return $this;
     }
 
+    /**
+     * Add WMS instance
+     *
+     * @param WmsInstance $instance
+     * @return $this
+     */
     public function addInstance(WmsInstance $instance)
     {
         $this->instances->add($instance);

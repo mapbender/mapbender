@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Component;
 
 /**
@@ -13,13 +12,11 @@ class Identifier
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $authority;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $value;
 
     /**
@@ -35,7 +32,7 @@ class Identifier
     /**
      * Set authority
      * @param string $value
-     * @return Identifier
+     * @return $this
      */
     public function setAuthority($value)
     {

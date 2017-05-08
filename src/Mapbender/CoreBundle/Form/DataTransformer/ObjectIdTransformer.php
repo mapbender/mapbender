@@ -1,9 +1,10 @@
 <?php
 namespace Mapbender\CoreBundle\Form\DataTransformer;
 
-use Symfony\Component\Form\DataTransformerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Entity;
+use Symfony\Component\Form\DataTransformerInterface;
 
 /**
  * Class ObjectIdTransformer transforms a value between different representations
@@ -16,44 +17,45 @@ class ObjectIdTransformer implements DataTransformerInterface
      * @var ObjectManager an object manager
      */
     private $om;
+
     /**
-     *
      * @var string  an entity class name
      */
-    private $classname;
+    private $className;
 
     /**
      * Creates an instance.
      * 
-     * @param ObjectManager $om an object manager
-     * @param string $classname an entity class name
+     * @param ObjectManager $om        an object manager
+     * @param string        $className an entity class name
      */
-    public function __construct(ObjectManager $om, $classname)
+    public function __construct(ObjectManager $om, $className)
     {
-        $this->om = $om;
-        $this->classname = $classname;
+        $this->om        = $om;
+        $this->className = $className;
     }
 
     /**
      * Transforms id/ids to an object/objects.
      *
      * @param mixed $data id(string) | array with ids
-     * @return mixed ArrayCollection | Entity object
+     * @return ArrayCollection|null|Entity|object object
      */
     public function transform($data)
     {
         if (!$data) {
             return null;
         }
+
+        $objectRepository = $this->getObjectRepository();
+
         if (is_array($data)) {
-            $repository = $this->om->getRepository($this->classname);
-            $qb = $repository->createQueryBuilder('obj');
+            $qb         = $objectRepository->createQueryBuilder('obj');
             $qb->select('obj')->where($qb->expr()->in('obj.id', $data));
             $result = $qb->getQuery()->getResult();
             return new ArrayCollection($result);
         } else {
-            $result = $this->om->getRepository($this->classname)->findOneBy(array('id' => $data));
-            return $result;
+            return $objectRepository->findOneBy(array('id' => $data));
         }
     }
 
@@ -79,6 +81,14 @@ class ObjectIdTransformer implements DataTransformerInterface
         } else {
             return (string) $data->getId();
         }
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectRepository
+     */
+    public function getObjectRepository()
+    {
+        return $this->om->getRepository($this->className);
     }
 
 }

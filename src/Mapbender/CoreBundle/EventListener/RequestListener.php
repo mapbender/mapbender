@@ -1,9 +1,7 @@
 <?php
-
 namespace Mapbender\CoreBundle\EventListener;
 
-use \Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use \Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 /**
  * RequestListener

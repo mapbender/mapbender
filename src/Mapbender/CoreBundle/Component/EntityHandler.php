@@ -3,10 +3,10 @@ namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
-//use 
 
 /**
  * Description of EntityHandler
@@ -21,10 +21,16 @@ class EntityHandler
     protected $container;
 
     /**
-     * @var mixed|SourceInstance entity
+     * @var SourceInstanceItem entity
      */
     protected $entity;
 
+    /**
+     * EntityHandler constructor.
+     *
+     * @param ContainerInterface $container
+     * @param                    $entity
+     */
     public function __construct(ContainerInterface $container, $entity)
     {
         $this->container = $container;
@@ -39,6 +45,9 @@ class EntityHandler
         return $this->entity;
     }
 
+    /**
+     * @return ContainerInterface
+     */
     public function getContainer()
     {
         return $this->container;
@@ -60,6 +69,14 @@ class EntityHandler
         $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
+    /**
+     * Find entity by class name and ID
+     *
+     * @param ContainerInterface $container
+     * @param  string            $entityClass
+     * @param  integer|string    $entityId
+     * @return object
+     */
     public static function find(ContainerInterface $container, $entityClass, $entityId)
     {
         return $container->get('doctrine')->getRepository($entityClass)->find($entityId);
@@ -67,8 +84,8 @@ class EntityHandler
 
     /**
      * @param ContainerInterface $container
-     * @param  SourceInstance $entity
-     * @return SourceInstanceEntityHandler|null
+     * @param  Source|SourceInstance|object $entity
+     * @return \Mapbender\WmsBundle\Component\WmsInstanceEntityHandler|SourceInstanceEntityHandler|null
      */
     public static function createHandler(ContainerInterface $container, $entity)
     {
@@ -90,6 +107,11 @@ class EntityHandler
         return null;
     }
 
+    /**
+     * @param ContainerInterface $container
+     * @param                    $entity
+     * @return null|\Symfony\Component\HttpKernel\Bundle\BundleInterface
+     */
     public function getBundle(ContainerInterface $container, $entity)
     {
         $bundles            = $container->get('kernel')->getBundles();
@@ -136,6 +158,13 @@ class EntityHandler
         }
     }
 
+    /**
+     * Is entity a database entity?
+     *
+     * @param ContainerInterface $container
+     * @param                    $entity
+     * @return bool
+     */
     public static function isEntity(ContainerInterface $container, $entity)
     {
         $className = is_string($entity) ? $entity : is_object($entity) ? ClassUtils::getClass($entity) : '';
@@ -149,14 +178,24 @@ class EntityHandler
         }
     }
 
+    /**
+     * Fins all entities
+     *
+     * @param ContainerInterface $container
+     * @param                    $entityClass
+     * @param array              $criteria
+     * @param null               $accessControl
+     * @return array|ArrayCollection
+     */
     public static function findAll(
         ContainerInterface $container,
         $entityClass,
         $criteria = array(),
         $accessControl = null
     ) {
-        $em     = $container->get('doctrine')->getManager();
-        $result = $em->getRepository($entityClass)->findAll($criteria);
+        $em               = $container->get('doctrine')->getManager();
+        $objectRepository = $em->getRepository($entityClass);
+        $result           = $objectRepository->findAll($criteria);
         if ($accessControl) {
             $securityContext = $container->get('security.context');
             $tmp             = new ArrayCollection();

@@ -39,11 +39,11 @@
                 $(elm).attr("data-state", "");
                 var sourcesIds = $(elm).attr("data-sourceset").split(",");
                 for (var i = 0; i < sourcesIds.length; i++) {
-                    if (sourcesIds[i] !== '') {
+                    if(sourcesIds[i] !== '') {
                         var source_list = model.findSource({origId: sourcesIds[i]});
-                        if(source_list.length === 0){
-                            Mapbender.error(Mapbender.trans(
-                                    "mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
+                        if(source_list.length === 0) {
+                            Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable")
+                                .replace('%id%', sourcesIds[i]), {'id': sourcesIds[i]});
                         }
                         for (var j = 0; j < source_list.length; j++) {
                             var tochange = {

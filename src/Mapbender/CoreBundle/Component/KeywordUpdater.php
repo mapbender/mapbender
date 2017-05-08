@@ -1,11 +1,7 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\CoreBundle\Component;
+
+use Mapbender\CoreBundle\Entity\Keyword;
 
 /**
  * Class to update of Keywords
@@ -15,6 +11,11 @@ namespace Mapbender\CoreBundle\Component;
 class KeywordUpdater
 {
 
+    /**
+     * @param Keyword $keyword
+     * @param array $keywordList
+     * @return bool
+     */
     public static function keywordExists($keyword, $keywordList)
     {
         foreach ($keywordList as $keywordTemp) {
@@ -25,6 +26,14 @@ class KeywordUpdater
         return false;
     }
 
+    /**
+     * Update keywords
+     *
+     * @param ContainingKeyword $componentOld
+     * @param ContainingKeyword $compenentNew
+     * @param                   $entityManager
+     * @param                   $newKeywordClass
+     */
     public static function updateKeywords(
         ContainingKeyword $componentOld,
         ContainingKeyword $compenentNew,
@@ -37,16 +46,12 @@ class KeywordUpdater
                 $entityManager->remove($keyword);
             }
         }
-//        $entityManager->refresh($componentOld);
         foreach ($compenentNew->getKeywords() as $keyword) {
             if (!self::keywordExists($keyword, $componentOld->getKeywords())) {
                 $keywordNew = new $newKeywordClass();
                 $keywordNew->setValue($keyword->getValue());
-//                $entityManager->persist($keywordNew);
                 $keywordNew->setReferenceObject($componentOld);
-//                $entityManager->persist($keywordNew);
                 $componentOld->addKeyword($keywordNew);
-//                $entityManager->persist($keywordNew->getReferenceObject());
             }
         }
     }

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  *
  * @author Christian Wygoda
- * @deprecated should be removed in release/3.0.6
+ * @deprecated should be removed in release/3.0.7
  */
 class DumpMapbenderAssetsCommand extends ContainerAwareCommand
 {

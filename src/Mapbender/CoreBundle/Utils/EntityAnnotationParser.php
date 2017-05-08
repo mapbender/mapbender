@@ -2,7 +2,7 @@
 namespace Mapbender\CoreBundle\Utils;
 
 /**
- * Description of EntityAnnotationParser
+ * Entity annotation parser
  *
  * @author Andriy Oblivantsev
  * @author Paul Schmidt

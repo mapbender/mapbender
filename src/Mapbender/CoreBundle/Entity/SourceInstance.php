@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -223,14 +222,14 @@ abstract class SourceInstance
     }
 
     /**
-     * Sets a basesource
+     * Sets base source
      *
-     * @param  boolean        $basesource
-     * @return SourceInstance SourceInstance
+     * @param  boolean $baseSource
+     * @return $this
      */
-    public function setBasesource($basesource)
+    public function setBasesource($baseSource)
     {
-        $this->basesource = $basesource;
+        $this->basesource = $baseSource;
 
         return $this;
     }
@@ -256,7 +255,7 @@ abstract class SourceInstance
     /**
      * Returns source
      *
-     * @return Source
+     * @return \Mapbender\WmsBundle\Entity\WmsSource|Source
      */
     abstract public function getSource();
 

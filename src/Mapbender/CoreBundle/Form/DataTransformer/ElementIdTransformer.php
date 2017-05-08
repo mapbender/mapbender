@@ -1,11 +1,9 @@
 <?php
-
 namespace Mapbender\CoreBundle\Form\DataTransformer;
 
-use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Entity\Element;
+use Symfony\Component\Form\DataTransformerInterface;
 
 /**
  * 
@@ -29,7 +27,7 @@ class ElementIdTransformer implements DataTransformerInterface
     /**
      * Transforms an object (element) to a string (id).
      *
-     * @param  Element|null $element
+     * @param int|string $id
      * @return string
      */
     public function transform($id)
@@ -47,9 +45,8 @@ class ElementIdTransformer implements DataTransformerInterface
     /**
      * Transforms a string (id) to an object (element).
      *
-     * @param  string $id
-     * @return Element|null
-     * @throws TransformationFailedException if object (element) is not found.
+     * @param Element|null $element
+     * @return Element|null|string
      */
     public function reverseTransform($element)
     {

@@ -16,12 +16,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class WmcParser
 {
-
+    /** @var ContainerInterface  */
     protected $container;
 
     /**
-     * The XML representation of the Capabilites Document
-     * @var DOMDocument
+     * Capabilities XML document
+     * @var \DOMDocument
      */
     protected $doc;
 
@@ -33,7 +33,8 @@ abstract class WmcParser
     /**
      * Creates an instance
      *
-     * @param \DOMDocument $doc
+     * @param ContainerInterface $container
+     * @param \DOMDocument       $doc
      */
     public function __construct(ContainerInterface $container, \DOMDocument $doc)
     {
@@ -145,8 +146,9 @@ abstract class WmcParser
     /**
      * Returns a wmc parser
      *
-     * @param \DOMDocument $doc the WMC document
-     * @return \Mapbender\WmcBundle\Component\WmcParser110
+     * @param ContainerInterface $container
+     * @param \DOMDocument       $doc the WMC document
+     * @return WmcParser110
      * @throws NotSupportedVersionException if a version is not supported
      */
     public static function getParser(ContainerInterface $container, \DOMDocument $doc)

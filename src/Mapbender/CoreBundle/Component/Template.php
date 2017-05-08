@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Component;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;

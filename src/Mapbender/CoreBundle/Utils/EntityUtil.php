@@ -1,16 +1,9 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\CoreBundle\Utils;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
 use ReflectionClass;
-use ReflectionMethod;
 use ReflectionProperty;
 
 /**
@@ -121,6 +114,11 @@ class EntityUtil
         return null;
     }
 
+    /**
+     * @param      $entity
+     * @param null $filter
+     * @return \ReflectionProperty[]
+     */
     public static function getProperties($entity, $filter = null)
     {
         $filter   = $filter === null ? ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED : $filter;
@@ -129,6 +127,11 @@ class EntityUtil
         return $props;
     }
 
+    /**
+     * @param $ormType
+     * @return int|string
+     * @throws \Exception
+     */
     public static function getDataType($ormType)
     {
         switch ($ormType) {
@@ -159,6 +162,11 @@ class EntityUtil
         }
     }
 
+    /**
+     * @param                 $fieldName
+     * @param ReflectionClass $class
+     * @return null|\ReflectionMethod
+     */
     public static function getReturnMethod($fieldName, ReflectionClass $class)
     {
         $method = null;
@@ -171,6 +179,11 @@ class EntityUtil
         }
     }
 
+    /**
+     * @param                 $fieldName
+     * @param ReflectionClass $class
+     * @return null|\ReflectionMethod
+     */
     public static function getSetMethod($fieldName, ReflectionClass $class)
     {
         $method = null;
@@ -181,6 +194,12 @@ class EntityUtil
         }
     }
 
+    /**
+     * @param                 $fieldName
+     * @param                 $prefix
+     * @param ReflectionClass $class
+     * @return null|\ReflectionMethod
+     */
     public static function getMethodName($fieldName, $prefix, ReflectionClass $class)
     {
         $methodHash = "";

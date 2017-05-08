@@ -17,14 +17,17 @@ class VendorSpecific extends DimensionInst
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $vstype;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $hidden = false;
+    public    $hidden = false;
+
+    /**
+     * @var mixed|null
+     */
+    public $origextentextent;
 
     public function getVstype()
     {

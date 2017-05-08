@@ -4,17 +4,17 @@
 
 {% block css %}
     {{parent()}}
-    <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror/lib/codemirror.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror/theme/neo.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('components/codemirror/lib/codemirror.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('components/codemirror/theme/neo.css') }}"/>
 {% endblock %}
 
 {% block js %}
   {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/lib/codemirror.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/code-mirror.yaml.plugin.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/mode/css/css.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/keymap/sublime.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/addon/selection/active-line.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('components/codemirror/lib/codemirror.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('components/codemirror/mode/yaml/yaml.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('components/codemirror/mode/css/css.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('components/codemirror/keymap/sublime.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('components/codemirror/addon/selection/active-line.js') }}"></script>
 
   <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-edit.js') }}"></script>

@@ -2,22 +2,44 @@
 
 namespace Mapbender\CoreBundle\Asset;
 
-use Assetic\AssetManager;
 use Assetic\Asset\AssetCollection;
-use Assetic\Asset\StringAsset;
 use Assetic\Asset\FileAsset;
+use Assetic\Asset\StringAsset;
+use Assetic\AssetManager;
 use Assetic\Cache\FilesystemCache;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ * Class ApplicationAssetCache
+ *
+ * @author Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
+ * @package Mapbender\CoreBundle\Asset
+ */
 class ApplicationAssetCache
 {
+    /** @var ContainerInterface  */
     protected $container;
+
+    /** @var array|\Assetic\Asset\FileAsset[]|\Assetic\Asset\StringAsset[]  */
     protected $inputs;
+
+    /** @var string  */
     protected $type;
+
+    /** @var string  */
     protected $targetPath;
+
     protected $force;
 
+    /**
+     * ApplicationAssetCache constructor.
+     *
+     * @param ContainerInterface $container
+     * @param StringAsset[]      $inputs
+     * @param                    $type
+     * @param bool               $force
+     */
     public function __construct(ContainerInterface $container, $inputs, $type, $force = false)
     {
         $this->container = $container;
@@ -115,11 +137,18 @@ class ApplicationAssetCache
         return $assets;
     }
 
+    /**
+     * @return string
+     */
     protected function getAssetRootPath()
     {
         return dirname($this->container->getParameter('kernel.root_dir')) . '/web';
     }
 
+    /**
+     * @param $input
+     * @return string
+     */
     protected function getPublicSourcePath($input)
     {
         $sourcePath = null;
@@ -134,10 +163,13 @@ class ApplicationAssetCache
         }
     }
 
+    /**
+     * @return string
+     */
     protected function getTargetPath()
     {
         $route = $this->container->get('router')->getRouteCollection()->get('mapbender_core_application_assets');
-        $target = str_replace('\\', '/', realpath($this->container->get('kernel')->getRootDir() . '/../web/app.php')) . $route->getPattern();
+        $target = str_replace('\\', '/', realpath($this->container->get('kernel')->getRootDir() . '/../web/app.php')) . $route->getPath();
         return $target;
     }
 }

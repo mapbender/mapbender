@@ -1,15 +1,5 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\CoreBundle\Entity;
-
-//use Doctrine\ORM\EntityManager;
-//use Mapbender\CoreBundle\Entity\SourceInstance;
-//use Mapbender\CoreBundle\Component\SourceItem;
 
 /**
  *
@@ -31,8 +21,8 @@ abstract class SourceInstanceItem
 
     /**
      * Set SourceInstance
-     * @param $sourceInstance the source
-     * @return SourceInstanceIn
+     * @param SourceInstance $sourceInstance Source instance
+     * @return SourceInstanceItem
      */
     public abstract function setSourceInstance(SourceInstance $sourceInstance);
 
@@ -52,7 +42,7 @@ abstract class SourceInstanceItem
     /**
      * Set SourceInstance
      * @param SourceItem $sourceItem the source item
-     * @return SourceInstanceItemIn
+     * @return SourceInstanceItem
      */
     public abstract function setSourceItem(SourceItem $sourceItem);
 }

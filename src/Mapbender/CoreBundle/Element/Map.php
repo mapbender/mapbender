@@ -61,7 +61,7 @@ class Map extends Element
                 'start' => array(5, 45, 15, 55)),
             'maxResolution' => 'auto',
             "scales" => array(25000000, 10000000, 5000000, 1000000, 500000),
-            'imgPath' => 'bundles/mapbendercore/mapquery/lib/openlayers/img');
+            'imgPath' => 'components/mapquery/lib/openlayers/img');
     }
 
     /**
@@ -79,10 +79,10 @@ class Map extends Element
     {
         return array(
             'js' => array(
-                'mapquery/lib/openlayers/OpenLayers.js',
+                '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
                 /* 'mapquery/lib/openlayers/lib/deprecated.js', */
-                'mapquery/lib/jquery/jquery.tmpl.js',
-                'mapquery/src/jquery.mapquery.core.js',
+                '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
+                '/../vendor/mapbender/mapquery/src/jquery.mapquery.core.js',
                 'proj4js/proj4js-compressed.js',
                 'mapbender.element.map.js'),
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));

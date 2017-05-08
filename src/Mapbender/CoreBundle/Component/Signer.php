@@ -1,11 +1,12 @@
 <?php
-
 namespace Mapbender\CoreBundle\Component;
 
-use ArsGeografica\Signing\Signer as BaseSigner;
 use ArsGeografica\Signing\BadSignatureException;
+use ArsGeografica\Signing\Signer as BaseSigner;
 
-
+/**
+ * Class Signer
+ */
 class Signer extends BaseSigner
 {
     /**
@@ -27,6 +28,10 @@ class Signer extends BaseSigner
         return $url . $sep . '_signature=' . urlencode($signature);
     }
 
+    /**
+     * @param string $url
+     * @throws BadSignatureException
+     */
     public function checkSignedUrl($url)
     {
         parse_str(parse_url($url, PHP_URL_QUERY), $params);

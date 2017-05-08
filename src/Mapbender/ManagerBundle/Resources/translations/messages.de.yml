@@ -3,23 +3,23 @@ mb:
     create:
       success: Ihre Anwendung wurde erstellt.
       failure:
-        create.directory: Application Verzeichniss kann nich erstellt werden.
+        create.directory: Anwendungsverzeichnis kann nicht erstellt werden.
     save:
       success: Ihre Anwendung wurde gespeichert.
       failure:
         general: Beim Speichern Ihrer Anwendung ist ein Fehler aufgetreten.
-        create.directory: Ihre Anwendung wurde aktualisiert aber das Applikationsverzeichnis konnte nicht erstellt werden.
+        create.directory: Ihre Anwendung wurde aktualisiert, aber das Anwendungsverzeichnis konnte nicht erstellt werden.
     remove:
       success: Ihre Anwendung wurde gelöscht.
       failure:
         general: Ihre Anwendung konnte nicht gelöscht werden.
-        already.removed: Ihre Anwendung wurde schon gelöscht.
+        already.removed: Ihre Anwendung wurde bereits gelöscht.
         remove.directory: Ihre Anwendung wurde gelöscht, aber das Anwendungsverzeichnis konnte nicht entfernt werden.
   layerset:
     create:
       success: Ihr Layerset wurde erstellt.
       failure:
-        unique.title: Der Layerset Titel wird schon benutzt.
+        unique.title: Der Layerset-Titel wird bereits verwendet.
     remove:
       success: Ihr Layerset wurde gelöscht.
       failure: Ihr Layerset kann nicht gelöscht werden.
@@ -36,20 +36,20 @@ mb:
         delete: 'Datenquelle entfernen'
         new:
           add: 'Datenquelle hinzufügen'
-        valid: 'Quelle valid'
-        notvalid: 'Quelle nicht valid'
-        no_source: 'Keine Quelle'
+        valid: 'Quelle valide'
+        notvalid: 'Die Datenquelle ist nicht valide'
+        no_source: 'Keine Datenquelle'
         update: 'Datenquelle aktualisieren'
         status:
           ok: 'Datenquelle OK'
           toupdate: 'Datenquelle inaktuell'
-          unreachable: 'Datenquelle unerreichbar'
+          unreachable: 'Die Datenquelle ist nicht erreichbar'
       map:
         max_extent: 'Max. Extent'
         start_extent: 'Start Extent'
       element:
         delete:
-          confirm: 'Wollen Sie ddas Element wirklich löschen?'
+          confirm: 'Wollen Sie das Element wirklich löschen?'
           title: 'Element entfernen'
         btn:
           delete: Löschen
@@ -69,8 +69,8 @@ mb:
       zoombar:
         draggable: Verschiebbar
       filter:
-        source: 'Filter Quelle'
-        layerset: 'Layerset Filter'
+        source: 'Filter'
+        layerset: 'Filter'
         application: Filter
       overview:
         maximize: Maximieren
@@ -82,24 +82,22 @@ mb:
         edit: 'Layerset bearbeiten'
         delete:
           title: 'Layerset löschen'
-          confirm: 'Wollen Sie wirklich das Layerset <span class="italic">%layerset_title%</span> löschen?'
-        sourceid: SourceId
-        instanceid: InstanceId
-        id: Id
+          confirm: 'Wollen Sie das Layerset <span class="italic">%layerset_title%</span> wirklich löschen?'
         id_description: 'Id in Form: SourceId/InstanceId'
+        id: Id
       instance:
         add: 'Instanz hinzufügen'
         show_hide: 'Instanz an/aus'
         edit: 'Instanz editieren'
-        delete:
-          title: 'Instanz löschen'
-          confirm: 'Wollen Sie wirklich die Instanz <span class="italic">%instance_title%</span> entfernen?'
+        delete: 'Instanz löschen'        
         no_instance_added: 'Keine Instanz vorhanden'
         no_layer_added: 'Keine Ebene hinzugefügt'
       template: Vorlage
       application:
         view: 'Anwendung anzeigen'
-        edit: 'Anwendung bearbeiten'
+        edit:
+          title: 'Anwendung bearbeiten'
+          base_data: 'Basisdaten'
         layouts: Layouts
         layersets: Layerset
         custom_css: CSS
@@ -122,6 +120,16 @@ mb:
         btn:
           create: Speichern
           cancel: Abbrechen
+        upload:
+          button: 'Datei auswählen:'
+          label: 'Keine Datei ausgewählt...'
+          tooltip: 'Bitte klicken Sie, um einen Screenshot hochzuladen'
+        export:
+          addAcl: Acls
+          addSources: Quellen
+          btn:
+            export: Exportieren
+            cancel: Abbrechen
         import:
           addApplications: Anwendungen
           addAcl: Acls
@@ -129,16 +137,6 @@ mb:
           btn:
             import: Importieren
             cancel: Abrechen
-        export:
-          addAcl: Acls
-          addSources: Quellen
-          btn:
-            export: Exportieren
-            cancel: Abbrechen
-        upload:
-          button: 'Datei auswählen:'
-          label: 'Keine Datei ausgewählt...'
-          tooltip: 'Bitte klicken Sie, um einen Screenshot hochzuladen'
         title: Titel
         url:
           title: 'URL Titel'
@@ -212,14 +210,14 @@ mb:
     template:
       region:
         tabs:
-          label: Reiter
+          label: Tabs
         accordion:
           label: Akkordeon
     upload:
       label_delete: 'Bild entfernt.'
     import:
       application:
-        failed: 'Applikation kann nicht importiert werden.'
+        failed: 'Anwendung kann nicht importiert werden.'
       acl:
         failed: 'Acls können nicht importiert werden.'
       source:

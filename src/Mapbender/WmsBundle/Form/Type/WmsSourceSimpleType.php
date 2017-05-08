@@ -29,7 +29,7 @@ class WmsSourceSimpleType extends AbstractType
             ->add('onlyvalid', 'checkbox',
                 array(
                 'mapped' => false,
-                'data' => true,
+                'data' => false,
                 'attr' => array(
                     'title' => 'The application title, as shown in the browser '
                     . 'title bar and in lists.')))

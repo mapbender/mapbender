@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * element.
  *
  * @author Christian Wygoda
+ * @deprecated and well
  */
 interface SearchEngine
 {
