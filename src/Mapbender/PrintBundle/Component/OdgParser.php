@@ -81,8 +81,8 @@ class OdgParser
         $draMapNode = (new \DOMXPath($doc))->query("//draw:custom-shape[@draw:name='map']")->item(0);
 
         return json_encode(array(
-            'width'  => static::parseNumericNodeAttribute($draMapNode, 'svg:width'),
-            'height' => static::parseNumericNodeAttribute($draMapNode, 'svg:height')
+            'width'  => static::parseNumericNodeAttribute($draMapNode, 'svg:width') / 10,
+            'height' => static::parseNumericNodeAttribute($draMapNode, 'svg:height') / 10
         ));
     }
 
