@@ -22,6 +22,9 @@ class OdgParser
     /** Default font size */
     const DEFAULT_FONT_SIZE = '10pt';
 
+    /** Conversion factor for meters to centimeters */
+    const CONVERSION_FACTOR = 10;
+
     /** @var ContainerInterface */
     protected $container;
 
@@ -81,8 +84,8 @@ class OdgParser
         $draMapNode = (new \DOMXPath($doc))->query("//draw:custom-shape[@draw:name='map']")->item(0);
 
         return json_encode(array(
-            'width'  => static::parseNumericNodeAttribute($draMapNode, 'svg:width') / 10,
-            'height' => static::parseNumericNodeAttribute($draMapNode, 'svg:height') / 10
+            'width'  => static::parseNumericNodeAttribute($draMapNode, 'svg:width') / static::CONVERSION_FACTOR,
+            'height' => static::parseNumericNodeAttribute($draMapNode, 'svg:height') / static::CONVERSION_FACTOR
         ));
     }
 
@@ -185,7 +188,7 @@ class OdgParser
     {
         $value = $node->getAttribute($xPath);
         if (!empty($value) && is_string($value) && strlen($value) > 2) {
-            $value = substr($value, 0, -2) * 10;
+            $value = substr($value, 0, -2) * static::CONVERSION_FACTOR;
         } else {
             $value = $defaultValue;
         }
