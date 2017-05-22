@@ -73,8 +73,9 @@ class ImageExportService
 
             file_put_contents($imagename, $response->getContent());
             $rawImage = null;
-            switch (trim($response->headers->get('content-type'))) {
-                case 'image/png' :
+            $contentType = trim($response->headers->get('content-type'));
+            switch ($contentType) {
+                case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
                     $rawImage = imagecreatefrompng($imagename);
                     break;
                 case 'image/png8' :
