@@ -305,14 +305,9 @@ class PrintService
             file_put_contents($imageName, $response->getContent());
 
             $rawImage = null;
-            switch (trim($response->headers->get('content-type'))) {
-                case 'image/png' :
-                    $rawImage = imagecreatefrompng($imageName);
-                    break;
-                case 'image/png8' :
-                    $rawImage = imagecreatefrompng($imageName);
-                    break;
-                case 'image/png; mode=24bit' :
+            $contentType = trim($response->headers->get('content-type'));
+            switch ($contentType) {
+                case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
                     $rawImage = imagecreatefrompng($imageName);
                     break;
                 case 'image/jpeg' :
@@ -597,8 +592,9 @@ class PrintService
 
             file_put_contents($imageName, $response->getContent());
             $im = null;
-            switch (trim($response->headers->get('content-type'))) {
-                case 'image/png' :
+            $contentType = trim($response->headers->get('content-type'));
+            switch ($contentType) {
+                case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
                     $im = imagecreatefrompng($imageName);
                     break;
                 case 'image/jpeg' :
@@ -608,7 +604,7 @@ class PrintService
                     $im = imagecreatefromgif($imageName);
                     break;
                 default:
-                    $logger->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
+                    $logger->debug("Unknown mimetype " . $contentType);
                     continue;
             }
             if ($im !== null) {
