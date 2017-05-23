@@ -310,10 +310,10 @@ class PrintService
                 case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
                     $rawImage = imagecreatefrompng($imageName);
                     break;
-                case 'image/jpeg' :
+                case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
                     $rawImage = imagecreatefromjpeg($imageName);
                     break;
-                case 'image/gif' :
+                case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
                     $rawImage = imagecreatefromgif($imageName);
                     break;
                 case 'image/bmp' :
@@ -597,10 +597,10 @@ class PrintService
                 case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
                     $im = imagecreatefrompng($imageName);
                     break;
-                case 'image/jpeg' :
+                case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
                     $im = imagecreatefromjpeg($imageName);
                     break;
-                case 'image/gif' :
+                case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
                     $im = imagecreatefromgif($imageName);
                     break;
                 default:

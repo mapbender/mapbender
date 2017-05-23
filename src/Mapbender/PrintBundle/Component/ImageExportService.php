@@ -78,16 +78,10 @@ class ImageExportService
                 case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
                     $rawImage = imagecreatefrompng($imagename);
                     break;
-                case 'image/png8' :
-                    $rawImage = imagecreatefrompng($imagename);
-                    break;
-                case 'image/png; mode=24bit' :
-                    $rawImage = imagecreatefrompng($imagename);
-                    break;
-                case 'image/jpeg' :
+                case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
                     $rawImage = imagecreatefromjpeg($imagename);
                     break;
-                case 'image/gif' :
+                case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
                     $rawImage = imagecreatefromgif($imagename);
                     break;
                 default:
