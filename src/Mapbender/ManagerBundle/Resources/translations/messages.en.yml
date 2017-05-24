@@ -71,9 +71,9 @@ mb:
       zoombar:
         draggable: Draggable
       filter:
-        source: 'Filter source'
-        layerset: 'Filter layerset'
-        application: 'Filter application'
+        source: 'Filter'
+        layerset: 'Filter'
+        application: 'Filter'
       overview:
         maximize: Maximize
         fix: Fix
@@ -91,9 +91,7 @@ mb:
         add: 'Add instance'
         show_hide: 'Toggle show/hide instance'
         edit: 'Edit instance'
-        delete:
-          title: 'delete instance'
-          confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
+        delete: 'Delete instance'
         no_instance_added: 'No instance added'
         no_layer_added: 'No layer added'
       template: Template
