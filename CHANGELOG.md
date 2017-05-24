@@ -1,5 +1,23 @@
 # Changelog
 
+* **v.3.0.6.1** - 2017-05-24
+    - PrintService/ImageExport: Accept all kinds of image/jpeg and image/gif from wms
+    - Refactor print scale bugfix
+    - fix a css problem with checkboxes by moving it out of screen some more
+    - improved position of removebutton
+    - Print Scale Bugfix
+    - Update Date in Changelog.md
+    - Set deprecated command advice for next release version
+    - Fix and add application by render elements
+    - Add WmcEditor Default Parameters for width and height
+    - Fix parse dimension data
+    - Fix vendor specific parameter close button position
+    - Add missed VendorSpecific origextentextent property
+    - Fix save MetadataUrl as doctine array type
+    - Fix WmsLayerSource modificators
+    - Fix save Style, VendorSpecific and WmsLayerSource entities
+
+
 * **v3.0.6.0** - 2017-05-05
 
     - Fix transalate element titles by import Closes: https://github.com/mapbender/mapbender-starter/issues/46
