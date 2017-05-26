@@ -782,16 +782,26 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Get authority
      *
-     * @return Authority
+     * @param bool $inherit to include Authorities form parent (default)
+     * @return Authority[]
+     * @deprecated because of misleading wording
      */
     public function getAuthority($inherit = true)
     {
-        if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) {
-            return array_merge($this->getParent()->getAuthority(), $this->authority);
+        return $this->getAuthorities($inherit);
+    }
+
+    /**
+     * @param bool $inherit to include Authorities form parent (default)
+     * @return Authority[]
+     */
+    public function getAuthorities($inherit = true)
+    {
+        if ($inherit && $this->getParent() && $this->getParent()->getAuthorities()) {
+            return array_merge($this->getParent()->getAuthorities(), $this->authority);
         } else {
-            $this->authority;
+            return $this->authority;
         }
     }
 
