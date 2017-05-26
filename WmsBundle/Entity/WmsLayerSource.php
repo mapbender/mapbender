@@ -770,14 +770,26 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Set authority
+     * Set authoritIES
      *
-     * @param array $authority
+     * @param Authority[] $authorities
+     * @return WmsLayerSource
+     * @deprecated because of misleading wording (singular / plural)
+     */
+    public function setAuthority($authorities)
+    {
+        return $this->setAuthorities($authorities);
+    }
+
+    /**
+     * Set authorities
+     *
+     * @param Authority[] $authorities
      * @return WmsLayerSource
      */
-    public function setAuthority($authority)
+    public function setAuthorities($authorities)
     {
-        $this->authority = $authority ? $authority : array();
+        $this->authority = $authorities ? $authorities : array();
         return $this;
     }
 
@@ -785,7 +797,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @param bool $inherit to include Authorities form parent (default)
      * @return Authority[]
-     * @deprecated because of misleading wording
+     * @deprecated because of misleading wording (singular / plural)
      */
     public function getAuthority($inherit = true)
     {
