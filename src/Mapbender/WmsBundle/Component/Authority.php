@@ -2,6 +2,8 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Utils\UrlUtil;
+
 /**
  * Authority class.
  *
@@ -62,5 +64,16 @@ class Authority
     {
         $this->name = $value;
         return $this;
+    }
+
+    /**
+     * Update host in $this->url
+     *
+     * @param string $to new host name
+     * @param string|null $from old host name (optional); if given, only replace if hostname in $this->url equals $from
+     */
+    public function replaceHost($to, $from = null)
+    {
+        $this->url = UrlUtil::replaceHost($this->url, $to, $from);
     }
 }
