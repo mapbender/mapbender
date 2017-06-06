@@ -787,7 +787,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) {
             return array_merge($this->getParent()->getAuthority(), $this->authority);
         } else {
-            $this->authority;
+            return $this->authority;
         }
     }
 
@@ -996,5 +996,21 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function __toString()
     {
         return (string)$this->id;
+    }
+
+    public function replaceHost($to, $from)
+    {
+        $styles = array();
+        foreach ($this->getStyles(false) as $style) {
+            $style->replaceHost($to, $from);
+            $styles[] = $style;
+        }
+        $this->setStyles($styles);
+        foreach ($this->getMetadataUrl() as $mdu) {
+            $mdu->getOnlineResource()->replaceHost($to, $from);
+        }
+        foreach ($this->getDataUrl() as $du) {
+            $du->replaceHost($to, $from);
+        }
     }
 }

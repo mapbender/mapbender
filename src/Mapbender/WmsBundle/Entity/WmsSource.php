@@ -7,6 +7,10 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Component\Authority;
+use Mapbender\WmsBundle\Component\LegendUrl;
+use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -919,6 +923,71 @@ class WmsSource extends Source implements ContainingKeyword
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
+        return $this;
+    }
+
+    /**
+     * Replace host name in all URLish attributes.
+     *
+     * @param string $to new host name
+     * @param string|null $from old host name (optional); if given, only replace if hostname in $url equals $from
+     * @return $this
+     */
+    public function replaceHost($to, $from = null)
+    {
+        $this->setOriginUrl(UrlUtil::replaceHost($this->getOriginUrl(), $to, $from));
+        $this->setOnlineResource(UrlUtil::replaceHost($this->getOnlineResource(), $to, $from));
+        if ($requestInfo = $this->getGetMap()) {
+            /** @var RequestInformation $requestInfo */
+            $requestInfo->replaceHost($to, $from);
+        }
+        if ($requestInfo = $this->getGetFeatureInfo()) {
+            /** @var RequestInformation $requestInfo */
+            $requestInfo->replaceHost($to, $from);
+        }
+        if ($requestInfo = $this->getGetCapabilities()) {
+            /** @var RequestInformation $requestInfo */
+            $requestInfo->replaceHost($to, $from);
+        }
+        if ($requestInfo = $this->getDescribeLayer()) {
+            /** @var RequestInformation $requestInfo */
+            $requestInfo->replaceHost($to, $from);
+        }
+        if ($requestInfo = $this->getGetLegendGraphic()) {
+            /** @var RequestInformation $requestInfo */
+            $requestInfo->replaceHost($to, $from);
+        }
+        if ($requestInfo = $this->getGetStyles()) {
+            /** @var RequestInformation $requestInfo */
+            $requestInfo->replaceHost($to, $from);
+        }
+        if ($requestInfo = $this->getPutStyles()) {
+            /** @var RequestInformation $requestInfo */
+            $requestInfo->replaceHost($to, $from);
+        }
+        $this->setGetMap($this->getGetMap());
+        $this->setGetFeatureInfo($this->getGetFeatureInfo());
+        $this->setGetCapabilities($this->getGetCapabilities());
+        $this->setDescribeLayer($this->getDescribeLayer());
+        $this->setGetLegendGraphic($this->getGetLegendGraphic());
+        $this->setGetStyles($this->getGetStyles());
+        $this->setPutStyles($this->getPutStyles());
+
+        foreach ($this->getLayers() as $layer) {
+            foreach ($layer->getStyles(false) as $style) {
+                $style->replaceHost($to, $from);
+            }
+            $layer->setStyles($layer->getStyles(false));
+            foreach ($layer->getAuthority(false) as $authority) {
+                /** @var Authority $authority */
+                if ($authority && $authority->getUrl()) {
+                    $authority->replaceHost($to, $from);
+                }
+            }
+            $layer->setAuthority($layer->getAuthority());
+        }
+        $this->setLayers($this->getLayers());
+
         return $this;
     }
 }

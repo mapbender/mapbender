@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Utils\UrlUtil;
+
 /**
  * OnlineResource class.
  *
@@ -95,4 +97,14 @@ class OnlineResource
         return $olr;
     }
 
+    /**
+     * Update host in $this->href
+     *
+     * @param string $to new host name
+     * @param string|null $from old host name (optional); if given, only replace if hostname in $this->href equals $from
+     */
+    public function replaceHost($to, $from = null)
+    {
+        $this->href = UrlUtil::replaceHost($this->href, $to, $from);
+    }
 }

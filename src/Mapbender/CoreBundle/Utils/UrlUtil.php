@@ -62,4 +62,72 @@ class UrlUtil
         }
         return $newurl;
     }
+
+    /**
+     * @param string $url input
+     * @param string $to new host name
+     * @param string|null $from old host name (optional); if given, only replace if hostname in $url equals $from
+     * @return string updated $url (or unchanged $url if mismatching $from given)
+     */
+    public static function replaceHost($url, $to, $from = null)
+    {
+        $parts = parse_url($url);
+        if (empty($parts['host'])) {
+            /**
+             * @todo: this should probably an exception; unfortunately, we have bad data in certain production dbs...
+             */
+            return $url;
+        }
+        if ($from && $from != $parts['host']) {
+            $urlOut = $url;
+        } else {
+            $parts['host'] = $to;
+            $urlOut = static::reconstruct($parts);
+        }
+        return $urlOut;
+    }
+
+    /**
+     * Inverse of parse_url.
+     * This should be a drop-in for http_build_url provided by the (rarely installed) "http" PECL extension.
+     *
+     * @param string[] $parts
+     * @return string
+     */
+    public static function reconstruct($parts)
+    {
+        $urlOut = "";
+        if (!empty($parts['scheme'])) {
+            if ($parts['scheme'] == 'file') {
+                $urlOut .= "{$parts['scheme']}:///";
+            } else {
+                $urlOut .= "{$parts['scheme']}://";
+            }
+        }
+        if (!empty($parts['user'])) {
+            $urlOut .= $parts['user'];
+        }
+        if (!empty($parts['pass'])) {
+            $urlOut .= ":{$parts['pass']}";
+        }
+        if (!empty($parts['user']) || !empty($parts['pass'])) {
+            $urlOut .= "@";
+        }
+        if (!empty($parts['host'])) {
+            $urlOut .= $parts['host'];
+        }
+        if (!empty($parts['port'])) {
+            $urlOut .= ":{$parts['port']}";
+        }
+        if (!empty($parts['path'])) {
+            $urlOut .= $parts['path'];
+        }
+        if (!empty($parts['query'])) {
+            $urlOut .= "?{$parts['query']}";
+        }
+        if (!empty($parts['fragment'])) {
+            $urlOut .= "#{$parts['fragment']}";
+        }
+        return $urlOut;
+    }
 }

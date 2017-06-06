@@ -183,4 +183,35 @@ class Style
         return $this->styleUlr;
     }
 
+    public function replaceHost($to, $from)
+    {
+        /**
+         * @todo: upstream functions getLegendUrl, getStyleUlr and getStyleSheetUrl
+         *    are marked as returning stdClass instances, but this seems to be an
+         *    error in the annotions. All setters enforce strict types, and all known
+         *    direct modifications (these are public attribs!) set instances of these
+         *    same types.
+         *
+         *    Return type annotations should be updated if possible.
+         */
+        $legendUrl = $this->getLegendUrl();
+        $styleUrl = $this->getStyleUlr();
+        $styleSheetUrl = $this->getStyleSheetUrl();
+        /** @var LegendUrl $legendUrl */
+        /** @var OnlineResource $styleSheetUrl */
+        /** @var OnlineResource $styleUrl */
+        if ($legendUrl && $legendUrl->getOnlineResource()) {
+            $legendUrl->getOnlineResource()->replaceHost($to, $from);
+            $legendUrl->setOnlineResource($legendUrl->getOnlineResource());
+        }
+        if ($styleUrl) {
+            $styleUrl->replaceHost($to, $from);
+        }
+        if ($styleSheetUrl) {
+            $styleSheetUrl->replaceHost($to, $from);
+        }
+        $this->setLegendUrl($this->getLegendUrl());
+        $this->setStyleUlr($this->getStyleUlr());
+        $this->setStyleSheetUrl($this->getStyleSheetUrl());
+    }
 }

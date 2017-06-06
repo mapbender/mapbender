@@ -2,6 +2,8 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Utils\UrlUtil;
+
 /**
  * RequestInformation class.
  *
@@ -95,4 +97,19 @@ class RequestInformation
         return $this;
     }
 
+    /**
+     * @param string $to new host name
+     * @param string|null $from old host name (optional); if given, only replace if hostname in $url equals $from
+     * @return $this
+     */
+    public function replaceHost($to, $from = null)
+    {
+        if ($this->httpGet) {
+            $this->httpGet  = UrlUtil::replaceHost($this->httpGet, $to, $from);
+        }
+        if ($this->httpPost) {
+            $this->httpPost = UrlUtil::replaceHost($this->httpPost, $to, $from);
+        }
+        return $this;
+    }
 }
