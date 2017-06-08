@@ -50,10 +50,10 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
         $doctrine=$this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
         $maps = $em->getRepository('MapbenderCoreBundle:Element')->findBy(array('class'=>'Mapbender\CoreBundle\Element\Map'));
-        foreach ($maps as $map){
+        foreach ($maps as $map) {
             $config = $map->getConfiguration();
 
-            if($config['imgPath'] == 'bundles/mapbendercore/mapquery/lib/openlayers/img'){
+            if ($config['imgPath'] == 'bundles/mapbendercore/mapquery/lib/openlayers/img') {
                 $config['imgPath']= 'components/mapquery/lib/openlayers/img';
                 $map->setConfiguration($config);
                 $em->persist($map);
