@@ -15,14 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  */
 class DatabaseUpgradeCommand extends ContainerAwareCommand {
-    private $generator;
 
-    protected function getGenerator() {
-        if($this->generator === null) {
-            $this->generator = new ElementGenerator();
-        }
-        return $this->generator;
-    }
     protected function configure() {
         $this
             ->setHelp('The <info>mapbender:database:upgrade</info> command updates the Datesbase to the new schema of mapbender version 3.0.6')
@@ -30,10 +23,24 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
             ->setDescription('Updates database scheme');
     }
 
+
+    /**
+     * Execute command
+     * @Todo Add logic to execute different action depended on the used MB3 Version
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     */
+
     protected function execute(InputInterface $input, OutputInterface $output) {
         $this->changeMapsImagePath();
     }
 
+    /**
+     * Change imagesPath configuration value from all MB3 map elements in the database
+     * from  "bundles/mapbendercore/mapquery/lib/openlayers/img"
+     * to "components/mapquery/lib/openlayers/img"
+     */
     protected function changeMapsImagePath(){
 
         /**
@@ -45,12 +52,9 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
         $maps = $em->getRepository('MapbenderCoreBundle:Element')->findBy(array('class'=>'Mapbender\CoreBundle\Element\Map'));
         foreach ($maps as $map){
             $config = $map->getConfiguration();
-            /*
-            * old imgPath: bundles/mapbendercore/mapquery/lib/openlayers/img
-            * new imgPath: components/mapquery/lib/openlayers/img
-            */
-            if($config['imgPath'] == "bundles/mapbendercore/mapquery/lib/openlayers/img"){
-                $config['imgPath']="components/mapquery/lib/openlayers/img";
+
+            if($config['imgPath'] == 'bundles/mapbendercore/mapquery/lib/openlayers/img'){
+                $config['imgPath']= 'components/mapquery/lib/openlayers/img';
                 $map->setConfiguration($config);
                 $em->persist($map);
             }
