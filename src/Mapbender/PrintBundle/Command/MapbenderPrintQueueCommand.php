@@ -63,67 +63,71 @@ class MapbenderPrintQueueCommand extends ContainerAwareCommand
         $this->output = $output;
 
         if ($input->getOption('clean')) {
-            $this->pass('Cleaned process started.');
-            $this->pass(sprintf('Cleaned %s queue(s) successfully.', count($manager->clean())));
+            $this->pass('Print queue clean process started.');
+            $this->pass(sprintf('Cleaned %s print queue item(s) successfully.', count($manager->clean())));
             return;
         }
         if ($input->getOption('repair')) {
-            $this->pass('Fixing broken queues.');
-            foreach($manager->fixBroken() as $queue){
-                $this->pass('The queue #'.$queue->getId()." fixed.");
+            $this->pass('Fixing broken items on print queue.');
+            $fixedQueues = $manager->fixBroken();
+            if ($fixedQueues) foreach ($fixedQueues as $queue) {
+                $this->pass('The queue id #'.$queue->getId()." fixed.");
+            } else {
+                $this->pass("No broken print queue items found for fixing");
             }
         }
 
         if ($id > 0) {
             $queue = $manager->find($id);
             if ($queue) {
-                $this->pass('The queue founded.');
-                $this->pass('Start processing.');
+                $this->pass("Starting processing of print queue id #{$id}");
                 $result = $manager->render($queue,true);
-
             } else {
-                $result = PrintQueueManager::STATUS_QUEUE_NOT_EXISTS;
+                $this->error("No print queue with id $id");
             }
         } else {
             $renderedQueue = $manager->getProcessedQueue();
             if($renderedQueue){
                 $this->warn('The queue #'.$renderedQueue->getId().' is not successfully rendered yet. Run this command with --repair option to fix this.');
             }
-
-            $this->pass('Get next queue.');
+            if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+                $this->pass('Get next queue.');
+            }
             $queue  = $manager->getNextQueue();
             if($queue instanceof PrintQueue){
                 $this->pass('New queue #'.$queue->getId().' processing.');
-                $manager->render($queue);
+                $result = $manager->render($queue);
             }else{
                 $result = PrintQueueManager::STATUS_QUEUE_EMPTY;
             }
         }
 
         switch ($result) {
-            case PrintQueueManager::STATUS_QUEUE_NOT_EXISTS:
-                $this->error('The queue doesn`t exists.');
-                $this->warn(self::NOTHING_DONE_TEXT);
+            case PrintQueueManager::STATUS_RENDERING_SAVE_ERROR:
+                $this->error("Print queue id #{$queue->getId()} could not be saved");
                 break;
-
             case PrintQueueManager::STATUS_WRONG_QUEUED:
-                $this->warn('The queue is already rendered.');
-                $this->warn(self::NOTHING_DONE_TEXT);
+                $this->warn("Print queue id #{$queue->getId()} is already rendered.");
                 break;
-
             case PrintQueueManager::STATUS_IN_PROCESS:
-                $this->warn('The queue is already in process.');
-                $this->warn(self::NOTHING_DONE_TEXT);
+                $this->warn("Print queue id #{$queue->getId()} already in process.");
                 break;
-
             case PrintQueueManager::STATUS_QUEUE_EMPTY:
-                $this->pass('The queue is empty.');
-                $this->warn(self::NOTHING_DONE_TEXT);
+                if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+                    $this->pass('The print queue is empty.');
+                }
                 break;
-
             default:
-                $this->pass('PDF rendered successfully to: ' . self::PASS_COLOR .realpath($manager->getPdfPath($queue)). self::COLOR_OFF);
-                $this->pass('Opened queues: '.$manager->countOpenedQueues());
+                if ($result instanceof PrintQueue) {
+                    $this->pass("PDF for print queue id #{$queue->getId()} rendered successfully to: "
+                                . realpath($manager->getPdfPath($queue)));
+                } elseif ($result !== null) {
+                    $this->warn("Unhandled PrintQueueManager result $result");
+                }
+
+        }
+        if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+            $this->pass('Opened queues: '.$manager->countOpenedQueues());
         }
     }
 

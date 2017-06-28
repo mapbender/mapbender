@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Component\EntitiesServiceBase;
 use Mapbender\PrintBundle\DependencyInjection\MapbenderPrintExtension;
 use Mapbender\PrintBundle\Entity\PrintQueue;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -103,11 +104,11 @@ class PrintQueueManager extends EntitiesServiceBase
         try {
             $fs->dumpFile($filePath, $pdf);
             $this->dispatch(self::STATUS_RENDERING_SAVED, $entity);
+            return $entity;
         } catch (IOException $e) {
             $this->dispatch(self::STATUS_RENDERING_SAVE_ERROR, $entity);
+            return self::STATUS_RENDERING_SAVE_ERROR;
         }
-
-        return $entity;
     }
 
     /**
