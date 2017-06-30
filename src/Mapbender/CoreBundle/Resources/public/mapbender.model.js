@@ -40,7 +40,7 @@ Mapbender.Model = {
         OpenLayers.Map.TILE_WIDTH = tileSize;
         OpenLayers.Map.TILE_HEIGHT = tileSize;
 
-        OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + this.mbMap.options.imgPath + '/';
+        OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + 'components/mapquery/lib/openlayers/img/';
 
         this.proj = this.getProj(this.mbMap.options.srs);
         this.units = this.mbMap.options.units; //TODO check if this.units === this.proj.proj.units
