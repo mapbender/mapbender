@@ -232,6 +232,22 @@ class Application
                 }
             }
         }
+        /** @var Element[] $elements */
+        foreach ($this->getElements() as $region => $elements) {
+            foreach ($elements as $element) {
+                $element_assets = $element->getLateAssets();
+                if (isset($element_assets[ $type ])) {
+                    foreach ($element_assets[ $type ] as $asset) {
+                        if ($type === 'trans') {
+                            $elementTranslations = json_decode($templating->render($asset), true);
+                            $translations        = array_merge($translations, $elementTranslations);
+                        } else {
+                            $this->addAsset($assets, $type, $this->getReference($element, $asset));
+                        }
+                    }
+                }
+            }
+        }
         foreach ($layerTranslations as $key => $value) {
             $translations = array_merge($translations, $value);
         }

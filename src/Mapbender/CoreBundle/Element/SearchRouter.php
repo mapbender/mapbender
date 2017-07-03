@@ -108,11 +108,22 @@ class SearchRouter extends Element
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 'vendor/json2.js',
                 'vendor/backbone.js',
+                //'mapbender.element.searchRouter.Feature.js',
+                //'mapbender.element.searchRouter.Search.js',
+                //'mapbender.element.searchRouter.js'
+                ),
+            'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss'),
+            'trans' => array('MapbenderCoreBundle:Element:search_router.json.twig'));
+    }
+    public static function listLateAssets()
+    {
+        return array(
+            'js'    => array(
                 'mapbender.element.searchRouter.Feature.js',
                 'mapbender.element.searchRouter.Search.js',
                 'mapbender.element.searchRouter.js'),
-            'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:search_router.json.twig'));
+            'css'   => array(),
+            'trans' => array());
     }
 
     /**

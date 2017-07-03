@@ -257,6 +257,10 @@ abstract class Element
     {
         return array();
     }
+    public static function listLateAssets()
+    {
+        return array();
+    }
 
     /**
      * Get the element assets.
@@ -270,6 +274,10 @@ abstract class Element
     public function getAssets()
     {
         return $this::listAssets();
+    }
+    public function getLateAssets()
+    {
+        return $this::listLateAssets();
     }
 
     /**
