@@ -1,8 +1,6 @@
 var Mapbender = Mapbender || {};
 
 (function() {
-    var format = new OpenLayers.Format.GeoJSON();
-
     Mapbender.FeatureModel = Backbone.Model.extend({
         defaults: {
             geometry: {},
@@ -17,7 +15,7 @@ var Mapbender = Mapbender || {};
 
         getFeature: function() {
             if(this.feature === null) {
-                this.feature = format.read({
+                this.feature = new OpenLayers.Format.GeoJSON().read({
                     type: 'Feature',
                     geometry: this.get('geometry'),
                     properties: this.get('properties')
