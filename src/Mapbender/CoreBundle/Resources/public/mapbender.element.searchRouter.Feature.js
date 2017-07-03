@@ -15,7 +15,8 @@ var Mapbender = Mapbender || {};
 
         getFeature: function() {
             if(this.feature === null) {
-                this.feature = new OpenLayers.Format.GeoJSON().read({
+                var geoJSON = new OpenLayers.Format.GeoJSON();
+                this.feature = geoJSON.read({
                     type: 'Feature',
                     geometry: this.get('geometry'),
                     properties: this.get('properties')
