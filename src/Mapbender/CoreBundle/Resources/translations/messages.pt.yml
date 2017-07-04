@@ -8,6 +8,7 @@ mb:
       popup:
         btn:
           ok: Fechar
+          print: Imprimir
       class:
         title: Informação
         description: Informação
