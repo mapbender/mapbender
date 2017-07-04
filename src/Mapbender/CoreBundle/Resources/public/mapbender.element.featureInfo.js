@@ -413,7 +413,7 @@
                     if (options.printResult === true) {
                         widget.popup.addButtons({
                             'print': {
-                                label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
+                                label: Mapbender.trans('mb.core.featureinfo.popup.btn.print'),
                                 cssClass: 'button right',
                                 callback: function() {
                                     widget._printContent();
