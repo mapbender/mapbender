@@ -1083,26 +1083,28 @@ class PrintService
 
 
                     // print legend on first page
-                    if(($y-$yStartPosition) + $tempY + 10 > $height && $width > 100 && $legendConf == true){
-                        $x += $x + 105;
-                        $y = $yStartPosition + 5;
-                        if($x - $xStartPosition + 20 > $width){
-                            $this->pdf->addPage('P');
-                            $x = 5;
-                            $y = 10;
-                            $legendConf = false;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
-                               $this->addLegendPageImage();
-                            } 
+                    if($legendConf == true){
+                        if(($y-$yStartPosition) + $tempY + 10 > $height && $width > 100){
+                            $x += $x + 105;
+                            $y = $yStartPosition + 5;
+                            if($x - $xStartPosition + 20 > $width){
+                                $this->pdf->addPage('P');
+                                $x = 5;
+                                $y = 10;
+                                $legendConf = false;
+                                if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                                   $this->addLegendPageImage();
+                                } 
+                            }
+                        }else if (($y-$yStartPosition) + $tempY + 10 > $height){
+                                $this->pdf->addPage('P');
+                                $x = 5;
+                                $y = 10;
+                                $legendConf = false;
+                                if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                                   $this->addLegendPageImage();
+                                } 
                         }
-                    }else if (($y-$yStartPosition) + $tempY + 10 > $height && $legendConf == true){
-                            $this->pdf->addPage('P');
-                            $x = 5;
-                            $y = 10;
-                            $legendConf = false;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
-                               $this->addLegendPageImage();
-                            } 
                     }
                 }
 
