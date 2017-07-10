@@ -177,4 +177,38 @@ class Utils
 
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
+
+    /**
+     * Returns php memory_limit parsed into a megabyte value.
+     * Returns null if memory is unlimited.
+     * @return float|null
+     */
+    public static function getMemoryLimitMegs()
+    {
+        $memoryLimitStr = ini_get('memory_limit');
+        if ($memoryLimitStr == '-1' || $memoryLimitStr == '0' || !strlen($memoryLimitStr)) {
+            return null;
+        } else {
+            $suffix = substr($memoryLimitStr, -1);
+            if (strlen($memoryLimitStr) == 1) {
+                return 0;
+            }
+            switch ($suffix) {
+                case 'G':
+                case 'g':
+                    return floatval(substr($memoryLimitStr, 0, -1)) * 1024;
+                case 'm':
+                case 'M':
+                    return floatval(substr($memoryLimitStr, 0, -1));
+                case 'k':
+                    return floatval(substr($memoryLimitStr, 0, -1)) / 1024;
+                default:
+                    if (is_numeric($suffix)) {
+                        return floatval($memoryLimitStr) / 1024 / 1024;
+                    } else {
+                        throw new \UnexpectedValueException("Unrecognized memory limit suffix " . var_export($suffix, true));
+                    }
+            }
+        }
+    }
 }

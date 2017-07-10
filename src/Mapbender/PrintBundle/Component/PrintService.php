@@ -2,6 +2,9 @@
 namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\CoreBundle\Component\SecurityContext;
+use Mapbender\CoreBundle\Component\Utils;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -14,7 +17,9 @@ use OwsProxy3\CoreBundle\Component\CommonProxy;
  */
 class PrintService
 {
-    /** @var PDF_ImageAlpha */
+    /** @var ContainerInterface */
+    protected $container;
+    /** @var PDF_Extensions */
     protected $pdf;
     protected $tempdir;
     protected $conf;
@@ -45,8 +50,21 @@ class PrintService
         $this->container = $container;
     }
 
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        return $this->container->get("logger");
+    }
+
     public function doPrint($data)
     {
+        $memoryLimit = Utils::getMemoryLimitMegs();
+        if ($memoryLimit && $memoryLimit < 3000) {
+            $this->getLogger()->warning("Increasing memory_limit to 3G");
+            ini_set('memory_limit', '3G');
+        }
         $this->setup($data);
        
         if ($data['rotation'] == 0) {
@@ -277,7 +295,7 @@ class PrintService
 
     private function getImages($width, $height)
     {
-        $logger        = $this->container->get("logger");
+        $logger        = $this->getLogger();
         $imageNames    = array();
         foreach ($this->mapRequests as $i => $url) {
             $logger->debug("Print Request Nr.: " . $i . ' ' . $url);
