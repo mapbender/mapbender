@@ -356,7 +356,7 @@ mb:
     entity:
       app:
         screenshotfile:
-          error: Errorrror
+          error: Error
     redlining:
       geometrytype:
         point: Point

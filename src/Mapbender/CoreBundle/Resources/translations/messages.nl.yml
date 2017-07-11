@@ -1,90 +1,5 @@
 mb:
   core:
-    admin:
-      copyright:
-        label:
-          autoopen: 'Auto open'
-      printclient:
-        label:
-          autoopen: 'Auto open'
-          rotatable: Draaibaar
-          legend: __mb.core.admin.printclient.label.legend
-      layertree:
-        label:
-          showbasesources: 'Toon basis capaciteit'
-          autoopen: 'Auto open'
-          showheader: 'Toon header'
-          showlayerremove: 'Toon laag verwijder'
-          usetheme: 'Thematic layer'
-          themes: Themes
-          theme:
-            opened: opened
-            activate: 'Add activate'
-            useTheme: 'Theme show'
-            sourceVisibility: 'Theme: source visibility'
-            allSelected: 'Theme: layer visibility'
-            label: 'theme name'
-          hidenottoggleable: 'Hide not toggleable'
-          hideselect: 'Hide visibility by folders'
-          hideinfo: 'Hide info'
-      poi:
-        label:
-          usemailto: 'Gebruik mail naar'
-      legend:
-        label:
-          autoopen: 'Auto open'
-          hideemptylayers: 'Verberg lege lagen'
-          generatelegendurl: 'Genereer een legenda url'
-          showsourcetitle: 'Toon source titel'
-          showlayertitle: 'Toon laag titel'
-          showgroupedlayertitle: 'Toon gegroepeerde laag titel'
-      featureinfo:
-        label:
-          autoopen: 'Auto open'
-          deactivateonclose: 'De activeer bij sluiten'
-          showoriginal: 'Show original'
-          onlyvalid: 'Only valid'
-      redlining:
-        label:
-          auto_activate: Autoactivate
-          deactivate_on_close: 'Deactivate on close'
-    basesourceswitcher:
-      form:
-        mesage: 'Geen basis set is gedefinieerd.'
-      error:
-        sourcenotavailable: 'Een bron met ID %id% is niet beschikbaar'
-      class:
-        title: 'Basis bron schakelaar'
-        Description: 'Wijzig de mappen achtergrond bronnen'
-      tag:
-        base: Basis
-        source: Bron
-        switcher: Schakelaar
-    aboutdialog:
-      content:
-        versionprefix: v.
-        learnmore: 'Leer mer over Mapbender3'
-        linktitle: 'Bezoek onze officiele official Mapbender3 website'
-        website: website
-      class:
-        title: 'Over de dialoog'
-        description: 'Toon de dialoog'
-      tag:
-        help: Help
-        info: Info
-        about: Over
-    ruler:
-      popup:
-        btn:
-          ok: Sluit
-      create_error: 'Liniaal: Type moet een lijn of vlak zijn.'
-      class:
-        title: 'Lijn/Vlak lineaal'
-        description: 'Lineaal voor het tekenen van een lijn/vlak en toont de lengte/oppervlakte in een dialoogbox'
-      tag:
-        line: lijn
-        area: vlak
-        measure: opmeten
     featureinfo:
       error:
         nolayer: 'No info kenmerk laag bestaat.'
@@ -101,7 +16,101 @@ mb:
         feature: kenmerk
         info: info
         dialog: dialoog
+    aboutdialog:
+      content:
+        versionprefix: v.
+        learnmore: 'Leer mer over Mapbender3'
+        linktitle: 'Bezoek onze officiele official Mapbender3 website'
+        website: website
+      class:
+        title: 'Over de dialoog'
+        description: 'Toon de dialoog'
+      tag:
+        help: Help
+        info: Info
+        about: Over
+    simplesearch:
+      input:
+        search: Zoek
+      class:
+        title: 'Simpele zoek'
+        description: 'Enkel zoekveld voor JSON bronnen (e.g. Solr)'
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
+    searchrouter:
+      popup:
+        btn:
+          ok: Zoek
+          cancel: Sluit
+          reset: Reset
+      no_results: 'No results found.'
+      result_counter: 'Results: %count%'
+      class:
+        title: 'Zoek route'
+        description: 'Configureer  het zoek route element'
+      tag:
+        search: zoek
+        router: router
+    poi:
+      sharepoi: 'Deel POI'
+      text:
+        snippet: 'U kan het volgende knipsel gebruiken in uw mail om een POI te versturen'
+      popup:
+        btn:
+          ok: Ok
+          cancel: Cancel
+      class:
+        title: POI
+        description: 'Maak een POI aan om te delen'
+      tag:
+        poi: poi
+        point: punt
+        interest: interest      
+      label:
+        text: Tekst
+    basesourceswitcher:
+      error:
+        sourcenotavailable: 'Een bron met ID %id% is niet beschikbaar'
+      class:
+        title: 'Basis bron schakelaar'
+        Description: 'Wijzig de mappen achtergrond bronnen'
+      tag:
+        base: Basis
+        source: Bron
+        switcher: Schakelaar
+      form:
+        mesage: 'Geen basis set is gedefinieerd.'
+    legend:
+      nolegend: 'Geen legenda beschikbaar'
+      popup:
+        btn:
+          ok: Sluit
+      class:
+        title: Legenda
+        description: 'De legenda toont de legenda van de map lagen'
+      tag:
+        layer: laag
+        legend: legenda
+    ruler:
+      popup:
+        btn:
+          ok: Sluit
+      create_error: 'Liniaal: Type moet een lijn of vlak zijn.'
+      class:
+        title: 'Lijn/Vlak lineaal'
+        description: 'Lineaal voor het tekenen van een lijn/vlak en toont de lengte/oppervlakte in een dialoogbox'
+      tag:
+        line: lijn
+        area: vlak
+        measure: opmeten
     printclient:
+      label:
+        template: Sjabloon
+        quality: Kwaliteit
+        scale: Schaal
+        rotation: Roteren
+        legend: __mb.core.printclient.label.legend
       popup:
         btn:
           ok: Print
@@ -110,12 +119,6 @@ mb:
         noactivelayer: 'Geen active laag!'
       form:
         required: 'Vul dit veld in graag'
-      label:
-        template: Sjabloon
-        quality: Kwaliteit
-        scale: Schaal
-        rotation: Roteren
-        legend: __mb.core.printclient.label.legend
       class:
         title: 'Print client'
         description: 'Renders a Print dialog'
@@ -126,6 +129,88 @@ mb:
         gif: gif
         jpg: jpg
         jpeg: jpeg
+      btn:
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'
+    overview:
+      nolayer: 'Het overzichtselement heeft geen laag.'
+      class:
+        title: Overzicht
+        description: 'Renders een kleine overzichtsmap'
+      tag:
+        overview: overzicht
+        map: map
+    sketch:
+      circle:
+        radius:
+          label: Radius
+          error: 'Radius is niet valide'
+        form:
+          button:
+            'yes': Ja
+            cancel: Cancel
+      class:
+        title: Schets
+        description: 'Voegt een vector laag toe aan de map waarop geometrische objecten op getekend kunnen worden.'
+      tag:
+        sketch: schets
+        circle: cirkel
+    metadata:
+      popup:
+        title: __mb.core.metadata.popup.title
+        btn:
+          ok: __mb.core.metadata.popup.btn.ok
+    gpsposition:
+      error:
+        notsupported: 'Sorry maar de geo locatie service wordt niet ondersteund door deze browser.'
+        nosignal: Kurrentli zijn muziek posible losate de rechtspositie.
+      class:
+        title: 'GPS Positie'
+        description: 'Renders een knop om de GPS positie te tonen'
+      tag:
+        gpsposition: 'GPS Positie'
+        gps: GPS
+        position: positie
+        button: knop
+    layertree:
+      confirm:
+        allremove: 'Wilt u werkelijk alle bronnen verwijderen?'
+      popup:
+        btn:
+          ok: Sluit
+      const:
+        outofscale: 'Laag buiten de schaal'
+        outofbounds: 'Laag buiten de kaders'
+        parentinvisible: 'Onderlegende laag niet zichtbaar'
+      tooltip:
+        sublayers_openclose: 'Sub lagen open/sluiten'
+        removelayer: 'Verwijder laag'
+        menu:
+          close: __mb.core.layertree.tooltip.menu.close
+      label:
+        visibility_onoff: 'Zichtbaarheid aan/uit'
+        featureinfo_onoff: 'Kenmerk informatie aan/uit'
+        opacity: Doorzichtbaarheid
+        zoomtolayer: 'Zoom naar laag'
+        metadata: Metadata
+        sources: Sources
+        deleteallsources: 'Remove all sources'
+        legend: Legenda
+        kmlexport: 'Kml export'
+        dimension_onoff: 'On/Off Dimension'
+        dimension: Dimension
+        sourcevisibility_onoff: 'Show sources'
+        allvisibility_on: 'Show all layers'
+        opacity: __mb.core.layertree.label.opacity
+      class:
+        title: 'Laag boom'
+        description: 'Boom van maplagen'
+      tag:
+        layertree: Lagenboom
+        layer: laag
+        tree: boom
+      contextmenu:
+        nooption: 'Layer has no context menu option'
     zoombar:
       panup: 'shuif omhoog'
       panright: 'shuif rechts'
@@ -146,131 +231,6 @@ mb:
         control: control
         navigation: navigatie
         panel: paneel
-    legend:
-      nolegend: 'Geen legenda beschikbaar'
-      popup:
-        btn:
-          ok: Sluit
-      class:
-        title: Legenda
-        description: 'De legenda toont de legenda van de map lagen'
-      tag:
-        layer: laag
-        legend: legenda
-    poi:
-      popup:
-        btn:
-          ok: Ok
-          cancel: Cancel
-      sharepoi: 'Deel POI'
-      label:
-        text: Tekst
-      text:
-        snippet: 'U kan het volgende knipsel gebruiken in uw mail om een POI te versturen'
-      class:
-        title: POI
-        description: 'Maak een POI aan om te delen'
-      tag:
-        poi: poi
-        point: punt
-        interest: interest
-    layertree:
-      tooltip:
-        sublayers_openclose: 'Sub lagen open/sluiten'
-        removelayer: 'Verwijder laag'
-        menu:
-          close: __mb.core.layertree.tooltip.menu.close
-      label:
-        visibility_onoff: 'Zichtbaarheid aan/uit'
-        featureinfo_onoff: 'Kenmerk informatie aan/uit'
-        transparency: Doorzichtbaarheid
-        zoomtolayer: 'Zoom naar laag'
-        sources: Sources
-        deleteallsources: 'Remove all sources'
-        metadata: Metadata
-        legend: Legenda
-        kmlexport: 'Kml export'
-        dimension_onoff: 'On/Off Dimension'
-        dimension: Dimension
-        sourcevisibility_onoff: 'Show sources'
-        allvisibility_on: 'Show all layers'
-        opacity: __mb.core.layertree.label.opacity
-      confirm:
-        allremove: 'Wilt u werkelijk alle bronnen verwijderen?'
-      popup:
-        btn:
-          ok: Sluit
-      const:
-        outofscale: 'Laag buiten de schaal'
-        outofbounds: 'Laag buiten de kaders'
-        parentinvisible: 'Onderlegende laag niet zichtbaar'
-      class:
-        title: 'Laag boom'
-        description: 'Boom van maplagen'
-      tag:
-        layertree: Lagenboom
-        layer: laag
-        tree: boom
-      contextmenu:
-        nooption: 'Layer has no context menu option'
-    searchrouter:
-      popup:
-        btn:
-          ok: Zoek
-          cancel: Sluit
-          reset: Reset
-      class:
-        title: 'Zoek route'
-        description: 'Configureer  het zoek route element'
-      tag:
-        search: zoek
-        router: route
-      no_results: __mb.core.searchrouter.no_results
-      result_counter: __mb.core.searchrouter.result_counter
-    simplesearch:
-      input:
-        search: Zoek
-      class:
-        title: 'Simpele zoek'
-        description: 'Enkel zoekveld voor JSON bronnen (e.g. Solr)'
-      error:
-        geometry:
-          missing: The selected entry does not contain a geometry.
-    overview:
-      nolayer: 'Het overzichtselement heeft geen laag.'
-      class:
-        title: Overzicht
-        description: 'Renders een kleine overzichtsmap'
-      tag:
-        overview: overzicht
-        map: map
-    gpsposition:
-      error:
-        notsupported: 'Sorry maar de geo locatie service wordt niet ondersteund door deze browser.'
-        nosignal: Kurrentli zijn muziek posible losate de rechtspositie.
-      class:
-        title: 'GPS Positie'
-        description: 'Renders een knop om de GPS positie te tonen'
-      tag:
-        gpsposition: 'GPS Positie'
-        gps: GPS
-        position: positie
-        button: knop
-    sketch:
-      circle:
-        radius:
-          label: Radius
-          error: 'Radius is niet valide'
-        form:
-          button:
-            'yes': Ja
-            cancel: Cancel
-      class:
-        title: Schets
-        description: 'Voegt een vector laag toe aan de map waarop geometrische objecten op getekend kunnen worden.'
-      tag:
-        sketch: schets
-        circle: cirkel
     activityindicator:
       class:
         title: 'Activiteiten indicator'
@@ -339,21 +299,65 @@ mb:
       tag:
         srs: SRS
         selector: selector
-    metadata:
-      popup:
-        title: __mb.core.metadata.popup.title
-        btn:
-          ok: __mb.core.metadata.popup.btn.ok
-    entity:
-      app:
-        screenshotfile:
-          error: __mb.core.entity.app.screenshotfile.error
+    admin:
+      poi:
+        label:
+          usemailto: 'Gebruik mail naar'
+      legend:
+        label:
+          autoopen: 'Auto open'
+          hideemptylayers: 'Verberg lege lagen'
+          generatelegendurl: 'Genereer een legenda url'
+          showsourcetitle: 'Toon source titel'
+          showlayertitle: 'Toon laag titel'
+          showgroupedlayertitle: 'Toon gegroepeerde laag titel'
+      featureinfo:
+        label:
+          autoopen: 'Auto open'
+          deactivateonclose: 'De activeer bij sluiten'
+          showoriginal: 'Show original'
+          onlyvalid: 'Only valid'
+      printclient:
+        label:
+          autoopen: 'Auto open'
+          rotatable: Draaibaar
+          legend: __mb.core.admin.printclient.label.legend
+          legend_default_behaviour: 'Legend checkbox active'
+      copyright:
+        label:
+          autoopen: 'Auto open'
+      layertree:
+        label:
+          showbasesources: 'Toon basis capaciteit'
+          autoopen: 'Auto open'
+          showheader: 'Toon header'
+          showlayerremove: 'Toon laag verwijder'
+          usetheme: 'Thematic layer'
+          themes: Themes
+          theme:
+            opened: opened
+            activate: 'Add activate'
+            useTheme: 'Theme show'
+            sourceVisibility: 'Theme: source visibility'
+            allSelected: 'Theme: layer visibility'
+            label: 'theme name'
+          hidenottoggleable: 'Hide not toggleable'
+          hideselect: 'Hide visibility by folders'
+          hideinfo: 'Hide info'
+      redlining:
+        label:
+          auto_activate: Autoactivate
+          deactivate_on_close: 'Deactivate on close'
     htmlelement:
       class:
         title: __mb.core.htmlelement.class.title
         description: __mb.core.htmlelement.class.description
       tag:
-        html: __mb.core.htmlelement.tag.html
+        html: HTML
+    entity:
+      app:
+        screenshotfile:
+          error: Error
     redlining:
       geometrytype:
         point: Point
@@ -377,8 +381,39 @@ mb:
       tag:
         redlining: redlining
         geometry: geometry
+    entity:
+      app:
+        screenshotfile:
+          error: __mb.core.entity.app.screenshotfile.error
+    printclient:
+      popup:
+        btn:
+          ok: Print
+          cancel: Cancel
+      info:
+        noactivelayer: 'Geen active laag!'
+      form:
+        required: 'Vul dit veld in graag'
+      label:
+        template: Sjabloon
+        quality: Kwaliteit
+        scale: Schaal
+        rotation: Roteren
+        legend: __mb.core.printclient.label.legend
+      class:
+        title: 'Print client'
+        description: 'Renders a Print dialog'
+      tag:
+        print: print
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg
+
   geosource:
     image_error:
       datails: 'The map cannot be displayed.'
       exception: 'Exception: %exception%'
       statuscode: 'HTTP status code'
+    

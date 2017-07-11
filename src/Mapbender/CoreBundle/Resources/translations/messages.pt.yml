@@ -16,74 +16,12 @@ mb:
         feature: Objeto
         info: Info
         dialog: Diálogo
-    metadata:
-      popup:
-        title: Metadados
-        btn:
-          ok: Fechar
-    entity:
-      app:
-        screenshotfile:
-          error: 'Ficheiro demasiado grande. O tamanho maximo é %limit% bytes.'
-    admin:
-      featureinfo:
-        label:
-          autoopen: 'Abrir automaticamente'
-          deactivateonclose: 'Desativar ao fechar'
-          showoriginal: 'Mostrar original'
-          onlyvalid: 'Mostrar válido somente'
-      printclient:
-        label:
-          autoopen: 'Abrir automaticamente'
-          rotatable: 'Pode girar'
-          legend: 'Imprimir legenda'
-      copyright:
-        label:
-          autoopen: 'Abrir automaticamente'
-      layertree:
-        label:
-          showbasesources: 'Mostrar BaseSources'
-          showheader: 'Mostrar header'
-          autoopen: 'Abrir automaticamente'
-          hidenottoggleable: 'Ocultar arquivos que não pode-se abrir'
-          hideselect: 'Ocultar visibilidade de arquivos'
-          hideinfo: 'Ocultar info'
-          usetheme: 'Mostrar o tema'
-          themes: Temas
-          theme:
-            label: 'Nome do tema'
-            useTheme: 'Camada temática'
-            opened: 'Tema aberto/fechado'
-            sourceVisibility: 'Tema: Visibilidade de serviços'
-            allSelected: 'Tema: Visibilidade de camadas'
-      poi:
-        label:
-          usemailto: 'Use mailto'
-      legend:
-        label:
-          autoopen: 'Abrir automaticamente'
-          hideemptylayers: 'Oculta camadas sem objetos'
-          generatelegendurl: 'Gerar URL de legenda'
-          showsourcetitle: 'Mostrar o título de origem de dados'
-          showlayertitle: 'Mostrar o título da camada'
-          showgroupedlayertitle: 'Mostrar o título da camada agrupada'
-      redlining:
-        label:
-          auto_activate: Autoactivate
-          deactivate_on_close: 'Deactivate on close'
-    basesourceswitcher:
-      form:
-        mesage: 'Segundo plano não existe.'
-      class:
-        title: 'Mudar o segundo plano'
-        Description: 'Pode-se definier o segundo plano. Na aplicação pode-se mudar o plano.'
-      tag:
-        base: base
-        source: source
-        switcher: switcher
-      error:
-        sourcenotavailable: 'O serviço com ID %id% não está disponível.'
     aboutdialog:
+      content:
+        versionprefix: Versão
+        learnmore: 'Aprenda mais sobre o Mapbender3.'
+        linktitle: 'Visita o site oficial do Mapbender3.'
+        website: 'Ao Site'
       class:
         title: 'Diálogo sobre Mapbender'
         description: 'O diálogo sobre Mapbender indica informações sobre Mapbender.'
@@ -91,11 +29,207 @@ mb:
         help: Ajuda
         info: Info
         about: 'Info diálogo'
-      content:
-        versionprefix: Versão
-        learnmore: 'Aprenda mais sobre o Mapbender3.'
-        linktitle: 'Visita o site oficial do Mapbender3.'
-        website: 'Ao Site'
+    simplesearch:
+      input:
+        search: Procurar
+      class:
+        title: 'Pesquisa simples'
+        description: 'Pesquisa simples sobre dados de JSON (p. ex. Solr)'
+      error:
+        geometry:
+          missing: The selected entry does not contain a geometry.
+    searchrouter:
+      popup:
+        btn:
+          ok: Procurar
+          cancel: Fechar
+          reset: Postergar
+      no_results: 'Sua pesquisa não encontrou resultados'
+      result_counter: 'Resultados: %count%'
+      class:
+        title: Procurar
+        description: 'Possibilita a configuração de pesquisas individuais'
+      tag:
+        search: Procurar
+        router: Router
+    poi:
+      sharepoi: 'Combinar ponto de encontro'
+      text:
+        snippet: 'Você pode mandar o link seguinte num e-mail. O link abre a aplicação e mostra o ponto de encontro. '
+      popup:
+        btn:
+          ok: Fechar
+          cancel: Cancelar
+      class:
+        title: 'Ponto de encontro (POI)'
+        description: 'Elemento sobre o que pode-se gerar e mandar um ponto de encontro.'
+      tag:
+        poi: 'Ponto de encontro (POI)'
+        point: Ponto
+        interest: Interesse
+      label:
+        text: Text
+    basesourceswitcher:
+      error:
+        sourcenotavailable: 'O serviço com ID %id% não está disponível.'
+      class:
+        title: 'Mudar o segundo plano'
+        Description: 'Pode-se definier o segundo plano. Na aplicação pode-se mudar o plano.'
+      tag:
+        base: base
+        source: source
+        switcher: switcher
+      form:
+        mesage: 'Segundo plano não existe.'
+    legend:
+      nolegend: 'Legenda não disponível.'
+      popup:
+        btn:
+          ok: Fechar
+      class:
+        title: Legenda
+        description: 'Mostra a leganda sobre os temas ativos. '
+      tag:
+        layer: Temas
+        legend: Legenda
+    ruler:
+      popup:
+        btn:
+          ok: Fechar
+      create_error: 'Medição: O tipo de geometria tem que ser linha ou área.'
+      class:
+        title: 'Medição de linha/área'
+        description: 'Medição: Uma linha/área é desenhado para indicar o seu tamanho num diálogo.'
+      tag:
+        line: Linha
+        area: Área
+        measure: Medição
+    printclient:
+      label:
+        template: Padrão
+        quality: Qualidade
+        scale: Escala
+        rotation: Rotação
+        legend: 'Imprimir legenda'
+      popup:
+        btn:
+          ok: Imprimir
+          cancel: Cancelar
+      info:
+        noactivelayer: 'Nenhuma camada ativa'
+      form:
+        required: 'Por favor, preencha este campo.'
+      class:
+        title: Impressão
+        description: 'Diálogo de Impressão'
+      tag:
+        print: Impressão
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg
+      btn:
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'
+    overview:
+      nolayer: 'Camada não disponível'
+      class:
+        title: 'Visão geral (overview)'
+        description: 'Mostra uma visão geral (overview).'
+      tag:
+        overview: 'Visão geral'
+        map: 'Mapa (visão geral)'
+    sketch:
+      circle:
+        radius:
+          label: Raio
+          error: 'Raio inválido'
+        form:
+          button:
+            'yes': Assumir
+            cancel: Cancelar
+      class:
+        title: Esboços
+        description: 'Adiciona uma camada de vetor ao mapa, sobre o que pode-se desenhar um objeto geométrico. '
+      tag:
+        sketch: Esboços
+        circle: Círculo
+    metadata:
+      popup:
+        title: Metadados
+        btn:
+          ok: Fechar
+    gpsposition:
+      error:
+        notsupported: 'O serviço Geolocation não é suportado por pelo seu browser.'
+        nosignal: Kurrentli seu posible música losate a posição legal.
+      class:
+        title: 'Posição GPS'
+        description: 'Entrega um botão para indica a posição GPS'
+      tag:
+        gpsposition: 'Posição GPS'
+        gps: GPS
+        position: Posição
+        button: Button
+    layertree:
+      confirm:
+        allremove: 'Limpar todos os serviços?'
+      popup:
+        btn:
+          ok: Fechar
+      const:
+        outofscale: 'Camada fora de escala'
+        outofbounds: 'Camada fora de BoundingBox'
+        parentinvisible: 'Camada superior invisível'
+      tooltip:
+        sublayers_openclose: Abrir/Fechar
+        removelayer: 'Tirar camada'
+        menu:
+          close: Fechar
+      label:
+        visibility_onoff: 'Visibilidade ligada/desligada'
+        featureinfo_onoff: 'informação ligada/desligada'
+        opacity: Dimensão
+        zoomtolayer: 'Ampliar em cima de camada'
+        metadata: Metadados
+        sources: Origem
+        deleteallsources: 'Tirar todos os serviços'
+        legend: Legend
+        kmlexport: 'KML export'
+        dimension_onoff: 'Dimensão ligada/desligada'
+        dimension: Dimensão
+        sourcevisibility_onoff: 'Visibilidade ligada/desligada'
+        allvisibility_on: 'Mostrar todas as camadas'
+      class:
+        title: 'Árvore de camadas'
+        description: 'Árvore de camadas de mapa'
+      tag:
+        layertree: 'Árvore de camadas'
+        layer: Camada
+        tree: Árvore
+      contextmenu:
+        nooption: 'Layer has no context menu option'
+    zoombar:
+      panup: 'Mover para cima'
+      panright: 'Mover à direita'
+      pandown: 'Mover para baixo'
+      panleft: 'Mover à esquerda'
+      goback: Voltar
+      goforward: Adiante
+      zoombybox: 'Caixa de ampliar'
+      zoombyworld: 'Mostrar toda extensão'
+      zoomin: Ampliar
+      zoomout: Reduzir
+      class:
+        title: 'Ferramenta de navegação'
+        description: 'A ferramenta de navegação oferece zoom e mover, parecido com OpenLayers'
+      tag:
+        zoom: Zoom
+        pan: Mover
+        control: Controlo
+        navigation: Navegação
+        panel: Panel
     activityindicator:
       class:
         title: 'Indicação de atividade'
@@ -125,66 +259,6 @@ mb:
       tag:
         copyright: Copyright
         dialog: Diálogo
-    gpsposition:
-      class:
-        title: 'Posição GPS'
-        description: 'Entrega um botão para indica a posição GPS'
-      tag:
-        gpsposition: 'Posição GPS'
-        gps: GPS
-        position: Posição
-        button: Button
-      error:
-        notsupported: 'O serviço Geolocation não é suportado por pelo seu browser.'
-        nosignal: Kurrentli seu posible música losate a posição legal.
-
-    layertree:
-      class:
-        title: 'Árvore de camadas'
-        description: 'Árvore de camadas de mapa'
-      tag:
-        layertree: 'Árvore de camadas'
-        layer: Camada
-        tree: Árvore
-      confirm:
-        allremove: 'Limpar todos os serviços?'
-      popup:
-        btn:
-          ok: Fechar
-      const:
-        outofscale: 'Camada fora de escala'
-        outofbounds: 'Camada fora de BoundingBox'
-        parentinvisible: 'Camada superior invisível'
-      tooltip:
-        sublayers_openclose: Abrir/Fechar
-        menu:
-          close: Fechar
-        removelayer: 'Tirar camada'
-      label:
-        sourcevisibility_onoff: 'Visibilidade ligada/desligada'
-        allvisibility_on: 'Mostrar todas as camadas'
-        visibility_onoff: 'Visibilidade ligada/desligada'
-        featureinfo_onoff: 'informação ligada/desligada'
-        opacity: Dimensão
-        dimension_onoff: 'Dimensão ligada/desligada'
-        dimension: Dimensão
-        zoomtolayer: 'Ampliar em cima de camada'
-        metadata: Metadados
-        sources: Origem
-        deleteallsources: 'Tirar todos os serviços'
-      contextmenu:
-        nooption: 'Layer has no context menu option'
-    legend:
-      class:
-        title: Legenda
-        description: 'Mostra a leganda sobre os temas ativos. '
-      tag:
-        layer: Temas
-        legend: Legenda
-      nolegend: 'Legenda não disponível.'
-      popup:
-        btn:
-          ok: Fechar
     map:
       class:
         title: Mapa
@@ -196,66 +270,6 @@ mb:
     mapabs:
       class:
         description: 'O mapa baseia em MapQuery/OpenLayers'
-    overview:
-      class:
-        title: 'Visão geral (overview)'
-        description: 'Mostra uma visão geral (overview).'
-      tag:
-        overview: 'Visão geral'
-        map: 'Mapa (visão geral)'
-      nolayer: 'Camada não disponível'
-    poi:
-      class:
-        title: 'Ponto de encontro (POI)'
-        description: 'Elemento sobre o que pode-se gerar e mandar um ponto de encontro.'
-      tag:
-        poi: 'Ponto de encontro (POI)'
-        point: Ponto
-        interest: Interesse
-      sharepoi: 'Combinar ponto de encontro'
-      text:
-        snippet: 'Você pode mandar o link seguinte num e-mail. O link abre a aplicação e mostra o ponto de encontro. '
-      popup:
-        btn:
-          ok: Fechar
-          cancel: Cancelar
-    printclient:
-      class:
-        title: Impressão
-        description: 'Diálogo de Impressão'
-      tag:
-        print: Impressão
-        pdf: pdf
-        png: png
-        gif: gif
-        jpg: jpg
-        jpeg: jpeg
-      popup:
-        btn:
-          ok: Imprimir
-          cancel: Cancelar
-      info:
-        noactivelayer: 'Nenhuma camada ativa'
-      form:
-        required: 'Por favor, preencha este campo.'
-      label:
-        template: Padrão
-        quality: Qualidade
-        scale: Escala
-        rotation: Rotação
-        legend: 'Imprimir legenda'
-    ruler:
-      class:
-        title: 'Medição de linha/área'
-        description: 'Medição: Uma linha/área é desenhado para indicar o seu tamanho num diálogo.'
-      tag:
-        line: Linha
-        area: Área
-        measure: Medição
-      popup:
-        btn:
-          ok: Fechar
-      create_error: 'Medição: O tipo de geometria tem que ser linha ou área.'
     scalebar:
       class:
         title: 'Barra de escala'
@@ -277,35 +291,6 @@ mb:
       tag:
         scale: Escala
         selector: Seleção
-    searchrouter:
-      class:
-        title: Procurar
-        description: 'Possibilita a configuração de pesquisas individuais'
-      tag:
-        search: Procurar
-        router: Router
-      popup:
-        btn:
-          ok: Procurar
-          cancel: Fechar
-          reset: Postergar
-      no_results: 'Sua pesquisa não encontrou resultados'
-      result_counter: 'Resultados: %count%'
-    sketch:
-      class:
-        title: Esboços
-        description: 'Adiciona uma camada de vetor ao mapa, sobre o que pode-se desenhar um objeto geométrico. '
-      tag:
-        sketch: Esboços
-        circle: Círculo
-      circle:
-        radius:
-          label: Raio
-          error: 'Raio inválido'
-        form:
-          button:
-            'yes': Assumir
-            cancel: Cancelar
     srsselector:
       class:
         title: 'Seleção de SRS'
@@ -313,51 +298,66 @@ mb:
       tag:
         srs: SRS
         selector: Seleção
-    zoombar:
-      class:
-        title: 'Ferramenta de navegação'
-        description: 'A ferramenta de navegação oferece zoom e mover, parecido com OpenLayers'
-      tag:
-        zoom: Zoom
-        pan: Mover
-        control: Controlo
-        navigation: Navegação
-        panel: Panel
-      panup: 'Mover para cima'
-      panright: 'Mover à direita'
-      pandown: 'Mover para baixo'
-      panleft: 'Mover à esquerda'
-      goback: Voltar
-      goforward: Adiante
-      zoombybox: 'Caixa de ampliar'
-      zoombyworld: 'Mostrar toda extensão'
-      zoomin: Ampliar
-      zoomout: Reduzir
-    simplesearch:
-      class:
-        title: 'Pesquisa simples'
-        description: 'Pesquisa simples sobre dados de JSON (p. ex. Solr)'
-      input:
-        search: Procurar
-      error:
-        geometry:
-          missing: The selected entry does not contain a geometry.
+    admin:
+      poi:
+        label:
+          usemailto: 'Use mailto'
+      legend:
+        label:
+          autoopen: 'Abrir automaticamente'
+          hideemptylayers: 'Oculta camadas sem objetos'
+          generatelegendurl: 'Gerar URL de legenda'
+          showsourcetitle: 'Mostrar o título de origem de dados'
+          showlayertitle: 'Mostrar o título da camada'
+          showgroupedlayertitle: 'Mostrar o título da camada agrupada'
+      featureinfo:
+        label:
+          autoopen: 'Abrir automaticamente'
+          deactivateonclose: 'Desativar ao fechar'
+          showoriginal: 'Mostrar original'
+          onlyvalid: 'Mostrar válido somente'
+      printclient:
+        label:
+          autoopen: 'Abrir automaticamente'
+          rotatable: 'Pode girar'
+          legend: 'Imprimir legenda'
+          legend_default_behaviour: 'Legend checkbox active'
+      copyright:
+        label:
+          autoopen: 'Abrir automaticamente'
+      layertree:
+        label:
+          showbasesources: 'Mostrar BaseSources'
+          autoopen: 'Abrir automaticamente'
+          showheader: 'Mostrar header'
+          showlayerremove: 'Show layer remove'
+          usetheme: 'Mostrar o tema'
+          themes: Temas
+          theme:
+            opened: 'Tema aberto/fechado'
+            activate: 'Enabling Layer Add / Remove'
+            useTheme: 'Camada temática'
+            sourceVisibility: 'Tema: Visibilidade de serviços'
+            allSelected: 'Tema: Visibilidade de camadas'
+            label: 'Nome do tema'
+          hidenottoggleable: 'Ocultar arquivos que não pode-se abrir'
+          hideselect: 'Ocultar visibilidade de arquivos'
+          hideinfo: 'Ocultar info'
+      redlining:
+        label:
+          auto_activate: Autoactivate
+          deactivate_on_close: 'Deactivate on close'
     htmlelement:
       class:
         title: HTML
         description: 'Adicionar HTML'
       tag:
         html: HTML
+    entity:
+      app:
+        screenshotfile:
+          error: 'Ficheiro demasiado grande. O tamanho maximo é %limit% bytes.'
     redlining:
-      class:
-        title: Redlining
-        description: 'Ferramenta: Redlining'
-      tag:
-        redlining: redlining
-        geometry: geometria
-      dialog:
-        btn:
-          cancel: Fechar
       geometrytype:
         point: Punto
         line: Linha
@@ -371,6 +371,15 @@ mb:
           remove: 'Tirar geometria'
           edit: 'Editar geometria'
           zoom: 'Ampliar em cima de geometria'
+      dialog:
+        btn:
+          cancel: Fechar
+      class:
+        title: Redlining
+        description: 'Ferramenta: Redlining'
+      tag:
+        redlining: redlining
+        geometry: geometria
   geosource:
     image_error:
       datails: 'Não pode mostra o mapa.'

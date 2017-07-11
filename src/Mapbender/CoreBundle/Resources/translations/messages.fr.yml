@@ -129,6 +129,9 @@ mb:
         gif: __mb.core.printclient.tag.gif
         jpg: __mb.core.printclient.tag.jpg
         jpeg: __mb.core.printclient.tag.jpeg
+      btn:
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'
     overview:
       nolayer: __mb.core.overview.nolayer
       class:
@@ -318,6 +321,7 @@ mb:
           autoopen: __mb.core.admin.printclient.label.autoopen
           rotatable: __mb.core.admin.printclient.label.rotatable
           legend: __mb.core.admin.printclient.label.legend
+          legend_default_behaviour: 'Legend checkbox active'
       copyright:
         label:
           autoopen: __mb.core.admin.copyright.label.autoopen
@@ -343,16 +347,16 @@ mb:
         label:
           auto_activate: Autoactivate
           deactivate_on_close: 'Deactivate on close'
+    htmlelement:
+      class:
+        title: HTML
+        description: 'Add some HTML'
+      tag:
+        html: HTML
     entity:
       app:
         screenshotfile:
-          error: __mb.core.entity.app.screenshotfile.error
-    htmlelement:
-      class:
-        title: __mb.core.htmlelement.class.title
-        description: __mb.core.htmlelement.class.description
-      tag:
-        html: __mb.core.htmlelement.tag.html
+          error: Error
     redlining:
       geometrytype:
         point: Point

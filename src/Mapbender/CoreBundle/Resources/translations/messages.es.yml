@@ -129,6 +129,9 @@ mb:
         gif: gif
         jpg: jpg
         jpeg: jpeg
+      btn:
+        deactivate: 'Deactivate Print Frame[Placeholder]'
+        activate: 'Activate Print Frame[Placeholder]'
     overview:
       nolayer: 'El elemento overview no tiene capa.'
       class:
@@ -316,8 +319,9 @@ mb:
       printclient:
         label:
           autoopen: Autoabrir
-          rotatable: Rotable
-          legend: __mb.core.admin.printclient.label.legend
+          rotatable: Rotatable
+          legend: 'Print legend'
+          legend_default_behaviour: 'Legend checkbox active'
       copyright:
         label:
           autoopen: Autoabrir
@@ -343,16 +347,16 @@ mb:
         label:
           auto_activate: Autoactivate
           deactivate_on_close: 'Deactivate on close'
-    entity:
-      app:
-        screenshotfile:
-          error: 'Screenshotfile error'
-    htmlelement:
+htmlelement:
       class:
         title: Title
         description: Description
       tag:
         html: html
+    entity:
+      app:
+        screenshotfile:
+          error: 'Screenshotfile error'
     redlining:
       geometrytype:
         point: Point
