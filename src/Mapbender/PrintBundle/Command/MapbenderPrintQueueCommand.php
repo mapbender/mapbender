@@ -102,28 +102,28 @@ class MapbenderPrintQueueCommand extends ContainerAwareCommand
             }
         }
 
-        switch ($result) {
-            case PrintQueueManager::STATUS_RENDERING_SAVE_ERROR:
-                $this->error("Print queue id #{$queue->getId()} could not be saved");
-                break;
-            case PrintQueueManager::STATUS_WRONG_QUEUED:
-                $this->warn("Print queue id #{$queue->getId()} is already rendered.");
-                break;
-            case PrintQueueManager::STATUS_IN_PROCESS:
-                $this->warn("Print queue id #{$queue->getId()} already in process.");
-                break;
-            case PrintQueueManager::STATUS_QUEUE_EMPTY:
-                if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-                    $this->pass('The print queue is empty.');
-                }
-                break;
-            default:
-                if ($result instanceof PrintQueue) {
-                    $this->pass("PDF for print queue id #{$queue->getId()} rendered successfully to: "
-                                . realpath($manager->getPdfPath($queue)));
-                } elseif ($result !== null) {
+        if ($result instanceof PrintQueue) {
+            $this->pass("PDF for print queue id #{$queue->getId()} rendered successfully to: "
+                . realpath($manager->getPdfPath($queue)));
+        } else {
+            switch ($result) {
+                case PrintQueueManager::STATUS_RENDERING_SAVE_ERROR:
+                    $this->error("Print queue id #{$queue->getId()} could not be saved");
+                    break;
+                case PrintQueueManager::STATUS_WRONG_QUEUED:
+                    $this->warn("Print queue id #{$queue->getId()} is already rendered.");
+                    break;
+                case PrintQueueManager::STATUS_IN_PROCESS:
+                    $this->warn("Print queue id #{$queue->getId()} already in process.");
+                    break;
+                case PrintQueueManager::STATUS_QUEUE_EMPTY:
+                    if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+                        $this->pass('The print queue is empty.');
+                    }
+                    break;
+                default:
                     $this->warn("Unhandled PrintQueueManager result $result");
-                }
+            }
 
         }
         if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
