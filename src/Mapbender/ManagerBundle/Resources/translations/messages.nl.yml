@@ -29,35 +29,26 @@ mb:
     instance:
       create:
         success: A new instance has been created. Please edit it.
-  core:
-    admin:
-      button:
-        show_label: 'Toon label'
-      scaleselector:
-        show_label: 'Toon label'
-      srsselector:
-        show_label: 'Toon label'
-      gpsposition:
-        show_label: 'Toon label'
-      element:
-        autostart: Autostart
-      corrdsdisplay:
-        label: 'Toon titel label'
-      about_dialog:
-        show_label: 'Toon knop label'
-    element:
-      be:
-        button:
-          show_label: 'Toon label'
-    entity:
-      app:
-        screenshotfile:
-          error: __mb.core.entity.app.screenshotfile.error
-          format_error: __mb.core.entity.app.screenshotfile.format_error
-          resolution:
-            error: __mb.core.entity.app.screenshotfile.resolution.error
   manager:
     admin:
+      sources: Bronnen
+      source:
+        add: 'Voeg bron toe'
+        show_metadata: 'Toon metadata'
+        delete: 'verwijder bron'
+        new:
+          add: 'Voeg bron toe'
+        valid: __mb.manager.admin.source.valid
+        notvalid: __mb.manager.admin.source.notvalid
+        no_source: 'Geen bron beschikbaar'
+        update: __mb.manager.admin.source.update
+        status:
+          ok: 'Source OK'
+          toupdate: 'Source not current anymore'
+          unreachable: 'Source unreachable'
+      map:
+        max_extent: 'Max. extent'
+        start_extent: 'Start extent'
       element:
         delete:
           title: 'Verwijder element'
@@ -75,47 +66,57 @@ mb:
         edit: 'Wijzig element'
         no_element_added:
           '': 'Geen element toegevoegd'
+      messagebox:
+        only_region_elements: __mb.manager.admin.messagebox.only_region_elements
+      zoombar:
+        draggable: Versleepbaar
+      filter:
+        source: 'Filter bron'
+        layerset: 'Filter lagenset'
+        application: 'Filter applicatie'
       overview:
         maximize: Maximaliseer
         fix: Fix
-      map:
-        max_extent: 'Max. extent'
-        start_extent: 'Start extent'
-      zoombar:
-        draggable: Versleepbaar
-      sources: Bronnen
-      source:
-        add: 'Voeg bron toe'
-        show_metadata: 'Toon metadata'
-        delete: 'verwijder bron'
-        no_source: 'Geen bron beschikbaar'
-        new:
-          add: 'Voeg bron toe'
-        valid: __mb.manager.admin.source.valid
-        notvalid: __mb.manager.admin.source.notvalid
-        update: __mb.manager.admin.source.update
-        status:
-          ok: 'Source OK'
-          toupdate: 'Source not current anymore'
-          unreachable: 'Source unreachable'
-      filter:
-        source: 'Filter bron'
-        application: 'Filter applicatie'
-        layerset: 'Filter lagenset'
+      layerset:
+        add: 'Voeg een lagenset toe'
+        title: Titel
+        type: Type
+        edit: 'Wijzig lagenset'
+        delete:
+          title: 'Verwijder lagenset'
+          confirm: 'Do you really want to remove the layerset with the title <span class="italic">%layerset_title%</span>?'
+        id_description: __mb.manager.admin.layerset.id_description
+        id: Id
+      instance:
+        add: 'Voeg instance toe'
+        show_hide: 'Wissel toon/verberg instance'
+        edit: 'Wijzig instance'
+        delete:
+          title: 'verwijder instance'
+          confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Geen instance toegevoegd'
+        no_layer_added: 'Geen laag toegevoegd'
       template: Sjabloon
-      applications: Applicatioes
       application:
-        view_this: 'Toon deze applicatie'
         view: Toon
-        duplicate: 'Dupliceer applicatie'
         edit:
           title: 'Wijzig applicatie'
           base_data: 'Basis data'
+        layouts: Layouts
+        layersets: Lagensets
+        custom_css: CSS
+        security:
+          title:  Beveiliging
+          add_users_groups: 'Add users and groups'
+          public: activated
+        save: Bewaar
+        cancel: Cancel
+        view_this: 'Toon deze applicatie'
+        duplicate: 'Dupliceer applicatie'
         public:
           on_off: 'Wissel publish/unpublish applicatie'
         delete: 'Verwijder applicatie'
         no_application: 'Geen applicatie beschikbaar'
-        security: Beveiliging
         new:
           title: 'Nieuwe Applicatie'
           base_data: 'Base data'
@@ -123,10 +124,16 @@ mb:
         btn:
           create: 'Maak aan'
           cancel: Cancel
-        layouts: Layouts
-        layersets: Lagensets
-        save: Bewaar
-        cancel: Cancel
+        upload:
+          button: __mb.manager.admin.application.upload.button
+          label: __mb.manager.admin.application.upload.label
+          tooltip: __mb.manager.admin.application.upload.tooltip
+        export:
+          addAcl: __mb.manager.admin.application.export.addAcl
+          addSources: __mb.manager.admin.application.export.addSources
+          btn:
+            export: __mb.manager.admin.application.export.btn.export
+            cancel: __mb.manager.admin.application.export.btn.cancel
         import:
           addApplications: __mb.manager.admin.application.import.addApplications
           addAcl: __mb.manager.admin.application.import.addAcl
@@ -134,37 +141,30 @@ mb:
           btn:
             import: __mb.manager.admin.application.import.btn.import
             cancel: __mb.manager.admin.application.import.btn.cancel
-        export:
-          addAcl: __mb.manager.admin.application.export.addAcl
-          addSources: __mb.manager.admin.application.export.addSources
-          btn:
-            export: __mb.manager.admin.application.export.btn.export
-            cancel: __mb.manager.admin.application.export.btn.cancel
-        custom_css: __mb.manager.admin.application.custom_css
-        upload:
-          tooltip: __mb.manager.admin.application.upload.tooltip
-          button: __mb.manager.admin.application.upload.button
-          label: __mb.manager.admin.application.upload.label
-      layerset:
-        delete: 'Verwijder lagenset'
-        add: 'Voeg een lagenset toe'
-        id: Id
-        title: Titel
-        type: Type
-        edit: 'Wijzig lagenset'
-        id_description: __mb.manager.admin.layerset.id_description
-      instance:
-        delete: 'verwijder instance'
-        add: 'Voeg instance toe'
-        show_hide: 'Wissel toon/verberg instance'
-        edit: 'Wijzig instance'
-        no_instance_added: 'Geen instance toegevoegd'
-        no_layer_added: 'Geen laag toegevoegd'
-      messagebox:
-        only_region_elements: __mb.manager.admin.messagebox.only_region_elements
+        title: Title
+        url:
+          title: 'URL Title'
+        description: Description
+        template: Template
+        edit:
+          title: 'Common'
+          base_data: 'Base data'
+      applications: Applicatioes
+    managerbundle:
+      applications: Applicaties
+      new_application: 'Nieuwe applicatie'
+      sources: Bronnen
+      add_source: 'Voeg bron toe'
+      add_user_group: __mb.manager.managerbundle.add_user_group
+      acl_element: __mb.manager.managerbundle.acl_element
+      import_application: __mb.manager.managerbundle.import_application
+      export_application: __mb.manager.managerbundle.export_application
     element:
       yaml:
         message: 'Gebruik de <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formaat voor het omschrijven van de element configuratie.'
+    be:
+      element:
+        delete: 'Verwijder element ''%element_title%'''
     components:
       popup:
         add_element:
@@ -211,26 +211,14 @@ mb:
             add: __mb.manager.components.popup.element_acl.btn.add
             back: __mb.manager.components.popup.element_acl.btn.back
             remove: __mb.manager.components.popup.element_acl.btn.remove
-    managerbundle:
-      applications: Applicaties
-      new_application: 'Nieuwe applicatie'
-      sources: Bronnen
-      add_source: 'Voeg bron toe'
-      add_user_group: __mb.manager.managerbundle.add_user_group
-      export_application: __mb.manager.managerbundle.export_application
-      import_application: __mb.manager.managerbundle.import_application
-      acl_element: __mb.manager.managerbundle.acl_element
-    be:
-      element:
-        delete: 'Verwijder element ''%element_title%'''
-    upload:
-      label_delete: __mb.manager.upload.label_delete
     template:
       region:
         tabs:
           label: __mb.manager.template.region.tabs.label
         accordion:
           label: __mb.manager.template.region.accordion.label
+    upload:
+      label_delete: __mb.manager.upload.label_delete
     import:
       application:
         failed: __mb.manager.import.application.failed
@@ -238,3 +226,36 @@ mb:
         failed: __mb.manager.import.acl.failed
       source:
         failed: __mb.manager.import.source.failed
+  core:
+    admin:
+      button:
+        show_label: 'Toon label'
+      scaleselector:
+        show_label: 'Toon label'
+      corrdsdisplay:
+        label: 'Toon titel label'
+      srsselector:
+        show_label: 'Toon label'
+      gpsposition:
+        show_label: 'Toon label'
+      element:
+        autostart: Autostart
+      about_dialog:
+        show_label: 'Toon knop label'
+    element:
+      be:
+        button:
+          show_label: 'Toon label'
+    entity:
+      app:
+        screenshotfile:
+          error: __mb.core.entity.app.screenshotfile.error
+          format_error: __mb.core.entity.app.screenshotfile.format_error
+          resolution:
+            error: 'Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.'
+form:
+  manager:
+    admin:
+      application:
+        export:
+          application: Applications

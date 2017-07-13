@@ -49,8 +49,8 @@ mb:
         start_extent: 'Start Extent'
       element:
         delete:
-          confirm: 'Wollen Sie das Element wirklich löschen?'
           title: 'Element entfernen'
+          confirm: 'Wollen Sie das Element wirklich löschen?'
         btn:
           delete: Löschen
           cancel: Abbrechen
@@ -89,7 +89,9 @@ mb:
         add: 'Instanz hinzufügen'
         show_hide: 'Instanz an/aus'
         edit: 'Instanz editieren'
-        delete: 'Instanz löschen'        
+        delete:  
+          title: 'Instanz löschen'
+          confirm: 'Wollen sie wirklich die Instanz mit dem Titel  <span class="italic">%instance_title%</span> entfernen?'       
         no_instance_added: 'Keine Instanz vorhanden'
         no_layer_added: 'Keine Ebene hinzugefügt'
       template: Vorlage
