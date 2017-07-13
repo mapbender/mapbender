@@ -1,52 +1,25 @@
 mb:
   wms:
     wmsloader:
+      dialog:
+        label:
+          example: Voorbeeld
+          wmsurl: 'Service URL'
+          wmsuser: User
+          wmspass: Pass
+        btn:
+          cancel: Cancel
+          load: Laad
       error:
         url: 'WMSLoader: WMS capabilities kunnen niet geladen worden! De capabilities url is niet valide.'
         service: 'WMSLoader: De service %service% is niet supported!'
         operation: 'WMSLoader: de WMS Operation %operation% is niet supported!'
         version: 'WMSLoader: the WMS version %version% is not supported!'
         load: 'WMSLoader: wms capabilities kan niet geladen worden!'
-      dialog:
-        btn:
-          cancel: Cancel
-          load: Laad
-        label:
-          example: Voorbeeld
-          wmsurl: 'Service URL'
-          wmsuser: User
-          wmspass: Pass
-      class:
-        title: 'WMS loader'
-        description: 'Laad een WMS via de getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: loader
       repo:
-        instancelayerform:
+        macros:
           label:
-            layerstitle: 'Laag titel'
-            minscale: Minschaal
-            maxsclase: Maxschaal
-            active: actief
-            allowselecttoc: 'Sta selecteren van TOC toe'
-            selectedtoc: 'Geselecteerd op TOC'
-            allowinfotoc: 'Sta kenmerkinfo toe op TOC'
-            infotoc: 'Kenmerkinfo op TOC'
-            allowtoggletoc: 'Sta Toggle bij TOC toe'
-            toggletoc: 'Toggle op TOC'
-            allowreordertoc: 'Sta herorder bij TOC toe'
-            moreinfo: 'Meer informatie'
-            id:
-              title: ID
-              description: __mb.wms.wmsloader.repo.instancelayerform.label.id.description
-            layersname: 'Laag naam'
-            style: Stijl
-        preview:
-          title:
-            servicerepository: 'Service Repository'
-          label:
-            load: Load
+            formats: Formaten
         view:
           title:
             wms: WMS
@@ -79,16 +52,6 @@ mb:
             country: Land
           message:
             cautionscalehint: 'Pas op: Scale calculations are subject to limited Scale Hint resolution in WMS 1.1.1!'
-        instancelayer:
-          title:
-            servicerepository: 'Service Repository'
-          label:
-            wmsinstancelayers: 'WMS Instance Layers'
-          btn:
-            save: Bewaar
-        macros:
-          label:
-            formats: Formaten
         instance:
           title:
             wmsinstance: 'WMS instance'
@@ -98,6 +61,7 @@ mb:
           label:
             originurl: 'Oorspronkelijke URL'
             visible: Zichtbaar
+            basesource: __mb.wms.wmsloader.repo.instance.label.basesource
             proxy: Proxy
             transparency: Doorzichtigheid
             tiled: Tiled
@@ -115,9 +79,13 @@ mb:
             cancel2: Cancel
             buffer: __mb.wms.wmsloader.repo.instance.label.buffer
             ratio: __mb.wms.wmsloader.repo.instance.label.ratio
-            basesource: __mb.wms.wmsloader.repo.instance.label.basesource
           vendorspecific:
             label: __mb.wms.wmsloader.repo.instance.vendorspecific.label
+        preview:
+          title:
+            servicerepository: 'Service Repository'
+          label:
+            load: Load
         layer:
           label:
             name: Naam
@@ -152,37 +120,55 @@ mb:
             extent: Extent
             dataurl: 'Data URL'
             featurelisturl: 'Kenmerklijst URL'
+        instancelayerform:
+          label:
+            layerstitle: 'Laag titel'
+            minscale: Minschaal
+            maxsclase: Maxschaal
+            active: actief
+            allowselecttoc: 'Sta selecteren van TOC toe'
+            selectedtoc: 'Geselecteerd op TOC'
+            allowinfotoc: 'Sta kenmerkinfo toe op TOC'
+            infotoc: 'Kenmerkinfo op TOC'
+            allowtoggletoc: 'Sta Toggle bij TOC toe'
+            toggletoc: 'Toggle op TOC'
+            allowreordertoc: 'Sta herorder bij TOC toe'
+            moreinfo: 'Meer informatie'
+            id:
+              title: ID
+              description: __mb.wms.wmsloader.repo.instancelayerform.label.id.description
+            layersname: 'Laag naam'
+            style: Stijl
+        new:
+          label:
+            addservice: 'Voeg Service toe'
+        instancelayer:
+          title:
+            servicerepository: 'Service Repository'
+          label:
+            wmsinstancelayers: 'WMS Instance Layers'
+          btn:
+            save: Bewaar
         form:
           label:
             ogcwms: 'OGC WMS'
+            onlyvalid: __mb.wms.wmsloader.repo.form.label.onlyvalid
             serviceurl: 'Service URL'
             username: 'Gebruikers naam'
             password: Wachtwoord
             load: Laad
             cancel: Cancel
-            onlyvalid: __mb.wms.wmsloader.repo.form.label.onlyvalid
-        new:
-          label:
-            addservice: 'Voeg Service toe'
+      class:
+        title: 'WMS loader'
+        description: 'Laad een WMS via de getCapabilities-Request'
+      tag:
+        wms: wms
+        loader: loader
       admin:
         label:
           autoopen: 'Auto open'
           splitlayers: 'Split lagen'
           declarative: 'Use declarative'
-    source:
-      image_error:
-        datails: 'De map kan niet getoond worden.'
-        exception: 'Afwijking: %exception%'
-        statuscode: 'HTTP status code'
-    dimensionsets:
-      no_dimension: 'no dimension'
-    dimhandler:
-      class:
-        title: __mb.wms.dimhandler.class.title
-        description: __mb.wms.dimhandler.class.description
-      tag:
-        dimension: __mb.wms.dimhandler.tag.dimension
-        handler: __mb.wms.dimhandler.tag.handler
     repository:
       parser:
         couldnotparse: 'Could not parse CapabilitiesDocument'
@@ -225,6 +211,20 @@ mb:
           name: Name
           srs: SRS
           bbox: BoundingBox
+    source:
+      image_error:
+        datails: 'De map kan niet getoond worden.'
+        exception: 'Afwijking: %exception%'
+        statuscode: 'HTTP status code'
+    dimhandler:
+      class:
+        title: __mb.wms.dimhandler.class.title
+        description: __mb.wms.dimhandler.class.description
+      tag:
+        dimension: __mb.wms.dimhandler.tag.dimension
+        handler: __mb.wms.dimhandler.tag.handler
+    dimensionsets:
+      no_dimension: 'no dimension'
   wmc:
     wmsloader:
       class:

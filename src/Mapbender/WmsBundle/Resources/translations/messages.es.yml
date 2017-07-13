@@ -1,17 +1,6 @@
 mb:
   wms:
     wmsloader:
-      admin:
-        label:
-          autoopen: 'Auto abrir'
-          splitlayers: 'Partir las capas'
-          declarative: 'Uso declarativo'
-      class:
-        title: 'WMS cargador'
-        description: 'Cargar un WMS via getCapabilities-Request'
-      tag:
-        wms: wms
-        loader: cargar
       dialog:
         label:
           example: Ejemplo
@@ -28,11 +17,9 @@ mb:
         version: 'WMSLoader: la versión WMS no es soportada!'
         load: 'WMSLoader: las características del wms no pueden ser cargadas!'
       repo:
-        preview:
-          title:
-            servicerepository: 'Repositorio de Servicio'
+        macros:
           label:
-            load: Cargar
+            formats: Formatos
         view:
           title:
             wms: WMS
@@ -65,12 +52,6 @@ mb:
             country: País
           message:
             cautionscalehint: 'Precaución: Calculos de escala están sujetos a limitaciones de resolución ScaleHint en WMS 1.1.1!'
-        macros:
-          label:
-            formats: Formatos
-        new:
-          label:
-            addservice: 'Agregar Servicio'
         instance:
           title:
             wmsinstance: 'WMS instancia'
@@ -100,41 +81,11 @@ mb:
             buffer: 'Tile buffer'
           vendorspecific:
             label: 'Vendor specific'
-        form:
-          label:
-            ogcwms: 'OGC WMS'
-            serviceurl: 'Servicio URL'
-            username: Usuario
-            password: Clave
-            load: Cargar
-            cancel: Cancelar
-            onlyvalid: 'Only valid'
-        instancelayerform:
-          label:
-            layerstitle: 'Título de las Capas'
-            minscale: Minscale
-            maxsclase: Maxsclase
-            active: activo
-            allowselecttoc: 'Permitir Seleccionar en TOC'
-            selectedtoc: 'Seleccionado en TOC'
-            allowinfotoc: 'Permitir FeatureInfo en TOC'
-            infotoc: 'FeatureInfo en TOC'
-            allowtoggletoc: 'Permitir Toggle en TOC'
-            toggletoc: 'Toggle en TOC'
-            allowreordertoc: 'Permitir Reordenar en TOC'
-            moreinfo: 'Más información'
-            id:
-              title: ID
-              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Nombre de las Capas'
-            style: Estilo
-        instancelayer:
+        preview:
           title:
             servicerepository: 'Repositorio de Servicio'
           label:
-            wmsinstancelayers: 'WMS Capa de Instancia'
-          btn:
-            save: Guardar
+            load: Cargar
         layer:
           label:
             name: Nombre
@@ -169,6 +120,55 @@ mb:
             extent: Extención
             dataurl: 'Datos URL'
             featurelisturl: 'Featurelist URL'
+        instancelayerform:
+          label:
+            layerstitle: 'Título de las Capas'
+            minscale: Minscale
+            maxsclase: Maxsclase
+            active: activo
+            allowselecttoc: 'Permitir Seleccionar en TOC'
+            selectedtoc: 'Seleccionado en TOC'
+            allowinfotoc: 'Permitir FeatureInfo en TOC'
+            infotoc: 'FeatureInfo en TOC'
+            allowtoggletoc: 'Permitir Toggle en TOC'
+            toggletoc: 'Toggle en TOC'
+            allowreordertoc: 'Permitir Reordenar en TOC'
+            moreinfo: 'Más información'
+            id:
+              title: ID
+              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+            layersname: 'Nombre de las Capas'
+            style: Estilo
+        new:
+          label:
+            addservice: 'Agregar Servicio'
+        instancelayer:
+          title:
+            servicerepository: 'Repositorio de Servicio'
+          label:
+            wmsinstancelayers: 'WMS Capa de Instancia'
+          btn:
+            save: Guardar
+        form:
+          label:
+            ogcwms: 'OGC WMS'
+            serviceurl: 'Servicio URL'
+            username: Usuario
+            password: Clave
+            load: Cargar
+            cancel: Cancelar
+            onlyvalid: 'Only valid'
+      class:
+        title: 'WMS cargador'
+        description: 'Cargar un WMS via getCapabilities-Request'
+      tag:
+        wms: wms
+        loader: cargar
+      admin:
+        label:
+          autoopen: 'Auto abrir'
+          splitlayers: 'Partir las capas'
+          declarative: 'Uso declarativo'
     repository:
       parser:
         couldnotparse: 'Could not parse'
