@@ -1,43 +1,23 @@
 mb:
   wmc:
-    element:
-      wmceditor:
-        popup:
-          btn:
-            ok: Отправить
-            cancel: Отменить
-            back: Назад
-      wmcloader:
-        popup:
-          btn:
-            ok: Загрузить
-            cancel: Отменить
-            back: Назад
-      suggestmap:
-        content:
-          email: 'Как электронной почте'
-          facebook: 'В Facebook'
-          twitter: 'В Twitter'
-          google+: 'В Google+'
-        error_srs: 'SRS "% state.extent.srs%" не поддерживается этим приложением.'
-        popup:
-          btn:
-            ok: Закрыть
-      wmchandler:
-        error_srs: 'SRS "% state.extent.srs%" не поддерживается этим приложением.'
-      wmclist:
-        select:
-          def_option: 'Пожалуйста выберите'
-    list:
-      add_wmc: 'Добавить в WMC'
-      id: Id
-      title: Название
-      description: 'Добавить конфигурацию для приложения'
-      toggle: 'WMC открытый/закрытый'
-      wmc_element: 'WMC элемент'
-      delete_wmc: 'WMC Удалить'
-      no_wmc: 'WMC не добавлено.'
+    suggestmap:
+      class:
+        title: 'Предложить карту'
+        description: 'Предложить карту'
+      tag:
+        suggest: Предложить
+        map: Карта
     wmceditor:
+      class:
+        title: ' WMC редактор'
+        description: 'Создает и редактирует документы WMC.'
+      tag:
+        wmc: WMC
+        editor: Редактор
+      create: Создать
+      edit: Редактировать
+      publish: Публиковать
+      screenshot: 'Скриншот или ширина, высота'
       list:
         id: Id
         title: Название
@@ -47,17 +27,20 @@ mb:
         edit_wmc: 'WMC Редактировать'
         toggle: 'WMC открытый/закрытый'
         no_wmc: 'WMC не добавлено.'
-      create: Создать
-      edit: Редактировать
-      publish: Публиковать
-      screenshot: 'Скриншот или ширина, высота'
+    wmclist:
       class:
-        title: ' WMC редактор'
-        description: 'Создает и редактирует документы WMC.'
+        title: 'Список WMC'
+        description: 'Показывать доступные WMC  документы в списке'
       tag:
         wmc: WMC
-        editor: Редактор
+        list: Список
     wmcloader:
+      class:
+        title: 'WMC загрузить'
+        description: 'WMC документ может быть загружен с элементом WMC для загрузки.'
+      tag:
+        wmc: WMC
+        loader: Загрузчик
       load_xml_wmc: 'WMC XML Загрузить'
       id: Id
       title: Название
@@ -66,43 +49,60 @@ mb:
       no_wmc: 'WMC нет'
       state:
         load: Загрузить
-      class:
-        title: 'WMC загрузить'
-        description: 'WMC документ может быть загружен с элементом WMC для загрузки.'
-      tag:
-        wmc: WMC
-        loader: Загрузчик
-    wmc:
-      delete_confirm: 'Вы действительно хотите удалить WMC с названием <em>%wmc_title%</em> и Id <em>%wmc_id%</em>?'
-    admin:
-      wmcloader:
-        keep_extent: 'Экстент поддерживать'
-      wmclist:
-        label: Отметка
-    suggestmap:
-      class:
-        title: 'Предложить карту'
-        description: 'Предложить карту'
-      tag:
-        suggest: Предложить
-        map: Карта
-    wmclist:
-      class:
-        title: 'Список WMC'
-        description: 'Показывать доступные WMC  документы в списке'
-      tag:
-        wmc: WMC
-        list: Список
     error:
       wmcxmlloader_notallowed: 'WMC XML-Загрузчик не допускается.'
       wmclistloader_notallowed: 'WMC XML-Загрузчик не допускается.'
       wmcidloader_notallowed: 'WMC XML-Загрузчик не допускается.'
       wmcnotfound: 'WMC %wmcid% не найден'
       wmccannotbeloaded: 'WMC не возможн загрузить'
-      wmcurlloader_notallowed: 'WMC URL Загрузчик не допускается'
       wmccannotberemoved: 'WMC не удаляются'
       wmcremoved: 'WMC %wmcid% удаляется.'
       wmccannotbesaved: 'WMC %wmcid% не сохраняются.'
       wmcsaved: 'WMC %wmcid% сохраняется.'
       statecannotbesaved: 'Статус не сохраняются.'
       statenotfound: 'Статус %StateID% не нашли.'
+      wmcurlloader_notallowed: 'WMC URL Загрузчик не допускается'
+    list:
+      add_wmc: 'Добавить в WMC'
+      id: Id
+      title: Название
+      description: 'Добавить конфигурацию для приложения'
+      toggle: 'WMC открытый/закрытый'
+      wmc_element: 'WMC элемент'
+      delete_wmc: 'WMC Удалить'
+      no_wmc: 'WMC не добавлено.'
+    element:
+      suggestmap:
+        error_srs: 'SRS "% state.extent.srs%" не поддерживается этим приложением.'
+        popup:
+          btn:
+            ok: Закрыть
+        content:
+          email: 'Как электронной почте'
+          twitter: 'В Twitter'
+          facebook: 'В Facebook'
+          google+: 'В Google+'
+      wmceditor:
+        popup:
+          btn:
+            ok: Отправить
+            cancel: Отменить
+            back: Назад
+      wmchandler:
+        error_srs: 'SRS "% state.extent.srs%" не поддерживается этим приложением.'
+      wmcloader:
+        popup:
+          btn:
+            ok: Загрузить
+            cancel: Отменить
+            back: Назад
+      wmclist:
+        select:
+          def_option: 'Пожалуйста выберите'
+    admin:
+      wmclist:
+        label: Отметка
+      wmcloader:
+        keep_extent: 'Экстент поддерживать'
+    wmc:
+      delete_confirm: 'Вы действительно хотите удалить WMC с названием <em>%wmc_title%</em> и Id <em>%wmc_id%</em>?'
