@@ -56,13 +56,13 @@ class Wmc
      * @var string A description url
      * @ORM\Column(type="object", nullable=true)
      */
-    public $logourl;
+    protected $logourl;
 
     /**
      * @var string A description url
      * @ORM\Column(type="object", nullable=true)
      */
-    public $descriptionurl;
+    protected $descriptionurl;
 
     /**
      * @var string $screenshotPath The wmc description
