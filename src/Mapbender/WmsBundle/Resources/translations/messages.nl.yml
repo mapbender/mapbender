@@ -211,11 +211,10 @@ mb:
           name: Name
           srs: SRS
           bbox: BoundingBox
-    source:
-      image_error:
-        datails: 'De map kan niet getoond worden.'
-        exception: 'Afwijking: %exception%'
-        statuscode: 'HTTP status code'
+    repo:
+      instance:
+        label:
+          dimensions: Dimensions
     dimhandler:
       class:
         title: __mb.wms.dimhandler.class.title
