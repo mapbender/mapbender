@@ -44,7 +44,6 @@ mb:
           ok: 'Источник OK'
           toupdate: 'Источник больше не является текущим'
           unreachable: 'Источник недоступен'
-      template: Шаблон
       map:
         max_extent: 'Макс. область'
         start_extent: 'Начало области'
@@ -90,12 +89,12 @@ mb:
         add: 'Добавить образец'
         show_hide: 'Вкл/выкл образец'
         edit: 'Редактировать образец'
-        delete: 'Удалить образец'
+        delete:
           title: 'Удалить образец'
           confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
         no_instance_added: 'Образец не добавлен'
         no_layer_added: 'Слой не добавлен'
-        template: Шаблон
+      template: Шаблон
       application:
         view: Обзор
         edit:
@@ -148,7 +147,7 @@ mb:
         edit:
           title: 'Common'
           base_data: 'Base data'
-        applications: Приложения
+      applications: Приложения
     managerbundle:
       applications: Приложения
       new_application: 'Новое приложение'

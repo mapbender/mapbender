@@ -1,14 +1,14 @@
 mb:
   print:
     imageexport:
-       popup:
+      popup:
         btn:
           ok: Exportar
           cancel: Cancelar
       info:
         noactivelayer: 'Nenhuma camada ativa!'
       chooseformat: 'Escolher formato de exportação'
-     class:
+      class:
         title: 'Exportar imagem'
         description: 'Exporta o mapa atual como uma imagem. Os Formatos possíveis são png e jpeg. '
       tag:

@@ -347,7 +347,7 @@ mb:
         label:
           auto_activate: Autoactivate
           deactivate_on_close: 'Deactivate on close'
-htmlelement:
+    htmlelement:
       class:
         title: Title
         description: Description

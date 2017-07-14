@@ -105,8 +105,8 @@ mb:
         layouts: Diseños
         layersets: 'Conjunto de capas'
         custom_css: CSS
-        security: Seguridad
-          title: Security
+        security:
+          title: Seguridad
           add_users_groups: 'Add users and groups'
           public: activated
         save: Guardar
@@ -145,12 +145,12 @@ mb:
         url:
           title: 'URL Title'
         description: Description
-      template: Plantilla
+        template: Plantilla
         edit:
           title: 'Common'
           base_data: 'Base data'
       applications: Aplicaciones
-managerbundle:
+    managerbundle:
       applications: Aplicaciones
       new_application: 'Nueva aplicación'
       sources: Fuentes

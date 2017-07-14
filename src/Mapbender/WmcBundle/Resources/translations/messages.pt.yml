@@ -80,7 +80,7 @@ mb:
         content:
           email: 'Por e-mail'
           twitter: 'Por twitter'
-         facebook: 'Por Facebook'
+          facebook: 'Por Facebook'
           google+: 'Por google+'
       wmceditor:
         popup:
