@@ -153,6 +153,7 @@ class SQLSearchEngine
      */
     public function search($config, $data, $srs, $extent)
     {
+
         // First, get DBAL connection service, either given one or default one
 
         $connection     = $this->getConnection($config);
@@ -163,11 +164,14 @@ class SQLSearchEngine
                         {
                             return 't.' . $attribute;
                         }, $config['class_options']['attributes']));
+
+
         // Add geometry to SELECT
         // // @todo: Platform independency (ST_AsGeoJSON)
         $select .= ', ST_AsGeoJSON(' . $config['class_options']['geometry_attribute'] . ') as geom';
 
         $qb->select($select);
+
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
 
@@ -193,8 +197,6 @@ class SQLSearchEngine
                 $cond->add($qb->expr()->eq('LOWER(t.' . $key . ')', 'LOWER(:' .$key . ')'));
                     $params[$key] = $value;
                     break;
-
-
                 case 'like':
                 case 'like-left':
                 case 'like-right':
@@ -271,7 +273,48 @@ class SQLSearchEngine
                 $createExpr($key, $value);
             }
         }
+
+        if(isset($config['class_options']['id'])) {
+            $cond->add($qb->expr()->comparison('t.' . $config['class_options']['id'], '=', ':' . $key));
+        }
+
         $qb->where($cond);
+
+
+        /*
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         * #######################################################
+         */
+
+        // REVIEW THIS PLEASE! looks like i shouldn't have done this!!
+        // Possible SQL injection?
+        if(isset($config['class_options']['order_by'])) {
+            $qb->orderBy($config['class_options']['order_by']);
+        }
+        // REVIEW THIS PLEASE! LOOKS like i shouldn't have done this!!
+
+
+        //echo $qb->getSql();
+        //exit;
 
         // Create prepared statement and execute
         $stmt = $connection->executeQuery($qb->getSql(), $params);
