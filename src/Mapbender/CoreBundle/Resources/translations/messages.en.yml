@@ -370,7 +370,7 @@ mb:
         action:
           remove: 'Remove geometry'
           edit: 'Edit geometry'
-          zoom: 'Zoom to geometryoom'
+          zoom: 'Zoom to geometry'
       dialog:
         btn:
           cancel: Close
