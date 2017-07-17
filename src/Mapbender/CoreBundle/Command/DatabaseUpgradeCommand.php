@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
  * Class DatabaseUpgradeCommand
@@ -33,7 +34,7 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
      */
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->changeMapsImagePath();
+        $this->changeMapsImagePath($input, $output);
     }
 
     /**
@@ -41,7 +42,7 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
      * from  "bundles/mapbendercore/mapquery/lib/openlayers/img"
      * to "components/mapquery/lib/openlayers/img"
      */
-    protected function changeMapsImagePath(){
+    protected function changeMapsImagePath(InputInterface $input, OutputInterface $output){
 
         /**
          * @var EntityManager $em
@@ -50,16 +51,27 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
         $doctrine=$this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
         $maps = $em->getRepository('MapbenderCoreBundle:Element')->findBy(array('class'=>'Mapbender\CoreBundle\Element\Map'));
+        $output->writeln('Updating map elements image path values');
+        $output->writeln('Found ' . count($maps) . ' map elements');
+        $progressBar = new ProgressBar($output, count($maps) );
         foreach ($maps as $map) {
             $config = $map->getConfiguration();
-
+            $progressBar->advance();
             if ($config['imgPath'] == 'bundles/mapbendercore/mapquery/lib/openlayers/img') {
+                $progressBar->setMessage('Found old image path');
                 $config['imgPath']= 'components/mapquery/lib/openlayers/img';
                 $map->setConfiguration($config);
                 $em->persist($map);
+                $progressBar->setMessage('Old image path successfully changed');
+            } else {
+                $progressBar->setMessage('Map element already up-to-date');
             }
         }
         $em->flush();
+        $progressBar->finish();
+        $output->writeln('');
+        $output->writeln('All image path values are now up-to-date');
+        $output->writeln('Exiting now');
     }
 }
 
