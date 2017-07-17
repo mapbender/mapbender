@@ -110,10 +110,7 @@ class FeatureInfo extends Element
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/featureinfo.scss'
             ),
-            'trans' => array(
-                'MapbenderCoreBundle:Element:featureinfo.json.twig',
-                'MapbenderCoreBundle:Element:printclient.json.twig'
-            )
+            'trans' => array('MapbenderCoreBundle:Element:featureinfo.json.twig')
         );
     }
 
