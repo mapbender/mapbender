@@ -806,6 +806,10 @@ class PrintService
 
     private function drawPolygon($geometry, $image)
     {
+        $quality = $this->data['quality'];        
+        if ($quality != 72){
+            $resize = ($quality/72);
+        }
         $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $ring) {
             if(count($ring) < 3) {
@@ -837,7 +841,7 @@ class PrintService
                     $style['strokeColor'],
                     $style['strokeOpacity'],
                     $image);
-                imagesetthickness($image, $style['strokeWidth']);
+                imagesetthickness($image, $style['strokeWidth']*$resize);
                 imagepolygon($image, $points, count($ring), $color);
             }
         }
@@ -845,6 +849,10 @@ class PrintService
 
     private function drawMultiPolygon($geometry, $image)
     {
+        $quality = $this->data['quality'];        
+        if ($quality != 72){
+            $resize = ($quality/72);
+        }        
         $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $element) {
             foreach($element as $ring) {
@@ -877,7 +885,7 @@ class PrintService
                         $style['strokeColor'],
                         $style['strokeOpacity'],
                         $image);
-                    imagesetthickness($image, $style['strokeWidth']);
+                    imagesetthickness($image, $style['strokeWidth']*$resize);
                     imagepolygon($image, $points, count($ring), $color);
                 }
             }
@@ -886,6 +894,10 @@ class PrintService
 
     private function drawLineString($geometry, $image)
     {
+        $quality = $this->data['quality'];        
+        if ($quality != 72){
+            $resize = ($quality/72);
+        }
         $style = $this->getStyle($geometry);
         $color = $this->getColor(
             $style['strokeColor'],
@@ -894,7 +906,7 @@ class PrintService
         if ($style['strokeWidth'] == 0) {
             return;
         }
-        imagesetthickness($image, $style['strokeWidth']);
+        imagesetthickness($image, $style['strokeWidth']*$resize);
 
         for($i = 1; $i < count($geometry['coordinates']); $i++) {
 
@@ -920,6 +932,10 @@ class PrintService
 	
     private function drawMultiLineString($geometry, $image)
     {
+        $quality = $this->data['quality'];        
+        if ($quality != 72){
+            $resize = ($quality/72)-1;
+        }
         $style = $this->getStyle($geometry);
         $color = $this->getColor(
             $style['strokeColor'],
@@ -928,7 +944,7 @@ class PrintService
         if ($style['strokeWidth'] == 0) {
             return;
         }
-        imagesetthickness($image, $style['strokeWidth']);
+        imagesetthickness($image, $style['strokeWidth']*$resize);
 	
 		foreach($geometry['coordinates'] as $coords) {
 		
@@ -959,6 +975,7 @@ class PrintService
     {
         $style = $this->getStyle($geometry);
         $c = $geometry['coordinates'];
+        $quality = $this->data['quality'];
 
         if($this->rotation == 0){
             $p = $this->realWorld2mapPos($c[0], $c[1]);
@@ -972,15 +989,23 @@ class PrintService
             $bgcolor = $this->getColor('#ffffff', 1, $image);
             $fontPath = $this->resourceDir.'/fonts/';
             $font = $fontPath . 'OpenSans-Bold.ttf';
-            imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0]+1, $p[1], $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0], $p[1], $color, $font, $style['label']);
+            
+            $fontSize = 10;
+            if ($quality != 72){
+                $fontSize = ($quality/72)*$fontSize;
+            }
+            imagettftext($image, $fontSize, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, $fontSize, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, $fontSize, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, $fontSize, 0, $p[0]+1, $p[1], $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, $fontSize, 0, $p[0], $p[1], $color, $font, $style['label']);
             //return;
         }
 
         $radius = $style['pointRadius'];
+        if ($quality != 72){
+            $radius = (($quality/72)-1)*$radius;
+        }
         // Filled circle
         if($style['fillOpacity'] > 0){
             $color = $this->getColor(
