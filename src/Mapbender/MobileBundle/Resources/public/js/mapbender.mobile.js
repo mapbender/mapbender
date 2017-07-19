@@ -115,9 +115,8 @@ $(function(){
         });
     });
 
-    $('.search-results').on('click', function(){
-        if(moved){
-            moved = false;
+    $('.search-results').on('click', function(e){
+        if(e.target.nodeName =="TD"){
             $('#mobilePaneClose').click();
         }
     });
