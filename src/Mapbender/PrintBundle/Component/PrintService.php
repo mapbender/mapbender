@@ -48,7 +48,7 @@ class PrintService
     public function doPrint($data)
     {
         $this->setup($data);
-       
+
         if ($data['rotation'] == 0) {
             $this->createFinalMapImage();
         } else {
@@ -65,13 +65,13 @@ class PrintService
         $this->tempDir = sys_get_temp_dir();
         // resource dir
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-        
+
         // get user
         /** @var SecurityContext $securityContext */
         $securityContext = $this->container->get('security.context');
         $token           = $securityContext->getToken();
         $this->user      = $token->getUser();
-        
+
         // data from client
         $this->data = $data;
 
@@ -114,7 +114,7 @@ class PrintService
             $width = '&WIDTH=' . $this->imageWidth;
             $height =  '&HEIGHT=' . $this->imageHeight;
         }else{
-            // calculate needed bbox 
+            // calculate needed bbox
             $neededExtentWidth = abs(sin(deg2rad($rotation)) * $extentHeight) +
                 abs(cos(deg2rad($rotation)) * $extentWidth);
             $neededExtentHeight = abs(sin(deg2rad($rotation)) * $extentWidth) +
@@ -475,26 +475,26 @@ class PrintService
         if (isset($this->conf['scalebar']) ) {
             $this->addScaleBar();
         }
-        
+
         // add coordinates
-        if (isset($this->conf['fields']['extent_ur_x']) && isset($this->conf['fields']['extent_ur_y']) 
+        if (isset($this->conf['fields']['extent_ur_x']) && isset($this->conf['fields']['extent_ur_y'])
                 && isset($this->conf['fields']['extent_ll_x']) && isset($this->conf['fields']['extent_ll_y']))
         {
             $this->addCoordinates();
         }
-        
+
         // add dynamic logo
         if (isset($this->conf['dynamic_image']) && $this->conf['dynamic_image']){
             $this->addDynamicImage();
         }
-        
+
         // add dynamic text
         if (isset($this->conf['fields'])
             && isset($this->conf['fields']['dynamic_text'])
             && $this->conf['fields']['dynamic_text']){
             $this->addDynamicText();
         }
-        
+
         // add legend
         if (isset($this->data['legends']) && !empty($this->data['legends'])){
             $this->addLegend();
@@ -700,11 +700,11 @@ class PrintService
         $pdf->SetFillColor(0,0,0);
         $pdf->Rect($this->conf['scalebar']['x'] + 40  , $this->conf['scalebar']['y'], 10, 2, 'FD');
     }
-    
+
     private function addCoordinates()
     {
         $pdf = $this->pdf;
-        
+
         $corrFactor = 2;
         $precision = 2;
         // correction factor and round precision if WGS84
@@ -712,7 +712,7 @@ class PrintService
              $corrFactor = 3;
              $precision = 6;
         }
-        
+
         // upper right Y
         $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_y']['fontsize']);
         $pdf->Text($this->conf['fields']['extent_ur_y']['x'] + $corrFactor,
@@ -737,7 +737,7 @@ class PrintService
                     $this->conf['fields']['extent_ll_x']['y'] + 30,
                     round($this->data['extent_feature'][0]['x'], $precision),'U');
     }
-    
+
     private function addDynamicImage()
     {
         if($this->user == 'anon.'){
@@ -746,11 +746,11 @@ class PrintService
 
         $groups = $this->user->getGroups();
         $group = $groups[0];
-        
+
         if(!isset($group)){
             return;
         }
-        
+
         $dynImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png';
         if(file_exists ($dynImage)){
             $this->pdf->Image($dynImage,
@@ -763,25 +763,25 @@ class PrintService
         }
 
     }
-    
+
     private function addDynamicText()
     {
         if($this->user == 'anon.'){
             return;
         }
-        
+
         $groups = $this->user->getGroups();
         $group = $groups[0];
-        
+
         if(!isset($group)){
             return;
         }
-        
+
         $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
         $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
                 $this->conf['fields']['dynamic_text']['height'],
                 utf8_decode($group->getDescription()));
-        
+
     }
 
     private function getFeature($schemaName, $featureId)
@@ -804,8 +804,18 @@ class PrintService
         }
     }
 
+    private function getResizeFactor()
+    {
+        if ($this->data['quality'] != 72) {
+            return $this->data['quality'] / 72;
+        } else {
+            return 1;
+        }
+    }
+
     private function drawPolygon($geometry, $image)
     {
+        $resizeFactor = $this->getResizeFactor();
         $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $ring) {
             if(count($ring) < 3) {
@@ -837,7 +847,7 @@ class PrintService
                     $style['strokeColor'],
                     $style['strokeOpacity'],
                     $image);
-                imagesetthickness($image, $style['strokeWidth']);
+                imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
                 imagepolygon($image, $points, count($ring), $color);
             }
         }
@@ -845,6 +855,7 @@ class PrintService
 
     private function drawMultiPolygon($geometry, $image)
     {
+        $resizeFactor = $this->getResizeFactor();
         $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $element) {
             foreach($element as $ring) {
@@ -877,7 +888,7 @@ class PrintService
                         $style['strokeColor'],
                         $style['strokeOpacity'],
                         $image);
-                    imagesetthickness($image, $style['strokeWidth']);
+                    imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
                     imagepolygon($image, $points, count($ring), $color);
                 }
             }
@@ -886,6 +897,7 @@ class PrintService
 
     private function drawLineString($geometry, $image)
     {
+        $resizeFactor = $this->getResizeFactor();
         $style = $this->getStyle($geometry);
         $color = $this->getColor(
             $style['strokeColor'],
@@ -894,7 +906,7 @@ class PrintService
         if ($style['strokeWidth'] == 0) {
             return;
         }
-        imagesetthickness($image, $style['strokeWidth']);
+        imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
 
         for($i = 1; $i < count($geometry['coordinates']); $i++) {
 
@@ -917,9 +929,10 @@ class PrintService
             imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
         }
     }
-	
+
     private function drawMultiLineString($geometry, $image)
     {
+        $resizeFactor = $this->getResizeFactor();
         $style = $this->getStyle($geometry);
         $color = $this->getColor(
             $style['strokeColor'],
@@ -928,37 +941,35 @@ class PrintService
         if ($style['strokeWidth'] == 0) {
             return;
         }
-        imagesetthickness($image, $style['strokeWidth']);
-	
-		foreach($geometry['coordinates'] as $coords) {
-		
-			for($i = 1; $i < count($coords); $i++) {
+        imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
 
-				if($this->rotation == 0){
-					$from = $this->realWorld2mapPos(
-						$coords[$i - 1][0],
-						$coords[$i - 1][1]);
-					$to = $this->realWorld2mapPos(
-						$coords[$i][0],
-						$coords[$i][1]);
-				}else{
-					$from = $this->realWorld2rotatedMapPos(
-						$coords[$i - 1][0],
-						$coords[$i - 1][1]);
-					$to = $this->realWorld2rotatedMapPos(
-						$coords[$i][0],
-						$coords[$i][1]);
-				}
-
-				imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
-			}
-		}
+        foreach($geometry['coordinates'] as $coords) {
+            for($i = 1; $i < count($coords); $i++) {
+                if($this->rotation == 0){
+                        $from = $this->realWorld2mapPos(
+                                $coords[$i - 1][0],
+                                $coords[$i - 1][1]);
+                        $to = $this->realWorld2mapPos(
+                                $coords[$i][0],
+                                $coords[$i][1]);
+                }else{
+                        $from = $this->realWorld2rotatedMapPos(
+                                $coords[$i - 1][0],
+                                $coords[$i - 1][1]);
+                        $to = $this->realWorld2rotatedMapPos(
+                                $coords[$i][0],
+                                $coords[$i][1]);
+                }
+                imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
+            }
+        }
     }
 
     private function drawPoint($geometry, $image)
     {
         $style = $this->getStyle($geometry);
         $c = $geometry['coordinates'];
+        $resizeFactor = $this->getResizeFactor();
 
         if($this->rotation == 0){
             $p = $this->realWorld2mapPos($c[0], $c[1]);
@@ -967,35 +978,38 @@ class PrintService
         }
 
         if(isset($style['label'])){
-            // draw label with white halo
-            $color = $this->getColor('#ff0000', 1, $image);
-            $bgcolor = $this->getColor('#ffffff', 1, $image);
+            // draw label with halo
+            $color = $this->getColor($style['fontColor'], 1, $image);
+            $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $image);
             $fontPath = $this->resourceDir.'/fonts/';
             $font = $fontPath . 'OpenSans-Bold.ttf';
-            imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0]+1, $p[1], $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0], $p[1], $color, $font, $style['label']);
-            //return;
+
+            $fontSize = 10 * $resizeFactor;
+            imagettftext($image, $fontSize, 0, $p[0], $p[1]+$resizeFactor, $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, $fontSize, 0, $p[0], $p[1]-$resizeFactor, $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, $fontSize, 0, $p[0]-$resizeFactor, $p[1], $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, $fontSize, 0, $p[0]+$resizeFactor, $p[1], $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, $fontSize, 0, $p[0], $p[1], $color, $font, $style['label']);
         }
 
-        $radius = $style['pointRadius'];
+        $radius = $resizeFactor * $style['pointRadius'];
         // Filled circle
         if($style['fillOpacity'] > 0){
             $color = $this->getColor(
                 $style['fillColor'],
                 $style['fillOpacity'],
                 $image);
-            imagefilledellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+            imagesetthickness($image, 0);
+            imagefilledellipse($image, $p[0], $p[1], 2 * $radius, 2 * $radius, $color);
         }
         // Circle border
-        if ($style['strokeWidth'] > 0) {
+        if ($style['strokeWidth'] > 0 && $style['strokeOpacity'] > 0) {
             $color = $this->getColor(
                 $style['strokeColor'],
                 $style['strokeOpacity'],
                 $image);
-            imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+            imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
+            imageellipse($image, $p[0], $p[1], 2 * $radius, 2 * $radius, $color);
         }
     }
 
@@ -1042,7 +1056,7 @@ class PrintService
           $height = $this->pdf->getHeight();
           $width = $this->pdf->getWidth();
           $legendConf = false;
-          if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+          if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
              $this->addLegendPageImage();
           }
         }
@@ -1068,16 +1082,16 @@ class PrintService
                     if($y + $tempY + 10 > ($this->pdf->getHeight()) && $legendConf == false){
                         $x += 105;
                         $y = 10;
-                        if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                        if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
                            $this->addLegendPageImage();
-                        } 
+                        }
                         if($x + 20 > ($this->pdf->getWidth())){
                             $this->pdf->addPage('P');
                             $x = 5;
                             $y = 10;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
                                $this->addLegendPageImage();
-                            } 
+                            }
                         }
                     }
 
@@ -1091,18 +1105,18 @@ class PrintService
                             $x = 5;
                             $y = 10;
                             $legendConf = false;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
                                $this->addLegendPageImage();
-                            } 
+                            }
                         }
                     }else if (($y-$yStartPosition) + $tempY + 10 > $height && $legendConf == true){
                             $this->pdf->addPage('P');
                             $x = 5;
                             $y = 10;
                             $legendConf = false;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
                                $this->addLegendPageImage();
-                            } 
+                            }
                     }
                 }
 
@@ -1130,9 +1144,9 @@ class PrintService
                             $height = $this->pdf->getHeight();
                             $width = $this->pdf->getWidth();
                             $legendConf = false;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
                                $this->addLegendPageImage();
-                            } 
+                            }
                         }
 
                   }else{
@@ -1144,17 +1158,17 @@ class PrintService
                       $y += round($size[1] * 25.4 / 96) + 10;
                       if($y > ($this->pdf->getHeight())){
                           $x += 105;
-                          $y = 10; 
+                          $y = 10;
                       }
                       if($x + 20 > ($this->pdf->getWidth()) && $c < $arraySize){
                           $this->pdf->addPage('P');
                           $x = 5;
                           $y = 10;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
+                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
                                $this->addLegendPageImage();
-                            } 
+                            }
                       }
-                       
+
                   }
 
                 unlink($image);
@@ -1223,10 +1237,10 @@ class PrintService
             $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
         }else{
           $groups = $this->user->getGroups();
-          $group = $groups[0]; 
-        
+          $group = $groups[0];
+
           if(isset($group)){
-              $legendpageImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png'; 
+              $legendpageImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png';
           }
         }
 
