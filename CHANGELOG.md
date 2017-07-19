@@ -1,6 +1,6 @@
 # Changelog
 
-* **v.3.0.6.2** - 2017-07-19
+* **v.3.0.6.2** - 2017-07-20
     - Fix create legend URL
     - Merge pull request #572 from mapbender/fix/wrong-scaleHint-in-sublayers
     - Fix layer instance administration form sizes Closes: #559
