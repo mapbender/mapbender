@@ -3,13 +3,13 @@ mb:
     wmsloader:
       dialog:
         label:
-          example: Example
+          example: Exemple
           wmsurl: 'Service URL'
-          wmsuser: User
-          wmspass: Password
+          wmsuser: 'Nom d''utilisateur'
+          wmspass: 'Mot de passe'
         btn:
-          cancel: Cancel
-          load: Load
+          cancel: Annuler
+          load: Charger
       error:
         url: 'WMSLoader: WMS capabilities can''t be loaded! The capabilities url is not valid.'
         service: 'WMSLoader: the service %service% is not supported!'
@@ -24,73 +24,74 @@ mb:
           title:
             wms: WMS
           label:
-            backtoservicelist: 'Back to Service List'
-            metadata: Metadata
+            backtoservicelist: 'Retour à la liste des services'
+            metadata: Metadonnées
             contact: Contact
-            details: Details
-            layers: Layers
-            title: Title
-            name: Name
+            details: Détails
+            layers: Couches
+            title: Titre
+            name: Nom
             version: Version
-            originurl: 'Origin URL'
-            abstract: Abstract
-            onlineresource: 'Online Resource'
-            exceptionformats: 'Exception Formats'
-            fees: Fees
-            accessconstraints: 'Access Constraints'
-            person: Person
-            organization: Organization
+            originurl: 'URL d''origine'
+            abstract: Résumé
+            onlineresource: 'Ressource en ligne'
+            exceptionformats: 'Formats d''exception'
+            fees: Frais
+            accessconstraints: 'Contraintes d''accès'
+            person: Personne
+            organization: Organisation
             position: Position
-            telephone: Telephone
-            facsimile: Facsimile
-            email: Email
-            address: Address
-            addresstype: Addresstype
-            city: City
-            state: State
-            postcode: Postcode
-            country: Country
+            telephone: Téléphone
+            facsimile: Fax
+            email: Courriel
+            address: Adresse
+            addresstype: 'Type d''adresse'
+            city: Ville
+            state: État/Province
+            postcode: 'Code Postal'
+            country: Pays
           message:
-            cautionscalehint: 'Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!'
+            cautionscalehint: 'Attention: Le calcul de l''échelle est potentiellement limité par la résolution de ScaleHint dans le service WMS version 1.1.1'
         instance:
           title:
             wmsinstance: 'WMS instance'
           btn:
-            save: Save
-            cancel: Cancel
+            save: Sauvegarder
+            cancel: Annuler
           label:
-            originurl: 'Origin URL'
+            originurl: 'URL d''origine'
             visible: Visible
-            basesource: BaseSource
+            basesource: Fond de carte
             proxy: Proxy
-            transparency: Transparency
-            tiled: Tiled
-            title: Title
+            transparency: Transparence
+            tiled: Tuilé
+            title: Titre
             minsc: Minsc
             maxsc: Maxsc
-            active: active
-            select: select
-            info: info
-            toggle: toggle
-            reorder: reorder
-            allow: allow
+            active: Active
+            select: Sélectionner
+            info: Info
+            toggle: Basculer
+            reorder: Réorganiser
+            allow: permettre
             'on': 'on'
-            save2: Save
-            cancel2: Cancel
+            save2: Sauvegarder
+            cancel2: Annuler
             ratio: 'BBOX factor'
-            buffer: 'Tile buffer'
+            buffer: 'Tampon de la tuile'
           vendorspecific:
             label: 'Vendor specific'
         preview:
           title:
-            servicerepository: 'Service Repository'
+            servicerepository: 'Répertoire du service'
           label:
-            load: Load
+            load: Charger
         layer:
           label:
-            name: Name
-            title: Title
-            abstract: Abstract
+            name: Nom
+            name: Nom
+            title: Titre
+            abstract: Résumé
             queryable: Queryable
             cascaded: Cascaded
             opaque: Opaque
@@ -104,7 +105,7 @@ mb:
             legendurl: 'Legend URL'
             stylesheeturl: 'Stylesheet URL'
             styleurl: 'Style URL'
-            scale: Scale
+            scale: Échelle
             min: Min
             max: Max
             scalehint: Scalehint
@@ -112,52 +113,52 @@ mb:
             onlineresource: 'Online Resource'
             logourl: 'Logo URL'
             identifier: Identifier
-            authority: Authority
+            authority: Authorité
             url: URL
-            value: Value
+            value: Valeur
             metadataurl: 'Metadata URL'
             dimension: Dimension
-            extent: Extent
+            extent: Étendue
             dataurl: 'Data URL'
             featurelisturl: 'Featurelist URL'
         instancelayerform:
           label:
-            layerstitle: 'Layer''s Title'
+            layerstitle: 'Titre de la couche'
             minscale: Minscale
             maxsclase: Maxsclase
             active: active
-            allowselecttoc: 'Allow Select at TOC'
-            selectedtoc: 'Selected  at TOC'
-            allowinfotoc: 'Allow FeatureInfo at TOC'
-            infotoc: 'FeatureInfo at TOC'
-            allowtoggletoc: 'Allow Toggle at TOC'
-            toggletoc: 'Toggle at TOC'
-            allowreordertoc: 'Allow Reorder at TOC'
-            moreinfo: 'More informations'
+            allowselecttoc: 'Permettre la sélection en cliquant'
+            selectedtoc: 'Sélectionné en cliquant'
+            allowinfotoc: 'Permettre le FeatureInfo en cliquant'
+            infotoc: 'FeatureInfo en cliquant'
+            allowtoggletoc: 'Permettre le basculement'
+            toggletoc: 'Basculer en cliquant'
+            allowreordertoc: 'Permettre la réorganisation en cliquant'
+            moreinfo: 'Plus d''informations'
             id:
               title: ID
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Layer''s Name'
+            layersname: 'Nom de la couche'
             style: Style
         new:
           label:
-            addservice: 'Add Service'
+            addservice: 'Ajouter un service'
         instancelayer:
           title:
-            servicerepository: 'Service Repository'
+            servicerepository: 'Répertoire du service'
           label:
-            wmsinstancelayers: 'WMS Instance Layers'
+            wmsinstancelayers: 'Couches de l''instance WMS'
           btn:
-            save: Save
+            save: Sauvegarder
         form:
           label:
             ogcwms: 'OGC WMS'
-            onlyvalid: 'only valid'
-            serviceurl: 'Service URL'
-            username: Username
-            password: Password
-            load: Load
-            cancel: Cancel
+            onlyvalid: 'Valide seulement'
+            serviceurl: 'URL du service'
+            username: 'Nom d''utilisateur'
+            password: 'Mot de passe'
+            load: Charger
+            cancel: Annuler
       class:
         title: 'WMS loader'
         description: 'Loads a WMS via the getCapabilities-Request'
@@ -180,35 +181,35 @@ mb:
       section:
         common:
           _title: Common
-          title: Title
-          name: Name
+          title: Titre
+          name: Nom
           version: Version
-          originUrl: 'Origin Url'
+          originUrl: 'URL d''origine'
           description: Description
           onlineResource: OnlineResource
-          exceptionFormats: 'Exception formats'
+          exceptionFormats: 'Formats d''exceptions'
         useconditions:
-          _title: 'Terms of use'
-          fees: Fees
-          accessconstraints: 'Access constraints'
+          _title: 'Conditions d''utilisation'
+          fees: Frais
+          accessconstraints: 'Contraintes d''accès'
         contact:
           _title: Contact
-          person: Person
+          person: Personne
           position: Position
-          organization: Organization
-          voiceTelephone: Telephone
-          facsimileTelephone: Facsimile
-          electronicMailAddress: Email
-          address: Address
-          addressType: 'Address type'
-          addressCity: City
-          addressStateOrProvince: 'State or province'
-          addressPostCode: 'Post code'
-          addressCountry: Country
+          organization: Organisation
+          voiceTelephone: Téléphone
+          facsimileTelephone: Fax
+          electronicMailAddress: Courriel
+          address: Adresse
+          addressType: 'Type d''adresse'
+          addressCity: Ville
+          addressStateOrProvince: 'État ou province'
+          addressPostCode: 'Code postal'
+          addressCountry: Pays
         items:
-          _title: Layer
-          title: Title
-          name: Name
+          _title: Couche
+          title: Titre
+          name: Nom
           srs: SRS
           bbox: BoundingBox
     repo:
@@ -223,12 +224,13 @@ mb:
         dimension: dimension
         handler: handler
     dimensionsets:
-      no_dimension: 'no dimension'
+      no_dimension: 'Aucune dimension'
   wmc:
     wmsloader:
       class:
-        title: 'Wms Loader'
+        title: 'Chargeur WMS'
         description: 'Opens a dialog in which a WMS can be loaded via the getCapabilities-Request'
+        description: 'Ouvre une fenêtre dans laquelle peut être chargé un service WMS avec une requête getCapabilities'
       tag:
         wms: wms
         loader: loader
