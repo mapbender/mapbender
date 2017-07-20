@@ -2,107 +2,107 @@ mb:
   wmc:
     suggestmap:
       class:
-        title: 'Suggest map'
-        description: 'Suggest a map'
+        title: 'Suggérer une carte'
+        description: 'Suggérer une carte'
       tag:
         suggest: suggest
         map: map
     wmceditor:
       class:
-        title: 'WMC editor'
-        description: 'Creates and edits WMC documents.'
+        title: 'Éditeur WMC'
+        description: 'Permet de créer et de modifier des documents WMC.'
       tag:
         wmc: wmc
         editor: editor
-      create: Create
-      edit: Edit
-      publish: Publish
+      create: Créer
+      edit: Modifier
+      publish: Publier
       screenshot: 'screenshot or width, height etc.'
       list:
         id: Id
-        title: Title
+        title: Titre
         description: Description
-        add_wmc: 'Add new WMC'
-        delete_wmc: 'Delete WMC'
-        edit_wmc: 'Edit WMC'
-        toggle: 'Toggle public/private WMC'
-        no_wmc: 'No WMC added.'
+        add_wmc: 'Ajouter un nouveau WMC'
+        delete_wmc: 'Supprimer le WMC'
+        edit_wmc: 'Modifier le WMC'
+        toggle: 'Basculer publique/privé'
+        no_wmc: 'Aucun WMC ajouté.'
     wmclist:
       class:
-        title: 'WMC list'
-        description: 'Shows available WMC documents at list'
+        title: 'Liste des WMC'
+        description: 'Affiche les documents WMC disponibles'
       tag:
         wmc: wmc
         list: list
     wmcloader:
       class:
-        title: 'WMC loader'
-        description: 'A WMC document can be loaded with the element WMC loader.'
+        title: 'Chargeur de WMC'
+        description: 'Permet de charger un document WMC XML'
       tag:
         wmc: wmc
         loader: loader
-      load_xml_wmc: 'Load XML WMC'
+      load_xml_wmc: 'Charger un WMC'
       id: Id
-      title: Title
+      title: Titre
       description: Description
-      view_wmc: 'View WMC'
-      no_wmc: 'No WMC.'
+      view_wmc: 'Voir le WMC'
+      no_wmc: 'Aucun WMC.'
       state:
-        load: Load
+        load: Charger
     error:
-      wmcxmlloader_notallowed: 'WMC XML loader is not allowed.'
-      wmclistloader_notallowed: 'WMC list loader is not allowed.'
-      wmcidloader_notallowed: 'WMC id loader is not allowed.'
-      wmcnotfound: 'WMC %wmcid% is not found'
-      wmccannotbeloaded: 'WMC can''t be loaded.'
-      wmccannotberemoved: 'WMC cannot be removed.'
-      wmcremoved: 'WMC %wmcid% is removed.'
-      wmccannotbesaved: 'WMC %wmcid% can not be saved.'
-      wmcsaved: 'WMC %wmcid% is saved.'
-      statecannotbesaved: 'State can not be saved.'
-      statenotfound: 'State %stateid% is not found.'
-      wmcurlloader_notallowed: 'WMC url loader is not allowed.'
+      wmcxmlloader_notallowed: 'Le chargeur de WMC XML n''est pas permis.'
+      wmclistloader_notallowed: 'Le chargeur de liste WMC n''est pas permis.'
+      wmcidloader_notallowed: 'Le chargeur de Id WMC n''est pas permis.'
+      wmcnotfound: 'Le WMC %wmcid% est introuvable'
+      wmccannotbeloaded: 'Le WMC ne peut pas être chargé.'
+      wmccannotberemoved: 'Le WMC ne peut pas être supprimé'
+      wmcremoved: 'Le WMC %wmcid% a été supprimé.'
+      wmccannotbesaved: 'Le WMC %wmcid% ne peut pas être sauvegardé'
+      wmcsaved: 'Le WMC %wmcid% a été sauvegardé.'
+      statecannotbesaved: 'L''état ne peut pas être sauvegardé.'
+      statenotfound: 'L''état %stateid% est introuvable.'
+      wmcurlloader_notallowed: 'Le chargeur WMC URL n''est pas permis.'
     list:
-      add_wmc: 'Add new WMC to'
+      add_wmc: 'Ajouter un nouveau WMC à'
       id: Id
-      title: Title
-      description: 'Add configurations from the selectbox to the application.'
-      toggle: 'Toggle public/private WMC'
-      wmc_element: 'WMC element'
-      delete_wmc: 'Delete WMC'
-      no_wmc: 'No WMC added.'
+      title: Titre
+      description: 'Ajouter des configurations à l''application à partir du menu déroulant.'
+      toggle: 'WMC Publique/Privé'
+      wmc_element: 'Élément WMC'
+      delete_wmc: 'Supprimer le WMC'
+      no_wmc: 'Aucun WMC ajouté.'
     element:
       suggestmap:
-        error_srs: 'SRS "%state.extent.srs%" is not supported by this application.'
+        error_srs: 'Le SRS "%state.extent.srs%" n''est pas supporté par cette application.'
         popup:
           btn:
-            ok: Close
+            ok: Fermer
         content:
-          email: 'As e-mail'
-          twitter: 'At Twitter'
-          facebook: 'At Facebook'
-          google+: 'At Google+'
+          email: 'Par courriel'
+          twitter: 'Par Twitter'
+          facebook: 'Par Facebook'
+          google+: 'Par Google+'
       wmceditor:
         popup:
           btn:
-            ok: Submit
-            cancel: Cancel
-            back: Back
+            ok: Soumettre
+            cancel: Annuler
+            back: Retour
       wmchandler:
-        error_srs: 'SRS "%state.extent.srs%" is not supported by this application.'
+        error_srs: 'Le SRS "%state.extent.srs%" n''est pas supporté par cette application.'
       wmcloader:
         popup:
           btn:
-            ok: Load
-            cancel: Cancel
-            back: Back
+            ok: Charger
+            cancel: Annuler
+            back: Retour
       wmclist:
         select:
-          def_option: 'Please select'
+          def_option: 'Sélectionnez'
     admin:
       wmclist:
-        label: Label
+        label: Étiquette
       wmcloader:
-        keep_extent: 'Keep Extent'
+        keep_extent: 'Garder l''étendue'
     wmc:
-      delete_confirm: 'Do you really want to remove the WMC with the title <em>%wmc_title%</em> and the id <em>%wmc_id%</em>?'
+      delete_confirm: 'Voulez-vous vraiment supprimer le WMC ayant comme titre <em>%wmc_title%</em> et le id <em>%wmc_id%</em>?'

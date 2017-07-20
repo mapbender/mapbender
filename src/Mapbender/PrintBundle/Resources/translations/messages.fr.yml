@@ -3,14 +3,14 @@ mb:
     imageexport:
       popup:
         btn:
-          ok: Export
-          cancel: Cancel
+          ok: Exporter
+          cancel: Annuler
       info:
-        noactivelayer: 'No active layer!'
-      chooseformat: 'Choose Export Format'
+        noactivelayer: 'Aucune couche active!'
+      chooseformat: 'Choisir un format d''exportation'
       class:
-        title: 'Image export'
-        description: 'Image Export allows you to export your current mapview. You can choose png or jpeg format.'
+        title: 'Exporter en image'
+        description: 'Cet élément permet d''exporter l''étendue actuel de la carte en format png ou jpeg'
       tag:
         image: image
         export: export

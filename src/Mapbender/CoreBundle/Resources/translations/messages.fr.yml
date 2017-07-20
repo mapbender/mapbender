@@ -7,88 +7,89 @@ mb:
         noresult: 'no result'
       popup:
         btn:
-          ok: Ferme
+          ok: Fermer
+          print: Imprimer
       class:
-        title: Information
-        description: Information
+        title: Identifier
+        description: Identifier l'objet cliqué sur la carte
       tag:
-        featureinfo: Information
+        featureinfo: featureinfo
         feature: feature
         info: info
-        dialog: dialogue
+        dialog: dialog
     aboutdialog:
       content:
-        versionprefix: V.
-        learnmore: Apprend plus de Mapbender3
-        linktitle: Visiste Mapbender3
+        versionprefix: v.
+        learnmore: 'En savoir davantage sur Mapbender3'
+        linktitle: 'Visiter le site web officiel de Mapbender3'
         website: website
       class:
-        title: Sur dialogue
-        description: Présenter le Sur dialogue
+        title: 'Fenêtre "À propos"'
+        description: 'Affiche une fenêtre "À propos"'
       tag:
         help: help
         info: info
         about: about
     simplesearch:
       input:
-        search: Recherche
+        search: Search
       class:
-        title: Recherche simple Solr
-        description: Recherche simple avec Solr
+        title: 'Recherche simple'
+        description: 'Recherche à un seul champ sur des sources JSON (e.g. Solr)'
       error:
         geometry:
-          missing: The selected entry does not contain a geometry.
+          missing: L'entrée sélectionnée ne contient aucune géométrie.
     searchrouter:
       popup:
         btn:
-          ok: Recherche
-          cancel: Ferme
-          reset: Reset
-      no_results: Pas des résultats
+          ok: Rechercher
+          cancel: Fermer
+          reset: Réinitialiser
+      no_results: 'Aucun résultat.'
       result_counter: 'Résultats: %count%'
       class:
-        title: Recherche - Search Router
-        description: Recherche avec SQL
+        title: 'Routeur de recherche'
+        description: 'Élément de routeur de recherche configurable'
       tag:
         search: search
         router: router
     poi:
-      sharepoi: Point de Rencontre
+      sharepoi: 'Partager un POI'
       text:
-        snippet: __mb.core.poi.text.snippet
+        snippet: 'You can use the following snippet in an email to send the POI'
       popup:
         btn:
           ok: Ok
-          cancel: __mb.core.poi.popup.btn.cancel
+          cancel: Annuler
       class:
-        title: Point de Rencontre
-        description: __mb.core.poi.class.description
+        title: POI
+        description: 'Permet de créer un POI (point d''intérêt) pour le partager'
       tag:
         poi: poi
         point: point
         interest: interest
       label:
-        text: Texte
+        text: Text
     basesourceswitcher:
       error:
         sourcenotavailable: 'A source with id %id% is not available.'
       class:
-        title: 'Base source switcher'
-        Description: 'Change the map''s background sources.'
+        title: 'Sélectionneur de fond de carte'
+        Description: 'Permet de sélectionner la couche de fond de la carte.'
       tag:
         base: base
         source: source
         switcher: switcher
       form:
-        mesage: 'No basesource set is defined.'
+        mesage: 'Aucun fond de carte n''est défini.'
     legend:
-      nolegend: Pas une légende
+      nolegend: 'Aucune légende n''est disponible.'
       popup:
         btn:
           ok: Fermer
       class:
         title: Légende
-        description: __mb.core.legend.class.description
+        description: 'Affiche la légende de la carte'
       tag:
         layer: layer
         legend: legend
@@ -96,32 +97,32 @@ mb:
       popup:
         btn:
           ok: Fermer
-      create_error: __mb.core.ruler.create_error
+      create_error: 'Mesurer: Type must be line or area.'
       class:
-        title: pied à coulisse pour ligne ou polygone
-        description: pied à coulisse pour ligne ou polygone
+        title: 'Mesure linéaire ou surfacique'
+        description: 'Permet de mesurer des segments linéaires ou des superficies puis d''afficher les mesures dans une fenêtre'
       tag:
         line: line
         area: area
         measure: measure
     printclient:
       label:
-        template: Modèle
-        quality: Qualité
-        scale: Echelle
+        template: Template
+        quality: Quality
+        scale: Scale
         rotation: Rotation
-        legend: imprimer la légende
+        legend: 'Print legend'
       popup:
         btn:
-          ok: imprimer
-          cancel: annuler
+          ok: Print
+          cancel: Cancel
       info:
-        noactivelayer: __mb.core.printclient.info.noactivelayer
+        noactivelayer: 'No active layer!'
       form:
-        required: __mb.core.printclient.form.required
+        required: 'Please fill out this field'
       class:
-        title: 'Client pour imprimer'
-        description: 'Renders a Print dialog'
+        title: 'Client d''impression'
+        description: 'Affiche une fenêtre d''impression. Permet d''exporter en format PDF'
       tag:
         print: print
         pdf: pdf
@@ -133,40 +134,40 @@ mb:
         deactivate: 'Deactivate Print Frame'
         activate: 'Activate Print Frame'
     overview:
-      nolayer: __mb.core.overview.nolayer
+      nolayer: 'The overview element has no layer.'
       class:
-        title: l'aperçu
-        description: l'aperçu
+        title: 'Vue d''ensemble'
+        description: 'Affiche la vue d''ensemble de la carte'
       tag:
         overview: overview
         map: map
     sketch:
       circle:
         radius:
-          label: Radius
-          error: 'Radius n'est pas valide'
+          label: Rayon
+          error: 'Le rayon est invalide'
         form:
           button:
-            'yes': Oui
+            'yes': 'Oui'
             cancel: Annuler
       class:
-        title: Sketch
-        description: 'Adds a vector layer in the map and enables geometry objects to draw.'
+        title: Esquisse
+        description: 'Ajoute une couche vectorielle à la carte et permet de dessiner des géométries'
       tag:
         sketch: sketch
         circle: circle
     metadata:
       popup:
-        title: Metadata
+        title: Metadonnées
         btn:
           ok: Fermer
     gpsposition:
       error:
-        notsupported: I'm sorry, but geolocation services are not supported by your browser.
-        nosignal: Currently it's not possible to locate your position.
+        notsupported: Le service de géolocalisation n'est pas supporté par votre navigateur.
+        nosignal: Il est impossible de vous géolocaliser pour le moment.
       class:
-        title: 'GPS Position'
-        description: 'Renders a button to show the GPS Position'
+        title: 'Position GPS'
+        description: 'Génère un bouton affichant la position GPS'
       tag:
         gpsposition: 'GPS Position'
         gps: GPS
@@ -174,36 +175,36 @@ mb:
         button: button
     layertree:
       confirm:
-        allremove: __mb.core.layertree.confirm.allremove
+        allremove: 'Voulez-vous vraiment supprimer toutes les sources?'
       popup:
         btn:
           ok: Fermer
       const:
-        outofscale: __mb.core.layertree.const.outofscale
-        outofbounds: __mb.core.layertree.const.outofbounds
-        parentinvisible: __mb.core.layertree.const.parentinvisible
+        outofscale: 'Layer out of scale'
+        outofbounds: 'Layer out of bounds'
+        parentinvisible: 'Parent layer invisible'
       tooltip:
-        sublayers_openclose: __mb.core.layertree.tooltip.sublayers_openclose
-        removelayer: __mb.core.layertree.tooltip.removelayer
+        sublayers_openclose: 'Sublayers open/close'
+        removelayer: 'Supprimer la couche'
         menu:
           close: Fermer
       label:
-        visibility_onoff: __mb.core.layertree.label.visibility_onoff
-        featureinfo_onoff: __mb.core.layertree.label.featureinfo_onoff
-        opacity: Opacity
-        zoomtolayer: __mb.core.layertree.label.zoomtolayer
-        metadata: __mb.core.layertree.label.metadata
-        sources: __mb.core.layertree.label.sources
-        deleteallsources: Supprimer toute
+        visibility_onoff: 'Visibilité On/Off'
+        featureinfo_onoff: 'FeatureInfo On/Off'
+        opacity: Opacité
+        zoomtolayer: 'Zoom to layer'
+        metadata: Metadonnées
+        sources: Sources
+        deleteallsources: 'Supprimer toutes les sources'
         legend: Légende
-        kmlexport: __mb.core.layertree.label.kmlexport
+        kmlexport: 'KML export'
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Show sources'
         allvisibility_on: 'Show all layers'
       class:
-        title: __mb.core.layertree.class.title
-        description: __mb.core.layertree.class.description
+        title: 'Arborescence des couches'
+        description: 'Arborescence des couches de la carte'
       tag:
         layertree: layertree
         layer: layer
@@ -211,29 +212,29 @@ mb:
       contextmenu:
         nooption: 'Layer has no context menu option'
     zoombar:
-      panup: Déplacer vers le haut
-      panright: 'Déplacer vers la droite'
-      pandown: 'Déplacer vers le bas'
-      panleft: 'Déplacer vers la gauche'
-      goback: Retour
-      goforward: Suivant
-      zoombybox: 'Zoomer sur la sélection'
-      zoombyworld: __mb.core.zoombar.zoombyworld
-      zoomin: 'Zoom avant'
-      zoomout: 'Zoom arrière'
+      panup: 'Pan up'
+      panright: 'Pan right'
+      pandown: 'Pan down'
+      panleft: 'Pan left'
+      goback: 'Go back'
+      goforward: 'Go forward'
+      zoombybox: 'Zoom by box'
+      zoombyworld: 'Zoom by world'
+      zoomin: Zoomin
+      zoomout: Zoomout
       class:
-        title: 'Navigation toolbar'
-        description: 'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
+        title: 'Outils de navigation'
+        description: 'Cet élément affiche boîte de contrôle flottante permettant de zoomer et de se déplacer sur la carte (ressemble au contrôle PanZoomBar d''OpenLayers). Cet élément est plus facile à utiliser lorsqu''un style personnalisé est requis.'
       tag:
-        zoom: Zoom
-        pan: Déplacer
+        zoom: zoom
+        pan: pan
         control: control
         navigation: navigation
         panel: panel
     activityindicator:
       class:
-        title: __mb.core.activityindicator.class.title
-        description: __mb.core.activityindicator.class.description
+        title: 'Indicateur d''activité'
+        description: 'Affiche l''activité HTTP'
       tag:
         activity: activity
         indicator: indicator
@@ -245,8 +246,8 @@ mb:
         button: button
     coordinatesdisplay:
       class:
-        title: Afficher les Coordonnées
-        description: Afficher les Coordonnées
+        title: 'Afficheur de coordonnées'
+        description: 'L''afficheur de coordonnées montre les coordonnées de la position de la souris'
       tag:
         coordinates: coordinates
         display: display
@@ -254,14 +255,14 @@ mb:
         position: position
     copyright:
       class:
-        title: Copyright
-        description: 'Afficher le Copyright'
+        title: Droits d'auteur
+        description: 'Affiche les conditions d''utilisation'
       tag:
         copyright: Copyright
         dialog: dialog
     map:
       class:
-        title: Carte (Map)
+        title: Carte
       tag:
         map: map
         mapquery: MapQuery
@@ -269,47 +270,47 @@ mb:
       srsnotfound: 'SRS properties for %srslist% are not found'
     mapabs:
       class:
-        description: 'OpenLayers based map'
+        description: 'Carte basée sur MapQuery/OpenLayers'
     scalebar:
       class:
-        title: 'Échelle (Scale bar)'
-        description: 'The scalebar displays a small line indicator representing the current map scale.'
+        title: 'Barre d''échelle'
+        description: 'La barre d''échelle affiche un indicateur linéaire représentant l''échelle actuelle de la carte.'
       tag:
         scale: scale
         bar: bar
     scaledisplay:
       class:
-        title: Échelle
-        description: Afflicher l'échelle
+        title: 'Échelle numérique'
+        description: 'Affiche l''échelle numérique actuelle de la carte'
       tag:
-        scale: Échelle
+        scale: scale
         display: display
     scaleselector:
       class:
-        title: __mb.core.scaleselector.class.title
-        description: __mb.core.scaleselector.class.description
+        title: 'Sélectionneur d''échelle'
+        description: 'Permet d''afficher et de changer l''échelle de la carte'
       tag:
-        scale: Echelle
+        scale: scale
         selector: selector
     srsselector:
       class:
-        title: 'SRS sélection'
-        description: 'The spatial reference system selector changes the map''s spatial reference system'
+        title: 'Sélectionneur de SRS'
+        description: 'Permet de sélectionner le système de référence spatial (SRS)'
       tag:
         srs: SRS
         selector: selector
     admin:
       poi:
         label:
-          usemailto: 'Utiliser Mailto'
+          usemailto: 'Use Mailto'
       legend:
         label:
           autoopen: Autoopen
-          hideemptylayers: 'Cacher empty sujets'
-          generatelegendurl: 'Generate legend url'
-          showsourcetitle: 'Show source title'
-          showlayertitle: 'Show layer title'
-          showgroupedlayertitle: 'Show grouped layer title'
+          hideemptylayers: 'Cacher les couches vides'
+          generatelegendurl: 'Générer l''URL de la légende'
+          showsourcetitle: 'Afficher le titre de la source'
+          showlayertitle: 'Afficher le titre de la couche'
+          showgroupedlayertitle: 'Afficher le titre des groupes de couches'
       featureinfo:
         label:
           autoopen: Autoopen
@@ -319,8 +320,8 @@ mb:
       printclient:
         label:
           autoopen: Autoopen
-          rotatable: Rotatif
-          legend: 'Print légende'
+          rotatable: Pivotable
+          legend: 'Imprimer la légende'
           legend_default_behaviour: 'Legend checkbox active'
       copyright:
         label:
@@ -350,13 +351,13 @@ mb:
     htmlelement:
       class:
         title: HTML
-        description: 'Add some HTML'
+        description: 'Ajouter du code HTML'
       tag:
         html: HTML
     entity:
       app:
         screenshotfile:
-          error: Erreur
+          error: Error
     redlining:
       geometrytype:
         point: Point
@@ -368,15 +369,15 @@ mb:
           label: Texte
       geometry:
         action:
-          remove: 'Supprimer géométrie'
-          edit: 'Éditer géométrie'
-          zoom: 'Zoom á géométrie'
+          remove: 'Remove geometry'
+          edit: 'Edit geometry'
+          zoom: 'Zoom to geometryoom'
       dialog:
         btn:
           cancel: Fermer
       class:
-        title: Redlining
-        description: 'Redlining outils'
+        title: Annotation
+        description: 'Outil d''annotation'
       tag:
         redlining: redlining
         geometry: geometry
@@ -385,3 +386,42 @@ mb:
       datails: 'The map cannot be displayed.'
       exception: 'Exception: %exception%'
       statuscode: 'HTTP status code'
+
+Search: __Search
+FeatureInfo: 'Données caractéristiques'
+Services: Services
+'X coordinate': 'Coordonnées X'
+'Y coordinate': 'Coordonnées Y'
+'Pan up': 'Déplacer vers le haut'
+'Pan right': 'Déplacer vers la droite'
+'Pan down': 'Déplacer vers le bas'
+'Pan left': 'Déplacer vers la gauche'
+'Go back': Retour
+'Go forward': Suivant
+'Zoom by box': 'Zoomer sur la sélection'
+'Zoom in': 'Zoom avant'
+'Click to zoom': 'Cliquer pour zoomer'
+'Zoom out': 'Zoom arrière'
+About: 'À propos'
+Save: Enregistrer
+Cancel: Annuler
+'Add Group': 'Ajouter un groupe'
+Delete: Supprimer
+'Really Delete': 'Supprimer définitivement'
+'Group Index': 'Index des groupes'
+'Available Groups': 'Groupes disponibles'
+Name: Nom
+Edit: Modifier
+'No Groups': 'Aucun groupe'
+'Add User': 'Ajouter un utilisateur'
+'Realy delete?': 'Supprimer définitivement?'
+'Yes': Oui
+'No': Non
+save: enregistrer
+'User Index': 'Index des utilisateurs'
+'Available Users': 'Utilisateurs disponibles'
+'No Users': 'Aucun utilisateur'
+'Share POI': 'Share POI'
+Text: Text
+'You can use the following snippet in an email to send the POI':
+  '': 'You can use the following snippet in an email to send the POI.'
