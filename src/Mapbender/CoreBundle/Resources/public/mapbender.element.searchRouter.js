@@ -912,6 +912,36 @@
         },
 
         /**
+         * Get current route definition
+         * @returns {*}
+         */
+        getCurrentRouteSettings: function() {
+            var widget = this;
+            var options = widget.options;
+            var currentRouteId = widget.getCurrentRouteId();
+
+            return _.contains(_.keys(options.routes), currentRouteId) ? options.routes[currentRouteId] : null;
+        },
+
+        /**
+         * Get current route id
+         */
+        getCurrentRouteId: function(){
+            var widget = this;
+            return $("select[name='search_routes[route]']",widget.element).val();
+        },
+
+        /**
+         * get current sub route id
+         * @param routeId
+         */
+        getCurrentSubRouteId: function(routeId){
+            var widget = this;
+            routeId = routeId === undefined ? widget.getCurrentRouteId() : routeId;
+            return $(".search-forms select[name='"+routeId+"[gemeinde]']",widget.element).val();
+        },
+
+        /**
          * Result callback
          *
          * @param  jQuery.Event event Mouse event
@@ -920,6 +950,9 @@
          */
         _detailResultCallback: function(event){
             var widget = this;
+            var options = widget.options;
+            var routeSettings = widget.getCurrentRouteSettings();
+            var subRouteId = widget.getCurrentSubRouteId();
             var row = $(event.currentTarget),
               feature = $.extend({}, row.data('feature').getFeature()),
               map = feature.layer.map,
