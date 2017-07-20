@@ -84,6 +84,7 @@ class Map extends Element
                 '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
                 '/../vendor/mapbender/mapquery/src/jquery.mapquery.core.js',
                 'proj4js/proj4js-compressed.js',
+                'mapbender.element.map.mapaxisorder.js',
                 'mapbender.element.map.js'),
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));
     }
