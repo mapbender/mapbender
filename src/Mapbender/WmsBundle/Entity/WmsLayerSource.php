@@ -203,7 +203,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Set parent
      *
-     * @param Object $parent
+     * @param WmsLayerSource $parent
      * @return WmsLayerSource
      */
     public function setParent(WmsLayerSource $parent = null)
@@ -215,7 +215,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get parent
      *
-     * @return Object
+     * @return WmsLayerSource|null
      */
     public function getParent()
     {
@@ -873,7 +873,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get dimension
      *
-     * @return array
+     * @return Dimension[]
      */
     public function getDimension()
     {

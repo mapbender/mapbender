@@ -6,11 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword;
-use Mapbender\WmsBundle\Component\RequestInformation;
 
 /**
  * Class that Parses WMS 1.3.0 GetCapabilies Document
@@ -19,15 +17,6 @@ use Mapbender\WmsBundle\Component\RequestInformation;
  */
 class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
 {
-
-    /**
-     * Creates an instance
-     * @param \DOMDocument $doc
-     */
-    public function __construct(\DOMDocument $doc)
-    {
-        parent::__construct($doc);
-    }
 
     /**
      * Parses the GetCapabilities document
@@ -162,6 +151,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
      *
      * @param \DOMElement $contextElm the element to use as context for the
      * Operation Request Information section
+     * @return RequestInformation
      */
     private function parseOperationRequestInformation(\DOMElement $contextElm)
     {
