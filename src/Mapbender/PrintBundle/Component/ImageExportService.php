@@ -37,9 +37,16 @@ class ImageExportService
             }
         }
 
-        $this->getImages();
+        $imagePath = $this->getImages();
+        $this->emitImageToBrowser($imagePath);
+        unlink($imagePath);
     }
 
+    /**
+     * Collect and merge WMS tiles and vector layers into a PNG file.
+     *
+     * @return string path to merged PNG file
+     */
     private function getImages()
     {
         $temp_names = array();
@@ -144,8 +151,15 @@ class ImageExportService
         if (isset($this->data['vectorLayers'])) {
             $this->drawFeatures($finalImageName);
         }
+        return $finalImageName;
+    }
 
-        $finalImage = imagecreatefrompng($finalImageName);
+    /**
+     * @param string $imagePath
+     */
+    protected function emitImageToBrowser($imagePath)
+    {
+        $finalImage = imagecreatefrompng($imagePath);
         if ($this->data['format'] == 'png') {
             header("Content-type: image/png");
             header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".png");
@@ -157,7 +171,6 @@ class ImageExportService
             //header('Content-Length: ' . filesize($file));
             imagejpeg($finalImage, null, 85);
         }
-        unlink($finalImageName);
     }
 
     private function drawFeatures($finalImageName)
