@@ -26,6 +26,8 @@ class ImageExportService
     protected $urlHostPath;
     /** @var array */
     protected $data;
+    /** @var string[] */
+    protected $requests = array();
 
     public function __construct($container)
     {
@@ -52,8 +54,19 @@ class ImageExportService
         return $logger;
     }
 
+    /**
+     * Builds a png image and emits it directly to the browser
+     *
+     * @param string $content the job description in valid JSON
+     * @return void
+     *
+     * @todo: converting from JSON encoding is controller responsibility
+     * @todo: emitting to browser is controller responsibility
+     */
     public function export($content)
     {
+        // Clean up internally modified / collected state
+        $this->requests = array();
         $this->data = json_decode($content, true);
 
         foreach ($this->data['requests'] as $i => $layer) {
