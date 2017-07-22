@@ -16,7 +16,6 @@ mb:
         feature: 'Özellik' #feature
         info: 'Bilgi' #info
         dialog: 'İletişim' #dialog
-#-----------------------------------------------------------------------------------------------------------------------
     aboutdialog:
       content:
         versionprefix: v.
@@ -30,7 +29,6 @@ mb:
         help: 'Yardim' #help
         info: 'Bilgi' #info
         about: 'Hakkında' #about
-#-----------------------------------------------------------------------------------------------------------------------
     simplesearch:
       input:
         search: 'Ara' #Search
@@ -40,7 +38,6 @@ mb:
       error:
         geometry:
           missing: 'Seçilen giriş geometri içermiyor' #The selected entry does not contain a geometry.
-#-----------------------------------------------------------------------------------------------------------------------
     searchrouter:
       popup:
         btn:
@@ -55,7 +52,6 @@ mb:
       tag:
         search: 'Ara' #Search
         router: 'Yönlendirici' #router
-#-----------------------------------------------------------------------------------------------------------------------
     poi:
       sharepoi: 'İlgi noktası Paylaş (Share POI)' #'Share POI'
       text:
@@ -73,7 +69,6 @@ mb:
         interest: 'İlgi' #interest
       label:
         text: 'Metin' #Text
-#-----------------------------------------------------------------------------------------------------------------------
     basesourceswitcher:
       error:
         sourcenotavailable: 'Kimliği %id% olan bir kaynak bulunamadı.' #'A source with id %id% is not available.'
@@ -86,7 +81,6 @@ mb:
         switcher: 'Değiştirici (Switcher)' #switcher
       form:
         mesage: 'Temelkaynak kümesi tanımlanmadı.' #'No basesource set is defined.'
-#-----------------------------------------------------------------------------------------------------------------------
     legend:
       nolegend: 'Açıklayıcı bilgiler (legend)' #'No legend available.'
       popup:
@@ -98,12 +92,11 @@ mb:
       tag:
         layer: 'Katman' #layer
         legend: 'Açıklayıcı bilgiler (legend)' #legend
-#-----------------------------------------------------------------------------------------------------------------------
     ruler:
       popup:
         btn:
           ok: 'Kapat' #Close
-      create_error: Ruler: 'Tip hat veya bölge olmalıdır.' #'Type must be line or area.'
+      create_error: 'Ruler: Tip hat veya bölge olmalıdır.' #'Type must be line or area.'
       class:
         title: 'Hat/Alan Cetvel' #'Line/Area Ruler'
         description: 'Hat/alan çizmek ve bir iletişim kutusunda uzunluk/alan görüntülemek için Cetvel' #'Ruler to draw a line/area and display length/area in a dialog'
@@ -111,7 +104,6 @@ mb:
         line: 'Hat' #line
         area: 'Bölge' #area
         measure: 'ölçmek' #measure
-#-----------------------------------------------------------------------------------------------------------------------
     printclient:
       label:
         template: 'Şablon (Kalıp)' #Template
@@ -140,7 +132,6 @@ mb:
       btn:
         deactivate: 'Baskı Çerçevesini Devre Dışı Bırak' #'Deactivate Print Frame'
         activate: 'Baskı Çerçevesini Etkinleştir' #'Activate Print Frame'
-#-----------------------------------------------------------------------------------------------------------------------
     overview:
       nolayer: 'Genel bakış öğesinin katmanı yoktur.' #'The overview element has no layer.'
       class:
@@ -149,7 +140,6 @@ mb:
       tag:
         overview: 'Genel bakış' #overview
         map: 'Harita' #map
-#-----------------------------------------------------------------------------------------------------------------------
     sketch:
       circle:
         radius:
@@ -165,13 +155,11 @@ mb:
       tag:
         sketch: 'Kroki' #sketch
         circle: 'Daire' #circle
-#-----------------------------------------------------------------------------------------------------------------------
     metadata:
       popup:
         title: 'Üstveri (MetaData)' #Metadata
         btn:
           ok: 'Kapat' #Close
-#-----------------------------------------------------------------------------------------------------------------------
     gpsposition:
       error:
         notsupported: 'Coğrafi konum servisleri tarayıcınız tarafından desteklenmiyor.' #I'm sorry, but geolocation services are not supported by your browser.
@@ -184,7 +172,6 @@ mb:
         gps: GPS
         position: 'Konum' #position
         button: 'Tuş' #button
-#-----------------------------------------------------------------------------------------------------------------------
     layertree:
       confirm:
         allremove: 'Bütün kaynaklar silinsin mi?' #'Really all sources delete?'
@@ -223,7 +210,6 @@ mb:
         tree: 'Ağaç' #tree
       contextmenu:
         nooption: 'Katmanın bağlam menüsü seçeneği yok' #'Layer has no context menu option'
-#-----------------------------------------------------------------------------------------------------------------------
     zoombar:
       panup: 'Kaydır' #'Pan up'
       panright: 'Sağa kaydır' #'Pan right'
@@ -232,20 +218,18 @@ mb:
       goback: 'Geri dön' #'Go back'
       goforward: 'İleri git' #'Go forward'
       zoombybox: 'Kutuyu yakınlaştır' #'Zoom by box'
-      zoombyworld: 'Dünya'ya yakınlaştır' #'Zoom by world'
+      zoombyworld: 'Dünya´ya yakınlaştır' #'Zoom by world'
       zoomin: 'Yakınlaştır' #Zoomin
       zoomout: 'Uzaklaştır' #Zoomout
       class:
         title: 'Gezinme araç çubuğu' #'Navigation toolbar'
-        description: 'Gezinme Çubuğu, OpenLayers PanZoomBar denetimine benzer şekilde kaydırmak ve yakınlaştırmak için bir denetim sağlar. Bu unsur özel şekillendirmeye ihtiyaç duyulduğunda kullanımı kolaylaştırır. '
-                    #'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
+        description: 'Gezinme Çubuğu, OpenLayers PanZoomBar denetimine benzer şekilde kaydırmak ve yakınlaştırmak için bir denetim sağlar. Bu unsur özel şekillendirmeye ihtiyaç duyulduğunda kullanımı kolaylaştırır. '                    #'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
       tag:
         zoom: 'Yakınlaştırma' #zoom
         pan: pan
         control: 'Kontrol' #control
         navigation: 'navigasyon' #navigation
         panel: panel
-#-----------------------------------------------------------------------------------------------------------------------
     activityindicator:
       class:
         title: 'Etkinlik göstergesi' #'Activity indicator'
@@ -253,14 +237,13 @@ mb:
       tag:
         activity: 'Etkinlik' #activity
         indicator: 'Gösterge' #indicator
-#-----------------------------------------------------------------------------------------------------------------------
     button:
       class:
         title: 'Tuş' #Button
         description: 'Tuş' #Button
       tag:
         button: 'Tuş' #button
-#-----------------------------------------------------------------------------------------------------------------------
+
     coordinatesdisplay:
       class:
         title: 'Koordinatları görüntüleme' #'Coordinates display'
@@ -270,7 +253,6 @@ mb:
         display: 'Ekran' #display
         mouse: 'Fare' #mouse
         position: 'Konum' #position
-#-----------------------------------------------------------------------------------------------------------------------
     copyright:
       class:
         title: 'Telif hakkı' #Copyright
@@ -278,7 +260,6 @@ mb:
       tag:
         copyright: 'Telif hakkı' #Copyright
         dialog: 'İletişim' #dialog
-#-----------------------------------------------------------------------------------------------------------------------
     map:
       class:
         title: 'Harita' #Map
@@ -287,20 +268,16 @@ mb:
         mapquery: 'Harita Sorgulama' #MapQuery
         openlayers: 'Katman Aç' #OpenLayers
       srsnotfound: '%Srslist% için SRS özellikleri bulunamadı' #'SRS properties for %srslist% are not found'
-#-----------------------------------------------------------------------------------------------------------------------
     mapabs:
       class:
         description: 'MapQuery/OpenLayers tabanlı harita' #'MapQuery/OpenLayers based map'
-#-----------------------------------------------------------------------------------------------------------------------
     scalebar:
       class:
         title: 'Ölçek çubuğu' #'Scale bar'
-        description: 'Ölçek çubuğu, geçerli harita ölçeğini temsil eden küçük bir çizgi göstergesi gösterir.' 
-                    #'The scalebar displays a small line indicator representing the current map scale.'
+        description: 'Ölçek çubuğu, geçerli harita ölçeğini temsil eden küçük bir çizgi göstergesi gösterir.'                     #'The scalebar displays a small line indicator representing the current map scale.'
       tag:
         scale: 'Ölçek' #scale
         bar: 'Çubuk' #bar
-#-----------------------------------------------------------------------------------------------------------------------
     scaledisplay:
       class:
         title: 'Ölçek ekranı' #'Scale display'
@@ -308,7 +285,6 @@ mb:
       tag:
         scale: 'Ölçek' #scale
         display: 'Ekran' #display
-#-----------------------------------------------------------------------------------------------------------------------
     scaleselector:
       class:
         title: 'Ölçek seçicisi' #'Scale selector'
@@ -316,7 +292,6 @@ mb:
       tag:
         scale: 'Ölçek' #scale
         selector: 'Seçici' #selector
-#-----------------------------------------------------------------------------------------------------------------------
     srsselector:
       class:
         title: 'SRS seçici' #'SRS selector'
@@ -324,16 +299,15 @@ mb:
       tag:
         srs: 'SRS'
         selector: 'Seçici' #selector
-#-----------------------------------------------------------------------------------------------------------------------
     admin:
       poi:
         label:
-          usemailto: 'Mailto'yu kullanın' #'Use Mailto'
+          usemailto: 'Mailto`yu kullanın' #'Use Mailto'
       legend:
         label:
           autoopen: 'Kendaç' #Autoopen
           hideemptylayers: 'Boş katmanları gizle' #'Hide empty layers'
-          generatelegendurl: 'Açıklayıcı bilgiler (legend) URL'si oluştur' #'Generate legend url'
+          generatelegendurl: 'Açıklayıcı bilgiler (legend) URL`si oluştur' #'Generate legend url'
           showsourcetitle: 'Kaynak başlığını göster' #'Show source title'
           showlayertitle: 'Katman başlığını göster' #'Show layer title'
           showgroupedlayertitle: 'Show grouped layer title' #'Show grouped layer title'
@@ -357,15 +331,15 @@ mb:
           showbasesources: 'Temel kaynağı göster' #'Show base sources'
           autoopen: 'Kendaç' #Autoopen
           showheader: 'Başlığı göster' #'Show header'
-          showlayerremove: 'Katman kaldır'ı göster' #'Show layer remove'
+          showlayerremove: 'Katman kaldır`ı göster' #'Show layer remove'
           usetheme: 'Tematik katman' #'Thematic layer'
           themes: 'Temalar' #Themes
           theme:
             opened: 'Açıldı' #opened
             activate: 'Katman etkinleştiryi ekle/kaldır' #'Enabling Layer Add / Remove'
             useTheme: 'Temaları göster' #'Theme show'
-            sourceVisibility: 'Theme: 'Kaynak görünürlüğü' #source visibility'
-            allSelected: 'Theme: 'Katman görünürlüğü' #layer visibility'
+            sourceVisibility: 'Theme: Kaynak görünürlüğü' #source visibility'
+            allSelected: 'Theme: Katman görünürlüğü' #layer visibility'
             label: 'Tema isimleri' #'theme name'
           hidenottoggleable: 'toggleable olmayanı gizle' #'Hide not toggleable'
           hideselect: 'Klasörlerde görünürlükğü gizle' #'Hide visibility by folders'
@@ -374,19 +348,16 @@ mb:
         label:
           auto_activate: 'Otomatik etkinleştir' #Autoactivate
           deactivate_on_close: 'Kapandığında devre dışı bırak' #'Deactivate on close'
-#-----------------------------------------------------------------------------------------------------------------------
     htmlelement:
       class:
         title: 'HTML' #HTML
         description: 'HTML ekle' #'Add some HTML'
       tag:
         html: 'HTML' #HTML
-#-----------------------------------------------------------------------------------------------------------------------
     entity:
       app:
         screenshotfile:
           error: 'Hata' #Error
-#-----------------------------------------------------------------------------------------------------------------------
     redlining:
       geometrytype:
         point: 'Nokta (Konum)' #Point
@@ -410,7 +381,6 @@ mb:
       tag:
         redlining: 'Redlining' #redlining
         geometry: 'Geometri' #geometry
-#-----------------------------------------------------------------------------------------------------------------------
   geosource:
     image_error:
       datails: 'Harita Görüntülenemiyor.' #'The map cannot be displayed.'
