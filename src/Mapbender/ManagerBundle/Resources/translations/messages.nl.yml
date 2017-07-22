@@ -1,34 +1,34 @@
 mb:
   application:
     create:
-      success: Your application has been created.
+      success: Uw applicatie is aangemaakt.
       failure:
-        create.directory: Application directory can't be created.
+        create.directory: Applicatie map kon niet aangemaakt worden.
     save:
-      success: Your application has been saved.
+      success: Uw applicatie is bewaard.
       failure:
-        general: There was an error trying to save your application.
+        general: Fout bij bewaren applicatie.
         create.directory: |
-          Your application has been updated but the application's directories can not be created.
+          Uw applicatie is bijgewerkt maar de mappen van de applicatie konden niet worden aangemaakt.
     remove:
-      success: Your application has been deleted.
+      success: Uw applicatie is verwijderd.
       failure:
-        general: Your application couldn't be deleted.
-        already.removed:  Your application has been already deleted.
+        general: Uw applicatie kon niet verwijderd worden.
+        already.removed:  Uw applicatie was reeds verwijderd.
         remove.directory: |
-          Your application has been deleted but the application's directories can not be removed.
+          Uw applicatie is verwijderd maar de mappen van de applicatie konden niet verwijderd worden.
   layerset:
     create:
-      success: Your layerset has been created.
+      success: Uw lagenset is aangemaakt.
       failure:
-        unique.title: Layerset title is already used.
+        unique.title: Lagenset titel is reeds in gebruik.
     remove:
-      success: Your layerset has been deleted.
-      failure: Your layerset can't be deleted.
+      success: Uw lagenset is verwijderd.
+      failure: Uw lagenset kon niet verwijderd worden.
   source:
     instance:
       create:
-        success: A new instance has been created. Please edit it.
+        success: Een nieuwe instantie is aangemaakt. Deze gaarne bewerken.
   manager:
     admin:
       sources: Bronnen
@@ -38,21 +38,21 @@ mb:
         delete: 'verwijder bron'
         new:
           add: 'Voeg bron toe'
-        valid: __mb.manager.admin.source.valid
-        notvalid: __mb.manager.admin.source.notvalid
+        valid: geldig
+        notvalid: ongeldig
         no_source: 'Geen bron beschikbaar'
-        update: __mb.manager.admin.source.update
+        update: bijwerken
         status:
-          ok: 'Source OK'
-          toupdate: 'Source not current anymore'
-          unreachable: 'Source unreachable'
+          ok: 'Bron OK'
+          toupdate: 'Bron is niet meer actueel'
+          unreachable: 'Bron is onbereikbaar'
       map:
-        max_extent: 'Max. extent'
-        start_extent: 'Start extent'
+        max_extent: 'Max. omvang (extent)'
+        start_extent: 'Start omvang (extent)'
       element:
         delete:
           title: 'Verwijder element'
-          confirm: 'Wilt u werkelijke het element verwijderen?'
+          confirm: 'Wilt u werkelijk dit element verwijderen?'
         btn:
           delete: Verwijder
           cancel: Cancel
@@ -67,7 +67,7 @@ mb:
         no_element_added:
           '': 'Geen element toegevoegd'
       messagebox:
-        only_region_elements: __mb.manager.admin.messagebox.only_region_elements
+        only_region_elements: 'Alleen elementen voor regio/gebied worden getoond'
       zoombar:
         draggable: Versleepbaar
       filter:
@@ -76,7 +76,7 @@ mb:
         application: 'Filter applicatie'
       overview:
         maximize: Maximaliseer
-        fix: Fix
+        fix: Repareer
       layerset:
         add: 'Voeg een lagenset toe'
         title: Titel
@@ -84,17 +84,17 @@ mb:
         edit: 'Wijzig lagenset'
         delete:
           title: 'Verwijder lagenset'
-          confirm: 'Do you really want to remove the layerset with the title <span class="italic">%layerset_title%</span>?'
-        id_description: __mb.manager.admin.layerset.id_description
+          confirm: 'Wilt u werkelijk de lagenset getiteld <span class="italic">%layerset_title%</span> verwijderen?'
+        id_description: 'Identificatie in formaat BronId/InstantieId'
         id: Id
       instance:
-        add: 'Voeg instance toe'
-        show_hide: 'Wissel toon/verberg instance'
-        edit: 'Wijzig instance'
+        add: 'Voeg instantie toe'
+        show_hide: 'Wissel toon/verberg instantie'
+        edit: 'Wijzig instantie'
         delete:
-          title: 'verwijder instance'
-          confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
-        no_instance_added: 'Geen instance toegevoegd'
+          title: 'verwijder instantie'
+          confirm: 'Wilt u werkelijk de instantie getiteld <span class="italic">%instance_title%</span> verwijderen?'
+        no_instance_added: 'Geen instantie toegevoegd'
         no_layer_added: 'Geen laag toegevoegd'
       template: Sjabloon
       application:
@@ -107,61 +107,61 @@ mb:
         custom_css: CSS
         security:
           title:  Beveiliging
-          add_users_groups: 'Add users and groups'
-          public: activated
+          add_users_groups: 'Voeg gebruikers en groepen toe'
+          public: geactiveerd
         save: Bewaar
-        cancel: Cancel
+        cancel: Annuleren
         view_this: 'Toon deze applicatie'
         duplicate: 'Dupliceer applicatie'
         public:
-          on_off: 'Wissel publish/unpublish applicatie'
+          on_off: 'Wissel publiceer/on-publiceer applicatie'
         delete: 'Verwijder applicatie'
         no_application: 'Geen applicatie beschikbaar'
         new:
           title: 'Nieuwe Applicatie'
-          base_data: 'Base data'
-        create_use: "Create a new application by providing basic information and then\n          use the edit mode to add elements and layers."
+          base_data: 'Basis data'
+        create_use: "Maak nieuwe applicatie aan met algemene informatie, \n          en gebruik vervolgens de bewerk-modus om elementen en lagen toe te voegen."
         btn:
-          create: 'Maak aan'
-          cancel: Cancel
+          create: 'Aanmaken'
+          cancel: Annuleren
         upload:
-          button: __mb.manager.admin.application.upload.button
-          label: __mb.manager.admin.application.upload.label
-          tooltip: __mb.manager.admin.application.upload.tooltip
+          button: 'Selecteer bestand'
+          label: 'Geen bestand geselecteerd'
+          tooltip: 'Klik om een schermafbeelding te laden'
         export:
-          addAcl: __mb.manager.admin.application.export.addAcl
-          addSources: __mb.manager.admin.application.export.addSources
+          addAcl: 'Toegangs-restricties (ACLs)'
+          addSources: 'Bronnen'
           btn:
-            export: __mb.manager.admin.application.export.btn.export
-            cancel: __mb.manager.admin.application.export.btn.cancel
+            export: 'Exporteer'
+            cancel: 'Annuleren'
         import:
-          addApplications: __mb.manager.admin.application.import.addApplications
-          addAcl: __mb.manager.admin.application.import.addAcl
-          addSources: __mb.manager.admin.application.import.addSources
+          addApplications: 'Toepassingen'
+          addAcl: 'Toegangs-restricties (ACLs)'
+          addSources: 'Bronnen'
           btn:
-            import: __mb.manager.admin.application.import.btn.import
-            cancel: __mb.manager.admin.application.import.btn.cancel
-        title: Title
+            import: 'Importeer'
+            cancel: 'Annuleren'
+        title: Titel
         url:
-          title: 'URL Title'
-        description: Description
-        template: Template
+          title: 'URL Titel'
+        description: Beschrijving
+        template: Sjabloon
         edit:
-          title: 'Common'
-          base_data: 'Base data'
-      applications: Applicatioes
+          title: 'Algemeen'
+          base_data: 'Basis data'
+      applications: Applicaties
     managerbundle:
       applications: Applicaties
       new_application: 'Nieuwe applicatie'
       sources: Bronnen
       add_source: 'Voeg bron toe'
-      add_user_group: __mb.manager.managerbundle.add_user_group
-      acl_element: __mb.manager.managerbundle.acl_element
-      import_application: __mb.manager.managerbundle.import_application
-      export_application: __mb.manager.managerbundle.export_application
+      add_user_group: 'Voeg gebruikers en groepen toe'
+      acl_element: 'Toegangs-restrictie (ACL) element'
+      import_application: 'Importeer'
+      export_application: 'Exporteer'
     element:
       yaml:
-        message: 'Gebruik de <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formaat voor het omschrijven van de element configuratie.'
+        message: 'Gebruik <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formaat voor het omschrijven van de element configuratie.'
     be:
       element:
         delete: 'Verwijder element ''%element_title%'''
@@ -171,61 +171,61 @@ mb:
           title: 'Voeg element toe'
           btn:
             ok: Ok
-            cancel: Cancel
+            cancel: Annuleren
             back: Terug
         edit_element:
           title: 'Wijzig element'
           btn:
-            ok: Update
-            cancel: Cancel
+            ok: Bijwerken
+            cancel: Annuleren
         delete_element:
           subtitle: element
-          title: 'Bevestig verwijdering'
+          title: 'Bevestig verwijderen'
           btn:
             ok: Verwijder
-            cancel: Cancel
+            cancel: Annuleren
         add_edit_layerset:
           title_edit: 'Wijzig lagenset'
-          title_add: 'Add layerset'
+          title_add: 'Voeg lagenset toe'
           btn:
             ok: Ok
-            cancel: Cancel
+            cancel: Annuleren
         delete_layerset:
           title: 'Verwijder lagenset'
           btn:
             ok: Verwijder
-            cancel: Cancel
+            cancel: Annuleren
         add_instance:
-          title: 'Kies brton'
+          title: 'Kies bron'
           btn:
-            cancel: Cancel
+            cancel: Annuleren
         delete_instance:
-          title: 'Bevestig verwijdering'
+          title: 'Bevestig verwijderen'
           btn:
             ok: Verwijder
-            cancel: Cancel
+            cancel: Annuleren
         element_acl:
           btn:
-            cancel: __mb.manager.components.popup.element_acl.btn.cancel
-            ok: __mb.manager.components.popup.element_acl.btn.ok
-            add: __mb.manager.components.popup.element_acl.btn.add
-            back: __mb.manager.components.popup.element_acl.btn.back
-            remove: __mb.manager.components.popup.element_acl.btn.remove
+            cancel: Annuleren
+            ok: Ok
+            add: Voeg toe
+            back: Terug
+            remove: Verwijderen
     template:
       region:
         tabs:
-          label: __mb.manager.template.region.tabs.label
+          label: Tabs
         accordion:
-          label: __mb.manager.template.region.accordion.label
+          label: Accordion
     upload:
-      label_delete: __mb.manager.upload.label_delete
+      label_delete: 'Schermafdruk verwijderd'
     import:
       application:
-        failed: __mb.manager.import.application.failed
+        failed: 'Applicatie kan niet geimporteerd'
       acl:
-        failed: __mb.manager.import.acl.failed
+        failed: 'Toegangs-restricties (ACLs) kunnen niet geimporteerd'
       source:
-        failed: __mb.manager.import.source.failed
+        failed: 'Bronnen kunnen niet geimporteerd'
   core:
     admin:
       button:
@@ -249,13 +249,13 @@ mb:
     entity:
       app:
         screenshotfile:
-          error: __mb.core.entity.app.screenshotfile.error
-          format_error: __mb.core.entity.app.screenshotfile.format_error
+          error: 'Bestand is te groot (%uploadFileSize% bytes). Maximum grootte is %maxFileSize% bytes.'
+          format_error: 'Dit formaat wordt niet ondersteund!'
           resolution:
-            error: 'Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.'
+            error: 'Alleen afbeeldingen van %screenshotHeight% x %screenshotWidth% pixels or hoger zijn mogelijk. Uw bestand is %uploadWidth% x %uploadHeighth% pixels.'
 form:
   manager:
     admin:
       application:
         export:
-          application: Applications
+          application: Applicaties
