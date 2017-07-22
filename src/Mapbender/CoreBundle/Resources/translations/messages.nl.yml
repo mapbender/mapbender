@@ -42,7 +42,7 @@ mb:
       popup:
         btn:
           ok: Zoek
-          cancel: Sluit
+          cancel: Annuleren
           reset: Wissen
       no_results: 'Geen resultaten gevonden.'
       result_counter: 'Resultaten: %count%'
@@ -59,7 +59,7 @@ mb:
       popup:
         btn:
           ok: Ok
-          cancel: Stop
+          cancel: Annuleren
       class:
         title: POI
         description: 'Maak een bijzondere plaats (POI) aan om te delen'
@@ -73,12 +73,12 @@ mb:
       error:
         sourcenotavailable: 'Bron met ID %id% is niet beschikbaar'
       class:
-        title: 'Basis-bron schakelaar'
+        title: 'Achtergrond-bron wisselaar'
         Description: 'Wijzig de achtergrond-bronnen'
       tag:
         base: Basis
         source: Bron
-        switcher: Schakelaar
+        switcher: Wisselaar
       form:
         mesage: 'Geen basis-bron set is gedefinieerd.'
     legend:
@@ -114,7 +114,7 @@ mb:
       popup:
         btn:
           ok: Print
-          cancel: Stop
+          cancel: Annuleren
       info:
         noactivelayer: 'Geen actieve laag!'
       form:
@@ -148,7 +148,7 @@ mb:
         form:
           button:
             'yes': Ja
-            cancel: Stop
+            cancel: Annuleren
       class:
         title: Schets
         description: 'Voegt een vector-laag toe aan de kaart waarop geometrische objecten getekend kunnen worden.'
@@ -389,7 +389,7 @@ mb:
       popup:
         btn:
           ok: Print
-          cancel: Stop
+          cancel: Annuleren
       info:
         noactivelayer: 'Er is geen actieve laag!'
       form:
@@ -416,4 +416,3 @@ mb:
       datails: 'De kaart kan niet getoond worden.'
       exception: 'Foutmelding: %exception%'
       statuscode: 'HTTP status code'
- 
