@@ -15,9 +15,7 @@ mb:
       failure:
         general: 'Uygulama silinemiyor.' #Your application couldn't be deleted.
         already.removed:  'Uygulama bulunamadı.' #Your application has been already deleted.
-        remove.directory: 'Uygulama silindi, ancak uygulamanın dizinleri kaldırılamadı.' 
-                          #Your application has been deleted but the application's directories can not be removed.
-#--------------------------------------------------------------------------------------------------------------------
+        remove.directory: 'Uygulama silindi, ancak uygulamanın dizinleri kaldırılamadı.'                           #Your application has been deleted but the application's directories can not be removed.
   layerset:
     create:
       success: 'Katman oluşturuldu.' #Your layerset has been created.
@@ -26,7 +24,6 @@ mb:
     remove:
       success: 'Katman silindi.' #Your layerset has been deleted.
       failure: 'Katman silinemiyor.' #Your layerset can't be deleted.
-#--------------------------------------------------------------------------------------------------------------------
   source:
     instance:
       create:
@@ -58,8 +55,7 @@ mb:
         btn:
           delete: 'Sil' #Delete
           cancel: 'Vazgeç' #Cancel
-        requirements: 'Zorunlu alanlar koyu renkli etiketlerle, isteğe bağlı alanlar ise daha açık renkli etiketlerle işaretlenir.'
-                     #'Required fields are marked with dark labels, while optional fields have lighter labels.'
+        requirements: 'Zorunlu alanlar koyu renkli etiketlerle, isteğe bağlı alanlar ise daha açık renkli etiketlerle işaretlenir.'                     #'Required fields are marked with dark labels, while optional fields have lighter labels.'
         base_data: 'Temel veriler' #'Base data'
         configuration: 'Yapılandırma' #Configuration
         title: 'Başlık' #Title
@@ -87,8 +83,7 @@ mb:
         edit: 'Katmanı düzenle' #'Edit layerset'
         delete:
           title: 'Katmanı sil' #'Delete layerset'
-          confirm: '<span class = "italic">% layerset_title% </ span> başlıklı katmanı kaldırmak istediğinizden eminmisiniz?'
-                  #'Do you really want to remove the layerset with the title <span class="italic">%layerset_title%</span>?'
+          confirm: '<span class = "italic">% layerset_title% </ span> başlıklı katmanı kaldırmak istediğinizden eminmisiniz?'                  #'Do you really want to remove the layerset with the title <span class="italic">%layerset_title%</span>?'
         id_description: 'Id (Kimlik) KaynakId/ÖrnekId (SourceId/InstanceId) şeklinde oluşturulur' #'Id in the form of SourceId/InstanceId'
         id: 'Kimlik' #Id
       instance:
@@ -124,8 +119,7 @@ mb:
         new:
           title: 'Uygulama oluştur' #'Create application'
           base_data: 'Temel veriler' #'Base data'
-        create_use: "Temel bilgilerden yararlanarak yeni bir uygulama oluşturun ve öğeler ve katmanlar eklemek için düzenleme modunu kullanın."
-                   #"Create a new application by providing basic information and then\n          use the edit mode to add elements and layers."
+        create_use: "Temel bilgilerden yararlanarak yeni bir uygulama oluşturun ve öğeler ve katmanlar eklemek için düzenleme modunu kullanın."                   #"Create a new application by providing basic information and then\n          use the edit mode to add elements and layers."
         btn:
           create: 'Oluştur' #Create
           cancel: 'Vazgeç' #Cancel
@@ -155,7 +149,6 @@ mb:
           title: 'Common'
           base_data: 'Temel veriler' #'Base data'
       applications: 'Uygulamalar' #Applications
-#--------------------------------------------------------------------------------------------------------------------
     managerbundle:
       applications: 'Uygulamalar' #Applications
       new_application: 'Uygulama oluştur' #'Application'
@@ -167,8 +160,7 @@ mb:
       export_application: 'Dışa aktarım (Export)' #Export
     element:
       yaml:
-        message: 'Öğeyi yapılandırmak için <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formatını kullanınız.'
-                #'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
+        message: 'Öğeyi yapılandırmak için <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> formatını kullanınız.'                #'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
     be:
       element:
         delete: 'Öğe sil %element_title%' #'Delete element ' '%element_title%'
@@ -256,16 +248,13 @@ mb:
     entity:
       app:
         screenshotfile:
-          error: 'Veri çok büyük (%uploadFileSize% bytes). Maksimum %maxFileSize% bayt olmalıdır.' 
-                #'The file is too large (%uploadFileSize% bytes). Allowed maximum size is %maxFileSize% bytes.'
+          error: 'Veri çok büyük (%uploadFileSize% bytes). Maksimum %maxFileSize% bayt olmalıdır.'                 #'The file is too large (%uploadFileSize% bytes). Allowed maximum size is %maxFileSize% bytes.'
           format_error: 'Bu format desteklenmiyor!' #'This format is not supported!'
           resolution:
-            error: 'Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.'
-                   #'Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.'
+            error: 'Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.'                   #'Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.'
 form:
   manager:
     admin:
       application:
         export:
           application: 'Uygulama' #Applications
-
