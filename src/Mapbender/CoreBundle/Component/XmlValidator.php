@@ -30,22 +30,16 @@ class XmlValidator
     protected $schemaCacheDir = null;
 
     /**
-     * @var array Proxy connection parameters
-     */
-    protected $proxy_config;
-
-    /**
      *
      * @var array temp files to delete
      */
     protected $filesToDelete;
 
-    public function __construct(ContainerInterface $container, array $proxy_config)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->schemaCacheDir = $container->getParameter('kernel.cache_dir') . '/xmlschemas';
         $this->ensureDirectory($this->schemaCacheDir);
-        $this->proxy_config = $proxy_config;
         $this->filesToDelete = array();
     }
 
@@ -314,7 +308,8 @@ EOF
     protected function download($url)
     {
         $proxy_query = ProxyQuery::createFromUrl($url);
-        $proxy = new CommonProxy($this->proxy_config, $proxy_query);
+        $proxy_config = $this->container->getParameter("owsproxy.proxy");
+        $proxy = new CommonProxy($proxy_config, $proxy_query);
         /** @var Response $response */
         $response = $proxy->handle();
         return $response->getContent();
