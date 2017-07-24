@@ -10,6 +10,7 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * XmlValidator class to validate xml documents.
@@ -18,10 +19,7 @@ use OwsProxy3\CoreBundle\Component\ProxyQuery;
  */
 class XmlValidator
 {
-    /**
-     *
-     * @var type container
-     */
+    /** @var ContainerInterface container */
     protected $container;
 
     /**
@@ -40,7 +38,7 @@ class XmlValidator
      */
     protected $filesToDelete;
 
-    public function __construct($container, array $proxy_config, $orderFromWeb = null)
+    public function __construct(ContainerInterface $container, array $proxy_config, $orderFromWeb = null)
     {
         $this->container = $container;
         $this->dir = $this->createDir($orderFromWeb);
@@ -59,7 +57,27 @@ class XmlValidator
     public function validate(\DOMDocument $doc)
     {
         $this->filesToDelete = array();
-        if (isset($doc->doctype)) {// DTD
+        try {
+            if (isset($doc->doctype)) {// DTD
+                $this->validateDtd($doc);
+            } else {
+                $this->validateNonDtd($doc);
+            }
+        } catch (\Exception $e) {
+            $this->removeFiles();
+            throw $e;
+        }
+        $this->removeFiles();
+        /**
+         * @todo: return value is === passed argument and not used at any calling site in mapbender itself. Evaluate
+         * if it's safe to remove return
+         */
+        return $doc;
+    }
+
+
+    protected function validateDtd(\DOMDocument $doc)
+    {
             $docH = new \DOMDocument();
             $filePath = $this->getFileName($doc->doctype->name, $doc->doctype->systemId);
             $this->isDirExists($filePath);
@@ -79,15 +97,16 @@ class XmlValidator
             $doc->loadXML($docStr);
             unset($docStr);
             if (!@$docH->loadXML($doc->saveXML(), LIBXML_DTDLOAD | LIBXML_DTDVALID)) {
-                $this->removeFiles();
                 throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
             }
             $doc = $docH;
             if (!@$doc->validate()) { // check with DTD
-                $this->removeFiles();
                 throw new XmlParseException("mb.wms.repository.parser.not_valid_dtd");
             }
-        } else {
+    }
+
+    protected function validateNonDtd(\DOMDocument $doc)
+    {
             $schemaLocations = $this->addSchemas($doc);
             $imports = "";
             foreach ($schemaLocations as $namespace => $location) {
@@ -114,13 +133,9 @@ EOF
                 }
                 $this->container->get('logger')->err($message);
                 libxml_clear_errors();
-                $this->removeFiles();
                 throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
             }
             libxml_clear_errors();
-        }
-        $this->removeFiles();
-        return $doc;
     }
 
     /**
@@ -175,27 +190,24 @@ EOF
     {
         $fullFileName = $this->getFileName($ns, $url);
         if (!is_file($fullFileName)) {
-            $proxy_query = ProxyQuery::createFromUrl($url);
-            $proxy = new CommonProxy($this->proxy_config, $proxy_query);
-            try {
-                $browserResponse = $proxy->handle();
-                $content = $browserResponse->getContent();
-                $doc = new \DOMDocument();
-                if (!@$doc->loadXML($content)) {
-                    throw new XmlParseException("mb.core.xmlvalidator.couldnotcreate");
-                }
-                $root = $doc->documentElement;
-                $imports = $root->getElementsByTagName("import");
-                foreach ($imports as $import) {
-                    $ns_ = $import->getAttribute("namespace");
-                    $sl_ = $import->getAttribute("schemaLocation");
-                    $this->addSchemaLocationReq($schemaLocations, $ns_, $sl_);
-                }
-                $this->isDirExists($fullFileName);
-                $doc->save($fullFileName);
-            } catch (\Exception $e) {
-                throw $e;
+        $proxy_query = ProxyQuery::createFromUrl($url);
+        $proxy = new CommonProxy($this->proxy_config, $proxy_query);
+            $browserResponse = $proxy->handle();
+            $content = $browserResponse->getContent();
+            $doc = new \DOMDocument();
+            if (!@$doc->loadXML($content)) {
+                throw new XmlParseException("mb.core.xmlvalidator.couldnotcreate");
             }
+            $root = $doc->documentElement;
+            $imports = $root->getElementsByTagName("import");
+            foreach ($imports as $import) {
+                /** @var \DOMElement $import */
+                $ns_ = $import->getAttribute("namespace");
+                $sl_ = $import->getAttribute("schemaLocation");
+                $this->addSchemaLocationReq($schemaLocations, $ns_, $sl_);
+            }
+            $this->isDirExists($fullFileName);
+            $doc->save($fullFileName);
         }
         $schemaLocations[$ns] = $this->addFileSchema($fullFileName);
     }
@@ -229,6 +241,7 @@ EOF
                 unlink($fileToDel);
             }
         }
+        $this->filesToDelete = array();
     }
 
     /**
@@ -272,7 +285,6 @@ EOF
         } else {
             $path   = $urlArr['host'] . $urlArr['path'];
         }
-        $aa = $this->normalizePath($path);
         return $this->normalizePath($path);
     }
 
