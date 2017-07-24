@@ -17,7 +17,7 @@ mb:
       create: Créer
       edit: Modifier
       publish: Publier
-      screenshot: 'screenshot or width, height etc.'
+      screenshot: 'capture d''écran ou largeur, hauteur, etc.'
       list:
         id: Id
         title: Titre

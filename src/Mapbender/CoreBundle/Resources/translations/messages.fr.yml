@@ -2,9 +2,9 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: 'No feature info layer exists.'
-        unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
-        noresult: 'no result'
+        nolayer: 'Impossible d''identifier l''objet.'
+        unknownoption: 'Option %key% inconnue ou non prise en charge pour %namespace%.%widgetname%.'
+        noresult: 'aucun résultat'
       popup:
         btn:
           ok: Fermer
@@ -56,7 +56,7 @@ mb:
     poi:
       sharepoi: 'Partager un POI'
       text:
-        snippet: 'You can use the following snippet in an email to send the POI'
+        snippet: 'Vous pouvez obtenir l''extrait suivant pour envoyer le POI'
       popup:
         btn:
           ok: Ok
@@ -72,7 +72,7 @@ mb:
         text: Text
     basesourceswitcher:
       error:
-        sourcenotavailable: 'A source with id %id% is not available.'
+        sourcenotavailable: 'La source avec le id %id% n''est pas disponible'
       class:
         title: 'Sélectionneur de fond de carte'
         Description: 'Permet de sélectionner la couche de fond de la carte.'
@@ -97,7 +97,7 @@ mb:
       popup:
         btn:
           ok: Fermer
-      create_error: 'Mesurer: Type must be line or area.'
+      create_error: 'Mesurer: Le type doit être une ligne ou un polygone.'
       class:
         title: 'Mesure linéaire ou surfacique'
         description: 'Permet de mesurer des segments linéaires ou des superficies puis d''afficher les mesures dans une fenêtre'
@@ -107,19 +107,19 @@ mb:
         measure: measure
     printclient:
       label:
-        template: Template
-        quality: Quality
-        scale: Scale
+        template: Modèle
+        quality: Qualité
+        scale: Échelle
         rotation: Rotation
-        legend: 'Print legend'
+        legend: 'Imprimer la légende'
       popup:
         btn:
-          ok: Print
-          cancel: Cancel
+          ok: Imprimer
+          cancel: Annuler
       info:
-        noactivelayer: 'No active layer!'
+        noactivelayer: 'Aucune couche n''est activée!'
       form:
-        required: 'Please fill out this field'
+        required: 'Ce champ est obligatoire'
       class:
         title: 'Client d''impression'
         description: 'Affiche une fenêtre d''impression. Permet d''exporter en format PDF'
@@ -131,10 +131,10 @@ mb:
         jpg: jpg
         jpeg: jpeg
       btn:
-        deactivate: 'Deactivate Print Frame'
-        activate: 'Activate Print Frame'
+        deactivate: 'Désactiver le cadre de l''impression'
+        activate: 'Activer le cadre de l''impression'
     overview:
-      nolayer: 'The overview element has no layer.'
+      nolayer: 'L''élément ''Vue d''ensemble'' n''a aucune couche.'
       class:
         title: 'Vue d''ensemble'
         description: 'Affiche la vue d''ensemble de la carte'
@@ -182,9 +182,9 @@ mb:
       const:
         outofscale: 'Layer out of scale'
         outofbounds: 'Layer out of bounds'
-        parentinvisible: 'Parent layer invisible'
+        parentinvisible: 'La couche parent est invisible'
       tooltip:
-        sublayers_openclose: 'Sublayers open/close'
+        sublayers_openclose: 'Ouvrir/Fermer la sous-couche'
         removelayer: 'Supprimer la couche'
         menu:
           close: Fermer
@@ -197,11 +197,11 @@ mb:
         sources: Sources
         deleteallsources: 'Supprimer toutes les sources'
         legend: Légende
-        kmlexport: 'KML export'
+        kmlexport: 'Exporter en KML'
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
-        sourcevisibility_onoff: 'Show sources'
-        allvisibility_on: 'Show all layers'
+        sourcevisibility_onoff: 'Afficher les sources'
+        allvisibility_on: 'Afficher toutes les couches'
       class:
         title: 'Arborescence des couches'
         description: 'Arborescence des couches de la carte'
@@ -212,14 +212,14 @@ mb:
       contextmenu:
         nooption: 'Layer has no context menu option'
     zoombar:
-      panup: 'Pan up'
-      panright: 'Pan right'
-      pandown: 'Pan down'
-      panleft: 'Pan left'
-      goback: 'Go back'
-      goforward: 'Go forward'
-      zoombybox: 'Zoom by box'
-      zoombyworld: 'Zoom by world'
+      panup: 'Déplacer vers le haut'
+      panright: 'Déplacer vers la droite'
+      pandown: 'Déplacer vers le bas'
+      panleft: 'Déplacer vers la gauche'
+      goback: 'Avancer'
+      goforward: 'Reculer'
+      zoombybox: 'Zoomer sur la boite'
+      zoombyworld: 'Zoomer sur l''étendue globale'
       zoomin: Zoomin
       zoomout: Zoomout
       class:
@@ -267,7 +267,7 @@ mb:
         map: map
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: 'SRS properties for %srslist% are not found'
+      srsnotfound: 'Les propriétés du SRS pour %srslist% sont introuvables'
     mapabs:
       class:
         description: 'Carte basée sur MapQuery/OpenLayers'
@@ -328,26 +328,26 @@ mb:
           autoopen: Autoopen
       layertree:
         label:
-          showbasesources: 'Show base sources'
+          showbasesources: 'Afficher les fonds de carte'
           autoopen: Autoopen
-          showheader: 'Show header'
-          showlayerremove: 'Show layer remove'
-          usetheme: 'Thematic layer'
+          showheader: 'Afficher l''entête'
+          showlayerremove: 'Afficher l''option de supression de couche'
+          usetheme: 'Couche thématique'
           themes: Themes
           theme:
-            opened: opened
-            activate: 'Enabling Layer Add / Remove'
-            useTheme: 'Theme show'
-            sourceVisibility: 'Theme: source visibility'
-            allSelected: 'Theme: layer visibility'
-            label: 'theme name'
-          hidenottoggleable: 'Hide not toggleable'
-          hideselect: 'Hide visibility by folders'
-          hideinfo: 'Hide info'
+            opened: ouvert
+            activate: 'Permettre la suppression/l''ajout de couches'
+            useTheme: 'Afficher le thème'
+            sourceVisibility: 'Thème: visibilité de la source'
+            allSelected: 'Thème: visibilité de la source'
+            label: 'nom du thème'
+          hidenottoggleable: 'Ne pas afficher les couches non-basculables'
+          hideselect: 'Ne pas afficher la visiblité pour les dossiers'
+          hideinfo: 'Ne pas afficher l''information'
       redlining:
         label:
           auto_activate: Autoactivate
-          deactivate_on_close: 'Deactivate on close'
+          deactivate_on_close: 'Désactiver à la fermeture'
     htmlelement:
       class:
         title: HTML
@@ -357,7 +357,7 @@ mb:
     entity:
       app:
         screenshotfile:
-          error: Error
+          error: Erreur
     redlining:
       geometrytype:
         point: Point
@@ -369,9 +369,9 @@ mb:
           label: Texte
       geometry:
         action:
-          remove: 'Remove geometry'
-          edit: 'Edit geometry'
-          zoom: 'Zoom to geometryoom'
+          remove: 'Supprimer la géométrie'
+          edit: 'Modifier la géometrie'
+          zoom: 'Zoomer sur la géométrie'
       dialog:
         btn:
           cancel: Fermer
@@ -383,9 +383,9 @@ mb:
         geometry: geometry
   geosource:
     image_error:
-      datails: 'The map cannot be displayed.'
+      datails: 'La carte ne peut pas être affichée.'
       exception: 'Exception: %exception%'
-      statuscode: 'HTTP status code'
+      statuscode: 'Code de statut HTTP'
 
 Search: __Search
 FeatureInfo: 'Données caractéristiques'
@@ -421,7 +421,7 @@ save: enregistrer
 'User Index': 'Index des utilisateurs'
 'Available Users': 'Utilisateurs disponibles'
 'No Users': 'Aucun utilisateur'
-'Share POI': 'Share POI'
-Text: Text
+'Share POI': 'Partager le POI'
+Text: Texte
 'You can use the following snippet in an email to send the POI':
-  '': 'You can use the following snippet in an email to send the POI.'
+  '': 'Vous pouvez utiliser l''extrait suivant pour partager le POI.'
