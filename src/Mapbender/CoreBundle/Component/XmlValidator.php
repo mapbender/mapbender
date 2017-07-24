@@ -34,11 +34,6 @@ class XmlValidator
     protected $schemaDownloadDir = null;
 
     /**
-     * @var array Proxy connection parameters
-     */
-    protected $proxy_config;
-
-    /**
      *
      * @var array temp files to delete
      */
@@ -48,15 +43,12 @@ class XmlValidator
      * XmlValidator constructor.
      *
      * @param  ContainerInterface $container
-     * @param array               $proxy_config
-     * @param  null|string        $orderFromWeb Path relative to web folder
      */
-    public function __construct(ContainerInterface $container, array $proxy_config, $orderFromWeb = null)
+    public function __construct(ContainerInterface $container)
     {
         $this->container     = $container;
-        $shippingRoot = $this->container->get('kernel')->getRootDir() . '/../web/' . $orderFromWeb;
+        $shippingRoot = $this->container->get('kernel')->getRootDir() . '/../web/xmlschemas';
         $this->shippingSchemaDir = $this->ensureDirectory($this->normalizePath($shippingRoot));
-        $this->proxy_config  = $proxy_config;
         $this->schemaDownloadDir = $this->ensureDirectory(sys_get_temp_dir() . '/mapbender/xmlvalidator');
         $this->filesToDelete = array();
     }
@@ -339,7 +331,8 @@ EOF
     protected function download($url)
     {
         $proxy_query = ProxyQuery::createFromUrl($url);
-        $proxy = new CommonProxy($this->proxy_config, $proxy_query);
+        $proxy_config = $this->container->getParameter("owsproxy.proxy");
+        $proxy = new CommonProxy($proxy_config, $proxy_query);
         /** @var Response $response */
         $response = $proxy->handle();
         return $response->getContent();
