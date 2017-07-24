@@ -4,18 +4,18 @@ mb:
       dialog:
         label:
           example: Exemple
-          wmsurl: 'Service URL'
+          wmsurl: 'URL du service'
           wmsuser: 'Nom d''utilisateur'
           wmspass: 'Mot de passe'
         btn:
           cancel: Annuler
           load: Charger
       error:
-        url: 'WMSLoader: WMS capabilities can''t be loaded! The capabilities url is not valid.'
-        service: 'WMSLoader: the service %service% is not supported!'
-        operation: 'WMSLoader: the WMS Operation %operation% is not supported!'
-        version: 'WMSLoader: the WMS version %version% is not supported!'
-        load: 'WMSLoader: wms capabilities can''t be loaded!'
+        url: 'WMSLoader: Impossible de charger les ''WMS capabilities''! L''URL est invalide.'
+        service: 'WMSLoader: Le service %service% n''est pas supporté!'
+        operation: 'WMSLoader: L''opération %operation% n''est pas supportée!'
+        version: 'WMSLoader: La version %version% du service WMS n''est pas supportée!'
+        load: 'WMSLoader: ''Impossible de chrager les WMS capabilities''!'
       repo:
         macros:
           label:
@@ -54,7 +54,7 @@ mb:
             cautionscalehint: 'Attention: Le calcul de l''échelle est potentiellement limité par la résolution de ScaleHint dans le service WMS version 1.1.1'
         instance:
           title:
-            wmsinstance: 'WMS instance'
+            wmsinstance: 'Instance WMS'
           btn:
             save: Sauvegarder
             cancel: Annuler
@@ -102,25 +102,25 @@ mb:
             boundingbox: BoundingBox
             srs: SRS
             styles: Styles
-            legendurl: 'Legend URL'
-            stylesheeturl: 'Stylesheet URL'
-            styleurl: 'Style URL'
+            legendurl: 'URL de la légende'
+            stylesheeturl: 'URL du stylesheet'
+            styleurl: 'URL du style'
             scale: Échelle
             min: Min
             max: Max
             scalehint: Scalehint
             attribution: Attribution
             onlineresource: 'Online Resource'
-            logourl: 'Logo URL'
+            logourl: 'URL du logo'
             identifier: Identifier
             authority: Authorité
             url: URL
             value: Valeur
-            metadataurl: 'Metadata URL'
+            metadataurl: 'URL des métadonnées'
             dimension: Dimension
             extent: Étendue
-            dataurl: 'Data URL'
-            featurelisturl: 'Featurelist URL'
+            dataurl: 'URL des données'
+            featurelisturl: 'URL du featurelist'
         instancelayerform:
           label:
             layerstitle: 'Titre de la couche'
@@ -137,7 +137,7 @@ mb:
             moreinfo: 'Plus d''informations'
             id:
               title: ID
-              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+              description: 'Le Id de l''instance de la couche sous la forme de: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nom de la couche'
             style: Style
         new:
@@ -160,27 +160,27 @@ mb:
             load: Charger
             cancel: Annuler
       class:
-        title: 'WMS loader'
-        description: 'Loads a WMS via the getCapabilities-Request'
+        title: 'Chargeur de WMS'
+        description: 'Charge un service WMS via une requête ''getCapabilities'''
       tag:
         wms: wms
         loader: loader
       admin:
         label:
-          autoopen: 'Auto open'
-          splitlayers: 'Split layers'
+          autoopen: 'Ouverture automatique'
+          splitlayers: 'Séparer les couches'
           declarative: 'Use declarative'
     repository:
       parser:
-        couldnotparse: 'Could not parse CapabilitiesDocument'
-        not_supported_document: 'Not supported CapabilitiesDocument'
-        not_supported_version: 'The WMS version is not supported'
-        not_valid_dtd: 'A WMS document is not valid (DTD).'
-        not_valid_xsd: 'A WMS document is not valid (XSD).'
+        couldnotparse: 'Impossible d''analyser CapabilitiesDocument'
+        not_supported_document: 'Le CapabilitiesDocument n''est pas supporté'
+        not_supported_version: 'La version du service WMS n''est pas supportée'
+        not_valid_dtd: 'Un document WMS est invalide (DTD).'
+        not_valid_xsd: 'Un document WMS est invalide (XSD).'
     metadata:
       section:
         common:
-          _title: Common
+          _title: Commun
           title: Titre
           name: Nom
           version: Version
@@ -218,8 +218,8 @@ mb:
           dimensions: Dimensions
     dimhandler:
       class:
-        title: 'Dimensions handler'
-        description: 'DimensionsHandler groups and calls the dimension supported instances at the map'
+        title: 'Prise en charge des dimensions'
+        description: 'DimensionsHandler groupe and fait appel aux instances supportant les dimensions'
       tag:
         dimension: dimension
         handler: handler
@@ -229,8 +229,7 @@ mb:
     wmsloader:
       class:
         title: 'Chargeur WMS'
-        description: 'Opens a dialog in which a WMS can be loaded via the getCapabilities-Request'
-        description: 'Ouvre une fenêtre dans laquelle peut être chargé un service WMS avec une requête getCapabilities'
+        description: 'Ouvre une fenêtre dans laquelle un service WMS peut être chargé avec une requête ''getCapabilities'''
       tag:
         wms: wms
         loader: loader
