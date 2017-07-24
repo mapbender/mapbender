@@ -32,5 +32,13 @@ class ServiceValidateCommand extends ContainerAwareCommand
         $importer = new Importer($this->getContainer());
         $result = $importer->evaluateServer($origin, true);
         $wmsSource = $result->getWmsSourceEntity();
+
+        $output->writeln("WMS source loaded and validated");
+        $layers = $wmsSource->getLayers();
+        $layerCount = count($layers);
+        $output->writeln("Source describes $layerCount layers:");
+        foreach ($layers as $layer) {
+            $output->writeln("* {$layer->getTitle()}");
+        }
     }
 }
