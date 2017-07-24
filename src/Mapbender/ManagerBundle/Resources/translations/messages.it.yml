@@ -30,19 +30,25 @@ mb:
       create:
         success: A new instance has been created. Please edit it.
   manager:
-    managerbundle:
-      applications: Applicazioni
-      new_application: 'Nuova applicazione'
-      sources: Fonti
-      add_source: 'Aggiungi fonte'
-      add_user_group: 'Add users and groups'
-      acl_element: 'Acl elemento'
-      import_application: __mb.manager.managerbundle.import_application
-      export_application: __mb.manager.managerbundle.export_application
-    element:
-      yaml:
-        message: 'Usa il formato <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> per descrivere la configurazione dell''elemento.'
     admin:
+      sources: Sources
+      source:
+        add: 'Aggiungi fonte'
+        show_metadata: 'Mostra metadati'
+        delete: 'Elimina fonte'
+        new:
+          add: 'Aggiungi fonte'
+        valid: 'Source valid'
+        notvalid: 'Source notvalid'
+        no_source: 'Nessuna fonte disponibile'
+        update: 'Update source'
+        status:
+          ok: 'Source OK'
+          toupdate: 'Source not current anymore'
+          unreachable: 'Source unreachable'
+      map:
+        max_extent: 'Max. extent'
+        start_extent: 'Start extent'
       element:
         delete:
           title: 'Elimina Elemento'
@@ -60,12 +66,6 @@ mb:
         edit: 'Modifica elemento'
         no_element_added:
           '': 'Nessun elemento aggiunto'
-      map:
-        max_extent: 'Max. extent'
-        start_extent: 'Start extent'
-      overview:
-        maximize: Massimizza
-        fix: Fissa
       messagebox:
         only_region_elements: 'Only for this region available elements are displayed.'
       zoombar:
@@ -74,28 +74,45 @@ mb:
         source: 'Filtra fonte'
         layerset: 'Filtra layerset'
         application: 'Filtra applicazioni'
-      source:
-        valid: 'Source valid'
-        notvalid: 'Source notvalid'
-        no_source: 'Nessuna fonte disponibile'
-        add: 'Aggiungi fonte'
-        show_metadata: 'Mostra metadati'
-        delete: 'Elimina fonte'
-        new:
-          add: 'Aggiungi fonte'
-        update: 'Update source'
-        status:
-          ok: 'Source OK'
-          toupdate: 'Source not current anymore'
-          unreachable: 'Source unreachable'
+      overview:
+        maximize: Massimizza
+        fix: Fissa
+      layerset:
+        add: 'Aggiungi layerset'
+        title: Titolo
+        type: Tipo
+        edit: 'Modifica layerset'
+        delete:
+          title: 'Elimina layerset'
+          confirm: 'Sei sicuro di voler rimuovere il layerset con il titolo <span class="italic">%layerset_title%</span>?'
+        id_description: __mb.manager.admin.layerset.id_description
+        id: Id
+      instance:
+        add: 'Aggiungi istanza'
+        show_hide: 'Alterna mostra/nascondi istanza'
+        edit: 'Modifica istanza'
+        delete:
+          title: 'elimina istanza'
+          confirm: 'Sei sicuro di voler rimuovere l''istanza con il titolo <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Nessuna istanza aggiunta'
+        no_layer_added: 'Nessun layer aggiunto'
+      template: Template
       application:
-        security: Sicurezza
-        view_this: 'Vedi questa applicazione'
         view: Vedi
-        duplicate: 'Copia applicazione'
         edit:
           title: 'Modifica applicazione'
           base_data: 'Dati di base'
+        layouts: Layouts
+        layersets: Layersets
+        custom_css: __mb.manager.admin.application.custom_css
+        security:
+          title: Sicurezza
+          add_users_groups: 'Add users and groups'
+          public: activated
+        save: Salva
+        cancel: Cancella
+        view_this: 'Vedi questa applicazione'
+        duplicate: 'Copia applicazione'
         public:
           on_off: 'Alterna pubblica/annulla pubblicazione applicazione'
         delete: 'Elimina applicazione'
@@ -107,15 +124,16 @@ mb:
         btn:
           create: Crea
           cancel: Cancella
-        layouts: Layouts
-        layersets: Layersets
-        save: Salva
-        cancel: Cancella
         upload:
-          tooltip: __mb.manager.admin.application.upload.tooltip
           button: __mb.manager.admin.application.upload.button
           label: __mb.manager.admin.application.upload.label
-        custom_css: __mb.manager.admin.application.custom_css
+          tooltip: __mb.manager.admin.application.upload.tooltip
+        export:
+          addAcl: __mb.manager.admin.application.export.addAcl
+          addSources: __mb.manager.admin.application.export.addSources
+          btn:
+            export: __mb.manager.admin.application.export.btn.export
+            cancel: __mb.manager.admin.application.export.btn.cancel
         import:
           addApplications: __mb.manager.admin.application.import.addApplications
           addAcl: __mb.manager.admin.application.import.addAcl
@@ -123,34 +141,27 @@ mb:
           btn:
             import: __mb.manager.admin.application.import.btn.import
             cancel: __mb.manager.admin.application.import.btn.cancel
-        export:
-          addAcl: __mb.manager.admin.application.export.addAcl
-          addSources: __mb.manager.admin.application.export.addSources
-          btn:
-            export: __mb.manager.admin.application.export.btn.export
-            cancel: __mb.manager.admin.application.export.btn.cancel
-      layerset:
-        add: 'Aggiungi layerset'
-        id: Id
-        title: Titolo
-        type: Tipo
-        edit: 'Modifica layerset'
-        delete:
-          title: 'Elimina layerset'
-          confirm: 'Sei sicuro di voler rimuovere il layerset con il titolo <span class="italic">%layerset_title%</span>?'
-        id_description: __mb.manager.admin.layerset.id_description
-      instance:
-        add: 'Aggiungi istanza'
-        show_hide: 'Alterna mostra/nascondi istanza'
-        edit: 'Modifica istanza'
-        delete:
-          title: 'elimina istanza'
-          confirm: 'Sei sicuro di voler rimuovere l''istanza con il titolo <span class="italic">%instance_title%</span>?'
-        no_instance_added: 'Nessuna istanza aggiunta'
-        no_layer_added: 'Nessun layer aggiunto'
+        title: Title
+        url:
+          title: 'URL Title'
+        description: Description
+        template: Template
+        edit:
+          title: 'Common'
+          base_data: 'Base data'
       applications: Applicazioni
-      template: Template
+    managerbundle:
+      applications: Applicazioni
+      new_application: 'Nuova applicazione'
       sources: Fonti
+      add_source: 'Aggiungi fonte'
+      add_user_group: 'Add users and groups'
+      acl_element: 'Acl elemento'
+      import_application: __mb.manager.managerbundle.import_application
+      export_application: __mb.manager.managerbundle.export_application
+    element:
+      yaml:
+        message: 'Usa il formato <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> per descrivere la configurazione dell''elemento.'
     be:
       element:
         delete: 'Elimina elemento ''%element_title%'''
@@ -217,6 +228,10 @@ mb:
         failed: 'Sources cannot be imported.'
   core:
     admin:
+      button:
+        show_label: 'Mostra label'
+      scaleselector:
+        show_label: 'Mostra label'
       corrdsdisplay:
         label: 'Mostra il titolo della label'
       srsselector:
@@ -225,10 +240,6 @@ mb:
         show_label: 'Mostra label'
       element:
         autostart: Autostart
-      scaleselector:
-        show_label: 'Mostra label'
-      button:
-        show_label: 'Mostra label'
       about_dialog:
         show_label: 'Mostra label del pulsante'
     element:
@@ -242,3 +253,9 @@ mb:
           format_error: __mb.core.entity.app.screenshotfile.format_error
           resolution:
             error: 'Si possono solamente caricare dei file con la dimensione di %screenshotHeight% x %screenshotWidth% pixel  o  piu grande. Il file da lei caricato ha la dimensione di %uploadWidth% x %uploadHeighth% Pixel.'
+form:
+  manager:
+    admin:
+      application:
+        export:
+          application: Applications

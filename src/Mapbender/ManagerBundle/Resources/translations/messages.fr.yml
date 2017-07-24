@@ -1,255 +1,257 @@
+
 mb:
   application:
     create:
-      success: Your application has been created.
+      success: L'application a été créée.
       failure:
-        create.directory: Application directory can't be created.
+        create.directory: Le dossier de l'application ne peut pas être créé.
     save:
-      success: Your application has been saved.
+      success: L'application a été sauvegardée.
       failure:
-        general: There was an error trying to save your application.
+        general: une erreur est survenue lors de la sauvegarde de l'application.
         create.directory: |
-          Your application has been updated but the application's directories can not be created.
+          L'application a été mise à jour mais mais les dossiers de l'application ne peuvent pas être créés.
     remove:
-      success: Your application has been deleted.
+      success: 'L''application a été supprimée.'
       failure:
-        general: Your application couldn't be deleted.
-        already.removed:  Your application has been already deleted.
+        general: 'L''application ne peut pas être supprimée'
+        already.removed:  L'application est déjà supprimée
         remove.directory: |
-          Your application has been deleted but the application's directories can not be removed.
+          L'application a été supprimée mais les dossiers ne peuvent pas être supprimés.
   layerset:
     create:
-      success: Your layerset has been created.
+      success: L'ensemble de couches a été créée.
       failure:
-        unique.title: Layerset title is already used.
+        unique.title: Le titre de l'ensemble de couches existe déjà.
     remove:
-      success: Your layerset has been deleted.
-      failure: Your layerset can't be deleted.
+      success: L'ensemble de couches a été supprimé.
+      failure: L'ensemble de couches ne peut pas être supprimé.
   source:
     instance:
       create:
-        success: A new instance has been created. Please edit it.
+        success: Une nouvelle instance a été créée. Modifiez-la
   manager:
     admin:
       sources: Sources
       source:
-        add: 'Add source'
-        show_metadata: 'Show metadata'
-        delete: 'Delete source'
+        add: 'Ajouter une source'
+        show_metadata: 'Afficher les metadonnées'
+        delete: 'Supprimer la source'
         new:
-          add: 'Add source'
+          add: 'Ajouter une source'
         valid: 'Source valid'
         notvalid: 'Source not valid.'
-        no_source: 'No source available'
-        update: 'Update source'
+        no_source: 'Aucune source n''est disponible'
+        update: 'Mettre à jour la source'
         status:
           ok: 'Source OK'
-          toupdate: 'Source not current anymore'
-          unreachable: 'Source unreachable'
+          toupdate: 'La source n''est plus à jour'
+          unreachable: 'Source inateignable'
       map:
-        max_extent: 'Max. extent'
-        start_extent: 'Start extent'
+        max_extent: 'Étendue maximum'
+        start_extent: 'Étendue de départ'
       element:
         delete:
-          title: 'Delete Element'
-          confirm: 'Do you really want to delete the element?'
+          title: 'Supprimer l''élément'
+          confirm: 'Voulez-vous vraiment supprimer l''élément?'
         btn:
-          delete: Delete
-          cancel: Cancel
-        requirements: 'Required fields are marked with dark labels, while optional fields have lighter labels.'
-        base_data: 'Base data'
+          delete: Supprimer
+          cancel: Annuler
+        requirements: 'Les champs requis ont une étiquette foncée alors que les champs optionnels ont une étiquette pâle.'
+        base_data: 'Données de base'
         configuration: Configuration
-        title: Title
+        title: Titre
         type: Type
-        add: 'Add a new element to'
-        show_hide: 'Toggle show/hide element'
-        edit: 'Edit element'
+        add: 'Ajouter un nouvel élément à'
+        show_hide: 'Afficher/Ne pas afficher l''élément'
+        edit: 'Modifier l''élément'
         no_element_added:
-          '': 'No element added'
+          '': 'Aucun élément ajouté'
       messagebox:
         only_region_elements: 'Only for this region available elements are displayed.'
       zoombar:
-        draggable: Draggable
+        draggable: Déplaçable
       filter:
-        source: 'Filter source'
-        layerset: 'Filter layerset'
-        application: 'Filter application'
+        source: 'Filtre'
+        layerset: 'Filtre'
+        application: 'Filtre'
       overview:
-        maximize: Maximize
-        fix: Fix
+        maximize: Aggrandir
+        fix: Fixer
       layerset:
-        add: 'Add layerset'
-        title: Title
+        add: 'Ajouter un ensemble de couches'
+        title: Titre
         type: Type
-        edit: 'Edit layerset'
+        edit: 'Modifier l''ensemble de couches'
         delete:
-          title: 'Delete layerset'
-          confirm: 'Do you really want to remove the layerset with the title <span class="italic">%layerset_title%</span>?'
-        id_description: 'Id in the form of SourceId/InstanceId'
+          title: 'Supprimer l''ensemble de couches'
+          confirm: 'Voulez-vous vraiment supprimer l''ensemble de couches  <span class="italic">%layerset_title%</span>?'
+        id_description: 'Id sous la forme de SourceId/InstanceId'
         id: Id
       instance:
-        add: 'Add instance'
-        show_hide: 'Toggle show/hide instance'
-        edit: 'Edit instance'
+        add: 'Ajouter une instance'
+        show_hide: 'Afficher/Cacher l''instance'
+        edit: 'Modifier l''instance'
         delete:
-          title: 'delete instance'
-          confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
-        no_instance_added: 'No instance added'
-        no_layer_added: 'No layer added'
-      template: Template
+          title: 'Supprimer une instance'
+          confirm: 'Voulez-vous vraiment supprimer l''instance <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Aucune instance ajoutée'
+        no_layer_added: 'Aucun ensemble de couches ajouté'
+      template: Modèle
       application:
-        view: View
+        view: Visualiser
         edit:
-          title: 'Edit application'
-          base_data: 'Base data'
-        layouts: Layouts
-        layersets: Layersets
+          title: 'Modifier l''application'
+          base_data: 'Données de base'
+        layouts: Éléments et disposition
+        layersets: Ensembles de couches
         custom_css: CSS
         security:
-          title: Security
-          add_users_groups: 'Add users and groups'
-          public: activated
-        save: Save
-        cancel: Cancel
-        view_this: 'View this application'
-        duplicate: 'Duplicate application'
+          title: Securité
+          add_users_groups: 'Ajouter des utilisateurs et des groupes'
+          public: Activé
+        save: Sauvegarder
+        cancel: Annuler
+        view_this: 'Afficher cette application'
+        duplicate: 'Dupliquer l''application'
         public:
-          on_off: 'Toggle publish/unpublish application'
-        delete: 'Delete application'
-        no_application: 'No application available'
+          on_off: 'Publier/Ne pas publier l''application'
+        delete: 'Supprimer l''application'
+        no_application: 'Aucune application n''est disponible'
         new:
-          title: 'New Application'
-          base_data: 'Base data'
-        create_use: "Create a new application by providing basic information and then\n          use the edit mode to add elements and layers."
+          title: 'Nouvelle application'
+          base_data: 'Données de base'
+
+        create_use: "Créez une nouvelle application en fournissant de l'information de base et ensuite entrez en mode édition pour ajouter des éléments et des couches"
         btn:
-          create: Create
-          cancel: Cancel
+          create: Créer
+          cancel: Annuler
         upload:
-          button: 'Select file:'
-          label: 'No file selected'
-          tooltip: 'Please click to upload a screenshot'
+          button: 'Choisir un fichier:'
+          label: 'Aucun fichier sélectionné'
+          tooltip: 'Cliquez pour charger une capture d''écran'
         export:
           addAcl: ACLs
           addSources: Sources
           btn:
-            export: Export
-            cancel: Cancel
+            export: Exporter
+            cancel: Annuler
         import:
           addApplications: Applications
           addAcl: ACLs
           addSources: Sources
           btn:
-            import: Import
-            cancel: Cancel
-        title: Title
+            import: Importer
+            cancel: Annuler
+        title: Titre
         url:
-          title: 'URL Title'
+          title: "Titre de l'URL"
         description: Description
-        template: Template
+        template: Modèle
       applications: Applications
     managerbundle:
       applications: Applications
-      new_application: 'New application'
+      new_application: 'Nouvelle application'
       sources: Sources
-      add_source: 'Add source'
-      add_user_group: 'Add users and groups'
-      acl_element: 'Acl element'
-      import_application: Import
-      export_application: Export
+      add_source: 'Ajouter une source'
+      add_user_group: 'Ajouter des utilisateurs ou des groupes'
+      acl_element: 'Élément ACL'
+      import_application: Importer
+      export_application: Exporter
     element:
       yaml:
-        message: 'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
+        message: 'Utilisez le format <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> afin de décrire la configuration de l''élément.'
     be:
       element:
-        delete: 'Delete element ''%element_title%'''
+        delete: 'Supprimer l''élément ''%element_title%'''
     components:
       popup:
         add_element:
-          title: 'Add element'
+          title: 'Ajouter un élément'
           btn:
             ok: Ok
-            cancel: Cancel
-            back: Back
+            cancel: Annuler
+            back: Retour
         edit_element:
-          title: 'Edit element'
+          title: 'Modifier l''élément'
           btn:
-            ok: Update
-            cancel: Cancel
+            ok: Mettre à jour
+            cancel: Annuler
         delete_element:
           subtitle: element
-          title: 'Confirm delete'
+          title: 'Confirmez la suppression'
           btn:
-            ok: Delete
-            cancel: Cancel
+            ok: Supprimer
+            cancel: Annuler
         add_edit_layerset:
-          title_edit: 'Edit layerset'
-          title_add: 'Add layerset'
+          title_edit: 'Modifier un ensemble de couches'
+          title_add: 'Ajouter un ensemble de couches'
           btn:
             ok: Ok
-            cancel: Cancel
+            cancel: Annuler
         delete_layerset:
-          title: 'Delete layerset'
+          title: 'Supprimer un ensemble de couches'
           btn:
-            ok: Delete
-            cancel: Cancel
+            ok: Supprimer
+            cancel: Annuler
         add_instance:
-          title: 'Select source'
+          title: 'Choisissez une source'
           btn:
-            cancel: Cancel
+            cancel: Annuler
         delete_instance:
-          title: 'Confirm delete'
+          title: 'Confirmez la suppression'
           btn:
-            ok: Delete
-            cancel: Cancel
+            ok: Supprimer
+            cancel: Annuler
         element_acl:
           btn:
-            cancel: Cancel
-            ok: Update
-            add: Add
-            back: Back
-            remove: Remove
+            cancel: Annuler
+            ok: Mettre à jour
+            add: Ajouter
+            back: Retour
+            remove: Supprimer
     template:
       region:
         tabs:
-          label: Tabs
+          label: Onglets
         accordion:
-          label: Accordion
+          label: Accordéon
     upload:
-      label_delete: 'Screenshot removed'
+      label_delete: 'Capture d''écran supprimée'
     import:
       application:
-        failed: 'Application cannot be imported.'
+        failed: 'Impossible d''importer l''application.'
       acl:
-        failed: 'Acls cannot be imported.'
+        failed: 'Impossible d''importer le ou les ACL(s).'
       source:
-        failed: 'Sources cannot be imported.'
+        failed: 'Impossible d''importer les sources.'
   core:
     admin:
       button:
-        show_label: 'Show label'
+        show_label: 'Afficher l''étiquette'
       scaleselector:
-        show_label: 'Show label'
+        show_label: 'Afficher l''étiquette'
       corrdsdisplay:
-        label: 'Show title label'
+        label: 'Afficher l''étiquette du titre'
       srsselector:
-        show_label: 'Show label'
+        show_label: 'Afficher l''étiquette'
       gpsposition:
-        show_label: 'Show label'
+        show_label: 'Afficher l''étiquette'
       element:
         autostart: Autostart
       about_dialog:
-        show_label: 'Show button label'
+        show_label: 'Afficher l''étiquette du bouton'
     element:
       be:
         button:
-          show_label: 'Show label'
+          show_label: 'Afficher l''étiquette'
     entity:
       app:
         screenshotfile:
-          error: 'The file is too large (%uploadFileSize% bytes). Allowed maximum size is %maxFileSize% bytes.'
-          format_error: 'This format is not supported!'
+          error: 'Le fichier est trop lourd (%uploadFileSize% bytes). La taille maximum permise est: %maxFileSize% octets.'
+          format_error: 'Ce format n''est pas supporté!'
           resolution:
-            error: 'Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.'
+            error: 'Seulement les images de dimension %screenshotHeight% x %screenshotWidth% pixel ou plus peuvent être sélectionnées. Le fichier sélectionné est de %uploadWidth% x %uploadHeighth% pixel.'
 form:
   manager:
     admin:

@@ -1,6 +1,13 @@
 mb:
   print:
     imageexport:
+      popup:
+        btn:
+          ok: Exportar
+          cancel: Cancelar
+      info:
+        noactivelayer: 'No hay capa activa!'
+      chooseformat: 'Escoger formato para exportar'
       class:
         title: 'Exportar imagen'
         description: 'Exportar imagen le permite exportar la vista actual del mapa. Puede escoger formato png o jpeg.'
@@ -9,10 +16,3 @@ mb:
         export: exportar
         jpeg: jpeg
         png: png
-      popup:
-        btn:
-          ok: Exportar
-          cancel: Cancelar
-      info:
-        noactivelayer: 'No hay capa activa!'
-      chooseformat: 'Escoger formato para exportar'

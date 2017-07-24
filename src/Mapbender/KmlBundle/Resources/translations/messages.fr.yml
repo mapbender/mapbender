@@ -1,0 +1,11 @@
+mb:
+  kml:
+    kmlexport:
+      xml:
+        name: 'Exporter en KML à partir de Mapbender'
+      class:
+        title: 'Exporter en KML'
+        description: 'Permet d''exporter les données de la carte en format KML'
+      tag:
+        kml: kml
+        export: export
