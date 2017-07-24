@@ -42,7 +42,7 @@ class XmlValidator
      * @param array               $proxy_config
      * @param  null|string        $orderFromWeb Path relative to web folder
      */
-    public function __construct($container, array $proxy_config, $orderFromWeb = null)
+    public function __construct(ContainerInterface $container, array $proxy_config, $orderFromWeb = null)
     {
         $this->container     = $container;
         $this->dir           = $this->createDir($orderFromWeb);
@@ -61,7 +61,27 @@ class XmlValidator
     public function validate(\DOMDocument $doc)
     {
         $this->filesToDelete = array();
-        if (isset($doc->doctype)) {// DTD
+        try {
+            if (isset($doc->doctype)) {// DTD
+                $this->validateDtd($doc);
+            } else {
+                $this->validateNonDtd($doc);
+            }
+        } catch (\Exception $e) {
+            $this->removeFiles();
+            throw $e;
+        }
+        $this->removeFiles();
+        /**
+         * @todo: return value is === passed argument and not used at any calling site in mapbender itself. Evaluate
+         * if it's safe to remove return
+         */
+        return $doc;
+    }
+
+
+    protected function validateDtd(\DOMDocument $doc)
+    {
             $docH = new \DOMDocument();
             $filePath = $this->getFileName($doc->doctype->name, $doc->doctype->systemId);
             $this->isDirExists($filePath);
@@ -81,15 +101,16 @@ class XmlValidator
             $doc->loadXML($docStr);
             unset($docStr);
             if (!@$docH->loadXML($doc->saveXML(), LIBXML_DTDLOAD | LIBXML_DTDVALID)) {
-                $this->removeFiles();
                 throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
             }
             $doc = $docH;
             if (!@$doc->validate()) { // check with DTD
-                $this->removeFiles();
                 throw new XmlParseException("mb.wms.repository.parser.not_valid_dtd");
             }
-        } else {
+    }
+
+    protected function validateNonDtd(\DOMDocument $doc)
+    {
             $schemaLocations = $this->addSchemas($doc);
             $imports = "";
             foreach ($schemaLocations as $namespace => $location) {
@@ -116,13 +137,9 @@ EOF
                 }
                 $this->container->get('logger')->err($message);
                 libxml_clear_errors();
-                $this->removeFiles();
                 throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
             }
             libxml_clear_errors();
-        }
-        $this->removeFiles();
-        return $doc;
     }
 
     /**
@@ -179,7 +196,6 @@ EOF
         if (!is_file($fullFileName)) {
             $proxy_query = ProxyQuery::createFromUrl($url);
             $proxy = new CommonProxy($this->proxy_config, $proxy_query);
-            try {
                 $browserResponse = $proxy->handle();
                 $content = $browserResponse->getContent();
                 $doc = new \DOMDocument();
@@ -189,15 +205,13 @@ EOF
                 $root = $doc->documentElement;
                 $imports = $root->getElementsByTagName("import");
                 foreach ($imports as $import) {
+                    /** @var \DOMElement $import */
                     $ns_ = $import->getAttribute("namespace");
                     $sl_ = $import->getAttribute("schemaLocation");
                     $this->addSchemaLocationReq($schemaLocations, $ns_, $sl_);
                 }
                 $this->isDirExists($fullFileName);
                 $doc->save($fullFileName);
-            } catch (\Exception $e) {
-                throw $e;
-            }
         }
         $schemaLocations[$ns] = $this->addFileSchema($fullFileName);
     }
@@ -231,6 +245,7 @@ EOF
                 unlink($fileToDel);
             }
         }
+        $this->filesToDelete = array();
     }
 
     /**
@@ -274,7 +289,6 @@ EOF
         } else {
             $path   = $urlArr['host'] . $urlArr['path'];
         }
-        $aa = $this->normalizePath($path);
         return $this->normalizePath($path);
     }
 
