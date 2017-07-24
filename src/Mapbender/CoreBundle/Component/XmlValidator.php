@@ -93,51 +93,51 @@ class XmlValidator
 
     protected function validateDtd(\DOMDocument $doc)
     {
-            $docH = new \DOMDocument();
-            $filePath = $this->ensureLocalSchema($doc->doctype->name, $doc->doctype->systemId);
-            $docStr = str_replace($doc->doctype->systemId, $this->addFileSchema($filePath), $doc->saveXML());
-            $doc->loadXML($docStr);
-            unset($docStr);
-            if (!@$docH->loadXML($doc->saveXML(), LIBXML_DTDLOAD | LIBXML_DTDVALID)) {
-                throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
-            }
-            $doc = $docH;
-            if (!@$doc->validate()) { // check with DTD
-                throw new XmlParseException("mb.wms.repository.parser.not_valid_dtd");
-            }
+        $docH = new \DOMDocument();
+        $filePath = $this->ensureLocalSchema($doc->doctype->name, $doc->doctype->systemId);
+        $docStr = str_replace($doc->doctype->systemId, $this->addFileSchema($filePath), $doc->saveXML());
+        $doc->loadXML($docStr);
+        unset($docStr);
+        if (!@$docH->loadXML($doc->saveXML(), LIBXML_DTDLOAD | LIBXML_DTDVALID)) {
+            throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
+        }
+        $doc = $docH;
+        if (!@$doc->validate()) { // check with DTD
+            throw new XmlParseException("mb.wms.repository.parser.not_valid_dtd");
+        }
     }
 
     protected function validateNonDtd(\DOMDocument $doc)
     {
-            $schemaLocations = $this->addSchemas($doc);
-            $imports = "";
-            foreach ($schemaLocations as $namespace => $location) {
-                $imports .=
-                    sprintf('  <xsd:import namespace="%s" schemaLocation="%s" />' . "\n", $namespace, $location);
-            }
+        $schemaLocations = $this->addSchemas($doc);
+        $imports = "";
+        foreach ($schemaLocations as $namespace => $location) {
+            $imports .=
+                sprintf('  <xsd:import namespace="%s" schemaLocation="%s" />' . "\n", $namespace, $location);
+        }
 
-            $source = <<<EOF
+        $source = <<<EOF
 <?xml version="1.0" encoding="utf-8" ?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
 $imports
 </xsd:schema>
 EOF
-            ;
-            libxml_use_internal_errors(true);
-            libxml_clear_errors();
-            $valid = $doc->schemaValidateSource($source);
-            if (!$valid) {
-                $errors = libxml_get_errors();
-                $message = "";
-                foreach ($errors as $error) {
-                    $message .= "\n" . $error->message;
-                }
-                $this->container->get('logger')->err($message);
-                libxml_clear_errors();
-                throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
+        ;
+        libxml_use_internal_errors(true);
+        libxml_clear_errors();
+        $valid = $doc->schemaValidateSource($source);
+        if (!$valid) {
+            $errors = libxml_get_errors();
+            $message = "";
+            foreach ($errors as $error) {
+                $message .= "\n" . $error->message;
             }
+            $this->container->get('logger')->err($message);
             libxml_clear_errors();
+            throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
+        }
+        libxml_clear_errors();
     }
 
     /**
