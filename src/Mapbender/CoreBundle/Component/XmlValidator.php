@@ -7,9 +7,11 @@
  */
 namespace Mapbender\CoreBundle\Component;
 
+use Buzz\Message\Response;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,7 +27,7 @@ class XmlValidator
     /**
      * @var string path to local directory for schemas, document type definitions.
      */
-    protected $dir = null;
+    protected $schemaCacheDir = null;
 
     /**
      * @var array Proxy connection parameters
@@ -38,10 +40,11 @@ class XmlValidator
      */
     protected $filesToDelete;
 
-    public function __construct(ContainerInterface $container, array $proxy_config, $orderFromWeb = null)
+    public function __construct(ContainerInterface $container, array $proxy_config)
     {
         $this->container = $container;
-        $this->dir = $this->createDir($orderFromWeb);
+        $this->schemaCacheDir = $container->getParameter('kernel.cache_dir') . '/xmlschemas';
+        $this->ensureDirectory($this->schemaCacheDir);
         $this->proxy_config = $proxy_config;
         $this->filesToDelete = array();
     }
@@ -79,20 +82,7 @@ class XmlValidator
     protected function validateDtd(\DOMDocument $doc)
     {
             $docH = new \DOMDocument();
-            $filePath = $this->getFileName($doc->doctype->name, $doc->doctype->systemId);
-            $this->isDirExists($filePath);
-            if (!is_file($filePath)) {
-                $proxy_query = ProxyQuery::createFromUrl($doc->doctype->systemId);
-                $proxy = new CommonProxy($this->proxy_config, $proxy_query);
-                try {
-                    $browserResponse = $proxy->handle();
-                    $content = $browserResponse->getContent();
-                    file_put_contents($filePath, $content);
-                } catch (\Exception $e) {
-                    $this->removeFiles();
-                    throw $e;
-                }
-            }
+            $filePath = $this->ensureLocalSchema($doc->doctype->name, $doc->doctype->systemId);
             $docStr = str_replace($doc->doctype->systemId, $this->addFileSchema($filePath), $doc->saveXML());
             $doc->loadXML($docStr);
             unset($docStr);
@@ -190,10 +180,7 @@ EOF
     {
         $fullFileName = $this->getFileName($ns, $url);
         if (!is_file($fullFileName)) {
-        $proxy_query = ProxyQuery::createFromUrl($url);
-        $proxy = new CommonProxy($this->proxy_config, $proxy_query);
-            $browserResponse = $proxy->handle();
-            $content = $browserResponse->getContent();
+            $content = $this->download($url);
             $doc = new \DOMDocument();
             if (!@$doc->loadXML($content)) {
                 throw new XmlParseException("mb.core.xmlvalidator.couldnotcreate");
@@ -206,29 +193,10 @@ EOF
                 $sl_ = $import->getAttribute("schemaLocation");
                 $this->addSchemaLocationReq($schemaLocations, $ns_, $sl_);
             }
-            $this->isDirExists($fullFileName);
+            $this->ensureDirectory(dirname($fullFileName));
             $doc->save($fullFileName);
         }
         $schemaLocations[$ns] = $this->addFileSchema($fullFileName);
-    }
-
-    /**
-     * Generates a file path
-     *
-     * @param string $ns namespace
-     * @param string $url url
-     * @return string file path
-     */
-    private function getFileName($ns, $url)
-    {
-        if ($this->dir === null) {
-            $tmpfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "mb3_" . time();
-            $this->filesToDelete[] = $tmpfile;
-            return $tmpfile;
-        } else {
-            $fileName = $this->fileNameFromUrl($ns, $url);
-            return $this->dir . $fileName;
-        }
     }
 
     /**
@@ -245,47 +213,23 @@ EOF
     }
 
     /**
-     * Creates the xsd schemas directory or checks it.
-     *
-     * @param string $orderFromWeb the path to xsd schemas directory (from "web" directory relative).
-     * @return string | null the absoulute path to xsd schemas directory or null.
-     */
-    private function createDir($orderFromWeb)
-    {
-        if ($orderFromWeb === null) {
-            return null;
-        }
-        $orderFromWeb =
-            $this->normalizePath($this->container->get('kernel')->getRootDir() . '/../web/' . $orderFromWeb);
-        if (!is_dir($orderFromWeb)) {
-            if (mkdir($orderFromWeb)) {
-                return $orderFromWeb;
-            } else {
-                return null;
-            }
-        } else {
-            return $orderFromWeb;
-        }
-    }
-
-    /**
-     * Creates a new file name form namespace and url
+     * Generates a local file path for schema storage from namespace and url.
      *
      * @param string $ns namespace
      * @param string $url url
      * @return string filename from a namespace and a url
      */
-    private function fileNameFromUrl($ns, $url)
+    private function getFileName($ns, $url)
     {
         $urlArr = parse_url($url);
         if (!isset($urlArr['host'])) {
             $nsArr = parse_url($ns);
             $path   = $nsArr['host'] . $nsArr['path'];
-            $path   = (strrpos($path, "/") === strlen($path) - 1 ? $path : $path . "/") . $urlArr['path'];
+            $path   = rtrim($path, "/") . "/" . $urlArr['path'];
         } else {
             $path   = $urlArr['host'] . $urlArr['path'];
         }
-        return $this->normalizePath($path);
+        return $this->schemaCacheDir . "/" . $this->normalizePath($path);
     }
 
     /**
@@ -321,23 +265,68 @@ EOF
     }
 
     /**
-     * Checks, if a file directory exists, otherwise creates a file directory.
-     * @param string $filePath the file path
-     * @return boolean true if directory exists
+     * Creates directory $path (including parents) if not present.
+     * If $path exists but is a regular file, it will be deleted first.
+     * @param string $path
      */
-    private function isDirExists($filePath)
+    protected function ensureDirectory($path)
     {
-        if (file_exists($filePath)) {
-            if (is_file($filePath)) {
-                return true;
-            } elseif (is_dir($filePath)) {
-                return rmdir($filePath);
-            } else {
-                return true;
-            }
-        } else {
-            mkdir($filePath, 0777, true);
-            return $this->isDirExists($filePath);
+        while (is_link($path)) {
+            $path = readlink($path);
         }
+        $wrongType = (is_file($path) ? "file" : (is_link($path) ? "symlink" : ""));
+        if ($wrongType) {
+            $this->getLogger()->warning("Need directory at " . var_export($path, true) . ", found $wrongType => deleting");
+            unlink($path);
+        }
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+        if (!(is_dir($path) && is_writable($path))) {
+            throw new \RuntimeException("Failed to create writable directory at " . var_export($path, true));
+        }
+    }
+
+    /**
+     * Downloads a local copy of a schema document if not present already, and returns a local file path
+     * to it.
+     *
+     * @param string $namespace
+     * @param string $url url
+     * @return string file path
+     * @throws \Exception on failure
+     */
+    protected function ensureLocalSchema($namespace, $url)
+    {
+        $localPath = $this->getFileName($namespace, $url);
+        if (!is_file($localPath)) {
+            $schemaBody = $this->download($url);
+            $this->ensureDirectory(dirname($localPath));
+            file_put_contents($localPath, $schemaBody);
+        }
+        return $localPath;
+    }
+
+    /**
+     * @param string $url
+     * @return string response body
+     */
+    protected function download($url)
+    {
+        $proxy_query = ProxyQuery::createFromUrl($url);
+        $proxy = new CommonProxy($this->proxy_config, $proxy_query);
+        /** @var Response $response */
+        $response = $proxy->handle();
+        return $response->getContent();
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->container->get("logger");
+        return $logger;
     }
 }

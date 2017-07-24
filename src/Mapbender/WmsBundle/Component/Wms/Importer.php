@@ -89,7 +89,7 @@ class Importer extends ContainerAware
 
     public function validate(\DOMDocument $capsDocument)
     {
-        $validator = new XmlValidator($this->container, $this->container->getParameter("owsproxy.proxy"), "xmlschemas/");
+        $validator = new XmlValidator($this->container, $this->container->getParameter("owsproxy.proxy"));
         $validator->validate($capsDocument);
     }
 
