@@ -1,3 +1,4 @@
+
 mb:
   application:
     create:
@@ -57,7 +58,7 @@ mb:
           delete: Delete
           cancel: Annuler
         requirements: 'Required fields are marked with dark labels, while optional fields have lighter labels.'
-        base_data: 'Base datawwwwwww'
+        base_data: 'Données de base'
         configuration: Configuration
         title: Titre
         type: Type
@@ -71,12 +72,12 @@ mb:
       zoombar:
         draggable: Draggable
       filter:
-        source: 'Filtrer les sources'
-        layerset: 'Filtrer les ensembles de couches'
-        application: 'Filtrer les applications'
+        source: 'Filtre'
+        layerset: 'Filtre'
+        application: 'Filtre'
       overview:
-        maximize: Maximize
-        fix: Fix
+        maximize: Aggrandir
+        fix: Fixer
       layerset:
         add: 'Ajouter un ensemble de couches'
         title: Titre
@@ -84,8 +85,8 @@ mb:
         edit: 'Modifier l''ensemble de couches'
         delete:
           title: 'Supprimer l''ensemble de couches'
-          confirm: 'Do you really want to remove the layerset with the title <span class="italic">%layerset_title%</span>?'
-        id_description: 'Id in the form of SourceId/InstanceId'
+          confirm: 'Voulez-vous vraiment supprimer l''ensemble de couches  <span class="italic">%layerset_title%</span>?'
+        id_description: 'Id sous la forme de SourceId/InstanceId'
         id: Id
       instance:
         add: 'Ajouter une instance'
@@ -93,7 +94,7 @@ mb:
         edit: 'Modifier l''instance'
         delete:
           title: 'Supprimer une instance'
-          confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
+          confirm: 'Voulez-vous vraiment supprimer l''instance <span class="italic">%instance_title%</span>?'
         no_instance_added: 'No instance added'
         no_layer_added: 'Aucun ensemble de couches ajouté'
       template: Modèle
@@ -101,8 +102,8 @@ mb:
         view: Visualiser
         edit:
           title: 'Modifier l''application'
-          base_data: 'Base datawwwwww'
-        layouts: Modèles
+          base_data: 'Données de base'
+        layouts: Éléments et disposition
         layersets: Ensembles de couches
         custom_css: CSS
         security:
@@ -154,7 +155,7 @@ mb:
       sources: Sources
       add_source: 'Ajouter une source'
       add_user_group: 'Ajouter des utilisateurs ou des groupes'
-      acl_element: 'Acl element'
+      acl_element: 'Élément ACL'
       import_application: Importer
       export_application: Exporter
     element:
@@ -162,7 +163,7 @@ mb:
         message: 'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
     be:
       element:
-        delete: 'Delete element ''%element_title%'''
+        delete: 'Supprimer l''élément ''%element_title%'''
     components:
       popup:
         add_element:
@@ -174,13 +175,13 @@ mb:
         edit_element:
           title: 'Modifier l''élément'
           btn:
-            ok: Update
+            ok: Mettre à jour
             cancel: Annuler
         delete_element:
           subtitle: element
           title: 'Confirmez la suppression'
           btn:
-            ok: Delete
+            ok: Supprimer
             cancel: Annuler
         add_edit_layerset:
           title_edit: 'Modifier un ensemble de couches'
@@ -223,7 +224,7 @@ mb:
       acl:
         failed: 'Acls cannot be imported.'
       source:
-        failed: 'Sources cannot be imported.'
+        failed: 'Les sources ne peuvent pas être importées.'
   core:
     admin:
       button:
