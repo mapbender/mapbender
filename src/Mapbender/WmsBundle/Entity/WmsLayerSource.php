@@ -688,7 +688,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         if (!$scale && !$parent) {
             return new MinMax();
         } elseif (!$scale && $parent) {
-            $scale = $parent->getScale();
+            return $parent->getScaleRecursive();
         } else {
             $hasMin = $scale->getMin() !== null;
             $hasMax = $scale->getMax() !== null;
@@ -700,14 +700,14 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
                         $hasMax ? $scale->getMax() : null
                     );
                 }
-                $scale       = new MinMax(
+                return new MinMax(
                     $hasMin ? $scale->getMin() : $parentScale->getMin(),
                     $hasMax ? $scale->getMax() : $parentScale->getMax()
                 );
             }
         }
-        //var_dump($scale->getMin() );
-        return $scale;
+
+
     }
 
     /**
