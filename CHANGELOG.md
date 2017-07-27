@@ -1,5 +1,8 @@
 # Changelog
 
+* **v.3.0.6.3**
+    - Fix WMS with Scale fails to load #584 - see commit message #2783540 for more information
+
 * **v.3.0.6.2** - 2017-07-20
     - Fix create legend URL
     - Merge pull request #572 from mapbender/fix/wrong-scaleHint-in-sublayers
