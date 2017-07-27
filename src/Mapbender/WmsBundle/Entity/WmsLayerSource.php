@@ -704,8 +704,11 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
                     $hasMin ? $scale->getMin() : $parentScale->getMin(),
                     $hasMax ? $scale->getMax() : $parentScale->getMax()
                 );
+            } else {
+                return $scale;
             }
         }
+
 
 
     }
