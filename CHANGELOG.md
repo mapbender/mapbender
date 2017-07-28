@@ -2,6 +2,7 @@
 
 * **v.3.0.6.3**
     - Fix WMS with Scale fails to load #584 - see commit message #2783540 for more information
+    - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
 
 * **v.3.0.6.2** - 2017-07-20
     - Fix create legend URL
