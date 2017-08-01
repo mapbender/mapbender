@@ -396,6 +396,9 @@
                         var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
                         lyrConf.opacity = opacity;
 
+                        // flag to change axis order
+                        lyrConf.changeAxis = this._changeAxis(layer.olLayer);
+
                         $.merge(fields, $('<input />', {
                             type: 'hidden',
                             name: 'layers[' + lyrCount + ']',
@@ -486,6 +489,9 @@
                     overview.url = url;
                     overview.scale = scale;
 
+                    // flag to change axis order
+                    overview.changeAxis = this._changeAxis(ovMap.layers[i]);
+
                     $.merge(fields, $('<input />', {
                         type: 'hidden',
                         name: 'overview[' + count + ']',
@@ -515,6 +521,19 @@
             if(this.options.autoClose){
                 this.popup.close();
             }
+        },
+
+        _changeAxis: function(layer) {
+            var olMap = this.map.map.olMap;
+            var currentProj = olMap.displayProjection.projCode;
+
+            if (layer.params.VERSION === '1.3.0') {
+                if (OpenLayers.Projection.defaults.hasOwnProperty(currentProj) && OpenLayers.Projection.defaults[currentProj].yx) {
+                    return true;
+                }
+            }
+
+            return false;
         },
 
         _getTemplateSize: function() {

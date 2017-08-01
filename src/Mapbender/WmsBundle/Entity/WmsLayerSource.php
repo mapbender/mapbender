@@ -643,7 +643,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         }
 
         if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getScaleRecursive()->getMin();
+            $value = $this->getScaleRecursive() ? $this->getScaleRecursive()->getMin() : null;
         }
 
         $value === null ? null : floatval($value);
@@ -667,7 +667,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         }
 
         if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getScaleRecursive()->getMax();
+            $value = $this->getScaleRecursive() ? $this->getScaleRecursive()->getMax() : null;
         }
 
         $value === null ? null : floatval($value);
@@ -688,26 +688,29 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         if (!$scale && !$parent) {
             return new MinMax();
         } elseif (!$scale && $parent) {
-            $scale = $parent->getScale();
+            return $parent->getScaleRecursive();
         } else {
             $hasMin = $scale->getMin() !== null;
             $hasMax = $scale->getMax() !== null;
             if ((!$hasMin || !$hasMax) && $parent) {
-                $parentScale = $parent->getScale();
+                $parentScale = $parent->getScaleRecursive();
                 if (!$parentScale) {
                     return new MinMax(
                         $hasMin ? $scale->getMin() : null,
                         $hasMax ? $scale->getMax() : null
                     );
                 }
-                $scale       = new MinMax(
+                return new MinMax(
                     $hasMin ? $scale->getMin() : $parentScale->getMin(),
                     $hasMax ? $scale->getMax() : $parentScale->getMax()
                 );
+            } else {
+                return $scale;
             }
         }
-        //var_dump($scale->getMin() );
-        return $scale;
+
+
+
     }
 
     /**
