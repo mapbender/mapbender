@@ -5,6 +5,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Psr\Log\LoggerInterface;
+use OwsProxy3\CoreBundle\Component\CommonProxy;
+use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use OwsProxy3\CoreBundle\Component\WmsProxy;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Image export service.
@@ -174,15 +178,59 @@ class ImageExportService
             $gets       = array();
             parse_str($parsed['query'], $gets);
             $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+            /** @var HttpKernelInterface $kernel */
+            $kernel = $this->container->get('http_kernel');
+            $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
         } else {
-            $attributes = array(
-                '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
-            );
-            $subRequest = new Request(array('url' => $url), array(), $attributes, array(), array(), array(), '');
+            $proxyQuery = ProxyQuery::createFromUrl($url);
+            try {
+                $serviceType = strtolower($proxyQuery->getServiceType());
+            } catch (\Exception $e) {
+                // fired when null "content" is loaded as an XML document...
+                $serviceType = null;
+            }
+            $proxyConfig = $this->container->getParameter('owsproxy.proxy');
+            switch ($serviceType) {
+                case "wms":
+                    /** @var EventDispatcherInterface $eventDispatcher */
+                    $eventDispatcher = $this->container->get('event_dispatcher');
+                    $proxy = new WmsProxy($eventDispatcher, $proxyConfig, $proxyQuery, $this->getLogger());
+                    break;
+                default:
+                    $proxy = new CommonProxy($proxyConfig, $proxyQuery, $this->getLogger());
+                    break;
+            }
+            /** @var \Buzz\Message\Response $buzzResponse */
+            $buzzResponse = $proxy->handle();
+            $response = $this->convertBuzzResponse($buzzResponse);
         }
-        /** @var HttpKernelInterface $kernel */
-        $kernel = $this->container->get('http_kernel');
-        $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $response;
+    }
+
+    /**
+     * Convert a Buzz Response to a Symfony HttpFoundation Response
+     *
+     * @todo: This belongs in owsproxy; it's the only part of Mapbender that uses Buzz
+     *
+     * @param \Buzz\Message\Response $buzzResponse
+     * @return Response
+     */
+    public static function convertBuzzResponse($buzzResponse)
+    {
+        // adapt header formatting: Buzz uses a flat list of lines, HttpFoundation expects a name: value mapping
+        $headers = array();
+        foreach ($buzzResponse->getHeaders() as $headerLine) {
+            $parts = explode(':', $headerLine, 2);
+            if (count($parts) == 2) {
+                $headers[$parts[0]] = $parts[1];
+            }
+        }
+        $response = new Response($buzzResponse->getContent(), $buzzResponse->getStatusCode(), $headers);
+        $response->setProtocolVersion($buzzResponse->getProtocolVersion());
+        $statusText = $buzzResponse->getReasonPhrase();
+        if ($statusText) {
+            $response->setStatusCode($buzzResponse->getStatusCode(), $statusText);
+        }
         return $response;
     }
 
