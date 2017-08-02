@@ -101,7 +101,7 @@ class PrintService
             $centery = $data['center']['y'];
 
             // switch axis for some EPSG if WMS Version 1.3.0
-            if ($layer['changeAxis']){
+            if (!empty($layer['changeAxis'])){
                 $extentWidth = $data['extent']['height'];
                 $extentHeight = $data['extent']['width'];
                 $centerx = $data['center']['y'];
@@ -569,7 +569,7 @@ class PrintService
             $centerx = $this->data['center']['x'];
             $centery = $this->data['center']['y'];
 
-            if ($layer['changeAxis']){
+            if (!empty($layer['changeAxis'])) {
                 $ovWidth = $this->conf['overview']['height'] * $layer['scale'] / 1000;
                 $ovHeight = $this->conf['overview']['width'] * $layer['scale'] / 1000;
                 $centerx = $this->data['center']['y'];
@@ -1093,6 +1093,8 @@ class PrintService
           if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
              $this->addLegendPageImage();
           }
+          $xStartPosition = 0;
+          $yStartPosition = 0;
         }
 
         foreach ($this->data['legends'] as $idx => $legendArray) {
@@ -1180,7 +1182,7 @@ class PrintService
                             $height = $this->pdf->getHeight();
                             $width = $this->pdf->getWidth();
                             $legendConf = false;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
+                            if (!empty($this->conf['legendpage_image'])) {
                                $this->addLegendPageImage();
                             }
                         }
@@ -1200,7 +1202,7 @@ class PrintService
                           $this->pdf->addPage('P');
                           $x = 5;
                           $y = 10;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
+                            if (!empty($this->conf['legendpage_image'])) {
                                $this->addLegendPageImage();
                             }
                       }
