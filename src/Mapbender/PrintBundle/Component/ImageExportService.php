@@ -17,7 +17,15 @@ class ImageExportService
     {
         $this->container = $container;
         $this->tempdir = sys_get_temp_dir();
-        $this->urlHostPath = $this->container->get('request')->getHttpHost() . $this->container->get('request')->getBaseURL();
+        # Extract URL base path so we can later decide to let Symfony handle internal requests or make proper
+        # HTTP connections.
+        # NOTE: This is only possible in web, not CLI
+        if (php_sapi_name() != "cli") {
+            $request = $this->container->get('request');
+            $this->urlHostPath = $request->getHttpHost() . $request->getBaseURL();
+        } else {
+            $this->urlHostPath = null;
+        }
     }
 
     public function export($content)

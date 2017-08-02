@@ -60,17 +60,21 @@ class PrintService
 
     private function setup($data)
     {
-        $this->urlHostPath = $this->container->get('request')->getHttpHost() . $this->container->get('request')->getBaseURL();
+        # Extract URL base path so we can later decide to let Symfony handle internal requests or make proper
+        # HTTP connections.
+        # NOTE: This is only possible in web, not CLI
+        if (php_sapi_name() != "cli") {
+            $request = $this->container->get('request');
+            $this->urlHostPath = $request->getHttpHost() . $request->getBaseURL();
+        } else {
+            $this->urlHostPath = null;
+        }
         // temp dir
         $this->tempDir = sys_get_temp_dir();
         // resource dir
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
 
-        // get user
-        /** @var SecurityContext $securityContext */
-        $securityContext = $this->container->get('security.context');
-        $token           = $securityContext->getToken();
-        $this->user      = $token->getUser();
+        $this->user      = $this->getUser();
 
         // data from client
         $this->data = $data;
@@ -770,7 +774,7 @@ class PrintService
 
     private function addDynamicImage()
     {
-        if($this->user == 'anon.'){
+        if (!$this->user || $this->user == 'anon.') {
             return;
         }
 
@@ -796,7 +800,7 @@ class PrintService
 
     private function addDynamicText()
     {
-        if($this->user == 'anon.'){
+        if (!$this->user || $this->user == 'anon.'){
             return;
         }
 
@@ -1265,7 +1269,7 @@ class PrintService
 
         $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
 
-        if($this->user == 'anon.'){
+        if (!$this->user || $this->user == 'anon.') {
             $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
         }else{
           $groups = $this->user->getGroups();
@@ -1344,4 +1348,18 @@ class PrintService
         return false;
     }
 
+    /**
+     * @return mixed|null
+     */
+    protected function getUser()
+    {
+        /** @var SecurityContext $securityContext */
+        $securityContext = $this->container->get('security.context');
+        $token           = $securityContext->getToken();
+        if ($token) {
+            return $token->getUser();
+        } else {
+            return null;
+        }
+    }
 }
