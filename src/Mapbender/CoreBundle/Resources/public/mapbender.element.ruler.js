@@ -7,7 +7,7 @@
             icon: undefined,
             label: true,
             group: undefined,
-            immediate: true,
+            immediate: null,
             persist: true,
             type: 'line',
             precision: 2
@@ -41,7 +41,7 @@
 
             var handler = (this.options.type === 'line' ? OpenLayers.Handler.Path :
                     OpenLayers.Handler.Polygon);
-
+            var immediate = this.options.immediate || false;
             this.control = new OpenLayers.Control.Measure(handler, {
                 callbacks: {
                     modify: function(point, feature, drawing){
@@ -64,7 +64,7 @@
                     }
                 },
                 persist: this.options.persist,
-                immediate: this.options.immediate,
+                immediate: immediate,
                 geodesic: this._isGeodesic()
             });
 

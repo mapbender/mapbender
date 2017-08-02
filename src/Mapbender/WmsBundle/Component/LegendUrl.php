@@ -120,7 +120,7 @@ class LegendUrl
         $legendURL      = null;
         $onlineResource = $onlineResource === null ? OnlineResource::create() : $onlineResource;
 
-        if (!$onlineResource) {
+        if ($onlineResource) {
             $legendURL = new LegendUrl();
             $legendURL->setWidth($width);
             $legendURL->setHeight($height);

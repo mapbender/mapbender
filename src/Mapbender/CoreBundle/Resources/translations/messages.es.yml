@@ -8,6 +8,7 @@ mb:
       popup:
         btn:
           ok: Cerrar
+          print: Imprimir
       class:
         title: FeatureInfo
         description: FeatureInfo

@@ -95,6 +95,7 @@
 
 .collectionItem {
   clear: both;
+  position: relative;
   & > .labelInput {
     display: none;
   }
@@ -109,4 +110,7 @@
 
 .collectionRemove {
   line-height: $inputHeight;
+  position: absolute;
+  right: 33px;
+  top: 27px;
 }

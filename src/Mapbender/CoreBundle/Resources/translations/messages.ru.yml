@@ -8,6 +8,7 @@ mb:
       popup:
         btn:
           ok: Закрыть
+          print: Печать
       class:
         title: Инфосвойства
         description: Инфосвойства
