@@ -42,7 +42,7 @@
   box-shadow:none;
   background: #E4E4E4 url("bundles/mapbendercore/image/content.png");
   border-bottom-width: 5px;
-  @extend .clearfix;
+  @extend .clearfix !optional;
   //  @extend .ie-8-borders-hack;
 
   > .modal-header {
