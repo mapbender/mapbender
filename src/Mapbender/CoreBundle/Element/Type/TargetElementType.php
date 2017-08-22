@@ -128,14 +128,17 @@ class TargetElementType extends AbstractType
 
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
-                $choices = $view->vars['choices'];
+                /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
                 $translator = $this->container->get('translator');
-
-                usort($choices,
-                      function($a, $b) use ($translator) {
-                    return strcasecmp($translator->trans($a->label), $translator->trans($b->label));
-                });
-                $view->vars = array_replace($view->vars, array('choices' => $choices));
+                $translatedLcLabels = array_map(function($element) use ($translator) {
+                    $transLabel = $translator->trans($element->label);
+                    // sorting should be case-insensitive
+                    return mb_strtolower($transLabel);
+                    }, $view->vars['choices']);
+                // we use array_multisort instead of usort to avoid a bug in many
+                // PHP5.x versions
+                // see https://bugs.php.net/bug.php?id=50688
+                array_multisort($view->vars['choices'], $translatedLcLabels);
             }
 
         }
