@@ -81,7 +81,6 @@ class SecurityContext implements TokenStorageInterface, AuthorizationCheckerInte
     }
 
     /**
-     * @deprecated since version 2.6, to be removed in 3.0. Use TokenStorageInterface::getToken() instead.
      *
      * {@inheritdoc}
      */
@@ -101,7 +100,6 @@ class SecurityContext implements TokenStorageInterface, AuthorizationCheckerInte
     }
 
     /**
-     * @deprecated since version 2.6, to be removed in 3.0. Use AuthorizationCheckerInterface::isGranted() instead.
      *
      * {@inheritdoc}
      */
