@@ -463,16 +463,19 @@
          */
         _ready: function() {
             var widget = this;
-            var readyCallbacks = widget.readyCallbacks;
-            for (var k in readyCallbacks) {
-                var readyCallback = readyCallbacks[k];
+
+            _.each(widget.readyCallbacks, function(readyCallback){
                 if(typeof(readyCallback ) === 'function') {
                     readyCallback();
                 }
-            }
+            })
+
+            // Mark as ready
+            widget.readyState = true;
+            
             // Remove handlers
             readyCallbacks.splice(0, readyCallbacks.length);
-            widget.readyState = true;
+
         }
 
     });
