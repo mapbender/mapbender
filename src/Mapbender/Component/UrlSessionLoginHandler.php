@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\Component;
 
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
@@ -6,13 +7,23 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class UrlSessionLoginHandler implements AuthenticationSuccessHandlerInterface {
+/**
+ * Class UrlSessionLoginHandler
+ *
+ * @package Mapbender\Component
+ * @author  Andriy Oblivantsev <eslider@gmail.com>
+ * @deprecated Remove it in 3.0.7. Nowhere used.
+ */
+class UrlSessionLoginHandler implements AuthenticationSuccessHandlerInterface
+{
     /**
      * Constructor
-     * @param RouterInterface   $router
-     * @param EntityManager     $em
+     *
+     * @param array $options
+     * @internal param RouterInterface $router
+     * @internal param EntityManager $em
      */
-   public function __construct(array $options = array()) {}
+    public function __construct(array $options = array()) { }
 
     /**
      * This is called when an interactive authentication attempt succeeds.
@@ -21,17 +32,16 @@ class UrlSessionLoginHandler implements AuthenticationSuccessHandlerInterface {
      *
      * @param Request        $request
      * @param TokenInterface $token
-     * @return Response The response to return
+     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    function onAuthenticationSuccess(Request $request, TokenInterface $token) {
+    function onAuthenticationSuccess(Request $request, TokenInterface $token)
+    {
         $session = $request->getSession();
+        $url     = $session->get('_security.target_path');
+        $url     = UrlHelper::setParameters($url, array(session_name() => $session->getId()));
 
-        $url = $session->get('_security.target_path');
         $session->remove('_security.target_path');
 
-        $url = UrlHelper::setParameters($url, array(
-            session_name() => $session->getId()));
-
         return new RedirectResponse($url);
-   }
+    }
 }
