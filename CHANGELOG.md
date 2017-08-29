@@ -1,5 +1,32 @@
 # Changelog
 
+* **v.3.0.6.3**
+    - Fix WMS with Scale fails to load #584 - see commit message #2783540 for more information
+
+* **v.3.0.6.2** - 2017-07-20
+    - Fix create legend URL
+    - Merge pull request #572 from mapbender/fix/wrong-scaleHint-in-sublayers
+    - Fix layer instance administration form sizes Closes: #559
+    - Merge pull request #545 from mapbender/hotfix/imagepathCommand-530
+    - Merge pull request #553 from mapbender/hotfix/featureinfo-print-trans-button
+    - Add output for better UX
+    - Revert commit d11dd2fd1bde139225a388ddb6d125cb24562260
+    - Merge pull request #570 from mapbender/fix/ruler-unmatching-value-app-backend
+    - Reverse to old getScaleRecursive-function in WmsLayerSource because of regression bug. Now correct scale and scale hint for sublayer are set
+    - Change default value for immediate messurment to null and add check if value is set
+    - Merge pull request #563 from mapbender/hotfix/epsg-code-list
+    - added EPSG:4839 and EPSG:5243 to the list
+    - changed trans variable for print button mb.core.featureinfo.popup.btn.print
+    - changed trans variable for print button mb.core.featureinfo.error.noresult
+    - Fix FeatureInfo print translations
+    - Fix initialize search router Closes: #543
+    - Added Command to update old imagepath of map element / Fix OpenLayers2 image path #530
+    - Merge pull request #551 from mapbender/fix/search-router-autoclose-after-click
+    - remove 'move' check on click event
+    - Add spaces behind foreach and if to satisfy code quality standards
+    - Remove unused element generator code. Add documentation
+    - Added reverse axis default for EPSG:31466
+
 * **v.3.0.6.1** - 2017-05-24
     - PrintService/ImageExport: Accept all kinds of image/jpeg and image/gif from wms
     - Refactor print scale bugfix
@@ -16,7 +43,6 @@
     - Fix save MetadataUrl as doctine array type
     - Fix WmsLayerSource modificators
     - Fix save Style, VendorSpecific and WmsLayerSource entities
-
 
 * **v3.0.6.0** - 2017-05-05
 
