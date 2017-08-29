@@ -2,22 +2,43 @@
 
 namespace Mapbender\Component;
 
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class UrlSessionRedirectListener {
+/**
+ * Class UrlSessionRedirectListener
+ *
+ * @package    Mapbender\Component
+ * @deprecated Remove it in 3.0.7. Nowhere used.
+ */
+class UrlSessionRedirectListener
+{
+    /** @var null|\Symfony\Component\HttpFoundation\Request */
     private $request;
 
-    public function __construct($container) {
-        $this->request = $container->get('request');
+    /**
+     * UrlSessionRedirectListener constructor.
+     *
+     * @param Container $container
+     */
+    public function __construct($container)
+    {
+        $this->request = $container->get('request_stack')->getCurrentRequest();
     }
 
-    public function onKernelResponse(FilterResponseEvent $event) {
-        $response = $event->getResponse();
-        $location = $response->headers->get('location');
-        if($location) {
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        $responseHeaderBag = $event->getResponse()->headers;
+        $location          = $responseHeaderBag->get('location');
+        if ($location) {
+            $request  = $this->request;
             $location = UrlHelper::setParameters($location, array(
-                session_name() => $this->request->getSession()->getId()));
-            $response->headers->set('location', $location);
+                session_name() => $request->getSession()->getId()
+            ));
+            $responseHeaderBag->set('location', $location);
         }
     }
 }

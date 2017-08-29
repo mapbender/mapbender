@@ -179,6 +179,30 @@ class SearchRouter extends Element
             return $response;
         }
 
+        if ('details' === $action) {
+            $this->getForms();
+            $data = json_decode(json_encode($request->request->get('data')));
+            $form = $this->forms[ $target ];
+            $form->submit(get_object_vars($data->properties));
+            $conf     = $conf['routes'][ $target ];
+            $query    = array(
+                'form'              => $form->getData(),
+                'autocomplete_keys' => new \stdClass());
+            // override class and class_options with detail_request options
+            $conf['class'] = $conf['results']['detail_request']['class'];
+            $conf['class_options'] = $conf['results']['detail_request']['class_options'];
+            $conf['form'] = $conf['results']['detail_request']['form'];
+            $conf['results'] = $conf['results']['detail_request']['results'];
+
+            $engine = new $conf['class']($this->container);
+            $features = $engine->search($conf, array('form'=>get_object_vars($data->properties),'autocomplete_keys' => new \stdClass()), $data->srs, $data->extent);
+            $result   = $this->getFeatureCollection($features);
+            $response->setData(array_merge($result, array(
+                'query' => $query['form']
+            )));
+            return $response;
+        }
+
         throw new NotFoundHttpException();
     }
 

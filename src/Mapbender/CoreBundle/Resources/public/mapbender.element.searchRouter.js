@@ -13,6 +13,9 @@
         highlightLayer: null,
         lastSearch: new Date(),
         resultCallbackEvent: null,
+        resultCallbackEvents: null,
+        detailResultCallbackEvent: null,
+        detailResultCallbackEvents: null,
         resultCallbackProxy: null,
         searchModel: null,
         autocompleteModel: null,
@@ -52,7 +55,9 @@
 
             // bind form reset to reset search model
             element.delegate('.search-forms form', 'reset', function(){
+                widget.resetFormStyle();
                 widget.removeLastResults();
+                widget._removeDetailResultCallbacks();
             });
             // bind form submit to send search model
             element.delegate('.search-forms form', 'submit', function(evt){
@@ -61,16 +66,24 @@
             });
 
             // bind result to result list and map view
+            // @Todo: use this also for details request
             searchModel.on('change:results', widget._searchResults, widget);
             searchModel.on('request', widget._setActive, widget);
             searchModel.on('error sync', widget._setInactive, widget);
             searchModel.on('error sync', widget._showResultState, widget);
-
             widget.resultCallbackProxy = $.proxy(widget._resultCallback, widget);
+
+            /*
+              Prepare Navigation Shortcuts (Display A-Z and 0-9 - clickable)
+              onClick the clicked character will be set into input field and the search is triggered
+            */
+            $('form input[data-navigationshortcuts="on"]', element).each(
+                $.proxy(widget._setupNavigationShortCuts, widget));
 
             // Prepare autocompletes
             $('form input[data-autocomplete="on"]', element).each(
                 $.proxy(widget._setupAutocomplete, widget));
+
             $('form input[data-autocomplete^="custom:"]', element).each(
                 $.proxy(widget._setupCustomAutocomplete, widget));
 
@@ -87,7 +100,6 @@
             });
 
             // Listen to changes of search select (switching and forms resetting)
-
             routeSelect.change($.proxy(widget._selectSearch, widget));
             Mapbender.elementRegistry.onElementReady(options.target, function(){
                 routeSelect.change();
@@ -102,6 +114,8 @@
             if(routeCount === 1){
                 $('#search_routes_route_control_group').hide()
                     .next('hr').hide();
+                // just to make sure...
+                $('#search_routes_route').parents('.dropdown').hide();
             }
 
             if(!options.asDialog) {
@@ -238,6 +252,43 @@
         },
 
         /**
+         * Set up NavigationShortCuts for all input with type text and data-navigationshortcuts="on"
+         *
+         * @param  integer      idx   Running index
+         * @param  HTMLDomNode  input Input element
+         */
+        _setupNavigationShortCuts: function(idx, input){
+            var widget = this;
+            input = $(input);
+            if (input.prop('type')!='text') {
+                return;
+            }
+            // @TODO all the css definition must be put into .css files of course...
+            var shortcutnav = $('<div></div>').css('width','230px').css('height','60px').css('margin','5px auto 40px');
+            var navelement;
+            $.each([
+                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
+                'Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5',
+                '6','7','8','9'], function(k,v){
+                // @TODO all the css definition must be put into .css files of course...
+                navelement = $('<span>'+v+'</span>')
+                  .css('width','15px')
+                  .css('margin','0px 5px')
+                  .css('float','left')
+                  .css('text-decoration','underline')
+                  .css('text-align','center')
+                  .css('cursor','pointer');
+                navelement.on('click',function() {
+                    input.val(v);
+                    widget._search();
+                });
+                shortcutnav.append(navelement);
+            });
+            input.after(shortcutnav);
+
+        },
+
+        /**
          * Set up autocomplete widgets for all inputs with data-autcomplete="on"
          *
          * @param  integer      idx   Running index
@@ -334,11 +385,17 @@
                 diff = (new Date()) - this.lastSearch;
 
             autoCompleteMenu.addClass("search-router");
-            console.log(autoCompleteMenu.attr("class"));
 
             if(diff <= delay * this.options.timeoutFactor){
                 event.preventDefault();
             }
+        },
+
+        resetFormStyle: function() {
+            // @TODO removeClass('error')
+            // @TODO all the css definition must be put into .css files of course...
+            $(':input[required]').css('border', '');
+            $(':input[required]').parents('.dropdown').css('border', '');
         },
 
         /**
@@ -347,12 +404,17 @@
         _search: function() {
             var form = $('form[name="' + this.selected + '"]', this.element);
             var valid = true;
+            this.resetFormStyle();
             $.each($(':input[required]', form), function() {
                 if('' === $(this).val()) {
+                    // @TODO addClass('error')
+                    // @TODO all the css definition must be put into .css files of course...
+                    // at least now the user might have a little clue that he didn't fill out all required fields
+                    $(this).parents('.dropdown').css("border", "1px solid red");
+                    $(this).css("border", "1px solid red");
                     valid = false;
                 }
             });
-
             if(valid) {
                 form.submit();
             }
@@ -365,33 +427,38 @@
             if(typeof this.options.routes[this.selected].results.headers === 'undefined'){
                 return;
             }
-
+            if(typeof this.options.routes[this.selected].results.display_headers === 'undefined'){
+                this.options.routes[this.selected].results.display_headers = 'yes';
+            }
             var headers = this.options.routes[this.selected].results.headers;
-
             var table = $('<table></table>'),
                 thead = $('<thead><tr></tr></thead>').appendTo(table);
-
-            for(var header in headers){
-                thead.append($('<th>' + headers[header] + '</th>'));
+            if (this.options.routes[this.selected].results.display_headers !== 'no') {
+                for (var header in headers) {
+                    thead.append($('<th>' + headers[header] + '</th>'));
+                }
+            } else {
+                for (var header in headers) {
+                    // @TODO all the css definition must be put into .css files of course...
+                    thead.append($('<th>&nbsp;</th>').css('display','none'));
+                }
             }
-
             table.append($('<tbody></tbody>'));
-
             container.append(table);
-
-            this._setupResultCallback();
         },
 
         /**
          * Update result list when search model's results property was changed
          */
         _searchResults: function(model, results, options){
-            if('table' === this.options.routes[this.selected].results.view) {
-                var container = $('.search-results', this.element);
-                if($('table', container).length === 0) {
-                    this._prepareResultTable(container);
-                }
-                this._searchResultsTable(model, results, options);
+            switch (this.options.routes[this.selected].results.view) {
+                case('table') :
+                        var container = $('.search-results', this.element);
+                        if($('table', container).length === 0) {
+                            this._prepareResultTable(container);
+                        }
+                        this._searchResultsTable(model, results, options);
+                    break;
             }
         },
 
@@ -403,17 +470,15 @@
          * @param object            options Backbone options
          */
         _searchResultsTable: function(model, results, options){
-            var headers = this.options.routes[this.selected].results.headers,
-                table = $('.search-results table', this.element),
+            var widget = this,
+                headers = widget.options.routes[widget.selected].results.headers,
+                table = $('.search-results table', widget.element),
                 tbody = $('<tbody></tbody>'),
-                layer = this._getLayer(true);
-
+                layer = widget._getLayer(true);
             $('tbody', table).remove();
             layer.removeAllFeatures();
             features = [];
-
-            if(results.length > 0) $('.no-results', this.element).hide();
-
+            if(results.length > 0) $('.no-results', widget.element).hide();
             results.each(function(feature, idx){
                 var row = $('<tr/>');
                 row.addClass(idx % 2 ? "even" : "odd");
@@ -426,9 +491,10 @@
 
                 features.push(feature.getFeature());
             });
-
             table.append(tbody);
             layer.addFeatures(features);
+            widget.resultCallbackProxy = $.proxy(widget._resultCallback, widget);
+            widget._setupResultCallbacks();
         },
 
         _showResultState: function() {
@@ -532,17 +598,59 @@
          */
         _setupResultCallback: function(){
             var widget = this;
+            var options = widget.options;
             var anchor = $('.search-results', widget.element);
-            if(widget.resultCallbackEvent !== null){
-                anchor.undelegate('tbody tr', widget.resultCallbackEvent,
-                    widget.resultCallbackProxy);
-                widget.resultCallbackEvent = null;
+            if(typeof options.routes[this.selected].results.callback.event === 'undefined'){
+                return;
             }
-
             var event = widget.options.routes[widget.selected].results.callback.event;
             if(typeof event === 'string'){
                 anchor.delegate('tbody tr', event, widget.resultCallbackProxy);
                 widget.resultCallbackEvent = event;
+            }
+        },
+
+        /**
+         * @TODO: finish: Set up multiple result callbacks (zoom on click + on mouseover for example)
+         */
+        _setupResultCallbacks: function(){
+            var widget = this;
+            var options = widget.options;
+            var anchor = $('.search-results', widget.element);
+            widget._removeDetailResultCallbacks();
+            widget._removeResultCallbacks();
+            // if we don't have multiple callback.events we just setup the default callback.event
+            // (this has not been finished yet : do not use: options.routes[this.selected].results.callback.events)
+            if(typeof options.routes[this.selected].results.callback.events === 'undefined'){
+                widget._setupResultCallback();
+                return;
+            }
+            var events = widget.options.routes[widget.selected].results.callback.events;
+            $.each(events, function(k,v){
+                if(typeof v.event === 'string'){
+                    anchor.delegate('tbody tr', v.event, widget.resultCallbackProxy);
+                    widget.resultCallbackEvents.push(v.event);
+                }
+            });
+            if (widget.resultCallbackEvents.length === 0) {
+                console.log('the callback.events are not configured properly - you are welcome');
+            }
+        },
+
+        _removeResultCallbacks: function() {
+            var widget = this;
+            var anchor = $('.search-results', widget.element);
+            if(widget.resultCallbackEvent !== null){
+                anchor.undelegate('tbody tr', widget.resultCallbackEvent, widget.resultCallbackProxy);
+                widget.resultCallbackEvent = null;
+            }
+            if(widget.resultCallbackEvents !== null){
+                $.each(resultCallbackEvents, function(k,v){
+                    if(typeof v.event === 'string'){
+                        anchor.undelegate('tbody tr', v.event, widget.resultCallbackProxy);
+                    }
+                });
+                widget.resultCallbackEvents = null;
             }
         },
 
@@ -554,17 +662,30 @@
         _resultCallback: function(event){
             var widget = this;
             var options = widget.options;
+            widget._basicResultCallback(event);
+            if(typeof options.routes[this.selected].results.detail_request !== 'undefined'){
+                widget._detailRequestResultCallback(event);
+            }
+        },
+
+        /**
+         * Result callback
+         *
+         * @param  jQuery.Event event Mouse event
+         */
+        _basicResultCallback: function(event){
+            var widget = this;
             var row = $(event.currentTarget),
-                feature = $.extend({}, row.data('feature').getFeature()),
-                map = feature.layer.map,
-                callbackConf = widget.getCurrentRoute().results.callback,
-                srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
+              feature = $.extend({}, row.data('feature').getFeature()),
+              map = feature.layer.map,
+              callbackConf = widget._getCallbackConf(),
+              srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
             var mapProj = Mapbender.Model.getCurrentProj();
             if(srs.projCode !== mapProj.projCode) {
                 feature.geometry = feature.geometry.transform(srs, mapProj);
             }
             var featureExtent = $.extend({},feature.geometry.getBounds());
-
+            // @TODO make multiple event definitions possible
             // buffer, if needed
             if(callbackConf.options && callbackConf.options.buffer){
                 var radius = callbackConf.options.buffer;
@@ -573,53 +694,329 @@
                 featureExtent.bottom -= radius;
                 featureExtent.left -= radius;
             }
-
             // get zoom for buffered extent
             var zoom = map.getZoomForExtent(featureExtent);
-
+            // @TODO make multiple event definitions possible
             // restrict zoom if needed
             if(callbackConf.options &&
                (callbackConf.options.maxScale || callbackConf.options.minScale)){
-
                 var res = map.getResolutionForZoom(zoom);
                 var units = map.baseLayer.units;
                 var scale = OpenLayers.Util.getScaleFromResolution(res, units);
-
-
                 if(callbackConf.options.maxScale){
                     var maxRes = OpenLayers.Util.getResolutionFromScale(
-                        callbackConf.options.maxScale, map.baseLayer.units);
+                      callbackConf.options.maxScale, map.baseLayer.units);
                     if(Math.round(res) < maxRes){
                         zoom = map.getZoomForResolution(maxRes);
                     }
                 }
-
                 if(callbackConf.options.minScale){
                     var minRes = OpenLayers.Util.getResolutionFromScale(
-                        callbackConf.options.minScale, map.baseLayer.units);
+                      callbackConf.options.minScale, map.baseLayer.units);
                     if(Math.round(res) > minRes){
                         zoom = map.getZoomForResolution(minRes);
                     }
                 }
             }
-
             // finally, zoom
             map.setCenter(featureExtent.getCenterLonLat(), zoom);
-
             // And highlight new feature
             var layer = feature.layer;
             $.each(layer.selectedFeatures, function(idx, feature) {
                 layer.drawFeature(feature, 'default');
             });
-
             widget.currentFeature = feature;
             widget.redraw();
             layer.selectedFeatures.push(feature);
         },
 
+        _getCallbackConf: function(event){
+            var widget = this;
+            var options = widget.options;
+            if(typeof options.routes[this.selected].results.callback.events === 'undefined'){
+                return widget.getCurrentRoute().results.callback;
+            }
+            // @TODO make multiple event definitions possible
+        },
+
         /**
+         * Detail Request Result callback - who called this methods "callbacks" btw? however copy & paste rules...
          *
+         * @param  jQuery.Event event Mouse event
          */
+        _detailRequestResultCallback: function(event){
+            var widget = this;
+            options = widget.options;
+            var row = $(event.currentTarget),
+              feature = $.extend({}, row.data('feature').getFeature()),
+              map = feature.layer.map;
+            var form = $('form[name="' + widget.selected + '"]', widget.element);
+            var properties = {};
+            var detailrequest = options.routes[this.selected].results.detail_request;
+
+            // we add the key/value pair of the id defined in results.detail_request.id
+            // this is stored in data of the row (we use the featureobject as representation for the row)
+            var detail_request_id_value = feature.attributes[detailrequest.id];
+            properties[detailrequest.id] = detail_request_id_value;
+
+            var data = {
+                data : {
+                    "properties": properties,
+                    "autocomplete_keys":{},
+                    "srs":map.getProjection(),
+                    "extent":map.getExtent().toArray()
+                }
+            };
+
+            // zoom to feature before we set up the detailrequest
+            widget._basicResultCallback(event);
+            $.ajax({
+                method: "POST",
+                url: widget.callbackUrl+widget.selected+"/details",
+                data: data
+            })
+              .done( function( response ) {
+                  // for now we just hide the result counter
+                  var element = widget.element;
+                  $('.result-counter', element).hide();
+                  var parsedResponse = {
+                      results: new Mapbender.FeatureCollection(response.features)
+                  }
+                  // @TODO all the css definition must be put into .css files of course...
+                  var details = $('<td></td>').attr('id','details').css('width','100%');
+                  var features = [];
+                  $.each(parsedResponse.results.models,function(k,result){
+                      // @TODO all the css definition must be put into .css files of course...
+                      var detail = $('<span></span>')
+                        .css('width', '15px')
+                        .css('margin', '0px 5px')
+                        .css('float', 'left')
+                        .css('text-decoration', 'underline')
+                        .css('text-align', 'center')
+                        .css('cursor', 'pointer');
+                      if(result.getFeature()) {
+                          var feature = result.getFeature();
+                          detail.data('feature', result);
+                          detail.text(feature.attributes[detailrequest.class_options.attributes[0]]);
+                          if (detail.text() != 'null') {
+                              details.append(detail);
+                              features.push(feature);
+                          }
+                      }
+                  });
+                  var layer = widget._getLayer(true);
+                  var anchor = $('.search-results', widget.element);
+                  if(features.length == 0) {
+                      // @TODO : change this to get message from config
+                      var detail = $('<span></span>').text('Keine Hausnummern gefunden');
+                      details.append(detail);
+                      features.push(feature);
+                      layer.removeAllFeatures();
+                      widget._removeResultCallbacks();
+                      // save clicked element
+                      var currentTarget = $(event.currentTarget).clone();
+                      currentTarget.css('cursor','arrow');
+                      // remove all results from first request
+                      anchor.find('tr').remove();
+                      // but keep clicked element
+                      anchor.find('tbody').append(currentTarget);
+                      // @TODO all the css definition must be put into .css files of course...
+                      var detailsresult = $('<tr></tr>').attr('id','detailsresult').css('font-weight','bold').css('height','30px').html(details);
+                      // add a row with details request's answer
+                      currentTarget.after(detailsresult);
+                  } else {
+                      layer.removeAllFeatures();
+                      widget._removeResultCallbacks();
+                      // save clicked element
+                      var currentTarget = $(event.currentTarget).clone();
+                      currentTarget.css('cursor','arrow');
+                      // remove all results from first request
+                      anchor.find('tr').remove();
+                      // but keep clicked element
+                      anchor.find('tbody').append(currentTarget);
+                      // @TODO all the css definition must be put into .css files of course...
+                      var detailsresult = $('<tr></tr>').attr('id','detailsresult').css('font-weight','bold').css('height','30px').html(details);
+                      // add a row with details request's answer
+                      currentTarget.after(detailsresult);
+                      widget._setupDetailResultCallbacks();
+                      // add features to current layer
+                      layer.addFeatures(features);
+                  }
+              }).error(function(response) {
+                console.log(response);
+                alert('there has been an error recieving data from the server - you may retry in a few seconds');
+            });
+        },
+
+        /**
+         * Set up detailResult callback (zoom on click for example)
+         */
+        _setupDetailResultCallback: function(){
+            var widget = this;
+            var options = widget.options;
+            var anchor = $('#detailsresult', widget.element);
+            widget.resultCallbackProxy = $.proxy(widget._detailResultCallback, widget);
+            if(typeof options.routes[this.selected].results.detail_request.results.callback.event === 'undefined'){
+                return;
+            }
+            widget._removeDetailResultCallbacks();
+            var event = widget.options.routes[widget.selected].results.detail_request.results.callback.event;
+            if(typeof event === 'string'){
+                anchor.delegate('span', event, widget.resultCallbackProxy);
+                widget.detailResultCallbackEvent = event;
+            }
+        },
+
+        /**
+         * @TODO: finish: Set up multiple result callbacks (zoom on click + on mouseover for example)
+         */
+        _setupDetailResultCallbacks: function(){
+            var widget = this;
+            var options = widget.options;
+            var anchor = $('#detailsresult', widget.element);
+            // if we don't have multiple callback.events we just setup the default callback.event
+            // (this has not been finished yet : do not use: options.routes[this.selected].results.callback.events)
+            if(typeof options.routes[this.selected].results.detail_request.results.callback.events === 'undefined'){
+                widget._setupDetailResultCallback();
+                return;
+            }
+            widget.resultCallbackProxy = $.proxy(widget._detailResultCallback, widget);
+            widget._removeDetailResultCallbacks();
+            var events = widget.options.routes[widget.selected].results.detail_request.results.callback.events;
+            $.each(events, function(k,v){
+                if(typeof v.event === 'string'){
+                    anchor.delegate('span', v.event, widget.resultCallbackProxy);
+                    widget.detailResultCallbackEvents.push(v.event);
+                }
+            });
+            if (widget.detailResultCallbackEvents.length === 0) {
+                console.log('the callback.events are not configured properly - you are welcome');
+            }
+        },
+
+        _removeDetailResultCallbacks: function() {
+            var widget = this;
+            var anchor = $('#detailsresult', widget.element);
+            if(widget.detailResultCallbackEvent !== null){
+                anchor.undelegate('span', widget.detailResultCallbackEvent, widget.resultCallbackProxy);
+                widget.detailResultCallbackEvent = null;
+            }
+            if(widget.detailResultCallbackEvents !== null){
+                $.each(detailResultCallbackEvents, function(k,v){
+                    if(typeof v.event === 'string'){
+                        anchor.undelegate('span', v.event, widget.resultCallbackProxy);
+                    }
+                });
+                widget.detailResultCallbackEvents = null;
+            }
+        },
+
+        /**
+         * Get current route definition
+         * @returns {*}
+         */
+        getCurrentRouteSettings: function() {
+            var widget = this;
+            var options = widget.options;
+            var currentRouteId = widget.getCurrentRouteId();
+
+            return _.contains(_.keys(options.routes), currentRouteId) ? options.routes[currentRouteId] : null;
+        },
+
+        /**
+         * Get current route id
+         */
+        getCurrentRouteId: function(){
+            var widget = this;
+            return $("select[name='search_routes[route]']",widget.element).val();
+        },
+
+        /**
+         * get current sub route id
+         * @param routeId
+         */
+        getCurrentSubRouteId: function(routeId){
+            var widget = this;
+            routeId = routeId === undefined ? widget.getCurrentRouteId() : routeId;
+            return $(".search-forms select[name='"+routeId+"[gemeinde]']",widget.element).val();
+        },
+
+        /**
+         * Result callback
+         *
+         * @param  jQuery.Event event Mouse event
+         *
+         * @TODO : this method must be edited alot... especially the zoom must come from configuration
+         */
+        _detailResultCallback: function(event){
+            var widget = this;
+            var options = widget.options;
+            var routeSettings = widget.getCurrentRouteSettings();
+            var subRouteId = widget.getCurrentSubRouteId();
+            var row = $(event.currentTarget),
+              feature = $.extend({}, row.data('feature').getFeature()),
+              map = feature.layer.map,
+              callbackConf = widget._getDetailCallbackConf(),
+              srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
+            var mapProj = Mapbender.Model.getCurrentProj();
+            if(srs.projCode !== mapProj.projCode) {
+                feature.geometry = feature.geometry.transform(srs, mapProj);
+            }
+            var featureExtent = $.extend({},feature.geometry.getBounds());
+            // @TODO make multiple event definitions possible
+            // buffer, if needed
+            if(callbackConf.options && callbackConf.options.buffer){
+                var radius = callbackConf.options.buffer;
+                featureExtent.top += radius;
+                featureExtent.right += radius;
+                featureExtent.bottom -= radius;
+                featureExtent.left -= radius;
+            }
+            // get zoom for buffered extent
+            var zoom = map.getZoomForExtent(featureExtent);
+            // @TODO make multiple event definitions possible
+            // restrict zoom if needed
+            if(callbackConf.options &&
+               (callbackConf.options.maxScale || callbackConf.options.minScale)){
+                var res = map.getResolutionForZoom(zoom);
+                var units = map.baseLayer.units;
+                var scale = OpenLayers.Util.getScaleFromResolution(res, units);
+                if(callbackConf.options.maxScale){
+                    var maxRes = OpenLayers.Util.getResolutionFromScale(
+                      callbackConf.options.maxScale, map.baseLayer.units);
+                    if(Math.round(res) < maxRes){
+                        zoom = map.getZoomForResolution(maxRes);
+                    }
+                }
+                if(callbackConf.options.minScale){
+                    var minRes = OpenLayers.Util.getResolutionFromScale(
+                      callbackConf.options.minScale, map.baseLayer.units);
+                    if(Math.round(res) > minRes){
+                        zoom = map.getZoomForResolution(minRes);
+                    }
+                }
+            }
+            // finally, zoom
+            map.setCenter(featureExtent.getCenterLonLat(), zoom);
+            // And highlight new feature
+            var layer = feature.layer;
+            $.each(layer.selectedFeatures, function(idx, feature) {
+                layer.drawFeature(feature, 'default');
+            });
+            widget.currentFeature = feature;
+            widget.redraw();
+            layer.selectedFeatures.push(feature);
+        },
+
+        _getDetailCallbackConf: function(event){
+            var widget = this;
+            var options = widget.options;
+            if(typeof options.routes[this.selected].results.detail_request.results.callback.events === 'undefined'){
+                return options.routes[this.selected].results.detail_request.results.callback;
+            }
+            // @TODO make multiple event definitions possible
+        },
+
         ready: function(callback){
             var widget = this;
             if(widget.readyState === true){

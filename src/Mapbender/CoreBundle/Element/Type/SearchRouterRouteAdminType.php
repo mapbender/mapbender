@@ -32,7 +32,7 @@ class SearchRouterRouteAdminType extends AbstractType
         $builder->add('title', 'text', array(
             'label' => 'Title'));
         $builder->add($builder->create('configuration', 'textarea', array(
-            'label' => 'Configuration'))->addViewTransformer($yamlTransformer));
+            'label' => 'Configuration','attr' => array('class' => 'code-yaml')))->addViewTransformer($yamlTransformer));
     }
 
 }

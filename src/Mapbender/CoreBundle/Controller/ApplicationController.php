@@ -46,7 +46,7 @@ class ApplicationController extends Controller
         $drupal_mark   = function_exists('mapbender_menu') ? '?q=mapbender' : $searchSubject;
 
         $urls = array(
-            'base'     => $this->get('request')->getBaseUrl(),
+            'base'     => $this->get('request_stack')->getCurrentRequest()->getBaseUrl(),
             'asset'    => $this->get('templating.helper.assets')->getUrl(null),
             'element'  => $router->generate('mapbender_core_application_element', $config),
             'trans'    => $router->generate('mapbender_core_translation_trans'),
@@ -307,7 +307,7 @@ class ApplicationController extends Controller
     public function metadataAction($slug)
     {
         $securityContext = $this->get('security.context');
-        $sourceId = $this->container->get('request')->get("sourceId", null);
+        $sourceId = $this->container->get('request_stack')->getCurrentRequest()->get("sourceId", null);
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
         if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
@@ -324,8 +324,8 @@ class ApplicationController extends Controller
         $manager = $managers[$instance->getManagertype()];
 
         $path = array('_controller' => $manager['bundle'] . ":" . "Repository:metadata");
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle(
+        $subRequest = $this->container->get('request_stack')->getCurrentRequest()->duplicate(array(), null, $path);
+        return $this->container->get('kernel')->handle(
                 $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
