@@ -1,10 +1,8 @@
-
 // notshow -> hide always legend item
 // notvisible -> hide legend item by user
-.notshow, .notvisible{display:none;}
-
+.notshow, .notvisible {
+  display:none;
+}
 .mb-element-legend ul li.image {
-
   overflow: auto;
 }
-
