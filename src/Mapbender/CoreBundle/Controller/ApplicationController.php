@@ -339,6 +339,9 @@ class ApplicationController extends Controller
     {
         $instance        = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
+        if (!$instance) {
+            throw new NotFoundHttpException("No such instance");
+        }
         $securityContext = $this->get('security.context');
 
         if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
