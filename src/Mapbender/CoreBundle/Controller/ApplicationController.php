@@ -15,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -366,23 +367,28 @@ class ApplicationController extends Controller
             $postParams = array_merge($vendorspec, $postParams);
         }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
+        $requestType = null;
         foreach ($getParams as $key => $value) {
             if (strtolower($key) === 'request') {
-                switch (strtolower($value)) {
-                    case 'getmap':
-                        $url = $instance->getSource()->getGetMap()->getHttpGet();
-                        break;
-                    case 'getfeatureinfo':
-                        $url = $instance->getSource()->getGetFeatureInfo()->getHttpGet();
-                        break;
-                    case 'getlegendgraphic':
-                        $url = $instance->getSource()->getGetLegendGraphic()->getHttpGet();
-                        break;
-                    default:
-                        throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
-                }
+                $requestType = $value;
                 break;
             }
+        }
+        if (!$requestType) {
+            throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
+        }
+        switch (strtolower($requestType)) {
+            case 'getmap':
+                $url = $instance->getSource()->getGetMap()->getHttpGet();
+                break;
+            case 'getfeatureinfo':
+                $url = $instance->getSource()->getGetFeatureInfo()->getHttpGet();
+                break;
+            case 'getlegendgraphic':
+                $url = $instance->getSource()->getGetLegendGraphic()->getHttpGet();
+                break;
+            default:
+                throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
         }
         $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
