@@ -243,7 +243,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
             if ($legendurl !== null) {
                 $configuration["legend"] = array(
-                    "url" => $this->checkLegendViaTunnel($legendurl->getOnlineResource()->getHref()),
+                    "url" => $this->generateTunnelUrl($legendurl->getOnlineResource()->getHref()),
                     "width" => intval($legendurl->getWidth()),
                     "height" => intval($legendurl->getHeight())
                 );
@@ -262,7 +262,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 . "&sld_version=1.1.0";
             $legendgraphic = Utils::getHttpUrl($url, $params);
             $configuration["legend"] = array(
-                "graphic" => $this->checkLegendViaTunnel($legendgraphic)
+                "graphic" => $this->generateTunnelUrl($legendgraphic)
             );
         }
         $configuration["treeOptions"] = array(
@@ -296,10 +296,10 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         return null;
     }
 
-    private function checkLegendViaTunnel($url)
+    private function generateTunnelUrl($url)
     {
         if ($this->entity->getSourceInstance()->getSource()->getUsername()) {
-            return $this->container->get('router')->generate(
+            $tunnelBaseUrl = $this->container->get('router')->generate(
                 'mapbender_core_application_instancetunnel',
                 array(
                     'slug' => $this->entity->getSourceInstance()->getLayerset()->getApplication()->getSlug(),
@@ -307,6 +307,15 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                     'legendurl' => $url),
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
+            // forward "request" param to tunnel (lower-case matching)
+            $params = array();
+            parse_str(parse_url($url, PHP_URL_QUERY), $params);
+            foreach ($params as $name => $value) {
+                if (strtolower($name) == 'request') {
+                    return "$tunnelBaseUrl?$name=" . urlencode($value);
+                }
+            }
+            throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
         } else {
             return $url;
         }

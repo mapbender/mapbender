@@ -366,26 +366,23 @@ class ApplicationController extends Controller
             $postParams = array_merge($vendorspec, $postParams);
         }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
-        if (isset($getParams['legendurl'])) {
-            $url = $getParams['legendurl'];
-            unset($getParams['legendurl']);
-        } else {
-            foreach ($getParams as $key => $value) {
-                if (strtolower($key) === 'request') {
-                    // TODO implement for other ogc services
-                    if (strtolower($value) === 'getmap') {
+        foreach ($getParams as $key => $value) {
+            if (strtolower($key) === 'request') {
+                switch (strtolower($value)) {
+                    case 'getmap':
                         $url = $instance->getSource()->getGetMap()->getHttpGet();
-                    } elseif (strtolower($value) === 'getfeatureinfo') {
+                        break;
+                    case 'getfeatureinfo':
                         $url = $instance->getSource()->getGetFeatureInfo()->getHttpGet();
-                    } elseif (strtolower($value) === 'getlegendgraphic') {
+                        break;
+                    case 'getlegendgraphic':
                         $url = $instance->getSource()->getGetLegendGraphic()->getHttpGet();
-                    }
-                    break;
+                        break;
+                    default:
+                        throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
                 }
+                break;
             }
-        }
-        if (!$url) {
-            throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
         }
         $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);

@@ -247,7 +247,7 @@ class WmsLoader extends Element
                 $instances[] = $instConfig;
             }
         }
-        return new Response(json_encode(array("success" => json_encode($instances))), 200, array(
+        return new Response(json_encode(array("success" => $instances)), 200, array(
             'Content-Type' => 'application/json'));
     }
 }
