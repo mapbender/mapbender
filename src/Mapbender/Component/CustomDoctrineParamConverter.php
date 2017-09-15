@@ -2,6 +2,7 @@
 namespace Mapbender\Component;
 use Doctrine\ORM\Mapping\MappingException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -18,8 +19,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class CustomDoctrineParamConverter implements ParamConverterInterface {
 
     protected $configuration = null;
+    protected $registry = null;
 
-    public function __construct(\Doctrine\Bundle\DoctrineBundle\Registry $registry = NULL)
+    /**
+     * CustomDoctrineParamConverter constructor.
+     *
+     * @param \Doctrine\Bundle\DoctrineBundle\Registry|null $registry
+     */
+    public function __construct(\Doctrine\Bundle\DoctrineBundle\Registry $registry = null)
     {
         if (is_null($registry)) {
             return;
@@ -28,7 +35,11 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
         $this->registry = $registry;
     }
 
-    public function apply(Request $request, ConfigurationInterface $configuration) {
+    /**
+     * @param Request        $request
+     * @param ParamConverter $configuration
+     */
+    public function apply(Request $request, ParamConverter $configuration) {
         $this->configuration = $configuration;
         $class = $configuration->getClass();
         $options = $this->getOptions($configuration);
@@ -52,6 +63,12 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
 
     }
 
+    /**
+     * @param         $class
+     * @param Request $request
+     * @param         $options
+     * @return array
+     */
     protected function findList($class,Request $request, $options){
             // if limit or offset are set we assume we the caller is trying for pagination
             // FIXME: is this clever? what if someone just wants to mess with us?
@@ -81,6 +98,12 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
             return $result;
     }
 
+    /**
+     * @param         $class
+     * @param Request $request
+     * @param         $options
+     * @return object
+     */
     protected function find($class, Request $request, $options) {
 
         // try to load by Id
@@ -98,7 +121,11 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
 
     }
 
-    public function supports(ConfigurationInterface $configuration) {
+    /**
+     * @param ParamConverter $configuration
+     * @return bool
+     */
+    public function supports(ParamConverter $configuration) {
         if (null === $this->registry) {
             return false;
         }
@@ -118,6 +145,11 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
             return false;
         }
     }
+
+    /**
+     * @param ConfigurationInterface $configuration
+     * @return array
+     */
     protected function getOptions(ConfigurationInterface $configuration) {
         return array_replace(array(
             'entity_manager' => 'default',
