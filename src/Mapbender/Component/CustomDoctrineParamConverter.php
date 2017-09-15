@@ -1,7 +1,7 @@
 <?php
 namespace Mapbender\Component;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\Mapping\MappingException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,26 +11,23 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @deprecated: would be deleted in next release
  * @Author: Karim Malhas <karim@malhas.de>
  * @package: bkg
- * This Class overides the default Doctrine ParamConverter to allow routes like this:
- * @Route(/{/{nameaId}/foo/{namebid})
+ * This Class overrides the default Doctrine ParamConverter to allow routes like this:
+ * "@Route(/{/{nameaId}/foo/{namebid})"
  * @ParamConverter("namea",class="FOOBundle:A")
  * public function (A $namea)
 */
 class CustomDoctrineParamConverter implements ParamConverterInterface {
 
-    protected $configuration = null;
+    protected $configuration;
     protected $registry = null;
 
     /**
      * CustomDoctrineParamConverter constructor.
      *
-     * @param \Doctrine\Bundle\DoctrineBundle\Registry|null $registry
+     * @param Registry|null $registry
      */
-    public function __construct(\Doctrine\Bundle\DoctrineBundle\Registry $registry = null)
+    public function __construct(Registry $registry)
     {
-        if (is_null($registry)) {
-            return;
-        }
 
         $this->registry = $registry;
     }
@@ -38,6 +35,7 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
     /**
      * @param Request        $request
      * @param ParamConverter $configuration
+     * @return bool|void
      */
     public function apply(Request $request, ParamConverter $configuration) {
         $this->configuration = $configuration;
@@ -147,10 +145,10 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
     }
 
     /**
-     * @param ConfigurationInterface $configuration
+     * @param ParamConverter $configuration
      * @return array
      */
-    protected function getOptions(ConfigurationInterface $configuration) {
+    protected function getOptions(ParamConverter $configuration) {
         return array_replace(array(
             'entity_manager' => 'default',
         ), $configuration->getOptions());
