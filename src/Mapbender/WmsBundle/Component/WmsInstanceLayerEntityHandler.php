@@ -311,7 +311,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             parse_str(parse_url($url, PHP_URL_QUERY), $params);
             foreach ($params as $name => $value) {
                 if (strtolower($name) == 'request') {
-                    return "$tunnelBaseUrl?$name=" . urlencode($value);
+                    $fullQueryString = strstr($url, '?', false);
+                    return $tunnelBaseUrl . $fullQueryString;
                 }
             }
             throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
