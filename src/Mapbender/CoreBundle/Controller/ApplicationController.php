@@ -396,7 +396,7 @@ class ApplicationController extends Controller
                 $url = $source->getGetLegendGraphic()->getHttpGet();
                 break;
             default:
-                throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
+                throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
         $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
