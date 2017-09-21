@@ -303,8 +303,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 'mapbender_core_application_instancetunnel',
                 array(
                     'slug' => $this->entity->getSourceInstance()->getLayerset()->getApplication()->getSlug(),
-                    'instanceId' => $this->entity->getSourceInstance()->getId(),
-                    'legendurl' => $url),
+                    'instanceId' => $this->entity->getSourceInstance()->getId()),
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
             // forward "request" param to tunnel (lower-case matching)
