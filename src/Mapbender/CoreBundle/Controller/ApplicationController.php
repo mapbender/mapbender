@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\WmsBundle\Entity\WmsSource;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\Utils;
@@ -342,12 +343,16 @@ class ApplicationController extends Controller
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }
+
         $securityContext = $this->get('security.context');
 
         if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
             && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
+        /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
+        /** @var WmsSource $source */
+        $source = $instance->getSource();
 // TODO source access ?
 //        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'))
 //            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
@@ -358,8 +363,8 @@ class ApplicationController extends Controller
         $headers     = array();
         $postParams  = $this->get("request")->request->all();
         $getParams   = $this->get("request")->query->all();
-        $user        = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
-        $password    = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
+        $user        = $source->getUsername() ? $source->getUsername() : null;
+        $password    = $source->getUsername() ? $source->getPassword() : null;
         $instHandler = EntityHandler::createHandler($this->container, $instance);
         $vendorspec  = $instHandler->getSensitiveVendorSpecific();
         /* overwrite vendorspecific parameters from handler with get/post parameters */
@@ -382,13 +387,13 @@ class ApplicationController extends Controller
         }
         switch (strtolower($requestType)) {
             case 'getmap':
-                $url = $instance->getSource()->getGetMap()->getHttpGet();
+                $url = $source->getGetMap()->getHttpGet();
                 break;
             case 'getfeatureinfo':
-                $url = $instance->getSource()->getGetFeatureInfo()->getHttpGet();
+                $url = $source->getGetFeatureInfo()->getHttpGet();
                 break;
             case 'getlegendgraphic':
-                $url = $instance->getSource()->getGetLegendGraphic()->getHttpGet();
+                $url = $source->getGetLegendGraphic()->getHttpGet();
                 break;
             default:
                 throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');

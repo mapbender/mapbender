@@ -102,10 +102,13 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function update(SourceInstance $instance, SourceItem $wmslayersource)
     {
+        /** @var WmsInstance $instance */
+        /** @var WmsLayerSource $wmslayersource */
         $manager = $this->container->get('doctrine')->getManager();
         /* remove instance layers for missed layer sources */
         $toRemove = array();
         foreach ($this->entity->getSublayer() as $wmsinstlayer) {
+            /** @var WmsInstanceLayer $wmsinstlayer */
             if ($this->isScheduledForRemoval($wmsinstlayer->getSourceItem())) {
                 $toRemove[] = $wmsinstlayer;
             }
@@ -119,7 +122,9 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             if ($layer) {
                 self::createHandler($this->container, $layer)->update($instance, $wmslayersourceSub);
             } else {
-                $obj = self::createHandler($this->container, new WmsInstanceLayer())->create(
+                $sublayerInstance = new WmsInstanceLayer();
+                $sublayerHandler = new WmsInstanceLayerEntityHandler($this->container, $sublayerInstance);
+                $obj = $sublayerHandler->create(
                     $instance,
                     $wmslayersourceSub,
                     $wmslayersourceSub->getPriority()
@@ -168,7 +173,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * Generates a configuration for layers
      *
-     * @param array $configuration
      * @return array
      */
     public function generateConfiguration()
@@ -238,8 +242,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             );
         }
         $configuration['bbox'] = $srses;
-        if (count($this->entity->getSourceItem()->getStyles()) > 0) {
-            $styles = $this->entity->getSourceItem()->getStyles();
+        $styles = $this->entity->getSourceItem()->getStyles();
+        if ($styles) {
             $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
             if ($legendurl !== null) {
                 $configuration["legend"] = array(
@@ -252,11 +256,12 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->getSourceItem()->getName() !== null &&
             $this->entity->getSourceItem()->getName() !== ""
         ) {
-            $legend = $this->entity->getSourceInstance()->getSource()->getGetLegendGraphic();
+            $source = $this->entity->getSourceInstance()->getSource();
+            $legend = $source->getGetLegendGraphic();
             $url = $legend->getHttpGet();
             $formats = $legend->getFormats();
             $params = "service=WMS&request=GetLegendGraphic"
-                . "&version=" . $this->entity->getSourceInstance()->getSource()->getVersion()
+                . "&version=" . $source->getVersion()
                 . "&layer=" . $this->entity->getSourceItem()->getName()
                 . (count($formats) > 0 ? "&format=" . $formats[0] : "")
                 . "&sld_version=1.1.0";

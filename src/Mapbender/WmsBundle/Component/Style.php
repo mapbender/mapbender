@@ -130,7 +130,7 @@ class Style
     /**
      * Get legendUrl
      *
-     * @return \stdClass 
+     * @return LegendUrl|null
      */
     public function getLegendUrl()
     {
