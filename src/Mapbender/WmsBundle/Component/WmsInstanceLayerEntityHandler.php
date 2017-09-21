@@ -5,6 +5,7 @@ use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceItem;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,21 +14,19 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * Description of WmsInstanceLayerEntityHandler
  *
  * @author Paul Schmidt
+ *
+ * @property WmsInstanceLayer $entity
  */
 class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 {
-
-
-    /**
-     * @var  \Mapbender\CoreBundle\Entity\Source entity
-     */
-    protected $entity;
 
     /**
      * @inheritdoc
      */
     public function create(SourceInstance $instance, SourceItem $wmslayersource, $num = 0)
     {
+        /** @var WmsLayerSource $wmslayersource */
+        /** @var WmsInstance $instance */
         $this->entity->setSourceInstance($instance);
         $this->entity->setSourceItem($wmslayersource);
         $this->entity->setTitle($wmslayersource->getTitle());
@@ -49,7 +48,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->setAllowtoggle(null);
         }
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
-            $entityHandler = self::createHandler($this->container, new WmsInstanceLayer());
+            $subLayerInstance = new WmsInstanceLayer();
+            $entityHandler = new WmsInstanceLayerEntityHandler($this->container, $subLayerInstance);
             $entityHandler->create($instance, $wmslayersourceSub, $num + 1);
             $entityHandler->getEntity()->setParent($this->entity);
             $this->entity->addSublayer($entityHandler->getEntity());
