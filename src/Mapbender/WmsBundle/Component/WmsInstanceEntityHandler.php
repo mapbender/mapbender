@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
@@ -17,6 +18,8 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  * Description of WmsSourceHandler
  *
  * @author Paul Schmidt
+ *
+ * @property WmsInstance $entity
  */
 class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 {
@@ -142,8 +145,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setWeight(-1);
         $wmslayer_root = $this->entity->getSource()->getRootlayer();
 
-        self::createHandler($this->container, new WmsInstanceLayer())->create($this->entity, $wmslayer_root);
-
+        $newInstanceLayerHandler = new WmsInstanceLayerEntityHandler($this->container, new WmsInstanceLayer());
+        $newInstanceLayerHandler->create($this->entity, $wmslayer_root);
     }
 
     /**
@@ -156,6 +159,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
         $num = 0;
         foreach ($this->entity->getLayerset()->getInstances() as $instance) {
+            /** @var WmsInstanceEntityHandler $instHandler */
             $instHandler = self::createHandler($this->container, $instance);
             $instHandler->getEntity()->setWeight($num);
             $instHandler->generateConfiguration();
@@ -284,34 +288,33 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
+     * @param WmsInstanceLayer $rootLayer
+     * @return BoundingBox[]
+     */
+    private function extractBoundingBoxes(WmsInstanceLayer $rootLayer)
+    {
+        $sourceItem = $rootLayer->getSourceItem();
+        $bboxes = array();
+        $latLonBounds = $sourceItem->getLatlonBounds();
+        if ($latLonBounds) {
+            $bboxes[] = $latLonBounds;
+        }
+        return array_merge($bboxes, $sourceItem->getBoundingBoxes());
+    }
+
+    /**
      * @inheritdoc
      */
     public function generateConfiguration()
     {
         $rootlayer = $this->entity->getRootlayer();
         $srses = array();
-        if ($llbbox    = $rootlayer->getSourceItem()->getLatlonBounds()) {
-            $srses = array_merge(
-                $srses,
-                array($llbbox->getSrs() => array(
-                        floatval($llbbox->getMinx()),
-                        floatval($llbbox->getMiny()),
-                        floatval($llbbox->getMaxx()),
-                        floatval($llbbox->getMaxy())
-                    )
-                )
-            );
-        }
-        foreach ($rootlayer->getSourceItem()->getBoundingBoxes() as $bbox) {
-            $srses = array_merge(
-                $srses,
-                array($bbox->getSrs() => array(
-                        floatval($bbox->getMinx()),
-                        floatval($bbox->getMiny()),
-                        floatval($bbox->getMaxx()),
-                        floatval($bbox->getMaxy())
-                    )
-                )
+        foreach ($this->extractBoundingBoxes($rootlayer) as $bbox) {
+            $srses[$bbox->getSrs()] = array(
+                floatval($bbox->getMinx()),
+                floatval($bbox->getMiny()),
+                floatval($bbox->getMaxx()),
+                floatval($bbox->getMaxy()),
             );
         }
         $wmsconf = new WmsInstanceConfiguration();
@@ -358,6 +361,20 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
         $wmsconf->setOptions($options);
         $entityHandler = self::createHandler($this->container, $rootlayer);
+        /**
+         * @todo: this should be removed
+         * WmsInstanceLayerEntityHandler::generateConfiguration references our WmsInstance again, requiring an id to be
+         * set. This breaks on instances that are not yet saved (no id assigned).
+         * Full child definition is only necessary for formatting the config for JavaScript client consumption. It's not
+         * necessary in all contexts where this method is called (most prominently, creating a new WmsInstance for attachment
+         * to an application).
+         *
+         * @todo: identify callees and make distinct methods for
+         *        1) "populate fields before we save to db"
+         *        2) "get configuration for client"
+         * #1 should be barebones (no redundant storage of our own entity's id etc)
+         * #2 can build on the saved result of #1, but extend with "children" information
+         */
         $wmsconf->setChildren(array($entityHandler->generateConfiguration()));
 
         $this->entity->setConfiguration($wmsconf->toArray());
