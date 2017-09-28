@@ -343,6 +343,29 @@ abstract class Element
      *************************************************************************/
 
     /**
+     * Walk up through the class hierarchy and return the name of the first-generation child class immediately
+     * inheriting from the abstract Element
+     *
+     * @return string
+     */
+    protected static function getBaseClassName()
+    {
+        $delegateClass = get_called_class();
+        $abstractRoot = __CLASS__;      // == Mapbender\CoreBundle\Component\Element
+        while (is_subclass_of($delegateClass, $abstractRoot, true)) {
+            $parentClass = get_parent_class($delegateClass);
+            if (is_subclass_of($parentClass, $abstractRoot, true)) {
+                // parent is still not abstract, good to delegate calls to
+                $delegateClass = $parentClass;
+            } else {
+                // we're down to abstract element, stop and keep delegateClass on the first-level child class
+                break;
+            }
+        }
+        return $delegateClass;
+    }
+
+    /**
      * Get the element configuration form type.
      *
      * Override this method to provide a custom configuration form instead of
@@ -352,7 +375,8 @@ abstract class Element
      */
     public static function getType()
     {
-        $clsInfo = explode('\\', get_called_class());
+
+        $clsInfo = explode('\\', static::getBaseClassName());
         return $clsInfo[0] . '\\' . $clsInfo[1] . '\\' . $clsInfo[2] . '\\Type\\' . $clsInfo[3] . 'AdminType';
     }
 
@@ -363,7 +387,7 @@ abstract class Element
      */
     public static function getFormTemplate()
     {
-        $clsInfo = explode('\\', get_called_class());
+        $clsInfo = explode('\\', static::getBaseClassName());
         return $clsInfo[0] .  $clsInfo[1] . ':' . $clsInfo[2] . 'Admin:' . static::getTemplateName($clsInfo[3]) . '.html.twig';
     }
 
