@@ -212,7 +212,7 @@ mb:
     template:
       region:
         tabs:
-          label: Tabs
+          label: Buttons
         accordion:
           label: Akkordeon
     upload:
