@@ -72,7 +72,7 @@ abstract class InstanceConfigurationOptions
      * Sets a proxy
      *
      * @param boolean $proxy source proxy
-     * @return InstanceConfigurationOptions
+     * @return $this
      */
     public function setProxy($proxy)
     {
