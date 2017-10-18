@@ -303,7 +303,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * @inheritdoc
+     * Modifies the bound entity, populates `configuration` attribute, returns nothing
      */
     public function generateConfiguration()
     {
@@ -360,24 +360,30 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setExceptionformat($this->entity->getExceptionformat());
 
         $wmsconf->setOptions($options);
-        $entityHandler = self::createHandler($this->container, $rootlayer);
+        $persistableConfig = $wmsconf->toArray();
         /**
          * @todo: this should be removed
          * WmsInstanceLayerEntityHandler::generateConfiguration references our WmsInstance again, requiring an id to be
          * set. This breaks on instances that are not yet saved (no id assigned).
          * Full child definition is only necessary for formatting the config for JavaScript client consumption. It's not
          * necessary in all contexts where this method is called (most prominently, creating a new WmsInstance for attachment
-         * to an application).
+         * to an application). It should not be persisted.
          *
-         * @todo: identify callees and make distinct methods for
-         *        1) "populate fields before we save to db"
-         *        2) "get configuration for client"
-         * #1 should be barebones (no redundant storage of our own entity's id etc)
-         * #2 can build on the saved result of #1, but extend with "children" information
+         * @todo: move population of the "children" entry away into the getConfiguration method
          */
-        $wmsconf->setChildren(array($entityHandler->generateConfiguration()));
+		$layerConfig = $this->getRootLayerConfig();
+        if ($layerConfig) {
+            $persistableConfig['children'] = array($layerConfig);
+        }
+        $this->entity->setConfiguration($persistableConfig);
+    }
 
-        $this->entity->setConfiguration($wmsconf->toArray());
+    protected function getRootLayerConfig()
+    {
+        $rootlayer = $this->entity->getRootlayer();
+        $entityHandler = new WmsInstanceLayerEntityHandler($this->container, $rootlayer);
+        $rootLayerConfig = $entityHandler->generateConfiguration();
+        return $rootLayerConfig;
     }
 
     /**
