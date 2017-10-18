@@ -247,6 +247,10 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->generateConfiguration();
         }
         $configuration = $this->entity->getConfiguration();
+        $layerConfig = $this->getRootLayerConfig();
+        if ($layerConfig) {
+            $configuration['children'] = array($layerConfig);
+        }
         if (!$this->isConfigurationValid($configuration)) {
             return null;
         }
@@ -361,20 +365,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
         $wmsconf->setOptions($options);
         $persistableConfig = $wmsconf->toArray();
-        /**
-         * @todo: this should be removed
-         * WmsInstanceLayerEntityHandler::generateConfiguration references our WmsInstance again, requiring an id to be
-         * set. This breaks on instances that are not yet saved (no id assigned).
-         * Full child definition is only necessary for formatting the config for JavaScript client consumption. It's not
-         * necessary in all contexts where this method is called (most prominently, creating a new WmsInstance for attachment
-         * to an application). It should not be persisted.
-         *
-         * @todo: move population of the "children" entry away into the getConfiguration method
-         */
-		$layerConfig = $this->getRootLayerConfig();
-        if ($layerConfig) {
-            $persistableConfig['children'] = array($layerConfig);
-        }
         $this->entity->setConfiguration($persistableConfig);
     }
 
