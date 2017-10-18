@@ -100,18 +100,18 @@
             if(moved.layerId) {
                 if(moved.before) {
                     $(this.element).find('[data-id="' + moved.before.layerId + '"]:first').before($(this.element).find(
-                            '[data-id="' + moved.layerId + '"]'));
+                        '[data-id="' + moved.layerId + '"]'));
                 } else if(moved.after) {
                     $(this.element).find('[data-id="' + moved.after.layerId + '"]:last').after($(this.element).find(
-                            '[data-id="' + moved.layerId + '"]'));
+                        '[data-id="' + moved.layerId + '"]'));
                 }
             } else {
                 if(moved.before) {
                     $(this.element).find('[data-id="' + moved.before.layerId + '"]:first').before($(this.element).find(
-                            '[data-sourceid="' + moved.source.id + '"]'));
+                        '[data-sourceid="' + moved.source.id + '"]'));
                 } else if(moved.after) {
                     $(this.element).find('[data-id="' + moved.after.layerId + '"]:last').after($(this.element).find(
-                            '[data-sourceid="' + moved.source.id + '"]'));
+                        '[data-sourceid="' + moved.source.id + '"]'));
                 }
             }
         },
@@ -130,8 +130,14 @@
             } else if(context && options.changed && options.changed.children) {
                 for(layerName in options.changed.children) {
                     var layer = options.changed.children[layerName];
+
                     if(layer.state) {
+
                         if(layer.state.visibility) {
+
+                            if($('li.image[data-id="' + layerName + '"]', context).attr("data-gisurl"))
+                                $('li.image[data-id="' + layerName + '"]', context).html('<img src="' + $('li.image[data-id="' + layerName + '"]', context).attr("data-gisurl") + '">');
+
                             $('li[data-id="' + layerName + '"]', context).removeClass('notvisible');
                         } else {
                             $('li[data-id="' + layerName + '"]', context).addClass('notvisible');
@@ -294,23 +300,27 @@
         },
         _createSourceTitleLine: function(layer){
             return '<li class="ebene' + layer.level + ' ' + this.sourceTitle + (!layer.childrenLegend ? ' notshow'
-                    : '') + ' title" data-sourceid="' + layer.sourceId + '" data-id="' + layer.id + '">' + layer.title + '</li>';
+                : '') + ' title" data-sourceid="' + layer.sourceId + '" data-id="' + layer.id + '">' + layer.title + '</li>';
         },
         _createNodeTitleLine: function(layer){
             return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + this.grouppedTitle + (!layer.childrenLegend
-                    ? ' notshow'
-                    : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
+                ? ' notshow'
+                : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
         },
         _createTitleLine: function(layer, hide){
             return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + this.layerTitle + ' ' + (hide
-                    ? this.hiddeEmpty : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
+                ? this.hiddeEmpty : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
         },
         _createImageLine: function(layer){
-            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' image" data-id="' + layer.id + '"><img src="' + layer.legend.url + '"></img></li>';
+
+            if(layer.visible == " notvisible")
+                return '<li class="ebene' + layer.level + ' ' + layer.visible + ' image" data-id="' + layer.id + '" data-gisurl="' + layer.legend.url + '"></li>';
+            else
+                return '<li class="ebene' + layer.level + ' ' + layer.visible + ' image" data-id="' + layer.id + '"><img src="' + layer.legend.url + '"></img></li>';
         },
         _createTextLine: function(layer, hide){
             return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + (hide ? this.hiddeEmpty
-                    : '') + ' text" data-id="' + layer.id + '">' + this.options.noLegend + '</li>';
+                : '') + ' text" data-id="' + layer.id + '">' + this.options.noLegend + '</li>';
         },
         _createLegendHtml: function(sources){
             var html = "";
@@ -351,7 +361,7 @@
                 if(layers[layidx].children.length > sublayidx) {
                     if(layers[layidx].children[sublayidx].legend) {
                         $(self.element).find("#imgtest").html(
-                                '<img id="testload" style="display: none;" src="' + layers[layidx].children[sublayidx].legend.url + '"></img>');
+                            '<img id="testload" style="display: none;" src="' + layers[layidx].children[sublayidx].legend.url + '"></img>');
                         $(self.element).find("#imgtest #testload").load(function(){
                             self._checkMaxImgWidth(self.width);
                             self._checkMaxImgHeight(self.height);
