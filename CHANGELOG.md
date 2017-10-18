@@ -1,5 +1,8 @@
 # Changelog
 
+* **v3.0.5.5** - 2017-09-xx
+    - Fix GetLegendGraphic tunnel
+
 * **v3.0.5.4** - 2016-09-xx
     - Fix doublets zoom level dots
     - Merge pull request #457 from mapbender/hotfix/featureinfo-css-no-accordion
