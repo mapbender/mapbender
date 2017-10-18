@@ -242,7 +242,8 @@ class WmcParser110 extends WmcParser
         $options = new WmsInstanceConfigurationOptions();
         $options->setUrl($wms->getGetMap()->getHttpGet())
             ->setVisible($wmsinst->getVisible())
-            ->setFormat($wmsinst->getFormat());
+            ->setFormat($wmsinst->getFormat())
+            ->setVersion($wms->getVersion());
 
         $extensionEl = $this->getValue("./cntxt:Extension", $layerElm);
         $layerList = null;
