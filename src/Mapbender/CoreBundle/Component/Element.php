@@ -354,10 +354,10 @@ abstract class Element
      *************************************************************************/
 
     /**
-     * Get the element configuration form type.
+     * Get the element configuration form type. By default, this class needs to have the same name
+     * as the element, suffixed with "AdminType" and located in the Element\Type sub-namespace.
      *
-     * Override this method to provide a custom configuration form instead of
-     * the default YAML form.
+     * Override this method and return null to get a simple YAML entry form.
      *
      * @return string Administration type class name
      */
