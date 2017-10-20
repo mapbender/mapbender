@@ -58,6 +58,34 @@ abstract class Element
     protected static $title = "mb.core.element.class.title";
 
     /**
+     * @var string[]
+     * Determines if "frontendTemplate", "formTemplate", "adminType" should be inherited from the parent class
+     * EVEN IF THEY ARE AUTOMAGICALLY CALCULATED. The three strings above are the valid / effective values.
+     * Also supported is "all".
+     *
+     * E.g. a SuperHTMLElement extends HTMLElement extends Element, with all inheritance left enabled (default)
+     * and no own implementations would return
+     *  getHtmlTemplatePath(false) => "MapbenderCoreBundle:Element:htmlelement.html.twig"
+     *  getHtmlTemplatePath(true)  => "MapbenderCoreBundle:ElementAdmin:htmlelement.html.twig"
+     *  (same:) getFormTemplate()  => "MapbenderCoreBundle:ElementAdmin:htmlelement.html.twig"
+     *  getType()                  => "Mapbender/CoreBundle/Element/Type/HTMLElementAdminType"
+     *
+     * With inheritance off (empty array or or other falsy value, it would instead return:
+     *  getHtmlTemplatePath(false) => "MapbenderCoreBundle:Element:super_htmlelement.html.twig"
+     *  getHtmlTemplatePath(true)  => "MapbenderCoreBundle:ElementAdmin:super_htmlelement.html.twig"
+     *  (same:) getFormTemplate()  => "MapbenderCoreBundle:ElementAdmin:super_htmlelement.html.twig"
+     *  getType()                  => "Mapbender/CoreBundle/Element/Type/SuperHTMLElementAdminType"
+     * I.e. with inheritance off, new templates and new admin type would be required by default.
+     *
+     * @todo: add widgetName to inheritables? Does that make sense?
+     */
+    protected static $inheritedFromParent = array(
+        'frontendTemplate',
+        'adminType',
+        'formTemplate',
+    );
+
+    /**
      * The constructor. Every element needs an application to live within and
      * the container to do useful things.
      *
@@ -224,10 +252,7 @@ abstract class Element
      */
     public function render()
     {
-        $parts    = $this->classNameParts;
-        $template = $parts[0] . $parts[1] . ":" . $parts[2] . ":" . static::getTemplateName($parts[3]) . ".html.twig";
-
-        return $this->container->get('templating')->render($template,
+        return $this->container->get('templating')->render($this->getHtmlTemplatePath(false),
             array(
                 'element'       => $this,
                 'id'            => $this->getId(),
@@ -343,29 +368,6 @@ abstract class Element
      *************************************************************************/
 
     /**
-     * Walk up through the class hierarchy and return the name of the first-generation child class immediately
-     * inheriting from the abstract Element
-     *
-     * @return string
-     */
-    protected static function getBaseClassName()
-    {
-        $delegateClass = get_called_class();
-        $abstractRoot = __CLASS__;      // == Mapbender\CoreBundle\Component\Element
-        while (is_subclass_of($delegateClass, $abstractRoot, true)) {
-            $parentClass = get_parent_class($delegateClass);
-            if (is_subclass_of($parentClass, $abstractRoot, true)) {
-                // parent is still not abstract, good to delegate calls to
-                $delegateClass = $parentClass;
-            } else {
-                // we're down to abstract element, stop and keep delegateClass on the first-level child class
-                break;
-            }
-        }
-        return $delegateClass;
-    }
-
-    /**
      * Get the element configuration form type.
      *
      * Override this method to provide a custom configuration form instead of
@@ -375,9 +377,15 @@ abstract class Element
      */
     public static function getType()
     {
-
-        $clsInfo = explode('\\', static::getBaseClassName());
-        return $clsInfo[0] . '\\' . $clsInfo[1] . '\\' . $clsInfo[2] . '\\Type\\' . $clsInfo[3] . 'AdminType';
+        if (static::isInherited('adminType')) {
+            $cls = static::getNonAbstractBaseClassName();
+        } else {
+            $cls = get_called_class();
+        }
+        $clsInfo = explode('\\', $cls);
+        $namespaceParts = array_slice($clsInfo, 0, -1);
+        $bareClassName = implode('', array_slice($clsInfo, -1));
+        return implode('\\', $namespaceParts) . '\\' . $bareClassName . 'AdminType';
     }
 
     /**
@@ -387,8 +395,7 @@ abstract class Element
      */
     public static function getFormTemplate()
     {
-        $clsInfo = explode('\\', static::getBaseClassName());
-        return $clsInfo[0] .  $clsInfo[1] . ':' . $clsInfo[2] . 'Admin:' . static::getTemplateName($clsInfo[3]) . '.html.twig';
+        return static::getHtmlTemplatePath(true);
     }
 
     /**
@@ -563,10 +570,17 @@ abstract class Element
     }
 
     /**
-     * Get template name by class name
+     * Converts a camel-case string to underscore-separated lower-case string
+     *
+     * E.g. "FantasticMethodNaming" => "fantastic_method_naming"
+     *
+     * Will not work with multiple consecutive upper-case letters
+     *
+     * @todo: naming, location
      *
      * @param $className
      * @return mixed
+     * @internal
      */
     protected static function getTemplateName($className)
     {
@@ -591,5 +605,97 @@ abstract class Element
     public function updateAppConfig($configIn)
     {
         return $configIn;
+    }
+
+    ##### Automagic calculation for template paths and admin type ####
+
+    /**
+     * Returns the template path used to render the element's HTML.
+     * The generated path is twig engine style, i.e.
+     * 'BundleClassName:subfolder-in-Resources/views:template-name.engine-name.twig'
+     *
+     * Base implementation automatically "calculates" the template name from the element class name by
+     * using the "middle" of the namespace as the Resources/views subfolder and using the remaining unqualified
+     * classname lower-cased & decamelized as a file name pre '.twig.html'
+     *
+     * E.g. for a Mapbender\FoodBundle\Element\Citrusy\LemonBomb element child class this will return
+     * "MapbenderFoodBundle:Element:Citrusy/lemon_bomb.html.twig" when called with $admin=false.
+     * This would correspond to this file path:
+     * <mapbender-root>/src/Mapbender/FoodBundle/Resources/views/Element/Citrusy/lemon_bomb.html.twig
+     *
+     * With $admin=true, this method appends "Admin" to the Resource section, and thus returns
+     * "MapbenderFoodBundle:ElementAdmin:Citrusy/lemon_bomb.html.twig"
+     *
+     * Override this if you can't follow this convention for placing your HTML template.
+     *
+     * @param boolean $admin setting true will suffix the resource section with "Admin"
+     * @return string
+     */
+    public static function getHtmlTemplatePath($admin)
+    {
+        if (static::isInherited($admin ? "formTemplate" : "frontendTemplate")) {
+            $cls = static::getNonAbstractBaseClassName();
+        } else {
+            $cls = get_called_class();
+        }
+        $classParts = explode('\\', $cls);
+        $nameWithoutNamespace = implode('', array_slice($classParts, -1));
+
+        $bundle = implode('', array_slice($classParts, 0, 2));  // e.g. "Mapbender" . "CoreBundle"
+        $resourceSection = $classParts[2];     // e.g. "Element"
+        if ($admin) {
+            $resourceSection .= 'Admin';
+        }
+        $resourcePathParts = array_slice($classParts, 3, -1);   // subfolder under section, often empty
+        $resourcePathParts[] = static::getTemplateName($nameWithoutNamespace);
+
+        return "{$bundle}:{$resourceSection}:" . implode('/', $resourcePathParts) . '.html.twig';
+    }
+
+    /**
+     * Checks if "frontendTemplate", "formTemplate", "adminType" should be inherited from the non-abstract
+     * parent class EVEN IF THEY ARE AUTOMAGICALLY CALCULATED.
+     *
+     * By default, inheritance is enabled.
+     * If you want to control this inheritance fine-grained, see the static $inheritedFromParent attribute.
+     * If you just want to replace one of the values, implement the getType
+     *
+     * @param string $what see above for valid values
+     * @return bool
+     * @internal
+     */
+    protected final static function isInherited($what)
+    {
+        if (!is_array(static::$inheritedFromParent)) {
+            $allowedToInherit = explode(',', (string)static::$inheritedFromParent);
+        } else {
+            $allowedToInherit = static::$inheritedFromParent;
+        }
+        return in_array($what, $allowedToInherit) || in_array('all', $allowedToInherit);
+    }
+
+    /**
+     * Walk up through the class hierarchy and return the name of the first-generation child class immediately
+     * inheriting from the abstract Element.
+     *
+     * @todo: location
+     *
+     * @return string fully qualified class name
+     */
+    protected static function getNonAbstractBaseClassName()
+    {
+        $nonAbstractBase = get_called_class();
+        $abstractRoot = __CLASS__;      // == "Mapbender\CoreBundle\Component\Element"
+        while (is_subclass_of($nonAbstractBase, $abstractRoot, true)) {
+            $parentClass = get_parent_class($nonAbstractBase);
+            if (is_subclass_of($parentClass, $abstractRoot, true)) {
+                // parent is still not abstract, good to delegate calls to
+                $nonAbstractBase = $parentClass;
+            } else {
+                // we're down all the way, next parent is now the abstract Element
+                break;
+            }
+        }
+        return $nonAbstractBase;
     }
 }
