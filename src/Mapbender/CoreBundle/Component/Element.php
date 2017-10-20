@@ -658,7 +658,10 @@ abstract class Element
      *
      * By default, inheritance is enabled.
      * If you want to control this inheritance fine-grained, see the static $inheritedFromParent attribute.
-     * If you just want to replace one of the values, implement the getType
+     * If you just want to replace one of the values, reimplement the getType, getFormTemplate, getHtmlTemplatePath
+     * methods.
+     * If you want your values to be automatically calculated but NOT inherited from the parent, adjust the
+     * value of the $inheritedFromParent static property accordingly.
      *
      * @param string $what see above for valid values
      * @return bool
