@@ -136,6 +136,7 @@
                     closeButton:            false,
                     closeOnPopupCloseClick: true,
                     closeOnESC:             false,
+                    destroyOnClose:         true,
                     content:                (html),
                     width:                  350,
                     height:                 500,
@@ -431,14 +432,19 @@
          */
         close: function() {
             var widget = this;
-            if(widget.isPopUpDialog) {
-                if(widget.popup) {
-                    if(widget.popupWindow.$element) widget.popupWindow.destroy();
-                    widget.popupWindow = null;
+
+            if (widget.isPopUpDialog) {
+
+                if (widget.popup) {
+
+                    if (widget.popupWindow.$element) {
+                        widget.popupWindow.destroy();
+                        widget.popupWindow = null;
+                    }
                 }
 
             }
-            if(widget.callback) {
+            if (widget.callback) {
                 widget.callback.call();
                 widget.callback = null;
             }
@@ -474,7 +480,7 @@
             widget.readyState = true;
             
             // Remove handlers
-            readyCallbacks.splice(0, readyCallbacks.length);
+            widget.readyCallbacks.splice(0, widget.readyCallbacks.length);
 
         }
 
