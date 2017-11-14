@@ -19,7 +19,6 @@
 
         readyCallbacks: [],
         callback:       null,
-        model:          null,
 
         /**
          * Widget constructor
@@ -43,10 +42,9 @@
         _setup: function() {
             var widget = this;
             var options = widget.options;
-            var mapWidget = $("#" + widget.options.target).data("mapbenderMbMap");
+
 
             options.noLegend = Mapbender.trans("mb.core.legend.nolegend");
-            widget.model = mapWidget.getModel();
 
             // Deprecated check if options exists
             if(options.hasOwnProperty("showGrouppedTitle")) {
@@ -165,7 +163,7 @@
         _getSources: function() {
             var widget = this;
             var allLayers = [];
-            var sources = widget.model.getSources();
+            var sources = Mapbender.Model.getSources();
             for (var i = (sources.length - 1); i > -1; i--) {
                 allLayers.push(widget._getSource(sources[i], sources[i].configuration.children[0], 1));
             }
