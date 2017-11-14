@@ -366,6 +366,8 @@ mb:
         text:
           title: Texto
           label: Texto
+          error:
+            notext: 'Text required'
       geometry:
         action:
           remove: 'Tirar geometria'
