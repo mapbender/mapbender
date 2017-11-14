@@ -36,17 +36,17 @@ class CustomDoctrineParamConverter implements ParamConverterInterface
 
     /**
      * @param Request        $request
-     * @param ParamConverter $configuration
+     * @param ParamConverter $paramConverter
      * @return bool|void
      */
-    public function apply(Request $request, ParamConverter $configuration)
+    public function apply(Request $request, ParamConverter $paramConverter)
     {
-        $this->configuration = $configuration;
-        $class               = $configuration->getClass();
-        $options             = $this->getOptions($configuration);
+        $this->configuration = $paramConverter;
+        $class               = $paramConverter->getClass();
+        $options             = $this->getOptions($paramConverter);
 
         // find by identifier?
-        if ($request->attributes->has('id') || $request->attributes->has($configuration->getName() . "Id")) {
+        if ($request->attributes->has('id') || $request->attributes->has($paramConverter->getName() . "Id")) {
             $object = $this->find($class, $request, $options);
         } else {
             // $object always becomes an array here
@@ -55,23 +55,23 @@ class CustomDoctrineParamConverter implements ParamConverterInterface
             }
         }
 
-        if (null === $object && false === $configuration->isOptional()) {
+        if (null === $object && false === $paramConverter->isOptional()) {
             throw new NotFoundHttpException(sprintf('%s object not found.', $class));
         }
 
-        $request->attributes->set($configuration->getName(), $object);
+        $request->attributes->set($paramConverter->getName(), $object);
 
     }
 
     /**
-     * @param ParamConverter $configuration
+     * @param ParamConverter $paramConverter
      * @return array
      */
-    protected function getOptions(ParamConverter $configuration)
+    protected function getOptions(ParamConverter $paramConverter)
     {
         return array_replace(array(
             'entity_manager' => 'default',
-        ), $configuration->getOptions());
+        ), $paramConverter->getOptions());
     }
 
     /**
@@ -136,24 +136,24 @@ class CustomDoctrineParamConverter implements ParamConverterInterface
     }
 
     /**
-     * @param ParamConverter $configuration
+     * @param ParamConverter $paramConverter
      * @return bool
      */
-    public function supports(ParamConverter $configuration)
+    public function supports(ParamConverter $paramConverter)
     {
         if (null === $this->registry) {
             return false;
         }
 
-        if (null === $configuration->getClass()) {
+        if (null === $paramConverter->getClass()) {
             return false;
         }
 
-        $options = $this->getOptions($configuration);
+        $options = $this->getOptions($paramConverter);
 
         // Doctrine Entity?
         try {
-            $this->registry->getManager($options['entity_manager'])->getClassMetadata($configuration->getClass());
+            $this->registry->getManager($options['entity_manager'])->getClassMetadata($paramConverter->getClass());
 
             return true;
         } catch (MappingException $e) {
