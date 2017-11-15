@@ -1,5 +1,8 @@
 # Changelog
 
+* **v.3.0.6.4**
+    - Fix displaying scale value in scale selector #657
+
 * **v.3.0.6.3**
     - Fix WMS with Scale fails to load #584 - see commit message #2783540 for more information
 
