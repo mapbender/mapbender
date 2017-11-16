@@ -502,7 +502,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Set boundingBoxes
      *
-     * @param array $boundingBoxes
+     * @param BoundingBox[] $boundingBoxes
      * @return WmsLayerSource
      */
     public function setBoundingBoxes($boundingBoxes)
@@ -514,7 +514,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get boundingBoxes
      *
-     * @return array
+     * @return BoundingBox[]
      */
     public function getBoundingBoxes()
     {
