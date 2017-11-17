@@ -1,87 +1,87 @@
 <?php
+
 namespace Mapbender\Component;
+
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\Mapping\MappingException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @deprecated: would be deleted in next release
- * @Author: Karim Malhas <karim@malhas.de>
- * @package: bkg
- * This Class overides the default Doctrine ParamConverter to allow routes like this:
- * @Route(/{/{nameaId}/foo/{namebid})
+ * @Author    : Karim Malhas <karim@malhas.de>
+ * @package   : bkg
+ * This Class overrides the default Doctrine ParamConverter to allow routes like this:
+ * "@Route(/{/{nameaId}/foo/{namebid})"
  * @ParamConverter("namea",class="FOOBundle:A")
  * public function (A $namea)
-*/
-class CustomDoctrineParamConverter implements ParamConverterInterface {
+ */
+class CustomDoctrineParamConverter implements ParamConverterInterface
+{
 
-    protected $configuration = null;
+    protected $configuration;
+    protected $registry = null;
 
-    public function __construct(\Doctrine\Bundle\DoctrineBundle\Registry $registry = NULL)
+    /**
+     * CustomDoctrineParamConverter constructor.
+     *
+     * @param Registry|null $registry
+     */
+    public function __construct(Registry $registry = null)
     {
-        if (is_null($registry)) {
-            return;
-        }
-
         $this->registry = $registry;
     }
 
-    public function apply(Request $request, ConfigurationInterface $configuration) {
-        $this->configuration = $configuration;
-        $class = $configuration->getClass();
-        $options = $this->getOptions($configuration);
-
+    /**
+     * @param Request        $request
+     * @param ParamConverter $paramConverter
+     * @return bool|void
+     */
+    public function apply(Request $request, ParamConverter $paramConverter)
+    {
+        $this->configuration = $paramConverter;
+        $class               = $paramConverter->getClass();
+        $options             = $this->getOptions($paramConverter);
 
         // find by identifier?
-        if ($request->attributes->has('id') || $request->attributes->has($configuration->getName()."Id" )) {
+        if ($request->attributes->has('id') || $request->attributes->has($paramConverter->getName() . "Id")) {
             $object = $this->find($class, $request, $options);
-        }else{
+        } else {
             // $object always becomes an array here
             if (false === $object = $this->findList($class, $request, $options)) {
                 throw new \LogicException('Unable to guess how to get a Doctrine instance from the request information.');
             }
         }
 
-        if (null === $object && false === $configuration->isOptional()) {
+        if (null === $object && false === $paramConverter->isOptional()) {
             throw new NotFoundHttpException(sprintf('%s object not found.', $class));
         }
 
-        $request->attributes->set($configuration->getName(), $object);
+        $request->attributes->set($paramConverter->getName(), $object);
 
     }
 
-    protected function findList($class,Request $request, $options){
-            // if limit or offset are set we assume we the caller is trying for pagination
-            // FIXME: is this clever? what if someone just wants to mess with us?
-
-            $offset = $request->get('offset') ? $request->get('offset') : 0;
-            $limit = $request->get('limit') ? $request->get('limit') : 10;
-            // allow 1000 results per page at most
-            $limit = $limit < 1000 ? $limit : 1000;
-
-            $request->attributes->set("usedOffset", $offset);
-            $request->attributes->set("usedLimit", $limit);
-
-            // this generally allows the user to search in any field
-            // something else might be wanted in any case
-            $criteria = array();
-            if ($request->attributes->get('criteria'))
-              parse_str($request->attributes->get('criteria'), $criteria);
-
-            $result = $this->registry->getRepository($class, $options['entity_manager'])
-              ->findBy($criteria,array('id' => 'ASC'),$limit + 1,$offset);
-            if(count($result) === ($limit + 1)) {
-              $result = array_splice($result, 0, $limit);
-              $request->attributes->set('lastPage', false);
-            } else {
-              $request->attributes->set('lastPage', true);
-            }
-            return $result;
+    /**
+     * @param ParamConverter $paramConverter
+     * @return array
+     */
+    protected function getOptions(ParamConverter $paramConverter)
+    {
+        return array_replace(array(
+            'entity_manager' => 'default',
+        ), $paramConverter->getOptions());
     }
 
-    protected function find($class, Request $request, $options) {
+    /**
+     * @param         $class
+     * @param Request $request
+     * @param         $options
+     * @return object
+     */
+    protected function find($class, Request $request, $options)
+    {
 
         // try to load by Id
         // Supports only single parameter - this is how the "normal" DoctrineParameterConverter works
@@ -92,35 +92,72 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
 
         // try to load by classname + id
         $name = $this->configuration->getName();
-        if ($request->attributes->has($name."Id")) {
-            return $this->registry->getRepository($class, $options['entity_manager'])->find($request->attributes->get($name."Id"));
+        if ($request->attributes->has($name . "Id")) {
+            return $this->registry->getRepository($class, $options['entity_manager'])->find($request->attributes->get($name . "Id"));
         }
 
     }
 
-    public function supports(ConfigurationInterface $configuration) {
+    /**
+     * @param         $class
+     * @param Request $request
+     * @param         $options
+     * @return array
+     */
+    protected function findList($class, Request $request, $options)
+    {
+        // if limit or offset are set we assume we the caller is trying for pagination
+        // FIXME: is this clever? what if someone just wants to mess with us?
+
+        $offset = $request->get('offset') ? $request->get('offset') : 0;
+        $limit  = $request->get('limit') ? $request->get('limit') : 10;
+        // allow 1000 results per page at most
+        $limit = $limit < 1000 ? $limit : 1000;
+
+        $request->attributes->set("usedOffset", $offset);
+        $request->attributes->set("usedLimit", $limit);
+
+        // this generally allows the user to search in any field
+        // something else might be wanted in any case
+        $criteria = array();
+        if ($request->attributes->get('criteria')) {
+            parse_str($request->attributes->get('criteria'), $criteria);
+        }
+
+        $result = $this->registry->getRepository($class, $options['entity_manager'])
+            ->findBy($criteria, array('id' => 'ASC'), $limit + 1, $offset);
+        if (count($result) === ($limit + 1)) {
+            $result = array_splice($result, 0, $limit);
+            $request->attributes->set('lastPage', false);
+        } else {
+            $request->attributes->set('lastPage', true);
+        }
+        return $result;
+    }
+
+    /**
+     * @param ParamConverter $paramConverter
+     * @return bool
+     */
+    public function supports(ParamConverter $paramConverter)
+    {
         if (null === $this->registry) {
             return false;
         }
 
-        if (null === $configuration->getClass()) {
+        if (null === $paramConverter->getClass()) {
             return false;
         }
 
-        $options = $this->getOptions($configuration);
+        $options = $this->getOptions($paramConverter);
 
         // Doctrine Entity?
         try {
-            $this->registry->getManager($options['entity_manager'])->getClassMetadata($configuration->getClass());
+            $this->registry->getManager($options['entity_manager'])->getClassMetadata($paramConverter->getClass());
 
             return true;
         } catch (MappingException $e) {
             return false;
         }
-    }
-    protected function getOptions(ConfigurationInterface $configuration) {
-        return array_replace(array(
-            'entity_manager' => 'default',
-        ), $configuration->getOptions());
     }
 }

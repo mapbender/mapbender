@@ -84,6 +84,7 @@ class Map extends Element
                 '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
                 '/../vendor/mapbender/mapquery/src/jquery.mapquery.core.js',
                 'proj4js/proj4js-compressed.js',
+                'mapbender.element.map.mapaxisorder.js',
                 'mapbender.element.map.js'),
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));
     }
@@ -164,7 +165,7 @@ class Map extends Element
                     'label' => isset($poi['label']) ? htmlentities($poi['label']) : null,
                     'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
-                if ($poi['srs']) {
+                if (!empty($poi['srs'])) {
                     $help['srs'] = $poi['srs'];
                 }
                 $extra['pois'][] = $help;

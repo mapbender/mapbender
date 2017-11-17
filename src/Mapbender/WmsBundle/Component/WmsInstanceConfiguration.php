@@ -28,7 +28,7 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     /**
      * Returns options
      * 
-     * @return ServiceConfigurationOptions
+     * @return InstanceConfigurationOptions
      */
     public function getOptions()
     {
@@ -36,9 +36,8 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     }
 
     /**
-     * Sets a children
-     * 
-     * @param array $children children
+     *
+     * @param array $children
      * @return InstanceConfiguration 
      */
     public function setChildren($children)
@@ -48,9 +47,8 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     }
 
     /**
-     * Returns a title
-     * 
-     * @return integer children
+     *
+     * @return array children
      */
     public function getChildren()
     {

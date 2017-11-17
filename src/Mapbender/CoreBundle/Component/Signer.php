@@ -20,12 +20,28 @@ class Signer extends BaseSigner
      */
     public function signUrl($url)
     {
-        $psp = substr($url, 0, strpos($url, '?'));
-        $signature = sprintf('%d%s%s', strlen($psp), $this->sep, $this->signature($psp));
-        $sep = (false === strstr($url, '?') ? '?' : '&');
-        $sep = ('?' === substr($url, -1) || '&' === substr($url, -1) ? '' : $sep);
+        $signature = $this->getSignature($url);
+        if (!preg_match('#\?.+$#', rtrim($url, '?'))) {
+            $paramSeparator = '?';
+        } else {
+            $paramSeparator = '&';
+        }
+        return rtrim($url, '?') . $paramSeparator . '_signature=' . urlencode($signature);
+    }
 
-        return $url . $sep . '_signature=' . urlencode($signature);
+    /**
+     * Create a signature from the pre-query portion of the given $url.
+     *
+     * @param string $url
+     * @return string
+     */
+    public function getSignature($url)
+    {
+        $baseUrl = preg_replace('#\?.*$#', '', $url);
+        return implode($this->sep, array(
+            strlen($baseUrl),
+            $this->signature($baseUrl),
+        ));
     }
 
     /**
@@ -38,12 +54,9 @@ class Signer extends BaseSigner
         if(!isset($params['_signature'])) {
             throw new BadSignatureException('No URL signature provided');
         }
-
-        $inSignature = explode($this->sep, $params['_signature']);
-        if(count($inSignature) < 2) {
-            throw new BadSignatureException('Invalid signature layout.');
+        $compareSignature = $this->getSignature($url);
+        if ($compareSignature !== $params['_signature']) {
+            throw new BadSignatureException('Signature mismatch');
         }
-
-        $this->unsign(substr($url, 0, $inSignature[0]) . $this->sep . $inSignature[1]);
     }
 }

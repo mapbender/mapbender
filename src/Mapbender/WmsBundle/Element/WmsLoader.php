@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\EntityHandler;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -196,21 +197,20 @@ class WmsLoader extends Element
     /**
      * Returns
      *
-     * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
+     * @return Response
      */
     protected function signeUrl()
     {
         $gc_url = urldecode($this->container->get('request')->get("url", null));
         $signer = $this->container->get('signer');
         $signedUrl = $signer->signUrl($gc_url);
-        return new Response(json_encode(array("success" => $signedUrl)), 200, array(
-            'Content-Type' => 'application/json'));
+        return new JsonResponse(array("success" => $signedUrl));
     }
 
     /**
      * Returns
      *
-     * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
+     * @return Response
      */
     protected function signeSources()
     {
@@ -219,13 +219,13 @@ class WmsLoader extends Element
         foreach ($sources as &$source) {
             $source['configuration']['options']['url'] = $signer->signUrl($source['configuration']['options']['url']);
         }
-        return new Response(json_encode(array("success" => json_encode($sources))), 200, array(
-            'Content-Type' => 'application/json'));
+        /** @todo: remove double json encoding (adjust consuming code in mapbender.element.wmsloader.js) */
+        return new JsonResponse(array("success" => json_encode($sources)));
     }
 
     /**
      * Creates Instances from sources.
-     * @return array Instance configurations
+     * @return Response
      */
     protected function getInstances()
     {
@@ -247,7 +247,6 @@ class WmsLoader extends Element
                 $instances[] = $instConfig;
             }
         }
-        return new Response(json_encode(array("success" => json_encode($instances))), 200, array(
-            'Content-Type' => 'application/json'));
+        return new JsonResponse(array("success" => $instances));
     }
 }
