@@ -462,7 +462,7 @@ class PrintService
                             $attribute = substr(strrchr($k, "."), 1);
                             $pdf->MultiCell($this->conf['fields'][$k]['width'],
                                 $this->conf['fields'][$k]['height'],
-                                $feature->getAttribute($attribute));
+                                utf8_decode($feature->getAttribute($attribute)));
                         }
                         break;
                 }
