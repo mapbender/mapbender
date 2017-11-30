@@ -242,7 +242,8 @@ class WmcParser110 extends WmcParser
         $options = new WmsInstanceConfigurationOptions();
         $options->setUrl($wms->getGetMap()->getHttpGet())
             ->setVisible($wmsinst->getVisible())
-            ->setFormat($wmsinst->getFormat());
+            ->setFormat($wmsinst->getFormat())
+            ->setVersion($wms->getVersion());
 
         $extensionEl = $this->getValue("./cntxt:Extension", $layerElm);
         $layerList = null;
@@ -275,33 +276,18 @@ class WmcParser110 extends WmcParser
             ->setSourceInstance($wmsinst);
         $rootInst->setToggle(false);
         $rootInst->setAllowtoggle(true);
+        $newLayerInstances = array();
         if ($layerList === null) {
             $layerListStr = explode(",", $this->getValue("./cntxt:Name/text()", $layerElm));
+
             foreach ($layerListStr as $layerStr) {
-                $num++;
                 $layerInst = new WmsInstanceLayer();
                 $layersource = new WmsLayerSource();
-                $layersource->setName($layerStr);
-                $layerInst->setTitle($layerStr)
-                    ->setParent($rootInst)
-                    ->setId($wmsinst->getId() . "_" . $num)
-                    ->setPriority($num)
-                    ->setSourceItem($layersource)
-                    ->setSourceInstance($wmsinst);
-                $rootInst->addSublayer($layerInst);
-                $wmsinst->addLayer($layerInst);
+                $layerInst->setTitle($layerStr);
+                $layerInst->setSourceItem($layersource);
             }
-            $rootLayHandler = EntityHandler::createHandler($this->container, $rootInst);
-            $children = array($rootLayHandler->generateConfiguration());
-            $wmsconf->setChildren($children);
-            return array(
-                'type' => strtolower($wmsinst->getType()),
-                'title' => $wmsinst->getTitle(),
-                'id' => $wmsinst->getId(),
-                'configuration' => $wmsconf->toArray());
-        } elseif ($layerList->length > 0) {
+        } else {
             foreach ($layerList as $layerElmMb) {
-                $num++;
                 $layerInst = new WmsInstanceLayer();
                 $layersource = new WmsLayerSource();
                 $layersource->setName($this->findFirstValue(array("./@name"), $layerElmMb, $num));
@@ -323,15 +309,21 @@ class WmcParser110 extends WmcParser
                 }
                 $queryable = $this->findFirstValue(array("./@queryable"), $layerElmMb, false);
                 $queryable = $queryable !== null && strtolower($queryable) === 'true' ? true : null;
-                $layerInst->setTitle($this->findFirstValue(array("./@title"), $layerElmMb, $num))
+                $layerInst->setTitle($this->findFirstValue(array("./@title"), $layerElmMb, $num));
+                $layerInst->setInfo($queryable);
+                $layerInst->setSourceItem($layersource);
+                $newLayerInstances[] = $layerInst;
+            }
+        }
+        if ($newLayerInstances) {
+            foreach ($newLayerInstances as $layerIndex => $newLayerInstance) {
+                $newLayerInstance
                     ->setParent($rootInst)
                     ->setId($wmsinst->getId() . "_" . $num)
                     ->setPriority($num)
-                    ->setInfo($queryable)
-                    ->setSourceItem($layersource)
                     ->setSourceInstance($wmsinst);
-                $rootInst->addSublayer($layerInst);
-                $wmsinst->addLayer($layerInst);
+                $rootInst->addSublayer($newLayerInstance);
+                $wmsinst->addLayer($newLayerInstance);
             }
             $rootLayHandler = EntityHandler::createHandler($this->container, $rootInst);
             $children = array($rootLayHandler->generateConfiguration());

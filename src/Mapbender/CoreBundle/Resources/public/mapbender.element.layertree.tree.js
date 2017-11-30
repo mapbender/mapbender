@@ -980,7 +980,7 @@
                             var dimHandler = Mapbender.Dimension(item);
                             var label = $('#layer-dimension-value-' + item.name, menu);
                             new Dragdealer('layer-dimension-' + item.name, {
-                                x: dimHandler.partFromValue(dimHandler.getValue()),
+                                x: dimHandler.partFromValue(dimHandler.getDefault()),
                                 horizontal: true,
                                 vertical: false,
                                 speed: 1,

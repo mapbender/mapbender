@@ -165,7 +165,7 @@ class Map extends Element
                     'label' => isset($poi['label']) ? htmlentities($poi['label']) : null,
                     'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
-                if ($poi['srs']) {
+                if (!empty($poi['srs'])) {
                     $help['srs'] = $poi['srs'];
                 }
                 $extra['pois'][] = $help;

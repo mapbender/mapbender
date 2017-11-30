@@ -2,9 +2,11 @@
 
 * **v.3.0.6.4**
     - Fix displaying scale value in scale selector #657
+    - Fix GetLegendGraphic tunnel
 
 * **v.3.0.6.3**
     - Fix WMS with Scale fails to load #584 - see commit message #2783540 for more information
+    - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
 
 * **v.3.0.6.2** - 2017-07-20
     - Fix create legend URL
@@ -255,6 +257,11 @@
     - Merge pull request #459 from mapbender/hotfix/changelog
     - Merge pull request #460 from mapbender/hotfix/default-titlesize512
     - Change tilesize default to 512
+
+* **v3.0.5.5** - 2017-09-xx
+    - Fix GetLegendGraphic tunnel
+
+* **v3.0.5.4** - 2016-09-xx
     - Fix doublets zoom level dots
     - Merge pull request #457 from mapbender/hotfix/featureinfo-css-no-accordion
     - use composer installed phantomjs for tests
