@@ -7,7 +7,6 @@ var Mapbender = Mapbender || {};
  */
 Mapbender.Event = {};
 Mapbender.Event.Dispatcher = Class({
-    abstract: true
 }, {
     'private object listeners': {},
     on: function(name, callback) {
@@ -53,7 +52,6 @@ Mapbender.Event.Dispatcher = Class({
  */
 Mapbender.Geo = {};
 Mapbender.Geo.SourceHandler = Class({
-    abstract: true,
     'extends': Mapbender.Event.Dispatcher
 }, {
     'private string layerNameIdent': 'name',

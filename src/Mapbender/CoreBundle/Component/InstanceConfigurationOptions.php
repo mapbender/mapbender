@@ -1,13 +1,5 @@
 <?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\CoreBundle\Component;
-
-use Mapbender\CoreBundle\Component\Signer;
 
 /**
  * Description of SourceConfigurationOptions
@@ -39,7 +31,7 @@ abstract class InstanceConfigurationOptions
     /**
      * Sets an url
      * @param string $url source url
-     * @return SierviceConfigurationOptions
+     * @return $this
      */
     public function setUrl($url)
     {
@@ -59,7 +51,7 @@ abstract class InstanceConfigurationOptions
     /**
      * Sets an opacity
      * @param float $opacity source opacity
-     * @return SierviceConfigurationOptions
+     * @return $this
      */
     public function setOpacity($opacity)
     {
@@ -78,8 +70,9 @@ abstract class InstanceConfigurationOptions
 
     /**
      * Sets a proxy
+     *
      * @param boolean $proxy source proxy
-     * @return SierviceConfigurationOptions
+     * @return $this
      */
     public function setProxy($proxy)
     {
@@ -99,7 +92,7 @@ abstract class InstanceConfigurationOptions
     /**
      * Sets a visible
      * @param boolean $visible source visibility
-     * @return SierviceConfigurationOptions
+     * @return $this
      */
     public function setVisible($visible)
     {
@@ -118,7 +111,9 @@ abstract class InstanceConfigurationOptions
 
     /**
      * Sings a url
-     * @return boolean transparency
+     *
+     * @param Signer $signer
+     * @return bool transparency
      */
     public function signUrl(Signer $signer = null)
     {

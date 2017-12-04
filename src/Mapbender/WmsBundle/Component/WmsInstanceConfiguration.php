@@ -5,11 +5,6 @@ namespace Mapbender\WmsBundle\Component;
 use Mapbender\CoreBundle\Component\InstanceConfiguration;
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of WmsInstanceConfiguration
  *
@@ -21,8 +16,8 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     /**
      * Sets options
      * 
-     * @param ServiceConfigurationOptions $options ServiceConfigurationOptions
-     * @return InstanceConfiguration 
+     * @param InstanceConfigurationOptions $options ServiceConfigurationOptions
+     * @return $this
      */
     public function setOptions(InstanceConfigurationOptions $options)
     {
@@ -33,7 +28,7 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     /**
      * Returns options
      * 
-     * @return ServiceConfigurationOptions
+     * @return InstanceConfigurationOptions
      */
     public function getOptions()
     {
@@ -41,9 +36,8 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     }
 
     /**
-     * Sets a children
-     * 
-     * @param array $children children
+     *
+     * @param array $children
      * @return InstanceConfiguration 
      */
     public function setChildren($children)
@@ -53,9 +47,8 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     }
 
     /**
-     * Returns a title
-     * 
-     * @return integer children
+     *
+     * @return array children
      */
     public function getChildren()
     {

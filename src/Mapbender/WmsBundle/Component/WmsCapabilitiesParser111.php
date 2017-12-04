@@ -3,12 +3,12 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword;
+use Mapbender\WmsBundle\Entity\WmsSource;
+use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 
 /**
  * Class that Parses WMS 1.3.0 GetCapabilies Document
@@ -150,26 +150,26 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
      * document
      *
      * @param \DOMElement $contextElm the element to use as context for the
-     * Operation Request Information section
+     *                                Operation Request Information section
      * @return RequestInformation
      */
     private function parseOperationRequestInformation(\DOMElement $contextElm)
     {
-        $requestImformation = new RequestInformation();
+        $requestInformation = new RequestInformation();
         $tempList = $this->xpath->query("./Format", $contextElm);
         if ($tempList !== null) {
             foreach ($tempList as $item) {
-                $requestImformation->addFormat($this->getValue("./text()", $item));
+                $requestInformation->addFormat($this->getValue("./text()", $item));
             }
         }
-        $requestImformation->setHttpGet(
+        $requestInformation->setHttpGet(
             $this->getValue("./DCPType/HTTP/Get/OnlineResource/@xlink:href", $contextElm)
         );
-        $requestImformation->setHttpPost(
+        $requestInformation->setHttpPost(
             $this->getValue("./DCPType/HTTP/Post/OnlineResource/@xlink:href", $contextElm)
         );
 
-        return $requestImformation;
+        return $requestInformation;
     }
 
     /**

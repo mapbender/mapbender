@@ -9,10 +9,7 @@ use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Authority;
-use Mapbender\WmsBundle\Component\LegendUrl;
-use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\RequestInformation;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -182,7 +179,7 @@ class WmsSource extends Source implements ContainingKeyword
     protected $password = null;
 
     /**
-     * @var ArrayCollection A list of WMS layers
+     * @var WmsLayerSource[]|ArrayCollection A list of WMS layers
      * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsLayerSource",mappedBy="source", cascade={"remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
@@ -201,6 +198,9 @@ class WmsSource extends Source implements ContainingKeyword
      */
     protected $instances;
 
+    /**
+     * WmsSource constructor.
+     */
     public function __construct()
     {
         parent::__construct(Source::TYPE_WMS);
@@ -836,7 +836,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Add keyword
      *
-     * @param Keyword $keyword
+     * @param Keyword|WmsSourceKeyword $keyword
      * @return Source
      */
     public function addKeyword(Keyword $keyword)
@@ -845,6 +845,12 @@ class WmsSource extends Source implements ContainingKeyword
         return $this;
     }
 
+    /**
+     * Add WMS instance
+     *
+     * @param WmsInstance $instance
+     * @return $this
+     */
     public function addInstance(WmsInstance $instance)
     {
         $this->instances->add($instance);

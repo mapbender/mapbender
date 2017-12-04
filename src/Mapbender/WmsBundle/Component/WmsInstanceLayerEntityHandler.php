@@ -1,16 +1,11 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceItem;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,14 +14,19 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * Description of WmsInstanceLayerEntityHandler
  *
  * @author Paul Schmidt
+ *
+ * @property WmsInstanceLayer $entity
  */
 class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 {
+
     /**
      * @inheritdoc
      */
     public function create(SourceInstance $instance, SourceItem $wmslayersource, $num = 0)
     {
+        /** @var WmsLayerSource $wmslayersource */
+        /** @var WmsInstance $instance */
         $this->entity->setSourceInstance($instance);
         $this->entity->setSourceItem($wmslayersource);
         $this->entity->setTitle($wmslayersource->getTitle());
@@ -48,7 +48,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->setAllowtoggle(null);
         }
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
-            $entityHandler = self::createHandler($this->container, new WmsInstanceLayer());
+            $subLayerInstance = new WmsInstanceLayer();
+            $entityHandler = new WmsInstanceLayerEntityHandler($this->container, $subLayerInstance);
             $entityHandler->create($instance, $wmslayersourceSub, $num + 1);
             $entityHandler->getEntity()->setParent($this->entity);
             $this->entity->addSublayer($entityHandler->getEntity());
@@ -101,10 +102,13 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function update(SourceInstance $instance, SourceItem $wmslayersource)
     {
+        /** @var WmsInstance $instance */
+        /** @var WmsLayerSource $wmslayersource */
         $manager = $this->container->get('doctrine')->getManager();
         /* remove instance layers for missed layer sources */
         $toRemove = array();
         foreach ($this->entity->getSublayer() as $wmsinstlayer) {
+            /** @var WmsInstanceLayer $wmsinstlayer */
             if ($this->isScheduledForRemoval($wmsinstlayer->getSourceItem())) {
                 $toRemove[] = $wmsinstlayer;
             }
@@ -118,7 +122,9 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             if ($layer) {
                 self::createHandler($this->container, $layer)->update($instance, $wmslayersourceSub);
             } else {
-                $obj = self::createHandler($this->container, new WmsInstanceLayer())->create(
+                $sublayerInstance = new WmsInstanceLayer();
+                $sublayerHandler = new WmsInstanceLayerEntityHandler($this->container, $sublayerInstance);
+                $obj = $sublayerHandler->create(
                     $instance,
                     $wmslayersourceSub,
                     $wmslayersourceSub->getPriority()
@@ -167,7 +173,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * Generates a configuration for layers
      *
-     * @param array $configuration
      * @return array
      */
     public function generateConfiguration()
@@ -237,12 +242,12 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             );
         }
         $configuration['bbox'] = $srses;
-        if (count($this->entity->getSourceItem()->getStyles()) > 0) {
-            $styles = $this->entity->getSourceItem()->getStyles();
+        $styles = $this->entity->getSourceItem()->getStyles();
+        if ($styles) {
             $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
             if ($legendurl !== null) {
                 $configuration["legend"] = array(
-                    "url" => $this->checkLegendViaTunnel($legendurl->getOnlineResource()->getHref()),
+                    "url" => $this->generateTunnelUrl($legendurl->getOnlineResource()->getHref()),
                     "width" => intval($legendurl->getWidth()),
                     "height" => intval($legendurl->getHeight())
                 );
@@ -251,17 +256,18 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->entity->getSourceItem()->getName() !== null &&
             $this->entity->getSourceItem()->getName() !== ""
         ) {
-            $legend = $this->entity->getSourceInstance()->getSource()->getGetLegendGraphic();
+            $source = $this->entity->getSourceInstance()->getSource();
+            $legend = $source->getGetLegendGraphic();
             $url = $legend->getHttpGet();
             $formats = $legend->getFormats();
             $params = "service=WMS&request=GetLegendGraphic"
-                . "&version=" . $this->entity->getSourceInstance()->getSource()->getVersion()
+                . "&version=" . $source->getVersion()
                 . "&layer=" . $this->entity->getSourceItem()->getName()
                 . (count($formats) > 0 ? "&format=" . $formats[0] : "")
                 . "&sld_version=1.1.0";
             $legendgraphic = Utils::getHttpUrl($url, $params);
             $configuration["legend"] = array(
-                "graphic" => $this->checkLegendViaTunnel($legendgraphic)
+                "graphic" => $this->generateTunnelUrl($legendgraphic)
             );
         }
         $configuration["treeOptions"] = array(
@@ -295,17 +301,26 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         return null;
     }
 
-    private function checkLegendViaTunnel($url)
+    private function generateTunnelUrl($url)
     {
         if ($this->entity->getSourceInstance()->getSource()->getUsername()) {
-            return $this->container->get('router')->generate(
+            $tunnelBaseUrl = $this->container->get('router')->generate(
                 'mapbender_core_application_instancetunnel',
                 array(
                     'slug' => $this->entity->getSourceInstance()->getLayerset()->getApplication()->getSlug(),
-                    'instanceId' => $this->entity->getSourceInstance()->getId(),
-                    'legendurl' => $url),
+                    'instanceId' => $this->entity->getSourceInstance()->getId()),
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
+            // forward "request" param to tunnel (lower-case matching)
+            $params = array();
+            parse_str(parse_url($url, PHP_URL_QUERY), $params);
+            foreach ($params as $name => $value) {
+                if (strtolower($name) == 'request') {
+                    $fullQueryString = strstr($url, '?', false);
+                    return $tunnelBaseUrl . $fullQueryString;
+                }
+            }
+            throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
         } else {
             return $url;
         }

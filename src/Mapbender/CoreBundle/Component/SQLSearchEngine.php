@@ -10,10 +10,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Class SQLSearchEngine
  *
  * @package Mapbender\CoreBundle\Component
+ * @deprecated and will be removed in 3.0.6 release
  */
 class SQLSearchEngine
 {
-    /** @var  ContainerInterface */
+    /** @var ContainerInterface */
     protected $container;
 
     /**

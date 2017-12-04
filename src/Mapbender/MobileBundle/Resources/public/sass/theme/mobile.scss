@@ -166,7 +166,6 @@ fieldset{
 @import "modules/layout";
 /* -------------------------------------------------------------------- POPUP */
 .overlay{
-  background:url("../../images/overlay.png");
   @include noUserSelect();
   @include opacity(0);
   @include transition(opacity 0.4s ease-in-out);

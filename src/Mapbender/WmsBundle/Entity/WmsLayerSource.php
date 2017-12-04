@@ -137,7 +137,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     protected $featureListUrl;
     /**
-     * @var ArrayCollections A list of WMS Layer keywords
+     * @var ArrayCollection A list of WMS Layer keywords
      * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
@@ -147,6 +147,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     protected $priority;
 
+    /**
+     * WmsLayerSource constructor.
+     */
     public function __construct()
     {
         $this->sublayer = new ArrayCollection();
@@ -494,7 +497,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Set boundingBoxes
      *
-     * @param array $boundingBoxes
+     * @param BoundingBox[] $boundingBoxes
      * @return WmsLayerSource
      */
     public function setBoundingBoxes($boundingBoxes)
@@ -506,7 +509,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get boundingBoxes
      *
-     * @return array
+     * @return BoundingBox[]
      */
     public function getBoundingBoxes()
     {

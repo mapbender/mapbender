@@ -247,7 +247,7 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        var sources = $.parseJSON(response.success);
+                        var sources = response.success;
                         self._addSources(sources, sourceOpts);
                     } else if (response.error) {
                         Mapbender.error(response.error);

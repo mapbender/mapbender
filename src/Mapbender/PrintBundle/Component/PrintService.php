@@ -327,6 +327,12 @@ class PrintService
                 case 'image/png' :
                     $rawImage = imagecreatefrompng($imageName);
                     break;
+                case 'image/png8' :
+                    $rawImage = imagecreatefrompng($imageName);
+                    break;
+                case 'image/png; mode=24bit' :
+                    $rawImage = imagecreatefrompng($imageName);
+                    break;
                 case 'image/jpeg' :
                     $rawImage = imagecreatefromjpeg($imageName);
                     break;
@@ -399,7 +405,11 @@ class PrintService
         $tplidx = $pdf->importPage(1);
         $pdf->SetAutoPageBreak(false);
         $pdf->addPage($orientation, $format);
-        $pdf->useTemplate($tplidx);
+
+        $hasTransparentBg = $this->checkPdfBackground($pdf, $pdfFile);
+        if ($hasTransparentBg == false){
+            $pdf->useTemplate($tplidx);
+        }
 
         // add final map image
         $mapUlX = $this->conf['map']['x'];
@@ -412,6 +422,10 @@ class PrintService
         // add map border (default is black)
         $pdf->Rect($mapUlX, $mapUlY, $mapWidth, $mapHeight);
         unlink($this->finalImageName);
+
+        if ($hasTransparentBg == true){
+            $pdf->useTemplate($tplidx);
+        }
 
         // add northarrow
         if (isset($this->conf['northarrow'])) {
@@ -508,7 +522,7 @@ class PrintService
         if (isset($this->data['legends']) && !empty($this->data['legends'])){
             $this->addLegend();
         }
-            
+
         return $pdf->Output(null, 'S');
     }
 
@@ -1177,6 +1191,19 @@ class PrintService
     private function getStyle($geometry)
     {
         return array_merge($this->defaultStyle, $geometry['style']);
+    }
+
+    private function checkPdfBackground($pdf, $pdfFile) {
+        $pdfArray = (array) $pdf;
+        $pdfSubArray = (array) $pdfArray['parsers'][$pdfFile];
+        $prefix = chr(0) . '*' . chr(0);
+        $pdfSubArray2 = $pdfSubArray[$prefix . '_root'][1][1];
+
+        if (sizeof($pdfSubArray2) > 0 && !array_key_exists('/Outlines', $pdfSubArray2)) {
+            return true;
+        }
+
+        return false;
     }
 
 }

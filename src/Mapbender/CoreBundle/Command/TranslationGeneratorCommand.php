@@ -3,13 +3,9 @@
 namespace Mapbender\CoreBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -17,7 +13,6 @@ use Symfony\Component\Finder\SplFileInfo;
  * Class TranslationGenerator
  *
  * @package   Mapbender\CoreBundle\Command
- * @author    Andriy Oblivantsev <eslider@gmail.com>
  * @copyright 2014 by WhereGroup GmbH & Co. KG
  * @deprecated should be removed in release/3.0.6
  */
@@ -41,7 +36,6 @@ class TranslationGeneratorCommand extends ContainerAwareCommand {
         /** @var SplFileInfo $dir */
 
         $finder      = new Finder();
-        $application = $this->getApplication();
         foreach ($finder->in('mapbender/src/Mapbender/*/Resources/translations/')->name('*.xlf') as $dir) {
             preg_match("/^([^.]+)[.]([^.]+)[.]/", $dir->getBasename(), $matches);
             $paths  = preg_split("|/|", $dir->getPath());
@@ -51,12 +45,7 @@ class TranslationGeneratorCommand extends ContainerAwareCommand {
             $cmd = "app/console translation:update --output-format=xlf --force $locale $bundle";
             $output->writeln("<comment>$cmd</comment>");
             echo `$cmd`;
-//            $this->runCommand('translation:update',
-//                array('locale'          => $locale,
-//                      'bundle'          => $bundle,
-//                      '--output-format' => 'xlf',
-//                      '--force'         => true)
-//            ,$output);
+
         }
     }
 

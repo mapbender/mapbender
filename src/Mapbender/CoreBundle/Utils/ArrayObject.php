@@ -1,10 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\CoreBundle\Utils;
 
 use Doctrine\ORM\PersistentCollection;
@@ -48,7 +42,8 @@ class ArrayObject
 
     /**
      * Transforms an object to an array.
-     * @param type $data
+     *
+     * @param array|object|PersistentCollection $data
      * @return array | null
      */
     public static function objectToArray($data)

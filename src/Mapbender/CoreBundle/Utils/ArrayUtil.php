@@ -1,10 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Mapbender\CoreBundle\Utils;
 
 /**
@@ -14,7 +8,6 @@ namespace Mapbender\CoreBundle\Utils;
  */
 class ArrayUtil
 {
-
     /**
      * @param $array array input to test
      * @return bool
@@ -24,6 +17,14 @@ class ArrayUtil
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
+    /**
+     * Get value from array
+     *
+     * @param array $list
+     * @param null  $value
+     * @param int   $default
+     * @return mixed|null
+     */
     public static function getValueFromArray(array $list, $value = null, $default = 0)
     {
         if (count($list) > 0) {

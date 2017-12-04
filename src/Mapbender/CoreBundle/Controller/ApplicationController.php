@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\WmsBundle\Entity\WmsSource;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\Utils;
@@ -15,6 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -343,12 +345,19 @@ class ApplicationController extends Controller
     {
         $instance        = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
+        if (!$instance) {
+            throw new NotFoundHttpException("No such instance");
+        }
+
         $securityContext = $this->get('security.context');
 
         if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
             && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
+        /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
+        /** @var WmsSource $source */
+        $source = $instance->getSource();
 // TODO source access ?
 //        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'))
 //            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
@@ -359,8 +368,8 @@ class ApplicationController extends Controller
         $headers     = array();
         $postParams  = $this->get("request")->request->all();
         $getParams   = $this->get("request")->query->all();
-        $user        = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
-        $password    = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
+        $user        = $source->getUsername() ? $source->getUsername() : null;
+        $password    = $source->getUsername() ? $source->getPassword() : null;
         $instHandler = EntityHandler::createHandler($this->container, $instance);
         $vendorspec  = $instHandler->getSensitiveVendorSpecific();
         /* overwrite vendorspecific parameters from handler with get/post parameters */
@@ -371,26 +380,28 @@ class ApplicationController extends Controller
             $postParams = array_merge($vendorspec, $postParams);
         }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
-        if (isset($getParams['legendurl'])) {
-            $url = $getParams['legendurl'];
-            unset($getParams['legendurl']);
-        } else {
-            foreach ($getParams as $key => $value) {
-                if (strtolower($key) === 'request') {
-                    // TODO implement for other ogc services
-                    if (strtolower($value) === 'getmap') {
-                        $url = $instance->getSource()->getGetMap()->getHttpGet();
-                    } elseif (strtolower($value) === 'getfeatureinfo') {
-                        $url = $instance->getSource()->getGetFeatureInfo()->getHttpGet();
-                    } elseif (strtolower($value) === 'getlegendgraphic') {
-                        $url = $instance->getSource()->getGetLegendGraphic()->getHttpGet();
-                    }
-                    break;
-                }
+        $requestType = null;
+        foreach ($getParams as $key => $value) {
+            if (strtolower($key) === 'request') {
+                $requestType = $value;
+                break;
             }
         }
-        if (!$url) {
-            throw new NotFoundHttpException('Operation "' . $value . '" is not supported by "tunnelAction".');
+        if (!$requestType) {
+            throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
+        }
+        switch (strtolower($requestType)) {
+            case 'getmap':
+                $url = $source->getGetMap()->getHttpGet();
+                break;
+            case 'getfeatureinfo':
+                $url = $source->getGetFeatureInfo()->getHttpGet();
+                break;
+            case 'getlegendgraphic':
+                $url = $source->getGetLegendGraphic()->getHttpGet();
+                break;
+            default:
+                throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
         $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
