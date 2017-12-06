@@ -154,6 +154,7 @@ class Application
                 '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
             ),
             'css'   => array(),
             'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')
