@@ -7,96 +7,98 @@
  * @author Andriy Oblivantsev <eslider@gmail.com>
  */
 function MapbenderContainerInfo(widget, options) {
-    var element = $(widget.element);
-    var toolBar = element.closest(".toolBar");
-    var contentPane = element.closest(".contentPane");
-    var sidePane = element.closest(".sidePane");
-    var container = null;
-    var lastState = null;
+    'use strict';
 
-    if(contentPane.size()) {
+    var element = $(widget.element),
+        toolBar = element.closest(".toolBar"),
+        contentPane = element.closest(".contentPane"),
+        sidePane = element.closest(".sidePane"),
+        container = null,
+        lastState = null;
+
+    if (contentPane.size()) {
         container = contentPane;
     }
 
-    if(toolBar.size()) {
+    if (toolBar.size()) {
         container = toolBar;
     }
 
-    if(sidePane.size()) {
+    if (sidePane.size()) {
         container = sidePane;
     }
 
-    this.isSidePane = function() {
+    this.isSidePane = function () {
         return sidePane.size() > 0;
     };
 
-    this.isContentPane = function() {
+    this.isContentPane = function () {
         return contentPane.size() > 0;
     };
 
-    this.isToolBar = function() {
+    this.isToolBar = function () {
         return toolBar.size() > 0;
     };
 
-    this.isOnTop = function() {
+    this.isOnTop = function () {
         return toolBar.hasClass('top');
     };
 
-    this.isOnBottom = function() {
+    this.isOnBottom = function () {
         return toolBar.hasClass('bottom');
     };
 
-    this.isOnTop = function() {
+    this.isOnTop = function () {
         return toolBar.hasClass('top');
     };
 
-    this.isOnLeft = function() {
+    this.isOnLeft = function () {
         return sidePane.hasClass('left');
     };
 
-    this.isOnRight = function() {
+    this.isOnRight = function () {
         return sidePane.hasClass('right');
     };
 
-    this.getContainer = function() {
+    this.getContainer = function () {
         return container;
     };
 
-    if(this.isSidePane()) {
-        var accordion = $(".accordionContainer", sidePane);
-        var hasAccordion = accordion.length > 0;
-
-        if(hasAccordion) {
-            var tabs = accordion.find('> div.accordion');
-            var currentTab = accordion.find('> div.accordion.active');
-
-            tabs.on('click', function(e) {
-                var tab = $(e.currentTarget);
-                handleByTab(tab);
-            });
-            handleByTab(currentTab);
-        }
-    }
-
     function handleByTab(tab) {
-        var tabContent = tab.parent().find("> div")[tab.index() + 1];
-        var hasWidget = $(tabContent).find(element).length > 0;
-        var state = hasWidget ? 'active' : 'inactive';
+        var tabContent = tab.parent().find("> div")[tab.index() + 1],
+            hasWidget = $(tabContent).find(element).length > 0,
+            state = hasWidget ? 'active' : 'inactive';
 
-        if(lastState === state) {
+        if (lastState === state) {
             return;
         }
 
-        if(state === "active") {
-            if(options.onactive) {
+        if (state === "active") {
+            if (options.onactive) {
                 options.onactive();
             }
         } else {
-            if(options.oninactive) {
+            if (options.oninactive) {
                 options.oninactive();
             }
         }
 
         lastState = state;
+    }
+
+    if (this.isSidePane()) {
+        var accordion = $(".accordionContainer", sidePane),
+            hasAccordion = accordion.length > 0;
+
+        if (hasAccordion) {
+            var tabs = accordion.find('> div.accordion'),
+                currentTab = accordion.find('> div.accordion.active');
+
+            tabs.on('click', function (e) {
+                var tab = $(e.currentTarget);
+                handleByTab(tab);
+            });
+            handleByTab(currentTab);
+        }
     }
 }

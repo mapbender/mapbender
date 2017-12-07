@@ -1,120 +1,101 @@
-(function($) {
+(function ($) {
+    'use strict';
 
-$.widget("mapbender.mbCoordinatesDisplay", {
-    options: {
-        target: null,
-        empty: 'x= -<br>y= -',
-        prefix: 'x= ',
-        separator: '<br/>y= ',
-        suffix: ''
-    },
+    $.widget("mapbender.mbCoordinatesDisplay", $.mapbender.mbBaseElement, {
+        options: {
+            target: null,
+            empty: 'x= -<br>y= -',
+            prefix: 'x= ',
+            separator: '<br/>y= ',
+            suffix: ''
+        },
+        RADIX: 10,
 
-    _create: function() {
-        if(!Mapbender.checkTarget("mbCoordinatesDisplay", this.options.target)){
-            return;
-        }
-        var self = this;
-        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
-    },
-
-    _setup: function(){
-        var self = this;
-        self.options.empty = self.options.empty ? self.options.empty : '';
-        self.options.prefix = self.options.prefix ? self.options.prefix : '';
-        self.options.separator = self.options.separator ? self.options.separator: ' ';
-        var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-        var layers = mbMap.map.layers();
-        for(var i = 0; i < layers.length; ++i) {
-            var layer = layers[i];
-            if(layer.options.isBaseLayer){
-                layer.olLayer.events.register('loadend', layer.olLayer, function(e){
-                     self.reset();
-                });
+        _create: function () {
+            if (!Mapbender.checkTarget("mbCoordinatesDisplay", this.options.target)) {
+                return;
             }
-        }
-        $(document).bind('mbmapsrschanged', $.proxy(self._reset, self));
-        self.options.numDigits = isNaN(parseInt(self.options.numDigits)) ? 0 : parseInt(self.options.numDigits);
-        self.options.numDigits = self.options.numDigits < 0 ? 0 : self.options.numDigits;
-        this._reset();
-        this._trigger('ready');
-        this._ready();
-    },
 
-    _reset: function(event, srs){
-        var self = this;
-        var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-        srs = { projection: mbMap.map.olMap.getProjectionObject()};
-        if(this.crs != null && this.crs == srs.projection.projCode){
-            return;
-        }
-        var isdeg = mbMap.map.olMap.units === 'degrees';
-        if(typeof(self.options.formatoutput) !== 'undefined'){
-            mbMap.map.olMap.addControl(new OpenLayers.Control.MousePosition({
-                id: $(self.element).attr('id'),
-                element: $(self.element)[0],
-                emptyString: self.options.empty,
-                numDigits: isdeg ? 5 + self.options.numDigits : self.options.numDigits,
-                formatOutput: function(pos) {
-                    var out = self.options.displaystring.replace("$lon$",pos.lon.toFixed(isdeg ? 5 : 0));
-                    return out.replace("$lat$", pos.lat.toFixed(isdeg ? 5 : 0));
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+        },
+
+        _setup: function () {
+            var self = this,
+                mbMap = $('#' + this.options.target).data('mapbenderMbMap'),
+                layers = mbMap.map.layers();
+
+            this.options.empty = this.options.empty || '';
+            this.options.prefix = this.options.prefix || '';
+            this.options.separator = this.options.separator || ' ';
+
+            layers.map(function (layer) {
+                if (layer.options.isBaseLayer) {
+                    layer.olLayer.events.register('loadend', layer.olLayer, function () {
+                        self.reset();
+                    });
                 }
-            }));
-            this.crs = srs.projection.projCode;
-        } else {
-            var mouseContr = mbMap.map.olMap.getControl($(self.element).attr('id'));
-            if(mouseContr != null)
-                mbMap.map.olMap.removeControl(mouseContr);
-            var options = {
-                id: $(self.element).attr('id'),
-                div: $($(self.element)[0]).find('#coordinatesdisplay')[0],
-                emptyString: self.options.empty ? self.options.empty : '',
-                prefix: self.options.prefix ? self.options.prefix : '',
-                separator: self.options.separator ? self.options.separator: ' ',
-                suffix: self.options.suffix,
-                numDigits: isdeg ? 5 + self.options.numDigits : self.options.numDigits,
-                displayProjection: srs.projection };
-            mbMap.map.olMap.addControl(new OpenLayers.Control.MousePosition(options));
-            this.crs = srs.projection.projCode;
-        }
-    },
+            });
 
-    showHidde: function() {
-        var self = this;
-        var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-        var list = mbMap.map.olMap.getControlsByClass('OpenLayers.Control.MousePosition');
-        $.each(list, function(idx, val) {
-            var div_id = '#'+$(self.element).attr('id')+'-div';
-            if(val.active) {
-               val.deactivate();
-               $(div_id).css('display', 'none');
-            } else {
-               $(div_id).css('display', 'inline');
-               val.activate();
+            $(document).on('mbmapsrschanged', $.proxy(this._reset, this));
+
+            this.options.numDigits = isNaN(parseInt(this.options.numDigits, this.RADIX))
+                ? 0
+                : parseInt(this.options.numDigits, this.RADIX);
+            this.options.numDigits = this.options.numDigits < 0 ? 0 : this.options.numDigits;
+
+            this._reset();
+        },
+
+        _reset: function (event, srs) {
+            var self = this,
+                mbMap = $('#' + this.options.target).data('mapbenderMbMap'),
+                isdeg = mbMap.map.olMap.units === 'degrees';
+
+            srs = { projection: mbMap.map.olMap.getProjectionObject()};
+
+            if (this.crs !== null && (this.crs === srs.projection.projCode)) {
+                return;
             }
-        });
-    },
-    /**
-     *
-     */
-    ready: function(callback) {
-        if(this.readyState === true) {
-            callback();
-        } else {
-            this.readyCallbacks.push(callback);
+
+            if (typeof (this.options.formatoutput) !== 'undefined') {
+                mbMap.map.olMap.addControl(
+                    new OpenLayers.Control.MousePosition({
+                        id: $(this.element).attr('id'),
+                        element: $(this.element)[0],
+                        emptyString: this.options.empty,
+                        numDigits: isdeg ? 5 + this.options.numDigits : this.options.numDigits,
+                        formatOutput: function (pos) {
+                            var out = self.options.displaystring.replace("$lon$", pos.lon.toFixed(isdeg ? 5 : 0));
+                            return out.replace("$lat$", pos.lat.toFixed(isdeg ? 5 : 0));
+                        }
+                    })
+                );
+
+                this.crs = srs.projection.projCode;
+            } else {
+                var mouseContr = mbMap.map.olMap.getControl($(this.element).attr('id'));
+
+                if (mouseContr !== null) {
+                    mbMap.map.olMap.removeControl(mouseContr);
+                }
+
+                mbMap.map.olMap.addControl(
+                    new OpenLayers.Control.MousePosition({
+                        id: $(this.element).attr('id'),
+                        div: $($(this.element)[0]).find('#coordinatesdisplay')[0],
+                        emptyString: this.options.empty || '',
+                        prefix: this.options.prefix || '',
+                        separator: this.options.separator || ' ',
+                        suffix: this.options.suffix,
+                        numDigits: isdeg ? 5 + this.options.numDigits : this.options.numDigits,
+                        displayProjection: srs.projection
+                    })
+                );
+
+                this.crs = srs.projection.projCode;
+            }
         }
-    },
-    /**
-     *
-     */
-    _ready: function() {
-        for(callback in this.readyCallbacks) {
-            callback();
-            delete(this.readyCallbacks[callback]);
-        }
-        this.readyState = true;
-    },
-    _destroy: $.noop
-});
+    });
 
 })(jQuery);
 

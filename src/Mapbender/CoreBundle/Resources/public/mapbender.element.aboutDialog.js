@@ -1,29 +1,30 @@
-(function($){
+(function ($) {
+    'use strict';
 
     $.widget("mapbender.mbAboutDialog", $.mapbender.mbBaseElement, {
         options: {},
         elementUrl: null,
         popup: null,
 
-        _create: function(){
-            var self = this;
-            var $me = $(this.element);
+        _create: function () {
+            var self = this,
+                $me = $(this.element);
 
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + $me.attr('id') + '/';
 
-            $me.on('click', function() {
+            $me.on('click', function () {
                 self.open();
             });
         },
 
-        defaultAction: function() {
+        defaultAction: function () {
             return this.open();
         },
 
-        open: function(){
+        open: function () {
             var self = this;
 
-            if(!this.popup || !this.popup.$element){
+            if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
                     modal: true,
@@ -38,7 +39,7 @@
                         'ok': {
                             label: 'OK',
                             cssClass: 'button right',
-                            callback: function(){
+                            callback: function () {
                                 self.close();
                             }
                         }
@@ -49,8 +50,8 @@
             }
         },
 
-        close: function(){
-            if(this.popup && this.popup.$element){
+        close: function () {
+            if (this.popup && this.popup.$element) {
                 this.popup.destroy();
             }
             this.popup = null;
