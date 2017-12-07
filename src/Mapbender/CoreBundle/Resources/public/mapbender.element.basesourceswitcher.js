@@ -1,6 +1,6 @@
 (function($) {
 
-    $.widget("mapbender.mbBaseSourceSwitcher", {
+    $.widget("mapbender.mbBaseSourceSwitcher", $.mapbender.mbBaseElement, {
         options: {},
         loadStarted: [],
         contextAddStart: false,
@@ -35,8 +35,8 @@
 
             $(document).bind('mbmapcontextaddstart', $.proxy(this._onContextAddStart, this));
             $(document).bind('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
-            $(document).bind('mbmapsourceloadend', $.proxy(this._onSourceLoadEnd, this));
-            $(document).bind('mbmapsourceloaderror', $.proxy(this._onSourceLoadError, this));
+            $(document).bind('mbmapsourceloadend', $.proxy(this._removeSourceFromLoad, this));
+            $(document).bind('mbmapsourceloaderror', $.proxy(this._removeSourceFromLoad, this));
         },
 
         _hideSources: function() {
@@ -110,22 +110,19 @@
             this._showActive();
         },
 
-        _onSourceLoadStart: function(event, options) {
-            if (this.contextAddStart && options.source) {
-                this.loadStarted[options.source.id ] = true;
+        _onSourceLoadStart: function(event, option) {
+            var position = this.loadStarted.indexOf(option.source.id);
+
+            if (this.contextAddStart && option.source && position < 0) {
+                this.loadStarted.push(option.source.id);
             }
         },
 
-        _onSourceLoadEnd: function(event, option) {
-            if (option.source && this.loadStarted[option.source.id]) {
-                this.loadStarted[option.source.id] = false;
-                this._checkReset();
-            }
-        },
+        _removeSourceFromLoad : function(event, option) {
+            var position = this.loadStarted.indexOf(option.source.id);
 
-        _onSourceLoadError: function(event, option) {
-            if (option.source && this.loadStarted[option.source.id]) {
-                this.loadStarted[option.source.id] = false;
+            if (option.source && position >= 0) {
+                this.loadStarted.splice(position, 1);
                 this._checkReset();
             }
         },
@@ -144,7 +141,7 @@
         },
 
         _checkReset: function() {
-            if (this.loadStarted.includes(true)) {
+            if (this.loadStarted.length > 0) {
                 return;
             }
 
@@ -156,22 +153,6 @@
             $(document).off('mbmapsourceloaderror', $.proxy(this._onSourceLoadError, this));
 
             $('.basesourcesetswitch[data-state="active"]:not(.basesourcegroup)', this.element).click();
-        },
-
-        ready: function() {
-            this.functionIsDeprecated();
-        },
-
-        _ready: function() {
-            this.functionIsDeprecated();
-        },
-
-        _destroy: function() {
-            this.functionIsDeprecated();
-        },
-
-        functionIsDeprecated: function() {
-            console.warn(new Error("Function marked as deprecated"));
         }
     });
 
