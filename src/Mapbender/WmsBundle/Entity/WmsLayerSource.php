@@ -87,13 +87,13 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $latlonBounds;
+
+    protected $latlonBounds;
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $boundingBoxes;
+
+    protected $boundingBoxes;
     /**
      * @ORM\Column(type="array", nullable=true)
      */
@@ -105,28 +105,28 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * @ORM\Column(type="object",nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $scale;
+
+    protected $scale;
     /**
      * @ORM\Column(type="object",nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $scaleHint;
+
+    protected $scaleHint;
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $attribution;
+
+    protected $attribution;
     /**
      * @ORM\Column(type="array",nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $identifier;
+
+    protected $identifier;
     /**
      * @ORM\Column(type="array",nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $authority;
+
+    protected $authority;
     /**
      * @ORM\Column(type="array", nullable=true)
      */
