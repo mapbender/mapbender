@@ -19,8 +19,8 @@ mb:
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: 'Mapbender3 hakkında daha fazla bilgi için tıklayınız >>' #'learn more about Mapbender3'
-        linktitle: 'Resmi Mapbender3 web sitemizi ziyaret edin' #'Visit our official Mapbender3 website'
+        learnmore: 'Mapbender hakkında daha fazla bilgi için tıklayınız >>' #'learn more about Mapbender'
+        linktitle: 'Resmi Mapbender web sitemizi ziyaret edin' #'Visit our official Mapbender website'
         website: 'Web sitesi' #website
       class:
         title: 'İletişim hakkında' #'About dialog'

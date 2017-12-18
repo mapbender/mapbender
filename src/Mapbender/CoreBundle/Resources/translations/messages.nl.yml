@@ -19,8 +19,8 @@ mb:
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: 'Leer meer over Mapbender3'
-        linktitle: 'Bezoek onze officieële Mapbender3 website'
+        learnmore: 'Leer meer over Mapbender'
+        linktitle: 'Bezoek onze officieële Mapbender website'
         website: website
       class:
         title: 'Over'

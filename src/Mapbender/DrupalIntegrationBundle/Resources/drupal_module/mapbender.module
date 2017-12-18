@@ -15,7 +15,7 @@ function mapbender_menu()
 {
     return array(
         'mapbender' => array(
-            'title' => 'Mapbender3 Sandbox',
+            'title' => 'Mapbender Sandbox',
             'page callback' => 'mapbender_show_view',
             'access arguments' => array('access content'),
             'type' => MENU_CALLBACK,

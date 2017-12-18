@@ -20,8 +20,8 @@ mb:
     aboutdialog:
       content:
         versionprefix: Version
-        learnmore: 'Lernen Sie Mapbender3 kennen '
-        linktitle: 'Besuchen Sie die offizielle Mapbender3 Webseite.'
+        learnmore: 'Lernen Sie Mapbender kennen '
+        linktitle: 'Besuchen Sie die offizielle Mapbender Webseite.'
         website: '- zur Webseite'
       class:
         title: Über-Mapbender-Dialog
