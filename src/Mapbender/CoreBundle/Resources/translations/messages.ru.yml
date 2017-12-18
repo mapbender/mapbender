@@ -20,8 +20,8 @@ mb:
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: 'Посетите наш Mapbender3'
-        linktitle: 'Посетите наш официальный сайт Mapbender3'
+        learnmore: 'Посетите наш Mapbender'
+        linktitle: 'Посетите наш официальный сайт Mapbender'
         website: сайт
       class:
         title: 'Раздел о программе'
