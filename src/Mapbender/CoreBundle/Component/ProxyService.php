@@ -103,7 +103,7 @@ class ProxyService
         }
 
         $user_agent = array_key_exists('HTTP_USER_AGENT', $_SERVER) ?
-                $_SERVER['HTTP_USER_AGENT'] : 'Mapbender3';
+                $_SERVER['HTTP_USER_AGENT'] : 'Mapbender';
 
         $curl_config = array(
             CURLOPT_FOLLOWLOCATION => true,
