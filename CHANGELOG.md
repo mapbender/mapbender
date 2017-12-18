@@ -1,6 +1,7 @@
 # Changelog
 
 * **v.3.0.6.4**
+    - Fix displaying scale value in scale selector #657
     - Fix GetLegendGraphic tunnel
 
 * **v.3.0.6.3**
