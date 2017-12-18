@@ -456,13 +456,13 @@ class PrintService
 
                         // fill digitizer feature fields
                         if(preg_match("/^feature./", $k)){
-                            if($feature == false){
+                            if(!isset($feature) OR $feature == false){
                                 continue;
                             }
                             $attribute = substr(strrchr($k, "."), 1);
                             $pdf->MultiCell($this->conf['fields'][$k]['width'],
                                 $this->conf['fields'][$k]['height'],
-                                $feature->getAttribute($attribute));
+                                utf8_decode($feature->getAttribute($attribute)));
                         }
                         break;
                 }
