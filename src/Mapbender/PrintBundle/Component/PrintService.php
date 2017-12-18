@@ -415,12 +415,6 @@ class PrintService
             $this->addNorthArrow();
         }
 
-        // get digitizer feature
-        if (isset($this->data['digitizer_feature'])) {
-            $dfData = $this->data['digitizer_feature'];
-            $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
-        }
-
         // fill text fields
         if (isset($this->conf['fields']) ) {
             foreach ($this->conf['fields'] as $k => $v) {
@@ -455,14 +449,16 @@ class PrintService
                         }
 
                         // fill digitizer feature fields
-                        if(preg_match("/^feature./", $k)){
-                            if(!isset($feature) OR $feature == false){
-                                continue;
-                            }
+                        if (isset($this->data['digitizer_feature']) && preg_match("/^feature./", $k)) {
+                            $dfData = $this->data['digitizer_feature'];
+                            $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
                             $attribute = substr(strrchr($k, "."), 1);
-                            $pdf->MultiCell($this->conf['fields'][$k]['width'],
-                                $this->conf['fields'][$k]['height'],
-                                utf8_decode($feature->getAttribute($attribute)));
+
+                            if ($feature && $attribute) {
+                                $pdf->MultiCell($this->conf['fields'][$k]['width'],
+                                    $this->conf['fields'][$k]['height'],
+                                    utf8_decode($feature->getAttribute($attribute)));
+                            }
                         }
                         break;
                 }
