@@ -87,12 +87,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-
     protected $latlonBounds;
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-
     protected $boundingBoxes;
     /**
      * @ORM\Column(type="array", nullable=true)
@@ -105,27 +103,22 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * @ORM\Column(type="object",nullable=true)
      */
-
     protected $scale;
     /**
      * @ORM\Column(type="object",nullable=true)
      */
-
     protected $scaleHint;
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-
     protected $attribution;
     /**
      * @ORM\Column(type="array",nullable=true)
      */
-
     protected $identifier;
     /**
      * @ORM\Column(type="array",nullable=true)
      */
-
     protected $authority;
     /**
      * @ORM\Column(type="array", nullable=true)
