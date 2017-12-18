@@ -2,11 +2,11 @@ mb:
   wmc:
     suggestmap:
       class:
-        title: 'Suggest map'
-        description: 'Suggest a map'
+        title: 'Suggereer kaart'
+        description: 'Suggereer een kaart'
       tag:
-        suggest: suggest
-        map: map
+        suggest: suggereer
+        map: kaart
     wmceditor:
       class:
         title: 'WMC editor'
@@ -16,7 +16,7 @@ mb:
         editor: editor
       create: 'Maak aan'
       edit: Wijzig
-      publish: Publish
+      publish: Publiceer
       screenshot: 'screenshot of breedte, hoogte etc.'
       list:
         id: Id
@@ -36,11 +36,11 @@ mb:
         list: lijst
     wmcloader:
       class:
-        title: 'WMC loader'
-        description: 'A WMC document kan geladen worden met de element WMC loader.'
+        title: 'WMC lader'
+        description: 'Een WMC document kan geladen worden met de element WMC lader.'
       tag:
         wmc: wmc
-        loader: loader
+        loader: lader
       load_xml_wmc: 'Laad XML WMC'
       id: Id
       title: Titel
@@ -50,18 +50,18 @@ mb:
       state:
         load: Laad
     error:
-      wmcxmlloader_notallowed: 'WMC XML loader is niet toegestaan.'
-      wmclistloader_notallowed: 'WMC lijst loader is niet toegestaan.'
-      wmcidloader_notallowed: 'WMC id loader is niet toegestaan.'
+      wmcxmlloader_notallowed: 'WMC XML lader is niet toegestaan.'
+      wmclistloader_notallowed: 'WMC lijst lader is niet toegestaan.'
+      wmcidloader_notallowed: 'WMC id lader is niet toegestaan.'
       wmcnotfound: 'WMC %wmcid% is gevonden'
       wmccannotbeloaded: 'WMC kan niet geladen worden.'
       wmccannotberemoved: 'WMC kan niet verwijderd worden.'
       wmcremoved: 'WMC %wmcid% is verwijderd.'
       wmccannotbesaved: 'WMC %wmcid% kan niet bewaard worden.'
       wmcsaved: 'WMC %wmcid% is bewaard.'
-      statecannotbesaved: 'State kan niet bewaard worden.'
-      statenotfound: 'State %stateid% is niet gevonden.'
-      wmcurlloader_notallowed: __mb.wmc.error.wmcurlloader_notallowed
+      statecannotbesaved: 'Toestand (state) kan niet bewaard worden.'
+      statenotfound: 'Toestand (state) %stateid% is niet gevonden.'
+      wmcurlloader_notallowed: 'WMC lader is niet toegestaan.'
     list:
       add_wmc: 'Voeg een nieuw WMC toe'
       id: Id
@@ -73,10 +73,10 @@ mb:
       no_wmc: 'Geen WMC toegevoegd.'
     element:
       suggestmap:
-        error_srs: 'SRS "%state.extent.srs%" is niet supported bij deze applicatie.'
+        error_srs: 'Projectie (SRS) "%state.extent.srs%" wordt niet ondersteund bij deze applicatie.'
         popup:
           btn:
-            ok: Sluit
+            ok: Sluiten
         content:
           email: 'Als e-mail'
           twitter: Twitter
@@ -86,15 +86,15 @@ mb:
         popup:
           btn:
             ok: Submit
-            cancel: Cancel
+            cancel: Annuleren
             back: Terug
       wmchandler:
-        error_srs: 'SRS "%state.extent.srs%" iis niet supported bij deze applicatie.'
+        error_srs: 'Projectie (SRS) "%state.extent.srs%" wordt niet ondersteund bij deze applicatie.'
       wmcloader:
         popup:
           btn:
             ok: Laad
-            cancel: Cancel
+            cancel: Annuleren
             back: Terug
       wmclist:
         select:
@@ -105,4 +105,4 @@ mb:
       wmcloader:
         keep_extent: 'Behoud Extent'
     wmc:
-      delete_confirm: 'Wilt uw werkelijk de WMC met de titel <em>%wmc_title%</em> and the id <em>%wmc_id%</em> verwijderen?'
+      delete_confirm: 'Wilt uw werkelijk de WMC met de titel <em>%wmc_title%</em> en Id <em>%wmc_id%</em> verwijderen?'

@@ -30,19 +30,25 @@ mb:
       create:
         success: A new instance has been created. Please edit it.
   manager:
-    managerbundle:
-      applications: Aplicaciones
-      new_application: 'Nueva aplicación'
-      sources: Fuentes
-      add_source: 'Añadir fuentes'
-      add_user_group: 'Añadir usuarios y grupos'
-      acl_element: 'Elemento Acl'
-      import_application: Importar
-      export_application: Exportar
-    element:
-      yaml:
-        message: 'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
     admin:
+      sources: Fuentes
+      source:
+        add: 'Añadir fuente'
+        show_metadata: 'Mostrar metadata'
+        delete: 'Borrar fuente'
+        new:
+          add: 'Añadir fuente'
+        valid: 'Source valid'
+        notvalid: 'Source not valid'
+        no_source: 'Fuente no disponible'
+        update: 'Update source'
+        status:
+          ok: 'Source OK'
+          toupdate: 'Source not current anymore'
+          unreachable: 'Source unreachable'
+      map:
+        max_extent: 'Max. extent'
+        start_extent: 'Start extent'
       element:
         delete:
           title: 'Borrar Elemento'
@@ -60,12 +66,6 @@ mb:
         edit: 'Editar elemento'
         no_element_added:
           '': 'No añadido elemento'
-      map:
-        max_extent: 'Max. extent'
-        start_extent: 'Start extent'
-      overview:
-        maximize: Maximizar
-        fix: Corregir
       messagebox:
         only_region_elements: 'Only for this region available elements are displayed.'
       zoombar:
@@ -74,28 +74,45 @@ mb:
         source: 'Filtrar fuente'
         layerset: 'Filtrar conjunto de capas'
         application: 'Filtrar aplicación'
-      source:
-        valid: 'Source valid'
-        notvalid: 'Source not valid'
-        no_source: 'Fuente no disponible'
-        add: 'Añadir fuente'
-        show_metadata: 'Mostrar metadata'
-        delete: 'Borrar fuente'
-        new:
-          add: 'Añadir fuente'
-        update: 'Update source'
-        status:
-          ok: 'Source OK'
-          toupdate: 'Source not current anymore'
-          unreachable: 'Source unreachable'
+      overview:
+        maximize: Maximizar
+        fix: Corregir
+      layerset:
+        add: 'Añadir conjunto de capas'
+        title: Título
+        type: Tipo
+        edit: 'Editar conjunto de capas'
+        delete:
+          title: 'Borrar conjunto de capas'
+          confirm: '¿Realmente quieres remover el conjunto de capas con el título <span class="italic">%layerset_title%</span>?'
+        id_description: Id
+        id: Id
+      instance:
+        add: 'Añadir instancia'
+        show_hide: 'Cambiar mostrar/ocultar instancia'
+        edit: 'Editar instancia'
+        delete:
+          title: 'borrar instancia'
+          confirm: '¿Realmente quieres quitar la instancia de título <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Instancia no añadida'
+        no_layer_added: 'No layer added'
+      template: Template
       application:
-        security: Seguridad
-        view_this: 'Ver esta aplicación'
         view: Ver
-        duplicate: 'Duplicar aplicación'
         edit:
           title: 'Editar aplicación'
           base_data: 'Dato Base'
+        layouts: Diseños
+        layersets: 'Conjunto de capas'
+        custom_css: CSS
+        security:
+          title: Seguridad
+          add_users_groups: 'Add users and groups'
+          public: activated
+        save: Guardar
+        cancel: Cancelar
+        view_this: 'Ver esta aplicación'
+        duplicate: 'Duplicar aplicación'
         public:
           on_off: 'Cambiar publicar/privado aplicación'
         delete: 'Borrar aplicación'
@@ -107,15 +124,16 @@ mb:
         btn:
           create: Crear
           cancel: Cancelar
-        layouts: Diseños
-        layersets: 'Conjunto de capas'
-        save: Guardar
-        cancel: Cancelar
         upload:
-          tooltip: 'De un clic para subir una captura de pantalla'
           button: 'Seleccione un archivo'
           label: 'No ha seleccionado un archivo'
-        custom_css: CSS
+          tooltip: 'De un clic para subir una captura de pantalla'
+        export:
+          addAcl: ACLs
+          addSources: Fuentes
+          btn:
+            export: Exportar
+            cancel: Cancelar
         import:
           addApplications: Aplicaciones
           addAcl: ACLs
@@ -123,34 +141,27 @@ mb:
           btn:
             import: Importar
             cancel: Cancelar
-        export:
-          addAcl: ACLs
-          addSources: Fuentes
-          btn:
-            export: Exportar
-            cancel: Cancelar
-      layerset:
-        add: 'Añadir conjunto de capas'
-        id: Id
-        title: Título
-        type: Tipo
-        edit: 'Editar conjunto de capas'
-        delete:
-          title: 'Borrar conjunto de capas'
-          confirm: '¿Realmente quieres remover el conjunto de capas con el título <span class="italic">%layerset_title%</span>?'
-        id_description: Id
-      instance:
-        add: 'Añadir instancia'
-        show_hide: 'Cambiar mostrar/ocultar instancia'
-        edit: 'Editar instancia'
-        delete:
-          title: 'borrar instancia'
-          confirm: '¿Realmente quieres quitar la instancia de título <span class="italic">%instance_title%</span>?'
-        no_instance_added: 'Instancia no añadida'
-        no_layer_added: 'No layer added'
+        title: Title
+        url:
+          title: 'URL Title'
+        description: Description
+        template: Plantilla
+        edit:
+          title: 'Common'
+          base_data: 'Base data'
       applications: Aplicaciones
-      template: Plantilla
+    managerbundle:
+      applications: Aplicaciones
+      new_application: 'Nueva aplicación'
       sources: Fuentes
+      add_source: 'Añadir fuentes'
+      add_user_group: 'Añadir usuarios y grupos'
+      acl_element: 'Elemento Acl'
+      import_application: Importar
+      export_application: Exportar
+    element:
+      yaml:
+        message: 'Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element''s configuration.'
     be:
       element:
         delete: 'Borrar elemento ''%element_title%'''
@@ -217,6 +228,10 @@ mb:
         failed: 'Las fuentes no pueden ser importadas.'
   core:
     admin:
+      button:
+        show_label: 'Mostrar etiqueta'
+      scaleselector:
+        show_label: 'Mostrar etiqueta'
       corrdsdisplay:
         label: 'Mostrar etiqueta título'
       srsselector:
@@ -225,10 +240,6 @@ mb:
         show_label: 'Mostrar etiqueta'
       element:
         autostart: 'Auto inicio'
-      scaleselector:
-        show_label: 'Mostrar etiqueta'
-      button:
-        show_label: 'Mostrar etiqueta'
       about_dialog:
         show_label: 'Mostrar etiqueta botón'
     element:
@@ -242,3 +253,9 @@ mb:
           format_error: 'Este formato no esta soportado'
           resolution:
             error: 'Es posible solamente subir archivos/fotos de %screenshotHeight% x %screenshotWidth% pixeles o de un tamano mayor. Su archivo es de %uploadWidth% x %uploadHeighth% pixeles.'
+form:
+  manager:
+    admin:
+      application:
+        export:
+          application: Applications

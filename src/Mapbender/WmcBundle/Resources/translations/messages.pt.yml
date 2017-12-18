@@ -1,10 +1,5 @@
 mb:
   wmc:
-    admin:
-      wmcloader:
-        keep_extent: 'Guardar extensão'
-      wmclist:
-        label: Rótulo
     suggestmap:
       class:
         title: 'Recomendar mapa'
@@ -77,15 +72,22 @@ mb:
       delete_wmc: 'Deletar WMC'
       no_wmc: 'Não adicionou WMC'
     element:
+      suggestmap:
+        error_srs: 'A aplicação não suporta o SRS "%state.extent.srs% .'
+        popup:
+          btn:
+            ok: Fechar
+        content:
+          email: 'Por e-mail'
+          twitter: 'Por twitter'
+          facebook: 'Por Facebook'
+          google+: 'Por google+'
       wmceditor:
         popup:
           btn:
             ok: Salvar
             cancel: Cancelar
             back: Voltar
-      wmclist:
-        select:
-          def_option: 'Por favor, selecione'
       wmchandler:
         error_srs: 'A aplicação não suporta o SRS "%state.extent.srs% .'
       wmcloader:
@@ -94,15 +96,13 @@ mb:
             ok: Carregar
             cancel: Cancelar
             back: Voltar
-      suggestmap:
-        content:
-          email: 'Por e-mail'
-          facebook: 'Por Facebook'
-          twitter: 'Por twitter'
-          google+: 'Por google+'
-        error_srs: 'A aplicação não suporta o SRS "%state.extent.srs% .'
-        popup:
-          btn:
-            ok: Fechar
+      wmclist:
+        select:
+          def_option: 'Por favor, selecione'
+    admin:
+      wmclist:
+        label: Rótulo
+      wmcloader:
+        keep_extent: 'Guardar extensão'
     wmc:
       delete_confirm: 'Realmente deletar a configuração <em>%wmc_title%</em> com ID <em>%wmc_id%</em>?'

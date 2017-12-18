@@ -29,11 +29,24 @@ mb:
         success: Новый образец был создан, но его нужно отредактировать.
   manager:
     admin:
-      messagebox:
-        only_region_elements: 'Доступные элементы отображаются только для этого региона.'
-      overview:
-        maximize: Максимизировать
-        fix: Закрепить
+      sources: Источники
+      source:
+        add: 'Добавить источник'
+        show_metadata: 'Показать метаданные'
+        delete: 'Удалить источник'
+        new:
+          add: 'Добавить источник'
+        valid: 'Источник действительный'
+        notvalid: 'Источник не действительный'
+        no_source: 'Нет доступного источника'
+        update: 'Обновить источник'
+        status:
+          ok: 'Источник OK'
+          toupdate: 'Источник больше не является текущим'
+          unreachable: 'Источник недоступен'
+      map:
+        max_extent: 'Макс. область'
+        start_extent: 'Начало области'
       element:
         delete:
           title: 'Удалить элемент'
@@ -51,19 +64,74 @@ mb:
         edit: 'Редактировать элемент'
         no_element_added:
           '': 'Элемент не добавлен'
-      map:
-        max_extent: 'Макс. область'
-        start_extent: 'Начало области'
+      messagebox:
+        only_region_elements: 'Доступные элементы отображаются только для этого региона.'
       zoombar:
         draggable: Перетаскиваемый
+      filter:
+        source: 'Фильтр источников'
+        layerset: 'Фильтровать слои'
+        application: 'Фильтр приложений'
+      overview:
+        maximize: Максимизировать
+        fix: Закрепить
+      layerset:
+        add: 'Добавить слои'
+        title: Название
+        type: Тип
+        edit: 'Редактировать слои'
+        delete:
+          title: 'Удалить слои'
+          confirm: 'Вы действительно хотите удалить слои с названием <span class="italic">%layerset_title%</span>?'
+        id_description: 'Id в форме SourceId/InstanceId'
+        id: Id
       instance:
-        delete: 'Удалить образец'
         add: 'Добавить образец'
         show_hide: 'Вкл/выкл образец'
         edit: 'Редактировать образец'
+        delete:
+          title: 'Удалить образец'
+          confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
         no_instance_added: 'Образец не добавлен'
         no_layer_added: 'Слой не добавлен'
+      template: Шаблон
       application:
+        view: Обзор
+        edit:
+          title: 'Редактировать приложение'
+          base_data: 'Базовые данные'
+        layouts: 'Панели инструментов'
+        layersets: Слои
+        custom_css: CSS
+        security:
+          title: Безопасность
+          add_users_groups: 'Добавить пользователей и группы'
+          public: активированы
+        save: Сохранить
+        cancel: Отменить
+        view_this: 'Показать приложение'
+        duplicate: 'Создать копию приложения'
+        public:
+          on_off: 'Вкл/выкл публикацию приложения'
+        delete: 'Удалить приложение'
+        no_application: 'Нет доступных приложений'
+        new:
+          title: 'Новое приложение'
+          base_data: 'Базовые данные'
+        create_use: 'Заполните основную информацию при создании нового приложения, а затем используйте режим редактирования, чтобы добавить элементы и слои.'
+        btn:
+          create: Создать
+          cancel: Отменить
+        upload:
+          button: 'Выбрать файл:'
+          label: 'Файл не выбран'
+          tooltip: 'Нажмите, чтобы загрузить скриншот'
+        export:
+          addAcl: ACLs
+          addSources: Источники
+          btn:
+            export: Экспорт
+            cancel: Отменить
         import:
           addApplications: Приложения
           addAcl: ACLs
@@ -71,87 +139,24 @@ mb:
           btn:
             import: Импорт
             cancel: Отменить
-        new:
-          title: 'Новое приложение'
-          base_data: 'Базовые данные'
-        security:
-          title: Безопасность
-          add_users_groups: 'Добавить пользователей и группы'
-          public: активированы
-        create_use: 'Заполните основную информацию при создании нового приложения, а затем используйте режим редактирования, чтобы добавить элементы и слои.'
-        btn:
-          create: Создать
-          cancel: Отменить
-        view: Обзор
-        view_this: 'Показать приложение'
-        duplicate: 'Создать копию приложения'
-        edit:
-          title: 'Редактировать приложение'
-          base_data: 'Базовые данные'
-        public:
-          on_off: 'Вкл/выкл публикацию приложения'
-        delete: 'Удалить приложение'
-        no_application: 'Нет доступных приложений'
-        export:
-          addAcl: ACLs
-          addSources: Источники
-          btn:
-            export: Экспорт
-            cancel: Отменить
-        layouts: 'Панели инструментов'
-        layersets: Слои
-        custom_css: CSS
-        save: Сохранить
-        cancel: Отменить
-        upload:
-          tooltip: 'Нажмите, чтобы загрузить скриншот'
-          button: 'Выбрать файл:'
-          label: 'Файл не выбран'
         title: Название
         url:
           title: 'URL заголовок'
         description: Описание
-        template: Шаблон
-      layerset:
-        add: 'Добавить слои'
-        id_description: 'Id в форме SourceId/InstanceId'
-        id: Id
-        title: Название
-        type: Тип
-        edit: 'Редактировать слои'
-        delete:
-          title: 'Удалить слои'
-          confirm: 'Вы действительно хотите удалить слои с названием <span class="italic">%layerset_title%</span>?'
-      filter:
-        layerset: 'Фильтровать слои'
-        application: 'Фильтр приложений'
-        source: 'Фильтр источников'
+        template: Template
+        edit:
+          title: 'Common'
+          base_data: 'Base data'
       applications: Приложения
-      source:
-        valid: 'Источник действительный'
-        notvalid: 'Источник не действительный'
-        no_source: 'Нет доступного источника'
-        update: 'Обновить источник'
-        new:
-          add: 'Добавить источник'
-        add: 'Добавить источник'
-        show_metadata: 'Показать метаданные'
-        delete: 'Удалить источник'
-        status:
-          ok: 'Источник OK'
-          toupdate: 'Источник больше не является текущим'
-          unreachable: 'Источник недоступен'
-      template: Шаблон
-      sources: Источники
     managerbundle:
-      add_user_group: 'Добавить пользователей и группы'
-      export_application: Экспорт
-      import_application: Импорт
-      acl_element: 'Acl элемент'
       applications: Приложения
       new_application: 'Новое приложение'
       sources: Источники
       add_source: 'Добавить источник'
+      add_user_group: 'Добавить пользователей и группы'
+      acl_element: 'Acl элемент'
+      import_application: Импорт
+      export_application: Экспорт
     element:
       yaml:
         message: 'Используйте <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> Формат для описания конфигурации элемента..'
@@ -204,14 +209,14 @@ mb:
             add: Добавить
             back: Назад
             remove: Удалить
-    upload:
-      label_delete: 'Скриншот удален'
     template:
       region:
         tabs:
           label: Вкладки
         accordion:
           label: Accordion
+    upload:
+      label_delete: 'Скриншот удален'
     import:
       application:
         failed: 'Приложение не может быть импортировано.'
@@ -221,6 +226,10 @@ mb:
         failed: 'Источник не может быть импортирован.'
   core:
     admin:
+      button:
+        show_label: 'Показать отметку'
+      scaleselector:
+        show_label: 'Показать отметку'
       corrdsdisplay:
         label: 'Показать название отметки'
       srsselector:
@@ -229,10 +238,6 @@ mb:
         show_label: 'Показать отметкиу'
       element:
         autostart: Автозапуск
-      button:
-        show_label: 'Показать отметку'
-      scaleselector:
-        show_label: 'Показать отметку'
       about_dialog:
         show_label: 'Показать надпись на кнопке'
     element:

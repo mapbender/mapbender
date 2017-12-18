@@ -92,7 +92,7 @@ mb:
         show_hide: 'Toggle show/hide instance'
         edit: 'Edit instance'
         delete:
-          title: 'delete instance'
+          title: 'Delete instance'
           confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
         no_instance_added: 'No instance added'
         no_layer_added: 'No layer added'
