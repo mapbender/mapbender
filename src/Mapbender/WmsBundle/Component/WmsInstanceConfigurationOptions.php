@@ -396,29 +396,29 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
                 }
             }
         }
-        $vendorsecifics = array();
+        $vendorspecifics = array();
         foreach ($entity->getVendorspecifics() as $key => $vendorspec) {
             $handler = new VendorSpecificHandler($vendorspec);
             /* add to url only simple vendor specific with valid default value */
             if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
-                $vendorsecifics[] = $handler->getConfiguration();
+                $vendorspecifics[] = $handler->getConfiguration();
                 $help             = $handler->getKvpConfiguration(null);
                 $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
             }
         }
 
         $bboxes = $entity->getRootLayer()->getSourceItem()->getMergedBboxes();
-        // reformat bboxes to coordinate arrays keyed on SRS
-        $bboxesOut = array();
+        // reformat bboxes to coordinate arrays, keyed on SRS
+        // @todo: when the same SRS comes up again, calculate the minimum box (current: last occurence per SRS wins)
+        $bboxArrays = array();
         foreach ($bboxes as $bbox) {
-            $bboxesOut[$bbox->getSrs()] = array(
+            $bboxArrays[$bbox->getSrs()] = array(
                 floatval($bbox->getMinx()),
                 floatval($bbox->getMiny()),
                 floatval($bbox->getMaxx()),
                 floatval($bbox->getMaxy()),
             );
         }
-
 
         $options->setProxy($entity->getProxy())
             ->setVisible($entity->getVisible())
@@ -427,11 +427,11 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             ->setTransparency($entity->getTransparency())
             ->setOpacity($entity->getOpacity() / 100)
             ->setTiled($entity->getTiled())
-            ->setBbox($bboxesOut)
+            ->setBbox($bboxArrays)
             ->setDimensions($dimensions)
             ->setBuffer($entity->getBuffer())
             ->setRatio($entity->getRatio())
-            ->setVendorspecifics($vendorsecifics)
+            ->setVendorspecifics($vendorspecifics)
             ->setVersion($entity->getSource()->getVersion())
             ->setExceptionformat($entity->getExceptionformat());
 
