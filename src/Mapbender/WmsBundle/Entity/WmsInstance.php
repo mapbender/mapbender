@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\VendorSpecific;
+use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -577,4 +578,13 @@ class WmsInstance extends SourceInstance
     {
         return new WmsMetadata($this);
     }
+
+    /**
+     * Recalculates the "configuration" array attribute
+     */
+    public function updateConfiguration()
+    {
+        $this->configuration = WmsInstanceConfiguration::entityToArray($this);
+    }
+
 }

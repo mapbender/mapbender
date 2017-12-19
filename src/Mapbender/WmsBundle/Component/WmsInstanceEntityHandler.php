@@ -2,7 +2,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\ORM\EntityManager;
-use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
@@ -301,9 +300,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function generateConfiguration()
     {
-        $wmsconf = WmsInstanceConfiguration::fromEntity($this->entity);
-        $persistableConfig = $wmsconf->toArray();
-        $this->entity->setConfiguration($persistableConfig);
+        $this->entity->updateConfiguration();
     }
 
     protected function getRootLayerConfig()
