@@ -2,6 +2,8 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
+use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * Description of WmsInstanceConfiguration
@@ -371,5 +373,68 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             }
         }
         return $ico;
+    }
+
+    /**
+     * Factory method, populates new instance from given entity
+     *
+     * @param WmsInstance $entity
+     * @return static
+     */
+    public static function fromEntity(WmsInstance $entity)
+    {
+        $options = new static();
+
+        $options->setUrl($entity->getSource()->getGetMap()->getHttpGet());
+        $dimensions = array();
+        foreach ($entity->getDimensions() as $dimension) {
+            if ($dimension->getActive()) {
+                $dimensions[] = $dimension->getConfiguration();
+                if ($dimension->getDefault()) {
+                    $help = array($dimension->getParameterName() => $dimension->getDefault());
+                    $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
+                }
+            }
+        }
+        $vendorsecifics = array();
+        foreach ($entity->getVendorspecifics() as $key => $vendorspec) {
+            $handler = new VendorSpecificHandler($vendorspec);
+            /* add to url only simple vendor specific with valid default value */
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
+                $vendorsecifics[] = $handler->getConfiguration();
+                $help             = $handler->getKvpConfiguration(null);
+                $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
+            }
+        }
+
+        $bboxes = $entity->getRootLayer()->getSourceItem()->getMergedBboxes();
+        // reformat bboxes to coordinate arrays keyed on SRS
+        $bboxesOut = array();
+        foreach ($bboxes as $bbox) {
+            $bboxesOut[$bbox->getSrs()] = array(
+                floatval($bbox->getMinx()),
+                floatval($bbox->getMiny()),
+                floatval($bbox->getMaxx()),
+                floatval($bbox->getMaxy()),
+            );
+        }
+
+
+        $options->setProxy($entity->getProxy())
+            ->setVisible($entity->getVisible())
+            ->setFormat($entity->getFormat())
+            ->setInfoformat($entity->getInfoformat())
+            ->setTransparency($entity->getTransparency())
+            ->setOpacity($entity->getOpacity() / 100)
+            ->setTiled($entity->getTiled())
+            ->setBbox($bboxesOut)
+            ->setDimensions($dimensions)
+            ->setBuffer($entity->getBuffer())
+            ->setRatio($entity->getRatio())
+            ->setVendorspecifics($vendorsecifics)
+            ->setVersion($entity->getSource()->getVersion())
+            ->setExceptionformat($entity->getExceptionformat());
+
+        return $options;
     }
 }
