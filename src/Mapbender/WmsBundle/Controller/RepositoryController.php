@@ -2,11 +2,13 @@
 
 namespace Mapbender\WmsBundle\Controller;
 
+use Doctrine\ORM\EntityRepository;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
+use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
@@ -154,9 +156,7 @@ class RepositoryController extends Controller
                     ->set('error', 'Could not parse data for url "' . $wmssource_req->getOriginUrl() . '"');
                 return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
             }
-            $wmsWithSameTitle = $this->getDoctrine()
-                ->getManager()
-                ->getRepository("MapbenderWmsBundle:WmsSource")
+            $wmsWithSameTitle = $this->getRepository("MapbenderWmsBundle:WmsSource")
                 ->findByTitle($wmssource->getTitle());
 
             if (count($wmsWithSameTitle) > 0) {
@@ -200,7 +200,7 @@ class RepositoryController extends Controller
      */
     public function updateformAction($sourceId)
     {
-        $source          = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $source          = $this->loadEntityByPk("MapbenderCoreBundle:Source", $sourceId);
         $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
@@ -221,7 +221,7 @@ class RepositoryController extends Controller
     public function updateAction($sourceId)
     {
         $request         = $this->get('request');
-        $source          = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $source          = $this->loadEntityByPk("MapbenderCoreBundle:Source", $sourceId);
         $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
@@ -232,7 +232,7 @@ class RepositoryController extends Controller
             $form          = $this->get("form.factory")->create(new WmsSourceSimpleType(), $wmssource_req);
             $form->bind($request);
             if ($form->isValid()) {
-                $wmsOrig      = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+                $wmsOrig      = $this->loadEntityByPk("MapbenderCoreBundle:Source", $sourceId);
                 $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
                 $proxy_config = $this->container->getParameter("owsproxy.proxy");
                 $proxy_query  = ProxyQuery::createFromUrl(
@@ -331,11 +331,8 @@ class RepositoryController extends Controller
      */
     public function deleteAction($sourceId)
     {
-        $wmssource    = $this->getDoctrine()
-            ->getRepository("MapbenderWmsBundle:WmsSource")
-            ->find($sourceId);
-        $wmsinstances = $this->getDoctrine()
-            ->getRepository("MapbenderWmsBundle:WmsInstance")
+        $wmssource    = $this->loadEntityByPk("MapbenderWmsBundle:WmsSource", $sourceId);
+        $wmsinstances = $this->getRepository("MapbenderWmsBundle:WmsInstance")
             ->findBySource($sourceId);
         $em           = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
@@ -366,9 +363,7 @@ class RepositoryController extends Controller
      */
     public function deleteInstanceAction($slug, $instanceId)
     {
-        $instance    = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
+        $instance    = $this->loadEntityByPk("MapbenderCoreBundle:SourceInstance", $instanceId);
         $em          = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
         $insthandler = EntityHandler::createHandler($this->container, $instance);
@@ -387,9 +382,8 @@ class RepositoryController extends Controller
      */
     public function instanceAction($slug, $instanceId)
     {
-        $wmsinstance = $this->getDoctrine()
-            ->getRepository("MapbenderWmsBundle:WmsInstance")
-            ->find($instanceId);
+        $repositoryName = "MapbenderWmsBundle:WmsInstance";
+        $wmsinstance = $this->loadEntityByPk($repositoryName, $instanceId);
 
         if ($this->getRequest()->getMethod() == 'POST') { //save
             $form = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance);
@@ -405,10 +399,9 @@ class RepositoryController extends Controller
                 $em->persist($wmsinstance);
                 $em->flush();
                 $em->getConnection()->commit();
-                $wmsinstance   = $this->getDoctrine()
-                    ->getRepository("MapbenderWmsBundle:WmsInstance")
-                    ->find($wmsinstance->getId());
-                $entityHandler = EntityHandler::createHandler($this->container, $wmsinstance);
+                // reload instance after saving ... why?
+                $wmsinstance = $this->loadEntityByPk($repositoryName, $wmsinstance->getId());
+                $entityHandler = new WmsInstanceEntityHandler($this->container, $wmsinstance);
                 $entityHandler->generateConfiguration();
                 $entityHandler->save();
                 $em->flush();
@@ -449,9 +442,7 @@ class RepositoryController extends Controller
     public function instanceLayerPriorityAction($slug, $instanceId, $instLayerId)
     {
         $number  = $this->get("request")->get("number");
-        $instLay = $this->getDoctrine()
-            ->getRepository('MapbenderWmsBundle:WmsInstanceLayer')
-            ->findOneById($instLayerId);
+        $instLay = $this->loadEntityByPk('MapbenderWmsBundle:WmsInstanceLayer', $instLayerId);
 
         if (!$instLay) {
             return new Response(json_encode(array(
@@ -496,9 +487,7 @@ class RepositoryController extends Controller
             $em->persist($inst);
         }
         $em->flush();
-        $wmsinstance = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:SourceInstance")
-            ->find($instanceId);
+        $wmsinstance = $this->loadEntityByPk("MapbenderCoreBundle:SourceInstance", $instanceId);
         $wmsinsthandler = EntityHandler::createHandler($this->container, $wmsinstance);
         $wmsinsthandler->generateConfiguration();
         $wmsinsthandler->save();
@@ -519,9 +508,7 @@ class RepositoryController extends Controller
     public function instanceEnabledAction($slug, $instanceId)
     {
         $enabled     = $this->get("request")->get("enabled");
-        $wmsinstance = $this->getDoctrine()
-            ->getRepository("MapbenderWmsBundle:WmsInstance")
-            ->find($instanceId);
+        $wmsinstance = $this->loadEntityByPk("MapbenderWmsBundle:WmsInstance", $instanceId);
         if (!$wmsinstance) {
             return new Response(
                 json_encode(array('error' => 'The wms instance with the id "'.$instanceId.'" does not exist.')),
@@ -530,7 +517,7 @@ class RepositoryController extends Controller
             );
         } else {
             $enabled_before = $wmsinstance->getEnabled();
-            $enabled        = $enabled === "true" ? true : false;
+            $enabled        = $enabled === "true";
             $wmsinstance->setEnabled($enabled);
             $this->getDoctrine()->getManager()->persist(
                 $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime('now')));
@@ -555,8 +542,7 @@ class RepositoryController extends Controller
     public function metadataAction()
     {
         $sourceId        = $this->container->get('request')->get("sourceId", null);
-        $instance        = $this->container->get("doctrine")
-                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
+        $instance        = $this->loadEntityByPk('Mapbender\CoreBundle\Entity\SourceInstance', $sourceId);
         $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
         if (!$securityContext->isGranted('VIEW', $oid)
@@ -572,5 +558,25 @@ class RepositoryController extends Controller
         $response->setContent($content);
         $response->headers->set('Content-Type', 'text/html');
         return $response;
+    }
+
+    /**
+     * @param string $repositoryName
+     * @param mixed $id
+     * @return object|null
+     */
+    protected function loadEntityByPk($repositoryName, $id)
+    {
+        return $this->getDoctrine()->getRepository($repositoryName)->find($id);
+    }
+
+    /**
+     * @param string $repositoryName
+     * @param string $persistentManagerName object manager name (leave as null for default manager)
+     * @return EntityRepository
+     */
+    protected function getRepository($repositoryName, $persistentManagerName = null)
+    {
+        return $this->getDoctrine()->getRepository($repositoryName, $persistentManagerName);
     }
 }
