@@ -341,12 +341,12 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
                 }
             }
         }
-        $vendorsecifics = array();
+        $vendorSpecific = array();
         foreach ($instance->getVendorspecifics() as $key => $vendorspec) {
             $handler = new VendorSpecificHandler($vendorspec);
             /* add to url only simple vendor specific with valid default value */
             if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
-                $vendorsecifics[] = $handler->getConfiguration();
+                $vendorSpecific[] = $handler->getConfiguration();
                 $help             = $handler->getKvpConfiguration(null);
                 $effectiveUrl = UrlUtil::validateUrl($effectiveUrl, $help, array());
             }
@@ -363,7 +363,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         return static::fromArray(array(
             'url' => $effectiveUrl,
             'dimensions' => $dimensions,
-            'vendorspecifics' => $vendorsecifics,
+            'vendorspecifics' => $vendorSpecific,
             'proxy' => $instance->getProxy(),
             'visible' => $instance->getVisible(),
             'format' => $instance->getFormat(),

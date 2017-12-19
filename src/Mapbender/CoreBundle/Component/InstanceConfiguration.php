@@ -12,30 +12,27 @@ use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
 abstract class InstanceConfiguration extends ConfigurationBase
 {
     /**
-     * ORM\Column(type="string", nullable=true)
      * @var string
      */
     public $type;
 
     /**
-     * ORM\Column(type="string", nullable=ture)
      * @var string
      */
     public $title;
 
     /**
-     * ORM\Column(type="text", nullable=true)
-     * @var InstanceConfigurationOptions|array
+     * @var InstanceConfigurationOptions
      */
     public $options;
 
     /**
-     * ORM\Column(type="text", nullable=false)
+     * @var array
      */
     public $children;
     
     /**
-     * ORM\Column(type="boolean", nullable=false)
+     * @var boolean
      */
     public $isBaseSource = true;
 
@@ -44,7 +41,6 @@ abstract class InstanceConfiguration extends ConfigurationBase
      */
     public function __construct()
     {
-        $this->options = array();
         $this->children = array();
     }
 
@@ -125,7 +121,7 @@ abstract class InstanceConfiguration extends ConfigurationBase
     /**
      * Returns options
      * 
-     * @return string
+     * @return InstanceConfigurationOptions|null
      */
     public abstract function getOptions();
 
@@ -140,7 +136,7 @@ abstract class InstanceConfiguration extends ConfigurationBase
     /**
      * Returns a title
      * 
-     * @return integer children
+     * @return array children
      */
     public abstract function getChildren();
     
