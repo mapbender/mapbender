@@ -157,9 +157,9 @@ class RepositoryController extends Controller
                 return $this->redirect($this->generateUrl("mapbender_manager_repository_new", array(), true));
             }
             $wmsWithSameTitle = $this->getRepository("MapbenderWmsBundle:WmsSource")
-                ->findByTitle($wmssource->getTitle());
+                ->findBy(array('title' => $wmssource->getTitle()));
 
-            if (count($wmsWithSameTitle) > 0) {
+            if ($wmsWithSameTitle) {
                 $wmssource->setAlias(count($wmsWithSameTitle));
             }
             $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
@@ -333,7 +333,7 @@ class RepositoryController extends Controller
     {
         $wmssource    = $this->loadEntityByPk("MapbenderWmsBundle:WmsSource", $sourceId);
         $wmsinstances = $this->getRepository("MapbenderWmsBundle:WmsInstance")
-            ->findBySource($sourceId);
+            ->findBy(array('source' => $sourceId));
         $em           = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
 
