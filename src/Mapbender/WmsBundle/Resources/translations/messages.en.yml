@@ -79,6 +79,9 @@ mb:
             cancel2: Cancel
             ratio: 'BBOX factor'
             buffer: 'Tile buffer'
+            layerOrder: Layer ordering
+            layerOrder.standard: standard (top-down)
+            layerOrder.reverse: reverse (bottom-up)
           vendorspecific:
             label: 'Vendor specific'
         preview:

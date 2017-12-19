@@ -185,13 +185,12 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     {
         $configuration = array();
         if ($this->entity->getActive() === true) {
-            $children = null;
+            $children = array();
             if ($this->entity->getSublayer()->count() > 0) {
-                $children = array();
                 foreach ($this->entity->getSublayer() as $sublayer) {
-                    $instLayHandler = self::createHandler($this->container, $sublayer);
+                    $instLayHandler = new WmsInstanceLayerEntityHandler($this->container, $sublayer);
                     $configurationTemp = $instLayHandler->generateConfiguration();
-                    if (count($configurationTemp) > 0) {
+                    if ($configurationTemp) {
                         $children[] = $configurationTemp;
                     }
                 }
@@ -206,7 +205,16 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                     "outOfBounds" => null
                 ),
             );
-            if ($children !== null) {
+            switch ($this->entity->getSourceInstance()->getLayerOrder()) {
+                default:
+                case WmsInstance::LAYER_ORDER_TOP_DOWN:
+                    // do nothing
+                    break;
+                case WmsInstance::LAYER_ORDER_BOTTOM_UP:
+                    $children = array_reverse($children);
+                    break;
+            }
+            if ($children) {
                 $configuration["children"] = $children;
             }
         }
@@ -229,6 +237,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             "minScale" => $this->entity->getMinScale() !== null ? floatval($this->entity->getMinScale()) : null,
             "maxScale" => $this->entity->getMaxScale() !== null ? floatval($this->entity->getMaxScale()) : null
         );
+        /*
         $srses = array();
         $llbbox = $this->entity->getSourceItem()->getLatlonBounds();
         if ($llbbox !== null) {
@@ -247,7 +256,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 floatval($bbox->getMaxy())
             );
         }
-        $configuration['bbox'] = $srses;
+        */
+        $configuration['bbox'] = $this->entity->getSourceItem()->getMergedBboxes();
         $styles = $this->entity->getSourceItem()->getStyles();
         if ($styles) {
             $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles

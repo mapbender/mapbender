@@ -105,6 +105,14 @@ class WmsInstance extends SourceInstance
      */
     protected $ratio = 1.25;
 
+    const LAYER_ORDER_TOP_DOWN  = 'standard';
+    const LAYER_ORDER_BOTTOM_UP = 'reverse';
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $layerOrder;
+
     /**
      * WmsInstance constructor.
      */
@@ -577,6 +585,43 @@ class WmsInstance extends SourceInstance
     public function getMetadata()
     {
         return new WmsMetadata($this);
+    }
+
+    /**
+     * @return string
+     */
+    public function getLayerOrder()
+    {
+        // NOTE: this is a recently added column; there will be NULLs in the DB for updated applications
+        //       we convert these NULLs to our desired default (not the default for new instances, which can
+        //       be configured)
+        //       the layerOrder column will be properly populated when instances are saved
+        return $this->layerOrder ?: self::LAYER_ORDER_TOP_DOWN;
+    }
+
+    /**
+     * @param string $value use "conformant" or "traditional" (see consts)
+     * @return $this
+     * @throws \InvalidArgumentException if $value is not one of the expected values
+     */
+    public function setLayerOrder($value)
+    {
+        if (!in_array($value, $this->validLayerOrderChoices())) {
+            throw new \InvalidArgumentException("Invalid layer order value '$value'");
+        }
+        $this->layerOrder = $value;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function validLayerOrderChoices()
+    {
+        return array(
+            self::LAYER_ORDER_TOP_DOWN,
+            self::LAYER_ORDER_BOTTOM_UP,
+        );
     }
 
     /**

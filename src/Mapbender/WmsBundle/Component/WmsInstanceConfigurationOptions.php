@@ -68,6 +68,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
      */
     public $ratio = 1.25;
+
+    /** @var  string */
+    public $layerOrder;
     
     /**
      * Returns a version
@@ -298,6 +301,24 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     }
 
     /**
+     * @return string
+     */
+    public function getLayerOrder()
+    {
+        return $this->layerOrder;
+    }
+
+    /**
+     * @param string $layerOrder for valid values see WmsInstance constants LAYER_ORDER_...
+     * @return $this
+     */
+    public function setLayerOrder($layerOrder)
+    {
+        $this->layerOrder = $layerOrder;
+        return $this;
+    }
+
+    /**
      * @inheritdoc
      */
     public function toArray()
@@ -318,6 +339,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "dimensions" => $this->dimensions,
             "buffer" => $this->buffer,
             "ratio" => $this->ratio,
+            "layerOrder" => $this->layerOrder,
         );
     }
 
@@ -370,6 +392,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             }
             if (isset($options["exception_format"])) {
                 $ico->exceptionformat = $options["exception_format"];
+            }
+            if (isset($options["layerOrder"])) {
+                $ico->setLayerOrder($options["layerOrder"]);
             }
         }
         return $ico;
@@ -433,7 +458,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             ->setRatio($entity->getRatio())
             ->setVendorspecifics($vendorspecifics)
             ->setVersion($entity->getSource()->getVersion())
-            ->setExceptionformat($entity->getExceptionformat());
+            ->setExceptionformat($entity->getExceptionformat())
+            ->setLayerOrder($entity->getLayerOrder())
+        ;
 
         return $options;
     }
