@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
@@ -157,6 +158,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         if ($this->entity->getRootlayer()) {
             self::createHandler($this->container, $this->entity->getRootlayer())->save();
         }
+        $layerSet = $this->entity->getLayerset();
         $num = 0;
         foreach ($this->entity->getLayerset()->getInstances() as $instance) {
             /** @var WmsInstanceEntityHandler $instHandler */
@@ -166,9 +168,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
             $num++;
         }
-        $this->container->get('doctrine')->getManager()->persist(
-            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        $application = $layerSet->getApplication();
+        $application->setUpdated(new \DateTime('now'));
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->container->get('doctrine')->getManager();
+        $entityManager->persist($application);
+        $entityManager->persist($this->entity);
     }
     
 

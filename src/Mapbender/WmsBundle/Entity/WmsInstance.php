@@ -5,6 +5,8 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -136,7 +138,7 @@ class WmsInstance extends SourceInstance
     /**
      * Returns dimensions
      *
-     * @return array of DimensionIst
+     * @return DimensionInst[]
      */
     public function getDimensions()
     {
@@ -146,7 +148,7 @@ class WmsInstance extends SourceInstance
     /**
      * Sets dimensions
      *
-     * @param array $dimensions array of DimensionIst
+     * @param DimensionInst[] $dimensions
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
     public function setDimensions(array $dimensions)
@@ -156,7 +158,7 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * @return VendorSpecific[]|DimensionInst[]
+     * @return VendorSpecific[]
      */
     public function getVendorspecifics()
     {
@@ -169,7 +171,8 @@ class WmsInstance extends SourceInstance
 
     /**
      * Sets vendorspecifics
-     * @param ArrayCollection $vendorspecifics array of DimensionIst
+     *
+     * @param VendorSpecific[] $vendorspecifics
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
     public function setVendorspecifics(array $vendorspecifics)
@@ -527,7 +530,7 @@ class WmsInstance extends SourceInstance
     /**
      * Add layers
      *
-     * @param WmsInstanceLayer $layers
+     * @param WmsInstanceLayer $layer
      * @return WmsInstance
      */
     public function addLayer(WmsInstanceLayer $layer)
