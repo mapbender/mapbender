@@ -647,4 +647,12 @@ class WmsInstanceLayer extends SourceInstanceItem
             $this->addSublayer($subLayerInstance);
         }
     }
+
+    /**
+     * @return boolean
+     */
+    public function isRoot()
+    {
+        return !$this->getParent();
+    }
 }

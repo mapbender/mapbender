@@ -52,6 +52,7 @@ class WmsSourceService extends SourceService
             'dimensions' => $this->getDimensionsConfiguration($sourceInstance),
             'buffer' => $buffer,
             'ratio' => $ratio,
+            'layerOrder' => $sourceInstance->getLayerOrder(),
         );
     }
 

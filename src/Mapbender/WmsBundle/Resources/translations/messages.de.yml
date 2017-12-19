@@ -80,6 +80,9 @@ mb:
             cancel2: Abbrechen
             ratio: BBOX-Faktor
             buffer: Kachel-Puffer
+            layerOrder: Layer-Reihenfolge
+            layerOrder.standard: Standard (v. oben nach unten)
+            layerOrder.reverse: Umgekehrt (v. unten nach oben)
           vendorspecific:
             label: 'Vendor specific'
         preview:
