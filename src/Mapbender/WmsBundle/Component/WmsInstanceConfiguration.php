@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfiguration;
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * Description of WmsInstanceConfiguration
@@ -91,6 +92,25 @@ class WmsInstanceConfiguration extends InstanceConfiguration
             }
         }
         return $ic;
+    }
+
+    /**
+     * Factory method that populates new instance from given entity
+     *
+     * @param WmsInstance $entity
+     * @return static
+     */
+    public static function fromEntity($entity)
+    {
+        $wmsconf = new static();
+
+        $wmsconf->setType(strtolower($entity->getType()));
+        $wmsconf->setTitle($entity->getTitle());
+        $wmsconf->setIsBaseSource($entity->isBasesource());
+        $options = WmsInstanceConfigurationOptions::fromEntity($entity);
+        $wmsconf->setOptions($options);
+
+        return $wmsconf;
     }
 
 }
