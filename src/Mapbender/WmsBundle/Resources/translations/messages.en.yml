@@ -81,8 +81,8 @@ mb:
             ratio: 'BBOX factor'
             buffer: 'Tile buffer'
             layerOrder: Layer ordering
-            layerOrder.standard: standard (top-down)
-            layerOrder.reverse: reverse (bottom-up)
+            layerOrder.standard: standard
+            layerOrder.reverse: QGIS
           vendorspecific:
             label: 'Vendor specific'
         preview:
