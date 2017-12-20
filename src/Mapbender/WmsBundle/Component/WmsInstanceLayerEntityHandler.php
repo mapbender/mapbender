@@ -250,13 +250,21 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $configuration['bbox'] = $srses;
         $styles = $this->entity->getSourceItem()->getStyles();
         if ($styles) {
-            $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
-            if ($legendurl !== null) {
-                $configuration["legend"] = array(
-                    "url" => $this->generateTunnelUrl($legendurl->getOnlineResource()->getHref()),
-                    "width" => intval($legendurl->getWidth()),
-                    "height" => intval($legendurl->getHeight())
-                );
+            // scan styles for legend url entries backwards
+            // some WMS services may not populate every style with a legend, so just checking the last
+            // style for a legend is not enough
+            foreach (array_reverse($styles) as $style) {
+                /** @var Style $style */
+                $legendurl = $style->getLegendUrl();
+                if ($legendurl) {
+                    $effectiveLegendUrl = $this->generateTunnelUrl($legendurl->getOnlineResource()->getHref());
+                    $configuration["legend"] = array(
+                        "url" => $effectiveLegendUrl,
+                        "width" => intval($legendurl->getWidth()),
+                        "height" => intval($legendurl->getHeight()),
+                    );
+                    break;
+                }
             }
         } elseif ($this->entity->getSourceInstance()->getSource()->getGetLegendGraphic() !== null &&
             $this->entity->getSourceItem()->getName() !== null &&
