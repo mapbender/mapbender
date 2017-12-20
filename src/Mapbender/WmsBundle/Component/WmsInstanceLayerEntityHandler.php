@@ -248,34 +248,11 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             );
         }
         $configuration['bbox'] = $srses;
-        $styleLegendUrl = $this->getLegendUrlFromStyles($this->entity->getSourceItem());
-        $useTunnel = WmsSourceEntityHandler::useTunnel($this->entity->getSourceInstance()->getSource());
-        if ($styleLegendUrl) {
-            if ($useTunnel) {
-                // request via tunnel, see ApplicationController::instanceTunnelAction
-                $publicLegendUrl = $this->generateTunnelUrl($styleLegendUrl);
-            } else {
-                $publicLegendUrl = $styleLegendUrl;
-            }
-            $configuration["legend"] = array(
-                "url"   => $publicLegendUrl,
-            );
-        } else {
-            $glgLegendUrl = $this->getLegendGraphicUrl($this->entity->getSourceItem());
-            if ($glgLegendUrl) {
-                if ($useTunnel) {
-                    // request via tunnel, see ApplicationController::instanceTunnelAction
-                    $publicLegendUrl = $this->generateTunnelUrl($glgLegendUrl);
-                } else {
-                    $publicLegendUrl = $glgLegendUrl;
-                }
-                $configuration["legend"] = array(
-                    // this entry in the emitted config is only evaluated by the legend element if configured with
-                    // "generateLegendUrl": true
-                    "graphic"   => $publicLegendUrl,
-                );
-            }
+        $legendConfig = $this->getLegendConfig($this->entity);
+        if ($legendConfig) {
+            $configuration["legend"] = $legendConfig;
         }
+
         $configuration["treeOptions"] = array(
             "info" => $this->entity->getInfo(),
             "selected" => $this->entity->getSelected(),
@@ -377,5 +354,44 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             return Utils::getHttpUrl($url, $params);
         }
         return null;
+    }
+
+    /**
+     * Return the client-facing configuration for a layer's legend
+     *
+     * @param WmsInstanceLayer $entity
+     * @return array
+     */
+    public function getLegendConfig(WmsInstanceLayer $entity)
+    {
+        $styleLegendUrl = $this->getLegendUrlFromStyles($entity->getSourceItem());
+        $useTunnel = WmsSourceEntityHandler::useTunnel($entity->getSourceInstance()->getSource());
+        if ($styleLegendUrl) {
+            if ($useTunnel) {
+                // request via tunnel, see ApplicationController::instanceTunnelAction
+                $publicLegendUrl = $this->generateTunnelUrl($styleLegendUrl);
+            } else {
+                $publicLegendUrl = $styleLegendUrl;
+            }
+            return array(
+                "url"   => $publicLegendUrl,
+            );
+        } else {
+            $glgLegendUrl = $this->getLegendGraphicUrl($entity->getSourceItem());
+            if ($glgLegendUrl) {
+                if ($useTunnel) {
+                    // request via tunnel, see ApplicationController::instanceTunnelAction
+                    $publicLegendUrl = $this->generateTunnelUrl($glgLegendUrl);
+                } else {
+                    $publicLegendUrl = $glgLegendUrl;
+                }
+                return array(
+                    // this entry in the emitted config is only evaluated by the legend element if configured with
+                    // "generateLegendUrl": true
+                    "graphic"   => $publicLegendUrl,
+                );
+            }
+        }
+        return array();
     }
 }
