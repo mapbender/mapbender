@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
@@ -153,5 +154,33 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         return $query->setParameters(
             array("sid" => $this->entity->getId())
         )->getResult();
+    }
+
+    /**
+     * Find the named WmsLayerSource
+     *
+     * @param WmsSource $source
+     * @param string $layerName
+     * @return WmsLayerSource|null
+     */
+    public static function getLayerSource(WmsSource $source, $layerName)
+    {
+        foreach ($source->getLayers() as $layer) {
+            if ($layer->getName() == $layerName) {
+                return $layer;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if service has auth information that needs to be hidden from client.
+     *
+     * @param WmsSource $source
+     * @return bool
+     */
+    public static function useTunnel(WmsSource $source)
+    {
+        return !empty($source->getUsername());
     }
 }

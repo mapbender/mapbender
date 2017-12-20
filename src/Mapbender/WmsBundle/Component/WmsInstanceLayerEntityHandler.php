@@ -242,41 +242,33 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             );
         }
         $configuration['bbox'] = $srses;
-        $styles = $this->entity->getSourceItem()->getStyles();
-        if ($styles) {
-            // scan styles for legend url entries backwards
-            // some WMS services may not populate every style with a legend, so just checking the last
-            // style for a legend is not enough
-            foreach (array_reverse($styles) as $style) {
-                /** @var Style $style */
-                $legendurl = $style->getLegendUrl();
-                if ($legendurl) {
-                    $effectiveLegendUrl = $this->generateTunnelUrl($legendurl->getOnlineResource()->getHref());
-                    $configuration["legend"] = array(
-                        "url" => $effectiveLegendUrl,
-                        "width" => intval($legendurl->getWidth()),
-                        "height" => intval($legendurl->getHeight()),
-                    );
-                    break;
-                }
+        $styleLegendUrl = $this->getLegendUrlFromStyles($this->entity->getSourceItem());
+        $useTunnel = WmsSourceEntityHandler::useTunnel($this->entity->getSourceInstance()->getSource());
+        if ($styleLegendUrl) {
+            if ($useTunnel) {
+                // request via tunnel, see ApplicationController::instanceTunnelAction
+                $publicLegendUrl = $this->generateTunnelUrl($styleLegendUrl);
+            } else {
+                $publicLegendUrl = $styleLegendUrl;
             }
-        } elseif ($this->entity->getSourceInstance()->getSource()->getGetLegendGraphic() !== null &&
-            $this->entity->getSourceItem()->getName() !== null &&
-            $this->entity->getSourceItem()->getName() !== ""
-        ) {
-            $source = $this->entity->getSourceInstance()->getSource();
-            $legend = $source->getGetLegendGraphic();
-            $url = $legend->getHttpGet();
-            $formats = $legend->getFormats();
-            $params = "service=WMS&request=GetLegendGraphic"
-                . "&version=" . $source->getVersion()
-                . "&layer=" . $this->entity->getSourceItem()->getName()
-                . (count($formats) > 0 ? "&format=" . $formats[0] : "")
-                . "&sld_version=1.1.0";
-            $legendgraphic = Utils::getHttpUrl($url, $params);
             $configuration["legend"] = array(
-                "graphic" => $this->generateTunnelUrl($legendgraphic)
+                "url"   => $publicLegendUrl,
             );
+        } else {
+            $glgLegendUrl = $this->getLegendGraphicUrl($this->entity->getSourceItem());
+            if ($glgLegendUrl) {
+                if ($useTunnel) {
+                    // request via tunnel, see ApplicationController::instanceTunnelAction
+                    $publicLegendUrl = $this->generateTunnelUrl($glgLegendUrl);
+                } else {
+                    $publicLegendUrl = $glgLegendUrl;
+                }
+                $configuration["legend"] = array(
+                    // this entry in the emitted config is only evaluated by the legend element if configured with
+                    // "generateLegendUrl": true
+                    "graphic"   => $publicLegendUrl,
+                );
+            }
         }
         $configuration["treeOptions"] = array(
             "info" => $this->entity->getInfo(),
@@ -332,5 +324,52 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         } else {
             return $url;
         }
+    }
+
+    /**
+     * Get a legend url from the layer's styles
+     *
+     * @param WmsLayerSource $layerSource
+     * @return string|null
+     */
+    public static function getLegendUrlFromStyles(WmsLayerSource $layerSource)
+    {
+        // scan styles for legend url entries backwards
+        // some WMS services may not populate every style with a legend, so just checking the last
+        // style for a legend is not enough
+        // @todo: style node selection should follow configured style
+        foreach (array_reverse($layerSource->getStyles()) as $style) {
+            /** @var Style $style */
+            $legendUrl = $style->getLegendUrl();
+            if ($legendUrl) {
+                return $legendUrl->getOnlineResource()->getHref();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param WmsLayerSource $layerSource
+     * @return string|null
+     */
+    public static function getLegendGraphicUrl(WmsLayerSource $layerSource)
+    {
+        /** @var WmsSource $source*/
+        $source = $layerSource->getSource();
+        $glg = $source->getGetLegendGraphic();
+        $layerName = $layerSource->getName();
+
+        if ($glg && $layerName) {
+            $source = $layerSource->getSource();
+            $url = $glg->getHttpGet();
+            $formats = $glg->getFormats();
+            $params = "service=WMS&request=GetLegendGraphic"
+                . "&version=" . $source->getVersion()
+                . "&layer=" . $layerName
+                . (count($formats) > 0 ? "&format=" . $formats[0] : "")
+                . "&sld_version=1.1.0";
+            return Utils::getHttpUrl($url, $params);
+        }
+        return null;
     }
 }
