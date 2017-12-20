@@ -237,27 +237,16 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             "minScale" => $this->entity->getMinScale() !== null ? floatval($this->entity->getMinScale()) : null,
             "maxScale" => $this->entity->getMaxScale() !== null ? floatval($this->entity->getMaxScale()) : null
         );
-        /*
-        $srses = array();
-        $llbbox = $this->entity->getSourceItem()->getLatlonBounds();
-        if ($llbbox !== null) {
-            $srses[$llbbox->getSrs()] = array(
-                floatval($llbbox->getMinx()),
-                floatval($llbbox->getMiny()),
-                floatval($llbbox->getMaxx()),
-                floatval($llbbox->getMaxy())
-            );
-        }
-        foreach ($this->entity->getSourceItem()->getBoundingBoxes() as $bbox) {
-            $srses[$bbox->getSrs()] = array(
+        $configuration['bbox'] = array();
+        $bboxes = $this->entity->getSourceItem()->getMergedBboxes();
+        foreach ($bboxes as $bbox) {
+            $configuration['bbox'][$bbox->getSrs()] = array(
                 floatval($bbox->getMinx()),
                 floatval($bbox->getMiny()),
                 floatval($bbox->getMaxx()),
                 floatval($bbox->getMaxy())
             );
         }
-        */
-        $configuration['bbox'] = $this->entity->getSourceItem()->getMergedBboxes();
         $styles = $this->entity->getSourceItem()->getStyles();
         if ($styles) {
             $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
