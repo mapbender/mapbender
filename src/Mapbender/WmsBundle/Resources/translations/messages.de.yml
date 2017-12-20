@@ -80,8 +80,8 @@ mb:
             ratio: BBOX-Faktor
             buffer: Kachel-Puffer
             layerOrder: Layer-Reihenfolge
-            layerOrder.standard: Standard (v. oben nach unten)
-            layerOrder.reverse: Umgekehrt (v. unten nach oben)
+            layerOrder.standard: Standard (umgekehrt)
+            layerOrder.reverse: QGIS Style (gleiche Reihenfolge)
           vendorspecific:
             label: 'Vendor specific'
         preview:
