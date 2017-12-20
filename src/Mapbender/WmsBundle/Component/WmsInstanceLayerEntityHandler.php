@@ -360,10 +360,12 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     {
         $styleLegendUrl = $this->getLegendUrlFromStyles($entity->getSourceItem());
         $useTunnel = WmsSourceEntityHandler::useTunnel($entity->getSourceInstance()->getSource());
+        $layerName = $entity->getSourceItem()->getName();
         if ($styleLegendUrl) {
             if ($useTunnel) {
                 // request via tunnel, see ApplicationController::instanceTunnelAction
-                $publicLegendUrl = $this->generateTunnelUrl($styleLegendUrl);
+                // instruct the tunnel action that the legend url should be plucked from styles
+                $publicLegendUrl = $this->generateTunnelUrl('?request=GetLegendGraphic&_glgmode=styles&layer=' . $layerName);
             } else {
                 $publicLegendUrl = $styleLegendUrl;
             }
@@ -375,7 +377,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             if ($glgLegendUrl) {
                 if ($useTunnel) {
                     // request via tunnel, see ApplicationController::instanceTunnelAction
-                    $publicLegendUrl = $this->generateTunnelUrl($glgLegendUrl);
+                    // instruct the tunnel action that the legend url should be plucked from GetLegendGraphic
+                    $publicLegendUrl = $this->generateTunnelUrl('?request=GetLegendGraphic&_glgmode=GetLegendGraphic');
                 } else {
                     $publicLegendUrl = $glgLegendUrl;
                 }

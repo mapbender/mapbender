@@ -8,6 +8,8 @@ use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
+use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -15,6 +17,7 @@ use OwsProxy3\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -338,6 +341,8 @@ class ApplicationController extends Controller
      */
     public function instanceTunnelAction($slug, $instanceId)
     {
+        // @todo: instance tunnel handling should move into a service component in WmsBundle
+        /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
         $instance        = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         if (!$instance) {
@@ -350,7 +355,7 @@ class ApplicationController extends Controller
             && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
-        /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
+
         /** @var WmsSource $source */
         $source = $instance->getSource();
 // TODO source access ?
@@ -361,8 +366,10 @@ class ApplicationController extends Controller
 //        $params = $this->getRequest()->getMethod() == 'POST' ?
 //            $this->get("request")->request->all() : $this->get("request")->query->all();
         $headers     = array();
-        $postParams  = $this->get("request")->request->all();
-        $getParams   = $this->get("request")->query->all();
+        /** @var Request $request */
+        $request = $this->get("request");
+        $postParams  = $request->request->all();
+        $getParams   = $request->query->all();
         $user        = $source->getUsername() ? $source->getUsername() : null;
         $password    = $source->getUsername() ? $source->getPassword() : null;
         $instHandler = EntityHandler::createHandler($this->container, $instance);
@@ -393,7 +400,28 @@ class ApplicationController extends Controller
                 $url = $source->getGetFeatureInfo()->getHttpGet();
                 break;
             case 'getlegendgraphic':
-                $url = $source->getGetLegendGraphic()->getHttpGet();
+                $glgMode = $request->query->get('_glgmode', null);
+                $layerName = $request->query->get('layer', null);
+                if (!$layerName) {
+                    $glgMode = null;
+                    $layerSource = null;
+                } else {
+                    $layerSource = WmsSourceEntityHandler::getLayerSource($source, $layerName);
+                    if (!$layerSource) {
+                        $glgMode = null;
+                    }
+                }
+                switch ($glgMode) {
+                    default:
+                        $url = $source->getGetLegendGraphic()->getHttpGet();
+                        break;
+                    case 'styles':
+                        $url = WmsInstanceLayerEntityHandler::getLegendUrlFromStyles($layerSource);
+                        break;
+                    case 'GetLegendGraphic':
+                        $url = WmsInstanceLayerEntityHandler::getLegendGraphicUrl($layerSource);
+                        break;
+                }
                 break;
             default:
                 throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
