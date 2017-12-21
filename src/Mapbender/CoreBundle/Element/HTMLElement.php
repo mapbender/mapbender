@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Doctrine\DBAL\Connection;
 use Mapbender\CoreBundle\Component\Element;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -189,5 +190,25 @@ class HTMLElement extends Element
             }
         }
         return $assets;
+    }
+
+    /**
+     * Render markup.
+     * Because the entire template is user-configurable, we add some error handling here.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->container->get('logger');
+
+        try {
+            return parent::render();
+        } catch (\Twig_Error $e) {
+            $message = "Invalid content in " . get_class($this) . " caused " . get_class($e);
+            $logger->warning($message . ", suppressing content", $this->getConfiguration());
+            return "<div id=\"{$this->getEntity()->getId()}\"><!-- $message --></div>";
+        }
     }
 }
