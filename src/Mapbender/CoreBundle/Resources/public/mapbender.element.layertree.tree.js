@@ -890,7 +890,7 @@
                 }
 
                 menu.removeClass('hidden');
-                $element.append(menu);
+                $element.after(menu);
                 $(menu).on('mousedown mousemove', function(e) {
                     e.stopPropagation();
                 });
