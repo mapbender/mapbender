@@ -48,10 +48,6 @@ function MapbenderContainerInfo(widget, options) {
         return toolBar.hasClass('bottom');
     };
 
-    this.isOnTop = function () {
-        return toolBar.hasClass('top');
-    };
-
     this.isOnLeft = function () {
         return sidePane.hasClass('left');
     };
