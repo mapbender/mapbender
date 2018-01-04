@@ -1,11 +1,11 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
-use Mapbender\CoreBundle\Component\SecurityContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 /**
  * Mapbender3 Print Service.
@@ -1249,9 +1249,9 @@ class PrintService extends ImageExportService
      */
     protected function getUser()
     {
-        /** @var SecurityContext $securityContext */
-        $securityContext = $this->container->get('security.context');
-        $token           = $securityContext->getToken();
+        /** @var TokenStorage $tokenStorage */
+        $tokenStorage = $this->container->get('security.token_storage');
+        $token = $tokenStorage->getToken();
         if ($token) {
             return $token->getUser();
         } else {
