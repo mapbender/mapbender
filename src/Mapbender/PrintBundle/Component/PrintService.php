@@ -12,7 +12,7 @@ use OwsProxy3\CoreBundle\Component\CommonProxy;
  *
  * @author Stefan Winkelmann
  */
-class PrintService
+class PrintService extends ImageExportService
 {
     /** @var PDF_ImageAlpha */
     protected $pdf;
@@ -40,11 +40,6 @@ class PrintService
         "strokeWidth" => 1
     );
 
-    public function __construct($container)
-    {
-        $this->container = $container;
-    }
-
     public function doPrint($data)
     {
         $this->setup($data);
@@ -60,17 +55,6 @@ class PrintService
 
     private function setup($data)
     {
-        # Extract URL base path so we can later decide to let Symfony handle internal requests or make proper
-        # HTTP connections.
-        # NOTE: This is only possible in web, not CLI
-        if (php_sapi_name() != "cli") {
-            $request = $this->container->get('request');
-            $this->urlHostPath = $request->getHttpHost() . $request->getBaseURL();
-        } else {
-            $this->urlHostPath = null;
-        }
-        // temp dir
-        $this->tempDir = sys_get_temp_dir();
         // resource dir
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
 
@@ -287,85 +271,30 @@ class PrintService
 
     private function getImages($width, $height)
     {
-        $logger        = $this->container->get("logger");
+        $logger        = $this->getLogger();
         $imageNames    = array();
         foreach ($this->mapRequests as $i => $url) {
-            $logger->debug("Print Request Nr.: " . $i . ' ' . $url);
-            // find urls from this host (tunnel connection for secured services)
-            $parsed   = parse_url($url);
-            $host = isset($parsed['host']) ? $parsed['host'] : $this->container->get('request')->getHttpHost();
-            $hostpath = $host . $parsed['path'];
-            $pos      = strpos($hostpath, $this->urlHostPath);
-            if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-                $attributes = $this->container->get('router')->match($routeStr);
-                $gets       = array();
-                parse_str($parsed['query'], $gets);
-                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
-            } else {
-                $attributes = array(
-                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
-                );
-                $subRequest = new Request(array('url' => $url), array(), $attributes, array(), array(), array(), '');
-            }
-            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            $this->getLogger()->debug("Print Request Nr.: " . $i . ' ' . $url);
+
+            $mapRequestResponse = $this->mapRequest($url);
 
             $imageName    = tempnam($this->tempDir, 'mb_print');
             $imageNames[] = $imageName;
+            $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
 
-            file_put_contents($imageName, $response->getContent());
-
-            $rawImage = null;
-            $contentType = trim($response->headers->get('content-type'));
-            switch ($contentType) {
-                case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
-                    $rawImage = imagecreatefrompng($imageName);
-                    break;
-                case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
-                    $rawImage = imagecreatefromjpeg($imageName);
-                    break;
-                case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
-                    $rawImage = imagecreatefromgif($imageName);
-                    break;
-                case 'image/bmp' :
-                    $logger->debug("Unsupported mimetype image/bmp");
-                    print_r("Unsupported mimetype image/bmp");
-                    break;
-                default:
-                    $logger->debug("ERROR! PrintRequest failed: " . $url);
-                    $logger->debug($response->getContent());
-                    print_r('an error has occurred. see log for more details <br>');
-                    print_r($response->getContent());
-                    foreach ($imageNames as $i => $imageName) {
-                        unlink($imageName);
-                    }
-                    exit;
+            if (!$rawImage) {
+                $logger->debug("ERROR! PrintRequest failed: " . $url);
+                $logger->debug($mapRequestResponse->getContent());
+                print_r('an error has occurred. see log for more details <br>');
+                print_r($mapRequestResponse->getContent());
+                foreach ($imageNames as $i => $imageName) {
+                    unlink($imageName);
+                }
+                exit;
             }
 
             if ($rawImage !== null) {
-                // Make sure input image is truecolor with alpha, regardless of input mode!
-                $image = imagecreatetruecolor($width, $height);
-                imagealphablending($image, false);
-                imagesavealpha($image, true);
-                imagecopyresampled($image, $rawImage, 0, 0, 0, 0, $width, $height, $width, $height);
-
-                // Taking the painful way to alpha blending. Stupid PHP-GD
-                $opacity = floatVal($this->data['layers'][$i]['opacity']);
-                if (1.0 !== $opacity) {
-                    $width  = imagesx($image);
-                    $height = imagesy($image);
-                    for ($x = 0; $x < $width; $x++) {
-                        for ($y = 0; $y < $height; $y++) {
-                            $colorIn  = imagecolorsforindex($image, imagecolorat($image, $x, $y));
-                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
-
-                            $colorOut = imagecolorallocatealpha(
-                                $image, $colorIn['red'], $colorIn['green'], $colorIn['blue'], $alphaOut);
-                            imagesetpixel($image, $x, $y, $colorOut);
-                            imagecolordeallocate($image, $colorOut);
-                        }
-                    }
-                }
-                imagepng($image, $imageName);
+                $this->forceToRgba($imageName, $rawImage, $this->data['layers'][$i]['opacity']);
             }
         }
         return $imageNames;
@@ -561,7 +490,7 @@ class PrintService
 
         // get images
         $tempNames = array();
-        $logger = $this->container->get("logger");
+        $logger = $this->getLogger();
         foreach ($this->data['overview'] as $i => $layer) {
             // calculate needed bbox
             $ovWidth = $this->conf['overview']['width'] * $layer['scale'] / 1000;
@@ -588,42 +517,11 @@ class PrintService
 
             $logger->debug("Print Overview Request Nr.: " . $i . ' ' . $url);
 
-            $parsed   = parse_url($url);
-            $hostpath = $parsed['host'] . $parsed['path'];
-            $pos      = strpos($hostpath, $this->urlHostPath);
-            if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-                $attributes = $this->container->get('router')->match($routeStr);
-                $gets       = array();
-                parse_str($parsed['query'], $gets);
-                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
-            } else {
-                $attributes = array(
-                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
-                );
-                $subRequest = new Request(array('url' => $url), array(), $attributes, array(), array(), array(), '');
-            }
-
-            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            $overviewRequestResponse = $this->mapRequest($url);
             $imageName = tempnam($this->tempdir, 'mb_print');
             $tempNames[] = $imageName;
+            $im = $this->serviceResponseToGdImage($imageName, $overviewRequestResponse);
 
-            file_put_contents($imageName, $response->getContent());
-            $im = null;
-            $contentType = trim($response->headers->get('content-type'));
-            switch ($contentType) {
-                case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
-                    $im = imagecreatefrompng($imageName);
-                    break;
-                case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
-                    $im = imagecreatefromjpeg($imageName);
-                    break;
-                case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
-                    $im = imagecreatefromgif($imageName);
-                    break;
-                default:
-                    $logger->debug("Unknown mimetype " . $contentType);
-                    continue;
-            }
             if ($im !== null) {
                 imagesavealpha($im, true);
                 imagepng($im, $imageName);
