@@ -16,14 +16,11 @@ class PrintService extends ImageExportService
 {
     /** @var PDF_ImageAlpha */
     protected $pdf;
-    protected $tempdir;
     protected $conf;
-    protected $data;
     protected $rotation;
     protected $resourceDir;
     protected $finalImageName;
     protected $user;
-    protected $tempDir;
     protected $mapRequests;
     protected $imageWidth;
     protected $imageHeight;
@@ -31,7 +28,6 @@ class PrintService extends ImageExportService
     protected $neededExtentHeight;
     protected $neededImageWidth;
     protected $neededImageHeight;
-    protected $urlHostPath;
 
     /**
      * @var array Default geometry style
@@ -186,7 +182,7 @@ class PrintService extends ImageExportService
         $imageNames = $this->getImages($width, $height);
 
         // create final merged image
-        $this->finalImageName = tempnam($this->tempDir, 'mb_print_final');
+        $this->finalImageName = $this->makeTempFile('mb_print_final');
         $finalImage = imagecreatetruecolor($width, $height);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $width, $height, $bg);
@@ -217,7 +213,7 @@ class PrintService extends ImageExportService
         $imageNames = $this->getImages($neededImageWidth,$neededImageHeight);
 
         // create temp merged image
-        $tempImageName = tempnam($this->tempDir, 'mb_print_temp');
+        $tempImageName = $this->makeTempFile('mb_print_temp');
         $tempImage = imagecreatetruecolor($neededImageWidth, $neededImageHeight);
         $bg = ImageColorAllocate($tempImage, 255, 255, 255);
         imagefilledrectangle($tempImage, 0, 0, $neededImageWidth, $neededImageHeight, $bg);
@@ -246,7 +242,7 @@ class PrintService extends ImageExportService
         $rotatedImage = imagerotate($tempImage2, $rotation, $transColor);
         imagealphablending($rotatedImage, false);
         imagesavealpha($rotatedImage, true);
-        $rotatedImageName = tempnam($this->tempDir, 'mb_print_rotated');
+        $rotatedImageName = $this->makeTempFile('mb_print_rotated');
         imagepng($rotatedImage, $rotatedImageName);
         unlink($tempImageName);
         unlink($rotatedImageName);
@@ -265,7 +261,7 @@ class PrintService extends ImageExportService
         imagecopy($clippedImage, $rotatedImage, 0, 0, $newx, $newy,
             $imageWidth, $imageHeight);
 
-        $this->finalImageName = tempnam($this->tempDir, 'mb_print_final');
+        $this->finalImageName = $this->makeTempFile('mb_print_final');
         imagepng($clippedImage, $this->finalImageName);
     }
 
@@ -278,7 +274,7 @@ class PrintService extends ImageExportService
 
             $mapRequestResponse = $this->mapRequest($url);
 
-            $imageName    = tempnam($this->tempDir, 'mb_print');
+            $imageName    = $this->makeTempFile('mb_print');
             $imageNames[] = $imageName;
             $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
 
@@ -448,7 +444,7 @@ class PrintService extends ImageExportService
             $image = imagecreatefrompng($northarrow);
             $transColor = imagecolorallocatealpha($image, 255, 255, 255, 0);
             $rotatedImage = imagerotate($image, $rotation, $transColor);
-            $rotatedImageName = tempnam($this->tempdir, 'mb_northarrow');
+            $rotatedImageName = $this->makeTempFile('mb_northarrow');
             imagepng($rotatedImage, $rotatedImageName);
 
             if ($rotation == 90 || $rotation == 270) {
@@ -518,7 +514,7 @@ class PrintService extends ImageExportService
             $logger->debug("Print Overview Request Nr.: " . $i . ' ' . $url);
 
             $overviewRequestResponse = $this->mapRequest($url);
-            $imageName = tempnam($this->tempdir, 'mb_print');
+            $imageName = $this->makeTempFile('mb_print');
             $tempNames[] = $imageName;
             $im = $this->serviceResponseToGdImage($imageName, $overviewRequestResponse);
 
@@ -529,7 +525,7 @@ class PrintService extends ImageExportService
         }
 
         // create final merged image
-        $finalImageName = tempnam($this->tempdir, 'mb_print_merged');
+        $finalImageName = $this->makeTempFile('mb_print_merged');
         $finalImage = imagecreatetruecolor($ovImageWidth, $ovImageHeight);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $ovImageWidth,
@@ -1128,7 +1124,7 @@ class PrintService extends ImageExportService
             parse_str($parsed['query'], $gets);
             $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
             $response   = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-            $imagename  = tempnam($this->tempdir, 'mb_printlegend');
+            $imagename  = $this->makeTempFile('mb_printlegend');
             file_put_contents($imagename, $response->getContent());
         } else {
             $proxy_config    = $this->container->getParameter("owsproxy.proxy");
@@ -1136,7 +1132,7 @@ class PrintService extends ImageExportService
             $proxy           = new CommonProxy($proxy_config, $proxy_query);
             $browserResponse = $proxy->handle();
 
-            $imagename = tempnam($this->tempdir, 'mb_printlegend');
+            $imagename = $this->makeTempFile('mb_printlegend');
             file_put_contents($imagename, $browserResponse->getContent());
         }
 

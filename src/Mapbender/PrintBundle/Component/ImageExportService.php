@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -17,12 +18,19 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ImageExportService
 {
+    /** @var ContainerInterface */
+    protected $container;
+    /** @var string */
+    protected $tempDir;
+    /** @var string */
     protected $urlHostPath;
+    /** @var array */
+    protected $data;
 
     public function __construct($container)
     {
         $this->container = $container;
-        $this->tempdir = sys_get_temp_dir();
+        $this->tempDir = sys_get_temp_dir();
         # Extract URL base path so we can later decide to let Symfony handle internal requests or make proper
         # HTTP connections.
         # NOTE: This is only possible in web, not CLI
@@ -85,7 +93,7 @@ class ImageExportService
 
             $mapRequestResponse = $this->mapRequest($url);
 
-            $imagename = tempnam($this->tempdir, 'mb_imgexp');
+            $imagename = $this->makeTempFile('mb_imgexp');
             $temp_names[] = $imagename;
             $rawImage = $this->serviceResponseToGdImage($imagename, $mapRequestResponse);
 
@@ -97,7 +105,7 @@ class ImageExportService
             }
         }
         // create final merged image
-        $finalImageName = tempnam($this->tempdir, 'mb_imgexp_merged');
+        $finalImageName = $this->makeTempFile('mb_imgexp_merged');
         $mergedImage = imagecreatetruecolor($width, $height);
         $bg = ImageColorAllocate($mergedImage, 255, 255, 255);
         imagefilledrectangle($mergedImage, 0, 0, $width, $height, $bg);
@@ -462,4 +470,21 @@ class ImageExportService
 
 	return $pixPos;
     }
+
+    /**
+     * Creates a ~randomly named temp file with given $prefix and returns its name
+     *
+     * @param $prefix
+     * @return string
+     */
+    protected function makeTempFile($prefix)
+    {
+        $filePath = tempnam($this->tempDir, $prefix);
+        // tempnam may return false in undocumented error cases
+        if (!$filePath) {
+            throw new \RuntimeException("Failed to create temp file with prefix '$prefix' in '{$this->tempDir}'");
+        }
+        return $filePath;
+    }
+
 }
