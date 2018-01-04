@@ -26,8 +26,8 @@ class ImageExportService
     protected $urlHostPath;
     /** @var array */
     protected $data;
-    /** @var string[] */
-    protected $requests = array();
+    /** @var string[] plain WMS URLs */
+    protected $mapRequests = array();
 
     public function __construct($container)
     {
@@ -66,14 +66,14 @@ class ImageExportService
     public function export($content)
     {
         // Clean up internally modified / collected state
-        $this->requests = array();
+        $this->mapRequests = array();
         $this->data = json_decode($content, true);
 
         foreach ($this->data['requests'] as $i => $layer) {
             if ($layer['type'] != 'wms') {
                 continue;
             }
-            $this->requests[$i] = $layer['url'];
+            $this->mapRequests[$i] = $layer['url'];
         }
 
         if(isset($this->data['vectorLayers'])){
@@ -95,7 +95,7 @@ class ImageExportService
     private function getImages()
     {
         $temp_names = array();
-        foreach ($this->requests as $k => $url) {
+        foreach ($this->mapRequests as $k => $url) {
             
             $url = strstr($url, '&WIDTH', true);
             $width = '&WIDTH=' . $this->data['width'];

@@ -21,7 +21,6 @@ class PrintService extends ImageExportService
     protected $resourceDir;
     protected $finalImageName;
     protected $user;
-    protected $mapRequests;
     protected $imageWidth;
     protected $imageHeight;
     protected $neededExtentWidth;
