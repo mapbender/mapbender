@@ -2,6 +2,8 @@
 namespace Mapbender\CoreBundle\Component;
 
 use FOM\UserBundle\Entity\User;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Model\ObjectIdentityInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
@@ -220,8 +222,8 @@ class SecurityContext implements TokenStorageInterface, AuthorizationCheckerInte
      */
     public function isUserAllowedToCreate($object)
     {
-        //$oid = new ObjectIdentity('class', get_class($object));
-        return $this->isGranted(self::PERMISSION_CREATE, $object);
+        $identity = $this->getClassIdentity($object);
+        return $this->isGranted(self::PERMISSION_CREATE, $identity);
     }
 
     /**
@@ -255,5 +257,29 @@ class SecurityContext implements TokenStorageInterface, AuthorizationCheckerInte
     public function isUserAllowedToView($object)
     {
         return $this->isGranted(self::PERMISSION_VIEW, $object);
+    }
+
+    /**
+     * Normalize passed string or class instance into an ObjectIdentity describing the class.
+     * This is useful for grants operating on types, not concrete instances (i.e. create actions).
+     * If argument is already an ObjectIdentity[Interface], it will be returned unchanged.
+     *
+     * @param object|string $objectOrClassName instance or (qualfied) class name as string
+     * @return ObjectIdentityInterface
+     */
+    public static function getClassIdentity($objectOrClassName)
+    {
+        if (is_string($objectOrClassName)) {
+            // assume we have a class name
+            return new ObjectIdentity('class', $objectOrClassName);
+        } elseif ($objectOrClassName instanceof ObjectIdentityInterface) {
+            // already an object identity, return as is
+            return $objectOrClassName;
+        } else {
+            if (!is_object($objectOrClassName)) {
+                throw new \InvalidArgumentException("Unsupported argument type " . gettype($objectOrClassName));
+            }
+            return new ObjectIdentity('class', get_class($objectOrClassName));
+        }
     }
 }
