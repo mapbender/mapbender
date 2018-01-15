@@ -406,7 +406,7 @@ class ApplicationController extends Controller
                     $glgMode = null;
                     $layerSource = null;
                 } else {
-                    $layerSource = WmsSourceEntityHandler::getLayerSource($source, $layerName);
+                    $layerSource = WmsSourceEntityHandler::getLayerSourceByName($source, $layerName);
                     if (!$layerSource) {
                         $glgMode = null;
                     }

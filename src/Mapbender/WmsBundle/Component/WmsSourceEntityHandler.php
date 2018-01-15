@@ -157,13 +157,13 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     }
 
     /**
-     * Find the named WmsLayerSource
+     * Find the named WmsLayerSource in the given WmsSource
      *
      * @param WmsSource $source
      * @param string $layerName
      * @return WmsLayerSource|null
      */
-    public static function getLayerSource(WmsSource $source, $layerName)
+    public static function getLayerSourceByName(WmsSource $source, $layerName)
     {
         foreach ($source->getLayers() as $layer) {
             if ($layer->getName() == $layerName) {
