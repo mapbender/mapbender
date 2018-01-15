@@ -58,7 +58,7 @@ class InstanceTunnel
     public function getInternalGetLegendGraphicUrl(Request $request)
     {
         $glgMode = $request->query->get('_glgmode', null);
-        $layerName = $request->query->get('layer', null);
+        $layerName = RequestUtil::getGetParamCaseInsensitive($request, 'layer', null);
         if (!$layerName) {
             $glgMode = null;
             $layerSource = null;
