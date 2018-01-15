@@ -341,12 +341,11 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     {
         $styleLegendUrl = $this->getLegendUrlFromStyles($entity->getSourceItem());
         if (WmsSourceEntityHandler::useTunnel($entity->getSourceInstance()->getSource())) {
-            $tunnel = new InstanceTunnel($this->entity->getSourceInstance());
             /** @var Router $router */
             $router = $this->container->get('router');
+            $tunnel = new InstanceTunnel($router, $entity->getSourceInstance());
         } else {
             $tunnel = null;
-            $router = null;
         }
         $layerName = $entity->getSourceItem()->getName();
         if ($styleLegendUrl) {
@@ -354,7 +353,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 // request via tunnel, see ApplicationController::instanceTunnelAction
                 // instruct the tunnel action that the legend url should be plucked from styles
                 $tunnelInputUrl = '?request=GetLegendGraphic&_glgmode=styles&layer=' . $layerName;
-                $publicLegendUrl = $tunnel->generatePublicUrl($router, $tunnelInputUrl);
+                $publicLegendUrl = $tunnel->generatePublicUrl($tunnelInputUrl);
             } else {
                 $publicLegendUrl = $styleLegendUrl;
             }
@@ -368,7 +367,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                     // request via tunnel, see ApplicationController::instanceTunnelAction
                     // instruct the tunnel action that the legend url should be plucked from GetLegendGraphic
                     $tunnelInputUrl = '?request=GetLegendGraphic&_glgmode=GetLegendGraphic';
-                    $publicLegendUrl = $tunnel->generatePublicUrl($router, $tunnelInputUrl);
+                    $publicLegendUrl = $tunnel->generatePublicUrl($tunnelInputUrl);
                 } else {
                     $publicLegendUrl = $glgLegendUrl;
                 }

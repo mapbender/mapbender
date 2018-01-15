@@ -9,7 +9,7 @@ use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Utils\RequestUtil;
-use Mapbender\WmsBundle\Component\InstanceTunnel;
+use Mapbender\WmsBundle\Component\InstanceTunnelHandler;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -387,7 +387,7 @@ class ApplicationController extends Controller
         if (!$requestType) {
             throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
         }
-        $instanceTunnel = new InstanceTunnel($instance);
+        $instanceTunnel = new InstanceTunnelHandler($instance);
         $url = $instanceTunnel->getInternalUrl($request);
         if (!$url) {
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
