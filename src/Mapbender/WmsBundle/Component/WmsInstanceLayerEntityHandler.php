@@ -9,7 +9,7 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Router;
 
 /**
  * Description of WmsInstanceLayerEntityHandler
@@ -284,31 +284,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         return null;
     }
 
-    private function generateTunnelUrl($url)
-    {
-        if ($this->entity->getSourceInstance()->getSource()->getUsername()) {
-            $tunnelBaseUrl = $this->container->get('router')->generate(
-                'mapbender_core_application_instancetunnel',
-                array(
-                    'slug' => $this->entity->getSourceInstance()->getLayerset()->getApplication()->getSlug(),
-                    'instanceId' => $this->entity->getSourceInstance()->getId()),
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
-            // forward "request" param to tunnel (lower-case matching)
-            $params = array();
-            parse_str(parse_url($url, PHP_URL_QUERY), $params);
-            foreach ($params as $name => $value) {
-                if (strtolower($name) == 'request') {
-                    $fullQueryString = strstr($url, '?', false);
-                    return $tunnelBaseUrl . $fullQueryString;
-                }
-            }
-            throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
-        } else {
-            return $url;
-        }
-    }
-
     /**
      * Get a legend url from the layer's styles
      *
@@ -365,13 +340,21 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     public function getLegendConfig(WmsInstanceLayer $entity)
     {
         $styleLegendUrl = $this->getLegendUrlFromStyles($entity->getSourceItem());
-        $useTunnel = WmsSourceEntityHandler::useTunnel($entity->getSourceInstance()->getSource());
+        if (WmsSourceEntityHandler::useTunnel($entity->getSourceInstance()->getSource())) {
+            $tunnel = new InstanceTunnel($this->entity->getSourceInstance());
+            /** @var Router $router */
+            $router = $this->container->get('router');
+        } else {
+            $tunnel = null;
+            $router = null;
+        }
         $layerName = $entity->getSourceItem()->getName();
         if ($styleLegendUrl) {
-            if ($useTunnel) {
+            if ($tunnel) {
                 // request via tunnel, see ApplicationController::instanceTunnelAction
                 // instruct the tunnel action that the legend url should be plucked from styles
-                $publicLegendUrl = $this->generateTunnelUrl('?request=GetLegendGraphic&_glgmode=styles&layer=' . $layerName);
+                $tunnelInputUrl = '?request=GetLegendGraphic&_glgmode=styles&layer=' . $layerName;
+                $publicLegendUrl = $tunnel->generatePublicUrl($router, $tunnelInputUrl);
             } else {
                 $publicLegendUrl = $styleLegendUrl;
             }
@@ -381,10 +364,11 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         } else {
             $glgLegendUrl = $this->getLegendGraphicUrl($entity->getSourceItem());
             if ($glgLegendUrl) {
-                if ($useTunnel) {
+                if ($tunnel) {
                     // request via tunnel, see ApplicationController::instanceTunnelAction
                     // instruct the tunnel action that the legend url should be plucked from GetLegendGraphic
-                    $publicLegendUrl = $this->generateTunnelUrl('?request=GetLegendGraphic&_glgmode=GetLegendGraphic');
+                    $tunnelInputUrl = '?request=GetLegendGraphic&_glgmode=GetLegendGraphic';
+                    $publicLegendUrl = $tunnel->generatePublicUrl($router, $tunnelInputUrl);
                 } else {
                     $publicLegendUrl = $glgLegendUrl;
                 }

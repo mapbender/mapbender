@@ -11,7 +11,6 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
@@ -269,13 +268,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             }
         }
         if ($hide || $this->entity->getSource()->getUsername()) {
-            $url = $this->container->get('router')->generate(
-                'mapbender_core_application_instancetunnel',
-                array(
-                    'slug' => $this->entity->getLayerset()->getApplication()->getSlug(),
-                    'instanceId' => $this->entity->getId()),
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
+            $tunnel = new InstanceTunnel($this->entity);
+            $url = $tunnel->getPublicBaseUrl($this->container->get('router'));
             $configuration['options']['url'] = UrlUtil::validateUrl($url, $params, array());
             // remove ows proxy for a tunnel connection
             $configuration['options']['tunnel'] = true;
