@@ -268,8 +268,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             }
         }
         if ($hide || $this->entity->getSource()->getUsername()) {
-            $tunnel = new InstanceTunnel($this->entity);
-            $url = $tunnel->getPublicBaseUrl($this->container->get('router'));
+            $url = $this->getTunnel()->getPublicBaseUrl();
             $configuration['options']['url'] = UrlUtil::validateUrl($url, $params, array());
             // remove ows proxy for a tunnel connection
             $configuration['options']['tunnel'] = true;

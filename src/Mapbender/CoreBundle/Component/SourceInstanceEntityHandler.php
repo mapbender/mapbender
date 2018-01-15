@@ -2,14 +2,21 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\InstanceTunnel;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Description of SourceInstanceEntityHandler
  *
  * @author Paul Schmidt
+ *
+ * @property SourceInstance $entity
  */
 abstract class SourceInstanceEntityHandler extends EntityHandler
 {
+    /** @var InstanceTunnel */
+    protected $tunnel;
+
     /**
      * @param array $configuration
      * @return SourceInstance
@@ -48,4 +55,17 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * Returns an array with sensitive vendor specific parameters
      */
     abstract public function getSensitiveVendorSpecific();
+
+    /**
+     * @return InstanceTunnel
+     */
+    protected function getTunnel()
+    {
+        if (!$this->tunnel) {
+            /** @var UrlGeneratorInterface $router */
+            $router = $this->container->get('router');
+            $this->tunnel = new InstanceTunnel($router, $this->entity);
+        }
+        return $this->tunnel;
+    }
 }
