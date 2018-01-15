@@ -8,8 +8,8 @@ use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
-use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
-use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
+use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\WmsBundle\Component\InstanceTunnel;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -382,50 +382,17 @@ class ApplicationController extends Controller
             $postParams = array_merge($vendorspec, $postParams);
         }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
-        $requestType = null;
-        foreach ($getParams as $key => $value) {
-            if (strtolower($key) === 'request') {
-                $requestType = $value;
-                break;
-            }
-        }
+
+        $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
         if (!$requestType) {
             throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
         }
-        switch (strtolower($requestType)) {
-            case 'getmap':
-                $url = $source->getGetMap()->getHttpGet();
-                break;
-            case 'getfeatureinfo':
-                $url = $source->getGetFeatureInfo()->getHttpGet();
-                break;
-            case 'getlegendgraphic':
-                $glgMode = $request->query->get('_glgmode', null);
-                $layerName = $request->query->get('layer', null);
-                if (!$layerName) {
-                    $glgMode = null;
-                    $layerSource = null;
-                } else {
-                    $layerSource = WmsSourceEntityHandler::getLayerSourceByName($source, $layerName);
-                    if (!$layerSource) {
-                        $glgMode = null;
-                    }
-                }
-                switch ($glgMode) {
-                    default:
-                        $url = $source->getGetLegendGraphic()->getHttpGet();
-                        break;
-                    case 'styles':
-                        $url = WmsInstanceLayerEntityHandler::getLegendUrlFromStyles($layerSource);
-                        break;
-                    case 'GetLegendGraphic':
-                        $url = WmsInstanceLayerEntityHandler::getLegendGraphicUrl($layerSource);
-                        break;
-                }
-                break;
-            default:
-                throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
+        $instanceTunnel = new InstanceTunnel($instance);
+        $url = $instanceTunnel->getInternalUrl($request);
+        if (!$url) {
+            throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
+
         $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
