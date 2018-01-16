@@ -2,6 +2,8 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
+use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * Description of WmsInstanceConfiguration
@@ -66,6 +68,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
      */
     public $ratio = 1.25;
+
+    /** @var  string */
+    public $layerOrder;
     
     /**
      * Returns a version
@@ -296,6 +301,24 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     }
 
     /**
+     * @return string
+     */
+    public function getLayerOrder()
+    {
+        return $this->layerOrder;
+    }
+
+    /**
+     * @param string $layerOrder for valid values see WmsInstance constants LAYER_ORDER_...
+     * @return $this
+     */
+    public function setLayerOrder($layerOrder)
+    {
+        $this->layerOrder = $layerOrder;
+        return $this;
+    }
+
+    /**
      * @inheritdoc
      */
     public function toArray()
@@ -316,6 +339,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "dimensions" => $this->dimensions,
             "buffer" => $this->buffer,
             "ratio" => $this->ratio,
+            "layerOrder" => $this->layerOrder,
         );
     }
 
@@ -369,7 +393,75 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             if (isset($options["exception_format"])) {
                 $ico->exceptionformat = $options["exception_format"];
             }
+            if (isset($options["layerOrder"])) {
+                $ico->setLayerOrder($options["layerOrder"]);
+            }
         }
         return $ico;
+    }
+
+    /**
+     * Factory method, populates new instance from given entity
+     *
+     * @param WmsInstance $entity
+     * @return static
+     */
+    public static function fromEntity(WmsInstance $entity)
+    {
+        $options = new static();
+
+        $options->setUrl($entity->getSource()->getGetMap()->getHttpGet());
+        $dimensions = array();
+        foreach ($entity->getDimensions() as $dimension) {
+            if ($dimension->getActive()) {
+                $dimensions[] = $dimension->getConfiguration();
+                if ($dimension->getDefault()) {
+                    $help = array($dimension->getParameterName() => $dimension->getDefault());
+                    $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
+                }
+            }
+        }
+        $vendorspecifics = array();
+        foreach ($entity->getVendorspecifics() as $key => $vendorspec) {
+            $handler = new VendorSpecificHandler($vendorspec);
+            /* add to url only simple vendor specific with valid default value */
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
+                $vendorspecifics[] = $handler->getConfiguration();
+                $help             = $handler->getKvpConfiguration(null);
+                $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
+            }
+        }
+
+        $bboxes = $entity->getRootLayer()->getSourceItem()->getMergedBboxes();
+        // reformat bboxes to coordinate arrays, keyed on SRS
+        // @todo: when the same SRS comes up again, calculate the minimum box (current: last occurence per SRS wins)
+        $bboxArrays = array();
+        foreach ($bboxes as $bbox) {
+            $bboxArrays[$bbox->getSrs()] = array(
+                floatval($bbox->getMinx()),
+                floatval($bbox->getMiny()),
+                floatval($bbox->getMaxx()),
+                floatval($bbox->getMaxy()),
+            );
+        }
+
+        $options->setProxy($entity->getProxy())
+            ->setVisible($entity->getVisible())
+            ->setFormat($entity->getFormat())
+            ->setInfoformat($entity->getInfoformat())
+            ->setTransparency($entity->getTransparency())
+            ->setOpacity($entity->getOpacity() / 100)
+            ->setTiled($entity->getTiled())
+            ->setBbox($bboxArrays)
+            ->setDimensions($dimensions)
+            ->setBuffer($entity->getBuffer())
+            ->setRatio($entity->getRatio())
+            ->setVendorspecifics($vendorspecifics)
+            ->setVersion($entity->getSource()->getVersion())
+            ->setExceptionformat($entity->getExceptionformat())
+            ->setLayerOrder($entity->getLayerOrder())
+        ;
+
+        return $options;
     }
 }

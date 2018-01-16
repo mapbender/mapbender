@@ -1059,4 +1059,21 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     {
         return (string)$this->id;
     }
+
+    /**
+     * Returns a filtered array containing both the `latlonBounds` and boundingBox list (empty elements ommitted)
+     * @todo: add an $inherit param for forwarding to getLatlonBounds?
+     *
+     * @return BoundingBox[]
+     */
+    public function getMergedBboxes()
+    {
+        $bboxes = array();
+
+        $latlonBounds = $this->getLatlonBounds();
+        if ($latlonBounds) {
+            $bboxes[] = $latlonBounds;
+        }
+        return array_merge($bboxes, $this->getBoundingBoxes());
+    }
 }

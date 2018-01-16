@@ -9,30 +9,27 @@ namespace Mapbender\CoreBundle\Component;
 abstract class InstanceConfiguration
 {
     /**
-     * ORM\Column(type="string", nullable=true)
      * @var string
      */
     public $type;
 
     /**
-     * ORM\Column(type="string", nullable=ture)
      * @var string
      */
     public $title;
 
     /**
-     * ORM\Column(type="text", nullable=true)
-     * @var string
+     * @var InstanceConfigurationOptions
      */
     public $options;
 
     /**
-     * ORM\Column(type="text", nullable=false)
+     * @var array
      */
     public $children;
     
     /**
-     * ORM\Column(type="boolean", nullable=false)
+     * @var boolean
      */
     public $isBaseSource = true;
 
@@ -41,7 +38,6 @@ abstract class InstanceConfiguration
      */
     public function __construct()
     {
-        $this->options = array();
         $this->children = array();
     }
 
@@ -122,7 +118,7 @@ abstract class InstanceConfiguration
     /**
      * Returns options
      * 
-     * @return string
+     * @return InstanceConfigurationOptions|null
      */
     public abstract function getOptions();
 
@@ -137,7 +133,7 @@ abstract class InstanceConfiguration
     /**
      * Returns a title
      * 
-     * @return integer children
+     * @return array children
      */
     public abstract function getChildren();
     

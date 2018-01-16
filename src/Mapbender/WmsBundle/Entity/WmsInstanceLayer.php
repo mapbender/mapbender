@@ -566,4 +566,13 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         return (string) $this->getId();
     }
+
+    /**
+     * @return boolean
+     */
+    public function isRoot()
+    {
+        return !$this->getParent();
+    }
+
 }

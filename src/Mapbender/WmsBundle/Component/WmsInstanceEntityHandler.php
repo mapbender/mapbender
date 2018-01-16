@@ -1,7 +1,7 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\CoreBundle\Component\BoundingBox;
+use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
@@ -143,11 +143,33 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setDimensions($dimensions);
 
         $this->entity->setWeight(-1);
+        $this->initializeLayerOrder($this->entity);
         $wmslayer_root = $this->entity->getSource()->getRootlayer();
 
         $newInstanceLayerHandler = new WmsInstanceLayerEntityHandler($this->container, new WmsInstanceLayer());
         $newInstanceLayerHandler->create($this->entity, $wmslayer_root);
     }
+
+    /**
+     * Populates the layer order of an (assumed) newly created WmsInstance
+     *
+     * @param WmsInstance $entity
+     */
+    public function initializeLayerOrder(WmsInstance $entity)
+    {
+        $layerOrderDefaultKey = 'wms.default_layer_order';
+        if ($this->container->hasParameter($layerOrderDefaultKey)) {
+            $configuredDefaultLayerOrder = $this->container->getParameter($layerOrderDefaultKey);
+            $entity->setLayerOrder($configuredDefaultLayerOrder);
+        }
+        /**
+         * NOTE: the entity has a built-in default, so new instances will work fine even without setting
+         *       layer order explicitly
+         * @see WmsInstance::getLayerOrder()
+         */
+
+    }
+
 
     /**
      * @inheritdoc
@@ -157,6 +179,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         if ($this->entity->getRootlayer()) {
             self::createHandler($this->container, $this->entity->getRootlayer())->save();
         }
+        $layerSet = $this->entity->getLayerset();
         $num = 0;
         foreach ($this->entity->getLayerset()->getInstances() as $instance) {
             /** @var WmsInstanceEntityHandler $instHandler */
@@ -166,9 +189,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
             $num++;
         }
-        $this->container->get('doctrine')->getManager()->persist(
-            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        $application = $layerSet->getApplication();
+        $application->setUpdated(new \DateTime('now'));
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->container->get('doctrine')->getManager();
+        $entityManager->persist($application);
+        $entityManager->persist($this->entity);
     }
     
 
@@ -292,80 +318,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * @param WmsInstanceLayer $rootLayer
-     * @return BoundingBox[]
-     */
-    private function extractBoundingBoxes(WmsInstanceLayer $rootLayer)
-    {
-        $sourceItem = $rootLayer->getSourceItem();
-        $bboxes = array();
-        $latLonBounds = $sourceItem->getLatlonBounds();
-        if ($latLonBounds) {
-            $bboxes[] = $latLonBounds;
-        }
-        return array_merge($bboxes, $sourceItem->getBoundingBoxes());
-    }
-
-    /**
      * Modifies the bound entity, populates `configuration` attribute, returns nothing
      */
     public function generateConfiguration()
     {
-        $rootlayer = $this->entity->getRootlayer();
-        $srses = array();
-        foreach ($this->extractBoundingBoxes($rootlayer) as $bbox) {
-            $srses[$bbox->getSrs()] = array(
-                floatval($bbox->getMinx()),
-                floatval($bbox->getMiny()),
-                floatval($bbox->getMaxx()),
-                floatval($bbox->getMaxy()),
-            );
-        }
-        $wmsconf = new WmsInstanceConfiguration();
-        $wmsconf->setType(strtolower($this->entity->getType()));
-        $wmsconf->setTitle($this->entity->getTitle());
-        $wmsconf->setIsBaseSource($this->entity->isBasesource());
-
-        $options    = new WmsInstanceConfigurationOptions();
-        $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet());
-        $dimensions = array();
-        foreach ($this->entity->getDimensions() as $dimension) {
-            if ($dimension->getActive()) {
-                $dimensions[] = $dimension->getConfiguration();
-                if ($dimension->getDefault()) {
-                    $help = array($dimension->getParameterName() => $dimension->getDefault());
-                    $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
-                }
-            }
-        }
-        $vendorsecifics = array();
-        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            /* add to url only simple vendor specific with valid default value */
-            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
-                $vendorsecifics[] = $handler->getConfiguration();
-                $help             = $handler->getKvpConfiguration(null);
-                $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
-            }
-        }
-        $options->setProxy($this->entity->getProxy())
-            ->setVisible($this->entity->getVisible())
-            ->setFormat($this->entity->getFormat())
-            ->setInfoformat($this->entity->getInfoformat())
-            ->setTransparency($this->entity->getTransparency())
-            ->setOpacity($this->entity->getOpacity() / 100)
-            ->setTiled($this->entity->getTiled())
-            ->setBbox($srses)
-            ->setDimensions($dimensions)
-            ->setBuffer($this->entity->getBuffer())
-            ->setRatio($this->entity->getRatio())
-            ->setVendorspecifics($vendorsecifics)
-            ->setVersion($this->entity->getSource()->getVersion())
-            ->setExceptionformat($this->entity->getExceptionformat());
-
-        $wmsconf->setOptions($options);
-        $persistableConfig = $wmsconf->toArray();
-        $this->entity->setConfiguration($persistableConfig);
+        $this->entity->updateConfiguration();
     }
 
     protected function getRootLayerConfig()
