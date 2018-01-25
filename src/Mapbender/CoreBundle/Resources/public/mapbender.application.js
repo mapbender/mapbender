@@ -95,16 +95,11 @@ Mapbender.initElement = function(id, data) {
     mapbenderWidget(data.configuration, widgetId);
 };
 
-Mapbender.isDebugMode = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
 Mapbender.source = Mapbender.source || {};
 Mapbender.setup = function(){
 
     // Initialize all elements by calling their init function with their options
     $.each(Mapbender.configuration.elements, function(id, data){
-        if(Mapbender.isDebugMode){
-            Mapbender.initElement(id,data);
-            return;
-        }
         try {
             Error.stackTraceLimit = 30;
             Mapbender.initElement(id,data);
