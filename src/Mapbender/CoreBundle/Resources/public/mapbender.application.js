@@ -90,14 +90,11 @@ Mapbender.setup = function(){
     // Initialize all elements by calling their init function with their options
     $.each(Mapbender.configuration.elements, function(id, data){
         try {
+            Error.stackTraceLimit = 30;
             Mapbender.initElement(id,data);
         } catch(e) {
-            console.error('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.');
-            console.log('Error:', e);
-            console.log('Configuration:', data.configuration);
-            if(Error) {
-                console.log(Error().stack);
-            }
+            $.notify('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.', 'error');
+            console.error(e);            
         }
     });
 
