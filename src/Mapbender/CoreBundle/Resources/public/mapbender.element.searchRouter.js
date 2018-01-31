@@ -437,7 +437,6 @@
                 })
                 .on('mouseenter', function () {
                     var feature = $(this).data('feature').getFeature();
-                    console.log(layer);
 
                     if(feature.renderIntent !== 'select') {
                         self._hightlightFeature(feature, layer, 'temporary');
@@ -445,7 +444,6 @@
                 })
                 .on('mouseleave', function () {
                     var feature = $(this).data('feature').getFeature();
-                    console.log(feature.renderIntent);
 
                     if(feature.renderIntent !== 'select') {
                         self._hightlightFeature(feature, layer, 'default');
