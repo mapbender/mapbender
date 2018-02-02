@@ -15,7 +15,7 @@
         "mapbender/mapbender-icons": "1.x",
 
         "friendsofsymfony/jsrouting-bundle": "1.5.x",
-        "viscreation/vis-ui.js": "0.0.x",
+        "mapbender/vis-ui.js": "0.0.x",
         "wheregroup/joii": "3.x",
         "wheregroup/codemirror": "5.x",
         "components/underscore": "1.x",
