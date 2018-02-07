@@ -238,7 +238,7 @@ class ElementController extends Controller
             return new Response('', 205);
         } else {
             return array(
-                'form' => $form['type']->getForm()->createView(),
+                'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
                 'assets' => $form['assets']);
         }
