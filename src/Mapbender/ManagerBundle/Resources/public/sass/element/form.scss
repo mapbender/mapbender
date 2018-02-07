@@ -20,6 +20,10 @@
   .inputWrapper, select, .choiceExpandedSortable, .collectionContainer {
     width: 70%;
     color: $secondColor;
+
+    .validationMsgBox{
+      min-width: 28%;
+    }
   }
   .collectionContainer {
     position: relative;
