@@ -201,20 +201,7 @@ class Application
                 ),
             ),
         );
-        // Super-duper missing assets fix: collect all assets from all elements in all active MapbenderBundles
-        foreach ($this->container->get('kernel')->getBundles() as $bundle) {
-            $dummyElEntity = new ElementEntity();
-            if ($bundle instanceof MapbenderBundle) {
-                foreach ($bundle->getElements() as $elementClassName) {
-                    $_cln = "\\" . ltrim($elementClassName, "\\");
-                    $elementInstance = new $_cln($this, $this->container, $dummyElEntity);
-                    $assetSources[] = array(
-                        'object' => $elementInstance,
-                        'assets' => $elementInstance->listAssets(),
-                    );
-                }
-            }
-        }
+
         // Collect asset definitions from actual configured elements in the application
         /** @var Element[] $elements */
         foreach ($this->getElements() as $regionName => $elements) {
