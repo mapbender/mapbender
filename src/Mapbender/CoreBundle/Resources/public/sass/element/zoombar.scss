@@ -56,7 +56,7 @@
     .iconBig {
       padding-left: 31px;
       &:before {
-        @include opacityAlpha(0.7);
+        /* @include opacityAlpha(0.7); */
       }
       &:hover {
         &:before {
