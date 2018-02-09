@@ -320,9 +320,9 @@ $(function() {
     });
 
     function elementFormSubmit() {
-        var form = $("#elementForm"),
-            data = form.serialize(),
-            url = form.attr('action'),
+        var $form = $("#elementForm"),
+            data = $form.serialize(),
+            url = $form.attr('action'),
             self = this;
 
         $.ajax({
@@ -330,13 +330,13 @@ $(function() {
             method: 'POST',
             data: data,
             error: function (e, statusCode, message) {
-                alert(Mapbender.trans("mb.application.save.failure.general") + ' ' + message);
+                Mapbender.error(Mapbender.trans("mb.application.save.failure.general") + ' ' + message);
             },
             success: function(data) {
                 if (data.length > 0) {
-                    $(form.parent()).html( data );
+                    $form.parent().html( data );
                 } else {
-                    $("#elementForm").data('dirty', false);
+                    $form.data('dirty', false);
                     self.close();
                     window.location.reload();
                 }
