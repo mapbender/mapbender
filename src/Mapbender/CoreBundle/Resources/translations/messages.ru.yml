@@ -367,6 +367,8 @@ mb:
         text:
           title: Текст
           label: Текст
+          error:
+            notext: 'Text required'
       geometry:
         action:
           remove: 'Удалить геометрию'
