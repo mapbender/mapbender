@@ -331,7 +331,11 @@ class ElementClassesInspectCommand extends ContainerAwareCommand
         );
         foreach ($detectOverrides as $methodName => $messageStyle) {
             if ($this->detectMethodOverride($rc, $methodName)) {
-                $issues[] = "<$messageStyle>own {$methodName}</$messageStyle>";
+                $message = "<$messageStyle>own {$methodName}</$messageStyle>";
+                if ($issues && !(count($issues) % 2)) {
+                    $message = "\n$message";
+                }
+                $issues[] = $message;
             }
         }
         $parentClass = get_parent_class($element);
@@ -340,7 +344,7 @@ class ElementClassesInspectCommand extends ContainerAwareCommand
         } else {
             $parentNote = "";
         }
-        return trim(implode(', ', $issues) . "\n{$parentNote}", "\n");
+        return trim(trim(implode(', ', $issues), "\n") . "\n{$parentNote}", "\n");
     }
 
     protected function detectMethodOverride(\ReflectionClass $rc, $methodName)
