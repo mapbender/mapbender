@@ -552,8 +552,6 @@ abstract class Element
      *
      * E.g. "FantasticMethodNaming" => "fantastic_method_naming"
      *
-     * Will not work with multiple consecutive upper-case letters
-     *
      * @todo: naming, location
      *
      * @param $className
@@ -562,15 +560,10 @@ abstract class Element
      */
     protected static function getTemplateName($className)
     {
-        $className = preg_replace_callback(
-            '/[A-Z]+[^A-Z]+/',
-            function ($match) {
-                return "_".strtolower($match[0]);
-            },
-            $className
-        );
-        $className = substr($className,1);
-        return $className;
+        // insert underscores before upper case letter following lower-case
+        $underscored = preg_replace('/([^A-Z])([A-Z])/', '\\1_\\2', $className);
+        // lower-case the whole thing
+        return strtolower($underscored);
     }
 
     /**
