@@ -276,7 +276,7 @@ abstract class Element
      */
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return $this->getAutomaticTemplatePath($suffix);
+        return $this->getAutomaticTemplatePath($suffix, null, false);
     }
 
     /**
@@ -413,7 +413,7 @@ abstract class Element
      */
     public static function getType()
     {
-        return static::getAutomaticAdminType(true);
+        return static::getAutomaticAdminType(false);
     }
 
     /**
@@ -423,7 +423,7 @@ abstract class Element
      */
     public static function getFormTemplate()
     {
-        return static::getAutomaticTemplatePath('.html.twig', 'ElementAdmin');
+        return static::getAutomaticTemplatePath('.html.twig', 'ElementAdmin', false);
     }
 
     /**
