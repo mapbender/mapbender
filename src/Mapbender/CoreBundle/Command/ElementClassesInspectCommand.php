@@ -324,13 +324,14 @@ class ElementClassesInspectCommand extends ContainerAwareCommand
             $issues[] = "<comment>deprecated</comment>";
         }
         $detectOverrides = array(
-            'render',
-            'getType',
-            'getFormTemplate',
+            'getConfiguration' => 'error',
+            'render' => 'comment',
+            'getType'=> 'comment',
+            'getFormTemplate' => 'comment',
         );
-        foreach ($detectOverrides as $methodName) {
+        foreach ($detectOverrides as $methodName => $messageStyle) {
             if ($this->detectMethodOverride($rc, $methodName)) {
-                $issues[] = "<comment>own {$methodName}</comment>";
+                $issues[] = "<$messageStyle>own {$methodName}</$messageStyle>";
             }
         }
         $parentClass = get_parent_class($element);
