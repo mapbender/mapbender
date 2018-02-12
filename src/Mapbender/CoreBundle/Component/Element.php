@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
+use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -224,14 +225,44 @@ abstract class Element
      */
     public function render()
     {
-        return $this->container->get('templating')->render($this->getFrontendTemplatePath(),
-            array(
-                'element'       => $this,
-                'id'            => $this->getId(),
-                'entity'        => $this->entity,
-                'title'         => $this->getTitle(),
-                'configuration' => $this->getConfiguration()
-            ));
+        $defaultTemplateVars = array(
+            'element'       => $this,
+            'id'            => $this->getId(),
+            'entity'        => $this->entity,
+            'title'         => $this->getTitle(),
+            'application'   => $this->application,
+        );
+        $templateVars = array_replace($defaultTemplateVars, $this->getFrontendTemplateVars());
+        $templatePath = $this->getFrontendTemplatePath();
+
+        /** @var TwigEngine $templatingEngine */
+        $templatingEngine = $this->container->get('templating');
+        return $templatingEngine->render($templatePath, $templateVars);
+    }
+
+    /**
+     * Should return the variables available for the frontend template. By default, this
+     * is a single "configuration" value holding the entirety of the configuration from the element entity.
+     * Override this if you want to unravel / strip / extract / otherwise prepare specific values for your
+     * element template.
+     *
+     * NOTE: the default implementation of render automatically makes the following available:
+     * * "element" (Element component instance)
+     * * "application" (Application component instance)
+     * * "entity" (Element entity instance)
+     * * "id" (Element id, string)
+     * * "title" (Element title from entity, string)
+     *
+     * You do not need to, and should not, produce them yourself again. If you do, your values will replace
+     * the defaults!
+     *
+     * @return array
+     */
+    public function getFrontendTemplateVars()
+    {
+        return array(
+            'configuration' => $this->getConfiguration(),
+        );
     }
 
     /**
@@ -246,6 +277,21 @@ abstract class Element
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
         return $this->getAutomaticTemplatePath($suffix, null, false);
+    }
+
+    /**
+     * Should return the values available to the JavaScript client code. By default, this is the entirety
+     * of the "configuration" array from the element entity, which is insecure if your element configuration
+     * stores API keys, users / passwords embedded into URLs etc.
+     *
+     * If you have sensitive data anywhere near your element entity's configuration, you should override this
+     * method and emit only the values you need for your JavaScript to work.
+     *
+     * @return array
+     */
+    public function getPublicConfiguration()
+    {
+        return $this->getConfiguration();
     }
 
     /**
@@ -283,11 +329,15 @@ abstract class Element
     }
 
     /**
-     * Get the publicly exposed configuration, usually directly derived from
-     * the configuration field of the configuration entity. If you, for
-     * example, store passwords in your element configuration, you should
-     * override this method to return a cleaned up version of your
-     * configuration which can safely be exposed in the client.
+     * Get the configuration from the element entity.
+     *
+     * This should primarily be used for exporting / importing.
+     *
+     * You SHOULD NOT do transformations specifically for your twig template or your JavaScript here,
+     * there are now dedicated methods exactly for that (see getFrontendTemplateVars and getPublicConfiguration).
+     * Anything you do here in a method override needs to be verified against application export + reimport.
+     *
+     * The backend usually accesses the entity instance directly, so it won't be affected.
      *
      * @return array
      */
