@@ -329,11 +329,15 @@ abstract class Element
     }
 
     /**
-     * Get the publicly exposed configuration, usually directly derived from
-     * the configuration field of the configuration entity. If you, for
-     * example, store passwords in your element configuration, you should
-     * override this method to return a cleaned up version of your
-     * configuration which can safely be exposed in the client.
+     * Get the configuration from the element entity.
+     *
+     * This should primarily be used for exporting / importing.
+     *
+     * You SHOULD NOT do transformations specifically for your twig template or your JavaScript here,
+     * there are now dedicated methods exactly for that (see getFrontendTemplateVars and getPublicConfiguration).
+     * Anything you do here in a method override needs to be verified against application export + reimport.
+     *
+     * The backend usually accesses the entity instance directly, so it won't be affected.
      *
      * @return array
      */
