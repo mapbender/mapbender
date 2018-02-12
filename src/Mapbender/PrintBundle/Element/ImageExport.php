@@ -73,15 +73,6 @@ class ImageExport extends Element
     /**
      * @inheritdoc
      */
-    public function getConfiguration()
-    {
-        $config = parent::getConfiguration();
-        return $config;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
         return 'Mapbender\PrintBundle\Element\Type\ImageExportAdminType';

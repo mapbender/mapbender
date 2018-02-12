@@ -97,14 +97,6 @@ class WmcEditor extends Element
     /**
      * @inheritdoc
      */
-    public function getConfiguration()
-    {
-        return parent::getConfiguration();
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function render()
     {
         $config = $this->getConfiguration();
