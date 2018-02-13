@@ -276,7 +276,7 @@ abstract class Element
      */
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return $this->getAutomaticTemplatePath($suffix, null, false);
+        return $this->getAutomaticTemplatePath($suffix);
     }
 
     /**
@@ -413,7 +413,7 @@ abstract class Element
      */
     public static function getType()
     {
-        return static::getAutomaticAdminType(false);
+        return static::getAutomaticAdminType(null);
     }
 
     /**
@@ -423,7 +423,7 @@ abstract class Element
      */
     public static function getFormTemplate()
     {
-        return static::getAutomaticTemplatePath('.html.twig', 'ElementAdmin', false);
+        return static::getAutomaticTemplatePath('.html.twig', 'ElementAdmin', null);
     }
 
     /**
@@ -652,12 +652,16 @@ abstract class Element
      * @param string|null $resourceSection if null, will use third namespace component (i.e. first non-bundle component).
      *                    For elements in any conventional Mapbender bundle, this will be "Element".
      *                    We also use "ElementAdmin" in certain places though.
-     * @param bool $inherit (default true) allow inheriting template names from parent classes, excluding the (abstract)
-     *                    Element class itself
+     * @param bool|null $inherit allow inheriting template names from parent class, excluding the (abstract)
+     *                  Element class itself; null (default) for auto-decide (blacklist controlled)
      * @return string twig-style Bundle:Section:file_name.ext
      */
-    public static function getAutomaticTemplatePath($suffix = '.html.twig', $resourceSection = null, $inherit = true)
+    public static function getAutomaticTemplatePath($suffix = '.html.twig', $resourceSection = null, $inherit = null)
     {
+        if ($inherit === null) {
+            return static::getAutomaticTemplatePath($suffix, $resourceSection, static::autoDetectInheritanceRule());
+        }
+
         if ($inherit) {
             $cls = static::getNonAbstractBaseClassName();
         } else {
@@ -680,12 +684,15 @@ abstract class Element
      * E.g. for a Mapbender\FoodBundle\Element\LemonBomb element child class this will return the string
      * "Mapbender\FoodBundle\Element\Type\LemonBombAdminType"
      *
-     * @param bool $inherit (default true) allow inheriting admin type from parent classes, excluding the (abstract)
-     *                    Element class itself
+     * @param bool|null $inherit allow inheriting admin type from parent class, excluding the (abstract)
+     *                  Element class itself; null (default) for auto-decide (blacklist controlled)
      * @return string
      */
-    public static function getAutomaticAdminType($inherit = true)
+    public static function getAutomaticAdminType($inherit = null)
     {
+        if ($inherit === null) {
+            return static::getAutomaticAdminType(static::autoDetectInheritanceRule());
+        }
         if ($inherit) {
             $cls = static::getNonAbstractBaseClassName();
         } else {
@@ -723,5 +730,31 @@ abstract class Element
             }
         }
         return $nonAbstractBase;
+    }
+
+    /**
+     * Determines if admin type / template / frontend template will be inherited if one of the getAutomatic*
+     * methods is called with inherit = null.
+     *
+     * We do this because the intuitive default behavior (inherit everything from parent) is incompatible with
+     * a certain, small set of elements. These elements are blacklisted for inheritance here. If the calling
+     * class is one of them, or a child, we will not inherit admin type / templates (this method will return false).
+     * Otherwise we do.
+     *
+     * @return bool
+     */
+    protected static function autodetectInheritanceRule()
+    {
+        $inheritanceBlacklist = array(
+            'Mapbender\DataSourceBundle\Element\BaseElement',
+            'Mapbender\DigitizerBundle\Element',
+        );
+        $cls = get_called_class();
+        foreach ($inheritanceBlacklist as $noInheritClass) {
+            if (is_a($cls, $noInheritClass, true)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
