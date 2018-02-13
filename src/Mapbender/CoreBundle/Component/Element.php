@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
+use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -224,17 +225,73 @@ abstract class Element
      */
     public function render()
     {
-        $parts    = $this->classNameParts;
-        $template = $parts[0] . $parts[1] . ":" . $parts[2] . ":" . static::getTemplateName($parts[3]) . ".html.twig";
+        $defaultTemplateVars = array(
+            'element'       => $this,
+            'id'            => $this->getId(),
+            'entity'        => $this->entity,
+            'title'         => $this->getTitle(),
+            'application'   => $this->application,
+        );
+        $templateVars = array_replace($defaultTemplateVars, $this->getFrontendTemplateVars());
+        $templatePath = $this->getFrontendTemplatePath();
 
-        return $this->container->get('templating')->render($template,
-            array(
-                'element'       => $this,
-                'id'            => $this->getId(),
-                'entity'        => $this->entity,
-                'title'         => $this->getTitle(),
-                'configuration' => $this->getConfiguration()
-            ));
+        /** @var TwigEngine $templatingEngine */
+        $templatingEngine = $this->container->get('templating');
+        return $templatingEngine->render($templatePath, $templateVars);
+    }
+
+    /**
+     * Should return the variables available for the frontend template. By default, this
+     * is a single "configuration" value holding the entirety of the configuration from the element entity.
+     * Override this if you want to unravel / strip / extract / otherwise prepare specific values for your
+     * element template.
+     *
+     * NOTE: the default implementation of render automatically makes the following available:
+     * * "element" (Element component instance)
+     * * "application" (Application component instance)
+     * * "entity" (Element entity instance)
+     * * "id" (Element id, string)
+     * * "title" (Element title from entity, string)
+     *
+     * You do not need to, and should not, produce them yourself again. If you do, your values will replace
+     * the defaults!
+     *
+     * @return array
+     */
+    public function getFrontendTemplateVars()
+    {
+        return array(
+            'configuration' => $this->getConfiguration(),
+        );
+    }
+
+    /**
+     * Return twig-style BundleName:section:file_name.engine.twig path to template file.
+     *
+     * Base implementation automatically calculates this from the class name. Override if
+     * you cannot follow naming / placement conventions.
+     *
+     * @param string $suffix defaults to '.html.twig'
+     * @return string
+     */
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return $this->getAutomaticTemplatePath($suffix, null, false);
+    }
+
+    /**
+     * Should return the values available to the JavaScript client code. By default, this is the entirety
+     * of the "configuration" array from the element entity, which is insecure if your element configuration
+     * stores API keys, users / passwords embedded into URLs etc.
+     *
+     * If you have sensitive data anywhere near your element entity's configuration, you should override this
+     * method and emit only the values you need for your JavaScript to work.
+     *
+     * @return array
+     */
+    public function getPublicConfiguration()
+    {
+        return $this->getConfiguration();
     }
 
     /**
@@ -272,11 +329,15 @@ abstract class Element
     }
 
     /**
-     * Get the publicly exposed configuration, usually directly derived from
-     * the configuration field of the configuration entity. If you, for
-     * example, store passwords in your element configuration, you should
-     * override this method to return a cleaned up version of your
-     * configuration which can safely be exposed in the client.
+     * Get the configuration from the element entity.
+     *
+     * This should primarily be used for exporting / importing.
+     *
+     * You SHOULD NOT do transformations specifically for your twig template or your JavaScript here,
+     * there are now dedicated methods exactly for that (see getFrontendTemplateVars and getPublicConfiguration).
+     * Anything you do here in a method override needs to be verified against application export + reimport.
+     *
+     * The backend usually accesses the entity instance directly, so it won't be affected.
      *
      * @return array
      */
@@ -343,17 +404,16 @@ abstract class Element
      *************************************************************************/
 
     /**
-     * Get the element configuration form type.
+     * Get the element configuration form type. By default, this class needs to have the same name
+     * as the element, suffixed with "AdminType" and located in the Element\Type sub-namespace.
      *
-     * Override this method to provide a custom configuration form instead of
-     * the default YAML form.
+     * Override this method and return null to get a simple YAML entry form.
      *
      * @return string Administration type class name
      */
     public static function getType()
     {
-        $clsInfo = explode('\\', get_called_class());
-        return $clsInfo[0] . '\\' . $clsInfo[1] . '\\' . $clsInfo[2] . '\\Type\\' . $clsInfo[3] . 'AdminType';
+        return static::getAutomaticAdminType(false);
     }
 
     /**
@@ -363,8 +423,7 @@ abstract class Element
      */
     public static function getFormTemplate()
     {
-        $clsInfo = explode('\\', get_called_class());
-        return $clsInfo[0] .  $clsInfo[1] . ':' . $clsInfo[2] . 'Admin:' . static::getTemplateName($clsInfo[3]) . '.html.twig';
+        return static::getAutomaticTemplatePath('.html.twig', 'ElementAdmin', false);
     }
 
     /**
@@ -539,22 +598,22 @@ abstract class Element
     }
 
     /**
-     * Get template name by class name
+     * Converts a camel-case string to underscore-separated lower-case string
+     *
+     * E.g. "FantasticMethodNaming" => "fantastic_method_naming"
+     *
+     * @todo: naming, location
      *
      * @param $className
      * @return mixed
+     * @internal
      */
     protected static function getTemplateName($className)
     {
-        $className = preg_replace_callback(
-            '/[A-Z]+[^A-Z]+/',
-            function ($match) {
-                return "_".strtolower($match[0]);
-            },
-            $className
-        );
-        $className = substr($className,1);
-        return $className;
+        // insert underscores before upper case letter following lower-case
+        $underscored = preg_replace('/([^A-Z])([A-Z])/', '\\1_\\2', $className);
+        // lower-case the whole thing
+        return strtolower($underscored);
     }
 
     /**
@@ -567,5 +626,102 @@ abstract class Element
     public function updateAppConfig($configIn)
     {
         return $configIn;
+    }
+
+    ##### Automagic calculation for template paths and admin type ####
+
+    /**
+     * Generates an automatic template path for the element from its class name.
+     *
+     * The generated path is twig engine style, i.e.
+     * 'BundleClassName:section:template_name.engine-name.twig'
+     *
+     * The bundle name is auto-generated from the first two namespace components, e.g. "MabenderCoreBundle".
+     *
+     * The resource section (=subfolder in Resources/views) defaults to "Element" but can be supplied.
+     *
+     * The file name is the in-namespace class name lower-cased and & decamelized, plus the given $suffix,
+     * which defaults to '.html.twig'. E.g. "html_element.html.twig".
+     *
+     * E.g. for a Mapbender\FoodBundle\Element\LemonBomb element child class this will return
+     * "MapbenderFoodBundle:Element:lemon_bomb.html.twig".
+     * This would correspond to this file path:
+     * <mapbender-root>/src/Mapbender/FoodBundle/Resources/views/Element/lemon_bomb.html.twig
+     *
+     * @param string $suffix to be appended to the generated path (default: '.html.twig', try '.json.twig' etc)
+     * @param string|null $resourceSection if null, will use third namespace component (i.e. first non-bundle component).
+     *                    For elements in any conventional Mapbender bundle, this will be "Element".
+     *                    We also use "ElementAdmin" in certain places though.
+     * @param bool $inherit (default true) allow inheriting template names from parent classes, excluding the (abstract)
+     *                    Element class itself
+     * @return string twig-style Bundle:Section:file_name.ext
+     */
+    public static function getAutomaticTemplatePath($suffix = '.html.twig', $resourceSection = null, $inherit = true)
+    {
+        if ($inherit) {
+            $cls = static::getNonAbstractBaseClassName();
+        } else {
+            $cls = get_called_class();
+        }
+        $classParts = explode('\\', $cls);
+        $nameWithoutNamespace = implode('', array_slice($classParts, -1));
+
+        $bundleName = implode('', array_slice($classParts, 0, 2));  // e.g. "Mapbender" . "CoreBundle"
+        $resourceSection = $resourceSection ?: "Element"; // $classParts[2];
+        $resourcePathParts = array_slice($classParts, 3, -1);   // subfolder under section, often empty
+        $resourcePathParts[] = static::getTemplateName($nameWithoutNamespace);
+
+        return "{$bundleName}:{$resourceSection}:" . implode('/', $resourcePathParts) . $suffix;
+    }
+
+    /**
+     * Generates an automatic "AdminType" class name from the element class name.
+     *
+     * E.g. for a Mapbender\FoodBundle\Element\LemonBomb element child class this will return the string
+     * "Mapbender\FoodBundle\Element\Type\LemonBombAdminType"
+     *
+     * @param bool $inherit (default true) allow inheriting admin type from parent classes, excluding the (abstract)
+     *                    Element class itself
+     * @return string
+     */
+    public static function getAutomaticAdminType($inherit = true)
+    {
+        if ($inherit) {
+            $cls = static::getNonAbstractBaseClassName();
+        } else {
+            $cls = get_called_class();
+        }
+        $clsInfo = explode('\\', $cls);
+        $namespaceParts = array_slice($clsInfo, 0, -1);
+        // convention: AdminType classes are placed into the "<bundle>\Element\Type" namespace
+        $namespaceParts[] = "Type";
+        $bareClassName = implode('', array_slice($clsInfo, -1));
+        // convention: AdminType class name is the same as the element class name suffixed with AdminType
+        return implode('\\', $namespaceParts) . '\\' . $bareClassName . 'AdminType';
+    }
+
+    /**
+     * Walk up through the class hierarchy and return the name of the first-generation child class immediately
+     * inheriting from the abstract Element.
+     *
+     * @todo: location
+     *
+     * @return string fully qualified class name
+     */
+    protected static function getNonAbstractBaseClassName()
+    {
+        $nonAbstractBase = get_called_class();
+        $abstractRoot = __CLASS__;      // == "Mapbender\CoreBundle\Component\Element"
+        while (is_subclass_of($nonAbstractBase, $abstractRoot, true)) {
+            $parentClass = get_parent_class($nonAbstractBase);
+            if (is_subclass_of($parentClass, $abstractRoot, true)) {
+                // parent is still not abstract, good to delegate calls to
+                $nonAbstractBase = $parentClass;
+            } else {
+                // we're down all the way, next parent is now the abstract Element
+                break;
+            }
+        }
+        return $nonAbstractBase;
     }
 }

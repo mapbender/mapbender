@@ -330,7 +330,7 @@ class Application
             foreach ($elements as $element) {
                 $configuration['elements'][ $element->getId() ] = array(
                     'init'          => $element->getWidgetName(),
-                    'configuration' => $element->getConfiguration());
+                    'configuration' => $element->getPublicConfiguration());
             }
         }
 
