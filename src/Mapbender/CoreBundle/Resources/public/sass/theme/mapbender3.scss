@@ -69,9 +69,6 @@
       }
       > label, > span {
         margin-bottom: 0;
-        &:before{
-          @include opacityAlpha(0.7);
-        }
         &:hover{
           &:before{
             @include opacityAlpha(1);
