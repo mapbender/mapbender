@@ -5,11 +5,11 @@ namespace Mapbender\IntrospectionBundle\Command;
 
 
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\ApplicationToSources;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\SourceToApplications;
-use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\SourceToSourceInstances;
 use Mapbender\IntrospectionBundle\Component\Collector;
+use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataGroup;
+use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItem;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\TableHelper;
@@ -89,6 +89,7 @@ class SourcesCommand extends ContainerAwareCommand
             'Applications',
             'Instances',
         );
+
         $rows = array();
         foreach ($aggregate->getRelations() as $srcInfo) {
             foreach ($this->formatSourceRelation($srcInfo) as $subRow) {
@@ -131,112 +132,44 @@ class SourcesCommand extends ContainerAwareCommand
 
     /**
      * @param ApplicationToSources $appInfo
-     * @return string[] one row of cells
+     * @return string[][] a 2D grid of cells
      */
     protected function formatAppRelation(ApplicationToSources $appInfo)
     {
         $application = $appInfo->getApplication();
-        $appText = "{$application->getId()}: {$application->getTitle()}";
-        if (!$application->isPublished()) {
-            $appText = "<comment>$appText <note>(not published)</note></comment>";
-        }
-        $rowsOut = array();
-        $baseCells = array(
-            $appText,
-        );
+        $appItem = new DataGroup($application->getId(), $application->getTitle());
+        $appItem->applyStyleIf(!$application->isPublished(), 'comment', 'not published');
         foreach ($appInfo->getSourceRelations() as $srcRelation) {
-            $extraCells = $this->formatSourceInstanceRelation($srcRelation);
-            $rowsOut[] = array_merge($baseCells, $extraCells);
-            $baseCells = array("");
+            $source = $srcRelation->getSource();
+            $sourceItem = new DataGroup($source->getId(), $source->getTitle());
+            foreach ($srcRelation->getSourceInstances() as $sourceInstance) {
+                $instanceItem = new DataItem($sourceInstance->getId(), $sourceInstance->getTitle());
+                $instanceItem->applyStyleIf(!$sourceInstance->getEnabled(), 'comment', 'disabled');
+                $sourceItem->addItem($instanceItem);
+            }
+            $appItem->addItem($sourceItem);
         }
-        return $rowsOut;
-    }
-
-    /**
-     * @param ApplicationToSources $appRelation
-     * @return string[] two cells of formatted text
-     */
-    protected function formatAppRelationForSource($appRelation)
-    {
-        $app = $appRelation->getApplication();
-        $appBaseText = "{$app->getId()}: {$app->getTitle()}";
-        $appText = $this->formatApplicationText($appBaseText, $app->isPublished());
-
-        $instanceTexts = array();
-        foreach ($appRelation->getSourceInstances() as $sourceInstance) {
-            $instanceTexts[] = $this->formatSourceInstanceText($sourceInstance, false);
-        }
-        if (!$instanceTexts) {
-            return array("$appText", "<error>-- none --</error>");
-        } else {
-            $appRows = array_pad(array($appText), count($instanceTexts), "");
-            return array(implode("\n", $appRows), implode("\n", $instanceTexts));
-        }
+        return $appItem->toGrid();
     }
 
     protected function formatSourceRelation(SourceToApplications $relation)
     {
         $source = $relation->getSource();
-        $rowsOut = array();
-        $baseCells = array(
-            $this->formatSourceText($source),
-        );
+
+        $sourceGroup = new DataGroup($source->getId(), $source->getTitle());
         foreach ($relation->getApplicationRelations() as $appRelation) {
-            $extraCells = $this->formatAppRelationForSource($appRelation);
-            $rowsOut[] = array_merge($baseCells, $extraCells);
-            $baseCells = array("");
-        }
-        return $rowsOut;
-    }
+            $app = $appRelation->getApplication();
+            $appItem = new DataGroup($app->getId(), $app->getTitle());
+            $appItem->applyStyleIf(!$app->isPublished(), 'comment', 'not published');
+            $sourceGroup->addItem($appItem);
 
-    protected function formatSourceInstanceRelation(SourceToSourceInstances $relation)
-    {
-        $sourceText = $this->formatSourceText($relation->getSource());
-        $instanceTexts = array();
-        foreach ($relation->getSourceInstances() as $sourceInstance) {
-            $instanceTexts[] = $this->formatSourceInstanceText($sourceInstance, false);
+            foreach ($appRelation->getSourceInstances() as $sourceInstance) {
+                $instanceItem = new DataItem($sourceInstance->getId(), $sourceInstance->getTitle());
+                $instanceItem->applyStyleIf(!$sourceInstance->getEnabled(), 'comment', 'disabled');
+                $appItem->addItem($instanceItem);
+            }
         }
-        if (!$instanceTexts) {
-            return array("$sourceText", "<error>-- none --</error>");
-        } else {
-            $appRows = array_pad(array($sourceText), count($instanceTexts), "");
-            return array(implode("\n", $appRows), implode("\n", $instanceTexts));
-        }
-    }
-
-    protected static function formatSourceText(Source $source, $enabled = true)
-    {
-        $baseText = "{$source->getId()}: {$source->getTitle()}";
-        if (!$enabled) {
-            return "<comment>{$baseText} <note>(disabled)</note></comment>";
-        } else {
-            return $baseText;
-        }
-    }
-
-    protected static function formatApplicationText($text, $published)
-    {
-        if (!$published) {
-            return "<comment>$text <note>(not published)</note></comment>";
-        } else {
-            return $text;
-        }
-    }
-
-    protected static function formatSourceInstanceText(SourceInstance $sourceInstance, $includeSourceId = true)
-    {
-        if ($includeSourceId) {
-            $sourceId = $sourceInstance->getSource()->getId();
-            $sourceIdText = "(src {$sourceId})";
-        } else {
-            $sourceIdText = "";
-        }
-        $baseText = "{$sourceInstance->getId()}{$sourceIdText}: {$sourceInstance->getTitle()}";
-        if ($sourceInstance->getEnabled()) {
-            return $baseText;
-        } else {
-            return "<comment>$baseText <note>(disabled)</note></comment>";
-        }
+        return $sourceGroup->toGrid();
     }
 
     /**
