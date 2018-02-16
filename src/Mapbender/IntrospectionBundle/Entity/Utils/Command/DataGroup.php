@@ -49,18 +49,31 @@ class DataGroup extends DataItem
     }
 
     /**
+     * Recursively dump this item and all its children into an array structure, where each node only has
+     * 'id', 'name' and 'items'.
+     * If you provide $itemTypeLabels, the 'items' subkey will be renamed, top down, until all provided
+     * labels have been used. Then it's back to 'items'.
      *
+     * @param string[] $itemTypeLabels
+     * @return array
      */
-    public function toArray()
+    public function toArray($itemTypeLabels = array())
     {
         $baseValues = parent::toArray();
+        if (!empty($itemTypeLabels[0])) {
+            $currentItemTypeLabel = $itemTypeLabels[0];
+            $subTypeLabels = array_slice($itemTypeLabels, 1);
+        } else {
+            $currentItemTypeLabel = 'item';
+            $subTypeLabels = array();
+        }
         if ($this->items) {
             $subValues = array();
             foreach ($this->items as $subItem) {
-                $subValues[] = $subItem->toArray();
+                $subValues[] = $subItem->toArray($subTypeLabels);
             }
             return array_replace($baseValues, array(
-                'items' => $subValues,
+                $currentItemTypeLabel => $subValues,
             ));
         } else {
             return $baseValues;

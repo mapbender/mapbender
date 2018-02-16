@@ -10,6 +10,7 @@ use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\SourceToApplicat
 use Mapbender\IntrospectionBundle\Component\Collector;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataGroup;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItem;
+use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataRootGroup;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\TableHelper;
@@ -60,20 +61,16 @@ class SourcesCommand extends ContainerAwareCommand
             'Sources',
             'Instances',
         );
-        $rows = array();
+        $tree = new DataRootGroup();
         foreach ($aggregate->getRelations(true) as $appInfo) {
-            foreach ($this->formatAppRelation($appInfo) as $subRow) {
-                $rows[] = $subRow;
-            }
+            $tree->addItem($this->collectAppRelation($appInfo));
         }
         foreach ($aggregate->getRelations(false) as $appInfo) {
-            foreach ($this->formatAppRelation($appInfo) as $subRow) {
-                $rows[] = $subRow;
-            }
+            $tree->addItem($this->collectAppRelation($appInfo));
         }
 
         if (!$input->getOption('unused-only')) {
-            $this->renderTable($output, $headers, $rows);
+            $this->renderTable($output, $headers, $tree->toGrid());
         }
         if (!$input->getOption('no-unused')) {
             $this->displayUnusedSources($output, $aggregate->getUnusedSources());
@@ -90,14 +87,12 @@ class SourcesCommand extends ContainerAwareCommand
             'Instances',
         );
 
-        $rows = array();
+        $tree = new DataRootGroup();
         foreach ($aggregate->getRelations() as $srcInfo) {
-            foreach ($this->formatSourceRelation($srcInfo) as $subRow) {
-                $rows[] = $subRow;
-            }
+            $tree->addItem($this->collectSourceRelation($srcInfo));
         }
         if (!$input->getOption('unused-only')) {
-            $this->renderTable($output, $headers, $rows);
+            $this->renderTable($output, $headers, $tree->toGrid());
         }
         if (!$input->getOption('no-unused')) {
             $this->displayUnusedSources($output, $aggregate->getUnusedSources());
@@ -132,9 +127,9 @@ class SourcesCommand extends ContainerAwareCommand
 
     /**
      * @param ApplicationToSources $appInfo
-     * @return string[][] a 2D grid of cells
+     * @return DataGroup
      */
-    protected function formatAppRelation(ApplicationToSources $appInfo)
+    protected function collectAppRelation(ApplicationToSources $appInfo)
     {
         $application = $appInfo->getApplication();
         $appItem = new DataGroup($application->getId(), $application->getTitle());
@@ -149,10 +144,14 @@ class SourcesCommand extends ContainerAwareCommand
             }
             $appItem->addItem($sourceItem);
         }
-        return $appItem->toGrid();
+        return $appItem;
     }
 
-    protected function formatSourceRelation(SourceToApplications $relation)
+    /**
+     * @param SourceToApplications $relation
+     * @return DataGroup
+     */
+    protected function collectSourceRelation(SourceToApplications $relation)
     {
         $source = $relation->getSource();
 
@@ -169,13 +168,13 @@ class SourcesCommand extends ContainerAwareCommand
                 $appItem->addItem($instanceItem);
             }
         }
-        return $sourceGroup->toGrid();
+        return $sourceGroup;
     }
 
     /**
      * @param OutputInterface $output
      * @param string[] $headers
-     * @param array[] $rows
+     * @param string[][] $rows
      */
     protected function renderTable(OutputInterface $output, $headers, $rows)
     {

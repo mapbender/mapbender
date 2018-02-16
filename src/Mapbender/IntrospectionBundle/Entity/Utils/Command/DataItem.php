@@ -120,12 +120,15 @@ class DataItem
      *
      * @return string[]
      */
-    public function toArray()
+    public function toArray($_unusedLabels = null)
     {
-        return array_filter(array(
+        $mandatory = array(
             'id'    => $this->id,
             'name'  => $this->name,
+        );
+        $optional = array(
             'modifiers' => $this->modifiers,
-        ));
+        );
+        return $mandatory + array_filter($optional);
     }
 }
