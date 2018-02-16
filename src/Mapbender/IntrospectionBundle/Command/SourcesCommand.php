@@ -51,56 +51,81 @@ class SourcesCommand extends ContainerAwareCommand
         $output->getFormatter()->setStyle('note', $noteStyle);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function executeByApp(InputInterface $input, OutputInterface $output)
     {
         $collector = new Collector($this->getContainer());
-        if ($this->bucketBy == 'application') {
-            $aggregate = $collector->collectApplicationInfo();
-            $headers = array(
-                'Application',
-                'Sources',
-                'Instances',
-            );
-            $rows = array();
-            foreach ($aggregate->getRelations(true) as $appInfo) {
-                foreach ($this->formatAppRelation($appInfo) as $subRow) {
-                    $rows[] = $subRow;
-                }
+        $aggregate = $collector->collectApplicationInfo();
+        $headers = array(
+            'Application',
+            'Sources',
+            'Instances',
+        );
+        $rows = array();
+        foreach ($aggregate->getRelations(true) as $appInfo) {
+            foreach ($this->formatAppRelation($appInfo) as $subRow) {
+                $rows[] = $subRow;
             }
-            foreach ($aggregate->getRelations(false) as $appInfo) {
-                foreach ($this->formatAppRelation($appInfo) as $subRow) {
-                    $rows[] = $subRow;
-                }
+        }
+        foreach ($aggregate->getRelations(false) as $appInfo) {
+            foreach ($this->formatAppRelation($appInfo) as $subRow) {
+                $rows[] = $subRow;
             }
-            $unusedSources = $aggregate->getUnusedSources();
-        } else {
-            $aggregate = $collector->collectSourceInfo();
-            $headers = array(
-                'Source',
-                'Applications',
-                'Instances',
-            );
-            $rows = array();
-            foreach ($aggregate->getRelations() as $srcInfo) {
-                foreach ($this->formatSourceRelation($srcInfo) as $subRow) {
-                    $rows[] = $subRow;
-                }
+        }
+
+        if (!$input->getOption('unused-only')) {
+            $this->renderTable($output, $headers, $rows);
+        }
+        if (!$input->getOption('no-unused')) {
+            $this->displayUnusedSources($output, $aggregate->getUnusedSources());
+        }
+    }
+
+    protected function executeBySource(InputInterface $input, OutputInterface $output)
+    {
+        $collector = new Collector($this->getContainer());
+        $aggregate = $collector->collectSourceInfo();
+        $headers = array(
+            'Source',
+            'Applications',
+            'Instances',
+        );
+        $rows = array();
+        foreach ($aggregate->getRelations() as $srcInfo) {
+            foreach ($this->formatSourceRelation($srcInfo) as $subRow) {
+                $rows[] = $subRow;
             }
-            $unusedSources = $aggregate->getUnusedSources();
         }
         if (!$input->getOption('unused-only')) {
             $this->renderTable($output, $headers, $rows);
         }
         if (!$input->getOption('no-unused')) {
-            if ($unusedSources) {
-                ksort($unusedSources);
-                $output->writeln("<comment>Unused sources:</comment>");
-                foreach ($unusedSources as $id => $unusedSource) {
-                    $output->writeln("  $id: {$unusedSource->getTitle()}");
-                }
-            } else {
-                $output->writeln("<info>No unused sources!</info>");
+            $this->displayUnusedSources($output, $aggregate->getUnusedSources());
+        }
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param Source[] $sources
+     */
+    protected function displayUnusedSources(OutputInterface $output, $sources)
+    {
+        if ($sources) {
+            ksort($sources);
+            $output->writeln("<comment>Unused sources:</comment>");
+            foreach ($sources as $id => $unusedSource) {
+                $output->writeln("  $id: {$unusedSource->getTitle()}");
             }
+        } else {
+            $output->writeln("<info>No unused sources!</info>");
+        }
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        if ($this->bucketBy == 'application') {
+            $this->executeByApp($input, $output);
+        } else {
+            $this->executeBySource($input, $output);
         }
     }
 
