@@ -4,19 +4,15 @@ namespace Mapbender\IntrospectionBundle\Component\Aggregator;
 
 
 use Mapbender\IntrospectionBundle\Component\WorkingSet;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
  * Collects relational information many sources <=> many applications from the source perspective.
  *
  */
-class Source
+class Source extends Base
 {
     /** @var Relation\SourceToApplications[] */
     protected $relations;
-
-    /** @var \Mapbender\CoreBundle\Entity\Source[] */
-    protected $unusedSources;
 
     /**
      * @param Relation\SourceToApplications[] $relationBuckets
@@ -25,7 +21,7 @@ class Source
     protected function __construct($relationBuckets, $unusedSources)
     {
         $this->relations = $relationBuckets;
-        $this->unusedSources = $unusedSources;
+        parent::__construct($unusedSources);
     }
 
     /**
@@ -65,28 +61,5 @@ class Source
     public function getRelations()
     {
         return $this->relations;
-    }
-
-    /**
-     * @return \Mapbender\CoreBundle\Entity\Source[]
-     */
-    public function getUnusedSources()
-    {
-        return $this->unusedSources;
-    }
-
-    /**
-     * @param \Mapbender\CoreBundle\Entity\Application $application
-     * @return SourceInstance[]
-     */
-    protected static function getLayerSetInstances($application)
-    {
-        $rv = array();
-        foreach ($application->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
-                $rv[] = $instance;
-            }
-        }
-        return $rv;
     }
 }

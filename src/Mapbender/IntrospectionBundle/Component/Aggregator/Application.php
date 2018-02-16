@@ -3,19 +3,15 @@
 namespace Mapbender\IntrospectionBundle\Component\Aggregator;
 
 use Mapbender\IntrospectionBundle\Component\WorkingSet;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
  * Collects relational information many applications <=> many sources from the application perspective.
  *
  */
-class Application
+class Application extends Base
 {
     /** @var Relation\ApplicationToSources[][] */
-    protected $applicationInformation;
-
-    /** @var \Mapbender\CoreBundle\Entity\Source[] */
-    protected $unusedSources;
+    protected $relationBuckets;
 
     /**
      * @param Relation\ApplicationToSources[][] $applicationRelationBuckets
@@ -23,8 +19,8 @@ class Application
      */
     protected function __construct($applicationRelationBuckets, $unusedSources)
     {
-        $this->applicationInformation = $applicationRelationBuckets;
-        $this->unusedSources = $unusedSources;
+        $this->relationBuckets = $applicationRelationBuckets;
+        parent::__construct($unusedSources);
     }
 
     /**
@@ -67,32 +63,9 @@ class Application
     public function getRelations($published = true)
     {
         if ($published) {
-            return $this->applicationInformation['published'];
+            return $this->relationBuckets['published'];
         } else {
-            return $this->applicationInformation['unpublished'];
+            return $this->relationBuckets['unpublished'];
         }
-    }
-
-    /**
-     * @return \Mapbender\CoreBundle\Entity\Source[]
-     */
-    public function getUnusedSources()
-    {
-        return $this->unusedSources;
-    }
-
-    /**
-     * @param \Mapbender\CoreBundle\Entity\Application $application
-     * @return SourceInstance[]
-     */
-    protected static function getLayerSetInstances($application)
-    {
-        $rv = array();
-        foreach ($application->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
-                $rv[] = $instance;
-            }
-        }
-        return $rv;
     }
 }
