@@ -27,9 +27,8 @@ use Symfony\Component\HttpKernel\Kernel;
  * * (overridden) AdminType class != automatically calculated AdminType class (to detect inheritance issues)
  * * (overridden) form template != automatically calculated form template (to detect inheritance / convention issues)
  *
- * @package Mapbender\CoreBundle\Command
  */
-class ElementClassesInspectCommand extends ContainerAwareCommand
+class ElementClassesCommand extends ContainerAwareCommand
 {
     /** @var  Application */
     protected static $dummyApplication;
