@@ -7,8 +7,10 @@ use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\FormRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Form\FormTypeInterface;
 
 /**
  * Base class for all Mapbender elements.
@@ -536,11 +538,13 @@ abstract class Element
                 'css' => array(
                     'components/codemirror/lib/codemirror.css'));
         } else {
-            $type = new $configurationFormType();
+            $type = self::getAdminFormType($configurationFormType, $container);
+
             $options = array('application' => $application);
             if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
                 $options['element'] = $element;
             }
+
             $formType->add('configuration', $type, $options);
             $formTheme = $class::getFormTemplate();
             $formAssets = $class::getFormAssets();
@@ -550,6 +554,27 @@ abstract class Element
             'form' => $formType->getForm(),
             'theme' => $formTheme,
             'assets' => $formAssets);
+    }
+
+    /**
+     * Get admin form object
+     *
+     * @param string $configurationFormType
+     * @param ContainerInterface $container
+     * @return $type
+     */
+    protected static function getAdminFormType($configurationFormType, ContainerInterface $container)
+    {
+        $formTypeId = 'mapbender.form_type.element.' . $configurationFormType::getName();
+        $serviceExists = $container->has($formTypeId);
+
+        if (false !== $serviceExists) {
+            $adminFormType = $container->get($formTypeId);
+        } else {
+            $adminFormType = new $configurationFormType();
+        }
+
+        return $adminFormType;
     }
 
     /**
