@@ -118,17 +118,12 @@ class DataItem
     /**
      * Back to array with keys id and name. Style has no effect. This is for rendering YAML or JSON.
      *
+     * @param DataItemFormatting $format
+     *
      * @return string[]
      */
-    public function toArray($_unusedLabels = null)
+    public function toArray(DataItemFormatting $format, $_unusedLabels = null)
     {
-        $mandatory = array(
-            'id'    => $this->id,
-            'name'  => $this->name,
-        );
-        $optional = array(
-            'modifiers' => $this->modifiers,
-        );
-        return $mandatory + array_filter($optional);
+        return $format->apply($this->id, $this->name, $this->modifiers);
     }
 }

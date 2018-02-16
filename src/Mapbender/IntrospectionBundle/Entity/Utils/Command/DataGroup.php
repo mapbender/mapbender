@@ -54,29 +54,44 @@ class DataGroup extends DataItem
      * If you provide $itemTypeLabels, the 'items' subkey will be renamed, top down, until all provided
      * labels have been used. Then it's back to 'items'.
      *
+     * @param DataItemFormatting $format
      * @param string[] $itemTypeLabels
      * @return array
      */
-    public function toArray($itemTypeLabels = array())
+    public function toArray(DataItemFormatting $format, $itemTypeLabels = array())
     {
-        $baseValues = parent::toArray();
-        if (!empty($itemTypeLabels[0])) {
-            $currentItemTypeLabel = $itemTypeLabels[0];
-            $subTypeLabels = array_slice($itemTypeLabels, 1);
-        } else {
-            $currentItemTypeLabel = 'item';
-            $subTypeLabels = array();
+        $baseValues = parent::toArray($format);
+        $children = $this->childrenToArray($format, array_slice($itemTypeLabels, 1));
+        if ($children) {
+            if (!empty($itemTypeLabels[0])) {
+                $currentItemTypeLabel = $itemTypeLabels[0];
+            } else {
+                $currentItemTypeLabel = 'items';
+            }
+            $baseValues[$currentItemTypeLabel] = $children;
         }
+        return $baseValues;
+    }
+
+    /**
+     * @param DataItemFormatting $format
+     * @param string[] $subItemTypeLabels
+     * @return array
+     */
+    public function childrenToArray(DataItemFormatting $format, $subItemTypeLabels = array())
+    {
         if ($this->items) {
             $subValues = array();
             foreach ($this->items as $subItem) {
-                $subValues[] = $subItem->toArray($subTypeLabels);
+                if ($format->hoistIds) {
+                    $subValues[$subItem->id] = $subItem->toArray($format, $subItemTypeLabels);
+                } else {
+                    $subValues[] = $subItem->toArray($format, $subItemTypeLabels);
+                }
             }
-            return array_replace($baseValues, array(
-                $currentItemTypeLabel => $subValues,
-            ));
+            return $subValues;
         } else {
-            return $baseValues;
+            return array();
         }
     }
 }

@@ -20,11 +20,11 @@ class DataRootGroup extends DataGroup
     /**
      * @inheritdoc
      */
-    public function toArray($dataTypeLabels = array())
+    public function toArray(DataItemFormatting $format, $dataTypeLabels = array())
     {
         $list = array();
         foreach ($this->items as $item) {
-            $list[] = $item->toArray($dataTypeLabels);
+            $list[] = $item->toArray($format, $dataTypeLabels);
         }
         return $list;
     }
@@ -34,6 +34,8 @@ class DataRootGroup extends DataGroup
      */
     public function toGrid()
     {
+        // we do not have any data to add, so the column width of the grid doesn't change here
+        // => perform trivial bulk list merging
         $subGrids = array();
         foreach ($this->items as $item) {
             $subGrids[] = $item->toGrid();
