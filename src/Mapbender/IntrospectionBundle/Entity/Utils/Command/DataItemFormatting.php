@@ -66,10 +66,10 @@ class DataItemFormatting
     public function mungeFlags($flagsIn)
     {
         if ($this->embedFlags) {
-            return array_values($flagsIn);
+            return $flagsIn;
         } elseif ($this->flagSubkey && $flagsIn) {
             return array(
-                $this->flagSubkey => array_values($flagsIn),
+                $this->flagSubkey => $flagsIn,
             );
         } else {
             return array();

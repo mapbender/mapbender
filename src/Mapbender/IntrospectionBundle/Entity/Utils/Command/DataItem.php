@@ -20,19 +20,21 @@ class DataItem
     /** @var string */
     protected $wrapStyle;
     /** @var string[] */
-    protected $modifiers;
+    protected $note;
+    /** @var string[] */
+    protected $flags;
 
     /**
      * @param string $id
      * @param string $name
-     * @param string[] $modifiers
+     * @param string[] $flags
      * @param string|null $wrapStyle Symfony OutputFormatter style reference, try "comment", "info", "error" etc.
      */
-    public function __construct($id, $name, $modifiers = array(), $wrapStyle = null)
+    public function __construct($id, $name, $flags = array(), $wrapStyle = null)
     {
         $this->id = strval($id);
         $this->name = strval($name);
-        $this->modifiers = array_unique($modifiers) ?: array();
+        $this->flags = $flags ?: array();
         $this->setWrapStyle($wrapStyle);
     }
 
@@ -41,22 +43,45 @@ class DataItem
      * but is ignored in array conversion (yaml / json).
      *
      * @param string|null $wrapStyle Symfony OutputFormatter style reference, try "comment", "info", "error" etc.
+     * @param string|null $explanation will be displayed in brackets to explain the highlighting
      */
-    public function setWrapStyle($wrapStyle = null)
+    public function setWrapStyle($wrapStyle = null, $explanation = null)
     {
         $this->wrapStyle = $wrapStyle;
+        if ($wrapStyle && $explanation) {
+            $this->setNote($explanation);
+        }
     }
 
     /**
-     * Add a modifier. This should be a short displayable text.
-     * In table rendering, we put all modifiers into brackets after the item name, and apply <note> highlighting.
-     * For array / yaml / json representation, these modifiers will be placed into the node array structure directly.
-     *
-     * @param string $modifier
+     * @param string|null $note
      */
-    public function addModifier($modifier)
+    public function setNote($note)
     {
-        $this->modifiers = array_unique(array_merge($this->modifiers, (array)$modifier));
+        $this->note = $note;
+    }
+
+    /**
+     * Add a flag, named with a value. This name => value association will be exported raw in ->toArray mode.
+     * For table rendering, the flag is only checked for truthiness. A highlight style is added for truthy or falsy
+     * (or theoretically both), and an explanation can be given that will be displayed after the "name", in brackets,
+     * which should very briefly identify the reason why the item is highlighted. This explanation is only displayed
+     * if there is any highlighting.
+     *
+     * @param string $name
+     * @param mixed $rawValue
+     * @param string|null $truthyStyle applied in table cell if $rawValue truthy
+     * @param string|null $falsyStyle applied in table cell if $rawValue falsy
+     * @param string|null $explanation displayed in table cell if any style applied
+     */
+    public function addFlag($name, $rawValue, $truthyStyle, $falsyStyle, $explanation)
+    {
+        $this->flags[$name] = $rawValue;
+        if ($rawValue && $truthyStyle) {
+            $this->setWrapStyle($truthyStyle, $explanation);
+        } elseif (!$rawValue && $falsyStyle) {
+            $this->setWrapStyle($falsyStyle, $explanation);
+        }
     }
 
     /**
@@ -64,14 +89,14 @@ class DataItem
      *
      * @param boolean $predicate
      * @param string $style
-     * @param string|null $modifier optional
+     * @param string|null $flag optional
      */
-    public function applyStyleIf($predicate, $style, $modifier)
+    private function applyStyleIf($predicate, $style, $flag)
     {
         if ($predicate) {
             $this->setWrapStyle($style);
-            if ($modifier) {
-                $this->addModifier($modifier);
+            if ($flag) {
+                $this->addFlag($flag);
             }
         }
     }
@@ -94,8 +119,8 @@ class DataItem
         } else {
             $baseText = $this->name;
         }
-        if ($this->modifiers && $includeModifiers) {
-            $baseText .= ' <note>(' . implode(',', $this->modifiers) . ')</note>';
+        if ($this->note && $includeModifiers) {
+            $baseText .= ' <note>(' . implode(',', (array)$this->note) . ')</note>';
         }
 
         if ($this->wrapStyle) {
@@ -124,6 +149,6 @@ class DataItem
      */
     public function toArray(DataItemFormatting $format, $_unusedLabels = null)
     {
-        return $format->apply($this->id, $this->name, $this->modifiers);
+        return $format->apply($this->id, $this->name, $this->flags);
     }
 }

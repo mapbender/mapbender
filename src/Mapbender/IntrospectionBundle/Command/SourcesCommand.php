@@ -187,13 +187,14 @@ class SourcesCommand extends ContainerAwareCommand
     {
         $application = $appInfo->getApplication();
         $appItem = new DataGroup($application->getId(), $application->getTitle());
-        $appItem->applyStyleIf(!$application->isPublished(), 'comment', 'not published');
+        $appItem->addFlag('publised', $application->isPublished(), null, 'comment', 'not published');
+
         foreach ($appInfo->getSourceRelations() as $srcRelation) {
             $source = $srcRelation->getSource();
             $sourceItem = new DataGroup($source->getId(), $source->getTitle());
             foreach ($srcRelation->getSourceInstances() as $sourceInstance) {
                 $instanceItem = new DataItem($sourceInstance->getId(), $sourceInstance->getTitle());
-                $instanceItem->applyStyleIf(!$sourceInstance->getEnabled(), 'comment', 'disabled');
+                $instanceItem->addFlag('enabled', $sourceInstance->getEnabled(), null, 'comment', 'disabled');
                 $sourceItem->addItem($instanceItem);
             }
             $appItem->addItem($sourceItem);
@@ -213,12 +214,12 @@ class SourcesCommand extends ContainerAwareCommand
         foreach ($relation->getApplicationRelations() as $appRelation) {
             $app = $appRelation->getApplication();
             $appItem = new DataGroup($app->getId(), $app->getTitle());
-            $appItem->applyStyleIf(!$app->isPublished(), 'comment', 'not published');
+            $appItem->addFlag('publised', $app->isPublished(), null, 'comment', 'not published');
             $sourceGroup->addItem($appItem);
 
             foreach ($appRelation->getSourceInstances() as $sourceInstance) {
                 $instanceItem = new DataItem($sourceInstance->getId(), $sourceInstance->getTitle());
-                $instanceItem->applyStyleIf(!$sourceInstance->getEnabled(), 'comment', 'disabled');
+                $instanceItem->addFlag('enabled', $sourceInstance->getEnabled(), null, 'comment', 'disabled');
                 $appItem->addItem($instanceItem);
             }
         }
