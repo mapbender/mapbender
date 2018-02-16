@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Mapbender\CoreBundle\Command;
+namespace Mapbender\IntrospectionBundle\Command;
 
 
 use Mapbender\CoreBundle\Component\Application;
