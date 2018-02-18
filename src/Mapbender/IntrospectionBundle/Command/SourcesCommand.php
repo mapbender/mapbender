@@ -12,6 +12,7 @@ use Mapbender\IntrospectionBundle\Component\Collector;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataGroup;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItem;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataRootGroup;
+use Mapbender\IntrospectionBundle\Entity\Utils\Command\JsonFormatting;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\YamlFormatting;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -164,7 +165,12 @@ class SourcesCommand extends ContainerAwareCommand
         } else {
             // Yaml and Json both require building an array representation
             $dataArray = array();
-            $format = new YamlFormatting('title');
+            if ($outputFormat == 'json') {
+                $format = new JsonFormatting('title');
+            } else {
+                $format = new YamlFormatting('title');
+            }
+
             if (!$input->getOption('unused-only')) {
                 $dataArray[$sectionName0] = $tree->toArray($format, $arraySubHeadings);
             }
