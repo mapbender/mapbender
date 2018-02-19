@@ -5,12 +5,11 @@ namespace Mapbender\IntrospectionBundle\Entity\Utils\Command;
 
 
 /**
- * Stealthy group container that has no own id or name, but can convert multiple sub-items to a flat list / table
- * nicely.
+ * Flat list container that has no own id or name.
  *
  * @package Mapbender\IntrospectionBundle\Entity\Utils\Command
  */
-class DataRootGroup extends DataGroup
+class DataItemList extends DataTreeNode
 {
     public function __construct()
     {

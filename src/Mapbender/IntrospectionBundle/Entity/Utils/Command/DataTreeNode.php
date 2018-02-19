@@ -9,7 +9,7 @@ namespace Mapbender\IntrospectionBundle\Entity\Utils\Command;
  *
  * @package Mapbender\IntrospectionBundle\Entity\Utils\Command
  */
-class DataGroup extends DataItem
+class DataTreeNode extends DataItem
 {
     /** @var DataItem[] */
     protected $items;

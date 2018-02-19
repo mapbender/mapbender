@@ -7,7 +7,7 @@ namespace Mapbender\IntrospectionBundle\Entity\Utils\Command;
 /**
  * Trivial model of an object id and a displayable name plus some console output styling awareness.
  *
- * This is the "leaf node" in a DataGroup.
+ * This is the "leaf node" in a DataTreeNode.
  *
  * @package Mapbender\IntrospectionBundle\Entity\Utils\Command
  */

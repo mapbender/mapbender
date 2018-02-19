@@ -6,7 +6,7 @@ namespace Mapbender\IntrospectionBundle\Entity\Utils\Command;
 
 /**
  * Container for structuring options relating to DataItem toArray() conversion. This is used to hold and pass around
- * settings while dumping DataItems / DataGroups to Json or Yaml.
+ * settings while dumping DataItems / DataTreeNodes to Json or Yaml.
  *
  */
 class DataItemFormatting

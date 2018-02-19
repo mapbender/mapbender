@@ -9,9 +9,9 @@ use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\ApplicationToSou
 use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\SourceToApplications;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Source;
 use Mapbender\IntrospectionBundle\Component\Collector;
-use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataGroup;
+use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataTreeNode;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItem;
-use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataRootGroup;
+use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItemList;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\JsonFormatting;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\YamlFormatting;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -77,7 +77,7 @@ class SourcesCommand extends ContainerAwareCommand
             'Sources',
             'Instances',
         );
-        $tree = new DataRootGroup();
+        $tree = new DataItemList();
         foreach ($aggregate->getRelations(true) as $appInfo) {
             $tree->addItem($this->collectAppRelation($appInfo));
         }
@@ -104,7 +104,7 @@ class SourcesCommand extends ContainerAwareCommand
             'Instances',
         );
 
-        $tree = new DataRootGroup();
+        $tree = new DataItemList();
         foreach ($aggregate->getRelations() as $srcInfo) {
             $tree->addItem($this->collectSourceRelation($srcInfo));
         }
@@ -187,17 +187,17 @@ class SourcesCommand extends ContainerAwareCommand
 
     /**
      * @param ApplicationToSources $appInfo
-     * @return DataGroup
+     * @return DataTreeNode
      */
     protected function collectAppRelation(ApplicationToSources $appInfo)
     {
         $application = $appInfo->getApplication();
-        $appItem = new DataGroup($application->getId(), $application->getTitle());
+        $appItem = new DataTreeNode($application->getId(), $application->getTitle());
         $appItem->addFlag('publised', $application->isPublished(), null, 'comment', 'not published');
 
         foreach ($appInfo->getSourceRelations() as $srcRelation) {
             $source = $srcRelation->getSource();
-            $sourceItem = new DataGroup($source->getId(), $source->getTitle());
+            $sourceItem = new DataTreeNode($source->getId(), $source->getTitle());
             foreach ($srcRelation->getSourceInstances() as $sourceInstance) {
                 $instanceItem = new DataItem($sourceInstance->getId(), $sourceInstance->getTitle());
                 $instanceItem->addFlag('enabled', $sourceInstance->getEnabled(), null, 'comment', 'disabled');
@@ -210,16 +210,16 @@ class SourcesCommand extends ContainerAwareCommand
 
     /**
      * @param SourceToApplications $relation
-     * @return DataGroup
+     * @return DataTreeNode
      */
     protected function collectSourceRelation(SourceToApplications $relation)
     {
         $source = $relation->getSource();
 
-        $sourceGroup = new DataGroup($source->getId(), $source->getTitle());
+        $sourceGroup = new DataTreeNode($source->getId(), $source->getTitle());
         foreach ($relation->getApplicationRelations() as $appRelation) {
             $app = $appRelation->getApplication();
-            $appItem = new DataGroup($app->getId(), $app->getTitle());
+            $appItem = new DataTreeNode($app->getId(), $app->getTitle());
             $appItem->addFlag('publised', $app->isPublished(), null, 'comment', 'not published');
             $sourceGroup->addItem($appItem);
 
