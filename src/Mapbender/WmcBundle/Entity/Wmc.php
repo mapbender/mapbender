@@ -371,11 +371,11 @@ class Wmc
         $state = $state === null ? new State() : $state;
         $wmc   = new Wmc();
         $wmc->setState($state);
-        $logoUrl = $logoUrl === null ? LegendUrl::create() : $logoUrl;
+        $logoUrl = $logoUrl === null ? null : $logoUrl;
         if ($logoUrl !== null) {
             $wmc->setLogourl($logoUrl);
         }
-        $descriptionUrl = $descriptionUrl === null ? OnlineResource::create() : $descriptionUrl;
+        $descriptionUrl = $descriptionUrl === null ? null : $descriptionUrl;
         if ($descriptionUrl !== null) {
             $wmc->setDescriptionurl($descriptionUrl);
         }

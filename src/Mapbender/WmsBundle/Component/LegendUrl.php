@@ -118,7 +118,7 @@ class LegendUrl
     {
         /** @var LegendUrl $legendURL */
         $legendURL      = null;
-        $onlineResource = $onlineResource === null ? OnlineResource::create() : $onlineResource;
+        $onlineResource = $onlineResource === null ? null : $onlineResource;
 
         if ($onlineResource) {
             $legendURL = new LegendUrl();
