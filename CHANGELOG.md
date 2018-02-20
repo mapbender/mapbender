@@ -1,9 +1,41 @@
 # Changelog
 
-* **v3.0.5.5** - 2017-09-xx
-    - Fix GetLegendGraphic tunnel
-
 * **v3.0.5.4** - 2016-09-xx
+    - Merge pull request #760 from mapbender/fix/unittest-preconditions
+    - Merge pull request #747 from mapbender/fix/metadata-serialization-746
+    - Merge pull request #743 from mapbender/fix/element-inheritance-639-noconfig
+    - Fix getting new application entity by slug from database (issue #739)
+    - Changed Opacity for zoombar and toolbar to get a unique button color
+    - Support legend URL extraction from styles even if last style has no LegendURL node
+    - Merge pull request #699 from mapbender/hotfix/publicFieldsInEntity
+    - Merge pull request #657 from mapbender/fix/display-scale-selector-status
+    - Merge pull request #456 from mapbender/hotfix/redlining-text
+    - No longer persist `WmsInstance->configuration["children"]` (aka "layersets" in frontend), generate only for Application config
+    - Fix unknown instance access HTTP status via tunnel (500 => 404)
+    - Remove deprecated joii.min.js library
+    - Misc code documentation and type annotation improvements
+    - Deprecate template and element generator commands
+    - Add copyright element width and height configuration options
+    - Merge pull request #484 from mapbender/hotfix/scaledisplay
+    - Remove unnecessary overlay from mobile SCSS
+    - Improved mimetype handling in Print and ImageExport
+    - Fix BaseSourceSwitcher initial state immediately on application load
+    - Fix duplicate loads of WMS when a layer is going out of scale.
+    - allow saving of instances with VIEW right on sources
+    - Support print Pdf templates with transparent background
+    - Merge pull request #466 from LazerTiberius/feature/immediate-ruler-measurement
+    - Improve FeatureInfo behavior in mobile apps
+    - Fix feature info reopen if active
+    - Make login, register, forgot password and restore password screens responsive
+    - Disallow select map, overview and buttons as text
+    - Improved PHP7 support
+    - Add syntax highlighting for Yaml entry forms
+    - Improve cookie and legend handling via "instance tunnel" (used for services secured by basic auth)
+    - Better print / export support for secured services
+    - Better print support for digitizer features and other geometries
+    - Add SymfonyAjaxManager to ManagerTemplate
+    - Intergrate bootstrap and refactor/fix administration SCSS files
+    - Merge pull request #460 from mapbender/hotfix/default-titlesize512
     - Fix doublets zoom level dots
     - Merge pull request #457 from mapbender/hotfix/featureinfo-css-no-accordion
     - use composer installed phantomjs for tests
@@ -59,7 +91,6 @@
     - change layername, change translations
     - add exception_format to OL wms layer
     - Fix getting template static properties
-    - set a map dpi to 72
     - Improve and refactor templates
     - Merge pull request #444 from mapbender/hotfix/measure-add-geodesic
     - add geodesic property by activate
