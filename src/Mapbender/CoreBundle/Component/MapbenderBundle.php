@@ -52,7 +52,7 @@ class MapbenderBundle extends ManagerBundle
      */
     public function getManagerControllers()
     {
-        
+        return array();
     }
 
     /**
