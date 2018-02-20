@@ -1,6 +1,6 @@
 # Changelog
 
-* **v3.0.5.4** - 2016-09-xx
+* **v3.0.5.4-RC1** - 2018-02-20
     - Merge pull request #760 from mapbender/fix/unittest-preconditions
     - Merge pull request #747 from mapbender/fix/metadata-serialization-746
     - Merge pull request #743 from mapbender/fix/element-inheritance-639-noconfig
