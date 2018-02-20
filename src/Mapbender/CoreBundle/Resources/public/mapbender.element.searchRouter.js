@@ -439,26 +439,26 @@
             $('.search-results tbody tr')
                 .on('click', function () {
                     var feature = $(this).data('feature').getFeature();
-                    self._hightlightFeature(feature, layer, 'select');
+                    self._highlightFeature(feature, layer, 'select');
                 })
                 .on('mouseenter', function () {
                     var feature = $(this).data('feature').getFeature();
 
                     if(feature.renderIntent !== 'select') {
-                        self._hightlightFeature(feature, layer, 'temporary');
+                        self._highlightFeature(feature, layer, 'temporary');
                     }
                 })
                 .on('mouseleave', function () {
                     var feature = $(this).data('feature').getFeature();
 
                     if(feature.renderIntent !== 'select') {
-                        self._hightlightFeature(feature, layer, 'default');
+                        self._highlightFeature(feature, layer, 'default');
                     }
                 })
             ;
         },
 
-        _hightlightFeature: function (feature, layer, style) {
+        _highlightFeature: function (feature, layer, style) {
             feature.renderIntent = style;
             layer.redraw();
         },
