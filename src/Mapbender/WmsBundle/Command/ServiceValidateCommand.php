@@ -17,7 +17,7 @@ class ServiceValidateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('mapbender:services:validate:wms')
+            ->setName('mapbender:wms:validate:url')
             ->setDescription('Replace host name in configured WMS / WFS services.')
             ->addArgument('serviceUrl', InputArgument::REQUIRED, 'URL to WMS')
             ->addOption('user', null, InputOption::VALUE_REQUIRED, 'Username (basicauth)', '')
