@@ -771,7 +771,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get username
      *
-     * @return stirng
+     * @return string
      */
     public function getUsername()
     {
