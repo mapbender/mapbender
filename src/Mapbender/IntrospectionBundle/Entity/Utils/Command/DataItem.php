@@ -85,23 +85,6 @@ class DataItem
     }
 
     /**
-     * Add a modifier and / or style if $predicate is true. Otherwise do nothing.
-     *
-     * @param boolean $predicate
-     * @param string $style
-     * @param string|null $flag optional
-     */
-    private function applyStyleIf($predicate, $style, $flag)
-    {
-        if ($predicate) {
-            $this->setWrapStyle($style);
-            if ($flag) {
-                $this->addFlag($flag);
-            }
-        }
-    }
-
-    /**
      * Format for CLI display, applying OutputFormatter-conformant styling. This will bake the id and name into a single
      * string and apply the wrapStyle around the whole of the result.
      *
