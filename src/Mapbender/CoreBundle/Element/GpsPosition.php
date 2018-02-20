@@ -5,7 +5,8 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 
 /**
- *
+ * Class GpsPosition
+ * @package Mapbender\CoreBundle\Element
  */
 class GpsPosition extends Element
 {
@@ -13,7 +14,7 @@ class GpsPosition extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.gpsposition.class.title";
     }
@@ -21,7 +22,7 @@ class GpsPosition extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.gpsposition.class.description";
     }
@@ -29,26 +30,29 @@ class GpsPosition extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.gpsposition.tag.gpsposition",
             "mb.core.gpsposition.tag.gps",
             "mb.core.gpsposition.tag.position",
-            "mb.core.gpsposition.tag.button");
+            "mb.core.gpsposition.tag.button"
+        );
     }
 
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array(
-            'js' => array(
+            'js'    => array(
                 'mapbender.element.button.js',
-                'mapbender.element.gpsPosition.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/gpsposition.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:gpsposition.json.twig'));
+                'mapbender.element.gpsPosition.js'
+            ),
+            'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/gpsposition.scss'),
+            'trans' => array('MapbenderCoreBundle:Element:gpsposition.json.twig')
+        );
     }
 
     /**
@@ -65,17 +69,18 @@ class GpsPosition extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => "GPS-Position",
-            'label' => true,
-            'autoStart' => false,
-            'target' => null,
-            'icon' => null,
-            'refreshinterval' => '5000',
-            'average' => 1,
-            'follow' => false,
+            'tooltip'               => "GPS-Position",
+            'label'                 => true,
+            'autoStart'             => false,
+            'target'                => null,
+            'icon'                  => null,
+            'refreshinterval'       => '5000',
+            'average'               => 1,
+            'follow'                => false,
             'centerOnFirstPosition' => true,
-            'zoomToAccuracy' => false,
-            'zoomToAccuracyOnFirstPosition' => true);
+            'zoomToAccuracy'        => false,
+            'zoomToAccuracyOnFirstPosition' => true
+        );
     }
 
     /**
@@ -93,11 +98,14 @@ class GpsPosition extends Element
     {
         $configuration = $this->getConfiguration();
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:gpsposition.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            'configuration' => $configuration,
-                            'title' => $this->getTitle()));
+            ->render(
+                'MapbenderCoreBundle:Element:gpsposition.html.twig',
+                array(
+                    'id' => $this->getId(),
+                    'configuration' => $configuration,
+                    'title' => $this->getTitle()
+                )
+            );
     }
 
     /**
@@ -108,4 +116,3 @@ class GpsPosition extends Element
         return 'MapbenderManagerBundle:Element:gpsposition.html.twig';
     }
 }
-
