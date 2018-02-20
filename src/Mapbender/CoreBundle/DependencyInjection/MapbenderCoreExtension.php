@@ -30,11 +30,13 @@ class MapbenderCoreExtension extends Extension {
         $now = new \DateTime('now');
         $container->setParameter("mapbender.cache_creation", $now->format('c'));
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.xml');
+        $xmlLoader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $xmlLoader->load('services.xml');
         
-        $loader2 = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader2->load('mapbender.yml');
+        $ymlLoader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $ymlLoader->load('mapbender.yml');
+        $ymlLoader->load('components.yml');
+        $ymlLoader->load('commands.yml');
     }
 
     public function getAlias() {
