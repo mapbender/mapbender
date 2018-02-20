@@ -169,7 +169,7 @@ abstract class Element
     /**
      * Get the configuration entity.
      *
-     * @return object $entity
+     * @return \Mapbender\CoreBundle\Entity\Element $entity
      */
     public function getEntity()
     {

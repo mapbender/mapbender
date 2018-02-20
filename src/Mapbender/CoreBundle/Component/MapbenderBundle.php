@@ -18,7 +18,7 @@ class MapbenderBundle extends ManagerBundle
      * Return list of element classes provided by this bundle.
      * Each entry in the array is a fully qualified class name.
      *
-     * @return Element Array of element class names
+     * @return string[]
      */
     public function getElements()
     {
@@ -29,7 +29,7 @@ class MapbenderBundle extends ManagerBundle
      * Return list of layer classes provided by this bundle.
      * Each entry in the array is a fully qualified class name.
      *
-     * @return array Array of layer class names
+     * @return string[]
      */
     public function getLayers()
     {
@@ -40,7 +40,7 @@ class MapbenderBundle extends ManagerBundle
      * Return list of template classes provided by this bundle.
      * Each entry in the array is a fully qualified class name.
      *
-     * @return Template[]  Array of template class names
+     * @return string[]
      */
     public function getTemplates()
     {
@@ -57,6 +57,8 @@ class MapbenderBundle extends ManagerBundle
 
     /**
      * Source factories provide information about source importers/parsers/transformers
+     *
+     * @return array[]
      */
     public function getRepositoryManagers()
     {
