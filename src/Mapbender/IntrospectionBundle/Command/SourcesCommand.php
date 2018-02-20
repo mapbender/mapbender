@@ -4,10 +4,9 @@
 namespace Mapbender\IntrospectionBundle\Command;
 
 
-use Mapbender\IntrospectionBundle\Component\Aggregator\Application;
+use Mapbender\IntrospectionBundle\Component\Aggregator\Base;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\ApplicationToSources;
 use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\SourceToApplications;
-use Mapbender\IntrospectionBundle\Component\Aggregator\Source;
 use Mapbender\IntrospectionBundle\Component\Collector;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataTreeNode;
 use Mapbender\IntrospectionBundle\Entity\Utils\Command\DataItem;
@@ -77,17 +76,19 @@ class SourcesCommand extends ContainerAwareCommand
             'Sources',
             'Instances',
         );
-        $tree = new DataItemList();
+        $appList = new DataItemList('applications');
         foreach ($aggregate->getRelations(true) as $appInfo) {
-            $tree->addItem($this->collectAppRelation($appInfo));
+            $appList->addItem($this->collectAppRelation($appInfo));
         }
         foreach ($aggregate->getRelations(false) as $appInfo) {
-            $tree->addItem($this->collectAppRelation($appInfo));
+            $appList->addItem($this->collectAppRelation($appInfo));
         }
+        $unusedList = $this->buildUnusedSourcesTree($aggregate);
+
         return array(
-            'tree'      => $tree,
-            'headers'   => $headers,
-            'aggregate' => $aggregate,
+            'tableHeaders'   => $headers,
+            'mainList'   => $appList,
+            'unusedSources' => $unusedList,
         );
     }
 
@@ -95,7 +96,7 @@ class SourcesCommand extends ContainerAwareCommand
      * @param Collector $collector
      * @return array
      */
-    protected function buildSourceTree(Collector $collector)
+    protected function buildSourcesTree(Collector $collector)
     {
         $aggregate = $collector->collectSourceInfo();
         $headers = array(
@@ -104,28 +105,47 @@ class SourcesCommand extends ContainerAwareCommand
             'Instances',
         );
 
-        $tree = new DataItemList();
+        $usedSourceList = new DataItemList('sources');
         foreach ($aggregate->getRelations() as $srcInfo) {
-            $tree->addItem($this->collectSourceRelation($srcInfo));
+            $usedSourceList->addItem($this->collectSourceRelation($srcInfo));
         }
+        $dataTree = new DataTreeNode(null);
+        $unusedList = $this->buildUnusedSourcesTree($aggregate);
+        $dataTree->addItem($usedSourceList);
+        $dataTree->addItem($unusedList);
+
         return array(
-            'tree'      => $tree,
-            'headers'   => $headers,
-            'aggregate' => $aggregate,
+            'tableHeaders'  => $headers,
+            'mainList'      => $usedSourceList,
+            'unusedSources' => $unusedList,
         );
+    }
+
+
+    /**
+     * @param Base $aggregator
+     * @return DataTreeNode
+     */
+    protected function buildUnusedSourcesTree($aggregator)
+    {
+        $itemTree = new DataItemList('unused');
+        foreach ($aggregator->getUnusedSources() as $source) {
+            $itemTree->addItem(new DataTreeNode($source->getId(), $source->getTitle()));
+        }
+        return $itemTree;
     }
 
     /**
      * @param OutputInterface $output
-     * @param \Mapbender\CoreBundle\Entity\Source[] $sources
+     * @param DataItemList $sourceItemList
      */
-    protected function displayUnusedSources(OutputInterface $output, $sources)
+    protected function displayUnusedSources(OutputInterface $output, $sourceItemList)
     {
-        if ($sources) {
-            ksort($sources);
+        $sourceItems = $sourceItemList->getItems();
+        if ($sourceItems) {
             $output->writeln("<comment>Unused sources:</comment>");
-            foreach ($sources as $id => $unusedSource) {
-                $output->writeln("  $id: {$unusedSource->getTitle()}");
+            foreach ($sourceItems as $unusedSourceItem) {
+                $output->writeln("  {$unusedSourceItem->toDisplayable()}");
             }
         } else {
             $output->writeln("<info>No unused sources!</info>");
@@ -137,46 +157,38 @@ class SourcesCommand extends ContainerAwareCommand
         $collector = new Collector($this->getContainer());
         if ($this->bucketBy == 'application') {
             $result = $this->buildAppTree($collector);
-            $sectionName0 = 'applications';
-            $arraySubHeadings = array('sources', 'instances');
 
         } else {
-            $result = $this->buildSourceTree($collector);
-            $sectionName0 = 'sources';
-            $arraySubHeadings = array('applications', 'instances');
+            $result = $this->buildSourcesTree($collector);
         }
 
-        /** @var DataItem $tree */
-        $tree = $result['tree'];
-        /** @var Application|Source $aggregate */
-        $aggregate = $result['aggregate'];
+        /** @var DataItem $mainList */
+        $mainList = $result['mainList'];
 
         $outputFormat = $input->getOption('format');
         if ($outputFormat == 'table') {
             if (!$input->getOption('unused-only')) {
-                $tree = $result['tree'];
-                $this->renderTable($output, $result['headers'], $tree->toGrid());
+                $this->renderTable($output, $result['tableHeaders'], $mainList->toGrid());
             }
             if (!$input->getOption('no-unused')) {
-                /** @var Application|Source $aggregate */
-                $aggregate = $result['aggregate'];
-                $this->displayUnusedSources($output, $aggregate->getUnusedSources());
+                $this->displayUnusedSources($output, $result['unusedSources']);
             }
         } else {
             // Yaml and Json both require building an array representation
-            $dataArray = array();
             if ($outputFormat == 'json') {
                 $format = new JsonFormatting('title');
             } else {
                 $format = new YamlFormatting('title');
             }
-
+            $displayTree = new DataTreeNode(null);
             if (!$input->getOption('unused-only')) {
-                $dataArray[$sectionName0] = $tree->toArray($format, $arraySubHeadings);
+                $displayTree->addItem($result['mainList']);
             }
             if (!$input->getOption('no-unused')) {
-                $dataArray['unusedSources'] = $this->sourcesToArray($aggregate->getUnusedSources());
+                $displayTree->addItem($result['unusedSources']);
             }
+
+            $dataArray = $displayTree->toArray($format);
             if ($outputFormat == 'json') {
                 $output->writeln(json_encode($dataArray));
             } else {
@@ -194,17 +206,21 @@ class SourcesCommand extends ContainerAwareCommand
         $application = $appInfo->getApplication();
         $appItem = new DataTreeNode($application->getId(), $application->getTitle());
         $appItem->addFlag('publised', $application->isPublished(), null, 'comment', 'not published');
+        $sourcesList = new DataItemList('sources');
 
         foreach ($appInfo->getSourceRelations() as $srcRelation) {
             $source = $srcRelation->getSource();
             $sourceItem = new DataTreeNode($source->getId(), $source->getTitle());
+            $instanceList = new DataItemList('instances');
             foreach ($srcRelation->getSourceInstances() as $sourceInstance) {
                 $instanceItem = new DataItem($sourceInstance->getId(), $sourceInstance->getTitle());
                 $instanceItem->addFlag('enabled', $sourceInstance->getEnabled(), null, 'comment', 'disabled');
-                $sourceItem->addItem($instanceItem);
+                $instanceList->addItem($instanceItem);
             }
-            $appItem->addItem($sourceItem);
+            $sourceItem->addItem($instanceList);
+            $sourcesList->addItem($sourceItem);
         }
+        $appItem->addItem($sourcesList);
         return $appItem;
     }
 
@@ -216,20 +232,24 @@ class SourcesCommand extends ContainerAwareCommand
     {
         $source = $relation->getSource();
 
-        $sourceGroup = new DataTreeNode($source->getId(), $source->getTitle());
+        $sourceItem = new DataTreeNode($source->getId(), $source->getTitle());
+        $appList = new DataItemList('applications');
+
         foreach ($relation->getApplicationRelations() as $appRelation) {
             $app = $appRelation->getApplication();
             $appItem = new DataTreeNode($app->getId(), $app->getTitle());
             $appItem->addFlag('publised', $app->isPublished(), null, 'comment', 'not published');
-            $sourceGroup->addItem($appItem);
-
+            $instanceList = new DataItemList('instances');
             foreach ($appRelation->getSourceInstances() as $sourceInstance) {
                 $instanceItem = new DataItem($sourceInstance->getId(), $sourceInstance->getTitle());
                 $instanceItem->addFlag('enabled', $sourceInstance->getEnabled(), null, 'comment', 'disabled');
-                $appItem->addItem($instanceItem);
+                $instanceList->addItem($instanceItem);
             }
+            $appItem->addItem($instanceList);
+            $appList->addItem($appItem);
         }
-        return $sourceGroup;
+        $sourceItem->addItem($appList);
+        return $sourceItem;
     }
 
     /**

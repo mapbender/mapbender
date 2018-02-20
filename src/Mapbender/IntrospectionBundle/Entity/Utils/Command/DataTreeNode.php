@@ -14,10 +14,18 @@ class DataTreeNode extends DataItem
     /** @var DataItem[] */
     protected $items;
 
-    public function __construct($groupId, $groupName, $modifiers = array(), $wrapStyle = null)
+    public function __construct($nodeId, $nodeName = null, $nodeModifiers = array(), $wrapStyle = null)
     {
-        parent::__construct($groupId, $groupName, $modifiers, $wrapStyle);
+        parent::__construct($nodeId, $nodeName, $nodeModifiers, $wrapStyle);
         $this->items = array();
+    }
+
+    /**
+     * @return DataItem[]
+     */
+    public function getItems()
+    {
+        return $this->items;
     }
 
     /**
@@ -33,60 +41,60 @@ class DataTreeNode extends DataItem
     /**
      * @return string[][]
      */
+    public function childrenToGrid()
+    {
+        $subGrids = array(array()); // array_merge requires at least one argument
+        foreach ($this->items as $item) {
+            $subGrids[] = $item->toGrid();
+        }
+        return call_user_func_array('array_merge', $subGrids);
+    }
+
+    /**
+     * @return string[][]
+     */
     public function toGrid()
     {
-        $baseCells = array($this->toDisplayable());
-        $rowsOut = array();
-
-        foreach ($this->items as $item) {
-            foreach ($item->toGrid() as $subRow) {
+        if ($this->name) {
+            $rowsOut = array();
+            $baseCells = array($this->toDisplayable());
+            foreach ($this->childrenToGrid() as $subRow) {
                 $rowsOut[] = array_merge($baseCells, $subRow);
                 // magic trick: omit group description after first row
                 $baseCells = array("");
             }
+            return $rowsOut;
+        } else {
+            return $this->childrenToGrid();
         }
-        return $rowsOut;
     }
 
     /**
-     * Recursively dump this item and all its children into an array structure, where each node only has
-     * 'id', 'name' and 'items'.
-     * If you provide $itemTypeLabels, the 'items' subkey will be renamed, top down, until all provided
-     * labels have been used. Then it's back to 'items'.
+     * Recursively dump this item and all its children into an array structure.
      *
      * @param DataItemFormatting $format
-     * @param string[] $itemTypeLabels
      * @return array
      */
-    public function toArray(DataItemFormatting $format, $itemTypeLabels = array())
+    public function toArray(DataItemFormatting $format)
     {
-        $baseValues = parent::toArray($format);
-        $children = $this->childrenToArray($format, array_slice($itemTypeLabels, 1));
-        if ($children) {
-            if (!empty($itemTypeLabels[0])) {
-                $currentItemTypeLabel = $itemTypeLabels[0];
-            } else {
-                $currentItemTypeLabel = 'items';
-            }
-            $baseValues[$currentItemTypeLabel] = $children;
-        }
-        return $baseValues;
+        $localValues = array_filter(parent::toArray($format));
+        $childValues = $this->childrenToArray($format);
+        return array_merge($localValues, $childValues);
     }
 
     /**
      * @param DataItemFormatting $format
-     * @param string[] $subItemTypeLabels
      * @return array
      */
-    public function childrenToArray(DataItemFormatting $format, $subItemTypeLabels = array())
+    public function childrenToArray(DataItemFormatting $format)
     {
         if ($this->items) {
             $subValues = array();
             foreach ($this->items as $subItem) {
-                if ($format->hoistIds) {
-                    $subValues[$subItem->id] = $subItem->toArray($format, $subItemTypeLabels);
+                if ($format->hoistIds || $subItem instanceof DataItemList) {
+                    $subValues[$subItem->getId()] = $subItem->toArray($format);
                 } else {
-                    $subValues[] = $subItem->toArray($format, $subItemTypeLabels);
+                    $subValues[] = $subItem->toArray($format);
                 }
             }
             return $subValues;

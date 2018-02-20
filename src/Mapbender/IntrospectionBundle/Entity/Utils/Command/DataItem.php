@@ -39,6 +39,14 @@ class DataItem
     }
 
     /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Wrap style will be applied around the whole displayable output (id plus name) in direct CLI rendering mode,
      * but is ignored in array conversion (yaml / json).
      *
@@ -130,7 +138,7 @@ class DataItem
      *
      * @return string[]
      */
-    public function toArray(DataItemFormatting $format, $_unusedLabels = null)
+    public function toArray(DataItemFormatting $format)
     {
         return $format->apply($this->id, $this->name, $this->flags);
     }
