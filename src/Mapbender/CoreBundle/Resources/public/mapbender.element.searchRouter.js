@@ -14,6 +14,12 @@
         searchModel: null,
         autocompleteModel: null,
         popup: null,
+        /**
+         * Ready event listeners
+         *
+         * @var {Array<Function>}
+         */
+        readyCallbacks: [],
 
         /**
          * Widget creator
