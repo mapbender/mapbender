@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 
 
-class ServiceValidateCommand extends ContainerAwareCommand
+class UrlValidateCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
