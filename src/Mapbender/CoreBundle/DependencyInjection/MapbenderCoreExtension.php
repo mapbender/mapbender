@@ -37,6 +37,7 @@ class MapbenderCoreExtension extends Extension {
         $ymlLoader->load('mapbender.yml');
         $ymlLoader->load('components.yml');
         $ymlLoader->load('commands.yml');
+        $ymlLoader->load('migrations.yml');
     }
 
     public function getAlias() {
