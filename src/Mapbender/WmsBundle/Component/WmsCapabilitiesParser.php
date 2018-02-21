@@ -17,7 +17,7 @@ abstract class WmsCapabilitiesParser
 {
     /**
      * The XML representation of the Capabilites Document
-     * @var DOMDocument
+     * @var \DOMDocument
      */
     protected $doc;
 
