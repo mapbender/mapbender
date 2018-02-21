@@ -4,13 +4,18 @@
             {{ "mb.manager.admin.messagebox.only_region_elements" | trans }}
         </div>
     {% endif %}
-{% endif %}
+{% endif %}   
+    <label for="inputFilterElements" class="labelInput left">{{"mb.manager.admin.filter.element"|trans}}</label><input id="inputFilterElements" type="text" class="input listFilterInput">
 
-{% for class, meta in elements %}
-<a class="checkContainer chooseElement" data-tags="{{ meta.tags | join(',') | lower }}" title="Choose {{meta.title}} Element" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}">
-    <span class="subTitle">{{ meta.title }}</span>
-    <span class="iconOk iconBig"></span>
-    <div class="description">{{ meta.description }}</div>
-    <div class="clearContainer"></div>
-</a>
-{% endfor %}
+    <ul id="listFilterElements" class="listFilterContainer clear">
+    {% for class, meta in elements %}
+        <li class="filterItem">
+            <a class="checkContainer chooseElement" data-tags="{{ meta.tags | join(',') | lower }}" title="Choose {{meta.title}} Element" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}">
+                <span class="subTitle">{{ meta.title }}</span>
+                <span class="iconOk iconBig"></span>
+                <div class="description">{{ meta.description }}</div>
+                <div class="clearContainer"></div>
+            </a>
+        </li>
+    {% endfor %}
+
