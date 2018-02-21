@@ -330,8 +330,10 @@ abstract class SourceMetadata
      */
     public static function getNotNull($sourceValue, $instanceValue = null)
     {
-        if ($instanceValue !== null && $sourceValue !== null) {
-            return $sourceValue . "(" . $instanceValue . ")";
+        if ($instanceValue !== null && $sourceValue !== null && $instanceValue !== $sourceValue) {
+            return $sourceValue . " (" . $instanceValue . ")";
+        } elseif ($instanceValue !== null && $sourceValue !== null){
+            return $sourceValue;
         } elseif ($sourceValue !== null) {
             return $sourceValue;
         } elseif ($instanceValue !== null) {
