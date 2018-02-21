@@ -1,6 +1,7 @@
 <?php
 
 namespace Mapbender\WmsBundle\Component;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
 
 /**
  * Style class.
@@ -183,7 +184,12 @@ class Style
         return $this->styleUlr;
     }
 
-    public function replaceHost($to, $from)
+    /**
+     * Update all urls stored in $this->legendUrl, $this->styleUrl and $this->styleSheetUrl
+     *
+     * @param ValueTransformerBase $rewriter
+     */
+    public function rewriteUrl(ValueTransformerBase $rewriter)
     {
         /**
          * @todo: upstream functions getLegendUrl, getStyleUlr and getStyleSheetUrl
@@ -201,14 +207,14 @@ class Style
         /** @var OnlineResource $styleSheetUrl */
         /** @var OnlineResource $styleUrl */
         if ($legendUrl && $legendUrl->getOnlineResource()) {
-            $legendUrl->getOnlineResource()->replaceHost($to, $from);
+            $legendUrl->getOnlineResource()->rewriteUrl($rewriter);
             $legendUrl->setOnlineResource($legendUrl->getOnlineResource());
         }
         if ($styleUrl) {
-            $styleUrl->replaceHost($to, $from);
+            $styleUrl->rewriteUrl($rewriter);
         }
         if ($styleSheetUrl) {
-            $styleSheetUrl->replaceHost($to, $from);
+            $styleSheetUrl->rewriteUrl($rewriter);
         }
         $this->setLegendUrl($this->getLegendUrl());
         $this->setStyleUlr($this->getStyleUlr());

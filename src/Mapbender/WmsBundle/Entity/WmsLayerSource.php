@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
@@ -998,19 +999,24 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         return (string)$this->id;
     }
 
-    public function replaceHost($to, $from)
+    /**
+     * Rewrite URL in all URLish attributes.
+     *
+     * @param ValueTransformerBase $rewriter
+     */
+    public function rewriteUrl(ValueTransformerBase $rewriter)
     {
         $styles = array();
         foreach ($this->getStyles(false) as $style) {
-            $style->replaceHost($to, $from);
+            $style->rewriteUrl($rewriter);
             $styles[] = $style;
         }
         $this->setStyles($styles);
         foreach ($this->getMetadataUrl() as $mdu) {
-            $mdu->getOnlineResource()->replaceHost($to, $from);
+            $mdu->getOnlineResource()->rewriteUrl($rewriter);
         }
         foreach ($this->getDataUrl() as $du) {
-            $du->replaceHost($to, $from);
+            $du->rewriteUrl($rewriter);
         }
     }
 }

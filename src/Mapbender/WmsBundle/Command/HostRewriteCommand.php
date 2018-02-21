@@ -3,6 +3,9 @@
 namespace Mapbender\WmsBundle\Command;
 
 use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Component\Transformer\CliHelperWrapper;
+use Mapbender\CoreBundle\Component\Transformer\UrlHostRewriter;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -31,9 +34,18 @@ class HostRewriteCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $dryRun = $input->getOption('dry-run');
-        $this->updateWmsLayerSources($input, $output, $dryRun);
-        $this->updateWmsSources($input, $output, $dryRun);
-        $this->updateWmsInstances($input, $output, $dryRun);
+
+        $from = $input->getArgument('from');
+        $to = $input->getArgument('to');
+
+        $rewriter = new UrlHostRewriter($to, $from, true);
+        $rewriterWrapper = new CliHelperWrapper($rewriter, function ($before, $after) use ($output) {
+            $output->writeln(" *   " . var_export($before, true) . "\n  \\=>" . var_export($after, true));
+        });
+
+        $this->updateWmsLayerSources($output, $rewriterWrapper, $dryRun);
+        $this->updateWmsSources($output, $rewriterWrapper, $dryRun);
+        $this->updateWmsInstances($output, $rewriterWrapper, $dryRun);
 
         if (!$dryRun) {
             $doctrine = $this->getContainer()->get('doctrine');
@@ -41,11 +53,8 @@ class HostRewriteCommand extends ContainerAwareCommand
         }
     }
 
-    protected function updateWmsSources(InputInterface $input, OutputInterface $output, $dryRun = false)
+    protected function updateWmsSources(OutputInterface $output, ValueTransformerBase $rewriter, $dryRun = false)
     {
-        $from = $input->getArgument('from');
-        $to = $input->getArgument('to');
-
         /** @var \Doctrine\Bundle\DoctrineBundle\Registry $doctrine */
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
@@ -60,12 +69,15 @@ class HostRewriteCommand extends ContainerAwareCommand
         $progress = $this->createProgressBar($output, $nSources);
 
         foreach ($sources as $source) {
+            /** @var WmsSource $source */
             $em->persist($source);
-            $em->persist($source->getContact());
+            $contact = $source->getContact();
+            if ($contact) {
+                $em->persist($contact);
+            }
             $eh = EntityHandler::createHandler($this->getContainer(), $source);
             /** @var WmsSourceEntityHandler $eh */
-            /** @var WmsSource $source */
-            $source->replaceHost($to, $from);
+            $source->rewriteUrl($rewriter);
 
             if (!$dryRun) {
                 $eh->update($source);
@@ -77,11 +89,8 @@ class HostRewriteCommand extends ContainerAwareCommand
         $progress->finish();
     }
 
-    protected function updateWmsLayerSources(InputInterface $input, OutputInterface $output, $dryRun = false)
+    protected function updateWmsLayerSources(OutputInterface $output, ValueTransformerBase $rewriter, $dryRun = false)
     {
-        $from = $input->getArgument('from');
-        $to = $input->getArgument('to');
-
         /** @var \Doctrine\Bundle\DoctrineBundle\Registry $doctrine */
         $doctrine = $this->getContainer()->get('doctrine');
 
@@ -97,7 +106,7 @@ class HostRewriteCommand extends ContainerAwareCommand
 
         foreach ($layourSources as $layerSource) {
             /** @var WmsLayerSource $layerSource */
-            $layerSource->replaceHost($to, $from);
+            $layerSource->rewriteUrl($rewriter);
 
             // the entity handler for layer sources doesn't work. Nothing will be written to db.
             // We have to do the updates directly
@@ -119,11 +128,8 @@ class HostRewriteCommand extends ContainerAwareCommand
         $progress->finish();
     }
 
-    protected function updateWmsInstances(InputInterface $input, OutputInterface $output, $dryRun = false)
+    protected function updateWmsInstances(OutputInterface $output, ValueTransformerBase $rewriter, $dryRun = false)
     {
-        $from = $input->getArgument('from');
-        $to = $input->getArgument('to');
-
         /** @var \Doctrine\Bundle\DoctrineBundle\Registry $doctrine */
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
@@ -147,7 +153,7 @@ class HostRewriteCommand extends ContainerAwareCommand
                 continue;
             }
 
-            $instance->getSource()->replaceHost($to, $from);
+            $instance->getSource()->rewriteUrl($rewriter);
             $instance->setSource($instance->getSource());
 
             $handler = EntityHandler::createHandler($this->getContainer(), $instance);

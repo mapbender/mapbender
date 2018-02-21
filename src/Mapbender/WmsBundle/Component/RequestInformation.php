@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
 
 /**
  * RequestInformation class.
@@ -98,18 +98,17 @@ class RequestInformation
     }
 
     /**
-     * @param string $to new host name
-     * @param string|null $from old host name (optional); if given, only replace if hostname in $url equals $from
-     * @return $this
+     * Update $this->httpGet and $this->httpPost
+     *
+     * @param ValueTransformerBase $rewriter
      */
-    public function replaceHost($to, $from = null)
+    public function rewriteUrl(ValueTransformerBase $rewriter)
     {
         if ($this->httpGet) {
-            $this->httpGet  = UrlUtil::replaceHost($this->httpGet, $to, $from);
+            $this->httpGet  = $rewriter->transform($this->httpGet);
         }
         if ($this->httpPost) {
-            $this->httpPost = UrlUtil::replaceHost($this->httpPost, $to, $from);
+            $this->httpPost = $rewriter->transform($this->httpPost);
         }
-        return $this;
     }
 }

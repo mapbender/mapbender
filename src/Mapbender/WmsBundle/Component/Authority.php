@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
 
 /**
  * Authority class.
@@ -65,13 +65,12 @@ class Authority
     }
 
     /**
-     * Update host in $this->url
+     * Update $this->url
      *
-     * @param string $to new host name
-     * @param string|null $from old host name (optional); if given, only replace if hostname in $this->url equals $from
+     * @param ValueTransformerBase $rewriter
      */
-    public function replaceHost($to, $from = null)
+    public function rewriteUrl(ValueTransformerBase $rewriter)
     {
-        $this->url = UrlUtil::replaceHost($this->url, $to, $from);
+        $this->url = $rewriter->transform($this->url);
     }
 }

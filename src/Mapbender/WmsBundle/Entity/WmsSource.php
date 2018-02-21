@@ -7,7 +7,7 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\OnlineResource;
@@ -927,43 +927,41 @@ class WmsSource extends Source implements ContainingKeyword
     }
 
     /**
-     * Replace host name in all URLish attributes.
+     * Rewrite URL in all URLish attributes.
      *
-     * @param string $to new host name
-     * @param string|null $from old host name (optional); if given, only replace if hostname in $url equals $from
-     * @return $this
+     * @param ValueTransformerBase $rewriter
      */
-    public function replaceHost($to, $from = null)
+    public function rewriteUrl(ValueTransformerBase $rewriter)
     {
-        $this->setOriginUrl(UrlUtil::replaceHost($this->getOriginUrl(), $to, $from));
-        $this->setOnlineResource(UrlUtil::replaceHost($this->getOnlineResource(), $to, $from));
+        $this->setOriginUrl($rewriter->transform($this->getOriginUrl()));
+        $this->setOnlineResource($rewriter->transform($this->getOnlineResource()));
         if ($requestInfo = $this->getGetMap()) {
             /** @var RequestInformation $requestInfo */
-            $requestInfo->replaceHost($to, $from);
+            $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getGetFeatureInfo()) {
             /** @var RequestInformation $requestInfo */
-            $requestInfo->replaceHost($to, $from);
+            $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getGetCapabilities()) {
             /** @var RequestInformation $requestInfo */
-            $requestInfo->replaceHost($to, $from);
+            $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getDescribeLayer()) {
             /** @var RequestInformation $requestInfo */
-            $requestInfo->replaceHost($to, $from);
+            $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getGetLegendGraphic()) {
             /** @var RequestInformation $requestInfo */
-            $requestInfo->replaceHost($to, $from);
+            $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getGetStyles()) {
             /** @var RequestInformation $requestInfo */
-            $requestInfo->replaceHost($to, $from);
+            $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getPutStyles()) {
             /** @var RequestInformation $requestInfo */
-            $requestInfo->replaceHost($to, $from);
+            $requestInfo->rewriteUrl($rewriter);
         }
         $this->setGetMap($this->getGetMap());
         $this->setGetFeatureInfo($this->getGetFeatureInfo());
@@ -975,19 +973,17 @@ class WmsSource extends Source implements ContainingKeyword
 
         foreach ($this->getLayers() as $layer) {
             foreach ($layer->getStyles(false) as $style) {
-                $style->replaceHost($to, $from);
+                $style->rewriteUrl($rewriter);
             }
             $layer->setStyles($layer->getStyles(false));
             foreach ($layer->getAuthority(false) as $authority) {
                 /** @var Authority $authority */
                 if ($authority && $authority->getUrl()) {
-                    $authority->replaceHost($to, $from);
+                    $authority->rewriteUrl($rewriter);
                 }
             }
             $layer->setAuthority($layer->getAuthority());
         }
         $this->setLayers($this->getLayers());
-
-        return $this;
     }
 }

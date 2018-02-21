@@ -1,7 +1,7 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
 
 /**
  * OnlineResource class.
@@ -98,13 +98,12 @@ class OnlineResource
     }
 
     /**
-     * Update host in $this->href
+     * Update $this->href
      *
-     * @param string $to new host name
-     * @param string|null $from old host name (optional); if given, only replace if hostname in $this->href equals $from
+     * @param ValueTransformerBase $rewriter
      */
-    public function replaceHost($to, $from = null)
+    public function rewriteUrl(ValueTransformerBase $rewriter)
     {
-        $this->href = UrlUtil::replaceHost($this->href, $to, $from);
+        $this->href = $rewriter->transform($this->href);
     }
 }
