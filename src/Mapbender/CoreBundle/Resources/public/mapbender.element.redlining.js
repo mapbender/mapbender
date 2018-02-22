@@ -35,17 +35,14 @@
             if(this.options.auto_activate || this.options.display_type === 'element'){
                 this.activate();
             }
+
+            this.setupMapEventListeners();
+
             this._trigger('ready');
             this._ready();
-
-            //put rl layer on top of layer stack if a source is added, i.e. by wms loader
-            var self = this;
-            $(document).on('mbmapsourceadded', function(event, params) {
-                if (self.layer) {
-                    self.map.raiseLayer(self.layer, self.map.getNumLayers());
-                    self.map.resetLayersZIndex();
-                }
-            });
+        },
+        setupMapEventListeners: function() {
+            $(document).on('mbmapsourceadded', this._moveLayerToLayerStackTop.bind(this));
         },
         defaultAction: function(callback){
             this.activate(callback);
@@ -313,6 +310,16 @@
                     $('.geometry-table tr[data-id="'+this.selectedFeature.id+'"] .geometry-name', this.element).text(label);
                     this.layer.redraw();
                 }
+            }
+        },
+        /**
+         * Move redlining layer on top of layer stack if a source is added, i.e. by wms loader
+         * @private
+         */
+        _moveLayerToLayerStackTop: function(event, params) {
+            if (this.layer) {
+                this.map.raiseLayer(this.layer, this.map.getNumLayers());
+                this.map.resetLayersZIndex();
             }
         },
         /**
