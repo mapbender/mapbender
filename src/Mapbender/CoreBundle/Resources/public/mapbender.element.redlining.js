@@ -37,6 +37,15 @@
             }
             this._trigger('ready');
             this._ready();
+
+            //put rl layer on top of layer stack if a source is added, i.e. by wms loader
+            var self = this;
+            $(document).on('mbmapsourceadded', function(event, params) {
+                if (self.layer) {
+                    self.map.raiseLayer(self.layer, self.map.getNumLayers());
+                    self.map.resetLayersZIndex();
+                }
+            });
         },
         defaultAction: function(callback){
             this.activate(callback);
