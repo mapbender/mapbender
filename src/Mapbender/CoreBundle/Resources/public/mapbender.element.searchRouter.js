@@ -14,6 +14,12 @@
         searchModel: null,
         autocompleteModel: null,
         popup: null,
+        /**
+         * Ready event listeners
+         *
+         * @var {Array<Function>}
+         */
+        readyCallbacks: [],
 
         /**
          * Widget creator
@@ -395,9 +401,9 @@
         /**
          * Rebuilds result table with search result data.
          *
-         * @param model             SearchModel
-         * @param results           FeatureCollection
-         * @param options           object Backbone options
+         * @param {SearchModel} model
+         * @param {FeatureCollection} results
+         * @param {Object} options Backbone options (not used?)
          */
         _searchResultsTable: function(model, results, options){
             var headers = this.options.routes[this.selected].results.headers,
