@@ -19,9 +19,16 @@ class XmlValidator
     protected $container;
 
     /**
+     * @var string path to built-in schemas shipping with mapbender. This is an optimization, avoiding ad-hoc
+     *   downloads of commonly used schemas
+     * @todo: these are currently in web, in mapbender-starter; they should be part of a Resources package
+     */
+    protected $shippingSchemaDir = null;
+
+    /**
      * @var string path to local directory for schemas, document type definitions.
      */
-    protected $schemaCacheDir = null;
+    protected $schemaDownloadDir = null;
 
     /**
      *
@@ -34,9 +41,10 @@ class XmlValidator
      */
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
-        $this->schemaCacheDir = $container->getParameter('kernel.cache_dir') . '/xmlschemas';
-        $this->ensureDirectory($this->schemaCacheDir);
+        $this->container     = $container;
+        $shippingRoot = $this->container->get('kernel')->getRootDir() . '/../web/xmlschemas';
+        $this->shippingSchemaDir = $this->ensureDirectory($this->normalizePath($shippingRoot));
+        $this->schemaDownloadDir = $this->ensureDirectory(sys_get_temp_dir() . '/mapbender/xmlvalidator');
         $this->filesToDelete = array();
     }
 
@@ -220,7 +228,18 @@ EOF
         } else {
             $path   = $urlArr['host'] . $urlArr['path'];
         }
-        return $this->schemaCacheDir . "/" . $this->normalizePath($path);
+        // try in shipping schema dir, and return the path if that file exists
+        // otherwise, return a file name in download dir, and track it for deletion
+        $path = $this->normalizePath($path);
+        $shippingPath = $this->shippingSchemaDir . "/{$path}";
+        if (file_exists($shippingPath)) {
+            return $shippingPath;
+        } else {
+            $downloadPath = $this->schemaDownloadDir . "/{$path}";
+            // this file needs to be cleaned up later
+            $this->filesToDelete[] = $downloadPath;
+            return $downloadPath;
+        }
     }
 
     /**
@@ -259,6 +278,7 @@ EOF
      * Creates directory $path (including parents) if not present.
      * If $path exists but is a regular file, it will be deleted first.
      * @param string $path
+     * @return string absolute, final path (symlinks resolved)
      */
     protected function ensureDirectory($path)
     {
@@ -276,6 +296,7 @@ EOF
         if (!(is_dir($path) && is_writable($path))) {
             throw new \RuntimeException("Failed to create writable directory at " . var_export($path, true));
         }
+        return $path;
     }
 
     /**

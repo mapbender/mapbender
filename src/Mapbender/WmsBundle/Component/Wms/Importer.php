@@ -16,14 +16,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Importer extends ContainerAware
 {
+    /**
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->setContainer($container);
     }
 
     /**
-     * Performs a GetCapabilities request against WMS at $serviceUrl and returns a WmsSource instance and the
-     * (suppressed) XML validation error, if any, wrapped in a Loader\Response object.
+     * Performs a GetCapabilities request against WMS at $serviceOrigin and returns a WmsSource instance and the
+     * (suppressed) XML validation error, if any, wrapped in a ImporterResponse object.
      *
      * @param WmsOrigin $serviceOrigin
      * @param bool $onlyValid
@@ -40,7 +43,7 @@ class Importer extends ContainerAware
 
     /**
      * Checks / evaluates a capabilities document returns a WmsSource instance and the (suppressed) XML validation error,
-     * if any, wrapped in a Loader\Response object.
+     * if any, wrapped in an Importer\Response object.
      *
      * @param \DOMDocument $document
      * @param boolean $onlyValid
@@ -116,6 +119,10 @@ class Importer extends ContainerAware
         return $response;
     }
 
+    /**
+     * @param string $url
+     * @throws InvalidUrlException
+     */
     public static function validateUrl($url)
     {
         $parts = parse_url($url);
@@ -124,6 +131,12 @@ class Importer extends ContainerAware
         }
     }
 
+    /**
+     * Copies origin-related attributes (url, username, password) from $origin to $wmsSource
+     *
+     * @param WmsSource $wmsSource
+     * @param WmsOrigin $origin
+     */
     public static function updateOrigin(WmsSource $wmsSource, WmsOrigin $origin)
     {
         $wmsSource->setOriginUrl($origin->getUrl());

@@ -277,12 +277,17 @@ class WmcEditor extends Element
                             $wmc->getScreenshot()->move($upload_directory, $filename);
                             $wmc->setScreenshotPath($filename);
                             $format = $wmc->getScreenshot()->getClientMimeType();
-                            $logourl = $wmchandler->getWmcUrl($filename);
-                            $logoUrl = LegendUrl::create(null, null, OnlineResource::create($format, $logourl));
+                            $screenshotHref = $wmchandler->getWmcUrl($filename);
+                            if ($screenshotHref) {
+                                $legendOnlineResource = new OnlineResource($format, $screenshotHref);
+                                $logoUrl = new LegendUrl($legendOnlineResource);
+                                $wmc->setLogourl($logoUrl);
+                            } else {
+                                $wmc->setLogourl(null);
+                            }
                             $state = $wmc->getState();
                             $state->setServerurl($wmchandler->getBaseUrl());
                             $state->setSlug($this->application->getSlug());
-                            $wmc->setLogourl($logoUrl);
                         }
                     } else {
                         $wmc->setScreenshotPath(null);

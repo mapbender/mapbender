@@ -28,12 +28,6 @@
             var dimension = Mapbender.Dimension(dimensionset['dimension']);
             var def = dimension.partFromValue(dimension.getDefault());// * 100;
             var valarea = $('#' + key + ' .dimensionset-value', this.element);
-            $.each(dimensionset.group, function (idx, item) {
-                var temp = self.model.findSource({origId: item.split('-')[0]});
-                if (temp.length > 0 && temp[0].configuration.options.dimensions) {
-                    temp[0].configuration.options.dimensions = [];
-                }
-            });
             valarea.text(dimension.getDefault());
             $('#' + key + ' .mb-slider', this.element).slider({
                 min: 0,
