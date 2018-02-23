@@ -78,26 +78,6 @@ class OnlineResource
     }
 
     /**
-     * Create online resource
-     * #
-     *
-     * @param null $format
-     * @param null $href
-     * @return OnlineResource|null
-     */
-    public static function create($format = null, $href = null)
-    {
-        if ($href === null) {
-            $olr = null;
-        } else {
-            $olr = new OnlineResource();
-            $olr->setFormat($format);
-            $olr->setHref($href);
-        }
-        return $olr;
-    }
-
-    /**
      * Update host in $this->href
      *
      * @param string $to new host name

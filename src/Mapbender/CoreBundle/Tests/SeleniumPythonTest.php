@@ -9,9 +9,13 @@ class SeleniumPythonTest extends WebTestCase
 {
     public function setUp()
     {
-        if (PHP_MINOR_VERSION == 3) {
-            $this->markTestIncomplete('This test does not run on PHP 5.3.');
-            return;
+        if (!version_compare(PHP_VERSION, '5.4', '>=')) {
+            $this->markTestSkipped('This test requires PHP >= 5.4');
+        }
+        $retCode = null;
+        passthru('python -c "import selenium" 2>/dev/null', $retCode);
+        if ($retCode !== 0) {
+            $this->markTestSkipped('This test requires Python and the selenium Python package');
         }
     }
 

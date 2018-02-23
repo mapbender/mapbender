@@ -741,6 +741,8 @@ class WmsSource extends Source implements ContainingKeyword
     }
 
     /**
+     * Get username
+     *
      * @return string
      */
     public function getUsername()
@@ -759,6 +761,8 @@ class WmsSource extends Source implements ContainingKeyword
     }
 
     /**
+     * Get password
+     *
      * @return string
      */
     public function getPassword()
