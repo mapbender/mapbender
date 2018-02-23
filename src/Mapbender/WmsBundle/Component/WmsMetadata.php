@@ -25,7 +25,7 @@ class WmsMetadata extends SourceMetadata
         $src = $this->instance->getSource();
         if ($this->getUseCommon()) {
             $source_items = array();
-            $source_items[] = array("title" => SourceMetadata::getNotNull($src->getTitle(), $this->instance->getTitle()));
+            $source_items[] = array("title" => $this->formatAlternatives($src->getTitle(), $this->instance->getTitle()));
             $source_items[] = array("name" => strval($src->getName()));
             $source_items[] = array("version" => strval($src->getVersion()));
             $source_items[] = array("originUrl" => strval($src->getOriginUrl()));

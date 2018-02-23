@@ -324,22 +324,44 @@ abstract class SourceMetadata
     /**
      * Get not null
      *
-     * @param mixed $sourceValue
-     * @param null  $instanceValue
-     * @return null|string
+     * @param string|null $sourceValue
+     * @param string|null  $instanceValue
+     * @return string
+     * @deprecated for bad wording, use strval (null => '') or formatAlternatives directly
+     * @internal
+     * @see SourceMetaData::formatAlternatives()
      */
     public static function getNotNull($sourceValue, $instanceValue = null)
     {
-        if ($instanceValue !== null && $sourceValue !== null && $instanceValue !== $sourceValue) {
-            return $sourceValue . " (" . $instanceValue . ")";
-        } elseif ($instanceValue !== null && $sourceValue !== null){
-            return $sourceValue;
-        } elseif ($sourceValue !== null) {
-            return $sourceValue;
-        } elseif ($instanceValue !== null) {
+        return static::formatAlternatives($sourceValue, $instanceValue, false);
+    }
+
+    /**
+     * Formats a primary and secondary label into a displayable string. The secondary label appears in round
+     * brackets after the first.
+     * The secondary label is suppressed, along with its brackets, if it's empty; also if it's equal to the primary
+     * label and $avoidSame is true.
+     *
+     * If the primary label is empty, the secondary label takes its place.
+     *
+     * @param string|null $sourceValue
+     * @param string|null $instanceValue
+     * @param bool $avoidSame to avoid repeating equal $sourceValue and $instanceValue
+     * @return string
+     */
+    public static function formatAlternatives($sourceValue, $instanceValue, $avoidSame = false)
+    {
+        // force nulls to empty strings, allow safe comparison without falsely identifying the string "0" as emptyish
+        $sourceValue = strval($sourceValue);
+        $instanceValue = strval($instanceValue);
+        if ($sourceValue === '') {
             return $instanceValue;
+        } elseif ($instanceValue === '') {
+            return $sourceValue;
+        } elseif ($sourceValue !== $instanceValue || !$avoidSame) {
+            return "{$sourceValue} ({$instanceValue})";
         } else {
-            return '';
+            return $sourceValue;
         }
     }
 
