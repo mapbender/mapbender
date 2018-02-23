@@ -34,6 +34,7 @@ class RegexRewriteCommand extends HostRewriteCommand
     {
         parent::configure();
         $this->setName('mapbender:wms:rewrite:regex');
+        $this->setDescription('Rewrite urls in configured WMS services using regex search + replace.');
         $definition = $this->getDefinition();
         $arguments = $definition->getArguments();
         $arguments['from'] = new InputArgument('from', InputArgument::REQUIRED, 'Search pattern (regular expression)');
