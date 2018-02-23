@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
+use Mapbender\CoreBundle\Entity\Element;
+
 /**
  * ElementExtension
  */
@@ -27,8 +29,8 @@ class ElementExtension extends \Twig_Extension
 
     /**
      * 
-     * @param type $element
-     * @return type
+     * @param Element $element
+     * @return string
      */
     public function element_class_title($element)
     {

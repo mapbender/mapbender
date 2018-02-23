@@ -34,7 +34,7 @@ class Application
     protected $template;
 
     /**
-     * @var array $elements The elements, ordered by weight
+     * @var Element[][] $element lists by region
      */
     protected $elements;
 
@@ -433,12 +433,11 @@ class Application
     /**
      * Get region elements, optionally by region
      *
-     * @param string $regionName Region to get elements for. If null, all elements  are returned.
-     * @return PersistentCollection Regions
+     * @param string $regionName deprecated; Region to get elements for. If null, all elements  are returned.
+     * @return Element[][] keyed by region name (string)
      */
     public function getElements($regionName = null)
     {
-        $regions = null;
         if (!$this->elements) {
             $regions = $this->getGrantedRegionElementCollections();
             foreach ($regions as $_regionName => $elements) {
@@ -685,6 +684,8 @@ class Application
 
     /**
      * Get granted elements
+     *
+     * @return Element[][] keyed on region name
      */
     protected function getGrantedRegionElementCollections()
     {
