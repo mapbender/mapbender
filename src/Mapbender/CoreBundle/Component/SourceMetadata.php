@@ -351,7 +351,7 @@ abstract class SourceMetadata
      * @param bool $avoidSame to avoid repeating equal $sourceValue and $instanceValue
      * @return string
      */
-    public static function formatAlternatives($sourceValue, $instanceValue, $avoidSame = false)
+    public static function formatAlternatives($sourceValue, $instanceValue, $avoidSame = true)
     {
         // force nulls to empty strings, allow safe comparison without falsely identifying the string "0" as emptyish
         $sourceValue = strval($sourceValue);
