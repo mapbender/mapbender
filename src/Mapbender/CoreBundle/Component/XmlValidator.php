@@ -195,12 +195,51 @@ EOF
                 /** @var \DOMElement $import */
                 $ns_ = $import->getAttribute("namespace");
                 $sl_ = $import->getAttribute("schemaLocation");
-                $this->addSchemaLocationReq($schemaLocations, $ns_, $sl_);
+                $schemaUrl = $this->resolveRelativeUrl($ns, $sl_);
+                $this->addSchemaLocationReq($schemaLocations, $ns_, $schemaUrl);
             }
             $this->ensureDirectory(dirname($fullFileName));
             $doc->save($fullFileName);
         }
         $schemaLocations[$ns] = $this->addFileSchema($fullFileName);
+    }
+
+    /**
+     * Turn a relative URL back into an absolute URL based on a context URL.
+     * This fixes downloading errors on e.g. http://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd
+     * which contains a schemaLocation="../../common/1.0/common.xsd" relative reference.
+     *
+     * @param string $contextUrl
+     * @param string $path
+     * @return string
+     */
+    protected function resolveRelativeUrl($contextUrl, $path)
+    {
+        $absolutePattern = '#^[\w]+://#';
+        $isAbsolute = !!preg_match($absolutePattern, $path);
+        if ($isAbsolute) {
+            return $path;
+        }
+        if (!preg_match($absolutePattern, $contextUrl)) {
+            throw new \RuntimeException("Context url is not absolute: " . var_export($contextUrl, true));
+        }
+        if (stripos($contextUrl, 'file:') === 0) {
+            throw new \RuntimeException("Context url is a file: " . var_export($contextUrl, true));
+        }
+        // @todo: support "//different-host/..." form for same protocol
+        // @todo: support "/absolute/path" form for same host and protocol
+        $contextParts = explode('/', $contextUrl);
+        $pathParts = explode('/', $path);
+        foreach ($pathParts as $i => $part) {
+            if ($part == '..') {
+                $contextParts = array_slice($contextParts, 0, -1);
+            } else {
+                $contextParts[] = $part;
+            }
+        }
+        $reconstructed = implode('/', $contextParts);
+
+        return $reconstructed;
     }
 
     /**
