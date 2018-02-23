@@ -1,6 +1,7 @@
 <?php
 
 namespace Mapbender\WmsBundle\Component;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
 
 /**
  * Style class.
@@ -183,4 +184,40 @@ class Style
         return $this->styleUlr;
     }
 
+    /**
+     * Update all urls stored in $this->legendUrl, $this->styleUrl and $this->styleSheetUrl
+     *
+     * @param ValueTransformerBase $rewriter
+     */
+    public function rewriteUrl(ValueTransformerBase $rewriter)
+    {
+        /**
+         * @todo: upstream functions getLegendUrl, getStyleUlr and getStyleSheetUrl
+         *    are marked as returning stdClass instances, but this seems to be an
+         *    error in the annotions. All setters enforce strict types, and all known
+         *    direct modifications (these are public attribs!) set instances of these
+         *    same types.
+         *
+         *    Return type annotations should be updated if possible.
+         */
+        $legendUrl = $this->getLegendUrl();
+        $styleUrl = $this->getStyleUlr();
+        $styleSheetUrl = $this->getStyleSheetUrl();
+        /** @var LegendUrl $legendUrl */
+        /** @var OnlineResource $styleSheetUrl */
+        /** @var OnlineResource $styleUrl */
+        if ($legendUrl && $legendUrl->getOnlineResource()) {
+            $legendUrl->getOnlineResource()->rewriteUrl($rewriter);
+            $legendUrl->setOnlineResource($legendUrl->getOnlineResource());
+        }
+        if ($styleUrl) {
+            $styleUrl->rewriteUrl($rewriter);
+        }
+        if ($styleSheetUrl) {
+            $styleSheetUrl->rewriteUrl($rewriter);
+        }
+        $this->setLegendUrl($this->getLegendUrl());
+        $this->setStyleUlr($this->getStyleUlr());
+        $this->setStyleSheetUrl($this->getStyleSheetUrl());
+    }
 }

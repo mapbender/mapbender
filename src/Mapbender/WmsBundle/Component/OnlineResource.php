@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
+
 /**
  * OnlineResource class.
  *
@@ -95,4 +97,13 @@ class OnlineResource
         return $olr;
     }
 
+    /**
+     * Update $this->href
+     *
+     * @param ValueTransformerBase $rewriter
+     */
+    public function rewriteUrl(ValueTransformerBase $rewriter)
+    {
+        $this->href = $rewriter->transform($this->href);
+    }
 }

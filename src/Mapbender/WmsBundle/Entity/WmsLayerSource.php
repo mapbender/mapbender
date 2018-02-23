@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
@@ -787,7 +788,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) {
             return array_merge($this->getParent()->getAuthority(), $this->authority);
         } else {
-            $this->authority;
+            return $this->authority;
         }
     }
 
@@ -996,5 +997,26 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function __toString()
     {
         return (string)$this->id;
+    }
+
+    /**
+     * Rewrite URL in all URLish attributes.
+     *
+     * @param ValueTransformerBase $rewriter
+     */
+    public function rewriteUrl(ValueTransformerBase $rewriter)
+    {
+        $styles = array();
+        foreach ($this->getStyles(false) as $style) {
+            $style->rewriteUrl($rewriter);
+            $styles[] = $style;
+        }
+        $this->setStyles($styles);
+        foreach ($this->getMetadataUrl() as $mdu) {
+            $mdu->getOnlineResource()->rewriteUrl($rewriter);
+        }
+        foreach ($this->getDataUrl() as $du) {
+            $du->rewriteUrl($rewriter);
+        }
     }
 }

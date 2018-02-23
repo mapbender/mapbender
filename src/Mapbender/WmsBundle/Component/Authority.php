@@ -2,6 +2,8 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
+
 /**
  * Authority class.
  *
@@ -60,5 +62,15 @@ class Authority
     {
         $this->name = $value;
         return $this;
+    }
+
+    /**
+     * Update $this->url
+     *
+     * @param ValueTransformerBase $rewriter
+     */
+    public function rewriteUrl(ValueTransformerBase $rewriter)
+    {
+        $this->url = $rewriter->transform($this->url);
     }
 }

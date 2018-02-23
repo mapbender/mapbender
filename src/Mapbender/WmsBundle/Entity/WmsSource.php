@@ -7,6 +7,10 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
+use Mapbender\WmsBundle\Component\Authority;
+use Mapbender\WmsBundle\Component\LegendUrl;
+use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -920,5 +924,59 @@ class WmsSource extends Source implements ContainingKeyword
     {
         $this->identifier = $identifier;
         return $this;
+    }
+
+    /**
+     * Rewrite URL in all URLish attributes.
+     *
+     * @param ValueTransformerBase $rewriter
+     */
+    public function rewriteUrl(ValueTransformerBase $rewriter)
+    {
+        $this->setOriginUrl($rewriter->transform($this->getOriginUrl()));
+        $this->setOnlineResource($rewriter->transform($this->getOnlineResource()));
+        if ($requestInfo = $this->getGetMap()) {
+            $requestInfo->rewriteUrl($rewriter);
+        }
+        if ($requestInfo = $this->getGetFeatureInfo()) {
+            $requestInfo->rewriteUrl($rewriter);
+        }
+        if ($requestInfo = $this->getGetCapabilities()) {
+            $requestInfo->rewriteUrl($rewriter);
+        }
+        if ($requestInfo = $this->getDescribeLayer()) {
+            $requestInfo->rewriteUrl($rewriter);
+        }
+        if ($requestInfo = $this->getGetLegendGraphic()) {
+            $requestInfo->rewriteUrl($rewriter);
+        }
+        if ($requestInfo = $this->getGetStyles()) {
+            $requestInfo->rewriteUrl($rewriter);
+        }
+        if ($requestInfo = $this->getPutStyles()) {
+            $requestInfo->rewriteUrl($rewriter);
+        }
+        $this->setGetMap($this->getGetMap());
+        $this->setGetFeatureInfo($this->getGetFeatureInfo());
+        $this->setGetCapabilities($this->getGetCapabilities());
+        $this->setDescribeLayer($this->getDescribeLayer());
+        $this->setGetLegendGraphic($this->getGetLegendGraphic());
+        $this->setGetStyles($this->getGetStyles());
+        $this->setPutStyles($this->getPutStyles());
+
+        foreach ($this->getLayers() as $layer) {
+            foreach ($layer->getStyles(false) as $style) {
+                $style->rewriteUrl($rewriter);
+            }
+            $layer->setStyles($layer->getStyles(false));
+            foreach ($layer->getAuthority(false) as $authority) {
+                /** @var Authority $authority */
+                if ($authority && $authority->getUrl()) {
+                    $authority->rewriteUrl($rewriter);
+                }
+            }
+            $layer->setAuthority($layer->getAuthority());
+        }
+        $this->setLayers($this->getLayers());
     }
 }

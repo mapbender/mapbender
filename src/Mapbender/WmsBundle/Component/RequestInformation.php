@@ -2,6 +2,8 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Component\Transformer\ValueTransformerBase;
+
 /**
  * RequestInformation class.
  *
@@ -95,4 +97,18 @@ class RequestInformation
         return $this;
     }
 
+    /**
+     * Update $this->httpGet and $this->httpPost
+     *
+     * @param ValueTransformerBase $rewriter
+     */
+    public function rewriteUrl(ValueTransformerBase $rewriter)
+    {
+        if ($this->httpGet) {
+            $this->httpGet  = $rewriter->transform($this->httpGet);
+        }
+        if ($this->httpPost) {
+            $this->httpPost = $rewriter->transform($this->httpPost);
+        }
+    }
 }
