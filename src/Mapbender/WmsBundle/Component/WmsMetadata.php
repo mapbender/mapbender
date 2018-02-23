@@ -80,8 +80,8 @@ class WmsMetadata extends SourceMetadata
     {
         $layer_items = array();
         $layer_items[] = array("name" => strval($layer->getSourceItem()->getName()));
-        $layer_items[] = array("title" => strval(
-            $layer->getSourceItem()->getTitle()) . ' (' . $layer->getTitle() . ')');
+        $sourceItem = $layer->getSourceItem();
+        $layer_items[] = array("title" => $this->formatAlternatives($sourceItem->getTitle(), $layer->getTitle()));
         $bbox = $layer->getSourceItem()->getLatlonBounds();
         $layer_items[] = array("bbox" => $bbox->getSrs() . " " .
                 $bbox->getMinx() . "," . $bbox->getMiny() . "," . $bbox->getMaxx() . "," . $bbox->getMaxy());
