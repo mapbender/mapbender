@@ -14,11 +14,13 @@ use Symfony\Component\Console\Helper\ProgressHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class HostRewriteCommand extends ContainerAwareCommand
 {
+    protected $progressOutput;
 
     protected function configure()
     {
@@ -35,10 +37,16 @@ class HostRewriteCommand extends ContainerAwareCommand
     {
         $dryRun = $input->getOption('dry-run');
 
-        $from = $input->getArgument('from');
-        $to = $input->getArgument('to');
+        if ($dryRun || $output->getVerbosity() >= 2) {
+            $detailOutput = $output;
+            $this->progressOutput = new NullOutput();
+        } else {
+            $detailOutput = new NullOutput();
+            $this->progressOutput = $output;
+        }
 
-        $rewriter = new UrlHostRewriter($to, $from, true);
+
+        $rewriter = $this->getRewriter($input, $detailOutput);
         $rewriterWrapper = new CliHelperWrapper($rewriter, function ($before, $after) use ($output) {
             $output->writeln(" *   " . var_export($before, true) . "\n  \\=>" . var_export($after, true));
         });
@@ -51,6 +59,20 @@ class HostRewriteCommand extends ContainerAwareCommand
             $doctrine = $this->getContainer()->get('doctrine');
             $doctrine->getManager()->flush();
         }
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return ValueTransformerBase
+     */
+    protected function getRewriter(InputInterface $input, OutputInterface $output)
+    {
+        $from = $input->getArgument('from');
+        $to = $input->getArgument('to');
+
+        $rewriter = new UrlHostRewriter($to, $from, true);
+        return $rewriter;
     }
 
     protected function updateWmsSources(OutputInterface $output, ValueTransformerBase $rewriter, $dryRun = false)
@@ -66,7 +88,7 @@ class HostRewriteCommand extends ContainerAwareCommand
 
         $nSources = count($sources);
         $output->writeln("<info>Updating WMS sources</info> ($nSources)");
-        $progress = $this->createProgressBar($output, $nSources);
+        $progress = $this->createProgressBar($nSources);
 
         foreach ($sources as $source) {
             /** @var WmsSource $source */
@@ -102,7 +124,7 @@ class HostRewriteCommand extends ContainerAwareCommand
 
         $nLayerSources = count($layourSources);
         $output->writeln("<info>Updating WMS layer sources</info> ($nLayerSources)");
-        $progress = $this->createProgressBar($output, $nLayerSources);
+        $progress = $this->createProgressBar($nLayerSources);
 
         foreach ($layourSources as $layerSource) {
             /** @var WmsLayerSource $layerSource */
@@ -144,7 +166,7 @@ class HostRewriteCommand extends ContainerAwareCommand
 
         $nInstances = count($instances);
         $output->writeln("<info>Updating WMS instances</info> ($nInstances)");
-        $progress = $this->createProgressBar($output, $nInstances);
+        $progress = $this->createProgressBar($nInstances);
 
         foreach ($instances as &$instance) {
             $fqt = $instance->getTitle();
@@ -171,11 +193,10 @@ class HostRewriteCommand extends ContainerAwareCommand
     /**
      * Create progress bar helper
      *
-     * @param  OutputInterface $output
      * @param  integer $maxCount
      * @return ProgressHelper
      */
-    protected function createProgressBar(OutputInterface $output, $maxCount)
+    protected function createProgressBar($maxCount)
     {
         $progressBar = clone $this->getHelper('progress');
         $progressBar->setFormat(' %current%/%max% [<info>%bar%</info>] %percent%% Elapsed: %elapsed%');
@@ -184,7 +205,7 @@ class HostRewriteCommand extends ContainerAwareCommand
         $progressBar->setBarWidth(20);
         $progressBar->setProgressCharacter("·");
         $progressBar->setRedrawFrequency(1);
-        $progressBar->start($output, $maxCount);
+        $progressBar->start($this->progressOutput, $maxCount);
         return $progressBar;
     }
 }
