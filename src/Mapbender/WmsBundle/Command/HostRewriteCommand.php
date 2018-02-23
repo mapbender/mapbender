@@ -18,6 +18,26 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
+/**
+ * Rewrites host names of WMS sources
+ * $ ../app/console mapbender:wms:rewrite:host ows.terrestris.de maps.wheregroup.com --dry-run
+    Updating WMS layer sources (538)
+     *   'http://ows.terrestris.de/osm/service?styles=&layer=OSM-WMS&service=WMS&format=image%2Fpng&sld_version=1.1.0&request=GetLegendGraphic&version=1.1.1'
+      \=>'http://maps.wheregroup.com/osm/service?styles=&layer=OSM-WMS&service=WMS&format=image%2Fpng&sld_version=1.1.0&request=GetLegendGraphic&version=1.1.1'
+    Updating WMS sources (45)
+     *   'http://ows.terrestris.de/osm/service?request=GetCapabilities&service=wms'
+      \=>'http://maps.wheregroup.com/osm/service?request=GetCapabilities&service=wms'
+     *   'http://ows.terrestris.de/osm/service'
+      \=>'http://maps.wheregroup.com/osm/service'
+     *   'http://ows.terrestris.de/osm/service'
+      \=>'http://maps.wheregroup.com/osm/service'
+     *   'http://ows.terrestris.de/osm/service'
+      \=>'http://maps.wheregroup.com/osm/service'
+     *   'http://ows.terrestris.de/osm/service'
+      \=>'http://maps.wheregroup.com/osm/service'
+    Updating WMS instances (169)
+
+ */
 class HostRewriteCommand extends ContainerAwareCommand
 {
     protected $progressOutput;
