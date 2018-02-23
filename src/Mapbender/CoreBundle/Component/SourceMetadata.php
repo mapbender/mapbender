@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Symfony\Component\Templating\EngineInterface;
+
 /**
  * Class SourceMetadata prepares and renders an OGC Service metadata
  *
@@ -196,7 +198,7 @@ abstract class SourceMetadata
     /**
      * Sets useCommon
      * @param boolean $useCommon
-     * @return SourceMetadata
+     * @return $this
      */
     protected function setUseCommon($useCommon)
     {
@@ -207,7 +209,7 @@ abstract class SourceMetadata
     /**
      * Sets useContact
      * @param boolean $useContact
-     * @return SourceMetadata
+     * @return $this
      */
     protected function setUseContact($useContact)
     {
@@ -218,7 +220,7 @@ abstract class SourceMetadata
     /**
      * Sets useUseConditions
      * @param boolean $useUseConditions
-     * @return SourceMetadata
+     * @return $this
      */
     protected function setUseUseConditions($useUseConditions)
     {
@@ -229,7 +231,7 @@ abstract class SourceMetadata
     /**
      * Sets useItems
      * @param boolean $useItems
-     * @return SourceMetadata
+     * @return $this
      */
     protected function setUseItems($useItems)
     {
@@ -240,7 +242,7 @@ abstract class SourceMetadata
     /**
      * Sets useExtended
      * @param boolean $useExtended
-     * @return SourceMetadata
+     * @return $this
      */
     protected function setUseExtended($useExtended)
     {
@@ -250,8 +252,8 @@ abstract class SourceMetadata
 
     /**
      * Sets container
-     * @param string $container
-     * @return SourceMetadata
+     * @param string|null $container null for none
+     * @return $this
      */
     public function setContainer($container = null)
     {
@@ -269,8 +271,8 @@ abstract class SourceMetadata
 
     /**
      * Sets a contenttype
-     * @param string $contenttype
-     * @return \Mapbender\CoreBundle\Component\SourceMetadata
+     * @param string|null $contenttype null for default ('element')
+     * @return $this
      */
     public function setContenttype($contenttype)
     {
@@ -286,7 +288,7 @@ abstract class SourceMetadata
         return $this;
     }
 
-        /**
+    /**
      * Resets the metadata data.
      */
     protected function resetData()
@@ -367,8 +369,9 @@ abstract class SourceMetadata
 
     /**
      * Renders the SourceMetadata.
-     * @param boolean $templating
-     * @param integer $itemName unic item name
+     * @param EngineInterface $templating
+     * @param string $itemName unic item name
+     * @return string
      */
     abstract public function render($templating, $itemName);
 }
