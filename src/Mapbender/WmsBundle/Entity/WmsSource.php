@@ -936,31 +936,24 @@ class WmsSource extends Source implements ContainingKeyword
         $this->setOriginUrl($rewriter->transform($this->getOriginUrl()));
         $this->setOnlineResource($rewriter->transform($this->getOnlineResource()));
         if ($requestInfo = $this->getGetMap()) {
-            /** @var RequestInformation $requestInfo */
             $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getGetFeatureInfo()) {
-            /** @var RequestInformation $requestInfo */
             $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getGetCapabilities()) {
-            /** @var RequestInformation $requestInfo */
             $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getDescribeLayer()) {
-            /** @var RequestInformation $requestInfo */
             $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getGetLegendGraphic()) {
-            /** @var RequestInformation $requestInfo */
             $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getGetStyles()) {
-            /** @var RequestInformation $requestInfo */
             $requestInfo->rewriteUrl($rewriter);
         }
         if ($requestInfo = $this->getPutStyles()) {
-            /** @var RequestInformation $requestInfo */
             $requestInfo->rewriteUrl($rewriter);
         }
         $this->setGetMap($this->getGetMap());
