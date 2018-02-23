@@ -369,6 +369,8 @@ mb:
         text:
           title: Text
           label: Text
+          error:
+            notext: 'Kein Text eingetragen'
       geometry:
         action:
           remove: 'Entfernen der Geometrie'

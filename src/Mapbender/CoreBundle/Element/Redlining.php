@@ -75,15 +75,6 @@ class Redlining extends Element
     /**
      * @inheritdoc
      */
-    public function getConfiguration()
-    {
-        $config = parent::getConfiguration();
-        return $config;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\RedliningAdminType';

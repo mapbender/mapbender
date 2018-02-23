@@ -19,29 +19,6 @@ class MetadataUrl
     public $type;
 
     /**
-     * @var string
-     */
-    public $url;
-
-    /**
-     * Creates a MetadataUrl object from parameters
-     *
-     * @param array $parameters
-     * @return MetadataUrl
-     */
-    public static function create($parameters)
-    {
-        $metadataUrl = new MetadataUrl();
-        if (isset($parameters["type"])) {
-            $metadataUrl->type = $parameters["type"];
-        }
-        if (isset($parameters["url"])) {
-            $metadataUrl->url = $parameters["url"];
-        }
-        return $metadataUrl;
-    }
-
-    /**
      * Get type
      *
      * @return string

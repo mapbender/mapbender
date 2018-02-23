@@ -9,7 +9,7 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Router;
 
 /**
  * Description of WmsInstanceLayerEntityHandler
@@ -248,34 +248,11 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             );
         }
         $configuration['bbox'] = $srses;
-        $styles = $this->entity->getSourceItem()->getStyles();
-        if ($styles) {
-            $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
-            if ($legendurl !== null) {
-                $configuration["legend"] = array(
-                    "url" => $this->generateTunnelUrl($legendurl->getOnlineResource()->getHref()),
-                    "width" => intval($legendurl->getWidth()),
-                    "height" => intval($legendurl->getHeight())
-                );
-            }
-        } elseif ($this->entity->getSourceInstance()->getSource()->getGetLegendGraphic() !== null &&
-            $this->entity->getSourceItem()->getName() !== null &&
-            $this->entity->getSourceItem()->getName() !== ""
-        ) {
-            $source = $this->entity->getSourceInstance()->getSource();
-            $legend = $source->getGetLegendGraphic();
-            $url = $legend->getHttpGet();
-            $formats = $legend->getFormats();
-            $params = "service=WMS&request=GetLegendGraphic"
-                . "&version=" . $source->getVersion()
-                . "&layer=" . $this->entity->getSourceItem()->getName()
-                . (count($formats) > 0 ? "&format=" . $formats[0] : "")
-                . "&sld_version=1.1.0";
-            $legendgraphic = Utils::getHttpUrl($url, $params);
-            $configuration["legend"] = array(
-                "graphic" => $this->generateTunnelUrl($legendgraphic)
-            );
+        $legendConfig = $this->getLegendConfig($this->entity);
+        if ($legendConfig) {
+            $configuration["legend"] = $legendConfig;
         }
+
         $configuration["treeOptions"] = array(
             "info" => $this->entity->getInfo(),
             "selected" => $this->entity->getSelected(),
@@ -307,28 +284,100 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         return null;
     }
 
-    private function generateTunnelUrl($url)
+    /**
+     * Get a legend url from the layer's styles
+     *
+     * @param WmsLayerSource $layerSource
+     * @return string|null
+     */
+    public static function getLegendUrlFromStyles(WmsLayerSource $layerSource)
     {
-        if ($this->entity->getSourceInstance()->getSource()->getUsername()) {
-            $tunnelBaseUrl = $this->container->get('router')->generate(
-                'mapbender_core_application_instancetunnel',
-                array(
-                    'slug' => $this->entity->getSourceInstance()->getLayerset()->getApplication()->getSlug(),
-                    'instanceId' => $this->entity->getSourceInstance()->getId()),
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
-            // forward "request" param to tunnel (lower-case matching)
-            $params = array();
-            parse_str(parse_url($url, PHP_URL_QUERY), $params);
-            foreach ($params as $name => $value) {
-                if (strtolower($name) == 'request') {
-                    $fullQueryString = strstr($url, '?', false);
-                    return $tunnelBaseUrl . $fullQueryString;
-                }
+        // scan styles for legend url entries backwards
+        // some WMS services may not populate every style with a legend, so just checking the last
+        // style for a legend is not enough
+        // @todo: style node selection should follow configured style
+        foreach (array_reverse($layerSource->getStyles()) as $style) {
+            /** @var Style $style */
+            $legendUrl = $style->getLegendUrl();
+            if ($legendUrl) {
+                return $legendUrl->getOnlineResource()->getHref();
             }
-            throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
-        } else {
-            return $url;
         }
+        return null;
+    }
+
+    /**
+     * @param WmsLayerSource $layerSource
+     * @return string|null
+     */
+    public static function getLegendGraphicUrl(WmsLayerSource $layerSource)
+    {
+        /** @var WmsSource $source*/
+        $source = $layerSource->getSource();
+        $glg = $source->getGetLegendGraphic();
+        $layerName = $layerSource->getName();
+
+        if ($glg && $layerName) {
+            $source = $layerSource->getSource();
+            $url = $glg->getHttpGet();
+            $formats = $glg->getFormats();
+            $params = "service=WMS&request=GetLegendGraphic"
+                . "&version=" . $source->getVersion()
+                . "&layer=" . $layerName
+                . (count($formats) > 0 ? "&format=" . $formats[0] : "")
+                . "&sld_version=1.1.0";
+            return Utils::getHttpUrl($url, $params);
+        }
+        return null;
+    }
+
+    /**
+     * Return the client-facing configuration for a layer's legend
+     *
+     * @param WmsInstanceLayer $entity
+     * @return array
+     */
+    public function getLegendConfig(WmsInstanceLayer $entity)
+    {
+        $styleLegendUrl = $this->getLegendUrlFromStyles($entity->getSourceItem());
+        if (WmsSourceEntityHandler::useTunnel($entity->getSourceInstance()->getSource())) {
+            /** @var Router $router */
+            $router = $this->container->get('router');
+            $tunnel = new InstanceTunnel($router, $entity->getSourceInstance());
+        } else {
+            $tunnel = null;
+        }
+        $layerName = $entity->getSourceItem()->getName();
+        if ($styleLegendUrl) {
+            if ($tunnel) {
+                // request via tunnel, see ApplicationController::instanceTunnelAction
+                // instruct the tunnel action that the legend url should be plucked from styles
+                $tunnelInputUrl = '?request=GetLegendGraphic&_glgmode=styles&layer=' . $layerName;
+                $publicLegendUrl = $tunnel->generatePublicUrl($tunnelInputUrl);
+            } else {
+                $publicLegendUrl = $styleLegendUrl;
+            }
+            return array(
+                "url"   => $publicLegendUrl,
+            );
+        } else {
+            $glgLegendUrl = $this->getLegendGraphicUrl($entity->getSourceItem());
+            if ($glgLegendUrl) {
+                if ($tunnel) {
+                    // request via tunnel, see ApplicationController::instanceTunnelAction
+                    // instruct the tunnel action that the legend url should be plucked from GetLegendGraphic
+                    $tunnelInputUrl = '?request=GetLegendGraphic&_glgmode=GetLegendGraphic';
+                    $publicLegendUrl = $tunnel->generatePublicUrl($tunnelInputUrl);
+                } else {
+                    $publicLegendUrl = $glgLegendUrl;
+                }
+                return array(
+                    // this entry in the emitted config is only evaluated by the legend element if configured with
+                    // "generateLegendUrl": true
+                    "graphic"   => $publicLegendUrl,
+                );
+            }
+        }
+        return array();
     }
 }

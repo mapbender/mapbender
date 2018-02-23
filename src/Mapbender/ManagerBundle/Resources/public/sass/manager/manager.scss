@@ -84,6 +84,9 @@ $pageWidth: $contentPaneWidth + $navWidth;
   &:hover{@include opacity(1);}
 }
 
+.notifyjs-corner {
+  z-index: 100000 !important;
+}
 
 
 
