@@ -3,9 +3,15 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
+use Mapbender\CoreBundle\Component\BoundingBox;
+use Mapbender\WmsBundle\Controller\RepositoryController;
 
 /**
- * 
+ * Renders frontend meta data for an entire Wms source or an individual layer.
+ * @see RepositoryController::metadataAction()
+ * @see WmsInstance::getMetadata()
+ *
  * @inheritdoc
  * @author Paul Schmidt
  */
@@ -76,17 +82,19 @@ class WmsMetadata extends SourceMetadata
         }
     }
 
+    /**
+     * @param WmsInstanceLayer $layer
+     * @return string[][]
+     */
     private function prepareLayers($layer)
     {
         $layer_items = array();
-        $layer_items[] = array("name" => strval($layer->getSourceItem()->getName()));
         $sourceItem = $layer->getSourceItem();
+        $layer_items[] = array("name" => strval($sourceItem->getName()));
         $layer_items[] = array("title" => $this->formatAlternatives($sourceItem->getTitle(), $layer->getTitle()));
-        $bbox = $layer->getSourceItem()->getLatlonBounds();
-        $layer_items[] = array("bbox" => $bbox->getSrs() . " " .
-                $bbox->getMinx() . "," . $bbox->getMiny() . "," . $bbox->getMaxx() . "," . $bbox->getMaxy());
-        $layer_items[] = array(
-            "srs" => implode(', ', $layer->getSourceItem()->getSrs()));
+        $bbox = $sourceItem->getLatlonBounds();
+        $layer_items[] = array("bbox" => $this->formatBbox($bbox));
+        $layer_items[] = array("srs" => implode(', ', $layer->getSourceItem()->getSrs()));
         if($layer->getSublayer()->count() > 0){
             $sublayers = array();
             foreach($layer->getSublayer() as $sublayer){
@@ -95,6 +103,20 @@ class WmsMetadata extends SourceMetadata
             $layer_items[] = array(SourceMetadata::$SECTION_SUBITEMS => $sublayers);
         }
         return $layer_items;
+    }
+
+    /**
+     * @param BoundingBox $bbox
+     * @return string
+     */
+    public static function formatBbox($bbox)
+    {
+        return $bbox->getSrs() . " " . implode(array(
+            $bbox->getMinx(),
+            $bbox->getMiny(),
+            $bbox->getMaxx(),
+            $bbox->getMaxy(),
+        ));
     }
 
     /**
