@@ -47,8 +47,7 @@ class WmsMetadata extends SourceMetadata
             $this->addMetadataSection(SourceMetadata::$SECTION_USECONDITIONS, $tou_items);
         }
         # add source contact metadata
-        if ($this->getUseContact()) {
-            $contact = $src->getContact();
+        if (($contact = $src->getContact()) && $this->getUseContact()) {
             $contact_items = array();
             $contact_items[] = array("person" => strval($contact->getPerson()));
             $contact_items[] = array("position" => strval($contact->getPosition()));
