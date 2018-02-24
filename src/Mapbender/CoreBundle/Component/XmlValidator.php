@@ -275,8 +275,8 @@ EOF
         // try in shipping schema dir, and return the path if that file exists
         // otherwise, return a file name in download dir, and track it for deletion
         $path = $this->normalizePath($path);
-        $shippingPath = $this->shippingSchemaDir . "/{$path}";
-        if (file_exists($shippingPath)) {
+        $shippingPath = $this->locateShippingSchema($ns, $path, $url);
+        if ($shippingPath && file_exists($shippingPath)) {
             return $shippingPath;
         } else {
             $downloadPath = $this->schemaDownloadDir . "/{$path}";
@@ -386,5 +386,46 @@ EOF
         /** @var LoggerInterface $logger */
         $logger = $this->container->get("logger");
         return $logger;
+    }
+
+    /**
+     * Finds an appropriate schema file in the "shipping" / bundled set, so we can avoid repeated downloads of
+     * common, static schemas.
+     *
+     * @param string $targetNamespace the schema namespace
+     * @param string $initialPath a relative sub-path, e.g. 'schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd'
+     * @param string $url the entire request url for the scheme, used as a fallback for legacy file placement
+     * @return string|null absoulte path to local file or null if not found
+     */
+    protected function locateShippingSchema($targetNamespace, $initialPath, $url)
+    {
+        $newStyleFullPath = "{$this->shippingSchemaDir}/{$initialPath}";
+        if (file_exists($newStyleFullPath)) {
+            return $newStyleFullPath;
+        } else {
+            // Legacy file naming placed all files into a single directory by flattening directory separators into
+            // underscores. Any other non-word characters (dots, '://' etc) are also converted to underscores.
+            /**
+             * @todo: shipping schemas should relocate and adopt a single file naming convention that works on
+             *        Unix and Windows. Then we can remove this entire path.
+             */
+            $legacyCandidates = array(
+                // first form will use the full URL, most notably including the scheme
+                // this produces names like
+                //   "xmlschemas/http___www_w3_org_XML_1998_namespace_http___www_w3_org_2001_xml_xsd"
+                "{$targetNamespace}_{$url}",
+                // second form uses the (already preprocessed) path
+                "{$targetNamespace}_{$initialPath}",
+            );
+            foreach ($legacyCandidates as $candidate) {
+                // flatten non-word / non-digit chars to underscores, prepend base path
+                $underscored = preg_replace('#[^\w\d]#', '_', $candidate);
+                $fullPath = "{$this->shippingSchemaDir}/{$underscored}";
+                if (file_exists($fullPath)) {
+                    return $fullPath;
+                }
+            }
+            return null;
+        }
     }
 }
