@@ -793,7 +793,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get password
      *
-     * 
+     * @return string
      */
     public function getPassword()
     {

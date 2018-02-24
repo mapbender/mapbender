@@ -259,6 +259,7 @@
     - Change tilesize default to 512
 
 * **v3.0.5.4**
+    - Merge pull request #765 from mapbender/fix/wms-cleanups-loading
     - Fix http 500 when rendering meta data for a service with undefined contact information
     - Merge pull request #760 from mapbender/fix/unittest-preconditions
     - Merge pull request #747 from mapbender/fix/metadata-serialization-746
