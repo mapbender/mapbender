@@ -287,30 +287,31 @@ EOF
     }
 
     /**
-     * Normalizes a file path: repaces all strings "/ORDERNAME/.." with "".
+     * Removes parent directory traversal from a path by removing all "<parent name>/.." occurences with "".
+     * Supports both Unix and Windows style directory separators.
      *
      * @param string $path
-     * @return string a mormalized file path.
+     * @return string a mormalized file path with native directory separators
      */
     private function normalizePath($path)
     {
-        $path = preg_replace("/[\/\\\][^\/\\\]+[\/\\\][\.]{2}/", "", $path);
+        $path = preg_replace('#[/\\\\][^/\\\\]+[/\\\\][\.]{2}#', '', $path);
         if (!strpos($path, "..")) {
-            return preg_replace("/[\/\\\]/", DIRECTORY_SEPARATOR, $path);
+            return preg_replace('#[/\\\\]#', DIRECTORY_SEPARATOR, $path);
         } else {
             return $this->normalizePath($path);
         }
     }
 
     /**
-     * Adds a schema "file:///" to file path.
+     * Adds a schema "file:///" to file path, enforces Unix-style directory separators.
      *
      * @param string $filePath a file path
      * @return string a file path as url
      */
     private function addFileSchema($filePath)
     {
-        $filePath_ = preg_replace("/[\/\\\]/", "/", $filePath);
+        $filePath_ = preg_replace('#[/\\\\]#', '/', $filePath);
         if (stripos($filePath_, "file:") !== 0) {
             return "file:///" . $filePath_;
         } else {
