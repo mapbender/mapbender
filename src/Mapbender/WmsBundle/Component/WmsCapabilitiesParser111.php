@@ -19,15 +19,6 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
 {
 
     /**
-     * Creates an instance
-     * @param \DOMDocument $doc
-     */
-    public function __construct(\DOMDocument $doc)
-    {
-        parent::__construct($doc);
-    }
-
-    /**
      * Parses the GetCapabilities document
      *
      * @return \Mapbender\WmsBundle\Entity\WmsSource

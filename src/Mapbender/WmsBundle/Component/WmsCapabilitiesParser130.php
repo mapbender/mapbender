@@ -9,7 +9,6 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword;
-use Mapbender\WmsBundle\Component\RequestInformation;
 
 /**
  * Class that Parses WMS 1.3.0 GetCapabilies Document
@@ -182,6 +181,7 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
      *
      * @param \DOMElement $contextElm the element to use as context for the
      * Operation Request Information section
+     * @return RequestInformation
      */
     private function parseOperationRequestInformation(\DOMElement $contextElm)
     {
