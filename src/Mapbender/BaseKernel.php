@@ -23,6 +23,45 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 abstract class BaseKernel extends Kernel
 {
     /**
+     * Search and initialize name space bundles.
+     * Search approach uses indirectly the composer auto generated file to get bundle names.
+     *
+     * This was originally introduced in a Mapbender 3.0.6 starter change
+     * @see https://github.com/mapbender/mapbender-starter/compare/8028d4ec86a9f060a2654e0f4b5443931493ae13...83a751528c309836130102b6ab6b07f76c74b932#diff-9166876875e5d5b4c5846613d76634e8
+     *
+     * Since this method doesn't take effect unless called explicitly from the active AppKernel, we can introduce
+     * it safely into earlier versions, which will ease the transition.
+     *
+     * @param BundleInterface[] $bundles   Bundle array link
+     * @param string            $nameSpace Name space prefix as string
+     * @return BundleInterface[] Bundle array
+     */
+    public function addNameSpaceBundles(array &$bundles, $nameSpace)
+    {
+        $vendorRoot = realpath($this->getRootDir() . '/../vendor');
+
+        $namespaces = include("{$vendorRoot}/composer/autoload_namespaces.php");
+        foreach ($namespaces as $name => $path) {
+            if (strpos($name, $nameSpace) === 0) {
+                $bundleClassName = $name . '\\' . str_replace('\\', "", $name);
+                $bundles[] = new $bundleClassName();
+            }
+
+        }
+
+        $namespaces = include("{$vendorRoot}/composer/autoload_psr4.php");
+        foreach ($namespaces as $name => $path) {
+            if (strpos($name, $nameSpace) === 0
+                && strpos($name, "Bundle")
+            ) {
+                $bundleClassName = $name . str_replace('\\', "", $name);
+                $bundles[] = new $bundleClassName();
+            }
+        }
+        return $bundles;
+    }
+
+    /**
      * @return array|BundleInterface[]
      */
     public function registerBundles()
