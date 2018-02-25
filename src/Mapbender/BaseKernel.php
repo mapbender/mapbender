@@ -94,4 +94,33 @@ abstract class BaseKernel extends Kernel
 
         return $bundles;
     }
+
+    /**
+     * Helper method to remove repeated bundles, retaining bundle order. Symfony initialization will throw
+     * an error "Uncaught LogicException: Trying to register two bundles with the same name" if the same bundle
+     * class appears twice.
+     *
+     * You SHOULD make sure to add each bundle only once, but if you're having difficulties you can use this
+     * to filter out dupes.
+     *
+     * The bundle constructor is pretty light, so instantiating too many is not a big performance problem.
+     *
+     * The real problem we solve here is that the "registerBundles" return type is not a list of class names,
+     * but a list of already created instances.
+     *
+     * @param BundleInterface[] $bundles
+     * @return BundleInterface[] input filtered down to only unique classes
+     */
+    public static function filterUniqueBundles($bundles)
+    {
+        // force contiguous numeric ids (array_map discards keys)
+        $bundles = array_values($bundles);
+
+        $bundleClasses = array_map('get_class', $bundles);
+        // array_unique preserves keys, keeps only first occurence of class name
+        $keptBundleClasses = array_unique($bundleClasses);
+        // intersect instances with deduped keys => instances of same class gone, order preserved
+        $keptBundleInstances = array_intersect_key($bundles, $keptBundleClasses);
+        return $keptBundleInstances;
+    }
 }
