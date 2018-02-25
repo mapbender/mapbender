@@ -23,6 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * Absorbed from owsproxy3 repository, where it lived a short, undocumented life and will be reverted.
  * @see https://github.com/mapbender/owsproxy3/compare/f7a3dc86ac0eac4896e55a577c5416814a491f11...65b66009417aca618235ec4c76100d2bb4399dac
+ * It didn't even function (container initalization was broken).
  *
  * This service and its underlying machinery should remain in place as is to support http response consumers that
  * only know how to deal with Buzz Response objects.
@@ -38,7 +39,7 @@ class LegacyService extends ContainerAware
      */
     public function __construct(ContainerInterface $container)
     {
-        $this->setContainer($this->container);
+        $this->setContainer($container);
     }
 
     /**
