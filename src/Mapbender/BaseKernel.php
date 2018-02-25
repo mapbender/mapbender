@@ -6,16 +6,28 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 /**
  * Mapbender base kernel that ensures all bundles required for barebones operation are registered.
+ * Optional to use. Legacy starter installations can remain blissfully unaware of this class, and continue
+ * to initialize all bundles themselves.
  *
- * This is the dependency-decoupling bridge between Mapbender and Mapbender starter.
- * We expect this class to be inherited from by the actual AppKernel residing in the starter,
- * which should add all the remaining, truly optional and project-specific bundles. I.e. we do
- * not provide the bundles for backend access, printing, mobile, sending emails etc. There are
- * legitimate reasons for turning any or all of them off.
+ * This is an attempt to reduce dependency coupling between Mapbender and Mapbender starter.
+ * In newer project setups we expect
+ * a) the actual AppKernel residing in the starter inherits from this class
+ * b) it retrieves the list of bundles that we absolutely depend on for basic operation from us
+ *    (by calling parent::registerBundles)
+ * c) it amends that barebones list with all desired optional bundles and return the merged bundle list
  *
- * We do however define here the bundles that we absolutely depend on for basic operation.
+ * BaseKernel does not provide the bundles for backend access, printing, mobile, sending emails etc. There are
+ * legitimate reasons for turning any or all of them off; also many of them require configuration to even initialize
+ * properly. This configuration resides in the starter, and may have been removed on a per-project basis.
  *
- * @see https://github.com/mapbender/mapbender/issues/773
+ * For background @see https://github.com/mapbender/mapbender/issues/773
+ *
+ * As a transition helper, we provide a utility method to throw out duplicate bundle declarations.
+ * @see BaseKernel::filterUniqueBundles()
+ *
+ * We also provide a utility to automatically discover and instantiate bundle classes from an arbitrary base namespaces,
+ * which is also completely optional to use.
+ * @see BaseKernel::addNameSpaceBundles()
  *
  * NOTE: do not try to extend this into the actual active kernel, getRootDir et al rely on the
  *       location of the concrete kernel class in the file system.
@@ -25,6 +37,9 @@ abstract class BaseKernel extends Kernel
     /**
      * Search and initialize name space bundles.
      * Search approach uses indirectly the composer auto generated file to get bundle names.
+     *
+     * You should pass in an already populated bundle instance list which will be added to
+     * by reference.
      *
      * This was originally introduced in a Mapbender 3.0.6 starter change
      * @see https://github.com/mapbender/mapbender-starter/compare/8028d4ec86a9f060a2654e0f4b5443931493ae13...83a751528c309836130102b6ab6b07f76c74b932#diff-9166876875e5d5b4c5846613d76634e8
@@ -62,7 +77,7 @@ abstract class BaseKernel extends Kernel
     }
 
     /**
-     * @return array|BundleInterface[]
+     * @return BundleInterface[]
      */
     public function registerBundles()
     {
@@ -100,8 +115,8 @@ abstract class BaseKernel extends Kernel
      * an error "Uncaught LogicException: Trying to register two bundles with the same name" if the same bundle
      * class appears twice.
      *
-     * You SHOULD make sure to add each bundle only once, but if you're having difficulties you can use this
-     * to filter out dupes.
+     * You SHOULD strive to add each bundle only once, but if you're having difficulties you can use this
+     * to filter out dupes at a minimal performance cost.
      *
      * The bundle constructor is pretty light, so instantiating too many is not a big performance problem.
      *
