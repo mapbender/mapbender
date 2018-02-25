@@ -6,6 +6,7 @@
         <parameter id="version">3.0.2</parameter>
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
         <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
+        <parameter key="mapbender.owsproxy.httpclient.legacy.class">Mapbender\CoreBundle\Component\OwsProxy\LegacyService</parameter>
     </parameters>
 
     <services>
@@ -85,6 +86,10 @@
         <service id="mapbender.validator.css" class="Mapbender\CoreBundle\Validator\Constraints\ScssValidator">
             <argument type="service" id="service_container" />
             <tag name="validator.constraint_validator" alias="mapbender.validator.css" />
+        </service>
+
+        <service id="owsproxy.httpclient" class="%mapbender.owsproxy.httpclient.legacy.class%">
+            <argument type="service" id="service_container" />
         </service>
     </services>
 </container>
