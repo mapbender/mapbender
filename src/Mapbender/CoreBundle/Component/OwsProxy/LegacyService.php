@@ -2,22 +2,30 @@
 
 namespace Mapbender\CoreBundle\Component\OwsProxy;
 
+use Buzz\Message\Response;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
+use OwsProxy3\CoreBundle\Component\Exception\HTTPStatus502Exception;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Legacy "owsproxy3"-based http client.
- * All requests return BuzzMessage
  *
  * @deprecated
  * @internal
  *
- * Absorbed from owsproxy3 repository, where it will be reverted.
+ * Known properties:
+ * - All requests return BuzzMessage.
+ * - All upstream connection errors (DNS, route, HTTP error responses) are ignored and time out.
+ * - Supplying a URL without a host is the only error condition that throws (a custom HTTPStatus502Exception, with
+ *   a truncated stack trace)
+ *
+ * Absorbed from owsproxy3 repository, where it lived a short, undocumented life and will be reverted.
  * @see https://github.com/mapbender/owsproxy3/compare/f7a3dc86ac0eac4896e55a577c5416814a491f11...65b66009417aca618235ec4c76100d2bb4399dac
  *
- *
+ * This service and its underlying machinery should remain in place as is to support http response consumers that
+ * only know how to deal with Buzz Response objects.
  *
  * @author  Andriy Oblivantsev <eslider@gmail.com>
  */
@@ -34,8 +42,11 @@ class LegacyService extends ContainerAware
     }
 
     /**
-     * /**
-     * Creates an instance from parameters
+     * Fetches a response from the given url with the given parameters.
+     * Method is GET, unless $content (raw POST body) or $postParams (key => value mapping) is supplied, then the
+     * method automatically becomes POST.
+     *
+     * $content and $postParams are **NOT** merged. If both are specified, only $content is used.
      *
      * @param string $url        URL
      * @param string $user       User name for basic authentication
@@ -44,7 +55,8 @@ class LegacyService extends ContainerAware
      * @param array  $getParams
      * @param array  $postParams the POST parameters
      * @param null   $content
-     * @return \Buzz\Message\Response|null
+     * @return Response
+     * @throws HTTPStatus502Exception on malformed URL
      */
     public function request($url,
                             $user = null,
@@ -61,6 +73,11 @@ class LegacyService extends ContainerAware
             $password,
             $headers, $getParams, $postParams,
             $content));
-        return $proxy->handle();
+        // upstream annotation is wrong, Buzz always returns a Response object from a request.
+        // upstream annotation is also missing the fact that nothing (=null aka void) is returned if method is neither
+        // GET nor POST. But createFromUrl will guarantee either GET or POST, so that's ok here.
+        /** @var Response $response */
+        $response = $proxy->handle();
+        return $response;
     }
 }
