@@ -1,6 +1,7 @@
 # Changelog
 
 * **v3.0.5.4**
+    - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
     - Replace usort => array_multisort to skip around PHP bug #50688 when sorting Element names (MB3 issue #586)
     - Merge pull request #765 from mapbender/fix/wms-cleanups-loading
     - Fix http 500 when rendering meta data for a service with undefined contact information
