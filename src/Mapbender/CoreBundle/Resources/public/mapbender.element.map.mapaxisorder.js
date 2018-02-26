@@ -8,7 +8,7 @@
 
     'use strict';
 
-    var codes = [{
+    var codes = {
         "EPSG:2036": {yx: true},
         "EPSG:2044": {yx: true},
         "EPSG:2045": {yx: true},
@@ -1895,9 +1895,8 @@
         "EPSG:31469": {yx: true},
         "EPSG:31700": {yx: true}
 
-    }];
+    };
 
-    _.each(codes, function(codeObj, key) {
-        jQuery.extend(OpenLayers.Projection.defaults, codeObj);
-    });
+    jQuery.extend(OpenLayers.Projection.defaults, codes);
+
 })(window);
