@@ -1,6 +1,6 @@
 # Changelog
 
-* **v.3.0.6.4**
+* **v.3.0.6.4** - 2018-20-26
     - Fix error displaying Wms metadata if no contact information available
     - Element selector (when adding to Application) is now filtered (Pull #766)
     - Fix displaying scale value in scale selector #657
