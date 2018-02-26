@@ -254,7 +254,6 @@ form {
     }
 
     > input[type='text'] {
-      @extend .ie-8-borders-hack;
     }
 
     > input[type='text']:before {
