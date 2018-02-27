@@ -80,6 +80,10 @@ class MinMax
         return $this;
     }
 
+    /**
+     * @param $value
+     * @return float|null
+     */
     public function getInRange($value)
     {
         $value_ = $value;
@@ -88,6 +92,11 @@ class MinMax
         return $value_ === null ? null : floatval($value_);
     }
 
+    /**
+     * @param $value1
+     * @param $value2
+     * @return MinMax
+     */
     public static function create($value1, $value2)
     {
         if (null === $value1) {
