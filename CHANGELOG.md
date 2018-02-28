@@ -3,6 +3,7 @@
 * **v3.0.5.4**
     - Update WmsLoader example URL to https
     - Skip undefined element classes in Yaml applications, log a warning instead of crashing
+    - Fix unbounded growth in "authority" on repeated export / reimport / cloning of applications (#777)
     - Backport doctrine annotations to fix some broken import / export scenarios
     - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers
     - Backport fix for getting Dimension configuration with open extent
