@@ -55,7 +55,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $instanceLayer->setAllowtoggle(null);
         }
         foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
-            $entityHandler = new WmsInstanceLayerEntityHandler($this->container, new WmsInstanceLayer());
+            $subLayerInstance = new WmsInstanceLayer();
+            $entityHandler = new WmsInstanceLayerEntityHandler($this->container, $subLayerInstance);
             $entityHandler->create($instance, $wmslayersourceSub, $num + 1);
             $entityHandler->getEntity()->setParent($instanceLayer);
             $instanceLayer->addSublayer($entityHandler->getEntity());

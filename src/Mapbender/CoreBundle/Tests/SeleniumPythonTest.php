@@ -5,6 +5,9 @@ namespace Mapbender\CoreBundle\Tests;
 use Symfony\Component\Process\Process;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * @group functional
+ */
 class SeleniumPythonTest extends WebTestCase
 {
     public function setUp()

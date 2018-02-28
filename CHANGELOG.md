@@ -261,6 +261,11 @@
     - Change tilesize default to 512
 
 * **v3.0.5.4**
+    - Update WmsLoader example URL to https
+    - Skip undefined element classes in Yaml applications, log a warning instead of crashing
+    - Backport doctrine annotations to fix some broken import / export scenarios
+    - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers
+    - Backport fix for getting Dimension configuration with open extent
     - Fix strict SCSS warnings when compiling with ruby-sass (closes issue #761)
     - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
     - Replace usort => array_multisort to skip around PHP bug #50688 when sorting Element names (MB3 issue #586)
