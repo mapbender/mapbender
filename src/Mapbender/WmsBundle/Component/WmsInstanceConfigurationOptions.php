@@ -302,16 +302,12 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      */
     public function toArray()
     {
-        return array(
+        return parent::toArray() + array(
             "version" => $this->version,
-            "url" => $this->url,
-            "proxy" => $this->proxy,
-            "visible" => $this->visible,
             "format" => $this->format,
             "info_format" => $this->infoformat,
             "exception_format" => $this->exceptionformat,
             "transparent" => $this->transparency,
-            "opacity" => $this->opacity,
             "tiled" => $this->tiled,
             "bbox" => $this->bbox,
             "vendorspecifics" => $this->vendorspecifics,
@@ -321,77 +317,22 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function fromArray($options)
-    {
-        $ico = null;
-        if ($options && is_array($options)) {
-            $ico = new WmsInstanceConfigurationOptions();
-            if (isset($options["url"])) {
-                $ico->url = $options["url"];
-            }
-            if (isset($options["proxy"])) {
-                $ico->proxy = $options["proxy"];
-            }
-            if (isset($options["visible"])) {
-                $ico->visible = $options["visible"];
-            }
-            if (isset($options["format"])) {
-                $ico->format = $options["format"];
-            }
-            if (isset($options["info_format"])) {
-                $ico->infoformat = $options["info_format"];
-            }
-            if (isset($options["transparent"])) {
-                $ico->transparency = $options["transparent"];
-            }
-            if (isset($options["opacity"])) {
-                $ico->opacity = $options["opacity"];
-            }
-            if (isset($options["tiled"])) {
-                $ico->tiled = $options["tiled"];
-            }
-            if (isset($options["bbox"])) {
-                $ico->bbox = $options["bbox"];
-            }
-            if (isset($options["vendorspecifics"])) {
-                $ico->vendorspecifics = $options["vendorspecifics"];
-            }
-            if (isset($options["buffer"])) {
-                $ico->buffer = $options["buffer"];
-            }
-            if (isset($options["ratio"])) {
-                $ico->ratio = $options["ratio"];
-            }
-            if (isset($options["version"])) {
-                $ico->version = $options["version"];
-            }
-            if (isset($options["exception_format"])) {
-                $ico->exceptionformat = $options["exception_format"];
-            }
-        }
-        return $ico;
-    }
-
     public static function fromEntity(WmsInstance $instance)
     {
-        $ico = new static();
         $source = $instance->getSource();
 
-        $ico->setUrl($source->getGetMap()->getHttpGet());
+        $effectiveUrl = $source->getGetMap()->getHttpGet();
+
         $dimensions = array();
         foreach ($instance->getDimensions() as $dimension) {
             if ($dimension->getActive()) {
                 $dimensions[] = $dimension->getConfiguration();
                 if ($dimension->getDefault()) {
                     $help = array($dimension->getParameterName() => $dimension->getDefault());
-                    $ico->setUrl(UrlUtil::validateUrl($ico->getUrl(), $help, array()));
+                    $effectiveUrl = UrlUtil::validateUrl($effectiveUrl, $help, array());
                 }
             }
         }
-        $ico->setDimensions($dimensions);
         $vendorsecifics = array();
         foreach ($instance->getVendorspecifics() as $key => $vendorspec) {
             $handler = new VendorSpecificHandler($vendorspec);
@@ -399,30 +340,48 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
                 $vendorsecifics[] = $handler->getConfiguration();
                 $help             = $handler->getKvpConfiguration(null);
-                $ico->setUrl(UrlUtil::validateUrl($ico->getUrl(), $help, array()));
+                $effectiveUrl = UrlUtil::validateUrl($effectiveUrl, $help, array());
             }
         }
-        $ico->setVendorspecifics($vendorsecifics);
-
-        $ico->setProxy($instance->getProxy())
-            ->setVisible($instance->getVisible())
-            ->setFormat($instance->getFormat())
-            ->setInfoformat($instance->getInfoformat())
-            ->setTransparency($instance->getTransparency())
-            ->setOpacity($instance->getOpacity() / 100)
-            ->setTiled($instance->getTiled())
-            ->setBuffer($instance->getBuffer())
-            ->setRatio($instance->getRatio())
-            ->setVersion($instance->getSource()->getVersion())
-            ->setExceptionformat($instance->getExceptionformat());
-
         $rootLayer = $instance->getRootlayer();
         $boundingBoxMap = array();
         foreach ($rootLayer->getSourceItem()->getMergedBoundingBoxes() as $bbox) {
             $boundingBoxMap[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
-        $ico->setBbox($boundingBoxMap);
+        return static::fromArray(array(
+            'url' => $effectiveUrl,
+            'dimensions' => $dimensions,
+            'vendorspecifics' => $vendorsecifics,
+            'proxy' => $instance->getProxy(),
+            'visible' => $instance->getVisible(),
+            'format' => $instance->getFormat(),
+            'info_format' => $instance->getInfoformat(),
+            'transparency' => $instance->getTransparency(),
+            'opacity' => ($instance->getOpacity() / 100),
+            'tiled' => $instance->getTiled(),
+            'buffer' => $instance->getBuffer(),
+            'ratio' => $instance->getRatio(),
+            'version' => $instance->getSource()->getVersion(),
+            'exception_format' => $instance->getExceptionformat(),
+            'bbox' => $boundingBoxMap,
+        ));
+    }
 
-        return $ico;
+    public static function defaults()
+    {
+        return parent::defaults() + array(
+            'buffer' => 0,
+            'ratio' => 1.25,
+            // everything else is uninitialized
+            'version' => null,
+            'exception_format' => null,     // danger zone: attribute name is exceptionformat, with no underscore
+            'format' => null,
+            'info_format' => null,          // danger zone: attribute name is infoformat, with no underscore
+            'transparency' => null,
+            'vendorspecifics' => null,
+            'tiled' => null,
+            'bbox' => null,
+            'dimensions' => null,
+        );
     }
 }

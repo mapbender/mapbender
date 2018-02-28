@@ -114,6 +114,9 @@ abstract class InstanceConfigurationOptions
      *
      * @param Signer $signer
      * @return bool transparency
+     *
+     * @deprecated this should be a getter, not a mutator
+     * @internal
      */
     public function signUrl(Signer $signer = null)
     {
@@ -126,15 +129,63 @@ abstract class InstanceConfigurationOptions
      * Returns InstanceConfigurationOptions as array
      * @return array
      */
-    abstract public function toArray();
+    public function toArray()
+    {
+        return array(
+            "url" => $this->url,
+            "opacity" => $this->opacity,
+            "proxy" => $this->proxy,
+            "visible" => $this->visible,
+        );
+    }
+
+    /**
+     * @return array
+     * Policy; no "get" prefix for non-serializible getter functions in objects that are persisted or exported
+     */
+    public static function defaults()
+    {
+        // all properties uninitialized
+        return array(
+            "url" => null,
+            "opacity" => null,
+            "proxy" => null,
+            "visible" => null,
+        );
+    }
 
     /**
      * Creates an InstanceConfigurationOptions from options
      * @param array $options array with options
-     * @return InstanceConfigurationOptions
+     * @param bool $strict to throw if unknown options have been passed
+     * @return static
      */
-    public static function fromArray($options)
+    public static function fromArray($options, $strict = true)
     {
-        
+        if (!is_array($options)) {
+            if ($strict) {
+                throw new \InvalidArgumentException('Options must be an array, is: ' . print_r($options, true));
+            } else {
+                $options = array();
+            }
+        }
+        $instance = new static();
+        $instance->populateAttributes($options, static::defaults(), $strict);
+        return $instance;
+    }
+
+    protected function populateAttributes($options, $defaults, $strict)
+    {
+        $mergedOptions = array_replace($defaults, $options);
+        if ($strict) {
+            $validateAgainst = $defaults ?: $this->defaults();
+            $badKeys = array_keys(array_diff_key($validateAgainst, $options));
+            if ($badKeys) {
+                throw new \RuntimeException("Unsupported keys in options: " . implode(", ", $badKeys));
+            }
+        }
+        foreach ($mergedOptions as $key => $value) {
+            $this->{$key} = $value;
+        }
     }
 }
