@@ -795,7 +795,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function getIdentifierAuthority()
     {
         $result = array();
-        $authorities = $this->getAuthority();
+        $authorities = $this->getAuthority(true);
         if (count($this->identifier) != 0 && count($authorities) != 0) {
             foreach ($this->identifier as $identifier) {
                 foreach ($authorities as $authority) {
@@ -838,9 +838,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get authority
      *
+     * @param bool $inherit to append Authrity objects inherited (recursively) from parent, if any
      * @return ArrayCollection|Authority[]
      */
-    public function getAuthority($inherit = true)
+    public function getAuthority($inherit = false)
     {
         $parent = $this->getParent();
         if ($parent) {
