@@ -28,13 +28,27 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      * @param WmsLayerSource|SourceItem $layerSource
      * @param int                       $num
      * @return WmsInstanceLayer
-     * @internal param  $item
+     * @deprecated for poor wording and unnecessary container dependency
+     * @internal
      */
     public function create(SourceInstance $instance, SourceItem $layerSource, $num = 0)
     {
         $instanceLayer = $this->entity;
         $this->populateFromSource($instanceLayer, $instance, $layerSource, $num);
         return $this->entity;
+    }
+
+    /**
+     * @param SourceInstance $sourceInstance
+     * @param SourceItem $layerSource
+     * @param int $num
+     * @return WmsInstanceLayer
+     */
+    public static function entityFactory(SourceInstance $sourceInstance, SourceItem $layerSource, $num = 0)
+    {
+        $newEntity = new WmsInstanceLayer();
+        static::populateFromSource($newEntity, $sourceInstance, $layerSource, $num);
+        return $newEntity;
     }
 
     /**
@@ -138,18 +152,12 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             if ($layer) {
                 self::createHandler($this->container, $layer)->update($instance, $wmslayersourceSub);
             } else {
-                $sublayerInstance = new WmsInstanceLayer();
-                $sublayerHandler = new WmsInstanceLayerEntityHandler($this->container, $sublayerInstance);
-                $obj = $sublayerHandler->create(
-                    $instance,
-                    $wmslayersourceSub,
-                    $wmslayersourceSub->getPriority()
-                );
-                $obj->setParent($this->entity);
-                $instance->getLayers()->add($obj);
-                $this->entity->getSublayer()->add($obj);
-                $manager->persist($obj);
-                foreach ($obj->getSublayer() as $lay) {
+                $sublayerInstance = WmsInstanceLayerEntityHandler::entityFactory($instance, $wmslayersourceSub, $wmslayersourceSub->getPriority());
+                $sublayerInstance->setParent($this->entity);
+                $instance->getLayers()->add($sublayerInstance);
+                $this->entity->getSublayer()->add($sublayerInstance);
+                $manager->persist($sublayerInstance);
+                foreach ($sublayerInstance->getSublayer() as $lay) {
                     $manager->persist($lay);
                 }
             }

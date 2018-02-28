@@ -150,8 +150,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setWeight(-1);
         $wmslayer_root = $this->entity->getSource()->getRootlayer();
 
-        $newInstanceLayerHandler = new WmsInstanceLayerEntityHandler($this->container, new WmsInstanceLayer());
-        $newInstanceLayerHandler->create($this->entity, $wmslayer_root);
+        // ??? @todo: return value is not used, does this implicitly modify one of the passed entities...?
+        WmsInstanceLayerEntityHandler::entityFactory($this->entity, $wmslayer_root);
     }
 
     /**
