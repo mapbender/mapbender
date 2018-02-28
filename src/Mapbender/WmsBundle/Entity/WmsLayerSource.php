@@ -623,32 +623,89 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Get scale
+     * Get minimum scale hint
+     *
+     * @param bool $recursive Try to get value from parent
+     * @return float|null
+     */
+    public function getMinScale($recursive = true)
+    {
+        $value = null;
+        $scale = $this->getScale();
+
+        if ($scale) {
+            $value = $scale->getMin();
+        }
+
+        if ($recursive && $value === null && $this->getParent()) {
+            $value = $this->getScaleRecursive() ? $this->getScaleRecursive()->getMin() : null;
+        }
+
+        $value === null ? null : floatval($value);
+
+        return $value;
+    }
+
+    /**
+     * Get maximum scale hint
+     *
+     * @param bool $recursive Try to get value from parent
+     * @return float|null
+     */
+    public function getMaxScale($recursive = true)
+    {
+        $value = null;
+        $scale = $this->getScale();
+
+        if ($scale) {
+            $value = $scale->getMax();
+        }
+
+        if ($recursive && $value === null && $this->getParent()) {
+            $value = $this->getScaleRecursive() ? $this->getScaleRecursive()->getMax() : null;
+        }
+
+        $value === null ? null : floatval($value);
+
+        return $value;
+    }
+
+    /**
+     * Get scale hint
      *
      * @return MinMax
      */
     public function getScaleRecursive()
     {
-        if ($this->scale !== null) {
-            if ($this->scale->getMin() === null || $this->scale->getMax() === null) {
-                if ($parent_scale = $this->getParent()->getScale()) {
-                    return new MinMax(
-                        $this->scale->getMin() !== null ? $this->scale->getMin() : $parent_scale->getMin(),
-                        $this->scale->getMax() !== null ? $this->scale->getMax() : $parent_scale->getMax()
-                    );
-                } else {
-                    return $this->scale;
-                }
-            } else {
-                return $this->scale;
-            }
+        $scale  = $this->getScale();
+        $parent = $this->getParent();
+
+        if (!$scale && !$parent) {
+            return new MinMax();
+        } elseif (!$scale && $parent) {
+            return $parent->getScaleRecursive();
         } else {
-            if ($this->getParent() !== null) {
-                return $this->getParent()->getScale();
+            $hasMin = $scale->getMin() !== null;
+            $hasMax = $scale->getMax() !== null;
+            if ((!$hasMin || !$hasMax) && $parent) {
+                $parentScale = $parent->getScaleRecursive();
+                if (!$parentScale) {
+                    return new MinMax(
+                        $hasMin ? $scale->getMin() : null,
+                        $hasMax ? $scale->getMax() : null
+                    );
+                }
+                return new MinMax(
+                    $hasMin ? $scale->getMin() : $parentScale->getMin(),
+                    $hasMax ? $scale->getMax() : $parentScale->getMax()
+                );
             } else {
-                return null;
+                return $scale;
             }
         }
+
+
+
     }
 
     /**

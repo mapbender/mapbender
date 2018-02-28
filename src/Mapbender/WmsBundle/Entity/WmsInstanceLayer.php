@@ -15,7 +15,7 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
  *
  * @author Paul Schmidt
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
  */
 class WmsInstanceLayer extends SourceInstanceItem
@@ -197,7 +197,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * Get sublayer
      *
-     * @return array
+     * @return ArrayCollection|WmsInstanceLayer[]
      */
     public function getSublayer()
     {
@@ -391,59 +391,89 @@ class WmsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set allowreorder
+     * Set allow reorder
      *
-     * @param boolean $allowreorder
+     * @param boolean $value
      * @return $this
      */
-    public function setAllowreorder($allowreorder)
+    public function setAllowreorder($value)
     {
-        $this->allowreorder = $allowreorder;
+        $this->allowreorder = $value;
         return $this;
     }
 
     /**
      * Set minScale
      *
-     * @param float $minScale
+     * @param float|null $value
      * @return WmsInstanceLayer
      */
-    public function setMinScale($minScale)
+    public function setMinScale($value)
     {
-        $this->minScale = $minScale;
+        $this->minScale = $value === null ? null : floatval($value);
         return $this;
     }
 
     /**
      * Get minScale
      *
+     * @param boolean $recursive Try to get value from parent
      * @return float
      */
-    public function getMinScale()
+    public function getMinScale($recursive = false)
     {
-        return $this->minScale;
+        $value = $this->minScale;
+
+        if ($value == INF) {
+            $value = null;
+        }
+
+        if ($recursive && $value === null && $this->getParent()) {
+            $value = $this->getParent()->getMinScale($recursive);
+        }
+
+        if ($value !== null) {
+            $value = floatval($value);
+        }
+
+        return $value;
     }
 
     /**
-     * Set maxScale
+     * Set maximum scale hint
      *
-     * @param float $maxScale
+     * @param float|null $value
      * @return WmsInstanceLayer
      */
-    public function setMaxScale($maxScale)
+    public function setMaxScale($value)
     {
-        $this->maxScale = $maxScale;
+        $this->maxScale = $value === null ? null : floatval($value);
         return $this;
     }
 
     /**
-     * Get maxScale
+     * Get maximums scale hint
      *
-     * @return float
+     * @param boolean $recursive Try to get value from parent
+     * @return float|null
      */
-    public function getMaxScale()
+    public function getMaxScale($recursive = false)
     {
-        return $this->maxScale;
+        $value = $this->maxScale;
+
+        if ($value == INF) {
+            $value = null;
+        }
+
+        if ($recursive && $value === null && $this->getParent()) {
+            $value = $this->getParent()->getMaxScale($recursive);
+        }
+
+        if ($value !== null) {
+            $value = floatval($value);
+        }
+
+        return $value;
     }
 
     /**
