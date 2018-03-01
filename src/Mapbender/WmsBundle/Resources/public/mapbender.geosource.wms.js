@@ -105,6 +105,10 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         return reqUrl;
     },
 
+    /**
+     * @deprecated, limited compatibility, no longer used by shipping mapbender elements.
+     *              Use server-side evaluation.
+     */
     createSourceDefinitions: function(xml, options){
         if(!options.global.defFormat) {
             options.global.defFormat = "image/png";
