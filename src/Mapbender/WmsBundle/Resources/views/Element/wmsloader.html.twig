@@ -1,6 +1,11 @@
 <div id="{{ id }}" class="mb-element mb-element-wmsloader" title="{{ configuration.tooltip|default(title)|trans }}">
     <p class="description">{{ "mb.wms.wmsloader.dialog.label.example"|trans }}: {{ example_url }}</p>
     <br>
+    <label class="labelInput" for="loadWmsOnlyValid">{{ "mb.wms.wmsloader.dialog.label.wmsonlyvalid"|trans}}</label>
+    <div class="checkWrapper left iconCheckbox" data-icon="iconCheckbox">
+        <input name="loadWmsOnlyValid" class="checkbox" type="checkbox" />
+    </div>
+    <br>
     <label class="labelInput" for="loadWmsUrl">{{ "mb.wms.wmsloader.dialog.label.wmsurl"|trans}}:</label>
     <div class="inputWrapper">
         <input name="loadWmsUrl" class="input url" type="text" />

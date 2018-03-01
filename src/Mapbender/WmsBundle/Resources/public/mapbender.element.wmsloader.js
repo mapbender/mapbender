@@ -73,7 +73,7 @@
                     content: self.element,
                     destroyOnClose: true,
                     width: 500,
-                    height: 320,
+                    height: 325,
                     buttons: {
                         'cancel': {
                             label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.cancel'),
@@ -94,8 +94,10 @@
                                 var urlObj = new Mapbender.Util.Url(url);
                                 urlObj.username = $('input[name="loadWmsUser"]', self.element).val();
                                 urlObj.password = $('input[name="loadWmsPass"]', self.element).val();
+                                var onlyValid = $('input[name="loadWmsOnlyValid"]').prop('checked');
                                 var options = {
                                     'gcurl': urlObj,
+                                    'onlyValid': onlyValid,
                                     'type': 'url',
                                     'layers': {},
                                     'global': {
@@ -165,96 +167,24 @@
             }
             return false;
         },
-        loadWms: function(options){
+        loadWms: function (sourceOpts) {
             var self = this;
-            if(!options.gcurl.isValid()){
-                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
-                return;
-            }
-            var version = options.gcurl.getParameter('version', true);
-            var request = options.gcurl.getParameter('request', true);
-            var service = options.gcurl.getParameter('service', true);
-            if(request === null || service === null){
-                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
-                return;
-            }
-
-            if(service.toUpperCase() !== "WMS"){
-                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.service', {"service": service}));
-                return false;
-            }else if(request.toUpperCase() !== "GETCAPABILITIES" && request.toUpperCase() !== 'CAPABILITIES'){
-                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.operation', {"operation": request }));
-                return false;
-            }else if(version && !(version.toUpperCase() === "1.1.0" || version.toUpperCase() === "1.1.1" || version.toUpperCase() === "1.3.0")){
-                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.version', {"version": version}));
-                return false;
-            }
+            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
+            sourceOpts['global']['defaultFormat'] = this.options.defaultFormat;
+            sourceOpts['global']['defaultInfoFormat'] = this.options.defaultInfoFormat;
+            sourceOpts['model'] = mbMap.model;
             $.ajax({
-                url: self.elementUrl + 'getCapabilities',
+                url: self.elementUrl + 'loadWms',
                 data: {
-                    url: options.gcurl.asString()
+                    url: sourceOpts.gcurl.asString(),
+                    onlyValid: sourceOpts.onlyValid
                 },
-                dataType: 'text',
+                dataType: 'json',
                 success: function(data, textStatus, jqXHR){
-                    self._getCapabilitiesUrlSuccess(data, options);
-                    // Maybe to much, need to be scoped!
-//                    $(".checkbox").trigger("change");
+                    self._addSources([data], sourceOpts)
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
-                }
-            });
-        },
-        _getCapabilitiesUrlSuccess: function(xml, sourceOpts){
-            var self = this;
-            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
-            sourceOpts['global']['defaultFormat'] = this.options.defaultFormat;
-            sourceOpts['global']['defaultInfoFormat'] = this.options.defaultInfoFormat;
-            sourceOpts['model'] = mbMap.model;
-            var sourceDefs = Mapbender.source.wms.createSourceDefinitions(xml, sourceOpts);
-            $.ajax({
-                url: self.elementUrl + 'signeSources',
-                data: {
-                    sources: JSON.stringify(sourceDefs)
-                },
-                type: 'POST',
-                dataType: 'json',
-                success: function(response){
-                    if(response.success){
-                        var sources = $.parseJSON(response.success);
-                        self._addSources(sources, sourceOpts);
-                    }else if(response.error){
-                        Mapbender.error(response.error);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown){
-                    self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
-                }
-            });
-        },
-        _getInstances: function(scvIds, sourceOpts) {
-            var self = this;
-            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
-            sourceOpts['global']['defaultFormat'] = this.options.defaultFormat;
-            sourceOpts['global']['defaultInfoFormat'] = this.options.defaultInfoFormat;
-            sourceOpts['model'] = mbMap.model;
-            $.ajax({
-                url: self.elementUrl + 'getInstances',
-                data: {
-                    instances: scvIds
-                },
-                type: 'POST',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        var sources = response.success;
-                        self._addSources(sources, sourceOpts);
-                    } else if (response.error) {
-                        Mapbender.error(response.error);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
                 }
             });
         },
