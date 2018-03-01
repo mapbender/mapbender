@@ -3,10 +3,11 @@ mb:
     wmsloader:
       dialog:
         label:
-          example: Example
-          wmsurl: 'Service URL'
-          wmsuser: User
-          wmspass: Password
+          example: Exemple
+          wmsurl: 'URL du service'
+          wmsuser: 'Nom d''utilisateur'
+          wmspass: 'Mot de passe'
+          wmsonlyvalid: 'Seulement valide?'
         btn:
           cancel: Cancel
           load: Load

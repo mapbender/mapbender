@@ -3,19 +3,20 @@ mb:
     wmsloader:
       error:
         url: 'WMSLoader: WMS capabilities kunnen niet geladen worden! De capabilities url is niet valide.'
-        service: 'WMSLoader: De service %service% is niet supported!'
-        operation: 'WMSLoader: de WMS Operation %operation% is niet supported!'
-        version: 'WMSLoader: the WMS version %version% is not supported!'
-        load: 'WMSLoader: wms capabilities kan niet geladen worden!'
+        service: 'WMSLoader: De service %service% wordt niet ondersteund!'
+        operation: 'WMSLoader: de WMS Operatie %operation% wordt niet ondersteund!'
+        version: 'WMSLoader: de WMS versie %version% wordt niet ondersteund!'
+        load: 'WMSLoader: WMS capabilities kan niet geladen worden!'
       dialog:
         btn:
-          cancel: Cancel
+          cancel: Annuleren
           load: Laad
         label:
           example: Voorbeeld
           wmsurl: 'Service URL'
-          wmsuser: User
-          wmspass: Pass
+          wmsuser: Gebruiker
+          wmspass: Wachtwoord
+          wmsonlyvalid: 'Alleen geldig?'
       class:
         title: 'WMS loader'
         description: 'Laad een WMS via de getCapabilities-Request'
