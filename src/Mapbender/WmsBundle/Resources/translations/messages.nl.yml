@@ -7,6 +7,7 @@ mb:
           wmsurl: 'Service URL'
           wmsuser: Gebruiker
           wmspass: Wachtwoord
+          wmsonlyvalid: 'Alleen geldig?'
         btn:
           cancel: Annuleren
           load: Laad
