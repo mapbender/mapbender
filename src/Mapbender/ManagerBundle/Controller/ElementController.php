@@ -137,7 +137,7 @@ class ElementController extends Controller
         $element->setApplication($application);
         $form = ComponentElement::getElementForm($this->container, $application,
             $element);
-        $form['form']->bind($this->get('request'));
+        $form['form']->submit($this->get('request'));
 
         if ($form['form']->isValid()) {
             $em    = $this->getDoctrine()->getManager();
@@ -218,7 +218,7 @@ class ElementController extends Controller
         $form = ComponentElement::getElementForm($this->container, $application,
                 $element);
 //        $form = $this->getElementForm($application, $element);
-        $form['form']->bind($this->get('request'));
+        $form['form']->submit($this->get('request'));
 
         if ($form['form']->isValid()) {
             $em = $this->getDoctrine()->getManager();

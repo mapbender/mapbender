@@ -311,7 +311,7 @@ class RepositoryController extends Controller
 
         if ($this->getRequest()->getMethod() == 'POST') { //save
             $form = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance);
-            $form->bind($this->get('request'));
+            $form->submit($this->get('request'));
             if ($form->isValid()) { //save
                 $em = $this->getDoctrine()->getManager();
                 $em->getConnection()->beginTransaction();
