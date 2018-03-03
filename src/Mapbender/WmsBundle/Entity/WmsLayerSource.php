@@ -3,7 +3,6 @@
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
@@ -843,65 +842,11 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     public function getAuthority($inherit = false)
     {
-        $parent = $this->getParent();
-        if ($parent) {
-            // filter artifact duplicates added by serialization / deserialization with bad default $inherit
-            // setting, see https://github.com/mapbender/mapbender/issues/777
-            // We must do this to clean up bad data potentially already accumulated in the db
-            // from previously broken logic. The data will only clean itself on next WMS Source refresh
-            // @todo / TBD: write a command that cleans up accumulated artifacts and enforce a run after the next
-            //              update to clean this up for good.
-
-            // *always* filter duplicates smeared in from parent, even with $inherit = false
-            // $inherit = false will only disable appending the parent's Authority to the returned array
-
-            // Filter *only* from own authority list, *only* if equivalent authority received from parent
-            // inheritance.
-            return $this->filterAuthorityDuplicateArtifacts($parent, $inherit);
+        if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) {
+            return array_merge($this->getParent()->getAuthority(), $this->authority);
         } else {
             return $this->authority;
         }
-    }
-
-    /**
-     * Filters parent-inhertiance smear artifacts from list of Authority objects.
-     * @see https://github.com/mapbender/mapbender/issues/777
-     * This must be run every time we extract the Authority list from any WmsLayerSource that has a parent, to clean
-     * up persisted artifacts.
-     *
-     * @param WmsLayerSource $parent
-     * @param boolean $inheritReturn to include parent-inherited Authority objects IN RETURN VALUE
-     * @return Authority[]
-     */
-    protected function filterAuthorityDuplicateArtifacts(WmsLayerSource $parent, $inheritReturn)
-    {
-        // ensure an array with linear keys, we need to make 1:1 key correlations
-        $ownAuthorities = $this->authority;
-        if ($ownAuthorities instanceof Collection) {
-            $ownAuthorities = iterator_to_array($ownAuthorities, false);
-        } else {
-            // copy, we're going to mutate with unset
-            $ownAuthorities = array() + array_values($ownAuthorities);
-        }
-        /** @var Authority[] $ownAuthorities */
-        $authoritiesOut = $ownAuthorities;
-        // array-converted forms of own authorities, used for duplicate checks only
-        $ownAuthorityArrays = array();
-        foreach ($ownAuthorities as $i => $ownAuthority) {
-            $ownAuthorityArrays[$i] = $ownAuthority->toArray();
-        }
-        foreach ($parent->getAuthority($inheritReturn) as $parentAuthority) {
-            if ($inheritReturn) {
-                $authoritiesOut[] = $parentAuthority;
-            }
-            $parentAuthorityArray = $parentAuthority->toArray();
-            while (false !== ($dupeIndex = array_search($parentAuthorityArray, $ownAuthorityArrays, true))) {
-                unset($ownAuthorityArrays[$dupeIndex]);
-                unset($ownAuthorities[$dupeIndex]);
-                unset($authoritiesOut[$dupeIndex]);
-            }
-        }
-        return $authoritiesOut;
     }
 
     /**
