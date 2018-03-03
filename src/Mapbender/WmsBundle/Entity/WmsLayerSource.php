@@ -472,7 +472,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @return Object
      */
-    public function getLatlonBounds($inherit = true)
+    public function getLatlonBounds($inherit = false)
     {
 //        //@TODO check layer inheritance if layer->latlonBounds === null
         if ($inherit && $this->latlonBounds === null && $this->getParent() !== null) {
@@ -512,7 +512,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @return BoundingBox[]
      */
-    public function getBoundingBoxes()
+    public function getBoundingBoxes($inherit = false)
     {
 //        //@TODO check layer inheritance if count(layer->boundingBoxes) === 0
 //        if(count($this->boundingBoxes) === 0 && $this->getParent() !== null){
@@ -553,7 +553,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @return array
      */
-    public function getSrs($inherit = true)
+    public function getSrs($inherit = false)
     {
         if ($inherit && $this->getParent() !== null) { // add crses from parent
             return array_unique(array_merge($this->getParent()->getSrs(), $this->srs));
