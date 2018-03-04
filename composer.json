@@ -13,8 +13,8 @@
         "arsgeografica/signing": "1.1.x",
         "setasign/fpdi-fpdf": "1.6.*",
 
-        "mapbender/fom": "~3.0.5.4@dev",
-        "mapbender/owsproxy": "~3.0.6.2@dev",
+        "mapbender/fom": "^3.0.5.4@dev",
+        "mapbender/owsproxy": "^3.0.6.2@dev",
 
         "mapbender/mapquery": "1.x"
     },
