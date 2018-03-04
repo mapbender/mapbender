@@ -596,7 +596,7 @@ class ApplicationController extends WelcomeController
                 ->find($layersetId);
             $form     = $this->createForm(new LayersetType(), $layerset);
         }
-        $form->bind($this->get('request'));
+        $form->submit($this->get('request'));
         $flashBag = $this->get('session')->getFlashBag();
         if ($form->isValid()) {
             $objectManager = $doctrine->getManager();

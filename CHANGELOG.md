@@ -264,6 +264,7 @@
     - Change tilesize default to 512
 
 * **v3.0.5.4**
+    - Extend WmsLoader WMS service compatibility, now matches backend
     - Update WmsLoader example URL to https
     - Skip undefined element classes in Yaml applications, log a warning instead of crashing
     - Backport doctrine annotations to fix some broken import / export scenarios
