@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.3.3",
-		"symfony/symfony": "~2.3.42",
+		"symfony/symfony": "^2.3.42",
 		"twig/extensions": "1.x",
 		"doctrine/orm": "^2.2.3",
 
