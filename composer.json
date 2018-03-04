@@ -16,7 +16,7 @@
         "setasign/fpdi-fpdf": "1.6.*",
 
         "mapbender/fom": "~3.0.5.4",
-        "mapbender/owsproxy": "~3.0.5.4,~3.0.6",
+        "mapbender/owsproxy": "~3.0.5.4 || ~3.0.6.2",
 
         "mapbender/mapquery": "1.x"
     },
