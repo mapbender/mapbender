@@ -9,12 +9,14 @@
 		"symfony/symfony": "^2.3.42",
 		"twig/extensions": "1.x",
 		"doctrine/orm": "^2.2.3",
+		"doctrine/doctrine-fixtures-bundle": "2.3.*",
+		"friendsofsymfony/jsrouting-bundle": "1.5.x",
 
         "arsgeografica/signing": "1.1.x",
         "setasign/fpdi-fpdf": "1.6.*",
 
-        "mapbender/fom": "^3.0.5.4@dev",
-        "mapbender/owsproxy": "^3.0.6.2@dev",
+        "mapbender/fom": "~3.0.5.4",
+        "mapbender/owsproxy": "~3.0.5.4,~3.0.6",
 
         "mapbender/mapquery": "1.x"
     },
