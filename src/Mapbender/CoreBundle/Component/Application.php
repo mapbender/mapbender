@@ -566,7 +566,7 @@ class Application
         if ($old_slug === null) {
             $slug_dir = $uploads_dir . "/" . $slug;
             if (!is_dir($slug_dir)) {
-                return mkdir($slug_dir);
+                return mkdir($slug_dir, 0777, true);
             } else {
                 return true;
             }
@@ -653,12 +653,15 @@ class Application
      */
     public static function copyAppWebDir($container, $srcSslug, $destSlug)
     {
-        $src = Application::getAppWebDir($container, $srcSslug);
-        $dst = Application::getAppWebDir($container, $destSlug);
+        $rootPath = $container->get('kernel')->getRootDir() . '/../web/';
+        $src      = Application::getAppWebDir($container, $srcSslug);
+        $dst      = Application::getAppWebDir($container, $destSlug);
+
         if ($src === null || $dst === null) {
             return false;
         }
-        Utils::copyOrderRecursive($src, $dst);
+
+        Utils::copyOrderRecursive($rootPath . $src, $rootPath . $dst);
         return true;
     }
 
