@@ -5,6 +5,7 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -187,7 +188,7 @@ class WmsInstance extends SourceInstance
      */
     public function setConfiguration($configuration)
     {
-        $this->configuration = $configuration;
+        // do nothing
         return $this;
     }
 
@@ -527,7 +528,12 @@ class WmsInstance extends SourceInstance
 
     public function getGridLayer()
     {
-        return null;
+        return ArrayUtil::getDefault($this->configuration, 'gridlayer', null);
+    }
+
+    public function setGridLayer($value)
+    {
+        $this->configuration['gridlayer'] = $value ?: null;
     }
 
     /**
@@ -571,6 +577,15 @@ class WmsInstance extends SourceInstance
                 'MapbenderCoreBundle::geosource.json.twig'
             )
         );
+    }
+
+    /** @ORM\PostLoad() */
+    public function postLoad()
+    {
+        $keepConfig = array_intersect_key($this->configuration ?: array(), array(
+            'gridlayer' => '',
+        ));
+        $this->configuration = $keepConfig;
     }
 
     /**

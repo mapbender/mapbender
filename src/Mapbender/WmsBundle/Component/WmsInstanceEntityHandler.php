@@ -242,10 +242,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function getConfiguration(Signer $signer = null)
     {
-        if ($this->entity->getConfiguration() === null) {
-            $this->generateConfiguration();
-        }
-        $configuration = $this->entity->getConfiguration();
+        $configuration = $this->entity->getConfiguration() + $this->generateConfiguration();
         $layerConfig = $this->getRootLayerConfig();
         if ($layerConfig) {
             $configuration['children'] = array($layerConfig);
@@ -357,8 +354,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setExceptionformat($this->entity->getExceptionformat());
 
         $wmsconf->setOptions($options);
-        $persistableConfig = $wmsconf->toArray();
-        $this->entity->setConfiguration($persistableConfig);
+        return $wmsconf->toArray();
     }
 
     protected function getRootLayerConfig()
