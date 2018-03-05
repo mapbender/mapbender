@@ -83,6 +83,10 @@
         <div id="vendorspecific-content" class="vendorspecific-content on-off-content hidden">
         {{ form_widget(form.vendorspecifics) }}
         </div>
+        <div class="textFieldGroup{{ not form.gridlayer.vars.choices ? ' hidden' }}">
+          {{ form_label(form.gridlayer) }}{{ form_widget(form.gridlayer) }}
+          <div class="clear"></div>
+        </div>
       </div>
     </div>
     {% set root = instance.source.getRootlayer() %}

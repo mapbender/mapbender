@@ -15,6 +15,7 @@ use Mapbender\WmsBundle\Component\WmsMetadata;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstance")
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
+ * @ORM\HasLifecycleCallbacks()
  */
 class WmsInstance extends SourceInstance
 {
@@ -522,6 +523,11 @@ class WmsInstance extends SourceInstance
     public function getSource()
     {
         return $this->source;
+    }
+
+    public function getGridLayer()
+    {
+        return null;
     }
 
     /**
