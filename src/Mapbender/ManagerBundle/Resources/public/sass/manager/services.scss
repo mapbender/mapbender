@@ -136,7 +136,6 @@
     position:absolute;
     right:0px;
     font-size:12px;
-    border:solid 1px $thirdColor;
     z-index:1;
     .on-off{
       background-color:darken($contentColor,20%);
@@ -160,6 +159,9 @@
     .on-off-title {
       padding: 0 $space/2 0 $space/2;
       .checkWrapper {margin-left: $space;}
+    }
+    > div {
+      margin-bottom: 1em;
     }
     .checkWrapper{
       display: inline-block;
