@@ -1,0 +1,10 @@
+.mb-element-utfgridinfo {
+  display: block;
+  background: #eeeeee;
+  border-color: #cccccc;
+  border-radius: 3px;
+  &.debug {
+    height: 100px;
+    min-width: 300px;
+  }
+}

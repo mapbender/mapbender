@@ -56,13 +56,14 @@ class UtfGridInfo extends Element
         $assets = array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
-                'mapbender.element.utfgriddisplay.js',
+                'mapbender.element.utfgridinfo.js',
             ),
             'css' => array(
-                '@MapbenderWmsBundle/Resources/public/sass/element/utfgriddisplay.scss',
+                '@MapbenderWmsBundle/Resources/public/sass/element/utfgridinfo.scss',
             ),
-            'trans' => array('MapbenderWmsBundle:Element:utfgriddisplay.json.twig')
+            'trans' => array('MapbenderWmsBundle:Element:utf_grid_info.json.twig')
         );
+        return $assets;
     }
 
     public function getFrontendTemplateVars()
