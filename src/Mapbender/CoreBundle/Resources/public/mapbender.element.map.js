@@ -25,10 +25,10 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
-            this.options = {
+            this.options = $.extend(this.options, {
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
-            };
+            });
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();
