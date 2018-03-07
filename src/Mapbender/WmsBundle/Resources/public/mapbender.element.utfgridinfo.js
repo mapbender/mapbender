@@ -59,14 +59,16 @@
                 if (!matchState.layer) {
                     console.log("Initializing layer for", matchState);
                     var olLayerName = "mbUtfGridInfo" + matchState.origId;
-                    matchState.layer = new OpenLayers.Layer.UTFGridWMS(olLayerName, matchState.baseUrl, {
-                            layers: [matchState.name],
-                            url: matchState.baseUrl,
-                            format: "application/json"
-                    }, {
-                            utfgridResolution: 4,
-                            singleTile: true
-                    });
+                    var params = {
+                        layers: [matchState.name],
+                        url: matchState.baseUrl,
+                        format: "application/json"
+                    };
+                    var mergedOptions = {
+                        utfgridResolution: 4,
+                        singleTile: true
+                    };
+                    matchState.layer = new OpenLayers.Layer.UTFGridWMS(olLayerName, matchState.baseUrl, params, mergedOptions);
                     console.log("New layer", matchState.layer);
                     self.mbMap.map.olMap.addLayer(matchState.layer);
                 }
