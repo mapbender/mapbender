@@ -7,8 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
  * WmsInstanceLayer class
@@ -417,6 +415,9 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * Get minScale
      *
+     * Recursive path used by frontend config generation and backend instance form
+     * for placeholders only.
+     *
      * @param boolean $recursive Try to get value from parent
      * @return float
      */
@@ -428,15 +429,26 @@ class WmsInstanceLayer extends SourceInstanceItem
             $value = null;
         }
 
-        if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getParent()->getMinScale($recursive);
+        /**
+         * Logic: if admin replaced scale for this exact layer, use that value.
+         * Otherwise: if both layer source and parent instance layer(s) have
+         *            values, combine them.
+         */
+        if ($recursive && $value === null) {
+            $parent = $this->getParent();
+            $parentValue = $parent ? $parent->getMinScale($recursive) : null;
+            $sourceValue = $this->getSourceItem()->getMinScale($recursive);
+            if ($parentValue !== null && $sourceValue !== null) {
+                // both parent layer instance and source layer have a value
+                // use MAXIMUM (=smaller range)
+                $value = max(floatval($parentValue), floatval($sourceValue));
+            } elseif ($sourceValue !== null) {
+                $value = floatval($sourceValue);
+            } else {
+                $value = $parentValue;
+            }
         }
-
-        if ($value !== null) {
-            $value = floatval($value);
-        }
-
-        return $value;
+        return $value === null ? null : floatval($value);
     }
 
     /**
@@ -454,6 +466,9 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * Get maximums scale hint
      *
+     * Recursive path used by frontend config generation and backend instance form
+     * for placeholders only.
+     *
      * @param boolean $recursive Try to get value from parent
      * @return float|null
      */
@@ -465,15 +480,26 @@ class WmsInstanceLayer extends SourceInstanceItem
             $value = null;
         }
 
-        if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getParent()->getMaxScale($recursive);
+        /**
+         * Logic: if admin replaced scale for this exact layer, use that value.
+         * Otherwise: if both layer source and parent instance layer(s) have
+         *            values, combine them.
+         */
+        if ($recursive && $value === null) {
+            $parent = $this->getParent();
+            $parentValue = $parent ? $parent->getMaxScale($recursive) : null;
+            $sourceValue = $this->getSourceItem()->getMaxScale($recursive);
+            if ($parentValue !== null && $sourceValue !== null) {
+                // both parent layer instance and source layer have a value
+                // use MINIMUM (=smaller range)
+                $value = min(floatval($parentValue), floatval($sourceValue));
+            } elseif ($sourceValue !== null) {
+                $value = floatval($sourceValue);
+            } else {
+                $value = $parentValue;
+            }
         }
-
-        if ($value !== null) {
-            $value = floatval($value);
-        }
-
-        return $value;
+        return $value === null ? null : floatval($value);
     }
 
     /**
