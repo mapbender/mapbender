@@ -43,7 +43,9 @@
             return true;
         },
         _renderData: function(data, lonLat, position) {
-            console.log("mbUtfGridInfo received", data, lonLat, position);
+            if (data) {
+                console.log("mbUtfGridInfo received", data, lonLat, position);
+            }
         },
         _initializeControls: function() {
             var self = this;
@@ -58,6 +60,7 @@
                     console.log("Initializing layer for", matchState);
                     var olLayerName = "mbUtfGridInfo" + matchState.origId;
                     matchState.layer = new OpenLayers.Layer.UTFGridWMS(olLayerName, matchState.baseUrl, {
+                            layers: [matchState.name],
                             url: matchState.baseUrl,
                             format: "application/json"
                     }, {
@@ -69,14 +72,11 @@
                 }
                 if (!matchState.control) {
                     console.log("Initializing control for", matchState);
-                    matchState.control = new OpenLayers.Control.UTFGrid({
+                    matchState.control = new OpenLayers.Control.UTFGridWMS({
                         callback: self._renderData.bind(self),
-                        layers: [matchState.name],
+                        layers: [matchState.layer],
                         handlerMode: "hover"
                     });
-                    matchState.control.findLayers = function() {
-                        return [matchState.layer];
-                    }
                     console.log("New control", matchState.control);
                     self.mbMap.map.olMap.addControl(matchState.control);
                 }
