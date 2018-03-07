@@ -430,22 +430,18 @@ class WmsInstanceLayer extends SourceInstanceItem
         }
 
         /**
-         * Logic: if admin replaced scale for this exact layer, use that value.
-         * Otherwise: if both layer source and parent instance layer(s) have
-         *            values, combine them.
+         * Logic:
+         * 1) if admin replaced scale for this exact layer instance, use that value.
+         * 2) if admin replaced scale for a parent layer instance, use that value.
+         * 3) use value from source layer (recursively scanning up)
          */
         if ($recursive && $value === null) {
             $parent = $this->getParent();
             $parentValue = $parent ? $parent->getMinScale($recursive) : null;
-            $sourceValue = $this->getSourceItem()->getMinScale($recursive);
-            if ($parentValue !== null && $sourceValue !== null) {
-                // both parent layer instance and source layer have a value
-                // use MAXIMUM (=smaller range)
-                $value = max(floatval($parentValue), floatval($sourceValue));
-            } elseif ($sourceValue !== null) {
-                $value = floatval($sourceValue);
-            } else {
+            if ($parentValue !== null) {
                 $value = $parentValue;
+            } else {
+                $value = $this->getSourceItem()->getMaxScale($recursive);
             }
         }
         return $value === null ? null : floatval($value);
@@ -481,22 +477,18 @@ class WmsInstanceLayer extends SourceInstanceItem
         }
 
         /**
-         * Logic: if admin replaced scale for this exact layer, use that value.
-         * Otherwise: if both layer source and parent instance layer(s) have
-         *            values, combine them.
+         * Logic:
+         * 1) if admin replaced scale for this exact layer instance, use that value.
+         * 2) if admin replaced scale for a parent layer instance, use that value.
+         * 3) use value from source layer (recursively scanning up)
          */
         if ($recursive && $value === null) {
             $parent = $this->getParent();
             $parentValue = $parent ? $parent->getMaxScale($recursive) : null;
-            $sourceValue = $this->getSourceItem()->getMaxScale($recursive);
-            if ($parentValue !== null && $sourceValue !== null) {
-                // both parent layer instance and source layer have a value
-                // use MINIMUM (=smaller range)
-                $value = min(floatval($parentValue), floatval($sourceValue));
-            } elseif ($sourceValue !== null) {
-                $value = floatval($sourceValue);
-            } else {
+            if ($parentValue !== null) {
                 $value = $parentValue;
+            } else {
+                $value = $this->getSourceItem()->getMaxScale($recursive);
             }
         }
         return $value === null ? null : floatval($value);
