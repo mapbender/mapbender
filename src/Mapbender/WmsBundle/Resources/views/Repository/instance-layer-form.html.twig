@@ -13,8 +13,8 @@
             <td class="level{{ level }} itemType {% if type == 'node' or  type == 'root' %}iconFolderActive{% else %}iconLinkButton{% endif %} iconSmall"></td>
             <td class="titleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.layerstitle"|trans }}">{{ form_widget(form_layer.title) }}</td>
 
-            <td class="minScaleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.minscale"|trans }}">{{ form_widget(form_layer.minScale) }}</td>
-            <td class="maxScaleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.maxsclase"|trans }}">{{ form_widget(form_layer.maxScale) }}</td>
+            <td class="minScaleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.minscale"|trans }}">{{ form_widget(form_layer.minScale, {'attr': {'placeholder': form_layer.vars.value.getMinScale(true)}}) }}</td>
+            <td class="maxScaleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.maxsclase"|trans }}">{{ form_widget(form_layer.maxScale, {'attr': {'placeholder': form_layer.vars.value.getMaxScale(true)}}) }}</td>
 
             <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.active"|trans }}">{{ form_widget(form_layer.active) }}</td>
             <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc"|trans }}">{{ form_widget(form_layer.allowselected) }}</td>
