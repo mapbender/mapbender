@@ -7,8 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
  * WmsInstanceLayer class
@@ -428,15 +426,19 @@ class WmsInstanceLayer extends SourceInstanceItem
             $value = null;
         }
 
-        if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getParent()->getMinScale($recursive);
+        if ($recursive && $value === null) {
+            $parent = $this->getParent();
+            $parentValue = $parent ? $parent->getMinScale($recursive) : null;
+            $sourceValue = $this->getSourceItem()->getMinScale($recursive);
+            if ($parentValue !== null && $sourceValue !== null) {
+                $value = max(floatval($parentValue), floatval($sourceValue));
+            } elseif ($sourceValue !== null) {
+                $value = floatval($sourceValue);
+            } else {
+                $value = $parentValue;
+            }
         }
-
-        if ($value !== null) {
-            $value = floatval($value);
-        }
-
-        return $value;
+        return $value === null ? null : floatval($value);
     }
 
     /**
@@ -465,15 +467,19 @@ class WmsInstanceLayer extends SourceInstanceItem
             $value = null;
         }
 
-        if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getParent()->getMaxScale($recursive);
+        if ($recursive && $value === null) {
+            $parent = $this->getParent();
+            $parentValue = $parent ? $parent->getMaxScale($recursive) : null;
+            $sourceValue = $this->getSourceItem()->getMaxScale($recursive);
+            if ($parentValue !== null && $sourceValue !== null) {
+                $value = min(floatval($parentValue), floatval($sourceValue));
+            } elseif ($sourceValue !== null) {
+                $value = floatval($sourceValue);
+            } else {
+                $value = $parentValue;
+            }
         }
-
-        if ($value !== null) {
-            $value = floatval($value);
-        }
-
-        return $value;
+        return $value === null ? null : floatval($value);
     }
 
     /**
