@@ -1,6 +1,7 @@
 # Changelog
 
 * **v.3.0.6.4**
+    - Validate Element forms in backend
     - Fix displaying scale value in scale selector #657
     - Fix GetLegendGraphic tunnel
 
