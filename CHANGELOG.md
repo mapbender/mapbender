@@ -1,15 +1,14 @@
 # Changelog
 
-* **v.3.0.6.5**
+* **v.3.0.6.4**
+    - Validate Element forms in backend
     - Extend WmsLoader WMS service compatibility, now matches backend
-
-* **v.3.0.6.4** - 2018-02-26
     - Fix error displaying Wms metadata if no contact information available
     - Element selector (when adding to Application) is now filtered (Pull #766)
     - Fix displaying scale value in scale selector #657
     - Fix GetLegendGraphic tunnel
 
-* **v.3.0.6.3**
+* **v.3.0.6.3** - 2017-07-27
     - Fix WMS with Scale fails to load #584 - see commit message #2783540 for more information
     - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
 

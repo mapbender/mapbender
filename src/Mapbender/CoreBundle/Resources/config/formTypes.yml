@@ -1,0 +1,15 @@
+services:
+
+    #
+    # Form Types
+    #
+    # Form types must be prefixed with "mapbender.form_type.element"
+    # to be accessible by initialisation in MB Core
+    #
+    mapbender.form_type.element.htmlelement:
+        class: Mapbender\CoreBundle\Element\Type\HTMLElementAdminType
+        arguments:
+            - '@mapbender.constraint.html'
+            - '@mapbender.constraint.twig'
+        tags:
+            - { name: form.type, alias: htmlelement }
