@@ -264,6 +264,7 @@
     - Change tilesize default to 512
 
 * **v3.0.5.4**
+    - Support WMS keywords > 255 characters; needs app/console doctrine:schema:update for running installations
     - Extend WmsLoader WMS service compatibility, now matches backend
     - Update WmsLoader example URL to https
     - Skip undefined element classes in Yaml applications, log a warning instead of crashing
