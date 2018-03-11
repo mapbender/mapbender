@@ -3,7 +3,8 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * Dimensions handler
@@ -117,11 +118,14 @@ class DimensionsHandler extends Element
         }
         return $configuration;
     }
-    
+
     /**
-     * @inheritdoc
+     * Replace dimension entries in generated frontend config with our desired values.
+     *
+     * @param mixed[] $appConfig
+     * @return mixed[]
      */
-    public function postSave()
+    public function updateAppConfig($appConfig)
     {
         $configuration = parent::getConfiguration();
         $instances = array();
@@ -131,14 +135,60 @@ class DimensionsHandler extends Element
                 $instances[$item[0]] = $value['dimension'];
             }
         }
-        foreach ($this->application->getEntity()->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
-                if (key_exists($instance->getId(), $instances)) {
-                    $handler = EntityHandler::createHandler($this->container, $instance);
-                    $handler->mergeDimension($instances[$instance->getId()]);
-                    $handler->save();
+        if (!$instances) {
+            // nothing to do, skip looping over all the layer configs
+            return $appConfig;
+        }
+
+        foreach ($appConfig['layersets'] as &$layerList) {
+            foreach ($layerList as &$layerMap) {
+                foreach ($layerMap as $layerId => &$layerDef) {
+                    if (empty($instances[$layerId]) || empty($layerDef['configuration']['options']['dimensions'])) {
+                        // layer is not controllable through DimHandler, leave its config alone
+                        continue;
+                    }
+                    $dimConfig = $instances[$layerId]->getConfiguration();
+                    $this->updateDimensionConfig($layerDef['configuration']['options']['dimensions'], $dimConfig);
                 }
             }
         }
+        return $appConfig;
+    }
+
+    /**
+     * Updates the $target list of dimension config arrays by reference with our own settings (from backend).
+     * Matching is by type. If a dimension config entry matches on type, we copy our "extent" and "default" into it.
+     *
+     * @param mixed[] $target
+     * @param mixed[] $dimensionConfig
+     */
+    public static function updateDimensionConfig(&$target, $dimensionConfig)
+    {
+        foreach ($target as &$dimensionDef) {
+            if ($dimensionDef['type'] == $dimensionConfig['type']) {
+                $dimensionDef['extent'] = $dimensionConfig['extent'];
+                $dimensionDef['default'] = $dimensionConfig['default'];
+            }
+        }
+    }
+
+    /**
+     * Copies Extent and Default from passed DimensionInst to any DimensionInst stored
+     * in given SourceInstance->dimensions, if they match the same Type.
+     *
+     * @param WmsInstance $instance
+     * @param DimensionInst $referenceDimension
+     * @deprecated was only used by DimensionsHandler::postSave, which was removed
+     *             Now a dangling legacy api fulfillment for @see WmsInstanceEntityHandler::mergeDimension
+     */
+    public static function reconfigureDimensions(WmsInstance $instance, DimensionInst $referenceDimension)
+    {
+        foreach ($instance->getDimensions() as $dim) {
+            if ($dim->getType() === $referenceDimension->getType()) {
+                $dim->setExtent($referenceDimension->getExtent());
+                $dim->setDefault($referenceDimension->getDefault());
+            }
+        }
+        $instance->setDimensions($instance->getDimensions());
     }
 }

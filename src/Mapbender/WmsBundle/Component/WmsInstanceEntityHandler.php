@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Element\DimensionsHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -433,16 +434,18 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         return $vsarr;
     }
 
+    /**
+     * Copies Extent and Default from passed DimensionInst to any DimensionInst stored
+     * in bound WmsInstance that match the same Type.
+     *
+     * @param DimensionInst $dimension
+     * @deprecated we do not modify entities for presentation or frontend purposes
+     *    This was only used by DimensionsHandler::postSave, which is now removed.
+     *    The implementation has been moved directly into DimensionsHandler.
+     */
     public function mergeDimension($dimension)
     {
-        $dimensions = $this->entity->getDimensions();
-        foreach ($dimensions as $dim) {
-            if ($dim->getType() === $dimension->getType()) {
-                $dim->setExtent($dimension->getExtent());
-                $dim->setDefault($dimension->getDefault());
-            }
-        }
-        $this->entity->setDimensions($dimensions);
+        DimensionsHandler::reconfigureDimensions($this->entity, $dimension);
     }
 
     /**
