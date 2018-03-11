@@ -24,7 +24,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * Creates a SourceInstanceItem
      *
-     * @param WmsSource|SourceInstance  $instance
+     * @param WmsInstance|SourceInstance  $instance
      * @param WmsLayerSource|SourceItem $layerSource
      * @param int                       $num
      * @return WmsInstanceLayer
@@ -34,57 +34,21 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     public function create(SourceInstance $instance, SourceItem $layerSource, $num = 0)
     {
         $instanceLayer = $this->entity;
-        $this->populateFromSource($instanceLayer, $instance, $layerSource, $num);
+        $instanceLayer->populateFromSource($instance, $layerSource, $num);
         return $this->entity;
     }
 
     /**
-     * @param SourceInstance $sourceInstance
-     * @param SourceItem $layerSource
+     * @param WmsInstance $sourceInstance
+     * @param WmsLayerSource $layerSource
      * @param int $num
      * @return WmsInstanceLayer
      */
-    public static function entityFactory(SourceInstance $sourceInstance, SourceItem $layerSource, $num = 0)
+    public static function entityFactory(WmsInstance $sourceInstance, WmsLayerSource $layerSource, $num = 0)
     {
         $newEntity = new WmsInstanceLayer();
-        static::populateFromSource($newEntity, $sourceInstance, $layerSource, $num);
+        $newEntity->populateFromSource($sourceInstance, $layerSource, $num);
         return $newEntity;
-    }
-
-    /**
-     * @internal
-     * @todo: this belongs into a WmsInstanceLayer::fromWmsInstance factory method
-     * @param WmsInstanceLayer $instanceLayer target
-     * @param WmsInstance $instance source
-     * @param WmsLayerSource $layerSource also the source, purpose unknown
-     * @param int $num
-     * @return WmsInstanceLayer
-     */
-    public static function populateFromSource(WmsInstanceLayer $instanceLayer, WmsInstance $instance, WmsLayerSource $layerSource, $num = 0)
-    {
-        $instanceLayer->setSourceInstance($instance);
-        $instanceLayer->setSourceItem($layerSource);
-        $instanceLayer->setTitle($layerSource->getTitle());
-
-        $queryable = $layerSource->getQueryable();
-        $instanceLayer->setInfo(Utils::getBool($queryable));
-        $instanceLayer->setAllowinfo(Utils::getBool($queryable));
-        $instanceLayer->setPriority($num);
-        $instance->addLayer($instanceLayer);
-        if ($layerSource->getSublayer()->count() > 0) {
-            $instanceLayer->setToggle(false);
-            $instanceLayer->setAllowtoggle(true);
-        } else {
-            $instanceLayer->setToggle(null);
-            $instanceLayer->setAllowtoggle(null);
-        }
-        foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
-            $subLayerInstance = new WmsInstanceLayer();
-            static::populateFromSource($subLayerInstance, $instance, $wmslayersourceSub, $num + 1);
-            $subLayerInstance->setParent($instanceLayer);
-            $instanceLayer->addSublayer($subLayerInstance);
-        }
-        return $instanceLayer;
     }
 
     /**
@@ -103,9 +67,15 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function remove()
     {
+        /**
+         * @todo: sublayer remove is redundant now, but it may require an automatic
+         *     doctrine:schema:update --force
+         *     before it can be removed
+         */
         foreach ($this->entity->getSublayer() as $sublayer) {
             self::createHandler($this->container, $sublayer)->remove();
         }
+
         $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 

@@ -24,6 +24,9 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 {
     /**
+     * Populates bound instance with array values. Used exclusively by
+     * ApplicationYAMLMapper ..?
+     *
      * @param array $configuration
      * @return WmsInstance
      */
@@ -126,32 +129,17 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * Copies attributes from bound instance's source to the bound instance
-     * @deprecated
-     * @inheritdoc
+     * Copies attributes from bound instance's source to the bound instance.
+     * I.e. does not work for a new instance until you have called ->setSource on the WmsInstance yourself,
+     * and does not achieve anything useful for an already configured instance loaded from the DB (though it's
+     * expensive!).
+     * If your source changed, and you want to push updates to your instance, you want to call update, not create.
+     *
+     * @deprecated for misleading wording, arcane usage, redundant container dependency
      */
     public function create()
     {
-        $this->entity->setTitle($this->entity->getSource()->getTitle());
-        $source = $this->entity->getSource();
-        $this->entity->setFormat(ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), null, 0));
-        $this->entity->setInfoformat(
-            ArrayUtil::getValueFromArray(
-                $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(),
-                null,
-                0
-            )
-        );
-        $this->entity->setExceptionformat(ArrayUtil::getValueFromArray($source->getExceptionFormats(), null, 0));
-
-        $dimensions = $this->getDimensionInst();
-        $this->entity->setDimensions($dimensions);
-
-        $this->entity->setWeight(-1);
-        $wmslayer_root = $this->entity->getSource()->getRootlayer();
-
-        // ??? @todo: return value is not used, does this implicitly modify one of the passed entities...?
-        WmsInstanceLayerEntityHandler::entityFactory($this->entity, $wmslayer_root);
+        $this->entity->populateFromSource($this->entity->getSource());
     }
 
     /**
@@ -186,8 +174,14 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function remove()
     {
+        /**
+         * @todo: layerHandler->remve is redundant now, but it may require an automatic
+         *     doctrine:schema:update --force
+         *     before it can be removed
+         */
         $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $layerHandler->remove();
+
         $this->container->get('doctrine')->getManager()->persist(
             $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->remove($this->entity);
@@ -212,7 +206,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setExceptionformat(
             ArrayUtil::getValueFromArray($source->getExceptionFormats(), $this->entity->getExceptionformat(), 0)
         );
-        $dimensions = $this->updateDimension($this->entity->getDimensions(), $this->getDimensionInst());
+        $layerDimensionInsts = $source->dimensionInstancesFactory();
+        $dimensions = $this->updateDimension($this->entity->getDimensions(), $layerDimensionInsts);
         $this->entity->setDimensions($dimensions);
 
         # TODO vendorspecific for layer specific parameters
@@ -227,25 +222,14 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * Creates DimensionInst object
+     * Creates DimensionInst object, copies attributes from given Dimension object
      * @param \Mapbender\WmsBundle\Component\Dimension $dim
      * @return \Mapbender\WmsBundle\Component\DimensionInst
+     * @deprecated for redundant container dependency, call DimensionInst::fromDimension directly
      */
     public function createDimensionInst(Dimension $dim)
     {
-        $diminst = new DimensionInst();
-        $diminst->setCurrent($dim->getCurrent());
-        $diminst->setDefault($dim->getDefault());
-        $diminst->setMultipleValues($dim->getMultipleValues());
-        $diminst->setName($dim->getName());
-        $diminst->setNearestValue($dim->getNearestValue());
-        $diminst->setUnitSymbol($dim->getUnitSymbol());
-        $diminst->setUnits($dim->getUnits());
-        $diminst->setActive(false);
-        $diminst->setOrigextent($dim->getExtent());
-        $diminst->setExtent($dim->getExtent());
-        $diminst->setType($diminst->findType($dim->getExtent()));
-        return $diminst;
+        return DimensionInst::fromDimension($dim);
     }
 
     /**
@@ -385,23 +369,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function mergeDimension($dimension)
     {
         DimensionsHandler::reconfigureDimensions($this->entity, $dimension);
-    }
-
-    /**
-     * @return array
-     */
-    private function getDimensionInst()
-    {
-        $dimensions = array();
-        foreach ($this->entity->getSource()->getLayers() as $layer) {
-            foreach ($layer->getDimension() as $dimension) {
-                $dim = $this->createDimensionInst($dimension);
-                if (!in_array($dim, $dimensions)) {
-                    $dimensions[] = $dim;
-                }
-            }
-        }
-        return $dimensions;
     }
 
     /**

@@ -60,6 +60,11 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
      */
     private function removeRecursively(WmsLayerSource $wmslayer)
     {
+        /**
+         * @todo: recursive remove is redundant now, but it may require an automatic
+         *     doctrine:schema:update --force
+         *     before it can be removed
+         */
         foreach ($wmslayer->getSublayer() as $sublayer) {
             $this->removeRecursively($sublayer);
         }

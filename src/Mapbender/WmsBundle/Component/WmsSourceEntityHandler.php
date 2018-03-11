@@ -53,15 +53,18 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     }
 
     /**
-     * @inheritdoc
+     * Creates a new WmsInstance, optionally attaches it to a layerset, then updates
+     * the ordering of the layers.
+     *
+     * @param Layerset|null $layerSet new instance will be attached to layerset if given
+     * @return WmsInstance
      */
     public function createInstance(Layerset $layerSet = NULL)
     {
         $instance        = new WmsInstance();
         $instance->setSource($this->entity);
         $instance->setLayerset($layerSet);
-        $instanceHandler = new WmsInstanceEntityHandler($this->container, $instance);
-        $instanceHandler->create();
+        $instance->populateFromSource($this->entity);
         if ($layerSet) {
             $num = 0;
             foreach ($layerSet->getInstances() as $instanceAtLayerset) {
@@ -80,6 +83,11 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function remove()
     {
+        /**
+         * @todo: rootLayer and contact remove is redundant now, but it may require an automatic
+         *     doctrine:schema:update --force
+         *     before it can be removed
+         */
         if ($this->entity->getRootlayer()) {
             self::createHandler($this->container, $this->entity->getRootlayer())->remove();
         }
