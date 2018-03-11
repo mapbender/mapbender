@@ -464,7 +464,7 @@ class WmsInstanceLayer extends SourceInstanceItem
                 $value = $parent->getInheritedMinScale();
             }
         }
-        return $value === null ? null : floatval($value);
+        return $value;
     }
 
     /**
@@ -517,7 +517,7 @@ class WmsInstanceLayer extends SourceInstanceItem
                 $value = $parent->getInheritedMaxScale();
             }
         }
-        return $value === null ? null : floatval($value);
+        return $value;
     }
 
     /**
