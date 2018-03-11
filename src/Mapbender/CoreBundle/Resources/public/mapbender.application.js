@@ -92,26 +92,20 @@ Mapbender.initElement = function(id, data) {
     mapbenderWidget(data.configuration, widgetId);
 };
 
-Mapbender.isDebugMode = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
 Mapbender.source = Mapbender.source || {};
 Mapbender.setup = function(){
 
     // Initialize all elements by calling their init function with their options
     $.each(Mapbender.configuration.elements, function(id, data){
-        if(Mapbender.isDebugMode){
-            Mapbender.initElement(id,data);
-            return;
-        }
-        try {
+        var defaultStackTraceLimit = Error.stackTraceLimit;
+        Error.stackTraceLimit = undefined;
+        try {       
             Mapbender.initElement(id,data);
         } catch(e) {
-            console.error('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.');
-            console.log('Error:', e);
-            console.log('Configuration:', data.configuration);
-            if(Error) {
-                console.log(Error().stack);
-            }
+            $.notify('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.', 'error');
+            console.error(e);            
         }
+        Error.stackTraceLimit = defaultStackTraceLimit;
     });
 
     // Tell the world that all widgets have been set up. Some elements will
