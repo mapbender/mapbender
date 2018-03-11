@@ -2,7 +2,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\ORM\EntityManager;
-use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
@@ -161,16 +160,16 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function save()
     {
         if ($this->entity->getRootlayer()) {
-            self::createHandler($this->container, $this->entity->getRootlayer())->save();
+            $rootlayerSaveHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
+            $rootlayerSaveHandler->save();
         }
         $layerSet = $this->entity->getLayerset();
         $num = 0;
         foreach ($layerSet->getInstances() as $instance) {
-            /** @var WmsInstanceEntityHandler $instHandler */
-            $instHandler = self::createHandler($this->container, $instance);
-            $instHandler->getEntity()->setWeight($num);
-            $instHandler->generateConfiguration();
-            $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
+            /** @var WmsInstance $instance */
+            $instance->setWeight($num);
+            $instance->updateConfiguration();
+            $this->container->get('doctrine')->getManager()->persist($instance);
             $num++;
         }
         $application = $layerSet->getApplication();
@@ -221,7 +220,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $rootUpdateHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
         $rootUpdateHandler->update($this->entity, $this->entity->getSource()->getRootlayer());
 
-        $this->generateConfiguration();
+        $this->entity->updateConfiguration();
         $this->container->get('doctrine')->getManager()->persist(
             $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->persist($this->entity);
@@ -255,7 +254,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function getConfiguration(Signer $signer = null)
     {
         if ($this->entity->getConfiguration() === null) {
-            $this->generateConfiguration();
+            $this->entity->updateConfiguration();
         }
         $configuration = $this->entity->getConfiguration();
         $layerConfig = $this->getRootLayerConfig();
@@ -298,14 +297,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
     /**
      * Modifies the bound entity, populates `configuration` attribute, returns nothing
+     * @deprecated, call the entity method directly; you don't need a container to do so
      */
     public function generateConfiguration()
     {
-        $wmsconf = WmsInstanceConfiguration::fromEntity($this->entity);
-
-        $persistableConfig = $wmsconf->toArray();
-
-        $this->entity->setConfiguration($persistableConfig);
+        $this->entity->updateConfiguration();
     }
 
     protected function getRootLayerConfig()

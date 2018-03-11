@@ -100,4 +100,16 @@ class WmsInstanceConfiguration extends InstanceConfiguration
         );
         return static::fromArray($options, $strict);
     }
+
+    /**
+     * Helper method that converts an entity to its array representation
+     * @todo: this probably belongs directly in the entity
+     *
+     * @param WmsInstance $entity
+     * @return array
+     */
+    public static function entityToArray($entity)
+    {
+        return static::fromEntity($entity)->toArray();
+    }
 }

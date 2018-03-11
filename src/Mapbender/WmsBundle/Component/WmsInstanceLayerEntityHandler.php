@@ -198,7 +198,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             if ($this->entity->getSublayer()->count() > 0) {
                 $children = array();
                 foreach ($this->entity->getSublayer() as $sublayer) {
-                    $instLayHandler = self::createHandler($this->container, $sublayer);
+                    /** @var WmsInstanceLayer $sublayer */
+                    $instLayHandler = new WmsInstanceLayerEntityHandler($this->container, $sublayer);
                     $configurationTemp = $instLayHandler->generateConfiguration();
                     if (count($configurationTemp) > 0) {
                         $children[] = $configurationTemp;
