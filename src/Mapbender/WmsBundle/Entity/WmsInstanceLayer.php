@@ -436,18 +436,22 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * Get inherited effective min scale for layer instance
-     * 1) if admin replaced min scale for any parent layer instance, use that value.
-     * 2) if no parent instances have admin-set values, use value from source layer (recursively scanning up)
+     * 1) if admin replaced min scale for THE parent layer instance, use that value.
+     * 2) if THE parent instance has no admin-set value, use value from source layer
+     * 3) if neither is set, recurse up the tree, maintaining preference instance first, then source
      * @return float|null
      */
     public function getInheritedMinScale()
     {
         $parent = $this->getParent();
-        $parentValue = $parent ? $parent->getMinScale(true) : null;
+        $parentValue = $parent ? $parent->getMinScale(false) : null;
         if ($parentValue !== null) {
             $value = $parentValue;
         } else {
-            $value = $this->getSourceItem()->getMinScale(true);
+            $value = $this->getSourceItem()->getMinScale(false);
+            if ($value === null && $parent) {
+                $value = $parent->getInheritedMinScale();
+            }
         }
         return $value === null ? null : floatval($value);
     }
@@ -488,18 +492,22 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * Get inherited effective max scale for layer instance
-     * 1) if admin replaced max scale for any parent layer instance, use that value.
-     * 2) if no parent instances have admin-set values, use value from source layer (recursively scanning up)
+     * 1) if admin replaced max scale for THE parent layer instance, use that value.
+     * 2) if THE parent instance has no admin-set value, use value from source layer
+     * 3) if neither is set, recurse up the tree, maintaining preference instance first, then source
      * @return float|null
      */
     public function getInheritedMaxScale()
     {
         $parent = $this->getParent();
-        $parentValue = $parent ? $parent->getMaxScale(true) : null;
+        $parentValue = $parent ? $parent->getMaxScale(false) : null;
         if ($parentValue !== null) {
             $value = $parentValue;
         } else {
-            $value = $this->getSourceItem()->getMaxScale(true);
+            $value = $this->getSourceItem()->getMaxScale(false);
+            if ($value === null && $parent) {
+                $value = $parent->getInheritedMaxScale();
+            }
         }
         return $value === null ? null : floatval($value);
     }
