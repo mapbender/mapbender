@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
@@ -9,7 +10,6 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
@@ -36,18 +36,31 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function save()
     {
+        /** @var ObjectManager $manager */
         $manager = $this->container->get('doctrine')->getManager();
-        if ($this->entity->getRootlayer()) {
-            self::createHandler($this->container, $this->entity->getRootlayer())->save();
+        $this->persistRecursive($manager, $this->entity);
+    }
+
+    /**
+     * Persists the source, all keywords and all layers, recursively.
+     *
+     * @param ObjectManager $manager
+     * @param WmsSource $entity
+     */
+    private static function persistRecursive(ObjectManager $manager, WmsSource $entity)
+    {
+        $rootLayer = $entity->getRootlayer();
+        if ($rootLayer) {
+            WmsLayerSourceEntityHandler::persistRecursive($manager, $rootLayer);
         }
-        $manager->persist($this->entity);
-        $cont = $this->entity->getContact();
+        $manager->persist($entity);
+        $cont = $entity->getContact();
         if ($cont == null) {
             $cont = new Contact();
-            $this->entity->setContact($cont);
+            $entity->setContact($cont);
         }
         $manager->persist($cont);
-        foreach ($this->entity->getKeywords() as $kwd) {
+        foreach ($entity->getKeywords() as $kwd) {
             $manager->persist($kwd);
         }
     }
@@ -89,7 +102,8 @@ class WmsSourceEntityHandler extends SourceEntityHandler
          *     before it can be removed
          */
         if ($this->entity->getRootlayer()) {
-            self::createHandler($this->container, $this->entity->getRootlayer())->remove();
+            $rootLayerHandler = new WmsLayerSourceEntityHandler($this->container, $this->entity->getRootlayer());
+            $rootLayerHandler->remove();
         }
         if ($this->entity->getContact()) {
             $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());

@@ -5,8 +5,8 @@ namespace Mapbender\CoreBundle\Controller;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
-use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
+use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\WmsBundle\Component\InstanceTunnelHandler;
@@ -372,7 +372,7 @@ class ApplicationController extends Controller
         $getParams   = $request->query->all();
         $user        = $source->getUsername() ? $source->getUsername() : null;
         $password    = $source->getUsername() ? $source->getPassword() : null;
-        $instHandler = EntityHandler::createHandler($this->container, $instance);
+        $instHandler = SourceInstanceEntityHandler::createHandler($this->container, $instance);
         $vendorspec  = $instHandler->getSensitiveVendorSpecific();
         /* overwrite vendorspecific parameters from handler with get/post parameters */
         if (count($getParams)) {

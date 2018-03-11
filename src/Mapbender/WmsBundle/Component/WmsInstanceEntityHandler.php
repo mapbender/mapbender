@@ -179,7 +179,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
          *     doctrine:schema:update --force
          *     before it can be removed
          */
-        $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
+        $layerHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
         $layerHandler->remove();
 
         $this->container->get('doctrine')->getManager()->persist(

@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
+use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
@@ -735,11 +736,11 @@ class ApplicationController extends WelcomeController
         $container     = $this->container;
         $source        = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         $layerSet      = $entityManager->getRepository("MapbenderCoreBundle:Layerset")->find($layersetId);
-        /** @var SourceEntityHandler|WmsSourceEntityHandler $eHandler */
-        $eHandler      = EntityHandler::createHandler($container, $source);
+        $eHandler      = SourceEntityHandler::createHandler($container, $source);
         $connection->beginTransaction();
         $sourceInstance = $eHandler->createInstance($layerSet);
-        EntityHandler::createHandler($container, $sourceInstance)->save();
+        $instanceSaveHandler = SourceInstanceEntityHandler::createHandler($container, $sourceInstance);
+        $instanceSaveHandler->save();
         $entityManager->flush();
         $connection->commit();
         $this->get("logger")
