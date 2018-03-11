@@ -5,6 +5,7 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -136,7 +137,7 @@ class WmsInstance extends SourceInstance
     /**
      * Returns dimensions
      *
-     * @return array of DimensionIst
+     * @return DimensionInst[]
      */
     public function getDimensions()
     {
