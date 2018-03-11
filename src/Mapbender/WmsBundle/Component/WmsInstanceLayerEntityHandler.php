@@ -32,9 +32,22 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function create(SourceInstance $instance, SourceItem $layerSource, $num = 0)
     {
-        /** @var WmsLayerSource $instanceLayer */
         $instanceLayer = $this->entity;
+        $this->populateFromSource($instanceLayer, $instance, $layerSource, $num);
+        return $this->entity;
+    }
 
+    /**
+     * @internal
+     * @todo: this belongs into a WmsInstanceLayer::fromWmsInstance factory method
+     * @param WmsInstanceLayer $instanceLayer target
+     * @param WmsInstance $instance source
+     * @param WmsLayerSource $layerSource also the source, purpose unknown
+     * @param int $num
+     * @return WmsInstanceLayer
+     */
+    public static function populateFromSource(WmsInstanceLayer $instanceLayer, WmsInstance $instance, WmsLayerSource $layerSource, $num = 0)
+    {
         $instanceLayer->setSourceInstance($instance);
         $instanceLayer->setSourceItem($layerSource);
         $instanceLayer->setTitle($layerSource->getTitle());
@@ -53,10 +66,9 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         }
         foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
             $subLayerInstance = new WmsInstanceLayer();
-            $entityHandler = new WmsInstanceLayerEntityHandler($this->container, $subLayerInstance);
-            $entityHandler->create($instance, $wmslayersourceSub, $num + 1);
-            $entityHandler->getEntity()->setParent($instanceLayer);
-            $instanceLayer->addSublayer($entityHandler->getEntity());
+            static::populateFromSource($subLayerInstance, $instance, $wmslayersourceSub, $num + 1);
+            $subLayerInstance->setParent($instanceLayer);
+            $instanceLayer->addSublayer($subLayerInstance);
         }
         return $instanceLayer;
     }
