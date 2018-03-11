@@ -628,7 +628,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * @param bool $recursive Try to get value from parent
      * @return float|null
      */
-    public function getMinScale($recursive = true)
+    public function getMinScale($recursive = false)
     {
         $value = null;
         $nextSource = $this;
@@ -647,7 +647,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      * @param bool $recursive Try to get value from parent
      * @return float|null
      */
-    public function getMaxScale($recursive = true)
+    public function getMaxScale($recursive = false)
     {
         $value = null;
         $nextSource = $this;
