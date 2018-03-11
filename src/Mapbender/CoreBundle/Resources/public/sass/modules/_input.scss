@@ -11,6 +11,9 @@
     outline:none;
     border:1px solid lighten($ciColor, 20%);
   }
+  &::placeholder {
+    color: lighten($secondColor, 20%);
+  }
 
   @extend .smallText;
 }
