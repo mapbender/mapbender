@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Controller;
 
 use Doctrine\ORM\EntityRepository;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
