@@ -6,7 +6,7 @@
     - Update WmsLoader example URL to https
     - Skip undefined element classes in Yaml applications, log a warning instead of crashing
     - Backport doctrine annotations to fix some broken import / export scenarios
-    - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers
+    - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers (see pull #787)
     - Backport fix for getting Dimension configuration with open extent
     - Fix strict SCSS warnings when compiling with ruby-sass (closes issue #761)
     - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
