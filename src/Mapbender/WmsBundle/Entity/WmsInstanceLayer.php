@@ -428,21 +428,26 @@ class WmsInstanceLayer extends SourceInstanceItem
         if ($value == INF) {
             $value = null;
         }
-
-        /**
-         * Logic:
-         * 1) if admin replaced scale for this exact layer instance, use that value.
-         * 2) if admin replaced scale for a parent layer instance, use that value.
-         * 3) use value from source layer (recursively scanning up)
-         */
         if ($recursive && $value === null) {
-            $parent = $this->getParent();
-            $parentValue = $parent ? $parent->getMinScale($recursive) : null;
-            if ($parentValue !== null) {
-                $value = $parentValue;
-            } else {
-                $value = $this->getSourceItem()->getMaxScale($recursive);
-            }
+            $value = $this->getInheritedMinScale();
+        }
+        return $value;
+    }
+
+    /**
+     * Get inherited effective min scale for layer instance
+     * 1) if admin replaced min scale for any parent layer instance, use that value.
+     * 2) if no parent instances have admin-set values, use value from source layer (recursively scanning up)
+     * @return float|null
+     */
+    public function getInheritedMinScale()
+    {
+        $parent = $this->getParent();
+        $parentValue = $parent ? $parent->getMinScale(true) : null;
+        if ($parentValue !== null) {
+            $value = $parentValue;
+        } else {
+            $value = $this->getSourceItem()->getMinScale(true);
         }
         return $value === null ? null : floatval($value);
     }
@@ -475,21 +480,26 @@ class WmsInstanceLayer extends SourceInstanceItem
         if ($value == INF) {
             $value = null;
         }
-
-        /**
-         * Logic:
-         * 1) if admin replaced scale for this exact layer instance, use that value.
-         * 2) if admin replaced scale for a parent layer instance, use that value.
-         * 3) use value from source layer (recursively scanning up)
-         */
         if ($recursive && $value === null) {
-            $parent = $this->getParent();
-            $parentValue = $parent ? $parent->getMaxScale($recursive) : null;
-            if ($parentValue !== null) {
-                $value = $parentValue;
-            } else {
-                $value = $this->getSourceItem()->getMaxScale($recursive);
-            }
+            $value = $this->getInheritedMaxScale();
+        }
+        return $value;
+    }
+
+    /**
+     * Get inherited effective max scale for layer instance
+     * 1) if admin replaced max scale for any parent layer instance, use that value.
+     * 2) if no parent instances have admin-set values, use value from source layer (recursively scanning up)
+     * @return float|null
+     */
+    public function getInheritedMaxScale()
+    {
+        $parent = $this->getParent();
+        $parentValue = $parent ? $parent->getMaxScale(true) : null;
+        if ($parentValue !== null) {
+            $value = $parentValue;
+        } else {
+            $value = $this->getSourceItem()->getMaxScale(true);
         }
         return $value === null ? null : floatval($value);
     }
