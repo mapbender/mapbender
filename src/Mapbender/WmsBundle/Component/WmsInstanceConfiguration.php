@@ -9,6 +9,8 @@ use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
  * Description of WmsInstanceConfiguration
  *
  * @author Paul Schmidt
+ *
+ * @property WmsInstanceConfigurationOptions $options
  */
 class WmsInstanceConfiguration extends InstanceConfiguration
 {
@@ -28,7 +30,7 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     /**
      * Returns options
      * 
-     * @return InstanceConfigurationOptions
+     * @return WmsInstanceConfigurationOptions
      */
     public function getOptions()
     {

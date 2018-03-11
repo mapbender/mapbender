@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Psr\Log\LoggerInterface;
+use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -221,6 +222,7 @@ class ApplicationYAMLMapper
                     "id"       => $id,
                     "layerset" => $layerset
                 );
+                /** @var WmsInstanceEntityHandler */
                 $entityHandler->setParameters(array_merge($layerDefinition, $internDefinition));
                 $layerset->addInstance($instance);
             }

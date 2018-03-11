@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
+
 /**
  * Description of SourceConfiguration
  *
@@ -22,7 +24,7 @@ abstract class InstanceConfiguration
 
     /**
      * ORM\Column(type="text", nullable=true)
-     * @var string
+     * @var InstanceConfigurationOptions
      */
     public $options;
 
@@ -159,7 +161,7 @@ abstract class InstanceConfiguration
         if($options && is_array($options))
         {
             if(isset($options['type']) && $options['type'] === 'wms'){
-                return \Mapbender\WmsBundle\Component\WmsInstanceConfiguration::fromArray($options);
+                return WmsInstanceConfiguration::fromArray($options);
             }
         }
         return null;

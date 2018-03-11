@@ -7,6 +7,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
+use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
@@ -18,6 +19,7 @@ use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
+use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\Form;
@@ -733,6 +735,7 @@ class ApplicationController extends WelcomeController
         $container     = $this->container;
         $source        = $entityManager->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         $layerSet      = $entityManager->getRepository("MapbenderCoreBundle:Layerset")->find($layersetId);
+        /** @var SourceEntityHandler|WmsSourceEntityHandler $eHandler */
         $eHandler      = EntityHandler::createHandler($container, $source);
         $connection->beginTransaction();
         $sourceInstance = $eHandler->createInstance($layerSet);

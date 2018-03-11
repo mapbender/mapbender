@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -332,6 +333,7 @@ class Application
             $layerSets     = array();
 
             foreach ($layerSet->layerObjects as $layer) {
+                /** @var SourceInstanceEntityHandler|WmsInstanceEntityHandler $instHandler */
                 $instHandler = EntityHandler::createHandler($this->container, $layer);
                 $conf        = $instHandler->getConfiguration($this->container->get('signer'));
 

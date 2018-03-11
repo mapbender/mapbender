@@ -469,7 +469,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get latlonBounds
      *
-     * @return Object
+     * @return BoundingBox
      */
     public function getLatlonBounds($inherit = true)
     {

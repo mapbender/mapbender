@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -170,7 +171,7 @@ class WmsInstance extends SourceInstance
 
     /**
      * Sets vendorspecifics
-     * @param ArrayCollection $vendorspecifics array of DimensionIst
+     * @param ArrayCollection|DimensionInst[]|VendorSpecific[] $vendorspecifics
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
     public function setVendorspecifics(array $vendorspecifics)
@@ -528,7 +529,7 @@ class WmsInstance extends SourceInstance
     /**
      * Add layers
      *
-     * @param WmsInstanceLayer $layers
+     * @param WmsInstanceLayer $layer
      * @return WmsInstance
      */
     public function addLayer(WmsInstanceLayer $layer)

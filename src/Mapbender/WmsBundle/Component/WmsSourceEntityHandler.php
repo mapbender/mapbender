@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
@@ -59,13 +60,13 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         $instance        = new WmsInstance();
         $instance->setSource($this->entity);
         $instance->setLayerset($layerSet);
-        $instanceHandler = self::createHandler($this->container, $instance);
+        $instanceHandler = new WmsInstanceEntityHandler($this->container, $instance);
         $instanceHandler->create();
-        if ($instanceHandler->getEntity()->getLayerset()) {
+        if ($instance->getLayerset()) {
             $num = 0;
-            foreach ($instanceHandler->getEntity()->getLayerset()->getInstances() as $instanceAtLayerset) {
-                $instHandler = self::createHandler($this->container, $instanceAtLayerset);
-                $instHandler->getEntity()->setWeight($num);
+            foreach ($instance->getLayerset()->getInstances() as $instanceAtLayerset) {
+                $instanceAtLayerset->setWeight($num);
+                $instHandler = new WmsInstanceEntityHandler($this->container, $instanceAtLayerset);
                 $instHandler->generateConfiguration();
                 $num++;
             }
