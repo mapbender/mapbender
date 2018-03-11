@@ -227,8 +227,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             "title" => $this->entity->getTitle(),
             "queryable" => $this->entity->getInfo(),
             "style" => $this->entity->getStyle(),
-            "minScale" => $this->entity->getMinScale() !== null ? floatval($this->entity->getMinScale()) : null,
-            "maxScale" => $this->entity->getMaxScale() !== null ? floatval($this->entity->getMaxScale()) : null
+            "minScale" => $this->entity->getMinScale(true),
+            "maxScale" => $this->entity->getMaxScale(true),
         );
         $srses = array();
         $llbbox = $this->entity->getSourceItem()->getLatlonBounds();
