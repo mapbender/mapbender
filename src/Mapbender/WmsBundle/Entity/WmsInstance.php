@@ -148,7 +148,7 @@ class WmsInstance extends SourceInstance
     /**
      * Sets dimensions
      *
-     * @param array $dimensions array of DimensionIst
+     * @param DimensionInst[] $dimensions
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
     public function setDimensions(array $dimensions)
@@ -158,7 +158,7 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * @return VendorSpecific[]|DimensionInst[]
+     * @return VendorSpecific[]
      */
     public function getVendorspecifics()
     {

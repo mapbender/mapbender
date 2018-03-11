@@ -145,12 +145,14 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         }
         foreach ($toRemove as $rem) {
             $this->entity->getSublayer()->removeElement($rem);
-            self::createHandler($this->container, $rem)->remove();
+            $removeHandler = new WmsInstanceLayerEntityHandler($this->container, $rem);
+            $removeHandler->remove();
         }
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
             $layer = $this->findLayer($wmslayersourceSub, $this->entity->getSublayer());
             if ($layer) {
-                self::createHandler($this->container, $layer)->update($instance, $wmslayersourceSub);
+                $layerInstanceHandler = new WmsInstanceLayerEntityHandler($this->container, $layer);
+                $layerInstanceHandler->update($instance, $wmslayersourceSub);
             } else {
                 $sublayerInstance = WmsInstanceLayerEntityHandler::entityFactory($instance, $wmslayersourceSub, $wmslayersourceSub->getPriority());
                 $sublayerInstance->setParent($this->entity);

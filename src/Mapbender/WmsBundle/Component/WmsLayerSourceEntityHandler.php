@@ -79,7 +79,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
      * @inheritdoc
      */
     public function update(SourceItem $itemNew)
-    {# set priority
+    {
         $prio = $this->entity->getPriority();
         $manager = $this->container->get('doctrine')->getManager();
         $classMeta = $manager->getClassMetadata(EntityUtil::getRealClass($this->entity));
@@ -93,6 +93,8 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
             }
             // ignore not identifier fields
         }
+        /** @var WmsLayerSource $itemNew */
+
         $this->entity->setPriority($prio);
         KeywordUpdater::updateKeywords(
             $this->entity,
@@ -156,9 +158,9 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
 
     /**
      * Finds a layers at the layerlist.
-     * @param type $layer
-     * @param type $layerList
-     * @return array true
+     * @param WmsLayerSource $layer
+     * @param WmsLayerSource[] $layerList
+     * @return WmsLayerSource[]
      */
     private function findLayer($layer, $layerList)
     {

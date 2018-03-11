@@ -215,8 +215,8 @@ class ApplicationYAMLMapper
             foreach ($layerDefinitions as $id => $layerDefinition) {
                 $class = $layerDefinition['class'];
                 unset($layerDefinition['class']);
-                $entityHandler    = EntityHandler::createHandler($this->container, new $class());
-                $instance         = $entityHandler->getEntity();
+                $instance = new $class();
+                $entityHandler    = EntityHandler::createHandler($this->container, $instance);
                 $internDefinition = array(
                     'weight'   => $weight++,
                     "id"       => $id,

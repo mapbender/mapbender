@@ -126,7 +126,8 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
         $this->entity->setContact($contact);
 
-        self::createHandler($this->container, $this->entity->getRootlayer())->update($sourceNew->getRootlayer());
+        $rootUpdateHandler = new WmsLayerSourceEntityHandler($this->container, $this->entity->getRootlayer());
+        $rootUpdateHandler->update($sourceNew->getRootlayer());
 
         KeywordUpdater::updateKeywords(
             $this->entity,
@@ -136,7 +137,8 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         );
 
         foreach ($this->getInstances() as $instance) {
-            self::createHandler($this->container, $instance)->update();
+            $instanceUpdateHandler = new WmsInstanceEntityHandler($this->container, $instance);
+            $instanceUpdateHandler->update();
         }
 
         if (!$transaction) {
@@ -145,7 +147,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     }
 
     /**
-     * @inheritdoc
+     * @return WmsInstance[]
      */
     public function getInstances()
     {
