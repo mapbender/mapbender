@@ -217,11 +217,12 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function getConfiguration()
     {
+        $sourceItem = $this->entity->getSourceItem();
         $configuration = array(
             "id" => strval($this->entity->getId()),
             "priority" => $this->entity->getPriority(),
-            "name" => $this->entity->getSourceItem()->getName() !== null ?
-                $this->entity->getSourceItem()->getName() : "",
+            "name" => $sourceItem->getName() !== null ?
+                $sourceItem->getName() : "",
             "title" => $this->entity->getTitle(),
             "queryable" => $this->entity->getInfo(),
             "style" => $this->entity->getStyle(),
@@ -229,22 +230,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             "maxScale" => $this->entity->getMaxScale(true),
         );
         $srses = array();
-        $llbbox = $this->entity->getSourceItem()->getLatlonBounds();
-        if ($llbbox !== null) {
-            $srses[$llbbox->getSrs()] = array(
-                floatval($llbbox->getMinx()),
-                floatval($llbbox->getMiny()),
-                floatval($llbbox->getMaxx()),
-                floatval($llbbox->getMaxy())
-            );
-        }
-        foreach ($this->entity->getSourceItem()->getBoundingBoxes() as $bbox) {
-            $srses[$bbox->getSrs()] = array(
-                floatval($bbox->getMinx()),
-                floatval($bbox->getMiny()),
-                floatval($bbox->getMaxx()),
-                floatval($bbox->getMaxy())
-            );
+        foreach ($sourceItem->getMergedBoundingBoxes() as $bbox) {
+            $srses[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
         $configuration['bbox'] = $srses;
         $legendConfig = $this->getLegendConfig($this->entity);

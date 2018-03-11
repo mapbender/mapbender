@@ -126,6 +126,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
+     * Copies attributes from bound instance's source to the bound instance
+     * @deprecated
      * @inheritdoc
      */
     public function create()
@@ -308,57 +310,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function generateConfiguration()
     {
-        $rootlayer = $this->entity->getRootlayer();
-        $srses = array();
-        foreach ($this->extractBoundingBoxes($rootlayer) as $bbox) {
-            $srses[$bbox->getSrs()] = array(
-                floatval($bbox->getMinx()),
-                floatval($bbox->getMiny()),
-                floatval($bbox->getMaxx()),
-                floatval($bbox->getMaxy()),
-            );
-        }
         $wmsconf = new WmsInstanceConfiguration();
         $wmsconf->setType(strtolower($this->entity->getType()));
         $wmsconf->setTitle($this->entity->getTitle());
         $wmsconf->setIsBaseSource($this->entity->isBasesource());
 
-        $options    = new WmsInstanceConfigurationOptions();
-        $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet());
-        $dimensions = array();
-        foreach ($this->entity->getDimensions() as $dimension) {
-            if ($dimension->getActive()) {
-                $dimensions[] = $dimension->getConfiguration();
-                if ($dimension->getDefault()) {
-                    $help = array($dimension->getParameterName() => $dimension->getDefault());
-                    $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
-                }
-            }
-        }
-        $vendorsecifics = array();
-        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            /* add to url only simple vendor specific with valid default value */
-            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
-                $vendorsecifics[] = $handler->getConfiguration();
-                $help             = $handler->getKvpConfiguration(null);
-                $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
-            }
-        }
-        $options->setProxy($this->entity->getProxy())
-            ->setVisible($this->entity->getVisible())
-            ->setFormat($this->entity->getFormat())
-            ->setInfoformat($this->entity->getInfoformat())
-            ->setTransparency($this->entity->getTransparency())
-            ->setOpacity($this->entity->getOpacity() / 100)
-            ->setTiled($this->entity->getTiled())
-            ->setBbox($srses)
-            ->setDimensions($dimensions)
-            ->setBuffer($this->entity->getBuffer())
-            ->setRatio($this->entity->getRatio())
-            ->setVendorspecifics($vendorsecifics)
-            ->setVersion($this->entity->getSource()->getVersion())
-            ->setExceptionformat($this->entity->getExceptionformat());
+        $options    = WmsInstanceConfigurationOptions::fromEntity($this->entity);
 
         $wmsconf->setOptions($options);
         $persistableConfig = $wmsconf->toArray();

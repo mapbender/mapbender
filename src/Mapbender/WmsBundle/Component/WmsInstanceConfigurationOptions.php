@@ -2,6 +2,8 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
+use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * Description of WmsInstanceConfiguration
@@ -370,6 +372,57 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
                 $ico->exceptionformat = $options["exception_format"];
             }
         }
+        return $ico;
+    }
+
+    public static function fromEntity(WmsInstance $instance)
+    {
+        $ico = new static();
+        $source = $instance->getSource();
+
+        $ico->setUrl($source->getGetMap()->getHttpGet());
+        $dimensions = array();
+        foreach ($instance->getDimensions() as $dimension) {
+            if ($dimension->getActive()) {
+                $dimensions[] = $dimension->getConfiguration();
+                if ($dimension->getDefault()) {
+                    $help = array($dimension->getParameterName() => $dimension->getDefault());
+                    $ico->setUrl(UrlUtil::validateUrl($ico->getUrl(), $help, array()));
+                }
+            }
+        }
+        $ico->setDimensions($dimensions);
+        $vendorsecifics = array();
+        foreach ($instance->getVendorspecifics() as $key => $vendorspec) {
+            $handler = new VendorSpecificHandler($vendorspec);
+            /* add to url only simple vendor specific with valid default value */
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
+                $vendorsecifics[] = $handler->getConfiguration();
+                $help             = $handler->getKvpConfiguration(null);
+                $ico->setUrl(UrlUtil::validateUrl($ico->getUrl(), $help, array()));
+            }
+        }
+        $ico->setVendorspecifics($vendorsecifics);
+
+        $ico->setProxy($instance->getProxy())
+            ->setVisible($instance->getVisible())
+            ->setFormat($instance->getFormat())
+            ->setInfoformat($instance->getInfoformat())
+            ->setTransparency($instance->getTransparency())
+            ->setOpacity($instance->getOpacity() / 100)
+            ->setTiled($instance->getTiled())
+            ->setBuffer($instance->getBuffer())
+            ->setRatio($instance->getRatio())
+            ->setVersion($instance->getSource()->getVersion())
+            ->setExceptionformat($instance->getExceptionformat());
+
+        $rootLayer = $instance->getRootlayer();
+        $boundingBoxMap = array();
+        foreach ($rootLayer->getSourceItem()->getMergedBoundingBoxes() as $bbox) {
+            $boundingBoxMap[$bbox->getSrs()] = $bbox->toCoordsArray();
+        }
+        $ico->setBbox($boundingBoxMap);
+
         return $ico;
     }
 }
