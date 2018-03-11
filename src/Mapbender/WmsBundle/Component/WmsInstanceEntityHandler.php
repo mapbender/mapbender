@@ -60,18 +60,21 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setTiled(ArrayUtil::hasSet($configuration, 'tiled', false))
             ->setBaseSource(ArrayUtil::hasSet($configuration, 'isBaseSource', true));
 
+        $rootMinScale = !isset($configuration["minScale"]) ? null : $configuration["minScale"];
+        $rootMaxScale =!isset($configuration["maxScale"]) ? null : $configuration["maxScale"];
+        $rootScaleObj = new MinMax($rootMinScale, $rootMaxScale);
+
         $num  = 0;
         $layersourceroot = new WmsLayerSource();
         $layersourceroot->setPriority($num)
             ->setSource($source)
             ->setTitle($this->entity->getTitle())
+            ->setScale($rootScaleObj)
             ->setId($source->getId() . '_' . $num);
         $source->addLayer($layersourceroot);
         $rootInstLayer = new WmsInstanceLayer();
         $rootInstLayer->setTitle($this->entity->getTitle())
             ->setId($this->entity->getId() . "_" . $num)
-            ->setMinScale(!isset($configuration["minScale"]) ? null : $configuration["minScale"])
-            ->setMaxScale(!isset($configuration["maxScale"]) ? null : $configuration["maxScale"])
             ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
             ->setPriority($num)
             ->setSourceItem($layersourceroot)
