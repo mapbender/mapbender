@@ -39,9 +39,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $instanceLayer->setSourceItem($layerSource);
         $instanceLayer->setTitle($layerSource->getTitle());
 
-        $instanceLayer->setMinScale($layerSource->getMinScale());
-        $instanceLayer->setMaxScale($layerSource->getMaxScale());
-
         $queryable = $layerSource->getQueryable();
         $instanceLayer->setInfo(Utils::getBool($queryable));
         $instanceLayer->setAllowinfo(Utils::getBool($queryable));
@@ -146,17 +143,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             }
         }
         $this->entity->setPriority($wmslayersource->getPriority());
-        $origMinMax = $wmslayersource->getScaleRecursive();
-        $scaleMinMax = null;
-        if ($origMinMax) {
-            $minInrange = $origMinMax->getInRange($this->entity->getMinScale());
-            $maxInrange = $origMinMax->getInRange($this->entity->getMaxScale());
-            $scaleMinMax = new MinMax($minInrange, $maxInrange);
-        } else {
-            $scaleMinMax = new MinMax($this->entity->getMinScale(), $this->entity->getMaxScale());
-        }
-        $this->entity->setMinScale($scaleMinMax ? $scaleMinMax->getMin() : null);
-        $this->entity->setMaxScale($scaleMinMax ? $scaleMinMax->getMax() : null);
         $queryable = Utils::getBool($wmslayersource->getQueryable(), true);
         if ($queryable === '0') {
             $queryable = false;
@@ -227,8 +213,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             "title" => $this->entity->getTitle(),
             "queryable" => $this->entity->getInfo(),
             "style" => $this->entity->getStyle(),
-            "minScale" => $this->entity->getMinScale() !== null ? floatval($this->entity->getMinScale()) : null,
-            "maxScale" => $this->entity->getMaxScale() !== null ? floatval($this->entity->getMaxScale()) : null
+            "minScale" => $this->entity->getMinScale(true),
+            "maxScale" => $this->entity->getMaxScale(true),
         );
         $srses = array();
         $llbbox = $this->entity->getSourceItem()->getLatlonBounds();

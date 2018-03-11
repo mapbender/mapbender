@@ -7,8 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
  * WmsInstanceLayer class
@@ -17,6 +15,7 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
  *
  * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
+ * @ORM\HasLifeCycleCallbacks()
  */
 class WmsInstanceLayer extends SourceInstanceItem
 {
@@ -125,6 +124,19 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $this->sublayer = new ArrayCollection();
         $this->style = "";
+    }
+
+    /**
+     * @ORM\PostLoad()
+     */
+    public function postLoad()
+    {
+        if ($this->minScale == INF) {
+            $this->minScale = null;
+        }
+        if ($this->maxScale == INF) {
+            $this->maxScale = null;
+        }
     }
 
     /**
@@ -410,12 +422,15 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setMinScale($value)
     {
-        $this->minScale = $value === null ? null : floatval($value);
+        $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
         return $this;
     }
 
     /**
      * Get minScale
+     *
+     * Recursive path used by frontend config generation and backend instance form
+     * for placeholders only.
      *
      * @param boolean $recursive Try to get value from parent
      * @return float
@@ -424,18 +439,31 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $value = $this->minScale;
 
-        if ($value == INF) {
-            $value = null;
+        if ($recursive && $value === null) {
+            $value = $this->getInheritedMinScale();
         }
+        return $value;
+    }
 
-        if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getParent()->getMinScale($recursive);
+    /**
+     * Get inherited effective min scale for layer instance
+     * 1) if admin replaced min scale for THE parent layer instance, use that value.
+     * 2) if THE parent instance has no admin-set value, use value from source layer
+     * 3) if neither is set, recurse up the tree, maintaining preference instance first, then source
+     * @return float|null
+     */
+    public function getInheritedMinScale()
+    {
+        $parent = $this->getParent();
+        $parentValue = $parent ? $parent->getMinScale(false) : null;
+        if ($parentValue !== null) {
+            $value = $parentValue;
+        } else {
+            $value = $this->getSourceItem()->getMinScale(false);
+            if ($value === null && $parent) {
+                $value = $parent->getInheritedMinScale();
+            }
         }
-
-        if ($value !== null) {
-            $value = floatval($value);
-        }
-
         return $value;
     }
 
@@ -447,12 +475,15 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setMaxScale($value)
     {
-        $this->maxScale = $value === null ? null : floatval($value);
+        $this->maxScale = ($value === null || $value == INF) ? null : floatval($value);
         return $this;
     }
 
     /**
      * Get maximums scale hint
+     *
+     * Recursive path used by frontend config generation and backend instance form
+     * for placeholders only.
      *
      * @param boolean $recursive Try to get value from parent
      * @return float|null
@@ -461,18 +492,31 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $value = $this->maxScale;
 
-        if ($value == INF) {
-            $value = null;
+        if ($recursive && $value === null) {
+            $value = $this->getInheritedMaxScale();
         }
+        return $value;
+    }
 
-        if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getParent()->getMaxScale($recursive);
+    /**
+     * Get inherited effective max scale for layer instance
+     * 1) if admin replaced max scale for THE parent layer instance, use that value.
+     * 2) if THE parent instance has no admin-set value, use value from source layer
+     * 3) if neither is set, recurse up the tree, maintaining preference instance first, then source
+     * @return float|null
+     */
+    public function getInheritedMaxScale()
+    {
+        $parent = $this->getParent();
+        $parentValue = $parent ? $parent->getMaxScale(false) : null;
+        if ($parentValue !== null) {
+            $value = $parentValue;
+        } else {
+            $value = $this->getSourceItem()->getMaxScale(false);
+            if ($value === null && $parent) {
+                $value = $parent->getInheritedMaxScale();
+            }
         }
-
-        if ($value !== null) {
-            $value = floatval($value);
-        }
-
         return $value;
     }
 
