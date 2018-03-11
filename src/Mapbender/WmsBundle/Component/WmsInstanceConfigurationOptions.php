@@ -356,7 +356,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             'visible' => $instance->getVisible(),
             'format' => $instance->getFormat(),
             'info_format' => $instance->getInfoformat(),
-            'transparency' => $instance->getTransparency(),
+            'transparent' => $instance->getTransparency(),
             'opacity' => ($instance->getOpacity() / 100),
             'tiled' => $instance->getTiled(),
             'buffer' => $instance->getBuffer(),
@@ -367,21 +367,13 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         ));
     }
 
-    public static function defaults()
+    protected static function keyToAttributeMapping()
     {
-        return parent::defaults() + array(
-            'buffer' => 0,
-            'ratio' => 1.25,
-            // everything else is uninitialized
-            'version' => null,
-            'exception_format' => null,     // danger zone: attribute name is exceptionformat, with no underscore
-            'format' => null,
-            'info_format' => null,          // danger zone: attribute name is infoformat, with no underscore
-            'transparency' => null,
-            'vendorspecifics' => null,
-            'tiled' => null,
-            'bbox' => null,
-            'dimensions' => null,
+        // remap our three "danger zone" keys
+        return array(
+            'exception_format' => 'exceptionformat',
+            'info_format' => 'infoformat',
+            'transparent' => 'transparency',
         );
     }
 }

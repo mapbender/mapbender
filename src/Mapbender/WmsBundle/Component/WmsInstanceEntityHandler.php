@@ -310,15 +310,10 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function generateConfiguration()
     {
-        $wmsconf = new WmsInstanceConfiguration();
-        $wmsconf->setType(strtolower($this->entity->getType()));
-        $wmsconf->setTitle($this->entity->getTitle());
-        $wmsconf->setIsBaseSource($this->entity->isBasesource());
+        $wmsconf = WmsInstanceConfiguration::fromEntity($this->entity);
 
-        $options    = WmsInstanceConfigurationOptions::fromEntity($this->entity);
-
-        $wmsconf->setOptions($options);
         $persistableConfig = $wmsconf->toArray();
+
         $this->entity->setConfiguration($persistableConfig);
     }
 
