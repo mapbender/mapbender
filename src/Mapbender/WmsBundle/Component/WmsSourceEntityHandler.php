@@ -96,18 +96,6 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function remove()
     {
-        /**
-         * @todo: rootLayer and contact remove is redundant now, but it may require an automatic
-         *     doctrine:schema:update --force
-         *     before it can be removed
-         */
-        if ($this->entity->getRootlayer()) {
-            $rootLayerHandler = new WmsLayerSourceEntityHandler($this->container, $this->entity->getRootlayer());
-            $rootLayerHandler->remove();
-        }
-        if ($this->entity->getContact()) {
-            $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
-        }
         $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
