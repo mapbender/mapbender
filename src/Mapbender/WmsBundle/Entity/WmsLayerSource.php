@@ -631,15 +631,12 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function getMinScale($recursive = true)
     {
         $value = null;
-        $scale = $this->getScale();
-
-        if ($scale) {
-            $value = $scale->getMin();
-        }
-
-        if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getScaleRecursive() ? $this->getScaleRecursive()->getMin() : null;
-        }
+        $nextSource = $this;
+        do {
+            $scaleObj = $nextSource->getScale();
+            $value = $scaleObj ? $scaleObj->getMin() : null;
+            $nextSource = $nextSource->getParent();
+        } while ($value === null && $recursive && $nextSource);
 
         return $value === null ? null : floatval($value);
     }
@@ -653,15 +650,12 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function getMaxScale($recursive = true)
     {
         $value = null;
-        $scale = $this->getScale();
-
-        if ($scale) {
-            $value = $scale->getMax();
-        }
-
-        if ($recursive && $value === null && $this->getParent()) {
-            $value = $this->getScaleRecursive() ? $this->getScaleRecursive()->getMax() : null;
-        }
+        $nextSource = $this;
+        do {
+            $scaleObj = $nextSource->getScale();
+            $value = $scaleObj ? $scaleObj->getMax() : null;
+            $nextSource = $nextSource->getParent();
+        } while ($value === null && $recursive && $nextSource);
 
         return $value === null ? null : floatval($value);
     }
@@ -673,29 +667,11 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     public function getScaleRecursive()
     {
-        $scale  = $this->getScale();
-        $parent = $this->getParent();
+        $minScale = $this->getMinScale(true);
+        $maxScale = $this->getMaxScale(true);
+        $mergedScale = new MinMax($minScale, $maxScale);
 
-        if (!$scale && !$parent) {
-            return new MinMax();
-        } elseif (!$scale && $parent) {
-            return $parent->getScaleRecursive();
-        } else {
-            $hasMin = $scale->getMin() !== null;
-            $hasMax = $scale->getMax() !== null;
-            if ((!$hasMin || !$hasMax) && $parent) {
-                $parentScale = $parent->getScaleRecursive();
-                if (!$parentScale) {
-                    return $scale;
-                }
-                return new MinMax(
-                    $hasMin ? $scale->getMin() : $parentScale->getMin(),
-                    $hasMax ? $scale->getMax() : $parentScale->getMax()
-                );
-            } else {
-                return $scale;
-            }
-        }
+        return $mergedScale;
     }
 
     /**
