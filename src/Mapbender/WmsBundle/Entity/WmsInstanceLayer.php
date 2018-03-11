@@ -15,6 +15,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
  *
  * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
+ * @ORM\HasLifeCycleCallbacks()
  */
 class WmsInstanceLayer extends SourceInstanceItem
 {
@@ -123,6 +124,19 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $this->sublayer = new ArrayCollection();
         $this->style = "";
+    }
+
+    /**
+     * @ORM\PostLoad()
+     */
+    public function postLoad()
+    {
+        if ($this->minScale == INF) {
+            $this->minScale = null;
+        }
+        if ($this->maxScale == INF) {
+            $this->maxScale = null;
+        }
     }
 
     /**
@@ -408,7 +422,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setMinScale($value)
     {
-        $this->minScale = $value === null ? null : floatval($value);
+        $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
         return $this;
     }
 
@@ -425,9 +439,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $value = $this->minScale;
 
-        if ($value == INF) {
-            $value = null;
-        }
         if ($recursive && $value === null) {
             $value = $this->getInheritedMinScale();
         }
@@ -464,7 +475,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setMaxScale($value)
     {
-        $this->maxScale = $value === null ? null : floatval($value);
+        $this->maxScale = ($value === null || $value == INF) ? null : floatval($value);
         return $this;
     }
 
@@ -481,9 +492,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $value = $this->maxScale;
 
-        if ($value == INF) {
-            $value = null;
-        }
         if ($recursive && $value === null) {
             $value = $this->getInheritedMaxScale();
         }
