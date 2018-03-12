@@ -56,6 +56,7 @@ class UtfGridInfo extends Element
         $assets = array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
+                'js/OpenLayers.Layer.UTFGridWMS.js',
                 'mapbender.element.utfgridinfo.js',
             ),
             'css' => array(
