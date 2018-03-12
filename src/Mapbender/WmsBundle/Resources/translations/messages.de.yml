@@ -227,3 +227,11 @@ mb:
         handler: Handler
     dimensionsets:
       no_dimension: 'Keine Dimension vorhanden.'
+    utfgridinfo:
+      class:
+        title: UTFGrid Info-Anzeige
+        description: Zeigt Feature-Informationen aus UTFGrids an
+    admin:
+      utfgridinfo:
+        label:
+          labelFormats: Anzeigeformatierung

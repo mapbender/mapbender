@@ -233,3 +233,11 @@ mb:
       tag:
         wms: wms
         loader: loader
+    utfgridinfo:
+      class:
+        title: UTFGrid info display
+        description: Shows feature information from UTFGrids
+  admin:
+    utfgridinfo:
+        label:
+          labelFormats: Display formats
