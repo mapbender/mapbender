@@ -76,6 +76,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
      */
     public $ratio = 1.25;
+
+    /** @var mixed[] @see WmsInstance::$configuration */
+    public $customUnstructured = array();
     
     /**
      * Returns a version
@@ -310,7 +313,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      */
     public function toArray()
     {
-        return parent::toArray() + array(
+        // ensure array; build custom values right into the top level
+        $customUnstructured = $this->customUnstructured ?: array();
+        return parent::toArray() + $customUnstructured + array(
             "version" => $this->version,
             "format" => $this->format,
             "info_format" => $this->infoformat,
@@ -376,6 +381,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             'version' => $instance->getSource()->getVersion(),
             'exception_format' => $instance->getExceptionformat(),
             'bbox' => $boundingBoxMap,
+            'customUnstructured' => $instance->getConfiguration() ?: array(),
         ));
     }
 
@@ -386,6 +392,13 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             'exception_format' => 'exceptionformat',
             'info_format' => 'infoformat',
             'transparent' => 'transparency',
+        );
+    }
+
+    public static function validSet()
+    {
+        return parent::validSet() + array(
+            'customUnstructured' => true,
         );
     }
 }
