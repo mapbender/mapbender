@@ -15,7 +15,7 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
  *     array and discared. The sanitization performed along the way is minimal.
  *
  * @see WmcParser110::parseLayer()
- * @see WmsInstance::updateConfiguration()
+ * @see WmsInstanceEntityHandler::getConfiguration()
  * @internal
  *
  * @property WmsInstanceConfigurationOptions|array $options
@@ -103,7 +103,7 @@ class WmsInstanceConfiguration extends InstanceConfiguration
 
     /**
      * Helper method that converts an entity to its array representation
-     * @todo: this probably belongs directly in the entity
+     * @todo: this probably belongs directly in a frontend config generating service
      *
      * @param WmsInstance $entity
      * @return array

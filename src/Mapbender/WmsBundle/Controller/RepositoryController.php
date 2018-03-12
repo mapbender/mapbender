@@ -327,7 +327,6 @@ class RepositoryController extends Controller
                 // reload instance after saving ... why?
                 /** @var WmsInstance $wmsinstance */
                 $wmsinstance = $this->loadEntityByPk($repositoryName, $wmsinstance->getId());
-                $wmsinstance->updateConfiguration();
                 $entityHandler = new WmsInstanceEntityHandler($this->container, $wmsinstance);
                 $entityHandler->save();
                 $em->flush();
@@ -417,7 +416,6 @@ class RepositoryController extends Controller
         $em->flush();
         /** @var WmsInstance $wmsinstance */
         $wmsinstance = $this->loadEntityByPk("MapbenderCoreBundle:SourceInstance", $instanceId);
-        $wmsinstance->updateConfiguration();
         $wmsinsthandler = new WmsInstanceEntityHandler($this->container, $wmsinstance);
         $wmsinsthandler->save();
         $em->flush();

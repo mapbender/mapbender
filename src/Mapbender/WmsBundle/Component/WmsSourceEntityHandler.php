@@ -83,11 +83,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
             foreach ($layerSet->getInstances() as $instanceAtLayerset) {
                 /** @var WmsInstance $instanceAtLayerset */
                 $instanceAtLayerset->setWeight($num);
-                $instanceAtLayerset->updateConfiguration();
                 $num++;
             }
         }
-        $instance->updateConfiguration();
         return $instance;
     }
 
