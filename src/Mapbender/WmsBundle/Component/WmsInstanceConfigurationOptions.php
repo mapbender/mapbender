@@ -356,6 +356,10 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         foreach ($rootLayer->getSourceItem()->getMergedBoundingBoxes() as $bbox) {
             $boundingBoxMap[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
+        $ratio = $instance->getRatio();
+        if ($ratio !== null) {
+            $ratio = floatval($ratio);
+        }
         return static::fromArray(array(
             'url' => $effectiveUrl,
             'dimensions' => $dimensions,
@@ -368,7 +372,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             'opacity' => ($instance->getOpacity() / 100),
             'tiled' => $instance->getTiled(),
             'buffer' => $instance->getBuffer(),
-            'ratio' => $instance->getRatio(),
+            'ratio' => $ratio,
             'version' => $instance->getSource()->getVersion(),
             'exception_format' => $instance->getExceptionformat(),
             'bbox' => $boundingBoxMap,
