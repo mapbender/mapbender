@@ -110,6 +110,11 @@ class WmsInstance extends SourceInstance
     protected $ratio = 1.25;
 
     /**
+     * @var mixed
+     */
+    protected $gridLayerConfig;
+
+    /**
      * WmsInstance constructor.
      */
     public function __construct()
@@ -530,6 +535,22 @@ class WmsInstance extends SourceInstance
     }
 
     /**
+     * @return mixed
+     */
+    public function getGridlayer()
+    {
+        return $this->gridLayerConfig;
+    }
+
+    /**
+     * @param mixed $value
+     */
+    public function setGridlayer($value)
+    {
+        $this->gridLayerConfig = $value;
+    }
+
+    /**
      * Add layers
      *
      * @param WmsInstanceLayer $layer
@@ -591,6 +612,7 @@ class WmsInstance extends SourceInstance
     {
         $this->configuration = array(
             // place your extended config attributes here
+            'gridlayer' => $this->gridLayerConfig,
         );
         // if empty, reduce to NULL
         $this->configuration = $this->configuration ?: null;
@@ -607,6 +629,7 @@ class WmsInstance extends SourceInstance
         // convert loaded NULL to empty array
         $loadedConfig = $this->configuration ?: array();
         // copy your extended config from $loadedConfig into your non-column attributes here
+        $this->gridLayerConfig = ArrayUtil::getDefault($loadedConfig, 'gridlayer', array());
     }
 
     /**

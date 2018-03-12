@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Form\Type;
 
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -42,6 +43,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var WmsInstance $wmsinstance */
         $wmsinstance = $options["data"];
         $arr = $wmsinstance->getSource()->getGetMap()->getFormats() !== null ?
             $wmsinstance->getSource()->getGetMap()->getFormats() : array();
@@ -72,6 +74,14 @@ class WmsInstanceInstanceLayersType extends AbstractType
         $opacity = array();
         foreach (range(0, 100, 10) as $value) {
             $opacity[$value] = $value;
+        }
+        $gridLayerChoices = array();
+        if (in_array('application/json', $formats)) {
+            foreach ($wmsinstance->getSource()->getLayers() as $layer) {
+                $layerName = $layer->getName();
+                $layerTitle = $layer->getTitle();
+                $gridLayerChoices[$layerName] = $layerTitle;
+            }
         }
         $builder->add('exceptionformat', 'choice', array(
                 'choices' => $formats_exc,
@@ -104,6 +114,11 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'type' => new VendorSpecificType(),
                 'allow_add' => true,
                 'allow_delete' => true,))
+            ->add('gridlayer', 'choice', array(
+                'choices' => $gridLayerChoices,
+                'required' => false,
+                'empty_value' => "",
+            ))
             ->add('layers', 'collection', array(
                 'type' => new WmsInstanceLayerType(),
                 'options' => array(
