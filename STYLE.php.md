@@ -16,8 +16,8 @@ to adoption of that framework's conventions as they come into conflict with our
 own.
 
 This guide is relevant to all PHP code produced and contributed to our public github
-group and internally, unless intended to be merged directly into a third-party
-codebase where different rules govern.
+group and internal Mapbender-related developments. This guide is not relevant for code to be merged directly
+into a third-party codebase where different rules govern.
 
 This document is _not_ a call to action to reformat all existing code.
 
