@@ -139,15 +139,13 @@
                 });
             });
             var popupHtml = $html.html();
-            // console.log("Displaying", lonLat, position, popupHtml);
-            if (!this.popup) {
-                this.popup = new this.popupClass(this.popupId, lonLat, null, popupHtml, null, true);
-                this.mbMap.map.olMap.addPopup(this.popup);
-            } else {
-                this.popup.moveTo(position);
-                this.popup.setContentHTML(popupHtml);
-                this.popup.show();
+
+            if (this.popup && !this.popup.lonlat.equals(lonLat)) {
+                console.log("Murdering previous popup for movement (from, to)", this.popup.lonlat, lonLat);
+                this.popup.destroy();
             }
+            this.popup = new this.popupClass(this.popupId, lonLat, null, popupHtml, null, true);
+            this.mbMap.map.olMap.addPopup(this.popup);
         },
         initializeControls: function(states) {
             var self = this;
