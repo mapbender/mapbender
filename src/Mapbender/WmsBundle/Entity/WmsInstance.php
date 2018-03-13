@@ -610,10 +610,11 @@ class WmsInstance extends SourceInstance
      */
     public function packConfiguration(PreUpdateEventArgs $args)
     {
-        $this->configuration = array(
+        // filter empty values so regular instances don't end up with "surprising" values in frontend config
+        $this->configuration = array_filter(array(
             // place your extended config attributes here
             'gridlayer' => $this->gridLayerConfig,
-        );
+        ));
         // if empty, reduce to NULL
         $this->configuration = $this->configuration ?: null;
     }
