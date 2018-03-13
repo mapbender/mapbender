@@ -7,7 +7,8 @@ OpenLayers.Layer.UTFGridWMS = OpenLayers.Layer.UTFGridWMS || OpenLayers.Class(Op
 
         OpenLayers.Layer.WMS.prototype.initialize.apply(this, arguments);
         this.tileOptions = OpenLayers.Util.extend({
-            utfgridResolution: this.utfgridResolution
+            utfgridResolution: this.utfgridResolution,
+            maxGetUrlLength: this.maxGetUrlLength
         }, this.tileOptions);
     },
     // inherit these methods from UTFGrid layer

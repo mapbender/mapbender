@@ -56,13 +56,14 @@
                         layer: null,
                         control: null,
                         state: null,
+                        olName: "mbUtfGridInfo" + layerFind.layer.options.origId,
                         config: layerFind.layer,
                         sourceConfig: sourceDef,
                         sourceOptions: sourceDef.configuration.options,
                         parentConfig: layerFind.parent,
                         layerTreeId: layerFind.layer.options.id,
                         origId: layerFind.layer.options.origId,
-                        name: layerFind.layer.options.name,
+                        visibleLayerName: layerFind.layer.options.name,
                         baseUrl: baseUrl
                     });
                 }
@@ -82,26 +83,27 @@
             var self = this;
             _.forEach(states || this.layerState, function(state) {
                 if (!state.layer) {
-                    var olLayerName = "mbUtfGridInfo" + state.origId;
                     var params = {
-                        layers: [state.name],
+                        layers: [state.visibleLayerName],
                         url: state.baseUrl,
                         format: "application/json"
                     };
                     var mergedOptions = {
                         utfgridResolution: 4,
+                        // avoid POST requests at all costs (CORS; POST may produce an unsupported OPTIONS preflight)
+                        maxGetUrlLength: null,
                         singleTile: true,
                         tiled: false,
                         ratio: state.sourceOptions.ratio || 1.0,
                         buffer: state.sourceOptions.buffer || 0
                     };
-                    state.layer = new OpenLayers.Layer.UTFGridWMS(olLayerName, state.baseUrl, params, mergedOptions);
+                    state.layer = new OpenLayers.Layer.UTFGridWMS(state.olName, state.baseUrl, params, mergedOptions);
                     self.mbMap.map.olMap.addLayer(state.layer);
                 }
                 if (!state.control) {
                     // @todo: reuse single control for multiple layers
                     state.control = new OpenLayers.Control.UTFGridWMS({
-                        callback: self.renderData.bind(self, state),
+                        callback: self.controlOnHover.bind(self),
                         layers: [state.layer],
                         handlerMode: "hover"
                     });
