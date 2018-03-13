@@ -4,7 +4,10 @@ services:
     # Form Types
     #
     # Form types must be prefixed with "mapbender.form_type.element"
+    # and named using lowercase element class name
     # to be accessible by initialisation in MB Core
+    #
+    # Example: for HTMLElementAdminType it must be mapbender.form_type.element.htmlelement
     #
 
     #
