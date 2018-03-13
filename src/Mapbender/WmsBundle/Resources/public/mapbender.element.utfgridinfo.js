@@ -14,6 +14,8 @@
             if (!Mapbender.checkTarget("mbUtfGridInfo", this.options.target)) {
                 return;
             }
+            this.popupId = "mbUtfGridInfo" + this.element.attr('id');
+            this.popupClass = OpenLayers.Popup.FramedCloud
             Mapbender.elementRegistry.onElementReady(this.options.target, this._setup.bind(this));
         },
         _setup: function() {
@@ -74,9 +76,77 @@
             // HACK for testing
             return true;
         },
-        renderData: function(layerState, data, lonLat, position) {
+        controlOnHover: function(data, lonLat, position) {
             if (data) {
-                console.log("mbUtfGridInfo received", layerState, data, lonLat, position);
+                // console.log("Receving data", data, lonLat, position);
+                // Data is keyed on internal OpenLayers layer index, which isn't particularly useful.
+                // "Recalculate" the full layerstate.
+                var perLayerData = _.map(Object.keys(data), function (layerIndex) {
+                    if (data[layerIndex] && data[layerIndex].data) {
+                        var olLayer = this.mbMap.map.olMap.layers[layerIndex];
+                        var layerState = _.findWhere(this.layerState, {olName: olLayer.name});
+                        if (layerState) {
+                            return {
+                                layerState: layerState,
+                                featureData: data[layerIndex].data
+                            };
+                        }
+                    }
+                }.bind(this));
+                // throw away emptyish (undefined) entries
+                perLayerData = _.filter(perLayerData, Boolean);
+                // console.log("Filtered data", perLayerData);
+                if (perLayerData.length) {
+                    this.displayData(perLayerData, lonLat, position);
+                } else {
+                    return;
+                    // mockup
+                    var mockupData = {
+                        layerState: _.first(this.layerState),
+                        featureData: {
+                            'name': "Der gute Name",
+                            'disposition': "Unverfänglich"
+                        }
+                    };
+                    this.displayData([mockupData], lonLat, position);
+                }
+            }
+        },
+        displayData: function(perLayerData, lonLat, position) {
+            var layerGroups = _.map(perLayerData, function (layerData) {
+                var layerTitle = layerData.layerState.config.options.title;
+                // translate labels
+                // @todo: enforce attribute order?
+                var attributes = _.map(layerData.featureData, function (value, key) {
+                    var label = this.options.labelFormats && this.options.labelFormats[key] || key;
+                    return {
+                        label: label,
+                        value: value
+                    };
+                }.bind(this));
+                return {
+                    layerTitle: layerTitle,
+                    attributes: attributes
+                };
+            }.bind(this));
+            // console.log("Transformed display data", layerGroups, perLayerData);
+            var $html = $('<ul>');
+            _.forEach(layerGroups, function (lg) {
+                var $header = $('<li>').text(lg.layerTitle);
+                $html.append($header);
+                _.forEach(lg.attributes, function (o) {
+                    $html.append($('<li>').text(o.label + ": " + o.value));
+                });
+            });
+            var popupHtml = $html.html();
+            // console.log("Displaying", lonLat, position, popupHtml);
+            if (!this.popup) {
+                this.popup = new this.popupClass(this.popupId, lonLat, null, popupHtml, null, true);
+                this.mbMap.map.olMap.addPopup(this.popup);
+            } else {
+                this.popup.moveTo(position);
+                this.popup.setContentHTML(popupHtml);
+                this.popup.show();
             }
         },
         initializeControls: function(states) {
@@ -116,6 +186,9 @@
          */
         handleSourceChanged: function() {
             console.log("Source changed event", arguments);
+        },
+        onPopupClose: function() {
+           console.log("Popup closed", arguments);
         }
     });
 })(jQuery);
