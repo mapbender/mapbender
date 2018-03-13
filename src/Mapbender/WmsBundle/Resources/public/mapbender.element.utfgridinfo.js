@@ -141,10 +141,9 @@
             var popupHtml = $html.html();
 
             if (this.popup && !this.popup.lonlat.equals(lonLat)) {
-                console.log("Murdering previous popup for movement (from, to)", this.popup.lonlat, lonLat);
                 this.popup.destroy();
             }
-            this.popup = new this.popupClass(this.popupId, lonLat, null, popupHtml, null, true);
+            this.popup = new this.popupClass(this.popupId, lonLat, null, popupHtml, null, true, this.onPopupClose.bind(this));
             this.mbMap.map.olMap.addPopup(this.popup);
         },
         initializeControls: function(states) {
@@ -186,7 +185,10 @@
             console.log("Source changed event", arguments);
         },
         onPopupClose: function() {
-           console.log("Popup closed", arguments);
+           if (this.popup) {
+               this.popup.destroy();
+               this.popup = null;
+           }
         }
     });
 })(jQuery);
