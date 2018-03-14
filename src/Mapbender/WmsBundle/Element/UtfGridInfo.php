@@ -74,4 +74,22 @@ class UtfGridInfo extends Element
             'debug' => true,
         );
     }
+
+    public function getPublicConfiguration()
+    {
+        return parent::getPublicConfiguration() + array(
+            // @todo: make this configurable
+            'usePopup' => true,
+            // @todo: make this configurable
+            'showInline' => false,
+            // @todo: make this configurable
+            'showLayerTitle' => false,
+            // @todo: make this configurable
+            'showDataLabels' => false,
+            // @todo: make this configurable
+            'displayableAttributes' => array(
+                'name',
+            ),
+        );
+    }
 }

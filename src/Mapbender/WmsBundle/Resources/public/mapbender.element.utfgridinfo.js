@@ -6,7 +6,15 @@
     $.widget("mapbender.mbUtfGridInfo", $.mapbender.mbBaseElement, {
         options: {
             target: null,
-            debug: false
+            debug: false,
+            // null for everything, otherwise whitelist (array of strings = keys in data object)
+            displayableAttributes: null,
+            // data key => displayable label mapping
+            labelFormats: {},
+            usePopup: true,
+            showInline: false,
+            showLayerTitle: false,
+            showDataLabels: false
         },
         readyCallbacks: [],
         layerState: [],
@@ -76,6 +84,40 @@
             // HACK for testing
             return true;
         },
+        preFilterLayerData: function(layerState, rawData) {
+            var displayables = this.options.displayableAttributes;
+            var dataObj;
+            var dataList;
+            var _unfold;
+            if (displayables !== null) {
+                dataObj = _.pick.apply(null, [rawData].concat(displayables));
+            } else {
+                dataObj = rawData;
+            }
+            // unfold data object into list, add label information (if any)
+            // if displayables is available, also enforce ordering
+            var _unfoldSingle = function(d, key) {
+                return {
+                    key: key,
+                    value: d[key],
+                    label: this.options.labelFormats && this.options.labelFormats[key] || key
+                };
+            }.bind(this, dataObj);
+            if (displayables !== null) {
+                dataList = _.map(displayables, _unfoldSingle);
+            } else {
+                dataList = _.map(Object.keys(dataObj), unfoldSingle);
+            }
+            if (dataList.length) {
+                return {
+                    layerState: layerState,
+                    layerTitle: layerState.config.options.title,
+                    featureAttributes: dataList
+                };
+            } else {
+                return undefined;
+            }
+        },
         controlOnHover: function(data, lonLat, position) {
             if (data) {
                 // console.log("Receving data", data, lonLat, position);
@@ -86,55 +128,37 @@
                         var olLayer = this.mbMap.map.olMap.layers[layerIndex];
                         var layerState = _.findWhere(this.layerState, {olName: olLayer.name});
                         if (layerState) {
-                            return {
-                                layerState: layerState,
-                                featureData: data[layerIndex].data
-                            };
+                            return this.preFilterLayerData.call(this, layerState, data[layerIndex].data);
                         }
                     }
                 }.bind(this));
                 // throw away emptyish (undefined) entries
                 perLayerData = _.filter(perLayerData, Boolean);
-                // console.log("Filtered data", perLayerData);
-                if (perLayerData.length) {
-                    this.displayData(perLayerData, lonLat, position);
-                } else {
-                    return;
+                if (false && !perLayerData.length) {
                     // mockup
                     var mockupData = {
                         layerState: _.first(this.layerState),
-                        featureData: {
-                            'name': "Der gute Name",
-                            'disposition': "Unverfänglich"
-                        }
+                        featureAttributes: [{
+                            label: "Name-Label",
+                            value: "Der gute Name"
+                        }, {
+                            label: "Disposition",
+                            value: "Unverfänglich"
+                        }]
                     };
-                    this.displayData([mockupData], lonLat, position);
+                    perLayerData = [mockupData];
+                }
+                if (perLayerData.length) {
+                    this.displayData(perLayerData, lonLat, position);
                 }
             }
         },
-        displayData: function(perLayerData, lonLat, position) {
-            var layerGroups = _.map(perLayerData, function (layerData) {
-                var layerTitle = layerData.layerState.config.options.title;
-                // translate labels
-                // @todo: enforce attribute order?
-                var attributes = _.map(layerData.featureData, function (value, key) {
-                    var label = this.options.labelFormats && this.options.labelFormats[key] || key;
-                    return {
-                        label: label,
-                        value: value
-                    };
-                }.bind(this));
-                return {
-                    layerTitle: layerTitle,
-                    attributes: attributes
-                };
-            }.bind(this));
-            // console.log("Transformed display data", layerGroups, perLayerData);
+        displayData: function(layerGroups, lonLat, position) {
             var $html = $('<ul>');
             _.forEach(layerGroups, function (lg) {
                 var $header = $('<li>').text(lg.layerTitle);
                 $html.append($header);
-                _.forEach(lg.attributes, function (o) {
+                _.forEach(lg.featureAttributes, function (o) {
                     $html.append($('<li>').text(o.label + ": " + o.value));
                 });
             });
