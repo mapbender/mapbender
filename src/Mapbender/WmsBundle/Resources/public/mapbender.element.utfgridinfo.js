@@ -154,15 +154,21 @@
             }
         },
         displayData: function(layerGroups, lonLat, position) {
-            var $html = $('<ul>');
+            var $html = $('<ul/>');
             _.forEach(layerGroups, function (lg) {
-                var $header = $('<li>').text(lg.layerTitle);
-                $html.append($header);
+                var $layerData = $('<li>').addClass('layer-data');
+                if (this.options.showLayerTitle) {
+                    $layerData.append($('<label>').text(lg.layerTitle));
+                }
+                var $attributeList = $('<ul>');
                 _.forEach(lg.featureAttributes, function (o) {
-                    $html.append($('<li>').text(o.label + ": " + o.value));
+                    $attributeList.append($('<li>').text(o.label + ": " + o.value));
                 });
-            });
-            var popupHtml = $html.html();
+                $layerData.append($attributeList);
+                $html.append($layerData);
+            }.bind(this));
+            // .html gives CONTENTS, so wrap it in a transient div
+            var popupHtml = $('<div>').append($html).html();
 
             if (this.popup && !this.popup.lonlat.equals(lonLat)) {
                 this.popup.destroy();
