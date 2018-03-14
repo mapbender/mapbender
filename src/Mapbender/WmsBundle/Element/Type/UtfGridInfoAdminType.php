@@ -40,7 +40,8 @@ class UtfGridInfoAdminType extends AbstractType
             'property_path' => '[target]',
             'required' => true,
         ));
-        $builder->add('labelFormats', new YAMLConfigurationType(), array(
+        // deactivated for now
+        if (false) $builder->add('labelFormats', new YAMLConfigurationType(), array(
             'label' => 'mb.wms.admin.utfgridinfo.label.labelFormats',
         ));
     }
