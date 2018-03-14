@@ -31,6 +31,15 @@
             this.layerState = this.findMonitoredLayers();
             this.initializeControls(this.layerState);
 
+            this.renderers = [];
+            var popupRenderer = new rendererPopup(this.mbMap.map.olMap, this.popupClass, this.options);
+            popupRenderer.formatAttribute = this.formatAttribute.bind(this);
+            this.renderers.push(popupRenderer);
+            if (this.options.showInline && $(this.element).closest('.toolBarItem').length) {
+                var inlineRenderer = new rendererToolBarInline(this.element, this.options);
+                inlineRenderer.formatAttribute = this.formatAttribute.bind(this);
+                this.renderers.push(inlineRenderer);
+            }
             this._trigger('ready');
             this._ready();
         },
@@ -161,28 +170,9 @@
             }
         },
         displayData: function(layerGroups, lonLat, position) {
-            var $html = $('<ul/>');
-            _.forEach(layerGroups, function (lg) {
-                var $layerData = $('<li>').addClass('layer-data');
-                if (this.options.showLayerTitle) {
-                    $layerData.append($('<label>').text(lg.layerTitle));
-                }
-                var $attributeList = $('<ul>');
-                _.forEach(lg.featureAttributes, function (o) {
-                    $attributeList.append($('<li>').text(this.formatAttribute(o)));
-                }.bind(this));
-                $layerData.append($attributeList);
-                $html.append($layerData);
-            }.bind(this));
-            // .html gives CONTENTS, so wrap it in a transient div
-            var popupHtml = $('<div>').append($html).html();
-
-            if (this.popup && !this.popup.lonlat.equals(lonLat)) {
-                this.popup.destroy();
-            }
-            this.popup = new this.popupClass(this.popupId, lonLat, null, popupHtml, null, true, this.onPopupClose.bind(this));
-            this.popup.div.className = (this.popup.div.className || '') + ' mb-popup-utfgridinfo';
-            this.mbMap.map.olMap.addPopup(this.popup);
+            _.forEach(this.renderers, function(renderer) {
+                renderer.render(layerGroups, lonLat);
+            });
         },
         initializeControls: function(states) {
             var self = this;
@@ -229,4 +219,60 @@
            }
         }
     });
+
+    function rendererPopup(olMap, popupClass, options) {
+        this.olMap = olMap;
+        this.popupClass = popupClass;
+        this.options = $.extend({}, options, {
+            cssClass: "mb-popup-utfgridinfo",
+        });
+        this.popup = null;
+    }
+    rendererPopup.prototype.render = function(valueMap, lonLat) {
+        var $html = $('<ul/>');
+        _.forEach(valueMap, function (lg) {
+            var $layerData = $('<li>').addClass('layer-data');
+            if (this.options.showLayerTitle) {
+                $layerData.append($('<label>').text(lg.layerTitle));
+            }
+            var $attributeList = $('<ul>');
+            _.forEach(lg.featureAttributes, function (o) {
+                $attributeList.append($('<li>').text(this.formatAttribute(o)));
+            }.bind(this));
+            $layerData.append($attributeList);
+            $html.append($layerData);
+        }.bind(this));
+        // .html gives CONTENTS, so wrap it in a transient div
+        var popupHtml = $('<div>').append($html).html();
+
+        if (this.popup && !this.popup.lonlat.equals(lonLat)) {
+            this.popup.destroy();
+        }
+        this.popup = new this.popupClass(this.popupId, lonLat, null, popupHtml, null, true, this.destroy.bind(this));
+        this.popup.div.className = (this.popup.div.className || '') + ' ' + this.options.cssClass;
+        this.olMap.addPopup(this.popup);
+    };
+    rendererPopup.prototype.destroy = function() {
+        if (this.popup) {
+            this.popup.destroy();
+            this.popup = null;
+        }
+    };
+
+    function rendererToolBarInline(element, options) {
+        this.$element = $(element);
+        this.options = options;
+    }
+    rendererToolBarInline.prototype.render = function(valueMap) {
+        // only display one layer
+        var layerData = _.first(valueMap);
+        var $html = $('<label>').attr('title', 'Vom Layer ' + layerData.layerTitle);
+        // only display one attribute
+        var attribData = _.first(layerData.featureAttributes);
+        $html.text(this.formatAttribute(attribData));
+        // .html gives CONTENTS, so wrap it in a transient div
+        var htmlBody = $('<div>').append($html).html();
+        this.$element.html(htmlBody);
+    };
+
 })(jQuery);

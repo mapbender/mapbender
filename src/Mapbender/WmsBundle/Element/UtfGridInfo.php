@@ -81,7 +81,7 @@ class UtfGridInfo extends Element
             // @todo: make this configurable
             'usePopup' => true,
             // @todo: make this configurable
-            'showInline' => false,
+            'showInline' => true,
             // @todo: make this configurable
             'showLayerTitle' => false,
             // @todo: make this configurable
