@@ -57,6 +57,7 @@ class UtfGridInfo extends Element
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                 'js/OpenLayers.Layer.UTFGridWMS.js',
+                '@MapbenderCoreBundle/Resources/public/js/OpenLayers.Popup.FramedCloudModern.js',
                 'mapbender.element.utfgridinfo.js',
             ),
             'css' => array(

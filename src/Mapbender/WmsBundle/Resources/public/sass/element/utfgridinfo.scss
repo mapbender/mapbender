@@ -1,0 +1,37 @@
+.mb-element-utfgridinfo {
+  .toolBar.itemsRight & {
+    // counter-style inherited text-align: right
+    text-align: initial;
+  }
+  .toolBar & {
+    height: $inputHeight;           // match .dropdown
+    line-height: $inputHeight;      // ~match .dropdown
+    background-color: #FFF;         // match .dropdown
+    border:solid 1px lighten($thirdColor, 15%); // match .dropdown .dropdownList
+    color: $secondColor;            // match .dropdown .dropdownList
+    padding-left: 5px;              // match .dropdown .dropdownValue
+
+    min-width: 172px;
+    overflow: hidden;
+  }
+}
+
+// add missing openlayers css
+div.olPopup.mb-popup-utfgridinfo {
+
+  .olPopupCloseBox:before {
+    font-family: FontAwesome;
+    font-size: 12px;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f00d";
+    cursor: pointer;
+    display: block;
+    border: 1px solid #5d5d5d;
+    color: #5d5d5d;
+    line-height: 16px;
+    text-align: center;
+    border-radius: 2px;
+  }
+}

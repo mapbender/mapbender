@@ -15,7 +15,7 @@
                 return;
             }
             this.popupId = "mbUtfGridInfo" + this.element.attr('id');
-            this.popupClass = OpenLayers.Popup.FramedCloud
+            this.popupClass = OpenLayers.Popup.FramedCloudModern
             Mapbender.elementRegistry.onElementReady(this.options.target, this._setup.bind(this));
         },
         _setup: function() {
@@ -144,6 +144,7 @@
                 this.popup.destroy();
             }
             this.popup = new this.popupClass(this.popupId, lonLat, null, popupHtml, null, true, this.onPopupClose.bind(this));
+            this.popup.div.className = (this.popup.div.className || '') + ' mb-popup-utfgridinfo';
             this.mbMap.map.olMap.addPopup(this.popup);
         },
         initializeControls: function(states) {
