@@ -153,6 +153,13 @@
                 }
             }
         },
+        formatAttribute: function (attributeObject) {
+            if (this.options.showDataLabels) {
+                return attributeObject.label + ": " + attributeObject.value;
+            } else {
+                return attributeObject.value;
+            }
+        },
         displayData: function(layerGroups, lonLat, position) {
             var $html = $('<ul/>');
             _.forEach(layerGroups, function (lg) {
@@ -162,8 +169,8 @@
                 }
                 var $attributeList = $('<ul>');
                 _.forEach(lg.featureAttributes, function (o) {
-                    $attributeList.append($('<li>').text(o.label + ": " + o.value));
-                });
+                    $attributeList.append($('<li>').text(this.formatAttribute(o)));
+                }.bind(this));
                 $layerData.append($attributeList);
                 $html.append($layerData);
             }.bind(this));
