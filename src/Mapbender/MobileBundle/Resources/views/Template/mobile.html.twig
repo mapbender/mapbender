@@ -30,6 +30,10 @@
 //                    'target-densityDpi=' + density +
                            '"/>');
         }
+        // for sending backend requests, this includes the script; e.g. '/docroot-subdir/app.php/'
+        var baseUrl = '{{ app.request.getBaseURL() | trim('/', 'right') ~ '/' }}';
+        // for static asset requests, this omits the script; e.g. '/docroot-subdir/'
+        var baseUrlStatic = baseUrl.replace(/(app|app_dev|index)\.php\/$/, '');
     </script>
 {% endblock %}
 
