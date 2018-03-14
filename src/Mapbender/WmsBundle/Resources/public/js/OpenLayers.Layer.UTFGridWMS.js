@@ -18,6 +18,7 @@ OpenLayers.Layer.UTFGridWMS = OpenLayers.Layer.UTFGridWMS || OpenLayers.Class(Op
 });
 
 OpenLayers.Control.UTFGridWMS = OpenLayers.Control.UTFGridWMS || OpenLayers.Class(OpenLayers.Control.UTFGrid, {
+    CLASS_NAME: "OpenLayers.Control.UTFGridWMS",
     findLayers: function() {
         var candidates = this.layers || this.map.layers;
         var layers = [];
