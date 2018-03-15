@@ -99,15 +99,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             }
         } elseif (is_array($data)) {
             $result = array();
-            if (ArrayUtil::isAssoc($data)) {
-                foreach ($data as $key => $item) {
-                    $result[$key] = $this->handleData($item);
-                }
-                return $result;
-            } else {
-                while (list($idx, $item) = each($data)) {
-                    $result[$idx] = $this->handleData($item);
-                }
+            foreach ($data as $key => $item) {
+                $result[$key] = $this->handleData($item);
             }
             return $result;
         } elseif ($data === null || is_integer($data) || is_float($data) || is_string($data) || is_bool($data)) {
@@ -290,8 +283,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                 }
             } else {
                 $help = array();
-                while (list($idx, $item) = each($value)) {
-                    $help[$idx] = $this->handleConfiguration($item);
+                foreach ($value as $key => $subvalue) {
+                    $help[$key] = $this->handleConfiguration($subvalue);
                 }
                 return $help;
             }

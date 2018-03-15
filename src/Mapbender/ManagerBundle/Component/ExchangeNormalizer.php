@@ -147,14 +147,8 @@ class ExchangeNormalizer extends ExchangeSerializer
     private function handleArray($array)
     {
         $result = array();
-        if (ArrayUtil::isAssoc($array)) {
-            foreach ($array as $key => $item) {
-                $result[$key] = $this->handleValue($item);
-            }
-        } else {
-            while (list($idx, $item) = each($array)) {
-                $result[$idx] = $this->handleValue($item);
-            }
+        foreach ($array as $key => $item) {
+            $result[$key] = $this->handleValue($item);
         }
         return $result;
     }
