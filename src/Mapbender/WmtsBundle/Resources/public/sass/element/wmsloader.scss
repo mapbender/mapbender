@@ -1,0 +1,9 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "modules/text";
+@import "modules/input";
+
+.mb-element-wmtsloader{
+  display: none;
+  .input{width:340px;}
+}

@@ -1,0 +1,20 @@
+  <li>
+    <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.tilematrix.label.identifier" | trans }}:</span>
+    <span class="metaText">{{ tilematrix.identifier }}</span>
+  </li>
+  <li>
+    <span class="labelText">{{"mb.wmts.wmtsloader.repo.tilematrix.label.scaledenominator" | trans }}:</span>
+    <span class="metaText">{{ tilematrix.scaledenominator }}</span>
+  </li>
+  <li>
+    <span class="labelText">{{"mb.wmts.wmtsloader.repo.tilematrix.label.topleftcorner" | trans }}:</span>
+    <span class="metaText">{{ tilematrix.topleftcorner|join(' ') }}</span>
+  </li>
+  <li>
+    <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.tilematrix.label.tilesize" | trans }}:</span>
+    <span class="metaText">{{ tilematrix.tileheight }} x {{ tilematrix.tileheight }}</span>
+  </li>
+  <li>
+    <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.tilematrix.label.matrixsize" | trans }}:</span>
+    <span class="metaText">{{ tilematrix.matrixwidth }} x {{ tilematrix.matrixheight }}</span>
+  </li>
