@@ -7,6 +7,7 @@
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
         <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
         <parameter key="mapbender.owsproxy.httpclient.legacy.class">Mapbender\CoreBundle\Component\OwsProxy\LegacyService</parameter>
+        <parameter key="mapbender.form_type.element.layertree.menu.class">Mapbender\CoreBundle\Element\Type\LayerTreeMenuType</parameter>
     </parameters>
 
     <services>
@@ -90,6 +91,12 @@
 
         <service id="owsproxy.httpclient" class="%mapbender.owsproxy.httpclient.legacy.class%">
             <argument type="service" id="service_container" />
+        </service>
+
+        <!-- layertree "menu" choices; servicy because of DimensionsHandler interaction -->
+        <service id="mapbender.form_type.element.layertree.menuChoices" class="%mapbender.form_type.element.layertree.menu.class%">
+            <argument>%mapbender.preview.element.dimensionshandler%</argument>
+            <tag name="form.type" alias="layertree_menu" />
         </service>
     </services>
 </container>
