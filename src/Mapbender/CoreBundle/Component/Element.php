@@ -536,7 +536,7 @@ abstract class Element
                 'css' => array(
                     'components/codemirror/lib/codemirror.css'));
         } else {
-            $type = self::getAdminFormType($configurationFormType, $container);
+            $type = self::getAdminFormType($configurationFormType, $container, $class);
 
             $options = array('application' => $application);
             if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
@@ -559,11 +559,13 @@ abstract class Element
      *
      * @param string $configurationFormType
      * @param ContainerInterface $container
+     * @param string $class
+     *
      * @return $type
      */
-    protected static function getAdminFormType($configurationFormType, ContainerInterface $container)
+    protected static function getAdminFormType($configurationFormType, ContainerInterface $container, $class)
     {
-        $formTypeId = 'mapbender.form_type.element.' . $configurationFormType::getName();
+        $formTypeId = 'mapbender.form_type.element.' . self::getElementName($class);
         $serviceExists = $container->has($formTypeId);
 
         if (false !== $serviceExists) {
@@ -573,6 +575,19 @@ abstract class Element
         }
 
         return $adminFormType;
+    }
+
+    /**
+     * Get lowercase element name from full class namespace
+     *
+     * @param string $class
+     * @return string
+     */
+    protected static function getElementName($class)
+    {
+        $namespaceParts = explode('\\', $class);
+
+        return strtolower(array_pop($namespaceParts));
     }
 
     /**

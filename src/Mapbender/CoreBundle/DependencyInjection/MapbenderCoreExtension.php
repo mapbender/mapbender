@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class MapbenderCoreExtension extends Extension
 {
-    const CONFIG_PATH = __DIR__ . '/../Resources/config';
+    const CONFIG_PATH = '/../Resources/config';
 
     /**
      * @var FileLocator
@@ -23,7 +23,7 @@ class MapbenderCoreExtension extends Extension
      */
     public function __construct()
     {
-        $this->fileLocator = new FileLocator(self::CONFIG_PATH);
+        $this->fileLocator = new FileLocator(__DIR__ . self::CONFIG_PATH);
     }
 
     public function load(array $configs, ContainerBuilder $container)
