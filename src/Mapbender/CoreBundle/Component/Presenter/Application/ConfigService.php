@@ -16,7 +16,7 @@ use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
  * Services that generates the frontend-facing configuration for a Mapbender application
  * @todo: plug in caching
  *
- * Instance registerd in container as mapbender.presenter.frontend.application.config.service
+ * Instance registerd in container as mapbender.presenter.application.config.service
  */
 class ConfigService
 {
@@ -31,7 +31,7 @@ class ConfigService
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->basePresenter = $container->get('mapbender.presenter.frontend.application.service');
+        $this->basePresenter = $container->get('mapbender.presenter.application.service');
         $this->sourceServices = $this->getSourceServices();
     }
 

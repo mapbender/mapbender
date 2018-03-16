@@ -44,7 +44,7 @@ class ApplicationController extends Controller
     private function getConfigService()
     {
         /** @var ConfigService $presenter */
-        $presenter = $this->get('mapbender.presenter.frontend.application.config.service');
+        $presenter = $this->get('mapbender.presenter.application.config.service');
         return $presenter;
     }
 

@@ -294,7 +294,7 @@ class Application
     private function getConfigService()
     {
         /** @var ConfigService $presenter */
-        $presenter = $this->container->get('mapbender.presenter.frontend.application.config.service');
+        $presenter = $this->container->get('mapbender.presenter.application.config.service');
         return $presenter;
     }
 
