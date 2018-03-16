@@ -3,8 +3,6 @@
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -21,12 +19,11 @@ use Mapbender\WmsBundle\Component\WmsMetadata;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstance")
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
- * @ORM\HasLifecycleCallbacks
  */
 class WmsInstance extends SourceInstance
 {
     /**
-     * @var array for custom unstructured extension storage (no real columns)
+     * @var array $configuration The instance configuration
      * @ORM\Column(type="array", nullable=true)
      */
     protected $configuration;
@@ -191,9 +188,10 @@ class WmsInstance extends SourceInstance
     }
 
     /**
+     * Set configuration
+     *
      * @param array $configuration
      * @return $this
-     * @internal, only public for Doctrine access
      */
     public function setConfiguration($configuration)
     {
@@ -202,8 +200,9 @@ class WmsInstance extends SourceInstance
     }
 
     /**
+     * Get an Instance Configuration.
+     *
      * @return array $configuration
-     * @internal, only public for Doctrine access
      */
     public function getConfiguration()
     {
@@ -599,37 +598,6 @@ class WmsInstance extends SourceInstance
     public function getMetadata()
     {
         return new WmsMetadata($this);
-    }
-
-    /**
-     * Doctrine lifecycle event handler, do not invoke explicitly.
-     *
-     * @param PreUpdateEventArgs $args
-     * @ORM\PreUpdate()
-     * @internal
-     */
-    public function packConfiguration(PreUpdateEventArgs $args)
-    {
-        $this->configuration = array(
-            // place your extended config attributes here
-            'gridlayer' => $this->gridLayerConfig,
-        );
-        // if empty, reduce to NULL
-        $this->configuration = $this->configuration ?: null;
-    }
-
-    /**
-     * Doctrine lifecycle event handler, do not invoke explicitly.
-     *
-     * @param LifecycleEventArgs $args
-     * @ORM\PostLoad()
-     */
-    public function unpackConfiguration(LifecycleEventArgs $args)
-    {
-        // convert loaded NULL to empty array
-        $loadedConfig = $this->configuration ?: array();
-        // copy your extended config from $loadedConfig into your non-column attributes here
-        $this->gridLayerConfig = ArrayUtil::getDefault($loadedConfig, 'gridlayer', array());
     }
 
     /**
