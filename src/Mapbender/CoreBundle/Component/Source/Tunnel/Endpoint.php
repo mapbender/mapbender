@@ -1,39 +1,56 @@
 <?php
 
-
-namespace Mapbender\WmsBundle\Component;
-
-use Mapbender\CoreBundle\Controller\ApplicationController;
+namespace Mapbender\CoreBundle\Component\Source\Tunnel;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\WmsBundle\Component\InstanceTunnel;
+use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
+use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Symfony\Component\HttpFoundation\Request;
 
-
 /**
- * Base version of InstanceTunnel that can process, but not generate tunnel requests (works without access to
- * Router).
- *
- * @see ApplicationController::instanceTunnelAction()
- *
- * @package Mapbender\WmsBundle\Component
+ * Tunnel base endpoint pre-bound to a particular SourceInstance
  */
-class InstanceTunnelHandler
+class Endpoint
 {
+    /** @var InstanceTunnel */
+    protected $service;
+
     /** @var SourceInstance */
     protected $instance;
 
     /** @var Source */
     protected $source;
 
+
     /**
      * InstanceTunnel constructor.
+     * @param InstanceTunnel
      * @param SourceInstance $instance
      */
-    public function __construct(SourceInstance $instance)
+    public function __construct($service, SourceInstance $instance)
     {
+        $this->service = $service;
         $this->instance = $instance;
         $this->source = $instance->getSource();
+    }
+
+    /**
+     * @return Application
+     */
+    public function getApplicationEntity()
+    {
+        return $this->instance->getLayerset()->getApplication();
+    }
+
+    /**
+     * @return SourceInstance
+     */
+    public function getSourceInstance()
+    {
+        return $this->instance;
     }
 
     /**

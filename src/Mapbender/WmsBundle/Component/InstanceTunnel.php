@@ -3,8 +3,10 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -17,10 +19,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  * @package Mapbender\WmsBundle\Component
  */
-class InstanceTunnel extends InstanceTunnelHandler
+class InstanceTunnel
 {
     /** @var UrlGeneratorInterface */
     protected $router;
+    /** @var Endpoint */
+    protected $endpoint;
 
     /**
      * InstanceTunnel constructor.
@@ -30,7 +34,12 @@ class InstanceTunnel extends InstanceTunnelHandler
     public function __construct(UrlGeneratorInterface $router, SourceInstance $instance)
     {
         $this->router = $router;
-        parent::__construct($instance);
+        $this->endpoint = $this->makeEndpoint($instance);
+    }
+
+    public function makeEndpoint(SourceInstance $instance)
+    {
+        return new Endpoint($this, $instance);
     }
 
     /**
@@ -43,8 +52,8 @@ class InstanceTunnel extends InstanceTunnelHandler
         return $this->router->generate(
             'mapbender_core_application_instancetunnel',
             array(
-                'slug' => $this->instance->getLayerset()->getApplication()->getSlug(),
-                'instanceId' => $this->instance->getId()),
+                'slug' => $this->endpoint->getApplicationEntity()->getSlug(),
+                'instanceId' => $this->endpoint->getSourceInstance()->getId()),
             UrlGeneratorInterface::ABSOLUTE_URL
         );
     }
@@ -71,5 +80,27 @@ class InstanceTunnel extends InstanceTunnelHandler
             }
         }
         throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
+    }
+
+    /**
+     * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object)
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function getInternalUrl(Request $request)
+    {
+        return $this->endpoint->getInternalUrl($request);
+    }
+
+    /**
+     * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object)
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function getInternalGetLegendGraphicUrl(Request $request)
+    {
+        return $this->endpoint->getInternalGetLegendGraphicUrl($request);
     }
 }
