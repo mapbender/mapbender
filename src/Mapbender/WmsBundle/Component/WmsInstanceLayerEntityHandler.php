@@ -330,7 +330,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         if (WmsSourceEntityHandler::useTunnel($entity->getSourceInstance()->getSource())) {
             /** @var InstanceTunnelService $tunnelService */
             $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
-            $tunnel = $tunnelService->makeEndpoint($this->entity->getSourceInstance());
+            $tunnel = $tunnelService->makeEndpoint($entity->getSourceInstance());
         } else {
             $tunnel = null;
         }
