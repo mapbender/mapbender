@@ -307,30 +307,7 @@ class Application
     public function getConfiguration()
     {
         $configService = $this->getConfigService();
-
-        /** @var Element[] $elements */
-        /** @var \Mapbender\CoreBundle\Component\Element $elementInstance */
-        $configuration = array(
-            'application' => $configService->getBaseConfiguration($this->entity),
-            'elements'    => array(),
-        );
-        $configuration += $configService->getLayerSetConfiguration($this->entity);
-
-        $activeElements = $this->getElements();
-        // Get all element configurations
-        $configuration['elements'] = $configService->getElementConfiguration($activeElements);
-
-        // Let (active, visible) Elements update the Application config
-        // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
-        // visible state of the frontend.
-        $configBeforeElement = $configAfterElements = $configuration;
-        foreach ($activeElements as $elementList) {
-            foreach ($elementList as $elementInstance) {
-                $configAfterElements = $configBeforeElement = $elementInstance->updateAppConfig($configBeforeElement);
-            }
-        }
-
-        $configuration = $configAfterElements;
+        $configuration = $configService->getConfiguration($this->entity, $this->getElements());
 
         // Convert to asset
         $asset = new StringAsset(json_encode((object)$configuration));

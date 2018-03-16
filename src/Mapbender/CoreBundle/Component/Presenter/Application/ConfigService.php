@@ -34,6 +34,36 @@ class ConfigService extends ContainerAware
         return $router;
     }
 
+    /**
+     * @param Application $entity
+     * @param Element[][] $activeElements
+     * @return mixed[]
+     * @todo: absorb element extraction + grants check duties
+     */
+    public function getConfiguration(Application $entity, $activeElements)
+    {
+        /** @var Element[] $elements */
+        /** @var \Mapbender\CoreBundle\Component\Element $elementInstance */
+        $configuration = array(
+            'application' => $this->getBaseConfiguration($entity),
+            'elements'    => $this->getElementConfiguration($activeElements),
+        );
+        $configuration += $this->getLayerSetConfiguration($entity);
+
+        // Let (active, visible) Elements update the Application config
+        // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
+        // visible state of the frontend.
+        $configBeforeElement = $configAfterElements = $configuration;
+        foreach ($activeElements as $elementList) {
+            foreach ($elementList as $elementInstance) {
+                $configAfterElements = $configBeforeElement = $elementInstance->updateAppConfig($configBeforeElement);
+            }
+        }
+
+        return $configAfterElements;
+
+    }
+
     public function getBaseConfiguration(Application $entity)
     {
         return array(
