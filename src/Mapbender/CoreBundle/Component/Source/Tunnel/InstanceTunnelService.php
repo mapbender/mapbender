@@ -1,9 +1,8 @@
 <?php
 
 
-namespace Mapbender\WmsBundle\Component;
+namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 
-use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -18,7 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  * @package Mapbender\WmsBundle\Component
  */
-class InstanceTunnel
+class InstanceTunnelService
 {
     /** @var UrlGeneratorInterface */
     protected $router;
@@ -26,7 +25,6 @@ class InstanceTunnel
     /**
      * InstanceTunnel constructor.
      * @param UrlGeneratorInterface $router
-     * @param SourceInstance $instance
      */
     public function __construct(UrlGeneratorInterface $router)
     {

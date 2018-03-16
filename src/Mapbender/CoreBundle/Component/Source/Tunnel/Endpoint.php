@@ -5,7 +5,6 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
-use Mapbender\WmsBundle\Component\InstanceTunnel;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Endpoint
 {
-    /** @var InstanceTunnel */
+    /** @var InstanceTunnelService */
     protected $service;
 
     /** @var SourceInstance */
@@ -27,7 +26,7 @@ class Endpoint
 
     /**
      * InstanceTunnel constructor.
-     * @param InstanceTunnel
+     * @param InstanceTunnelService
      * @param SourceInstance $instance
      */
     public function __construct($service, SourceInstance $instance)

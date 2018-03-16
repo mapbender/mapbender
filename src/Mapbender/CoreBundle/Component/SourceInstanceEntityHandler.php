@@ -1,8 +1,9 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmsBundle\Component\InstanceTunnel;
+use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 
 /**
  * Description of SourceInstanceEntityHandler
@@ -13,7 +14,7 @@ use Mapbender\WmsBundle\Component\InstanceTunnel;
  */
 abstract class SourceInstanceEntityHandler extends EntityHandler
 {
-    /** @var InstanceTunnel */
+    /** @var InstanceTunnelService */
     protected $tunnel;
 
     /**
@@ -56,12 +57,12 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function getSensitiveVendorSpecific();
 
     /**
-     * @return InstanceTunnel
+     * @return Endpoint
      */
     protected function getTunnel()
     {
         if (!$this->tunnel) {
-            /** @var InstanceTunnel $tunnelService */
+            /** @var InstanceTunnelService $tunnelService */
             $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
             $this->tunnel = $tunnelService->makeEndpoint($this->entity);
         }

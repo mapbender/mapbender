@@ -7,7 +7,7 @@
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
         <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
         <parameter key="mapbender.owsproxy.httpclient.legacy.class">Mapbender\CoreBundle\Component\OwsProxy\LegacyService</parameter>
-        <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\WmsBundle\Component\InstanceTunnel</parameter>
+        <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
     </parameters>
 
     <services>
