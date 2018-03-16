@@ -7,6 +7,7 @@
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
         <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
         <parameter key="mapbender.owsproxy.httpclient.legacy.class">Mapbender\CoreBundle\Component\OwsProxy\LegacyService</parameter>
+        <parameter key="mapbender.presenter.source.service.class">Mapbender\CoreBundle\Component\Presenter\SourceService</parameter>
         <parameter key="mapbender.presenter.frontend.application.service.class">Mapbender\CoreBundle\Component\Presenter\ApplicationService</parameter>
         <parameter key="mapbender.presenter.frontend.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
     </parameters>
@@ -98,6 +99,9 @@
             <argument type="service" id="service_container" />
         </service>
         <service id="mapbender.presenter.frontend.application.config.service" class="%mapbender.presenter.frontend.application.config.service.class%">
+            <argument type="service" id="service_container" />
+        </service>
+        <service id="mapbender.presenter.source.service" class="%mapbender.presenter.source.service.class%">
             <argument type="service" id="service_container" />
         </service>
     </services>

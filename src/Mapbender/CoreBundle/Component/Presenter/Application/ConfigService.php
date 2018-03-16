@@ -3,10 +3,11 @@
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
 use Mapbender\CoreBundle\Component\Element as Element;
-use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,11 +23,34 @@ class ConfigService extends ContainerAware
 {
     /** @var ApplicationService */
     protected $basePresenter;
+    /** @var SourceService[] $sourceConfigServices */
+    protected $sourceServices;
+
 
     public function __construct(ContainerInterface $container)
     {
         $this->setContainer($container);
         $this->basePresenter = $container->get('mapbender.presenter.frontend.application.service');
+        $this->sourceServices = $this->getSourceServices();
+    }
+
+    /**
+     * Get the appropriate service to deal with the given SourceInstance child class.
+     * Tries first to get a match based on type (e.g. 'wms'). If no specific handling service is configured, fall
+     * back to an internal default (which currently happens to be the same as for 'wms').
+     *
+     * To extend the list of available source instance handling services, @see getSourceServices
+     *
+     * @param SourceInstance $sourceInstance
+     * @return SourceService|null
+     */
+    public function getSourceService(SourceInstance $sourceInstance)
+    {
+        $key = strtolower($sourceInstance->getType());
+        $service = ArrayUtil::getDefault($this->sourceServices, $key, null);
+        // @todo: throw exception if empty?
+        $service = $service ?: $this->sourceServices['__default__'];
+        return $service;
     }
 
     /**
@@ -126,23 +150,18 @@ class ConfigService extends ContainerAware
             $layerSets     = array();
 
             foreach ($this->filterActiveSourceInstances($layerSet) as $layer) {
-                /**
-                 * @todo: pluggable config generator service per source type please
-                 *        currently, we only have WMS...
-                 */
-                $instHandler = EntityHandler::createHandler($this->container, $layer);
-                $conf        = $instHandler->getConfiguration($this->container->get('signer'));
-
-                if (!$conf) {
+                $sourceService = $this->getSourceService($layer);
+                if (!$sourceService) {
+                    // @todo: throw?
                     continue;
                 }
-
+                $conf = $sourceService->getConfiguration($layer);
+                if (!$conf) {
+                    // @todo: throw?
+                    continue;
+                }
                 $layerSets[] = array(
-                    $layer->getId() => array(
-                        'type'          => strtolower($layer->getType()),
-                        'title'         => $layer->getTitle(),
-                        'configuration' => $conf
-                    )
+                    $layer->getId() => $conf,
                 );
             }
 
@@ -196,5 +215,22 @@ class ConfigService extends ContainerAware
     protected function getActiveElements(Application $entity)
     {
         return $this->basePresenter->getActiveElements($entity);
+    }
+
+    /**
+     * Called once during construction to collect services appropriate to handle polymorphic SourceInstance types.
+     *
+     * @return SourceService[] keyed on lower-cased source type
+     */
+    protected function getSourceServices()
+    {
+        /** @var ConfigService $defaultService */
+        $defaultService = $this->container->get('mapbender.presenter.source.service');
+        return array(
+            '__default__' => $defaultService,
+            'wms' => $defaultService,
+            // Plug your specialized config generators on top of this in a child class and replace this service with
+            // yours.
+        );
     }
 }
