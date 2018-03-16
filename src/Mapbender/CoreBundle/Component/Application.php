@@ -316,21 +316,15 @@ class Application
         );
         $configuration += $configService->getLayerSetConfiguration($this->entity);
 
+        $activeElements = $this->getElements();
         // Get all element configurations
-        $configuration['elements'] = array();
-        foreach ($this->getElements() as $region => $elements) {
-            foreach ($elements as $element) {
-                $configuration['elements'][ $element->getId() ] = array(
-                    'init'          => $element->getWidgetName(),
-                    'configuration' => $element->getPublicConfiguration());
-            }
-        }
+        $configuration['elements'] = $configService->getElementConfiguration($activeElements);
 
         // Let (active, visible) Elements update the Application config
         // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
         // visible state of the frontend.
         $configBeforeElement = $configAfterElements = $configuration;
-        foreach ($this->getElements() as $elementList) {
+        foreach ($activeElements as $elementList) {
             foreach ($elementList as $elementInstance) {
                 $configAfterElements = $configBeforeElement = $elementInstance->updateAppConfig($configBeforeElement);
             }

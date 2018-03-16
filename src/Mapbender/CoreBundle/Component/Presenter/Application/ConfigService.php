@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
+use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -123,6 +124,23 @@ class ConfigService extends ContainerAware
             'layersets' => $configs,
             'layersetmap' => $titles,
         );
+    }
+
+    /**
+     * @param Element[][] $elementsByRegion
+     * @return mixed[]
+     */
+    public static function getElementConfiguration($elementsByRegion)
+    {
+        $elementConfig = array();
+        foreach ($elementsByRegion as $elementList) {
+            foreach ($elementList as $element) {
+                $elementConfig[$element->getId()] = array(
+                    'init'          => $element->getWidgetName(),
+                    'configuration' => $element->getPublicConfiguration());
+            }
+        }
+        return $elementConfig;
     }
 
     /**
