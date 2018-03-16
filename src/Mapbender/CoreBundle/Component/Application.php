@@ -45,11 +45,6 @@ class Application
     protected $layers;
 
     /**
-     * @var array $urls Runtime URLs
-     */
-    protected $urls;
-
-    /**
      * @var Entity
      */
     protected $entity;
@@ -57,13 +52,11 @@ class Application
     /**
      * @param ContainerInterface $container The container
      * @param Entity             $entity    The configuration entity
-     * @param array              $urls      Array of runtime URLs
      */
-    public function __construct(ContainerInterface $container, Entity $entity, array $urls)
+    public function __construct(ContainerInterface $container, Entity $entity)
     {
         $this->container = $container;
         $this->entity    = $entity;
-        $this->urls      = $urls;
     }
 
     /**

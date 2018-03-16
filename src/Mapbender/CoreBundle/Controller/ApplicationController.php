@@ -207,12 +207,7 @@ class ApplicationController extends Controller
     {
         /** @var Mapbender $mapbender */
         $mapbender = $this->get('mapbender');
-        $entity = $mapbender->getApplicationEntity($slug);
-        /**
-         * @todo: urls are only relevant for config emission, remove this later
-         */
-        $urls = $this->getConfigService()->getUrls($entity);
-        $application = $mapbender->getApplication($slug, $urls);
+        $application = $mapbender->getApplication($slug);
 
         if (!$application) {
             throw new NotFoundHttpException(
