@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * @see WmsInstanceEntityHandler::getConfiguration()
  * @see WmsInstanceLayerEntityHandler::getLegendConfig()
  *
- * @package Mapbender\WmsBundle\Component
+ * By default registered in container as mapbender.source.instancetunnel.service, see services.xml
  */
 class InstanceTunnelService
 {
