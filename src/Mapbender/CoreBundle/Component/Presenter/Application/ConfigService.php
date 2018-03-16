@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Component\Presenter\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -89,12 +90,12 @@ class ConfigService extends ContainerAware
     {
         $configs = array();
         $titles = array();
-        foreach ($this->getLayersetObjectMap($entity) as $layerSet) {
+        foreach ($entity->getLayersets() as $layerSet) {
             $layerId       = '' . $layerSet->getId();
             $layerSetTitle = $layerSet->getTitle() ? $layerSet->getTitle() : $layerId;
             $layerSets     = array();
 
-            foreach ($layerSet->layerObjects as $layer) {
+            foreach ($this->filterActiveSourceInstances($layerSet) as $layer) {
                 /**
                  * @todo: pluggable config generator service per source type please
                  *        currently, we only have WMS...
@@ -125,27 +126,20 @@ class ConfigService extends ContainerAware
     }
 
     /**
-     * Extracts active layersets and instances from given Application entity.
+     * Extracts active source instances from given Layerset entity.
      *
-     * Side-effect: source instances are actually smeared into the Layerset entity, in the (otherwise unused) `layerObjects`
-     * attribute.
-     * @todo: remove entity-modifying side effect
-     *
-     * @param Application $entity
-     * @return Layerset[]
+     * @param Layerset $entity
+     * @return SourceInstance[]
      */
-    protected function getLayersetObjectMap(Application $entity)
+    protected static function filterActiveSourceInstances(Layerset $entity)
     {
-        $layersetMap = array();
-        foreach ($entity->getLayersets() as $layerSet) {
-            $layerSet->layerObjects = array();
-            foreach ($layerSet->getInstances() as $instance) {
-                if ($entity->isYamlBased() || $instance->getEnabled()) {
-                    $layerSet->layerObjects[] = $instance;
-                }
+        $isYamlApp = $entity->getApplication()->isYamlBased();
+        $activeInstances = array();
+        foreach ($entity->getInstances() as $instance) {
+            if ($isYamlApp || $instance->getEnabled()) {
+                $activeInstances[] = $instance;
             }
-            $layersetMap[$layerSet->getId()] = $layerSet;
         }
-        return $layersetMap;
+        return $activeInstances;
     }
 }

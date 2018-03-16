@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -208,8 +209,8 @@ class Application
         }
 
         // Load all layer assets
-        foreach ($this->getLayersets() as $layerset) {
-            foreach ($layerset->layerObjects as $layer) {
+        foreach ($this->entity->getLayersets() as $layerset) {
+            foreach ($this->filterActiveSourceInstances($layerset) as $layer) {
                 $layer_assets = $layer->getAssets();
                 if (isset($layer_assets[ $type ])) {
                     foreach ($layer_assets[ $type ] as $asset) {
@@ -435,28 +436,37 @@ class Application
     /**
      * Returns all layer sets
      *
+     * @deprecated for entity-modifying side effects, do not use
      * @return Layerset[] Layer sets
      */
     public function getLayersets()
     {
         if ($this->layers === null) {
-            // Set up all elements (by region)
             $this->layers = array();
             foreach ($this->entity->getLayersets() as $layerSet) {
-                $layerSet->layerObjects = array();
-                foreach ($layerSet->getInstances() as $instance) {
-                    if ($this->getEntity()->isYamlBased()) {
-                        $layerSet->layerObjects[] = $instance;
-                    } else {
-                        if ($instance->getEnabled()) {
-                            $layerSet->layerObjects[] = $instance;
-                        }
-                    }
-                }
-                $this->layers[ $layerSet->getId() ] = $layerSet;
+                $layerSet->layerObjects = $this->filterActiveSourceInstances($layerSet);
+                $this->layers[$layerSet->getId()] = $layerSet;
             }
         }
         return $this->layers;
+    }
+
+    /**
+     * Extracts active source instances from given Layerset entity.
+     *
+     * @param Layerset $entity
+     * @return SourceInstance[]
+     */
+    protected static function filterActiveSourceInstances(Layerset $entity)
+    {
+        $isYamlApp = $entity->getApplication()->isYamlBased();
+        $activeInstances = array();
+        foreach ($entity->getInstances() as $instance) {
+            if ($isYamlApp || $instance->getEnabled()) {
+                $activeInstances[] = $instance;
+            }
+        }
+        return $activeInstances;
     }
 
     /**
