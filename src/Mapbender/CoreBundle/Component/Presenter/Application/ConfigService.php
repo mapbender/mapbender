@@ -67,11 +67,10 @@ class ConfigService
     /**
      * @param Application $entity
      * @return mixed[]
-     * @todo: absorb element extraction + grants check duties
      */
     public function getConfiguration(Application $entity)
     {
-        $activeElements = $this->getActiveElements($entity);
+        $activeElements = $this->basePresenter->getActiveElements($entity);
         $configuration = array(
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),
@@ -206,16 +205,6 @@ class ConfigService
             }
         }
         return $activeInstances;
-    }
-
-    /**
-     * Returns the list of Elements from the given Application that are enabled and granted for the current user
-     * @param Application $entity
-     * @return Element[]
-     */
-    protected function getActiveElements(Application $entity)
-    {
-        return $this->basePresenter->getActiveElements($entity);
     }
 
     /**

@@ -11,6 +11,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\SecurityContext;
 
+/**
+ * Presentation service for Mapbender Application entities.
+ *
+ * Currently only performs grants checks and Element Component factory duties.
+ */
 class ApplicationService
 {
     /** @var ContainerInterface */
