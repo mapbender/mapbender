@@ -8,7 +8,6 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
@@ -19,8 +18,10 @@ use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
  *
  * Instance registerd in container as mapbender.presenter.frontend.application.config.service
  */
-class ConfigService extends ContainerAware
+class ConfigService
 {
+    /** @var ContainerInterface */
+    protected $container;
     /** @var ApplicationService */
     protected $basePresenter;
     /** @var SourceService[] $sourceConfigServices */
@@ -29,7 +30,7 @@ class ConfigService extends ContainerAware
 
     public function __construct(ContainerInterface $container)
     {
-        $this->setContainer($container);
+        $this->container = $container;
         $this->basePresenter = $container->get('mapbender.presenter.frontend.application.service');
         $this->sourceServices = $this->getSourceServices();
     }
