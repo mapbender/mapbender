@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component;
 use Assetic\Asset\StringAsset;
 use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
+use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -294,6 +295,16 @@ class Application
     }
 
     /**
+     * @return ConfigService
+     */
+    private function getConfigService()
+    {
+        /** @var ConfigService $presenter */
+        $presenter = $this->container->get('mapbender.presenter.frontend.application.config.service');
+        return $presenter;
+    }
+
+    /**
      * Get the configuration (application, elements, layers) as an StringAsset.
      * Filters can be applied later on with the ensureFilter method.
      *
@@ -301,14 +312,12 @@ class Application
      */
     public function getConfiguration()
     {
+        $configService = $this->getConfigService();
+
         /** @var Element[] $elements */
         /** @var \Mapbender\CoreBundle\Component\Element $elementInstance */
         $configuration = array(
-            'application' => array(
-                'title'         => $this->entity->getTitle(),
-                'urls'          => $this->urls,
-                'publicOptions' => $this->entity->getPublicOptions(),
-                'slug'          => $this->getSlug()),
+            'application' => $configService->getBaseConfiguration($this->entity),
             'elements'    => array(),
             'layersets'   => array(),
             // Layer titles
