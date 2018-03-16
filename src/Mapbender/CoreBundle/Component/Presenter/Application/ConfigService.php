@@ -2,17 +2,15 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
-use FOM\UserBundle\Component\AclManager;
-use Mapbender\CoreBundle\Component\Element as ElementComponent;
-use Mapbender\CoreBundle\Entity\Element as ElementEntity;
+use Mapbender\CoreBundle\Component\Element as Element;
 use Mapbender\CoreBundle\Component\EntityHandler;
-use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 
 /**
  * Services that generates the frontend-facing configuration for a Mapbender application
@@ -22,18 +20,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ConfigService extends ContainerAware
 {
-    /** @var SecurityContext  */
-    protected $securityContext;
-    /** @var AclManager */
-    protected $aclManager;
-
-    protected static $bufferedApplicationComponents = array();
+    /** @var ApplicationService */
+    protected $basePresenter;
 
     public function __construct(ContainerInterface $container)
     {
         $this->setContainer($container);
-        $this->securityContext = $container->get('security.context');
-        $this->aclManager = $container->get("fom.acl.manager");
+        $this->basePresenter = $container->get('mapbender.presenter.frontend.application.service');
     }
 
     /**
@@ -67,7 +60,6 @@ class ConfigService extends ContainerAware
         foreach ($activeElements as $elementComponent) {
             $configAfterElements = $configBeforeElement = $elementComponent->updateAppConfig($configBeforeElement);
         }
-
         return $configAfterElements;
     }
 
@@ -164,7 +156,7 @@ class ConfigService extends ContainerAware
     }
 
     /**
-     * @param ElementComponent[] $elements
+     * @param Element[] $elements Element Components
      * @return mixed[]
      */
     public static function getElementConfiguration($elements)
@@ -199,82 +191,10 @@ class ConfigService extends ContainerAware
     /**
      * Returns the list of Elements from the given Application that are enabled and granted for the current user
      * @param Application $entity
-     * @return ElementComponent[]
+     * @return Element[]
      */
     protected function getActiveElements(Application $entity)
     {
-        $elements    = array();
-        foreach ($entity->getElements() as $elementEntity) {
-            if (!$elementEntity->getEnabled() || !$this->isElementGranted($elementEntity)) {
-                continue;
-            }
-            $elementComponent = $this->makeElementComponent($entity, $elementEntity);
-            if ($elementComponent) {
-                $elements[] = $elementComponent;
-            }
-        }
-        return $elements;
-    }
-
-    /**
-     * @param ElementEntity $element
-     * @param string $permission
-     * @return bool
-     */
-    protected function isElementGranted(ElementEntity $element, $permission = SecurityContext::PERMISSION_VIEW)
-    {
-        if ($this->aclManager->hasObjectAclEntries($element)) {
-            $isGranted = $this->securityContext->isGranted($permission, $element);
-        } else {
-            $isGranted = true;
-        }
-
-        if (!$isGranted && $element->getApplication()->isYamlBased()) {
-            foreach ($element->getYamlRoles() ?: array() as $role) {
-                if ($this->securityContext->isGranted($role)) {
-                    $isGranted = true;
-                    break;
-                }
-            }
-        }
-        return $isGranted;
-    }
-
-    /**
-     * @param Application $application
-     * @param ElementEntity $entity
-     * @return ElementComponent|null
-     */
-    protected function makeElementComponent(Application $application, ElementEntity $entity)
-    {
-        $class = $entity->getClass();
-        if (!class_exists($class)) {
-            // @todo: warn, maybe?
-            return null;
-        }
-        $appComponent = $this->makeApplicationComponent($application);
-        return new $class($appComponent, $this->container, $entity);
-    }
-
-    /**
-     * Creates a (dummy?) Application Component. This is only used for binding to an ElementComponent.
-     * @todo: figure out how and why this is even used on the ElementComponent side
-     *
-     * @param Application $application
-     * @param bool $reuseBuffered to reuse already fabbed Application Component
-     * @return \Mapbender\CoreBundle\Component\Application
-     */
-    protected function makeApplicationComponent(Application $application, $reuseBuffered = true)
-    {
-        if ($reuseBuffered) {
-            $appId = spl_object_hash($application);
-            if (empty(static::$bufferedApplicationComponents[$appId])) {
-                $appComponent = $this->makeApplicationComponent($application, false);
-                static::$bufferedApplicationComponents[$appId] = $appComponent;
-            }
-            return static::$bufferedApplicationComponents[$appId];
-        } else {
-            return new \Mapbender\CoreBundle\Component\Application($this->container, $application);
-        }
+        return $this->basePresenter->getActiveElements($entity);
     }
 }
