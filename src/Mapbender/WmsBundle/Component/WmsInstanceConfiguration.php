@@ -81,7 +81,7 @@ class WmsInstanceConfiguration extends InstanceConfiguration
             "title" => $this->title,
             "isBaseSource" => $this->isBaseSource,
             "options" => $optionsArray,
-            "children" => $this->children
+            "children" => $this->children,
         );
     }
 

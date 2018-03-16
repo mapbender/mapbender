@@ -76,6 +76,11 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
      */
     public $ratio = 1.25;
+
+    /**
+     * @var mixed[] random unstructured extensions
+     */
+    public $optionalOptions = array();
     
     /**
      * Returns a version
@@ -310,7 +315,8 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      */
     public function toArray()
     {
-        return parent::toArray() + array(
+        $optionalOptions = array_filter($this->optionalOptions);
+        return parent::toArray() + $optionalOptions + array(
             "version" => $this->version,
             "format" => $this->format,
             "info_format" => $this->infoformat,
@@ -360,6 +366,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         if ($ratio !== null) {
             $ratio = floatval($ratio);
         }
+        $optionalOptions = array_filter(array(
+            'gridlayer' => $instance->getGridlayer(),
+        ));
         return static::fromArray(array(
             'url' => $effectiveUrl,
             'dimensions' => $dimensions,
@@ -376,6 +385,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             'version' => $instance->getSource()->getVersion(),
             'exception_format' => $instance->getExceptionformat(),
             'bbox' => $boundingBoxMap,
+            'optionalOptions' => $optionalOptions,
         ));
     }
 
@@ -386,6 +396,13 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             'exception_format' => 'exceptionformat',
             'info_format' => 'infoformat',
             'transparent' => 'transparency',
+        );
+    }
+
+    public static function validSet()
+    {
+        return parent::validSet() + array(
+            'optionalOptions' => true,
         );
     }
 }

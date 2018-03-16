@@ -107,9 +107,10 @@ class WmsInstance extends SourceInstance
     protected $ratio = 1.25;
 
     /**
-     * @var mixed
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
      */
-    protected $gridLayerConfig;
+    protected $gridLayer;
 
     /**
      * WmsInstance constructor.
@@ -538,7 +539,7 @@ class WmsInstance extends SourceInstance
      */
     public function getGridlayer()
     {
-        return $this->gridLayerConfig;
+        return $this->gridLayer ?: null;
     }
 
     /**
@@ -546,7 +547,7 @@ class WmsInstance extends SourceInstance
      */
     public function setGridlayer($value)
     {
-        $this->gridLayerConfig = $value;
+        $this->gridLayer = $value ?: null;
     }
 
     /**
