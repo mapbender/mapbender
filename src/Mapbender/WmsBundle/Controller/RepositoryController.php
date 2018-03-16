@@ -93,7 +93,8 @@ class RepositoryController extends Controller
         $form->submit($request);
         $onlyvalid = $form->get('onlyvalid')->getData();
         if ($form->isValid()) {
-            $importer = new Importer($this->container);
+            /** @var Importer $importer */
+            $importer = $this->container->get('mapbender.importer.source.wms.service');
             $origin = new WmsOrigin($wmssource_req->getOriginUrl(), $wmssource_req->getUsername(), $wmssource_req->getPassword());
 
             try {
@@ -176,7 +177,8 @@ class RepositoryController extends Controller
             $form          = $this->createForm(new WmsSourceSimpleType(), $wmssource_req);
             $form->submit($request);
             if ($form->isValid()) {
-                $importer = new Importer($this->container);
+                /** @var Importer $importer */
+                $importer = $this->container->get('mapbender.importer.source.wms.service');
                 $origin = new WmsOrigin($wmssource_req->getOriginUrl(), $wmssource_req->getUsername(), $wmssource_req->getPassword());
                 try {
                     $importerResponse = $importer->evaluateServer($origin, false);
