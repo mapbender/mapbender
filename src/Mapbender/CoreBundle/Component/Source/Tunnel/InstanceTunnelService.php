@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Mapbender\WmsBundle\Component;
+namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -15,9 +15,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * @see WmsInstanceEntityHandler::getConfiguration()
  * @see WmsInstanceLayerEntityHandler::getLegendConfig()
  *
- * @package Mapbender\WmsBundle\Component
+ * By default registered in container as mapbender.source.instancetunnel.service, see services.xml
  */
-class InstanceTunnel extends InstanceTunnelHandler
+class InstanceTunnelService
 {
     /** @var UrlGeneratorInterface */
     protected $router;
@@ -25,26 +25,30 @@ class InstanceTunnel extends InstanceTunnelHandler
     /**
      * InstanceTunnel constructor.
      * @param UrlGeneratorInterface $router
-     * @param SourceInstance $instance
      */
-    public function __construct(UrlGeneratorInterface $router, SourceInstance $instance)
+    public function __construct(UrlGeneratorInterface $router)
     {
         $this->router = $router;
-        parent::__construct($instance);
+    }
+
+    public function makeEndpoint(SourceInstance $instance)
+    {
+        return new Endpoint($this, $instance);
     }
 
     /**
      * Returns the URL base the Browser / JS client should use to access the tunnel.
      *
+     * @param Endpoint $endpoint
      * @return string
      */
-    public function getPublicBaseUrl()
+    public function getPublicBaseUrl(Endpoint $endpoint)
     {
         return $this->router->generate(
             'mapbender_core_application_instancetunnel',
             array(
-                'slug' => $this->instance->getLayerset()->getApplication()->getSlug(),
-                'instanceId' => $this->instance->getId()),
+                'slug' => $endpoint->getApplicationEntity()->getSlug(),
+                'instanceId' => $endpoint->getSourceInstance()->getId()),
             UrlGeneratorInterface::ABSOLUTE_URL
         );
     }
@@ -53,11 +57,12 @@ class InstanceTunnel extends InstanceTunnelHandler
      * Returns the URL the Browser / JS client should use to access a specific WMS function (by given URL) via
      * the tunnel.
      *
+     * @param Endpoint $endpoint
      * @param string $url NOTE: scheme/host/path completely ignored, only query string is relevant
      * @return string
      * @throws \RuntimeException if no REQUEST=... in given $url
      */
-    public function generatePublicUrl($url)
+    public function generatePublicUrl(Endpoint $endpoint, $url)
     {
         // require a "request" param, the tunnel action doesn't function without it
         $params = array();
@@ -67,7 +72,7 @@ class InstanceTunnel extends InstanceTunnelHandler
                 // @todo: validate if request value is in our supported set (GetMap, GetLegendGraphic, GetFeatureInfo)?
                 $fullQueryString = strstr($url, '?', false);
                 // forward ALL GET parameters in input url
-                return $this->getPublicBaseUrl() . $fullQueryString;
+                return $this->getPublicBaseUrl($endpoint) . $fullQueryString;
             }
         }
         throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
