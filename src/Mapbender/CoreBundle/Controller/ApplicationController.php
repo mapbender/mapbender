@@ -387,7 +387,9 @@ class ApplicationController extends Controller
         if (!$requestType) {
             throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
         }
-        $instanceTunnel = new InstanceTunnel($this->get('router'), $instance);
+        /** @var InstanceTunnel $tunnelService */
+        $tunnelService = $this->get('mapbender.source.instancetunnel.service');
+        $instanceTunnel = $tunnelService->makeEndpoint($instance);
         $url = $instanceTunnel->getInternalUrl($request);
         if (!$url) {
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');

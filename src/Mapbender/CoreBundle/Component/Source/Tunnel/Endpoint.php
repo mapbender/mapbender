@@ -38,6 +38,30 @@ class Endpoint
     }
 
     /**
+     * Returns the URL base the Browser / JS client should use to access the tunnel.
+     *
+     * @return string
+     */
+    public function getPublicBaseUrl()
+    {
+        return $this->service->getPublicBaseUrl($this);
+    }
+
+    /**
+     * Returns the URL the Browser / JS client should use to access a specific WMS function (by given URL) via
+     * the tunnel.
+     *
+     * @param string $url NOTE: scheme/host/path completely ignored, only query string is relevant
+     * @return string
+     * @throws \RuntimeException if no REQUEST=... in given $url
+     */
+    public function generatePublicUrl($url)
+    {
+        return $this->service->generatePublicUrl($this, $url);
+    }
+
+
+    /**
      * @return Application
      */
     public function getApplicationEntity()

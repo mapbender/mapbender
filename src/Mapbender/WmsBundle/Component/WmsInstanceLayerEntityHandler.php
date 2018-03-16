@@ -9,7 +9,6 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Component\Routing\Router;
 
 /**
  * Description of WmsInstanceLayerEntityHandler
@@ -328,9 +327,9 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     {
         $styleLegendUrl = $this->getLegendUrlFromStyles($entity->getSourceItem());
         if (WmsSourceEntityHandler::useTunnel($entity->getSourceInstance()->getSource())) {
-            /** @var Router $router */
-            $router = $this->container->get('router');
-            $tunnel = new InstanceTunnel($router, $entity->getSourceInstance());
+            /** @var InstanceTunnel $tunnelService */
+            $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
+            $tunnel = $tunnelService->makeEndpoint($this->entity->getSourceInstance());
         } else {
             $tunnel = null;
         }
