@@ -312,10 +312,8 @@ class Application
         $configuration = array(
             'application' => $configService->getBaseConfiguration($this->entity),
             'elements'    => array(),
-            'layersets'   => array(),
-            // Layer titles
-            'layersetmap' => array(),
         );
+        $configuration += $configService->getLayerSetConfiguration($this->entity);
 
         // Get all element configurations
         $configuration['elements'] = array();
@@ -325,33 +323,6 @@ class Application
                     'init'          => $element->getWidgetName(),
                     'configuration' => $element->getPublicConfiguration());
             }
-        }
-
-        // Get all layer configurations
-        foreach ($this->getLayersets() as $layerSet) {
-            $layerId       = '' . $layerSet->getId();
-            $layerSetTitle = $layerSet->getTitle() ? $layerSet->getTitle() : $layerId;
-            $layerSets     = array();
-
-            foreach ($layerSet->layerObjects as $layer) {
-                $instHandler = EntityHandler::createHandler($this->container, $layer);
-                $conf        = $instHandler->getConfiguration($this->container->get('signer'));
-
-                if (!$conf) {
-                    continue;
-                }
-
-                $layerSets[] = array(
-                    $layer->getId() => array(
-                        'type'          => strtolower($layer->getType()),
-                        'title'         => $layer->getTitle(),
-                        'configuration' => $conf
-                    )
-                );
-            }
-
-            $configuration['layersets'][ $layerId ]   = $layerSets;
-            $configuration['layersetmap'][ $layerId ] = $layerSetTitle;
         }
 
         // Let (active, visible) Elements update the Application config

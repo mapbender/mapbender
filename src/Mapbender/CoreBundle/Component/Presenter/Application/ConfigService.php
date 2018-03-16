@@ -2,7 +2,9 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Layerset;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -74,5 +76,76 @@ class ConfigService extends ContainerAware
         }
 
         return $urls;
+    }
+
+    /**
+     * Returns layerset config. This is actually already an array with two subarrays 'layersets' (actual config)
+     * and 'layersetmap' (layer titles).
+     *
+     * @param Application $entity
+     * @return array[]
+     */
+    public function getLayerSetConfiguration(Application $entity)
+    {
+        $configs = array();
+        $titles = array();
+        foreach ($this->getLayersetObjectMap($entity) as $layerSet) {
+            $layerId       = '' . $layerSet->getId();
+            $layerSetTitle = $layerSet->getTitle() ? $layerSet->getTitle() : $layerId;
+            $layerSets     = array();
+
+            foreach ($layerSet->layerObjects as $layer) {
+                /**
+                 * @todo: pluggable config generator service per source type please
+                 *        currently, we only have WMS...
+                 */
+                $instHandler = EntityHandler::createHandler($this->container, $layer);
+                $conf        = $instHandler->getConfiguration($this->container->get('signer'));
+
+                if (!$conf) {
+                    continue;
+                }
+
+                $layerSets[] = array(
+                    $layer->getId() => array(
+                        'type'          => strtolower($layer->getType()),
+                        'title'         => $layer->getTitle(),
+                        'configuration' => $conf
+                    )
+                );
+            }
+
+            $configs[$layerId] = $layerSets;
+            $titles[$layerId] = $layerSetTitle;
+        }
+        return array(
+            'layersets' => $configs,
+            'layersetmap' => $titles,
+        );
+    }
+
+    /**
+     * Extracts active layersets and instances from given Application entity.
+     *
+     * Side-effect: source instances are actually smeared into the Layerset entity, in the (otherwise unused) `layerObjects`
+     * attribute.
+     * @todo: remove entity-modifying side effect
+     *
+     * @param Application $entity
+     * @return Layerset[]
+     */
+    protected function getLayersetObjectMap(Application $entity)
+    {
+        $layersetMap = array();
+        foreach ($entity->getLayersets() as $layerSet) {
+            $layerSet->layerObjects = array();
+            foreach ($layerSet->getInstances() as $instance) {
+                if ($entity->isYamlBased() || $instance->getEnabled()) {
+                    $layerSet->layerObjects[] = $instance;
+                }
+            }
+            $layersetMap[$layerSet->getId()] = $layerSet;
+        }
+        return $layersetMap;
     }
 }
