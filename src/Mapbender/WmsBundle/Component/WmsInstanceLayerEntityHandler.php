@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -327,7 +328,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     {
         $styleLegendUrl = $this->getLegendUrlFromStyles($entity->getSourceItem());
         if (WmsSourceEntityHandler::useTunnel($entity->getSourceInstance()->getSource())) {
-            /** @var InstanceTunnel $tunnelService */
+            /** @var InstanceTunnelService $tunnelService */
             $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
             $tunnel = $tunnelService->makeEndpoint($this->entity->getSourceInstance());
         } else {
