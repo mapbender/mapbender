@@ -307,7 +307,7 @@ class Application
     public function getConfiguration()
     {
         $configService = $this->getConfigService();
-        $configuration = $configService->getConfiguration($this->entity, $this->getElements());
+        $configuration = $configService->getConfiguration($this->entity);
 
         // Convert to asset
         $asset = new StringAsset(json_encode((object)$configuration));
