@@ -8,6 +8,7 @@
 namespace Mapbender\WmtsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
+use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
