@@ -197,7 +197,8 @@ class WmsLoader extends Element
         $onlyValid = $request->get("onlyvalid");
 
         $wmsOrigin = new WmsOrigin($requestUrl, $requestUserName, $requestPassword);
-        $importer = new Importer($this->container);
+        /** @var Importer $importer */
+        $importer = $this->container->get('mapbender.importer.source.wms.service');
         $importerResponse = $importer->evaluateServer($wmsOrigin, $onlyValid);
 
         return $importerResponse->getWmsSourceEntity();
