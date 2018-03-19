@@ -27,6 +27,10 @@
                 } else {
                     bsswtch.addClass('hidden');
                 }
+
+                if (!e.hasOwnProperty('originalEvent')) {
+                    bsswtch.addClass('hidden');
+                }
             });
 
             this._hideSources();
