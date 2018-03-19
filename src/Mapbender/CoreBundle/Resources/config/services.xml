@@ -100,6 +100,13 @@
         </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
             <argument type="service" id="service_container" />
+            <call method="setDefaultSourceService">
+                <argument type="service" id="mapbender.presenter.source.service" />
+            </call>
+            <call method="addSourceService">
+                <argument>wms</argument>
+                <argument type="service" id="mapbender.presenter.source.service" />
+            </call>
         </service>
         <service id="mapbender.presenter.source.service" class="%mapbender.presenter.source.service.class%">
             <argument type="service" id="service_container" />

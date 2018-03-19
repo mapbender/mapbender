@@ -17,6 +17,11 @@ use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
  * @todo: plug in caching
  *
  * Instance registerd in container as mapbender.presenter.application.config.service
+ *
+ * Handlers for polymorphic source instance types pluggable and extensible via services.xml <call> tags to
+ * * setDefaultSourceService
+ * * addSourceSource
+ * See CoreBundle/Resources/config/services.xml for the default setup
  */
 class ConfigService
 {
@@ -24,15 +29,54 @@ class ConfigService
     protected $container;
     /** @var ApplicationService */
     protected $basePresenter;
-    /** @var SourceService[] $sourceConfigServices */
-    protected $sourceServices;
+    /** @var SourceService[] */
+    protected $sourceServices = array();
+    /** @var SourceService|null */
+    protected $defaultSourceService;
 
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->basePresenter = $container->get('mapbender.presenter.application.service');
-        $this->sourceServices = $this->getSourceServices();
+    }
+
+    /**
+     * Sets (or removes) the default service for generating source instance configuration. This default
+     * service is used as the fallback if the specific type ("wms") has not been explicitly wired to a
+     * specialized service via @see addSourceService
+     *
+     * Provided as a post-constructor customization hook. Should be called exclusively from a services.xml, e.g.
+     *   <call method="setDefaultSourceService">
+     *      <argument type="service" id="your.replacement.service.id" />
+     *   </call>
+     *
+     * @param SourceService|null $service
+     */
+    public function setDefaultSourceService(SourceService $service = null)
+    {
+        $this->defaultSourceService = $service;
+    }
+
+    /**
+     * Adds (or replaces) the sub-service for generating configuration for specific types of source instances.
+     *
+     * Provided as a post-constructor customization hook. Should call from a services.xml, e.g.
+     *   <call method="addSourceService">
+     *      <argument>wmts</argument>
+     *      <argument type="service" id="your.wmts.config.generating.service.id" />
+     *   </call>
+     *
+     * @param string $instanceType
+     * @param SourceService|null $service
+     */
+    public function addSourceService($instanceType, SourceService $service)
+    {
+        if (!$instanceType || !is_string($instanceType)) {
+            throw new \InvalidArgumentException('Empty / non-string instanceType ' . print_r($instanceType));
+        }
+        $key = strtolower($instanceType);
+        $this->sourceServices[$key] = $service;
     }
 
     /**
@@ -49,8 +93,14 @@ class ConfigService
     {
         $key = strtolower($sourceInstance->getType());
         $service = ArrayUtil::getDefault($this->sourceServices, $key, null);
-        // @todo: throw exception if empty?
-        $service = $service ?: $this->sourceServices['__default__'];
+        if (!$service) {
+            // @todo: warn?
+            $service = $this->defaultSourceService;
+        }
+        if (!$service) {
+            $message = 'No config generator available for source instance type ' . print_r($key, true);
+            throw new \RuntimeException($message);
+        }
         return $service;
     }
 
@@ -205,22 +255,5 @@ class ConfigService
             }
         }
         return $activeInstances;
-    }
-
-    /**
-     * Called once during construction to collect services appropriate to handle polymorphic SourceInstance types.
-     *
-     * @return SourceService[] keyed on lower-cased source type
-     */
-    protected function getSourceServices()
-    {
-        /** @var ConfigService $defaultService */
-        $defaultService = $this->container->get('mapbender.presenter.source.service');
-        return array(
-            '__default__' => $defaultService,
-            'wms' => $defaultService,
-            // Plug your specialized config generators on top of this in a child class and replace this service with
-            // yours.
-        );
     }
 }
