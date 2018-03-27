@@ -111,7 +111,11 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
     'private function findMatrixSetEpsg': function(matrixSets, epsg, clone){
         var matrixsets = {};
         for(var i = 0; i < matrixSets.length; i++){
-            if(epsg === matrixSets[i].supportedCrs){
+            var supportedCrs = matrixSets[i].supportedCrs;
+            if(this.checkUrnIdentifier(matrixSets[i].supportedCrs)) {
+                supportedCrs = this.getEpgsFromUrn(supportedCrs);
+            }
+            if(epsg === supportedCrs){
                 matrixsets[matrixSets[i].identifier] = clone ? $.extend(true, {}, matrixSets[i]) : matrixSets[i];
             }
         }
@@ -132,6 +136,15 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             }
         }
         return null;
+    },
+    'private function checkUrnIdentifier': function(crs){
+        var pattern = new RegExp("urn:ogc:def:crs");
+        if(pattern.test(crs)) return true;
+    },
+    'private function getEpgsFromUrn': function(urnIdentifier){
+        var urnArray = urnIdentifier.split(":");
+        var epsgCode = urnArray[urnArray.length-1];
+        return "EPSG:" + epsgCode;
     },
     'public function onLoadStart': function(source) {
         this.enable(source, 'loadError');
