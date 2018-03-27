@@ -115,6 +115,7 @@
 .collectionRemove {
   line-height: $inputHeight;
   position: absolute;
-  right: 33px;
-  top: 27px;
+  right: 31px;
+  top: -6px;
+  z-index: 1;
 }
