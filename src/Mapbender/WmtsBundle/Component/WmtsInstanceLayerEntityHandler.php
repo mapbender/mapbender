@@ -12,11 +12,13 @@ use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmtsBundle\Entity\WmtsInstance;
+use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
+use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
+use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
- * Description of WmsInstanceLayerEntityHandler
+ * Description of WmtsInstanceLayerEntityHandler
  *
  * @author Paul Schmidt
  */
@@ -28,24 +30,22 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function create(SourceInstance $instance, SourceItem $wmtslayersource, $num = 0, $persist = true)
     {
-        $this->entity->setSourceInstance($instance);
-        $this->entity->setSourceItem($wmtslayersource);
-        $this->entity->setTitle($wmtslayersource->getTitle());
-        $this->entity->setFormat(ArrayUtil::getValueFromArray($wmtslayersource->getFormats(), null, 0));
-        $this->entity->setInfoformat(ArrayUtil::getValueFromArray($wmtslayersource->getInfoformats(), null, 0));
-//        // @TODO min max from scaleHint
-//        $this->entity->setMinScale($wmslayersource->getScaleRecursive() !== null ?
-//                $wmslayersource->getScaleRecursive()->getMin() : null);
-//        $this->entity->setMaxScale($wmslayersource->getScaleRecursive() !== null ?
-//                $wmslayersource->getScaleRecursive()->getMax() : null);
-//        $queryable = $wmtslayersource->getQueryable();
-        $this->entity->setInfo(Utils::getBool(count($wmtslayersource->getInfoformats())));
-        $this->entity->setAllowinfo(Utils::getBool(count($wmtslayersource->getInfoformats())));
-//        $this->entity->setPriority($num);
-        $instance->addLayer($this->entity);
+        /** @var WmtsInstance $instance */
+        $instanceLayer = $this->entity;
+
+        $instanceLayer->setSourceInstance($instance);
+        $instanceLayer->setSourceItem($wmtslayersource);
+        $instanceLayer->setTitle($wmtslayersource->getTitle());
+        $instanceLayer->setFormat(ArrayUtil::getValueFromArray($wmtslayersource->getFormats(), null, 0));
+        $instanceLayer->setInfoformat(ArrayUtil::getValueFromArray($wmtslayersource->getInfoformats(), null, 0));
+        $instanceLayer->setInfo(Utils::getBool(count($wmtslayersource->getInfoformats())));
+        $instanceLayer->setAllowinfo(Utils::getBool(count($wmtslayersource->getInfoformats())));
+        $styles = $wmtslayersource->getStyles();
+        $instanceLayer->setStyle($styles[0]->identifier);
+        $instance->addLayer($instanceLayer);
 
         if ($persist) {
-            $this->container->get('doctrine')->getManager()->persist($this->entity);
+            $this->container->get('doctrine')->getManager()->persist($instanceLayer);
             $this->container->get('doctrine')->getManager()->flush();
         }
     }
@@ -61,7 +61,7 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * @inheritdoc
      */
-    public function update(SourceInstance $instance, SourceItem $wmslayersource)
+    public function update(SourceInstance $instance, SourceItem $wmtslayersource)
     {
         /* remove instance layers for missed layer sources */
 //        foreach ($this->entity->getSublayer() as $wmsinstlayer) {
@@ -202,14 +202,14 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * Finds an instance layer, that is linked with a given wms source layer.
      *
-     * @param WmsLayerSource $wmssourcelayer wms layer source
+     * @param WmtsLayerSource $wmtssourcelayer wms layer source
      * @param array $instancelayerList list of instance layers
-     * @return WmsInstanceLayer | null the instance layer, otherwise null
+     * @return WmtsInstanceLayer | null the instance layer, otherwise null
      */
-    public function findLayer(WmsLayerSource $wmssourcelayer, $instancelayerList)
+    public function findLayer(WmtsLayerSource $wmtssourcelayer, $instancelayerList)
     {
         foreach ($instancelayerList as $instancelayer) {
-            if ($wmssourcelayer->getId() === $instancelayer->getSourceItem()->getId()) {
+            if ($wmtssourcelayer->getId() === $instancelayer->getSourceItem()->getId()) {
                 return $instancelayer;
             }
         }
