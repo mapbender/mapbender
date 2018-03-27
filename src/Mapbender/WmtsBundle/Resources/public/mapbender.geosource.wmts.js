@@ -67,14 +67,18 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
     'private function createLayerOptions': function(layer, matrixsets, projection, proxy, olLayer){
         var matrixset = this.findMatrixSetIdent(matrixsets, layer.options.tilematrixset, null, true);
         var tileFullExtent = null;
-        if(layer.options.bbox[matrixset.supportedCrs]){
+        var supportedCrs = matrixset.supportedCrs;
+        if(this.checkUrnIdentifier(matrixset.supportedCrs)) {
+            supportedCrs = this.getEpgsFromUrn(supportedCrs);
+        }
+        if(layer.options.bbox[supportedCrs]){
             tileFullExtent =
-                OpenLayers.Bounds.fromArray(layer.options.bbox[matrixset.supportedCrs]);
+                OpenLayers.Bounds.fromArray(layer.options.bbox[supportedCrs]);
         } else {
             for(srs in layer.options.bbox){
                 tileFullExtent = OpenLayers.Bounds.fromArray(layer.options.bbox[srs]).transform(
                     Mapbender.Model.getProj(srs),
-                    Mapbender.Model.getProj(matrixset.supportedCrs)
+                    Mapbender.Model.getProj(supportedCrs)
                 );
                 break;
             }
