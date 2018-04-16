@@ -89,7 +89,7 @@ class ApplicationController extends Controller
             }
         }
 
-        $application = $this->get('mapbender')->getApplication($slug, array());
+        $application = $this->getApplication($slug);
         if ($type == "css") {
             $sourcePath = $request->getBasePath();
             $refs       = array_unique($application->getAssets('css'));

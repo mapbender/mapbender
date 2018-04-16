@@ -302,7 +302,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     {
         foreach ($app->getElements() as $element) {
             $elmClass = $element->getClass();
-            $applComp = new ApplicationComponent($this->container, $element->getApplication(), array());
+            $applComp = new ApplicationComponent($this->container, $element->getApplication());
             $elmComp = new $elmClass($applComp, $this->container, $element);
             $configuration = $element->getConfiguration();
             foreach ($configuration as $key => $value) {
