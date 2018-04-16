@@ -3,13 +3,12 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Doctrine\ORM\EntityRepository;
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Form\DataTransformer\ElementIdTransformer;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -99,9 +98,12 @@ class TargetElementType extends AbstractType
         } else {
             $elm_ids = array();
             foreach ($options['application']->getElements() as $element_entity) {
-                $class = $element_entity->getClass();
-                if ($class::$ext_api) {
-                    $element_entity->getId();
+                /** @var Element $element_entity */
+                $elementComponentClass = $element_entity->getClass();
+                if (class_exists($elementComponentClass)) {
+                    if ($elementComponentClass::$ext_api) {
+                        $element_entity->getId();
+                    }
                 }
             }
 
