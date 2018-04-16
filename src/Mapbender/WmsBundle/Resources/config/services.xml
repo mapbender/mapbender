@@ -5,6 +5,8 @@
     <parameters>
         <parameter key="mapbender.importer.source.wms.service.class">Mapbender\WmsBundle\Component\Wms\Importer</parameter>
         <parameter key="wmsloader.example_url">https://wms.wheregroup.com/cgi-bin/mapbender_user.xml?VERSION=1.3.0&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS</parameter>
+        <!-- set this to true in your parameters.yml to expose DimensionsHandler element -->
+        <parameter key="mapbender.preview.element.dimensionshandler">false</parameter>
     </parameters>
     <services>
         <service id="mapbender.importer.source.wms.service" class="%mapbender.importer.source.wms.service.class%">

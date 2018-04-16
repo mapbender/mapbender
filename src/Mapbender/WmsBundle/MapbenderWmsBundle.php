@@ -15,9 +15,13 @@ class MapbenderWmsBundle extends MapbenderBundle
      */
     public function getElements()
     {
-        return array(
-            'Mapbender\WmsBundle\Element\WmsLoader'
+        $elements = array(
+            'Mapbender\WmsBundle\Element\WmsLoader',
         );
+        if ($this->container->getParameter('mapbender.preview.element.dimensionshandler')) {
+            $elements[] = 'Mapbender\WmsBundle\Element\DimensionsHandler';
+        }
+        return $elements;
     }
 
     /**
