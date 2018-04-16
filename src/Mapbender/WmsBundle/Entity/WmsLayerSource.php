@@ -471,7 +471,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @return Object
      */
-    public function getLatlonBounds($inherit = true)
+    public function getLatlonBounds($inherit = false)
     {
 //        //@TODO check layer inheritance if layer->latlonBounds === null
         if ($inherit && $this->latlonBounds === null && $this->getParent() !== null) {
@@ -511,7 +511,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @return BoundingBox[]
      */
-    public function getBoundingBoxes()
+    public function getBoundingBoxes($inherit = false)
     {
 //        //@TODO check layer inheritance if count(layer->boundingBoxes) === 0
 //        if(count($this->boundingBoxes) === 0 && $this->getParent() !== null){
@@ -552,7 +552,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @return array
      */
-    public function getSrs($inherit = true)
+    public function getSrs($inherit = false)
     {
         if ($inherit && $this->getParent() !== null) { // add crses from parent
             return array_unique(array_merge($this->getParent()->getSrs(), $this->srs));
@@ -760,7 +760,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function getIdentifierAuthority()
     {
         $result = array();
-        $authorities = $this->getAuthority();
+        $authorities = $this->getAuthority(true);
         if (count($this->identifier) != 0 && count($authorities) != 0) {
             foreach ($this->identifier as $identifier) {
                 foreach ($authorities as $authority) {
@@ -803,14 +803,15 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get authority
      *
-     * @return Authority
+     * @param bool $inherit to append Authrity objects inherited (recursively) from parent, if any
+     * @return ArrayCollection|Authority[]
      */
-    public function getAuthority($inherit = true)
+    public function getAuthority($inherit = false)
     {
         if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) {
             return array_merge($this->getParent()->getAuthority(), $this->authority);
         } else {
-            $this->authority;
+            return $this->authority;
         }
     }
 

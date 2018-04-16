@@ -217,7 +217,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             "maxScale" => $this->entity->getMaxScale(true),
         );
         $srses = array();
-        $llbbox = $this->entity->getSourceItem()->getLatlonBounds();
+        $llbbox = $this->entity->getSourceItem()->getLatlonBounds(true);
         if ($llbbox !== null) {
             $srses[$llbbox->getSrs()] = array(
                 floatval($llbbox->getMinx()),
@@ -226,7 +226,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 floatval($llbbox->getMaxy())
             );
         }
-        foreach ($this->entity->getSourceItem()->getBoundingBoxes() as $bbox) {
+        foreach ($this->entity->getSourceItem()->getBoundingBoxes(true) as $bbox) {
             $srses[$bbox->getSrs()] = array(
                 floatval($bbox->getMinx()),
                 floatval($bbox->getMiny()),
