@@ -429,6 +429,8 @@
                 if(widget.popup && widget.popup.$element){
                     widget.popup.$element.show();
                 }
+            } else {
+                this.element.removeClass('hidden');
             }
         },
         _getContext: function() {
