@@ -85,7 +85,7 @@ class TargetElementType extends AbstractType
         $repository = $this->getContainer()->get('doctrine')->getRepository($options['class']);
         $qb = $repository->createQueryBuilder($builderName);
         $filter = $qb->expr()->andX();
-        if (isset($options['element_class'])) {
+        if (!empty($options['element_class'])) {
             $filter->add($qb->expr()->eq($builderName . '.application', $options['application']->getId()));
             if (is_integer(strpos($options['element_class'], "%"))) {
                 $classComparison = $qb->expr()->like($builderName . '.class', ':class');
@@ -98,11 +98,8 @@ class TargetElementType extends AbstractType
             $elm_ids = array();
             foreach ($options['application']->getElements() as $element_entity) {
                 $class = $element_entity->getClass();
-                $appl = new Application($this->getContainer(), $options['application'], array());
-                $element = new $class($appl, $this->getContainer(), $element_entity);
-                $elm_class = get_class($element);
-                if ($elm_class::$ext_api) {
-                    $elm_ids[] = $element->getId();
+                if ($class::$ext_api) {
+                    $element_entity->getId();
                 }
             }
 
