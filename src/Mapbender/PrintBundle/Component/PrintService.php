@@ -1,37 +1,32 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
-use Mapbender\CoreBundle\Component\SecurityContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 /**
  * Mapbender3 Print Service.
  *
  * @author Stefan Winkelmann
  */
-class PrintService
+class PrintService extends ImageExportService
 {
     /** @var PDF_ImageAlpha */
     protected $pdf;
-    protected $tempdir;
     protected $conf;
-    protected $data;
     protected $rotation;
     protected $resourceDir;
     protected $finalImageName;
     protected $user;
-    protected $tempDir;
-    protected $mapRequests;
     protected $imageWidth;
     protected $imageHeight;
     protected $neededExtentWidth;
     protected $neededExtentHeight;
     protected $neededImageWidth;
     protected $neededImageHeight;
-    protected $urlHostPath;
 
     /**
      * @var array Default geometry style
@@ -39,11 +34,6 @@ class PrintService
     protected $defaultStyle = array(
         "strokeWidth" => 1
     );
-
-    public function __construct($container)
-    {
-        $this->container = $container;
-    }
 
     public function doPrint($data)
     {
@@ -60,17 +50,10 @@ class PrintService
 
     private function setup($data)
     {
-        $this->urlHostPath = $this->container->get('request')->getHttpHost() . $this->container->get('request')->getBaseURL();
-        // temp dir
-        $this->tempDir = sys_get_temp_dir();
         // resource dir
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
 
-        // get user
-        /** @var SecurityContext $securityContext */
-        $securityContext = $this->container->get('security.context');
-        $token           = $securityContext->getToken();
-        $this->user      = $token->getUser();
+        $this->user      = $this->getUser();
 
         // data from client
         $this->data = $data;
@@ -97,7 +80,7 @@ class PrintService
             $centery = $data['center']['y'];
 
             // switch axis for some EPSG if WMS Version 1.3.0
-            if ($layer['changeAxis']){
+            if (!empty($layer['changeAxis'])){
                 $extentWidth = $data['extent']['height'];
                 $extentHeight = $data['extent']['width'];
                 $centerx = $data['center']['y'];
@@ -198,7 +181,7 @@ class PrintService
         $imageNames = $this->getImages($width, $height);
 
         // create final merged image
-        $this->finalImageName = tempnam($this->tempDir, 'mb_print_final');
+        $this->finalImageName = $this->makeTempFile('mb_print_final');
         $finalImage = imagecreatetruecolor($width, $height);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $width, $height, $bg);
@@ -229,7 +212,7 @@ class PrintService
         $imageNames = $this->getImages($neededImageWidth,$neededImageHeight);
 
         // create temp merged image
-        $tempImageName = tempnam($this->tempDir, 'mb_print_temp');
+        $tempImageName = $this->makeTempFile('mb_print_temp');
         $tempImage = imagecreatetruecolor($neededImageWidth, $neededImageHeight);
         $bg = ImageColorAllocate($tempImage, 255, 255, 255);
         imagefilledrectangle($tempImage, 0, 0, $neededImageWidth, $neededImageHeight, $bg);
@@ -258,7 +241,7 @@ class PrintService
         $rotatedImage = imagerotate($tempImage2, $rotation, $transColor);
         imagealphablending($rotatedImage, false);
         imagesavealpha($rotatedImage, true);
-        $rotatedImageName = tempnam($this->tempDir, 'mb_print_rotated');
+        $rotatedImageName = $this->makeTempFile('mb_print_rotated');
         imagepng($rotatedImage, $rotatedImageName);
         unlink($tempImageName);
         unlink($rotatedImageName);
@@ -277,91 +260,36 @@ class PrintService
         imagecopy($clippedImage, $rotatedImage, 0, 0, $newx, $newy,
             $imageWidth, $imageHeight);
 
-        $this->finalImageName = tempnam($this->tempDir, 'mb_print_final');
+        $this->finalImageName = $this->makeTempFile('mb_print_final');
         imagepng($clippedImage, $this->finalImageName);
     }
 
     private function getImages($width, $height)
     {
-        $logger        = $this->container->get("logger");
+        $logger        = $this->getLogger();
         $imageNames    = array();
         foreach ($this->mapRequests as $i => $url) {
-            $logger->debug("Print Request Nr.: " . $i . ' ' . $url);
-            // find urls from this host (tunnel connection for secured services)
-            $parsed   = parse_url($url);
-            $host = isset($parsed['host']) ? $parsed['host'] : $this->container->get('request')->getHttpHost();
-            $hostpath = $host . $parsed['path'];
-            $pos      = strpos($hostpath, $this->urlHostPath);
-            if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-                $attributes = $this->container->get('router')->match($routeStr);
-                $gets       = array();
-                parse_str($parsed['query'], $gets);
-                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
-            } else {
-                $attributes = array(
-                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
-                );
-                $subRequest = new Request(array('url' => $url), array(), $attributes, array(), array(), array(), '');
-            }
-            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            $this->getLogger()->debug("Print Request Nr.: " . $i . ' ' . $url);
 
-            $imageName    = tempnam($this->tempDir, 'mb_print');
+            $mapRequestResponse = $this->mapRequest($url);
+
+            $imageName    = $this->makeTempFile('mb_print');
             $imageNames[] = $imageName;
+            $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
 
-            file_put_contents($imageName, $response->getContent());
-
-            $rawImage = null;
-            $contentType = trim($response->headers->get('content-type'));
-            switch ($contentType) {
-                case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
-                    $rawImage = imagecreatefrompng($imageName);
-                    break;
-                case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
-                    $rawImage = imagecreatefromjpeg($imageName);
-                    break;
-                case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
-                    $rawImage = imagecreatefromgif($imageName);
-                    break;
-                case 'image/bmp' :
-                    $logger->debug("Unsupported mimetype image/bmp");
-                    print_r("Unsupported mimetype image/bmp");
-                    break;
-                default:
-                    $logger->debug("ERROR! PrintRequest failed: " . $url);
-                    $logger->debug($response->getContent());
-                    print_r('an error has occurred. see log for more details <br>');
-                    print_r($response->getContent());
-                    foreach ($imageNames as $i => $imageName) {
-                        unlink($imageName);
-                    }
-                    exit;
+            if (!$rawImage) {
+                $logger->debug("ERROR! PrintRequest failed: " . $url);
+                $logger->debug($mapRequestResponse->getContent());
+                print_r('an error has occurred. see log for more details <br>');
+                print_r($mapRequestResponse->getContent());
+                foreach ($imageNames as $i => $imageName) {
+                    unlink($imageName);
+                }
+                exit;
             }
 
             if ($rawImage !== null) {
-                // Make sure input image is truecolor with alpha, regardless of input mode!
-                $image = imagecreatetruecolor($width, $height);
-                imagealphablending($image, false);
-                imagesavealpha($image, true);
-                imagecopyresampled($image, $rawImage, 0, 0, 0, 0, $width, $height, $width, $height);
-
-                // Taking the painful way to alpha blending. Stupid PHP-GD
-                $opacity = floatVal($this->data['layers'][$i]['opacity']);
-                if (1.0 !== $opacity) {
-                    $width  = imagesx($image);
-                    $height = imagesy($image);
-                    for ($x = 0; $x < $width; $x++) {
-                        for ($y = 0; $y < $height; $y++) {
-                            $colorIn  = imagecolorsforindex($image, imagecolorat($image, $x, $y));
-                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
-
-                            $colorOut = imagecolorallocatealpha(
-                                $image, $colorIn['red'], $colorIn['green'], $colorIn['blue'], $alphaOut);
-                            imagesetpixel($image, $x, $y, $colorOut);
-                            imagecolordeallocate($image, $colorOut);
-                        }
-                    }
-                }
-                imagepng($image, $imageName);
+                $this->forceToRgba($imageName, $rawImage, $this->data['layers'][$i]['opacity']);
             }
         }
         return $imageNames;
@@ -515,7 +443,7 @@ class PrintService
             $image = imagecreatefrompng($northarrow);
             $transColor = imagecolorallocatealpha($image, 255, 255, 255, 0);
             $rotatedImage = imagerotate($image, $rotation, $transColor);
-            $rotatedImageName = tempnam($this->tempdir, 'mb_northarrow');
+            $rotatedImageName = $this->makeTempFile('mb_northarrow');
             imagepng($rotatedImage, $rotatedImageName);
 
             if ($rotation == 90 || $rotation == 270) {
@@ -557,7 +485,7 @@ class PrintService
 
         // get images
         $tempNames = array();
-        $logger = $this->container->get("logger");
+        $logger = $this->getLogger();
         foreach ($this->data['overview'] as $i => $layer) {
             // calculate needed bbox
             $ovWidth = $this->conf['overview']['width'] * $layer['scale'] / 1000;
@@ -565,7 +493,7 @@ class PrintService
             $centerx = $this->data['center']['x'];
             $centery = $this->data['center']['y'];
 
-            if ($layer['changeAxis']){
+            if (!empty($layer['changeAxis'])) {
                 $ovWidth = $this->conf['overview']['height'] * $layer['scale'] / 1000;
                 $ovHeight = $this->conf['overview']['width'] * $layer['scale'] / 1000;
                 $centerx = $this->data['center']['y'];
@@ -584,42 +512,11 @@ class PrintService
 
             $logger->debug("Print Overview Request Nr.: " . $i . ' ' . $url);
 
-            $parsed   = parse_url($url);
-            $hostpath = $parsed['host'] . $parsed['path'];
-            $pos      = strpos($hostpath, $this->urlHostPath);
-            if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-                $attributes = $this->container->get('router')->match($routeStr);
-                $gets       = array();
-                parse_str($parsed['query'], $gets);
-                $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
-            } else {
-                $attributes = array(
-                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint'
-                );
-                $subRequest = new Request(array('url' => $url), array(), $attributes, array(), array(), array(), '');
-            }
-
-            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-            $imageName = tempnam($this->tempdir, 'mb_print');
+            $overviewRequestResponse = $this->mapRequest($url);
+            $imageName = $this->makeTempFile('mb_print');
             $tempNames[] = $imageName;
+            $im = $this->serviceResponseToGdImage($imageName, $overviewRequestResponse);
 
-            file_put_contents($imageName, $response->getContent());
-            $im = null;
-            $contentType = trim($response->headers->get('content-type'));
-            switch ($contentType) {
-                case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
-                    $im = imagecreatefrompng($imageName);
-                    break;
-                case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
-                    $im = imagecreatefromjpeg($imageName);
-                    break;
-                case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
-                    $im = imagecreatefromgif($imageName);
-                    break;
-                default:
-                    $logger->debug("Unknown mimetype " . $contentType);
-                    continue;
-            }
             if ($im !== null) {
                 imagesavealpha($im, true);
                 imagepng($im, $imageName);
@@ -627,7 +524,7 @@ class PrintService
         }
 
         // create final merged image
-        $finalImageName = tempnam($this->tempdir, 'mb_print_merged');
+        $finalImageName = $this->makeTempFile('mb_print_merged');
         $finalImage = imagecreatetruecolor($ovImageWidth, $ovImageHeight);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $ovImageWidth,
@@ -770,7 +667,7 @@ class PrintService
 
     private function addDynamicImage()
     {
-        if($this->user == 'anon.'){
+        if (!$this->user || $this->user == 'anon.') {
             return;
         }
 
@@ -796,7 +693,7 @@ class PrintService
 
     private function addDynamicText()
     {
-        if($this->user == 'anon.'){
+        if (!$this->user || $this->user == 'anon.'){
             return;
         }
 
@@ -1089,6 +986,8 @@ class PrintService
           if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
              $this->addLegendPageImage();
           }
+          $xStartPosition = 0;
+          $yStartPosition = 0;
         }
 
         foreach ($this->data['legends'] as $idx => $legendArray) {
@@ -1176,7 +1075,7 @@ class PrintService
                             $height = $this->pdf->getHeight();
                             $width = $this->pdf->getWidth();
                             $legendConf = false;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
+                            if (!empty($this->conf['legendpage_image'])) {
                                $this->addLegendPageImage();
                             }
                         }
@@ -1196,7 +1095,7 @@ class PrintService
                           $this->pdf->addPage('P');
                           $x = 5;
                           $y = 10;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
+                            if (!empty($this->conf['legendpage_image'])) {
                                $this->addLegendPageImage();
                             }
                       }
@@ -1224,7 +1123,7 @@ class PrintService
             parse_str($parsed['query'], $gets);
             $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
             $response   = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-            $imagename  = tempnam($this->tempdir, 'mb_printlegend');
+            $imagename  = $this->makeTempFile('mb_printlegend');
             file_put_contents($imagename, $response->getContent());
         } else {
             $proxy_config    = $this->container->getParameter("owsproxy.proxy");
@@ -1232,7 +1131,7 @@ class PrintService
             $proxy           = new CommonProxy($proxy_config, $proxy_query);
             $browserResponse = $proxy->handle();
 
-            $imagename = tempnam($this->tempdir, 'mb_printlegend');
+            $imagename = $this->makeTempFile('mb_printlegend');
             file_put_contents($imagename, $browserResponse->getContent());
         }
 
@@ -1265,7 +1164,7 @@ class PrintService
 
         $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
 
-        if($this->user == 'anon.'){
+        if (!$this->user || $this->user == 'anon.') {
             $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
         }else{
           $groups = $this->user->getGroups();
@@ -1344,4 +1243,18 @@ class PrintService
         return false;
     }
 
+    /**
+     * @return mixed|null
+     */
+    protected function getUser()
+    {
+        /** @var TokenStorage $tokenStorage */
+        $tokenStorage = $this->container->get('security.token_storage');
+        $token = $tokenStorage->getToken();
+        if ($token) {
+            return $token->getUser();
+        } else {
+            return null;
+        }
+    }
 }
