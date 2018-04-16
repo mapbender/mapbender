@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
@@ -181,8 +182,11 @@ class ConfigService
         $key = strtolower($sourceInstance->getType());
         $service = ArrayUtil::getDefault($this->sourceServices, $key, null);
         if (!$service) {
-            // @todo: warn?
             $service = $this->defaultSourceService;
+            if ($service) {
+                $message = 'Using default source service for source instance type ' . print_r($key, true);
+                $this->getLogger()->warning(__CLASS__ . ": {$message}");
+            }
         }
         if (!$service) {
             $message = 'No config generator available for source instance type ' . print_r($key, true);
@@ -255,5 +259,15 @@ class ConfigService
             }
         }
         return $activeInstances;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->container->get('logger');
+        return $logger;
     }
 }
