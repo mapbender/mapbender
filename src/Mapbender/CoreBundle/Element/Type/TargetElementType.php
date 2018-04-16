@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Doctrine\ORM\EntityRepository;
+use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -79,23 +81,19 @@ class TargetElementType extends AbstractType
     public function getChoicesQueryBuilder(Options $options)
     {
         $builderName = preg_replace("/[^\w]/", "", $options['property_path']);
+        /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository($options['class']);
-        if (isset($options['element_class']) && $options['element_class'] !== null) {
-            $qb = $repository->createQueryBuilder($builderName);
+        $qb = $repository->createQueryBuilder($builderName);
+        $filter = $qb->expr()->andX();
+        if (isset($options['element_class'])) {
+            $filter->add($qb->expr()->eq($builderName . '.application', $options['application']->getId()));
             if (is_integer(strpos($options['element_class'], "%"))) {
-                $filter = $qb->expr()->andX(
-                        $qb->expr()->eq($builderName . '.application', $options['application']->getId()),
-                                        $qb->expr()->like($builderName . '.class', ':class'));
-                $qb->where($filter);
-                $qb->setParameter('class', $options['element_class']);
+                $classComparison = $qb->expr()->like($builderName . '.class', ':class');
             } else {
-                $filter = $qb->expr()->andX(
-                        $qb->expr()->eq($builderName . '.application', $options['application']->getId()),
-                                        $qb->expr()->eq($builderName . '.class', ':class'));
-                $qb->where($filter);
-                $qb->setParameter('class', $options['element_class']);
+                $classComparison = $qb->expr()->eq($builderName . '.class', ':class');
             }
-            return $qb;
+            $filter->add($classComparison);
+            $qb->setParameter('class', $options['element_class']);
         } else {
             $elm_ids = array();
             foreach ($options['application']->getElements() as $element_entity) {
@@ -107,18 +105,16 @@ class TargetElementType extends AbstractType
                     $elm_ids[] = $element->getId();
                 }
             }
-            $qb = $repository->createQueryBuilder($builderName);
-            $filter = $qb->expr()->andX();
+
             if (count($elm_ids) > 0) {
                 $filter->add($qb->expr()->in($builderName . '.id', ':elm_ids'));
-                $qb->where($filter);
                 $qb->setParameter('elm_ids', $elm_ids);
             } else {
                 $filter->add($qb->expr()->eq($builderName . '.application', $options['application']->getId()));
-                $qb->where($filter);
             }
-            return $qb;
         }
+        $qb->where($filter);
+        return $qb;
     }
 
     /**
