@@ -127,6 +127,7 @@
         <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">
             <argument type="service" id="logger" />
             <argument type="service" id="mapbender.presenter.application.cache.backend" />
+            <argument>%container.compilation_timestamp_float%</argument>
         </service>
         <service id="mapbender.presenter.application.cache.backend" class="%mapbender.presenter.application.cache.backend.class%">
             <argument type="service" id="service_container" />

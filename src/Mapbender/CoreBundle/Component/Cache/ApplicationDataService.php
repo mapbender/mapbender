@@ -23,15 +23,20 @@ class ApplicationDataService
     /** @var Backend\File */
     protected $backend;
 
+    /** @var float */
+    protected $containerTimestamp;
+
     /**
      * ApplicationDataService constructor.
      * @param LoggerInterface $logger
      * @param Backend\File $backend
+     * @param float $containerTimestamp
      */
-    public function __construct(LoggerInterface $logger, $backend)
+    public function __construct(LoggerInterface $logger, $backend, $containerTimestamp)
     {
         $this->logger = $logger;
         $this->backend = $backend;
+        $this->containerTimestamp = $containerTimestamp;
     }
 
     /**
@@ -77,19 +82,25 @@ class ApplicationDataService
 
     /**
      * Generates the reusability mark for application data.
-     * @todo: container compilation time should also be considered (for "app_dev" mode)
+     * Considers application "updated" column plus container compilation time, so any change to the application
+     * or any configuration file makes the cache stale.
      *
      * @param Application $application
-     * @return string
+     * @return array
      */
     protected function getMark(Application $application)
     {
+        $parts = array(
+            $this->containerTimestamp,
+        );
         $updated = $application->getUpdated();
-        // NOTE: $updated is NULL for yaml applications ...
         if ($updated) {
-            return $updated->format('U-u');
-        } else {
-            return 'never';
+            // NOTE: $updated is only available on DB applications, always NULL for yaml applications.
+            //       Including the container compilation time makes caching safe even for yaml applications though,
+            //       because any edit to any application's yml triggers a container re-compilation, which is reflected
+            //       in the container timestamp.
+            $parts[] = $updated->format('U-u');
         }
+        return $parts;
     }
 }
