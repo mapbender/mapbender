@@ -3,7 +3,7 @@
 
 namespace Mapbender\CoreBundle\Component\Cache\Backend;
 use Mapbender\BaseKernel;
-use Symfony\Component\Debug\Exception\DummyException;
+use Mapbender\CoreBundle\Component\Exception\CacheMiss;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -138,7 +138,7 @@ class File
         try {
             $header = fread($stream, 14);
             if ($header === false || strlen($header) != 14) {
-                throw new DummyException();
+                throw new CacheMiss();
             }
             $markSerialized = serialize($mark);
             $markLength = intval(substr($header, 0, 6));
@@ -146,14 +146,13 @@ class File
 
             $markPrevious = fread($stream, $markLength + 1);
             if ($markPrevious === false || substr($markPrevious, 0, -1) !== $markSerialized) {
-                throw new DummyException();
+                throw new CacheMiss();
             }
             return array(
                 'length' => $valueLength,
                 'stream' => $stream,
             );
-        } catch (DummyException $e) {
-            // this is a cache miss
+        } catch (CacheMiss $e) {
             flock($stream, LOCK_UN);
             fclose($stream);
             return false;
