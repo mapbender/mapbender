@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Component\Cache;
 
 
+use Mapbender\CoreBundle\Component\Exception\CacheMiss;
 use Mapbender\CoreBundle\Component\Exception\NotCachable;
 use Mapbender\CoreBundle\Entity\Application;
 use Psr\Log\LoggerInterface;
@@ -54,6 +55,8 @@ class ApplicationDataService
             return $this->backend->get($fullKeyPath, $signature);
         } catch (NotCachable $e) {
             return false;
+        } catch (CacheMiss $e) {
+            return false;
         }
     }
 
@@ -81,6 +84,8 @@ class ApplicationDataService
             // @todo: add etag etc
             return $response;
         } catch (NotCachable $e) {
+            return false;
+        } catch (CacheMiss $e) {
             return false;
         }
     }
