@@ -12,6 +12,8 @@
         <parameter key="mapbender.presenter.source.service.class">Mapbender\CoreBundle\Component\Presenter\SourceService</parameter>
         <parameter key="mapbender.presenter.application.service.class">Mapbender\CoreBundle\Component\Presenter\ApplicationService</parameter>
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
+        <parameter key="mapbender.presenter.application.cache.class">Mapbender\CoreBundle\Component\Cache\ApplicationDataService</parameter>
+        <parameter key="mapbender.presenter.application.cache.backend.class">Mapbender\CoreBundle\Component\Cache\Backend\File</parameter>
     </parameters>
 
     <services>
@@ -122,6 +124,12 @@
         <service id="mapbender.presenter.source.service" class="%mapbender.presenter.source.service.class%">
             <argument type="service" id="service_container" />
         </service>
+        <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">
+            <argument type="service" id="logger" />
+            <argument type="service" id="mapbender.presenter.application.cache.backend" />
+        </service>
+        <service id="mapbender.presenter.application.cache.backend" class="%mapbender.presenter.application.cache.backend.class%">
+            <argument type="service" id="service_container" />
+        </service>
     </services>
 </container>
-
