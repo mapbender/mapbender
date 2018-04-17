@@ -32,11 +32,13 @@ class File
     protected $storagePattern;
 
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @param string $rootPath of all cache files
+     * @throws \RuntimeException if $rootPath is not writable
+     */
+    public function __construct($rootPath)
     {
-        /** @var BaseKernel $kernel */
-        $kernel = $container->get('kernel');
-        $rootPath = realpath($kernel->getCacheDir());
+        $rootPath = realpath($rootPath);
         if (!is_dir($rootPath) || !is_writable($rootPath)) {
             throw new \RuntimeException("Cache path {$rootPath} is not writable");
         }
