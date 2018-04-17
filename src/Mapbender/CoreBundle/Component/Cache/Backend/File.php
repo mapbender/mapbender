@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Component\Cache\Backend;
 use Mapbender\BaseKernel;
 use Mapbender\CoreBundle\Component\Exception\CacheMiss;
+use Mapbender\CoreBundle\Component\Exception\NotCachable;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -49,14 +50,11 @@ class File
      */
     public function put($keyPath, $value, $signature)
     {
-        $fullPath = $this->getFullPath($keyPath);
-        @mkdir(dirname($fullPath), 0777, true);
         // Bake the $signature completely into the stored value. This is done to
         // 1) achieve complete atomicity of put / get
         // 2) be independent of various mtime resolutions on various filesystems when using time stamps
         // 3) support arbitrary (any serializable) signatures instead of just timestamps
         // We also encode the length of the signature and the data itself in a fixed-length fashion, to ease reading
-
         if (!$this->storagePattern) {
             $this->storagePattern = '%' . static::H_LENGTHOF_SIGNATURE_LENGTH . 'd'
                                   . ':'
@@ -64,7 +62,13 @@ class File
                                   // two more placeholders for signature + value
                                   . ':%s:%s';
         }
-        $valueInternal = sprintf($this->storagePattern, strlen($signature), strlen($value), $signature, $value);
+        $valueLength = strlen($value);
+        if (strlen($valueLength) > static::H_LENGTHOF_VALUE_LENGTH) {
+            throw new NotCachable("Value too long to encode in header ($valueLength bytes)");
+        }
+        $valueInternal = sprintf($this->storagePattern, strlen($signature), $valueLength, $signature, $value);
+        $fullPath = $this->getFullPath($keyPath);
+        @mkdir(dirname($fullPath), 0777, true);
         @file_put_contents($fullPath, $valueInternal, LOCK_EX);
     }
 
