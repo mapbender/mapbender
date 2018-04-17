@@ -3,7 +3,7 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Doctrine\ORM\EntityRepository;
-use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -14,7 +14,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 /**
- *
+ * Choice-style form element for picking an element's "target" element (this is used e.g. for a generic Button
+ * controlling a functional Element like a FeatureInfo).
  */
 class TargetElementType extends AbstractType
 {
@@ -77,8 +78,15 @@ class TargetElementType extends AbstractType
         ));
     }
 
+    /**
+     * Returns the initialized query builder used for loading the target choices.
+     *
+     * @param Options $options
+     * @return \Doctrine\ORM\QueryBuilder
+     */
     public function getChoicesQueryBuilder(Options $options)
     {
+        // strip the square brackets from the property_path to extract the entity attribute name
         $builderName = preg_replace("/[^\w]/", "", $options['property_path']);
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository($options['class']);
@@ -96,20 +104,21 @@ class TargetElementType extends AbstractType
             $filter->add($classComparison);
             $qb->setParameter('class', $options['element_class']);
         } else {
-            $elm_ids = array();
-            foreach ($options['application']->getElements() as $element_entity) {
-                /** @var Element $element_entity */
-                $elementComponentClass = $element_entity->getClass();
+            $elementIds = array();
+            /** @var Application $applicationEntity */
+            $applicationEntity = $options['application'];
+            foreach ($applicationEntity->getElements() as $elementEntity) {
+                $elementComponentClass = $elementEntity->getClass();
                 if (class_exists($elementComponentClass)) {
                     if ($elementComponentClass::$ext_api) {
-                        $element_entity->getId();
+                        $elementEntity->getId();
                     }
                 }
             }
 
-            if (count($elm_ids) > 0) {
+            if (count($elementIds) > 0) {
                 $filter->add($qb->expr()->in($builderName . '.id', ':elm_ids'));
-                $qb->setParameter('elm_ids', $elm_ids);
+                $qb->setParameter('elm_ids', $elementIds);
             }
         }
         $qb->where($filter);
