@@ -17,27 +17,26 @@
         _setup: function () {
             $('.basesourcesetswitch:not(.basesourcegroup)', this.element).on('click', $.proxy(this._toggleMapset, this));
 
-            $('.basesourcegroup', this.element).on('click', function (e) {
-                var bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
+            $('.basesourcesubswitcher', $(this.element)).addClass('hidden');
 
-                $('.basesourcesubswitcher', $(this.element)).addClass('hidden');
+            $('.basesourcegroup', this.element).on('click', $.proxy(this._showHideMenu, this));
 
-                if (bsswtch.hasClass('hidden')) {
-                    bsswtch.removeClass('hidden');
-                } else {
-                    bsswtch.addClass('hidden');
-                }
-            });
-
-            this._hideSources();
             this._showActive();
-
-            this.element.find('.basesourcesetswitch:first').click();
 
             $(document).on('mbmapcontextaddstart', $.proxy(this._onContextAddStart, this));
             $(document).on('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
             $(document).on('mbmapsourceloadend', $.proxy(this._removeSourceFromLoad, this));
             $(document).on('mbmapsourceloaderror', $.proxy(this._removeSourceFromLoad, this));
+        },
+
+        _showHideMenu: function(e) {
+            var $bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
+
+            if ($bsswtch.hasClass('hidden')) {
+                $bsswtch.removeClass('hidden');
+            } else {
+                $bsswtch.addClass('hidden');
+            }
         },
 
         _hideSources: function () {
