@@ -49,9 +49,9 @@ class ApplicationDataService
     public function getValue(Application $application, $keyPath)
     {
         try {
-            $mark = $this->getMark($application);
+            $signature = $this->getSignature($application);
             $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
-            return $this->backend->get($fullKeyPath, $mark);
+            return $this->backend->get($fullKeyPath, $signature);
         } catch (NotCachable $e) {
             return false;
         }
@@ -69,9 +69,9 @@ class ApplicationDataService
     public function getResponse(Application $application, $keyPath, $mimeType)
     {
         try {
-            $mark = $this->getMark($application);
+            $signature = $this->getSignature($application);
             $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
-            $content = $this->backend->get($fullKeyPath, $mark);
+            $content = $this->backend->get($fullKeyPath, $signature);
             if ($content === false) {
                 return false;
             }
@@ -93,23 +93,23 @@ class ApplicationDataService
     public function putValue(Application $application, $keyPath, $value)
     {
         try {
-            $mark = $this->getMark($application);
+            $signature = $this->getSignature($application);
             $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
-            $this->backend->put($fullKeyPath, $value, $mark);
+            $this->backend->put($fullKeyPath, $value, $signature);
         } catch (NotCachable $e) {
             // do nothing
         }
     }
 
     /**
-     * Generates the reusability mark for application data.
+     * Generates the reusability signature for application data.
      * Considers application "updated" column plus container compilation time, so any change to the application
      * or any configuration file makes the cache stale.
      *
      * @param Application $application
-     * @return array
+     * @return string
      */
-    protected function getMark(Application $application)
+    protected function getSignature(Application $application)
     {
         $parts = array();
         if ($this->containerTimestamp !== null) {
@@ -126,6 +126,6 @@ class ApplicationDataService
         if (!$parts) {
             throw new NotCachable();
         }
-        return $parts;
+        return print_r($parts, true);
     }
 }
