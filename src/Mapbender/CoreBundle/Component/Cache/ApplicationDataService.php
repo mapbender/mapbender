@@ -102,7 +102,9 @@ class ApplicationDataService
             $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
             $this->backend->put($fullKeyPath, $value, $signature);
         } catch (NotCachable $e) {
-            // do nothing
+            // Not creating a cache entry should not be a visible error condition, just like not getting
+            // a reusable entry from the cache is not an error condition.
+            // => do nothing, let the application continue normally
         }
     }
 
