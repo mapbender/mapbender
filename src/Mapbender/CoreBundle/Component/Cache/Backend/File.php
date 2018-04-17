@@ -62,12 +62,8 @@ class File
      */
     public function get($keyPath, $mark)
     {
-        // prepend root path
-        array_unshift($keyPath, $this->rootPath);
-        $fullPath = implode('/', $keyPath);
-
         try {
-            return $this->getInternal($fullPath, $mark);
+            return $this->getInternal($keyPath, $mark);
         } catch (CacheMiss $e) {
             // @todo: should this be allowed to bubble?
             return false;
@@ -75,38 +71,16 @@ class File
     }
 
     /**
-     * Sends cached data (if present + reusable) directly to the browser with the given $mimeType
-     *
-     * @param string[] $keyPath
-     * @param mixed $mark to verify reusability
-     * @param string $mimeType
-     * @return bool true if data sent, false if no reusable cache item was available
-     * @throws \Exception
+     * @param string[] $keyPath multi-component key
+     * @param mixed $mark
+     * @return string
+     * @throws CacheMiss
      */
-    public function emit($keyPath, $mark, $mimeType)
+    protected function getInternal($keyPath, $mark)
     {
-        // prepend root path
         array_unshift($keyPath, $this->rootPath);
         $fullPath = implode('/', $keyPath);
 
-        try {
-            $value = $this->getInternal($fullPath, $mark);
-            header("Content-Type: $mimeType");
-            header("Content-Length: " . strlen($value));
-            echo $value;
-            return true;
-        } catch (CacheMiss $e) {
-            return false;
-        }
-    }
-
-    /**
-     * @param string $fullPath
-     * @param mixed $mark
-     * @return string
-     */
-    protected function getInternal($fullPath, $mark)
-    {
         $valueInternal = @file_get_contents($fullPath);
         if (!$valueInternal || strlen($valueInternal) < 16) {
             throw new CacheMiss();

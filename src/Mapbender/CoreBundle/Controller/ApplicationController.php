@@ -233,17 +233,19 @@ class ApplicationController extends Controller
         $cacheService = $configService->getCacheService();
         $cacheKeyPath = array('config.json');
         $cachable = !!$this->container->getParameter('cachable.mapbender.application.config');
-        if (!$cachable || !$cacheService->emitValue($applicationEntity, $cacheKeyPath, 'application/json')) {
+        if ($cachable) {
+            $response = $cacheService->getResponse($applicationEntity, $cacheKeyPath, 'application/json');
+        } else {
+            $response = false;
+        }
+        if (!$cachable || !$response) {
             $freshConfig = $configService->getConfiguration($applicationEntity);
             $response = new JsonResponse($freshConfig);
             if ($cachable) {
                 $cacheService->putValue($applicationEntity, $cacheKeyPath, $response->getContent());
             }
-            return $response;
-        } else {
-            // headers + content already emitted from cache, no response
-            return null;
         }
+        return $response;
     }
 
     /**

@@ -7,12 +7,11 @@ namespace Mapbender\CoreBundle\Component\Cache;
 use Mapbender\CoreBundle\Component\Exception\NotCachable;
 use Mapbender\CoreBundle\Entity\Application;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Caching service for assorted Mapbender Application-specific raw string data values.
- * Storage backend pluggable via container.
- *
- * First implementation only handles the frontend configuration and defaults to a filesystem backend.
+ * Storage backend separately pluggable via container. First implementation defaults to a filesystem backend.
  *
  * Instance registered in container as mapbender.presenter.application.cache (see services.xml)
  */
@@ -41,20 +40,46 @@ class ApplicationDataService
     }
 
     /**
-     * Sends data directly to the browser if available in cache, including appropriate headers.
-     * If no cached configuration is available, emits nothing and returns false.
+     * Returns cached (and non-stale) data as a single string. If no reusable data is found, returns false.
      *
      * @param Application $application
      * @param string[] $keyPath
-     * @param string $mimeType
-     * @return boolean true if emission performed, false if no cache data available.
+     * @return string|false false if no cache data available.
      */
-    public function emitValue(Application $application, $keyPath, $mimeType)
+    public function getValue(Application $application, $keyPath)
     {
         try {
             $mark = $this->getMark($application);
             $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
-            return $this->backend->emit($fullKeyPath, $mark, $mimeType);
+            return $this->backend->get($fullKeyPath, $mark);
+        } catch (NotCachable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns cached (and non-stale) data baked into a Response with the desired $mimeType. If no
+     * reusable data is found, returns false.
+     *
+     * @param Application $application
+     * @param string[] $keyPath
+     * @param string $mimeType
+     * @return Response|false
+     */
+    public function getResponse(Application $application, $keyPath, $mimeType)
+    {
+        try {
+            $mark = $this->getMark($application);
+            $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
+            $content = $this->backend->get($fullKeyPath, $mark);
+            if ($content === false) {
+                return false;
+            }
+            $response = new Response($content, 200, array(
+                'Content-Type' => $mimeType,
+            ));
+            // @todo: add etag etc
+            return $response;
         } catch (NotCachable $e) {
             return false;
         }
