@@ -50,7 +50,7 @@ class File
     public function put($keyPath, $value, $signature)
     {
         $fullPath = $this->getFullPath($keyPath);
-        @mkdir(dirname($fullPath));
+        @mkdir(dirname($fullPath), 0777, true);
         // Bake the $signature completely into the stored value. This is done to
         // 1) achieve complete atomicity of put / get
         // 2) be independent of various mtime resolutions on various filesystems when using time stamps
