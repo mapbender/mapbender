@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Component\Cache;
 
 
+use Mapbender\CoreBundle\Component\Exception\NotCachable;
 use Mapbender\CoreBundle\Entity\Application;
 use Psr\Log\LoggerInterface;
 
@@ -40,19 +41,6 @@ class ApplicationDataService
     }
 
     /**
-     * Returns, if available in cache, the json-serialized configuration as a single string. If not cached, or cache
-     * held stale non-reusable data, returns boolean false.
-     *
-     * @param Application $application
-     * @return string|false
-     */
-    public function getConfigurationJson(Application $application)
-    {
-        $mark = $this->getMark($application);
-        return $this->backend->get(array($application->getSlug(), 'config.json'), $mark);
-    }
-
-    /**
      * Sends data directly to the browser if available in cache, including appropriate headers.
      * If no cached configuration is available, emits nothing and returns false.
      *
@@ -63,9 +51,13 @@ class ApplicationDataService
      */
     public function emitValue(Application $application, $keyPath, $mimeType)
     {
-        $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
-        $mark = $this->getMark($application);
-        return $this->backend->emit($fullKeyPath, $mark, $mimeType);
+        try {
+            $mark = $this->getMark($application);
+            $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
+            return $this->backend->emit($fullKeyPath, $mark, $mimeType);
+        } catch (NotCachable $e) {
+            return false;
+        }
     }
 
     /**
@@ -75,9 +67,13 @@ class ApplicationDataService
      */
     public function putValue(Application $application, $keyPath, $value)
     {
-        $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
-        $mark = $this->getMark($application);
-        $this->backend->put($fullKeyPath, $value, $mark);
+        try {
+            $mark = $this->getMark($application);
+            $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
+            $this->backend->put($fullKeyPath, $value, $mark);
+        } catch (NotCachable $e) {
+            // do nothing
+        }
     }
 
     /**
@@ -90,9 +86,10 @@ class ApplicationDataService
      */
     protected function getMark(Application $application)
     {
-        $parts = array(
-            $this->containerTimestamp,
-        );
+        $parts = array();
+        if ($this->containerTimestamp !== null) {
+            $parts[] = $this->containerTimestamp;
+        }
         $updated = $application->getUpdated();
         if ($updated) {
             // NOTE: $updated is only available on DB applications, always NULL for yaml applications.
@@ -100,6 +97,9 @@ class ApplicationDataService
             //       because any edit to any application's yml triggers a container re-compilation, which is reflected
             //       in the container timestamp.
             $parts[] = $updated->format('U-u');
+        }
+        if (!$parts) {
+            throw new NotCachable();
         }
         return $parts;
     }
