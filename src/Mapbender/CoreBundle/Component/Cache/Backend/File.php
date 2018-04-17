@@ -17,8 +17,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class File
 {
+    // constants related to internal header construction
+    const H_LENGTHOF_SIGNATURE_LENGTH = 6;
+    const H_LENGTHOF_VALUE_LENGTH = 6;
+
     /** @var string */
     protected $rootPath;
+
+    /**
+     * Lazy-initialized sprintf pattern used to generate the header plus value we place / expect in the file.
+     * @var string|null
+     */
+    protected $storagePattern;
+
 
     public function __construct(ContainerInterface $container)
     {
@@ -44,10 +55,16 @@ class File
         // 1) achieve complete atomicity of put / get
         // 2) be independent of various mtime resolutions on various filesystems when using time stamps
         // 3) support arbitrary (any serializable) signatures instead of just timestamps
+        // We also encode the length of the signature and the data itself in a fixed-length fashion, to ease reading
 
-        // Encode the length of the signature and the data itself in a fixed-length fashion, to ease reading
-        $prefix = sprintf("%6d:%6d:%s:", strlen($signature), strlen($value), $signature);
-        $valueInternal = $prefix . $value;
+        if (!$this->storagePattern) {
+            $this->storagePattern = '%' . static::H_LENGTHOF_SIGNATURE_LENGTH . 'd'
+                                  . ':'
+                                  . '%' . static::H_LENGTHOF_VALUE_LENGTH . 'd'
+                                  // two more placeholders for signature + value
+                                  . ':%s:%s';
+        }
+        $valueInternal = sprintf($this->storagePattern, strlen($signature), strlen($value), $signature, $value);
         @file_put_contents($fullPath, $valueInternal, LOCK_EX);
     }
 
@@ -62,24 +79,35 @@ class File
     {
         $fullPath = $this->getFullPath($keyPath);
 
+        // Header encodes lengths of signature and value plus two semicolon separators
+        $headerLength = static::H_LENGTHOF_SIGNATURE_LENGTH + static::H_LENGTHOF_VALUE_LENGTH + 2;
+        // The absolute minimum length of the whole internal value is the header + empty signature + semicolon + empty value
+        $minimumLength = $headerLength + 2;
+
         $valueInternal = @file_get_contents($fullPath);
-        if (!$valueInternal || strlen($valueInternal) < 16) {
+        if (!$valueInternal || strlen($valueInternal) < $minimumLength) {
             throw new CacheMiss();
         }
-        $header = substr($valueInternal, 0, 14);
-        $signatureLength = intval(substr($header, 0, 6));
-        $cachedSignature = substr($valueInternal, 14, $signatureLength);
+        $header = substr($valueInternal, 0, $headerLength);
+        $signatureLength = intval(substr($header, 0, static::H_LENGTHOF_SIGNATURE_LENGTH));
+        $cachedSignature = substr($valueInternal, $headerLength, $signatureLength);
         if ($cachedSignature === false || $cachedSignature !== $signature) {
             throw new CacheMiss();
         }
-        $valueLength = intval(substr($header, 7, 6));
-        $valueStart = 14 + $signatureLength + 1;
+        // value length is encoded after signature length and a semicolon
+        $valueLengthStart = static::H_LENGTHOF_SIGNATURE_LENGTH + 1;
+        $valueLength = intval(substr($header, $valueLengthStart, static::H_LENGTHOF_VALUE_LENGTH));
+        // value starts after signature plus a semicolon
+        $valueStart = $headerLength + $signatureLength + 1;
         if (strlen($valueInternal) < ($valueStart + $valueLength)) {
+            // file is truncated or otherwise corrupt OR our header formatting constants may have changed
+            // since it was written
             throw new CacheMiss();
         }
 
         $value = substr($valueInternal, $valueStart, $valueLength);
         if ($value === false) {
+            // If substr decides to fail ...
             throw new CacheMiss();
         }
         return $value;
