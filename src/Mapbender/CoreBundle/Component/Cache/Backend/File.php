@@ -20,7 +20,7 @@ class File
 {
     // constants related to internal header construction
     const H_LENGTHOF_SIGNATURE_LENGTH = 6;
-    const H_LENGTHOF_VALUE_LENGTH = 6;
+    const H_LENGTHOF_VALUE_LENGTH = 8;          // <100MB max cachable value length
 
     /** @var string */
     protected $rootPath;
