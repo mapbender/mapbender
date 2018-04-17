@@ -66,25 +66,11 @@ class File
         array_unshift($keyPath, $this->rootPath);
         $fullPath = implode('/', $keyPath);
 
-        $cacheInfo = $this->getInternal($fullPath, $mark);
-        if (!$cacheInfo) {
-            return false;
-        }
         try {
-            $valueLength = $cacheInfo['length'];
-            // NOTE: fread($stream, 0) is a php warning
-            if ($valueLength > 0) {
-                $value = fread($cacheInfo['stream'], $valueLength);
-            } else {
-                $value = '';
-            }
-            flock($cacheInfo['stream'], LOCK_UN);
-            fclose($cacheInfo['stream']);
-            return $value;
-        } catch (\Exception $e) {
-            flock($cacheInfo['stream'], LOCK_UN);
-            fclose($cacheInfo['stream']);
-            throw $e;
+            return $this->getInternal($fullPath, $mark);
+        } catch (CacheMiss $e) {
+            // @todo: should this be allowed to bubble?
+            return false;
         }
     }
 
@@ -103,64 +89,41 @@ class File
         array_unshift($keyPath, $this->rootPath);
         $fullPath = implode('/', $keyPath);
 
-        $cacheInfo = $this->getInternal($fullPath, $mark);
-        if (!$cacheInfo) {
-            return false;
-        }
         try {
+            $value = $this->getInternal($fullPath, $mark);
             header("Content-Type: $mimeType");
-            header("Content-Length: {$cacheInfo['length']}");
-            fpassthru($cacheInfo['stream']);
-            flock($cacheInfo['stream'], LOCK_UN);
-            fclose($cacheInfo['stream']);
+            header("Content-Length: " . strlen($value));
+            echo $value;
             return true;
-        } catch (\Exception $e) {
-            flock($cacheInfo['stream'], LOCK_UN);
-            fclose($cacheInfo['stream']);
-            throw $e;
+        } catch (CacheMiss $e) {
+            return false;
         }
     }
 
     /**
      * @param string $fullPath
      * @param mixed $mark
-     * @return array|false
+     * @return string
      */
     protected function getInternal($fullPath, $mark)
     {
-        $stream = @fopen($fullPath, 'rb');
-        if ($stream === false) {
-            return false;
+        $valueInternal = @file_get_contents($fullPath);
+        if (!$valueInternal || strlen($valueInternal) < 16) {
+            throw new CacheMiss();
         }
-        if (false === flock($stream, LOCK_SH)) {
-            return false;
+        $header = substr($valueInternal, 0, 14);
+        $markLength = intval(substr($header, 0, 6));
+        $markSerialized = serialize($mark);
+        $markPrevious = substr($valueInternal, 14, $markLength);
+        if ($markPrevious === false || $markPrevious !== $markSerialized) {
+            throw new CacheMiss();
         }
-        try {
-            $header = fread($stream, 14);
-            if ($header === false || strlen($header) != 14) {
-                throw new CacheMiss();
-            }
-            $markSerialized = serialize($mark);
-            $markLength = intval(substr($header, 0, 6));
-            $valueLength = intval(substr($header, 7, 6));
+        $valueLength = intval(substr($header, 7, 6));
+        $valueStart = 14 + $markLength + 1;
+        if (strlen($valueInternal) < ($valueStart + $valueLength)) {
+            throw new CacheMiss();
+        }
 
-            $markPrevious = fread($stream, $markLength + 1);
-            if ($markPrevious === false || substr($markPrevious, 0, -1) !== $markSerialized) {
-                throw new CacheMiss();
-            }
-            return array(
-                'length' => $valueLength,
-                'stream' => $stream,
-            );
-        } catch (CacheMiss $e) {
-            flock($stream, LOCK_UN);
-            fclose($stream);
-            return false;
-        } catch (\Exception $e) {
-            // this is something severely wrong, rethrow after release lock + file
-            flock($stream, LOCK_UN);
-            fclose($stream);
-            throw $e;
-        }
+        return substr($valueInternal, $valueStart, $valueLength);
     }
 }
