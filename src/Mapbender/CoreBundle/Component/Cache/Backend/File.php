@@ -38,9 +38,7 @@ class File
      */
     public function put($keyPath, $value, $signature)
     {
-        // prepend root path
-        array_unshift($keyPath, $this->rootPath);
-        $fullPath = implode('/', $keyPath);
+        $fullPath = $this->getFullPath($keyPath);
         @mkdir(dirname($fullPath));
         // Bake the $signature completely into the stored value. This is done to
         // 1) achieve complete atomicity of put / get
@@ -62,24 +60,7 @@ class File
      */
     public function get($keyPath, $signature)
     {
-        try {
-            return $this->getInternal($keyPath, $signature);
-        } catch (CacheMiss $e) {
-            // @todo: should this be allowed to bubble?
-            return false;
-        }
-    }
-
-    /**
-     * @param string[] $keyPath multi-component key
-     * @param string $signature
-     * @return string
-     * @throws CacheMiss
-     */
-    protected function getInternal($keyPath, $signature)
-    {
-        array_unshift($keyPath, $this->rootPath);
-        $fullPath = implode('/', $keyPath);
+        $fullPath = $this->getFullPath($keyPath);
 
         $valueInternal = @file_get_contents($fullPath);
         if (!$valueInternal || strlen($valueInternal) < 16) {
@@ -97,6 +78,21 @@ class File
             throw new CacheMiss();
         }
 
-        return substr($valueInternal, $valueStart, $valueLength);
+        $value = substr($valueInternal, $valueStart, $valueLength);
+        if ($value === false) {
+            throw new CacheMiss();
+        }
+        return $value;
+    }
+
+    /**
+     * @param string[] $keyPath
+     * @return string
+     */
+    protected function getFullPath($keyPath)
+    {
+        // prepend root path
+        array_unshift($keyPath, $this->rootPath);
+        return implode('/', $keyPath);
     }
 }
