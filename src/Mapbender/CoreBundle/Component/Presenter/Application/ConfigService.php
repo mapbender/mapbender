@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
+use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
 use Mapbender\CoreBundle\Component\Element as Element;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
@@ -14,8 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 
 /**
- * Services that generates the frontend-facing configuration for a Mapbender application
- * @todo: plug in caching
+ * Service that generates the frontend-facing configuration for a Mapbender application
  *
  * Instance registerd in container as mapbender.presenter.application.config.service
  *
@@ -34,12 +34,16 @@ class ConfigService
     protected $sourceServices = array();
     /** @var SourceService|null */
     protected $defaultSourceService;
+    /** @var ApplicationDataService */
+    protected $cacheService;
+
 
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->basePresenter = $container->get('mapbender.presenter.application.service');
+        $this->cacheService = $container->get('mapbender.presenter.application.cache');
     }
 
     /**
@@ -269,5 +273,15 @@ class ConfigService
         /** @var LoggerInterface $logger */
         $logger = $this->container->get('logger');
         return $logger;
+    }
+
+    /**
+     * @return ApplicationDataService
+     */
+    public function getCacheService()
+    {
+        /** @var ApplicationDataService $cacheService */
+        $cacheService = $this->container->get('mapbender.presenter.application.cache');
+        return $cacheService;
     }
 }

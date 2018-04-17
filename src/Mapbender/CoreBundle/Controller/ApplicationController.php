@@ -19,6 +19,7 @@ use OwsProxy3\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -226,13 +227,25 @@ class ApplicationController extends Controller
      */
     public function configurationAction($slug)
     {
-        $config  = $this->getApplication($slug)->getConfiguration();
+        $applicationEntity = $this->getApplication($slug)->getEntity();
         $this->get("session")->set("proxyAllowed", true);
-        return new Response(
-            $config,
-            200,
-            array('Content-Type' => 'text/json')
-        );
+        $configService = $this->getConfigService();
+        $cacheService = $configService->getCacheService();
+        $cacheKeyPath = array('config.json');
+        $cachable = !!$this->container->getParameter('cachable.mapbender.application.config');
+        if ($cachable) {
+            $response = $cacheService->getResponse($applicationEntity, $cacheKeyPath, 'application/json');
+        } else {
+            $response = false;
+        }
+        if (!$cachable || !$response) {
+            $freshConfig = $configService->getConfiguration($applicationEntity);
+            $response = new JsonResponse($freshConfig);
+            if ($cachable) {
+                $cacheService->putValue($applicationEntity, $cacheKeyPath, $response->getContent());
+            }
+        }
+        return $response;
     }
 
     /**
