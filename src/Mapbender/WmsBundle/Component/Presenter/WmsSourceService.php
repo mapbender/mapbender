@@ -7,7 +7,6 @@ use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
-use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 
@@ -23,8 +22,36 @@ class WmsSourceService extends SourceService
     {
         return parent::getInnerConfiguration($sourceInstance) + array(
             /** @todo: replace WmsInstanceConfigurationOptions stuff with a local implementation */
-            'options' => WmsInstanceConfigurationOptions::fromEntity($sourceInstance)->toArray(),
+            'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array($this->getRootLayerConfig($sourceInstance)),
+        );
+    }
+
+    public function getOptionsConfiguration(WmsInstance $sourceInstance)
+    {
+        // return WmsInstanceConfigurationOptions::fromEntity($sourceInstance)->toArray();
+        $buffer = max(0, intval($sourceInstance->getBuffer()));
+        $ratio = $sourceInstance->getRatio();
+        if ($ratio !== null) {
+            $ratio = floatval($ratio);
+        }
+
+        return array(
+            'url' => $this->getUrlOption($sourceInstance),
+            'opacity' => ($sourceInstance->getOpacity() / 100),
+            'proxy' => $sourceInstance->getProxy(),
+            'visible' => $sourceInstance->getVisible(),
+            'version' => $sourceInstance->getSource()->getVersion(),
+            'format' => $sourceInstance->getFormat(),
+            'info_format' => $sourceInstance->getInfoformat(),
+            'exception_format' => $sourceInstance->getExceptionformat(),
+            'transparent' => $sourceInstance->getTransparency(),
+            'tiled' => $sourceInstance->getTiled(),
+            'bbox' => $this->getBboxConfiguration($sourceInstance),
+            'vendorspecifics' => $this->getVendorSpecificsConfiguration($sourceInstance),
+            'dimensions' => $this->getDimensionsConfiguration($sourceInstance),
+            'buffer' => $buffer,
+            'ratio' => $ratio,
         );
     }
 
@@ -89,6 +116,97 @@ class WmsSourceService extends SourceService
             }
         }
         return $configuration;
+    }
+
+    public function getUrlOption(WmsInstance $sourceInstance)
+    {
+        $url = $sourceInstance->getSource()->getGetMap()->getHttpGet();
+        $url = $this->addDimensionParameters($sourceInstance, $url);
+        $url = $this->addVendorSpecifics($sourceInstance, $url);
+        return $url;
+    }
+
+    /**
+     * Extend the given $url with parameters from the Dimension defaults set on the given $sourceInstance
+     *
+     * @param WmsInstance $sourceInstance
+     * @param string $url
+     * @return string
+     */
+    public function addDimensionParameters(WmsInstance $sourceInstance, $url)
+    {
+        foreach ($sourceInstance->getDimensions() as $dimension) {
+            if ($dimension->getActive() && $dimension->getDefault()) {
+                $help = array($dimension->getParameterName() => $dimension->getDefault());
+                $url = UrlUtil::validateUrl($url, $help, array());
+            }
+        }
+        return $url;
+    }
+
+    /**
+     * Extend the given $url with vendor specific parameters set on the given $sourceInstance (only "simple" type)
+     *
+     * @param WmsInstance $sourceInstance
+     * @param string $url
+     * @return string
+     */
+    public function addVendorSpecifics(WmsInstance $sourceInstance, $url)
+    {
+        foreach ($sourceInstance->getVendorspecifics() as $key => $vendorspec) {
+            $handler = new VendorSpecificHandler($vendorspec);
+            /* add to url only simple vendor specific with valid default value */
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
+                $help = $handler->getKvpConfiguration(null);
+                $url = UrlUtil::validateUrl($url, $help, array());
+            }
+        }
+        return $url;
+    }
+
+    /**
+     * Return an array mapping srs id : bounding box coordinates
+     *
+     * @param WmsInstance $sourceInstance
+     * @return float[][]
+     */
+    public function getBboxConfiguration(WmsInstance $sourceInstance)
+    {
+        $rootLayer = $sourceInstance->getRootlayer();
+        $boundingBoxMap = array();
+        foreach ($rootLayer->getSourceItem()->getMergedBoundingBoxes() as $bbox) {
+            $boundingBoxMap[$bbox->getSrs()] = $bbox->toCoordsArray();
+        }
+        return $boundingBoxMap;
+    }
+
+    /**
+     * Return the collected configuration arrays from all Dimensions on the given $sourceInstance
+     *
+     * @param WmsInstance $sourceInstance
+     * @return array[]
+     */
+    public function getDimensionsConfiguration(WmsInstance $sourceInstance)
+    {
+        $dimensions = array();
+        foreach ($sourceInstance->getDimensions() as $dimension) {
+            if ($dimension->getActive()) {
+                $dimensions[] = $dimension->getConfiguration();
+            }
+        }
+        return $dimensions;
+    }
+
+    public function getVendorSpecificsConfiguration(WmsInstance $sourceInstance)
+    {
+        $vendorSpecific = array();
+        foreach ($sourceInstance->getVendorspecifics() as $key => $vendorspec) {
+            $handler = new VendorSpecificHandler($vendorspec);
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
+                $vendorSpecific[] = $handler->getConfiguration();
+            }
+        }
+        return $vendorSpecific;
     }
 }
 
