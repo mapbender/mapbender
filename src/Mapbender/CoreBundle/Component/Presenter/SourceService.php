@@ -5,6 +5,8 @@ namespace Mapbender\CoreBundle\Component\Presenter;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -42,5 +44,20 @@ class SourceService
             'configuration' => $innerConfig,
         );
         return $wrappedConfig;
+    }
+
+    /**
+     * NOTE: only WmsInstances have a root layer. SourceInstance does not define this.
+     * @todo: this technically makes this whole class WmsInstance-specific, so it should be renamed / moved
+     *
+     * @param WmsInstance $sourceInstance
+     * @return array
+     */
+    public function getRootLayerConfig(WmsInstance $sourceInstance)
+    {
+        $rootlayer = $sourceInstance->getRootlayer();
+        $entityHandler = new WmsInstanceLayerEntityHandler($this->container, null);
+        $rootLayerConfig = $entityHandler->generateConfiguration($rootlayer);
+        return $rootLayerConfig;
     }
 }

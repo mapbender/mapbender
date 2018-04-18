@@ -2,6 +2,7 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\ORM\EntityManager;
+use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
@@ -232,12 +233,15 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function getConfiguration(Signer $signer = null)
     {
-        $configuration = WmsInstanceConfiguration::entityToArray($this->entity);
+        $configService = $this->getConfigService();
+        $configuration = array(
+            'type' => strtolower($this->entity->getType()),
+            'title' => $this->entity->getTitle(),
+            'isBaseSource' => $this->entity->isBaseSource(),
+            'options' => WmsInstanceConfigurationOptions::fromEntity($this->entity)->toArray(),
+            'children' => array($configService->getRootLayerConfig($this->entity)),
+        );
 
-        $layerConfig = $this->getRootLayerConfig();
-        if ($layerConfig) {
-            $configuration['children'] = array($layerConfig);
-        }
         if (!$this->isConfigurationValid($configuration)) {
             return null;
         }
@@ -280,12 +284,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     {
     }
 
+    /**
+     * @return array
+     * @deprecated, use the service
+     */
     protected function getRootLayerConfig()
     {
-        $rootlayer = $this->entity->getRootlayer();
-        $entityHandler = new WmsInstanceLayerEntityHandler($this->container, null);
-        $rootLayerConfig = $entityHandler->generateConfiguration($rootlayer);
-        return $rootLayerConfig;
+        return $this->getConfigService()->getRootLayerConfig($this->entity);
     }
 
     /**
@@ -434,5 +439,15 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             }
         }
         return false;
+    }
+
+    /**
+     * @return SourceService
+     */
+    protected function getConfigService()
+    {
+        /** @var SourceService $configService */
+        $configService = $this->container->get('mapbender.presenter.source.service');
+        return $configService;
     }
 }

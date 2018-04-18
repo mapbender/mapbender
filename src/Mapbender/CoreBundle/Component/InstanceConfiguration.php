@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\Base\ConfigurationBase;
-use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
 
 /**
  * Description of SourceConfiguration

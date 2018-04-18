@@ -8,7 +8,6 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\VendorSpecific;
-use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**

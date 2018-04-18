@@ -7,15 +7,14 @@ use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
- * Description of WmsInstanceConfiguration
  *
  * @author Paul Schmidt
  *
  * @deprecated this entire class is only used transiently to capture values via its setters, then converted to
- *     array and discared. The sanitization performed along the way is minimal.
+ *     array and discared. The sanitization performed along the way is minimal. The ONLY remaining usage is in
+ *     WmcParser110.
  *
  * @see WmcParser110::parseLayer()
- * @see WmsInstanceEntityHandler::getConfiguration()
  * @internal
  *
  * @property WmsInstanceConfigurationOptions|array $options
