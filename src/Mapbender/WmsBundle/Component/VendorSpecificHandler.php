@@ -10,6 +10,10 @@ use Mapbender\CoreBundle\Utils\EntityUtil;
  * VendorSpecificHandler class for handling of VendorSpecific.
  *
  * @author Paul Schmidt
+ * @deprecated
+ * @internal
+ *
+ * Only used by WmsInstanceEntityHandler
  */
 class VendorSpecificHandler
 {
@@ -27,7 +31,7 @@ class VendorSpecificHandler
 
     /**
      * Sets a vendor specific
-     * @param type $vendorspecific
+     * @param VendorSpecific $vendorspecific
      * @return \Mapbender\WmsBundle\Component\VendorSpecificHandler
      */
     public function setVendorspecific(VendorSpecific $vendorspecific)
@@ -62,7 +66,7 @@ class VendorSpecificHandler
     /**
      * Reterns a vendor specific value
      * @param mixed $object
-     * @return type
+     * @return string|null
      */
     public function getVendorSpecificValue($object)
     {

@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Mapbender\WmsBundle\Component\Dimension;
 
 /**
  * Description of SourceInstanceEntityHandler
@@ -25,7 +26,9 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function setParameters(array $configuration = array());
 
     /**
-     * Creates a SourceInstance
+     * Copies attributes from bound instance's source to the bound instance
+     * @deprecated
+     * If the source is already bound to the instance....
      */
     abstract public function create();
     

@@ -49,6 +49,9 @@ class ArrayUtil
     /**
      * Check if array has a key and return the value, other way set new one and return it.
      *
+     * @deprecated THIS MODIFIES THE ARRAY BY WRITING THE KEY INTO THE KEY NOT THE VALUE YOU HAVE BEEN WARNED
+     * @internal
+     *
      * @param array $arr array
      * @param string $key array key to check for existens
      * @param null  $value default value if key doesn't exists

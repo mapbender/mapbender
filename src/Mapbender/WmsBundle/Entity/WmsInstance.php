@@ -5,7 +5,10 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Component\VendorSpecific;
+use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -147,7 +150,7 @@ class WmsInstance extends SourceInstance
     /**
      * Sets dimensions
      *
-     * @param array $dimensions array of DimensionIst
+     * @param DimensionInst[] $dimensions
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
     public function setDimensions(array $dimensions)
@@ -157,7 +160,7 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * @return VendorSpecific[]|DimensionInst[]
+     * @return VendorSpecific[]
      */
     public function getVendorspecifics()
     {
@@ -170,7 +173,7 @@ class WmsInstance extends SourceInstance
 
     /**
      * Sets vendorspecifics
-     * @param ArrayCollection $vendorspecifics array of DimensionIst
+     * @param ArrayCollection|DimensionInst[]|VendorSpecific[] $vendorspecifics
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
     public function setVendorspecifics(array $vendorspecifics)
@@ -528,7 +531,7 @@ class WmsInstance extends SourceInstance
     /**
      * Add layers
      *
-     * @param WmsInstanceLayer $layers
+     * @param WmsInstanceLayer $layer
      * @return WmsInstance
      */
     public function addLayer(WmsInstanceLayer $layer)
@@ -574,5 +577,29 @@ class WmsInstance extends SourceInstance
     public function getMetadata()
     {
         return new WmsMetadata($this);
+    }
+
+    /**
+     * @param WmsSource $source
+     */
+    public function populateFromSource(WmsSource $source)
+    {
+        $this->setTitle($source->getTitle());
+        $this->setFormat(ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), null, 0));
+        $this->setInfoformat(
+            ArrayUtil::getValueFromArray(
+                $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(),
+                null,
+                0
+            )
+        );
+        $this->setExceptionformat(ArrayUtil::getValueFromArray($source->getExceptionFormats(), null, 0));
+
+        $this->setDimensions($source->dimensionInstancesFactory());
+        // @todo: ??? why? is that safe?
+        $this->setWeight(-1);
+
+        $newRootLayer = new WmsInstanceLayer();
+        $newRootLayer->populateFromSource($this, $source->getRootLayer());
     }
 }

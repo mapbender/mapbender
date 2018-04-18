@@ -85,26 +85,19 @@ class EntityHandler
     /**
      * @param ContainerInterface $container
      * @param  Source|SourceInstance|object $entity
-     * @return SourceInstanceEntityHandler|null
+     * @return static|null
+     * @todo: never return null
      */
     public static function createHandler(ContainerInterface $container, $entity)
     {
-        $bundles            = $container->get('kernel')->getBundles();
-        $reflect            = new \ReflectionClass($entity);
         $entityClass        = ClassUtils::getClass($entity);
-        $entityBundleFolder = substr($entityClass, 0, strpos($entityClass, '\\Entity\\'));
-        $entityName         = $reflect->getShortName();
-        foreach ($bundles as $type => $bundle) {
-            if (strpos( get_class($bundle), $entityBundleFolder) === 0) {
-                $handlerClass = $entityBundleFolder . '\\Component\\' . $entityName . 'EntityHandler';
-                if (class_exists($handlerClass)) {
-                    return new $handlerClass($container, $entity);
-                } else {
-                    return null;
-                }
-            }
+        $handlerClass = str_replace('\\Entity\\', '\\Component\\', $entityClass) . 'EntityHandler';
+
+        if (class_exists($handlerClass)) {
+            return new $handlerClass($container, $entity);
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**

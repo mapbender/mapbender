@@ -227,7 +227,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
 
     /**
      *
-     * @return ArrayCollection
+     * @return ArrayCollection|WmsLayerSource[]
      */
     public function getSublayer()
     {
@@ -469,7 +469,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get latlonBounds
      *
-     * @return Object
+     * @return BoundingBox
      */
     public function getLatlonBounds($inherit = false)
     {
@@ -1020,5 +1020,21 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function __toString()
     {
         return (string)$this->id;
+    }
+
+    /**
+     * Returns a merged array of the latlon bounds (if set) and other bounding boxes.
+     * This is used by the *EntityHandler machinery frontend config generation.
+     *
+     * @return BoundingBox[]
+     */
+    public function getMergedBoundingBoxes()
+    {
+        $bboxes = array();
+        $latLonBounds = $this->getLatlonBounds();
+        if ($latLonBounds) {
+            $bboxes[] = $latLonBounds;
+        }
+        return array_merge($bboxes, $this->getBoundingBoxes());
     }
 }
