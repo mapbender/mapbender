@@ -1329,5 +1329,17 @@ Mapbender.Model = {
                 }
             });
         }
+    },
+    getZoomFromScale: function(scale){
+
+        for(var i =0; i < Mapbender.Model.map.olMap.scales.length; i++){
+            if(Math.round(parseFloat(Mapbender.Model.map.olMap.scales[i])) === Math.round(scale)) {
+                return i;
+            }
+        }
+        return null;
+    },
+    getScaleFromZoom: function(zoom){
+        return Mapbender.Model.map.olMap.scales[zoom] ? parseFloat(Mapbender.Model.map.olMap.scales[zoom]) : -1;
     }
 };

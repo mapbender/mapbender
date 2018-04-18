@@ -108,7 +108,12 @@
                 }
 
                 if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function'){
-                    var layerConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
+                    var layerConf = Mapbender.source[sources[i].type].getPrintConfig(
+                        layer.olLayer,
+                        this.map.map.olMap.getExtent(),
+                        this.map.map.olMap.getScale(),
+                        sources[i].configuration.options.proxy
+                    );
                     layerConf.opacity = sources[i].configuration.options.opacity;
                     layers[num] = layerConf;
                     num++;
@@ -161,6 +166,8 @@
                 var format = $("input[name='imageformat']:checked").val();
 
                 var data = {
+                    scale: this.map.map.olMap.getScale(),
+                    bbox: mapExtent.toArray(),
                     requests: layers,
                     format: format,
                     width: imageSize.w,
