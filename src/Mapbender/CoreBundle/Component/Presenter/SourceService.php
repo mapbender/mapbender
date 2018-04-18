@@ -133,8 +133,7 @@ class SourceService
     }
 
     /**
-     * After generating a configuration array, this method can make decisions about URL obfuscation etc.
-     * E.g. this implementation changes public urls to use the instance tunnel if they contain sensitive parameters.
+     * After generating a configuration array, this method can perform validation and adjustments.
      *
      * @param WmsInstance $sourceInstance
      * @param mixed[] $configuration
@@ -146,7 +145,23 @@ class SourceService
             // @todo: Figure out why null. This is never checked. Won't this just cause errors elsewhere?
             return null;
         }
+        $configuration = $this->postProcessUrls($sourceInstance, $configuration);
 
+        $status = $sourceInstance->getSource()->getStatus();
+        $configuration['status'] = $status && $status === Source::STATUS_UNREACHABLE ? 'error' : 'ok';
+        return $configuration;
+    }
+
+    /**
+     * @todo: tunnel vs no-tunnel based on "sensitive" VendorSpecifics may not be cachable, investigate
+     *
+     * @param WmsInstance $sourceInstance
+     * @param mixed[] $configuration
+     * @return mixed[] modified configuration
+     */
+    public function postProcessUrls(WmsInstance $sourceInstance, $configuration)
+    {
+        $user = $this->container->get('security.context')->getToken()->getUser();
         $hide = false;
         $params = array();
         foreach ($sourceInstance->getVendorspecifics() as $key => $vendorspec) {
@@ -154,7 +169,6 @@ class SourceService
             if ($handler->isVendorSpecificValueValid()) {
                 if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE ||
                     ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE && !$vendorspec->getHidden())) {
-                    $user = $this->container->get('security.context')->getToken()->getUser();
                     $params = array_merge($params, $handler->getKvpConfiguration($user));
                 } else {
                     $hide = true;
@@ -173,8 +187,6 @@ class SourceService
                 $this->proxifyUrls($configuration['children'][0]);
             }
         }
-        $status = $sourceInstance->getSource()->getStatus();
-        $configuration['status'] = $status && $status === Source::STATUS_UNREACHABLE ? 'error' : 'ok';
         return $configuration;
     }
 
