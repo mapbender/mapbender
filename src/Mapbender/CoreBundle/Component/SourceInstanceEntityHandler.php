@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
+use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
@@ -65,10 +67,20 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     protected function getTunnel()
     {
         if (!$this->tunnel) {
-            /** @var InstanceTunnelService $tunnelService */
-            $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
-            $this->tunnel = $tunnelService->makeEndpoint($this->entity);
+            $this->tunnel = $this->getConfigService()->makeTunnelEndpoint($this->entity);
         }
         return $this->tunnel;
+    }
+
+    /**
+     * Returns a source config generating service appropriate for the bound source instance (polymorphic).
+     *
+     * @return SourceService
+     */
+    protected function getConfigService()
+    {
+        /** @var ConfigService $applicationConfigService */
+        $applicationConfigService = $this->container->get('mapbender.presenter.application.config.service');
+        return $applicationConfigService->getSourceService($this->entity);
     }
 }
