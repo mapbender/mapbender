@@ -227,22 +227,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
     /**
      * @inheritdoc
+     * @deprecated, use the appropriate service directly
      */
     public function getConfiguration(Signer $signer = null)
     {
         $configService = $this->getConfigService();
-        $configuration = array(
-            'type' => strtolower($this->entity->getType()),
-            'title' => $this->entity->getTitle(),
-            'isBaseSource' => $this->entity->isBaseSource(),
-            'options' => WmsInstanceConfigurationOptions::fromEntity($this->entity)->toArray(),
-            'children' => array($configService->getRootLayerConfig($this->entity)),
-        );
-
-        if (!$configService->validateInnerConfiguration($configuration)) {
-            return null;
-        }
-        return $this->getConfigService()->postProcess($this->entity, $configuration);
+        return $configService->getConfiguration($this->entity);
     }
 
     /**
@@ -255,7 +245,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
     /**
      * @return array
-     * @deprecated, use the service
+     * @deprecated, use the service directly
      */
     protected function getRootLayerConfig()
     {

@@ -5,12 +5,12 @@ namespace Mapbender\CoreBundle\Component\Presenter;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
-use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
+use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -41,15 +41,37 @@ class SourceService
      */
     public function getConfiguration(SourceInstance $sourceInstance)
     {
-        // @todo: make this awesome
-        $handler = SourceInstanceEntityHandler::createHandler($this->container, $sourceInstance);
-        $innerConfig = $handler->getConfiguration($this->signer);
+        $innerConfig = $this->getInnerConfiguration($sourceInstance);
         $wrappedConfig = array(
             'type'          => strtolower($sourceInstance->getType()),
             'title'         => $sourceInstance->getTitle(),
             'configuration' => $innerConfig,
         );
         return $wrappedConfig;
+    }
+
+    /**
+     * Generates the contents of the top-level "configuration" sub-key
+     * @see getConfiguration
+     * @todo: do away with inner and outer configs, it's confusing and not beneficial
+     * @todo: this is now WmsInstance-specific, because only WmsInstance has a root layer
+     *        Either SourceInstance must absorb the root layer concept, or this hierarchy must split
+     *
+     * @param WmsInstance $sourceInstance
+     * @return mixed[]|null
+     */
+    public function getInnerConfiguration(WmsInstance $sourceInstance)
+    {
+        $configuration = array(
+            'type' => strtolower($sourceInstance->getType()),
+            'title' => $sourceInstance->getTitle(),
+            'isBaseSource' => $sourceInstance->isBaseSource(),
+            /** @todo: replace WmsInstanceConfigurationOptions stuff with a local implementation */
+            'options' => WmsInstanceConfigurationOptions::fromEntity($sourceInstance)->toArray(),
+            'children' => array($this->getRootLayerConfig($sourceInstance)),
+        );
+
+        return $this->postProcessInnerConfiguration($sourceInstance, $configuration);
     }
 
     /**
@@ -118,8 +140,13 @@ class SourceService
      * @param mixed[] $configuration
      * @return mixed[]
      */
-    public function postProcess(WmsInstance $sourceInstance, $configuration)
+    public function postProcessInnerConfiguration(WmsInstance $sourceInstance, $configuration)
     {
+        if (!$this->validateInnerConfiguration($configuration)) {
+            // @todo: Figure out why null. This is never checked. Won't this just cause errors elsewhere?
+            return null;
+        }
+
         $hide = false;
         $params = array();
         foreach ($sourceInstance->getVendorspecifics() as $key => $vendorspec) {
