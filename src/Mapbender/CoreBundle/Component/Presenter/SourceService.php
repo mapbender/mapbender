@@ -7,22 +7,15 @@ use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Utils\UrlUtil;
-use Mapbender\WmsBundle\Component\VendorSpecific;
-use Mapbender\WmsBundle\Component\VendorSpecificHandler;
-use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
-use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
-use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Generator for frontend-facing configuration for SourceInstance entities.
  * Plugged into Application\ConfigService as the default generator.
- * May only support WmsInstance entities.
+ * Base class for atm the only shipping concrete implementation: @see WmsSourceService
  *
- * Instance registered in container as mapbender.presenter.source.service, see services.xml
  */
-class SourceService
+abstract class SourceService
 {
     /** @var ContainerInterface */
     protected $container;
@@ -42,6 +35,7 @@ class SourceService
     public function getConfiguration(SourceInstance $sourceInstance)
     {
         $innerConfig = $this->getInnerConfiguration($sourceInstance);
+        $innerConfig = $this->postProcessInnerConfiguration($sourceInstance, $innerConfig);
         $wrappedConfig = array(
             'type'          => strtolower($sourceInstance->getType()),
             'title'         => $sourceInstance->getTitle(),
@@ -57,21 +51,16 @@ class SourceService
      * @todo: this is now WmsInstance-specific, because only WmsInstance has a root layer
      *        Either SourceInstance must absorb the root layer concept, or this hierarchy must split
      *
-     * @param WmsInstance $sourceInstance
+     * @param SourceInstance $sourceInstance
      * @return mixed[]|null
      */
-    public function getInnerConfiguration(WmsInstance $sourceInstance)
+    public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
-        $configuration = array(
+        return array(
             'type' => strtolower($sourceInstance->getType()),
             'title' => $sourceInstance->getTitle(),
             'isBaseSource' => $sourceInstance->isBaseSource(),
-            /** @todo: replace WmsInstanceConfigurationOptions stuff with a local implementation */
-            'options' => WmsInstanceConfigurationOptions::fromEntity($sourceInstance)->toArray(),
-            'children' => array($this->getRootLayerConfig($sourceInstance)),
         );
-
-        return $this->postProcessInnerConfiguration($sourceInstance, $configuration);
     }
 
     /**
@@ -118,75 +107,21 @@ class SourceService
     }
 
     /**
-     * NOTE: only WmsInstances have a root layer. SourceInstance does not define this.
-     * @todo: this technically makes this whole class WmsInstance-specific, so it should be renamed / moved
-     *
-     * @param WmsInstance $sourceInstance
-     * @return array
-     */
-    public function getRootLayerConfig(WmsInstance $sourceInstance)
-    {
-        $rootlayer = $sourceInstance->getRootlayer();
-        $entityHandler = new WmsInstanceLayerEntityHandler($this->container, null);
-        $rootLayerConfig = $entityHandler->generateConfiguration($rootlayer);
-        return $rootLayerConfig;
-    }
-
-    /**
      * After generating a configuration array, this method can perform validation and adjustments.
+     * Returns null on error, otherwise the (potentially modified) configuration.
      *
-     * @param WmsInstance $sourceInstance
+     * @param SourceInstance $sourceInstance
      * @param mixed[] $configuration
-     * @return mixed[]
+     * @return mixed[]|null
      */
-    public function postProcessInnerConfiguration(WmsInstance $sourceInstance, $configuration)
+    public function postProcessInnerConfiguration(SourceInstance $sourceInstance, $configuration)
     {
         if (!$this->validateInnerConfiguration($configuration)) {
             // @todo: Figure out why null. This is never checked. Won't this just cause errors elsewhere?
             return null;
         }
-        $configuration = $this->postProcessUrls($sourceInstance, $configuration);
-
         $status = $sourceInstance->getSource()->getStatus();
         $configuration['status'] = $status && $status === Source::STATUS_UNREACHABLE ? 'error' : 'ok';
-        return $configuration;
-    }
-
-    /**
-     * @todo: tunnel vs no-tunnel based on "sensitive" VendorSpecifics may not be cachable, investigate
-     *
-     * @param WmsInstance $sourceInstance
-     * @param mixed[] $configuration
-     * @return mixed[] modified configuration
-     */
-    public function postProcessUrls(WmsInstance $sourceInstance, $configuration)
-    {
-        $user = $this->container->get('security.context')->getToken()->getUser();
-        $hide = false;
-        $params = array();
-        foreach ($sourceInstance->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            if ($handler->isVendorSpecificValueValid()) {
-                if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE ||
-                    ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE && !$vendorspec->getHidden())) {
-                    $params = array_merge($params, $handler->getKvpConfiguration($user));
-                } else {
-                    $hide = true;
-                }
-            }
-        }
-        if ($hide || $sourceInstance->getSource()->getUsername()) {
-            $url = $this->makeTunnelEndpoint($sourceInstance)->getPublicBaseUrl();
-            $configuration['options']['url'] = UrlUtil::validateUrl($url, $params, array());
-            // remove ows proxy for a tunnel connection
-            $configuration['options']['tunnel'] = true;
-        } elseif ($this->signer) {
-            $configuration['options']['url'] = UrlUtil::validateUrl($configuration['options']['url'], $params, array());
-            $configuration['options']['url'] = $this->signer->signUrl($configuration['options']['url']);
-            if ($sourceInstance->getProxy()) {
-                $this->proxifyUrls($configuration['children'][0]);
-            }
-        }
         return $configuration;
     }
 
@@ -196,7 +131,7 @@ class SourceService
      *
      * @param $layerConfig
      */
-    protected function proxifyUrls($layerConfig)
+    protected function signLayerUrls($layerConfig)
     {
         if (isset($layerConfig['options']['legend'])) {
             if (isset($layerConfig['options']['legend']['graphic'])) {
@@ -207,7 +142,7 @@ class SourceService
         }
         if (isset($layerConfig['children'])) {
             foreach ($layerConfig['children'] as &$child) {
-                $this->proxifyUrls($child);
+                $this->signLayerUrls($child);
             }
         }
     }
