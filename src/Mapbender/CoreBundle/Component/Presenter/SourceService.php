@@ -53,6 +53,49 @@ class SourceService
     }
 
     /**
+     * Validate the contents of the top-level "configuration" sub-key / aka "innerConfig"
+     * @todo: do away with inner and outer configs, it's confusing and not beneficial
+     *
+     * @param mixed[] $configuration
+     * @return boolean true if a configuration is valid otherwise false
+     */
+    public function validateInnerConfiguration($configuration)
+    {
+        // TODO another tests for instance configuration
+        /* check if root exists and has children */
+        if (count($configuration['children']) !== 1 || !isset($configuration['children'][0]['children'])) {
+            return false;
+        } else {
+            foreach ($configuration['children'][0]['children'] as $childConfig) {
+                if ($this->validateLayerConfiguration($childConfig)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Validate generated layer configuration, recursively.
+     *
+     * @param mixed[] $configuration
+     * @return bool
+     */
+    public function validateLayerConfiguration($configuration)
+    {
+        if (isset($configuration['children'])) { // > 2 simple layers -> OK.
+            foreach ($configuration['children'] as $childConfig) {
+                if ($this->validateLayerConfiguration($childConfig)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * NOTE: only WmsInstances have a root layer. SourceInstance does not define this.
      * @todo: this technically makes this whole class WmsInstance-specific, so it should be renamed / moved
      *

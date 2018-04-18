@@ -239,7 +239,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             'children' => array($configService->getRootLayerConfig($this->entity)),
         );
 
-        if (!$this->isConfigurationValid($configuration)) {
+        if (!$configService->validateInnerConfiguration($configuration)) {
             return null;
         }
         return $this->getConfigService()->postProcess($this->entity, $configuration);
@@ -353,39 +353,5 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $dimensions[] = $dimension;
         }
         return $dimensions;
-    }
-
-    /**
-     * Checks if a configuraiton is valid.
-     * @param array $configuration configuration of an instance or a layer
-     * @param boolean $isLayer if it is a layer's configurationis it a layer's configuration?
-     * @return boolean true if a configuration is valid otherwise false
-     */
-    private function isConfigurationValid(array $configuration, $isLayer = false)
-    {
-        if (!$isLayer) {
-            // TODO another tests for instance configuration
-            /* check if root exists and has children */
-            if (count($configuration['children']) !== 1 || !isset($configuration['children'][0]['children'])) {
-                return false;
-            } else {
-                foreach ($configuration['children'][0]['children'] as $childConfig) {
-                    if ($this->isConfigurationValid($childConfig, true)) {
-                        return true;
-                    }
-                }
-            }
-        } else {
-            if (isset($configuration['children'])) { // > 2 simple layers -> OK.
-                foreach ($configuration['children'] as $childConfig) {
-                    if ($this->isConfigurationValid($childConfig, true)) {
-                        return true;
-                    }
-                }
-            } else {
-                return true;
-            }
-        }
-        return false;
     }
 }
