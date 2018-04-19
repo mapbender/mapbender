@@ -13,6 +13,16 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class WmsInstanceInstanceLayersType extends AbstractType
 {
+    /** @var bool */
+    protected $exposeLayerOrder;
+
+    /**
+     * @param bool $exposeLayerOrder to expose layer order controls; from parameter mapbender.preview.layer_order.wms
+     */
+    public function __construct($exposeLayerOrder = false)
+    {
+        $this->exposeLayerOrder = $exposeLayerOrder;
+    }
 
     /**
      * @inheritdoc
@@ -111,15 +121,17 @@ class WmsInstanceInstanceLayersType extends AbstractType
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
                     'num_layers' => count($wmsinstance->getLayers()))));
 
-        $layerOrderChoices = array();
-        foreach (WmsInstance::validLayerOrderChoices() as $validChoice) {
-            $translationKey = "mb.wms.wmsloader.repo.instance.label.layerOrder.$validChoice";
-            $layerOrderChoices[$validChoice] = $translationKey;
+        if ($this->exposeLayerOrder) {
+            $layerOrderChoices = array();
+            foreach (WmsInstance::validLayerOrderChoices() as $validChoice) {
+                $translationKey = "mb.wms.wmsloader.repo.instance.label.layerOrder.$validChoice";
+                $layerOrderChoices[$validChoice] = $translationKey;
+            }
+            $builder->add('layerOrder', 'choice', array(
+                'choices' => $layerOrderChoices,
+                'required' => true,
+                'auto_initialize' => true,
+            ));
         }
-        $builder->add('layerOrder', 'choice', array(
-            'choices' => $layerOrderChoices,
-            'required' => true,
-            'auto_initialize' => true,
-        ));
     }
 }

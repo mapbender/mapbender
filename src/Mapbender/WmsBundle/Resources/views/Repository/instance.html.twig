@@ -69,10 +69,12 @@
         {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.tiled"|trans}}</label>
         </div>
         <div class="clear"></div>
+        {% if form.layerOrder is defined %}
         <div class="left">
           {{ form_label(form.layerOrder, 'mb.wms.wmsloader.repo.instance.label.layerOrder', {}) }}{{ form_widget(form.layerOrder) }}
         </div>
         <div class="clear"></div>
+        {% endif %}
       </div>
       <div class="extendedGroup">
         {% if form.dimensions is not null and form.dimensions | length > 0 %}
