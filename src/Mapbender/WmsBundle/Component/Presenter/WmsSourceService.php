@@ -4,6 +4,7 @@
 namespace Mapbender\WmsBundle\Component\Presenter;
 
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
@@ -209,5 +210,35 @@ class WmsSourceService extends SourceService
         }
         return $vendorSpecific;
     }
-}
 
+    /**
+     * @param WmsInstance $sourceInstance
+     * @todo: This belongs in the repository layer. TBD if we can access the container / other services there.
+     */
+    public function initializeInstance(WmsInstance $sourceInstance)
+    {
+        parent::initializeInstance($sourceInstance);
+        $this->initializeLayerOrder($sourceInstance);
+    }
+
+    /**
+     * Initialize layer order if a default is configured. This configuration is optional. It's only applied to
+     * NEW WmsInstances. The parameter key for this default value is wms.default_layer_order (can be set in
+     * parameters.yml / xml configs).
+     *
+     * @param WmsInstance $sourceInstance
+     */
+    public function initializeLayerOrder(WmsInstance $sourceInstance)
+    {
+        $layerOrderDefaultKey = 'wms.default_layer_order';
+        if ($this->container->hasParameter($layerOrderDefaultKey)) {
+            $configuredDefaultLayerOrder = $this->container->getParameter($layerOrderDefaultKey);
+            $sourceInstance->setLayerOrder($configuredDefaultLayerOrder);
+        }
+        /**
+         * NOTE: the entity has a built-in default, so new instances will work fine even without setting
+         *       layer order explicitly
+         * @see WmsInstance::getLayerOrder()
+         */
+    }
+}

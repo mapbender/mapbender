@@ -86,28 +86,8 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                 $num++;
             }
         }
-        $this->initializeLayerOrder($instance);
+        $this->initializeSourceInstance($instance);
         return $instance;
-    }
-
-    /**
-     * Populates the layer order of an (assumed) newly created WmsInstance.
-     * @param WmsInstance $entity
-     * @internal
-     * @todo: This is copy&pasted from WmsInstanceEntityHandler (disjoint hierarchy) and really belongs in a service
-     */
-    protected function initializeLayerOrder(WmsInstance $entity)
-    {
-        $layerOrderDefaultKey = 'wms.default_layer_order';
-        if ($this->container->hasParameter($layerOrderDefaultKey)) {
-            $configuredDefaultLayerOrder = $this->container->getParameter($layerOrderDefaultKey);
-            $entity->setLayerOrder($configuredDefaultLayerOrder);
-        }
-        /**
-         * NOTE: the entity has a built-in default, so new instances will work fine even without setting
-         *       layer order explicitly
-         * @see WmsInstance::getLayerOrder()
-         */
     }
 
     /**

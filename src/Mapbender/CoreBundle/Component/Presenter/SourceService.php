@@ -157,4 +157,16 @@ abstract class SourceService
         $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
         return $tunnelService->makeEndpoint($sourceInstance);
     }
+
+    /**
+     * Perform post-creation setup of a new SourceInstance entity.
+     * The base implementation does nothing. Different types of source instances should perform necessary setup in an
+     * override.
+     *
+     * @param SourceInstance $sourceInstance
+     * @todo: This belongs in the repository layer. TBD if we can access the container / other services there.
+     */
+    public function initializeInstance(SourceInstance $sourceInstance)
+    {
+    }
 }
