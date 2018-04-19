@@ -14,7 +14,9 @@
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
         <parameter key="mapbender.presenter.application.cache.class">Mapbender\CoreBundle\Component\Cache\ApplicationDataService</parameter>
         <parameter key="mapbender.presenter.application.cache.backend.class">Mapbender\CoreBundle\Component\Cache\Backend\File</parameter>
-        <parameter key="cachable.mapbender.application.config">true</parameter>
+        <!-- Application config caching disabled because we have identified some parts of the configuration may depend on current user
+             Caching machinery can only be safely enabled after these cases have been adressed properly -->
+        <parameter key="cachable.mapbender.application.config">false</parameter>
     </parameters>
 
     <services>
