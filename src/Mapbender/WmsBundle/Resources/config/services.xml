@@ -16,7 +16,7 @@
         <service id="mapbender.presenter.source.wms.service" class="%mapbender.presenter.source.wms.service.class%">
             <argument type="service" id="service_container" />
         </service>
+        <!-- wms service is the shipping default, unless changed by an optionally installed bundle -->
         <service id="mapbender.presenter.source.service" alias="mapbender.presenter.source.wms.service" />
     </services>
 </container>
-

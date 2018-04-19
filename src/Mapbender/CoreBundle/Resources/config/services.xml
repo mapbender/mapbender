@@ -114,13 +114,7 @@
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
             <argument type="service" id="service_container" />
             <call method="setDefaultSourceService">
-                <!-- alias of wms service -->
-                <argument type="service" id="mapbender.presenter.source.service" />
-            </call>
-            <call method="addSourceService">
-                <argument>wms</argument>
-                <!-- defined in WmsBundle; still figuring out how to call method outside of the service definition -->
-                <argument type="service" id="mapbender.presenter.source.wms.service" />
+                <argument>mapbender.presenter.source.service</argument>
             </call>
         </service>
         <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">
