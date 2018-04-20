@@ -1,6 +1,7 @@
 # Changelog
 
 * **v3.0.5.4**
+    - Support reversible layer order per WMS source instance (new dropdown application backend section "Layersets")
     - Support WMS keywords > 255 characters; needs app/console doctrine:schema:update for running installations
     - Extend WmsLoader WMS service compatibility, now matches backend
     - Update WmsLoader example URL to https

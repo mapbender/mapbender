@@ -9,7 +9,7 @@
         <!-- set this to true in your parameters.yml to expose DimensionsHandler element -->
         <parameter key="mapbender.preview.element.dimensionshandler">false</parameter>
         <!-- set this to true in your parameters.yml to enable layer order control in "Layersets" backend -->
-        <parameter key="mapbender.preview.layer_order.wms">false</parameter>
+        <parameter key="mapbender.preview.layer_order.wms">true</parameter>
     </parameters>
     <services>
         <service id="mapbender.importer.source.wms.service" class="%mapbender.importer.source.wms.service.class%">
