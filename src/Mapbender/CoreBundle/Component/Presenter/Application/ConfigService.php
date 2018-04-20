@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -17,12 +18,14 @@ use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 /**
  * Service that generates the frontend-facing configuration for a Mapbender application
  *
- * Instance registerd in container as mapbender.presenter.application.config.service
+ * Instance registerd in container as mapbender.presenter.application.config.service, see services.xml
  *
- * Handlers for polymorphic source instance types pluggable and extensible via services.xml <call> tags to
+ * Handlers for polymorphic source instance types pluggable and extensible by injecting method calls to
  * * @see ConfigService::setDefaultSourceService
  * * @see ConfigService::addSourceService
- * See CoreBundle/Resources/config/services.xml for the default setup
+ *
+ * This should be done in a DI compiler pass (extending service definition via XML / YAML does not work across bundles)
+ * @see RegisterWmsSourceServicePass for a working example
  */
 class ConfigService
 {
@@ -196,7 +199,41 @@ class ConfigService
             $message = 'No config generator available for source instance type ' . print_r($key, true);
             throw new \RuntimeException($message);
         }
+        // lazy-get services plugged as service id strings; this avoids circular dependencies in container
+        // building extensions
+        if (is_string($service)) {
+            $service = $this->container->get($service);
+            // NOTE: The service id may have come from $this->defaultSourceService.
+            //       This is harmless. The sourceServices array is checked first, and the worst that can happen
+            //       is that we create an implicit entry for every type that uses the default service.
+            $this->sourceServices[$key] = $service;
+        }
         return $service;
+    }
+
+    /**
+     * Adds (or replaces) the sub-service for generating configuration for specific types of source instances.
+     *
+     * Provided as a post-constructor customization hook. Should call from a DI compiler pass to plug in
+     * support for new source types.
+     *
+     * @see RegisterWmsSourceServicePass for a working example
+     *
+     * @param string $instanceType
+     * @param SourceService|string $service service instance or the service id string (for lazy evaluation)
+     */
+    public function addSourceService($instanceType, $service)
+    {
+        if (!$instanceType || !is_string($instanceType)) {
+            throw new \InvalidArgumentException('Empty / non-string instanceType ' . print_r($instanceType));
+        }
+        $key = strtolower($instanceType);
+        $service = $this->validateSourceServiceType($service, true);
+        if (!$service) {
+            unset($this->sourceServices[$key]);
+        } else {
+            $this->sourceServices[$key] = $service;
+        }
     }
 
     /**
@@ -204,37 +241,41 @@ class ConfigService
      * service is used as the fallback if the specific type ("wms") has not been explicitly wired to a
      * specialized service via @see addSourceService
      *
-     * Provided as a post-constructor customization hook. Should be called exclusively from a services.xml, e.g.
-     *   <call method="setDefaultSourceService">
-     *      <argument type="service" id="your.replacement.service.id" />
-     *   </call>
+     * The default is set via services.xml. This should not require compiler pass DI, though that's possible, too.
      *
-     * @param SourceService|null $service
+     * @param SourceService|string $service
      */
-    public function setDefaultSourceService(SourceService $service = null)
+    public function setDefaultSourceService($service = null)
     {
-        $this->defaultSourceService = $service;
+        $this->defaultSourceService = $this->validateSourceServiceType($service, true);
     }
 
     /**
-     * Adds (or replaces) the sub-service for generating configuration for specific types of source instances.
+     * Validates / restricts given source service reference to a usable type. Allowed here:
+     * * string (interpreted as a service id for lazy evaluation)
+     * * SourceService instance
+     * * falsy ONLY IF $allowEmpty = false (will be cast to null), otherwise throws
+     * Returns the input, falsy converted to null.
      *
-     * Provided as a post-constructor customization hook. Should call from a services.xml, e.g.
-     *   <call method="addSourceService">
-     *      <argument>wmts</argument>
-     *      <argument type="service" id="your.wmts.config.generating.service.id" />
-     *   </call>
-     *
-     * @param string $instanceType
-     * @param SourceService|null $service
+     * @param mixed $serviceOrId
+     * @param boolean $allowEmpty
+     * @return SourceService|string|null
+     * @throws \InvalidArgumentException if unsupported input type, or input empty and $allowEmpty false
      */
-    public function addSourceService($instanceType, SourceService $service)
+    protected function validateSourceServiceType($serviceOrId, $allowEmpty)
     {
-        if (!$instanceType || !is_string($instanceType)) {
-            throw new \InvalidArgumentException('Empty / non-string instanceType ' . print_r($instanceType));
+        if (!$serviceOrId) {
+            if (!$allowEmpty) {
+                throw new \InvalidArgumentException("Empty source service reference not allowed in this context");
+            }
+            return null;
+        } else {
+            if (!is_string($serviceOrId) && !($serviceOrId instanceof SourceService)) {
+                $type = is_object($serviceOrId) ? get_class($serviceOrId) : gettype($serviceOrId);
+                throw new \InvalidArgumentException("Unsupported type {$type}, must be string or SourceService");
+            }
+            return $serviceOrId;
         }
-        $key = strtolower($instanceType);
-        $this->sourceServices[$key] = $service;
     }
 
     /**

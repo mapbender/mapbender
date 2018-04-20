@@ -13,9 +13,9 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
  *
  * @deprecated this entire class is only used transiently to capture values via its setters, then converted to
  *     array and discared. The sanitization performed along the way is minimal.
+ *     The only remaining use is in WmcParser110.
  *
  * @see WmcParser110::parseLayer()
- * @see WmsInstanceEntityHandler::getConfiguration()
  * @see WmsInstanceConfiguration::fromEntity()
  * @internal
  */

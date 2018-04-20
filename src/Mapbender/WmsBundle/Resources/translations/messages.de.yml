@@ -80,6 +80,9 @@ mb:
             cancel2: Abbrechen
             ratio: BBOX-Faktor
             buffer: Kachel-Puffer
+            layerOrder: Layer-Reihenfolge
+            layerOrder.standard: Standard (umgekehrt)
+            layerOrder.reverse: QGIS Style (gleiche Reihenfolge)
           vendorspecific:
             label: 'Vendor specific'
         preview:

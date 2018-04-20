@@ -2,12 +2,9 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\ORM\EntityManager;
-use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Element\DimensionsHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -141,6 +138,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function create()
     {
         $this->entity->populateFromSource($this->entity->getSource());
+        $this->initializeSourceInstance($this->entity);
     }
 
     /**
@@ -230,50 +228,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
     /**
      * @inheritdoc
+     * @deprecated, use the appropriate service directly
      */
     public function getConfiguration(Signer $signer = null)
     {
         $configService = $this->getConfigService();
-        $configuration = array(
-            'type' => strtolower($this->entity->getType()),
-            'title' => $this->entity->getTitle(),
-            'isBaseSource' => $this->entity->isBaseSource(),
-            'options' => WmsInstanceConfigurationOptions::fromEntity($this->entity)->toArray(),
-            'children' => array($configService->getRootLayerConfig($this->entity)),
-        );
-
-        if (!$this->isConfigurationValid($configuration)) {
-            return null;
-        }
-        $hide = false;
-        $params = array();
-        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            if ($handler->isVendorSpecificValueValid()) {
-                if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE ||
-                    ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE && !$vendorspec->getHidden())) {
-                    $user = $this->container->get('security.context')->getToken()->getUser();
-                    $params = array_merge($params, $handler->getKvpConfiguration($user));
-                } else {
-                    $hide = true;
-                }
-            }
-        }
-        if ($hide || $this->entity->getSource()->getUsername()) {
-            $url = $this->getTunnel()->getPublicBaseUrl();
-            $configuration['options']['url'] = UrlUtil::validateUrl($url, $params, array());
-            // remove ows proxy for a tunnel connection
-            $configuration['options']['tunnel'] = true;
-        } elseif ($signer) {
-            $configuration['options']['url'] = UrlUtil::validateUrl($configuration['options']['url'], $params, array());
-            $configuration['options']['url'] = $signer->signUrl($configuration['options']['url']);
-            if ($this->entity->getProxy()) {
-                $this->signeUrls($signer, $configuration['children'][0]);
-            }
-        }
-        $status = $this->entity->getSource()->getStatus();
-        $configuration['status'] = $status && $status === Source::STATUS_UNREACHABLE ? 'error' : 'ok';
-        return $configuration;
+        return $configService->getConfiguration($this->entity);
     }
 
     /**
@@ -286,32 +246,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
     /**
      * @return array
-     * @deprecated, use the service
+     * @deprecated, use the service directly
      */
     protected function getRootLayerConfig()
     {
         return $this->getConfigService()->getRootLayerConfig($this->entity);
-    }
-
-    /**
-     * Signes urls.
-     * @param Signer $signer signer
-     * @param type $layer
-     */
-    private function signeUrls(Signer $signer, &$layer)
-    {
-        if (isset($layer['options']['legend'])) {
-            if (isset($layer['options']['legend']['graphic'])) {
-                $layer['options']['legend']['graphic'] = $signer->signUrl($layer['options']['legend']['graphic']);
-            } elseif (isset($layer['options']['legend']['url'])) {
-                $layer['options']['legend']['url'] = $signer->signUrl($layer['options']['legend']['url']);
-            }
-        }
-        if (isset($layer['children'])) {
-            foreach ($layer['children'] as &$child) {
-                $this->signeUrls($signer, $child);
-            }
-        }
     }
 
     /**
@@ -405,49 +344,5 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $dimensions[] = $dimension;
         }
         return $dimensions;
-    }
-
-    /**
-     * Checks if a configuraiton is valid.
-     * @param array $configuration configuration of an instance or a layer
-     * @param boolean $isLayer if it is a layer's configurationis it a layer's configuration?
-     * @return boolean true if a configuration is valid otherwise false
-     */
-    private function isConfigurationValid(array $configuration, $isLayer = false)
-    {
-        if (!$isLayer) {
-            // TODO another tests for instance configuration
-            /* check if root exists and has children */
-            if (count($configuration['children']) !== 1 || !isset($configuration['children'][0]['children'])) {
-                return false;
-            } else {
-                foreach ($configuration['children'][0]['children'] as $childConfig) {
-                    if ($this->isConfigurationValid($childConfig, true)) {
-                        return true;
-                    }
-                }
-            }
-        } else {
-            if (isset($configuration['children'])) { // > 2 simple layers -> OK.
-                foreach ($configuration['children'] as $childConfig) {
-                    if ($this->isConfigurationValid($childConfig, true)) {
-                        return true;
-                    }
-                }
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @return SourceService
-     */
-    protected function getConfigService()
-    {
-        /** @var SourceService $configService */
-        $configService = $this->container->get('mapbender.presenter.source.service');
-        return $configService;
     }
 }

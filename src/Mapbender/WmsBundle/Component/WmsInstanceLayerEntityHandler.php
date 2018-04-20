@@ -180,6 +180,15 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                     "outOfBounds" => null
                 ),
             );
+            switch ($entity->getSourceInstance()->getLayerOrder()) {
+                default:
+                case WmsInstance::LAYER_ORDER_TOP_DOWN:
+                    // do nothing
+                    break;
+                case WmsInstance::LAYER_ORDER_BOTTOM_UP:
+                    $children = array_reverse($children);
+                    break;
+            }
             if ($children) {
                 $configuration["children"] = $children;
             }

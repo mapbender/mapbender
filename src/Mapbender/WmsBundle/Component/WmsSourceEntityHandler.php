@@ -86,6 +86,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                 $num++;
             }
         }
+        $this->initializeSourceInstance($instance);
         return $instance;
     }
 

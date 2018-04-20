@@ -13,7 +13,6 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -313,7 +312,7 @@ class RepositoryController extends Controller
         $wmsinstance = $this->loadEntityByPk($repositoryName, $instanceId);
 
         if ($this->getRequest()->getMethod() == 'POST') { //save
-            $form = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance);
+            $form = $this->createForm('wmsinstanceinstancelayers', $wmsinstance);
             $form->submit($this->get('request'));
             if ($form->isValid()) { //save
                 $em = $this->getDoctrine()->getManager();
@@ -352,7 +351,7 @@ class RepositoryController extends Controller
                 }
             }
             /* bug fix end */
-            $form = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance);
+            $form = $this->createForm('wmsinstanceinstancelayers', $wmsinstance);
             return array(
                 "form" => $form->createView(),
                 "slug" => $slug,
