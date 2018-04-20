@@ -1,0 +1,11 @@
+services:
+
+    #
+    # Mapbender Migrations Command
+    #
+    mapbender.command.migrations_install:
+        class: Mapbender\CoreBundle\Command\MigrationsInstallCommand
+        arguments:
+            - '@mapbender.symlink_installer'
+        tags:
+            - { name: console.command }
