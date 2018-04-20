@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Component;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -86,7 +87,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                 $num++;
             }
         }
-        $this->initializeSourceInstance($instance);
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        $directory->getSourceService($instance)->initializeInstance($instance);
         return $instance;
     }
 

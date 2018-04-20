@@ -19,8 +19,9 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 class WmsSourceService extends SourceService
 {
 
-    public function getInnerConfiguration(WmsInstance $sourceInstance)
+    public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
+        /** @var WmsInstance $sourceInstance */
         return parent::getInnerConfiguration($sourceInstance) + array(
             /** @todo: replace WmsInstanceConfigurationOptions stuff with a local implementation */
             'options' => $this->getOptionsConfiguration($sourceInstance),
@@ -57,8 +58,9 @@ class WmsSourceService extends SourceService
         );
     }
 
-    public function postProcessInnerConfiguration(WmsInstance $sourceInstance, $configuration)
+    public function postProcessInnerConfiguration(SourceInstance $sourceInstance, $configuration)
     {
+        /** @var WmsInstance $sourceInstance */
         $configuration = parent::postProcessInnerConfiguration($sourceInstance, $configuration);
         // upstream may return null if validation fails...
         if ($configuration) {
@@ -215,8 +217,9 @@ class WmsSourceService extends SourceService
      * @param WmsInstance $sourceInstance
      * @todo: This belongs in the repository layer. TBD if we can access the container / other services there.
      */
-    public function initializeInstance(WmsInstance $sourceInstance)
+    public function initializeInstance(SourceInstance $sourceInstance)
     {
+        /** @var WmsInstance $sourceInstance */
         parent::initializeInstance($sourceInstance);
         $this->initializeLayerOrder($sourceInstance);
     }

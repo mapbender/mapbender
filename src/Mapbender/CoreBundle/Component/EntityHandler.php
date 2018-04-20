@@ -202,19 +202,4 @@ class EntityHandler
         }
         return $result;
     }
-
-    /**
-     * Initializes a newly created SourceInstance
-     * @param SourceInstance $sourceInstance
-     * @internal
-     * @todo: This belongs in the repository layer. TBD if we can access the container / other services there.
-     */
-    protected function initializeSourceInstance(SourceInstance $sourceInstance)
-    {
-        // delegate to service (polymorphic)
-        /** @var ConfigService $appConfigService */
-        $appConfigService = $this->container->get('mapbender.presenter.application.config.service');
-        $sourceService = $appConfigService->getSourceService($sourceInstance);
-        $sourceService->initializeInstance($sourceInstance);
-    }
 }

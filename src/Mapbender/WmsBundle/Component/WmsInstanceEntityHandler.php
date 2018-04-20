@@ -139,7 +139,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function create()
     {
         $this->entity->populateFromSource($this->entity->getSource());
-        $this->initializeSourceInstance($this->entity);
+        $this->getService()->initializeInstance($this->entity);
     }
 
     /**
