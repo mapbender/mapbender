@@ -13,6 +13,7 @@
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
         <parameter key="mapbender.presenter.application.cache.class">Mapbender\CoreBundle\Component\Cache\ApplicationDataService</parameter>
         <parameter key="mapbender.presenter.application.cache.backend.class">Mapbender\CoreBundle\Component\Cache\Backend\File</parameter>
+        <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
         <parameter key="cachable.mapbender.application.config">true</parameter>
     </parameters>
 
@@ -113,8 +114,11 @@
         </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
             <argument type="service" id="service_container" />
+        </service>
+        <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">
+            <argument type="service" id="service_container" />
             <call method="setDefaultSourceService">
-                <argument>mapbender.presenter.source.service</argument>
+                <argument>mapbender.source.default.service</argument>
             </call>
         </service>
         <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">

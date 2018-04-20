@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="mapbender.presenter.source.wms.service.class">Mapbender\WmsBundle\Component\Presenter\WmsSourceService</parameter>
+        <parameter key="mapbender.source.wms.service.class">Mapbender\WmsBundle\Component\Presenter\WmsSourceService</parameter>
         <parameter key="mapbender.importer.source.wms.service.class">Mapbender\WmsBundle\Component\Wms\Importer</parameter>
         <parameter key="wmsloader.example_url">https://wms.wheregroup.com/cgi-bin/mapbender_user.xml?VERSION=1.3.0&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS</parameter>
         <!-- set this to true in your parameters.yml to expose DimensionsHandler element -->
@@ -13,10 +13,10 @@
         <service id="mapbender.importer.source.wms.service" class="%mapbender.importer.source.wms.service.class%">
             <argument type="service" id="service_container" />
         </service>
-        <service id="mapbender.presenter.source.wms.service" class="%mapbender.presenter.source.wms.service.class%">
+        <service id="mapbender.source.wms.service" class="%mapbender.source.wms.service.class%">
             <argument type="service" id="service_container" />
         </service>
         <!-- wms service is the shipping default, unless changed by an optionally installed bundle -->
-        <service id="mapbender.presenter.source.service" alias="mapbender.presenter.source.wms.service" />
+        <service id="mapbender.source.default.service" alias="mapbender.source.wms.service" />
     </services>
 </container>

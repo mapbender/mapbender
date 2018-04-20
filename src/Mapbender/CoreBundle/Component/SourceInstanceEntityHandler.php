@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\WmsBundle\Component\Dimension;
@@ -67,7 +68,7 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     protected function getTunnel()
     {
         if (!$this->tunnel) {
-            $this->tunnel = $this->getConfigService()->makeTunnelEndpoint($this->entity);
+            $this->tunnel = $this->getService()->makeTunnelEndpoint($this->entity);
         }
         return $this->tunnel;
     }
@@ -77,10 +78,10 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      *
      * @return SourceService
      */
-    protected function getConfigService()
+    protected function getService()
     {
-        /** @var ConfigService $applicationConfigService */
-        $applicationConfigService = $this->container->get('mapbender.presenter.application.config.service');
-        return $applicationConfigService->getSourceService($this->entity);
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        return $directory->getSourceService($this->entity);
     }
 }
