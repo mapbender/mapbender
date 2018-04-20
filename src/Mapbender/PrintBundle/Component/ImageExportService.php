@@ -3,6 +3,10 @@ namespace Mapbender\PrintBundle\Component;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Psr\Log\LoggerInterface;
+use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use OwsProxy3\CoreBundle\Component\WmsProxy;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Image export service.
@@ -48,129 +52,98 @@ class ImageExportService
     }
 
     /**
-     * Todo
+     * Builds a png image and emits it directly to the browser
      *
+     * @param string $content the job description in valid JSON
+     * @return void
+     *
+     * @todo: converting from JSON encoding is controller responsibility
+     * @todo: emitting to browser is controller responsibility
      */
     public function export($content)
     {
+        // Clean up internally modified / collected state
+        $this->mapRequests = array();
         $this->data = json_decode($content, true);
 
-        if (isset($this->data['vectorLayers'])) {
-            foreach ($this->data['vectorLayers'] as $idx => $layer) {
+        foreach ($this->data['requests'] as $i => $layer) {
+            if (!in_array($layer['type'], array('wms', 'wmts', 'tms'))) {
+                continue;
+            }
+            $this->mapRequests[$i] = $layer;
+        }
+
+        if(isset($this->data['vectorLayers'])){
+            foreach ($this->data['vectorLayers'] as $idx => $layer){
                 $this->data['vectorLayers'][$idx] = json_decode($this->data['vectorLayers'][$idx], true);
             }
         }
-//        print "<pre>";
-//        print_r($this->data);
-//        print "</pre>";
-//        die();
-        $this->format = $this->data['format'];
-        $this->requests = $this->data['requests'];
-        // resource dir
-        $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-        $imgWidth = $this->data['width'];
-        $imgHeight = $this->data['height'];
-        $temp_names = $this->getImages($imgWidth, $this->data['height']);
+
+        $imagePath = $this->getImages();
+        $this->emitImageToBrowser($imagePath);
+        unlink($imagePath);
+    }
+
+    /**
+     * Collect and merge WMS tiles and vector layers into a PNG file.
+     *
+     * @return string path to merged PNG file
+     */
+    private function getImages()
+    {
+        $temp_names = array();
+        $width = $this->data['width'];
+        $height = $this->data['height'];
+        foreach ($this->mapRequests as $k => $request) {
+            $imageName = $this->makeTempFile('mb_imgexp');
+            $temp_names[] = $imageName;
+            if (is_array($request) && $request['type'] === 'wms') { // wms
+                $this->getLogger()->debug("Image Export Request Nr.: " . $k . ' ' . $request['url']);
+                $mapRequestResponse = $this->mapRequest($this->getCorrectRequestDimension($request['url'], $width, $height));
+                $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
+            } elseif (is_array($request) && $request['type'] === 'tms') { // only tms
+                $this->getLogger()->debug("Image Export Request Nr.: " . $k . ' ' . $request['url']);
+                $rawImage = $this->getTmsImage($request, $imageName, $width, $height);
+            } elseif (is_array($request) && $request['type'] === 'wmts') { // only wmts
+                $this->getLogger()->debug("Image Export Request Nr.: " . $k . ' ' . $request['url']);
+                $rawImage = $this->getWmtsImage($request, $imageName, $width, $height);
+            } else {
+                continue;
+            }
+
+            if ($rawImage !== null) {
+                $this->forceToRgba($imageName, $rawImage, $this->data['requests'][$k]['opacity']);
+                $width = imagesx($rawImage);
+                $height = imagesy($rawImage);
+            }
+        }
 
         // create final merged image
-        $finalimagename = tempnam($this->tempDir, 'mb_imgexp_merged');
-        $finalImage = imagecreatetruecolor($imgWidth, $imgHeight);
-        $bg = ImageColorAllocate($finalImage, 255, 255, 255);
-        imagefilledrectangle($finalImage, 0, 0, $imgWidth, $imgHeight, $bg);
-        imagepng($finalImage, $finalimagename);
+        $finalImageName = $this->makeTempFile('mb_imgexp_merged');
+        $mergedImage = imagecreatetruecolor($width, $height);
+        $bg = ImageColorAllocate($mergedImage, 255, 255, 255);
+        imagefilledrectangle($mergedImage, 0, 0, $width, $height, $bg);
+        imagepng($mergedImage, $finalImageName);
         foreach ($temp_names as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
-                $dest = imagecreatefrompng($finalimagename);
+                $dest = imagecreatefrompng($finalImageName);
                 $src = imagecreatefrompng($temp_name);
-                imagecopy($dest, $src, 0, 0, 0, 0, $imgWidth, $imgHeight);
-                imagepng($dest, $finalimagename);
+                imagecopy($dest, $src, 0, 0, 0, 0, $width, $height);
+                imagepng($dest, $finalImageName);
             }
             unlink($temp_name);
             finfo_close($finfo);
         }
-
-        $date = date("Ymd");
-        $time = date("His");
-
-        $this->finalimagename = $finalimagename;
-
         if (isset($this->data['vectorLayers'])) {
-            $this->drawFeatures();
+            $this->drawFeatures($finalImageName);
         }
-
-        $file = $this->finalimagename;
-        $image = imagecreatefrompng($file);
-        if ($this->format == 'png') {
-            header("Content-type: image/png");
-            header("Content-Disposition: attachment; filename=export_" . $date . $time . ".png");
-            //header('Content-Length: ' . filesize($file));
-            imagepng($image);
-        } else {
-            header("Content-type: image/jpeg");
-            header("Content-Disposition: attachment; filename=export_" . $date . $time . ".jpg");
-            //header('Content-Length: ' . filesize($file));
-            imagejpeg($image, null, 85);
-        }
-        unlink($this->finalimagename);
-    }
-
-    private function getImages($width, $height)
-    {
-        $logger = $this->container->get("logger");
-        $imageNames = array();
-        $rawImage = null;
-        foreach ($this->requests as $i => $request) {
-            $imageName = tempnam($this->tempDir, 'mb_print');
-            if (is_array($request) && $request['type'] === 'wms') { // wms
-                $logger->debug("Print Request Nr.: " . $i . ' ' . $request['url']);
-                $rawImage = $this->getImage($request['url'], $imageName);
-            } elseif (is_array($request) && $request['type'] === 'tms') { // only tms
-                $logger->debug("Print Request Nr.: " . $i . ' ' . $request['url']);
-                $rawImage = $this->getTmsImage($request, $imageName, $width, $height);
-            } elseif (is_array($request) && $request['type'] === 'wmts') { // only wmts
-                $logger->debug("Print Request Nr.: " . $i . ' ' . $request['url']);
-                $rawImage = $this->getWmtsImage($request, $imageName, $width, $height);
-            } else { // tms, wmts
-                continue;
-            }
-            if ($rawImage !== null) {
-                $imageNames[] = $imageName;
-                // Make sure input image is truecolor with alpha, regardless of input mode!
-                $image = imagecreatetruecolor($width, $height);
-                $this->drawImage($image, $rawImage, 0, 0, 0, 0, $width, $height, $width, $height);
-                // Taking the painful way to alpha blending. Stupid PHP-GD
-                $opacity = 1.0;#floatVal(???);
-                if (1.0 !== $opacity) {
-                    $width = imagesx($dst_image);
-                    $height = imagesy($dst_image);
-                    for ($x = 0; $x < $width; $x++) {
-                        for ($y = 0; $y < $height; $y++) {
-                            $colorIn = imagecolorsforindex($dst_image, imagecolorat($dst_image, $x, $y));
-                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
-
-                            $colorOut = imagecolorallocatealpha(
-                                $dst_image,
-                                $colorIn['red'],
-                                $colorIn['green'],
-                                $colorIn['blue'],
-                                $alphaOut
-                            );
-                            imagesetpixel($dst_image, $x, $y, $colorOut);
-                            imagecolordeallocate($dst_image, $colorOut);
-                        }
-                    }
-                }
-                imagepng($image, $imageName);
-            }
-        }
-        return $imageNames;
+        return $finalImageName;
     }
 
     private function getWmtsImage($request, $imageName, $width, $height)
     {
         $logger = $this->container->get("logger");
-//        $msg = '';
         $metersPerUnit = 1; // only 1 m /
         $scaleDenominator = floatval($this->data['scale']);
         $tilematrixset = $request['matrixset'];
@@ -178,7 +151,6 @@ class ImageExportService
             $style = $request['options']['style'];
         }
         $matrix = null;
-        //var_dump(array($tilematrixset,$scaleDenominator));die;
         foreach ($tilematrixset['tilematrices'] as $tilematrix) {
             if ($scaleDenominator === round($tilematrix['scaleDenominator'], 5)) {
                 $matrix = $tilematrix;
@@ -222,7 +194,6 @@ class ImageExportService
                         $url = str_replace('{TileCol}', $xnum, $urlHelp);
                         $url = str_replace('{TileRow}', $ynum, $url);
                         $logger->debug("WMTS: " . $xnum . "-" . $ynum . " " . $url);
-//                        $msg .= $xnum . "\t" . $ynum . "\t" . $url .'\n\n';
                         $imageName = tempnam($this->tempDir, 'mb_print_wmts' . $xnum . "-" . $ynum);
 
                         $rawImage = $this->getImage($url, $imageName);
@@ -231,7 +202,6 @@ class ImageExportService
                             $ty = $matrixBbox[3] - $ynum * $tileSpanY;
                             $txpos = intval(round(($tx - $bbox[0]) / $pixelSpan));
                             $typos = intval(round(($bbox[3] - $ty) / $pixelSpan));
-//                            $msg .= $txpos . "\t" . $typos . "\t" . $xnum . "\t" . $ynum .'\t' . $url . '\n\n';
                             $image = $this->drawImage($image, $rawImage, $txpos, $typos, 0, 0, $tileWidth, $tileHeight, $tileWidth, $tileHeight);
                             unlink($imageName);
                         }
@@ -239,7 +209,6 @@ class ImageExportService
                 }
             }
         }
-//        $logger->debug($msg);
         return $image;
     }
 
@@ -248,7 +217,6 @@ class ImageExportService
     private function getTmsImage($request, $imageName, $width, $height)
     {
         $logger = $this->container->get("logger");
-//        $msg = '';
         $tilematrixset = $request['options']['tilematrixset'];
         $tileWidth = $tilematrixset['tileSize'][0];
         $tileHeight = $tilematrixset['tileSize'][1];
@@ -280,20 +248,17 @@ class ImageExportService
                     if ($rawImage !== null) {
                         $txpos = intval(round(($tileLeft - $minx) / $unitsPerPixel));
                         $typos = intval(round(($miny - $tileBottom) / $unitsPerPixel)) + $height - $tileHeight;
-//                        $msg .= $txpos . "\t" . $typos . "\t" . $xnum . "\t" . $ynum .'\t' . $url . '\n\n';
                         $image = $this->drawImage($image, $rawImage, $txpos, $typos, 0, 0, $tileWidth, $tileHeight, $tileWidth, $tileHeight);
                         unlink($imageName);
                     }
                 }
             }
         }
-//        $logger->debug($msg);
         return $image;
     }
 
     private function getImage($request, $imageName)
     {
-        $logger = $this->container->get("logger");
         $path = array(
             '_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
             'url' => $request
@@ -314,7 +279,7 @@ class ImageExportService
                 $rawImage = imagecreatefromgif($imageName);
                 break;
             default:
-                $logger->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
+                $this->getLogger()->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
                 continue;
         }
         return $rawImage;
@@ -328,32 +293,28 @@ class ImageExportService
         return $dst_image;
     }
 
-    private function drawFeatures()
+    private function drawFeatures($finalImageName)
     {
-        $image = imagecreatefrompng($this->finalimagename);
+        $image = imagecreatefrompng($finalImageName);
         imagesavealpha($image, true);
         imagealphablending($image, true);
-
-        foreach ($this->data['vectorLayers'] as $idx => $layer) {
-            foreach ($layer['geometries'] as $geometry) {
+        foreach($this->data['vectorLayers'] as $idx => $layer) {
+            foreach($layer['geometries'] as $geometry) {
                 $renderMethodName = 'draw' . $geometry['type'];
-
-                if (!method_exists($this, $renderMethodName)) {
+                if(!method_exists($this, $renderMethodName)) {
                     continue;
                     //throw new \RuntimeException('Can not draw geometries of type "' . $geometry['type'] . '".');
                 }
-
                 $this->$renderMethodName($geometry, $image);
             }
         }
-        imagepng($image, $this->finalimagename);
+        imagepng($image, $finalImageName);
     }
 
     private function getColor($color, $alpha, $image)
     {
         list($r, $g, $b) = CSSColorParser::parse($color);
-
-        if (0 == $alpha) {
+        if(0 == $alpha) {
             return ImageColorAllocate($image, $r, $g, $b);
         } else {
             $a = (1 - $alpha) * 127.0;
@@ -363,33 +324,30 @@ class ImageExportService
 
     private function drawPolygon($geometry, $image)
     {
-        foreach ($geometry['coordinates'] as $ring) {
-            if (count($ring) < 3) {
+        foreach($geometry['coordinates'] as $ring) {
+            if(count($ring) < 3) {
                 continue;
             }
-
             $points = array();
-            foreach ($ring as $c) {
+            foreach($ring as $c) {
                 $p = $this->realWorld2mapPos($c[0], $c[1]);
                 $points[] = floatval($p[0]);
                 $points[] = floatval($p[1]);
             }
             imagesetthickness($image, 0);
             // Filled area
-            if ($geometry['style']['fillOpacity'] > 0) {
+            if($geometry['style']['fillOpacity'] > 0){
                 $color = $this->getColor(
                     $geometry['style']['fillColor'],
                     $geometry['style']['fillOpacity'],
-                    $image
-                );
+                    $image);
                 imagefilledpolygon($image, $points, count($ring), $color);
             }
             // Border
             $color = $this->getColor(
                 $geometry['style']['strokeColor'],
                 $geometry['style']['strokeOpacity'],
-                $image
-            );
+                $image);
             imagesetthickness($image, $geometry['style']['strokeWidth']);
             imagepolygon($image, $points, count($ring), $color);
         }
@@ -397,33 +355,30 @@ class ImageExportService
 
     private function drawMultiPolygon($geometry, $image)
     {
-        foreach ($geometry['coordinates'][0] as $ring) {
-            if (count($ring) < 3) {
+        foreach($geometry['coordinates'][0] as $ring) {
+            if(count($ring) < 3) {
                 continue;
             }
-
             $points = array();
-            foreach ($ring as $c) {
+            foreach($ring as $c) {
                 $p = $this->realWorld2mapPos($c[0], $c[1]);
                 $points[] = floatval($p[0]);
                 $points[] = floatval($p[1]);
             }
             imagesetthickness($image, 0);
             // Filled area
-            if ($geometry['style']['fillOpacity'] > 0) {
+            if($geometry['style']['fillOpacity'] > 0){
                 $color = $this->getColor(
                     $geometry['style']['fillColor'],
                     $geometry['style']['fillOpacity'],
-                    $image
-                );
+                    $image);
                 imagefilledpolygon($image, $points, count($ring), $color);
             }
             // Border
             $color = $this->getColor(
                 $geometry['style']['strokeColor'],
                 $geometry['style']['strokeOpacity'],
-                $image
-            );
+                $image);
             imagesetthickness($image, $geometry['style']['strokeWidth']);
             imagepolygon($image, $points, count($ring), $color);
         }
@@ -434,20 +389,15 @@ class ImageExportService
         $color = $this->getColor(
             $geometry['style']['strokeColor'],
             $geometry['style']['strokeOpacity'],
-            $image
-        );
+            $image);
         imagesetthickness($image, $geometry['style']['strokeWidth']);
-
-        for ($i = 1; $i < count($geometry['coordinates']); $i++) {
+        for($i = 1; $i < count($geometry['coordinates']); $i++) {
             $from = $this->realWorld2mapPos(
                 $geometry['coordinates'][$i - 1][0],
-                $geometry['coordinates'][$i - 1][1]
-            );
+                $geometry['coordinates'][$i - 1][1]);
             $to = $this->realWorld2mapPos(
                 $geometry['coordinates'][$i][0],
-                $geometry['coordinates'][$i][1]
-            );
-
+                $geometry['coordinates'][$i][1]);
             imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
         }
     }
@@ -455,15 +405,13 @@ class ImageExportService
     private function drawPoint($geometry, $image)
     {
         $c = $geometry['coordinates'];
-
         $p = $this->realWorld2mapPos($c[0], $c[1]);
-
-        if (isset($geometry['style']['label'])) {
+        if(isset($geometry['style']['label'])){
             // draw label with white halo
             $color = $this->getColor('#ff0000', 1, $image);
             $bgcolor = $this->getColor('#ffffff', 1, $image);
-            $fontPath = $this->resourceDir.'/fonts/';
-            $font = $fontPath . 'Trebuchet_MS.ttf';
+            $fontPath = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle/fonts/';
+            $font = $fontPath . 'OpenSans-Bold.ttf';
             imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
@@ -471,48 +419,232 @@ class ImageExportService
             imagettftext($image, 14, 0, $p[0], $p[1], $color, $font, $geometry['style']['label']);
             return;
         }
-
         $radius = $geometry['style']['pointRadius'];
         // Filled circle
-        if ($geometry['style']['fillOpacity'] > 0) {
+        if($geometry['style']['fillOpacity'] > 0){
             $color = $this->getColor(
                 $geometry['style']['fillColor'],
                 $geometry['style']['fillOpacity'],
-                $image
-            );
+                $image);
             imagefilledellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
         }
         // Circle border
         $color = $this->getColor(
             $geometry['style']['strokeColor'],
             $geometry['style']['strokeOpacity'],
-            $image
-        );
+            $image);
         imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
     }
 
-    private function realWorld2mapPos($rw_x, $rw_y)
+    private function realWorld2mapPos($rw_x,$rw_y)
     {
         $quality = 72;
         $map_width = $this->data['extentwidth'];
         $map_height = $this->data['extentheight'];
         $centerx = $this->data['centerx'];
         $centery = $this->data['centery'];
-
         $height = $this->data['height'];
         $width = $this->data['width'];
-
         $minX = $centerx - $map_width * 0.5;
         $minY = $centery - $map_height * 0.5;
         $maxX = $centerx + $map_width * 0.5;
         $maxY = $centery + $map_height * 0.5;
-
-        $extentx = $maxX - $minX;
-        $extenty = $maxY - $minY;
+        $extentx = $maxX - $minX ;
+        $extenty = $maxY - $minY ;
         $pixPos_x = (($rw_x - $minX)/$extentx) * $width;
-        $pixPos_y = (($maxY - $rw_y) / $extenty) * $height;
-
+        $pixPos_y = (($maxY - $rw_y)/$extenty) * $height;
         $pixPos = array($pixPos_x, $pixPos_y);
         return $pixPos;
+    }
+
+    /**
+     * Takes a wms request url and corrects to requested map extent to given width and height
+     *
+     * @param $url string
+     * @param $width string
+     * @param $height string
+     * @return string
+     */
+    private function getCorrectRequestDimension($url, $width, $height)
+    {
+        $url = strstr($url, '&WIDTH', true);
+        $width = '&WIDTH=' . $width;
+        $height = '&HEIGHT=' . $height;
+        $url .= $width . $height;
+        return $url;
+    }
+
+    /**
+     * Convert a GD image to true-color RGBA and write it back to the file
+     * system.
+     *
+     * @param string $imageName will be overwritten
+     * @param resource $imageResource source image
+     * @param float $opacity in [0;1]
+     */
+    protected function forceToRgba($imageName, $imageResource, $opacity)
+    {
+        $width = imagesx($imageResource);
+        $height = imagesy($imageResource);
+        // Make sure input image is truecolor with alpha, regardless of input mode!
+        $image = imagecreatetruecolor($width, $height);
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+        imagecopyresampled($image, $imageResource, 0, 0, 0, 0, $width, $height, $width, $height);
+        // Taking the painful way to alpha blending. Stupid PHP-GD
+        if (1.0 !== $opacity) {
+            for ($x = 0; $x < $width; $x++) {
+                for ($y = 0; $y < $height; $y++) {
+                    $colorIn = imagecolorsforindex($image, imagecolorat($image, $x, $y));
+                    $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
+                    $colorOut = imagecolorallocatealpha(
+                        $image,
+                        $colorIn['red'],
+                        $colorIn['green'],
+                        $colorIn['blue'],
+                        $alphaOut);
+                    imagesetpixel($image, $x, $y, $colorOut);
+                    imagecolordeallocate($image, $colorOut);
+                }
+            }
+        }
+        imagepng($image, $imageName);
+    }
+
+    /**
+     * Query a (presumably) WMS service $url and return the Response object.
+     *
+     * @param string $url
+     * @return Response
+     */
+    protected function mapRequest($url)
+    {
+        // find urls from this host (tunnel connection for secured services)
+        $parsed   = parse_url($url);
+        $host = isset($parsed['host']) ? $parsed['host'] : $this->container->get('request')->getHttpHost();
+        $hostpath = $host . $parsed['path'];
+        $pos      = strpos($hostpath, $this->urlHostPath);
+        if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
+            $attributes = $this->container->get('router')->match($routeStr);
+            $gets       = array();
+            parse_str($parsed['query'], $gets);
+            $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
+            /** @var HttpKernelInterface $kernel */
+            $kernel = $this->container->get('http_kernel');
+            $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        } else {
+            $proxyQuery = ProxyQuery::createFromUrl($url);
+            try {
+                $serviceType = strtolower($proxyQuery->getServiceType());
+            } catch (\Exception $e) {
+                // fired when null "content" is loaded as an XML document...
+                $serviceType = null;
+            }
+            $proxyConfig = $this->container->getParameter('owsproxy.proxy');
+            switch ($serviceType) {
+                case "wms":
+                    /** @var EventDispatcherInterface $eventDispatcher */
+                    $eventDispatcher = $this->container->get('event_dispatcher');
+                    $proxy = new WmsProxy($eventDispatcher, $proxyConfig, $proxyQuery, $this->getLogger());
+                    break;
+                default:
+                    $proxy = new CommonProxy($proxyConfig, $proxyQuery, $this->getLogger());
+                    break;
+            }
+            /** @var \Buzz\Message\Response $buzzResponse */
+            $buzzResponse = $proxy->handle();
+            $response = $this->convertBuzzResponse($buzzResponse);
+        }
+        return $response;
+    }
+
+    /**
+     * Convert a Buzz Response to a Symfony HttpFoundation Response
+     *
+     * @todo: This belongs in owsproxy; it's the only part of Mapbender that uses Buzz
+     *
+     * @param \Buzz\Message\Response $buzzResponse
+     * @return Response
+     */
+    public static function convertBuzzResponse($buzzResponse)
+    {
+        // adapt header formatting: Buzz uses a flat list of lines, HttpFoundation expects a name: value mapping
+        $headers = array();
+        foreach ($buzzResponse->getHeaders() as $headerLine) {
+            $parts = explode(':', $headerLine, 2);
+            if (count($parts) == 2) {
+                $headers[$parts[0]] = $parts[1];
+            }
+        }
+        $response = new Response($buzzResponse->getContent(), $buzzResponse->getStatusCode(), $headers);
+        $response->setProtocolVersion($buzzResponse->getProtocolVersion());
+        $statusText = $buzzResponse->getReasonPhrase();
+        if ($statusText) {
+            $response->setStatusCode($buzzResponse->getStatusCode(), $statusText);
+        }
+        return $response;
+    }
+
+    /**
+     * Converts a http response to a GD image, respecting the mimetype.
+     *
+     * @param string $storagePath for temp file storage
+     * @param Response $response
+     * @return resource|null GD image or null on failure
+     */
+    protected function serviceResponseToGdImage($storagePath, $response)
+    {
+        file_put_contents($storagePath, $response->getContent());
+        $contentType = trim($response->headers->get('content-type'));
+        switch ($contentType) {
+            case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
+                return imagecreatefrompng($storagePath);
+                break;
+            case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
+                return imagecreatefromjpeg($storagePath);
+                break;
+            case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
+                return imagecreatefromgif($storagePath);
+                break;
+            default:
+                return null;
+                $this->getLogger()->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
+            //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
+        }
+    }
+
+    /**
+     * @param string $imagePath
+     */
+    protected function emitImageToBrowser($imagePath)
+    {
+        $finalImage = imagecreatefrompng($imagePath);
+        if ($this->data['format'] == 'png') {
+            header("Content-type: image/png");
+            header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".png");
+            //header('Content-Length: ' . filesize($file));
+            imagepng($finalImage);
+        } else {
+            header("Content-type: image/jpeg");
+            header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".jpg");
+            //header('Content-Length: ' . filesize($file));
+            imagejpeg($finalImage, null, 85);
+        }
+    }
+
+    /**
+     * Creates a ~randomly named temp file with given $prefix and returns its name
+     *
+     * @param $prefix
+     * @return string
+     */
+    protected function makeTempFile($prefix)
+    {
+        $filePath = tempnam($this->tempDir, $prefix);
+        // tempnam may return false in undocumented error cases
+        if (!$filePath) {
+            throw new \RuntimeException("Failed to create temp file with prefix '$prefix' in '{$this->tempDir}'");
+        }
+        return $filePath;
     }
 }
