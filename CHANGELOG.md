@@ -1,5 +1,22 @@
 # Changelog
 
+* **v.3.0.7.0**
+    - Support reversible layer order per WMS source instance (new dropdown application backend section "Layersets")
+    - Support WMS keywords > 255 characters; needs app/console doctrine:schema:update for running installations
+    - Extend WmsLoader WMS service compatibility, now matches backend
+    - Update WmsLoader example URL to https
+    - Skip undefined element classes in Yaml applications, log a warning instead of crashing
+    - Fix unbounded growth in "authority" on repeated export / reimport / cloning of applications (#777)
+    - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers (see pull #787)
+    - Fix strict SCSS warnings when compiling with ruby-sass (closes issue #761)
+    - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
+    - Replace usort => array_multisort to skip around PHP bug #50688 when sorting Element names (MB3 issue #586)
+    - Fix http 500 when rendering meta data for a service with undefined contact information
+    - Merge pull request #760 from mapbender/fix/unittest-preconditions
+    - Merge pull request #747 from mapbender/fix/metadata-serialization-746
+    - Merge pull request #743 from mapbender/fix/element-inheritance-639-noconfig
+    - Changed Opacity for zoombar and toolbar to get a unique button color
+
 * **v.3.0.6.4**
     - Validate Element forms in backend
     - Extend WmsLoader WMS service compatibility, now matches backend
