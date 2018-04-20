@@ -1,39 +1,79 @@
 <?php
 
-
-namespace Mapbender\WmsBundle\Component;
-
-use Mapbender\CoreBundle\Controller\ApplicationController;
+namespace Mapbender\CoreBundle\Component\Source\Tunnel;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
+use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Symfony\Component\HttpFoundation\Request;
 
-
 /**
- * Base version of InstanceTunnel that can process, but not generate tunnel requests (works without access to
- * Router).
- *
- * @see ApplicationController::instanceTunnelAction()
- *
- * @package Mapbender\WmsBundle\Component
+ * Tunnel base endpoint pre-bound to a particular SourceInstance
  */
-class InstanceTunnelHandler
+class Endpoint
 {
+    /** @var InstanceTunnelService */
+    protected $service;
+
     /** @var SourceInstance */
     protected $instance;
 
     /** @var Source */
     protected $source;
 
+
     /**
      * InstanceTunnel constructor.
+     * @param InstanceTunnelService
      * @param SourceInstance $instance
      */
-    public function __construct(SourceInstance $instance)
+    public function __construct($service, SourceInstance $instance)
     {
+        $this->service = $service;
         $this->instance = $instance;
         $this->source = $instance->getSource();
+    }
+
+    /**
+     * Returns the URL base the Browser / JS client should use to access the tunnel.
+     *
+     * @return string
+     */
+    public function getPublicBaseUrl()
+    {
+        return $this->service->getPublicBaseUrl($this);
+    }
+
+    /**
+     * Returns the URL the Browser / JS client should use to access a specific WMS function (by given URL) via
+     * the tunnel.
+     *
+     * @param string $url NOTE: scheme/host/path completely ignored, only query string is relevant
+     * @return string
+     * @throws \RuntimeException if no REQUEST=... in given $url
+     */
+    public function generatePublicUrl($url)
+    {
+        return $this->service->generatePublicUrl($this, $url);
+    }
+
+
+    /**
+     * @return Application
+     */
+    public function getApplicationEntity()
+    {
+        return $this->instance->getLayerset()->getApplication();
+    }
+
+    /**
+     * @return SourceInstance
+     */
+    public function getSourceInstance()
+    {
+        return $this->instance;
     }
 
     /**

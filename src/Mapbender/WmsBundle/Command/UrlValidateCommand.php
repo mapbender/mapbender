@@ -29,7 +29,8 @@ class UrlValidateCommand extends ContainerAwareCommand
     {
         $origin = new WmsOrigin($input->getArgument('serviceUrl'), $input->getOption('user'), $input->getOption('password'));
 
-        $importer = new Importer($this->getContainer());
+        /** @var Importer $importer */
+        $importer = $this->getContainer()->get('mapbender.importer.source.wms.service');
         $result = $importer->evaluateServer($origin, true);
         $wmsSource = $result->getWmsSourceEntity();
 
