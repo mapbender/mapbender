@@ -8,6 +8,7 @@
     - Skip undefined element classes in Yaml applications, log a warning instead of crashing
     - Fix unbounded growth in "authority" on repeated export / reimport / cloning of applications (#777)
     - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers (see pull #787)
+    - Add Doctrine migration framework and command-line support (pull #762)
     - Fix strict SCSS warnings when compiling with ruby-sass (closes issue #761)
     - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
     - Replace usort => array_multisort to skip around PHP bug #50688 when sorting Element names (MB3 issue #586)

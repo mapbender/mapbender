@@ -10,6 +10,7 @@
         "twig/extensions": "1.x",
         "doctrine/orm": "^2.2.3",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
+        "doctrine/doctrine-migrations-bundle": "^1.3",
 
         "arsgeografica/signing": "1.1.x",
         "setasign/fpdi-fpdf": "1.6.*",
