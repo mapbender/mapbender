@@ -7,6 +7,7 @@ namespace Mapbender\IntrospectionBundle\Command;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Mapbender;
+use Mapbender\IntrospectionBundle\Utils\BundleUtil;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\TableHelper;
@@ -26,9 +27,8 @@ use Symfony\Component\HttpKernel\Kernel;
  * * (overridden) AdminType class != automatically calculated AdminType class (to detect inheritance issues)
  * * (overridden) form template != automatically calculated form template (to detect inheritance / convention issues)
  *
- * @package Mapbender\CoreBundle\Command
  */
-class ElementClassesInspectCommand extends ContainerAwareCommand
+class ElementClassesCommand extends ContainerAwareCommand
 {
     /** @var  Application */
     protected static $dummyApplication;
@@ -104,31 +104,6 @@ class ElementClassesInspectCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param string $className
-     * @return string
-     */
-    protected static function extractBundleNamespace($className)
-    {
-        $classNameParts = explode('\\', $className);
-        return implode('\\', array_slice($classNameParts, 0, 2));
-    }
-
-    protected static function extractBundleNameFromClassName($className)
-    {
-        $classNameParts = explode('\\', $className);
-        return implode('', array_slice($classNameParts, 0, 2));
-    }
-
-    /**
-     * @param string $templatePath twig-style (":" separators")
-     * @return string
-     */
-    protected static function extractBundleNameFromTemplatePath($templatePath)
-    {
-        return implode('', array_slice(explode(':', $templatePath), 0, 1));
-    }
-
-    /**
      * @param Element $element
      * @return string[]
      */
@@ -157,8 +132,8 @@ class ElementClassesInspectCommand extends ContainerAwareCommand
     {
         $adminType = $element->getType();
         $autoAdminType = $element->getAutomaticAdminType();
-        $elementBNS = static::extractBundleNamespace(get_class($element));
-        $adminTypeBNS = static::extractBundleNamespace($adminType);
+        $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
+        $adminTypeBNS = BundleUtil::extractBundleNamespace($adminType);
 
         if (!class_exists($adminType)) {
             // mark missing class as error
@@ -297,8 +272,8 @@ class ElementClassesInspectCommand extends ContainerAwareCommand
         if (!$this->templateExists($path)) {
             return "<error>$path</error>";
         }
-        $templateBundle = static::extractBundleNameFromTemplatePath($path);
-        $elementBundle = static::extractBundleNameFromClassName(get_class($element));
+        $templateBundle = BundleUtil::extractBundleNameFromTemplatePath($path);
+        $elementBundle = BundleUtil::extractBundleNameFromClassName(get_class($element));
         if ($templateBundle != $elementBundle) {
             $parts = explode(':', $path);
             $info = "<note>{$parts[0]}</note>:" . implode(':', array_slice($parts, 1));

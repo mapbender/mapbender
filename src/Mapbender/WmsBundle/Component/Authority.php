@@ -61,4 +61,15 @@ class Authority
         $this->name = $value;
         return $this;
     }
+
+    /**
+     * @return string[]
+     */
+    public function toArray()
+    {
+        return array(
+            'url' => $this->url,
+            'name' => $this->name,
+        );
+    }
 }

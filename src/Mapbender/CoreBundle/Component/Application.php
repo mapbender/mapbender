@@ -4,9 +4,11 @@ namespace Mapbender\CoreBundle\Component;
 use Assetic\Asset\StringAsset;
 use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
+use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
@@ -47,11 +49,6 @@ class Application
     protected $layers;
 
     /**
-     * @var array $urls Runtime URLs
-     */
-    protected $urls;
-
-    /**
      * @var Entity
      */
     protected $entity;
@@ -59,13 +56,11 @@ class Application
     /**
      * @param ContainerInterface $container The container
      * @param Entity             $entity    The configuration entity
-     * @param array              $urls      Array of runtime URLs
      */
-    public function __construct(ContainerInterface $container, Entity $entity, array $urls)
+    public function __construct(ContainerInterface $container, Entity $entity)
     {
         $this->container = $container;
         $this->entity    = $entity;
-        $this->urls      = $urls;
     }
 
     /**
@@ -217,8 +212,8 @@ class Application
         }
 
         // Load all layer assets
-        foreach ($this->getLayersets() as $layerset) {
-            foreach ($layerset->layerObjects as $layer) {
+        foreach ($this->entity->getLayersets() as $layerset) {
+            foreach ($this->filterActiveSourceInstances($layerset) as $layer) {
                 $layer_assets = $layer->getAssets();
                 if (isset($layer_assets[ $type ])) {
                     foreach ($layer_assets[ $type ] as $asset) {
@@ -297,6 +292,16 @@ class Application
     }
 
     /**
+     * @return ConfigService
+     */
+    private function getConfigService()
+    {
+        /** @var ConfigService $presenter */
+        $presenter = $this->container->get('mapbender.presenter.application.config.service');
+        return $presenter;
+    }
+
+    /**
      * Get the configuration (application, elements, layers) as an StringAsset.
      * Filters can be applied later on with the ensureFilter method.
      *
@@ -304,68 +309,8 @@ class Application
      */
     public function getConfiguration()
     {
-        /** @var Element[] $elements */
-        /** @var \Mapbender\CoreBundle\Component\Element $elementInstance */
-        $configuration = array(
-            'application' => array(
-                'title'         => $this->entity->getTitle(),
-                'urls'          => $this->urls,
-                'publicOptions' => $this->entity->getPublicOptions(),
-                'slug'          => $this->getSlug()),
-            'elements'    => array(),
-            'layersets'   => array(),
-            // Layer titles
-            'layersetmap' => array(),
-        );
-
-        // Get all element configurations
-        $configuration['elements'] = array();
-        foreach ($this->getElements() as $region => $elements) {
-            foreach ($elements as $element) {
-                $configuration['elements'][ $element->getId() ] = array(
-                    'init'          => $element->getWidgetName(),
-                    'configuration' => $element->getPublicConfiguration());
-            }
-        }
-
-        // Get all layer configurations
-        foreach ($this->getLayersets() as $layerSet) {
-            $layerId       = '' . $layerSet->getId();
-            $layerSetTitle = $layerSet->getTitle() ? $layerSet->getTitle() : $layerId;
-            $layerSets     = array();
-
-            foreach ($layerSet->layerObjects as $layer) {
-                $instHandler = EntityHandler::createHandler($this->container, $layer);
-                $conf        = $instHandler->getConfiguration($this->container->get('signer'));
-
-                if (!$conf) {
-                    continue;
-                }
-
-                $layerSets[] = array(
-                    $layer->getId() => array(
-                        'type'          => strtolower($layer->getType()),
-                        'title'         => $layer->getTitle(),
-                        'configuration' => $conf
-                    )
-                );
-            }
-
-            $configuration['layersets'][ $layerId ]   = $layerSets;
-            $configuration['layersetmap'][ $layerId ] = $layerSetTitle;
-        }
-
-        // Let (active, visible) Elements update the Application config
-        // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
-        // visible state of the frontend.
-        $configBeforeElement = $configAfterElements = $configuration;
-        foreach ($this->getElements() as $elementList) {
-            foreach ($elementList as $elementInstance) {
-                $configAfterElements = $configBeforeElement = $elementInstance->updateAppConfig($configBeforeElement);
-            }
-        }
-
-        $configuration = $configAfterElements;
+        $configService = $this->getConfigService();
+        $configuration = $configService->getConfiguration($this->entity);
 
         // Convert to asset
         $asset = new StringAsset(json_encode((object)$configuration));
@@ -465,28 +410,37 @@ class Application
     /**
      * Returns all layer sets
      *
+     * @deprecated for entity-modifying side effects, do not use
      * @return Layerset[] Layer sets
      */
     public function getLayersets()
     {
         if ($this->layers === null) {
-            // Set up all elements (by region)
             $this->layers = array();
             foreach ($this->entity->getLayersets() as $layerSet) {
-                $layerSet->layerObjects = array();
-                foreach ($layerSet->getInstances() as $instance) {
-                    if ($this->getEntity()->isYamlBased()) {
-                        $layerSet->layerObjects[] = $instance;
-                    } else {
-                        if ($instance->getEnabled()) {
-                            $layerSet->layerObjects[] = $instance;
-                        }
-                    }
-                }
-                $this->layers[ $layerSet->getId() ] = $layerSet;
+                $layerSet->layerObjects = $this->filterActiveSourceInstances($layerSet);
+                $this->layers[$layerSet->getId()] = $layerSet;
             }
         }
         return $this->layers;
+    }
+
+    /**
+     * Extracts active source instances from given Layerset entity.
+     *
+     * @param Layerset $entity
+     * @return SourceInstance[]
+     */
+    protected static function filterActiveSourceInstances(Layerset $entity)
+    {
+        $isYamlApp = $entity->getApplication()->isYamlBased();
+        $activeInstances = array();
+        foreach ($entity->getInstances() as $instance) {
+            if ($isYamlApp || $instance->getEnabled()) {
+                $activeInstances[] = $instance;
+            }
+        }
+        return $activeInstances;
     }
 
     /**

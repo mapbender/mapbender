@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 
 /**
  * Layerset configuration entity
@@ -48,7 +49,10 @@ class Layerset
      */
     protected $instances;
 
-    /** @var \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]  */
+    /**
+     * @var \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]
+     * @deprecated only abused as a temporary data dumping place by @see ApplicationComponent::getLayersets
+     */
     public $layerObjects;
 
     /**

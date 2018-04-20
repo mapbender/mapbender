@@ -109,7 +109,7 @@ class ElementController extends Controller
 
         $template             = $application->getTemplate();
         $region               = $this->get('request')->get('region');
-        $applicationComponent = new ApplicationComponent($this->container, $application, array());
+        $applicationComponent = new ApplicationComponent($this->container, $application);
         $elementComponent     = new $class($applicationComponent, $this->container, ComponentElement::getDefaultElement($class, $region));
 
         $elementComponent->getEntity()->setTitle($elementComponent->trans($elementComponent->getClassTitle()));
@@ -154,8 +154,7 @@ class ElementController extends Controller
             $em->persist($element);
             $em->flush();
             $entity_class = $element->getClass();
-            $appl = new ApplicationComponent($this->container,
-                $application, array());
+            $appl = new ApplicationComponent($this->container, $application);
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
             $this->get('session')->getFlashBag()->set('success',
@@ -228,8 +227,7 @@ class ElementController extends Controller
             $em->flush();
 
             $entity_class = $element->getClass();
-            $appl = new ApplicationComponent($this->container,
-                $application, array());
+            $appl = new ApplicationComponent($this->container, $application);
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
             $this->get('session')->getFlashBag()->set('success',

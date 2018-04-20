@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -920,5 +921,23 @@ class WmsSource extends Source implements ContainingKeyword
     {
         $this->identifier = $identifier;
         return $this;
+    }
+
+    /**
+     * @return DimensionInst[]
+     */
+    public function dimensionInstancesFactory()
+    {
+        $dimensions = array();
+        foreach ($this->getLayers() as $layer) {
+            /** @var WmsLayerSource $layer */
+            foreach ($layer->getDimension() as $dimension) {
+                $dim = DimensionInst::fromDimension($dimension);
+                if (!in_array($dim, $dimensions)) {
+                    $dimensions[] = $dim;
+                }
+            }
+        }
+        return $dimensions;
     }
 }

@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
+use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
@@ -85,26 +86,19 @@ class EntityHandler
     /**
      * @param ContainerInterface $container
      * @param  Source|SourceInstance|object $entity
-     * @return \Mapbender\WmsBundle\Component\WmsInstanceEntityHandler|SourceInstanceEntityHandler|null
+     * @return static|null
+     * @todo: never return null
      */
     public static function createHandler(ContainerInterface $container, $entity)
     {
-        $bundles            = $container->get('kernel')->getBundles();
-        $reflect            = new \ReflectionClass($entity);
         $entityClass        = ClassUtils::getClass($entity);
-        $entityBundleFolder = substr($entityClass, 0, strpos($entityClass, '\\Entity\\'));
-        $entityName         = $reflect->getShortName();
-        foreach ($bundles as $type => $bundle) {
-            if (strpos( get_class($bundle), $entityBundleFolder) === 0) {
-                $handlerClass = $entityBundleFolder . '\\Component\\' . $entityName . 'EntityHandler';
-                if (class_exists($handlerClass)) {
-                    return new $handlerClass($container, $entity);
-                } else {
-                    return null;
-                }
-            }
+        $handlerClass = str_replace('\\Entity\\', '\\Component\\', $entityClass) . 'EntityHandler';
+
+        if (class_exists($handlerClass)) {
+            return new $handlerClass($container, $entity);
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -207,5 +201,20 @@ class EntityHandler
             return $tmp;
         }
         return $result;
+    }
+
+    /**
+     * Initializes a newly created SourceInstance
+     * @param SourceInstance $sourceInstance
+     * @internal
+     * @todo: This belongs in the repository layer. TBD if we can access the container / other services there.
+     */
+    protected function initializeSourceInstance(SourceInstance $sourceInstance)
+    {
+        // delegate to service (polymorphic)
+        /** @var ConfigService $appConfigService */
+        $appConfigService = $this->container->get('mapbender.presenter.application.config.service');
+        $sourceService = $appConfigService->getSourceService($sourceInstance);
+        $sourceService->initializeInstance($sourceInstance);
     }
 }
