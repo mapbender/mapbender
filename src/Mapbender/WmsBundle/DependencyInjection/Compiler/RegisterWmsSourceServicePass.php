@@ -14,8 +14,8 @@ class RegisterWmsSourceServicePass implements CompilerPassInterface
         // Register wms config generation service with source type directory service in CoreBundle.
         // This is done here because service definitions cannot be amended via XML / YAML across bundles.
         $typeDirectoryDefinition = $container->getDefinition('mapbender.source.typedirectory.service');
-        /** @see TypeDirectoryService::addSourceService */
-        $typeDirectoryDefinition->addMethodCall('addSourceService', array(
+        /** @see TypeDirectoryService::registerSubtypeService */
+        $typeDirectoryDefinition->addMethodCall('registerSubtypeService', array(
             'wms',
             'mapbender.source.wms.service',
         ));

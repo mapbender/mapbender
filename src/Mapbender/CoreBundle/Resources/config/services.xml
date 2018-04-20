@@ -119,7 +119,7 @@
         <service id="mapbender.source.default.service" alias="mapbender.source.wms.service" />
         <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">
             <argument type="service" id="service_container" />
-            <call method="setDefaultSourceService">
+            <call method="setDefaultService">
                 <argument>mapbender.source.default.service</argument>
             </call>
         </service>

@@ -18,8 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * The directory itself is registered in container at mapbender.source.typedirectory
  *
  * Handlers for polymorphic source instance types pluggable and extensible by injecting method calls to
- * * @see TypeDirectoryService::setDefaultSourceService
- * * @see TypeDirectoryService::addSourceService
+ * * @see TypeDirectoryService::setDefaultService
+ * * @see TypeDirectoryService::registerSubtypeService
  *
  * This should be done in a DI compiler pass (extending service definition via XML / YAML does not work across bundles)
  * @see RegisterWmsSourceServicePass for a working example
@@ -29,9 +29,9 @@ class TypeDirectoryService
     /** @var ContainerInterface */
     protected $container;
     /** @var SourceService[] */
-    protected $sourceServices = array();
+    protected $subtypeServices = array();
     /** @var SourceService|null */
-    protected $defaultSourceService;
+    protected $defaultService;
 
     public function __construct(ContainerInterface $container)
     {
@@ -51,9 +51,9 @@ class TypeDirectoryService
     public function getSourceService(SourceInstance $sourceInstance)
     {
         $key = strtolower($sourceInstance->getType());
-        $service = ArrayUtil::getDefault($this->sourceServices, $key, null);
+        $service = ArrayUtil::getDefault($this->subtypeServices, $key, null);
         if (!$service) {
-            $service = $this->defaultSourceService;
+            $service = $this->defaultService;
             if ($service) {
                 $message = 'Using default source service for source instance type ' . print_r($key, true);
                 $this->getLogger()->warning(__CLASS__ . ": {$message}");
@@ -67,10 +67,10 @@ class TypeDirectoryService
         // building extensions
         if (is_string($service)) {
             $service = $this->container->get($service);
-            // NOTE: The service id may have come from $this->defaultSourceService.
+            // NOTE: The service id may have come from $this->defaultService.
             //       This is harmless. The sourceServices array is checked first, and the worst that can happen
             //       is that we create an implicit entry for every type that uses the default service.
-            $this->sourceServices[$key] = $service;
+            $this->subtypeServices[$key] = $service;
         }
         return $service;
     }
@@ -78,19 +78,19 @@ class TypeDirectoryService
     /**
      * Sets (or removes) the default service for generating source instance configuration. This default
      * service is used as the fallback if the specific type ("wms") has not been explicitly wired to a
-     * specialized service via @see addSourceService
+     * specialized service via @see registerSubtypeService
      *
      * The default is set via services.xml. This should not require compiler pass DI, though that's possible, too.
      *
      * @param SourceService|string $service
      */
-    public function setDefaultSourceService($service = null)
+    public function setDefaultService($service = null)
     {
-        $this->defaultSourceService = $this->validateSourceServiceType($service, true);
+        $this->defaultService = $this->validateServiceType($service, true);
     }
 
     /**
-     * Adds (or replaces) the sub-service for generating configuration for specific types of source instances.
+     * Adds (or replaces) the sub-service for generating configuration for a concrete sub-type of source instances.
      *
      * Provided as a post-constructor customization hook. Should call from a DI compiler pass to plug in
      * support for new source types.
@@ -100,17 +100,17 @@ class TypeDirectoryService
      * @param string $instanceType
      * @param SourceService|string $service service instance or the service id string (for lazy evaluation)
      */
-    public function addSourceService($instanceType, $service)
+    public function registerSubtypeService($instanceType, $service)
     {
         if (!$instanceType || !is_string($instanceType)) {
             throw new \InvalidArgumentException('Empty / non-string instanceType ' . print_r($instanceType));
         }
         $key = strtolower($instanceType);
-        $service = $this->validateSourceServiceType($service, true);
+        $service = $this->validateServiceType($service, true);
         if (!$service) {
-            unset($this->sourceServices[$key]);
+            unset($this->subtypeServices[$key]);
         } else {
-            $this->sourceServices[$key] = $service;
+            $this->subtypeServices[$key] = $service;
         }
     }
 
@@ -126,7 +126,7 @@ class TypeDirectoryService
      * @return SourceService|string|null
      * @throws \InvalidArgumentException if unsupported input type, or input empty and $allowEmpty false
      */
-    protected function validateSourceServiceType($serviceOrId, $allowEmpty)
+    protected function validateServiceType($serviceOrId, $allowEmpty)
     {
         if (!$serviceOrId) {
             if (!$allowEmpty) {
