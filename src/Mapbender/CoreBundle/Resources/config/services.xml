@@ -17,7 +17,6 @@
              Caching machinery can only be safely enabled after these cases have been adressed properly -->
         <parameter key="cachable.mapbender.application.config">false</parameter>
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
-        <parameter key="cachable.mapbender.application.config">true</parameter>
     </parameters>
 
     <services>
