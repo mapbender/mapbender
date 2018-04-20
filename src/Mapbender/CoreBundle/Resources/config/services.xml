@@ -16,6 +16,8 @@
         <!-- Application config caching disabled because we have identified some parts of the configuration may depend on current user
              Caching machinery can only be safely enabled after these cases have been adressed properly -->
         <parameter key="cachable.mapbender.application.config">false</parameter>
+        <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
+        <parameter key="cachable.mapbender.application.config">true</parameter>
     </parameters>
 
     <services>
@@ -115,8 +117,13 @@
         </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
             <argument type="service" id="service_container" />
-            <call method="setDefaultSourceService">
-                <argument>mapbender.presenter.source.service</argument>
+        </service>
+        <!-- wms service is the shipping default, unless changed by an optionally installed bundle -->
+        <service id="mapbender.source.default.service" alias="mapbender.source.wms.service" />
+        <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">
+            <argument type="service" id="service_container" />
+            <call method="setDefaultService">
+                <argument>mapbender.source.default.service</argument>
             </call>
         </service>
         <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">

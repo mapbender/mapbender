@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Element\DimensionsHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -232,8 +233,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function getConfiguration(Signer $signer = null)
     {
-        $configService = $this->getConfigService();
-        return $configService->getConfiguration($this->entity);
+        $service = $this->getService();
+        return $service->getConfiguration($this->entity);
     }
 
     /**
@@ -250,7 +251,9 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     protected function getRootLayerConfig()
     {
-        return $this->getConfigService()->getRootLayerConfig($this->entity);
+        /** @var WmsSourceService $service */
+        $service = $this->getService();
+        return $service->getRootLayerConfig($this->entity);
     }
 
     /**

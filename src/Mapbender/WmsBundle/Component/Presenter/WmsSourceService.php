@@ -12,8 +12,8 @@ use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
- * Instance registered in container at mapbender.presenter.source.wms.service and aliased as
- * mapbender.presenter.source.service (because it's the default and the only one we start with),
+ * Instance registered in container at mapbender.source.wms.service and aliased as
+ * mapbender.source.default.service (because it's the default and the only one we start with),
  * see services.xml
  */
 class WmsSourceService extends SourceService
