@@ -250,6 +250,33 @@
   .input{width:80px;}
   .titleColumn .input{width:200px;}
 }
+
+.wmtsInstanceTable {
+  tbody{
+    .wmtsTitle{
+      .inputWrapper{width:120px !important;}
+    }
+    .wmtsMatrixsets{
+      .dropdown{width:100px !important;}
+      select{
+        width:80px !important;
+        text-overflow:ellipsis !important;
+        word-wrap: break-word !important;
+        overflow: hidden !important;
+      }
+    }
+    .wmtsFormats{
+      .dropdown{width:80px !important;}
+    }
+    .wmtsStyles{
+      .dropdown{width:50px !important;}
+    }
+    select:not(:-internal-list-box) {
+      overflow: hidden !important;
+    }
+  }
+}
+
 .infoMsgBox{
   z-index: 10;
   min-width: 260px;
