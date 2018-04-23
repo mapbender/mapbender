@@ -69,10 +69,17 @@ class PrintService extends ImageExportService
         // map requests array
         $this->mapRequests = array();
         foreach ($data['layers'] as $i => $layer) {
-            if ($layer['type'] != 'wms') {
+            if ($layer['type'] === 'wms') {
+                $request = strstr($layer['url'], '&BBOX', true);
+            } else if ($layer['type'] === 'wmts' || $layer['type'] === 'tms') {
+                if ($data['quality'] === '288' ) {
+                    $this->mapRequests[$i] = $data['layers'][$i]['url'];
+                } else {
+                    $this->mapRequests[$i] = $data['layers'][$i];
+                }
+            } else {
                 continue;
             }
-            $request = strstr($layer['url'], '&BBOX', true);
 
             $extentWidth = $data['extent']['width'];
             $extentHeight = $data['extent']['height'];
@@ -98,7 +105,7 @@ class PrintService extends ImageExportService
 
                 $width = '&WIDTH=' . $this->imageWidth;
                 $height =  '&HEIGHT=' . $this->imageHeight;
-            }else{
+            } else {
                 // calculate needed bbox
                 $neededExtentWidth = abs(sin(deg2rad($rotation)) * $extentHeight) +
                     abs(cos(deg2rad($rotation)) * $extentWidth);
@@ -126,22 +133,30 @@ class PrintService extends ImageExportService
                 $height =  '&HEIGHT=' . $neededImageHeight;
             }
 
-            $request .= '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
-            $request .= $width . $height;
+            if ($layer['type'] === 'wms') {
+                $request .= '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
+                $request .= $width . $height;
 
-            if(!isset($this->data['replace_pattern'])){
-                if ($this->data['quality'] != '72') {
-                    $request .= '&map_resolution=' . $this->data['quality'];
+                if(!isset($this->data['replace_pattern'])){
+                    if ($this->data['quality'] != '72') {
+                        $request .= '&map_resolution=' . $this->data['quality'];
+                    }
                 }
+                $this->mapRequests[$i] = $request;
+            } else if ($layer['type'] === 'wmts' || $layer['type'] === 'tms') {
+                $request = $this->mapRequests[$i];
+                $request['bbox'] = array($minX, $minY, $maxX, $maxY);
+                $request['neededHeight'] = isset($neededImageHeight) ? $neededImageHeight : $this->imageHeight;
+                $request['neededWidth'] = isset($neededImageWidth) ? $neededImageWidth : $this->imageWidth;
+                $request['width'] = $this->imageWidth;
+                $request['height'] = $this->imageHeight;
+                $this->mapRequests[$i] = $request;
             }
-
-            $this->mapRequests[$i] = $request;
         }
 
         if(isset($this->data['replace_pattern'])){
             $this->addReplacePattern();
         }
-
     }
 
     private function addReplacePattern()
@@ -149,6 +164,10 @@ class PrintService extends ImageExportService
         $quality = $this->data['quality'];
         $default = '';
         foreach ($this->mapRequests as $k => $url) {
+            // check if request is wms url
+            if (!is_string($url)){
+                continue;
+            }
             foreach ($this->data['replace_pattern'] as $rKey => $pattern) {
                 if(isset($pattern['default'])){
                     if(isset($pattern['default'][$quality])){
@@ -264,18 +283,179 @@ class PrintService extends ImageExportService
         imagepng($clippedImage, $this->finalImageName);
     }
 
+    private function getWmtsImage($request, $imageName, $width, $height)
+    {
+        $logger = $this->container->get("logger");
+//        $msg = '';
+        $metersPerUnit = 1; // only 1 m /
+        $scaleDenominator = floatval($this->data['scale_select']);
+        $tilematrixset = $request['matrixset'];
+        if (isset($request['options']['style'])) {
+            $style = $request['options']['style'];
+        }
+        $matrix = null;
+        foreach ($tilematrixset['tilematrices'] as $tilematrix) {
+            if (round($scaleDenominator, 2) === round($tilematrix['scaleDenominator'], 2)) {
+                $matrix = $tilematrix;
+                break;
+            }
+        }
+        if (!$matrix) {
+            return null;
+        }
+        $tileWidth = isset($matrix['tileWidth']) ? $matrix['tileWidth'] : $tilematrixset['tileSize'][0];
+        $tileHeight = isset($matrix['tileHeight']) ? $matrix['tileHeight'] : $tilematrixset['tileSize'][1];
+        $topLeftX = isset($matrix['topLeftCorner']) ? $matrix['topLeftCorner'][0] : $tilematrixset['origin'][0];
+        $topLeftY = isset($matrix['topLeftCorner']) ? $matrix['topLeftCorner'][1] : $tilematrixset['origin'][1];
+        $bbox = $request['bbox'];
+        $pixelSpan  = $scaleDenominator * 0.00028 / $metersPerUnit;
+        $tileSpanX = $tileWidth * $pixelSpan;
+        $tileSpanY = $tileHeight * $pixelSpan;
+
+        $matrixSizeX = $matrix['matrixSize'][0];
+        $matrixSizeY = $matrix['matrixSize'][1];
+        $matrixBbox = array(
+            $topLeftX,
+            $topLeftY - ($tileSpanY * $matrixSizeY),
+            $topLeftX + ($tileSpanX * $matrixSizeX),
+            $topLeftY
+        );
+        $urlHelp = str_replace('{TileMatrixSet}', $tilematrixset['identifier'], $request['url']);
+        $urlHelp = str_replace('{TileMatrix}', $matrix['identifier'], $urlHelp);
+        if (isset($style)) {
+            $urlHelp = str_replace('{Style}', $style, $urlHelp);
+        }
+        $image = imagecreatetruecolor($width, $height);
+        for ($tytop = $bbox[3]; $tytop >= $bbox[1]- $tileSpanY; $tytop = $tytop - $tileSpanY) {
+            $tybottom = $tytop - $tileSpanY;
+            if ($tybottom <= $matrixBbox[3] && $tytop >= $matrixBbox[1]) { // ??? check
+                for ($txleft = $bbox[0]; $txleft <= $bbox[2] + $tileSpanX; $txleft = $txleft + $tileSpanX) {
+                    $txright = $txleft + $tileSpanX;
+                    if ($txright >= $matrixBbox[0] && $txleft <= $matrixBbox[2]) {
+                        $xnum = floor(($txleft - $matrixBbox[0]) / $tileSpanX);
+                        $ynum = $matrixSizeY - floor(($tytop - $matrixBbox[1]) / $tileSpanY) - 1;
+                        $url = str_replace('{TileCol}', $xnum, $urlHelp);
+                        $url = str_replace('{TileRow}', $ynum, $url);
+                        $logger->debug("WMTS: " . $xnum . "-" . $ynum . " " . $url);
+//                        $msg .= $xnum . "\t" . $ynum . "\t" . $url .'\n\n';
+                        $imageName = tempnam($this->tempDir, 'mb_print_wmts' . $xnum . "-" . $ynum);
+
+                        $rawImage = $this->getImage2($url, $imageName);
+                        if ($rawImage !== null) {
+                            $tx = $xnum * $tileSpanX + $matrixBbox[0];
+                            $ty = $matrixBbox[3] - $ynum * $tileSpanY;
+                            $txpos = intval(round(($tx - $bbox[0]) / $pixelSpan));
+                            $typos = intval(round(($bbox[3] - $ty) / $pixelSpan));
+//                            $msg .= $txpos . "\t" . $typos . "\t" . $xnum . "\t" . $ynum .'\t' . $url . '\n\n';
+                            $image = $this->drawImage($image, $rawImage, $txpos, $typos, 0, 0, $tileWidth, $tileHeight, $tileWidth, $tileHeight);
+                            unlink($imageName);
+                        }
+                    }
+                }
+            }
+        }
+//        $logger->debug($msg);
+        return $image;
+    }
+
+    private function getTmsImage($request, $imageName, $width, $height)
+    {
+        $logger = $this->container->get("logger");
+//        $msg = '';
+        $tilematrixset = $request['options']['tilematrixset'];
+        $tileWidth = $tilematrixset['tileSize'][0];
+        $tileHeight = $tilematrixset['tileSize'][1];
+        $tileMatrixStartX = $tilematrixset['origin'][0];
+        $tileMatrixStartY = $tilematrixset['origin'][1];
+        $matrix = $tilematrixset['tilesets'][$request['zoom']];
+        $unitsPerPixel = $matrix['units-per-pixel'];
+        $bbox = $request['bbox'];
+        $matrixBbox = $request['options']['bbox'][$tilematrixset['supportedCrs']];
+        $xstep = $unitsPerPixel * $tileWidth;
+        $ystep = $unitsPerPixel * $tileHeight;
+        $image = imagecreatetruecolor($width, $height);
+
+        $minx = $bbox[0] > $matrixBbox[0] ? $bbox[0] : $matrixBbox[0];
+        $miny = $bbox[1] > $matrixBbox[1] ? $bbox[1] : $matrixBbox[1];
+        $maxx = $bbox[2] < $matrixBbox[2] ? $bbox[2] : $matrixBbox[2];
+        $maxy = $bbox[3] < $matrixBbox[3] ? $bbox[3] : $matrixBbox[3];
+        if ($minx < $maxx && $miny < $maxy) {
+            $ynum = floor(($miny - $tileMatrixStartY) / $ystep);
+            $ty0 = $ynum * $ystep + $tileMatrixStartY;
+            for ($tileBottom = $ty0; $tileBottom <= $maxy; $tileBottom += $ystep, $ynum++) {
+                $xnum = floor(($minx - $tileMatrixStartX) / $xstep);
+                $tx0 = $xnum * $xstep + $tileMatrixStartX;
+                for ($tileLeft = $tx0; $tileLeft <= $maxx; $tileLeft += $xstep, $xnum++) {
+                    $url = $matrix['href'] . "/"  . $xnum . "/" . $ynum . "." . $request['options']['format_ext'];
+                    $logger->debug("TMS: " . $xnum . "-" . $ynum . " " . $url);
+                    $imageName = tempnam($this->tempDir, 'mb_print_tms' . $xnum . "-" . $ynum);
+                    $rawImage = $this->getImage2($url, $imageName);
+                    if ($rawImage !== null) {
+                        $txpos = intval(round(($tileLeft - $minx) / $unitsPerPixel));
+                        $typos = intval(round(($miny - $tileBottom) / $unitsPerPixel)) + $height - $tileHeight;
+//                        $msg .= $txpos . "\t" . $typos . "\t" . $xnum . "\t" . $ynum .'\t' . $url . '\n\n';
+                        $image = $this->drawImage($image, $rawImage, $txpos, $typos, 0, 0, $tileWidth, $tileHeight, $tileWidth, $tileHeight);
+                        unlink($imageName);
+                    }
+                }
+            }
+        }
+//        $logger->debug($msg);
+        return $image;
+    }
+
+    private function getImage2($request, $imageName)
+    {
+        $logger = $this->container->get("logger");
+        $path = array(
+            '_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+            'url' => $request
+        );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+
+        file_put_contents($imageName, $response->getContent());
+        $rawImage = null;
+        switch (trim($response->headers->get('content-type'))) {
+            case 'image/png':
+                $rawImage = imagecreatefrompng($imageName);
+                break;
+            case 'image/jpeg':
+                $rawImage = imagecreatefromjpeg($imageName);
+                break;
+            case 'image/gif':
+                $rawImage = imagecreatefromgif($imageName);
+                break;
+            default:
+                $logger->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
+                continue;
+        }
+        return $rawImage;
+    }
+
     private function getImages($width, $height)
     {
         $logger        = $this->getLogger();
         $imageNames    = array();
         foreach ($this->mapRequests as $i => $url) {
-            $this->getLogger()->debug("Print Request Nr.: " . $i . ' ' . $url);
-
-            $mapRequestResponse = $this->mapRequest($url);
+            $logger->debug("Print Request Nr.: " . $i . ' ' . $url);
 
             $imageName    = $this->makeTempFile('mb_print');
             $imageNames[] = $imageName;
-            $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
+
+            if (is_string($url)) {
+                $mapRequestResponse = $this->mapRequest($url);
+
+                $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
+            } elseif (is_array($url) && $url['type'] === 'tms') { // only tms
+                $logger->debug("Print Request Nr.: " . $i . ' ' . $url['url']);
+                $rawImage = $this->getTmsImage($url, $imageName, $width, $height);
+            } elseif (is_array($url) && $url['type'] === 'wmts') { // only wmts
+                $logger->debug("Print Request Nr.: " . $i . ' ' . $url['url']);
+                $rawImage = $this->getWmtsImage($url, $imageName, $width, $height);
+            } else {
+                continue;
+            }
 
             if (!$rawImage) {
                 $logger->debug("ERROR! PrintRequest failed: " . $url);

@@ -393,7 +393,10 @@
                         layer.olLayer.params.STYLES = visLayers.styles;
 
                         var opacity = sources[i].configuration.options.opacity;
-                        var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
+                        var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer,
+                            this.map.map.olMap.getExtent(),
+                            scale,
+                            sources[i].configuration.options.proxy);
                         lyrConf.opacity = opacity;
 
                         // flag to change axis order

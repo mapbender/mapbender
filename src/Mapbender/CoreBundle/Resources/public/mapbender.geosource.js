@@ -60,7 +60,7 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'abstract public function featureInfoUrl': function(layer, x, y) {
     },
-    'abstract public function getPrintConfig': function(layer, bounds, isProxy) {
+    'abstract public function getPrintConfig': function(layer, bounds, scale, isProxy) {
     },
     'abstract public function createSourceDefinitions': function(xml, options) {
     }, // to remove
