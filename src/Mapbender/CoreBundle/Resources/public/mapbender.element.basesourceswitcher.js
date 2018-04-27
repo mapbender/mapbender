@@ -19,7 +19,8 @@
 
             $('.basesourcesubswitcher', $(this.element)).addClass('hidden');
 
-            $('.basesourcegroup', this.element).on('click', $.proxy(this._showHideMenu, this));
+            $('.basesourcegroup', this.element).on('mouseenter', $.proxy(this._showMenu, this));
+            $('.basesourcegroup', this.element).on('mouseleave', $.proxy(this._hideMenu, this));
 
             this._showActive();
 
@@ -29,14 +30,16 @@
             $(document).on('mbmapsourceloaderror', $.proxy(this._removeSourceFromLoad, this));
         },
 
-        _showHideMenu: function(e) {
+        _showMenu: function(e) {
             var $bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
 
-            if ($bsswtch.hasClass('hidden')) {
-                $bsswtch.removeClass('hidden');
-            } else {
-                $bsswtch.addClass('hidden');
-            }
+            $bsswtch.removeClass('hidden');
+        },
+
+        _hideMenu: function(e) {
+            var $bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
+
+            $bsswtch.addClass('hidden');
         },
 
         _hideSources: function () {
