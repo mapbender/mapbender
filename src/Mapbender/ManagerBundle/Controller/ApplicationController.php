@@ -228,11 +228,11 @@ class ApplicationController extends WelcomeController
                 'application'         => $application,
                 'form'                => $form->createView(),
                 'form_name'           => $form->getName(),
-                'screenshot_filename' => $screenShotUrl);
+                'screenshot_filename' => $screenShotUrl
+            );
         }
 
         $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
-        $app_web_url   = AppComponent::getAppWebUrl($this->container, $application->getSlug());
         $application->setUpdated(new \DateTime('now'));
         $em = $this->getDoctrine()->getManager();
 
@@ -251,8 +251,6 @@ class ApplicationController extends WelcomeController
             && $parameters['uploadScreenShot'] !== '1'
         ) {
             $uploadScreenShot->upload($app_directory, $scFile, $application);
-            $app_web_url   = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-            $screenShotUrl = $app_web_url . "/" . $application->getScreenshot();
         }
 
         $em->persist($application);
@@ -279,8 +277,8 @@ class ApplicationController extends WelcomeController
             $connection->rollBack();
             $flashBag->set('error', $this->translate('mb.application.create.failure.create.directory'));
         }
-        return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
 
+        return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
     }
 
     /**
