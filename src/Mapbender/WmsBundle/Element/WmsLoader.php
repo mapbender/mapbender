@@ -191,7 +191,7 @@ class WmsLoader extends Element
         $requestUrl = $request->get("url");
         $requestUserName = $request->get("username");
         $requestPassword = $request->get("password");
-        $onlyValid = $request->get("onlyvalid");
+        $onlyValid = false;
 
         $wmsOrigin = new WmsOrigin($requestUrl, $requestUserName, $requestPassword);
         /** @var Importer $importer */

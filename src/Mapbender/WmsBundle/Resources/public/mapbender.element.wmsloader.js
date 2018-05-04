@@ -94,10 +94,8 @@
                                 var urlObj = new Mapbender.Util.Url(url);
                                 urlObj.username = $('input[name="loadWmsUser"]', self.element).val();
                                 urlObj.password = $('input[name="loadWmsPass"]', self.element).val();
-                                var onlyValid = $('input[name="loadWmsOnlyValid"]').prop('checked');
                                 var options = {
                                     'gcurl': urlObj,
-                                    'onlyValid': onlyValid,
                                     'type': 'url',
                                     'layers': {},
                                     'global': {
@@ -176,8 +174,7 @@
             $.ajax({
                 url: self.elementUrl + 'loadWms',
                 data: {
-                    url: sourceOpts.gcurl.asString(),
-                    onlyValid: sourceOpts.onlyValid
+                    url: sourceOpts.gcurl.asString()
                 },
                 dataType: 'json',
                 success: function(data, textStatus, jqXHR){

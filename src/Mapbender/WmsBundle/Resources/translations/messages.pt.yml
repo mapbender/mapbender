@@ -7,7 +7,6 @@ mb:
           wmsurl: URL
           wmsuser: Usuário
           wmspass: Senha
-          wmsonlyvalid: 'Apenas válido?'
         btn:
           cancel: Cancelar
           load: Carregar
