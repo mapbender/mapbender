@@ -223,7 +223,7 @@ class ApplicationController extends WelcomeController
         $parameters    = $request->request->get('application');
         $screenShotUrl = null;
 
-        if (!$form->submit($parameters)->isValid()) {
+        if (!$form->submit($request)->isValid()) {
             return array(
                 'application'         => $application,
                 'form'                => $form->createView(),
