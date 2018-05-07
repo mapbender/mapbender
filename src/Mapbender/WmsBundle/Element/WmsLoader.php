@@ -180,10 +180,7 @@ class WmsLoader extends Element
 
         $wmsInstanceEntityHandler = new WmsInstanceEntityHandler($this->container, $wmsInstance);
         $signer = $this->container->get('signer');
-        $layerConfiguration = array();
-        $layerConfiguration['title'] = $wmsInstance->getTitle();
-        $layerConfiguration['type'] = strtolower($wmsInstance->getType());
-        $layerConfiguration['configuration'] = $wmsInstanceEntityHandler->getConfiguration($signer);
+        $layerConfiguration = $wmsInstanceEntityHandler->getConfiguration($signer);
         $layerConfiguration['configuration']['children'] = $this->getLayersetConfig($wmsInstance);
 
         return new JsonResponse($layerConfiguration);
@@ -194,7 +191,7 @@ class WmsLoader extends Element
         $requestUrl = $request->get("url");
         $requestUserName = $request->get("username");
         $requestPassword = $request->get("password");
-        $onlyValid = $request->get("onlyvalid");
+        $onlyValid = false;
 
         $wmsOrigin = new WmsOrigin($requestUrl, $requestUserName, $requestPassword);
         /** @var Importer $importer */
