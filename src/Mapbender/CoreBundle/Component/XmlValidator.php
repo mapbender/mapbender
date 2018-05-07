@@ -125,7 +125,7 @@ EOF
             foreach ($errors as $error) {
                 $message .= "\n" . $error->message;
             }
-            $this->container->get('logger')->err($message);
+            $this->getLogger()->error($message);
             libxml_clear_errors();
             throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
         }
@@ -161,7 +161,7 @@ EOF
      */
     private function addSchemaLocation(&$schemaLocations, $ns, $path)
     {
-        if (stripos($path, "http:") === 0) {
+        if (stripos($path, "http:") === 0 || stripos($path, "https:") === 0) {
             $this->addSchemaLocationReq($schemaLocations, $ns, $path);
             return true;
         } elseif (is_file($path)) {
