@@ -83,6 +83,10 @@ class XmlValidator
     }
 
 
+    /**
+     * @param \DOMDocument $doc
+     * @throws XmlParseException
+     */
     protected function validateDtd(\DOMDocument $doc)
     {
         $docH = new \DOMDocument();
@@ -99,6 +103,10 @@ class XmlValidator
         }
     }
 
+    /**
+     * @param \DOMDocument $doc
+     * @throws XmlParseException
+     */
     protected function validateNonDtd(\DOMDocument $doc)
     {
         $schemaLocations = $this->addSchemas($doc);
