@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
@@ -176,9 +177,9 @@ class WmsLoader extends Element
 
         $wmsSourceEntityHandler = new WmsSourceEntityHandler($this->container, $wmsSource);
         $wmsInstance = $wmsSourceEntityHandler->createInstance();
-
-        $wmsInstanceEntityHandler = new WmsInstanceEntityHandler($this->container, $wmsInstance);
-        $layerConfiguration = $wmsInstanceEntityHandler->getService()->getConfiguration($wmsInstance);
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        $layerConfiguration = $directory->getSourceService($wmsInstance)->getConfiguration($wmsInstance);
 
         return new JsonResponse($layerConfiguration);
     }
