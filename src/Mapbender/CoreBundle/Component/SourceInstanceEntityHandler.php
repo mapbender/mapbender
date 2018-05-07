@@ -78,7 +78,7 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      *
      * @return SourceService
      */
-    protected function getService()
+    public function getService()
     {
         /** @var TypeDirectoryService $directory */
         $directory = $this->container->get('mapbender.source.typedirectory.service');
