@@ -10,9 +10,10 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 class Response
 {
     protected $wmsSourceEntity;
+    /** @var DeferredValidation|XmlParseException|null */
     protected $validationError;
 
-    public function __construct(WmsSource $wmsSourceEntity, XmlParseException $validationError = null)
+    public function __construct(WmsSource $wmsSourceEntity, $validationError = null)
     {
         $this->wmsSourceEntity = $wmsSourceEntity;
         $this->validationError = $validationError;
@@ -31,6 +32,10 @@ class Response
      */
     public function getValidationError()
     {
+        if ($this->validationError && ($this->validationError instanceof DeferredValidation)) {
+            // evaluate validation now, replace proxy with result
+            $this->validationError = $this->validationError->run();
+        }
         return $this->validationError;
     }
 }
