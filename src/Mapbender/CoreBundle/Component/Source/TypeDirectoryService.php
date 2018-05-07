@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * * generating frontend configuration
  * * locating the correct form type for administration (WIP)
  *
- * The directory itself is registered in container at mapbender.source.typedirectory
+ * The directory itself is registered in container at mapbender.source.typedirectory.service
  *
  * Handlers for polymorphic source instance types pluggable and extensible by injecting method calls to
  * * @see TypeDirectoryService::setDefaultService
