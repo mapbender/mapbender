@@ -7,7 +7,6 @@ mb:
           wmsurl: 'URL del Servizio'
           wmsuser: User
           wmspass: Password
-          wmsonlyvalid: 'Valido solo?'
         btn:
           cancel: Cancella
           load: Carica

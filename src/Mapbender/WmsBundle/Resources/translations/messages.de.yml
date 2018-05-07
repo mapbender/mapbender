@@ -7,7 +7,6 @@ mb:
           wmsurl: URL
           wmsuser: Benutzername
           wmspass: Password
-          wmsonlyvalid: 'Nur valide?'
         btn:
           cancel: Abbrechen
           load: Laden

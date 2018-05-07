@@ -7,7 +7,6 @@ mb:
           wmsurl: 'Сервис URL'
           wmsuser: Пользователь
           wmspass: Пароль
-          wmsonlyvalid: 'Действительно ли?'
         btn:
           cancel: Отменить
           load: Загрузить
