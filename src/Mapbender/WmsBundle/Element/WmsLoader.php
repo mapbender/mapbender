@@ -4,12 +4,8 @@ namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\WmsBundle\Component\Wms\Importer;
-use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
-use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
-use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -197,30 +193,5 @@ class WmsLoader extends Element
         $importerResponse = $importer->evaluateServer($wmsOrigin, $onlyValid);
 
         return $importerResponse->getWmsSourceEntity();
-    }
-
-    protected function getLayersetConfig(WmsInstance $wmsInstance)
-    {
-        $wmsInstanceLayers = $wmsInstance->getLayers();
-        $layersetConfiguration = array();
-
-        foreach ($wmsInstanceLayers as $layer) {
-            $instHandler = new WmsInstanceLayerEntityHandler($this->container, $layer);
-            $conf        = $instHandler->generateConfiguration();
-            array_push($layersetConfiguration, $conf);
-
-            if (!$conf) {
-                continue;
-            }
-
-            $layerSets[] = array(
-                $layer->getId() => array(
-                    'type'          => strtolower($wmsInstance->getType()),
-                    'title'         => $layer->getTitle(),
-                    'configuration' => $conf
-                )
-            );
-        }
-        return $layersetConfiguration;
     }
 }
