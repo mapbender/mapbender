@@ -175,8 +175,7 @@ class WmsLoader extends Element
         $wmsSource = $this->getWmsSource($request);
 
         $wmsSourceEntityHandler = new WmsSourceEntityHandler($this->container, $wmsSource);
-        $layerset = new Layerset();
-        $wmsInstance = $wmsSourceEntityHandler->createInstance($layerset);
+        $wmsInstance = $wmsSourceEntityHandler->createInstance();
 
         $wmsInstanceEntityHandler = new WmsInstanceEntityHandler($this->container, $wmsInstance);
         $layerConfiguration = $wmsInstanceEntityHandler->getService()->getConfiguration($wmsInstance);

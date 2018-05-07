@@ -73,13 +73,13 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      * @param Layerset|null $layerSet new instance will be attached to layerset if given
      * @return WmsInstance
      */
-    public function createInstance(Layerset $layerSet = NULL)
+    public function createInstance(Layerset $layerSet = null)
     {
         $instance        = new WmsInstance();
         $instance->setSource($this->entity);
-        $instance->setLayerset($layerSet);
         $instance->populateFromSource($this->entity);
         if ($layerSet) {
+            $instance->setLayerset($layerSet);
             $num = 0;
             foreach ($layerSet->getInstances() as $instanceAtLayerset) {
                 /** @var WmsInstance $instanceAtLayerset */
