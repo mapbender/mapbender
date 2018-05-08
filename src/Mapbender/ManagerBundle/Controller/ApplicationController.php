@@ -220,15 +220,15 @@ class ApplicationController extends WelcomeController
 
         $form          = $this->createApplicationForm($application);
         $request       = $this->getRequest();
+        $form->handleRequest($request);
         $parameters    = $request->request->get('application');
-        $screenShotUrl = null;
 
-        if (!$form->submit($request)->isValid()) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return array(
                 'application'         => $application,
                 'form'                => $form->createView(),
                 'form_name'           => $form->getName(),
-                'screenshot_filename' => $screenShotUrl
+                'screenshot_filename' => null,
             );
         }
 
