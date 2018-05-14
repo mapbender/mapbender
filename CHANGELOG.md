@@ -3,6 +3,8 @@
 * **v3.0.7.1**
     - Revert inclusion of "only valid" checkbox in WmsLoader
     - Bypass (potentially very long) WmsLoader DTD / XSD validation of GetCapabilities document
+    - Print: fixed font size handling for coordinates display
+    - Fix application screenshot upload handling
 
 * **v.3.0.7.0**
     - Support reversible layer order per WMS source instance (new dropdown application backend section "Layersets")
