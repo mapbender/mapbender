@@ -92,8 +92,8 @@ class XmlValidator
         $docH = new \DOMDocument();
         $filePath = $this->ensureLocalSchema($doc->doctype->name, $doc->doctype->systemId);
         $docStr = str_replace($doc->doctype->systemId, $this->addFileSchema($filePath), $doc->saveXML());
-        unset($docStr);
-        if (!@$docH->loadXML($doc->saveXML(), LIBXML_DTDLOAD | LIBXML_DTDVALID)) {
+
+        if (!@$docH->loadXML($docStr, LIBXML_DTDLOAD | LIBXML_DTDVALID)) {
             throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
         }
 
