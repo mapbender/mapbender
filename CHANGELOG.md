@@ -1,5 +1,9 @@
 # Changelog
 
+* **v3.0.7.1**
+    - Revert inclusion of "only valid" checkbox in WmsLoader
+    - Bypass (potentially very long) WmsLoader DTD / XSD validation of GetCapabilities document
+
 * **v.3.0.7.0**
     - Support reversible layer order per WMS source instance (new dropdown application backend section "Layersets")
     - Support WMS keywords > 255 characters; needs app/console doctrine:schema:update for running installations
