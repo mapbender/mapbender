@@ -140,7 +140,8 @@
             var selectValue;
 
             $.each(scales, function(idx, scale) {
-                if(scale == currentScale){
+                scale = Math.round(scale);
+                if(scale === currentScale){
                     selectValue = scales[idx];
                     return false;
                 }
@@ -149,11 +150,11 @@
                     return false;
                 }
             });
-            if(currentScale <= scales[0]){
-                selectValue = scales[0];
+            if(currentScale <= Math.round(scales[0])){
+                selectValue = Math.round(scales[0]);
             }
-            if(currentScale > scales[scales.length-1]){
-                selectValue = scales[scales.length-1];
+            if(currentScale > Math.round(scales[scales.length-1])){
+                selectValue = Math.round(scales[scales.length-1]);
             }
 
             select.val(selectValue);
