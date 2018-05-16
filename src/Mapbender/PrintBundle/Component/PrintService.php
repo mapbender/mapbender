@@ -438,14 +438,13 @@ class PrintService extends ImageExportService
         $logger        = $this->getLogger();
         $imageNames    = array();
         foreach ($this->mapRequests as $i => $url) {
-            $logger->debug("Print Request Nr.: " . $i . ' ' . $url);
 
             $imageName    = $this->makeTempFile('mb_print');
             $imageNames[] = $imageName;
 
             if (is_string($url)) {
+                $logger->debug("Print Request Nr.: " . $i . ' ' . $url);
                 $mapRequestResponse = $this->mapRequest($url);
-
                 $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
             } elseif (is_array($url) && $url['type'] === 'tms') { // only tms
                 $logger->debug("Print Request Nr.: " . $i . ' ' . $url['url']);
