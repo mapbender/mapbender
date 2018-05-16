@@ -73,6 +73,9 @@ Mapbender.initElement = function(id, data) {
     var readyEvent = widgetName.toLowerCase() + 'ready';
     var mapbenderWidgets = $[nameSpace];
     var mapbenderWidget = mapbenderWidgets[widgetName];
+    if (!mapbenderWidget) {
+        throw new Error("No such widget " + widgetName + " in " + nameSpace + " namespace");
+    }
 
     // Register for ready event to operate ElementRegistry
     widgetElement.one(readyEvent, function(event) {
