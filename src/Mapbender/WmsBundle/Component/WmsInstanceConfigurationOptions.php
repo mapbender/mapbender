@@ -2,15 +2,25 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
+use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmcBundle\Component\WmcParser110;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * Description of WmsInstanceConfiguration
  *
  * @author Paul Schmidt
+ *
+ * @deprecated this entire class is only used transiently to capture values via its setters, then converted to
+ *     array and discared. The sanitization performed along the way is minimal.
+ *     The only remaining use is in WmcParser110.
+ *
+ * @see WmcParser110::parseLayer()
+ * @see WmsInstanceConfiguration::fromEntity()
+ * @internal
  */
 class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 {
-
     /**
      * ORM\Column(type="string", nullable=true)
      */
@@ -300,16 +310,12 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      */
     public function toArray()
     {
-        return array(
+        return parent::toArray() + array(
             "version" => $this->version,
-            "url" => $this->url,
-            "proxy" => $this->proxy,
-            "visible" => $this->visible,
             "format" => $this->format,
             "info_format" => $this->infoformat,
             "exception_format" => $this->exceptionformat,
             "transparent" => $this->transparency,
-            "opacity" => $this->opacity,
             "tiled" => $this->tiled,
             "bbox" => $this->bbox,
             "vendorspecifics" => $this->vendorspecifics,
@@ -319,57 +325,67 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function fromArray($options)
+    public static function fromEntity(WmsInstance $instance)
     {
-        $ico = null;
-        if ($options && is_array($options)) {
-            $ico = new WmsInstanceConfigurationOptions();
-            if (isset($options["url"])) {
-                $ico->url = $options["url"];
-            }
-            if (isset($options["proxy"])) {
-                $ico->proxy = $options["proxy"];
-            }
-            if (isset($options["visible"])) {
-                $ico->visible = $options["visible"];
-            }
-            if (isset($options["format"])) {
-                $ico->format = $options["format"];
-            }
-            if (isset($options["info_format"])) {
-                $ico->infoformat = $options["info_format"];
-            }
-            if (isset($options["transparent"])) {
-                $ico->transparency = $options["transparent"];
-            }
-            if (isset($options["opacity"])) {
-                $ico->opacity = $options["opacity"];
-            }
-            if (isset($options["tiled"])) {
-                $ico->tiled = $options["tiled"];
-            }
-            if (isset($options["bbox"])) {
-                $ico->bbox = $options["bbox"];
-            }
-            if (isset($options["vendorspecifics"])) {
-                $ico->vendorspecifics = $options["vendorspecifics"];
-            }
-            if (isset($options["buffer"])) {
-                $ico->buffer = $options["buffer"];
-            }
-            if (isset($options["ratio"])) {
-                $ico->ratio = $options["ratio"];
-            }
-            if (isset($options["version"])) {
-                $ico->version = $options["version"];
-            }
-            if (isset($options["exception_format"])) {
-                $ico->exceptionformat = $options["exception_format"];
+        $source = $instance->getSource();
+
+        $effectiveUrl = $source->getGetMap()->getHttpGet();
+
+        $dimensions = array();
+        foreach ($instance->getDimensions() as $dimension) {
+            if ($dimension->getActive()) {
+                $dimensions[] = $dimension->getConfiguration();
+                if ($dimension->getDefault()) {
+                    $help = array($dimension->getParameterName() => $dimension->getDefault());
+                    $effectiveUrl = UrlUtil::validateUrl($effectiveUrl, $help, array());
+                }
             }
         }
-        return $ico;
+        $vendorSpecific = array();
+        foreach ($instance->getVendorspecifics() as $key => $vendorspec) {
+            $handler = new VendorSpecificHandler($vendorspec);
+            /* add to url only simple vendor specific with valid default value */
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
+                $vendorSpecific[] = $handler->getConfiguration();
+                $help             = $handler->getKvpConfiguration(null);
+                $effectiveUrl = UrlUtil::validateUrl($effectiveUrl, $help, array());
+            }
+        }
+        $rootLayer = $instance->getRootlayer();
+        $boundingBoxMap = array();
+        foreach ($rootLayer->getSourceItem()->getMergedBoundingBoxes() as $bbox) {
+            $boundingBoxMap[$bbox->getSrs()] = $bbox->toCoordsArray();
+        }
+        $ratio = $instance->getRatio();
+        if ($ratio !== null) {
+            $ratio = floatval($ratio);
+        }
+        return static::fromArray(array(
+            'url' => $effectiveUrl,
+            'dimensions' => $dimensions,
+            'vendorspecifics' => $vendorSpecific,
+            'proxy' => $instance->getProxy(),
+            'visible' => $instance->getVisible(),
+            'format' => $instance->getFormat(),
+            'info_format' => $instance->getInfoformat(),
+            'transparent' => $instance->getTransparency(),
+            'opacity' => ($instance->getOpacity() / 100),
+            'tiled' => $instance->getTiled(),
+            'buffer' => $instance->getBuffer(),
+            'ratio' => $ratio,
+            'version' => $instance->getSource()->getVersion(),
+            'exception_format' => $instance->getExceptionformat(),
+            'bbox' => $boundingBoxMap,
+        ));
+    }
+
+    protected static function keyToAttributeMapping()
+    {
+        // remap our three "danger zone" keys
+        return array(
+            'exception_format' => 'exceptionformat',
+            'info_format' => 'infoformat',
+            'transparent' => 'transparency',
+        );
     }
 }

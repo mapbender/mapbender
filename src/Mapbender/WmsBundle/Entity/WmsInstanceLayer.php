@@ -4,6 +4,8 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\BoundingBox;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -609,5 +611,48 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function __toString()
     {
         return (string) $this->getId();
+    }
+
+    /**
+     * @internal
+     * @param WmsInstance $instance source
+     * @param WmsLayerSource $layerSource also the source, purpose unknown
+     * @param int $priority
+     */
+    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, $priority = 0)
+    {
+        $this->setSourceInstance($instance);
+        $this->setSourceItem($layerSource);
+        $this->setTitle($layerSource->getTitle());
+
+        $this->setMinScale($layerSource->getMinScale());
+        $this->setMaxScale($layerSource->getMaxScale());
+
+        $queryable = $layerSource->getQueryable();
+        $this->setInfo(Utils::getBool($queryable));
+        $this->setAllowinfo(Utils::getBool($queryable));
+        $this->setPriority($priority);
+        $instance->addLayer($this);
+        if ($layerSource->getSublayer()->count() > 0) {
+            $this->setToggle(false);
+            $this->setAllowtoggle(true);
+        } else {
+            $this->setToggle(null);
+            $this->setAllowtoggle(null);
+        }
+        foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
+            $subLayerInstance = new static();
+            $subLayerInstance->populateFromSource($instance, $wmslayersourceSub, $priority);
+            $subLayerInstance->setParent($this);
+            $this->addSublayer($subLayerInstance);
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRoot()
+    {
+        return !$this->getParent();
     }
 }

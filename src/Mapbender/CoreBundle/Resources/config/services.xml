@@ -8,6 +8,15 @@
         <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
         <parameter key="mapbender.owsproxy.httpclient.legacy.class">Mapbender\CoreBundle\Component\OwsProxy\LegacyService</parameter>
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
+        <parameter key="mapbender.form_type.element.layertree.menu.class">Mapbender\CoreBundle\Element\Type\LayerTreeMenuType</parameter>
+        <parameter key="mapbender.presenter.application.service.class">Mapbender\CoreBundle\Component\Presenter\ApplicationService</parameter>
+        <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
+        <parameter key="mapbender.presenter.application.cache.class">Mapbender\CoreBundle\Component\Cache\ApplicationDataService</parameter>
+        <parameter key="mapbender.presenter.application.cache.backend.class">Mapbender\CoreBundle\Component\Cache\Backend\File</parameter>
+        <!-- Application config caching disabled because we have identified some parts of the configuration may depend on current user
+             Caching machinery can only be safely enabled after these cases have been adressed properly -->
+        <parameter key="cachable.mapbender.application.config">false</parameter>
+        <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
     </parameters>
 
     <services>
@@ -95,6 +104,34 @@
 
         <service id="owsproxy.httpclient" class="%mapbender.owsproxy.httpclient.legacy.class%">
             <argument type="service" id="service_container" />
+        </service>
+
+        <!-- layertree "menu" choices; servicy because of DimensionsHandler interaction -->
+        <service id="mapbender.form_type.element.layertree.menuChoices" class="%mapbender.form_type.element.layertree.menu.class%">
+            <argument>%mapbender.preview.element.dimensionshandler%</argument>
+            <tag name="form.type" alias="layertree_menu" />
+        </service>
+        <service id="mapbender.presenter.application.service" class="%mapbender.presenter.application.service.class%">
+            <argument type="service" id="service_container" />
+        </service>
+        <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
+            <argument type="service" id="service_container" />
+        </service>
+        <!-- wms service is the shipping default, unless changed by an optionally installed bundle -->
+        <service id="mapbender.source.default.service" alias="mapbender.source.wms.service" />
+        <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">
+            <argument type="service" id="service_container" />
+            <call method="setDefaultService">
+                <argument>mapbender.source.default.service</argument>
+            </call>
+        </service>
+        <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">
+            <argument type="service" id="logger" />
+            <argument type="service" id="mapbender.presenter.application.cache.backend" />
+            <argument>%container.compilation_timestamp_float%</argument>
+        </service>
+        <service id="mapbender.presenter.application.cache.backend" class="%mapbender.presenter.application.cache.backend.class%">
+            <argument>%kernel.cache_dir%</argument>
         </service>
     </services>
 </container>

@@ -37,15 +37,6 @@ class LayertreeAdminType extends AbstractType
     {
         $subscriber = new LayertreeSubscriber($builder->getFormFactory(), $options['application']);
         $builder->addEventSubscriber($subscriber);
-        $menuComponents = array(
-            "layerremove" => "Remove layer",
-            "opacity" => "Opacity",
-            "zoomtolayer" => "Zoom to layer",
-            "metadata" => "Metadata",
-//            "legend" => "Legend",
-//            "kmlexport" => "KML export",
-//            "dimension" => "Dimension",
-        );
         $builder->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
@@ -75,9 +66,10 @@ class LayertreeAdminType extends AbstractType
                 'required' => false))
             ->add('hideSelect', 'checkbox', array(
                 'required' => false))
-            ->add('menu', 'choice', array(
+            // see LayerTreeMenuType.php
+            ->add('menu', 'layertree_menu', array(
                 'required' => false,
-                "multiple" => true,
-                'choices' => $menuComponents));
+            ))
+        ;
     }
 }

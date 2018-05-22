@@ -210,7 +210,7 @@ class WmsLoader extends Element
         $layersetConfiguration = array();
 
         foreach ($wmsInstanceLayers as $layer) {
-            $instHandler = WmsInstanceLayerEntityHandler::createHandler($this->container, $layer);
+            $instHandler = new WmsInstanceLayerEntityHandler($this->container, $layer);
             $conf        = $instHandler->generateConfiguration();
             array_push($layersetConfiguration, $conf);
 

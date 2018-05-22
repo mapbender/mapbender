@@ -1,34 +1,29 @@
 <div id="dimension{{ num }}" class="on-off on-off-title">
-    <div class="left">{%if dim.vars.data.name != ''%}{{ dim.vars.data.name }}{% else %}undefined{% endif %}</div><div class="left">
+    <div class="left">{%if dim.vars.data.name != ''%}{{ dim.vars.data.name }}{% else %}undefined{% endif %}</div><div style="width:50%;">
         {{ form_widget(dim.active) }}<label for="{{dim.active.vars.id}}" class="labelCheck" title="Active">active</label>
     </div>
-    <div class="clear"></div>
 </div>
 <div id="dimension{{ num }}-content" class="on-off-content hidden" data-json="{{ dim.json.vars.data }}">
-    <div class="left">
-        {{ form_widget(dim.multipleValues) }}<label for="{{dim.multipleValues.vars.id}}" class="labelCheck" title="multipleValues">multiple</label>
+    <div>
+        <div class="left">
+            {{ form_widget(dim.multipleValues) }}<label for="{{dim.multipleValues.vars.id}}" class="labelCheck" title="multipleValues">multiple</label>
+        </div>
+        <div class="left">
+            {{ form_widget(dim.nearestValue) }}<label for="{{dim.nearestValue.vars.id}}" class="labelCheck" title="nearestValue">nearest</label>
+        </div>
+        <div class="left">
+            {{ form_widget(dim.current) }}<label for="{{dim.current.vars.id}}" class="labelCheck" title="current">current</label>
+        </div>
     </div>
-    <div class="left">
-        {{ form_widget(dim.nearestValue) }}<label for="{{dim.nearestValue.vars.id}}" class="labelCheck" title="nearestValue">nearest</label>
-    </div>
-    <div class="left">
-        {{ form_widget(dim.current) }}<label for="{{dim.current.vars.id}}" class="labelCheck" title="current">current</label>
-    </div>
-    <div class="clear"></div>
     {{ form_label(dim.name) }}{{ form_widget(dim.name) }}
-    <div class="clear"></div>
     {{ form_label(dim.units) }}{{ form_widget(dim.units) }}
-    <div class="clear"></div>
     {{ form_label(dim.unitSymbol) }}{{ form_widget(dim.unitSymbol) }}
-    <div class="clear"></div>
     {% if dim.default is defined %}
         {{ form_label(dim.default) }}{{ form_widget(dim.default) }}
-        <div class="clear"></div>
     {% endif %}
     <label for="{{dim.extentEdit.vars.id}}" class="labelInput" title="Extent">Extent</label>{{ form_widget(dim.extentEdit) }}
-    <div class="clear"></div>
-    <div class="clear dimension-type">{{ form_widget(dim.type) }}</div>
-    <div class="clear dimension-origextent">{{ form_widget(dim.origextent) }}</div>
-    <div class="clear dimension-exent">{{ form_widget(dim.extent) }}</div>
+    <div class="dimension-type">{{ form_widget(dim.type) }}</div>
+    <div class="dimension-origextent">{{ form_widget(dim.origextent) }}</div>
+    <div class="dimension-exent">{{ form_widget(dim.extent) }}</div>
     <div id="dimension{{ num }}-extent" class="mb-slider"></div>
 </div>

@@ -4,11 +4,21 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfiguration;
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
- * Description of WmsInstanceConfiguration
  *
  * @author Paul Schmidt
+ *
+ * @deprecated this entire class is only used transiently to capture values via its setters, then converted to
+ *     array and discared. The sanitization performed along the way is minimal. The ONLY remaining usage is in
+ *     WmcParser110.
+ *
+ * @see WmcParser110::parseLayer()
+ * @internal
+ *
+ * @property WmsInstanceConfigurationOptions|array $options
+ *
  */
 class WmsInstanceConfiguration extends InstanceConfiguration
 {
@@ -28,7 +38,7 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     /**
      * Returns options
      * 
-     * @return InstanceConfigurationOptions
+     * @return WmsInstanceConfigurationOptions
      */
     public function getOptions()
     {
@@ -60,37 +70,45 @@ class WmsInstanceConfiguration extends InstanceConfiguration
      */
     public function toArray()
     {
+        if (is_array($this->options)) {
+            $optionsArray = $this->options;
+        } else {
+            $optionsArray = $this->options->toArray();
+        }
         return array(
             "type" => $this->type,
             "title" => $this->title,
             "isBaseSource" => $this->isBaseSource,
-            "options" => $this->options->toArray(),
+            "options" => $optionsArray,
             "children" => $this->children
         );
     }
 
     /**
-     * @inheritdoc
+     * @param WmsInstance $instance
+     * @param bool $strict
+     * @return null|static
      */
-    public static function fromArray($options)
+    public static function fromEntity(WmsInstance $instance, $strict = true)
     {
-        $ic = null;
-        if ($options && is_array($options)) {
-            $ic = new WmsInstanceConfiguration();
-            if (isset($options['type'])) {
-                $ic->type = $options['type'];
-            }
-            if (isset($options['title'])) {
-                $ic->title = $options['title'];
-            }
-            if (isset($options['isBaseSource'])) {
-                $ic->isBaseSource = $options['isBaseSource'];
-            }
-            if (isset($options['options'])) {
-                $ic->options = WmsInstanceConfigurationOptions::fromArray($options['options']);
-            }
-        }
-        return $ic;
+        $options = array(
+            'type' => strtolower($instance->getType()),
+            'title' => $instance->getTitle(),
+            'isBaseSource' => $instance->isBaseSource(),
+            'options' => WmsInstanceConfigurationOptions::fromEntity($instance),
+        );
+        return static::fromArray($options, $strict);
     }
 
+    /**
+     * Helper method that converts an entity to its array representation
+     * @todo: this probably belongs directly in a frontend config generating service
+     *
+     * @param WmsInstance $entity
+     * @return array
+     */
+    public static function entityToArray($entity)
+    {
+        return static::fromEntity($entity)->toArray();
+    }
 }

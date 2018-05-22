@@ -2,6 +2,7 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -24,41 +25,18 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * Creates a SourceInstanceItem
      *
-     * @param WmsSource|SourceInstance  $instance
+     * @param WmsInstance|SourceInstance  $instance
      * @param WmsLayerSource|SourceItem $layerSource
      * @param int                       $num
      * @return WmsInstanceLayer
-     * @internal param  $item
+     * @deprecated for poor wording and unnecessary container dependency
+     * @internal
      */
     public function create(SourceInstance $instance, SourceItem $layerSource, $num = 0)
     {
-        /** @var WmsInstance $instance */
         $instanceLayer = $this->entity;
-
-        $instanceLayer->setSourceInstance($instance);
-        $instanceLayer->setSourceItem($layerSource);
-        $instanceLayer->setTitle($layerSource->getTitle());
-
-        $queryable = $layerSource->getQueryable();
-        $instanceLayer->setInfo(Utils::getBool($queryable));
-        $instanceLayer->setAllowinfo(Utils::getBool($queryable));
-        $instanceLayer->setPriority($num);
-        $instance->addLayer($instanceLayer);
-        if ($layerSource->getSublayer()->count() > 0) {
-            $instanceLayer->setToggle(false);
-            $instanceLayer->setAllowtoggle(true);
-        } else {
-            $instanceLayer->setToggle(null);
-            $instanceLayer->setAllowtoggle(null);
-        }
-        foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
-            $subLayerInstance = new WmsInstanceLayer();
-            $entityHandler = new WmsInstanceLayerEntityHandler($this->container, $subLayerInstance);
-            $entityHandler->create($instance, $wmslayersourceSub, $num + 1);
-            $entityHandler->getEntity()->setParent($instanceLayer);
-            $instanceLayer->addSublayer($entityHandler->getEntity());
-        }
-        return $instanceLayer;
+        $instanceLayer->populateFromSource($instance, $layerSource, $num);
+        return $this->entity;
     }
 
     /**
@@ -66,9 +44,22 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function save()
     {
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
-        foreach ($this->entity->getSublayer() as $sublayer) {
-            self::createHandler($this->container, $sublayer)->save();
+        /** @var ObjectManager $manager */
+        $manager = $this->container->get('doctrine')->getManager();
+        $this->persistRecursive($manager, $this->entity);
+    }
+
+    /**
+     * Persists the instance layer and all child layers, recursively
+     *
+     * @param ObjectManager $manager
+     * @param WmsInstanceLayer $entity
+     */
+    private static function persistRecursive(ObjectManager $manager, WmsInstanceLayer $entity)
+    {
+        $manager->persist($entity);
+        foreach ($entity->getSublayer() as $sublayer) {
+            static::persistRecursive($manager, $sublayer);
         }
     }
 
@@ -77,9 +68,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function remove()
     {
-        foreach ($this->entity->getSublayer() as $sublayer) {
-            self::createHandler($this->container, $sublayer)->remove();
-        }
         $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
@@ -119,27 +107,21 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         }
         foreach ($toRemove as $rem) {
             $this->entity->getSublayer()->removeElement($rem);
-            self::createHandler($this->container, $rem)->remove();
+            $removeHandler = new WmsInstanceLayerEntityHandler($this->container, $rem);
+            $removeHandler->remove();
         }
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
             $layer = $this->findLayer($wmslayersourceSub, $this->entity->getSublayer());
             if ($layer) {
-                self::createHandler($this->container, $layer)->update($instance, $wmslayersourceSub);
+                $layerInstanceHandler = new WmsInstanceLayerEntityHandler($this->container, $layer);
+                $layerInstanceHandler->update($instance, $wmslayersourceSub);
             } else {
                 $sublayerInstance = new WmsInstanceLayer();
-                $sublayerHandler = new WmsInstanceLayerEntityHandler($this->container, $sublayerInstance);
-                $obj = $sublayerHandler->create(
-                    $instance,
-                    $wmslayersourceSub,
-                    $wmslayersourceSub->getPriority()
-                );
-                $obj->setParent($this->entity);
-                $instance->getLayers()->add($obj);
-                $this->entity->getSublayer()->add($obj);
-                $manager->persist($obj);
-                foreach ($obj->getSublayer() as $lay) {
-                    $manager->persist($lay);
-                }
+                $sublayerInstance->populateFromSource($instance, $wmslayersourceSub, $wmslayersourceSub->getPriority());
+                $sublayerInstance->setParent($this->entity);
+                $instance->getLayers()->add($sublayerInstance);
+                $this->entity->getSublayer()->add($sublayerInstance);
+                $this->persistRecursive($manager, $sublayerInstance);
             }
         }
         $this->entity->setPriority($wmslayersource->getPriority());
@@ -164,26 +146,31 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     }
 
     /**
-     * Generates a configuration for layers
+     * Generates layerset configuration for frontend consumption, recursively.
+     *
+     * @param WmsInstanceLayer|null $entity uses bound entity if omitted
+     *    HACK alert: this function cannot currently be unbound / made static because
+     *                deep down, the URL generation via tunnel might require access
+     *                to the container. The bound entity OTOH is used for nothing
+     *                outside the (optional) initial substitution for an empty argument
      *
      * @return array
      */
-    public function generateConfiguration()
+    public function generateConfiguration(WmsInstanceLayer $entity = null)
     {
-        $configuration = array();
-        if ($this->entity->getActive() === true) {
-            $children = null;
-            if ($this->entity->getSublayer()->count() > 0) {
-                $children = array();
-                foreach ($this->entity->getSublayer() as $sublayer) {
-                    $instLayHandler = self::createHandler($this->container, $sublayer);
-                    $configurationTemp = $instLayHandler->generateConfiguration();
-                    if (count($configurationTemp) > 0) {
-                        $children[] = $configurationTemp;
-                    }
+        $entity = $entity ?: $this->entity;
+        if (!$entity->getActive()) {
+            return array();
+        } else {
+            $children = array();
+            foreach ($entity->getSublayer() as $sublayer) {
+                /** @var WmsInstanceLayer $sublayer */
+                $configurationTemp = $this->generateConfiguration($sublayer);
+                if (count($configurationTemp) > 0) {
+                    $children[] = $configurationTemp;
                 }
             }
-            $layerConf = $this->getConfiguration();
+            $layerConf = $this->getConfiguration($entity);
             $configuration = array(
                 "options" => $layerConf,
                 "state" => array(
@@ -193,62 +180,64 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                     "outOfBounds" => null
                 ),
             );
-            if ($children !== null) {
+            switch ($entity->getSourceInstance()->getLayerOrder()) {
+                default:
+                case WmsInstance::LAYER_ORDER_TOP_DOWN:
+                    // do nothing
+                    break;
+                case WmsInstance::LAYER_ORDER_BOTTOM_UP:
+                    $children = array_reverse($children);
+                    break;
+            }
+            if ($children) {
                 $configuration["children"] = $children;
             }
+            return $configuration;
         }
-        return $configuration;
     }
 
     /**
+     * @param WmsInstanceLayer|null $entity uses bound entity if omitted
+     *    HACK alert: this function cannot currently be unbound / made static because
+     *                deep down, the URL generation via tunnel might require access
+     *                to the container. The bound entity OTOH is used for nothing
+     *                outside the (optional) initial substitution for an empty argument
      * @inheritdoc
      */
-    public function getConfiguration()
+    public function getConfiguration(WmsInstanceLayer $entity = null)
     {
+        $entity = $entity ?: $this->entity;
+        $sourceItem = $entity->getSourceItem();
         $configuration = array(
-            "id" => strval($this->entity->getId()),
-            "priority" => $this->entity->getPriority(),
-            "name" => $this->entity->getSourceItem()->getName() !== null ?
-                $this->entity->getSourceItem()->getName() : "",
-            "title" => $this->entity->getTitle(),
-            "queryable" => $this->entity->getInfo(),
-            "style" => $this->entity->getStyle(),
-            "minScale" => $this->entity->getMinScale(true),
-            "maxScale" => $this->entity->getMaxScale(true),
+            "id" => strval($entity->getId()),
+            "priority" => $entity->getPriority(),
+            "name" => $sourceItem->getName() !== null ?
+                $sourceItem->getName() : "",
+            "title" => $entity->getTitle(),
+            "queryable" => $entity->getInfo(),
+            "style" => $entity->getStyle(),
+            "minScale" => $entity->getMinScale(true),
+            "maxScale" => $entity->getMaxScale(true),
         );
         $srses = array();
-        $llbbox = $this->entity->getSourceItem()->getLatlonBounds();
-        if ($llbbox !== null) {
-            $srses[$llbbox->getSrs()] = array(
-                floatval($llbbox->getMinx()),
-                floatval($llbbox->getMiny()),
-                floatval($llbbox->getMaxx()),
-                floatval($llbbox->getMaxy())
-            );
-        }
-        foreach ($this->entity->getSourceItem()->getBoundingBoxes() as $bbox) {
-            $srses[$bbox->getSrs()] = array(
-                floatval($bbox->getMinx()),
-                floatval($bbox->getMiny()),
-                floatval($bbox->getMaxx()),
-                floatval($bbox->getMaxy())
-            );
+        foreach ($sourceItem->getMergedBoundingBoxes() as $bbox) {
+            $srses[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
         $configuration['bbox'] = $srses;
-        $legendConfig = $this->getLegendConfig($this->entity);
+        $legendConfig = $this->getLegendConfig($entity);
         if ($legendConfig) {
             $configuration["legend"] = $legendConfig;
         }
 
         $configuration["treeOptions"] = array(
-            "info" => $this->entity->getInfo(),
-            "selected" => $this->entity->getSelected(),
-            "toggle" => $this->entity->getSublayer()->count() > 0 ? $this->entity->getToggle() : null,
+            "info" => $entity->getInfo(),
+            "selected" => $entity->getSelected(),
+            "toggle" => $entity->getSublayer()->count() > 0 ? $entity->getToggle() : null,
             "allow" => array(
-                "info" => $this->entity->getAllowinfo(),
-                "selected" => $this->entity->getAllowselected(),
-                "toggle" => $this->entity->getSublayer()->count() > 0 ? $this->entity->getAllowtoggle() : null,
-                "reorder" => $this->entity->getAllowreorder(),
+                "info" => $entity->getAllowinfo(),
+                "selected" => $entity->getAllowselected(),
+                "toggle" => $entity->getSublayer()->count() > 0 ? $entity->getAllowtoggle() : null,
+                "reorder" => $entity->getAllowreorder(),
             )
         );
         return $configuration;

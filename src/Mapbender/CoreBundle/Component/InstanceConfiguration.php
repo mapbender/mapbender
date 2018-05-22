@@ -1,38 +1,37 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\Base\ConfigurationBase;
+
 /**
  * Description of SourceConfiguration
  *
  * @author Paul Schmidt
  */
-abstract class InstanceConfiguration
+abstract class InstanceConfiguration extends ConfigurationBase
 {
     /**
-     * ORM\Column(type="string", nullable=true)
      * @var string
      */
     public $type;
 
     /**
-     * ORM\Column(type="string", nullable=ture)
      * @var string
      */
     public $title;
 
     /**
-     * ORM\Column(type="text", nullable=true)
-     * @var string
+     * @var InstanceConfigurationOptions
      */
     public $options;
 
     /**
-     * ORM\Column(type="text", nullable=false)
+     * @var array
      */
     public $children;
     
     /**
-     * ORM\Column(type="boolean", nullable=false)
+     * @var boolean
      */
     public $isBaseSource = true;
 
@@ -41,7 +40,6 @@ abstract class InstanceConfiguration
      */
     public function __construct()
     {
-        $this->options = array();
         $this->children = array();
     }
 
@@ -122,7 +120,7 @@ abstract class InstanceConfiguration
     /**
      * Returns options
      * 
-     * @return string
+     * @return InstanceConfigurationOptions|null
      */
     public abstract function getOptions();
 
@@ -137,33 +135,9 @@ abstract class InstanceConfiguration
     /**
      * Returns a title
      * 
-     * @return integer children
+     * @return array children
      */
     public abstract function getChildren();
     
-    /**
-     * Returns InstanceConfiguration as array
-     * 
-     * @return array
-     */
-    public abstract function toArray();
-    
-    /**
-     * Creates an InstanceConfiguration from options
-     * 
-     * @param array $options array with options
-     * @return InstanceConfiguration
-     */
-    public static function fromArray($options)
-    {
-        if($options && is_array($options))
-        {
-            if(isset($options['type']) && $options['type'] === 'wms'){
-                return \Mapbender\WmsBundle\Component\WmsInstanceConfiguration::fromArray($options);
-            }
-        }
-        return null;
-    }
-
 }
 

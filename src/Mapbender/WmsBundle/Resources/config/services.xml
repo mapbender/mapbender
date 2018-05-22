@@ -3,13 +3,25 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
+        <parameter key="mapbender.source.wms.service.class">Mapbender\WmsBundle\Component\Presenter\WmsSourceService</parameter>
         <parameter key="mapbender.importer.source.wms.service.class">Mapbender\WmsBundle\Component\Wms\Importer</parameter>
         <parameter key="wmsloader.example_url">https://wms.wheregroup.com/cgi-bin/mapbender_user.xml?VERSION=1.3.0&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS</parameter>
+        <!-- set this to true in your parameters.yml to expose DimensionsHandler element -->
+        <parameter key="mapbender.preview.element.dimensionshandler">false</parameter>
+        <!-- set this to true in your parameters.yml to enable layer order control in "Layersets" backend -->
+        <parameter key="mapbender.preview.layer_order.wms">true</parameter>
     </parameters>
     <services>
         <service id="mapbender.importer.source.wms.service" class="%mapbender.importer.source.wms.service.class%">
             <argument type="service" id="service_container" />
         </service>
+        <service id="mapbender.source.wms.service" class="%mapbender.source.wms.service.class%">
+            <argument type="service" id="service_container" />
+        </service>
+        <!-- servicy form type for wms instances; required to inject other services / params -->
+        <service id="mapbender.sourceinstance.wms.form" class="Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType">
+            <argument>%mapbender.preview.layer_order.wms%</argument>
+            <tag name="form.type" alias="wmsinstanceinstancelayers"/>
+        </service>
     </services>
 </container>
-

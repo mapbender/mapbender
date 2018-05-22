@@ -113,7 +113,6 @@
 .instanceContainer{
   .linkButton{display:inline-block;}
   .labelInput{
-    width:100px;
     display: inline-block;
   }
   .dropdown{
@@ -125,18 +124,27 @@
     margin-top:8px;
     height:$inputHeight;
   }
-  .leftContainer{margin-right:$space;}
+  .leftContainer{
+    width: 49%;
+    margin-right: 2%;
+  }
+  .rightContainer {
+    margin-left: 51%;
+  }
   .leftContainer .inputWrapper{
     min-width:200px;
     margin-bottom:$space/2;
   }
   .leftContainer .inputWrapper input{ width: 100%; }
-  .extendedGroup{
-    width: 326px;
-    position:absolute;
-    right:0px;
-    font-size:12px;
-    z-index:1;
+  .extendedGroup {
+    .collectionItem {
+      float: none;
+      clear: none;
+    }
+    .clearContainer {
+      clear: none;
+      float: none;
+    }
     .on-off{
       background-color:darken($contentColor,20%);
       border: solid 1px darken($contentColor,40%);
@@ -160,7 +168,7 @@
       padding: 0 $space/2 0 $space/2;
       .checkWrapper {margin-left: $space;}
     }
-    > div {
+    .blockgroup {
       margin-bottom: 1em;
     }
     .checkWrapper{
@@ -181,9 +189,7 @@
       .labelInput{width:80px;}
       .collectionItem > label{display:none;}
       a.collectionRemove {
-          position: relative;
-          top: -190px;
-          right: -272px;
+        float: right;
       }
     }
     .mb-slider{margin-top: $space/2;}

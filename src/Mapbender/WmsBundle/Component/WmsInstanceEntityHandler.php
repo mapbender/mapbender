@@ -1,12 +1,11 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\CoreBundle\Component\BoundingBox;
+use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Element\DimensionsHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -24,6 +23,9 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 {
     /**
+     * Populates bound instance with array values. Used exclusively by
+     * ApplicationYAMLMapper ..?
+     *
      * @param array $configuration
      * @return WmsInstance
      */
@@ -126,30 +128,18 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * @inheritdoc
+     * Copies attributes from bound instance's source to the bound instance.
+     * I.e. does not work for a new instance until you have called ->setSource on the WmsInstance yourself,
+     * and does not achieve anything useful for an already configured instance loaded from the DB (though it's
+     * expensive!).
+     * If your source changed, and you want to push updates to your instance, you want to call update, not create.
+     *
+     * @deprecated for misleading wording, arcane usage, redundant container dependency
      */
     public function create()
     {
-        $this->entity->setTitle($this->entity->getSource()->getTitle());
-        $source = $this->entity->getSource();
-        $this->entity->setFormat(ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), null, 0));
-        $this->entity->setInfoformat(
-            ArrayUtil::getValueFromArray(
-                $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(),
-                null,
-                0
-            )
-        );
-        $this->entity->setExceptionformat(ArrayUtil::getValueFromArray($source->getExceptionFormats(), null, 0));
-
-        $dimensions = $this->getDimensionInst();
-        $this->entity->setDimensions($dimensions);
-
-        $this->entity->setWeight(-1);
-        $wmslayer_root = $this->entity->getSource()->getRootlayer();
-
-        $newInstanceLayerHandler = new WmsInstanceLayerEntityHandler($this->container, new WmsInstanceLayer());
-        $newInstanceLayerHandler->create($this->entity, $wmslayer_root);
+        $this->entity->populateFromSource($this->entity->getSource());
+        $this->getService()->initializeInstance($this->entity);
     }
 
     /**
@@ -158,20 +148,23 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function save()
     {
         if ($this->entity->getRootlayer()) {
-            self::createHandler($this->container, $this->entity->getRootlayer())->save();
+            $rootlayerSaveHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
+            $rootlayerSaveHandler->save();
         }
+        $layerSet = $this->entity->getLayerset();
         $num = 0;
-        foreach ($this->entity->getLayerset()->getInstances() as $instance) {
-            /** @var WmsInstanceEntityHandler $instHandler */
-            $instHandler = self::createHandler($this->container, $instance);
-            $instHandler->getEntity()->setWeight($num);
-            $instHandler->generateConfiguration();
-            $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
+        foreach ($layerSet->getInstances() as $instance) {
+            /** @var WmsInstance $instance */
+            $instance->setWeight($num);
+            $this->container->get('doctrine')->getManager()->persist($instance);
             $num++;
         }
-        $this->container->get('doctrine')->getManager()->persist(
-            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        $application = $layerSet->getApplication();
+        $application->setUpdated(new \DateTime('now'));
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->container->get('doctrine')->getManager();
+        $entityManager->persist($application);
+        $entityManager->persist($this->entity);
     }
     
 
@@ -180,8 +173,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function remove()
     {
-        $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
-        $layerHandler->remove();
+        /**
+         * @todo: layerHandler->remve is redundant now, but it may require an automatic
+         *     doctrine:schema:update --force
+         *     before it can be removed
+         */
         $this->container->get('doctrine')->getManager()->persist(
             $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->remove($this->entity);
@@ -206,192 +202,58 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setExceptionformat(
             ArrayUtil::getValueFromArray($source->getExceptionFormats(), $this->entity->getExceptionformat(), 0)
         );
-        $dimensions = $this->updateDimension($this->entity->getDimensions(), $this->getDimensionInst());
+        $layerDimensionInsts = $source->dimensionInstancesFactory();
+        $dimensions = $this->updateDimension($this->entity->getDimensions(), $layerDimensionInsts);
         $this->entity->setDimensions($dimensions);
 
         # TODO vendorspecific for layer specific parameters
-        self::createHandler($this->container, $this->entity->getRootlayer())
-            ->update($this->entity, $this->entity->getSource()->getRootlayer());
+        /** @var WmsInstanceLayerEntityHandler $rootUpdateHandler */
+        $rootUpdateHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
+        $rootUpdateHandler->update($this->entity, $this->entity->getSource()->getRootlayer());
 
-        $this->generateConfiguration();
         $this->container->get('doctrine')->getManager()->persist(
             $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->persist($this->entity);
     }
 
     /**
-     * Creates DimensionInst object
+     * Creates DimensionInst object, copies attributes from given Dimension object
      * @param \Mapbender\WmsBundle\Component\Dimension $dim
      * @return \Mapbender\WmsBundle\Component\DimensionInst
+     * @deprecated for redundant container dependency, call DimensionInst::fromDimension directly
      */
     public function createDimensionInst(Dimension $dim)
     {
-        $diminst = new DimensionInst();
-        $diminst->setCurrent($dim->getCurrent());
-        $diminst->setDefault($dim->getDefault());
-        $diminst->setMultipleValues($dim->getMultipleValues());
-        $diminst->setName($dim->getName());
-        $diminst->setNearestValue($dim->getNearestValue());
-        $diminst->setUnitSymbol($dim->getUnitSymbol());
-        $diminst->setUnits($dim->getUnits());
-        $diminst->setActive(false);
-        $diminst->setOrigextent($dim->getExtent());
-        $diminst->setExtent($dim->getExtent());
-        $diminst->setType($diminst->findType($dim->getExtent()));
-        return $diminst;
+        return DimensionInst::fromDimension($dim);
     }
 
     /**
      * @inheritdoc
+     * @deprecated, use the appropriate service directly
      */
     public function getConfiguration(Signer $signer = null)
     {
-        if ($this->entity->getConfiguration() === null) {
-            $this->generateConfiguration();
-        }
-        $configuration = $this->entity->getConfiguration();
-        $layerConfig = $this->getRootLayerConfig();
-        if ($layerConfig) {
-            $configuration['children'] = array($layerConfig);
-        }
-        if (!$this->isConfigurationValid($configuration)) {
-            return null;
-        }
-        $hide = false;
-        $params = array();
-        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            if ($handler->isVendorSpecificValueValid()) {
-                if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE ||
-                    ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE && !$vendorspec->getHidden())) {
-                    $user = $this->container->get('security.token_storage')->getToken()->getUser();
-                    $params = array_merge($params, $handler->getKvpConfiguration($user));
-                } else {
-                    $hide = true;
-                }
-            }
-        }
-        if ($hide || $this->entity->getSource()->getUsername()) {
-            $url = $this->getTunnel()->getPublicBaseUrl();
-            $configuration['options']['url'] = UrlUtil::validateUrl($url, $params, array());
-            // remove ows proxy for a tunnel connection
-            $configuration['options']['tunnel'] = true;
-        } elseif ($signer) {
-            $configuration['options']['url'] = UrlUtil::validateUrl($configuration['options']['url'], $params, array());
-            $configuration['options']['url'] = $signer->signUrl($configuration['options']['url']);
-            if ($this->entity->getProxy()) {
-                $this->signeUrls($signer, $configuration['children'][0]);
-            }
-        }
-        $status = $this->entity->getSource()->getStatus();
-        $configuration['status'] = $status && $status === Source::STATUS_UNREACHABLE ? 'error' : 'ok';
-        return $configuration;
+        $service = $this->getService();
+        return $service->getConfiguration($this->entity);
     }
 
     /**
-     * @param WmsInstanceLayer $rootLayer
-     * @return BoundingBox[]
-     */
-    private function extractBoundingBoxes(WmsInstanceLayer $rootLayer)
-    {
-        $sourceItem = $rootLayer->getSourceItem();
-        $bboxes = array();
-        $latLonBounds = $sourceItem->getLatlonBounds();
-        if ($latLonBounds) {
-            $bboxes[] = $latLonBounds;
-        }
-        return array_merge($bboxes, $sourceItem->getBoundingBoxes());
-    }
-
-    /**
-     * Modifies the bound entity, populates `configuration` attribute, returns nothing
+     * Does nothing, returns nothing
+     * @deprecated
      */
     public function generateConfiguration()
     {
-        $rootlayer = $this->entity->getRootlayer();
-        $srses = array();
-        foreach ($this->extractBoundingBoxes($rootlayer) as $bbox) {
-            $srses[$bbox->getSrs()] = array(
-                floatval($bbox->getMinx()),
-                floatval($bbox->getMiny()),
-                floatval($bbox->getMaxx()),
-                floatval($bbox->getMaxy()),
-            );
-        }
-        $wmsconf = new WmsInstanceConfiguration();
-        $wmsconf->setType(strtolower($this->entity->getType()));
-        $wmsconf->setTitle($this->entity->getTitle());
-        $wmsconf->setIsBaseSource($this->entity->isBasesource());
-
-        $options    = new WmsInstanceConfigurationOptions();
-        $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet());
-        $dimensions = array();
-        foreach ($this->entity->getDimensions() as $dimension) {
-            if ($dimension->getActive()) {
-                $dimensions[] = $dimension->getConfiguration();
-                if ($dimension->getDefault()) {
-                    $help = array($dimension->getParameterName() => $dimension->getDefault());
-                    $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
-                }
-            }
-        }
-        $vendorsecifics = array();
-        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            /* add to url only simple vendor specific with valid default value */
-            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
-                $vendorsecifics[] = $handler->getConfiguration();
-                $help             = $handler->getKvpConfiguration(null);
-                $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
-            }
-        }
-        $options->setProxy($this->entity->getProxy())
-            ->setVisible($this->entity->getVisible())
-            ->setFormat($this->entity->getFormat())
-            ->setInfoformat($this->entity->getInfoformat())
-            ->setTransparency($this->entity->getTransparency())
-            ->setOpacity($this->entity->getOpacity() / 100)
-            ->setTiled($this->entity->getTiled())
-            ->setBbox($srses)
-            ->setDimensions($dimensions)
-            ->setBuffer($this->entity->getBuffer())
-            ->setRatio($this->entity->getRatio())
-            ->setVendorspecifics($vendorsecifics)
-            ->setVersion($this->entity->getSource()->getVersion())
-            ->setExceptionformat($this->entity->getExceptionformat());
-
-        $wmsconf->setOptions($options);
-        $persistableConfig = $wmsconf->toArray();
-        $this->entity->setConfiguration($persistableConfig);
-    }
-
-    protected function getRootLayerConfig()
-    {
-        $rootlayer = $this->entity->getRootlayer();
-        $entityHandler = new WmsInstanceLayerEntityHandler($this->container, $rootlayer);
-        $rootLayerConfig = $entityHandler->generateConfiguration();
-        return $rootLayerConfig;
     }
 
     /**
-     * Signes urls.
-     * @param Signer $signer signer
-     * @param type $layer
+     * @return array
+     * @deprecated, use the service directly
      */
-    private function signeUrls(Signer $signer, &$layer)
+    protected function getRootLayerConfig()
     {
-        if (isset($layer['options']['legend'])) {
-            if (isset($layer['options']['legend']['graphic'])) {
-                $layer['options']['legend']['graphic'] = $signer->signUrl($layer['options']['legend']['graphic']);
-            } elseif (isset($layer['options']['legend']['url'])) {
-                $layer['options']['legend']['url'] = $signer->signUrl($layer['options']['legend']['url']);
-            }
-        }
-        if (isset($layer['children'])) {
-            foreach ($layer['children'] as &$child) {
-                $this->signeUrls($signer, $child);
-            }
-        }
+        /** @var WmsSourceService $service */
+        $service = $this->getService();
+        return $service->getRootLayerConfig($this->entity);
     }
 
     /**
@@ -449,23 +311,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * @return array
-     */
-    private function getDimensionInst()
-    {
-        $dimensions = array();
-        foreach ($this->entity->getSource()->getLayers() as $layer) {
-            foreach ($layer->getDimension() as $dimension) {
-                $dim = $this->createDimensionInst($dimension);
-                if (!in_array($dim, $dimensions)) {
-                    $dimensions[] = $dim;
-                }
-            }
-        }
-        return $dimensions;
-    }
-
-    /**
      * @param \Mapbender\WmsBundle\Component\DimensionInst $dimension
      * @param  DimensionInst[]                             $dimensionList
      * @return null
@@ -502,39 +347,5 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $dimensions[] = $dimension;
         }
         return $dimensions;
-    }
-
-    /**
-     * Checks if a configuraiton is valid.
-     * @param array $configuration configuration of an instance or a layer
-     * @param boolean $isLayer if it is a layer's configurationis it a layer's configuration?
-     * @return boolean true if a configuration is valid otherwise false
-     */
-    private function isConfigurationValid(array $configuration, $isLayer = false)
-    {
-        if (!$isLayer) {
-            // TODO another tests for instance configuration
-            /* check if root exists and has children */
-            if (count($configuration['children']) !== 1 || !isset($configuration['children'][0]['children'])) {
-                return false;
-            } else {
-                foreach ($configuration['children'][0]['children'] as $childConfig) {
-                    if ($this->isConfigurationValid($childConfig, true)) {
-                        return true;
-                    }
-                }
-            }
-        } else {
-            if (isset($configuration['children'])) { // > 2 simple layers -> OK.
-                foreach ($configuration['children'] as $childConfig) {
-                    if ($this->isConfigurationValid($childConfig, true)) {
-                        return true;
-                    }
-                }
-            } else {
-                return true;
-            }
-        }
-        return false;
     }
 }

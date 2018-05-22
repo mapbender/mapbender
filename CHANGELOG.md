@@ -263,10 +263,12 @@
     - Change tilesize default to 512
 
 * **v3.0.5.4**
+    - Support reversible layer order per WMS source instance (new dropdown application backend section "Layersets")
     - Support WMS keywords > 255 characters; needs app/console doctrine:schema:update for running installations
     - Extend WmsLoader WMS service compatibility, now matches backend
     - Update WmsLoader example URL to https
     - Skip undefined element classes in Yaml applications, log a warning instead of crashing
+    - Fix unbounded growth in "authority" on repeated export / reimport / cloning of applications (#777)
     - Backport doctrine annotations to fix some broken import / export scenarios
     - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers (see pull #787)
     - Backport fix for getting Dimension configuration with open extent

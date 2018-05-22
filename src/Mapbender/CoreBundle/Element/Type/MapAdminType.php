@@ -69,8 +69,6 @@ class MapAdminType extends AbstractType
                 'required' => true))
             ->add('maxResolution', 'text', array(
                 'label' => 'Max. resolution'))
-            ->add('imgPath', 'text', array(
-                'label' => 'OL image path'))
             ->add('otherSrs', 'text', array(
                 'label' => 'Other SRS',
                 'required' => false));

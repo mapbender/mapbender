@@ -15,6 +15,7 @@ use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\Component\Style;
 use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
 use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
+use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -325,7 +326,7 @@ class WmcParser110 extends WmcParser
                 $rootInst->addSublayer($newLayerInstance);
                 $wmsinst->addLayer($newLayerInstance);
             }
-            $rootLayHandler = EntityHandler::createHandler($this->container, $rootInst);
+            $rootLayHandler = new WmsInstanceLayerEntityHandler($this->container, $rootInst);
             $children = array($rootLayHandler->generateConfiguration());
             $wmsconf->setChildren($children);
             return array(

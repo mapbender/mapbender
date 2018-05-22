@@ -148,17 +148,16 @@ class Mapbender
      * override the YAML one.
      *
      * @param string $slug
-     * @param array $urls Array of runtime URLs
      * @return Application Application component
      */
-    public function getApplication($slug, $urls)
+    public function getApplication($slug)
     {
         $entity = $this->getApplicationEntity($slug);
         if (!$entity) {
             return null;
         }
 
-        return new Application($this->container, $entity, $urls);
+        return new Application($this->container, $entity);
     }
 
     /**

@@ -31,64 +31,59 @@
     <div class="metaData">
       <div class="left leftContainer textFieldGroup">
         {{ form_label(form.title) }}{{ form_widget(form.title) }}
-        <div class="clear"></div>
         {{ form_label(form.format) }}{{ form_widget(form.format) }}
-        <div class="clear"></div>
         {{ form_label(form.infoformat) }}{{ form_widget(form.infoformat) }}
-        <div class="clear"></div>
         {{ form_label(form.exceptionformat) }}{{ form_widget(form.exceptionformat) }}
-        <div class="clear"></div>
         {{ form_label(form.opacity) }}{{ form_widget(form.opacity) }}
-        <div class="clear"></div>
         <label class='labelInput' for="{{form.buffer.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.buffer"|trans}}</label>
         {{ form_widget(form.buffer) }}
-        <div class='clear'></div>
         <label class='labelInput' for="{{form.ratio.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.ratio"|trans}}</label>
         {{ form_widget(form.ratio) }}
-        <div class="clear"></div>
       </div>
-
-      <div class="left rightContainer checkboxGroup">
-        <div class="left">
+      <div class="rightContainer"> <!-- class="left rightContainer" -->
+        <div class="extendedGroup">
+            {% if form.dimensions is not null and form.dimensions | length > 0 %}
+              <div class="blockgroup">
+                <!-- todo: the header should be part of the "dimensions" input widget -->
+                <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
+                <div id="dimension-content" class="on-off-content hidden">
+                    {% for dim in form.dimensions %}
+                        {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
+                    {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          <div class="blockgroup">
+            <!-- todo: the header should be part of the "vendorspecifics" input widget -->
+            <div id="vendorspecific" class="on-off on-off-title">{{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}</div>
+            <div id="vendorspecific-content" class="vendorspecific-content on-off-content hidden">
+                {{ form_widget(form.vendorspecifics) }}
+            </div>
+          </div>
+        </div>
+        <div class="checkboxGroup">
+        <div>
         {{ form_widget(form.visible) }}<label for="{{form.visible.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.visible"|trans}}</label>
         </div>
-        <div class="clear"></div>
-        <div class="left">
+        <div>
         {{ form_widget(form.basesource) }}<label for="{{form.basesource.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.basesource"|trans}}</label>
         </div>
-        <div class="clear"></div>
-        <div class="left">
+        <div>
         {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.proxy"|trans}}</label>
         </div>
-        <div class="clear"></div>
-        <div class="left">
+        <div>
         {{ form_widget(form.transparency) }}<label for="{{form.transparency.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.transparency"|trans}}</label>
         </div>
-        <div class="clear"></div>
-        <div class="left">
+        <div>
         {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.tiled"|trans}}</label>
         </div>
-        <div class="clear"></div>
-      </div>
-      <div class="extendedGroup">
-        {% if form.dimensions is not null and form.dimensions | length > 0 %}
-        <div class="blockgroup">
-          <!-- todo: the header should be part of the "dimensions" input widget -->
-          <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
-          <div id="dimension-content" class="on-off-content hidden">
-            {% for dim in form.dimensions %}
-              {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
-            {% endfor %}
-          </div>
+        {% if form.layerOrder is defined %}
+        <div>
+          {{ form_label(form.layerOrder, 'mb.wms.wmsloader.repo.instance.label.layerOrder', {}) }}{{ form_widget(form.layerOrder) }}
         </div>
         {% endif %}
-        <div class="blockgroup">
-          <!-- todo: the header should be part of the "vendorspecifics" input widget -->
-          <div id="vendorspecific" class="on-off on-off-title">{{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}</div>
-          <div id="vendorspecific-content" class="vendorspecific-content on-off-content hidden">
-          {{ form_widget(form.vendorspecifics) }}
-          </div>
-        </div>
+      </div>
+      <div class="clear"></div>
       </div>
     </div>
     {% set root = instance.source.getRootlayer() %}
