@@ -17,8 +17,8 @@
     </script>
     {% endblock %}
     {##}
+    <link rel="stylesheet" type="text/css" href="{{ asset('components/cookieconsent/build/cookieconsent.min.css') }}"/>
     <link rel="shortcut icon" href="{% block favicon %}{% endblock %}" />
-
     {% block css %}{% endblock %}
 </head>
 <body class="{% if app.debug %}debug{% endif %}">
@@ -26,25 +26,19 @@
 <script src="{{ asset('components/joii/dist/joii.min.js')}}"></script>
 <script src="{{ asset('components/jquery/jquery.min.js')}}"></script>
 <script src="{{ asset('components/jquery-ui/jquery-ui.min.js')}}"></script>
+{% if  cookieconsent is defined %}
 <script>
-
-    {% if  cookieconsent is defined %}
 
     var backgroundColor = {{ cookieconsent.backgroundColor| default("#000000")| json_encode | raw }};
     var backgroundTextColor = {{ cookieconsent.backgroundTextColor| default ("#FFF" )| json_encode| raw }};
-
     var buttonColor = {{ cookieconsent.buttonColor| default ("#CAD401" )| json_encode| raw }};
     var buttonTextColor = {{ cookieconsent.buttonTextColor| default ("#000000" )| json_encode| raw }};
-
-
     var message = {{ cookieconsent.message| default ("This website uses cookies to ensure you get the best experience on our website. ") | json_encode | raw }};
     var dismissText = {{ cookieconsent.dismissText | default ("Got it")| json_encode | raw }};
     var linkText = {{ cookieconsent.linkText| default ("Learn More" ) | json_encode | raw }};
     var linkUrl = {{ cookieconsent.linkUrl| default ("https://cookiesandyou.com/" ) | json_encode | raw }};
     var theme   = {{ cookieconsent.theme| default ("classic" ) | json_encode | raw }};
     var position   = {{ cookieconsent.position| default ("bottom-right" ) | json_encode | raw }};
-
-
 
     window.addEventListener("load", function() {
 
@@ -70,11 +64,10 @@
         })
     });
 
-    {% endif %}
+
 
 </script>
-<script src="{{ asset('components/jquery-ui/jquery-ui.min.js') }}"></script>
-<link rel="stylesheet" type="text/css" href="{{ asset('components/cookieconsent/build/cookieconsent.min.css') }}"/>
+{% endif %}
 <script src="{{ asset('components/cookieconsent/build/cookieconsent.min.js') }}"></script>
 {% block trans %}{% endblock %}
 {% block js %}{% endblock %}
