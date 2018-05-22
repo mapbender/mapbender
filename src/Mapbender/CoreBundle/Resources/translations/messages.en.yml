@@ -391,3 +391,25 @@ Search: Search
 
 mb.imprint.title: Imprint
 mb.data_policy.title: Data policy
+mb.imprint.instructions: |
+  This is a placeholder for content delivered via Mapbender's builtin /imprint URL.
+  You can customize this text in one of two ways:
+  1) Add a custom HTML document
+  Place your file with HTML (and optionall Twig) content in application/app/Resources/MapbenderCoreBundle/views/Site/imprint.content.html.twig. The system will
+  provide the HTML skeleton around this. If instead you want to use a full HTML document (including <head>), name your file imprint.page.html.twig instead (same directory).
+
+  2) Unformatted text in translation catalog
+  You can place free text under the translation key mb.imprint.content, which will then be rendered on the imprint URL.
+  The translation catalogs are YAML files you can place in application/app/Resources/MapbenderCoreBundle/translations/. The files are named
+  messages.de.yml, messages.en.yml etc, one file per target language. This method does not support any formatting or markup beyond simple line breaks.
+mb.data_policy.instructions: |
+  This is a placeholder for content delivered via Mapbender's builtin /data-policy URL.
+  You can customize this text in one of two ways:
+  1) Add a custom HTML document
+  Place your file with HTML (and optionall Twig) content in application/app/Resources/MapbenderCoreBundle/views/Site/data_policy.content.html.twig. The system will
+  provide the HTML skeleton around this. If instead you want to use a full HTML document (including <head>), name your file data_policy.page.html.twig instead (same directory).
+
+  2) Unformatted text in translation catalog
+  You can place free text under the translation key mb.data_policy.content, which will then be rendered on the /data-policy URL.
+  The translation catalogs are YAML files you can place in application/app/Resources/MapbenderCoreBundle/translations/. The files are named
+  messages.de.yml, messages.en.yml etc, one file per target language. This method does not support any formatting or markup beyond simple line breaks.

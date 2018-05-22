@@ -1,0 +1,7 @@
+{% set textTranslationKey = 'mb.imprint.content' %}
+{% set text = textTranslationKey | trans %}
+{% if text != textTranslationKey %}
+    {{ text | nl2br }}
+{% else %}
+    {{ 'mb.imprint.instructions' | trans | nl2br }}
+{% endif %}

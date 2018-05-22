@@ -391,3 +391,25 @@ mb:
 
 mb.imprint.title: Impressum
 mb.data_policy.title: Datenschutzrichtlinie
+mb.imprint.instructions: |
+  Dies ist ein Platzhalter für den von Mapbender unter der URL /imprint auslieferbaren Impressumstext.
+  Sie haben zwei Möglichkeiten Ihren eigenen Text zu hinterlegen:
+  1) Eigenes Template (erlaubt HTML-Formatierung)
+  Hierzu legen sie eine Datei mit HTML- und optional Twig-Inhalten in application/app/Resources/MapbenderCoreBundle/views/Site/imprint.content.html.twig ab. Der HTML-Kopf wird hierbei vom System
+  bereitgestellt. Wenn Sie eine komplette HTML-Seite (inklusive <head>) hinterlegen möchten, nennen Sie die Datei stattdessen imprint.page.html.twig (gleiches Verzeichnis).
+
+  2) Unformatierter Fließtext im Übersetzungskatalog
+  Unter dem Schlüssel mb.imprint.content kann in den Übersetzungskatalogen Freitext hinterlegt werden, der dann auf der URL /imprint ausgeliefert wird.
+  Die Übersetzungskataloge sind YAML-Dateien die Sie in application/app/Resources/MapbenderCoreBundle/translations/ hinterlegen können. Die Dateien
+  heißen (sprachabhängig) messages.de.yml, messages.en.yml usw. Diese Methode unterstützt derzeit keinerlei Formatierungen, lediglich Zeilenumbrüche werden ausgewertet.
+mb.data_policy.instructions: |
+  Dies ist ein Platzhalter für den von Mapbender auslieferbaren Datenschutzrichlinientext.
+  Sie haben zwei Möglichkeiten Ihren eigenen Text zu hinterlegen:
+  1) Eigenes Template (erlaubt HTML-Formatierung)
+  Hierzu legen sie eine Datei mit HTML- und optional Twig-Inhalten in application/app/Resources/MapbenderCoreBundle/views/Site/data_policy.content.html.twig ab. Der HTML-Kopf wird hierbei vom System
+  bereitgestellt. Wenn Sie eine komplette HTML-Seite (inklusive <head>) hinterlegen möchten, nennen Sie die Datei stattdessen data_policy.page.html.twig (gleiches Verzeichnis).
+
+  2) Unformatierter Fließtext im Übersetzungskatalog
+  Unter dem Schlüssel mb.data_policy.content kann in den Übersetzungskatalogen Freitext hinterlegt werden, der dann auf der URL /data-policy ausgeliefert wird.
+  Die Übersetzungskataloge sind YAML-Dateien die Sie in application/app/Resources/MapbenderCoreBundle/translations/ hinterlegen können. Die Dateien
+  heißen (sprachabhängig) messages.de.yml, messages.en.yml usw. Diese Methode unterstützt derzeit keinerlei Formatierungen, lediglich Zeilenumbrüche werden ausgewertet.

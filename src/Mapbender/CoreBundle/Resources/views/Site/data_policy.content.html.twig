@@ -1,0 +1,7 @@
+{% set textTranslationKey = 'mapbender.data_policy.content' %}
+{% set text = textTranslationKey | trans %}
+{% if text != textTranslationKey %}
+    {{ text | nl2br }}
+{% else %}
+    {{ 'mapbender.data_policy.instructions' | trans | nl2br }}
+{% endif %}
