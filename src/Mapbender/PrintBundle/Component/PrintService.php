@@ -546,7 +546,7 @@ class PrintService extends ImageExportService
                     case 'scale' :
                         $pdf->Cell($this->conf['fields']['scale']['width'],
                             $this->conf['fields']['scale']['height'],
-                            '1 : ' . $this->data['scale_select']);
+                            '1 : ' . round($this->data['scale_select']));
                         break;
                     default:
                         if (isset($this->data['extra'][$k])) {
@@ -794,7 +794,7 @@ class PrintService extends ImageExportService
         $suffix = 'm';
 
         $pdf->Text( $this->conf['scalebar']['x'] -1 , $this->conf['scalebar']['y'] - 1 , '0' );
-        $pdf->Text( $this->conf['scalebar']['x'] + 46, $this->conf['scalebar']['y'] - 1 , $length . '' . $suffix);
+        $pdf->Text( $this->conf['scalebar']['x'] + 46, $this->conf['scalebar']['y'] - 1 , round($length) . '' . $suffix);
 
         $pdf->Rect($this->conf['scalebar']['x'], $this->conf['scalebar']['y'], 10, 2, 'FD');
         $pdf->SetFillColor(255, 255, 255);
