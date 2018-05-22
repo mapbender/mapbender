@@ -820,25 +820,25 @@ class PrintService extends ImageExportService
         }
 
         // upper right Y
-        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_y']['fontsize']);
+        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ur_y']['fontsize']));
         $pdf->Text($this->conf['fields']['extent_ur_y']['x'] + $corrFactor,
                     $this->conf['fields']['extent_ur_y']['y'] + 3,
                     round($this->data['extent_feature'][2]['y'], $precision));
 
         // upper right X
-        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ur_x']['fontsize']);
+        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ur_x']['fontsize']));
         $pdf->TextWithDirection($this->conf['fields']['extent_ur_x']['x'] + 1,
                     $this->conf['fields']['extent_ur_x']['y'],
                     round($this->data['extent_feature'][2]['x'], $precision),'D');
 
         // lower left Y
-        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ll_y']['fontsize']);
+        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ll_y']['fontsize']));
         $pdf->Text($this->conf['fields']['extent_ll_y']['x'],
                     $this->conf['fields']['extent_ll_y']['y'] + 3,
                     round($this->data['extent_feature'][0]['y'], $precision));
 
         // lower left X
-        $pdf->SetFont('Arial', '', $this->conf['fields']['extent_ll_x']['fontsize']);
+        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ll_x']['fontsize']));
         $pdf->TextWithDirection($this->conf['fields']['extent_ll_x']['x'] + 3,
                     $this->conf['fields']['extent_ll_x']['y'] + 30,
                     round($this->data['extent_feature'][0]['x'], $precision),'U');
