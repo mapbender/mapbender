@@ -17,6 +17,16 @@
              Caching machinery can only be safely enabled after these cases have been adressed properly -->
         <parameter key="cachable.mapbender.application.config">false</parameter>
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
+        <!-- Configuration knobs for imprint and data policy. See SiteController -->
+        <!-- The two `.expose` parameters are a booleans that open the URL routes /imprint and /data-policy respectively -->
+        <!-- The template pairs are twig templates for a) full page (including HTML head etc) and b) content only (to support
+             Ajax-loaded dialog content etc) -->
+        <parameter key="mapbender.imprint.expose">true</parameter>
+        <parameter key="mapbender.imprint.template.page">@MapbenderCore/Site/imprint.page.html.twig</parameter>
+        <parameter key="mapbender.imprint.template.content">@MapbenderCore/Site/imprint.content.html.twig</parameter>
+        <parameter key="mapbender.data_policy.expose">true</parameter>
+        <parameter key="mapbender.data_policy.template.page">@MapbenderCore/Site/data_policy.page.html.twig</parameter>
+        <parameter key="mapbender.data_policy.template.content">@MapbenderCore/Site/data_policy.content.html.twig</parameter>
     </parameters>
 
     <services>

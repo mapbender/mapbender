@@ -388,3 +388,6 @@ mb:
       exception: 'Exception: %exception%'
       statuscode: 'HTTP status code'
 Search: Search
+
+mb.imprint.title: Imprint
+mb.data_policy.title: Data policy

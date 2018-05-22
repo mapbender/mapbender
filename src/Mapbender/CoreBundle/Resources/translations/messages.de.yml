@@ -388,3 +388,6 @@ mb:
       datails: 'Die Karte kann nicht angezeigt werden.'
       exception: 'Ausnahmefehler: %exception%'
       statuscode: 'HTTP Statuscode'
+
+mb.imprint.title: Impressum
+mb.data_policy.title: Datenschutzrichtlinie
