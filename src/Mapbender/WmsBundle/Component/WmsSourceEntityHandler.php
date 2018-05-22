@@ -1,10 +1,8 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
-use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -37,60 +35,43 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function save()
     {
-        /** @var ObjectManager $manager */
         $manager = $this->container->get('doctrine')->getManager();
-        $this->persistRecursive($manager, $this->entity);
-    }
-
-    /**
-     * Persists the source, all keywords and all layers, recursively.
-     *
-     * @param ObjectManager $manager
-     * @param WmsSource $entity
-     */
-    private static function persistRecursive(ObjectManager $manager, WmsSource $entity)
-    {
-        $rootLayer = $entity->getRootlayer();
-        if ($rootLayer) {
-            WmsLayerSourceEntityHandler::persistRecursive($manager, $rootLayer);
+        if ($this->entity->getRootlayer()) {
+            self::createHandler($this->container, $this->entity->getRootlayer())->save();
         }
-        $manager->persist($entity);
-        $cont = $entity->getContact();
+        $manager->persist($this->entity);
+        $cont = $this->entity->getContact();
         if ($cont == null) {
             $cont = new Contact();
-            $entity->setContact($cont);
+            $this->entity->setContact($cont);
         }
         $manager->persist($cont);
-        foreach ($entity->getKeywords() as $kwd) {
+        foreach ($this->entity->getKeywords() as $kwd) {
             $manager->persist($kwd);
         }
     }
 
     /**
-     * Creates a new WmsInstance, optionally attaches it to a layerset, then updates
-     * the ordering of the layers.
-     *
-     * @param Layerset|null $layerSet new instance will be attached to layerset if given
-     * @return WmsInstance
+     * @inheritdoc
      */
     public function createInstance(Layerset $layerSet = NULL)
     {
         $instance        = new WmsInstance();
         $instance->setSource($this->entity);
         $instance->setLayerset($layerSet);
-        $instance->populateFromSource($this->entity);
-        if ($layerSet) {
+        $instanceHandler = self::createHandler($this->container, $instance);
+        $instanceHandler->create();
+        if ($instanceHandler->getEntity()->getLayerset()) {
             $num = 0;
-            foreach ($layerSet->getInstances() as $instanceAtLayerset) {
-                /** @var WmsInstance $instanceAtLayerset */
-                $instanceAtLayerset->setWeight($num);
+            foreach ($instanceHandler->getEntity()->getLayerset()->getInstances() as $instanceAtLayerset) {
+                $instHandler = self::createHandler($this->container, $instanceAtLayerset);
+                $instHandler->getEntity()->setWeight($num);
+                $instHandler->generateConfiguration();
                 $num++;
             }
         }
-        /** @var TypeDirectoryService $directory */
-        $directory = $this->container->get('mapbender.source.typedirectory.service');
-        $directory->getSourceService($instance)->initializeInstance($instance);
-        return $instance;
+        $instanceHandler->generateConfiguration();
+        return $instanceHandler->getEntity();
     }
 
     /**
@@ -98,6 +79,12 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function remove()
     {
+        if ($this->entity->getRootlayer()) {
+            self::createHandler($this->container, $this->entity->getRootlayer())->remove();
+        }
+        if ($this->entity->getContact()) {
+            $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
+        }
         $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
@@ -138,8 +125,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
         $this->entity->setContact($contact);
 
-        $rootUpdateHandler = new WmsLayerSourceEntityHandler($this->container, $this->entity->getRootlayer());
-        $rootUpdateHandler->update($sourceNew->getRootlayer());
+        self::createHandler($this->container, $this->entity->getRootlayer())->update($sourceNew->getRootlayer());
 
         KeywordUpdater::updateKeywords(
             $this->entity,
@@ -149,8 +135,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         );
 
         foreach ($this->getInstances() as $instance) {
-            $instanceUpdateHandler = new WmsInstanceEntityHandler($this->container, $instance);
-            $instanceUpdateHandler->update();
+            self::createHandler($this->container, $instance)->update();
         }
 
         if (!$transaction) {
@@ -159,7 +144,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     }
 
     /**
-     * @return WmsInstance[]
+     * @inheritdoc
      */
     public function getInstances()
     {

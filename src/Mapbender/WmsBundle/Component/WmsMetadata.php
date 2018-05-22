@@ -91,9 +91,9 @@ class WmsMetadata extends SourceMetadata
         $sourceItem = $layer->getSourceItem();
         $layer_items[] = array("name" => strval($sourceItem->getName()));
         $layer_items[] = array("title" => $this->formatAlternatives($sourceItem->getTitle(), $layer->getTitle()));
-        $bbox = $sourceItem->getLatlonBounds(true);
+        $bbox = $sourceItem->getLatlonBounds();
         $layer_items[] = array("bbox" => $this->formatBbox($bbox));
-        $layer_items[] = array("srs" => implode(', ', $layer->getSourceItem()->getSrs(true)));
+        $layer_items[] = array("srs" => implode(', ', $layer->getSourceItem()->getSrs()));
         if($layer->getSublayer()->count() > 0){
             $sublayers = array();
             foreach($layer->getSublayer() as $sublayer){
@@ -110,7 +110,7 @@ class WmsMetadata extends SourceMetadata
      */
     public static function formatBbox($bbox)
     {
-        return $bbox->getSrs() . " " . implode(',', array(
+        return $bbox->getSrs() . " " . implode(array(
             $bbox->getMinx(),
             $bbox->getMiny(),
             $bbox->getMaxx(),

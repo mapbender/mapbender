@@ -3,8 +3,6 @@
 namespace Mapbender\WmsBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
-use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * MapbenderWmsBundle
@@ -12,24 +10,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class MapbenderWmsBundle extends MapbenderBundle
 {
 
-    public function build(ContainerBuilder $container)
-    {
-        parent::build($container);
-        $container->addCompilerPass(new RegisterWmsSourceServicePass());
-    }
-
     /**
      * @inheritdoc
      */
     public function getElements()
     {
-        $elements = array(
-            'Mapbender\WmsBundle\Element\WmsLoader',
+        return array(
+            'Mapbender\WmsBundle\Element\WmsLoader'
         );
-        if ($this->container->getParameter('mapbender.preview.element.dimensionshandler')) {
-            $elements[] = 'Mapbender\WmsBundle\Element\DimensionsHandler';
-        }
-        return $elements;
     }
 
     /**

@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
-use Mapbender\CoreBundle\DependencyInjection\Compiler\ContainerUpdateTimestampPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -33,7 +32,6 @@ class MapbenderCoreBundle extends MapbenderBundle
                 $kernelPath . "/config/applications",
                 $kernelPath . "/config/mapbender.yml")
         );
-        $container->addCompilerPass(new ContainerUpdateTimestampPass());
     }
 
     /**

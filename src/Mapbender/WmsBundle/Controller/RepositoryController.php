@@ -4,15 +4,15 @@ namespace Mapbender\WmsBundle\Controller;
 
 use Doctrine\ORM\EntityRepository;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\WmsBundle\Component\Wms\Importer;
-use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
-use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
+use Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -124,9 +124,7 @@ class RepositoryController extends Controller
 
             $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
 
-            $sourceHandler = new WmsSourceEntityHandler($this->container, $wmssource);
-            $sourceHandler->save();
-
+            EntityHandler::createHandler($this->container, $wmssource)->save();
             $this->getDoctrine()->getManager()->flush();
             $this->initializeAccessControl($wmssource);
             $this->getDoctrine()->getManager()->getConnection()->commit();
@@ -207,7 +205,7 @@ class RepositoryController extends Controller
 
                 $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
                 try {
-                    $wmssourcehandler = new WmsSourceEntityHandler($this->container, $wmsOrig);
+                    $wmssourcehandler = EntityHandler::createHandler($this->container, $wmsOrig);
                     $wmssourcehandler->update($wmssource);
                 } catch (\Exception $e) {
                     $this->get("logger")->debug($e->getMessage());
@@ -224,7 +222,7 @@ class RepositoryController extends Controller
                 $importer->updateOrigin($wmsOrig, $origin);
                 $wmsOrig->setValid($wmssource->getValid());
 
-                $wmssourcehandler->save();
+                EntityHandler::createHandler($this->container, $wmsOrig)->save();
                 $this->getDoctrine()->getManager()->flush();
                 $this->getDoctrine()->getManager()->getConnection()->commit();
 
@@ -268,11 +266,11 @@ class RepositoryController extends Controller
         $aclProvider->deleteAcl($oid);
 
         foreach ($wmsinstances as $wmsinstance) {
-            $wmsinsthandler = new WmsInstanceEntityHandler($this->container, $wmsinstance);
+            $wmsinsthandler = EntityHandler::createHandler($this->container, $wmsinstance);
             $wmsinsthandler->remove();
             $em->flush();
         }
-        $wmshandler = new WmsSourceEntityHandler($this->container, $wmssource);
+        $wmshandler = EntityHandler::createHandler($this->container, $wmssource);
         $wmshandler->remove();
 
         $em->flush();
@@ -292,7 +290,7 @@ class RepositoryController extends Controller
         $instance    = $this->loadEntityByPk("MapbenderCoreBundle:SourceInstance", $instanceId);
         $em          = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
-        $insthandler = new WmsInstanceEntityHandler($this->container, $instance);
+        $insthandler = EntityHandler::createHandler($this->container, $instance);
         $insthandler->remove();
         $em->flush();
         $em->getConnection()->commit();
@@ -313,7 +311,7 @@ class RepositoryController extends Controller
         $wmsinstance = $this->loadEntityByPk($repositoryName, $instanceId);
 
         if ($this->getRequest()->getMethod() == 'POST') { //save
-            $form = $this->createForm('wmsinstanceinstancelayers', $wmsinstance);
+            $form = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance);
             $form->submit($this->get('request'));
             if ($form->isValid()) { //save
                 $em = $this->getDoctrine()->getManager();
@@ -326,10 +324,10 @@ class RepositoryController extends Controller
                 $em->persist($wmsinstance);
                 $em->flush();
                 $em->getConnection()->commit();
-                // reload instance after saving ... why?
                 /** @var WmsInstance $wmsinstance */
                 $wmsinstance = $this->loadEntityByPk($repositoryName, $wmsinstance->getId());
-                $entityHandler = new WmsInstanceEntityHandler($this->container, $wmsinstance);
+                $entityHandler = EntityHandler::createHandler($this->container, $wmsinstance);
+                $entityHandler->generateConfiguration();
                 $entityHandler->save();
                 $em->flush();
 
@@ -352,7 +350,7 @@ class RepositoryController extends Controller
                 }
             }
             /* bug fix end */
-            $form = $this->createForm('wmsinstanceinstancelayers', $wmsinstance);
+            $form = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance);
             return array(
                 "form" => $form->createView(),
                 "slug" => $slug,
@@ -416,9 +414,9 @@ class RepositoryController extends Controller
             $em->persist($inst);
         }
         $em->flush();
-        /** @var WmsInstance $wmsinstance */
         $wmsinstance = $this->loadEntityByPk("MapbenderCoreBundle:SourceInstance", $instanceId);
-        $wmsinsthandler = new WmsInstanceEntityHandler($this->container, $wmsinstance);
+        $wmsinsthandler = EntityHandler::createHandler($this->container, $wmsinstance);
+        $wmsinsthandler->generateConfiguration();
         $wmsinsthandler->save();
         $em->flush();
         $em->getConnection()->commit();

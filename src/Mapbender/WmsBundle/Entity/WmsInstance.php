@@ -5,9 +5,7 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
-use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -105,14 +103,6 @@ class WmsInstance extends SourceInstance
      */
     protected $ratio = 1.25;
 
-    const LAYER_ORDER_TOP_DOWN  = 'standard';
-    const LAYER_ORDER_BOTTOM_UP = 'reverse';
-
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $layerOrder;
-
     /**
      * WmsInstance constructor.
      */
@@ -157,7 +147,7 @@ class WmsInstance extends SourceInstance
     /**
      * Sets dimensions
      *
-     * @param DimensionInst[] $dimensions
+     * @param array $dimensions array of DimensionIst
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
     public function setDimensions(array $dimensions)
@@ -167,7 +157,7 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * @return VendorSpecific[]
+     * @return VendorSpecific[]|DimensionInst[]
      */
     public function getVendorspecifics()
     {
@@ -180,7 +170,7 @@ class WmsInstance extends SourceInstance
 
     /**
      * Sets vendorspecifics
-     * @param ArrayCollection|DimensionInst[]|VendorSpecific[] $vendorspecifics
+     * @param ArrayCollection $vendorspecifics array of DimensionIst
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
     public function setVendorspecifics(array $vendorspecifics)
@@ -538,7 +528,7 @@ class WmsInstance extends SourceInstance
     /**
      * Add layers
      *
-     * @param WmsInstanceLayer $layer
+     * @param WmsInstanceLayer $layers
      * @return WmsInstance
      */
     public function addLayer(WmsInstanceLayer $layer)
@@ -584,66 +574,5 @@ class WmsInstance extends SourceInstance
     public function getMetadata()
     {
         return new WmsMetadata($this);
-    }
-
-    /**
-     * @param WmsSource $source
-     */
-    public function populateFromSource(WmsSource $source)
-    {
-        $this->setTitle($source->getTitle());
-        $this->setFormat(ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), null, 0));
-        $this->setInfoformat(
-            ArrayUtil::getValueFromArray(
-                $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(),
-                null,
-                0
-            )
-        );
-        $this->setExceptionformat(ArrayUtil::getValueFromArray($source->getExceptionFormats(), null, 0));
-
-        $this->setDimensions($source->dimensionInstancesFactory());
-        // @todo: ??? why? is that safe?
-        $this->setWeight(-1);
-
-        $newRootLayer = new WmsInstanceLayer();
-        $newRootLayer->populateFromSource($this, $source->getRootLayer());
-    }
-
-    /**
-     * @return string
-     */
-    public function getLayerOrder()
-    {
-        // NOTE: this is a recently added column; there will be NULLs in the DB for updated applications
-        //       we convert these NULLs to our desired default (not the default for new instances, which can
-        //       be configured)
-        //       the layerOrder column will be properly populated when instances are saved
-        return $this->layerOrder ?: self::LAYER_ORDER_TOP_DOWN;
-    }
-
-    /**
-     * @param string $value use "conformant" or "traditional" (see consts)
-     * @return $this
-     * @throws \InvalidArgumentException if $value is not one of the expected values
-     */
-    public function setLayerOrder($value)
-    {
-        if (!in_array($value, $this->validLayerOrderChoices())) {
-            throw new \InvalidArgumentException("Invalid layer order value '$value'");
-        }
-        $this->layerOrder = $value;
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public static function validLayerOrderChoices()
-    {
-        return array(
-            self::LAYER_ORDER_TOP_DOWN,
-            self::LAYER_ORDER_BOTTOM_UP,
-        );
     }
 }

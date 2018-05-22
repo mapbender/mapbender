@@ -3,7 +3,6 @@ namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
-use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
@@ -86,19 +85,26 @@ class EntityHandler
     /**
      * @param ContainerInterface $container
      * @param  Source|SourceInstance|object $entity
-     * @return static|null
-     * @todo: never return null
+     * @return \Mapbender\WmsBundle\Component\WmsInstanceEntityHandler|SourceInstanceEntityHandler|null
      */
     public static function createHandler(ContainerInterface $container, $entity)
     {
+        $bundles            = $container->get('kernel')->getBundles();
+        $reflect            = new \ReflectionClass($entity);
         $entityClass        = ClassUtils::getClass($entity);
-        $handlerClass = str_replace('\\Entity\\', '\\Component\\', $entityClass) . 'EntityHandler';
-
-        if (class_exists($handlerClass)) {
-            return new $handlerClass($container, $entity);
-        } else {
-            return null;
+        $entityBundleFolder = substr($entityClass, 0, strpos($entityClass, '\\Entity\\'));
+        $entityName         = $reflect->getShortName();
+        foreach ($bundles as $type => $bundle) {
+            if (strpos( get_class($bundle), $entityBundleFolder) === 0) {
+                $handlerClass = $entityBundleFolder . '\\Component\\' . $entityName . 'EntityHandler';
+                if (class_exists($handlerClass)) {
+                    return new $handlerClass($container, $entity);
+                } else {
+                    return null;
+                }
+            }
         }
+        return null;
     }
 
     /**

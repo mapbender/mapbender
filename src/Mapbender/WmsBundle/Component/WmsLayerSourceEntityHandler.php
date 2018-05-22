@@ -2,7 +2,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\SourceItemEntityHandler;
 use Mapbender\CoreBundle\Entity\SourceItem;
@@ -34,26 +33,13 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
      */
     public function save()
     {
-        /** @var ObjectManager $manager */
-        $manager = $this->container->get('doctrine')->getManager();
-        $this->persistRecursive($manager, $this->entity);
-    }
-
-    /**
-     * Persists the source layer and all child layers, recursively
-     *
-     * @param ObjectManager $manager
-     * @param WmsLayerSource $entity
-     */
-    public static function persistRecursive(ObjectManager $manager, WmsLayerSource $entity)
-    {
-        $manager->persist($entity);
-        foreach ($entity->getSublayer() as $sublayer) {
-            static::persistRecursive($manager, $sublayer);
+        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        foreach ($this->entity->getSublayer() as $sublayer) {
+            self::createHandler($this->container, $sublayer)->save();
         }
-        foreach ($entity->getKeywords() as $kwd) {
-            $kwd->setReferenceObject($entity);
-            $manager->persist($kwd);
+        foreach ($this->entity->getKeywords() as $kwd) {
+            $kwd->setReferenceObject($this->entity);
+            $this->container->get('doctrine')->getManager()->persist($kwd);
         }
     }
 
@@ -74,18 +60,17 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
      */
     private function removeRecursively(WmsLayerSource $wmslayer)
     {
-        /**
-         * @todo: recursive remove is redundant wrt entity manager, but detaching from the relational collections
-         *        may be necessary for update to work
-         */
         foreach ($wmslayer->getSublayer() as $sublayer) {
             $this->removeRecursively($sublayer);
         }
-        if ($wmslayer->getParent()) {
-            $wmslayer->getParent()->getSublayer()->removeElement($wmslayer);
+        foreach ($this->entity->getKeywords() as $kwd) {
+            $this->container->get('doctrine')->getManager()->remove($kwd);
         }
-        if ($wmslayer->getSource()) {
-            $wmslayer->getSource()->getLayers()->removeElement($wmslayer);
+        if ($this->entity->getParent()) {
+            $this->entity->getParent()->getSublayer()->removeElement($this->entity);
+        }
+        if ($this->entity->getSource()) {
+            $this->entity->getSource()->getLayers()->removeElement($wmslayer);
         }
         $this->container->get('doctrine')->getManager()->remove($wmslayer);
     }
@@ -94,7 +79,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
      * @inheritdoc
      */
     public function update(SourceItem $itemNew)
-    {
+    {# set priority
         $prio = $this->entity->getPriority();
         $manager = $this->container->get('doctrine')->getManager();
         $classMeta = $manager->getClassMetadata(EntityUtil::getRealClass($this->entity));
@@ -108,8 +93,6 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
             }
             // ignore not identifier fields
         }
-        /** @var WmsLayerSource $itemNew */
-
         $this->entity->setPriority($prio);
         KeywordUpdater::updateKeywords(
             $this->entity,
@@ -129,7 +112,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
         }
         foreach ($toRemove as $lay) {
             $this->entity->getSublayer()->removeElement($lay);
-            $this->removeRecursively($lay);
+            self::createHandler($this->container, $lay)->remove();
         }
         $num = 0;
         /* update founded layers, add new layers */
@@ -149,12 +132,12 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
 //                $manager->persist($this->entity);
             } elseif (count($subItemsOld) === 1) { # update a layer
                 $subItemsOld[0]->setPriority($prio + $num);
-                $subLayerHandler = new WmsLayerSourceEntityHandler($this->container, $subItemsOld[0]);
-                $subLayerHandler->update($subItemNew);
+                self::createHandler($this->container, $subItemsOld[0])->update($subItemNew);
 //                $manager->persist($this->entity);
             } else { # remove all old layers and add new layers
                 foreach ($subItemsOld as $layerToRemove) {
-                    $this->removeRecursively($layerToRemove);
+                    $this->entity->getSublayer()->removeElement($layerToRemove);
+                    self::createHandler($this->container, $layerToRemove)->remove();
                 }
                 $lay = $this->addLayer(
                     $this->entity->getSource(),
@@ -173,9 +156,9 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
 
     /**
      * Finds a layers at the layerlist.
-     * @param WmsLayerSource $layer
-     * @param WmsLayerSource[] $layerList
-     * @return WmsLayerSource[]
+     * @param type $layer
+     * @param type $layerList
+     * @return array true
      */
     private function findLayer($layer, $layerList)
     {

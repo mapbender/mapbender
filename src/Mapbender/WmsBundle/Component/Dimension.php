@@ -126,8 +126,6 @@ class Dimension
 
     /**
      * Get default
-     *
-     * @return string|null
      */
     public function getDefault()
     {
