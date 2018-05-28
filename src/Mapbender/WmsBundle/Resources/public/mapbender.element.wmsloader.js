@@ -178,6 +178,8 @@
                 },
                 dataType: 'json',
                 success: function(data, textStatus, jqXHR){
+                    data.configuration.options.info_format = self.options.defaultInfoFormat;
+                    data.configuration.options.format = self.options.defaultFormat;
                     self._addSources([data], sourceOpts)
                 },
                 error: function(jqXHR, textStatus, errorThrown){
