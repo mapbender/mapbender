@@ -178,6 +178,8 @@
                 },
                 dataType: 'json',
                 success: function(data, textStatus, jqXHR){
+                    data.configuration.options.info_format = self.options.defaultInfoFormat;
+                    data.configuration.options.format = self.options.defaultFormat;
                     self._addSources([data], sourceOpts)
                 },
                 error: function(jqXHR, textStatus, errorThrown){
@@ -196,8 +198,11 @@
                 }else if(mbMap.model.findSource(opts).length === 0){
                     mbMap.addSource(sourceDef, null, null);
                 }
-
             });
+            // Enable feature info
+            // @todo: find a way to do this directly on the map, without using the layertree
+            // @todo: fix default for newly added source (no fi) to match default layertree visual (fi on)
+             $('.mb-element-layertree .featureInfoWrapper input[type="checkbox"]').trigger('change');
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
             Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
