@@ -180,7 +180,17 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                     "outOfBounds" => null
                 ),
             );
-            switch ($entity->getSourceInstance()->getLayerOrder()) {
+            $layerOrderDefaultKey = 'wms.default_layer_order';
+            if ($this->container->hasParameter($layerOrderDefaultKey)) {
+                $configuredDefaultLayerOrder = $this->container->getParameter($layerOrderDefaultKey);
+                // if the default has not been configured explicitly, use the "traditional" value
+                $layerOrderDefault = $configuredDefaultLayerOrder ?: WmsInstance::LAYER_ORDER_TOP_DOWN;
+            } else {
+                $layerOrderDefault = WmsInstance::LAYER_ORDER_TOP_DOWN;
+            }
+            $layerOrder = $entity->getSourceInstance()->getLayerOrder() ?: $layerOrderDefault;
+
+            switch ($layerOrder) {
                 default:
                 case WmsInstance::LAYER_ORDER_TOP_DOWN:
                     // do nothing
