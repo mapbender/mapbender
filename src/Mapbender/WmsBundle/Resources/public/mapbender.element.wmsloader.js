@@ -178,9 +178,14 @@
                 },
                 dataType: 'json',
                 success: function(data, textStatus, jqXHR){
-                    data.configuration.options.info_format = self.options.defaultInfoFormat;
-                    data.configuration.options.format = self.options.defaultFormat;
-                    self._addSources([data], sourceOpts)
+                    var i;
+
+                    for (i = 0; i < data.length; i++) {
+                      data[i].configuration.options.info_format = self.options.defaultInfoFormat;
+                      data[i].configuration.options.format = self.options.defaultFormat;
+                    }
+
+                    self._addSources(data, sourceOpts);
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
