@@ -1028,7 +1028,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
             $styles[] = $style;
         }
         $this->setStyles($styles);
-        foreach ($this->getMetadataUrl() as $mdu) {
+        foreach ($this->getMetadataUrl() ?: array() as $mdu) {
             $mdu->getOnlineResource()->replaceHost($to, $from);
         }
         foreach ($this->getDataUrl() as $du) {
