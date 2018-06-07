@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\VendorSpecific;
+use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
@@ -611,15 +612,16 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * @return string
+     * Returns desired layer order, as a string enum ('standard' or 'reverse')
+     * NOTE: this is a recently added column; there will be NULLs in the DB for updated applications.
+     *       The default for these cases is provided at the "Handler" level.
+     * @see WmsInstanceLayerEntityHandler::generateConfiguration()
+     *
+     * @return string|null
      */
     public function getLayerOrder()
     {
-        // NOTE: this is a recently added column; there will be NULLs in the DB for updated applications
-        //       we convert these NULLs to our desired default (not the default for new instances, which can
-        //       be configured)
-        //       the layerOrder column will be properly populated when instances are saved
-        return $this->layerOrder ?: self::LAYER_ORDER_TOP_DOWN;
+        return $this->layerOrder;
     }
 
     /**
