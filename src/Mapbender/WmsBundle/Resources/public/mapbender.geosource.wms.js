@@ -89,7 +89,8 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         var wmsgfi = new OpenLayers.Control.WMSGetFeatureInfo({
             url: Mapbender.Util.removeProxy(mqLayer.olLayer.url), 
             layers: [mqLayer.olLayer],
-            queryVisible: true
+            queryVisible: true,
+            maxFeatures: 1000
         });
         wmsgfi.map = mqLayer.map.olMap;
         var reqObj = wmsgfi.buildWMSOptions(
