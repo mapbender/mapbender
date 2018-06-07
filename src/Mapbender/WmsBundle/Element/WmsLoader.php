@@ -204,6 +204,7 @@ class WmsLoader extends Element
     protected function splitLayers($layerConfiguration)
     {
         $children = $layerConfiguration['configuration']['children'][0]['children'];
+        $layerConfigurations = array();
         foreach ($children as $child) {
             $layerConfiguration['configuration']['children'][0]['children'] = [$child];
             $layerConfiguration['configuration']['children'][0]['options']['title'] = $child['options']['title']
