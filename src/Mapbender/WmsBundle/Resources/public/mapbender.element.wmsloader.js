@@ -193,6 +193,7 @@
             $.each(sourceDefs, function(idx, sourceDef) {
                 var opts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
                 sourceDef.configuration.status = 'ok';
+                sourceDef.wmsloader = true;
                 if(!sourceOpts.global.mergeSource){
                     mbMap.addSource(sourceDef, null, null);
                 }else if(mbMap.model.findSource(opts).length === 0){

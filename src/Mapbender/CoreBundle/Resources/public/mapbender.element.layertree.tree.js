@@ -926,7 +926,7 @@
                 }
 
                 if ($.inArray("metadata", self.options.menu) === -1 || menu.find(
-                    '.layer-metadata').length === 0 || isNaN(parseInt(source.origId))) {
+                    '.layer-metadata').length === 0 || (source.hasOwnProperty('wmsloader') && source.wmsloader === true) || isNaN(parseInt(source.origId))) {
                     $('.layer-metadata', menu).remove();
                 } else {
                     atLeastOne = true;
