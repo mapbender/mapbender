@@ -152,7 +152,7 @@ class ImageExportService
         }
         $matrix = null;
         foreach ($tilematrixset['tilematrices'] as $tilematrix) {
-            if ($scaleDenominator === round($tilematrix['scaleDenominator'], 5)) {
+            if (round($scaleDenominator, 2) === round($tilematrix['scaleDenominator'], 2)) {
                 $matrix = $tilematrix;
                 break;
             }
