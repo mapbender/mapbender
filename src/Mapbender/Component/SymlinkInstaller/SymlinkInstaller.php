@@ -120,7 +120,7 @@ class SymlinkInstaller implements SymlinkInstallerInterface
     {
         $this->checkSettings();
 
-        $this->filesystem->symlink($this->relativeOriginDir ?? $this->originDir, $this->targetDir);
+        $this->filesystem->symlink($this->relativeOriginDir ?: $this->originDir, $this->targetDir);
 
         if (!file_exists($this->targetDir)) {
             throw new IOException(sprintf('Symbolic link "%s" was created but appears to be broken.', $this->targetDir), 0, null, $this->targetDir);
