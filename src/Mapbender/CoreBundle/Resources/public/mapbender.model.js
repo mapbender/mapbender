@@ -1139,6 +1139,47 @@ Mapbender.Model = {
         }
     },
     /**
+     * Updates the source identified by given id with a new layer order.
+     * This will pull styles and "state" (such as visibility) from values
+     * currently stored in the "geosource".
+     *
+     * @param {string} sourceId
+     * @param {string[]} newLayerIdOrder
+     */
+    setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
+        var sourceObj = this.getSource({id: sourceId});
+        var geoSourceType = Mapbender.source[sourceObj.type];
+        var layerConfigs = $.map(newLayerIdOrder, function(layerId) {
+            return geoSourceType.findLayer(sourceObj, {id: layerId}).layer;
+        });
+        layerConfigs = _.filter(layerConfigs, function(layerConf) {
+            return !!layerConf.state.visibility;
+        });
+        var layerNames = $.map(layerConfigs, function(layerConf) {
+            return layerConf.options.name;
+        });
+        var layerStyles = $.map(layerConfigs, function(layerConf) {
+            return layerConf.options.style || '';
+        });
+        var activeInfoLayerConfigs = _.filter(layerConfigs, function(layerConf) {
+            return layerConf.options.treeOptions.info === true;
+        });
+        var infoLayers = $.map(activeInfoLayerConfigs, function(layerConf) {
+            return layerConf.options.name;
+        });
+        this.mbMap.fireModelEvent({
+            name: 'sourceMoved',
+            // no receiver cares about the bizarre "changeOptions" return value
+            value: null
+        });
+        var mqLayer = this.map.layersList[sourceObj.mqlid];
+        if (this._resetSourceVisibility(mqLayer, layerNames, infoLayers, layerStyles)) {
+            mqLayer.olLayer.removeBackBuffer();
+            mqLayer.olLayer.createBackBuffer();
+            mqLayer.olLayer.redraw(true);
+        }
+    },
+    /**
      *
      */
     _reorderLayers: function(source, layerToMove, targetParent, targetIdx, before, after) {
@@ -1161,6 +1202,42 @@ Mapbender.Model = {
                 children: {}
             }
         });
+    },
+    /**
+     * Bring the sources identified by the given ids into the given order.
+     * All other sources will be left alone!
+     *
+     * @param {string[]} newIdOrder
+     */
+    reorderSources: function(newIdOrder) {
+        var self = this;
+        var sourceObjs = $.map(newIdOrder, function(sourceId) {
+            return self.findSource({id: sourceId});
+        });
+        // Collect currently set positions and z indexes for given sources.
+        // position := array index in this.sourceTree
+        // z index := mapquery layer position = openlayers map layer index - 1
+        // The collected values will be reused / redistributed to the affected
+        // sources.
+        var oldPositions = [];
+        var zIndexes = [];
+        var sourceIdToSource = {};
+        $.each(sourceObjs, function(i, sourceObj) {
+            oldPositions.push(self.getSourcePos(sourceObj));
+            sourceIdToSource[sourceObj.id] = sourceObj;
+            zIndexes.push(self.map.layersList[sourceObj.mqlid].position());
+        });
+        oldPositions.sort();
+        zIndexes.sort();
+        // rewrite sourceTree order and z indexes
+        for (var i = 0; i < oldPositions.length; ++i) {
+            var oldPos = oldPositions[i];
+            var injectSourceId = newIdOrder[i];
+            var injectSourceObj = sourceIdToSource[injectSourceId];
+            var injectSourceZ = zIndexes[i];
+            this.sourceTree[oldPos] = injectSourceObj;
+            self.map.layersList[injectSourceObj.mqlid].position(injectSourceZ);
+        }
     },
     /**
      *
