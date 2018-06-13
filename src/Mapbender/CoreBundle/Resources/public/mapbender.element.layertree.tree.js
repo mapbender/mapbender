@@ -217,10 +217,10 @@
                         if (type === 'theme' || type === 'root') {
                             self._updateSourceOrder();
                             // self._sortTheme($elm);
-                        } else if ($elm.attr('data-type') === 'simple') {
+                        } else if (type === 'simple' || type === 'group') {
                             self._updateSource($elm.closest('.serviceContainer'));
                         } else {
-                            console.warn("Warning: unhandled element in layertree sorting", $elm);
+                            console.warn("Warning: unhandled element in layertree sorting", type, $elm);
                         }
                     }
                 });
