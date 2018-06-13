@@ -76,9 +76,7 @@
         addSource: function(sourceDef){
             this.model.addSource({
                 add: {
-                    sourceDef: sourceDef,
-                    before: null,
-                    after: null
+                    sourceDef: sourceDef
                 }
             });
         },

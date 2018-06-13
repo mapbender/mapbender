@@ -200,9 +200,9 @@
                 sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
                 if(!sourceOpts.global.mergeSource){
-                    mbMap.addSource(sourceDef, null, null);
+                    mbMap.addSource(sourceDef);
                 }else if(mbMap.model.findSource(opts).length === 0){
-                    mbMap.addSource(sourceDef, null, null);
+                    mbMap.addSource(sourceDef);
                 }
             });
             // Enable feature info

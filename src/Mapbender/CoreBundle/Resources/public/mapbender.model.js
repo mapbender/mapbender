@@ -219,9 +219,7 @@ Mapbender.Model = {
                         layerDef['origId'] = idx;
                         self.addSource({
                             add: {
-                                sourceDef: layerDef,
-                                before: null,
-                                after: null
+                                sourceDef: layerDef
                             }
                         });
                     });
@@ -809,10 +807,9 @@ Mapbender.Model = {
      */
     addSource: function(addOptions) {
         var self = this;
+        var before;
         if (addOptions.add) {
             var sourceDef = addOptions.add.sourceDef;
-            var before = addOptions.add.before;
-            var after = addOptions.add.after;
             sourceDef.id = this.generateSourceId();
 
             if (typeof sourceDef.origId === 'undefined') {
@@ -822,26 +819,16 @@ Mapbender.Model = {
                 name: 'beforeSourceAdded',
                 value: {
                     source: sourceDef,
-                    before: before,
-                    after: after
+                    before: null,
+                    after: null
                 }
             });
             if (!this.getSourcePos(sourceDef)) {
-                if (!before && !after) {
-                    before = {
-                        source: this.sourceTree[this.sourceTree.length - 1]
-                    };
-                    after = null;
-                }
                 this.sourceTree.push(sourceDef);
-            } else {
-                if (!before && !after) {
-                    before = {
-                        source: this.sourceTree[this.sourceTree.length - 1]
-                    };
-                    after = null;
-                }
             }
+            before = {
+                source: this.sourceTree[this.sourceTree.length - 1]
+            };
             var source = sourceDef;
             var mapQueryLayer = this.map.layers(this._convertLayerDef(source));
             if (mapQueryLayer) {
@@ -867,13 +854,10 @@ Mapbender.Model = {
                         added: {
                             source: source,
                             before: before,
-                            after: after
+                            after: null
                         }
                     }
                 });
-                if (after) {
-                    this._moveSource(source, before, after);
-                }
                 this._checkAndRedrawSource({
                     sourceIdx: {
                         id: source.id
