@@ -533,17 +533,25 @@ Mapbender.Model = {
      * Checks the source changes and returns the source changes.
      */
     _checkAndRedrawSource: function(toChangeOpts) {
+        return this._checkSource(toChangeOpts, true, true);
+    },
+    _checkSource: function(toChangeOpts, reset, redraw) {
         var source = this.getSource(toChangeOpts.sourceIdx);
-        var result = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
+        var gsResult = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
-        if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers, result.styles)) {
+        if (!mqLayer) {
+            console.error("No mqLayer found", toChangeOpts);
+        }
+        if (mqLayer && reset) {
+            redraw = redraw && this._resetSourceVisibility(mqLayer, gsResult.layers, gsResult.infolayers, gsResult.styles);
+        }
+        if (mqLayer && redraw) {
             mqLayer.olLayer.removeBackBuffer();
             mqLayer.olLayer.createBackBuffer();
             mqLayer.olLayer.redraw(true);
         }
-        return result.changed;
+        return gsResult.changed;
     },
-
     _preCheckChanges: function(e) {
         this._checkChanges(e, true);
     },
@@ -551,38 +559,29 @@ Mapbender.Model = {
     _checkChanges: function(e, isPreEvent) {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
-            var result = Mapbender.source[source.type].changeOptions(
-                source, self.getScale(), {
-                sourceIdx: {
-                    id: source.id
-                },
+            var sourceIdx = {id: source.id};
+            var changeOpts = {
+                sourceIdx: sourceIdx,
                 options: {
                     children: {}
                 }
-            });
-            var mqLayer = self.map.layersList[source.mqlid];
-            if (self._resetSourceVisibility(mqLayer, result.layers, result.infolayers, result.styles)) {
-                if (!isPreEvent) {
-                    mqLayer.olLayer.redraw();
-                }
-            }
-            for (var child in result.changed.children) {
-                if (result.changed.children[child].state
-                    && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
-                    var changed = {
-                        changed: {
-                            children: result.changed.children,
-                            sourceIdx: result.changed.sourceIdx
-                        }
-                    };
+            };
+            var changed = self._checkSource(changeOpts, true, !isPreEvent);
+            for (var child in changed.children) {
+                if (changed.children[child].state
+                    && typeof changed.children[child].state.outOfScale !== 'undefined') {
                     self.mbMap.fireModelEvent({
                         name: 'sourceChanged',
-                        value: changed
-                    });//{options: result}});
+                        value: {
+                            changed: {
+                                children: changed.children,
+                                sourceIdx: sourceIdx
+                            }
+                        }
+                    });
                     break;
                 }
             }
-
         });
     },
 
@@ -958,15 +957,14 @@ Mapbender.Model = {
                 });
                 if (changeOpts.options.type === 'selected') {
                     var result = this._checkAndRedrawSource(changeOpts);
-                    var changed = {
-                        changed: {
-                            children: result.children,
-                            sourceIdx: result.sourceIdx
-                        }
-                    };
                     this.mbMap.fireModelEvent({
                         name: 'sourceChanged',
-                        value: changed
+                        value: {
+                            changed: {
+                                children: result.children,
+                                sourceIdx: result.sourceIdx
+                            }
+                        }
                     });
                 }
                 if (changeOpts.options.type === 'info') {
