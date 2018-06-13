@@ -807,7 +807,6 @@ Mapbender.Model = {
      */
     addSource: function(addOptions) {
         var self = this;
-        var before;
         if (addOptions.add) {
             var sourceDef = addOptions.add.sourceDef;
             sourceDef.id = this.generateSourceId();
@@ -826,9 +825,6 @@ Mapbender.Model = {
             if (!this.getSourcePos(sourceDef)) {
                 this.sourceTree.push(sourceDef);
             }
-            before = {
-                source: this.sourceTree[this.sourceTree.length - 1]
-            };
             var source = sourceDef;
             var mapQueryLayer = this.map.layers(this._convertLayerDef(source));
             if (mapQueryLayer) {
@@ -853,7 +849,11 @@ Mapbender.Model = {
                     value: {
                         added: {
                             source: source,
-                            before: before,
+                            // legacy: no known consumer evaluates these props,
+                            // but even if, they've historically been wrong anyway
+                            // was: "before": always last source previously in list, even though
+                            // the new source was actually added *after* that
+                            before: null,
                             after: null
                         }
                     }
