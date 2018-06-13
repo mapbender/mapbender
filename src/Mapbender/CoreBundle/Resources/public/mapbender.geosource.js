@@ -54,6 +54,7 @@ Mapbender.Geo = {};
 Mapbender.Geo.SourceHandler = Class({
     'extends': Mapbender.Event.Dispatcher
 }, {
+    _layerOrderMap: {},
     'private string layerNameIdent': 'name',
     'private object defaultOptions': {},
     'abstract public function create': function(options) {
@@ -590,6 +591,13 @@ Mapbender.Geo.SourceHandler = Class({
                 layerChanged.state = layer.state;
                 result.changed.children[layer.options.id] = layerChanged;
             }
+            var customLayerOrder = self._layerOrderMap[source.id];
+            if (customLayerOrder && customLayerOrder.length && result.layers && result.layers.length) {
+                result.layers = _.filter(customLayerOrder, function(layerName) {
+                    return result.layers.indexOf(layerName) !== -1;
+                });
+            }
+
             return layer;
         }
     },
@@ -718,6 +726,13 @@ Mapbender.Geo.SourceHandler = Class({
             return source.configuration.options.bbox;
         }
         return null;
+    },
+    'public function setLayerOrder': function(source, layerIdOrder) {
+        var self = this;
+        this._layerOrderMap[source.id] = $.map(layerIdOrder, function(layerId) {
+            var layerObj = self.findLayer(source, {id: layerId});
+            return layerObj.layer.options.name;
+        });
     }
 });
 

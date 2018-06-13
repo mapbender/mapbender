@@ -1054,37 +1054,22 @@ Mapbender.Model = {
      * @param {string[]} newLayerIdOrder
      */
     setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
-        var sourceObj = this.getSource({id: sourceId});
-        var geoSourceType = Mapbender.source[sourceObj.type];
-        var layerConfigs = $.map(newLayerIdOrder, function(layerId) {
-            return geoSourceType.findLayer(sourceObj, {id: layerId}).layer;
-        });
-        layerConfigs = _.filter(layerConfigs, function(layerConf) {
-            return !!layerConf.state.visibility;
-        });
-        var layerNames = $.map(layerConfigs, function(layerConf) {
-            return layerConf.options.name;
-        });
-        var layerStyles = $.map(layerConfigs, function(layerConf) {
-            return layerConf.options.style || '';
-        });
-        var activeInfoLayerConfigs = _.filter(layerConfigs, function(layerConf) {
-            return layerConf.options.treeOptions.info === true;
-        });
-        var infoLayers = $.map(activeInfoLayerConfigs, function(layerConf) {
-            return layerConf.options.name;
-        });
+        var sourceIdx = {id: sourceId};
+        var sourceObj = this.getSource(sourceIdx);
+        var geoSource = Mapbender.source[sourceObj.type];
+
+        geoSource.setLayerOrder(sourceObj, newLayerIdOrder);
+
         this.mbMap.fireModelEvent({
             name: 'sourceMoved',
-            // no receiver cares about the bizarre "changeOptions" return value
+            // no receiver uses the bizarre "changeOptions" return value
+            // on this event
             value: null
         });
-        var mqLayer = this.map.layersList[sourceObj.mqlid];
-        if (this._resetSourceVisibility(mqLayer, layerNames, infoLayers, layerStyles)) {
-            mqLayer.olLayer.removeBackBuffer();
-            mqLayer.olLayer.createBackBuffer();
-            mqLayer.olLayer.redraw(true);
-        }
+        this._checkAndRedrawSource({
+            sourceIdx: sourceIdx,
+            options: {children: {}}
+        });
     },
     /**
      * Bring the sources identified by the given ids into the given order.
