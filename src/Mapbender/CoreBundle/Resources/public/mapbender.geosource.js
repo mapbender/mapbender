@@ -244,12 +244,12 @@ Mapbender.Geo.SourceHandler = Class({
                     if (layer.children[i].options.id.toString() === offsetLayer.options.id.toString()) {
                         options.found = true;
                         if (options.cut_with) {
-                            var lays = layer.children.splice(i, layer.children.length - i);
+                            var lays = layer.children.slice().splice(i, layer.children.length - i);
                             options.layers = options.layers.concat(lays);
                             break;
                         }
                     } else if (options.found) {
-                        var lays = layer.children.splice(i, layer.children.length - i);
+                        var lays = layer.children.slice().splice(i, layer.children.length - i);
                         options.layers = options.layers.concat(lays);
                         break;
                     }
