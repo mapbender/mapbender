@@ -50,7 +50,9 @@ Mapbender.Event.Dispatcher = Class({
  * Abstract Geo Source Handler
  * @author Paul Schmidt
  */
-Mapbender.Geo = {};
+Mapbender.Geo = {
+    'layerOrderMap': {}
+};
 Mapbender.Geo.SourceHandler = Class({
     'extends': Mapbender.Event.Dispatcher
 }, {
@@ -591,7 +593,7 @@ Mapbender.Geo.SourceHandler = Class({
                 layerChanged.state = layer.state;
                 result.changed.children[layer.options.id] = layerChanged;
             }
-            var customLayerOrder = self._layerOrderMap[source.id];
+            var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
             if (customLayerOrder && customLayerOrder.length && result.layers && result.layers.length) {
                 result.layers = _.filter(customLayerOrder, function(layerName) {
                     return result.layers.indexOf(layerName) !== -1;
@@ -729,7 +731,7 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'public function setLayerOrder': function(source, layerIdOrder) {
         var self = this;
-        this._layerOrderMap[source.id] = $.map(layerIdOrder, function(layerId) {
+        Mapbender.Geo.layerOrderMap["" + source.id] = $.map(layerIdOrder, function(layerId) {
             var layerObj = self.findLayer(source, {id: layerId});
             return layerObj.layer.options.name;
         });
