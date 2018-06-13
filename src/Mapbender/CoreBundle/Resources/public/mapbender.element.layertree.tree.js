@@ -188,7 +188,7 @@
                     layerIdOrder.push(layerId.toString());
                 }
             });
-            this.model.setSourceLayerOrder(sourceId, layerIdOrder);
+            this.model.setSourceLayerOrder(sourceId, layerIdOrder.reverse());
         },
         /**
          * Applies the new (going by DOM) ordering between sources.
@@ -540,7 +540,6 @@
         _removeChild: function(changed) {
             var self = this;
             if (changed && changed.sourceIdx && changed.childRemoved) {
-                var source = this.model.getSource(changed.sourceIdx);
                 $('ul.layers:first li[data-id="' + changed.childRemoved.layer.options.id + '"]', self.element).
                     remove();
             }
