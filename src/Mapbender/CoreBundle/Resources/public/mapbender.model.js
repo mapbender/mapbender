@@ -1087,30 +1087,6 @@ Mapbender.Model = {
         }
     },
     /**
-     *
-     */
-    _reorderLayers: function(source, layerToMove, targetParent, targetIdx, before, after) {
-        var removed = Mapbender.source[source.type].removeLayer(source, layerToMove);
-        var added = Mapbender.source[source.type].addLayer(source, removed.layer, targetParent, targetIdx);
-        var changed = this.createChangedObj(source);
-        changed.children[added.options.id] = added;
-        changed.layerId = added.options.id;
-        changed.after = after;
-        changed.before = before;
-        this.mbMap.fireModelEvent({
-            name: 'sourceMoved',
-            value: changed
-        });
-        this._checkAndRedrawSource({
-            sourceIdx: {
-                id: source.id
-            },
-            options: {
-                children: {}
-            }
-        });
-    },
-    /**
      * Bring the sources identified by the given ids into the given order.
      * All other sources will be left alone!
      *
