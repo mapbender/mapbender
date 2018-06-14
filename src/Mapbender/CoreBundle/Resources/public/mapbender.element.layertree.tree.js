@@ -205,8 +205,7 @@
         _createSortable: function() {
             var self = this;
             $("ul.layers", this.element).each(function() {
-                var that = this;
-                $(that).sortable({
+                $(this).sortable({
                     axis: 'y',
                     items: "> li:not(.notreorder)",
                     distance: 6,
