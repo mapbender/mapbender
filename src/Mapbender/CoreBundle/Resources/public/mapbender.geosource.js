@@ -734,11 +734,11 @@ Mapbender.Geo.SourceHandler = Class({
         return null;
     },
     'public function setLayerOrder': function(source, layerIdOrder) {
-        var self = this;
-        Mapbender.Geo.layerOrderMap["" + source.id] = $.map(layerIdOrder, function(layerId) {
-            var layerObj = self.findLayer(source, {id: layerId});
+        var newLayerNameOrder = $.map(layerIdOrder, function(layerId) {
+            var layerObj = this.findLayer(source, {id: layerId});
             return layerObj.layer.options.name;
-        });
+        }.bind(this));
+        Mapbender.Geo.layerOrderMap["" + source.id] = newLayerNameOrder;
     }
 });
 
