@@ -245,14 +245,18 @@ Mapbender.Geo.SourceHandler = Class({
                 for (; i < layer.children.length; i++) {
                     if (layer.children[i].options.id.toString() === offsetLayer.options.id.toString()) {
                         options.found = true;
-                        if (options.includeOffset) {
-                            var lays = layer.children.slice().splice(i, layer.children.length - i);
-                            options.layers = options.layers.concat(lays);
-                            break;
+                    }
+                    if (options.found) {
+                        var matchOffset = i;
+                        if (!options.includeOffset) {
+                            matchOffset += 1;
                         }
-                    } else if (options.found) {
-                        var lays = layer.children.slice().splice(i, layer.children.length - i);
-                        options.layers = options.layers.concat(lays);
+                        var matchLength = layer.children.length - matchOffset;
+                        // splice modifies the original Array => work with a shallow copy
+                        var layersCopy = layer.children.slice();
+                        var matchedLayers = layersCopy.splice(matchOffset, matchLength);
+                        options.layers = options.layers.concat(matchedLayers);
+
                         break;
                     }
                     options = _findLayers(layer.children[i], offsetLayer, options);
