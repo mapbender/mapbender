@@ -184,8 +184,8 @@
             $('li.leave[data-type="simple"]', $sourceContainer).each(function() {
                 var $t = $(this);
                 var layerId = $t.attr('data-id');
-                if (layerId !== undefined) {
-                    layerIdOrder.push(layerId.toString());
+                if (typeof layerId !== "undefined") {
+                    layerIdOrder.push("" + layerId);
                 }
             });
             this.model.setSourceLayerOrder(sourceId, layerIdOrder.reverse());
