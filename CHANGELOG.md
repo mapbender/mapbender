@@ -1,5 +1,17 @@
 # Changelog
 
+* **v3.0.7.2**
+    - Fix dynamic layertree reordering vs reversed layer order (PR#852)
+    - Change default prefix for printouts to mapbender (Issue #855)
+    - Add cookieconsent code for mapbender (PR#835)
+    - Fix PHP5 incompatibility in Migrations (PR#851)
+    - Restore WmsLoader "splitLayers" functionality (PR#848)
+    - Disable non-functional Meta data display for dynamically added Wms (PR#845)
+    - Raise maximum feature count for feature info to 1000 (PR#849)
+    - Fix saving layer order on Postgres (PR#846)
+    - Restore application of preconfigured image format / feature info format in WmsLoader (PR#841)
+    - Fix foreign key violation error when deleting data source on Postgres (PR#840)
+
 * **v3.0.7.1**
     - Revert inclusion of "only valid" checkbox in WmsLoader
     - Bypass (potentially very long) WmsLoader DTD / XSD validation of GetCapabilities document
