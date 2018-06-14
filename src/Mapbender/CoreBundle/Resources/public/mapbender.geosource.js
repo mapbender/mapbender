@@ -228,7 +228,7 @@ Mapbender.Geo.SourceHandler = Class({
             layers: [
             ],
             found: false,
-            cut_with: includeOffset
+            includeOffset: includeOffset
         };
         if (rootLayer.options.id.toString() === offsetLayer.options.id.toString()) {
             options.found = true;
@@ -245,7 +245,7 @@ Mapbender.Geo.SourceHandler = Class({
                 for (; i < layer.children.length; i++) {
                     if (layer.children[i].options.id.toString() === offsetLayer.options.id.toString()) {
                         options.found = true;
-                        if (options.cut_with) {
+                        if (options.includeOffset) {
                             var lays = layer.children.slice().splice(i, layer.children.length - i);
                             options.layers = options.layers.concat(lays);
                             break;
