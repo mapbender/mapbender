@@ -100,7 +100,7 @@ class PrintClient extends Element
                 "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
                 "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))),
             "replace_pattern" => null,
-            "file_prefix" => 'mapbender3'
+            "file_prefix" => 'mapbender'
         );
     }
 
