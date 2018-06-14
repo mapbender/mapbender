@@ -214,13 +214,18 @@
                     update: function(event, ui) {
                         var $elm = $(ui.item);
                         var type = $elm.attr('data-type');
-                        if (type === 'theme' || type === 'root') {
-                            self._updateSourceOrder();
-                            // self._sortTheme($elm);
-                        } else if (type === 'simple' || type === 'group') {
-                            self._updateSource($elm.closest('.serviceContainer'));
-                        } else {
-                            console.warn("Warning: unhandled element in layertree sorting", type, $elm);
+                        switch (type) {
+                            case 'theme':
+                            case 'root':
+                                self._updateSourceOrder();
+                                break;
+                            case 'simple':
+                            case 'group':
+                                self._updateSource($elm.closest('.serviceContainer'));
+                                break;
+                            default:
+                                console.warn("Warning: unhandled element in layertree sorting", type, $elm);
+                                break;
                         }
                     }
                 });
