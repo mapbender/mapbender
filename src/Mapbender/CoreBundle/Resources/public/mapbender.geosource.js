@@ -50,10 +50,13 @@ Mapbender.Event.Dispatcher = Class({
  * Abstract Geo Source Handler
  * @author Paul Schmidt
  */
-Mapbender.Geo = {};
+Mapbender.Geo = {
+    'layerOrderMap': {}
+};
 Mapbender.Geo.SourceHandler = Class({
     'extends': Mapbender.Event.Dispatcher
 }, {
+    _layerOrderMap: {},
     'private string layerNameIdent': 'name',
     'private object defaultOptions': {},
     'abstract public function create': function(options) {
@@ -225,7 +228,7 @@ Mapbender.Geo.SourceHandler = Class({
             layers: [
             ],
             found: false,
-            cut_with: includeOffset
+            includeOffset: includeOffset
         };
         if (rootLayer.options.id.toString() === offsetLayer.options.id.toString()) {
             options.found = true;
@@ -242,14 +245,18 @@ Mapbender.Geo.SourceHandler = Class({
                 for (; i < layer.children.length; i++) {
                     if (layer.children[i].options.id.toString() === offsetLayer.options.id.toString()) {
                         options.found = true;
-                        if (options.cut_with) {
-                            var lays = layer.children.splice(i, layer.children.length - i);
-                            options.layers = options.layers.concat(lays);
-                            break;
+                    }
+                    if (options.found) {
+                        var matchOffset = i;
+                        if (!options.includeOffset) {
+                            matchOffset += 1;
                         }
-                    } else if (options.found) {
-                        var lays = layer.children.splice(i, layer.children.length - i);
-                        options.layers = options.layers.concat(lays);
+                        var matchLength = layer.children.length - matchOffset;
+                        // splice modifies the original Array => work with a shallow copy
+                        var layersCopy = layer.children.slice();
+                        var matchedLayers = layersCopy.splice(matchOffset, matchLength);
+                        options.layers = options.layers.concat(matchedLayers);
+
                         break;
                     }
                     options = _findLayers(layer.children[i], offsetLayer, options);
@@ -590,6 +597,13 @@ Mapbender.Geo.SourceHandler = Class({
                 layerChanged.state = layer.state;
                 result.changed.children[layer.options.id] = layerChanged;
             }
+            var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
+            if (customLayerOrder && customLayerOrder.length && result.layers && result.layers.length) {
+                result.layers = _.filter(customLayerOrder, function(layerName) {
+                    return result.layers.indexOf(layerName) !== -1;
+                });
+            }
+
             return layer;
         }
     },
@@ -718,6 +732,13 @@ Mapbender.Geo.SourceHandler = Class({
             return source.configuration.options.bbox;
         }
         return null;
+    },
+    'public function setLayerOrder': function(source, layerIdOrder) {
+        var newLayerNameOrder = $.map(layerIdOrder, function(layerId) {
+            var layerObj = this.findLayer(source, {id: layerId});
+            return layerObj.layer.options.name;
+        }.bind(this));
+        Mapbender.Geo.layerOrderMap["" + source.id] = newLayerNameOrder;
     }
 });
 
