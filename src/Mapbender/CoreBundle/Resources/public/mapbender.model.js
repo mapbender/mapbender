@@ -1088,7 +1088,7 @@ Mapbender.Model = {
         var oldPositions = [];
         var zIndexes = [];
         var sourceIdToSource = {};
-        $.each(sourceObjs, function(i, sourceObj) {
+        _.forEach(sourceObjs, function(sourceObj) {
             oldPositions.push(self.getSourcePos(sourceObj));
             sourceIdToSource[sourceObj.id] = sourceObj;
             zIndexes.push(self.map.layersList[sourceObj.mqlid].position());
