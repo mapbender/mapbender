@@ -36,7 +36,7 @@ class ApplicationAssetCache
      * ApplicationAssetCache constructor.
      *
      * @param ContainerInterface $container
-     * @param StringAsset[]      $inputs
+     * @param (string|StringAsset)[]      $inputs
      * @param                    $type
      * @param bool               $force
      */

@@ -92,9 +92,9 @@ class ApplicationController extends Controller
         }
 
         $application = $this->getApplication($slug);
+        $refs = $application->getAssetGroup($type);
         if ($type == "css") {
             $sourcePath = $request->getBasePath();
-            $refs       = array_unique($application->getAssets('css'));
             $custom     = $application->getCustomCssAsset();
             if ($custom) {
                 $refs[] = $custom;
@@ -102,7 +102,7 @@ class ApplicationController extends Controller
             $factory = new AssetFactory($this->container, $refs, 'css', $request->server->get('REQUEST_URI'), empty($sourcePath) ? "." : $sourcePath);
             $content = $factory->compile();
         } else {
-            $cache   = new ApplicationAssetCache($this->container, $application->getAssets($type), $type);
+            $cache   = new ApplicationAssetCache($this->container, $refs, $type);
             $assets  = $cache->fill($slug, 0);
             $content = $assets->dump();
         }
