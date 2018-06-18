@@ -1,13 +1,25 @@
-Mapbender.Model = function() {
+Mapbender.Model = function(layerSetIds) {
     'use strict';
+    var sources = this.sourcesFromLayerSetIds(layerSetIds);
+    // console.log("Created sources", sources);
+    var engineLayers = _.map(sources, function(source) {
+        var olSource = this.modelSourceToEngineSource(source);
+        return new ol.layer.Tile({source: olSource});
+    }.bind(this));
+    // console.log("Created engine layers", engineLayers);
+
+    /*
+    // dummy / prototyping layers
+    layers = [new ol.layer.Tile({
+            source: new ol.source.OSM()
+    })];
+    */
     this.map = new ol.Map({
         view:   new ol.View({
             center: [0, 0],
             zoom:   1
         }),
-        layers: [new ol.layer.Tile({
-            source: new ol.source.OSM()
-        })],
+        layers: engineLayers,
         target: 'Map'
     });
 
@@ -58,12 +70,79 @@ Mapbender.Model.prototype.setLayerOpacity = function setLayerOpacity() {
 Mapbender.Model.prototype.changeProjection = function changeProjection() {
 };
 
+/**
+ *
+ * @param {object} config plain old data
+ * @param {string} [id]
+ * @returns {Mapbender.Model.Source}
+ */
+Mapbender.Model.prototype.sourceFromConfig = function sourceFromConfig(config, id) {
+    return Mapbender.Model.Source.fromConfig(this, config, id);
+};
 
+/**
+ * Picks a (hopefully) unused source id based on the count of layers currently on the (engine-side) map.
+ *
+ * @returns {string}
+ */
+Mapbender.Model.prototype.generateSourceId = function generateSourceId() {
+    var layerCount = this.map.getLayers().length;
+    return "autoSrc" + layerCount;
+};
 
+/**
+ * @param {object} config
+ * @return {Mapbender.Model.Source[]}
+ */
+Mapbender.Model.prototype.layerSetConfigToSources = function layerSetConfigToSources(config) {
+    var sources = [];
+    _.forEach(config, function(sourceConfigWrapper) {
+        _.forEach(sourceConfigWrapper, function(sourceConfig, sourceId) {
+            var source = this.sourceFromConfig(sourceConfig, "" + sourceId);
+            sources.push(source);
+        }.bind(this));
+    }.bind(this));
+    return sources;
+};
 
+/**
+ * @param {string[]} layerSetIds
+ * @return {Mapbender.Model.Source[]}
+ */
+Mapbender.Model.prototype.sourcesFromLayerSetIds = function sourcesFromLayerSetIds(layerSetIds) {
+    var sources = [];
+    _.forEach(layerSetIds, function(layerSetId) {
+        var layerSetConfig = Mapbender.configuration.layersets["" + layerSetId];
+        if (typeof layerSetConfig === 'undefined') {
+            throw new Error("Unknown layerset '" + layerSetId + "'");
+        }
+        sources = sources.concat(this.layerSetConfigToSources(layerSetConfig));
+    }.bind(this));
 
+    return sources;
+};
 
-
-
-
-
+/**
+ * Adapts a model source to an engine source.
+ * TBD: This may only be required for Openlayers 4? Other engines may operate exclusively on displayable layers
+ *      (not to be confused with WMS layers), and not model sources separately.
+ *
+ * @param {Mapbender.Model.Source} modelSource
+ * @return {ol.source.Source}
+ */
+Mapbender.Model.prototype.modelSourceToEngineSource = function modelSourceToEngineSource(modelSource) {
+    var engineOpts;
+    var sourceType = modelSource.getType();
+    switch (sourceType.toLowerCase()) {
+        case 'wms':
+            engineOpts = {
+                url: modelSource.getBaseUrl(),
+                params: {
+                    LAYERS: modelSource.activeLayerNames
+                }
+            };
+            return new ol.source.TileWMS(engineOpts);
+        default:
+            throw new Error("Unhandled source type '" + sourceType + "'");
+    }
+};

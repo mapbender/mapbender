@@ -161,6 +161,7 @@ class Application implements IAssetDependent
                     'js' => array(
                         '/components/openlayers/ol.js',
                         '@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js',
+                        '@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.source.js',
                     ),
                     'css' => array(
                         '/components/openlayers/ol.css',
