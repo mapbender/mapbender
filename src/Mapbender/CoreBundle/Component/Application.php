@@ -155,7 +155,7 @@ class Application implements IAssetDependent
                 // @todo: need correct new path to enter here
                 return array(
                     'js' => array(
-                        '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                        '@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js',
                     ),
                 );
             default:
