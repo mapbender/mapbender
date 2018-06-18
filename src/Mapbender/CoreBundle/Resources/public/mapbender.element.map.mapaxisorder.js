@@ -1899,6 +1899,6 @@
 
     };
 
-    jQuery.extend(OpenLayers.Projection.defaults, codes);
+    //jQuery.extend(OpenLayers.Projection.defaults, codes);
 
 })(window);

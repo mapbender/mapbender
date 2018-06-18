@@ -19,11 +19,11 @@
          * Creates the map widget
          */
         _create: function(){
-            OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
+            //OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
             var self = this,
                     me = $(this.element);
             //Todo: Move to a seperate file. ADD ALL THE EPSGCODES!!!!111
-            jQuery.extend(OpenLayers.Projection.defaults, {'EPSG:31466': {yx : true}});
+            //jQuery.extend(OpenLayers.Projection.defaults, {'EPSG:31466': {yx : true}});
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.initMap(this);
