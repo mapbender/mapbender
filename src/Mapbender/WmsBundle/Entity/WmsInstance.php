@@ -566,16 +566,17 @@ class WmsInstance extends SourceInstance
     /**
      * @inheritdoc
      */
-    public static function listAssets()
+    public function getAssets()
     {
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
-                '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js'),
+                '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js',
+            ),
             'css' => array(),
             'trans' => array(
-                'MapbenderCoreBundle::geosource.json.twig'
-            )
+                'MapbenderCoreBundle::geosource.json.twig',
+            ),
         );
     }
 
