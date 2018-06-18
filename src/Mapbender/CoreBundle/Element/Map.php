@@ -75,7 +75,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    public static function listAssets()
+    public function getAssets()
     {
         return array(
             'js' => array(
