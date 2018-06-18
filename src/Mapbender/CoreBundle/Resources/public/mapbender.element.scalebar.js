@@ -1,6 +1,6 @@
 (function($) {
 
-    $.widget("mapbender.mbScalebar", {
+    $.widget('mapbender.mbScalebar', {
         options: {
         },
         scalebar: null,
@@ -9,7 +9,7 @@
          * Creates the scale bar
          */
         _create: function() {
-            if(!Mapbender.checkTarget("mbScalebar", this.options.target)){
+            if(!Mapbender.checkTarget('mbScalebar', this.options.target)){
                 return;
             }
             var self = this;
@@ -21,17 +21,17 @@
          */
         _setup: function() {
             var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            var projection = mbMap.map.olMap.getProjectionObject();
+            var projection = mbMap.map.olMap.getProjection();
 
             $(this.element).addClass(this.options.anchor);
             var scalebarOptions = {
                 div: $(this.element).get(0),
                 maxWidth: this.options.maxWidth,
                 geodesic: projection.units = 'degrees' ? true : false,
-                topOutUnits: "km",
-                topInUnits: "m",
-                bottomOutUnits: "mi",
-                bottomInUnits: "ft"
+                topOutUnits: 'km',
+                topInUnits: 'm',
+                bottomOutUnits: 'mi',
+                bottomInUnits: 'ft'
             };
             this.scalebar = new OpenLayers.Control.ScaleLine(scalebarOptions);
 
