@@ -136,25 +136,66 @@ class Application implements IAssetDependent
     }
 
     /**
+     * Lists map-engine specific asset references in same format as getAssets
+     *
+     * @return string[][]
+     */
+    public function getMapEngineAssets()
+    {
+        $engineCode = $this->entity->getMapEngineCode();
+        switch ($engineCode) {
+            case 'mq-ol2':
+                return array(
+                    'js' => array(
+                        '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                    ),
+                );
+            case 'ol4':
+                // HACK: same as ol2 path
+                // @todo: need correct new path to enter here
+                return array(
+                    'js' => array(
+                        '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                    ),
+                );
+            default:
+                throw new \RuntimeException("Unhandled map engine code " . print_r($engineCode, true));
+
+        }
+    }
+
+    /**
      * Lists assets.
      *
-     * @return array
+     * @return string[]
      */
     public function getAssets()
     {
-        return array(
+        $assetRefs = array(
             'js'    => array(
                 '@MapbenderCoreBundle/Resources/public/stubs.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+            ),
+            'css'   => array(),
+            'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')
+        );
+        $afterEngineAssets = array(
+            'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                 '@MapbenderCoreBundle/Resources/public/polyfills.js',
             ),
-            'css'   => array(),
-            'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')
         );
+        // append map engine specific asset refs
+        foreach ($this->getMapEngineAssets() as $groupKey => $engineRefs) {
+            $assetRefs[$groupKey] = array_merge($assetRefs[$groupKey], $engineRefs[$groupKey]);
+        }
+        // append more asset refs *after* engine-specific refs
+        foreach ($afterEngineAssets as $groupKey => $engineRefs) {
+            $assetRefs[$groupKey] = array_merge($assetRefs[$groupKey], $engineRefs[$groupKey]);
+        }
+        return $assetRefs;
     }
 
     /**
