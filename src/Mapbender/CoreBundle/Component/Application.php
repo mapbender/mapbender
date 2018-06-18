@@ -189,11 +189,11 @@ class Application implements IAssetDependent
         );
         // append map engine specific asset refs
         foreach ($this->getMapEngineAssets() as $groupKey => $engineRefs) {
-            $assetRefs[$groupKey] = array_merge($assetRefs[$groupKey], $engineRefs[$groupKey]);
+            $assetRefs[$groupKey] = array_merge($assetRefs[$groupKey], $engineRefs);
         }
         // append more asset refs *after* engine-specific refs
-        foreach ($afterEngineAssets as $groupKey => $engineRefs) {
-            $assetRefs[$groupKey] = array_merge($assetRefs[$groupKey], $engineRefs[$groupKey]);
+        foreach ($afterEngineAssets as $groupKey => $extraRefs) {
+            $assetRefs[$groupKey] = array_merge($assetRefs[$groupKey], $extraRefs);
         }
         return $assetRefs;
     }
