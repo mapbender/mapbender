@@ -159,6 +159,7 @@ class Application implements IAssetDependent
                 // @todo: need correct new path to enter here
                 return array(
                     'js' => array(
+                        '/components/openlayers/ol.js',
                         '@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js',
                     ),
                 );
