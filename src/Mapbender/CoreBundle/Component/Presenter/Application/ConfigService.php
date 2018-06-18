@@ -73,6 +73,7 @@ class ConfigService
             'urls'          => $this->getUrls($entity),
             'publicOptions' => $entity->getPublicOptions(),
             'slug'          => $entity->getSlug(),
+            'mapEngineCode' => $entity->getMapEngineCode(),
         );
     }
 

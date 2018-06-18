@@ -666,4 +666,20 @@ class Application
         return $this->source == self::SOURCE_DB;
     }
 
+    /**
+     * Get the map engine code as a string. Can be (exactly) one of
+     * 'ol4' for Openlayers 4
+     * or
+     * 'mq-ol2' for Openlayers 2 via Mapquery
+     *
+     * @return string
+     */
+    public function getMapEngineCode()
+    {
+        // HACK: return constant
+        /**
+         * @todo: provide db column + expose in form
+         */
+        return 'ol4';
+    }
 }
