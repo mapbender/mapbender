@@ -70,21 +70,6 @@ class WmsLoader extends Element
     /**
      * @inheritdoc
      */
-    public static function listAssets()
-    {
-        $files = array(
-            'js' => array(
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                'mapbender.element.wmsloader.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js'),
-            'css' => array('@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss'),
-            'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));
-        return $files;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
@@ -114,14 +99,22 @@ class WmsLoader extends Element
      */
     public function getAssets()
     {
-        $files = self::listAssets();
-
-        $config = $this->getConfiguration();
-        if (!(isset($config['useDeclarative']) && $config['useDeclarative'] === true)) {
-            $idx = array_search('@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js', $files['js']);
-            unset($files['js'][$idx]);
+        $assetRefs = array(
+            'js' => array(
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                'mapbender.element.wmsloader.js',
+            ),
+            'css' => array(
+                '@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss',
+            ),
+            'trans' => array(
+                'MapbenderWmsBundle:Element:wmsloader.json.twig',
+            ),
+        );
+        if (!empty($config['useDeclarative'])) {
+            $assetRefs['js'][] = '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js';
         }
-        return $files;
+        return $assetRefs;
     }
 
     /**
