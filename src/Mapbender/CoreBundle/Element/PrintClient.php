@@ -49,7 +49,7 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    public static function listAssets()
+    public function getAssets()
     {
         return array('js' => array('mapbender.element.printClient.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',

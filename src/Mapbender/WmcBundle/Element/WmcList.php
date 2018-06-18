@@ -72,7 +72,7 @@ class WmcList extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         $js = array(
             'mapbender.element.wmclist.js',
