@@ -148,6 +148,10 @@ class Application implements IAssetDependent
                 return array(
                     'js' => array(
                         '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                        '/components/mapquery/lib/openlayers/OpenLayers.js',
+                        // @todo: figure out why this tmpl extension is here, potentially safe to remove entirely
+                        '../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
+                        '/components/mapquery/src/jquery.mapquery.core.js',
                     ),
                 );
             case 'ol4':
