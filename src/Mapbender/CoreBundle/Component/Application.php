@@ -162,6 +162,9 @@ class Application implements IAssetDependent
                         '/components/openlayers/ol.js',
                         '@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js',
                     ),
+                    'css' => array(
+                        '/components/openlayers/ol.css',
+                    ),
                 );
             default:
                 throw new \RuntimeException("Unhandled map engine code " . print_r($engineCode, true));
