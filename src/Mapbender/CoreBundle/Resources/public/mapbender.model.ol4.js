@@ -15,7 +15,7 @@ Mapbender.Model = {
                     source: new ol.source.OSM()
                 })
             ],
-            target: 'map'
+            target: 'Map'
         });
 
     return true;
