@@ -59,7 +59,7 @@ class ApplicationAssetCache
         $static_assets_cache_path = $this->container->getParameter('mapbender.static_assets_cache_path');
 
         // For each asset build compiled, cached asset
-        $assetRootPath = $this->getAssetRootPath();
+        $assetRootPath = $this->getWebDir();
         $assetTargetPath = $this->targetPath;
 
         $assets = new AssetCollection(array(), array(), $assetRootPath);
@@ -80,8 +80,12 @@ class ApplicationAssetCache
             }
 
             // First, build file asset with filters and public path information
-            $file = $locator->locate($input);
-            $publicSourcePath = $this->getPublicSourcePath($input);
+            $sourcePath = $this->getSourcePath($input);
+            if ($sourcePath) {
+                $file = $locator->locate($sourcePath);
+            } else {
+                $file = $locator->locate($input);
+            }
 
             // Build filter list (None for JS/Trans, Compass for SASS and Rewrite for SASS/CSS)
             $filters = array();
@@ -92,7 +96,7 @@ class ApplicationAssetCache
                 $filters[] = $this->container->get('assetic.filter.cssrewrite');
             }
 
-            $fileAsset = new FileAsset($file, $filters, null, $assetRootPath . '/' . $publicSourcePath);
+            $fileAsset = new FileAsset($file, $filters, null, $assetRootPath . '/' . $sourcePath);
             $fileAsset->setTargetPath($this->targetPath);
 
             $name = str_replace(array('@', 'Resources/public/'), '', $input);
@@ -140,7 +144,7 @@ class ApplicationAssetCache
     /**
      * @return string
      */
-    protected function getAssetRootPath()
+    protected function getWebDir()
     {
         return dirname($this->container->getParameter('kernel.root_dir')) . '/web';
     }
@@ -149,17 +153,23 @@ class ApplicationAssetCache
      * @param $input
      * @return string
      */
-    protected function getPublicSourcePath($input)
+    protected function getSourcePath($input)
     {
-        $sourcePath = null;
         if ($input[0] == '@') {
             // Bundle name
             $bundle = substr($input, 1, strpos($input, '/') - 1);
             // Path inside the Resources/public folder
             $assetPath = substr($input,
                 strlen('@' . $bundle . '/Resources/public'));
+            $assetDir = 'bundles/' . preg_replace('/bundle$/', '', strtolower($bundle));
 
-            return 'bundles/' . preg_replace('/bundle$/', '', strtolower($bundle)) . $assetPath;
+            return $this->getSourcePath($assetDir . $assetPath);
+        } else {
+            $webRoot = $this->getWebDir();
+            $inWeb = $webRoot . '/' . ltrim($input, '/');
+            if (@is_file($inWeb) && @is_readable($inWeb)) {
+                return $inWeb;
+            }
         }
     }
 
