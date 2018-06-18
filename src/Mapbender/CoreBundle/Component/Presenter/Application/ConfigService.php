@@ -78,6 +78,7 @@ class ConfigService
             'publicOptions' => $entity->getPublicOptions(),
             'slug'          => $entity->getSlug(),
             'debug'         => ($this->container->get('kernel')->getEnvironment() !== 'prod'),
+            'mapEngineCode' => $entity->getMapEngineCode(),
         );
     }
 

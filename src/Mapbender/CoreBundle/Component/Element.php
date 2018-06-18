@@ -544,4 +544,14 @@ abstract class Element extends MinimalBound
         }
         return true;
     }
+
+    /**
+     * Return map engine code ('ol4' or 'mq-ol2'). Convenience getter.
+     *
+     * @return string
+     */
+    public function getMapEngineCode()
+    {
+        return $this->application->getEntity()->getMapEngineCode();
+    }
 }
