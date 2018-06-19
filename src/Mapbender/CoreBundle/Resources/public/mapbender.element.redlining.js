@@ -29,8 +29,8 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
-            this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
-            this.model = new Mapbender.Model();
+            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+            this.model = map.model;
             this.rowTemplate = this.element.find('.geometry-table tr').remove();
             var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
             this.map.removeControl(selectControl[0]);
