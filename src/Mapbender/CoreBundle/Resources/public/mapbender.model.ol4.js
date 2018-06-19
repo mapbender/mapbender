@@ -167,3 +167,19 @@ Mapbender.Model.prototype.addLayerSetsById = function addLayerSetsById(layerSetI
         this.map.addLayer(engineLayers[i]);
     }
 };
+
+/**
+ * Create draw control
+ *
+ * @param {ol.source.Vector} source
+ * @param {ol.geom.GeometryType} type
+ * @returns {*}
+ * @constructor
+ */
+Mapbender.Model.prototype.DrawFeature = function DrawFeature(source, type) {
+    'use strict';
+    return ol.interaction.Draw({
+        source: source,
+        type: type
+    });
+};
