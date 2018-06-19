@@ -2,11 +2,6 @@
 
     $.widget('mapbender.mbRedlining', {
         options: {
-            target: null,
-            displayType: 'dialog',
-            autoActivate: false,
-            deactivateOnClose: true,
-            geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
             paintstyles: {
                 'strokeColor': '#ff0000',
                 'fillColor': '#ff0000',
@@ -30,7 +25,6 @@
         },
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
-            this.model = new Mapbender.Model();
             this.rowTemplate = this.element.find('.geometry-table tr').remove();
             var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
             this.map.removeControl(selectControl[0]);
