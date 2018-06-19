@@ -210,7 +210,7 @@ Mapbender.Model.prototype.createVectorLayer = function(options, style, owner){
 
 /**
  *
- * @param array
+ * @param array {lat,lon}
  * @returns {ol.Coordinate}
  */
 Mapbender.Model.prototype.createCoordinate = function (array) {
