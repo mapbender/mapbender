@@ -1,5 +1,6 @@
 Mapbender.Model = function(domId) {
     'use strict';
+    this.vectorLayer = {};
     this.map = new ol.Map({
         view:   new ol.View({
             center: [0, 0],
@@ -11,8 +12,13 @@ Mapbender.Model = function(domId) {
     return this;
 };
 
-Mapbender.Model.prototype.map = null;
-Mapbender.Model.prototype.vectorLayer = {};
+Mapbender.Model.prototype.layerTypes = {
+    vector: 'vectorLayer'
+};
+
+
+Mapbender.Model.prototype.DRAWTYPES = ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle'];
+
 Mapbender.Model.prototype.mapElement = null;
 Mapbender.Model.prototype.currentProj = null;
 Mapbender.Model.prototype.parseURL = function parseURL() {
@@ -103,7 +109,7 @@ Mapbender.Model.prototype.sourcesFromLayerSetIds = function sourcesFromLayerSetI
     var sources = [];
     _.forEach(layerSetIds, function(layerSetId) {
         var layerSetConfig = Mapbender.configuration.layersets["" + layerSetId];
-        if (typeof layerSetConfig === 'undefined') {
+        if(typeof layerSetConfig === 'undefined') {
             throw new Error("Unknown layerset '" + layerSetId + "'");
         }
         sources = sources.concat(this.layerSetConfigToSources(layerSetConfig));
@@ -127,7 +133,7 @@ Mapbender.Model.prototype.modelSourceToEngineSource = function modelSourceToEngi
     switch (sourceType.toLowerCase()) {
         case 'wms':
             engineOpts = {
-                url: modelSource.getBaseUrl(),
+                url:    modelSource.getBaseUrl(),
                 params: {
                     LAYERS: modelSource.activeLayerNames
                 }
@@ -147,7 +153,7 @@ Mapbender.Model.prototype.modelSourceToEngineSource = function modelSourceToEngi
 Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sourceConfig, id) {
     'use strict';
     var id_;
-    if (typeof id === 'undefined') {
+    if(typeof id === 'undefined') {
         id_ = this.generateSourceId();
     } else {
         id_ = '' + id;
@@ -175,17 +181,68 @@ Mapbender.Model.prototype.addLayerSetsById = function addLayerSetsById(layerSetI
         this.map.addLayer(engineLayers[i]);
     }
 };
-
-
-Mapbender.Model.prototype.createVectorLayer = function(options, style, owner){
+/**
+ *
+ * @param  {Object} options (See https://openlayers.org/en/latest/apidoc/ol.layer.Vector.html)
+ * @param {ol.style|function} style
+ * @param {string} owner
+ * @returns {string}
+ */
+Mapbender.Model.prototype.createVectorLayer = function(options, style, owner) {
     'use strict';
     var uuid = Mapbender.UUID();
     this.vectorLayer[owner] = this.vectorLayer[owner] || {};
     options.map = this.map;
-    var vectorLayer = new ol.layer.Vector(options,{
-        style: style }
-    );
-    this.vectorLayer[owner][uuid] = vectorLayer;
+    this.vectorLayer[owner][uuid] = new ol.layer.Vector(options, {
+        style: style
+    });
 
     return uuid;
 };
+
+/**
+ *
+ * @param owner
+ * @param uuid
+ * @param style
+ * @param refresh
+ */
+Mapbender.Model.prototype.setVectorLayerStyle = function(owner, uuid, style, refresh){
+    'use strict';
+    this.setLayerStyle('vectorLayer', owner, uuid, style);
+};
+/**
+ *
+ * @param layerType
+ * @param owner
+ * @param uuid
+ * @param style
+ * @param refresh
+ */
+Mapbender.Model.prototype.setLayerStyle = function setLayerStyle(layerType, owner, uuid, style, refresh){
+    'use strict';
+    this.vectorLayer[owner][uuid].setLayerStyle(new ol.style.Style(style));
+    if(refresh){
+        this.vectorLayer[owner][uuid].refresh();
+    }
+
+};
+Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, owner){
+    'use strict';
+
+    if(!_.contains( this.DRAWTYPES,type )){
+        throw new Error('Mapbender.Model.createDrawControl only supports the operations \'Point\', \'LineString\', \'LinearRing\', \'Polygon\', \'MultiPoint\', \'MultiLineString\', \'MultiPolygon\', \'GeometryCollection\', \'Circle\' ');
+    }
+    var vector = new ol.source.Vector({wrapX: false});
+    var layerId = this.createVectorLayer({ source : vector},{},owner);
+
+    var draw =  new ol.interaction.Draw({
+        source: vector,
+        type: type
+    });
+    this.map.addInteraction(draw);
+
+    return layerId;
+
+};
+
