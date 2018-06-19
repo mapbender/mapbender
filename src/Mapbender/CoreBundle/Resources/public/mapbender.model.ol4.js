@@ -1,25 +1,10 @@
-Mapbender.Model = function(layerSetIds) {
+Mapbender.Model = function() {
     'use strict';
-    var sources = this.sourcesFromLayerSetIds(layerSetIds);
-    // console.log("Created sources", sources);
-    var engineLayers = _.map(sources, function(source) {
-        var olSource = this.modelSourceToEngineSource(source);
-        return new ol.layer.Tile({source: olSource});
-    }.bind(this));
-    // console.log("Created engine layers", engineLayers);
-
-    /*
-    // dummy / prototyping layers
-    layers = [new ol.layer.Tile({
-            source: new ol.source.OSM()
-    })];
-    */
     this.map = new ol.Map({
         view:   new ol.View({
             center: [0, 0],
             zoom:   1
         }),
-        layers: engineLayers,
         target: 'Map'
     });
 
@@ -144,5 +129,21 @@ Mapbender.Model.prototype.modelSourceToEngineSource = function modelSourceToEngi
             return new ol.source.TileWMS(engineOpts);
         default:
             throw new Error("Unhandled source type '" + sourceType + "'");
+    }
+};
+
+/**
+ * @param {string[]} layerSetIds, in draw order
+ * @param layerSetIds
+ */
+Mapbender.Model.prototype.addLayerSetsById = function addLayerSetsById(layerSetIds) {
+    var sources = this.sourcesFromLayerSetIds(layerSetIds);
+    var engineLayers = _.map(sources.reverse(), function(source) {
+        var olSource = this.modelSourceToEngineSource(source);
+        return new ol.layer.Tile({source: olSource});
+    }.bind(this));
+
+    for (var i = 0; i < engineLayers.length; ++i) {
+        this.map.addLayer(engineLayers[i]);
     }
 };
