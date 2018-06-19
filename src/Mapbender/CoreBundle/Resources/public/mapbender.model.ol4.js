@@ -231,7 +231,7 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
     'use strict';
 
     if(!_.contains( this.DRAWTYPES,type )){
-        throw new Error('Mapbender.Model.createDrawControl only supports the operations \'Point\', \'LineString\', \'LinearRing\', \'Polygon\', \'MultiPoint\', \'MultiLineString\', \'MultiPolygon\', \'GeometryCollection\', \'Circle\' ');
+        throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString());
     }
     var vector = new ol.source.Vector({wrapX: false});
     var layerId = this.createVectorLayer({ source : vector},{},owner);
