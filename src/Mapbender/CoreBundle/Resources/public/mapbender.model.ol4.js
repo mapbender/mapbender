@@ -224,6 +224,6 @@ Mapbender.Model.prototype.createCoordinate = function (array) {
  * @param destination
  * @returns {ol.Coordinate}
  */
-Mapbender.Model.prototype.transfrom = function transform(coordinate, source, destination) {
+Mapbender.Model.prototype.transform = function transform(coordinate, source, destination) {
     return new ol.Coordinate(newCoordinate)
 };
