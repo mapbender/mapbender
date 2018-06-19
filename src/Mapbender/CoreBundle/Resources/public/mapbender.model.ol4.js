@@ -1,17 +1,18 @@
-Mapbender.Model = function() {
+Mapbender.Model = function(domId) {
     'use strict';
     this.map = new ol.Map({
         view:   new ol.View({
             center: [0, 0],
             zoom:   1
         }),
-        target: 'Map'
+        target: domId
     });
 
     return this;
 };
 
 Mapbender.Model.prototype.map = null;
+Mapbender.Model.prototype.vectorLayer = {};
 Mapbender.Model.prototype.mapElement = null;
 Mapbender.Model.prototype.currentProj = null;
 Mapbender.Model.prototype.parseURL = function parseURL() {
@@ -62,6 +63,7 @@ Mapbender.Model.prototype.changeProjection = function changeProjection() {
  * @returns {Mapbender.Model.Source}
  */
 Mapbender.Model.prototype.sourceFromConfig = function sourceFromConfig(config, id) {
+    'use strict';
     return Mapbender.Model.Source.fromConfig(this, config, id);
 };
 
@@ -71,6 +73,7 @@ Mapbender.Model.prototype.sourceFromConfig = function sourceFromConfig(config, i
  * @returns {string}
  */
 Mapbender.Model.prototype.generateSourceId = function generateSourceId() {
+    'use strict';
     var layerCount = this.map.getLayers().length;
     return "autoSrc" + layerCount;
 };
@@ -80,6 +83,7 @@ Mapbender.Model.prototype.generateSourceId = function generateSourceId() {
  * @return {Mapbender.Model.Source[]}
  */
 Mapbender.Model.prototype.layerSetConfigToSources = function layerSetConfigToSources(config) {
+    'use strict';
     var sources = [];
     _.forEach(config, function(sourceConfigWrapper) {
         _.forEach(sourceConfigWrapper, function(sourceConfig, sourceId) {
@@ -95,6 +99,7 @@ Mapbender.Model.prototype.layerSetConfigToSources = function layerSetConfigToSou
  * @return {Mapbender.Model.Source[]}
  */
 Mapbender.Model.prototype.sourcesFromLayerSetIds = function sourcesFromLayerSetIds(layerSetIds) {
+    'use strict';
     var sources = [];
     _.forEach(layerSetIds, function(layerSetId) {
         var layerSetConfig = Mapbender.configuration.layersets["" + layerSetId];
@@ -116,6 +121,7 @@ Mapbender.Model.prototype.sourcesFromLayerSetIds = function sourcesFromLayerSetI
  * @return {ol.source.Source}
  */
 Mapbender.Model.prototype.modelSourceToEngineSource = function modelSourceToEngineSource(modelSource) {
+    'use strict';
     var engineOpts;
     var sourceType = modelSource.getType();
     switch (sourceType.toLowerCase()) {
@@ -139,11 +145,12 @@ Mapbender.Model.prototype.modelSourceToEngineSource = function modelSourceToEngi
  * @returns {Mapbender.Model.Source}
  */
 Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sourceConfig, id) {
+    'use strict';
     var id_;
     if (typeof id === 'undefined') {
         id_ = this.generateSourceId();
     } else {
-        id_ = "" + id;
+        id_ = '' + id;
     }
     var source = this.sourceFromConfig(sourceConfig, id_);
     var olSource = this.modelSourceToEngineSource(source);
@@ -157,6 +164,7 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
  * @param layerSetIds
  */
 Mapbender.Model.prototype.addLayerSetsById = function addLayerSetsById(layerSetIds) {
+    'use strict';
     var sources = this.sourcesFromLayerSetIds(layerSetIds);
     var engineLayers = _.map(sources.reverse(), function(source) {
         var olSource = this.modelSourceToEngineSource(source);
@@ -166,4 +174,18 @@ Mapbender.Model.prototype.addLayerSetsById = function addLayerSetsById(layerSetI
     for (var i = 0; i < engineLayers.length; ++i) {
         this.map.addLayer(engineLayers[i]);
     }
+};
+
+
+Mapbender.Model.prototype.createVectorLayer = function(options, style, owner){
+    'use strict';
+    var uuid = Mapbender.UUID();
+    this.vectorLayer[owner] = this.vectorLayer[owner] || {};
+    options.map = this.map;
+    var vectorLayer = new ol.layer.Vector(options,{
+        style: style }
+    );
+    this.vectorLayer[owner][uuid] = vectorLayer;
+
+    return uuid;
 };
