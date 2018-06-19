@@ -189,3 +189,41 @@ Mapbender.Model.prototype.createVectorLayer = function(options, style, owner){
 
     return uuid;
 };
+
+// /**
+//  *
+//  * @param options
+//  * @returns {ol.Geolocation}
+//  */
+// Mapbender.Model.prototype.createGeolocation = function (options) {
+//     return new ol.Geolocation(options)
+// };
+//
+// /**
+//  *
+//  * @param options
+//  * @returns {*}
+//  */
+// Mapbender.Model.prototype.createProjection = function (options) {
+//     return new ol.proj.Projection(options)
+// };
+
+/**
+ *
+ * @param array
+ * @returns {ol.Coordinate}
+ */
+Mapbender.Model.prototype.createCoordinate = function (array) {
+    return new ol.Coordinate(array)
+};
+
+/**
+ * // https://openlayers.org/en/latest/apidoc/ol.proj.html#.transform
+ * @param coordinate
+ * @param source
+ * @param destination
+ * @returns {ol.Coordinate}
+ */
+Mapbender.Model.prototype.transfrom = function transform(coordinate, source, destination) {
+    return new ol.Coordinate(newCoordinate)
+};
