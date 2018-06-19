@@ -133,6 +133,26 @@ Mapbender.Model.prototype.modelSourceToEngineSource = function modelSourceToEngi
 };
 
 /**
+ *
+ * @param {object} sourceConfig plain old data as seen in application config or WmsLoader/loadWms response
+ * @param {string} [id]
+ * @returns {Mapbender.Model.Source}
+ */
+Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sourceConfig, id) {
+    var id_;
+    if (typeof id === 'undefined') {
+        id_ = this.generateSourceId();
+    } else {
+        id_ = "" + id;
+    }
+    var source = this.sourceFromConfig(sourceConfig, id_);
+    var olSource = this.modelSourceToEngineSource(source);
+    var engineLayer = new ol.layer.Tile({source: olSource});
+    this.map.addLayer(engineLayer);
+    return source;
+};
+
+/**
  * @param {string[]} layerSetIds, in draw order
  * @param layerSetIds
  */
