@@ -189,3 +189,17 @@ Mapbender.Model.prototype.createVectorLayer = function(options, style, owner){
 
     return uuid;
 };
+
+/**
+ * Create Proj4js instance for given projection code
+ *
+ * @param {string} projectionCode
+ * @returns {{proj: Proj4js.Proj}}
+ */
+Mapbender.Model.prototype.createProjection = function(projectionCode) {
+    'use strict';
+
+    return {
+        proj: new Proj4js.Proj(projectionCode),
+    };
+};
