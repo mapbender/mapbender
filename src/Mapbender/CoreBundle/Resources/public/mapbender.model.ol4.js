@@ -189,3 +189,37 @@ Mapbender.Model.prototype.createVectorLayer = function(options, style, owner){
 
     return uuid;
 };
+
+/**
+ * Get map control by class name
+ *
+ * @param className, i.e. model.control.Overview
+ * @returns {boolean}
+ */
+Mapbender.Model.prototype.getControlsByClass = function getControlsByClass(className) {
+    'use strict';
+    var mapControls = this.map.getControls();
+    mapControls.forEach(function (control) {
+        if (control instanceof className) {
+            return control;
+        }
+    });
+    return false;
+};
+
+/**
+ * Get map interaction by class name
+ *
+ * @param className, i.e. model.interaction.Select
+ * @returns {boolean}
+ */
+Mapbender.Model.prototype.getInteractionsByClass = function getInteractionsByClass(className) {
+    'use strict';
+    var mapInteractions = this.map.getInteractions();
+    mapInteractions.forEach(function (interaction) {
+        if (interaction instanceof className) {
+            return interaction;
+        }
+    });
+    return false;
+};
