@@ -18,6 +18,7 @@ window.Mapbender.Model.Source = (function() {
         this.baseUrl_ = config.configuration.options.url;
         this.options = {
             opacity: config.configuration.options['opacity'] || 1,
+            visibility: true,
             tiled: false // configuration.options.tiled || false
         };
         this.urlSettingsFixed = {
@@ -123,6 +124,9 @@ window.Mapbender.Model.Source = (function() {
         var params = $.extend({}, this.urlSettingsFixed, this.customRequestParams);
         this.engineLayer_.setOpacity(this.options.opacity);
         this.engineLayer_.getSource().updateParams(params);
+        // hide (engine-side) layer if no layers activated for display
+        var visibility = this.options.visibility && !!this.customRequestParams.LAYERS;
+        this.engineLayer_.setVisible(visibility);
     };
 
     Source.prototype.setLayerState = function setLayerState(layerName, active) {
