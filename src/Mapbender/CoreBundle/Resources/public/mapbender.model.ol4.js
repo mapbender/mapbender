@@ -374,10 +374,12 @@ Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerSty
  * @returns {string[]}
  */
 Mapbender.Model.prototype.getActiveSourceIds = function() {
-    // HACK: no concept of "active" or not (yet) => return everything
     var ids = [];
     for (var i = 0; i < this.pixelSources.length; ++i) {
-        ids.push(this.pixelSources[i].id);
+        var source = this.pixelSources[i].id;
+        if (source.isActive()) {
+            ids.push(source.id);
+        }
     }
     return ids;
 };

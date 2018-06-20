@@ -143,10 +143,10 @@ window.Mapbender.Model.Source = (function() {
     /**
      * Activate / deactivate the entire source
      *
-     * @param {boolean} active
+     * @param {bool} active
      */
     Source.prototype.setState = function setState(active) {
-        this.options.active = active;
+        this.options.visibility = !!active;
         this.updateEngine();
     };
 
@@ -197,6 +197,16 @@ window.Mapbender.Model.Source = (function() {
         }
         return _.filter((effectiveQueryParams.LAYERS || "").split(','));
     };
+
+    /**
+     * Check if source is active
+     *
+     * @returns {boolean}
+     */
+    Source.prototype.isActive = function isActive() {
+        return this.options.visibility;
+    };
+
 
     /**
      * @returns {string|null}
