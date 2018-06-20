@@ -95,7 +95,7 @@ Mapbender.Model.prototype.generateSourceId = function generateSourceId() {
  */
 Mapbender.Model.prototype.sourcesFromLayerSetId = function sourcesFromLayerSetIds(layerSetId) {
     'use strict';
-    var layerSetConfig = Mapbender.configuration.layersets["" + layerSetId];
+    var layerSetConfig = Mapbender.configuration.layersets['' + layerSetId];
     var sources = [];
     if (typeof layerSetConfig === 'undefined') {
         throw new Error("Unknown layerset '" + layerSetId + "'");
@@ -219,16 +219,16 @@ Mapbender.Model.prototype.createVectorLayer = function(options, style, owner){
  * @returns {ol.Coordinate}
  */
 Mapbender.Model.prototype.createCoordinate = function (array) {
-    return new ol.Coordinate(array)
+    return new ol.Coordinate(array);
 };
 
 /**
- * // https://openlayers.org/en/latest/apidoc/ol.proj.html#.transform
+ * @see: https://openlayers.org/en/latest/apidoc/ol.proj.html#.transform
  * @param coordinate
  * @param source
  * @param destination
  * @returns {ol.Coordinate}
  */
 Mapbender.Model.prototype.transform = function transform(coordinate, source, destination) {
-    return new ol.Coordinate(newCoordinate)
+    return new ol.Coordinate(newCoordinate);
 };
