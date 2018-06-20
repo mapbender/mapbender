@@ -110,32 +110,6 @@ Mapbender.Model.prototype.sourcesFromLayerSetId = function sourcesFromLayerSetId
 };
 
 /**
- * Adapts a model source to an engine source.
- * TBD: This may only be required for Openlayers 4? Other engines may operate exclusively on displayable layers
- *      (not to be confused with WMS layers), and not model sources separately.
- *
- * @param {Mapbender.Model.Source} modelSource
- * @return {ol.source.Source}
- */
-Mapbender.Model.prototype.modelSourceToEngineSource = function modelSourceToEngineSource(modelSource) {
-    'use strict';
-    var engineOpts;
-    var sourceType = modelSource.getType();
-    switch (sourceType.toLowerCase()) {
-        case 'wms':
-            engineOpts = {
-                url: modelSource.getBaseUrl(),
-                params: {
-                    LAYERS: modelSource.activeLayerNames
-                }
-            };
-            return new ol.source.TileWMS(engineOpts);
-        default:
-            throw new Error("Unhandled source type '" + sourceType + "'");
-    }
-};
-
-/**
  *
  * @param {object} sourceConfig plain old data as seen in application config or WmsLoader/loadWms response
  * @param {string} [id]
@@ -155,10 +129,28 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
 };
 
 /**
+ * Adds a model source to the map.
+ *
  * @param {Mapbender.Model.Source} sourceObj
  */
 Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
-    var olSource = this.modelSourceToEngineSource(sourceObj);
+    var engineOpts;
+    var sourceType = sourceObj.getType();
+    var olSource;
+    switch (sourceType.toLowerCase()) {
+        case 'wms':
+            engineOpts = {
+                url: sourceObj.getBaseUrl(),
+                params: {
+                    LAYERS: sourceObj.activeLayerNames
+                }
+            };
+            olSource = new ol.source.TileWMS(engineOpts);
+            break;
+        default:
+            throw new Error("Unhandled source type '" + sourceType + "'");
+    }
+
     var engineLayer = new ol.layer.Tile({source: olSource});
     this.map.addLayer(engineLayer);
 };
