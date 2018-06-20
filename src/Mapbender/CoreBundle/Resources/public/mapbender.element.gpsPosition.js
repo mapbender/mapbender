@@ -25,6 +25,7 @@
             }
         },
         map: null,
+        model: null,
         observer: null,
         firstPosition: true,
         stack: [],
@@ -56,7 +57,7 @@
         },
 
         _setup: function () {
-            this.map = $('#' + this.options.target).data('mapbenderMbMap');
+            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
             if (this.options.autoStart === true) {
                 this.toggleTracking();
             }
@@ -189,14 +190,38 @@
          */
         activate: function () {
             var widget = this;
-            var olmap = widget.map.map.olMap;
+            var model = widget.map.model;
             if (navigator.geolocation) {
                 widget.observer = navigator.geolocation.watchPosition(function success(position) {
-                    var proj = new OpenLayers.Projection("EPSG:4326"),
-                        newProj = olmap.getProjectionObject(),
-                        p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
+                    // var proj = new OpenLayers.Projection("EPSG:4326"),
+                    //     newProj = olmap.getProjectionObject(),
+                    //     p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
+                    //
+                    // p.transform(proj, newProj);
 
-                    p.transform(proj, newProj);
+
+                    //var trackingOptions = position;
+                    //
+                    //     Coordinates {
+                    //     accuracy :94
+                    //     altitude : null
+                    //     altitudeAccuracy : null
+                    //     heading: null
+                    //     latitude :52.4948033
+                    //     longitude :13.286340200000001
+                    //     speed:null
+                    //     },
+                    // timestamp: 1529416309175
+
+                    //ol4
+                    var viewProj = 'EPSG:25832';//model.prototype.getCurrentProj();
+                    var proj = 'EPSG:4326';
+                    var coordPos = {
+                        lat : position.coords.longitude,
+                        lon : position.coords.latitude
+                    };
+                    var tansCoord = model.prototype.transform(coordPos, proj, viewProj);
+                    var p = model.prototype.createCoordinate(tansCoord);
 
                     // Averaging: Building a queue...
                     widget.stack.push(p);
