@@ -766,24 +766,31 @@
         },
         _toggleSelected: function(e) {
             var $target = $(e.target);
-            var layerName = $target.closest('.leave[data-layername]').attr('data-layername');
-            if (!layerName) {
-                console.error("Can't find layername from event target", $target);
-                throw new Error("Can't change layer visibility; no layer name");
-            }
             var $serviceNode = $target.closest('.serviceContainer');
             var sourceId = $serviceNode.attr('data-sourceid');
-            // collect checkbox values up the entire tree (layer, layer group, source, theme)
-            var nodes = $target.parents('li.leave').get();
-            var newState = 1;
-            for (var i = 0; i < nodes.length; ++i) {
-                var $cb = $('input[name="selected"]', nodes[i]);
-                console.log("Adding state of checkbox", $cb);
-                newState &= $cb.prop('checked');
-            }
-
             var sourceObj = this.model.getSourceById(sourceId);
-            sourceObj.setLayerState(layerName, !!newState);
+
+            // collect affected layer names tree-down (to support events on group / root)
+            var affectedLeaves = $('.leave[data-type="simple"]', $serviceNode).get();
+            for (var i = 0; i < affectedLeaves.length; ++i) {
+                // for each layer: collect checkbox values up the entire tree (layer, layer group, source, theme)
+                var layerNode = affectedLeaves[i];
+                var layerName = $(layerNode).attr('data-layername');
+                if (!layerName) {
+                    console.error("Can't find layername from event target", $target);
+                    throw new Error("Can't change layer visibility; no layer name");
+                }
+                // checkboxes to scan are inside leaf layer node itself plus all parent containers
+                var scanNodes = [layerNode].concat($(layerNode).parents('li.leave').get());
+                var newState = 1;
+                for (var j = 0; j < scanNodes.length; ++j) {
+                    var $cb = $('input[name="selected"]', scanNodes[j]);
+                    console.log("Adding state of checkbox", $cb);
+                    newState &= $cb.prop('checked');
+                }
+                // apply
+                sourceObj.setLayerState(layerName, !!newState);
+            }
         },
         _toggleInfo: function(e) {
             var li = $(e.target).parents('li:first');
