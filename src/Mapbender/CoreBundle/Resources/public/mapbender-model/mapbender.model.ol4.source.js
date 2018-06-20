@@ -16,8 +16,19 @@ window.Mapbender.Model.Source = (function() {
         this.id = "" + (id || model.generateSourceId());
         this.type = (config['type'] || 'wms').toLowerCase();
         this.baseUrl_ = config.configuration.options.url;
+        var opacity;
+        // handle / support literal 0 opacity (=falsy, needs extended check)
+        if (typeof config.configuration.options.opacity !== undefined) {
+            opacity = parseFloat(config.configuration.options.opacity);
+            if (isNaN(opacity)) {
+                opacity = 1.0;
+            }
+        } else {
+            opacity = 1.0;
+        }
+
         this.options = {
-            opacity: config.configuration.options['opacity'] || 1,
+            opacity: opacity,
             visibility: true,
             tiled: false // configuration.options.tiled || false
         };
