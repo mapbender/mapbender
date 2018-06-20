@@ -15,12 +15,23 @@ window.Mapbender.Model.Source = (function() {
         this.model = model;
         this.id = "" + (id || model.generateSourceId());
         this.type = (config['type'] || 'wms').toLowerCase();
-        this.baseUrl_ = config.configuration.options['url'];
+        this.baseUrl_ = config.configuration.options.url;
+        this.options = {
+            opacity: config.configuration.options['opacity'] || 1,
+            tiled: false // configuration.options.tiled || false
+        };
+        this.urlSettingsFixed = {
+            VERSION: config.configuration.options.version || "1.1.1",
+            FORMAT: config.configuration.options.format || 'image/png',
+            TRANSPARENT: (config.configuration.options.transparent || true) ? "TRUE" : "FALSE",
+            INFO_FORMAT: config.configuration.options.info_format || 'text/html'
+        };
+        this.customRequestParams = {};
+
         var layerDefs = this.extractLeafLayerConfigs(config.configuration);
         this.layerOptionsMap_ = {};
         this.layerNameMap_ = {};
         this.allLayerNames_ = [];
-        this.activeLayerNames = [];
 
         _.forEach(layerDefs, function(layerConfig) {
             this.processLayerConfig(layerConfig);
@@ -41,6 +52,16 @@ window.Mapbender.Model.Source = (function() {
     };
     // convenience: make fromConfig accessible via instance as well
     Source.prototype.fromConfig = Source.fromConfig;
+
+    /**
+     * @param {ol.layer.Tile} engineLayer
+     */
+    Source.prototype.initializeEngineLayer = function initializeEngineLayer(engineLayer) {
+        if (this.engineLayer_) {
+            throw new Error("Source: engine layer already assigned, runtime changes not allowed");
+        }
+        this.engineLayer_ = engineLayer;
+    };
 
     /**
      * Traverses the (historically) nested layer configuration array and returns *only*
@@ -83,7 +104,38 @@ window.Mapbender.Model.Source = (function() {
         this.layerOptionsMap_[stringId] = layerConfig;
         this.layerNameMap_[stringLayerName] = layerConfig;
         this.allLayerNames_.push(stringLayerName);
-        this.activeLayerNames.push(stringLayerName);
+
+        //HACK: all layers treated as (initially) active
+        // @todo: scan "parent" nodes in configuration to determine enabled state
+        // @todo: also initialize if layer is queryable
+        var layerActive = true;
+
+        if (layerActive) {
+            if (!this.customRequestParams.LAYERS) {
+                this.customRequestParams.LAYERS = stringLayerName;
+            } else {
+                this.customRequestParams.LAYERS = [this.customRequestParams.LAYERS, stringLayerName].join(',');
+            }
+        }
+    };
+
+    Source.prototype.updateEngine = function updateEngine() {
+        var params = $.extend({}, this.urlSettingsFixed, this.customRequestParams);
+        this.engineLayer_.setOpacity(this.options.opacity);
+        this.engineLayer_.getSource().updateParams(params);
+    };
+
+
+    /**
+     * @returns {string[]}
+     */
+    Source.prototype.getActiveLayerNames = function() {
+        var effectiveQueryParams = this.engineLayer_.getSource().getParams();
+        if (typeof effectiveQueryParams.LAYERS === 'undefined') {
+            console.error("getParameters returned:", effectiveQueryParams);
+            throw new Error("LAYERS parameter not populated");
+        }
+        return _.filter((effectiveQueryParams.LAYERS || "").split(','));
     };
 
     /**
@@ -92,8 +144,12 @@ window.Mapbender.Model.Source = (function() {
     Source.prototype.getType = function() {
         return this.type;
     };
+    /**
+     * @returns {string}
+     */
     Source.prototype.getBaseUrl = function() {
         return this.baseUrl_;
     };
+
     return Source;
 })();
