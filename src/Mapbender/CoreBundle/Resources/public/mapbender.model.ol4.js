@@ -9,6 +9,8 @@ Mapbender.Model = function(domId) {
         target: domId
     });
 
+    var id = this.createDrawControl('LineString', '1');
+    this.removeVectorLayer('1',id);
     return this;
 };
 
@@ -234,15 +236,39 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
         throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString());
     }
     var vector = new ol.source.Vector({wrapX: false});
-    var layerId = this.createVectorLayer({ source : vector},{},owner);
+    var id = this.createVectorLayer({ source : vector},{},owner);
 
     var draw =  new ol.interaction.Draw({
         source: vector,
         type: type
     });
+    this.vectorLayer[owner][id].interactions = this.vectorLayer[owner][id].interactions  || {};
+    this.vectorLayer[owner][id].controls[id] = draw;
+
     this.map.addInteraction(draw);
 
-    return layerId;
+    return id;
 
 };
+
+Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,id){
+    var vectorLayer = this.vectorLayer[owner][id];
+    if(this.vectorLayer[owner][id].hasOwnProperty('interactions')){
+        this.removeInteractions(this.vectorLayer[owner][id].interactions);
+    }
+    this.map.removeLayer(vectorLayer);
+
+};
+
+Mapbender.Model.prototype.removeInteractions = function removeControls(controls){
+    _.each(controls, function(control, index){
+        this.map.removeInteraction(control);
+    }.bind(this));
+
+
+};
+
+
+
+
 
