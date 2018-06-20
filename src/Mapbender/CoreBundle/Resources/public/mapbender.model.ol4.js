@@ -9,8 +9,7 @@ Mapbender.Model = function(domId) {
         target: domId
     });
 
-    var id = this.createDrawControl('LineString', '1');
-    this.removeVectorLayer('1',id);
+
     return this;
 };
 
@@ -229,21 +228,28 @@ Mapbender.Model.prototype.setLayerStyle = function setLayerStyle(layerType, owne
     }
 
 };
-Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, owner){
+Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, owner, style, events){
     'use strict';
 
     if(!_.contains( this.DRAWTYPES,type )){
-        throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString());
+        throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
     }
     var vector = new ol.source.Vector({wrapX: false});
-    var id = this.createVectorLayer({ source : vector},{},owner);
+    var id = this.createVectorLayer({ source : vector},style,owner);
 
     var draw =  new ol.interaction.Draw({
         source: vector,
         type: type
     });
+
+
     this.vectorLayer[owner][id].interactions = this.vectorLayer[owner][id].interactions  || {};
-    this.vectorLayer[owner][id].controls[id] = draw;
+    this.vectorLayer[owner][id].interactions[id] = draw;
+
+
+    _.each(events, function(value, key) {
+        draw.on(key, value);
+    }.bind(this));
 
     this.map.addInteraction(draw);
 
@@ -267,6 +273,39 @@ Mapbender.Model.prototype.removeInteractions = function removeControls(controls)
 
 
 };
+
+Mapbender.Model.prototype.eventFeatureWrapper = function eventFeatureWrapper(event, callback, args){
+    'use strict';
+    var args = [event.feature].concat(args)
+    return callback.apply(this,args);
+
+};
+
+
+
+Mapbender.Model.prototype.getLineStringLength = function(line){
+    'use strict';
+
+    return  ol.Sphere.getLength(line);
+};
+
+Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservable, args){
+    'use strict';
+
+    return feature.getGeometry().on('change', function(evt) {
+        var geom = evt.target;
+        args = [geom].concat(args);
+        obvservable.value =  callback.apply(this,args);
+    });
+
+
+};
+
+
+
+Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(){
+    return {};
+}
 
 
 
