@@ -35,8 +35,8 @@ window.Mapbender.Model.Source = (function() {
         this.urlSettingsFixed = {
             VERSION: config.configuration.options.version || "1.1.1",
             FORMAT: config.configuration.options.format || 'image/png',
-            TRANSPARENT: (config.configuration.options.transparent || true) ? "TRUE" : "FALSE",
-            INFO_FORMAT: config.configuration.options.info_format || 'text/html'
+            TRANSPARENT: (config.configuration.options.transparent || true) ? "TRUE" : "FALSE"
+//            ,            INFO_FORMAT: config.configuration.options.info_format || 'text/html'
         };
         this.customRequestParams = {};
 
