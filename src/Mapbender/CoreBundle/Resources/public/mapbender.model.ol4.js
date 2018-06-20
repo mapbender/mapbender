@@ -204,7 +204,7 @@ Mapbender.Model.prototype.createVectorLayer = function(options, style, owner){
  * @returns {ol.Coordinate}
  */
 Mapbender.Model.prototype.createCoordinate = function (array) {
-    return new ol.Coordinate(array)
+    return new ol.Coordinate(array);
 };
 
 /**
@@ -215,5 +215,5 @@ Mapbender.Model.prototype.createCoordinate = function (array) {
  * @returns {ol.Coordinate}
  */
 Mapbender.Model.prototype.transform = function transform(coordinate, source, destination) {
-    return new ol.Coordinate(newCoordinate)
+    return new ol.Coordinate(newCoordinate);
 };
