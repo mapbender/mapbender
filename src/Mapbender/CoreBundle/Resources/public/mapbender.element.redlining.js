@@ -139,12 +139,6 @@
                             this._addToGeomList(event.feature, Mapbender.trans('mb.core.redlining.geometrytype.point'));
                         }.bind(this)
                     });
-                    // this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
-                    //         OpenLayers.Handler.Point, {
-                    //             featureAdded: function(e){
-                    //                 self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.point'));
-                    //             }
-                    //         });
                     break;
                 case 'line':
                     this.activeControlId = this.model.createDrawControl('LineString', this.element.attr('id'), this.layerStyle, {
@@ -152,12 +146,6 @@
                             this._addToGeomList(event.feature, Mapbender.trans('mb.core.redlining.geometrytype.line'));
                         }.bind(this)
                     });
-                    // this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
-                    //         OpenLayers.Handler.Path, {
-                    //             featureAdded: function(e){
-                    //                 self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.line'));
-                    //             }
-                    //         });
                     break;
                 case 'polygon':
                     this.activeControlId = this.model.createDrawControl('Polygon', this.element.attr('id'), this.layerStyle, {
@@ -165,33 +153,15 @@
                             this._addToGeomList(event.feature, Mapbender.trans('mb.core.redlining.geometrytype.polygon'));
                         }.bind(this)
                     });
-                    // this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
-                    //         OpenLayers.Handler.Polygon, {
-                    //             handlerOptions: {
-                    //                 handleRightClicks: false
-                    //             },
-                    //             featureAdded: function(e){
-                    //                 self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.polygon'));
-                    //             }
-                    //         });
                     break;
                 case 'rectangle':
+                    // TODO this needs to be createRegular Polygon
+                    // https://openlayers.org/en/latest/apidoc/ol.interaction.Draw.html#.createRegularPolygon
                     this.activeControlId = this.model.createDrawControl('Circle', this.element.attr('id'), this.layerStyle, {
                         'drawend': function(event) {
                             this._addToGeomList(event.feature, Mapbender.trans('mb.core.redlining.geometrytype.rectangle'));
                         }.bind(this)
                     });
-                    // this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
-                    //         OpenLayers.Handler.RegularPolygon, {
-                    //             handlerOptions: {
-                    //                 sides: 4,
-                    //                 irregular: true,
-                    //                 rightClick: false
-                    //             },
-                    //             featureAdded: function(e){
-                    //                 self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.rectangle'));
-                    //             }
-                    //         });
                     break;
                 case 'text':
                     $('input[name=label-text]', this.element).val('');
@@ -212,6 +182,7 @@
                             });
                     break;
             }
+            // TODO Check if this is still necessary
             // this.map.addControl(this.activeControl);
             // this.activeControl.activate();
 
@@ -275,7 +246,6 @@
             this._deactivateControl();
             var $tr = $(e.target).parents('tr:first');
             this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
-            // this._removeFeature(this.selectedFeature);
             this.model.removeFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
             $tr.remove();
             this.selectedFeature = null;
