@@ -129,6 +129,23 @@ window.Mapbender.Model.Source = (function() {
         this.engineLayer_.setVisible(visibility);
     };
 
+    /**
+     * Activate / deactivate the entire source
+     *
+     * @param {boolean} active
+     */
+    Source.prototype.setState = function setState(active) {
+        this.options.active = active;
+        this.updateEngine();
+    };
+
+    /**
+     * Activate / deactivate a single layer by name
+     *
+     * @param {string} layerName
+     * @param {boolean} active
+     * @todo: also support queryable
+     */
     Source.prototype.setLayerState = function setLayerState(layerName, active) {
         if (!this.layerNameMap_[layerName]) {
             console.error("Unknown layer name", layerName, "known:", Object.keys(this.layerNameMap_));
