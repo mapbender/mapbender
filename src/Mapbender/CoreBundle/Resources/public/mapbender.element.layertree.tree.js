@@ -56,7 +56,8 @@
             this.template.removeClass('hidden');
             this.menuTemplate = $('#layer-menu', this.template).remove();
 
-            this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
+            this.mbMap = $("#" + this.options.target).data("mapbenderMbMap");
+            this.model = this.mbMap.getModel();
             if (this.options.type === 'element') {
                 this._createTree();
             } else if (this.options.type === 'dialog' && new Boolean(this.options.autoOpen).valueOf() === true) {
@@ -66,9 +67,38 @@
             this._trigger('ready');
             this._ready();
         },
+        _getConfiguredLayersetConfigs: function() {
+            var layerSetIds = this.mbMap.options.layersets;
+            var lsConfigs = [];
+            for (var i = 0; i < layerSetIds.length; ++i) {
+                var layerSetId = layerSetIds[i];
+                var layerSetConfig = Mapbender.configuration.layersets[layerSetId] || Mapbender.configuration.layersets["" + layerSetId];
+                if (typeof layerSetConfig === 'undefined') {
+                    console.error("Can't find layerset in config", layerSetId, Mapbender.configuration.layersets);
+                    throw new Error("Missing layerset with id '" + layerSetId + "'");
+                }
+                lsConfigs.push(layerSetConfig);
+            }
+            return lsConfigs;
+        },
+        _getConfiguredSourceConfigs: function() {
+            var lsConfigs = this._getConfiguredLayersetConfigs();
+            var sourceConfigs = [];
+            for (var i = 0; i < lsConfigs.length; ++i) {
+                var lsConfig = lsConfigs[i];
+                for (var j = 0; j < lsConfig.length; ++j) {
+                    var sourceConfigWrapper = lsConfig[j];
+                    _.forEach(sourceConfigWrapper, function(sourceConfig, sourceId) {
+                        sourceConfig.id = "" + sourceId;
+                        sourceConfigs.push(sourceConfig);
+                    });
+                }
+            }
+            return sourceConfigs.reverse();
+        },
         _createTree: function() {
             var self = this;
-            var sources = this.model.getSources();
+            var sources = this._getConfiguredSourceConfigs();
             if (this.created)
                 this._unSortable();
             for (var i = (sources.length - 1); i > -1; i--) {
@@ -284,6 +314,12 @@
             $('div.selectAll', $li).remove();
             $('div.sourceVisibilityWrapper', $li).remove();
             $li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
+            if (nodeType === 'simple') {
+                if (!sourceEl.options.name) {
+                    console.warn("Source element is missing the layer name", nodeType, sourceEl);
+                }
+                $li.attr('data-layername', sourceEl.options.name);
+            }
             if (nodeType === this.consts.root || nodeType === this.consts.group) {
                 $('.featureInfoWrapper:first', $li).remove();
                 if (nodeType === this.consts.root) {
@@ -729,41 +765,25 @@
             return false;
         },
         _toggleSelected: function(e) {
-            var $li = $(e.target).parents('li:first');
-            var tochange = {
-                sourceIdx: {
-                    id: $li.attr('data-sourceid')
-                },
-                options: {}
-            };
-            if ($li.attr('data-type') === this.consts.root) {
-                if(!this._isThemeChecked($li)) { // thematic layertree handling
-                    return false;
-                }
-                tochange.options = {
-                    configuration: {
-                        options: {
-                            visibility: $(e.target).is(':checked')
-                        }
-                    }
-                };
-            } else {
-                tochange.options = {
-                    children: {}
-                };
-                tochange.options.children[$li.attr('data-id')] = {
-                    options: {
-                        treeOptions: {
-                            selected: $(e.target).is(':checked')
-                        }
-                    }
-                };
+            var $target = $(e.target);
+            var layerName = $target.closest('.leave[data-layername]').attr('data-layername');
+            if (!layerName) {
+                console.error("Can't find layername from event target", $target);
+                throw new Error("Can't change layer visibility; no layer name");
             }
-            tochange.options['type'] = 'selected';
-            this.model.changeSource({
-                change: tochange
-            });
-            return false;
+            var $serviceNode = $target.closest('.serviceContainer');
+            var sourceId = $serviceNode.attr('data-sourceid');
+            // collect checkbox values up the entire tree (layer, layer group, source, theme)
+            var nodes = $target.parents('li.leave').get();
+            var newState = 1;
+            for (var i = 0; i < nodes.length; ++i) {
+                var $cb = $('input[name="selected"]', nodes[i]);
+                console.log("Adding state of checkbox", $cb);
+                newState &= $cb.prop('checked');
+            }
+
+            var sourceObj = this.model.getSourceById(sourceId);
+            sourceObj.setLayerState(layerName, !!newState);
         },
         _toggleInfo: function(e) {
             var li = $(e.target).parents('li:first');
