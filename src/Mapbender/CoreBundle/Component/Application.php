@@ -155,13 +155,14 @@ class Application implements IAssetDependent
                     ),
                 );
             case 'ol4':
-                // HACK: same as ol2 path
-                // @todo: need correct new path to enter here
+                $coreJsBase = '@MapbenderCoreBundle/Resources/public';
                 return array(
                     'js' => array(
                         '/components/openlayers/ol.js',
-                        '@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js',
-                        '@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.source.js',
+                        "$coreJsBase/mapbender.model.ol4.js",
+                        "$coreJsBase/mapbender-model/mapbender.model.ol4.sourcelayer.state.js",
+                        "$coreJsBase/mapbender-model/mapbender.model.ol4.sourcelayer.js",
+                        "$coreJsBase/mapbender.model.ol4.source.js",
                     ),
                     'css' => array(
                         '/components/openlayers/ol.css',
