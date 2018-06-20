@@ -208,7 +208,7 @@ Mapbender.Model.prototype.createCoordinate = function (array) {
 };
 
 /**
- * // https://openlayers.org/en/latest/apidoc/ol.proj.html#.transform
+ * @see: https://openlayers.org/en/latest/apidoc/ol.proj.html#.transform
  * @param coordinate
  * @param source
  * @param destination
