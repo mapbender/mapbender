@@ -142,10 +142,7 @@ Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
     switch (sourceType.toLowerCase()) {
         case 'wms':
             engineOpts = {
-                url: sourceObj.getBaseUrl(),
-                params: {
-                    LAYERS: sourceObj.activeLayerNames
-                }
+                url: sourceObj.getBaseUrl()
             };
             olSource = new ol.source.TileWMS(engineOpts);
             break;
@@ -155,6 +152,8 @@ Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
     var engineLayer = new ol.layer.Tile({source: olSource});
     this.pixelSources.push(sourceObj);
     this.map.addLayer(engineLayer);
+    sourceObj.initializeEngineLayer(engineLayer);
+    sourceObj.updateEngine();
 };
 
 /**
@@ -235,4 +234,24 @@ Mapbender.Model.prototype.createCoordinate = function (array) {
  */
 Mapbender.Model.prototype.transform = function transform(coordinate, source, destination) {
     return new ol.Coordinate(newCoordinate)
+};
+
+/**
+ * @returns {string[]}
+ */
+Mapbender.Model.prototype.getActiveSourceIds = function() {
+    // HACK: no concept of "active" or not (yet) => return everything
+    var ids = [];
+    for (var i = 0; i < this.pixelSources.length; ++i) {
+        ids.push(this.pixelSources[i].id);
+    }
+    return ids;
+};
+
+/**
+ * @returns {string[]}
+ * @param sourceId
+ */
+Mapbender.Model.prototype.getActiveLayerNames = function(sourceId) {
+    return this.getSourceById(sourceId).getActiveLayerNames();
 };
