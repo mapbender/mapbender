@@ -27,7 +27,9 @@
             //jQuery.extend(OpenLayers.Projection.defaults, {'EPSG:31466': {yx : true}});
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = new Mapbender.Model('Map');
-            this.model.addLayerSetsById(this.options.layersets.reverse());
+            _.forEach(this.options.layersets.reverse(), function(layerSetId) {
+                this.model.addLayerSetById(layerSetId);
+            }.bind(this));
 
             this.srsDefinitions = this.options.srsDefs;
             this.initializeSrsDefinitions();
