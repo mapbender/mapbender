@@ -10,6 +10,7 @@
             },
             layersets: []
         },
+        srsDefinitions: [],
         elementUrl: null,
         model: null,
         map: null,
@@ -27,6 +28,9 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = new Mapbender.Model('Map');
             this.model.addLayerSetsById(this.options.layersets.reverse());
+
+            this.srsDefinitions = this.options.srsDefs;
+            this.initializeSrsDefinitions();
 
             this.options = {
                 layerDefs: [],
@@ -134,7 +138,17 @@
          * Returns all defined srs
          */
         getAllSrs: function(){
-            return this.model.getAllSrs();
+            return this.srsDefinitions;
+        },
+        /**
+         * @returns {mapbender.mbMap}
+         */
+        initializeSrsDefinitions: function () {
+            _.map(this.srsDefinitions, function(definition) {
+                Proj4js.defs[definition.name] = definition.definition;
+            }.bind(this));
+
+            return this;
         },
         /**
          * Reterns the model
