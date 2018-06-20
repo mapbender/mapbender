@@ -150,26 +150,27 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
         id_ = '' + id;
     }
     var source = this.sourceFromConfig(sourceConfig, id_);
-    var olSource = this.modelSourceToEngineSource(source);
-    var engineLayer = new ol.layer.Tile({source: olSource});
-    this.map.addLayer(engineLayer);
+    this.addSourceObject(source);
     return source;
 };
 
 /**
- * @param {string[]} layerSetIds, in draw order
- * @param layerSetIds
+ * @param {Mapbender.Model.Source} sourceObj
+ */
+Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
+    var olSource = this.modelSourceToEngineSource(sourceObj);
+    var engineLayer = new ol.layer.Tile({source: olSource});
+    this.map.addLayer(engineLayer);
+};
+
+/**
+ * @param {string} layerSetId, in draw order
  */
 Mapbender.Model.prototype.addLayerSetById = function addLayerSetsById(layerSetId) {
     'use strict';
-    var sources = this.sourcesFromLayerSetId(layerSetId);
-    var engineLayers = _.map(sources.reverse(), function(source) {
-        var olSource = this.modelSourceToEngineSource(source);
-        return new ol.layer.Tile({source: olSource});
-    }.bind(this));
-
-    for (var i = 0; i < engineLayers.length; ++i) {
-        this.map.addLayer(engineLayers[i]);
+    var sources = this.sourcesFromLayerSetId(layerSetId).reverse();
+    for (var i = 0; i < sources.length; ++i) {
+        this.addSourceObject(sources[i]);
     }
 };
 
