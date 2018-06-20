@@ -34,8 +34,25 @@ Mapbender.Model.prototype.onFeatureClick = function onFeatureClick() {
 Mapbender.Model.prototype.setLayerStyle = function setLayerStyle() {
 };
 
+// @todo is just a mockup now.
 Mapbender.Model.prototype.createStyle = function createStyle() {
+    return new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: '#ffcc33'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#ffcc33',
+            width: 2
+        }),
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+                color: '#ffcc33'
+            })
+        })
+    });
 };
+
 Mapbender.Model.prototype.getActiveLayers = function getActiveLayers() {
 };
 Mapbender.Model.prototype.setRequestParameter = function setRequestParameter() {
