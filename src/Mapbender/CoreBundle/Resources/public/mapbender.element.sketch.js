@@ -30,10 +30,18 @@
         defaultAction: function() {
             this.activated = !this.activated;
 
-            var style = this.model.createStyle();
+            var styleOptions = {
+                fill : {
+                    color : '#ffcc33'
+                },
+                stroke: {
+                    color: 'orange',
+                    width: 2
+                }
+            };
 
             if (this.activated) {
-                this.model.createDrawControl('Circle', this.id, style, {});
+                this.model.createDrawControl('Circle', this.id, this.model.createStyle(styleOptions));
             } else {
                 this.model.removeInteractions();
             }
