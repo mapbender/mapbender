@@ -143,20 +143,29 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
  * @param {Mapbender.Model.Source} sourceObj
  */
 Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
-    var engineOpts;
     var sourceType = sourceObj.getType();
-    var olSource;
+    var sourceOpts = {
+        url: sourceObj.getBaseUrl(),
+        transition: 0
+    };
+
+    var olSourceClass;
+    var olLayerClass;
     switch (sourceType.toLowerCase()) {
         case 'wms':
-            engineOpts = {
-                url: sourceObj.getBaseUrl()
-            };
-            olSource = new ol.source.TileWMS(engineOpts);
+            if (sourceObj.options.tiled) {
+                olSourceClass = ol.source.TileWMS;
+                olLayerClass = ol.layer.Tile;
+            } else {
+                olSourceClass = ol.source.ImageWMS;
+                olLayerClass = ol.layer.Image;
+            }
             break;
         default:
             throw new Error("Unhandled source type '" + sourceType + "'");
     }
-    var engineLayer = new ol.layer.Tile({source: olSource});
+    var olSource = new (olSourceClass)(sourceOpts);
+    var engineLayer = new (olLayerClass)({source: olSource});
     this.pixelSources.push(sourceObj);
     this.map.addLayer(engineLayer);
     sourceObj.initializeEngineLayer(engineLayer);
