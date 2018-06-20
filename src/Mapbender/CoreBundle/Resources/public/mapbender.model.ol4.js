@@ -90,36 +90,22 @@ Mapbender.Model.prototype.generateSourceId = function generateSourceId() {
 };
 
 /**
- * @param {object} config
+ * @param {string} layerSetId
  * @return {Mapbender.Model.Source[]}
  */
-Mapbender.Model.prototype.layerSetConfigToSources = function layerSetConfigToSources(config) {
+Mapbender.Model.prototype.sourcesFromLayerSetId = function sourcesFromLayerSetIds(layerSetId) {
     'use strict';
+    var layerSetConfig = Mapbender.configuration.layersets["" + layerSetId];
     var sources = [];
-    _.forEach(config, function(sourceConfigWrapper) {
+    if (typeof layerSetConfig === 'undefined') {
+        throw new Error("Unknown layerset '" + layerSetId + "'");
+    }
+    _.forEach(layerSetConfig, function(sourceConfigWrapper) {
         _.forEach(sourceConfigWrapper, function(sourceConfig, sourceId) {
             var source = this.sourceFromConfig(sourceConfig, "" + sourceId);
             sources.push(source);
         }.bind(this));
     }.bind(this));
-    return sources;
-};
-
-/**
- * @param {string[]} layerSetIds
- * @return {Mapbender.Model.Source[]}
- */
-Mapbender.Model.prototype.sourcesFromLayerSetIds = function sourcesFromLayerSetIds(layerSetIds) {
-    'use strict';
-    var sources = [];
-    _.forEach(layerSetIds, function(layerSetId) {
-        var layerSetConfig = Mapbender.configuration.layersets["" + layerSetId];
-        if (typeof layerSetConfig === 'undefined') {
-            throw new Error("Unknown layerset '" + layerSetId + "'");
-        }
-        sources = sources.concat(this.layerSetConfigToSources(layerSetConfig));
-    }.bind(this));
-
     return sources;
 };
 
@@ -174,9 +160,9 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
  * @param {string[]} layerSetIds, in draw order
  * @param layerSetIds
  */
-Mapbender.Model.prototype.addLayerSetsById = function addLayerSetsById(layerSetIds) {
+Mapbender.Model.prototype.addLayerSetById = function addLayerSetsById(layerSetId) {
     'use strict';
-    var sources = this.sourcesFromLayerSetIds(layerSetIds);
+    var sources = this.sourcesFromLayerSetId(layerSetId);
     var engineLayers = _.map(sources.reverse(), function(source) {
         var olSource = this.modelSourceToEngineSource(source);
         return new ol.layer.Tile({source: olSource});
