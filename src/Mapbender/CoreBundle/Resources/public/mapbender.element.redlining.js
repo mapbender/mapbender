@@ -29,7 +29,7 @@
             this.rowTemplate = this.element.find('.geometry-table tr').remove();
             //var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
             //this.map.removeControl(selectControl[0]);
-            if(this.options.autoActivate || this.options.displayType === 'element'){
+            if(this.options.auto_activate || this.options.display_type === 'element'){
                 this.activate();
             }
 
@@ -54,7 +54,7 @@
                 var drawLayerId = this.model.createVectorLayer({}, this.layerStyle, this.element.attr('id'));
                 //this.map.addLayer(this.layer);
             }
-            if (this.options.displayType === 'dialog'){
+            if (this.options.display_type === 'dialog'){
                 this._open();
             } else {
                 this.element.removeClass('hidden');
@@ -62,10 +62,10 @@
             $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
         },
         deactivate: function(){
-            if (this.options.displayType === 'dialog'){
+            if (this.options.display_type === 'dialog'){
                 this._close();
             }
-            if (this.options.displayType === 'dialog' && this.options.deactivateOnClose){
+            if (this.options.display_type === 'dialog' && this.options.deactivate_on_close){
                 this._removeAllFeatures();
                 this.callback ? this.callback.call() : this.callback = null;
             }

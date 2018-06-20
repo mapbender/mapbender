@@ -40,12 +40,12 @@ class RedliningAdminType extends AbstractType
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
-            ->add('displayType', 'choice', array(
+            ->add('display_type', 'choice', array(
                 'required' => true,
                 'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
-            ->add('autoActivate', 'checkbox', array('required' => false))
-            ->add('deactivateOnClose', 'checkbox', array('required' => false))
-            ->add('geometryTypes', 'choice', array(
+            ->add('auto_activate', 'checkbox', array('required' => false))
+            ->add('deactivate_on_close', 'checkbox', array('required' => false))
+            ->add('geometrytypes', 'choice', array(
                 'required' => true,
                 'multiple' => true,
                 'choices' => array(

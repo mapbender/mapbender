@@ -65,10 +65,10 @@ class Redlining extends Element
     {
         return array(
             "target" => null,
-            "displayType" => null,
-            "autoActivate" => false,
-            "deactivateOnClose" => true,
-            "geometryTypes" => array( "point", "line", "polygon", "text")
+            "display_type" => null,
+            "auto_activate" => false,
+            "deactivate_on_close" => true,
+            "geometrytypes" => array( "point", "line", "polygon", "text")
         );
     }
 
