@@ -1,5 +1,6 @@
 Mapbender.Model = function(domId) {
     'use strict';
+    this.vectorLayer = {};
     this.map = new ol.Map({
         view:   new ol.View({
             center: [0, 0],
@@ -8,11 +9,17 @@ Mapbender.Model = function(domId) {
         target: domId
     });
 
+
     return this;
 };
 
-Mapbender.Model.prototype.map = null;
-Mapbender.Model.prototype.vectorLayer = {};
+Mapbender.Model.prototype.layerTypes = {
+    vector: 'vectorLayer'
+};
+
+
+Mapbender.Model.prototype.DRAWTYPES = ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle'];
+
 Mapbender.Model.prototype.mapElement = null;
 Mapbender.Model.prototype.parseURL = function parseURL() {
 };
@@ -167,33 +174,24 @@ Mapbender.Model.prototype.addLayerSetById = function addLayerSetsById(layerSetId
 };
 
 /**
- * Create draw control
  *
- * @param {ol.source.Vector} source
- * @param {ol.geom.GeometryType} type
- * @returns {*}
- * @constructor
+ * @param  {Object} options (See https://openlayers.org/en/latest/apidoc/ol.layer.Vector.html)
+ * @param {ol.style|function} style
+ * @param {string} owner
+ * @returns {string}
  */
-Mapbender.Model.prototype.DrawFeature = function DrawFeature(source, type) {
-    'use strict';
-    return ol.interaction.Draw({
-        source: source,
-        type: type
-    });
-};
-
-Mapbender.Model.prototype.createVectorLayer = function(options, style, owner){
+Mapbender.Model.prototype.createVectorLayer = function(options, style, owner) {
     'use strict';
     var uuid = Mapbender.UUID();
     this.vectorLayer[owner] = this.vectorLayer[owner] || {};
     options.map = this.map;
-    var vectorLayer = new ol.layer.Vector(options,{
-        style: style }
-    );
-    this.vectorLayer[owner][uuid] = vectorLayer;
+    this.vectorLayer[owner][uuid] = new ol.layer.Vector(options, {
+        style: style
+    });
 
     return uuid;
 };
+
 
 // /**
 //  *
@@ -232,3 +230,115 @@ Mapbender.Model.prototype.createCoordinate = function (array) {
 Mapbender.Model.prototype.transform = function transform(coordinate, source, destination) {
     return new ol.Coordinate(newCoordinate);
 };
+
+/**
+ *
+ * @param owner
+ * @param uuid
+ * @param style
+ * @param refresh
+ */
+Mapbender.Model.prototype.setVectorLayerStyle = function(owner, uuid, style, refresh){
+    'use strict';
+    this.setLayerStyle('vectorLayer', owner, uuid, style);
+};
+/**
+ *
+ * @param layerType
+ * @param owner
+ * @param uuid
+ * @param style
+ * @param refresh
+ */
+Mapbender.Model.prototype.setLayerStyle = function setLayerStyle(layerType, owner, uuid, style, refresh){
+    'use strict';
+    this.vectorLayer[owner][uuid].setLayerStyle(new ol.style.Style(style));
+    if(refresh){
+        this.vectorLayer[owner][uuid].refresh();
+    }
+
+};
+Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, owner, style, events){
+    'use strict';
+
+    if(!_.contains( this.DRAWTYPES,type )){
+        throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
+    }
+    var vector = new ol.source.Vector({wrapX: false});
+    var id = this.createVectorLayer({ source : vector},style,owner);
+
+    var draw =  new ol.interaction.Draw({
+        source: vector,
+        type: type
+    });
+
+
+    this.vectorLayer[owner][id].interactions = this.vectorLayer[owner][id].interactions  || {};
+    this.vectorLayer[owner][id].interactions[id] = draw;
+
+
+    _.each(events, function(value, key) {
+        draw.on(key, value);
+    }.bind(this));
+
+    this.map.addInteraction(draw);
+
+    return id;
+
+};
+
+Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,id){
+    var vectorLayer = this.vectorLayer[owner][id];
+    if(this.vectorLayer[owner][id].hasOwnProperty('interactions')){
+        this.removeInteractions(this.vectorLayer[owner][id].interactions);
+    }
+    this.map.removeLayer(vectorLayer);
+
+};
+
+Mapbender.Model.prototype.removeInteractions = function removeControls(controls){
+    _.each(controls, function(control, index){
+        this.map.removeInteraction(control);
+    }.bind(this));
+
+
+};
+
+Mapbender.Model.prototype.eventFeatureWrapper = function eventFeatureWrapper(event, callback, args){
+    'use strict';
+    var args = [event.feature].concat(args)
+    return callback.apply(this,args);
+
+};
+
+
+
+Mapbender.Model.prototype.getLineStringLength = function(line){
+    'use strict';
+
+    return  ol.Sphere.getLength(line);
+};
+
+Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservable, args){
+    'use strict';
+
+    return feature.getGeometry().on('change', function(evt) {
+        var geom = evt.target;
+        args = [geom].concat(args);
+        obvservable.value =  callback.apply(this,args);
+    });
+
+
+};
+
+
+
+Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(){
+    return {};
+};
+
+
+
+
+
+
