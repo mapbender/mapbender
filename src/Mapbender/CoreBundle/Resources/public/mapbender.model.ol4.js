@@ -14,7 +14,6 @@ Mapbender.Model = function(domId) {
 Mapbender.Model.prototype.map = null;
 Mapbender.Model.prototype.vectorLayer = {};
 Mapbender.Model.prototype.mapElement = null;
-Mapbender.Model.prototype.currentProj = null;
 Mapbender.Model.prototype.parseURL = function parseURL() {
 };
 Mapbender.Model.prototype.onMapClick = function onMapClick() {
@@ -33,10 +32,22 @@ Mapbender.Model.prototype.getActiveLayers = function getActiveLayers() {
 };
 Mapbender.Model.prototype.setRequestParameter = function setRequestParameter() {
 };
-Mapbender.Model.prototype.getCurrentProj = function getCurrentProj() {
+/**
+ * @returns {string}
+ */
+Mapbender.Model.prototype.getCurrentProjectionCode = function getCurrentProj() {
     'use strict';
-    return this.currentProj;
+    return this.map.getView().getProjection().getCode();
 };
+
+/**
+ * @returns {ol.proj.Projection}
+ */
+Mapbender.Model.prototype.getCurrentProjectionObject = function getCurrentProj() {
+    'use strict';
+    return this.map.getView().getProjection();
+};
+
 Mapbender.Model.prototype.getAllSrs = function getAllSrs() {
 };
 Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
