@@ -209,43 +209,90 @@ Mapbender.Model.prototype.createVectorLayer = function(options, style, owner) {
     return uuid;
 };
 
-
-// /**
-//  *
-//  * @param options
-//  * @returns {ol.Geolocation}
-//  */
-// Mapbender.Model.prototype.createGeolocation = function (options) {
-//     return new ol.Geolocation(options)
-// };
-//
-// /**
-//  *
-//  * @param options
-//  * @returns {*}
-//  */
-// Mapbender.Model.prototype.createProjection = function (options) {
-//     return new ol.proj.Projection(options)
-// };
-
 /**
  *
- * @param array {lat,lon}
- * @returns {ol.Coordinate}
+ * @param array
+ * @param delta
+ * @returns {ol.Coordinate.add}
  */
-Mapbender.Model.prototype.createCoordinate = function (array) {
-    return new ol.Coordinate(array);
+Mapbender.Model.prototype.createCoordinate = function (array, delta) {
+    return new ol.Coordinate.add(array, delta);
 };
 
 /**
- * @see: https://openlayers.org/en/latest/apidoc/ol.proj.html#.transform
+ *
  * @param coordinate
  * @param source
  * @param destination
  * @returns {ol.Coordinate}
  */
-Mapbender.Model.prototype.transform = function transform(coordinate, source, destination) {
-    return new ol.Coordinate(newCoordinate);
+
+Mapbender.Model.prototype.transformCoordinate = function transformCoordinate(coordinate, source, destination) {
+    'use strict';
+   return ol.proj.transform(coordinate, source, destination);
+};
+
+/**
+ *
+ * @param owner
+ * @returns {boolean}
+ */
+Mapbender.Model.prototype.removeVectorLayerbyName = function removeVectorLayerbyName(owner){
+    var vectorLayer = this.vectorLayer;
+    var desiredObject = vectorLayer[owner];
+    var keys = Object.keys(desiredObject);
+
+    if (keys.length > 0 ){
+        for (var i = 0; i < keys.length; i++) {
+            var val = desiredObject[keys[i]];
+            val.getSource().clear();
+            //this.map.removeLayer(desiredObject);
+        }
+        delete vectorLayer[owner];
+        return true
+    }else{
+        return false
+    }
+};
+
+/**
+ *
+ * @param center
+ * @returns {*|void}
+ */
+Mapbender.Model.prototype.setCenter = function setCenter(center) {
+    'use strict';
+    return this.map.getView().setCenter(center);
+};
+
+/**
+ *
+ * @param zoom
+ * @returns {*}
+ */
+Mapbender.Model.prototype.setZoom = function setZoom(zoom) {
+    'use strict';
+    return this.map.getView().setZoom(zoom);
+};
+
+/**
+ *
+ * @param geometryOrExtent
+ * @param opt_options
+ * @returns {*}
+ */
+Mapbender.Model.prototype.fit = function fit(geometryOrExtent, opt_options) {
+    'use strict';
+    return this.map.getView().fit(geometryOrExtent, opt_options);
+};
+
+/**
+ *
+ * @returns {*}
+ */
+Mapbender.Model.prototype.getLayers = function getLayers() {
+    'use strict';
+    return this.map.getLayers();
 };
 
 /**
