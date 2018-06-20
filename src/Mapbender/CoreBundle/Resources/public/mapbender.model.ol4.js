@@ -95,7 +95,7 @@ Mapbender.Model.prototype.generateSourceId = function generateSourceId() {
  */
 Mapbender.Model.prototype.sourcesFromLayerSetId = function sourcesFromLayerSetIds(layerSetId) {
     'use strict';
-    var layerSetConfig = Mapbender.configuration.layersets["" + layerSetId];
+    var layerSetConfig = Mapbender.configuration.layersets['' + layerSetId];
     var sources = [];
     if (typeof layerSetConfig === 'undefined') {
         throw new Error("Unknown layerset '" + layerSetId + "'");
