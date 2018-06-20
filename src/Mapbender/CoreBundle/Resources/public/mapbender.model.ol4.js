@@ -381,3 +381,29 @@ Mapbender.Model.prototype.getActiveSourceIds = function() {
 Mapbender.Model.prototype.getActiveLayerNames = function(sourceId) {
     return this.getSourceById(sourceId).getActiveLayerNames();
 };
+
+/**
+ *
+ * @param owner
+ * @param vectorId
+ * @param featureId
+ * @returns {ol.Feature}
+ */
+Mapbender.Model.prototype.getFeatureById = function(owner, vectorId, featureId) {
+    'use strict';
+    var source = this.vectorLayer[owner][vectorId].getSource();
+    return source.getFeatureById(featureId);
+};
+
+/**
+ *
+ * @param owner
+ * @param vectorId
+ * @param featureId
+ */
+Mapbender.Model.prototype.removeFeatureById = function(owner, vectorId, featureId) {
+    'use strict';
+    var source = this.vectorLayer[owner][vectorId].getSource();
+    var feature = source.getFeatureById(featureId);
+    source.removeFeature(feature);
+};
