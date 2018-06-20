@@ -89,12 +89,32 @@
                 for (var j = 0; j < lsConfig.length; ++j) {
                     var sourceConfigWrapper = lsConfig[j];
                     _.forEach(sourceConfigWrapper, function(sourceConfig, sourceId) {
+                        // HACK: put a string id on the source, so we can render it in an attribute later
+                        // @todo: fix the configuration server-side. Source definition should always come with a built-in id
                         sourceConfig.id = "" + sourceId;
                         sourceConfigs.push(sourceConfig);
                     });
                 }
             }
             return sourceConfigs.reverse();
+        },
+        _findLayerSetConfigFromSourceConfig: function(sourceConfig) {
+            var layerSetId = sourceConfig.layerSetId;
+            if (!layerSetId) {
+                console.error("Can't find layerset id in source config", sourceConfig);
+                throw new Error("Can't find layerset id in source config");
+            }
+            var layerSet = Mapbender.configuration.layersets[sourceConfig.layerSetId];
+            if (!layerSet) {
+                throw new Error("Can't find layerset with id '" + layerSetId + "'");
+            }
+
+            // emulate return structure from old model code (findLayerSet)
+            return {
+                id: layerSetId,
+                title: Mapbender.configuration.layersetmap[layerSetId],
+                content: layerSet
+            };
         },
         _createTree: function() {
             var self = this;
@@ -129,11 +149,7 @@
         },
         _addNode: function($toAdd, source) {
             if (this.options.useTheme) {
-                var layerset = this.model.findLayerset({
-                    source: {
-                        origId: source.origId
-                    }
-                });
+                var layerset = this._findLayerSetConfigFromSourceConfig(source);
                 var theme = {};
                 $.each(this.options.themes, function(idx, item) {
                     if (item.id === layerset.id)
