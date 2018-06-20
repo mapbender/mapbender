@@ -7,6 +7,8 @@ Mapbender.Model = function(domId) {
         }),
         target: domId
     });
+    // ordered list of WMS / WMTS etc sources that provide pixel tiles
+    this.pixelSources = [];
 
     return this;
 };
@@ -150,9 +152,26 @@ Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
         default:
             throw new Error("Unhandled source type '" + sourceType + "'");
     }
-
     var engineLayer = new ol.layer.Tile({source: olSource});
+    this.pixelSources.push(sourceObj);
     this.map.addLayer(engineLayer);
+};
+
+/**
+ *
+ * @param {string} sourceId
+ * @returns Mapbender.Model.Source
+ * @internal
+ */
+Mapbender.Model.prototype.getSourceById = function getSourceById(sourceId) {
+    var safeId = "" + sourceId;
+    for (var i = 0; i < this.pixelSources.length; ++i) {
+        var source = this.pixelSources[i];
+        if (source.id === safeId) {
+            return source;
+        }
+    }
+    return null;
 };
 
 /**
