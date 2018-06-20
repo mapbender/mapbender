@@ -31,7 +31,7 @@ window.Mapbender.Model.Source = (function() {
         var layerDefs = this.extractLeafLayerConfigs(config.configuration);
         this.layerOptionsMap_ = {};
         this.layerNameMap_ = {};
-        this.allLayerNames_ = [];
+        this.layerOrder_ = [];
 
         _.forEach(layerDefs, function(layerConfig) {
             this.processLayerConfig(layerConfig);
@@ -103,7 +103,7 @@ window.Mapbender.Model.Source = (function() {
         var stringLayerName = "" + layerConfig.name;
         this.layerOptionsMap_[stringId] = layerConfig;
         this.layerNameMap_[stringLayerName] = layerConfig;
-        this.allLayerNames_.push(stringLayerName);
+        this.layerOrder_.push(stringLayerName);
 
         //HACK: all layers treated as (initially) active
         // @todo: scan "parent" nodes in configuration to determine enabled state
@@ -125,6 +125,34 @@ window.Mapbender.Model.Source = (function() {
         this.engineLayer_.getSource().updateParams(params);
     };
 
+    Source.prototype.setLayerState = function setLayerState(layerName, active) {
+        if (!this.layerNameMap_[layerName]) {
+            console.error("Unknown layer name", layerName, "known:", Object.keys(this.layerNameMap_));
+            return;
+        }
+        var activeMap = {};
+        var activeBefore = this.getActiveLayerNames();
+        var i;
+        for (i = 0; i < activeBefore.length; ++i) {
+            activeMap[activeBefore[i]] = true;
+        }
+        if (active) {
+            activeMap[layerName] = true;
+        } else {
+            delete activeMap[layerName];
+        }
+        var activeAfter = [];
+        // loop through allLayerNames_, use that to determine layer ordering and rebuild the LAYERS request parameter
+        for (i = 0; i < this.layerOrder_.length; ++i) {
+            var nextLayerName = this.layerOrder_[i];
+            if (!!activeMap[nextLayerName]) {
+                activeAfter.push(nextLayerName);
+                delete activeMap[nextLayerName];
+            }
+        }
+        this.customRequestParams.LAYERS = activeAfter.join(',');
+        this.updateEngine();
+    };
 
     /**
      * @returns {string[]}
