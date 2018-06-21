@@ -323,7 +323,7 @@
             // }
 
             var model= this.map.model;
-            var layersToRemove = model.removeVectorLayerbyName('gpsPosition');
+            var layersToRemove = model.removeVectorLayerByName('gpsPosition');
             console.log('delete: '+layersToRemove);
             return this;
         },

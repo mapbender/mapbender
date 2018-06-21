@@ -237,7 +237,7 @@ Mapbender.Model.prototype.transformCoordinate = function transformCoordinate(coo
  * @param owner
  * @returns {boolean}
  */
-Mapbender.Model.prototype.removeVectorLayerbyName = function removeVectorLayerbyName(owner){
+Mapbender.Model.prototype.removeVectorLayerByName = function removeVectorLayerbyName(owner){
     var vectorLayer = this.vectorLayer;
     var desiredObject = vectorLayer[owner];
     var keys = Object.keys(desiredObject);
