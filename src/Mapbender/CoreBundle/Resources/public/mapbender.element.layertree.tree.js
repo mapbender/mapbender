@@ -204,11 +204,7 @@
             this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleSelected, self));
-            if (initCheckbox) {
-                $('.checkbox', self.element).each(function() {
-                    initCheckbox.call(this);
-                });
-            }
+            $('input[type="checkbox"]', this.element).mbCheckbox();
         },
         _resetSortable: function() {
             this._unSortable();
@@ -527,15 +523,11 @@
         },
         _resetNodeSelected: function($li, layerOptions) {
             var chk_selected = $('input[name="selected"]:first', $li);
-            chk_selected.prop('checked', layerOptions.treeOptions.selected);
-            initCheckbox.call(chk_selected);
+            chk_selected.prop('checked', layerOptions.treeOptions.selected).trigger('change');
         },
         _resetNodeInfo: function($li, layerOptions) {
             var chk_info = $('input[name="info"]:first', $li);
-            chk_info.prop('checked', layerOptions.treeOptions.info);
-            chk_info.each(function(k, v) {
-                initCheckbox.call(v);
-            });
+            chk_info.prop('checked', layerOptions.treeOptions.info).trigger('change');
         },
         _resetNodeVisible: function($li, layerDef) {
             if (layerDef.state.visibility) {
@@ -574,16 +566,13 @@
                                 this._resetNodeVisible($li, changed.children[layerId].options);
                             }
                             if(changed.children[layerId].options.treeOptions.allow){
+                                var chk_selected = $('input[name="selected"]:first', $li);
                                 if(changed.children[layerId].options.treeOptions.allow.selected === true){
-                                    var chk_selected = $('input[name="selected"]:first', $li);
-                                    chk_selected.prop('disabled', false);
+                                    chk_selected.prop('disabled', false).mbCheckbox();
                                     $li.removeClass('invisible');
-                                    initCheckbox.call(chk_selected);
                                 } else if(changed.children[layerId].options.treeOptions.allow.selected === false){
-                                    var chk_selected = $('input[name="selected"]:first', $li);
-                                    chk_selected.prop('disabled', true);
+                                    chk_selected.prop('disabled', true).mbCheckbox();
                                     $li.addClass('invisible');
-                                    initCheckbox.call(chk_selected);
                                 }
                             }
                         } else if (changed.children[layerId].state) {
@@ -929,7 +918,7 @@
                         inpchkbox.on('change', function(e) {
                             self._callDimension(source, $(e.target));
                         });
-                        initCheckbox.call(inpchkbox);
+                        $(inpchkbox).mbCheckbox();
                         title.attr('title', title.attr('title') + ' ' + item.name);
                         title.attr('id', title.attr('id') + item.name);
                         chkbox.after(title);

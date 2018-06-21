@@ -64,6 +64,7 @@ class Layertree extends Element
                 '@FOMCoreBundle/Resources/public/js/dragdealer.min.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
+                '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
                 '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
                 'mapbender.element.layertree.tree.js',
                 'mapbender.metadata.js'),
