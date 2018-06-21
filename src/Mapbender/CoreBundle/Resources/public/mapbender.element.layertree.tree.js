@@ -782,40 +782,36 @@
         },
         _toggleSelected: function(e) {
             var $target = $(e.target);
-            var $serviceNode = $target.closest('.serviceContainer');
-            if (!$serviceNode.get().length) {
+            var serviceNodes = $target.closest('.serviceContainer').get();
+            if (!serviceNodes.length) {
                 // assume click on a theme. Find .serviceContainer nodes UNDER the theme, and
                 // update them iteratively
-                $serviceNode = $target.closest('.themeContainer').find('.serviceContainer');
-                console.log("Updating services", $serviceNode);
-                _.forEach($serviceNode.get(), function(serviceNode) {
-                    var fakeEvent = {
-                        target: serviceNode
-                    };
-                    this._toggleSelected(fakeEvent);
-                }.bind(this));
-                return;
+                serviceNodes = $target.closest('.themeContainer').find('.serviceContainer').get();
             }
-
-            var sourceId = $serviceNode.attr('data-sourceid');
+            for (var i = 0; i < serviceNodes.length; ++i) {
+                this._updateService($(serviceNodes[i]));
+            }
+        },
+        _updateService($node) {
+            var sourceId = $node.attr('data-sourceid');
             var sourceObj = this.model.getSourceById(sourceId);
 
             // collect affected layer names tree-down (to support events on group / root)
-            var affectedLeaves = $('.leave[data-type="simple"]', $serviceNode).get();
+            var affectedLeaves = $('.leave[data-type="simple"]', $node).get();
             for (var i = 0; i < affectedLeaves.length; ++i) {
                 // for each layer: collect checkbox values up the entire tree (layer, layer group, source, theme)
                 var layerNode = affectedLeaves[i];
                 var layerName = $(layerNode).attr('data-layername');
                 if (!layerName) {
-                    console.error("Can't find layername from event target", $target);
+                    console.error("Can't find layername from layer node", layerNode);
                     throw new Error("Can't change layer visibility; no layer name");
                 }
                 // checkboxes to scan are inside leaf layer node itself plus all parent containers
                 var scanNodes = [layerNode].concat($(layerNode).parents('li.leave').get());
                 var newState = 1;
                 for (var j = 0; j < scanNodes.length; ++j) {
-                    var $cb = $('input[name="selected"]', scanNodes[j]);
-                    console.log("Adding state of checkbox", $cb);
+                    // NOTE: "theme" checkboxes use a different input name ("sourceVisibility")
+                    var $cb = $('input[name="selected"],input[name="sourceVisibility"]', scanNodes[j]);
                     newState &= $cb.prop('checked');
                 }
                 // apply
