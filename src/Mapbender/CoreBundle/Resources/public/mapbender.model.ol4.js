@@ -228,14 +228,12 @@ Mapbender.Model.prototype.addLayerSetById = function addLayerSetsById(layerSetId
  * @param {string} owner
  * @returns {string}
  */
-Mapbender.Model.prototype.createVectorLayer = function(options, style, owner) {
+Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
     'use strict';
     var uuid = Mapbender.UUID();
     this.vectorLayer[owner] = this.vectorLayer[owner] || {};
     options.map = this.map;
-    this.vectorLayer[owner][uuid] = new ol.layer.Vector(options, {
-        style: style
-    });
+    this.vectorLayer[owner][uuid] = new ol.layer.Vector(options);
 
     return uuid;
 };
@@ -307,17 +305,20 @@ Mapbender.Model.prototype.setLayerStyle = function setLayerStyle(layerType, owne
     }
 
 };
-Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, owner, style, events){
+Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, owner, options){
     'use strict';
 
     if(!_.contains( this.DRAWTYPES,type )){
         throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
     }
-    var vector = new ol.source.Vector({wrapX: false});
-    var id = this.createVectorLayer({ source : vector, style : style}, {}, owner);
+    //var layerStyle = this.createVectorLayerStyle(style);
+    options = options || {};
+    options.source = options.source ||  new ol.source.Vector({wrapX: false});
+
+    var id = this.createVectorLayer(options, owner);
 
     var draw =  new ol.interaction.Draw({
-        source: vector,
+        source: options.source,
         type: type
     });
 
@@ -326,7 +327,7 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
     this.vectorLayer[owner][id].interactions[id] = draw;
 
 
-    _.each(events, function(value, key) {
+    _.each(options.events, function(value, key) {
         draw.on(key, value);
     }.bind(this));
 
@@ -342,6 +343,8 @@ Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,i
         this.removeInteractions(this.vectorLayer[owner][id].interactions);
     }
     this.map.removeLayer(vectorLayer);
+    delete this.vectorLayer[owner][id];
+
 
 };
 
@@ -383,7 +386,7 @@ Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservab
 
 
 Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(){
-    return {};
+    return new ol.style.Style();
 }
 
 
@@ -412,4 +415,23 @@ Mapbender.Model.prototype.getActiveSourceIds = function() {
  */
 Mapbender.Model.prototype.getActiveLayerNames = function(sourceId) {
     return this.getSourceById(sourceId).getActiveLayerNames();
+};
+
+
+Mapbender.Model.prototype.removeAllFeaturesFromLayer = function removeAllFeaturesFromLayer(owner, id) {
+
+    return   this.vectorLayer[owner][id].getSource().clear();
+
+};
+
+Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature) {
+
+    return   this.getLineStringLength(feature.getGeometry());
+
+};
+
+Mapbender.Model.prototype.getGeometryCoordinates = function getFeaureCoordinates(geom) {
+
+    return   geom.getFlatCoordinates();
+
 };
