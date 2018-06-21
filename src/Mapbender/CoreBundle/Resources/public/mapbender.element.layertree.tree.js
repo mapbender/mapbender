@@ -175,7 +175,7 @@
             var self = this;
             this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
-            this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.on('change', 'input[name="info"]', $.proxy(self._toggleSelected, self));
             this.element.on('click', '.iconFolder', $.proxy(self._toggleContent, self));
             this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
@@ -185,7 +185,7 @@
             var self = this;
             this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
-            this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.off('change', 'input[name="info"]', $.proxy(self._toggleSelected, self));
             this.element.off('click', '.iconFolder', $.proxy(self._toggleContent, self));
             this.element.off('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.off('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
@@ -200,10 +200,10 @@
             var self = this;
             this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
-            this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.off('change', 'input[name="info"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
-            this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.on('change', 'input[name="info"]', $.proxy(self._toggleSelected, self));
             if (initCheckbox) {
                 $('.checkbox', self.element).each(function() {
                     initCheckbox.call(this);
@@ -752,32 +752,9 @@
             return false;
         },
         _selectAll: function(e) {
-            var self = this;
             var $sourceVsbl = $(e.target);
             var $li = $sourceVsbl.parents('li:first');
-            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, srcLi) {
-                var $srcLi = $(srcLi);
-                var source = {
-                    id: $srcLi.data('sourceid')
-                };
-                var options = {
-                    layers: {}
-                };
-                var value = {
-                    options: {
-                        treeOptions: {
-                            selected: true
-                        }
-                    }
-                };
-                $('li', $srcLi).each(function(idx, layerLi) {
-                    var $layerLi = $(layerLi);
-                    if (!$('input[name="selected"]:first', $layerLi).prop('checked')) {
-                        options.layers[$layerLi.attr('data-id')] = value;
-                    }
-                });
-                self.model.changeLayerState(source, options, false, true);
-            });
+            $('.serviceContainer input[name="selected"]', $li).prop('checked', true).trigger('change');
             return false;
         },
         _toggleSelected: function(e) {
