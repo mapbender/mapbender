@@ -78,8 +78,8 @@
 
             var type = this.typeMap[this.options.type].name;
 
-            var layerStyle = model.createVectorLayerStyle();
-            this.layerId = model.createDrawControl(type, id, layerStyle, {
+
+            this.layerId = model.createDrawControl(type, id, {
                 'drawstart': function(event) {
                     var obvservable = {value: null};
                     this.featureVeriticesLength = this.typeMap[this.options.type].startVertices;
