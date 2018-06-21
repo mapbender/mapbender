@@ -849,14 +849,18 @@
                     });
                 }
                 var showZoomTo = $.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0;
-                showZoomTo = showZoomTo && nodeOptions.bbox;
+                var currentSrs = self.model.getCurrentProjectionCode();
+                showZoomTo = showZoomTo && nodeOptions.bbox && nodeOptions.bbox[currentSrs];
                 if (showZoomTo) {
                     $('.layer-zoom', menu).removeClass('inactive').on('click', function() {
-                        var currentSrs = self.model.getCurrentProjectionCode();
-                        var extent = (nodeOptions.bbox || {})[currentSrs];
+                        // SRS may theoretically have changed since binding the event handler, get it again
+                        var currentSrsOnClick = self.model.getCurrentProjectionCode();
+                        var extent = (nodeOptions.bbox || {})[currentSrsOnClick];
                         if (extent) {
                             // @todo 3.1.0: move to model
                             self.model.map.getView().fit(extent);
+                        } else {
+                            console.warn("Empty extent for current projection", currentSrsOnClick);
                         }
                     });
                     atLeastOne = true;
