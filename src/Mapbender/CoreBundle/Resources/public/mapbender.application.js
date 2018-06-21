@@ -99,10 +99,9 @@ Mapbender.setup = function(){
     $.each(Mapbender.configuration.elements, function(id, data){
         var defaultStackTraceLimit = Error.stackTraceLimit;
         Error.stackTraceLimit = undefined;
-        try {
+        try {       
             Mapbender.initElement(id,data);
         } catch(e) {
-            throw e;
             $.notify('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.', 'error');
             console.error(e);            
         }
