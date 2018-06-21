@@ -82,6 +82,8 @@ Mapbender.Model.prototype.getCurrentProjectionObject = function getCurrentProj()
 Mapbender.Model.prototype.getAllSrs = function getAllSrs() {
 };
 Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
+    'use strict';
+    return this.map.getView().calculateExtent();
 };
 Mapbender.Model.prototype.getScale = function getScale() {
 };
@@ -346,10 +348,10 @@ Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,i
 
 };
 
-Mapbender.Model.prototype.removeInteractions = function removeControls(controls){
-    _.each(controls, function(control, index){
+Mapbender.Model.prototype.removeInteractions = function removeControls(control){
+    //_.each(controls, function(control, index){
         this.map.removeInteraction(control);
-    }.bind(this));
+    //}.bind(this));
 
 
 };
@@ -439,4 +441,58 @@ Mapbender.Model.prototype.removeFeatureById = function(owner, vectorId, featureI
     var source = this.vectorLayer[owner][vectorId].getSource();
     var feature = source.getFeatureById(featureId);
     source.removeFeature(feature);
+};
+
+/**
+ *
+ * @param owner
+ * @param vectorId
+ */
+Mapbender.Model.prototype.getLayerExtent = function(owner, vectorId) {
+    'use strict';
+    var vectorLayerExtent = this.vectorLayer[owner][vectorId].getSource().getExtent();
+    return this.mbExtent(vectorLayerExtent);
+};
+
+/**
+ *
+ * @param owner
+ * @param vectorId
+ * @param featureId
+ */
+Mapbender.Model.prototype.getFeatureExtent = function(owner, vectorId, featureId) {
+    'use strict';
+    var feature = this.getFeatureById(owner, vectorId, featureId);
+    var featureExtent = feature.getGeometry().getExtent();
+    return this.mbExtent(featureExtent);
+};
+
+/**
+ * An array of numbers representing an extent: [minx, miny, maxx, maxy].
+ *
+ * @param {Array.<number>} extentCoordinates
+ */
+Mapbender.Model.prototype.mbExtent = function MbExtent(extentCoordinates) {
+    'use strict';
+    var extent = {};
+    extent.left = extentCoordinates[0];
+    extent.bottom = extentCoordinates[1];
+    extent.right = extentCoordinates[2];
+    extent.top = extentCoordinates[3];
+    return extent;
+};
+
+/**
+ *
+ * @param mbExtent
+ */
+Mapbender.Model.prototype.zoomToExtent = function(mbExtent) {
+    'use strict';
+    var extent = [
+        mbExtent.left,
+        mbExtent.bottom,
+        mbExtent.right,
+        mbExtent.top
+    ];
+    this.map.getView().fit(extent, this.map.getSize());
 };
