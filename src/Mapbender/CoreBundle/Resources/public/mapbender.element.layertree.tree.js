@@ -708,36 +708,6 @@
                 $parent.addClass("showLeaves");
             }
             var li = $me.parents('li:first[data-sourceid]');
-            if (li.length > 0) {
-                this._resetSourceAtTree(this.model.getSource({
-                    id: li.attr(
-                        'data-sourceid')
-                }));
-            }
-            return false;
-        },
-        _toggleSourceVisibility: function(e) {
-            var self = this;
-            var $sourceVsbl = $(e.target);
-            var $li = $sourceVsbl.parents('li:first');
-            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
-                var $item = $(item);
-                var chk_selected = $('input[name="selected"]:first', $item);
-                self.model.changeSource({
-                    change: {
-                    sourceIdx: {
-                        id: $item.attr('data-sourceid')
-                    },
-                    options: {
-                        type: 'selected',
-                        configuration: {
-                            options: {
-                                visibility: $sourceVsbl.prop('checked') === false ? false : chk_selected.prop('checked')
-                            }
-                        }
-                    }
-                }});
-            });
             return false;
         },
         _selectAll: function(e) {
@@ -748,22 +718,41 @@
         },
         _toggleSelected: function(e) {
             var $target = $(e.target);
-            var serviceNodes = $target.closest('.serviceContainer').get();
-            if (!serviceNodes.length) {
-                // assume click on a theme. Find .serviceContainer nodes UNDER the theme, and
-                // update them iteratively
-                serviceNodes = $target.closest('.themeContainer').find('.serviceContainer').get();
-            }
-            for (var i = 0; i < serviceNodes.length; ++i) {
-                this._updateService($(serviceNodes[i]));
+            var $listNode = $target.closest('.leave[data-type]');
+            switch ($listNode.attr('data-type')) {
+                case 'theme':
+                    var serviceNodes = $('.serviceContainer', $listNode).get();
+                    for (var i = 0; i < serviceNodes.length; ++i) {
+                        this._updateServiceState($(serviceNodes[i]));
+                    }
+                    break;
+                case 'root':
+                    this._updateServiceState($listNode);
+                    break;
+                case 'group':
+                case 'simple':
+                    this._updateLeafStates($listNode);
+                    break;
+                default:
+                    throw new Error("Unhandled node type " + $listNode.attr('data-type'));
             }
         },
-        _updateService($node) {
+        _updateServiceState: function($node) {
             var sourceId = $node.attr('data-sourceid');
+            var themeActive = $('input[name="sourceVisibility"]', $node.parentsUntil(this.element, 'li.themeContainer')).prop('checked');
             var sourceObj = this.model.getSourceById(sourceId);
-
+            var active = $('.leaveContainer:first input[name="selected"]', $node).prop('checked');
+            if (typeof themeActive !== 'undefined') {
+                active &= themeActive;
+            }
+            sourceObj.setState(!!active);
+        },
+        _updateLeafStates: function($startNode) {
+            var $serviceNode = $startNode.closest('.serviceContainer');
+            var sourceId = $serviceNode.attr('data-sourceid');
+            var sourceObj = this.model.getSourceById(sourceId);
             // collect affected layer names tree-down (to support events on group / root)
-            var affectedLeaves = $('.leave[data-type="simple"]', $node).get();
+            var affectedLeaves = $('.leave[data-type="simple"]', $serviceNode).get();
             for (var i = 0; i < affectedLeaves.length; ++i) {
                 // for each layer: collect checkbox values up the entire tree (layer, layer group, source, theme)
                 var layerNode = affectedLeaves[i];
@@ -774,41 +763,21 @@
                 }
                 // checkboxes to scan are inside leaf layer node itself plus all parent containers
                 var scanNodes = [layerNode].concat($(layerNode).parents('li.leave').get());
-                var newState = 1;
+                var newStateVisible = 1;
+                var newStateInfo = 1;
                 for (var j = 0; j < scanNodes.length; ++j) {
                     // NOTE: "theme" checkboxes use a different input name ("sourceVisibility")
-                    var $cb = $('input[name="selected"],input[name="sourceVisibility"]', scanNodes[j]);
-                    newState &= $cb.prop('checked');
+                    var $cbVisible = $('input[name="selected"],input[name="sourceVisibility"]', scanNodes[j]);
+                    var $cbInfo = $('input[name="info"],input[name="sourceVisibility"]', scanNodes[j]);
+                    newStateVisible &= $cbVisible.prop('checked');
+                    newStateInfo &= $cbInfo.prop('checked');
                 }
                 // apply
-                sourceObj.setLayerState(layerName, !!newState);
+                sourceObj.updateLayerState(layerName, {
+                    visible: !!newStateVisible,
+                    queryable: !!newStateInfo
+                });
             }
-        },
-        _toggleInfo: function(e) {
-            var li = $(e.target).parents('li:first');
-            var tochange = {
-                sourceIdx: {
-                    id: li.attr(
-                        'data-sourceid')
-                },
-                options: {
-                    children: {},
-                    type: 'info'
-                }
-            };
-            tochange.options.children[li.attr('data-id')] = {
-                options: {
-                    treeOptions: {
-                        info: $(
-                            e.target).
-                            is(
-                                ':checked')
-                    }
-                }
-            };
-            this.model.changeSource({
-                change: tochange
-            });
         },
         currentMenu: null,
         closeMenu: function(menu) {
