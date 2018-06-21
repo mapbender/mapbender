@@ -855,9 +855,7 @@
             var self = this;
             function createMenu($element, sourceId, layerId) {
                 var atLeastOne = false;
-                var source = self.model.findSource({
-                    id: sourceId
-                })[0];
+                var source = self.model.getSourceById(sourceId);
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
                     sourceId));
                 var exitButton = menu.find('.exit-button');
@@ -896,7 +894,7 @@
                     atLeastOne = true;
                     $('.layer-opacity-handle').attr('unselectable', 'on');
                     new Dragdealer('layer-opacity', {
-                        x: source.configuration.options.opacity,
+                        x: self.model.getSourceById(sourceId).getOpacity(),
                         horizontal: true,
                         vertical: false,
                         speed: 1,
@@ -905,9 +903,7 @@
                         animationCallback: function(x, y) {
                             var percentage = Math.round(x * 100);
                             $("#layer-opacity").find(".layer-opacity-handle").text(percentage);
-                            self._setOpacity(self.model.findSource({
-                                id: sourceId
-                            })[0], percentage / 100.0);
+                            self.model.getSourceById(sourceId).setOpacity(x);
                         }
                     });
                 }

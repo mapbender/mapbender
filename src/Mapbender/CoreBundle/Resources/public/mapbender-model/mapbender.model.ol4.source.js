@@ -15,6 +15,9 @@ window.Mapbender.Model.Source = (function() {
         this.model = model;
         this.id = "" + (id || model.generateSourceId());
         this.type = (config['type'] || 'wms').toLowerCase();
+        // HACK: Store original config for old-style access.
+        //       This attribute is not used internally in the source or in the model layer.
+        this.config = config;
         this.baseUrl_ = config.configuration.options.url;
         var opacity;
         // handle / support literal 0 opacity (=falsy, needs extended check)
@@ -129,6 +132,15 @@ window.Mapbender.Model.Source = (function() {
                 this.customRequestParams.LAYERS = [this.customRequestParams.LAYERS, stringLayerName].join(',');
             }
         }
+    };
+
+    Source.prototype.getOpacity = function getOpacity() {
+        return this.options.opacity;
+    };
+
+    Source.prototype.setOpacity = function setOpacity(v) {
+        this.options.opacity = v;
+        this.updateEngine();
     };
 
     Source.prototype.updateEngine = function updateEngine() {
