@@ -173,7 +173,7 @@
         },
         _createEvents: function() {
             var self = this;
-            this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
+            this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.iconFolder', $.proxy(self._toggleContent, self));
@@ -183,7 +183,7 @@
         },
         _removeEvents: function() {
             var self = this;
-            this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
+            this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.off('click', '.iconFolder', $.proxy(self._toggleContent, self));
@@ -198,10 +198,10 @@
         },
         _resetCheckboxes: function() {
             var self = this;
-            this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
+            this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
+            this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             if (initCheckbox) {
@@ -783,6 +783,20 @@
         _toggleSelected: function(e) {
             var $target = $(e.target);
             var $serviceNode = $target.closest('.serviceContainer');
+            if (!$serviceNode.get().length) {
+                // assume click on a theme. Find .serviceContainer nodes UNDER the theme, and
+                // update them iteratively
+                $serviceNode = $target.closest('.themeContainer').find('.serviceContainer');
+                console.log("Updating services", $serviceNode);
+                _.forEach($serviceNode.get(), function(serviceNode) {
+                    var fakeEvent = {
+                        target: serviceNode
+                    };
+                    this._toggleSelected(fakeEvent);
+                }.bind(this));
+                return;
+            }
+
             var sourceId = $serviceNode.attr('data-sourceid');
             var sourceObj = this.model.getSourceById(sourceId);
 
