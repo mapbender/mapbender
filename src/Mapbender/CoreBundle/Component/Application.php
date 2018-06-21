@@ -155,17 +155,20 @@ class Application implements IAssetDependent
                     ),
                 );
             case 'ol4':
-              if($this->container->get('kernel')->getEnvironment()=== 'dev'){
+                if ($this->container->get('kernel')->getEnvironment()=== 'dev'){
                     $ol4 = '/components/openlayers/ol-debug.js';
+                    $proj4js = '/components/proj4js/dist/proj4-src.js';
                 } else {
                     $ol4 = '/components/openlayers/ol.js';
-                };
+                    $proj4js = '/components/proj4js/dist/proj4.js';
+                }
 
                 $coreJsBase = '@MapbenderCoreBundle/Resources/public';
                 $modelJsBase = "$coreJsBase/mapbender-model";
                 return array(
                     'js' => array(
                         $ol4,
+                        $proj4js,
                         "$coreJsBase/mapbender.model.ol4.js",
                         "$modelJsBase/mapbender.model.ol4.sourcelayer.state.js",
                         "$modelJsBase/mapbender.model.ol4.sourcelayer.js",
