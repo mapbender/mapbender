@@ -209,11 +209,14 @@
                 }
                 this.selectedFeature = null;
             }
-            if(this.activeControl !== null) {
-                this.activeControl.deactivate();
-                this.activeControl.destroy();
-                this.map.removeControl(this.activeControl);
-                this.activeControl = null;
+            // if(this.activeControl !== null) {
+            //     this.activeControl.deactivate();
+            //     this.activeControl.destroy();
+            //     this.map.removeControl(this.activeControl);
+            //     this.activeControl = null;
+            // }
+            if(this.activeControlId){
+                this.model.removeInteractions(this.model.vectorLayer[this.element.attr('id')][this.activeControlId].interactions[this.activeControlId]);
             }
             $('#redlining-text-wrapper', this.element).addClass('hidden');
             this._deactivateButton();
@@ -271,9 +274,15 @@
         },
         _zoomToFeature: function(e){
             this._deactivateControl();
-            var feature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
-            var bounds = feature.geometry.getBounds();
-            this.map.zoomToExtent(bounds);
+            var $tr = $(e.target).parents('tr:first');
+            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
+            var extent = this.model.getFeatureExtent(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
+            this.model.zoomToExtent(extent);
+            // var feature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
+            // var bounds = feature.geometry.getBounds();
+            // this.map.zoomToExtent(bounds);
+
+
         },
         _generateTextStyle: function(label){
             var style = OpenLayers.Util.applyDefaults(null, OpenLayers.Feature.Vector.style['default']);
