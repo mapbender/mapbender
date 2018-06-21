@@ -2,18 +2,18 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: 'Özellik bilgisi katmanı bulunamadı.' #'No feature info layer exists.'
+        nolayer: 'Detay bilgisi katmanı bulunamadı.' #'No feature info layer exists.'
         unknownoption: '% Namespace%.% Widgetname% için bilinmeyen veya işlenmemiş seçenek %key%.' #'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
         noresult: 'Sonuç bulunamadı' #'no result'
       popup:
         btn:
           ok: 'Kapat' #Close
       class:
-        title: 'Özellik bilgisi' #FeatureInfo
-        description: 'Özellik bilgisi' #FeatureInfo
+        title: 'Detay bilgisi' #FeatureInfo
+        description: 'Detay bilgisi' #FeatureInfo
       tag:
-        featureinfo: 'Özellik bilgisi' #featureinfo
-        feature: 'Özellik' #feature
+        featureinfo: 'Detay bilgisi' #featureinfo
+        feature: 'Detay' #feature
         info: 'Bilgi' #info
         dialog: 'İletişim' #dialog
     aboutdialog:
@@ -34,7 +34,7 @@ mb:
         search: 'Ara' #Search
       class:
         title: 'Basit arama' #'Simple Search'
-        description: 'JSON kaynaklarında tek alan araştırması (ör. Solr)' #'Single field search on JSON sources (e.g. Solr)'
+        description: 'JSON kaynaklarında tek alan arama (ör. Solr)' #'Single field search on JSON sources (e.g. Solr)'
       error:
         geometry:
           missing: 'Seçilen giriş geometri içermiyor' #The selected entry does not contain a geometry.
@@ -45,7 +45,7 @@ mb:
           cancel: 'Kapat' #Close
           reset: 'Sıfırla (Reset)' #Reset
       no_results: 'Sonuç bulunamadı' #'No results found.'
-      result_counter: 'Results: %count%'
+      result_counter: 'Sonuçlar: %count%'
       class:
         title: 'Arama yönlendiricisi' #'Search router'
         description: 'Yapılandırılabilir arama yönlendirme' #'Configurable search routing element'
@@ -53,12 +53,12 @@ mb:
         search: 'Ara' #Search
         router: 'Yönlendirici' #router
     poi:
-      sharepoi: 'İlgi noktası Paylaş (Share POI)' #'Share POI'
+      sharepoi: 'İlgi noktası (POI) Paylaş' #'Share POI'
       text:
-        snippet: 'İlgi noktası (POI) göndermek için e-postada şu pasajı kullan' #'You can use the following snippet in an email to send the POI'
+        snippet: 'İlgi noktası (POI) göndermek için e-postada şu alıntıyı kullan' #'You can use the following snippet in an email to send the POI'
       popup:
         btn:
-          ok: 'Gönder' #Ok
+          ok: 'Tamam' #Ok
           cancel: 'Vazgeç' #Cancel
       class:
         title: 'İlgi noktası (POI)' #POI
@@ -73,55 +73,55 @@ mb:
       error:
         sourcenotavailable: 'Kimliği %id% olan bir kaynak bulunamadı.' #'A source with id %id% is not available.'
       class:
-        title: 'Temel kaynak değiştirici' #'Base source switcher'
-        Description: 'Haritanın arka plan kaynağını değiştirin.' #'Change the map''s background sources.'
+        title: 'Altlık değiştirici' #'Base source switcher'
+        Description: 'Haritanın altlık kaynağını değiştirin.' #'Change the map''s background sources.'
       tag:
-        base: 'Temel' #base
+        base: 'Altlık' #base
         source: 'Kaynak' #source
         switcher: 'Değiştirici (Switcher)' #switcher
       form:
-        mesage: 'Temelkaynak kümesi tanımlanmadı.' #'No basesource set is defined.'
+        mesage: 'Altlık kaynağı ayarı tanımlanmadı.' #'No basesource set is defined.'
     legend:
-      nolegend: 'Açıklayıcı bilgiler (legend)' #'No legend available.'
+      nolegend: 'Lejant' #'No legend available.'
       popup:
         btn:
           ok: 'Kapat' #Close
       class:
-        title: 'Açıklayıcı bilgiler (legend)' #Legend
-        description: 'Açıklayıcı bilgiler (legend) haritanın katmanlarındaki sembollerin açıklamasını gösterir' #'The legend shows the legend of the map''s layers'
+        title: 'Lejant' #Legend
+        description: 'Lejant haritanın katmanlarındaki sembollerin açıklamasını gösterir' #'The legend shows the legend of the map''s layers'
       tag:
         layer: 'Katman' #layer
-        legend: 'Açıklayıcı bilgiler (legend)' #legend
+        legend: 'Lejant' #legend
     ruler:
       popup:
         btn:
           ok: 'Kapat' #Close
-      create_error: 'Ruler: Tip hat veya bölge olmalıdır.' #'Type must be line or area.'
+      create_error: 'İpucu: Tip hat veya bölge olmalıdır.' #'Type must be line or area.'
       class:
-        title: 'Hat/Alan Cetvel' #'Line/Area Ruler'
-        description: 'Hat/alan çizmek ve bir iletişim kutusunda uzunluk/alan görüntülemek için Cetvel' #'Ruler to draw a line/area and display length/area in a dialog'
+        title: 'Hat/KapalıAlan Ölçümü' #'Line/Area Ruler'
+        description: 'Hat/KapalıAlan çizmek ve bir iletişim kutusunda uzunluk/alan görüntülemek için ölçüm aracı' #'Ruler to draw a line/area and display length/area in a dialog'
       tag:
         line: 'Hat' #line
-        area: 'Bölge' #area
-        measure: 'ölçmek' #measure
+        area: 'Kapalı Alan' #area
+        measure: 'Ölç' #measure
     printclient:
       label:
-        template: 'Şablon (Kalıp)' #Template
+        template: 'Şablon' #Template
         quality: 'Kalite' #Quality
         scale: 'Ölçek' #Scale
-        rotation: 'Rotasyon' #Rotation
-        legend: 'Açıklayıcı bilgileri (legend) yazdır' #'Print legend'
+        rotation: 'Dönüklük' #Rotation
+        legend: 'Lejant yazdır' #'Print legend'
       popup:
         btn:
           ok: 'Yazdır' #Print
           cancel: 'Vazgeç' #Cancel
       info:
-        noactivelayer: 'Etkin katman zok' #'No active layer!'
+        noactivelayer: 'Etkin katman yok!' #'No active layer!'
       form:
         required: 'Lütfen bu alanı doldurun' #'Please fill out this field'
       class:
-        title: 'Baskı istemcisi (Print client)' #'Print client'
-        description: 'Yazdır düğmesi oluşturur' #'Renders a Print dialog'
+        title: 'Yazıcı istemcisi' #'Print client'
+        description: 'Yazdır penceresi gösterir' #'Renders a Print dialog'
       tag:
         print: 'Yazdır' #print
         pdf: pdf
@@ -130,15 +130,15 @@ mb:
         jpg: jpg
         jpeg: jpeg
       btn:
-        deactivate: 'Baskı Çerçevesini Devre Dışı Bırak' #'Deactivate Print Frame'
-        activate: 'Baskı Çerçevesini Etkinleştir' #'Activate Print Frame'
+        deactivate: 'Yazdırılan Alan Çerçevesini Devre Dışı Bırak' #'Deactivate Print Frame'
+        activate: 'Yazdırılan Alan Çerçevesini Etkinleştir' #'Activate Print Frame'
     overview:
-      nolayer: 'Genel bakış öğesinin katmanı yoktur.' #'The overview element has no layer.'
+      nolayer: 'Genel görünüm öğesinin katmanı yoktur.' #'The overview element has no layer.'
       class:
-        title: 'Genel bakış' #Overview
-        description: 'Küçük bir genel bakış haritası oluşturur' #'Renders a small overview map'
+        title: 'Genel görünüm' #Overview
+        description: 'Küçük bir genel görünüm haritası oluşturur' #'Renders a small overview map'
       tag:
-        overview: 'Genel bakış' #overview
+        overview: 'Genel görünüm' #overview
         map: 'Harita' #map
     sketch:
       circle:
@@ -151,10 +151,10 @@ mb:
             cancel: 'Vazgeç' #Cancel
       class:
         title: 'Kroki' #Sketch
-        description: '' #'Adds a vector layer in the map and enables geometry objects to draw.'
+        description: 'Haritaya bir vektör katmanı ekler ve geometrik şekiller çizilmesini sağlar.' #'Adds a vector layer in the map and enables geometry objects to draw.'
       tag:
         sketch: 'Kroki' #sketch
-        circle: 'Daire' #circle
+        circle: 'Çember' #circle
     metadata:
       popup:
         title: 'Üstveri (MetaData)' #Metadata
@@ -166,12 +166,12 @@ mb:
         nosignal: 'Şu anda konumunuzu bulmak mümkün değil.' #Currently it's not possible to locate your position.
       class:
         title: 'GPS Konumu' #'GPS Position'
-        description: 'GPS Konumunu göstermek için bir düğme oluşturur' #'Renders a button to show the GPS Position'
+        description: 'GPS Konumunu göstermek için bir buton oluşturur' #'Renders a button to show the GPS Position'
       tag:
         gpsposition: 'GPS Konumu' #'GPS Position'
         gps: GPS
         position: 'Konum' #position
-        button: 'Tuş' #button
+        button: 'Buton' #button
     layertree:
       confirm:
         allremove: 'Bütün kaynaklar silinsin mi?' #'Really all sources delete?'
@@ -179,25 +179,25 @@ mb:
         btn:
           ok: 'Kapat' #Close
       const:
-        outofscale: 'Ölçekli bakış' #'Layer out of scale'
-        outofbounds: 'Dışarıdan bakış' #'Layer out of bounds'
-        parentinvisible: 'Üst katman görünmez' #'Parent layer invisible'
+        outofscale: 'Ölçeksiz bakış' #'Layer out of scale'
+        outofbounds: 'Sınırın dışından bakış' #'Layer out of bounds'
+        parentinvisible: 'Üst katmanı gizle' #'Parent layer invisible'
       tooltip:
-        sublayers_openclose: 'Altkatmanları açık/kapalı' #'Sublayers open/close'
+        sublayers_openclose: 'Alt katmanları aç/kapa' #'Sublayers open/close'
         removelayer: 'Katmanı kaldır' #'Remove layer'
         menu:
           close: 'Kapat' #Close
       label:
-        visibility_onoff: 'Görünürlük açma/kapama' #'Visibility on/off'
-        featureinfo_onoff: 'Özellik bilgisi açık/kapalı' #'Featureinfo on/off'
+        visibility_onoff: 'Görünürlük aç/kapa' #'Visibility on/off'
+        featureinfo_onoff: 'Detay bilgisi açık/kapalı' #'Featureinfo on/off'
         opacity: 'Opaklık' #Opacity
         zoomtolayer: 'Katmana yakınlaştır' #'Zoom to layer'
         metadata: ' Üstveri (Metadata)' #Metadata
         sources: 'Kaynaklar' #Sources
         deleteallsources: 'Tüm kaynakları kaldır' #'Remove all sources'
-        legend: 'Açıklayıcı bilgiler (legend)' #Legend
+        legend: 'Lejant' #Legend
         kmlexport: 'KML formatında dışa aktar (Export)' #'KML export'
-        dimension_onoff: 'Açık/Kapalı Boyut' #'On/Off Dimension'
+        dimension_onoff: 'Boyutlar Açık/Kapalı' #'On/Off Dimension'
         dimension: 'Boyut' #Dimension
         sourcevisibility_onoff: 'Kaynaklari göster' #'Show sources'
         allvisibility_on: 'Bütün Katmanlari göster' #'Show all layers'
@@ -209,7 +209,7 @@ mb:
         layer: 'Katman' #layer
         tree: 'Ağaç' #tree
       contextmenu:
-        nooption: 'Katmanın bağlam menüsü seçeneği yok' #'Layer has no context menu option'
+        nooption: 'Katmanın menü seçeneği yok' #'Layer has no context menu option'
     zoombar:
       panup: 'Kaydır' #'Pan up'
       panright: 'Sağa kaydır' #'Pan right'
@@ -217,40 +217,40 @@ mb:
       panleft: 'Sola kaydırıldı' #'Pan left'
       goback: 'Geri dön' #'Go back'
       goforward: 'İleri git' #'Go forward'
-      zoombybox: 'Kutuyu yakınlaştır' #'Zoom by box'
-      zoombyworld: 'Dünya´ya yakınlaştır' #'Zoom by world'
+      zoombybox: 'Çizilen alana yakınlaştır' #'Zoom by box'
+      zoombyworld: 'Tüm dünyayı göster' #'Zoom by world'
       zoomin: 'Yakınlaştır' #Zoomin
       zoomout: 'Uzaklaştır' #Zoomout
       class:
         title: 'Gezinme araç çubuğu' #'Navigation toolbar'
-        description: 'Gezinme Çubuğu, OpenLayers PanZoomBar denetimine benzer şekilde kaydırmak ve yakınlaştırmak için bir denetim sağlar. Bu unsur özel şekillendirmeye ihtiyaç duyulduğunda kullanımı kolaylaştırır. '                    #'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
+        description: 'Gezinme Çubuğu, OpenLayers PanZoomBar denetimine benzer şekilde kaydırmak ve yakınlaştırmak için bir araç sağlar. Bu araç, özelleştirmeye ihtiyaç duyulduğunda kullanımı kolaylaştırır. '                    #'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
       tag:
         zoom: 'Yakınlaştırma' #zoom
         pan: pan
         control: 'Kontrol' #control
-        navigation: 'navigasyon' #navigation
+        navigation: 'gezinme' #navigation
         panel: panel
     activityindicator:
       class:
-        title: 'Etkinlik göstergesi' #'Activity indicator'
+        title: 'Etkinlik göstergeci' #'Activity indicator'
         description: 'HTTP etkinliğini gösterir' #'Shows HTTP activity'
       tag:
         activity: 'Etkinlik' #activity
         indicator: 'Gösterge' #indicator
     button:
       class:
-        title: 'Tuş' #Button
-        description: 'Tuş' #Button
+        title: 'Buton' #Button
+        description: 'Buton' #Button
       tag:
-        button: 'Tuş' #button
+        button: 'Buton' #button
 
     coordinatesdisplay:
       class:
-        title: 'Koordinatları görüntüleme' #'Coordinates display'
-        description: 'Koordinat görüntüleme ekranı farenizin harita üzerindeki konumunu gösterir.' #'The coordinates display shows your mouse position in map coordinates.'
+        title: 'Koordinatları göster' #'Coordinates display'
+        description: 'Koordinat göstergesi, farenizin harita üzerindeki konumunu gösterir.' #'The coordinates display shows your mouse position in map coordinates.'
       tag:
         coordinates: 'Koordinatlar' #coordinates
-        display: 'Ekran' #display
+        display: 'Gösterge' #display
         mouse: 'Fare' #mouse
         position: 'Konum' #position
     copyright:
@@ -265,26 +265,26 @@ mb:
         title: 'Harita' #Map
       tag:
         map: 'Harita' #map
-        mapquery: 'Harita Sorgulama' #MapQuery
-        openlayers: 'Katman Aç' #OpenLayers
+        mapquery: 'MapQuery' #MapQuery
+        openlayers: 'OpenLayers' #OpenLayers
       srsnotfound: '%Srslist% için SRS özellikleri bulunamadı' #'SRS properties for %srslist% are not found'
     mapabs:
       class:
-        description: 'MapQuery/OpenLayers tabanlı harita' #'MapQuery/OpenLayers based map'
+        description: 'MapQuery/OpenLayers altlıkları olan harita' #'MapQuery/OpenLayers based map'
     scalebar:
       class:
         title: 'Ölçek çubuğu' #'Scale bar'
-        description: 'Ölçek çubuğu, geçerli harita ölçeğini temsil eden küçük bir çizgi göstergesi gösterir.'                     #'The scalebar displays a small line indicator representing the current map scale.'
+        description: 'Ölçek çubuğu, geçerli harita ölçeğini temsil eden küçük bir çizgi gösterir.'                     #'The scalebar displays a small line indicator representing the current map scale.'
       tag:
         scale: 'Ölçek' #scale
         bar: 'Çubuk' #bar
     scaledisplay:
       class:
-        title: 'Ölçek ekranı' #'Scale display'
+        title: 'Ölçek göstergesi' #'Scale display'
         description: 'Geçerli harita ölçeğini görüntüler' #'Displays the current map scale'
       tag:
         scale: 'Ölçek' #scale
-        display: 'Ekran' #display
+        display: 'Gösterge' #display
     scaleselector:
       class:
         title: 'Ölçek seçicisi' #'Scale selector'
@@ -305,45 +305,45 @@ mb:
           usemailto: 'Mailto`yu kullanın' #'Use Mailto'
       legend:
         label:
-          autoopen: 'Kendaç' #Autoopen
+          autoopen: 'Otomatik aç' #Autoopen
           hideemptylayers: 'Boş katmanları gizle' #'Hide empty layers'
-          generatelegendurl: 'Açıklayıcı bilgiler (legend) URL`si oluştur' #'Generate legend url'
+          generatelegendurl: 'Lejant URL`si oluştur' #'Generate legend url'
           showsourcetitle: 'Kaynak başlığını göster' #'Show source title'
           showlayertitle: 'Katman başlığını göster' #'Show layer title'
-          showgroupedlayertitle: 'Show grouped layer title' #'Show grouped layer title'
+          showgroupedlayertitle: 'Gruplanmış katman başlığını göster' #'Show grouped layer title'
       featureinfo:
         label:
-          autoopen: 'Kendaç' #Autoopen
+          autoopen: 'Otomatik aç' #Autoopen
           deactivateonclose: 'Kapandığında devre dışı bırak' #'Deactivate on close'
           showoriginal: 'Orjinali göster' #'Show original'
           onlyvalid: 'Sadece geçerli olan' #'Only valid'
       printclient:
         label:
-          autoopen: 'Kendaç' #Autoopen
-          rotatable: '' #Rotatable
-          legend: 'Açıklayıcı bilgileri (legend) yazdır' #'Print legend'
-          legend_default_behaviour: 'Açıklayıcı bilgiler (legend) onay kutusu etkin' #'Legend checkbox active'
+          autoopen: 'Otomatik aç' #Autoopen
+          rotatable: 'Döndürülebilir' #Rotatable
+          legend: 'Lejant yazdır' #'Print legend'
+          legend_default_behaviour: 'Lejant onay kutusu etkin' #'Legend checkbox active'
       copyright:
         label:
-          autoopen: 'Kendaç' #Autoopen
+          autoopen: 'Otomatik aç' #Autoopen
       layertree:
         label:
-          showbasesources: 'Temel kaynağı göster' #'Show base sources'
-          autoopen: 'Kendaç' #Autoopen
+          showbasesources: 'Altlık kaynaklarını göster' #'Show base sources'
+          autoopen: 'Otomatik aç' #Autoopen
           showheader: 'Başlığı göster' #'Show header'
-          showlayerremove: 'Katman kaldır`ı göster' #'Show layer remove'
+          showlayerremove: 'Katman kaldır aracını göster' #'Show layer remove'
           usetheme: 'Tematik katman' #'Thematic layer'
           themes: 'Temalar' #Themes
           theme:
             opened: 'Açıldı' #opened
-            activate: 'Katman etkinleştiryi ekle/kaldır' #'Enabling Layer Add / Remove'
+            activate: 'Katman ekle/kaldır aracını ekler' #'Enabling Layer Add / Remove'
             useTheme: 'Temaları göster' #'Theme show'
-            sourceVisibility: 'Theme: Kaynak görünürlüğü' #source visibility'
-            allSelected: 'Theme: Katman görünürlüğü' #layer visibility'
+            sourceVisibility: 'Kaynak görünürlüğü' #source visibility'
+            allSelected: 'Katman görünürlüğü' #layer visibility'
             label: 'Tema isimleri' #'theme name'
-          hidenottoggleable: 'toggleable olmayanı gizle' #'Hide not toggleable'
-          hideselect: 'Klasörlerde görünürlükğü gizle' #'Hide visibility by folders'
-          hideinfo: 'Bilgileri gizleme' #'Hide info'
+          hidenottoggleable: 'Açılıp kapanamayan(lar)ı gizle' #'Hide not toggleable'
+          hideselect: 'Klasöri kullanarak gizle' #'Hide visibility by folders'
+          hideinfo: 'Bilgileri gizle' #'Hide info'
       redlining:
         label:
           auto_activate: 'Otomatik etkinleştir' #Autoactivate
@@ -351,7 +351,7 @@ mb:
     htmlelement:
       class:
         title: 'HTML' #HTML
-        description: 'HTML ekle' #'Add some HTML'
+        description: 'HTML kodu ekle' #'Add some HTML'
       tag:
         html: 'HTML' #HTML
     entity:
@@ -360,7 +360,7 @@ mb:
           error: 'Hata' #Error
     redlining:
       geometrytype:
-        point: 'Nokta (Konum)' #Point
+        point: 'Nokta' #Point
         line: 'Hat' #Line
         polygon: 'Çokgen' #Polygon
         rectangle: 'Dikdörtgen' #Rectangle
@@ -371,19 +371,19 @@ mb:
         action:
           remove: 'Geometriyi kaldır' #'Remove geometry'
           edit: 'Geometriyi düzenle' #'Edit geometry'
-          zoom: 'Geometri zoom ayarlari' #'Zoom to geometryoom'
+          zoom: 'Geometriye yakınlaştır' #'Zoom to geometryoom'
       dialog:
         btn:
           cancel: 'Kapat' #Close
       class:
-        title: 'Redlining' #Redlining
-        description: 'Redlining aracı' #'Redlining tool'
+        title: 'İşaretleme' #Redlining
+        description: 'İşaretleme aracı' #'Redlining tool'
       tag:
-        redlining: 'Redlining' #redlining
+        redlining: 'İşaretleme' #redlining
         geometry: 'Geometri' #geometry
   geosource:
     image_error:
       datails: 'Harita Görüntülenemiyor.' #'The map cannot be displayed.'
-      exception: '' #'Exception: %exception%'
+      exception: 'Kural-dışı: %exception%' #'Exception: %exception%'
       statuscode: 'HTTP durum kodu' #'HTTP status code'
 
