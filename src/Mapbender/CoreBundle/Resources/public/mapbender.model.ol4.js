@@ -35,8 +35,30 @@ Mapbender.Model.prototype.onFeatureClick = function onFeatureClick() {
 };
 Mapbender.Model.prototype.setLayerStyle = function setLayerStyle() {
 };
-Mapbender.Model.prototype.createStyle = function createStyle() {
+
+/**
+ * @todo is not complete yet
+ *
+ * @param {Object} options
+ * @returns {ol.style.Style}
+ */
+Mapbender.Model.prototype.createStyle = function createStyle(options) {
+
+    var style = new ol.style.Style();
+
+    if (options['fill']) {
+        var fill = new ol.style.Fill(options['fill']);
+        style.setFill(fill);
+    }
+
+    if (options['stroke']) {
+        var stroke =  new ol.style.Stroke(options['stroke']);
+        style.setStroke(stroke);
+    }
+
+    return style;
 };
+
 Mapbender.Model.prototype.getActiveLayers = function getActiveLayers() {
 };
 Mapbender.Model.prototype.setRequestParameter = function setRequestParameter() {
@@ -143,20 +165,29 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
  * @param {Mapbender.Model.Source} sourceObj
  */
 Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
-    var engineOpts;
     var sourceType = sourceObj.getType();
-    var olSource;
+    var sourceOpts = {
+        url: sourceObj.getBaseUrl(),
+        transition: 0
+    };
+
+    var olSourceClass;
+    var olLayerClass;
     switch (sourceType.toLowerCase()) {
         case 'wms':
-            engineOpts = {
-                url: sourceObj.getBaseUrl()
-            };
-            olSource = new ol.source.TileWMS(engineOpts);
+            if (sourceObj.options.tiled) {
+                olSourceClass = ol.source.TileWMS;
+                olLayerClass = ol.layer.Tile;
+            } else {
+                olSourceClass = ol.source.ImageWMS;
+                olLayerClass = ol.layer.Image;
+            }
             break;
         default:
             throw new Error("Unhandled source type '" + sourceType + "'");
     }
-    var engineLayer = new ol.layer.Tile({source: olSource});
+    var olSource = new (olSourceClass)(sourceOpts);
+    var engineLayer = new (olLayerClass)({source: olSource});
     this.pixelSources.push(sourceObj);
     this.map.addLayer(engineLayer);
     sourceObj.initializeEngineLayer(engineLayer);
@@ -284,7 +315,7 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
         throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
     }
     var vector = new ol.source.Vector({wrapX: false});
-    var id = this.createVectorLayer({ source : vector},style,owner);
+    var id = this.createVectorLayer({ source : vector, style : style}, {}, owner);
 
     var draw =  new ol.interaction.Draw({
         source: vector,
@@ -366,10 +397,12 @@ Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerSty
  * @returns {string[]}
  */
 Mapbender.Model.prototype.getActiveSourceIds = function() {
-    // HACK: no concept of "active" or not (yet) => return everything
     var ids = [];
     for (var i = 0; i < this.pixelSources.length; ++i) {
-        ids.push(this.pixelSources[i].id);
+        var source = this.pixelSources[i];
+        if (source.isActive()) {
+            ids.push(source.id);
+        }
     }
     return ids;
 };
