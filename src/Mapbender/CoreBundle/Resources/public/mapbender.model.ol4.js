@@ -394,7 +394,7 @@ Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerSty
 Mapbender.Model.prototype.getActiveSourceIds = function() {
     var ids = [];
     for (var i = 0; i < this.pixelSources.length; ++i) {
-        var source = this.pixelSources[i].id;
+        var source = this.pixelSources[i];
         if (source.isActive()) {
             ids.push(source.id);
         }
