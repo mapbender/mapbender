@@ -792,7 +792,9 @@
             var self = this;
             function createMenu($element, sourceId, layerId) {
                 var atLeastOne = false;
-                var nodeOptions = $element.closest('li.leave').data('options') || {};
+                var $node = $element.closest('li.leave');
+                var nodeOptions = $node.data('options') || {};
+                var isRootLayerNode = $node.attr('data-type') === 'root';
 
                 var source = self.model.getSourceById(sourceId);
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
@@ -876,9 +878,12 @@
                     $mdMenu.remove();
                 }
 
-                var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
-                if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
-                    && source.configuration.children[0].options.id === layerId && dims.length > 0) {
+                var dims = source.configuration.options.dimensions || [];
+                var showDims = $.inArray("dimension", self.options.menu) !== -1;
+                showDims = showDims && dims.length && source.type === 'wms';
+                showDims = showDims && isRootLayerNode;
+
+                if (showDims) {
                     atLeastOne = true;
                     var lastItem = $('.layer-dimension-checkbox', menu).prev();
                     var dimCheckbox = $('.layer-dimension-checkbox', menu).remove();
@@ -964,18 +969,8 @@
         _callDimension: function(source, chkbox) {
             var dimension = chkbox.data('dimension');
             var params = {};
-            params[dimension['__name']] = chkbox.attr('data-value');
-            if (chkbox.is(':checked')) {
-                this.model.resetSourceUrl(source, {
-                    'add': params
-                },
-                true);
-            } else if (params[dimension['__name']]) {
-                this.model.resetSourceUrl(source, {
-                    'remove': params
-                },
-                true);
-            }
+            params[dimension['__name']] = (chkbox.is(':checked') && chkbox.attr('data-value')) || undefined;
+            source.updateRequestParams(params);
             return true;
         },
         _setOpacity: function(source, opacity) {

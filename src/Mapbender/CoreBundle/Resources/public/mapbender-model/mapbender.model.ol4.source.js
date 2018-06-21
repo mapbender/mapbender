@@ -17,7 +17,7 @@ window.Mapbender.Model.Source = (function() {
         this.type = (config['type'] || 'wms').toLowerCase();
         // HACK: Store original config for old-style access.
         //       This attribute is not used internally in the source or in the model layer.
-        this.config = config;
+        this.configuration = config.configuration;
         this.baseUrl_ = config.configuration.options.url;
         var opacity;
         // handle / support literal 0 opacity (=falsy, needs extended check)
@@ -81,6 +81,49 @@ window.Mapbender.Model.Source = (function() {
             throw new Error("Source: engine layer already assigned, runtime changes not allowed");
         }
         this.engineLayer_ = engineLayer;
+    };
+
+    /**
+     * Add or remove param values to GetMap request URL.
+     *
+     * Map undefined to a key to remove that parameter.
+     *
+     * @param {Object} params plain old data
+     * @param {boolean} caseSensitive for query param names (WMS style is CI)
+     */
+    Source.prototype.updateRequestParams = function updateRequestParams(params, caseSensitive) {
+        var existingKeys = Object.keys(this.getMapParams);
+        var passedKeys = Object.keys(params);
+        var i, j;
+        var keyTransform;
+        if (!caseSensitive) {
+            keyTransform = String.prototype.toLowerCase;
+        } else {
+            keyTransform = function identity() { return this; }
+        }
+        for (i = 0; i < passedKeys.length; ++i) {
+            var passedKey = passedKeys[i];
+            var passedValue = params[passedKey];
+            var passedKeyTransformed = keyTransform.call(passedKey);
+            // remove original value (might theoretically remove multiple values if not case sensitive!)
+            for (j = 0; j < existingKeys.length; ++j) {
+                var existingKey = existingKeys[j];
+                var existingKeyTransformed = keyTransform.call(existingKey);
+                if (existingKeyTransformed === passedKeyTransformed) {
+                    delete this.getMapParams[existingKey];
+                }
+            }
+            // warn if layers changed, any case
+            if (passedKey.toLowerCase() === 'layers') {
+                console.warn("Modifying layers parameter directly, you should use updateLayerState instead!", passedKey, passedValue, params);
+            }
+            if (typeof passedValue !== 'undefined') {
+                // add value (use original, untransformed key)
+                this.getMapParams[passedKey] = passedValue;
+            }
+            // NOTE: if passedValue === undefined, we specify that the original value is removed; we already did that
+        }
+        this.updateEngine();
     };
 
     /**
