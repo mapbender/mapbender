@@ -21,7 +21,8 @@
         popup:                  null,
         featureVeriticesLength: 2,
         typeMap:                {
-            line: {name:       'LineString',
+            line: {
+                name:          'LineString',
                 startVertices: 4,
                 increase:      2
             },
@@ -78,35 +79,34 @@
 
             var type = this.typeMap[this.options.type].name;
 
-
             this.layerId = model.createDrawControl(type, id, {
-                'drawstart': function(event) {
-                    var obvservable = {value: null};
-                    this.featureVeriticesLength = this.typeMap[this.options.type].startVertices;
-                    model.removeAllFeaturesFromLayer(id, this.layerId);
-                    this._reset();
+                events: {
+                    'drawstart': function(event) {
+                        var obvservable = {value: null};
+                        this.featureVeriticesLength = this.typeMap[this.options.type].startVertices;
+                        this._reset();
 
-                    model.eventFeatureWrapper(event, model.onFeatureChange, [function(f) {
-                        console.log(model.getGeometryCoordinates(f).length);
+                        model.eventFeatureWrapper(event, model.onFeatureChange, [function(f) {
+                            console.log(model.getGeometryCoordinates(f).length);
 
-                        if(model.getGeometryCoordinates(f).length !== this.featureVeriticesLength) {
-                            this._handleModify(model.getLineStringLength(f));
-                        }
-                        if(model.getGeometryCoordinates(f).length === this.featureVeriticesLength) {
-                            this.featureVeriticesLength = this.featureVeriticesLength + this.typeMap[this.options.type].increase;
-                            this._handlePartial(model.getLineStringLength(f));
-                        }
+                            if(model.getGeometryCoordinates(f).length !== this.featureVeriticesLength) {
+                                this._handleModify(model.getLineStringLength(f));
+                            }
+                            if(model.getGeometryCoordinates(f).length === this.featureVeriticesLength) {
+                                this.featureVeriticesLength = this.featureVeriticesLength + this.typeMap[this.options.type].increase;
+                                this._handlePartial(model.getLineStringLength(f));
+                            }
 
-                    }.bind(this), obvservable]);
+                        }.bind(this), obvservable]);
 
-                }.bind(this),
+                    }.bind(this),
 
-                'drawend': function(event) {
-                    model.eventFeatureWrapper(event, function(f) {
-                        this._handleFinal(model.getFeatureSize(f));
-                    }.bind(this));
-                }.bind(this)
-
+                    'drawend': function(event) {
+                        model.eventFeatureWrapper(event, function(f) {
+                            this._handleFinal(model.getFeatureSize(f));
+                        }.bind(this));
+                    }.bind(this)
+                }
             });
 
             this._reset();
@@ -148,6 +148,7 @@
         deactivate:  function() {
 
             this.active = false;
+            this.map.model.removeAllFeaturesFromLayer(this.id, this.layerId);
             this.map.model.removeVectorLayer(this.id, this.layerId);
             $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
 
@@ -158,6 +159,7 @@
         },
 
         _reset:         function() {
+            this.map.model.removeAllFeaturesFromLayer(this.id, this.layerId);
             this.segments.empty();
             this.total.empty();
             //this.segments.append('<li/>');
@@ -165,7 +167,7 @@
         },
         _handleModify:  function(measure) {
 
-            var measure = this.formatLength(measure);
+            measure = this.formatLength(measure);
             if(this.options.immediate) {
                 this.segments.children('li').first().html(measure);
             }
@@ -175,7 +177,7 @@
             }
         },
         _handlePartial: function(measure) {
-            var measure = this.formatLength(measure);
+            measure = this.formatLength(measure);
             if(!this.options.immediate && this.featureVeriticesLength <= this.typeMap[this.options.type].startVertices + this.typeMap[this.options.type].increase) {
                 return false;
             }
@@ -202,7 +204,7 @@
         },
 
         formatLength: function(length) {
-            var unit  = (this.options.type === 'line') ? ' km' : ' km²';
+            var unit = (this.options.type === 'line') ? ' km' : ' km²';
             return (length / 1000).toFixed(this.options.precision) + unit;
 
         }
