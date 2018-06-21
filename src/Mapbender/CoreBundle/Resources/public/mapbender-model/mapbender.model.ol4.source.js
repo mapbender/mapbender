@@ -15,12 +15,35 @@ window.Mapbender.Model.Source = (function() {
         this.model = model;
         this.id = "" + (id || model.generateSourceId());
         this.type = (config['type'] || 'wms').toLowerCase();
-        this.baseUrl_ = config.configuration.options['url'];
+        this.baseUrl_ = config.configuration.options.url;
+        var opacity;
+        // handle / support literal 0 opacity (=falsy, needs extended check)
+        if (typeof config.configuration.options.opacity !== undefined) {
+            opacity = parseFloat(config.configuration.options.opacity);
+            if (isNaN(opacity)) {
+                opacity = 1.0;
+            }
+        } else {
+            opacity = 1.0;
+        }
+
+        this.options = {
+            opacity: opacity,
+            visibility: true,
+            tiled: false // configuration.options.tiled || false
+        };
+        this.urlSettingsFixed = {
+            VERSION: config.configuration.options.version || "1.1.1",
+            FORMAT: config.configuration.options.format || 'image/png',
+            TRANSPARENT: (config.configuration.options.transparent || true) ? "TRUE" : "FALSE",
+            INFO_FORMAT: config.configuration.options.info_format || 'text/html'
+        };
+        this.customRequestParams = {};
+
         var layerDefs = this.extractLeafLayerConfigs(config.configuration);
         this.layerOptionsMap_ = {};
         this.layerNameMap_ = {};
-        this.allLayerNames_ = [];
-        this.activeLayerNames = [];
+        this.layerOrder_ = [];
 
         _.forEach(layerDefs, function(layerConfig) {
             this.processLayerConfig(layerConfig);
@@ -41,6 +64,16 @@ window.Mapbender.Model.Source = (function() {
     };
     // convenience: make fromConfig accessible via instance as well
     Source.prototype.fromConfig = Source.fromConfig;
+
+    /**
+     * @param {ol.layer.Tile} engineLayer
+     */
+    Source.prototype.initializeEngineLayer = function initializeEngineLayer(engineLayer) {
+        if (this.engineLayer_) {
+            throw new Error("Source: engine layer already assigned, runtime changes not allowed");
+        }
+        this.engineLayer_ = engineLayer;
+    };
 
     /**
      * Traverses the (historically) nested layer configuration array and returns *only*
@@ -82,9 +115,98 @@ window.Mapbender.Model.Source = (function() {
         var stringLayerName = "" + layerConfig.name;
         this.layerOptionsMap_[stringId] = layerConfig;
         this.layerNameMap_[stringLayerName] = layerConfig;
-        this.allLayerNames_.push(stringLayerName);
-        this.activeLayerNames.push(stringLayerName);
+        this.layerOrder_.push(stringLayerName);
+
+        //HACK: all layers treated as (initially) active
+        // @todo: scan "parent" nodes in configuration to determine enabled state
+        // @todo: also initialize if layer is queryable
+        var layerActive = true;
+
+        if (layerActive) {
+            if (!this.customRequestParams.LAYERS) {
+                this.customRequestParams.LAYERS = stringLayerName;
+            } else {
+                this.customRequestParams.LAYERS = [this.customRequestParams.LAYERS, stringLayerName].join(',');
+            }
+        }
     };
+
+    Source.prototype.updateEngine = function updateEngine() {
+        var params = $.extend({}, this.urlSettingsFixed, this.customRequestParams);
+        this.engineLayer_.setOpacity(this.options.opacity);
+        this.engineLayer_.getSource().updateParams(params);
+        // hide (engine-side) layer if no layers activated for display
+        var visibility = this.options.visibility && !!this.customRequestParams.LAYERS;
+        this.engineLayer_.setVisible(visibility);
+    };
+
+    /**
+     * Activate / deactivate the entire source
+     *
+     * @param {bool} active
+     */
+    Source.prototype.setState = function setState(active) {
+        this.options.visibility = !!active;
+        this.updateEngine();
+    };
+
+    /**
+     * Activate / deactivate a single layer by name
+     *
+     * @param {string} layerName
+     * @param {boolean} active
+     * @todo: also support queryable
+     */
+    Source.prototype.setLayerState = function setLayerState(layerName, active) {
+        if (!this.layerNameMap_[layerName]) {
+            console.error("Unknown layer name", layerName, "known:", Object.keys(this.layerNameMap_));
+            return;
+        }
+        var activeMap = {};
+        var activeBefore = this.getActiveLayerNames();
+        var i;
+        for (i = 0; i < activeBefore.length; ++i) {
+            activeMap[activeBefore[i]] = true;
+        }
+        if (active) {
+            activeMap[layerName] = true;
+        } else {
+            delete activeMap[layerName];
+        }
+        var activeAfter = [];
+        // loop through allLayerNames_, use that to determine layer ordering and rebuild the LAYERS request parameter
+        for (i = 0; i < this.layerOrder_.length; ++i) {
+            var nextLayerName = this.layerOrder_[i];
+            if (!!activeMap[nextLayerName]) {
+                activeAfter.push(nextLayerName);
+                delete activeMap[nextLayerName];
+            }
+        }
+        this.customRequestParams.LAYERS = activeAfter.join(',');
+        this.updateEngine();
+    };
+
+    /**
+     * @returns {string[]}
+     */
+    Source.prototype.getActiveLayerNames = function() {
+        var effectiveQueryParams = this.engineLayer_.getSource().getParams();
+        if (typeof effectiveQueryParams.LAYERS === 'undefined') {
+            console.error("getParameters returned:", effectiveQueryParams);
+            throw new Error("LAYERS parameter not populated");
+        }
+        return _.filter((effectiveQueryParams.LAYERS || "").split(','));
+    };
+
+    /**
+     * Check if source is active
+     *
+     * @returns {boolean}
+     */
+    Source.prototype.isActive = function isActive() {
+        return this.options.visibility;
+    };
+
 
     /**
      * @returns {string|null}
@@ -92,8 +214,12 @@ window.Mapbender.Model.Source = (function() {
     Source.prototype.getType = function() {
         return this.type;
     };
+    /**
+     * @returns {string}
+     */
     Source.prototype.getBaseUrl = function() {
         return this.baseUrl_;
     };
+
     return Source;
 })();
