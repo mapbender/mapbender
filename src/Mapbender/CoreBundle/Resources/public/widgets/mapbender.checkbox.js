@@ -12,7 +12,6 @@
      * $('input[type="checkbox"]', myScope).mbCheckbox()
      */
     $.fn.mbCheckbox = function() {
-        console.log("Hello y'all checkboxes", this, arguments);
         var propagateToWrapper = function propagateToWrapper() {
             var $cb = $(this);
             var $wrapper = $cb.parents('.checkWrapper');
