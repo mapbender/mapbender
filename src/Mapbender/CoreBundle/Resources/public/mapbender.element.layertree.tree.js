@@ -861,23 +861,21 @@
                 } else {
                     $('.layer-zoom', menu).remove();
                 }
-
-                if ($.inArray("metadata", self.options.menu) === -1 || menu.find(
-                    '.layer-metadata').length === 0 || (source.hasOwnProperty('wmsloader') && source.wmsloader === true) || isNaN(parseInt(source.origId))) {
-                    $('.layer-metadata', menu).remove();
-                } else {
-                    atLeastOne = true;
-                    var layer = self.model.findLayer({
-                        id: sourceId
-                    },
-                    {
-                        id: layerId
+                var showMetaData = $.inArray("metadata", self.options.menu) !== -1;
+                showMetaData = showMetaData && menu.find('.layer-metadata').length;
+                showMetaData = showMetaData && (!source.wmsloader);
+                var $mdMenu = $('.layer-metadata', menu);
+                if (showMetaData) {
+                    var layerName = nodeOptions.name;
+                    $mdMenu.removeClass('inactive');
+                    $mdMenu.on('click', function() {
+                        Mapbender.Metadata.loadAsPopup(sourceId, layerName);
                     });
-                    if (layer) {
-                        $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata,
-                            self));
-                    }
+                    atLeastOne = true;
+                } else {
+                    $mdMenu.remove();
                 }
+
                 var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
                 if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
                     && source.configuration.children[0].options.id === layerId && dims.length > 0) {
