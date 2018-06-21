@@ -35,8 +35,26 @@ Mapbender.Model.prototype.onFeatureClick = function onFeatureClick() {
 };
 Mapbender.Model.prototype.setLayerStyle = function setLayerStyle() {
 };
+
+// @todo is just a mockup now.
 Mapbender.Model.prototype.createStyle = function createStyle() {
+    return new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: '#ffcc33'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#ffcc33',
+            width: 2
+        }),
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+                color: '#ffcc33'
+            })
+        })
+    });
 };
+
 Mapbender.Model.prototype.getActiveLayers = function getActiveLayers() {
 };
 Mapbender.Model.prototype.setRequestParameter = function setRequestParameter() {
@@ -339,7 +357,7 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
         throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
     }
     var vector = new ol.source.Vector({wrapX: false});
-    var id = this.createVectorLayer({ source : vector},style,owner);
+    var id = this.createVectorLayer({ source : vector, style : style}, {}, owner);
 
     var draw =  new ol.interaction.Draw({
         source: vector,
