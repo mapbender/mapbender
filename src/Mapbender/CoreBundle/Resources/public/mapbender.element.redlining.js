@@ -2,6 +2,11 @@
 
     $.widget('mapbender.mbRedlining', {
         options: {
+            target: null,
+            display_type: 'dialog',
+            auto_activate: false,
+            deactivate_on_close: true,
+            geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
             paintstyles: {
                 'strokeColor': '#ff0000',
                 'fillColor': '#ff0000',
