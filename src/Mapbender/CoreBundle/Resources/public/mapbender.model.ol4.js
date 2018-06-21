@@ -8,6 +8,8 @@ Mapbender.Model = function(domId) {
         }),
         target: domId
     });
+    // ordered list of WMS / WMTS etc sources that provide pixel tiles
+    this.pixelSources = [];
 
 
     return this;
@@ -159,25 +161,50 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
  * @param {Mapbender.Model.Source} sourceObj
  */
 Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
-    var engineOpts;
     var sourceType = sourceObj.getType();
-    var olSource;
+    var sourceOpts = {
+        url: sourceObj.getBaseUrl(),
+        transition: 0
+    };
+
+    var olSourceClass;
+    var olLayerClass;
     switch (sourceType.toLowerCase()) {
         case 'wms':
-            engineOpts = {
-                url: sourceObj.getBaseUrl(),
-                params: {
-                    LAYERS: sourceObj.activeLayerNames
-                }
-            };
-            olSource = new ol.source.TileWMS(engineOpts);
+            if (sourceObj.options.tiled) {
+                olSourceClass = ol.source.TileWMS;
+                olLayerClass = ol.layer.Tile;
+            } else {
+                olSourceClass = ol.source.ImageWMS;
+                olLayerClass = ol.layer.Image;
+            }
             break;
         default:
             throw new Error("Unhandled source type '" + sourceType + "'");
     }
-
-    var engineLayer = new ol.layer.Tile({source: olSource});
+    var olSource = new (olSourceClass)(sourceOpts);
+    var engineLayer = new (olLayerClass)({source: olSource});
+    this.pixelSources.push(sourceObj);
     this.map.addLayer(engineLayer);
+    sourceObj.initializeEngineLayer(engineLayer);
+    sourceObj.updateEngine();
+};
+
+/**
+ *
+ * @param {string} sourceId
+ * @returns Mapbender.Model.Source
+ * @internal
+ */
+Mapbender.Model.prototype.getSourceById = function getSourceById(sourceId) {
+    var safeId = "" + sourceId;
+    for (var i = 0; i < this.pixelSources.length; ++i) {
+        var source = this.pixelSources[i];
+        if (source.id === safeId) {
+            return source;
+        }
+    }
+    return null;
 };
 
 /**
@@ -259,6 +286,7 @@ Mapbender.Model.prototype.setVectorLayerStyle = function(owner, uuid, style, ref
     'use strict';
     this.setLayerStyle('vectorLayer', owner, uuid, style);
 };
+
 /**
  *
  * @param layerType
@@ -359,3 +387,25 @@ Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerSty
 
 
 
+
+/**
+ * @returns {string[]}
+ */
+Mapbender.Model.prototype.getActiveSourceIds = function() {
+    var ids = [];
+    for (var i = 0; i < this.pixelSources.length; ++i) {
+        var source = this.pixelSources[i].id;
+        if (source.isActive()) {
+            ids.push(source.id);
+        }
+    }
+    return ids;
+};
+
+/**
+ * @returns {string[]}
+ * @param sourceId
+ */
+Mapbender.Model.prototype.getActiveLayerNames = function(sourceId) {
+    return this.getSourceById(sourceId).getActiveLayerNames();
+};
