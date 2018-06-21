@@ -380,3 +380,23 @@ Mapbender.Model.prototype.getActiveSourceIds = function() {
 Mapbender.Model.prototype.getActiveLayerNames = function(sourceId) {
     return this.getSourceById(sourceId).getActiveLayerNames();
 };
+
+/**
+ *
+ * @param elementConfig
+ */
+Mapbender.Model.prototype.createMousePositionControl = function createMousePositionControl(elementConfig){
+    'use strict';
+    var template = elementConfig.prefix + '{x}' + elementConfig.separator + '{y}';
+    var mousePositionControl = new ol.control.MousePosition({
+        coordinateFormat: function(coordinate) {
+
+            return ol.coordinate.format(coordinate, template, elementConfig.numDigits);
+        },
+        projection: elementConfig.displayProjection.projCode,
+        className: 'custom-mouse-position',
+        target: elementConfig.target,
+        undefinedHTML: elementConfig.emptyString
+    });
+    this.map.addControl(mousePositionControl);
+}

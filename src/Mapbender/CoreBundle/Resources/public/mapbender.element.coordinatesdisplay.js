@@ -20,22 +20,10 @@
         },
 
         _setup: function () {
-            var self = this,
-                mbMap = $('#' + this.options.target).data('mapbenderMbMap'),
-                layers = mbMap.map.layers();
-
+            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
             this.options.empty = this.options.empty || '';
             this.options.prefix = this.options.prefix || '';
             this.options.separator = this.options.separator || ' ';
-
-            layers.map(function (layer) {
-                if (layer.options.isBaseLayer) {
-                    layer.olLayer.events.register('loadend', layer.olLayer, function () {
-                        self.reset();
-                    });
-                }
-            });
-
             $(document).on('mbmapsrschanged', $.proxy(this._reset, this));
 
             this.options.numDigits = isNaN(parseInt(this.options.numDigits, this.RADIX))
@@ -47,55 +35,26 @@
         },
 
         _reset: function (event, srs) {
-            var self = this,
-                mbMap = $('#' + this.options.target).data('mapbenderMbMap'),
-                isdeg = mbMap.map.olMap.units === 'degrees';
-
-            srs = { projection: mbMap.map.olMap.getProjectionObject()};
+            var model = this.map.model;
+            var isdeg = model.getCurrentProjectionObject().getUnits() === 'dd';
+            srs = { projection: {projCode: model.getCurrentProjectionCode()}};
 
             if (this.crs !== null && (this.crs === srs.projection.projCode)) {
                 return;
             }
 
-            if (typeof (this.options.formatoutput) !== 'undefined') {
-                mbMap.map.olMap.addControl(
-                    new OpenLayers.Control.MousePosition({
-                        id: $(this.element).attr('id'),
-                        element: $(this.element)[0],
-                        emptyString: this.options.empty,
-                        numDigits: isdeg ? 5 + this.options.numDigits : this.options.numDigits,
-                        formatOutput: function (pos) {
-                            var out = self.options.displaystring.replace("$lon$", pos.lon.toFixed(isdeg ? 5 : 0));
-                            return out.replace("$lat$", pos.lat.toFixed(isdeg ? 5 : 0));
-                        }
-                    })
-                );
-
-                this.crs = srs.projection.projCode;
-            } else {
-                var mouseContr = mbMap.map.olMap.getControl($(this.element).attr('id'));
-
-                if (mouseContr !== null) {
-                    mbMap.map.olMap.removeControl(mouseContr);
-                }
-
-                mbMap.map.olMap.addControl(
-                    new OpenLayers.Control.MousePosition({
-                        id: $(this.element).attr('id'),
-                        div: $($(this.element)[0]).find('#coordinatesdisplay')[0],
-                        emptyString: this.options.empty || '',
-                        prefix: this.options.prefix || '',
-                        separator: this.options.separator || ' ',
-                        suffix: this.options.suffix,
-                        numDigits: isdeg ? 5 + this.options.numDigits : this.options.numDigits,
-                        displayProjection: srs.projection
-                    })
-                );
-
-                this.crs = srs.projection.projCode;
-            }
+            var elementConfig = {
+              target: $(this.element).attr('id'),
+              emptyString: this.options.empty || '',
+              prefix: this.options.prefix || '',
+              separator: this.options.separator || ' ',
+              suffix: this.options.suffix,
+              numDigits: isdeg ? 5 + this.options.numDigits : this.options.numDigits,
+              displayProjection: srs.projection
+            };
+            model.createMousePositionControl(elementConfig);
+            this.crs = srs.projection.projCode;
         }
     });
 
 })(jQuery);
-
