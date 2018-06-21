@@ -16,8 +16,20 @@ window.Mapbender.Model.Source = (function() {
         this.id = "" + (id || model.generateSourceId());
         this.type = (config['type'] || 'wms').toLowerCase();
         this.baseUrl_ = config.configuration.options.url;
+        var opacity;
+        // handle / support literal 0 opacity (=falsy, needs extended check)
+        if (typeof config.configuration.options.opacity !== undefined) {
+            opacity = parseFloat(config.configuration.options.opacity);
+            if (isNaN(opacity)) {
+                opacity = 1.0;
+            }
+        } else {
+            opacity = 1.0;
+        }
+
         this.options = {
-            opacity: config.configuration.options['opacity'] || 1,
+            opacity: opacity,
+            visibility: true,
             tiled: false // configuration.options.tiled || false
         };
         this.urlSettingsFixed = {
@@ -31,7 +43,7 @@ window.Mapbender.Model.Source = (function() {
         var layerDefs = this.extractLeafLayerConfigs(config.configuration);
         this.layerOptionsMap_ = {};
         this.layerNameMap_ = {};
-        this.allLayerNames_ = [];
+        this.layerOrder_ = [];
 
         _.forEach(layerDefs, function(layerConfig) {
             this.processLayerConfig(layerConfig);
@@ -103,7 +115,7 @@ window.Mapbender.Model.Source = (function() {
         var stringLayerName = "" + layerConfig.name;
         this.layerOptionsMap_[stringId] = layerConfig;
         this.layerNameMap_[stringLayerName] = layerConfig;
-        this.allLayerNames_.push(stringLayerName);
+        this.layerOrder_.push(stringLayerName);
 
         //HACK: all layers treated as (initially) active
         // @todo: scan "parent" nodes in configuration to determine enabled state
@@ -123,8 +135,56 @@ window.Mapbender.Model.Source = (function() {
         var params = $.extend({}, this.urlSettingsFixed, this.customRequestParams);
         this.engineLayer_.setOpacity(this.options.opacity);
         this.engineLayer_.getSource().updateParams(params);
+        // hide (engine-side) layer if no layers activated for display
+        var visibility = this.options.visibility && !!this.customRequestParams.LAYERS;
+        this.engineLayer_.setVisible(visibility);
     };
 
+    /**
+     * Activate / deactivate the entire source
+     *
+     * @param {bool} active
+     */
+    Source.prototype.setState = function setState(active) {
+        this.options.visibility = !!active;
+        this.updateEngine();
+    };
+
+    /**
+     * Activate / deactivate a single layer by name
+     *
+     * @param {string} layerName
+     * @param {boolean} active
+     * @todo: also support queryable
+     */
+    Source.prototype.setLayerState = function setLayerState(layerName, active) {
+        if (!this.layerNameMap_[layerName]) {
+            console.error("Unknown layer name", layerName, "known:", Object.keys(this.layerNameMap_));
+            return;
+        }
+        var activeMap = {};
+        var activeBefore = this.getActiveLayerNames();
+        var i;
+        for (i = 0; i < activeBefore.length; ++i) {
+            activeMap[activeBefore[i]] = true;
+        }
+        if (active) {
+            activeMap[layerName] = true;
+        } else {
+            delete activeMap[layerName];
+        }
+        var activeAfter = [];
+        // loop through allLayerNames_, use that to determine layer ordering and rebuild the LAYERS request parameter
+        for (i = 0; i < this.layerOrder_.length; ++i) {
+            var nextLayerName = this.layerOrder_[i];
+            if (!!activeMap[nextLayerName]) {
+                activeAfter.push(nextLayerName);
+                delete activeMap[nextLayerName];
+            }
+        }
+        this.customRequestParams.LAYERS = activeAfter.join(',');
+        this.updateEngine();
+    };
 
     /**
      * @returns {string[]}
@@ -137,6 +197,16 @@ window.Mapbender.Model.Source = (function() {
         }
         return _.filter((effectiveQueryParams.LAYERS || "").split(','));
     };
+
+    /**
+     * Check if source is active
+     *
+     * @returns {boolean}
+     */
+    Source.prototype.isActive = function isActive() {
+        return this.options.visibility;
+    };
+
 
     /**
      * @returns {string|null}
