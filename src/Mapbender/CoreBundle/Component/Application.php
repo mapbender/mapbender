@@ -155,31 +155,22 @@ class Application implements IAssetDependent
                     ),
                 );
             case 'ol4':
-
-
-              /*  if($this->container->get('kernel')->getEnvironment()=== 'dev'){
-                    $ol = '/components/openlayers/ol-debug.js';
+              if($this->container->get('kernel')->getEnvironment()=== 'dev'){
+                    $ol4 = '/components/openlayers/ol-debug.js';
                 } else {
-                    $ol = '/components/openlayers/ol.js';
-
-                }; */
+                    $ol4 = '/components/openlayers/ol.js';
+                };
 
                 $coreJsBase = '@MapbenderCoreBundle/Resources/public';
                 $modelJsBase = "$coreJsBase/mapbender-model";
                 return array(
                     'js' => array(
-                        '/components/openlayers/ol.js',
+                        $ol4,
                         "$coreJsBase/mapbender.model.ol4.js",
                         "$modelJsBase/mapbender.model.ol4.sourcelayer.state.js",
                         "$modelJsBase/mapbender.model.ol4.sourcelayer.js",
                         "$modelJsBase/mapbender.model.ol4.source.js",
                     ));
-                // HACK: same as ol2 path
-                // @todo: need correct new path to enter here
-
-
-
-
             default:
                 throw new \RuntimeException("Unhandled map engine code " . print_r($engineCode, true));
 
