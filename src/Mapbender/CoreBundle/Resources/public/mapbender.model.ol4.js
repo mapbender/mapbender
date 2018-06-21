@@ -316,8 +316,9 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
     if(!_.contains( this.DRAWTYPES,type )){
         throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
     }
+    var layerStyle = this.createVectorLayerStyle(style);
     var vector = new ol.source.Vector({wrapX: false});
-    var id = this.createVectorLayer({ source : vector, style : style}, {}, owner);
+    var id = this.createVectorLayer({ source : vector, style : layerStyle}, {}, owner);
 
     var draw =  new ol.interaction.Draw({
         source: vector,
@@ -345,6 +346,8 @@ Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,i
         this.removeInteractions(this.vectorLayer[owner][id].interactions);
     }
     this.map.removeLayer(vectorLayer);
+    delete this.vectorLayer[owner][id];
+
 
 };
 
@@ -386,8 +389,9 @@ Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservab
 
 
 Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(){
-    return {};
+    return new ol.style.Style();
 };
+
 
 
 
@@ -496,3 +500,22 @@ Mapbender.Model.prototype.zoomToExtent = function(mbExtent) {
     ];
     this.map.getView().fit(extent, this.map.getSize());
 };
+
+Mapbender.Model.prototype.removeAllFeaturesFromLayer = function removeAllFeaturesFromLayer(owner, id) {
+
+    return   this.vectorLayer[owner][id].getSource().clear();
+
+};
+
+Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature) {
+
+    return   this.getLineStringLength(feature.getGeometry());
+
+};
+
+Mapbender.Model.prototype.getGeometryCoordinates = function getFeaureCoordinates(geom) {
+
+    return   geom.getFlatCoordinates();
+
+};
+
