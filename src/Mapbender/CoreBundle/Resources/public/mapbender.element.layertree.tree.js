@@ -319,6 +319,8 @@
         },
         _createNode: function(source, sourceEl, config, isroot) {
             var $li = this.template.clone();
+            $li.data('options', sourceEl.options || {});
+
             $li.removeClass('hide-elm');
             $li.attr('data-id', sourceEl.options.id);
             $li.attr('data-sourceid', source.id);
@@ -790,6 +792,8 @@
             var self = this;
             function createMenu($element, sourceId, layerId) {
                 var atLeastOne = false;
+                var nodeOptions = $element.closest('li.leave').data('options') || {};
+
                 var source = self.model.getSourceById(sourceId);
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
                     sourceId));
@@ -842,13 +846,18 @@
                         }
                     });
                 }
-                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0
-                    && self.model.getLayerExtents({
-                        sourceId: sourceId,
-                        layerId: layerId
-                    })) {
+                var showZoomTo = $.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0;
+                showZoomTo = showZoomTo && nodeOptions.bbox;
+                if (showZoomTo) {
+                    $('.layer-zoom', menu).removeClass('inactive').on('click', function() {
+                        var currentSrs = self.model.getCurrentProjectionCode();
+                        var extent = (nodeOptions.bbox || {})[currentSrs];
+                        if (extent) {
+                            // @todo 3.1.0: move to model
+                            self.model.map.getView().fit(extent);
+                        }
+                    });
                     atLeastOne = true;
-                    $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                 } else {
                     $('.layer-zoom', menu).remove();
                 }
@@ -1015,13 +1024,6 @@
         _showLegend: function(elm) {
         },
         _exportKml: function(elm) {
-        },
-        _zoomToLayer: function(e) {
-            var options = {
-                sourceId: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId"),
-                layerId: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId")
-            };
-            this.model.zoomToLayer(options);
         },
         _showMetadata: function(e) {
             Mapbender.Metadata.call(
