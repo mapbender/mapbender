@@ -26,7 +26,8 @@
             //Todo: Move to a seperate file. ADD ALL THE EPSGCODES!!!!111
             //jQuery.extend(OpenLayers.Projection.defaults, {'EPSG:31466': {yx : true}});
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.model = new Mapbender.Model('Map');
+
+            this.model = new Mapbender.Model(this.element.attr('id'));
             _.forEach(this.options.layersets.reverse(), function(layerSetId) {
                 this.model.addLayerSetById(layerSetId);
             }.bind(this));
