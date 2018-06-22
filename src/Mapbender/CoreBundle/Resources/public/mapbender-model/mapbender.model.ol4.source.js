@@ -41,7 +41,7 @@ window.Mapbender.Model.Source = (function() {
             TRANSPARENT: (config.configuration.options.transparent || true) ? "TRUE" : "FALSE"
         };
         this.featureInfoParams = {
-            VERSION: config.configuration.options.version || "1.1.1",
+            MAX_FEATURE_COUNT: 1000,
             INFO_FORMAT: config.configuration.options.info_format || 'text/html'
         };
         this.customRequestParams = {};
@@ -320,11 +320,19 @@ window.Mapbender.Model.Source = (function() {
     Source.prototype.getType = function() {
         return this.type;
     };
+
     /**
      * @returns {string}
      */
     Source.prototype.getBaseUrl = function() {
         return this.baseUrl_;
+    };
+
+    /**
+     * @returns {ol.source.ImageWMS|ol.source.TileWMS}
+     */
+    Source.prototype.getEngineSource = function() {
+        return this.engineLayer_.getSource();
     };
 
     return Source;
