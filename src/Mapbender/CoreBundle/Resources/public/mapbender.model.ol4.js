@@ -8,9 +8,14 @@ Mapbender.Model = function(domId) {
         }),
         target: domId
     });
-    // ordered list of WMS / WMTS etc sources that provide pixel tiles
     this.pixelSources = [];
+    // ordered list of WMS / WMTS etc sources that provide pixel tiles
+    /*var popupOverlay = new Mapbender.Model.MapPopup();
+    this.map.on('singleclick', function(evt) {
 
+        var coordinate = evt.coordinate;
+        popupOverlay.openPopupOnXY(coordinate, function(){return '123'});
+    }); */
 
     return this;
 };
@@ -435,3 +440,21 @@ Mapbender.Model.prototype.getGeometryCoordinates = function getFeaureCoordinates
     return   geom.getFlatCoordinates();
 
 };
+
+
+
+
+
+Mapbender.Model.prototype.getPolygonArea = function getPolygonArea(polygon){
+    'use strict';
+
+    return  ol.Sphere.getArea(polygon);
+};
+
+Mapbender.Model.prototype.getGeometryFromFeatureWrapper = function getGeometryFromFeatureWrapper(feature, callback, args){
+    'use strict';
+    args = [feature.getGeometry()].concat(args)
+    return callback.apply(this,args);
+
+};
+
