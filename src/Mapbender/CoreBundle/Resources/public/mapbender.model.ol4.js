@@ -435,3 +435,44 @@ Mapbender.Model.prototype.getGeometryCoordinates = function getFeaureCoordinates
     return   geom.getFlatCoordinates();
 
 };
+
+/**
+ * Get feature info url; may return null if feature info is not available.
+ *
+ * @param {string} sourceId
+ * @param {*} coordinate in current EPSG
+ * @param {*} resolution purpose?
+ * @returns {string|null}
+ */
+Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceId, coordinate, resolution) {
+    var sourceObj = this.getSourceById(sourceId);
+    var sourceObjParams = sourceObj.featureInfoParams;
+    /** @var {ol.source.ImageWMS|ol.source.TileWMS} engineSource */
+    var engineSource = sourceObj.getEngineSource();
+    var projection = this.getCurrentProjectionCode();
+
+    // @todo: pass / evaluate coordinate from feature click
+    // @todo: figure out the purpose of 'resolution' param
+
+    console.log(engineSource);
+    return engineSource.getGetFeatureInfoUrl(coordinate || [0, 0], resolution || 5, projection, sourceObjParams);
+};
+
+/**
+ * Collects feature info URLs from all active sources
+ *
+ * @todo: add coordinate / resolution params
+ *
+ * @returns {string[]}
+ */
+Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUrls() {
+    var urls = [];
+    var sourceIds = this.getActiveSourceIds();
+    for (var i = 0; i < sourceIds.length; ++i) {
+        // pass sourceId, forward all remaining arguments
+        // @todo: remove this argument-forwarding style once the API has settled
+        urls.push(this.getFeatureInfoUrl.apply(this, [sourceIds[i]].concat(arguments)));
+    }
+    // strip nulls
+    return _.filter(urls);
+};
