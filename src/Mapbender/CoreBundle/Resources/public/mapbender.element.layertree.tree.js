@@ -413,45 +413,28 @@
             }
             return false;
         },
-        _resetNodeOutOfScale: function($li, layerDef) {
-            if (layerDef.state.outOfScale) {
+        _redisplayLayerState: function($li, state) {
+            if (state.outOfScale) {
                 $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
-            } else if (!layerDef.state.outOfScale) {
-                $li.removeClass("invisible").find('span.layer-state').attr("title", "");
-            }
-        },
-        _resetNodeSelected: function($li, layerOptions) {
-            var chk_selected = $('input[name="selected"]:first', $li);
-            chk_selected.prop('checked', layerOptions.treeOptions.selected);
-            initCheckbox.call(chk_selected);
-        },
-        _resetNodeInfo: function($li, layerOptions) {
-            var chk_info = $('input[name="info"]:first', $li);
-            chk_info.prop('checked', layerOptions.treeOptions.info);
-            chk_info.each(function(k, v) {
-                initCheckbox.call(v);
-            });
-        },
-        _resetNodeVisible: function($li, layerDef) {
-            if (layerDef.state.visibility) {
+            } else if (state.visibility) {
                 $li.removeClass("invisible").find('span.layer-state:first').attr("title", "");
+            } else {
+                // @todo (TBD): is this really a separate state, or is visibility always := !outOfScale?
+                $li.addClass("invisible").find('span.layer-state').attr("title", "");
             }
-            this._resetNodeOutOfScale($li, layerDef);
         },
         _resetSourceAtTree: function(source) {
+            // console.warn("Skipping _resetSourceAtTree call"); return;
             var self = this;
             function resetSourceAtTree(layer, parent) {
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
-                self._resetNodeSelected($li, layer.options);
-                self._resetNodeInfo($li, layer.options);
-                self._resetNodeVisible($li, layer);
+                self._redisplayLayerState($li, layer.state);
                 if (layer.children) {
                     for (var i = 0; i < layer.children.length; i++) {
                         resetSourceAtTree(layer.children[i], layer);
                     }
                 }
             }
-            ;
             resetSourceAtTree(source.configuration.children[0], null);
         },
         _changeChildren: function(changed) {
@@ -462,12 +445,10 @@
                         if ($li.attr("data-type") === this.consts.root && !this._isThemeChecked($li)){
                             continue;
                         }
+                        if (changed.children[layerId].state) {
+                            this._redisplayLayerState($li, changed.children[layerId].state);
+                        }
                         if (changed.children[layerId].options) {
-                            this._resetNodeSelected($li, changed.children[layerId].options);
-                            this._resetNodeInfo($li, changed.children[layerId].options);
-                            if (changed.children[layerId].options.state) {
-                                this._resetNodeVisible($li, changed.children[layerId].options);
-                            }
                             if(changed.children[layerId].options.treeOptions.allow){
                                 if(changed.children[layerId].options.treeOptions.allow.selected === true){
                                     var chk_selected = $('input[name="selected"]:first', $li);
@@ -481,8 +462,6 @@
                                     initCheckbox.call(chk_selected);
                                 }
                             }
-                        } else if (changed.children[layerId].state) {
-                            this._resetNodeOutOfScale($li, changed.children[layerId]);
                         }
                     }
                 }
@@ -673,7 +652,6 @@
                 });
                 self.model.changeLayerState(source, options, false, true);
             });
-            this._broadcastSync();
             return false;
         },
         _toggleSelected: function(e) {
