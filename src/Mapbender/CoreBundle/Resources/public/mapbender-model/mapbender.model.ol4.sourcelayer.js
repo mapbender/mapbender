@@ -17,8 +17,6 @@ window.Mapbender.Model.SourceLayer = (function() {
         }
         this.source = source;
         this.name = name;
-        // initialize fully empty / falsy state (we haven't applied anything yet)
-        this.appliedState = new Mapbender.Model.SourceLayerState(false, false);
     }
 
     return SourceLayer;
