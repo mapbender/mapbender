@@ -25,15 +25,6 @@
             var projection = model.getCurrentProjectionObject();
 
             $(this.element).addClass(this.options.anchor);
-            var scalebarOptions = {
-                div: $(this.element).get(0),
-                maxWidth: this.options.maxWidth,
-                geodesic: projection.units = 'degrees' ? true : false,
-                topOutUnits: "km",
-                topInUnits: "m",
-                bottomOutUnits: "mi",
-                bottomInUnits: "ft"
-            };
 
             var scaleLineOptions = {
                 'className': 'ol-scale-line',
@@ -41,6 +32,7 @@
                 'units': 'metric',
                 'target': document.getElementById($(this.element).get(0).id)
             };
+
             this.scalebar = new ol.control.ScaleLine(scaleLineOptions);
             model.map.addControl(this.scalebar);
 
