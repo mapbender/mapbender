@@ -279,7 +279,7 @@ window.Mapbender.Model.Source = (function() {
      * @returns {string[]}
      */
     Source.prototype.getQueryableLayerNames = function() {
-        return _.filter(this.featureInfoParams.QUERY_LAYERS || "").split(',');
+        return _.filter((this.featureInfoParams.QUERY_LAYERS || "").split(','));
     };
 
     /**
