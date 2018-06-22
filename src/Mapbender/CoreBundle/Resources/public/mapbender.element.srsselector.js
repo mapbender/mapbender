@@ -5,20 +5,20 @@
             target: null
         },
         op_sel: null,
-        mapWidget: null,
         model: null,
         _create: function(){
             if(!Mapbender.checkTarget("mbSrsSelector", this.options.target)){
                 return;
             }
             var self = this;
-            this.mapWidget = $('#' + this.options.target);
-            this.model = new Mapbender.Model();
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
             var self = this;
-            var mbMap = this.mapWidget.data('mapbenderMbMap');
+            var mbMap = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+
+            this.model = mbMap.model;
+
             var options = "";
             var allSrs = mbMap.getAllSrs();
 
@@ -50,15 +50,8 @@
                 $(div_id).css('display', 'none');
             }
         },
-        _switchSrs: function(evt){
-            var destinationProjection = new Proj4js.Proj(this.getSelectedSrs());
-
-            if(!destinationProjection.units){
-                destinationProjection.units = 'degrees';
-            }
-
-            this._trigger('srsSwitched', null, {projection: destinationProjection});
-            return true;
+        _switchSrs: function(event){
+            this.model.updateMapViewForProjection(this.getSelectedSrs());
         },
         _onSrsChanged: function(event, srsObj){
             this.selectSrs(srsObj.projection.projCode);

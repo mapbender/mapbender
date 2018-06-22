@@ -147,7 +147,7 @@
          */
         initializeSrsDefinitions: function () {
             _.map(this.srsDefinitions, function(definition) {
-                Proj4js.defs[definition.name] = definition.definition;
+                proj4.defs(definition.name, definition.definition);
             }.bind(this));
 
             return this;
@@ -326,7 +326,7 @@
         _loadSrsSuccess: function(response, textStatus, jqXHR){
             if(response.data) {
                 for(var i = 0; i < response.data.length; i++) {
-                    Proj4js.defs[response.data[i].name] = response.data[i].definition;
+                    proj4.defs(response.data[i].name, response.data[i].definition);
                     this.model.srsDefs.push(response.data[i]);
                     this.fireModelEvent({
                         name: 'srsadded',

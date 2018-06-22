@@ -3,14 +3,13 @@ Mapbender.Model = function(domId) {
     this.vectorLayer = {};
     this.map = new ol.Map({
         view:   new ol.View({
-            center: [0, 0],
-            zoom:   1
+            center: [744582.5381944415, 6324247.475347412], //[0, 0],
+            zoom:   10 //1
         }),
         target: domId
     });
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
     this.pixelSources = [];
-
 
     return this;
 };
@@ -387,13 +386,7 @@ Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservab
 
 Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(){
     return new ol.style.Style();
-}
-
-
-
-
-
-
+};
 
 /**
  * @returns {string[]}
@@ -475,4 +468,29 @@ Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUr
     }
     // strip nulls
     return _.filter(urls);
+};
+
+/**
+ * Update map view according to selected projection
+ *
+ * @param {string} projectionCode
+ */
+Mapbender.Model.prototype.updateMapViewForProjection = function (projectionCode) {
+
+    if (typeof projectionCode === 'undefined' || projectionCode === this.getCurrentProjectionCode()) {
+        return;
+    }
+
+    var newProjection = ol.proj.get(projectionCode),
+        currentCenter = this.map.getView().getCenter(),
+        newCenter = ol.proj.transform(currentCenter, this.getCurrentProjectionCode(), projectionCode),
+        zoom = this.map.getView().getZoom();
+
+    var newView = new ol.View({
+        projection: newProjection,
+        center: newCenter,
+        zoom: zoom
+    });
+
+    this.map.setView(newView);
 };
