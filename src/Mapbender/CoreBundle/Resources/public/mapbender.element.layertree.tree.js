@@ -68,7 +68,7 @@
             this._ready();
         },
         _getConfiguredLayersetConfigs: function() {
-            var layerSetIds = this.mbMap.options.layersets;
+            var layerSetIds = this.mbMap.options.layersets.reverse();
             var lsConfigs = [];
             for (var i = 0; i < layerSetIds.length; ++i) {
                 var layerSetId = layerSetIds[i];
