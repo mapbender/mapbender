@@ -20,7 +20,7 @@ Mapbender.Model.prototype.layerTypes = {
 };
 
 
-Mapbender.Model.prototype.DRAWTYPES = ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle'];
+Mapbender.Model.prototype.DRAWTYPES = ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle', 'Box'];
 
 Mapbender.Model.prototype.mapElement = null;
 Mapbender.Model.prototype.parseURL = function parseURL() {
@@ -65,6 +65,16 @@ Mapbender.Model.prototype.createStyle = function createStyle(options) {
             stroke: new ol.style.Stroke(options['circle']['stroke'])
         });
         style.setImage(circle);
+    }
+
+    if (options['text']) {
+        var text = new ol.style.Text({
+            fill: new ol.style.Fill({
+                color: options['text']['fill'].color
+            }),
+            stroke: new ol.style.Stroke(options['text']['stroke'])
+        });
+        style.setText(text);
     }
 
     return style;
@@ -328,13 +338,18 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
     options = options || {};
     options.source = options.source ||  new ol.source.Vector({wrapX: false});
 
+    var drawOptions = {
+        type: type,
+        source: options.source
+    };
     var id = this.createVectorLayer(options, owner);
 
-    var draw =  new ol.interaction.Draw({
-        source: options.source,
-        type: type
-    });
+    if (type === 'Box') {
+        drawOptions.geometryFunction = ol.interaction.Draw.createBox();
+        drawOptions.type = 'Circle';
+    }
 
+    var draw = new ol.interaction.Draw(drawOptions);
 
     this.vectorLayer[owner][id].interactions = this.vectorLayer[owner][id].interactions || {};
     this.vectorLayer[owner][id].interactions[id] = draw;
@@ -601,3 +616,24 @@ Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUr
     return _.filter(urls);
 };
 
+Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
+    'use strict';
+
+    var textStyle = new ol.style.Text();
+
+    if (options['text']) {
+        var text = new ol.style.Text(options['text']);
+        textStyle.setText(text);
+    }
+
+    if (options['fill']) {
+        var fill = new ol.style.Fill(options['fill']);
+        textStyle.setFill(fill);
+    }
+
+    if (options['stroke']) {
+        var stroke = new ol.style.Stroke(options['stroke']);
+        textStyle.setStroke(stroke);
+    }
+    return new ol.style.Text(options);
+}
