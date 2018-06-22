@@ -8,8 +8,15 @@ Mapbender.Model = function(domId) {
         }),
         target: domId
     });
-    // ordered list of WMS / WMTS etc sources that provide pixel tiles
     this.pixelSources = [];
+    // ordered list of WMS / WMTS etc sources that provide pixel tiles
+    /*var popupOverlay = new Mapbender.Model.MapPopup();
+    this.map.on('singleclick', function(evt) {
+
+
+        var coordinate = evt.coordinate;
+        popupOverlay.openPopupOnXY(coordinate, function(){return '123'});
+    }); */
 
 
     return this;
@@ -447,13 +454,6 @@ Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerSty
     return new ol.style.Style();
 };
 
-
-
-
-
-
-
-
 /**
  * @returns {string[]}
  */
@@ -575,6 +575,22 @@ Mapbender.Model.prototype.getGeometryCoordinates = function getFeaureCoordinates
 };
 
 
+
+
+
+Mapbender.Model.prototype.getPolygonArea = function getPolygonArea(polygon){
+    'use strict';
+
+    return  ol.Sphere.getArea(polygon);
+};
+
+Mapbender.Model.prototype.getGeometryFromFeatureWrapper = function getGeometryFromFeatureWrapper(feature, callback, args){
+    'use strict';
+    args = [feature.getGeometry()].concat(args)
+    return callback.apply(this,args);
+
+};
+
 /**
  * Get feature info url; may return null if feature info is not available.
  *
@@ -616,6 +632,7 @@ Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUr
     return _.filter(urls);
 };
 
+
 Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
     'use strict';
 
@@ -636,4 +653,32 @@ Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
         textStyle.setStroke(stroke);
     }
     return new ol.style.Text(options);
-}
+},
+
+
+/**
+ * Update map view according to selected projection
+ *
+ * @param {string} projectionCode
+ */
+Mapbender.Model.prototype.updateMapViewForProjection = function (projectionCode) {
+
+    if (typeof projectionCode === 'undefined' || projectionCode === this.getCurrentProjectionCode()) {
+        return;
+    }
+
+    var newProjection = ol.proj.get(projectionCode),
+        currentCenter = this.map.getView().getCenter(),
+        newCenter = ol.proj.transform(currentCenter, this.getCurrentProjectionCode(), projectionCode),
+        zoom = this.map.getView().getZoom();
+
+    var newView = new ol.View({
+        projection: newProjection,
+        center: newCenter,
+        zoom: zoom
+    });
+
+    this.map.setView(newView);
+};
+
+
