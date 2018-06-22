@@ -625,7 +625,6 @@ Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUr
     return _.filter(urls);
 };
 
-
 /**
  * Update map view according to selected projection
  *
@@ -649,5 +648,70 @@ Mapbender.Model.prototype.updateMapViewForProjection = function (projectionCode)
     });
 
     this.map.setView(newView);
+};
+
+
+/**
+ * Set callback function for single click event
+ *
+ * @param callback
+ * @returns {ol.EventsKey|Array.<ol.EventsKey>}
+ */
+Mapbender.Model.prototype.setOnSingleClickHandler = function (callback) {
+    return this.map.on("singleclick", callback);
+};
+
+
+/**
+ * Remove event listener by event key
+ *
+ * @param key
+ * @returns {Mapbender.Model}
+ */
+Mapbender.Model.prototype.removeEventListenerByKey = function (key) {
+    ol.Observable.unByKey(key);
+
+    return this;
+};
+
+/**
+ * Get coordinates from map click event and wrap them in {x,y} object
+ *
+ * @param event
+ * @returns undefined | {{x}, {y}}
+ */
+Mapbender.Model.prototype.getCoordinatesXYObjectFromMapClickEvent = function (event) {
+
+    var coordinates = undefined;
+
+    if (typeof event.coordinate !== 'undefined') {
+        coordinates = {
+            x: event.coordinate[0],
+            y: event.coordinate[1],
+        };
+    }
+
+    return coordinates;
+};
+
+/**
+ * Get units of current map projection
+ *
+ * @returns {ol.proj.Units}
+ */
+Mapbender.Model.prototype.getUnitsOfCurrentProjection = function () {
+    return this.getCurrentProjectionObject().getUnits();
+};
+
+/**
+ * Set style of map cursor
+ *
+ * @param style
+ * @returns {Mapbender.Model}
+ */
+Mapbender.Model.prototype.setMapCursorStyle = function (style) {
+    this.map.getTargetElement().style.cursor = style;
+
+    return this;
 };
 
