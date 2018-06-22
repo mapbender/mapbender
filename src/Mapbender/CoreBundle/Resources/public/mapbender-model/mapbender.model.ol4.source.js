@@ -33,7 +33,7 @@ window.Mapbender.Model.Source = (function() {
         this.options = {
             opacity: opacity,
             visibility: true,
-            tiled: false // configuration.options.tiled || false
+            tiled: config.configuration.options.tiled || false
         };
         this.getMapParams = {
             VERSION: config.configuration.options.version || "1.1.1",
