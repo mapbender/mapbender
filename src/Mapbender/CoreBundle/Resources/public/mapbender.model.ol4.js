@@ -52,8 +52,19 @@ Mapbender.Model.prototype.createStyle = function createStyle(options) {
     }
 
     if (options['stroke']) {
-        var stroke =  new ol.style.Stroke(options['stroke']);
+        var stroke = new ol.style.Stroke(options['stroke']);
         style.setStroke(stroke);
+    }
+
+    if (options['circle']) {
+        var circle = new ol.style.Circle({
+            radius: options['circle'].radius,
+            fill: new ol.style.Fill({
+                color: options['circle'].color
+            }),
+            stroke: new ol.style.Stroke(options['circle']['stroke'])
+        });
+        style.setImage(circle);
     }
 
     return style;
@@ -314,7 +325,6 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
     if(!_.contains( this.DRAWTYPES,type )){
         throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
     }
-    //var layerStyle = this.createVectorLayerStyle(style);
     options = options || {};
     options.source = options.source ||  new ol.source.Vector({wrapX: false});
 
@@ -326,7 +336,7 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
     });
 
 
-    this.vectorLayer[owner][id].interactions = this.vectorLayer[owner][id].interactions  || {};
+    this.vectorLayer[owner][id].interactions = this.vectorLayer[owner][id].interactions || {};
     this.vectorLayer[owner][id].interactions[id] = draw;
 
 
@@ -338,6 +348,36 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
 
     return id;
 
+};
+
+Mapbender.Model.prototype.createModifyInteraction = function createModifyInteraction(owner, style, vectorId, featureId, events) {
+    'use strict';
+
+    var vectorLayer = this.vectorLayer[owner][vectorId];
+    var features = vectorLayer.getSource().getFeatures();
+    var selectInteraction = new ol.interaction.Select({
+        layers: vectorLayer,
+        style: style
+    });
+    selectInteraction.getFeatures().push(features[0]);
+
+    this.vectorLayer[owner][vectorId].interactions = this.vectorLayer[owner][vectorId].interactions  || {};
+    this.vectorLayer[owner][vectorId].interactions[vectorId] = selectInteraction;
+
+    var modify = new ol.interaction.Modify({
+        features: selectInteraction.getFeatures()
+    });
+
+    this.vectorLayer[owner][vectorId].interactions = this.vectorLayer[owner][vectorId].interactions  || {};
+    this.vectorLayer[owner][vectorId].interactions[vectorId] = modify;
+
+    _.each(events, function(value, key) {
+        modify.on(key, value);
+    }.bind(this));
+
+    // this.map.addInteraction(selectInteraction);
+    // this.map.addInteraction(modify);
+    this.map.getInteractions().extend([selectInteraction, modify]);
 };
 
 Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,id){
