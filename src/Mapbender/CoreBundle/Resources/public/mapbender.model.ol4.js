@@ -8,6 +8,8 @@ Mapbender.Model = function(domId) {
         }),
         target: domId
     });
+    // ordered list of WMS / WMTS etc sources that provide pixel tiles
+    this.pixelSources = [];
 
 
     return this;
@@ -33,8 +35,30 @@ Mapbender.Model.prototype.onFeatureClick = function onFeatureClick() {
 };
 Mapbender.Model.prototype.setLayerStyle = function setLayerStyle() {
 };
-Mapbender.Model.prototype.createStyle = function createStyle() {
+
+/**
+ * @todo is not complete yet
+ *
+ * @param {Object} options
+ * @returns {ol.style.Style}
+ */
+Mapbender.Model.prototype.createStyle = function createStyle(options) {
+
+    var style = new ol.style.Style();
+
+    if (options['fill']) {
+        var fill = new ol.style.Fill(options['fill']);
+        style.setFill(fill);
+    }
+
+    if (options['stroke']) {
+        var stroke =  new ol.style.Stroke(options['stroke']);
+        style.setStroke(stroke);
+    }
+
+    return style;
 };
+
 Mapbender.Model.prototype.getActiveLayers = function getActiveLayers() {
 };
 Mapbender.Model.prototype.setRequestParameter = function setRequestParameter() {
@@ -141,25 +165,50 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
  * @param {Mapbender.Model.Source} sourceObj
  */
 Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
-    var engineOpts;
     var sourceType = sourceObj.getType();
-    var olSource;
+    var sourceOpts = {
+        url: sourceObj.getBaseUrl(),
+        transition: 0
+    };
+
+    var olSourceClass;
+    var olLayerClass;
     switch (sourceType.toLowerCase()) {
         case 'wms':
-            engineOpts = {
-                url: sourceObj.getBaseUrl(),
-                params: {
-                    LAYERS: sourceObj.activeLayerNames
-                }
-            };
-            olSource = new ol.source.TileWMS(engineOpts);
+            if (sourceObj.options.tiled) {
+                olSourceClass = ol.source.TileWMS;
+                olLayerClass = ol.layer.Tile;
+            } else {
+                olSourceClass = ol.source.ImageWMS;
+                olLayerClass = ol.layer.Image;
+            }
             break;
         default:
             throw new Error("Unhandled source type '" + sourceType + "'");
     }
-
-    var engineLayer = new ol.layer.Tile({source: olSource});
+    var olSource = new (olSourceClass)(sourceOpts);
+    var engineLayer = new (olLayerClass)({source: olSource});
+    this.pixelSources.push(sourceObj);
     this.map.addLayer(engineLayer);
+    sourceObj.initializeEngineLayer(engineLayer);
+    sourceObj.updateEngine();
+};
+
+/**
+ *
+ * @param {string} sourceId
+ * @returns Mapbender.Model.Source
+ * @internal
+ */
+Mapbender.Model.prototype.getSourceById = function getSourceById(sourceId) {
+    var safeId = "" + sourceId;
+    for (var i = 0; i < this.pixelSources.length; ++i) {
+        var source = this.pixelSources[i];
+        if (source.id === safeId) {
+            return source;
+        }
+    }
+    return null;
 };
 
 /**
@@ -179,14 +228,12 @@ Mapbender.Model.prototype.addLayerSetById = function addLayerSetsById(layerSetId
  * @param {string} owner
  * @returns {string}
  */
-Mapbender.Model.prototype.createVectorLayer = function(options, style, owner) {
+Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
     'use strict';
     var uuid = Mapbender.UUID();
     this.vectorLayer[owner] = this.vectorLayer[owner] || {};
     options.map = this.map;
-    this.vectorLayer[owner][uuid] = new ol.layer.Vector(options, {
-        style: style
-    });
+    this.vectorLayer[owner][uuid] = new ol.layer.Vector(options);
 
     return uuid;
 };
@@ -241,6 +288,7 @@ Mapbender.Model.prototype.setVectorLayerStyle = function(owner, uuid, style, ref
     'use strict';
     this.setLayerStyle('vectorLayer', owner, uuid, style);
 };
+
 /**
  *
  * @param layerType
@@ -257,17 +305,20 @@ Mapbender.Model.prototype.setLayerStyle = function setLayerStyle(layerType, owne
     }
 
 };
-Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, owner, style, events){
+Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, owner, options){
     'use strict';
 
     if(!_.contains( this.DRAWTYPES,type )){
         throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
     }
-    var vector = new ol.source.Vector({wrapX: false});
-    var id = this.createVectorLayer({ source : vector},style,owner);
+    //var layerStyle = this.createVectorLayerStyle(style);
+    options = options || {};
+    options.source = options.source ||  new ol.source.Vector({wrapX: false});
+
+    var id = this.createVectorLayer(options, owner);
 
     var draw =  new ol.interaction.Draw({
-        source: vector,
+        source: options.source,
         type: type
     });
 
@@ -276,7 +327,7 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
     this.vectorLayer[owner][id].interactions[id] = draw;
 
 
-    _.each(events, function(value, key) {
+    _.each(options.events, function(value, key) {
         draw.on(key, value);
     }.bind(this));
 
@@ -292,6 +343,8 @@ Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,i
         this.removeInteractions(this.vectorLayer[owner][id].interactions);
     }
     this.map.removeLayer(vectorLayer);
+    delete this.vectorLayer[owner][id];
+
 
 };
 
@@ -333,7 +386,7 @@ Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservab
 
 
 Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(){
-    return {};
+    return new ol.style.Style();
 }
 
 
@@ -341,3 +394,85 @@ Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerSty
 
 
 
+
+/**
+ * @returns {string[]}
+ */
+Mapbender.Model.prototype.getActiveSourceIds = function() {
+    var ids = [];
+    for (var i = 0; i < this.pixelSources.length; ++i) {
+        var source = this.pixelSources[i];
+        if (source.isActive()) {
+            ids.push(source.id);
+        }
+    }
+    return ids;
+};
+
+/**
+ * @returns {string[]}
+ * @param sourceId
+ */
+Mapbender.Model.prototype.getActiveLayerNames = function(sourceId) {
+    return this.getSourceById(sourceId).getActiveLayerNames();
+};
+
+
+Mapbender.Model.prototype.removeAllFeaturesFromLayer = function removeAllFeaturesFromLayer(owner, id) {
+
+    return   this.vectorLayer[owner][id].getSource().clear();
+
+};
+
+Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature) {
+
+    return   this.getLineStringLength(feature.getGeometry());
+
+};
+
+Mapbender.Model.prototype.getGeometryCoordinates = function getFeaureCoordinates(geom) {
+
+    return   geom.getFlatCoordinates();
+
+};
+
+/**
+ * Get feature info url; may return null if feature info is not available.
+ *
+ * @param {string} sourceId
+ * @param {*} coordinate in current EPSG
+ * @param {*} resolution purpose?
+ * @returns {string|null}
+ */
+Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceId, coordinate, resolution) {
+    var sourceObj = this.getSourceById(sourceId);
+    var sourceObjParams = sourceObj.featureInfoParams;
+    /** @var {ol.source.ImageWMS|ol.source.TileWMS} engineSource */
+    var engineSource = sourceObj.getEngineSource();
+    var projection = this.getCurrentProjectionCode();
+
+    // @todo: pass / evaluate coordinate from feature click
+    // @todo: figure out the purpose of 'resolution' param
+
+    console.log(engineSource);
+    return engineSource.getGetFeatureInfoUrl(coordinate || [0, 0], resolution || 5, projection, sourceObjParams);
+};
+
+/**
+ * Collects feature info URLs from all active sources
+ *
+ * @todo: add coordinate / resolution params
+ *
+ * @returns {string[]}
+ */
+Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUrls() {
+    var urls = [];
+    var sourceIds = this.getActiveSourceIds();
+    for (var i = 0; i < sourceIds.length; ++i) {
+        // pass sourceId, forward all remaining arguments
+        // @todo: remove this argument-forwarding style once the API has settled
+        urls.push(this.getFeatureInfoUrl.apply(this, [sourceIds[i]].concat(arguments)));
+    }
+    // strip nulls
+    return _.filter(urls);
+};

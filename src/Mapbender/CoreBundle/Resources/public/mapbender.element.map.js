@@ -34,10 +34,10 @@
             this.srsDefinitions = this.options.srsDefs;
             this.initializeSrsDefinitions();
 
-            this.options = {
+            this.options = $.extend({}, this.options, {
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
-            };
+            });
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();
