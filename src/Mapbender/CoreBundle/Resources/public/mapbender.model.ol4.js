@@ -1,15 +1,24 @@
-Mapbender.Model = function(domId) {
+Mapbender.Model = function(domId, options) {
     'use strict';
     this.vectorLayer = {};
+    var extent = [];
+    _.each(options.extents.max,function(value){
+      value =(typeof value === "string") ? Math.floor(value) :value;
+      extent.push(value);
+    });
+
+    var proj = new ol.proj.Projection({code : options.srs, extent : extent});
     this.map = new ol.Map({
         view:   new ol.View({
+            projection:  proj,
             center: [0, 0],
-            zoom:   1
+            extent: extent
         }),
         target: domId
     });
-    this.pixelSources = [];
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
+    this.pixelSources = [];
+    this.zoomToExtent(this.mbExtent(options.extents.start));
     /*var popupOverlay = new Mapbender.Model.MapPopup();
     this.map.on('singleclick', function(evt) {
 
@@ -17,8 +26,6 @@ Mapbender.Model = function(domId) {
         var coordinate = evt.coordinate;
         popupOverlay.openPopupOnXY(coordinate, function(){return '123'});
     }); */
-
-
     return this;
 };
 
@@ -206,8 +213,9 @@ Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
         default:
             throw new Error("Unhandled source type '" + sourceType + "'");
     }
+
     var olSource = new (olSourceClass)(sourceOpts);
-    var engineLayer = new (olLayerClass)({source: olSource});
+    var engineLayer = new (olLayerClass)({source: olSource, extent: this.map.getView().getProjection().getExtent()});
     this.pixelSources.push(sourceObj);
     this.map.addLayer(engineLayer);
     sourceObj.initializeEngineLayer(engineLayer);
@@ -519,10 +527,10 @@ Mapbender.Model.prototype.getFeatureExtent = function(owner, vectorId, featureId
 Mapbender.Model.prototype.mbExtent = function MbExtent(extentCoordinates) {
     'use strict';
     var extent = {};
-    extent.left = extentCoordinates[0];
-    extent.bottom = extentCoordinates[1];
-    extent.right = extentCoordinates[2];
-    extent.top = extentCoordinates[3];
+    _.each(["left","bottom", "right","top"],function(value, index){
+        extent[value] =(typeof extentCoordinates[index] === "string") ? Math.floor(extentCoordinates[index]) : extentCoordinates[index]
+    });
+
     return extent;
 };
 
