@@ -319,6 +319,8 @@
         },
         _createNode: function(source, sourceEl, config, isroot) {
             var $li = this.template.clone();
+            $li.data('options', sourceEl.options || {});
+
             $li.removeClass('hide-elm');
             $li.attr('data-id', sourceEl.options.id);
             $li.attr('data-sourceid', source.id);
@@ -708,36 +710,6 @@
                 $parent.addClass("showLeaves");
             }
             var li = $me.parents('li:first[data-sourceid]');
-            if (li.length > 0) {
-                this._resetSourceAtTree(this.model.getSource({
-                    id: li.attr(
-                        'data-sourceid')
-                }));
-            }
-            return false;
-        },
-        _toggleSourceVisibility: function(e) {
-            var self = this;
-            var $sourceVsbl = $(e.target);
-            var $li = $sourceVsbl.parents('li:first');
-            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
-                var $item = $(item);
-                var chk_selected = $('input[name="selected"]:first', $item);
-                self.model.changeSource({
-                    change: {
-                    sourceIdx: {
-                        id: $item.attr('data-sourceid')
-                    },
-                    options: {
-                        type: 'selected',
-                        configuration: {
-                            options: {
-                                visibility: $sourceVsbl.prop('checked') === false ? false : chk_selected.prop('checked')
-                            }
-                        }
-                    }
-                }});
-            });
             return false;
         },
         _selectAll: function(e) {
@@ -748,22 +720,41 @@
         },
         _toggleSelected: function(e) {
             var $target = $(e.target);
-            var serviceNodes = $target.closest('.serviceContainer').get();
-            if (!serviceNodes.length) {
-                // assume click on a theme. Find .serviceContainer nodes UNDER the theme, and
-                // update them iteratively
-                serviceNodes = $target.closest('.themeContainer').find('.serviceContainer').get();
-            }
-            for (var i = 0; i < serviceNodes.length; ++i) {
-                this._updateService($(serviceNodes[i]));
+            var $listNode = $target.closest('.leave[data-type]');
+            switch ($listNode.attr('data-type')) {
+                case 'theme':
+                    var serviceNodes = $('.serviceContainer', $listNode).get();
+                    for (var i = 0; i < serviceNodes.length; ++i) {
+                        this._updateServiceState($(serviceNodes[i]));
+                    }
+                    break;
+                case 'root':
+                    this._updateServiceState($listNode);
+                    break;
+                case 'group':
+                case 'simple':
+                    this._updateLeafStates($listNode);
+                    break;
+                default:
+                    throw new Error("Unhandled node type " + $listNode.attr('data-type'));
             }
         },
-        _updateService($node) {
+        _updateServiceState: function($node) {
             var sourceId = $node.attr('data-sourceid');
+            var themeActive = $('input[name="sourceVisibility"]', $node.parentsUntil(this.element, 'li.themeContainer')).prop('checked');
             var sourceObj = this.model.getSourceById(sourceId);
-
+            var active = $('.leaveContainer:first input[name="selected"]', $node).prop('checked');
+            if (typeof themeActive !== 'undefined') {
+                active &= themeActive;
+            }
+            sourceObj.setState(!!active);
+        },
+        _updateLeafStates: function($startNode) {
+            var $serviceNode = $startNode.closest('.serviceContainer');
+            var sourceId = $serviceNode.attr('data-sourceid');
+            var sourceObj = this.model.getSourceById(sourceId);
             // collect affected layer names tree-down (to support events on group / root)
-            var affectedLeaves = $('.leave[data-type="simple"]', $node).get();
+            var affectedLeaves = $('.leave[data-type="simple"]', $serviceNode).get();
             for (var i = 0; i < affectedLeaves.length; ++i) {
                 // for each layer: collect checkbox values up the entire tree (layer, layer group, source, theme)
                 var layerNode = affectedLeaves[i];
@@ -774,41 +765,21 @@
                 }
                 // checkboxes to scan are inside leaf layer node itself plus all parent containers
                 var scanNodes = [layerNode].concat($(layerNode).parents('li.leave').get());
-                var newState = 1;
+                var newStateVisible = 1;
+                var newStateInfo = 1;
                 for (var j = 0; j < scanNodes.length; ++j) {
                     // NOTE: "theme" checkboxes use a different input name ("sourceVisibility")
-                    var $cb = $('input[name="selected"],input[name="sourceVisibility"]', scanNodes[j]);
-                    newState &= $cb.prop('checked');
+                    var $cbVisible = $('input[name="selected"],input[name="sourceVisibility"]', scanNodes[j]);
+                    var $cbInfo = $('input[name="info"],input[name="sourceVisibility"]', scanNodes[j]);
+                    newStateVisible &= $cbVisible.prop('checked');
+                    newStateInfo &= $cbInfo.prop('checked');
                 }
                 // apply
-                sourceObj.setLayerState(layerName, !!newState);
+                sourceObj.updateLayerState(layerName, {
+                    visible: !!newStateVisible,
+                    queryable: !!newStateInfo
+                });
             }
-        },
-        _toggleInfo: function(e) {
-            var li = $(e.target).parents('li:first');
-            var tochange = {
-                sourceIdx: {
-                    id: li.attr(
-                        'data-sourceid')
-                },
-                options: {
-                    children: {},
-                    type: 'info'
-                }
-            };
-            tochange.options.children[li.attr('data-id')] = {
-                options: {
-                    treeOptions: {
-                        info: $(
-                            e.target).
-                            is(
-                                ':checked')
-                    }
-                }
-            };
-            this.model.changeSource({
-                change: tochange
-            });
         },
         currentMenu: null,
         closeMenu: function(menu) {
@@ -821,6 +792,10 @@
             var self = this;
             function createMenu($element, sourceId, layerId) {
                 var atLeastOne = false;
+                var $node = $element.closest('li.leave');
+                var nodeOptions = $node.data('options') || {};
+                var isRootLayerNode = $node.attr('data-type') === 'root';
+
                 var source = self.model.getSourceById(sourceId);
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
                     sourceId));
@@ -873,36 +848,46 @@
                         }
                     });
                 }
-                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0
-                    && self.model.getLayerExtents({
-                        sourceId: sourceId,
-                        layerId: layerId
-                    })) {
+                var showZoomTo = $.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0;
+                var currentSrs = self.model.getCurrentProjectionCode();
+                showZoomTo = showZoomTo && nodeOptions.bbox && nodeOptions.bbox[currentSrs];
+                if (showZoomTo) {
+                    $('.layer-zoom', menu).removeClass('inactive').on('click', function() {
+                        // SRS may theoretically have changed since binding the event handler, get it again
+                        var currentSrsOnClick = self.model.getCurrentProjectionCode();
+                        var extent = (nodeOptions.bbox || {})[currentSrsOnClick];
+                        if (extent) {
+                            // @todo 3.1.0: move to model
+                            self.model.map.getView().fit(extent);
+                        } else {
+                            console.warn("Empty extent for current projection", currentSrsOnClick);
+                        }
+                    });
                     atLeastOne = true;
-                    $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                 } else {
                     $('.layer-zoom', menu).remove();
                 }
-
-                if ($.inArray("metadata", self.options.menu) === -1 || menu.find(
-                    '.layer-metadata').length === 0 || (source.hasOwnProperty('wmsloader') && source.wmsloader === true) || isNaN(parseInt(source.origId))) {
-                    $('.layer-metadata', menu).remove();
-                } else {
-                    atLeastOne = true;
-                    var layer = self.model.findLayer({
-                        id: sourceId
-                    },
-                    {
-                        id: layerId
+                var showMetaData = $.inArray("metadata", self.options.menu) !== -1;
+                showMetaData = showMetaData && menu.find('.layer-metadata').length;
+                showMetaData = showMetaData && (!source.wmsloader);
+                var $mdMenu = $('.layer-metadata', menu);
+                if (showMetaData) {
+                    var layerName = nodeOptions.name;
+                    $mdMenu.removeClass('inactive');
+                    $mdMenu.on('click', function() {
+                        Mapbender.Metadata.loadAsPopup(sourceId, layerName);
                     });
-                    if (layer) {
-                        $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata,
-                            self));
-                    }
+                    atLeastOne = true;
+                } else {
+                    $mdMenu.remove();
                 }
-                var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
-                if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
-                    && source.configuration.children[0].options.id === layerId && dims.length > 0) {
+
+                var dims = source.configuration.options.dimensions || [];
+                var showDims = $.inArray("dimension", self.options.menu) !== -1;
+                showDims = showDims && dims.length && source.type === 'wms';
+                showDims = showDims && isRootLayerNode;
+
+                if (showDims) {
                     atLeastOne = true;
                     var lastItem = $('.layer-dimension-checkbox', menu).prev();
                     var dimCheckbox = $('.layer-dimension-checkbox', menu).remove();
@@ -988,18 +973,8 @@
         _callDimension: function(source, chkbox) {
             var dimension = chkbox.data('dimension');
             var params = {};
-            params[dimension['__name']] = chkbox.attr('data-value');
-            if (chkbox.is(':checked')) {
-                this.model.resetSourceUrl(source, {
-                    'add': params
-                },
-                true);
-            } else if (params[dimension['__name']]) {
-                this.model.resetSourceUrl(source, {
-                    'remove': params
-                },
-                true);
-            }
+            params[dimension['__name']] = (chkbox.is(':checked') && chkbox.attr('data-value')) || undefined;
+            source.updateRequestParams(params);
             return true;
         },
         _setOpacity: function(source, opacity) {
@@ -1046,13 +1021,6 @@
         _showLegend: function(elm) {
         },
         _exportKml: function(elm) {
-        },
-        _zoomToLayer: function(e) {
-            var options = {
-                sourceId: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId"),
-                layerId: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId")
-            };
-            this.model.zoomToLayer(options);
         },
         _showMetadata: function(e) {
             Mapbender.Metadata.call(

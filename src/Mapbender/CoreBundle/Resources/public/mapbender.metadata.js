@@ -21,6 +21,13 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
                 link.click();
                 link.remove();
             } else {
+                Mapbender.Metadata.loadAsPopup(source[0].origId, layer.options.name || '');
+            }
+        }
+    }
+};
+
+Mapbender.Metadata.loadAsPopup = function(sourceId, layerName) {
                 var metadata_popup = null;
                 metadata_popup = new Mapbender.Popup2({
                     title: Mapbender.trans("mb.core.metadata.popup.title"),
@@ -35,8 +42,8 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
                             type: "POST",
                             url: Mapbender.configuration.application.urls['metadata'],
                             data: {
-                                sourceId: source[0].origId,
-                                layerName: layer.options.name && layer.options.name !== '' ? layer.options.name : ''
+                                sourceId: sourceId,
+                                layerName: layerName
                             },
                             dataType: 'html',
                             complete: function(data) {
@@ -62,7 +69,4 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
                         }
                     }
                 });
-            }
-        }
-    }
 };
