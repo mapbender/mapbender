@@ -11,7 +11,6 @@ Mapbender.Model = function(domId) {
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
     this.pixelSources = [];
 
-
     return this;
 };
 
@@ -387,13 +386,7 @@ Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservab
 
 Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(){
     return new ol.style.Style();
-}
-
-
-
-
-
-
+};
 
 /**
  * @returns {string[]}
@@ -475,4 +468,29 @@ Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUr
     }
     // strip nulls
     return _.filter(urls);
+};
+
+/**
+ * Update map view according to selected projection
+ *
+ * @param {string} projectionCode
+ */
+Mapbender.Model.prototype.updateMapViewForProjection = function (projectionCode) {
+
+    if (typeof projectionCode === 'undefined' || projectionCode === this.getCurrentProjectionCode()) {
+        return;
+    }
+
+    var newProjection = ol.proj.get(projectionCode),
+        currentCenter = this.map.getView().getCenter(),
+        newCenter = ol.proj.transform(currentCenter, this.getCurrentProjectionCode(), projectionCode),
+        zoom = this.map.getView().getZoom();
+
+    var newView = new ol.View({
+        projection: newProjection,
+        center: newCenter,
+        zoom: zoom
+    });
+
+    this.map.setView(newView);
 };

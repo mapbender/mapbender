@@ -10,6 +10,7 @@
             },
             layersets: []
         },
+        srsDefinitions: [],
         elementUrl: null,
         model: null,
         map: null,
@@ -29,6 +30,9 @@
             _.forEach(this.options.layersets.reverse(), function(layerSetId) {
                 this.model.addLayerSetById(layerSetId);
             }.bind(this));
+
+            this.srsDefinitions = this.options.srsDefs;
+            this.initializeSrsDefinitions();
 
             this.options = $.extend({}, this.options, {
                 layerDefs: [],
@@ -136,7 +140,17 @@
          * Returns all defined srs
          */
         getAllSrs: function(){
-            return this.model.getAllSrs();
+            return this.srsDefinitions;
+        },
+        /**
+         * @returns {mapbender.mbMap}
+         */
+        initializeSrsDefinitions: function () {
+            _.map(this.srsDefinitions, function(definition) {
+                proj4.defs(definition.name, definition.definition);
+            }.bind(this));
+
+            return this;
         },
         /**
          * Reterns the model
@@ -312,7 +326,7 @@
         _loadSrsSuccess: function(response, textStatus, jqXHR){
             if(response.data) {
                 for(var i = 0; i < response.data.length; i++) {
-                    Proj4js.defs[response.data[i].name] = response.data[i].definition;
+                    proj4.defs(response.data[i].name, response.data[i].definition);
                     this.model.srsDefs.push(response.data[i]);
                     this.fireModelEvent({
                         name: 'srsadded',
