@@ -3,8 +3,8 @@ Mapbender.Model = function(domId) {
     this.vectorLayer = {};
     this.map = new ol.Map({
         view:   new ol.View({
-            center: [744582.5381944415, 6324247.475347412], //[0, 0],
-            zoom:   10 //1
+            center: [0, 0],
+            zoom:   1
         }),
         target: domId
     });
