@@ -26,11 +26,8 @@ Mapbender.Model = {
         };
         
         this.mbMap = mbMap;
-
         this.srsDefs = this.mbMap.options.srsDefs;
-        for (var i = 0; i < this.srsDefs.length; i++) {
-            Proj4js.defs[this.srsDefs[i].name] = this.srsDefs[i].definition;
-        }
+        Mapbender.Projection.extendSrsDefintions(this.srsDefs || []);
 
         if (typeof (this.mbMap.options.dpi) !== 'undefined') {
             this.resolution = OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
