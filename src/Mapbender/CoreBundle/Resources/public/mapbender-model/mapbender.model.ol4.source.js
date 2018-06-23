@@ -1,10 +1,10 @@
 window.Mapbender = Mapbender || {};
-window.Mapbender.Model = Mapbender.Model || {};
-window.Mapbender.Model.Source = (function() {
+/** @constructor */
+window.Mapbender.SourceModelOl4 = (function() {
     'use strict';
 
     /**
-     * Instantiate a Mapbender.Model.Source from a given config + id
+     * Instantiate from a given config + id
      *
      * @param {object} config plain old data, generated server-side
      * @param {string} id
@@ -67,13 +67,12 @@ window.Mapbender.Model.Source = (function() {
      * "Static" factory method.
      * @todo: different auto-selected classes for WMS vs WMTS?
      *
-     * @param {Mapbender.Model} model
      * @param {object} config
      * @param {string} [id]
      * @returns {Source}
      */
-    Source.fromConfig = function(model, config, id) {
-        return new Source(model, config, id);
+    Source.fromConfig = function(config, id) {
+        return new Source(config, id);
     };
     // convenience: make fromConfig accessible via instance as well
     Source.prototype.fromConfig = Source.fromConfig;
@@ -375,7 +374,7 @@ window.Mapbender.Model.Source = (function() {
     };
 
     /**
-     * @returns {ol.source.ImageWMS|ol.source.TileWMS}
+     * @returns {(ol.source.ImageWMS|ol.source.TileWMS)}
      */
     Source.prototype.getEngineSource = function() {
         return this.engineLayer_.getSource();

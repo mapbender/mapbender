@@ -1,4 +1,10 @@
-
+/**
+ *
+ * @param domId
+ * @param options
+ * @returns {Mapbender.Model}
+ * @constructor
+ */
 Mapbender.Model = function(domId, options) {
     'use strict';
     this.vectorLayer = {};
@@ -20,6 +26,7 @@ Mapbender.Model = function(domId, options) {
     });
 
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
+    /** @type {Array.<Mapbender.SourceModelOl4>} **/
     this.pixelSources = [];
     this.zoomToExtent(options.startExtent || options.maxExtent);
     // @todo: ???
@@ -32,6 +39,8 @@ Mapbender.Model = function(domId, options) {
     }); */
     return this;
 };
+Mapbender.Model.SourceModel = Mapbender.SourceModelOl4;
+Mapbender.Model.prototype.SourceModel = Mapbender.SourceModelOl4;
 
 Mapbender.Model.prototype.layerTypes = {
     vector: 'vectorLayer'
@@ -153,18 +162,18 @@ Mapbender.Model.prototype.generateSourceId = Mapbender.Model.generateSourceId;
  *
  * @param {object} config plain old data
  * @param {string} [id]
- * @returns {Mapbender.Model.Source}
+ * @returns {Mapbender.SourceModelOl4}
  * @static
  */
 Mapbender.Model.sourceFromConfig = function sourceFromConfig(config, id) {
     'use strict';
-    return Mapbender.Model.Source.fromConfig(config, id || this.generateSourceId());
+    return this.SourceModel.fromConfig(config, id || this.generateSourceId());
 };
 Mapbender.Model.prototype.sourceFromConfig = Mapbender.Model.sourceFromConfig;
 
 /**
  * @param {string} layerSetId
- * @return {Mapbender.Model.Source[]}
+ * @return {Array.<Mapbender.SourceModelOl4>}
  * @static
  */
 Mapbender.Model.sourcesFromLayerSetId = function sourcesFromLayerSetIds(layerSetId) {
@@ -188,7 +197,7 @@ Mapbender.Model.prototype.sourcesFromLayerSetId = Mapbender.Model.sourcesFromLay
  *
  * @param {object} sourceConfig plain old data as seen in application config or WmsLoader/loadWms response
  * @param {string} [id]
- * @returns {Mapbender.Model.Source}
+ * @returns {Mapbender.SourceModelOl4}
  */
 Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sourceConfig, id) {
     'use strict';
@@ -203,7 +212,7 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
     return source;
 };
 /**
- * @param {Mapbender.Model.Source} sourceObj
+ * @param {Mapbender.SourceModelOl4} sourceObj
  * @param {ol.Extent} extent
  * @returns {(ol.layer.Tile|ol.layer.Image)}
  */
@@ -241,7 +250,7 @@ Mapbender.Model.layerFactoryStatic = function layerFactoryStatic(sourceObj, exte
 Mapbender.Model.prototype.layerFactoryStatic = Mapbender.Model.layerFactoryStatic;
 
 /**
- * @param {Mapbender.Model.Source} sourceObj
+ * @param {Mapbender.SourceModelOl4} sourceObj
  * @returns {(ol.layer.Tile|ol.layer.Image)}
  */
 Mapbender.Model.prototype.layerFactory = function layerFactory(sourceObj) {
@@ -250,7 +259,7 @@ Mapbender.Model.prototype.layerFactory = function layerFactory(sourceObj) {
 };
 
 /**
- * @param {Mapbender.Model.Source} sourceObj
+ * @param {Mapbender.SourceModelOl4} sourceObj
  */
 Mapbender.Model.prototype.addSourceObject = function addSourceObject(sourceObj) {
     var engineLayer = this.layerFactory(sourceObj);
@@ -262,8 +271,7 @@ Mapbender.Model.prototype.addSourceObject = function addSourceObject(sourceObj) 
 /**
  *
  * @param {string} sourceId
- * @returns Mapbender.Model.Source
- * @internal
+ * @returns {Mapbender.SourceModelOl4}
  */
 Mapbender.Model.prototype.getSourceById = function getSourceById(sourceId) {
     var safeId = "" + sourceId;
