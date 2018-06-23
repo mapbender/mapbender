@@ -93,19 +93,9 @@ class Overview extends Element
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/overview.scss'));
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
+    public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:overview.html.twig',
-            array(
-                'id' => $this->getId(),
-                "title" => $this->getTitle(),
-                'configuration' => $this->getConfiguration()
-            )
-        );
+        return 'MapbenderCoreBundle:Element:overview.html.twig';
     }
 
     /**
@@ -113,6 +103,8 @@ class Overview extends Element
      */
     public static function getFormTemplate()
     {
+        // For historic / bc reasons this template is not in ElementAdming,
+        // but in a different bundle altogether
         return 'MapbenderManagerBundle:Element:overview.html.twig';
     }
 

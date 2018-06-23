@@ -18,6 +18,7 @@ Mapbender.Model = function(domId, options) {
         view: view,
         target: domId
     });
+
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
     this.pixelSources = [];
     this.zoomToExtent(options.startExtent || options.maxExtent);
@@ -129,32 +130,44 @@ Mapbender.Model.prototype.changeProjection = function changeProjection() {
 };
 
 /**
+ * @type {number}
+ * @static
+ * @private
+ */
+Mapbender.Model.nextGeneratedSourceId_ = 1;
+
+/**
+ * Generate a string id for a source that doesn't have one. Preconfigured sources
+ * (application backend: "Layersets") always have an id. Sources supplied dynamically
+ * by WmsLoader and / or WmcHandler might not.
+ *
+ * @returns {string}
+ * @static
+ */
+Mapbender.Model.generateSourceId = function generateSourceId() {
+    return "src-autoid-" + (Mapbender.Model.nextGeneratedSourceId_++);
+};
+Mapbender.Model.prototype.generateSourceId = Mapbender.Model.generateSourceId;
+
+/**
  *
  * @param {object} config plain old data
  * @param {string} [id]
  * @returns {Mapbender.Model.Source}
+ * @static
  */
-Mapbender.Model.prototype.sourceFromConfig = function sourceFromConfig(config, id) {
+Mapbender.Model.sourceFromConfig = function sourceFromConfig(config, id) {
     'use strict';
-    return Mapbender.Model.Source.fromConfig(this, config, id);
+    return Mapbender.Model.Source.fromConfig(config, id || this.generateSourceId());
 };
-
-/**
- * Picks a (hopefully) unused source id based on the count of layers currently on the (engine-side) map.
- *
- * @returns {string}
- */
-Mapbender.Model.prototype.generateSourceId = function generateSourceId() {
-    'use strict';
-    var layerCount = this.map.getLayers().length;
-    return "autoSrc" + layerCount;
-};
+Mapbender.Model.prototype.sourceFromConfig = Mapbender.Model.sourceFromConfig;
 
 /**
  * @param {string} layerSetId
  * @return {Mapbender.Model.Source[]}
+ * @static
  */
-Mapbender.Model.prototype.sourcesFromLayerSetId = function sourcesFromLayerSetIds(layerSetId) {
+Mapbender.Model.sourcesFromLayerSetId = function sourcesFromLayerSetIds(layerSetId) {
     'use strict';
     var layerSetConfig = Mapbender.configuration.layersets['' + layerSetId];
     var sources = [];
@@ -169,6 +182,7 @@ Mapbender.Model.prototype.sourcesFromLayerSetId = function sourcesFromLayerSetId
     }.bind(this));
     return sources;
 };
+Mapbender.Model.prototype.sourcesFromLayerSetId = Mapbender.Model.sourcesFromLayerSetId;
 
 /**
  *
@@ -188,13 +202,12 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
     this.addSourceObject(source);
     return source;
 };
-
 /**
- * Adds a model source to the map.
- *
  * @param {Mapbender.Model.Source} sourceObj
+ * @param {ol.Extent} extent
+ * @returns {(ol.layer.Tile|ol.layer.Image)}
  */
-Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
+Mapbender.Model.layerFactoryStatic = function layerFactoryStatic(sourceObj, extent) {
     var sourceType = sourceObj.getType();
     var sourceOpts = {
         url: sourceObj.getBaseUrl(),
@@ -217,11 +230,32 @@ Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
             throw new Error("Unhandled source type '" + sourceType + "'");
     }
 
-    var olSource = new (olSourceClass)(sourceOpts);
-    var engineLayer = new (olLayerClass)({source: olSource, extent: this.map.getView().getProjection().getExtent()});
+    var layerOptions = {
+        source: new (olSourceClass)(sourceOpts),
+        extent: extent || undefined
+    };
+    var layer = new (olLayerClass)(layerOptions);
+    sourceObj.initializeEngineLayer(layer);
+    return layer;
+};
+Mapbender.Model.prototype.layerFactoryStatic = Mapbender.Model.layerFactoryStatic;
+
+/**
+ * @param {Mapbender.Model.Source} sourceObj
+ * @returns {(ol.layer.Tile|ol.layer.Image)}
+ */
+Mapbender.Model.prototype.layerFactory = function layerFactory(sourceObj) {
+    var extent = this.map.getView().getProjection().getExtent();
+    return this.layerFactoryStatic(sourceObj, extent);
+};
+
+/**
+ * @param {Mapbender.Model.Source} sourceObj
+ */
+Mapbender.Model.prototype.addSourceObject = function addSourceObject(sourceObj) {
+    var engineLayer = this.layerFactory(sourceObj);
     this.pixelSources.push(sourceObj);
     this.map.addLayer(engineLayer);
-    sourceObj.initializeEngineLayer(engineLayer);
     sourceObj.updateEngine();
 };
 
@@ -775,3 +809,27 @@ Mapbender.Model.sanitizeExtent = function(extent) {
     }
 };
 Mapbender.Model.prototype.sanitizeExtent = Mapbender.Model.sanitizeExtent;
+
+/**
+ * Return current live extent in "universal extent" format
+ * + monkey-patched attribute 'srs'
+ *
+ * @returns {Array<number>|*}
+ */
+Mapbender.Model.prototype.getCurrentExtent = function getCurrentExtent() {
+    var extent = this.mbExtent(this.map.getView().calculateExtent());
+    extent.srs = this.getCurrentProjectionCode();
+    return extent;
+};
+
+/**
+ * Return maximum extent in "universal extent" format
+ * + monkey-patched attribute 'srs'
+ *
+ * @returns {Array<number>|*}
+ */
+Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
+    var extent = this.mbExtent(this.getCurrentProjectionObject().getExtent());
+    extent.srs = this.getCurrentProjectionCode();
+    return extent;
+};

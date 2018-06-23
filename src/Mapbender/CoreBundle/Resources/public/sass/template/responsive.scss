@@ -203,9 +203,11 @@
         @include transition(padding .2s ease-in-out);
         @include frontendContainerStyle();
       }
-      .olMapViewport {
+      .viewport {
         border: none;
       }
+      // element generated / attached dynamically by OpenLayers 2.x when using the
+      // OpenLayers.Control.OverviewMap control
       .olControlOverviewMapElement {
         @include absolute('' -3px -3px '');
         z-index: 20;
