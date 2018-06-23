@@ -87,7 +87,6 @@
                 })
             };
             this.control_ = new ol.control.OverviewMap(controlOptions);
-            console.log(controlOptions, this.control_);
             mainMapModel.map.addControl(this.control_);
             tmpModel.map.dispose();
         },
