@@ -7,18 +7,9 @@ Mapbender.Model = function(domId, options) {
         throw new Error("Can't initialize model");
     }
 
-    // @todo: move this out of here
-    function sanitizeExtent(ex) {
-        if (Array.isArray(ex) && ex.length === 4 && ol.extent.isEmpty(ex)) {
-            return [ex[2], ex[3], ex[0], ex[1]];
-        } else {
-            return ex;
-        }
-    }
-
     var proj = new ol.proj.Projection({
         code: options.srs,
-        extent: sanitizeExtent(options.maxExtent)
+        extent: this.sanitizeExtent(options.maxExtent)
     });
     var view = new ol.View({
         projection:  proj
@@ -29,10 +20,8 @@ Mapbender.Model = function(domId, options) {
     });
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
     this.pixelSources = [];
-    var startExtent = sanitizeExtent(options.startExtent || options.maxExtent);
-    // @todo: fix zoomToExtent to accept ...coordinates!
-//    this.zoomToExtent(this.mbExtent(options.extents.start));
-    this.map.getView().fit(startExtent, this.map.getSize());
+    var startExtent = this.sanitizeExtent(options.startExtent || options.maxExtent);
+    this.zoomToExtent(startExtent);
     // @todo: ???
     /*var popupOverlay = new Mapbender.Model.MapPopup();
     this.map.on('singleclick', function(evt) {
@@ -535,33 +524,51 @@ Mapbender.Model.prototype.getFeatureExtent = function(owner, vectorId, featureId
 };
 
 /**
- * An array of numbers representing an extent: [minx, miny, maxx, maxy].
+ * Promote input extent into "universally understood" extent.
  *
- * @param {Array.<number>} extentCoordinates
+ * Monkey-patch attributes 'left', 'bottom', 'right', 'top' onto
+ * a coordinate array, or convert a pure object extent with those
+ * attributes into a monkey-patched Array of numbers.
+ *
+ * Also force coordinate values to float.
+ *
+ * @param {(Array.<number>|Object.<string, number>)} extent
+ * @returns {Array.<number>}
+ * @static
  */
-Mapbender.Model.prototype.mbExtent = function MbExtent(extentCoordinates) {
+Mapbender.Model.mbExtent = function mbExtent(extent) {
     'use strict';
-    var extent = {};
-    _.each(["left","bottom", "right","top"],function(value, index){
-        extent[value] =(typeof extentCoordinates[index] === "string") ? Math.floor(extentCoordinates[index]) : extentCoordinates[index]
-    });
-
-    return extent;
+    if (Array.isArray(extent)) {
+        if (typeof extent.left !== 'undefined') {
+            // already patched, return same object (idempotence, no copy)
+            return extent;
+        }
+        _.each(["left","bottom", "right","top"], function(value, index){
+            extent[index] = parseFloat(extent[index]);
+            extent[value] = extent[index];
+        });
+        return extent;
+    } else if (typeof extent.left !== 'undefined') {
+        return Mapbender.Model.mbExtent([
+            extent.left,
+            extent.bottom,
+            extent.right,
+            extent.top
+            ]);
+    } else {
+        console.error("Unsupported extent format", extent);
+        throw new Error("Unsupported extent format");
+    }
 };
+Mapbender.Model.prototype.mbExtent = Mapbender.Model.mbExtent;
 
 /**
  *
  * @param mbExtent
  */
-Mapbender.Model.prototype.zoomToExtent = function(mbExtent) {
+Mapbender.Model.prototype.zoomToExtent = function(extent) {
     'use strict';
-    var extent = [
-        mbExtent.left,
-        mbExtent.bottom,
-        mbExtent.right,
-        mbExtent.top
-    ];
-    this.map.getView().fit(extent, this.map.getSize());
+    this.map.getView().fit(this.mbExtent(extent), this.map.getSize());
 };
 
 Mapbender.Model.prototype.removeAllFeaturesFromLayer = function removeAllFeaturesFromLayer(owner, id) {
@@ -730,3 +737,38 @@ Mapbender.Model.prototype.setMapCursorStyle = function (style) {
     return this;
 };
 
+/**
+ * Valdiates and fixes an incoming extent. Coordinate values will
+ * be cast to float. Inverted coordinates are flipped.
+ *
+ * @param extent
+ * @returns {Array<number>} monkey-patched mbExtent with .left etc
+ * @static
+ */
+Mapbender.Model.sanitizeExtent = function(extent) {
+    var mbExtent = this.mbExtent(extent);
+    var warnings = [];
+    for (var i = 0; i < mbExtent.length; ++i) {
+        if (isNaN(mbExtent[i])) {
+            console.error("Extent contains NaNs", mbExtent);
+            throw new Error("Extent contains NaNs");
+        }
+    }
+    if (mbExtent[0] > mbExtent[2]) {
+        warnings.push("left > right");
+    }
+    if (mbExtent[1] > mbExtent[3]) {
+        warnings.push("bottom > top");
+    }
+    if (warnings.length) {
+        console.warn("Fixing flipped extent coordinates " + warnings.join(","), mbExtent);
+        var left = Math.min(mbExtent[0], mbExtent[2]);
+        var right = Math.max(mbExtent[0], mbExtent[2]);
+        var bottom = Math.min(mbExtent[1], mbExtent[3]);
+        var top = Math.max(mbExtent[1], mbExtent[3]);
+        return this.mbExtent([left, bottom, right, top]);
+    } else {
+        return mbExtent;
+    }
+};
+Mapbender.Model.prototype.sanitizeExtent = Mapbender.Model.sanitizeExtent;

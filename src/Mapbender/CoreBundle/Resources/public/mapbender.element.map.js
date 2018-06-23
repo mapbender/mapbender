@@ -37,12 +37,12 @@
 
             // cast extent coordinates to float
             // @todo: server should send these as floats so we can skip the casts here
-            var maxExtent = _.map(this.options.extents.max, parseFloat);
-            var startExtent = _.map(this.options.extents.start, parseFloat);
+//            var maxExtent = _.map(this.options.extents.max, parseFloat);
+//            var startExtent = _.map(this.options.extents.start, parseFloat);
             var modelOptions = {
                 srs: this.options.srs,
-                maxExtent: maxExtent,
-                startExtent: (startExtent.length && startExtent) || null
+                maxExtent: Mapbender.Model.sanitizeExtent(this.options.extents.max),
+                startExtent: Mapbender.Model.sanitizeExtent(this.options.extents.start)
             };
             this.model = new Mapbender.Model(this.element.attr('id'), modelOptions);
             _.forEach(this.options.layersets.reverse(), function(layerSetId) {
