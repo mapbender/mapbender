@@ -539,6 +539,10 @@ Mapbender.Model.prototype.getFeatureExtent = function(owner, vectorId, featureId
 Mapbender.Model.mbExtent = function mbExtent(extent) {
     'use strict';
     if (Array.isArray(extent)) {
+        if (extent.length !== 4) {
+            console.error("Extent coordinate length mismatch", extent);
+            throw new Error("Extent coordinate length mismatch");
+        }
         if (typeof extent.left !== 'undefined') {
             // already patched, return same object (idempotence, no copy)
             return extent;
