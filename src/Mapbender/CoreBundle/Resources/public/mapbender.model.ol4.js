@@ -1,24 +1,39 @@
+
 Mapbender.Model = function(domId, options) {
     'use strict';
     this.vectorLayer = {};
-    var extent = [];
-    _.each(options.extents.max,function(value){
-      value =(typeof value === "string") ? Math.floor(value) :value;
-      extent.push(value);
-    });
+    if (!options || !options.srs || !options.maxExtent) {
+        console.error("Options srs and maxExtent required");
+        throw new Error("Can't initialize model");
+    }
 
-    var proj = new ol.proj.Projection({code : options.srs, extent : extent});
+    // @todo: move this out of here
+    function sanitizeExtent(ex) {
+        if (Array.isArray(ex) && ex.length === 4 && ol.extent.isEmpty(ex)) {
+            return [ex[2], ex[3], ex[0], ex[1]];
+        } else {
+            return ex;
+        }
+    }
+
+    var proj = new ol.proj.Projection({
+        code: options.srs,
+        extent: sanitizeExtent(options.maxExtent)
+    });
+    var view = new ol.View({
+        projection:  proj
+    });
     this.map = new ol.Map({
-        view:   new ol.View({
-            projection:  proj,
-            center: [0, 0],
-            extent: extent
-        }),
+        view: view,
         target: domId
     });
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
     this.pixelSources = [];
-    this.zoomToExtent(this.mbExtent(options.extents.start));
+    var startExtent = sanitizeExtent(options.startExtent || options.maxExtent);
+    // @todo: fix zoomToExtent to accept ...coordinates!
+//    this.zoomToExtent(this.mbExtent(options.extents.start));
+    this.map.getView().fit(startExtent, this.map.getSize());
+    // @todo: ???
     /*var popupOverlay = new Mapbender.Model.MapPopup();
     this.map.on('singleclick', function(evt) {
 

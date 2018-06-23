@@ -27,7 +27,24 @@
             //jQuery.extend(OpenLayers.Projection.defaults, {'EPSG:31466': {yx : true}});
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
 
-            this.model = new Mapbender.Model(this.element.attr('id'));
+            // Patch missing SRS definitions into proj4
+            // This avoids errors when initializing the OL4 view with
+            // "exotic" / non-geodesic projections such as EPSG:25832
+            for (var i = 0; i < this.options.srsDefs.length; ++i) {
+                var projDef = this.options.srsDefs[i];
+                proj4.defs(projDef.name, projDef.definition);
+            }
+
+            // cast extent coordinates to float
+            // @todo: server should send these as floats so we can skip the casts here
+            var maxExtent = _.map(this.options.extents.max, parseFloat);
+            var startExtent = _.map(this.options.extents.start, parseFloat);
+            var modelOptions = {
+                srs: this.options.srs,
+                maxExtent: maxExtent,
+                startExtent: (startExtent.length && startExtent) || null
+            };
+            this.model = new Mapbender.Model(this.element.attr('id'), modelOptions);
             _.forEach(this.options.layersets.reverse(), function(layerSetId) {
                 this.model.addLayerSetById(layerSetId);
             }.bind(this));
