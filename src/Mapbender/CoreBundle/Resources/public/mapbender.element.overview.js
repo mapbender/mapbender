@@ -9,6 +9,8 @@
         // @todo 3.1.0: remove this attribute and its usages
         mapOrigExtents_: {},
         startproj: null,
+        $viewport_: null,
+        mbMap_: null,
 
         /**
          * Creates the overview
@@ -25,21 +27,19 @@
          * Initializes the overview
          */
         _setup:         function() {
-            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
+            this.mbMap_ = $('#' + this.options.target).data('mapbenderMbMap');
             var $element = $(this.element);
-            var $viewport = $('.viewport', $element);
+            this.$viewport_ = $('.viewport', $element);
 
-            var engine = Mapbender.configuration.application.mapEngineCode;
-            switch (engine) {
+            switch (this.mbMap_.engineCode) {
                 case 'ol4':
-                    this._initAsOl4Control(mbMap, $viewport);
+                    this._initAsOl4Control(this.mbMap_, this.$viewport_);
                     break;
                 case 'mq-ol2':
-                    this._initAsOl2Control(mbMap, $viewport);
+                    this._initAsOl2Control(this.mbMap_, this.$viewport_);
                     break;
                 default:
-                    throw new Error("Unhandled engine code " + engine);
-
+                    throw new Error("Unhandled engine code " + this.mbMap_.engineCode);
             }
             $element.addClass(this.options.anchor);
 
@@ -77,7 +77,7 @@
                 return layer;
             });
             var controlOptions = {
-                collapsible: false,
+                collapsible: true,
                 collapsed: false,
                 target: $viewport.attr('id'),
                 layers: layers,
@@ -183,11 +183,18 @@
         _openClose: function(event){
             var self = this;
             $(this.element).toggleClass('closed');
-            window.setTimeout(function(){
-                if(!$(self.element).hasClass('closed')){
-                    self.control_.ovmap.updateSize();
-                }
-            }, 300);
+            switch (this.mbMap_.engineCode) {
+                case 'ol4':
+                    // Nothing to do. Ol4 keeps the overview up to date by itself.
+                    break;
+                case 'mq-ol2':
+                    window.setTimeout(function(){
+                        if(!$(self.element).hasClass('closed')){
+                            self.control_.ovmap.updateSize();
+                        }
+                    }, 300);
+                    break;
+            }
         },
 
         /**

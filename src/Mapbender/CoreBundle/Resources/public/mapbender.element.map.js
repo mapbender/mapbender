@@ -33,6 +33,8 @@
             // "exotic" / non-geodesic projections such as EPSG:25832
             Mapbender.Projection.extendSrsDefintions(this.srsDefinitions);
 
+            this.engineCode = Mapbender.configuration.application.mapEngineCode;
+
             var modelOptions = {
                 srs: this.options.srs,
                 maxExtent: Mapbender.Model.sanitizeExtent(this.options.extents.max),
