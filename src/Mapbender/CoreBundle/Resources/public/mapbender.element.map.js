@@ -81,13 +81,6 @@
         getMapState: function(){
             return this.model.getMapState();
         },
-        sourceById: function(idObject){
-            return this.model.getSource(idObject);
-        },
-        mqLayerBySourceId: function(idObject){
-            var source = this.sourceById(idObject);
-            return this.map.layersList[source.mqlid];
-        },
         /**
          *
          */
