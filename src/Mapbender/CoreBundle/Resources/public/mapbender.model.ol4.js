@@ -18,6 +18,7 @@ Mapbender.Model = function(domId, options) {
         view: view,
         target: domId
     });
+
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
     this.pixelSources = [];
     this.zoomToExtent(options.startExtent || options.maxExtent);
@@ -129,32 +130,44 @@ Mapbender.Model.prototype.changeProjection = function changeProjection() {
 };
 
 /**
+ * @type {number}
+ * @static
+ * @private
+ */
+Mapbender.Model.nextGeneratedSourceId_ = 1;
+
+/**
+ * Generate a string id for a source that doesn't have one. Preconfigured sources
+ * (application backend: "Layersets") always have an id. Sources supplied dynamically
+ * by WmsLoader and / or WmcHandler might not.
+ *
+ * @returns {string}
+ * @static
+ */
+Mapbender.Model.generateSourceId = function generateSourceId() {
+    return "src-autoid-" + (Mapbender.Model.nextGeneratedSourceId_++);
+};
+Mapbender.Model.prototype.generateSourceId = Mapbender.Model.generateSourceId;
+
+/**
  *
  * @param {object} config plain old data
  * @param {string} [id]
  * @returns {Mapbender.Model.Source}
+ * @static
  */
-Mapbender.Model.prototype.sourceFromConfig = function sourceFromConfig(config, id) {
+Mapbender.Model.sourceFromConfig = function sourceFromConfig(config, id) {
     'use strict';
     return Mapbender.Model.Source.fromConfig(config, id || this.generateSourceId());
 };
-
-/**
- * Picks a (hopefully) unused source id based on the count of layers currently on the (engine-side) map.
- *
- * @returns {string}
- */
-Mapbender.Model.prototype.generateSourceId = function generateSourceId() {
-    'use strict';
-    var layerCount = this.map.getLayers().length;
-    return "autoSrc" + layerCount;
-};
+Mapbender.Model.prototype.sourceFromConfig = Mapbender.Model.sourceFromConfig;
 
 /**
  * @param {string} layerSetId
  * @return {Mapbender.Model.Source[]}
+ * @static
  */
-Mapbender.Model.prototype.sourcesFromLayerSetId = function sourcesFromLayerSetIds(layerSetId) {
+Mapbender.Model.sourcesFromLayerSetId = function sourcesFromLayerSetIds(layerSetId) {
     'use strict';
     var layerSetConfig = Mapbender.configuration.layersets['' + layerSetId];
     var sources = [];
@@ -169,6 +182,7 @@ Mapbender.Model.prototype.sourcesFromLayerSetId = function sourcesFromLayerSetId
     }.bind(this));
     return sources;
 };
+Mapbender.Model.prototype.sourcesFromLayerSetId = Mapbender.Model.sourcesFromLayerSetId;
 
 /**
  *

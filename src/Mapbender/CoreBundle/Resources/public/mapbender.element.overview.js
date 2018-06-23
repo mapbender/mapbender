@@ -53,21 +53,14 @@
         _initAsOl4Control: function() {
             // @see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/overviewmap.js
 
-            // HACK: create a temporary model so we can use its methods
-            // @todo: make these methods "static" as far as possible
             var mainMapModel = this.mbMap_.model;
-            var modelOptions = {
-                srs: mainMapModel.getCurrentProjectionCode(),
-                maxExtent: mainMapModel.getMaxExtent(),
-                startExtent: mainMapModel.getCurrentExtent()
-            };
+            var maxExtent = mainMapModel.getMaxExtent();
             this.$viewport_.width(this.options.width).height(this.options.height);
             var viewportId = this.$viewport_.attr('id');
-            var tmpModel = new Mapbender.Model(viewportId, modelOptions);
 
-            var sources = tmpModel.sourcesFromLayerSetId("" + this.options.layerset);
+            var sources = Mapbender.Model.sourcesFromLayerSetId("" + this.options.layerset);
             var layers = sources.map(function(source) {
-                var layer = Mapbender.Model.layerFactoryStatic(source, modelOptions.maxExtent);
+                var layer = Mapbender.Model.layerFactoryStatic(source, maxExtent);
                 // Also activate all sources and all layers.
                 // This is backwards-compatible behvavior. The old overview never
                 // evaluated "visible", or any other config state on the source nor
@@ -82,13 +75,12 @@
                 target: viewportId,
                 layers: layers,
                 view: new ol.View({
-                    projection: mainMapModel.map.getView().getProjection(),
+                    projection: mainMapModel.getCurrentProjectionObject(), //map.getView().getProjection(),
                     center: mainMapModel.map.getView().getCenter()
                 })
             };
             this.control_ = new ol.control.OverviewMap(controlOptions);
             mainMapModel.map.addControl(this.control_);
-            tmpModel.map.dispose();
         },
         _initAsOl2Control: function() {
             var overviewLayers = [];
