@@ -262,7 +262,4 @@ Mapbender.Util.removeSignature = function(url) {
     return url;
 };
 
-// This calls on document.ready and won't be called when inserted dynamically
-// into a existing page. In such case, Mapbender.setup has to be called
-// explicitely, see mapbender.application.json.js
 /* load application configuration see application.config.loader.js.twig */
