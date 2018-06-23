@@ -30,40 +30,40 @@
             this.mbMap_ = $('#' + this.options.target).data('mapbenderMbMap');
             var $element = $(this.element);
             this.$viewport_ = $('.viewport', $element);
-
+            if (!$element.hasClass('closed')) {
+                // if we start closed, wait with initialization until opened
+                this._initDisplay();
+            }
+            this._ready();
+            $element.find('.toggleOverview').bind('click', this._openClose.bind(this));
+        },
+        _initDisplay: function() {
             switch (this.mbMap_.engineCode) {
                 case 'ol4':
-                    this._initAsOl4Control(this.mbMap_, this.$viewport_);
+                    this._initAsOl4Control();
                     break;
                 case 'mq-ol2':
-                    this._initAsOl2Control(this.mbMap_, this.$viewport_);
+                    this._initAsOl2Control();
                     break;
                 default:
                     throw new Error("Unhandled engine code " + this.mbMap_.engineCode);
             }
-            $element.addClass(this.options.anchor);
-
             $(document).bind('mbmapsrschanged', this._changeSrs.bind(this));
-            $element.find('.toggleOverview').bind('click', this._openClose.bind(this));
-
-            if (!this.options.maximized) {
-                $element.addClass("closed");
-            }
-            this._ready();
         },
-        _initAsOl4Control: function(mainMap, $viewport) {
+        _initAsOl4Control: function() {
             // @see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/overviewmap.js
 
             // HACK: create a temporary model so we can use its methods
             // @todo: make these methods "static" as far as possible
-            var mainMapModel = mainMap.model;
+            var mainMapModel = this.mbMap_.model;
             var modelOptions = {
                 srs: mainMapModel.getCurrentProjectionCode(),
                 maxExtent: mainMapModel.getMaxExtent(),
                 startExtent: mainMapModel.getCurrentExtent()
             };
-            $viewport.width(this.options.width).height(this.options.height);
-            var tmpModel = new Mapbender.Model($viewport.attr('id'), modelOptions);
+            this.$viewport_.width(this.options.width).height(this.options.height);
+            var viewportId = this.$viewport_.attr('id');
+            var tmpModel = new Mapbender.Model(viewportId, modelOptions);
 
             var sources = tmpModel.sourcesFromLayerSetId("" + this.options.layerset);
             var layers = sources.map(function(source) {
@@ -79,7 +79,7 @@
             var controlOptions = {
                 collapsible: true,
                 collapsed: false,
-                target: $viewport.attr('id'),
+                target: viewportId,
                 layers: layers,
                 view: new ol.View({
                     projection: mainMapModel.map.getView().getProjection(),
@@ -91,7 +91,7 @@
             mainMapModel.map.addControl(this.control_);
             tmpModel.map.dispose();
         },
-        _initAsOl2Control: function(mainMap, $viewport) {
+        _initAsOl2Control: function() {
             var overviewLayers = [];
             var layerSet = Mapbender.configuration.layersets[this.options.layerset];
 
@@ -123,7 +123,7 @@
 
             var overviewOptions = {
                 layers: overviewLayers,
-                div: $viewport.get(0),
+                div: this.$viewport_.get(0),
                 size: new OpenLayers.Size(this.options.width, this.options.height),
                 mapOptions: {
                     maxExtent: maxExtent,
@@ -142,7 +142,11 @@
 
             this.control_ = new OpenLayers.Control.OverviewMap(overviewOptions);
 
-            mainMap.map.olMap.addControl(this.control_);
+            this.mbMap_.map.olMap.addControl(this.control_);
+
+            window.setTimeout(function(){
+                this.control_.ovmap.updateSize();
+            }.bind(this), 300);
         },
         /**
          * Create WMS layer by definition
@@ -181,22 +185,15 @@
          * Opens/closes the overview element
          */
         _openClose: function(event){
-            var self = this;
-            $(this.element).toggleClass('closed');
-            switch (this.mbMap_.engineCode) {
-                case 'ol4':
-                    // Nothing to do. Ol4 keeps the overview up to date by itself.
-                    break;
-                case 'mq-ol2':
-                    window.setTimeout(function(){
-                        if(!$(self.element).hasClass('closed')){
-                            self.control_.ovmap.updateSize();
-                        }
-                    }, 300);
-                    break;
+            if (!this.control_) {
+                $(this.element).removeClass('closed');
+                window.setTimeout(function() {
+                    this._initDisplay();
+                }.bind(this), 300);
+            } else {
+                $(this.element).toggleClass('closed');
             }
         },
-
         /**
          * Transforms an extent into 'projection' projection.
          */
