@@ -4,7 +4,7 @@
         options: {
             layerset: []
         },
-        overview: null,
+        control_: null,
         layersOrigExtents: {},
         // @todo 3.1.0: remove this attribute and its usages
         mapOrigExtents_: {},
@@ -32,10 +32,10 @@
             var engine = Mapbender.configuration.application.mapEngineCode;
             switch (engine) {
                 case 'ol4':
-                    this._initWithOwnModel(mbMap, $viewport);
+                    this._initAsOl4Control(mbMap, $viewport);
                     break;
                 case 'mq-ol2':
-                    this._initAsControl(mbMap, $viewport);
+                    this._initAsOl2Control(mbMap, $viewport);
                     break;
                 default:
                     throw new Error("Unhandled engine code " + engine);
@@ -51,20 +51,47 @@
             }
             this._ready();
         },
-        _initWithOwnModel: function(mainMap, $viewport) {
-            var mainMapModel = mainMap.model;
-            var srs = mainMapModel.getCurrentProjectionCode();
+        _initAsOl4Control: function(mainMap, $viewport) {
+            // @see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/overviewmap.js
 
+            // HACK: create a temporary model so we can use its methods
+            // @todo: make these methods "static" as far as possible
+            var mainMapModel = mainMap.model;
             var modelOptions = {
-                srs: srs,
+                srs: mainMapModel.getCurrentProjectionCode(),
                 maxExtent: mainMapModel.getMaxExtent(),
                 startExtent: mainMapModel.getCurrentExtent()
             };
             $viewport.width(this.options.width).height(this.options.height);
-            this.model = new Mapbender.Model($viewport.attr('id'), modelOptions);
-            this.model.addLayerSetById('' + this.options.layerset);
+            var tmpModel = new Mapbender.Model($viewport.attr('id'), modelOptions);
+
+            var sources = tmpModel.sourcesFromLayerSetId("" + this.options.layerset);
+            var layers = sources.map(function(source) {
+                var layer = Mapbender.Model.layerFactoryStatic(source, modelOptions.maxExtent);
+                // Also activate all sources and all layers.
+                // This is backwards-compatible behvavior. The old overview never
+                // evaluated "visible", or any other config state on the source nor
+                // its layers
+                // NOTE: we can only do this AFTER creating and attach the layer via factory
+                source.setState(true);
+                return layer;
+            });
+            var controlOptions = {
+                collapsible: false,
+                collapsed: false,
+                target: $viewport.attr('id'),
+                layers: layers,
+                view: new ol.View({
+                    projection: mainMapModel.map.getView().getProjection(),
+                    center: mainMapModel.map.getView().getCenter()
+                })
+            };
+            this.control_ = new ol.control.OverviewMap(controlOptions);
+            console.log(controlOptions, this.control_);
+            mainMapModel.map.addControl(this.control_);
+            tmpModel.map.dispose();
         },
-        _initAsControl: function(mainMap, $viewport) {
+        _initAsOl2Control: function(mainMap, $viewport) {
             var overviewLayers = [];
             var layerSet = Mapbender.configuration.layersets[this.options.layerset];
 
@@ -113,9 +140,9 @@
                 });
             }
 
-            this.overview = new OpenLayers.Control.OverviewMap(overviewOptions);
+            this.control_ = new OpenLayers.Control.OverviewMap(overviewOptions);
 
-            mainMap.map.olMap.addControl(this.overview);
+            mainMap.map.olMap.addControl(this.control_);
         },
         /**
          * Create WMS layer by definition
@@ -158,7 +185,7 @@
             $(this.element).toggleClass('closed');
             window.setTimeout(function(){
                 if(!$(self.element).hasClass('closed')){
-                    self.overview.ovmap.updateSize();
+                    self.control_.ovmap.updateSize();
                 }
             }, 300);
         },
@@ -185,8 +212,8 @@
          */
         _changeSrs: function(event, srs) {
             var widget = this;
-            var overview = widget.overview;
-            var ovMap = overview.ovmap;
+            // @todo 3.1.0: this won't work on OL4, starting here
+            var ovMap = this.control_.ovmap;
             var oldProj = ovMap.projection;
             var center = ovMap.getCenter().transform(oldProj, srs.projection);
 
@@ -201,13 +228,13 @@
                 if(!widget.layersOrigExtents[layer.id]) {
                     widget._addOrigLayerExtent(layer);
                 }
-                if(layer.maxExtent && layer.maxExtent != widget.overview.ovmap.maxExtent) {
+                if(layer.maxExtent && layer.maxExtent != widget.control_.ovmap.maxExtent) {
                     layer.maxExtent = widget._transformExtent(widget.layersOrigExtents[layer.id].max, srs.projection);
                 }
                 layer.initResolutions();
             });
 
-            overview.update();
+            this.control_.update();
             ovMap.setCenter(center, ovMap.getZoom(), false, true);
         },
 
