@@ -121,18 +121,13 @@
             }
         },
         /**
-         * Triggers an event from the model.
-         * options.name - name of the event,
-         * options.value - parameter in the form of:
-         * options.value.mapquerylayer - for a MapQuery.Layer,
-         * options.value.source - for a source from the model.sourceTree,
-         * options.value.tochange - for a "tochange" object
-         * (see model.createToChangeObj(id)),
-         * options.value.changed -  for a "changed" object
-         * (see model.createChangedObj(id)).
+         * Triggers an event
+         * options.name - name of the event (mbmap prefix will be added, result lowercased)
+         * options.value - will be passed into the event handler callables as the second argument
+         *
+         * @see https://github.com/jquery/jquery-ui/blob/1.12.1/ui/widget.js#L659
          */
-        fireModelEvent: function(options){
-//            window.console && console.log(options.name, options.value);
+        fireModelEvent: function(options) {
             this._trigger(options.name, null, options.value);
         },
         /**
