@@ -98,12 +98,19 @@ Mapbender.setup = function(){
     // Initialize all elements by calling their init function with their options
     $.each(Mapbender.configuration.elements, function(id, data){
         var defaultStackTraceLimit = Error.stackTraceLimit;
-        Error.stackTraceLimit = undefined;
-        try {       
+        // NOTE: do not set undefined; undefined captures NO STACK TRACE AT ALL in some browsers
+        Error.stackTraceLimit = 100;
+        try {
             Mapbender.initElement(id,data);
         } catch(e) {
+            // NOTE: console.error produces a NEW stack trace that ends right here, and as such
+            //       won't point to the origin of the Error at all.
+            console.error("Element " + id + " failed to initialize:", e.message);
+            if (Mapbender.configuration.application.debug) {
+                // Log original stack trace (clickable in Chrome, unfortunately not in Firefox) separately
+                console.log(e.stack);
+            }
             $.notify('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.', 'error');
-            console.error(e);            
         }
         Error.stackTraceLimit = defaultStackTraceLimit;
     });
