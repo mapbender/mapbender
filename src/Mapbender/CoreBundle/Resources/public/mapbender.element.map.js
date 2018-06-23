@@ -27,10 +27,11 @@
             //jQuery.extend(OpenLayers.Projection.defaults, {'EPSG:31466': {yx : true}});
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
 
+            this.srsDefinitions = this.options.srsDefs || [];
             // Patch missing SRS definitions into proj4
             // This avoids errors when initializing the OL4 view with
             // "exotic" / non-geodesic projections such as EPSG:25832
-            Mapbender.Projection.extendSrsDefintions(this.options.srsDefs || []);
+            Mapbender.Projection.extendSrsDefintions(this.srsDefinitions);
 
             var modelOptions = {
                 srs: this.options.srs,
@@ -42,8 +43,6 @@
                 this.model.addLayerSetById(layerSetId);
             }.bind(this));
 
-            this.srsDefinitions = this.options.srsDefs;
-            this.initializeSrsDefinitions();
 
             this.options = $.extend({}, this.options, {
                 layerDefs: [],
@@ -130,26 +129,10 @@
             return this.model.sourceTree;
         },
         /**
-         * Reterns the generated source id from model
-         */
-        genereateSourceId: function(){
-            return this.model.generateSourceId();
-        },
-        /**
          * Returns all defined srs
          */
         getAllSrs: function(){
             return this.srsDefinitions;
-        },
-        /**
-         * @returns {mapbender.mbMap}
-         */
-        initializeSrsDefinitions: function () {
-            _.map(this.srsDefinitions, function(definition) {
-                proj4.defs(definition.name, definition.definition);
-            }.bind(this));
-
-            return this;
         },
         /**
          * Reterns the model
