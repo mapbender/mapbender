@@ -30,10 +30,7 @@
             // Patch missing SRS definitions into proj4
             // This avoids errors when initializing the OL4 view with
             // "exotic" / non-geodesic projections such as EPSG:25832
-            for (var i = 0; i < this.options.srsDefs.length; ++i) {
-                var projDef = this.options.srsDefs[i];
-                proj4.defs(projDef.name, projDef.definition);
-            }
+            Mapbender.Projection.extendSrsDefintions(this.options.srsDefs || []);
 
             var modelOptions = {
                 srs: this.options.srs,
