@@ -147,6 +147,7 @@ class Application implements IAssetDependent
             case 'mq-ol2':
                 return array(
                     'js' => array(
+                        '@MapbenderCoreBundle/Resources/public/init/projection.js',
                         '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
                         '/components/mapquery/lib/openlayers/OpenLayers.js',
                         // @todo: figure out why this tmpl extension is here, potentially safe to remove entirely
@@ -169,6 +170,7 @@ class Application implements IAssetDependent
                     'js' => array(
                         $ol4,
                         $proj4js,
+                        '@MapbenderCoreBundle/Resources/public/init/projection.js',
                         "$coreJsBase/mapbender.model.ol4.js",
                         "$modelJsBase/mapbender.model.ol4.sourcelayer.state.js",
                         "$modelJsBase/mapbender.model.ol4.sourcelayer.js",
