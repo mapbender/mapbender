@@ -136,7 +136,7 @@ Mapbender.Model.prototype.changeProjection = function changeProjection() {
  */
 Mapbender.Model.prototype.sourceFromConfig = function sourceFromConfig(config, id) {
     'use strict';
-    return Mapbender.Model.Source.fromConfig(this, config, id);
+    return Mapbender.Model.Source.fromConfig(config, id || this.generateSourceId());
 };
 
 /**
@@ -188,13 +188,12 @@ Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sou
     this.addSourceObject(source);
     return source;
 };
-
 /**
- * Adds a model source to the map.
- *
  * @param {Mapbender.Model.Source} sourceObj
+ * @param {ol.Extent} extent
+ * @returns {(ol.layer.Tile|ol.layer.Image)}
  */
-Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
+Mapbender.Model.layerFactoryStatic = function layerFactoryStatic(sourceObj, extent) {
     var sourceType = sourceObj.getType();
     var sourceOpts = {
         url: sourceObj.getBaseUrl(),
@@ -217,11 +216,32 @@ Mapbender.Model.prototype.addSourceObject = function addSourceObj(sourceObj) {
             throw new Error("Unhandled source type '" + sourceType + "'");
     }
 
-    var olSource = new (olSourceClass)(sourceOpts);
-    var engineLayer = new (olLayerClass)({source: olSource, extent: this.map.getView().getProjection().getExtent()});
+    var layerOptions = {
+        source: new (olSourceClass)(sourceOpts),
+        extent: extent || undefined
+    };
+    var layer = new (olLayerClass)(layerOptions);
+    sourceObj.initializeEngineLayer(layer);
+    return layer;
+};
+Mapbender.Model.prototype.layerFactoryStatic = Mapbender.Model.layerFactoryStatic;
+
+/**
+ * @param {Mapbender.Model.Source} sourceObj
+ * @returns {(ol.layer.Tile|ol.layer.Image)}
+ */
+Mapbender.Model.prototype.layerFactory = function layerFactory(sourceObj) {
+    var extent = this.map.getView().getProjection().getExtent();
+    return this.layerFactoryStatic(sourceObj, extent);
+};
+
+/**
+ * @param {Mapbender.Model.Source} sourceObj
+ */
+Mapbender.Model.prototype.addSourceObject = function addSourceObject(sourceObj) {
+    var engineLayer = this.layerFactory(sourceObj);
     this.pixelSources.push(sourceObj);
     this.map.addLayer(engineLayer);
-    sourceObj.initializeEngineLayer(engineLayer);
     sourceObj.updateEngine();
 };
 

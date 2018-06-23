@@ -4,16 +4,17 @@ window.Mapbender.Model.Source = (function() {
     'use strict';
 
     /**
-     * Instantiate a Mapbender.Model.Source from a given config + id and bind it to the given Mapbender.Model instance
+     * Instantiate a Mapbender.Model.Source from a given config + id
      *
-     * @param {Mapbender.Model} model
      * @param {object} config plain old data, generated server-side
-     * @param {string} [id] defaults to auto-generated value; will be cast to string
+     * @param {string} id
      * @constructor
      */
-    function Source(model, config, id) {
-        this.model = model;
-        this.id = "" + (id || model.generateSourceId());
+    function Source(config, id) {
+        this.id = id;
+        if (!id) {
+            console.error("Instantiating source with empty id; this might cause problems later");
+        }
         this.type = (config['type'] || 'wms').toLowerCase();
         // HACK: Store original config for old-style access.
         //       This attribute is not used internally in the source or in the model layer.
@@ -78,7 +79,7 @@ window.Mapbender.Model.Source = (function() {
     Source.prototype.fromConfig = Source.fromConfig;
 
     /**
-     * @param {ol.layer.Tile} engineLayer
+     * @param {(ol.layer.Tile|ol.layer.Image)} engineLayer
      */
     Source.prototype.initializeEngineLayer = function initializeEngineLayer(engineLayer) {
         if (this.engineLayer_) {
