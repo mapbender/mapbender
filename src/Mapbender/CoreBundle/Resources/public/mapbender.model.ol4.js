@@ -775,3 +775,27 @@ Mapbender.Model.sanitizeExtent = function(extent) {
     }
 };
 Mapbender.Model.prototype.sanitizeExtent = Mapbender.Model.sanitizeExtent;
+
+/**
+ * Return current live extent in "universal extent" format
+ * + monkey-patched attribute 'srs'
+ *
+ * @returns {Array<number>|*}
+ */
+Mapbender.Model.prototype.getCurrentExtent = function getCurrentExtent() {
+    var extent = this.mbExtent(this.map.getView().calculateExtent());
+    extent.srs = this.getCurrentProjectionCode();
+    return extent;
+};
+
+/**
+ * Return maximum extent in "universal extent" format
+ * + monkey-patched attribute 'srs'
+ *
+ * @returns {Array<number>|*}
+ */
+Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
+    var extent = this.mbExtent(this.getCurrentProjectionObject().getExtent());
+    extent.srs = this.getCurrentProjectionCode();
+    return extent;
+};

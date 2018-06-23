@@ -23,7 +23,7 @@
     background-image: url("components/mapquery/lib/openlayers/img/blank.gif");
   }
 
-  .olMap {
+  .viewport {
     background-color: white;
     @include transition(width .2s linear);
     & > div {
@@ -36,8 +36,11 @@
     }
   }
   &.closed {
-    .olMap {
+    .viewport {
       width: 0px !important;
+      .olMap, .ol-viewport {
+        border: none;
+      }
     }
     .toggleOverview {
       @extend .iconOpen;

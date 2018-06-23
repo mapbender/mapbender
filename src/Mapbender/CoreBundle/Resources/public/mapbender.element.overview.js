@@ -6,7 +6,8 @@
         },
         overview: null,
         layersOrigExtents: {},
-        mapOrigExtents: {},
+        // @todo 3.1.0: remove this attribute and its usages
+        mapOrigExtents_: {},
         startproj: null,
 
         /**
@@ -24,29 +25,56 @@
          * Initializes the overview
          */
         _setup:         function() {
-            var widget = this;
-            var options = widget.options;
-            var mbMap = $('#' + options.target).data('mapbenderMbMap');
-            var model = mbMap.model;
-            var element = $(widget.element);
-            var mapMaxExtent = model.mapMaxExtent;
-            var projection = mapMaxExtent.projection;
-            var maxExtent = mapMaxExtent.extent;
-            var overviewLayers = [];
-            var layerSet = Mapbender.configuration.layersets[options.layerset];
-            var overviewContainer = $('.overviewContainer', widget.element).get(0);
+            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
+            var $element = $(this.element);
+            var $viewport = $('.viewport', $element);
 
-            widget.mapOrigExtents = {
+            var engine = Mapbender.configuration.application.mapEngineCode;
+            switch (engine) {
+                case 'ol4':
+                    this._initWithOwnModel(mbMap, $viewport);
+                    break;
+                case 'mq-ol2':
+                    this._initAsControl(mbMap, $viewport);
+                    break;
+                default:
+                    throw new Error("Unhandled engine code " + engine);
+
+            }
+            $element.addClass(this.options.anchor);
+
+            $(document).bind('mbmapsrschanged', this._changeSrs.bind(this));
+            $element.find('.toggleOverview').bind('click', this._openClose.bind(this));
+
+            if (!this.options.maximized) {
+                $element.addClass("closed");
+            }
+            this._ready();
+        },
+        _initWithOwnModel: function(mainMap, $viewport) {
+            var mainMapModel = mainMap.model;
+            var srs = mainMapModel.getCurrentProjectionCode();
+
+            var modelOptions = {
+                srs: srs,
+                maxExtent: mainMapModel.getMaxExtent(),
+                startExtent: mainMapModel.getCurrentExtent()
+            };
+            $viewport.width(this.options.width).height(this.options.height);
+            this.model = new Mapbender.Model($viewport.attr('id'), modelOptions);
+            this.model.addLayerSetById('' + this.options.layerset);
+        },
+        _initAsControl: function(mainMap, $viewport) {
+            var overviewLayers = [];
+            var layerSet = Mapbender.configuration.layersets[this.options.layerset];
+
+            this.mapOrigExtents_ = {
                 max: {
-                    projection: projection,
+                    projection: srs,
                     extent: maxExtent
                 }
             };
-
-            widget.startproj = projection;
-
-            element.addClass(options.anchor);
-
+            this.startproj = srs;
             $.each(layerSet.reverse(), function(idx, item) {
                 $.each(item, function(idx2, layerDef) {
                     if(layerDef.type !== "wms") {
@@ -68,9 +96,8 @@
 
             var overviewOptions = {
                 layers: overviewLayers,
-                div: overviewContainer,
-                size: new OpenLayers.Size(options.width, options.height),
-                //maximized: widget.options.maximized,
+                div: $viewport.get(0),
+                size: new OpenLayers.Size(this.options.width, this.options.height),
                 mapOptions: {
                     maxExtent: maxExtent,
                     projection: projection,
@@ -78,7 +105,7 @@
                 }
             };
 
-            if(options.fixed){
+            if (this.options.fixed) {
                 $.extend(overviewOptions, {
                     minRatio: 1,
                     maxRatio: 1000000000
@@ -86,20 +113,10 @@
                 });
             }
 
-            widget.overview = new OpenLayers.Control.OverviewMap(overviewOptions);
+            this.overview = new OpenLayers.Control.OverviewMap(overviewOptions);
 
-            mbMap.map.olMap.addControl(widget.overview);
-
-            $(document).bind('mbmapsrschanged', $.proxy(widget._changeSrs, widget));
-            element.find('.toggleOverview').bind('click', $.proxy(widget._openClose, widget));
-            
-            if(!options.maximized){
-                element.addClass("closed");
-            }    
-                
-            widget._ready();
+            mainMap.map.olMap.addControl(this.overview);
         },
-
         /**
          * Create WMS layer by definition
          * @param layerDefinition
@@ -176,7 +193,7 @@
             ovMap.projection = srs.projection;
             ovMap.displayProjection = srs.projection;
             ovMap.units = srs.projection.proj.units;
-            ovMap.maxExtent = widget._transformExtent(widget.mapOrigExtents.max, srs.projection);
+            ovMap.maxExtent = widget._transformExtent(widget.mapOrigExtents_.max, srs.projection);
 
             $.each(ovMap.layers, function(idx, layer) {
                 layer.projection = srs.projection;
