@@ -35,10 +35,6 @@
                 proj4.defs(projDef.name, projDef.definition);
             }
 
-            // cast extent coordinates to float
-            // @todo: server should send these as floats so we can skip the casts here
-//            var maxExtent = _.map(this.options.extents.max, parseFloat);
-//            var startExtent = _.map(this.options.extents.start, parseFloat);
             var modelOptions = {
                 srs: this.options.srs,
                 maxExtent: Mapbender.Model.sanitizeExtent(this.options.extents.max),

@@ -9,7 +9,7 @@ Mapbender.Model = function(domId, options) {
 
     var proj = new ol.proj.Projection({
         code: options.srs,
-        extent: this.sanitizeExtent(options.maxExtent)
+        extent: options.maxExtent
     });
     var view = new ol.View({
         projection:  proj
@@ -20,8 +20,7 @@ Mapbender.Model = function(domId, options) {
     });
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
     this.pixelSources = [];
-    var startExtent = this.sanitizeExtent(options.startExtent || options.maxExtent);
-    this.zoomToExtent(startExtent);
+    this.zoomToExtent(options.startExtent || options.maxExtent);
     // @todo: ???
     /*var popupOverlay = new Mapbender.Model.MapPopup();
     this.map.on('singleclick', function(evt) {
