@@ -336,44 +336,27 @@ Mapbender.Geo.SourceHandler = Class({
         }
     },
     'public function findLayer': function(source, optionToFind) {
-        var rootLayer = source.configuration.children[0];
         var options = {
             level: 0,
             idx: 0,
             layer: null,
             parent: null
         };
-        options = _findLayer(rootLayer, optionToFind, options, 0);
-        return options;
-        function _findLayer(layer, optionToFind, options, levelTmp) {
-            if (layer.children) {
-                levelTmp++;
-                for (var i = 0; i < layer.children.length; i++) {
-                    for (var key in optionToFind) {
-                        if (layer.children[i].options[key].toString() === optionToFind[key].toString()) {
-                            options.idx = i;
-                            options.parent = layer;
-                            options.level = levelTmp;
-                            options.layer = layer.children[i];
-                            return options;
-                        }
-                    }
-                    options = _findLayer(layer.children[i], optionToFind, options, levelTmp);
-                }
-                levelTmp--;
-            }
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, i, parents) {
             for (var key in optionToFind) {
                 if (layer.options[key].toString() === optionToFind[key].toString()) {
-                    options.level = levelTmp;
+                    options.idx = i;
+                    options.parent = parents[0] || null;
+                    options.level = parents.length;
                     options.layer = layer;
-                    return options;
+                    // abort iteration
+                    return false;
                 }
             }
-            return options;
-        }
+        });
+        return options;
     },
     'public function checkInfoLayers': function(source, scale, tochange, result) {
-        var self = this;
         if (!result)
             result = {
                 infolayers: [
@@ -385,37 +368,25 @@ Mapbender.Geo.SourceHandler = Class({
                     children: {}
                 }
             };
-        var rootLayer = source.configuration.children[0];
-        _checkInfoLayers(rootLayer, scale, {
-            state: {
-                visibility: true
-            }
-        },
-        tochange,
-            result);
-        return result;
 
-        function _checkInfoLayers(layer, scale, parent, tochange, result) {
-            var layerChanged;
+
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
             if (typeof layer.options.treeOptions.info === 'undefined') {
                 layer.options.treeOptions.info = false;
             }
-            if (tochange.options.children[layer.options.id] && layer.options[self.layerNameIdent] && layer.options[self.layerNameIdent].length > 0) {
-                layerChanged = tochange.options.children[layer.options.id];
+            var layerChanged = tochange.options.children[layer.options.id];
+            if (layerChanged && layer.options.name) {
                 if (layerChanged.options.treeOptions.info !== layer.options.treeOptions.info) {
                     layer.options.treeOptions.info = layerChanged.options.treeOptions.info;
                     result.changed.children[layer.options.id] = layerChanged;
                 }
             }
-            if (layer.options.treeOptions.info === true && layer.state.visibility) {
-                result.infolayers.push(layer.options[self.layerNameIdent]);
+            if (layer.options.treeOptions.info && layer.state.visibility) {
+                result.infolayers.push(layer.options.name);
             }
-            if (layer.children) {
-                for (var j = 0; j < layer.children.length; j++) {
-                    _checkInfoLayers(layer.children[j], scale, layer, tochange, result);
-                }
-            }
-        }
+        });
+
+        return result;
     },
     /**
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };
@@ -710,21 +681,15 @@ Mapbender.Geo.SourceHandler = Class({
      * @returns {object} extent of form {projectionCode: OpenLayers.Bounds.toArray, ...}
      */
     'public function getLayerExtents': function(source, layerId) {
-        function _layerExtent(layer, toFindLayerId) {
-            if (layer.options.id === toFindLayerId) {
-                return layer.options.bbox ? layer.options.bbox : null;
+        var extents = null;
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layerDef) {
+            if (layerDef.options.id === layerId) {
+                extents = layerDef.options.bbox || null;
+                // abort iteration
+                return false;
             }
-            if (layer.children) {
-                for (var j = 0; j < layer.children.length; j++) {
-                    var temp = _layerExtent(layer.children[j], toFindLayerId);
-                    if (temp) {
-                        return temp;
-                    }
-                }
-            }
-            return null;
-        }
-        var extents = _layerExtent(source.configuration.children[0], layerId);
+        });
+
         for (srs in extents) {
             return extents;
         }
