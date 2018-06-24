@@ -50,8 +50,7 @@ Mapbender.Model = {
 
         this.mapStartExtent = {
             projection: this.getProj(this.mbMap.options.srs),
-            extent: this.mbMap.options.extents.start ?
-                OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start) : this.mbMap.options.extents.max
+            extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start || this.mbMap.options.extents.max)
         };
         var mapOptions = {
             maxExtent: this._transformExtent(this.mapMaxExtent, this.proj).toArray(),
@@ -100,18 +99,44 @@ Mapbender.Model = {
     },
     /**
      * Set map view: extent from URL parameters or configuration and POIs
+     * @deprecated, call individual methods
      */
     setView: function(addLayers) {
-        var self = this;
-        var start_extent = this.mapStartExtent;
+        var startExtent = this.getInitialExtent();
+        var poiData = this.initializePois(startExtent);
 
-        var pois = [],
-            bbox = null;
-        if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
-            bbox = this.mbMap.options.extra['bbox'] ?
-                OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']) :
-                start_extent;
+        if (!poiData.extentModified) {
+            if (this.mbMap.options['center']) {
+                var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
+                if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+                    this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
+                } else {
+                    this.map.olMap.setCenter(lonlat);
+                }
+            } else {
+                this.map.olMap.zoomToExtent(startExtent, true);
+            }
         }
+        if (addLayers) {
+            this.initializeSourceLayers();
+        }
+        this.finishPoiInit(poiData.markerLayer, poiData.popups);
+    },
+    getInitialExtent: function() {
+        var startExtent = this.mapStartExtent.extent;
+        if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
+            startExtent = OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']);
+        }
+        if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+            startExtent = startExtent.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj());
+        }
+
+        return startExtent || null;
+    },
+    initializePois: function() {
+        var haveBbox = this.mbMap.options.extra && this.mbMap.options.extra['bbox'];
+        var self = this;
+        var pois = [];
         if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
             $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
                 var coord = new OpenLayers.LonLat(poi.x, poi.y);
@@ -145,11 +170,10 @@ Mapbender.Model = {
             );
         }
         $.each(pois, function(idx, poi) {
-            if (!bbox) {
-                if (!poiBox)
-                    poiBox = new OpenLayers.Bounds();
-                poiBox.extend(poi.position);
+            if (!poiBox) {
+                poiBox = new OpenLayers.Bounds();
             }
+            poiBox.extend(poi.position);
 
             // Marker
             poiMarkerLayer.addMarker(new OpenLayers.Marker(
@@ -169,64 +193,55 @@ Mapbender.Model = {
                     }));
             }
         });
-        var centered = false;
-        if (poiBox) {
-            if (pois.length == 1 && pois[0].scale) {
+        if (!haveBbox && pois.length) {
+            if (pois.length === 1 && pois[0].scale) {
                 this.map.olMap.setCenter(pois[0].position);
                 this.map.olMap.zoomToScale(pois[0].scale, true);
             } else {
                 this.map.olMap.zoomToExtent(poiBox.scale(1.5));
             }
-            centered = true;
-        }
-
-        if (bbox) {
-            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-                bbox = bbox.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj());
-            }
-            this.map.olMap.zoomToExtent(bbox, true);
+            return {
+                markerLayer: poiMarkerLayer,
+                popups: poiPopups,
+                extentModified: true
+            };
         } else {
-            if (!centered) {
-                this.map.olMap.zoomToExtent(start_extent.extent ? start_extent.extent : start_extent, true);
-            }
+            return {
+                markerLayer: poiMarkerLayer,
+                popups: poiPopups,
+                extentModified: false
+            };
         }
+    },
+    initializeSourceLayers: function() {
+        var self = this;
+        // @todo 3.1.0: event binding is historically tied to initializing layers ... resolve / separate?
+        $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
+        // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
+        // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
+        this.map.olMap.events.register('movestart', this, $.proxy(this._preCheckChanges, this));
 
-        if (!centered && this.mbMap.options['center']) {
-            var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
-            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-                this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
-            } else {
-                this.map.olMap.setCenter(lonlat);
+        this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
+        $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
+            if(!Mapbender.configuration.layersets[layersetId]) {
+                return;
             }
-        }
-
-        if (true === addLayers) {
-            $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
-            // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
-            // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
-            this.map.olMap.events.register('movestart', this, $.proxy(this._preCheckChanges, this));
-
-            this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
-            $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
-                if(!Mapbender.configuration.layersets[layersetId]) {
-                    return;
-                }
-                $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
-                    $.each(defArr, function(idx, sourceDef) {
-                        self.addSourceFromConfig(sourceDef, false);
-                    });
+            $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
+                $.each(defArr, function(idx, sourceDef) {
+                    self.addSourceFromConfig(sourceDef, false);
                 });
             });
-        }
-
-        if (poiMarkerLayer) {
-            this.map.olMap.addLayer(poiMarkerLayer);
+        });
+    },
+    finishPoiInit: function(markerLayer, popups) {
+        if (markerLayer) {
+            this.map.olMap.addLayer(markerLayer);
         }
 
         // Popups have to be set after map extent initialization
-        $.each(poiPopups, function(idx, popup) {
-            self.map.olMap.addPopup(popup);
-        });
+        $.each(popups || [], function(idx, popup) {
+            this.map.olMap.addPopup(popup);
+        }.bind(this));
     },
     getCurrentProj: function() {
         return this.map.olMap.getProjectionObject();
