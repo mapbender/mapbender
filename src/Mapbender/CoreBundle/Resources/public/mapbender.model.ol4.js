@@ -201,16 +201,19 @@ Mapbender.Model.prototype.sourcesFromLayerSetId = Mapbender.Model.sourcesFromLay
  */
 Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sourceConfig, id) {
     'use strict';
-    var id_;
-    if (typeof id === 'undefined') {
-        id_ = this.generateSourceId();
+    var id_ = sourceConfig.id || sourceConfig.origId;
+    // DO NOT check ids strictly for being undefined. We do not want to use
+    // boolean false or empty strings as ids, ever
+    if (!id_) {
+        id_ = '' + (id || this.generateSourceId());
     } else {
-        id_ = '' + id;
+        id_ = '' + id_;
     }
     var source = this.sourceFromConfig(sourceConfig, id_);
     this.addSourceObject(source);
     return source;
 };
+
 /**
  * @param {Mapbender.SourceModelOl4} sourceObj
  * @param {ol.Extent} extent

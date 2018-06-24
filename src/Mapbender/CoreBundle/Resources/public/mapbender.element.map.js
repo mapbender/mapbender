@@ -86,11 +86,7 @@
          *
          */
         addSource: function(sourceDef){
-            this.model.addSource({
-                add: {
-                    sourceDef: sourceDef
-                }
-            });
+            this.model.addSourceFromConfig(sourceDef);
         },
         /**
          *
