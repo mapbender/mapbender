@@ -36,12 +36,12 @@ window.Mapbender.Util.SourceTree = (function() {
      * Callable may return boolean false at any node to immediately abort iteration.
      * Any other returned value is ignored.
      *
-     * @callback Mapbender.Util.SourceTree~cbTypeIdNode
+     * @callback Mapbender.Util.SourceTree~cbTypeNodeId
      * @param {number|string} id
      * @param {Object} def plain old data
      * @returns {boolean}
      */
-    var _cbTypeIdPlusConfig;        // inconsequential, helps IDE separate callback type declaration from next real symbol
+    var _cbTypeNodeId;              // inconsequential, helps IDE separate callback type declaration from next real symbol
 
     /**
      * Callable type passed into iterateLayers and friends for both 'callback' and 'filter'. Receives
@@ -116,44 +116,20 @@ window.Mapbender.Util.SourceTree = (function() {
     };
 
     /**
-     * Iterate over all layersets in no specific order (config storage is an object, we can't guarantee
-     * anything).
+     * Iterate over all configured layersets in no specific order (ls config is an object, we can't guarantee anything).
+     * Calls given callback on any located layerset configuration node, with 1) config node, 2) layerset id.
      *
-     * @param {Mapbender.Util.SourceTree~cbTypeIdNode} callback receives id, def; can abort iteration by returning false
-     * @param {Mapbender.Util.SourceTree~cbTypeIdNode} [filter] also receives id, def
+     * @param {Mapbender.Util.SourceTree~cbTypeNodeId} callback - receives def, id; can abort iteration by returning false
+     * @param {Mapbender.Util.SourceTree~cbTypeNodeId} [filter] - also receives def, id
      */
     function iterateLayersets(callback, filter) {
         var lsKeys = Object.keys(_r());
         for (var i = 0; i < lsKeys.length; ++i) {
             var id = lsKeys[i];
             var def = _lsroot[id];
-            if (!filter || filter(id, def)) {
-                if (false === callback(id, def)) {
+            if (!filter || filter(def, id)) {
+                if (false === callback(def, id)) {
                     break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Iterate over all source configs in given layerset in desired order.
-     *
-     * @param {string|number|object} layerset if Object, scanned as is; if string / id, looked up in global configuration
-     * @param {boolean} reverse false for configuration sort order; true for the other thing
-     * @param {Mapbender.Util.SourceTree~cbTypeIdNode} callback receives id, def; can abort iteration by returning false
-     * @param {Mapbender.Util.SourceTree~cbTypeIdNode} [filter] also receives id, def
-     */
-    function iterateSources(layerset, reverse, callback, filter) {
-        var _ls = _anyToLsConf(layerset)[reverse ? 'reverse' : 'slice']();
-        for (var i = 0; i < _ls.length; ++i) {
-            var srcDefWrap = _ls[i];
-            var lsKeys = Object.keys(srcDefWrap)[reverse ? 'reverse' : 'slice']();
-            for (var j = 0; j < lsKeys.length; ++j) {
-                var srcId = lsKeys[j];
-                var srcDef = srcDefWrap[srcId];
-                if ((!filter || filter(srcId, srcDef)) && false === callback(srcId, srcDef)) {
-                    // multi-level break :)
-                    return;
                 }
             }
         }
@@ -164,46 +140,15 @@ window.Mapbender.Util.SourceTree = (function() {
         for (var i = 0; i < ids.length; ++i) {
             var id = ids[i];
             var def = _lsroot[id];
-            if ((!filter || filter(id, def)) && false === callback(id, def)) {
+            if ((!filter || filter(def, id)) && false === callback(def, id)) {
                 break;
             }
         }
-    }
-    function getSourceDef(layerset, sourceId) {
-        var match = null;
-        var _cb = function(id, def) {
-            match = def;
-            return false;
-        };
-        var _f = function(id) {
-            return id === sourceId;
-        };
-        iterateSources(layerset, false, _cb, _f);
-        return match;
     }
     function getRootLayer(sourceDef) {
         return sourceDef.configuration.children[0];
     }
 
-    /**
-     * Recursively walks through all layers in the given source definition (depth last) and calls callback on any
-     * visited node. Callback receives
-     * 1) config node ref
-     * 2) sibling offset
-     * 3) list of parent config nodes (tree upwards / nearest first, root last)
-     *
-     * Optional second 'filter' callback has the same signature. If the filter callback is given and returns false for
-     * the current node, invocation of the main callback is skipped.
-     *
-     * @param {object} sourceDef
-     * @param {boolean} reverse for child node visiting order; false follows config Array order; true reverses (all nodes)
-     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} callback
-     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} [filter]
-     */
-    function iterateLayers(sourceDef, reverse, callback, filter) {
-        var _r = getRootLayer(sourceDef);
-        _itLayersRecursive(_r, reverse, callback, filter, []);
-    }
     function iterateSourceLeaves(sourceDef, reverse, callback, filter) {
         var _r = getRootLayer(sourceDef);
         var _f = _chainFilters(filter, function(node) {
@@ -221,7 +166,7 @@ window.Mapbender.Util.SourceTree = (function() {
 
     /**
      *
-     * @aram {Object} startLayerDef config node reference
+     * @param {object} startLayerDef config node reference
      * @param {boolean} reverse false for 'children' list order matching configuration order; true for the other thing
      * @param {Mapbender.Util.SourceTree~cbTypeNodeOffset} callback
      *      receives config node and sibling offset for anyvisited node
@@ -241,10 +186,54 @@ window.Mapbender.Util.SourceTree = (function() {
 
     return {
         iterateLayerSetsById: iterateLayersetsById,
-        iterateSources: iterateSources,
+        /**
+         * Find and return the configuration node for the given sourceId (strict) within the given layerset (flexible).
+         * Null is only returned if no source with the given id is found in the layerset configuration.
+         *
+         * @param {string|number|object} layerset if Object, scanned as is; if string / id, looked up in global configuration
+         * @param {string|number} sourceId
+         * @returns {object|null}
+         */
+        getSourceDef: function getSourceDef(layerset, sourceId) {
+            var match = null;
+            // filter that only passes single, desired node
+            var _f = function(def, id) {
+                return id === sourceId;
+            };
+            var _cb = function(def) {
+                // store match, abort iteration
+                match = def;
+                return false;
+            };
+            this.iterateSources(layerset, false, _cb, _f);
+            return match;
+        },
+        /**
+         * Iterate over all source configs in given layerset in desired order.
+         *
+         * @param {string|number|object} layerset if Object, scanned as is; if string / id, looked up in global configuration
+         * @param {boolean} reverse false for configuration sort order; true for the other thing
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeId} callback - receives def, id; can abort iteration by returning false
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeId} [filter] - also receives def,id
+         */
+        iterateSources: function iterateSources(layerset, reverse, callback, filter) {
+            var _ls = _anyToLsConf(layerset)[reverse ? 'reverse' : 'slice']();
+            for (var i = 0; i < _ls.length; ++i) {
+                var srcDefWrap = _ls[i];
+                var lsKeys = Object.keys(srcDefWrap)[reverse ? 'reverse' : 'slice']();
+                for (var j = 0; j < lsKeys.length; ++j) {
+                    var srcId = lsKeys[j];
+                    var srcDef = srcDefWrap[srcId];
+                    if ((!filter || filter(srcDef, srcId)) && false === callback(srcDef, srcId)) {
+                        // multi-level break :)
+                        return;
+                    }
+                }
+            }
+        },
         getLayersetDef: function(id) { return (_r())[id]; },
         getRootLayer: getRootLayer,
-        getSourceDef: getSourceDef,
+
         /**
          * Recursively walks through all layers in the given source definition (depth last) and calls callback on any
          * visited node. Callback receives
@@ -252,15 +241,18 @@ window.Mapbender.Util.SourceTree = (function() {
          * 2) sibling offset
          * 3) list of parent config nodes (tree upwards / nearest first, root last)
          *
-         * Optional second 'filter' callback has the same signature. If the filter callback is given and returns false for
-         * the current node, invocation of the main callback is skipped.
+         * Optional second 'filter' callback has the same signature. If the filter callback is given, main callback is
+         * only invoked after the filter, only if the filter returned a truthy value.
          *
          * @param {object} sourceDef
          * @param {boolean} reverse for child node visiting order; false follows config Array order; true reverses (all nodes)
          * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} callback
          * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} [filter]
          */
-        iterateLayers: iterateLayers,
+        iterateLayers: function(sourceDef, reverse, callback, filter) {
+            var _r = getRootLayer(sourceDef);
+            _itLayersRecursive(_r, reverse, callback, filter, []);
+        },
         iterateSourceLeaves: iterateSourceLeaves,
         iterateChildlayers: iterateChildlayers
     };
