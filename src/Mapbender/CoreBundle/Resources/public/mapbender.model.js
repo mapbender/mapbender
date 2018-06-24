@@ -798,6 +798,7 @@ Mapbender.Model = {
      *  {add: {sourceDef: <x>}}
      *
      * @param {object} addOptions
+     * @returns {object} source defnition (unraveled but same ref)
      * @deprecated, call addSourceFromConfig directly
      */
     addSource: function(addOptions) {
@@ -812,6 +813,7 @@ Mapbender.Model = {
      * @param {object} sourceDef
      * @param {boolean} [mangleSourceId] to rewrite sourceDef.id EVEN IF ITS ALREADY POPULATED
      * @param {boolean} [mangleLayerIds] to rewrite (recursively) all layer ids EVEN IF ALREADY POPULATED
+     * @returns {object} sourceDef same ref, potentially modified
      */
     addSourceFromConfig: function(sourceDef, mangleSourceId, mangleLayerIds) {
         var self = this;
@@ -880,6 +882,7 @@ Mapbender.Model = {
         } else {
             this.sourceTree.splice(this.getSourcePos(sourceDef), 1);
         }
+        return sourceDef;
     },
     /**
      *
