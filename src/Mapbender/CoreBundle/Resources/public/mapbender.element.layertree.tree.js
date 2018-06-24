@@ -98,24 +98,6 @@
             }
             return sourceConfigs.reverse();
         },
-        _findLayerSetConfigFromSourceConfig: function(sourceConfig) {
-            var layerSetId = sourceConfig.layerSetId;
-            if (!layerSetId) {
-                console.error("Can't find layerset id in source config", sourceConfig);
-                throw new Error("Can't find layerset id in source config");
-            }
-            var layerSet = Mapbender.configuration.layersets[sourceConfig.layerSetId];
-            if (!layerSet) {
-                throw new Error("Can't find layerset with id '" + layerSetId + "'");
-            }
-
-            // emulate return structure from old model code (findLayerSet)
-            return {
-                id: layerSetId,
-                title: Mapbender.configuration.layersetmap[layerSetId],
-                content: layerSet
-            };
-        },
         _createTree: function() {
             var self = this;
             var sources = this._getConfiguredSourceConfigs();
