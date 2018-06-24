@@ -361,36 +361,6 @@
             }
             return li;
         },
-        _createTreeNode: function(source, scale, layerToAdd, parent) {
-            var li = "";
-            for (var i = 0; i < source.configuration.children.length; i++) {
-                li = this._createTreeLayerNode(source, source.configuration.children[i], scale, layerToAdd, parent,
-                    source.type, true, false);
-            }
-        },
-        _createTreeLayerNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found) {
-            if (layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found) {
-                return this._createLayerNode(source, sourceEl, scale, isroot);
-            }
-            if (sourceEl.children) {
-                parent = parent.find('li[data-id="' + sourceEl.options.id + '"]:first');
-                for (var j = 0; j < sourceEl.children.length; j++) {
-                    var li = this._createTreeLayerNode(source, sourceEl.children[j], scale, layerToAdd, parent, type,
-                        false, false);
-                    if (li) {
-                        if (sourceEl.children.length === 1) {
-                            parent.add(li);
-                        } else if (j === 0) {
-                            parent.find('li[data-id="' + sourceEl.children[j + 1].options.id + '"]:first').after(
-                                li);
-                        } else {
-                            parent.find('li[data-id="' + sourceEl.children[j - 1].options.id + '"]:first').before(
-                                li);
-                        }
-                    }
-                }
-            }
-        },
         _onSourceAdded: function(event, options) {
             if (!this.created || !options.added)
                 return;
@@ -399,11 +369,6 @@
                 return;
             }
             if (this.options.displaytype === "tree") {
-                for (layerid in added.children) {
-                    this._createTreeNode(added.source, this.model.getScale(), added.children[layerid], $(
-                        this.element).find('ul.layers:first'));
-                }
-
                 var li_s = this._createSourceTree(added.source, this.model.getScale());
                 var first_li = $(this.element).find('ul.layers:first li:first');
                 if (first_li && first_li.length !== 0) {
