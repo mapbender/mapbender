@@ -115,26 +115,6 @@ window.Mapbender.Util.SourceTree = (function() {
         }
     };
 
-    /**
-     * Iterate over all configured layersets in no specific order (ls config is an object, we can't guarantee anything).
-     * Calls given callback on any located layerset configuration node, with 1) config node, 2) layerset id.
-     *
-     * @param {Mapbender.Util.SourceTree~cbTypeNodeId} callback - receives def, id; can abort iteration by returning false
-     * @param {Mapbender.Util.SourceTree~cbTypeNodeId} [filter] - also receives def, id
-     */
-    function iterateLayersets(callback, filter) {
-        var lsKeys = Object.keys(_r());
-        for (var i = 0; i < lsKeys.length; ++i) {
-            var id = lsKeys[i];
-            var def = _lsroot[id];
-            if (!filter || filter(def, id)) {
-                if (false === callback(def, id)) {
-                    break;
-                }
-            }
-        }
-    }
-
     function getRootLayer(sourceDef) {
         return sourceDef.configuration.children[0];
     }
@@ -264,6 +244,50 @@ window.Mapbender.Util.SourceTree = (function() {
             _itLayersRecursive(_r, reverse, callback, filter, []);
         },
         iterateSourceLeaves: iterateSourceLeaves,
-        iterateChildlayers: iterateChildlayers
+        iterateChildlayers: iterateChildlayers,
+        /**
+         * Generates and assigns string ids for layers corresponding to source or parent node id + sibling index
+         * within each level. Nodes deeper down the tree get longer ids as a result.
+         *
+         * The generated ids are stored in each layer node's options.id AND options.origId (same value).
+         *
+         * @param {object} sourceDef
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} [chainCallback] - called on each node
+         *   after assignment of ids; receives layerDef, sibling index, list of parents (closest first, tree upwards)
+         */
+        generateLayerIds: function(sourceDef, chainCallback) {
+            if (!sourceDef.id && sourceDef.id !== 0) {
+                console.error("Empty source id in sourceDef", sourceDef);
+                throw new Error("Empty source id");
+            }
+            this.iterateLayers(sourceDef, false, function(layer, index, parents) {
+                // concat running sibling index either to parent's options.id or, if root layer, to source id
+                var layerId = ((parents[0] || {}).options || sourceDef).id + '-' + index;
+                layer.options.id = layerId;
+                layer.options.origId = layerId;
+                if (chainCallback) {
+                    chainCallback(layer, index, parents);
+                }
+            });
+        },
+        /**
+         * Iterate over all configured layersets in no specific order (ls config is an object, we can't guarantee anything).
+         * Calls given callback on any located layerset configuration node, with 1) config node, 2) layerset id.
+         *
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeId} callback - receives def, id; can abort iteration by returning false
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeId} [filter] - also receives def, id
+         */
+        iterateLayersets: function(callback, filter) {
+            var lsKeys = Object.keys(_r());
+            for (var i = 0; i < lsKeys.length; ++i) {
+                var id = lsKeys[i];
+                var def = _lsroot[id];
+                if (!filter || filter(def, id)) {
+                    if (false === callback(def, id)) {
+                        break;
+                    }
+                }
+            }
+        }
     };
 })();

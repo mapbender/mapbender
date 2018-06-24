@@ -148,22 +148,22 @@
             this.created = true;
         },
         _addNode: function($toAdd, source) {
+            var $targetList = $("ul.layers:first", this.element);
             if (this.options.useTheme) {
-                var layerset = this._findLayerSetConfigFromSourceConfig(source);
+                // Collect layerset <=> theme relations
+                // @todo 3.1.0: this should happen server-side
+                var layerset = this._findLayersetWithSource(source);
                 var theme = {};
                 $.each(this.options.themes, function(idx, item) {
                     if (item.id === layerset.id)
                         theme = item;
-                })
+                });
                 if (theme.useTheme) {
                     var $layersetEl = this._createThemeNode(layerset, theme);
-                    $("ul.layers:first", $layersetEl).append($toAdd);
-                } else {
-                    $("ul.layers:first", this.element).append($toAdd);
+                    $targetList = $("ul.layers:first", $layersetEl);
                 }
-            } else {
-                $("ul.layers:first", this.element).append($toAdd);
             }
+            $targetList.append($toAdd);
         },
         _reset: function() {
             this._resetEvents();
@@ -1081,6 +1081,23 @@
                 delete(this.readyCallbacks[callback]);
             }
             this.readyState = true;
+        },
+        _findLayersetWithSource: function(source) {
+            var layerset = null;
+            Mapbender.Util.SourceTree.iterateLayersets(function(layersetDef, layersetId) {
+                for (var i = 0; i < layersetDef.length; i++) {
+                    if (layersetDef[i][source.origId]) {
+                        layerset = {
+                            id: layersetId,
+                            title: Mapbender.configuration.layersetmap[layersetId],
+                            content: layersetDef
+                        };
+                        // stop iteration
+                        return false;
+                    }
+                }
+            });
+            return layerset;
         },
         _destroy: $.noop
     });
