@@ -202,13 +202,7 @@
                 var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
                 sourceDef.id = sourceId;
                 sourceDef.origId = sourceId;
-                // assign layer ids
-                Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layer, index, parents) {
-                    // concat running sibling index either to parent's options.id or, if root layer, to source id
-                    var layerId = ((parents[0] || {}).options || sourceDef).id + '-' + index;
-                    layer.options.id = layerId;
-                    layer.options.origId = layerId;
-                });
+                Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
                 if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
