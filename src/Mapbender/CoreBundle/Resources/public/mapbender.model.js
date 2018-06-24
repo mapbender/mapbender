@@ -212,13 +212,8 @@ Mapbender.Model = {
                     return;
                 }
                 $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
-                    $.each(defArr, function(idx, layerDef) {
-                        layerDef['origId'] = idx;
-                        self.addSource({
-                            add: {
-                                sourceDef: layerDef
-                            }
-                        });
+                    $.each(defArr, function(idx, sourceDef) {
+                        self.addSourceFromConfig(sourceDef, false, false);
                     });
                 });
             });
@@ -303,8 +298,8 @@ Mapbender.Model = {
             centroid.x + 0.5 * w + buffer_bounds.w,
             centroid.y + 0.5 * h + buffer_bounds.h);
     },
-    _convertLayerDef: function(layerDef) {
-        var l = $.extend({}, Mapbender.source[layerDef.type.toLowerCase()].create(layerDef), {
+    _convertLayerDef: function(layerDef, mangleIds) {
+        var l = $.extend({}, Mapbender.source[layerDef.type.toLowerCase()].create(layerDef, mangleIds), {
             mapbenderId: layerDef.id
         });
         if(typeof this.mbMap.options.wmsTileDelay !== 'undefined') {
@@ -799,25 +794,31 @@ Mapbender.Model = {
         return null;
     },
     /**
-     * @deprecated, call addSourceFromConfig yourself
+     * Old-style API to add a source. Source is a POD object that needs to be nested into an outer structure like:
+     *  {add: {sourceDef: <x>}}
+     *
+     * @param {object} addOptions
+     * @deprecated, call addSourceFromConfig directly
      */
     addSource: function(addOptions) {
         if (addOptions.add && addOptions.add.sourceDef) {
-            return this.addSourceFromConfig(addOptions.add.sourceDef, true);
+            // because legacy behavior was to always mangle / destroy / rewrite all ids, we do the same here
+            return this.addSourceFromConfig(addOptions.add.sourceDef, true, true);
         } else {
-            window.console && console.error("CHECK options at model.addSource");
+            console.error("Unuspported options, ignoring", addOptions);
         }
     },
     /**
      * @param {object} sourceDef
-     * @param {boolean} [mangleIds] to rewrite sourceDef.id EVEN IF ITS ALREADY POPULATED
+     * @param {boolean} [mangleSourceId] to rewrite sourceDef.id EVEN IF ITS ALREADY POPULATED
+     * @param {boolean} [mangleLayerIds] to rewrite (recursively) all layer ids EVEN IF ALREADY POPULATED
      */
-    addSourceFromConfig: function(sourceDef, mangleIds) {
+    addSourceFromConfig: function(sourceDef, mangleSourceId, mangleLayerIds) {
         var self = this;
         if (!sourceDef.origId) {
             sourceDef.origId = '' + sourceDef.id;
         }
-        if (mangleIds) {
+        if (mangleSourceId) {
             sourceDef.id = this.generateSourceId();
             if (typeof sourceDef.origId === 'undefined') {
                 sourceDef.origId = sourceDef.id;
@@ -836,7 +837,7 @@ Mapbender.Model = {
             this.sourceTree.push(sourceDef);
         }
         var source = sourceDef;
-        var mapQueryLayer = this.map.layers(this._convertLayerDef(source));
+        var mapQueryLayer = this.map.layers(this._convertLayerDef(source, mangleLayerIds));
         if (mapQueryLayer) {
             source.mqlid = mapQueryLayer.id;
             source.ollid = mapQueryLayer.olLayer.id;
