@@ -115,26 +115,6 @@ window.Mapbender.Util.SourceTree = (function() {
         }
     };
 
-    /**
-     * Iterate over all configured layersets in no specific order (ls config is an object, we can't guarantee anything).
-     * Calls given callback on any located layerset configuration node, with 1) config node, 2) layerset id.
-     *
-     * @param {Mapbender.Util.SourceTree~cbTypeNodeId} callback - receives def, id; can abort iteration by returning false
-     * @param {Mapbender.Util.SourceTree~cbTypeNodeId} [filter] - also receives def, id
-     */
-    function iterateLayersets(callback, filter) {
-        var lsKeys = Object.keys(_r());
-        for (var i = 0; i < lsKeys.length; ++i) {
-            var id = lsKeys[i];
-            var def = _lsroot[id];
-            if (!filter || filter(def, id)) {
-                if (false === callback(def, id)) {
-                    break;
-                }
-            }
-        }
-    }
-
     function getRootLayer(sourceDef) {
         return sourceDef.configuration.children[0];
     }
@@ -289,6 +269,25 @@ window.Mapbender.Util.SourceTree = (function() {
                     chainCallback(layer, index, parents);
                 }
             });
+        },
+        /**
+         * Iterate over all configured layersets in no specific order (ls config is an object, we can't guarantee anything).
+         * Calls given callback on any located layerset configuration node, with 1) config node, 2) layerset id.
+         *
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeId} callback - receives def, id; can abort iteration by returning false
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeId} [filter] - also receives def, id
+         */
+        iterateLayersets: function(callback, filter) {
+            var lsKeys = Object.keys(_r());
+            for (var i = 0; i < lsKeys.length; ++i) {
+                var id = lsKeys[i];
+                var def = _lsroot[id];
+                if (!filter || filter(def, id)) {
+                    if (false === callback(def, id)) {
+                        break;
+                    }
+                }
+            }
         }
     };
 })();

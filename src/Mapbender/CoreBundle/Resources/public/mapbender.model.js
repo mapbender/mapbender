@@ -459,11 +459,20 @@ Mapbender.Model = {
             return null;
         }
     },
+    /**
+     * @deprecated used by layertree only, return type is presentationy, supports only a single search criterion
+     * @param options
+     * @returns {*}
+     */
     findLayerset: function(options) {
+        if (!(options.source && options.source.origId)) {
+            console.error("Invalid layerset search parameters", options);
+            throw new Error("Invalid layerset search parameters");
+        }
         for (var layersetId in Mapbender.configuration.layersets) {
             var layerset = Mapbender.configuration.layersets[layersetId];
             for (var i = 0; i < layerset.length; i++) {
-                if (options.source && layerset[i][options.source.origId]) {
+                if (layerset[i][options.source.origId]) {
                     return {
                         id: layersetId,
                         title: Mapbender.configuration.layersetmap[layersetId],
