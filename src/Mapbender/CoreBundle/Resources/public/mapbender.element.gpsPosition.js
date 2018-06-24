@@ -30,7 +30,8 @@
         firstPosition: true,
         stack: [],
         olGeolocation: null,
-        geolocationLayerId: null,
+        geolocationAccuracyId: null,
+        geolocationMarkerId: null,
 
         _create: function () {
             var widget = this;
@@ -61,17 +62,7 @@
         _setup: function () {
             this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
             this.model = this.map.model;
-            var layerStyle = model.createVectorLayerStyle();
 
-            var drawLayerId = model.createDrawControl(type, "gpsPosition", layerStyle, {
-                'drawstart': function(event) {
-                    var obvservable = {value: null};
-                    console.log(model.eventFeatureWrapper(event, model.onFeatureChange, [function(f) {
-                        this._handleModify(model.getLineStringLength(f))
-                    }.bind(this), obvservable]));
-                    window.a = obvservable;
-                }.bind(this)
-            });
             if (this.options.autoStart === true) {
                 this.toggleTracking();
             }
@@ -79,87 +70,115 @@
 
         _createMarker: function (position, accuracy) {
             var self = this,
-                olmap = this.map.map.olMap,
-                markers,
-                icon,
-                candidates = olmap.getLayersByName('Markers'),
+                olmap = self.map,
+                markerId = this.geolocationMarkerId,
+                accuracyId = this.geolocationAccuracyId,
+                positionProj = 'EPSG:4326',
+                metersProj = 'EPSG:3857',
+                currentProj = olmap.model.getCurrentProjectionCode(),
+                transPositionCurrentProj = olmap.model.transformCoordinate(position,positionProj,currentProj),
+                pointInMeters = olmap.model.transformCoordinate(position,positionProj,metersProj),
+                accuracyOrgPoint,
+                differance;
 
-                vector,
-                metersProj,
-                currentProj,
-                originInMeters,
-                accuracyPoint,
-                differance,
-                circle;
-            if (candidates.length > 0) {
-                markers = candidates[0];
-                olmap.removeLayer(markers);
-                markers.destroy();
+            var markerStyle = new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 10,
+                    fill: null,
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(255, 0, 0, 1)',
+                        width: 3,
+                        lineCap: 'butt'
+                    })
+                })
+            });
+
+            // add an empty iconFeature to the source of the layer
+            var iconFeature = new ol.Feature(
+                new ol.geom.Point(transPositionCurrentProj)
+            );
+            var markersSource = new ol.source.Vector({
+                features: [iconFeature]
+            });
+
+            if (markerId){
+                // var keys = Object.keys(candidates);
+                // for (var i = 0; i < keys.length; i++) {
+                //     var val = candidates[keys[i]];
+                //     val.getSource().clear();
+                // }
+                var vectorlayer = olmap.model.getVectorLayerByNameId('Position',markerId);
+                vectorlayer.setSource(markersSource)
+            }else {
+                markerId = olmap.model.createVectorLayer({
+                    source: markersSource,
+                    style: markerStyle
+                }, 'Position');
             }
 
-            markers = new OpenLayers.Layer.Vector('Markers');
-            var point = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(position.lon, position.lat), null, {
-                strokeColor:   "#ff0000",
-                strokeWidth:   3,
-                strokeOpacity: 1,
-                strokeLinecap: "butt",
-                fillOpacity:   0,
-                pointRadius:   10
-            });
-            markers.addFeatures([point]);
-            olmap.addLayer(markers);
+            // set geolocationMarkerId
+            this.geolocationMarkerId = markerId;
+
 
             // Accurancy
             if (!accuracy) {
                 return;
             }
-            candidates = olmap.getLayersByName('Accuracy');
-            if (candidates.length > 0) {
-                olmap.removeLayer(candidates[0]);
-                candidates[0].destroy();
+            if (accuracyId) {
+                olmap.model.removeVectorLayer('Accuracy',accuracyId)
             }
-            vector = new OpenLayers.Layer.Vector('Accuracy');
-            olmap.addLayer(vector);
 
-            metersProj = new OpenLayers.Projection('EPSG:900913');
-            currentProj = olmap.getProjectionObject();
+            var accurancyStyle = new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'rgba(255,255,255, 1)',
+                    width: 1
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255,255,255, 0.5)'
+                })
+            });
 
-            originInMeters = new OpenLayers.LonLat(position.lon, position.lat);
-            originInMeters.transform(currentProj, metersProj);
+            accuracyOrgPoint = [pointInMeters[0] + (accuracy / 2), pointInMeters[1] + (accuracy / 2)];
+            differance = accuracyOrgPoint[0] - pointInMeters[0];
 
-            accuracyPoint = new OpenLayers.LonLat(originInMeters.lon + (accuracy / 2), originInMeters.lat + (accuracy / 2));
-            accuracyPoint.transform(metersProj, currentProj);
-
-            differance = accuracyPoint.lon - position.lon;
-
-            circle = new OpenLayers.Feature.Vector(
-                OpenLayers.Geometry.Polygon.createRegularPolygon(
-
-                    new OpenLayers.Geometry.Point(position.lon, position.lat),
-                    differance,
-                    40,
-                    0
-                ),
-                {},
-                self.options.accurancyStyle
+            var accurancyFeature = new ol.Feature(
+                new ol.geom.Circle(transPositionCurrentProj,differance)
             );
-            vector.addFeatures([circle]);
+            var accurancySource = new ol.source.Vector({
+                features: [accurancyFeature]
+            });
+
+            accuracyId = olmap.model.createVectorLayer({
+                source: accurancySource,
+                style : accurancyStyle
+            },'Accuracy');
+
+            // set geolocationMarkerId
+            this.geolocationAccuracyId = accuracyId;
+
+            // create console messages
+            console.log('GPS-Position: '+ transPositionCurrentProj + ' with Accuracy: '+ accuracy);
+
         },
 
-        _centerMap: function (point) {
-            var olmap = this.map.map.olMap,
-                extent = olmap.getExtent();
-            if (extent.containsLonLat(point) === false) // point is in extent?
+        _centerMap: function (position) {
+            var olmap = this.map,
+                extent = olmap.model.getMapExtent(),
+                positionProj = 'EPSG:4326',
+                currentProj = olmap.model.getCurrentProjectionCode(),
+                transPositionCurrentProj = olmap.model.transformCoordinate(position,positionProj,currentProj);
+
+            if (olmap.model.containsCoordinate(extent, transPositionCurrentProj) === false) // point is in extent?
             {
                 if (this.options.follow) {
-                    olmap.panTo(point);
+                    olmap.model.setCenter(transPositionCurrentProj);
                 } else if (this.firstPosition && this.options.centerOnFirstPosition) {
-                    olmap.panTo(point);
-                } 
+                    olmap.model.setCenter(transPositionCurrentProj);
+                }
             }
         },
 
-        _zoomMap: function (point, accuracy) {
+        _zoomMap: function (position, accuracy) {
             if (!accuracy) {
                 return; // no accurancy
             }
@@ -167,14 +186,25 @@
                 return;
             }
 
-            var olmap = this.map.map.olMap,
-                metersProj = new OpenLayers.Projection("EPSG:900913"),
-                currentProj = olmap.getProjectionObject(),
-                pointInMeters = point.transform(currentProj, metersProj),
-                min = new OpenLayers.LonLat(pointInMeters.lon - (accuracy / 2), pointInMeters.lat - (accuracy / 2)).transform(metersProj, currentProj),
-                max = new OpenLayers.LonLat(pointInMeters.lon + (accuracy / 2), pointInMeters.lat + (accuracy / 2)).transform(metersProj, currentProj);
+            var olmap = this.map,
+                positionProj = 'EPSG:4326',
+                metersProj = 'EPSG:3857',
+                currentProj = olmap.model.getCurrentProjectionCode(),
+                pointInMeters = olmap.model.transformCoordinate(position,positionProj,metersProj),
+                calLon = pointInMeters[0] - (accuracy / 2),
+                calLat = pointInMeters[1] - (accuracy / 2),
+                calLonPlus = pointInMeters[0] + (accuracy / 2),
+                calLatPlus = pointInMeters[1] + (accuracy / 2),
+                min = olmap.model.transformCoordinate([calLon,calLat], metersProj, currentProj),
+                max = olmap.model.transformCoordinate([calLonPlus,calLatPlus], metersProj, currentProj);
+            var extent = {
+                left: min[0],
+                bottom: min[1],
+                right: max[0],
+                top: max[1]
+            };
 
-            olmap.zoomToExtent(new OpenLayers.Bounds(min.lon, min.lat, max.lon, max.lat));
+            olmap.model.zoomToExtent(extent);
         },
 
         /**
@@ -206,52 +236,12 @@
             var widget = this;
             if (navigator.geolocation) {
                 widget.observer = navigator.geolocation.watchPosition(function success(position) {
-                    // var proj = new OpenLayers.Projection("EPSG:4326"),
-                    //     newProj = olmap.getProjectionObject(),
-                    //     p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
-                    //
-                    // p.transform(proj, newProj);
-
-                    //ol4
                     var model = widget.model,
-                        map = widget.map,
                         proj = 'EPSG:4326',
-                        newProj = model.getCurrentProjectionCode();
-
-                    var p = model.transformCoordinate([position.coords.longitude, position.coords.latitude], proj, newProj);
-
-                    var iconStyle = new ol.style.Style({
-                        image: new ol.style.Circle({
-                            radius: 6,
-                            fill: new ol.style.Fill({
-                                color: '#3399CC'
-                            }),
-                            stroke: new ol.style.Stroke({
-                                color: '#fff',
-                                width: 2
-                            })
-                        })
-                    });
-
-                    // add an empty iconFeature to the source of the layer
-                    var iconFeature = new ol.Feature();
-                    var iconSource = new ol.source.Vector({
-                        features: [iconFeature]
-                    });
-
-                    iconFeature.setGeometry(new ol.geom.Point(p));
-
-                    var geolocationLayerId = widget.model.createVectorLayer({
-                        source: iconSource,
-                        style : iconStyle
-                    },{},'gpsPosition');
-
-                    model.setCenter(p);
-                    model.setZoom(10);
-
-                    widget.geolocationLayerId = geolocationLayerId;
-                    console.log(geolocationLayerId);
-
+                        newProj = model.getCurrentProjectionCode(),
+                        p = model.addCoordinate([position.coords.longitude, position.coords.latitude]);
+                        // transCoord= model.transformCoordinate(coord, proj, newProj),
+                        // p = model.toLonLat(transCoord,newProj);
 
                     // Averaging: Building a queue...
                     widget.stack.push(p);
@@ -260,21 +250,15 @@
                     }
 
                     // ...and reducing it.
-                    // p = _.reduce(widget.stack, function (memo, p) {
-                    //     memo.lon += p.lon / widget.stack.length;
-                    //     memo.lat += p.lat / widget.stack.length;
-                    //     return memo;
-                    // }, new OpenLayers.LonLat(0, 0));
-
                     p = _.reduce(widget.stack, function (memo, p) {
-                        memo.lon += p.lon / widget.stack.length;
-                        memo.lat += p.lat / widget.stack.length;
+                        memo.lon += p[0] / widget.stack.length;
+                        memo.lat += p[1] / widget.stack.length;
                         return memo;
-                    }, ol.proj.transform([0, 0], proj, newProj));
+                    });
 
-                     //widget._createMarker(p, position.coords.accuracy);
-                    // widget._centerMap(p);
-                    // widget._zoomMap(p, position.coords.accuracy);
+                     widget._createMarker(p, position.coords.accuracy);
+                     widget._centerMap(p);
+                     widget._zoomMap(p, position.coords.accuracy);
 
                     if (widget.firstPosition) {
                         widget.firstPosition = false;
@@ -307,24 +291,22 @@
                 this.observer = null;
             }
             // Delete Markers
-            // var olmap = this.map.map.olMap,
-            //     markers,
-            //     candidates = olmap.getLayersByName('Markers');
-            // if (candidates.length > 0) {
-            //     markers = candidates[0];
-            //     olmap.removeLayer(markers);
-            //     markers.destroy();
-            // }
-            //
-            // candidates = olmap.getLayersByName('Accuracy');
-            // if (candidates.length > 0) {
-            //     olmap.removeLayer(candidates[0]);
-            //     candidates[0].destroy();
-            // }
+            var olmap =  this.map,
+                 candidates = olmap.model.getVectorLayerByNameId('Position', this.geolocationMarkerId);
 
-            var model= this.map.model;
-            var layersToRemove = model.removeVectorLayerByName('gpsPosition');
-            console.log('delete: '+layersToRemove);
+            if (candidates) {
+                candidates.getSource().clear();
+                olmap.model.removeVectorLayer('Position', this.geolocationMarkerId);
+                this.geolocationMarkerId = null;
+
+            }
+
+             candidates = olmap.model.getVectorLayerByNameId('Accuracy', this.geolocationAccuracyId);
+             if (candidates) {
+                 candidates.getSource().clear();
+                 olmap.model.removeVectorLayer('Accuracy', this.geolocationAccuracyId);
+                 this.geolocationAccuracyId = null;
+             }
             return this;
         },
         /**
