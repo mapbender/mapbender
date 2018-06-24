@@ -199,17 +199,22 @@ Mapbender.Model.prototype.sourcesFromLayerSetId = Mapbender.Model.sourcesFromLay
  * @param {string} [id]
  * @returns {Mapbender.SourceModelOl4}
  */
-Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sourceConfig, id) {
+Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sourceConfig, mangleIds) {
     'use strict';
     var id_ = sourceConfig.id || sourceConfig.origId;
     // DO NOT check ids strictly for being undefined. We do not want to use
     // boolean false or empty strings as ids, ever
     if (!id_) {
-        id_ = '' + (id || this.generateSourceId());
-    } else {
-        id_ = '' + id_;
+        if (mangleIds) {
+            id_ = this.generateSourceId();
+            sourceConfig.origId = sourceConfig.id || id_;
+            sourceConfig.id = id_;
+        } else {
+            console.error("Can't initialize source with emptyish id", id_, sourceConfig);
+            throw new Error("Can't initialize source with emptyish id");
+        }
     }
-    var source = this.sourceFromConfig(sourceConfig, id_);
+    var source = this.sourceFromConfig(sourceConfig, '' + id_);
     this.addSourceObject(source);
     return source;
 };
