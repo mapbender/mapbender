@@ -135,16 +135,6 @@ window.Mapbender.Util.SourceTree = (function() {
         }
     }
 
-    function iterateLayersetsById(ids, callback, filter) {
-        _r();
-        for (var i = 0; i < ids.length; ++i) {
-            var id = ids[i];
-            var def = _lsroot[id];
-            if ((!filter || filter(def, id)) && false === callback(def, id)) {
-                break;
-            }
-        }
-    }
     function getRootLayer(sourceDef) {
         return sourceDef.configuration.children[0];
     }
@@ -185,7 +175,27 @@ window.Mapbender.Util.SourceTree = (function() {
     }
 
     return {
-        iterateLayerSetsById: iterateLayersetsById,
+        /**
+         * Visit layerset config nodes matching the given ids, in the same order as the given ids, and invoke the given
+         * callback with 1) the config node, 2) the id.
+         *
+         * NOTE: for layerset ids not matching any configured layerset, the callback (+optional filter callback) are still
+         * invoked, but then receive undefined as the first argument.
+         *
+         * @param {Array.<string|number>} ids -
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeId} callback - receives def, id; can abort iteration by returning false
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeId} [filter] - also receives def, id
+         */
+        iterateLayerSetsById: function iterateLayersetsById(ids, callback, filter) {
+            _r();
+            for (var i = 0; i < ids.length; ++i) {
+                var id = ids[i];
+                var def = _lsroot[id];
+                if ((!filter || filter(def, id)) && false === callback(def, id)) {
+                    break;
+                }
+            }
+        },
         /**
          * Find and return the configuration node for the given sourceId (strict) within the given layerset (flexible).
          * Null is only returned if no source with the given id is found in the layerset configuration.
