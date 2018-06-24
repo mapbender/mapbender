@@ -75,7 +75,7 @@
                 if (!sources[i].configuration.isBaseSource
                     || (sources[i].configuration.isBaseSource && this.options.showBaseSource)) {
                     if (this.options.displaytype === "tree") {
-                        var li_s = this._createSourceTree(sources[i], sources[i], this.model.getScale());
+                        var li_s = this._createSourceTree(sources[i], this.model.getScale());
                         this._addNode(li_s, sources[i]);
                     } else {
                         return;
@@ -331,81 +331,73 @@
             if (this.options.menu.length === 0) {
                 $li.find('.layer-menu-btn').remove();
             }
-            return $li;
-        },
-        _createSourceTree: function(source, sourceEl, scale, type, isroot) {
-            if (sourceEl.type) {
-                var li = this._createSourceTree(source, sourceEl.configuration.children[0], scale, sourceEl.type,
-                    true);
-                if (sourceEl.configuration.status !== 'ok') {
-                    li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
-                        sourceEl.configuration.status);
+            var $childList = $li.find('ul:first');
+            if (sourceEl.children) {
+                $childList.attr('id', 'list-' + sourceEl.options.id);
+                if (config.toggle) {
+                    $childList.addClass("closed");
                 }
             } else {
-                var config = this._getNodeProporties(sourceEl);
-                var li = this._createNode(source, sourceEl, config, isroot);
-                if (sourceEl.children) {
-                    li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
-                    if (config.toggle) {
-                        li.find('ul:first').addClass("closed");
-                    }
-                    for (var j = sourceEl.children.length; j > 0; j--) {
-                        li.find('ul:first').append(this._createSourceTree(source, sourceEl.children[j - 1], scale,
-                            type, false));
-                    }
-                } else {
-                    li.find('ul:first').remove();
+                $childList.remove();
+            }
+
+            return $li;
+        },
+        _createSourceTree: function(source, scale) {
+            var li = this._createLayerNode(source, source.configuration.children[0], scale, source.type, true);
+            if (source.configuration.status !== 'ok') {
+                li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
+                    source.configuration.status);
+            }
+            return li;
+        },
+        _createLayerNode: function(source, sourceEl, scale, isroot) {
+            var config = this._getNodeProporties(sourceEl);
+            var li = this._createNode(source, sourceEl, config, isroot);
+            if (sourceEl.children) {
+                for (var j = sourceEl.children.length; j > 0; j--) {
+                    li.find('ul:first').append(this._createLayerNode(source, sourceEl.children[j - 1], scale, false));
                 }
             }
             return li;
         },
-        _createTreeNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found) {
-            if (sourceEl.type) {
-                var li = "";
-                for (var i = 0; i < sourceEl.configuration.children.length; i++) {
-                    li = this._createTreeNode(source, sourceEl.configuration.children[i], scale, layerToAdd, parent,
-                        sourceEl.type, true, false);
-                }
-            } else {
-                if (layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found) {
-                    found = true;
-                    var config = this._getNodeProporties(sourceEl);
-                    var li = this._createNode(source, sourceEl, config, isroot);
-                    if (sourceEl.children) {
-                        li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
-                        if (config.toggle) {
-                            li.find('ul:first').addClass("closed");
-                        }
-                        for (var j = 0; j < sourceEl.children.length; j++) {
-                            li.find('ul:first').append(this._createTreeNode(source, sourceEl.children[j], scale,
-                                layerToAdd, parent, type, false, found));
-                        }
-                    } else {
-                        li.find('ul').remove();
-                    }
-                    found = false;
-                    return li;
-                }
+        _createTreeNode: function(source, scale, layerToAdd, parent) {
+            var li = "";
+            for (var i = 0; i < source.configuration.children.length; i++) {
+                li = this._createTreeLayerNode(source, source.configuration.children[i], scale, layerToAdd, parent,
+                    source.type, true, false);
+            }
+        },
+        _createTreeLayerNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found) {
+            if (layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found) {
+                var config = this._getNodeProporties(sourceEl);
+                var li = this._createNode(source, sourceEl, config, isroot);
                 if (sourceEl.children) {
-                    parent = parent.find('li[data-id="' + sourceEl.options.id + '"]:first');
                     for (var j = 0; j < sourceEl.children.length; j++) {
-                        var li = this._createTreeNode(source, sourceEl.children[j], scale, layerToAdd, parent, type,
-                            false, found);
-                        if (li !== null) {
-                            if (sourceEl.children.length === 1) {
-                                parent.add(li);
-                            } else if (j === 0) {
-                                parent.find('li[data-id="' + sourceEl.children[j + 1].options.id + '"]:first').after(
-                                    li);
-                            } else {
-                                parent.find('li[data-id="' + sourceEl.children[j - 1].options.id + '"]:first').before(
-                                    li);
-                            }
+                        li.find('ul:first').append(this._createTreeLayerNode(source, sourceEl.children[j], scale,
+                            layerToAdd, parent, type, false, true));
+                    }
+                }
+                return li;
+            }
+            if (sourceEl.children) {
+                parent = parent.find('li[data-id="' + sourceEl.options.id + '"]:first');
+                for (var j = 0; j < sourceEl.children.length; j++) {
+                    var li = this._createTreeLayerNode(source, sourceEl.children[j], scale, layerToAdd, parent, type,
+                        false, false);
+                    if (li) {
+                        if (sourceEl.children.length === 1) {
+                            parent.add(li);
+                        } else if (j === 0) {
+                            parent.find('li[data-id="' + sourceEl.children[j + 1].options.id + '"]:first').after(
+                                li);
+                        } else {
+                            parent.find('li[data-id="' + sourceEl.children[j - 1].options.id + '"]:first').before(
+                                li);
                         }
                     }
                 }
             }
-            return null;
         },
         _onSourceAdded: function(event, options) {
             if (!this.created || !options.added)
@@ -415,19 +407,17 @@
                 return;
             }
             if (this.options.displaytype === "tree") {
-                var hasChildren = false;
                 for (layerid in added.children) {
-                    this._createTreeNode(added.source, added.source, this.model.getScale(), added.children[layerid], $(
+                    this._createTreeNode(added.source, this.model.getScale(), added.children[layerid], $(
                         this.element).find('ul.layers:first'));
                 }
-                if (!hasChildren) {
-                    var li_s = this._createSourceTree(added.source, added.source, this.model.getScale());
-                    var first_li = $(this.element).find('ul.layers:first li:first');
-                    if (first_li && first_li.length !== 0) {
-                        first_li.before(li_s);
-                    } else {
-                        $(this.element).find('ul.layers:first').append($(li_s));
-                    }
+
+                var li_s = this._createSourceTree(added.source, this.model.getScale());
+                var first_li = $(this.element).find('ul.layers:first li:first');
+                if (first_li && first_li.length !== 0) {
+                    first_li.before(li_s);
+                } else {
+                    $(this.element).find('ul.layers:first').append($(li_s));
                 }
             } else {
                 return;
@@ -726,6 +716,7 @@
                 });
                 self.model.changeLayerState(source, options, false, true);
             });
+            this._broadcastSync();
             return false;
         },
         _toggleSelected: function(e) {
