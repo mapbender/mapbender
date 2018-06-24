@@ -370,15 +370,7 @@
         },
         _createTreeLayerNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found) {
             if (layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found) {
-                var config = this._getNodeProporties(sourceEl);
-                var li = this._createNode(source, sourceEl, config, isroot);
-                if (sourceEl.children) {
-                    for (var j = 0; j < sourceEl.children.length; j++) {
-                        li.find('ul:first').append(this._createTreeLayerNode(source, sourceEl.children[j], scale,
-                            layerToAdd, parent, type, false, true));
-                    }
-                }
-                return li;
+                return this._createLayerNode(source, sourceEl, scale, isroot);
             }
             if (sourceEl.children) {
                 parent = parent.find('li[data-id="' + sourceEl.options.id + '"]:first');
