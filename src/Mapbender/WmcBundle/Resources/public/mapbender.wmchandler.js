@@ -98,20 +98,18 @@ Mapbender.WmcHandler = function(mapWidget, options){
             value: null
         });
         var model = this.mapWidget.getModel();
-        var toKeepSources = {};
-        if(this.options.keepSources === 'basesources'){
-            for(var i = 0; i < model.sourceTree.length; i++){
-                var source = model.sourceTree[i];
-                if(source.configuration.isBaseSource)
-                    toKeepSources[source.id] = {sourceId: source.id};
+        if (this.options.keepSources !== 'allsources') {
+            var toKeepSources = {};
+            if (this.options.keepSources === 'basesources') {
+                for(var i = 0; i < model.sourceTree.length; i++){
+                    var source = model.sourceTree[i];
+                    if(source.configuration.isBaseSource)
+                        toKeepSources[source.id] = {sourceId: source.id};
+                }
             }
-        } else if(this.options.keepSources === 'allsources'){
-            for(var i = 0; i < model.sourceTree.length; i++){
-                var source = model.sourceTree[i];
-                toKeepSources[source.id] = {sourceId: source.id};
-            }
+            this.mapWidget.removeSources(toKeepSources);
         }
-        this.mapWidget.removeSources(toKeepSources);
+
         this.mapWidget.fireModelEvent({
             name: 'contextremoveend',
             value: null
