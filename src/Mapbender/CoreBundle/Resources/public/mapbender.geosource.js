@@ -460,7 +460,7 @@ Mapbender.Geo.SourceHandler = Class({
         toChangeOpts,
             result);
         return result;
-        function _createState(layer) {
+        function _copyState(layer) {
             return {
                 outOfScale: layer.state.outOfScale,
                 outOfBounds: layer.state.outOfBounds,
@@ -468,105 +468,75 @@ Mapbender.Geo.SourceHandler = Class({
             };
         }
         function _changeOptions(layer, scale, parentState, toChangeOpts, result) {
-            var layerChanged,
+            var layerChanges,
                 elchanged = false;
-            if (toChangeOpts.options.children[layer.options.id]) {
-                layerChanged = toChangeOpts.options.children[layer.options.id];
-                layerChanged.state = _createState(layer);
-                if (typeof layerChanged.options.treeOptions !== 'undefined') {
-                    var treeOptions = layerChanged.options.treeOptions;
-                    if (typeof treeOptions.selected !== 'undefined'
-                        && layer.options.treeOptions.allow.selected === true) {
-                        if (layer.options.treeOptions.selected === treeOptions.selected)
-                            delete(treeOptions.selected);
-                        else {
-                            layer.options.treeOptions.selected = treeOptions.selected;
-                            elchanged = true;
+            layerChanges = toChangeOpts.options.children[layer.options.id];
+            if (layerChanges) {
+                layerChanges.state = _copyState(layer);
+                var treeChanges = layerChanges.options.treeOptions;
+                var treeOptions = layer.options.treeOptions;
+                if (typeof treeChanges !== 'undefined') {
+                    var optionsTasks = [['selected', true], ['info', true], ['toggle', false]];
+                    for (var oti = 0; oti < optionsTasks.length; ++oti) {
+                        var optionName = optionsTasks[oti][0];
+                        var checkAllow = optionsTasks[oti][1];
+                        if (typeof treeChanges[optionName] !== undefined && (!checkAllow || treeOptions.allow[optionName])) {
+                            if (treeOptions[optionName] === treeChanges[optionName]) {
+                                delete(treeChanges[optionName]);
+                            } else {
+                                treeOptions[optionName] = treeChanges[optionName];
+                                elchanged = true;
+                            }
                         }
-                    }
-                    if (typeof treeOptions.info !== 'undefined'
-                        && layer.options.treeOptions.allow.info === true) {
-                        if (layer.options.treeOptions.info === treeOptions.info)
-                            delete(treeOptions.info);
-                        else {
-                            layer.options.treeOptions.info = treeOptions.info;
-                            elchanged = true;
-                        }
-                    }
-                    if (typeof treeOptions.toggle !== 'undefined') {
-                        if (layer.options.treeOptions.toggle === treeOptions.toggle)
-                            delete(treeOptions.toggle);
-                        else
-                            layer.options.treeOptions.toggle = treeOptions.toggle;
                     }
                 }
             } else {
-                layerChanged = {
-                    state: _createState(
-                        layer)
-                };
+                layerChanges = {state: _copyState(layer)};
             }
             layer.state.outOfScale = !Mapbender.Util.isInScale(scale, layer.options.minScale,
                 layer.options.maxScale);
             /* @TODO outOfBounds for layers ?  */
-            if (layer.children) {
-                if (parentState.state.visibility
+            var newVisibilityState = parentState.state.visibility
                     && layer.options.treeOptions.selected
                     && !layer.state.outOfScale
-                    && !layer.state.outOfBounds) {
-                    layer.state.visibility = true;
-                } else {
-                    layer.state.visibility = false;
-                }
-                var child_visible = false;
+                    && !layer.state.outOfBounds;
+            if (layer.children) {
+                // Store preliminary visibility for the recursive check, where current layer state will be "parentState"
+                layer.state.visibility = !!newVisibilityState;
+                var atLeastOneChildVisible = false;
                 for (var j = 0; j < layer.children.length; j++) {
                     var child = _changeOptions(layer.children[j], scale, layer, toChangeOpts, result);
                     if (child.state.visibility) {
-                        child_visible = true;
+                        atLeastOneChildVisible = true;
                     }
                 }
-                if (child_visible) {
-                    layer.state.visibility = true;
-                } else {
-                    layer.state.visibility = false;
-                }
+                // NOTE: Children can only be visible if this layer was already set visible before we called the
+                //       recursive check. Thus if you think this should be a &&, you're not wrong, but the result is
+                //       the same anyway.
+                layer.state.visibility = atLeastOneChildVisible;
             } else {
-                if (parentState.state.visibility
-                    && layer.options.treeOptions.selected
-                    && !layer.state.outOfScale
-                    && !layer.state.outOfBounds
-                    && layer.options[self.layerNameIdent].length > 0) {
-                    layer.state.visibility = true;
+                layer.state.visibility = !!(newVisibilityState && layer.options[self.layerNameIdent].length);
+                if (layer.state.visibility) {
                     result.layers.push(layer.options[self.layerNameIdent]);
                     result.styles.push(layer.options.style ? layer.options.style : '');
                     if (layer.options.treeOptions.info === true) {
                         result.infolayers.push(layer.options[self.layerNameIdent]);
                     }
-                } else {
-                    layer.state.visibility = false;
                 }
             }
-            if (layerChanged.state.outOfScale !== layer.state.outOfScale) {
-                layerChanged.state.outOfScale = layer.state.outOfScale;
-                elchanged = true;
-            } else {
-                delete(layerChanged.state.outOfScale);
-            }
-            if (layerChanged.state.outOfBounds !== layer.state.outOfBounds) {
-                layerChanged.state.outOfBounds = layer.state.outOfBounds;
-                elchanged = true;
-            } else {
-                delete(layerChanged.state.outOfBounds);
-            }
-            if (layerChanged.state.visibility !== layer.state.visibility) {
-                layerChanged.state.visibility = layer.state.visibility;
-                elchanged = true;
-            } else {
-                delete(layerChanged.state.visibility);
+            var stateNames = ['outOfScale', 'outOfBounds', 'visibility'];
+            for (var sni = 0; sni < stateNames.length; ++ sni) {
+                var stateName = stateNames[sni];
+                if (layerChanges.state[stateName] !== layer.state[stateName]) {
+                    layerChanges.state[stateName] = layer.state[stateName];
+                    elchanged = true;
+                } else {
+                    delete(layerChanges.state[stateName]);
+                }
             }
             if (elchanged) {
-                layerChanged.state = layer.state;
-                result.changed.children[layer.options.id] = layerChanged;
+                layerChanges.state = layer.state;
+                result.changed.children[layer.options.id] = layerChanges;
             }
             var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
             if (customLayerOrder && customLayerOrder.length && result.layers && result.layers.length) {
@@ -675,10 +645,11 @@ Mapbender.Geo.SourceHandler = Class({
         };
     },
     /**
-     * Gets a layer extent or an extent from layer parents
-     * @param {object} source wms source
-     * @param {object} changeOptions options in form of:
-     * @returns {object} extent of form {projectionCode: OpenLayers.Bounds.toArray, ...}
+     * Gets a layer extent, or the source extent as a fallback
+     *
+     * @param {object} source config object
+     * @param {string} layerId
+     * @returns {Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair
      */
     'public function getLayerExtents': function(source, layerId) {
         var extents = null;
@@ -690,10 +661,10 @@ Mapbender.Geo.SourceHandler = Class({
             }
         });
 
-        for (srs in extents) {
+        if (extents && Object.keys(extents).length) {
             return extents;
         }
-        for (srs in source.configuration.options.bbox) {
+        if (source.configuration.options.bbox && Object.keys(source.configuration.options.bbox).length) {
             return source.configuration.options.bbox;
         }
         return null;
