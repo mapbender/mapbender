@@ -69,6 +69,14 @@
                 source.setState(true);
                 return layer;
             });
+            var center = mainMapModel.map.getView().getCenter();
+            /**
+             * @todo: find a working solution for 'fixed' mode
+             *      adding constant 'minZoom: 7, maxZoom: 7' to the view options
+             *      disables zooming, but we need the calculated values that match
+             *      the maximum extent of the main map. Combining view zoom constraints
+             *      with center + fit (see below) additionally throws errors.
+             */
             var controlOptions = {
                 collapsible: true,
                 collapsed: false,
@@ -76,11 +84,24 @@
                 layers: layers,
                 view: new ol.View({
                     projection: mainMapModel.getCurrentProjectionObject(), //map.getView().getProjection(),
-                    center: mainMapModel.map.getView().getCenter()
+                    center: center,
+                    extent: mainMapModel.getMaxExtent()
                 })
             };
             this.control_ = new ol.control.OverviewMap(controlOptions);
             mainMapModel.map.addControl(this.control_);
+            if (this.options.fixed) {
+                console.warn("Engaging Overview mode 'fixed', no working implementation!", mainMapModel.getMaxExtent(), center);
+                // zoom out to main map extent limit and lock
+                var ctView = this.control_.ovmap_.getView();
+                var fixedRes = ctView.getResolutionForExtent(mainMapModel.getMaxExtent());
+                console.log("Calculated resolution", fixedRes);
+                // @todo: figure out how to constrain the overview map / its view
+                // ctView.fit(mainMapModel.getMaxExtent());   // no effect?!
+                // ctView.constrainCenter(center);  // no effect?!
+                // ctView.constrainResolution(fixedRes, 0.0); // no effect?!
+
+            }
         },
         _initAsOl2Control: function() {
             var overviewLayers = [];
