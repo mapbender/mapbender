@@ -199,12 +199,20 @@
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
             $.each(sourceDefs, function(idx, sourceDef) {
                 var findOpts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
-                sourceDef.id = srcIdPrefix + '-' + (self.loadedSourcesCount++);
-                sourceDef.origId = sourceDef.id;
+                var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
+                sourceDef.id = sourceId;
+                sourceDef.origId = sourceId;
+                // assign layer ids
+                Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layer, index, parents) {
+                    // concat running sibling index either to parent's options.id or, if root layer, to source id
+                    var layerId = ((parents[0] || {}).options || sourceDef).id + '-' + index;
+                    layer.options.id = layerId;
+                    layer.options.origId = layerId;
+                });
                 sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
                 if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
-                    mbMap.model.addSourceFromConfig(sourceDef, false);
+                    mbMap.model.addSourceFromConfig(sourceDef, false, false);
                 }
             });
             // Enable feature info

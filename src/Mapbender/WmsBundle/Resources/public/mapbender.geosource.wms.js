@@ -23,8 +23,7 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         noMagic: true,
         transitionEffect: 'resize'
     },
-    create: function(sourceDef){
-        var self = this;
+    create: function(sourceDef, mangleIds){
         var rootLayer = sourceDef.configuration.children[0];
         if(sourceDef.configuration.status !== 'ok'){ //deactivate corrupte or unreachable sources
             rootLayer.options.treeOptions.selected = false;
@@ -35,8 +34,14 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         var options = sourceDef.configuration.options;
         Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layer, index, parents) {
             /* set unic id for a layer */
-            layer.options.origId = layer.options.id;
-            layer.options.id = (parents[0] && parents[0].options || sourceDef).id + "_" + index;
+            if (mangleIds) {
+                layer.options.origId = layer.options.id;
+                layer.options.id = (parents[0] && parents[0].options || sourceDef).id + "_" + index;
+            } else {
+                if (!layer.options.origId && layer.options.id) {
+                    layer.options.origId = layer.options.id;
+                }
+            }
             if(options.proxy && layer.options.legend && !options.tunnel) {
                 if(layer.options.legend.graphic) {
                     layer.options.legend.graphic = Mapbender.Util.addProxy(layer.options.legend.graphic);
