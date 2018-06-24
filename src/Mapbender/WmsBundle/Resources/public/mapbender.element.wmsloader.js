@@ -213,6 +213,14 @@
                 sourceDef.wmsloader = true;
                 if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
                     mbMap.model.addSourceFromConfig(sourceDef, false, false);
+                    mbMap.fireModelEvent({
+                        name: 'sourceAdded',
+                        value:{
+                            added:{
+                                source: mbMap.model.getSourceById(sourceId)
+                            }
+                        }
+                    });
                 }
             });
             // Enable feature info
