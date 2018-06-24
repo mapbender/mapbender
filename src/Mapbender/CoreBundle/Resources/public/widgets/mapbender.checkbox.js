@@ -37,8 +37,10 @@
                 $this.on('change', function() {
                     propagateToWrapper.call(this);
                 });
-                $this.closest('.checkWrapper').on('click', function() {
+                $this.closest('.checkWrapper').on('click', function(e) {
                     $('input[type="checkbox"]', this).trigger('click');
+                    // prevent bubbling to globally document-bound FOM initCheckbox binding
+                    e.stopPropagation();
                 });
             }
             // Always rerender. This allows calling $(selector).mbCheckbox again to visually update for prop('disabled').

@@ -56,7 +56,7 @@
             var $me = $(this.element),
                 $map = $('#' + this.options.target).data('mapbenderMbMap'),
                 model = $map.getModel(),
-                source_list;
+                source;
 
             $me.find(selector).each(function (idx, elm) {
                 if (false === visibility) {
@@ -69,27 +69,14 @@
                     if (sourcesId.length === 0) {
                         return;
                     }
+                    source = model.getSourceById(sourcesId);
 
-                    source_list = model.findSource({origId: sourcesId});
-
-                    if (source_list.length === 0) {
+                    if (!source) {
                         Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable")
                             .replace('%id%', sourcesId), {'id': sourcesId});
+                    } else {
+                        source.setState(visibility);
                     }
-
-                    source_list.map(function (source) {
-                        model.changeSource({
-                            change: {
-                                sourceIdx: {id: source.id},
-                                options: {
-                                    configuration: {
-                                        options: {visibility: visibility}
-                                    },
-                                    type: 'selected'
-                                }
-                            }
-                        });
-                    });
                 });
             });
         },

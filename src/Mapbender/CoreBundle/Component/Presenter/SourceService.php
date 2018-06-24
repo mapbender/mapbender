@@ -41,6 +41,8 @@ abstract class SourceService
             'title'         => $sourceInstance->getTitle(),
             'configuration' => $innerConfig,
             'layerSetId' => strval($sourceInstance->getLayerset()->getId()),
+            'id'            => strval($sourceInstance->getId()),
+            'origId'        => strval($sourceInstance->getId()),
         );
         return $wrappedConfig;
     }

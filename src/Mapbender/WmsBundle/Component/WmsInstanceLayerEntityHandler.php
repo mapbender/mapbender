@@ -220,6 +220,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $sourceItem = $entity->getSourceItem();
         $configuration = array(
             "id" => strval($entity->getId()),
+            "origId" => strval($entity->getId()),
             "priority" => $entity->getPriority(),
             "name" => $sourceItem->getName() !== null ?
                 $sourceItem->getName() : "",

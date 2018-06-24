@@ -5,31 +5,36 @@
             target: null
         },
         op_sel: null,
-        mapWidget: null,
+        model: null,
         _create: function(){
             if(!Mapbender.checkTarget("mbSrsSelector", this.options.target)){
                 return;
             }
             var self = this;
-            this.mapWidget = $('#' + this.options.target);
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
             var self = this;
-            var mbMap = this.mapWidget.data('mapbenderMbMap');
+            var mbMap = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+
+            this.model = mbMap.model;
+
             var options = "";
             var allSrs = mbMap.getAllSrs();
+
+            var mapProjectionCode = this.model.getCurrentProjectionCode();
+
             for(var i = 0; i < allSrs.length; i++){
                 options += '<option value="' + allSrs[i].name + '">' + allSrs[i].title + '</option>';
             }
             $("#" + $(this.element).attr('id') + " select").html(options);
             this.op_sel = "#" + $(this.element).attr('id') + " select option";
-            $(this.op_sel + '[value="'+mbMap.map.olMap.getProjection()+'"]').prop("selected", true);
+            $(this.op_sel + '[value="' + mapProjectionCode + '"]').prop("selected", true);
             initDropdown.call(this.element.get(0));
             $("#" + $(this.element).attr('id') + " select").on('change', $.proxy(self._switchSrs, self));
             $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
             $(document).on('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
-            
+
             this._trigger('ready');
             this._ready();
         },
@@ -45,13 +50,8 @@
                 $(div_id).css('display', 'none');
             }
         },
-        _switchSrs: function(evt){
-            var dest = new OpenLayers.Projection(this.getSelectedSrs());
-            if(!dest.proj.units){
-                dest.proj.units = 'degrees';
-            }
-            this._trigger('srsSwitched', null, {projection: dest});
-            return true;
+        _switchSrs: function(event){
+            this.model.updateMapViewForProjection(this.getSelectedSrs());
         },
         _onSrsChanged: function(event, srsObj){
             this.selectSrs(srsObj.projection.projCode);

@@ -10,6 +10,7 @@
             },
             layersets: []
         },
+        srsDefinitions: [],
         elementUrl: null,
         model: null,
         map: null,
@@ -25,10 +26,25 @@
             //Todo: Move to a seperate file. ADD ALL THE EPSGCODES!!!!111
             //jQuery.extend(OpenLayers.Projection.defaults, {'EPSG:31466': {yx : true}});
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.model = new Mapbender.Model('Map');
+
+            this.srsDefinitions = this.options.srsDefs || [];
+            // Patch missing SRS definitions into proj4
+            // This avoids errors when initializing the OL4 view with
+            // "exotic" / non-geodesic projections such as EPSG:25832
+            Mapbender.Projection.extendSrsDefintions(this.srsDefinitions);
+
+            this.engineCode = Mapbender.configuration.application.mapEngineCode;
+
+            var modelOptions = {
+                srs: this.options.srs,
+                maxExtent: Mapbender.Model.sanitizeExtent(this.options.extents.max),
+                startExtent: Mapbender.Model.sanitizeExtent(this.options.extents.start)
+            };
+            this.model = new Mapbender.Model(this.element.attr('id'), modelOptions);
             _.forEach(this.options.layersets.reverse(), function(layerSetId) {
                 this.model.addLayerSetById(layerSetId);
             }.bind(this));
+
 
             this.options = $.extend({}, this.options, {
                 layerDefs: [],
@@ -66,13 +82,6 @@
         getMapState: function(){
             return this.model.getMapState();
         },
-        sourceById: function(idObject){
-            return this.model.getSource(idObject);
-        },
-        mqLayerBySourceId: function(idObject){
-            var source = this.sourceById(idObject);
-            return this.map.layersList[source.mqlid];
-        },
         /**
          *
          */
@@ -106,18 +115,13 @@
             }
         },
         /**
-         * Triggers an event from the model.
-         * options.name - name of the event,
-         * options.value - parameter in the form of:
-         * options.value.mapquerylayer - for a MapQuery.Layer,
-         * options.value.source - for a source from the model.sourceTree,
-         * options.value.tochange - for a "tochange" object
-         * (see model.createToChangeObj(id)),
-         * options.value.changed -  for a "changed" object
-         * (see model.createChangedObj(id)).
+         * Triggers an event
+         * options.name - name of the event (mbmap prefix will be added, result lowercased)
+         * options.value - will be passed into the event handler callables as the second argument
+         *
+         * @see https://github.com/jquery/jquery-ui/blob/1.12.1/ui/widget.js#L659
          */
-        fireModelEvent: function(options){
-//            window.console && console.log(options.name, options.value);
+        fireModelEvent: function(options) {
             this._trigger(options.name, null, options.value);
         },
         /**
@@ -127,16 +131,10 @@
             return this.model.sourceTree;
         },
         /**
-         * Reterns the generated source id from model
-         */
-        genereateSourceId: function(){
-            return this.model.generateSourceId();
-        },
-        /**
          * Returns all defined srs
          */
         getAllSrs: function(){
-            return this.model.getAllSrs();
+            return this.srsDefinitions;
         },
         /**
          * Reterns the model
@@ -312,7 +310,7 @@
         _loadSrsSuccess: function(response, textStatus, jqXHR){
             if(response.data) {
                 for(var i = 0; i < response.data.length; i++) {
-                    Proj4js.defs[response.data[i].name] = response.data[i].definition;
+                    proj4.defs(response.data[i].name, response.data[i].definition);
                     this.model.srsDefs.push(response.data[i]);
                     this.fireModelEvent({
                         name: 'srsadded',

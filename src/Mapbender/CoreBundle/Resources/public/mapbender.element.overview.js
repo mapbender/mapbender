@@ -4,10 +4,13 @@
         options: {
             layerset: []
         },
-        overview: null,
+        control_: null,
         layersOrigExtents: {},
-        mapOrigExtents: {},
+        // @todo 3.1.0: remove this attribute and its usages
+        mapOrigExtents_: {},
         startproj: null,
+        $viewport_: null,
+        mbMap_: null,
 
         /**
          * Creates the overview
@@ -24,29 +27,72 @@
          * Initializes the overview
          */
         _setup:         function() {
-            var widget = this;
-            var options = widget.options;
-            var mbMap = $('#' + options.target).data('mapbenderMbMap');
-            var model = mbMap.model;
-            var element = $(widget.element);
-            var mapMaxExtent = model.mapMaxExtent;
-            var projection = mapMaxExtent.projection;
-            var maxExtent = mapMaxExtent.extent;
-            var overviewLayers = [];
-            var layerSet = Mapbender.configuration.layersets[options.layerset];
-            var overviewContainer = $('.overviewContainer', widget.element).get(0);
+            this.mbMap_ = $('#' + this.options.target).data('mapbenderMbMap');
+            var $element = $(this.element);
+            this.$viewport_ = $('.viewport', $element);
+            if (!$element.hasClass('closed')) {
+                // if we start closed, wait with initialization until opened
+                this._initDisplay();
+            }
+            this._ready();
+            $element.find('.toggleOverview').bind('click', this._openClose.bind(this));
+        },
+        _initDisplay: function() {
+            switch (this.mbMap_.engineCode) {
+                case 'ol4':
+                    this._initAsOl4Control();
+                    break;
+                case 'mq-ol2':
+                    this._initAsOl2Control();
+                    break;
+                default:
+                    throw new Error("Unhandled engine code " + this.mbMap_.engineCode);
+            }
+            $(document).bind('mbmapsrschanged', this._changeSrs.bind(this));
+        },
+        _initAsOl4Control: function() {
+            // @see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/overviewmap.js
 
-            widget.mapOrigExtents = {
+            var mainMapModel = this.mbMap_.model;
+            var maxExtent = mainMapModel.getMaxExtent();
+            this.$viewport_.width(this.options.width).height(this.options.height);
+            var viewportId = this.$viewport_.attr('id');
+
+            var sources = Mapbender.Model.sourcesFromLayerSetId("" + this.options.layerset);
+            var layers = sources.map(function(source) {
+                var layer = Mapbender.Model.layerFactoryStatic(source, maxExtent);
+                // Also activate all sources and all layers.
+                // This is backwards-compatible behvavior. The old overview never
+                // evaluated "visible", or any other config state on the source nor
+                // its layers
+                // NOTE: we can only do this AFTER creating and attach the layer via factory
+                source.setState(true);
+                return layer;
+            });
+            var controlOptions = {
+                collapsible: true,
+                collapsed: false,
+                target: viewportId,
+                layers: layers,
+                view: new ol.View({
+                    projection: mainMapModel.getCurrentProjectionObject(), //map.getView().getProjection(),
+                    center: mainMapModel.map.getView().getCenter()
+                })
+            };
+            this.control_ = new ol.control.OverviewMap(controlOptions);
+            mainMapModel.map.addControl(this.control_);
+        },
+        _initAsOl2Control: function() {
+            var overviewLayers = [];
+            var layerSet = Mapbender.configuration.layersets[this.options.layerset];
+
+            this.mapOrigExtents_ = {
                 max: {
-                    projection: projection,
+                    projection: srs,
                     extent: maxExtent
                 }
             };
-
-            widget.startproj = projection;
-
-            element.addClass(options.anchor);
-
+            this.startproj = srs;
             $.each(layerSet.reverse(), function(idx, item) {
                 $.each(item, function(idx2, layerDef) {
                     if(layerDef.type !== "wms") {
@@ -68,9 +114,8 @@
 
             var overviewOptions = {
                 layers: overviewLayers,
-                div: overviewContainer,
-                size: new OpenLayers.Size(options.width, options.height),
-                //maximized: widget.options.maximized,
+                div: this.$viewport_.get(0),
+                size: new OpenLayers.Size(this.options.width, this.options.height),
                 mapOptions: {
                     maxExtent: maxExtent,
                     projection: projection,
@@ -78,7 +123,7 @@
                 }
             };
 
-            if(options.fixed){
+            if (this.options.fixed) {
                 $.extend(overviewOptions, {
                     minRatio: 1,
                     maxRatio: 1000000000
@@ -86,20 +131,14 @@
                 });
             }
 
-            widget.overview = new OpenLayers.Control.OverviewMap(overviewOptions);
+            this.control_ = new OpenLayers.Control.OverviewMap(overviewOptions);
 
-            mbMap.map.olMap.addControl(widget.overview);
+            this.mbMap_.map.olMap.addControl(this.control_);
 
-            $(document).bind('mbmapsrschanged', $.proxy(widget._changeSrs, widget));
-            element.find('.toggleOverview').bind('click', $.proxy(widget._openClose, widget));
-            
-            if(!options.maximized){
-                element.addClass("closed");
-            }    
-                
-            widget._ready();
+            window.setTimeout(function(){
+                this.control_.ovmap.updateSize();
+            }.bind(this), 300);
         },
-
         /**
          * Create WMS layer by definition
          * @param layerDefinition
@@ -137,15 +176,15 @@
          * Opens/closes the overview element
          */
         _openClose: function(event){
-            var self = this;
-            $(this.element).toggleClass('closed');
-            window.setTimeout(function(){
-                if(!$(self.element).hasClass('closed')){
-                    self.overview.ovmap.updateSize();
-                }
-            }, 300);
+            if (!this.control_) {
+                $(this.element).removeClass('closed');
+                window.setTimeout(function() {
+                    this._initDisplay();
+                }.bind(this), 300);
+            } else {
+                $(this.element).toggleClass('closed');
+            }
         },
-
         /**
          * Transforms an extent into 'projection' projection.
          */
@@ -168,15 +207,15 @@
          */
         _changeSrs: function(event, srs) {
             var widget = this;
-            var overview = widget.overview;
-            var ovMap = overview.ovmap;
+            // @todo 3.1.0: this won't work on OL4, starting here
+            var ovMap = this.control_.ovmap;
             var oldProj = ovMap.projection;
             var center = ovMap.getCenter().transform(oldProj, srs.projection);
 
             ovMap.projection = srs.projection;
             ovMap.displayProjection = srs.projection;
             ovMap.units = srs.projection.proj.units;
-            ovMap.maxExtent = widget._transformExtent(widget.mapOrigExtents.max, srs.projection);
+            ovMap.maxExtent = widget._transformExtent(widget.mapOrigExtents_.max, srs.projection);
 
             $.each(ovMap.layers, function(idx, layer) {
                 layer.projection = srs.projection;
@@ -184,13 +223,13 @@
                 if(!widget.layersOrigExtents[layer.id]) {
                     widget._addOrigLayerExtent(layer);
                 }
-                if(layer.maxExtent && layer.maxExtent != widget.overview.ovmap.maxExtent) {
+                if(layer.maxExtent && layer.maxExtent != widget.control_.ovmap.maxExtent) {
                     layer.maxExtent = widget._transformExtent(widget.layersOrigExtents[layer.id].max, srs.projection);
                 }
                 layer.initResolutions();
             });
 
-            overview.update();
+            this.control_.update();
             ovMap.setCenter(center, ovMap.getZoom(), false, true);
         },
 
