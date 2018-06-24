@@ -174,7 +174,6 @@ class Application implements IAssetDependent
                         "$modelJsBase/mapbender.model.ol4.source.js",
                         "$coreJsBase/mapbender.model.ol4.js",
                         "$modelJsBase/mapbender.model.ol4.sourcelayer.state.js",
-                        "$modelJsBase/mapbender.model.ol4.sourcelayer.js",
                     ));
             default:
                 throw new \RuntimeException("Unhandled map engine code " . print_r($engineCode, true));
