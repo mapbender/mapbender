@@ -213,7 +213,7 @@ Mapbender.Model = {
                 }
                 $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
                     $.each(defArr, function(idx, sourceDef) {
-                        self.addSourceFromConfig(sourceDef, false, false);
+                        self.addSourceFromConfig(sourceDef, false);
                     });
                 });
             });
@@ -804,23 +804,22 @@ Mapbender.Model = {
     addSource: function(addOptions) {
         if (addOptions.add && addOptions.add.sourceDef) {
             // because legacy behavior was to always mangle / destroy / rewrite all ids, we do the same here
-            return this.addSourceFromConfig(addOptions.add.sourceDef, true, true);
+            return this.addSourceFromConfig(addOptions.add.sourceDef, true);
         } else {
             console.error("Unuspported options, ignoring", addOptions);
         }
     },
     /**
      * @param {object} sourceDef
-     * @param {boolean} [mangleSourceId] to rewrite sourceDef.id EVEN IF ITS ALREADY POPULATED
-     * @param {boolean} [mangleLayerIds] to rewrite (recursively) all layer ids EVEN IF ALREADY POPULATED
+     * @param {boolean} [mangleIds] to rewrite sourceDef.id and all layer ids EVEN IF ALREADY POPULATED
      * @returns {object} sourceDef same ref, potentially modified
      */
-    addSourceFromConfig: function(sourceDef, mangleSourceId, mangleLayerIds) {
+    addSourceFromConfig: function(sourceDef, mangleIds) {
         var self = this;
         if (!sourceDef.origId) {
             sourceDef.origId = '' + sourceDef.id;
         }
-        if (mangleSourceId) {
+        if (mangleIds) {
             sourceDef.id = this.generateSourceId();
             if (typeof sourceDef.origId === 'undefined') {
                 sourceDef.origId = sourceDef.id;
@@ -839,7 +838,7 @@ Mapbender.Model = {
             this.sourceTree.push(sourceDef);
         }
         var source = sourceDef;
-        var mapQueryLayer = this.map.layers(this._convertLayerDef(source, mangleLayerIds));
+        var mapQueryLayer = this.map.layers(this._convertLayerDef(source, mangleIds));
         if (mapQueryLayer) {
             source.mqlid = mapQueryLayer.id;
             source.ollid = mapQueryLayer.olLayer.id;

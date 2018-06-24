@@ -73,12 +73,9 @@
         /**
          *
          */
-        addSource: function(sourceDef){
-            this.model.addSource({
-                add: {
-                    sourceDef: sourceDef
-                }
-            });
+        addSource: function(sourceDef, mangleIds) {
+            // legacy support: callers that do not know about the mangleIds argument most certainly want ids mangled
+            this.model.addSourceFromConfig(sourceDef, !!mangleIds || typeof mangleIds === 'undefined');
         },
         /**
          *
