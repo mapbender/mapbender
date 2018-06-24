@@ -799,73 +799,85 @@ Mapbender.Model = {
         return null;
     },
     /**
-     *
+     * @deprecated, call addSourceFromConfig yourself
      */
     addSource: function(addOptions) {
+        if (addOptions.add && addOptions.add.sourceDef) {
+            return this.addSourceFromConfig(addOptions.add.sourceDef, true);
+        } else {
+            window.console && console.error("CHECK options at model.addSource");
+        }
+    },
+    /**
+     * @param {object} sourceDef
+     * @param {boolean} [mangleIds] to rewrite sourceDef.id EVEN IF ITS ALREADY POPULATED
+     */
+    addSourceFromConfig: function(sourceDef, mangleIds) {
         var self = this;
-        if (addOptions.add) {
-            var sourceDef = addOptions.add.sourceDef;
+        if (!sourceDef.origId) {
+            sourceDef.origId = '' + sourceDef.id;
+        }
+        if (mangleIds) {
             sourceDef.id = this.generateSourceId();
-
             if (typeof sourceDef.origId === 'undefined') {
                 sourceDef.origId = sourceDef.id;
             }
-            this.mbMap.fireModelEvent({
-                name: 'beforeSourceAdded',
-                value: {
-                    source: sourceDef,
-                    before: null,
-                    after: null
+        }
+
+        this.mbMap.fireModelEvent({
+            name: 'beforeSourceAdded',
+            value: {
+                source: sourceDef,
+                before: null,
+                after: null
+            }
+        });
+        if (!this.getSourcePos(sourceDef)) {
+            this.sourceTree.push(sourceDef);
+        }
+        var source = sourceDef;
+        var mapQueryLayer = this.map.layers(this._convertLayerDef(source));
+        if (mapQueryLayer) {
+            source.mqlid = mapQueryLayer.id;
+            source.ollid = mapQueryLayer.olLayer.id;
+            mapQueryLayer.source = source;
+            this._addLayerMaxExtent(mapQueryLayer);
+            Mapbender.source[source.type.toLowerCase()].postCreate(source, mapQueryLayer);
+            mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e) {
+                self._sourceLoadStart(e);
+            });
+            mapQueryLayer.olLayer.events.register("loadend", mapQueryLayer.olLayer, function(e) {
+                var imgEl = $('div[id="' + e.element.id + '"]  .olImageLoadError');
+                if (imgEl.length > 0) {
+                    self._sourceLoadError(e, imgEl);
+                } else {
+                    self._sourceLoadeEnd(e);
                 }
             });
-            if (!this.getSourcePos(sourceDef)) {
-                this.sourceTree.push(sourceDef);
-            }
-            var source = sourceDef;
-            var mapQueryLayer = this.map.layers(this._convertLayerDef(source));
-            if (mapQueryLayer) {
-                source.mqlid = mapQueryLayer.id;
-                source.ollid = mapQueryLayer.olLayer.id;
-                mapQueryLayer.source = source;
-                this._addLayerMaxExtent(mapQueryLayer);
-                Mapbender.source[source.type.toLowerCase()].postCreate(source, mapQueryLayer);
-                mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e) {
-                    self._sourceLoadStart(e);
-                });
-                mapQueryLayer.olLayer.events.register("loadend", mapQueryLayer.olLayer, function(e) {
-                    var imgEl = $('div[id="' + e.element.id + '"]  .olImageLoadError');
-                    if (imgEl.length > 0) {
-                        self._sourceLoadError(e, imgEl);
-                    } else {
-                        self._sourceLoadeEnd(e);
+            this.mbMap.fireModelEvent({
+                name: 'sourceAdded',
+                value: {
+                    added: {
+                        source: source,
+                        // legacy: no known consumer evaluates these props,
+                        // but even if, they've historically been wrong anyway
+                        // was: "before": always last source previously in list, even though
+                        // the new source was actually added *after* that
+                        before: null,
+                        after: null
                     }
-                });
-                this.mbMap.fireModelEvent({
-                    name: 'sourceAdded',
-                    value: {
-                        added: {
-                            source: source,
-                            // legacy: no known consumer evaluates these props,
-                            // but even if, they've historically been wrong anyway
-                            // was: "before": always last source previously in list, even though
-                            // the new source was actually added *after* that
-                            before: null,
-                            after: null
-                        }
-                    }
-                });
-                this._checkAndRedrawSource({
-                    sourceIdx: {
-                        id: source.id
-                    },
-                    options: {
-                        children: {}
-                    }
-                });
-            } else
-                this.sourceTree.splice(this.getSourcePos(sourceDef), 1);
+                }
+            });
+            this._checkAndRedrawSource({
+                sourceIdx: {
+                    id: source.id
+                },
+                options: {
+                    children: {}
+                }
+            });
         } else {
-            window.console && console.error("CHECK options at model.addSource");
+            this.sourceTree.splice(this.getSourcePos(sourceDef), 1);
         }
     },
     /**
