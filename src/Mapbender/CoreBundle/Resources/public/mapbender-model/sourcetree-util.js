@@ -29,13 +29,54 @@ window.Mapbender.Util.SourceTree = (function() {
     }
 
     /**
-     * Callable type passed into iterateLayersets and iterateSources for both 'callback' and 'filter'
-     * @callback Mapbender.Util.SourceTree~idNodeCb
+     * Callable type passed into iterateLayersets and iterateSources for both 'callback' and 'filter'. Receives
+     * 1) an id -- this is stored one level up, outside the configuration, inside the config tree
+     * 2) a data object with the full layerset or source configuration
+     *
+     * Callable may return boolean false at any node to immediately abort iteration.
+     * Any other returned value is ignored.
+     *
+     * @callback Mapbender.Util.SourceTree~cbTypeIdNode
      * @param {number|string} id
      * @param {Object} def plain old data
      * @returns {boolean}
      */
-    var _dummyToMakeTheIDELessConfused;
+    var _cbTypeIdPlusConfig;        // inconsequential, helps IDE separate callback type declaration from next real symbol
+
+    /**
+     * Callable type passed into iterateLayers and friends for both 'callback' and 'filter'. Receives
+     * 1) Ref to a data object with the full layer configuration (including children and everything)
+     * 2) A running per-parent sibling index of the node (first child of a parent node receives 0, next child after that 1 etc)
+     * 3) A list of refs to parent config nodes, ordered direct parent first, root node last.
+     *    The root node receives an empty list. First child receives [parentNodeRef]. Grandchild receives
+     *    [parentNodeRef, grandParentNodeRef] etc.
+     *
+     * Callable may return boolean false at any node to immediately abort iteration.
+     * Any other returned value is ignored.
+     *
+     * @callback Mapbender.Util.SourceTree~cbTypeNodeOffsetParents
+     * @param {Object} def plain old data
+     * @param {number} siblingIndex
+     * @param {Array.<Object>} parents
+     * @returns {boolean}
+     */
+    var _cbTypeNodeOffsetParents;   // inconsequential, helps IDE separate callback type declaration from next real symbol
+
+    /**
+     * Callable type passed into iterateChildLayers. Receives
+     * 1) Ref to a data object with the full layer configuration (including children and everything)
+     * 2) A running per-parent sibling index of the node (first child of a parent node receives 0, next child after that 1 etc)
+     *
+     * Callable may return boolean false at any node to immediately abort iteration.
+     * Any other returned value is ignored.
+     *
+     * @callback Mapbender.Util.SourceTree~cbTypeNodeOffset
+     * @param {Object} def plain old data
+     * @param {number} siblingIndex
+     * @returns {boolean}
+     */
+    var _cbTypeNodeOffset;          // inconsequential, helps IDE separate callback type declaration from next real symbol
+
 
     var _itLayersRecursive = function(node, reverse, callback, filter, parents, index) {
         if ((!filter || filter(node, parents)) && false === callback(node, index || 0, parents.slice())) {
@@ -78,8 +119,8 @@ window.Mapbender.Util.SourceTree = (function() {
      * Iterate over all layersets in no specific order (config storage is an object, we can't guarantee
      * anything).
      *
-     * @param {Mapbender.Util.SourceTree~idNodeCb} callback receives id, def; can abort iteration by returning false
-     * @param {Mapbender.Util.SourceTree~idNodeCb} [filter] also receives id, def
+     * @param {Mapbender.Util.SourceTree~cbTypeIdNode} callback receives id, def; can abort iteration by returning false
+     * @param {Mapbender.Util.SourceTree~cbTypeIdNode} [filter] also receives id, def
      */
     function iterateLayersets(callback, filter) {
         var lsKeys = Object.keys(_r());
@@ -99,8 +140,8 @@ window.Mapbender.Util.SourceTree = (function() {
      *
      * @param {string|number|object} layerset if Object, scanned as is; if string / id, looked up in global configuration
      * @param {boolean} reverse false for configuration sort order; true for the other thing
-     * @param {Mapbender.Util.SourceTree~idNodeCb} callback receives id, def; can abort iteration by returning false
-     * @param {Mapbender.Util.SourceTree~idNodeCb} [filter] also receives id, def
+     * @param {Mapbender.Util.SourceTree~cbTypeIdNode} callback receives id, def; can abort iteration by returning false
+     * @param {Mapbender.Util.SourceTree~cbTypeIdNode} [filter] also receives id, def
      */
     function iterateSources(layerset, reverse, callback, filter) {
         var _ls = _anyToLsConf(layerset)[reverse ? 'reverse' : 'slice']();
@@ -143,7 +184,23 @@ window.Mapbender.Util.SourceTree = (function() {
     function getRootLayer(sourceDef) {
         return sourceDef.configuration.children[0];
     }
-    function iterateSourceLayers(sourceDef, reverse, callback, filter) {
+
+    /**
+     * Recursively walks through all layers in the given source definition (depth last) and calls callback on any
+     * visited node. Callback receives
+     * 1) config node ref
+     * 2) sibling offset
+     * 3) list of parent config nodes (tree upwards / nearest first, root last)
+     *
+     * Optional second 'filter' callback has the same signature. If the filter callback is given and returns false for
+     * the current node, invocation of the main callback is skipped.
+     *
+     * @param {object} sourceDef
+     * @param {boolean} reverse for child node visiting order; false follows config Array order; true reverses (all nodes)
+     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} callback
+     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} [filter]
+     */
+    function iterateLayers(sourceDef, reverse, callback, filter) {
         var _r = getRootLayer(sourceDef);
         _itLayersRecursive(_r, reverse, callback, filter, []);
     }
@@ -162,6 +219,16 @@ window.Mapbender.Util.SourceTree = (function() {
         _itLayersRecursive(_r, reverse, callback, _f, []);
     }
 
+    /**
+     *
+     * @aram {Object} startLayerDef config node reference
+     * @param {boolean} reverse false for 'children' list order matching configuration order; true for the other thing
+     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffset} callback
+     *      receives config node and sibling offset for anyvisited node
+     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffset} filter
+     *      receives config node and sibling offset for any visited node
+     * @param filter
+     */
     function iterateChildlayers(startLayerDef, reverse, callback, filter) {
         // create a wrapped callback that suppressed the problematic second 'parents' argument
         var _cb = function(node, index) { return callback(node, index); };
@@ -178,7 +245,22 @@ window.Mapbender.Util.SourceTree = (function() {
         getLayersetDef: function(id) { return (_r())[id]; },
         getRootLayer: getRootLayer,
         getSourceDef: getSourceDef,
-        iterateLayers: iterateSourceLayers,
+        /**
+         * Recursively walks through all layers in the given source definition (depth last) and calls callback on any
+         * visited node. Callback receives
+         * 1) config node ref
+         * 2) sibling offset
+         * 3) list of parent config nodes (tree upwards / nearest first, root last)
+         *
+         * Optional second 'filter' callback has the same signature. If the filter callback is given and returns false for
+         * the current node, invocation of the main callback is skipped.
+         *
+         * @param {object} sourceDef
+         * @param {boolean} reverse for child node visiting order; false follows config Array order; true reverses (all nodes)
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} callback
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} [filter]
+         */
+        iterateLayers: iterateLayers,
         iterateSourceLeaves: iterateSourceLeaves,
         iterateChildlayers: iterateChildlayers
     };
