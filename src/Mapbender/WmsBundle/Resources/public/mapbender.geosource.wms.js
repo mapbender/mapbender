@@ -32,10 +32,11 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         }
         var layerNames = [];
 
-        function _setProperties(layer, parent, id, num, options){
+        var options = sourceDef.configuration.options;
+        Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layer, index, parents) {
             /* set unic id for a layer */
             layer.options.origId = layer.options.id;
-            layer.options.id = parent ? parent.options.id + "_" + num : id + "_" + num;
+            layer.options.id = (parents[0] && parents[0].options || sourceDef).id + "_" + index;
             if(options.proxy && layer.options.legend && !options.tunnel) {
                 if(layer.options.legend.graphic) {
                     layer.options.legend.graphic = Mapbender.Util.addProxy(layer.options.legend.graphic);
@@ -43,16 +44,11 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
                     layer.options.legend.url = Mapbender.Util.addProxy(layer.options.legend.url);
                 }
             }
-            if(layer.children) {
-                for(var i = 0; i < layer.children.length; i++) {
-                    _setProperties(layer.children[i], layer, id, i, options);
-                }
-            } else {
+            if (!layer.children) {
                 layerNames.push(layer.options.name);
             }
-        }
-        
-        _setProperties(rootLayer, null, sourceDef.id, 0, sourceDef.configuration.options);
+        });
+
         Mapbender.Geo.layerOrderMap["" + sourceDef.id] = layerNames;
         var finalUrl = sourceDef.configuration.options.url;
         

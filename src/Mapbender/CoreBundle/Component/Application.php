@@ -193,6 +193,7 @@ class Application implements IAssetDependent
             'js'    => array(
                 '@MapbenderCoreBundle/Resources/public/stubs.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
             ),
             'css'   => array(),
             'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')
