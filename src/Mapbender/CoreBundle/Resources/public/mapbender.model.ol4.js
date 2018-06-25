@@ -127,8 +127,6 @@ Mapbender.Model.prototype.getCurrentProjectionObject = function getCurrentProj()
     return this.map.getView().getProjection();
 };
 
-Mapbender.Model.prototype.getAllSrs = function getAllSrs() {
-};
 Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
     'use strict';
     return this.map.getView().calculateExtent();
