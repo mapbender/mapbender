@@ -133,7 +133,34 @@ Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
     'use strict';
     return this.map.getView().calculateExtent();
 };
-Mapbender.Model.prototype.getScale = function getScale() {
+
+/**
+ *
+ * @param {number} dpi default 72 DPI
+ * @param {boolean} opt_round Whether to round the scale or not.
+ * @param {boolean} opt_scaleRating Whether to round the scale rating or not.
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getScale = function getScale(dpi, opt_round, opt_scaleRating) {
+    var currentUnit = this.getUnitsOfCurrentProjection();
+    var mpu = this.getMeterPersUnit(currentUnit);
+    var resolution = this.map.getView().getResolution();
+    var inchesPerMetre = 39.37;
+    var dpi = dpi ? dpi : 72;
+    var scaleCalc = resolution * mpu * inchesPerMetre * dpi;
+    var scale = opt_round ? Math.round(scaleCalc) : scaleCalc;
+
+    if (opt_scaleRating){
+        if (scale >= 9500 && scale <= 950000) {
+            scale = Math.round(scale/ 1000) + ".000";
+        } else if (scale >= 950000) {
+            scale = Math.round(scale / 1000000) + ".000.000";
+        } else {
+            scale = Math.round(scale);
+        }
+    }
+
+    return scale;
 };
 
 Mapbender.Model.prototype.center = function center() {
