@@ -18,10 +18,26 @@
             centerOnFirstPosition: true,
             zoomToAccuracyOnFirstPosition: true,
             accurancyStyle: {
-                fillColor: '#FFF',
-                fillOpacity: 0.5,
-                strokeWidth: 1,
-                strokeColor: '#FFF'
+                //fillColor: '#FFF',
+                //fillOpacity: 0.5,
+                //strokeWidth: 1,
+                //strokeColor: '#FFF'
+                stroke: new ol.style.Stroke({
+                    color: 'rgba(255,255,255, 1)',
+                    width: 1
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255,255,255, 0.5)'
+                })
+            },
+            markerStyle: {
+                radius: 10,
+                fill: null,
+                stroke: new ol.style.Stroke({
+                    color: 'rgba(255, 0, 0, 1)',
+                    width: 3,
+                    lineCap: 'butt'
+                })
             }
         },
         map: null,
@@ -101,14 +117,10 @@
                 features: [iconFeature]
             });
 
+            // check vectorlayer and set an new Source
             if (markerId){
-                // var keys = Object.keys(candidates);
-                // for (var i = 0; i < keys.length; i++) {
-                //     var val = candidates[keys[i]];
-                //     val.getSource().clear();
-                // }
-                var vectorlayer = olmap.model.getVectorLayerByNameId('Position',markerId);
-                vectorlayer.setSource(markersSource)
+                var markerVectorLayer = olmap.model.getVectorLayerByNameId('Position',markerId);
+                markerVectorLayer.setSource(markersSource);
             }else {
                 markerId = olmap.model.createVectorLayer({
                     source: markersSource,
@@ -123,9 +135,6 @@
             // Accurancy
             if (!accuracy) {
                 return;
-            }
-            if (accuracyId) {
-                olmap.model.removeVectorLayer('Accuracy',accuracyId)
             }
 
             var accurancyStyle = new ol.style.Style({
@@ -148,10 +157,16 @@
                 features: [accurancyFeature]
             });
 
-            accuracyId = olmap.model.createVectorLayer({
-                source: accurancySource,
-                style : accurancyStyle
-            },'Accuracy');
+            // check vectorlayer and set an new Source
+            if (accuracyId) {
+                var accuracyVectorLayer = olmap.model.getVectorLayerByNameId('Accuracy', accuracyId);
+                accuracyVectorLayer.setSource(accurancySource);
+            }else{
+                accuracyId = olmap.model.createVectorLayer({
+                    source: accurancySource,
+                    style : accurancyStyle
+                },'Accuracy');
+            }
 
             // set geolocationMarkerId
             this.geolocationAccuracyId = accuracyId;
