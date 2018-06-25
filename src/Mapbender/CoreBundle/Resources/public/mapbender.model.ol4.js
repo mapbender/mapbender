@@ -1031,3 +1031,22 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
     extent.srs = this.getCurrentProjectionCode();
     return extent;
 };
+
+/**
+ *
+ * @returns {ol.proj.Units}
+ */
+Mapbender.Model.prototype.getCurrentProjectionUnit = function getCurrentProjectionUnit() {
+    'use strict';
+    return this.map.getView().getProjection().getUnits();
+};
+
+/**
+ *
+ * @param currentUnit
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getMeterPersUnit = function getMeterPersUnit(currentUnit) {
+    'use strict';
+    return ol.proj.METERS_PER_UNIT[currentUnit];
+};

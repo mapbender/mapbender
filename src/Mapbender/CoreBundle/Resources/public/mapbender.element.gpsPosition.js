@@ -89,9 +89,11 @@
                 metersProj = 'EPSG:3857',
                 currentProj = olmap.model.getCurrentProjectionCode(),
                 transPositionCurrentProj = olmap.model.transformCoordinate(position,positionProj,currentProj),
+                currentUnit = olmap.model.getCurrentProjectionUnit(),
+                mpu = olmap.model.getMeterPersUnit(currentUnit),
                 pointInMeters = olmap.model.transformCoordinate(position,positionProj,metersProj),
                 accuracyOrgPoint,
-                differance,
+                differancePerUnit,
                 accurancyStyleParams = self.options.accurancyStyle,
                 circleStyleParams = self.options.circleStyle
             ;
@@ -131,10 +133,10 @@
             var accurancyStyle = new ol.style.Style(accurancyStyleParams);
 
             accuracyOrgPoint = [pointInMeters[0] + (accuracy / 2), pointInMeters[1] + (accuracy / 2)];
-            differance = accuracyOrgPoint[0] - pointInMeters[0];
+            differancePerUnit = (accuracyOrgPoint[0] - pointInMeters[0]) / mpu;
 
             var accurancyFeature = new ol.Feature(
-                new ol.geom.Circle(transPositionCurrentProj,differance)
+                new ol.geom.Circle(transPositionCurrentProj, differancePerUnit)
             );
             var accurancySource = new ol.source.Vector({
                 features: [accurancyFeature]
