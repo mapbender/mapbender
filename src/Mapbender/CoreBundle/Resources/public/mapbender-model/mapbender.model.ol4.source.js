@@ -30,13 +30,19 @@ window.Mapbender.SourceModelOl4 = (function() {
         } else {
             opacity = 1.0;
         }
-
+        var rootLayerDef = (config.configuration.children || [{}])[0];
         this.options = {
             opacity: opacity,
-            visibility: this.mergeParentTreeOptions_((config.configuration.children || [{}])[0]).selected,
+            // determined entirely by single bool in root layer "treeOptions"
+            visibility: rootLayerDef.options.treeOptions.selected,
+            // determined by logical OR of queryability of all leaf layers
+            // any layer queryable => source queryable
+            // this property is modified by initLayers_
+            // after initLayers, we logical-AND it with the root layer setting
+            queryable: false,
             tiled: config.configuration.options.tiled || false
         };
-        // console.log("Initial source options", config.title, this.options);
+
         this.getMapParams = {
             VERSION: config.configuration.options.version || "1.1.1",
             FORMAT: config.configuration.options.format || 'image/png',
@@ -50,17 +56,15 @@ window.Mapbender.SourceModelOl4 = (function() {
         };
         this.customRequestParams = {};
 
-        var layerDefs = this.extractLeafLayerConfigs_(config.configuration.children[0], null);
         this.layerNameMap_ = {};
         this.layerOptionsMap_ = {};
         this.activeLayerMap_ = {};
         this.queryLayerMap_ = {};
         this.layerOrder_ = [];
 
-        _.forEach(layerDefs, function(layerConfig) {
-            this.processLayerConfig_(layerConfig);
-        }.bind(this));
-        // console.log("Initial active layers for source", config.title, this.getMapParams.LAYERS, this.featureInfoParams.QUERY_LAYERS);
+        this.initLayers_(config);
+
+        this.options.queryable = this.options.queryable && rootLayerDef.options.treeOptions.info;
     }
 
     /**
@@ -130,89 +134,48 @@ window.Mapbender.SourceModelOl4 = (function() {
         this.updateEngine();
     };
 
-    Source.prototype.mergeParentTreeOptions_ = function mergeParentTreeOptions_(configNode, parentState) {
-        var localState = $.extend({}, parentState || {
-            info: true,
-            selected: true
-        });
-        // gate off feature info if PARENT is not "selected" (i.e. visible)
-        localState.info = localState.info && localState.selected;
-
-        // merge parent state with values from config nodes
-        var treeOptions = configNode.options && configNode.options.treeOptions || {
-            info: true,
-            selected: true
-        };
-        if (typeof treeOptions.info !== 'undefined') {
-            localState.info = !!(localState.info && treeOptions.info);
-        }
-        if (typeof treeOptions.selected !== 'undefined') {
-            localState.selected = !!(localState.selected && treeOptions.selected);
-        }
-        return localState;
-    };
-
     /**
-     * Traverses the (historically) nested layer configuration array and returns *only*
-     * the configs for the leaves as one flat list.
      *
-     * @param {object} layerConfig nested configuration array
-     * @param {object} parentState to collect 'info' and 'selected' booleans tree-down
-     * @return {object[]}
-     *
-     * @todo: Nested configuration is only needed for presentation (Layertree)
-     *        => separate layertree configuration from Model configuration server-side
-     */
-    Source.prototype.extractLeafLayerConfigs_ = function extractLeafLayerConfigs_(layerConfig, parentState) {
-        var localState;
-        if (!parentState) {
-            // Current node is a root layer
-            // Visibility of root layer is NOT considered for any child layers
-            // Instead, root layer visibility is treated as a separate "entire source" toggle
-            localState = {
-                selected: true,
-                queryable: true
-            };
-        } else {
-            localState = this.mergeParentTreeOptions_(layerConfig, parentState);
-        }
-
-        if (layerConfig.children) {
-            var childConfigs = [];
-            _.forEach(layerConfig.children, function(childConfig) {
-                childConfigs = childConfigs.concat(this.extractLeafLayerConfigs_(childConfig, localState));
-            }.bind(this));
-            return childConfigs;
-        } else {
-            return [{options: layerConfig.options, state: localState}];
-        }
-    };
-
-    /**
-     * Inspects config for a single leaf layer and adds it to internal data structures.
-     *
-     * @param {object} layerConfigWrapper plain old data, should have 'options' and 'state' keys
+     * @param {object} sourceConfig
      * @private
      */
-    Source.prototype.processLayerConfig_ = function processLayerConfig_(layerConfigWrapper) {
-        var layerConfig = layerConfigWrapper.options;
-        var initialLayerState = layerConfigWrapper.state;
-        if (!layerConfig.id) {
-            console.error("Missing / empty 'id' in layer configuration", layerConfig);
-            throw new Error("Can't initialize layer with empty id");
-        }
-        if (!layerConfig.name) {
-            console.error("Missing / empty 'name' in layer configuration", layerConfig);
-            throw new Error("Can't initialize layer with empty name");
-        }
+    Source.prototype.initLayers_ = function initLayers_(sourceConfig) {
+        Mapbender.Util.SourceTree.iterateSourceLeaves(sourceConfig, false, function(def, siblingIdx, parents) {
+            var layerName = def.options.name;
+            var queryable = !!def.options.queryable;
+            var info = queryable && def.options.treeOptions.info;
+            var selected = !!def.options.treeOptions.selected;
+            // DO NOT evaluate root layer for visibility
+            // Root layer "selected" controls the entire source and is evaluated separately
+            // (see constructor, options.visibility)
+            for (var i = 0; i < (parents.length - 1); ++i) {
+                var parent = parents[i];
+                var parentTreeOptions = parent.options.treeOptions;
+                selected = selected && parentTreeOptions.selected;
+                // info is disabled if any parent is not selected (=not visible in GetMap)
+                // info is NOT disabled if the exact same layer is not selected
+                info = info && selected;
+            }
+            this.options.queryable = this.options.queryable || queryable;
+            this.initializeLayerState_(layerName, def, selected, info);
+        }.bind(this));
+    };
+
+    /**
+     *
+     * @param {string} layerName
+     * @param {object} layerConfig
+     * @param {boolean} layerActive
+     * @param {boolean} infoActive
+     * @private
+     */
+    Source.prototype.initializeLayerState_ = function initializeLayerState_(layerName, layerConfig, layerActive, infoActive) {
         var stringId = "" + layerConfig.id;
-        var stringLayerName = "" + layerConfig.name;
+        var stringLayerName = "" + layerName;
+
         this.layerOptionsMap_[stringId] = layerConfig;
         this.layerNameMap_[stringLayerName] = layerConfig;
         this.layerOrder_.push(stringLayerName);
-
-        var layerActive = initialLayerState.selected;
-        var layerQueryable = initialLayerState.info;
 
         if (layerActive) {
             this.activeLayerMap_[stringLayerName] = true;
@@ -222,7 +185,7 @@ window.Mapbender.SourceModelOl4 = (function() {
                 this.getMapParams.LAYERS = [this.getMapParams.LAYERS, stringLayerName].join(',');
             }
         }
-        if (layerQueryable) {
+        if (infoActive) {
             this.queryLayerMap_[stringLayerName] = true;
             if (!this.featureInfoParams.QUERY_LAYERS) {
                 this.featureInfoParams.QUERY_LAYERS = stringLayerName;

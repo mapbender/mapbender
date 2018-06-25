@@ -79,7 +79,7 @@ window.Mapbender.Util.SourceTree = (function() {
 
 
     var _itLayersRecursive = function(node, reverse, callback, filter, parents, index) {
-        if ((!filter || filter(node, parents)) && false === callback(node, index || 0, parents.slice())) {
+        if ((!filter || filter(node, index, parents)) && false === callback(node, index || 0, parents.slice())) {
             return false;
         }
         if (node.children && node.children.length) {
@@ -119,13 +119,6 @@ window.Mapbender.Util.SourceTree = (function() {
         return sourceDef.configuration.children[0];
     }
 
-    function iterateSourceLeaves(sourceDef, reverse, callback, filter) {
-        var _r = getRootLayer(sourceDef);
-        var _f = _chainFilters(filter, function(node) {
-            return !(node.children || []).length;
-        });
-        _itLayersRecursive(_r, reverse, callback, _f, []);
-    }
     function iterateSourceGroupLayers(sourceDef, reverse, callback, filter) {
         var _r = getRootLayer(sourceDef);
         var _f = _chainFilters(filter, function(node) {
@@ -243,7 +236,28 @@ window.Mapbender.Util.SourceTree = (function() {
             var _r = getRootLayer(sourceDef);
             _itLayersRecursive(_r, reverse, callback, filter, []);
         },
-        iterateSourceLeaves: iterateSourceLeaves,
+        /**
+         * Visit all leaf nodes in the given source definition and invoke the given callback. Callback receives
+         * 1) config node ref
+         * 2) sibling offset
+         * 3) list of parent config nodes (tree upwards / nearest first, root last)
+         *
+         * Optional second 'filter' callback has the same signature. If the filter callback is given, main callback is
+         * only invoked after the filter, only if the filter returned a truthy value.
+         *
+         * @param {object} sourceDef
+         * @param {boolean} reverse for child node visiting order; false follows config Array order; true reverses (all nodes)
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} callback
+         * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} [filter]
+         */
+        iterateSourceLeaves: function iterateSourceLeaves(sourceDef, reverse, callback, filter) {
+            var _r = getRootLayer(sourceDef);
+            var _f = _chainFilters(filter, function(node) {
+                return !(node.children || []).length;
+            });
+            _itLayersRecursive(_r, reverse, callback, _f, []);
+        },
+
         iterateChildlayers: iterateChildlayers,
         /**
          * Generates and assigns string ids for layers corresponding to source or parent node id + sibling index
