@@ -888,3 +888,109 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
     extent.srs = this.getCurrentProjectionCode();
     return extent;
 };
+
+/**
+ * Returns the size of the map in the DOM (in pixels):
+ * An array of numbers representing a size: [width, height].
+ * @returns {Array.<number>}
+ */
+Mapbender.Model.prototype.getMapSize = function getMapSize() {
+    'use strict';
+    return this.map.getSize();
+};
+
+/**
+ * Returns the view center of a map:
+ * An array of numbers representing an xy coordinate. Example: [16, 48].
+ * @returns {Array.<number>}
+ */
+Mapbender.Model.prototype.getMapCenter = function getMapCenter() {
+    'use strict';
+    return this.map.getView().getCenter();
+};
+
+/**
+ * Returns the width of an extent.
+ * @param extent
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getWidthOfExtent = function getWidthOfExtent(extent) {
+    'use strict';
+    return ol.extent.getWidth(extent);
+};
+
+/**
+ * Returns the height of an extent.
+ * @param {Array} extent
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getHeigthOfExtent = function getHeigthOfExtent(extent) {
+    'use strict';
+    return ol.extent.getHeight(extent);
+};
+
+/**
+ * @param {Object} params
+ * @returns {string}
+ */
+Mapbender.Model.prototype.getUrlParametersAsString = function getUrlParametersAsString(params) {
+    'use strict';
+    var url = '';
+    for (var key in params) {
+        if (params.hasOwnProperty(key)) {
+            url += '&' + key + '=' + params[key];
+        }
+    }
+
+    return url;
+};
+
+/**
+ * @param {string} sourceId
+ * @param {Array} extent
+ * @param {Array} size
+ * @returns {{type: (string|null), url: string, opacity}}
+ */
+Mapbender.Model.prototype.getSourcePrintConfig = function(sourceId, extent, size) {
+    var sourceObj = this.getSourceById(sourceId);
+
+    // Contains VERSION, FORMAT, TRANSPARENT, LAYERS
+    var params = sourceObj.getMapParams;  //engineSource.getParams();
+
+    var v13 = false;
+    if (params.VERSION.indexOf('1.3') !== -1) {
+        v13 = true;
+    }
+
+    // To ensure that only active layers are considered.
+    params.LAYERS = sourceObj.getActiveLayerNames().join(',');
+
+    params.REQUEST = 'GetMap';
+    params.SERVICE = sourceObj.getType().toUpperCase();
+    params.STYLES = ''; //@todo always empty or should it be possible to assign them from a config?
+
+
+    params[v13 ? 'CRS' : 'SRS'] = this.getCurrentProjectionCode();
+
+    var bbox;
+    var axisOrientation = this.getCurrentProjectionObject().getAxisOrientation();
+    if (v13 && axisOrientation.substr(0, 2) === 'ne') {
+        bbox = [extent[1], extent[0], extent[3], extent[2]];
+    } else {
+        bbox = extent;
+    }
+    params.BBOX = bbox.join(',');
+
+    params.WIDTH = size[0];
+    params.HEIGHT = size[1];
+
+    // base url contains the ? sign already.
+    var url = sourceObj.getBaseUrl();
+    url += this.getUrlParametersAsString(params);
+
+    return {
+        type : sourceObj.getType(),
+        url : url,
+        opacity : sourceObj.options.opacity
+    };
+}
