@@ -174,7 +174,6 @@ class Application implements IAssetDependent
                         "$modelJsBase/mapbender.model.ol4.source.js",
                         "$coreJsBase/mapbender.model.ol4.js",
                         "$modelJsBase/mapbender.model.ol4.sourcelayer.state.js",
-                        "$modelJsBase/mapbender.model.ol4.sourcelayer.js",
                     ));
             default:
                 throw new \RuntimeException("Unhandled map engine code " . print_r($engineCode, true));
@@ -193,6 +192,7 @@ class Application implements IAssetDependent
             'js'    => array(
                 '@MapbenderCoreBundle/Resources/public/stubs.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
             ),
             'css'   => array(),
             'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')

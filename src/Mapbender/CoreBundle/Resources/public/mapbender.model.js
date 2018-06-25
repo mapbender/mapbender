@@ -50,8 +50,7 @@ Mapbender.Model = {
 
         this.mapStartExtent = {
             projection: this.getProj(this.mbMap.options.srs),
-            extent: this.mbMap.options.extents.start ?
-                OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start) : this.mbMap.options.extents.max
+            extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start || this.mbMap.options.extents.max)
         };
         var mapOptions = {
             maxExtent: this._transformExtent(this.mapMaxExtent, this.proj).toArray(),
@@ -100,18 +99,44 @@ Mapbender.Model = {
     },
     /**
      * Set map view: extent from URL parameters or configuration and POIs
+     * @deprecated, call individual methods
      */
     setView: function(addLayers) {
-        var self = this;
-        var start_extent = this.mapStartExtent;
+        var startExtent = this.getInitialExtent();
+        var poiData = this.initializePois(startExtent);
 
-        var pois = [],
-            bbox = null;
-        if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
-            bbox = this.mbMap.options.extra['bbox'] ?
-                OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']) :
-                start_extent;
+        if (!poiData.extentModified) {
+            if (this.mbMap.options['center']) {
+                var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
+                if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+                    this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
+                } else {
+                    this.map.olMap.setCenter(lonlat);
+                }
+            } else {
+                this.map.olMap.zoomToExtent(startExtent, true);
+            }
         }
+        if (addLayers) {
+            this.initializeSourceLayers();
+        }
+        this.finishPoiInit(poiData.markerLayer, poiData.popups);
+    },
+    getInitialExtent: function() {
+        var startExtent = this.mapStartExtent.extent;
+        if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
+            startExtent = OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']);
+        }
+        if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+            startExtent = startExtent.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj());
+        }
+
+        return startExtent || null;
+    },
+    initializePois: function() {
+        var haveBbox = this.mbMap.options.extra && this.mbMap.options.extra['bbox'];
+        var self = this;
+        var pois = [];
         if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
             $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
                 var coord = new OpenLayers.LonLat(poi.x, poi.y);
@@ -145,11 +170,10 @@ Mapbender.Model = {
             );
         }
         $.each(pois, function(idx, poi) {
-            if (!bbox) {
-                if (!poiBox)
-                    poiBox = new OpenLayers.Bounds();
-                poiBox.extend(poi.position);
+            if (!poiBox) {
+                poiBox = new OpenLayers.Bounds();
             }
+            poiBox.extend(poi.position);
 
             // Marker
             poiMarkerLayer.addMarker(new OpenLayers.Marker(
@@ -169,69 +193,55 @@ Mapbender.Model = {
                     }));
             }
         });
-        var centered = false;
-        if (poiBox) {
-            if (pois.length == 1 && pois[0].scale) {
+        if (!haveBbox && pois.length) {
+            if (pois.length === 1 && pois[0].scale) {
                 this.map.olMap.setCenter(pois[0].position);
                 this.map.olMap.zoomToScale(pois[0].scale, true);
             } else {
                 this.map.olMap.zoomToExtent(poiBox.scale(1.5));
             }
-            centered = true;
-        }
-
-        if (bbox) {
-            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-                bbox = bbox.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj());
-            }
-            this.map.olMap.zoomToExtent(bbox, true);
+            return {
+                markerLayer: poiMarkerLayer,
+                popups: poiPopups,
+                extentModified: true
+            };
         } else {
-            if (!centered) {
-                this.map.olMap.zoomToExtent(start_extent.extent ? start_extent.extent : start_extent, true);
-            }
+            return {
+                markerLayer: poiMarkerLayer,
+                popups: poiPopups,
+                extentModified: false
+            };
         }
+    },
+    initializeSourceLayers: function() {
+        var self = this;
+        // @todo 3.1.0: event binding is historically tied to initializing layers ... resolve / separate?
+        $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
+        // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
+        // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
+        this.map.olMap.events.register('movestart', this, $.proxy(this._preCheckChanges, this));
 
-        if (!centered && this.mbMap.options['center']) {
-            var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
-            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-                this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
-            } else {
-                this.map.olMap.setCenter(lonlat);
+        this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
+        $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
+            if(!Mapbender.configuration.layersets[layersetId]) {
+                return;
             }
-        }
-
-        if (true === addLayers) {
-            $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
-            // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
-            // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
-            this.map.olMap.events.register('movestart', this, $.proxy(this._preCheckChanges, this));
-
-            this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
-            $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
-                if(!Mapbender.configuration.layersets[layersetId]) {
-                    return;
-                }
-                $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
-                    $.each(defArr, function(idx, layerDef) {
-                        layerDef['origId'] = idx;
-                        self.addSource({
-                            add: {
-                                sourceDef: layerDef
-                            }
-                        });
-                    });
+            $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
+                $.each(defArr, function(idx, sourceDef) {
+                    self.addSourceFromConfig(sourceDef, false);
                 });
             });
-        }
-
-        if (poiMarkerLayer) {
-            this.map.olMap.addLayer(poiMarkerLayer);
+        });
+    },
+    finishPoiInit: function(markerLayer, popups) {
+        if (markerLayer) {
+            this.map.olMap.addLayer(markerLayer);
         }
 
         // Popups have to be set after map extent initialization
-        $.each(poiPopups, function(idx, popup) {
-            self.map.olMap.addPopup(popup);
-        });
+        $.each(popups || [], function(idx, popup) {
+            this.map.olMap.addPopup(popup);
+        }.bind(this));
     },
     getCurrentProj: function() {
         return this.map.olMap.getProjectionObject();
@@ -303,8 +313,8 @@ Mapbender.Model = {
             centroid.x + 0.5 * w + buffer_bounds.w,
             centroid.y + 0.5 * h + buffer_bounds.h);
     },
-    _convertLayerDef: function(layerDef) {
-        var l = $.extend({}, Mapbender.source[layerDef.type.toLowerCase()].create(layerDef), {
+    _convertLayerDef: function(layerDef, mangleIds) {
+        var l = $.extend({}, Mapbender.source[layerDef.type.toLowerCase()].create(layerDef, mangleIds), {
             mapbenderId: layerDef.id
         });
         if(typeof this.mbMap.options.wmsTileDelay !== 'undefined') {
@@ -449,11 +459,20 @@ Mapbender.Model = {
             return null;
         }
     },
+    /**
+     * @deprecated used by layertree only, return type is presentationy, supports only a single search criterion
+     * @param options
+     * @returns {*}
+     */
     findLayerset: function(options) {
+        if (!(options.source && options.source.origId)) {
+            console.error("Invalid layerset search parameters", options);
+            throw new Error("Invalid layerset search parameters");
+        }
         for (var layersetId in Mapbender.configuration.layersets) {
             var layerset = Mapbender.configuration.layersets[layersetId];
             for (var i = 0; i < layerset.length; i++) {
-                if (options.source && layerset[i][options.source.origId]) {
+                if (layerset[i][options.source.origId]) {
                     return {
                         id: layersetId,
                         title: Mapbender.configuration.layersetmap[layersetId],
@@ -799,74 +818,94 @@ Mapbender.Model = {
         return null;
     },
     /**
+     * Old-style API to add a source. Source is a POD object that needs to be nested into an outer structure like:
+     *  {add: {sourceDef: <x>}}
      *
+     * @param {object} addOptions
+     * @returns {object} source defnition (unraveled but same ref)
+     * @deprecated, call addSourceFromConfig directly
      */
     addSource: function(addOptions) {
+        if (addOptions.add && addOptions.add.sourceDef) {
+            // because legacy behavior was to always mangle / destroy / rewrite all ids, we do the same here
+            return this.addSourceFromConfig(addOptions.add.sourceDef, true);
+        } else {
+            console.error("Unuspported options, ignoring", addOptions);
+        }
+    },
+    /**
+     * @param {object} sourceDef
+     * @param {boolean} [mangleIds] to rewrite sourceDef.id and all layer ids EVEN IF ALREADY POPULATED
+     * @returns {object} sourceDef same ref, potentially modified
+     */
+    addSourceFromConfig: function(sourceDef, mangleIds) {
         var self = this;
-        if (addOptions.add) {
-            var sourceDef = addOptions.add.sourceDef;
+        if (!sourceDef.origId) {
+            sourceDef.origId = '' + sourceDef.id;
+        }
+        if (mangleIds) {
             sourceDef.id = this.generateSourceId();
-
             if (typeof sourceDef.origId === 'undefined') {
                 sourceDef.origId = sourceDef.id;
             }
-            this.mbMap.fireModelEvent({
-                name: 'beforeSourceAdded',
-                value: {
-                    source: sourceDef,
-                    before: null,
-                    after: null
+        }
+
+        this.mbMap.fireModelEvent({
+            name: 'beforeSourceAdded',
+            value: {
+                source: sourceDef,
+                before: null,
+                after: null
+            }
+        });
+        if (!this.getSourcePos(sourceDef)) {
+            this.sourceTree.push(sourceDef);
+        }
+        var source = sourceDef;
+        var mapQueryLayer = this.map.layers(this._convertLayerDef(source, mangleIds));
+        if (mapQueryLayer) {
+            source.mqlid = mapQueryLayer.id;
+            source.ollid = mapQueryLayer.olLayer.id;
+            mapQueryLayer.source = source;
+            this._addLayerMaxExtent(mapQueryLayer);
+            Mapbender.source[source.type.toLowerCase()].postCreate(source, mapQueryLayer);
+            mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e) {
+                self._sourceLoadStart(e);
+            });
+            mapQueryLayer.olLayer.events.register("loadend", mapQueryLayer.olLayer, function(e) {
+                var imgEl = $('div[id="' + e.element.id + '"]  .olImageLoadError');
+                if (imgEl.length > 0) {
+                    self._sourceLoadError(e, imgEl);
+                } else {
+                    self._sourceLoadeEnd(e);
                 }
             });
-            if (!this.getSourcePos(sourceDef)) {
-                this.sourceTree.push(sourceDef);
-            }
-            var source = sourceDef;
-            var mapQueryLayer = this.map.layers(this._convertLayerDef(source));
-            if (mapQueryLayer) {
-                source.mqlid = mapQueryLayer.id;
-                source.ollid = mapQueryLayer.olLayer.id;
-                mapQueryLayer.source = source;
-                this._addLayerMaxExtent(mapQueryLayer);
-                Mapbender.source[source.type.toLowerCase()].postCreate(source, mapQueryLayer);
-                mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e) {
-                    self._sourceLoadStart(e);
-                });
-                mapQueryLayer.olLayer.events.register("loadend", mapQueryLayer.olLayer, function(e) {
-                    var imgEl = $('div[id="' + e.element.id + '"]  .olImageLoadError');
-                    if (imgEl.length > 0) {
-                        self._sourceLoadError(e, imgEl);
-                    } else {
-                        self._sourceLoadeEnd(e);
+            this.mbMap.fireModelEvent({
+                name: 'sourceAdded',
+                value: {
+                    added: {
+                        source: source,
+                        // legacy: no known consumer evaluates these props,
+                        // but even if, they've historically been wrong anyway
+                        // was: "before": always last source previously in list, even though
+                        // the new source was actually added *after* that
+                        before: null,
+                        after: null
                     }
-                });
-                this.mbMap.fireModelEvent({
-                    name: 'sourceAdded',
-                    value: {
-                        added: {
-                            source: source,
-                            // legacy: no known consumer evaluates these props,
-                            // but even if, they've historically been wrong anyway
-                            // was: "before": always last source previously in list, even though
-                            // the new source was actually added *after* that
-                            before: null,
-                            after: null
-                        }
-                    }
-                });
-                this._checkAndRedrawSource({
-                    sourceIdx: {
-                        id: source.id
-                    },
-                    options: {
-                        children: {}
-                    }
-                });
-            } else
-                this.sourceTree.splice(this.getSourcePos(sourceDef), 1);
+                }
+            });
+            this._checkAndRedrawSource({
+                sourceIdx: {
+                    id: source.id
+                },
+                options: {
+                    children: {}
+                }
+            });
         } else {
-            window.console && console.error("CHECK options at model.addSource");
+            this.sourceTree.splice(this.getSourcePos(sourceDef), 1);
         }
+        return sourceDef;
     },
     /**
      *

@@ -47,7 +47,7 @@ Mapbender.Model.prototype.layerTypes = {
 };
 
 
-Mapbender.Model.prototype.DRAWTYPES = ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle'];
+Mapbender.Model.prototype.DRAWTYPES = ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle', 'Box'];
 
 Mapbender.Model.prototype.mapElement = null;
 Mapbender.Model.prototype.parseURL = function parseURL() {
@@ -92,6 +92,16 @@ Mapbender.Model.prototype.createStyle = function createStyle(options) {
             stroke: new ol.style.Stroke(options['circle']['stroke'])
         });
         style.setImage(circle);
+    }
+
+    if (options['text']) {
+        var text = new ol.style.Text({
+            fill: new ol.style.Fill({
+                color: options['text']['fill'].color
+            }),
+            stroke: new ol.style.Stroke(options['text']['stroke'])
+        });
+        style.setText(text);
     }
 
     return style;
@@ -204,18 +214,26 @@ Mapbender.Model.prototype.sourcesFromLayerSetId = Mapbender.Model.sourcesFromLay
  * @param {string} [id]
  * @returns {Mapbender.SourceModelOl4}
  */
-Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sourceConfig, id) {
+Mapbender.Model.prototype.addSourceFromConfig = function addSourceFromConfig(sourceConfig, mangleIds) {
     'use strict';
-    var id_;
-    if (typeof id === 'undefined') {
-        id_ = this.generateSourceId();
-    } else {
-        id_ = '' + id;
+    var id_ = sourceConfig.id || sourceConfig.origId;
+    // DO NOT check ids strictly for being undefined. We do not want to use
+    // boolean false or empty strings as ids, ever
+    if (!id_) {
+        if (mangleIds) {
+            id_ = this.generateSourceId();
+            sourceConfig.origId = sourceConfig.id || id_;
+            sourceConfig.id = id_;
+        } else {
+            console.error("Can't initialize source with emptyish id", id_, sourceConfig);
+            throw new Error("Can't initialize source with emptyish id");
+        }
     }
-    var source = this.sourceFromConfig(sourceConfig, id_);
+    var source = this.sourceFromConfig(sourceConfig, '' + id_);
     this.addSourceObject(source);
     return source;
 };
+
 /**
  * @param {Mapbender.SourceModelOl4} sourceObj
  * @param {ol.Extent} extent
@@ -531,13 +549,18 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
     options = options || {};
     options.source = options.source ||  new ol.source.Vector({wrapX: false});
 
+    var drawOptions = {
+        type: type,
+        source: options.source
+    };
     var id = this.createVectorLayer(options, owner);
 
-    var draw =  new ol.interaction.Draw({
-        source: options.source,
-        type: type
-    });
+    if (type === 'Box') {
+        drawOptions.geometryFunction = ol.interaction.Draw.createBox();
+        drawOptions.type = 'Circle';
+    }
 
+    var draw = new ol.interaction.Draw(drawOptions);
 
     this.vectorLayer[owner][id].interactions = this.vectorLayer[owner][id].interactions || {};
     this.vectorLayer[owner][id].interactions[id] = draw;
@@ -834,6 +857,30 @@ Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUr
     // strip nulls
     return _.filter(urls);
 };
+
+
+Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
+    'use strict';
+
+    var textStyle = new ol.style.Text();
+
+    if (options['text']) {
+        var text = new ol.style.Text(options['text']);
+        textStyle.setText(text);
+    }
+
+    if (options['fill']) {
+        var fill = new ol.style.Fill(options['fill']);
+        textStyle.setFill(fill);
+    }
+
+    if (options['stroke']) {
+        var stroke = new ol.style.Stroke(options['stroke']);
+        textStyle.setStroke(stroke);
+    }
+    return new ol.style.Text(options);
+},
+
 
 /**
  * Update map view according to selected projection

@@ -7,6 +7,7 @@
             splitLayers: false,
             wms_url: null
         },
+        loadedSourcesCount: 0,
         elementUrl: null,
         _create: function(){
             var self = this;
@@ -193,16 +194,19 @@
             });
         },
         _addSources: function(sourceDefs, sourceOpts) {
+            var srcIdPrefix = 'wmsloader-' + $(this.element).attr('id');
             var self = this;
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
             $.each(sourceDefs, function(idx, sourceDef) {
-                var opts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
+                var findOpts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
+                var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
+                sourceDef.id = sourceId;
+                sourceDef.origId = sourceId;
+                Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
-                if(!sourceOpts.global.mergeSource){
-                    mbMap.addSource(sourceDef);
-                }else if(mbMap.model.findSource(opts).length === 0){
-                    mbMap.addSource(sourceDef);
+                if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
+                    mbMap.addSource(sourceDef, false);
                 }
             });
             // Enable feature info

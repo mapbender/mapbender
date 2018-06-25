@@ -85,12 +85,23 @@
         /**
          *
          */
-        addSource: function(sourceDef){
-            this.model.addSource({
-                add: {
-                    sourceDef: sourceDef
-                }
-            });
+        addSource: function(sourceDef, mangleIds) {
+            // legacy support: callers that do not know about the mangleIds argument most certainly want ids mangled
+            var doMangle = !!mangleIds || typeof mangleIds === 'undefined';
+            var source =this.model.addSourceFromConfig(sourceDef, doMangle);
+            if (this.engineCode === 'ol4') {
+                // @todo 3.1.0: only the map widget itself should ever fire mbmap* events
+                //      The old code does this in the Mapbender.Model
+                //      Fix that, then remove the if
+                this.fireModelEvent({
+                    name: 'sourceadded',
+                    value:{
+                        added:{
+                            source: source
+                        }
+                    }
+                });
+            }
         },
         /**
          *
