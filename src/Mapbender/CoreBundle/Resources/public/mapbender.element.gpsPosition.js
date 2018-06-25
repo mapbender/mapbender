@@ -18,10 +18,6 @@
             centerOnFirstPosition: true,
             zoomToAccuracyOnFirstPosition: true,
             accurancyStyle: {
-                //fillColor: '#FFF',
-                //fillOpacity: 0.5,
-                //strokeWidth: 1,
-                //strokeColor: '#FFF'
                 stroke: new ol.style.Stroke({
                     color: 'rgba(255,255,255, 1)',
                     width: 1
@@ -30,7 +26,7 @@
                     color: 'rgba(255,255,255, 0.5)'
                 })
             },
-            markerStyle: {
+            circleStyle: {
                 radius: 10,
                 fill: null,
                 stroke: new ol.style.Stroke({
@@ -87,26 +83,21 @@
         _createMarker: function (position, accuracy) {
             var self = this,
                 olmap = self.map,
-                markerId = this.geolocationMarkerId,
-                accuracyId = this.geolocationAccuracyId,
+                markerId = self.geolocationMarkerId,
+                accuracyId = self.geolocationAccuracyId,
                 positionProj = 'EPSG:4326',
                 metersProj = 'EPSG:3857',
                 currentProj = olmap.model.getCurrentProjectionCode(),
                 transPositionCurrentProj = olmap.model.transformCoordinate(position,positionProj,currentProj),
                 pointInMeters = olmap.model.transformCoordinate(position,positionProj,metersProj),
                 accuracyOrgPoint,
-                differance;
+                differance,
+                accurancyStyleParams = self.options.accurancyStyle,
+                circleStyleParams = self.options.circleStyle
+            ;
 
             var markerStyle = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 10,
-                    fill: null,
-                    stroke: new ol.style.Stroke({
-                        color: 'rgba(255, 0, 0, 1)',
-                        width: 3,
-                        lineCap: 'butt'
-                    })
-                })
+                image: new ol.style.Circle(circleStyleParams)
             });
 
             // add an empty iconFeature to the source of the layer
@@ -137,15 +128,7 @@
                 return;
             }
 
-            var accurancyStyle = new ol.style.Style({
-                stroke: new ol.style.Stroke({
-                    color: 'rgba(255,255,255, 1)',
-                    width: 1
-                }),
-                fill: new ol.style.Fill({
-                    color: 'rgba(255,255,255, 0.5)'
-                })
-            });
+            var accurancyStyle = new ol.style.Style(accurancyStyleParams);
 
             accuracyOrgPoint = [pointInMeters[0] + (accuracy / 2), pointInMeters[1] + (accuracy / 2)];
             differance = accuracyOrgPoint[0] - pointInMeters[0];
