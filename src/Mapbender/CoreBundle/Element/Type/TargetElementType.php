@@ -111,7 +111,7 @@ class TargetElementType extends AbstractType
                 $elementComponentClass = $elementEntity->getClass();
                 if (class_exists($elementComponentClass)) {
                     if ($elementComponentClass::$ext_api) {
-                        $elementEntity->getId();
+                        $elementIds[] = $elementEntity->getId();
                     }
                 }
             }
