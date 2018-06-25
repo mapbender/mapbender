@@ -89,7 +89,7 @@
                 metersProj = 'EPSG:3857',
                 currentProj = olmap.model.getCurrentProjectionCode(),
                 transPositionCurrentProj = olmap.model.transformCoordinate(position,positionProj,currentProj),
-                currentUnit = olmap.model.getCurrentProjectionUnit(),
+                currentUnit = olmap.model.getUnitsOfCurrentProjection(),
                 mpu = olmap.model.getMeterPersUnit(currentUnit),
                 pointInMeters = olmap.model.transformCoordinate(position,positionProj,metersProj),
                 accuracyOrgPoint,
@@ -290,24 +290,28 @@
                 this.firstPosition = true;
                 this.observer = null;
             }
-            // Delete Markers
-            var olmap =  this.map,
-                 candidates = olmap.model.getVectorLayerByNameId('Position', this.geolocationMarkerId);
 
-            if (candidates) {
-                candidates.getSource().clear();
-                olmap.model.removeVectorLayer('Position', this.geolocationMarkerId);
-                this.geolocationMarkerId = null;
+            // Check if id of Position and Accuracy has been set
+            if ( (this.geolocationMarkerId !== null) && (this.geolocationAccuracyId !== null) ) {
+                // Delete Markers
+                var olmap = this.map,
+                    candidates = olmap.model.getVectorLayerByNameId('Position', this.geolocationMarkerId);
 
+                if (candidates) {
+                    candidates.getSource().clear();
+                    olmap.model.removeVectorLayer('Position', this.geolocationMarkerId);
+                    this.geolocationMarkerId = null;
+
+                }
+
+                candidates = olmap.model.getVectorLayerByNameId('Accuracy', this.geolocationAccuracyId);
+                if (candidates) {
+                    candidates.getSource().clear();
+                    olmap.model.removeVectorLayer('Accuracy', this.geolocationAccuracyId);
+                    this.geolocationAccuracyId = null;
+                }
+                return this;
             }
-
-             candidates = olmap.model.getVectorLayerByNameId('Accuracy', this.geolocationAccuracyId);
-             if (candidates) {
-                 candidates.getSource().clear();
-                 olmap.model.removeVectorLayer('Accuracy', this.geolocationAccuracyId);
-                 this.geolocationAccuracyId = null;
-             }
-            return this;
         },
         /**
          * Determinate ready state of plugin
