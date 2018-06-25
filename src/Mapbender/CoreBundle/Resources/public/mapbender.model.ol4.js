@@ -127,11 +127,42 @@ Mapbender.Model.prototype.getCurrentProjectionObject = function getCurrentProj()
     return this.map.getView().getProjection();
 };
 
+/**
+ *
+ * @returns {*|OpenLayers.Bounds}
+ */
 Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
     'use strict';
     return this.map.getView().calculateExtent();
 };
-Mapbender.Model.prototype.getScale = function getScale() {
+
+/**
+ *
+ * @param {number} dpi default 72 DPI
+ * @param {boolean} opt_round Whether to round the scale or not.
+ * @param {boolean} opt_scaleRating Whether to round the scale rating or not.
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getScale = function getScale(dpi, opt_round, opt_scaleRating) {
+    var currentUnit = this.getUnitsOfCurrentProjection();
+    var mpu = this.getMeterPersUnit(currentUnit);
+    var resolution = this.map.getView().getResolution();
+    var inchesPerMetre = 39.37;
+    var dpi = dpi ? dpi : 72;
+    var scaleCalc = resolution * mpu * inchesPerMetre * dpi;
+    var scale = opt_round ? Math.round(scaleCalc) : scaleCalc;
+
+    if (opt_scaleRating){
+        if (scale >= 9500 && scale <= 950000) {
+            scale = Math.round(scale/ 1000) + ".000";
+        } else if (scale >= 950000) {
+            scale = Math.round(scale / 1000000) + ".000.000";
+        } else {
+            scale = Math.round(scale);
+        }
+    }
+
+    return scale;
 };
 
 Mapbender.Model.prototype.center = function center() {
@@ -328,43 +359,181 @@ Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
     return uuid;
 };
 
-
-// /**
-//  *
-//  * @param options
-//  * @returns {ol.Geolocation}
-//  */
-// Mapbender.Model.prototype.createGeolocation = function (options) {
-//     return new ol.Geolocation(options)
-// };
-//
-// /**
-//  *
-//  * @param options
-//  * @returns {*}
-//  */
-// Mapbender.Model.prototype.createProjection = function (options) {
-//     return new ol.proj.Projection(options)
-// };
-
 /**
  *
- * @param array {lat,lon}
- * @returns {ol.Coordinate}
+ * @param array
+ * @param deltaArray
+ * @returns {ol.coordinate.add}
  */
-Mapbender.Model.prototype.createCoordinate = function (array) {
-    return new ol.Coordinate(array);
+Mapbender.Model.prototype.addCoordinate= function addCoordinate(array, deltaArray) {
+    if (! deltaArray){
+        deltaArray = [0, 0]
+    }
+    return new ol.coordinate.add(array, deltaArray);
 };
 
 /**
- * @see: https://openlayers.org/en/latest/apidoc/ol.proj.html#.transform
+ *
  * @param coordinate
  * @param source
  * @param destination
  * @returns {ol.Coordinate}
  */
-Mapbender.Model.prototype.transform = function transform(coordinate, source, destination) {
-    return new ol.Coordinate(newCoordinate);
+
+Mapbender.Model.prototype.transformCoordinate = function transformCoordinate(coordinate, source, destination) {
+    'use strict';
+   return ol.proj.transform(coordinate, source, destination);
+};
+
+/**
+ *
+ * @param coordinate
+ * @param opt_projection
+ * @returns {ol.Coordinate}
+ */
+Mapbender.Model.prototype.toLonLat = function toLonLat(coordinate, opt_projection) {
+    'use strict';
+    return ol.proj.toLonLat(coordinate,opt_projection);
+};
+
+/**
+ *
+ * @param owner
+ * @returns {*}
+ */
+Mapbender.Model.prototype.getVectorLayerByNameId = function getVectorLayerByNameId(owner, id) {
+    'use strict';
+    var vectorLayer = this.vectorLayer;
+    return  vectorLayer[owner][id];
+};
+
+/**
+ *
+ * @param owner
+ * @param featuresArray
+ */
+Mapbender.Model.prototype.addFeaturesVectorSource = function addFeaturesVectorSource(owner,featuresArray) {
+    'use strict';
+    var vectorLayer = this.vectorLayer[owner];
+    var vectorSource = new ol.source.Vector({
+        features: featuresArray
+    });
+    vectorLayer.setSource(vectorSource);
+
+};
+
+/**
+ *
+ * @param center
+ * @returns {*|void}
+ */
+Mapbender.Model.prototype.setCenter = function setCenter(center) {
+    'use strict';
+    return this.map.getView().setCenter(center);
+};
+
+/**
+ *
+ * @param zoom
+ * @returns {*}
+ */
+Mapbender.Model.prototype.setZoom = function setZoom(zoom) {
+    'use strict';
+    return this.map.getView().setZoom(zoom);
+};
+
+/**
+ *
+ * @param geometryOrExtent
+ * @param opt_options
+ * @returns {*}
+ */
+Mapbender.Model.prototype.fit = function fit(geometryOrExtent, opt_options) {
+    'use strict';
+    return this.map.getView().fit(geometryOrExtent, opt_options);
+};
+
+/**
+ *
+ * @param extent1
+ * @param extent2
+ * @returns {*|boolean}
+ */
+Mapbender.Model.prototype.containsExtent = function containsExtent(extent1, extent2) {
+    'use strict';
+    return ol.extent.containsExtent(extent1, extent2);
+};
+
+/**
+ *
+ * @param extent
+ * @param coordinate
+ * @returns {*}
+ */
+Mapbender.Model.prototype.containsCoordinate = function containsCoordinate(extent, coordinate) {
+    'use strict';
+    return ol.extent.containsCoordinate(extent, coordinate);
+};
+
+/**
+ *
+ * @param extent
+ * @param duration
+ * @param maxZoom
+ */
+Mapbender.Model.prototype.panToExtent = function panToExtent(extent, duration, maxZoom) {
+    'use strict';
+
+    var view = this.map.getView();
+    var maxZoomNum= view.getZoom();
+    var durationNum = 2000;
+
+    if (maxZoom){
+        maxZoomNum = maxZoom;
+    }
+
+    if (duration){
+        durationNum = duration;
+    }
+
+    view.fit(extent, {
+        duration: durationNum,
+        maxZoom: maxZoomNum
+    });
+};
+
+/**
+ *
+ * @param mbExtent
+ */
+Mapbender.Model.prototype.zoomToExtent = function(mbExtent) {
+    'use strict';
+    var extent = [
+        mbExtent.left,
+        mbExtent.bottom,
+        mbExtent.right,
+        mbExtent.top
+    ];
+    this.map.getView().fit(extent, this.map.getSize());
+};
+
+/**
+ *
+ * @param coordinate
+ * @returns {ol.Extent}
+ */
+Mapbender.Model.prototype.boundingExtentFromCoordinates = function boundingExtentFromCoordinates(coordinate) {
+    'use strict';
+    return ol.extent.boundingExtent(coordinate);
+};
+
+/**
+ *
+ * @returns {*}
+ */
+Mapbender.Model.prototype.getLayers = function getLayers() {
+    'use strict';
+    return this.map.getLayers();
 };
 
 /**
@@ -374,7 +543,7 @@ Mapbender.Model.prototype.transform = function transform(coordinate, source, des
  * @param style
  * @param refresh
  */
-Mapbender.Model.prototype.setVectorLayerStyle = function(owner, uuid, style, refresh){
+Mapbender.Model.prototype.setVectorLayerStyle = function setVectorLayerStyle(owner, uuid, style, refresh){
     'use strict';
     this.setLayerStyle('vectorLayer', owner, uuid, style);
 };
@@ -960,4 +1129,14 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
     var extent = this.mbExtent(this.getCurrentProjectionObject().getExtent());
     extent.srs = this.getCurrentProjectionCode();
     return extent;
+};
+
+/**
+ *
+ * @param currentUnit
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getMeterPersUnit = function getMeterPersUnit(currentUnit) {
+    'use strict';
+    return ol.proj.METERS_PER_UNIT[currentUnit];
 };
