@@ -681,10 +681,14 @@
                 var newStateInfo = 1;
                 for (var j = 0; j < scanNodes.length; ++j) {
                     // NOTE: "theme" checkboxes use a different input name ("sourceVisibility")
-                    var $cbVisible = $('input[name="selected"],input[name="sourceVisibility"]', scanNodes[j]);
-                    var $cbInfo = $('input[name="info"],input[name="sourceVisibility"]', scanNodes[j]);
-                    newStateVisible &= $cbVisible.prop('checked');
-                    newStateInfo &= $cbInfo.prop('checked');
+                    var $cbVisible = $('>.leaveContainer input[name="selected"],input[name="sourceVisibility"]', scanNodes[j]);
+                    var $cbInfo = $('>.leaveContainer input[name="info"],input[name="sourceVisibility"]', scanNodes[j]);
+                    if ($cbVisible.length) {
+                        newStateVisible &= $cbVisible.prop('checked');
+                    }
+                    if ($cbInfo.length) {
+                        newStateInfo &= $cbInfo.prop('checked');
+                    }
                 }
                 // apply
                 sourceObj.updateLayerState(layerName, {
