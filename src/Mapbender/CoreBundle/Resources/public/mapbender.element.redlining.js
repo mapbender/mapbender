@@ -27,6 +27,15 @@
                         color: 'rgba(255,0,0,1)',
                         width: 2
                     }
+                },
+                text: {
+                    fill: {
+                        color: 'rgba(255,0,0,0.3)'
+                    },
+                    stroke: {
+                        color: 'rgba(255,0,0,1)',
+                        width: 2
+                    }
                 }
             },
             selectStyle: {
@@ -169,7 +178,6 @@
                         style: this.defaultStyle,
                         events: {
                             'drawend': function(event) {
-                                console.log(event);
                                 this.model.eventFeatureWrapper(event, function(f) {
                                     this._addToGeomList(f, Mapbender.trans('mb.core.redlining.geometrytype.point'));
                                 }.bind(this));
@@ -182,7 +190,6 @@
                         style: this.defaultStyle,
                         events: {
                             'drawend': function(event) {
-                                console.log(event);
                                 this.model.eventFeatureWrapper(event, function(f) {
                                     this._addToGeomList(f, Mapbender.trans('mb.core.redlining.geometrytype.line'));
                                 }.bind(this));
@@ -195,7 +202,6 @@
                         style: this.defaultStyle,
                         events: {
                             'drawend': function(event) {
-                                console.log(event);
                                 this.model.eventFeatureWrapper(event, function(f) {
                                     this._addToGeomList(f, Mapbender.trans('mb.core.redlining.geometrytype.polygon'));
                                 }.bind(this));
@@ -204,13 +210,10 @@
                     });
                     break;
                 case 'rectangle':
-                    // TODO this needs to be createRegular Polygon
-                    // https://openlayers.org/en/latest/apidoc/ol.interaction.Draw.html#.createRegularPolygon
-                    this.activeControlId = this.model.createDrawControl('Circle', this.element.attr('id'), {
+                    this.activeControlId = this.model.createDrawControl('Box', this.element.attr('id'), {
                         style: this.defaultStyle,
                         events: {
                             'drawend': function(event) {
-                                console.log(event);
                                 this.model.eventFeatureWrapper(event, function(f) {
                                     this._addToGeomList(f, Mapbender.trans('mb.core.redlining.geometrytype.rectangle'));
                                 }.bind(this));
@@ -221,20 +224,40 @@
                 case 'text':
                     $('input[name=label-text]', this.element).val('');
                     $('#redlining-text-wrapper', this.element).removeClass('hidden');
-                    this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
-                            OpenLayers.Handler.Point, {
-                                featureAdded: function (e) {
+                    this.activeControlId = this.model.createDrawControl('Point', this.element.attr('id'), {
+                        style: this.defaultStyle,
+                        events: {
+                            'drawend': function(event) {
+                                this.model.eventFeatureWrapper(event, function(f) {
+                                    f.setId(Mapbender.UUID());
+                                    f.setStyle(this.defaultStyle);
+                                    f.getStyle().getText().setText(function() {
+                                        return $('input[name=label-text]', this.element).val();
+                                    });
                                     if ($('input[name=label-text]', self.element).val().trim() === '') {
                                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
-                                        self._removeFeature(e);
+                                        this._removeFeature(f);
                                     } else {
-                                        e.style = self._generateTextStyle($('input[name=label-text]', this.element).val());
-                                        self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
-                                        self.layer.redraw();
-                                        $('input[name=label-text]', this.element).val('');
+                                        this._addToGeomList(f, Mapbender.trans('mb.core.redlining.geometrytype.point'));
                                     }
-                                }
-                            });
+                                }.bind(this));
+                            }.bind(this)
+                        }
+                    });
+                    // this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
+                    //         OpenLayers.Handler.Point, {
+                    //             featureAdded: function (e) {
+                    //                 if ($('input[name=label-text]', self.element).val().trim() === '') {
+                    //                     Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
+                    //                     self._removeFeature(e);
+                    //                 } else {
+                    //                     e.style = self._generateTextStyle($('input[name=label-text]', this.element).val());
+                    //                     self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
+                    //                     self.layer.redraw();
+                    //                     $('input[name=label-text]', this.element).val('');
+                    //                 }
+                    //             }
+                    //         });
                     break;
             }
             // TODO Check if this is still necessary
@@ -243,7 +266,11 @@
 
         },
         _removeFeature: function(feature){
-            this.model.removeFeature(feature);
+            // TODO This is ol4 stuff and needs to be replaced
+            this.model.vectorLayer[this.element.attr('id')][this.activeControlId].getSource().once('addfeature', function() {
+                this.model.removeFeatureById(this.element.attr('id'), this.activeControlId, feature.getId());
+            }.bind(this));
+
         },
         _removeAllFeatures: function(){
             $('.geometry-table tr', this.element).remove();
