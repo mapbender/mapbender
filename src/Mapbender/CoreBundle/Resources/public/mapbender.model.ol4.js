@@ -1034,15 +1034,6 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
 
 /**
  *
- * @returns {ol.proj.Units}
- */
-Mapbender.Model.prototype.getCurrentProjectionUnit = function getCurrentProjectionUnit() {
-    'use strict';
-    return this.map.getView().getProjection().getUnits();
-};
-
-/**
- *
  * @param currentUnit
  * @returns {number}
  */
