@@ -828,6 +828,81 @@ Mapbender.Model.prototype.setMapCursorStyle = function (style) {
 };
 
 /**
+ * Set marker on a map by provided coordinates
+ *
+ * @param {string[]} coordinates
+ * @param {string} owner Element id
+ * @param {string} vectorLayerId
+ * @returns {string} vectorLayerId
+ */
+Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner, vectorLayerId) {
+
+    if (typeof coordinates === 'undefined') {
+        throw new Error("Coordinates are not defined!");
+    }
+
+    var point = new ol.geom.Point(coordinates);
+
+    if (typeof vectorLayerId === 'undefined') {
+
+        vectorLayerId = this.createVectorLayer({
+            source: new ol.source.Vector({wrapX: false}),
+        }, owner);
+
+        this.map.addLayer(this.vectorLayer[owner][vectorLayerId]);
+    }
+
+    this.drawFeatureOnVectorLayer(point, this.vectorLayer[owner][vectorLayerId]);
+
+    return vectorLayerId;
+};
+
+/**
+ * Draw feature on a vector layer
+ *
+ * @param {ol.geom} geometry
+ * @param {ol.layer.Vector} vectorLayer
+ * @returns {Mapbender.Model}
+ */
+Mapbender.Model.prototype.drawFeatureOnVectorLayer = function (geometry, vectorLayer) {
+    var feature = new ol.Feature({
+        geometry: geometry,
+    });
+
+    var source = vectorLayer.getSource();
+
+    source.addFeature(feature);
+
+    return this;
+};
+
+/**
+ * Center map to provided coordinates
+ *
+ * @param {string[]} coordinates
+ * @returns {Mapbender.Model}
+ */
+Mapbender.Model.prototype.centerMapByCoordinates = function (coordinates) {
+    this.map.getView().setCenter(coordinates);
+
+    return this;
+
+};
+
+/**
+ * Zoom map to provided zoom level
+ *
+ * @param {int} zoom
+ * @returns {Mapbender.Model}
+ */
+Mapbender.Model.prototype.zoomToZoomLevel = function (zoom) {
+    this.map.getView().setZoom(zoom);
+
+    return this;
+};
+
+
+/**
  * Valdiates and fixes an incoming extent. Coordinate values will
  * be cast to float. Inverted coordinates are flipped.
  *
