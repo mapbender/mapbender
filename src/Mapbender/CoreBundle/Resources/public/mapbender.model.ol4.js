@@ -1091,32 +1091,6 @@ Mapbender.Model.prototype.drawFeatureOnVectorLayer = function (geometry, vectorL
 };
 
 /**
- * Center map to provided coordinates
- *
- * @param {string[]} coordinates
- * @returns {Mapbender.Model}
- */
-Mapbender.Model.prototype.centerMapByCoordinates = function (coordinates) {
-    this.map.getView().setCenter(coordinates);
-
-    return this;
-
-};
-
-/**
- * Zoom map to provided zoom level
- *
- * @param {int} zoom
- * @returns {Mapbender.Model}
- */
-Mapbender.Model.prototype.zoomToZoomLevel = function (zoom) {
-    this.map.getView().setZoom(zoom);
-
-    return this;
-};
-
-
-/**
  * Valdiates and fixes an incoming extent. Coordinate values will
  * be cast to float. Inverted coordinates are flipped.
  *
