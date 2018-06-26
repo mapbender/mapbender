@@ -40,7 +40,8 @@ window.Mapbender.SourceModelOl4 = (function() {
             // this property is modified by initLayers_
             // after initLayers, we logical-AND it with the root layer setting
             queryable: false,
-            tiled: config.configuration.options.tiled || false
+            tiled: config.configuration.options.tiled || false,
+            title: config.title || rootLayerDef.options.title || rootLayerDef.options.name
         };
 
         this.getMapParams = {
@@ -89,6 +90,10 @@ window.Mapbender.SourceModelOl4 = (function() {
             throw new Error("Source: engine layer already assigned, runtime changes not allowed");
         }
         this.engineLayer_ = engineLayer;
+    };
+
+    Source.prototype.getTitle = function getTitle() {
+        return this.options.title;
     };
 
     /**
