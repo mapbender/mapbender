@@ -1004,6 +1004,18 @@ Mapbender.Model.prototype.setOnSingleClickHandler = function (callback) {
     return this.map.on("singleclick", callback);
 };
 
+/**
+ * Set callback for map moveend event
+ * @param callback
+ * @returns {ol.EventsKey|Array<ol.EventsKey>}
+ */
+Mapbender.Model.prototype.setOnMoveendHandler = function (callback) {
+    'use strict';
+
+    if (typeof callback === 'function') {
+        return this.map.on("moveend", callback);
+    }
+};
 
 /**
  * Remove event listener by event key
