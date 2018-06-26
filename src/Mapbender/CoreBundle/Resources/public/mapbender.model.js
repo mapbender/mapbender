@@ -103,7 +103,6 @@ Mapbender.Model = {
      */
     setView: function(addLayers) {
         var startExtent = this.getInitialExtent();
-        var poiData = this.initializePois(startExtent);
 
         if (this.mbMap.options['center']) {
             var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
@@ -118,7 +117,7 @@ Mapbender.Model = {
         if (addLayers) {
             this.initializeSourceLayers();
         }
-        this.finishPoiInit(poiData.markerLayer, poiData.popups);
+        this.initializePois(startExtent);
     },
     getInitialExtent: function() {
         var startExtent = this.mapStartExtent.extent;
@@ -132,7 +131,6 @@ Mapbender.Model = {
         return startExtent || null;
     },
     initializePois: function() {
-        var haveBbox = this.mbMap.options.extra && this.mbMap.options.extra['bbox'];
         var self = this;
         var pois = [];
         if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
@@ -186,17 +184,7 @@ Mapbender.Model = {
                     }));
             }
         });
-        if (!haveBbox && pois.length) {
-            return {
-                markerLayer: poiMarkerLayer,
-                popups: poiPopups
-            };
-        } else {
-            return {
-                markerLayer: poiMarkerLayer,
-                popups: poiPopups
-            };
-        }
+        this.finishPoiInit(poiMarkerLayer, poiPopups);
     },
     initializeSourceLayers: function() {
         var self = this;
