@@ -12,13 +12,19 @@ Mapbender.Model = function(domId, options) {
         console.error("Options srs and maxExtent required");
         throw new Error("Can't initialize model");
     }
+    this.options = options;
+    this.maxResolution = this.scaleToResolution(_.max(options.scales));
+    this.minResolution = this.maxResolution / Math.pow(2,options.scales.length);
 
     var proj = new ol.proj.Projection({
         code: options.srs,
         extent: options.maxExtent
     });
     var view = new ol.View({
-        projection:  proj
+        projection:  proj,
+        minResolution: this.minResolution,
+        maxResolution : this.maxResolution,
+        zoom: 1
     });
     this.map = new ol.Map({
         view: view,
@@ -30,13 +36,13 @@ Mapbender.Model = function(domId, options) {
     this.pixelSources = [];
     this.zoomToExtent(options.startExtent || options.maxExtent);
     // @todo: ???
-    /*var popupOverlay = new Mapbender.Model.MapPopup();
-    this.map.on('singleclick', function(evt) {
+    //var popupOverlay = new Mapbender.Model.MapPopup(undefined, this);
+    /*this.map.on('singleclick', function(evt) {
 
 
         var coordinate = evt.coordinate;
-        popupOverlay.openPopupOnXY(coordinate, function(){return '123'});
-    }); */
+        popupOverlay.openPopupOnXY(coordinate, function(coord){return '<span> X:  ' + coord[0] + '<span/><span> Y: '+ coord[1] + '</span>' });
+    });*/
     return this;
 };
 Mapbender.Model.SourceModel = Mapbender.SourceModelOl4;
@@ -124,7 +130,15 @@ Mapbender.Model.prototype.getCurrentProjectionCode = function getCurrentProj() {
  */
 Mapbender.Model.prototype.getCurrentProjectionObject = function getCurrentProj() {
     'use strict';
-    return this.map.getView().getProjection();
+    if(this.map){
+        return this.map.getView().getProjection();
+    } else {
+      return new ol.proj.Projection({
+          code: this.options.srs,
+          extent: this.options.maxExtent
+      });
+    }
+
 };
 
 Mapbender.Model.prototype.getAllSrs = function getAllSrs() {
@@ -336,7 +350,7 @@ Mapbender.Model.layerFactoryStatic = function layerFactoryStatic(sourceObj, exte
 
     var layerOptions = {
         source: new (olSourceClass)(sourceOpts),
-        extent: extent || undefined
+
     };
     var layer = new (olLayerClass)(layerOptions);
     sourceObj.initializeEngineLayer(layer);
