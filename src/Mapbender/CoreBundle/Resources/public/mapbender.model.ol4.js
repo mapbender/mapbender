@@ -1004,7 +1004,7 @@ Mapbender.Model.prototype.createOlFormatGeoJSON = function createOlFormatGeoJSON
 };
 
 /**
- * Returns the features of the VectorLayers hashed by owner and uuid.
+ * Returns the features of the vectorLayers hashed by owner and uuid.
  * @returns {Object.<string>.<string>.<Array.<ol.Feature>>}
  */
 Mapbender.Model.prototype.getVectorLayerFeatures = function getVectorLayerFeatures() {
@@ -1029,7 +1029,7 @@ Mapbender.Model.prototype.getVectorLayerFeatures = function getVectorLayerFeatur
 };
 
 /**
- * Returns the styles of the VectorLayers hashed by owner and uuid.
+ * Returns the styles of the vectorLayers hashed by owner and uuid.
  * @returns {Object.<string>.<string>.<ol.style.Style>}
  */
 Mapbender.Model.prototype.getVectorLayerStyles = function getVectorLayerStyles() {
