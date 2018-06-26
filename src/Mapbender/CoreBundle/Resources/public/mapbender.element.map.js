@@ -38,8 +38,13 @@
             var modelOptions = {
                 srs: this.options.srs,
                 maxExtent: Mapbender.Model.sanitizeExtent(this.options.extents.max),
-                startExtent: Mapbender.Model.sanitizeExtent(this.options.extents.start)
+                startExtent: Mapbender.Model.sanitizeExtent(this.options.extents.start),
+                scales : this.options.scales,
+                dpi: this.options.dpi,
+                tileSize: this.options.tileSize
             };
+
+
             this.model = new Mapbender.Model(this.element.attr('id'), modelOptions);
             _.forEach(this.options.layersets.reverse(), function(layerSetId) {
                 this.model.addLayerSetById(layerSetId);
