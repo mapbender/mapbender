@@ -434,9 +434,12 @@ Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
  * @returns {ol.coordinate.add}
  */
 Mapbender.Model.prototype.addCoordinate= function addCoordinate(array, deltaArray) {
-    if (! deltaArray){
-        deltaArray = [0, 0]
+    'use strict';
+
+    if (!deltaArray) {
+        deltaArray = [0, 0];
     }
+
     return new ol.coordinate.add(array, deltaArray);
 };
 
@@ -450,7 +453,7 @@ Mapbender.Model.prototype.addCoordinate= function addCoordinate(array, deltaArra
 
 Mapbender.Model.prototype.transformCoordinate = function transformCoordinate(coordinate, source, destination) {
     'use strict';
-   return ol.proj.transform(coordinate, source, destination);
+    return ol.proj.transform(coordinate, source, destination);
 };
 
 /**
@@ -876,19 +879,28 @@ Mapbender.Model.prototype.zoomToExtent = function(extent) {
 
 Mapbender.Model.prototype.removeAllFeaturesFromLayer = function removeAllFeaturesFromLayer(owner, id) {
 
-    return   this.vectorLayer[owner][id].getSource().clear();
+    return this.vectorLayer[owner][id].getSource().clear();
 
 };
 
-Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature) {
+Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature, type) {
 
-    return   this.getLineStringLength(feature.getGeometry());
+    if(type === 'line'){
+        return this.getLineStringLength(feature);
+    }
+    if(type === 'area'){
+        return   this.getPolygonArea(feature);
+    }
+
+
+
+
 
 };
 
 Mapbender.Model.prototype.getGeometryCoordinates = function getFeaureCoordinates(geom) {
 
-    return   geom.getFlatCoordinates();
+    return geom.getFlatCoordinates();
 
 };
 
@@ -1012,9 +1024,22 @@ Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
  * @returns {ol.EventsKey|Array.<ol.EventsKey>}
  */
 Mapbender.Model.prototype.setOnSingleClickHandler = function (callback) {
+    'use strict';
     return this.map.on("singleclick", callback);
 };
 
+/**
+ * Set callback for map moveend event
+ * @param callback
+ * @returns {ol.EventsKey|Array<ol.EventsKey>}
+ */
+Mapbender.Model.prototype.setOnMoveendHandler = function (callback) {
+    'use strict';
+
+    if (typeof callback === 'function') {
+        return this.map.on("moveend", callback);
+    }
+};
 
 /**
  * Remove event listener by event key
@@ -1137,4 +1162,9 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
 Mapbender.Model.prototype.getMeterPersUnit = function getMeterPersUnit(currentUnit) {
     'use strict';
     return ol.proj.METERS_PER_UNIT[currentUnit];
+};
+
+Mapbender.Model.prototype.getGeomFromFeature = function getGeomFromFeature(feature) {
+    'use strict';
+    return feature.getGeometry();
 };

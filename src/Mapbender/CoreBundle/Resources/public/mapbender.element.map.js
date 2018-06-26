@@ -8,6 +8,7 @@
                 xoffset: -6,
                 yoffset: -38
             },
+            targetscale: null,
             layersets: []
         },
         srsDefinitions: [],
@@ -51,10 +52,23 @@
             }.bind(this));
 
 
-            this.options = $.extend({}, this.options, {
+            $.extend(this.options, {
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
             });
+
+            // NOTE: startExtent is technically mutually exclusive with
+            //    center and / or targetscale
+            //    However, ol may not properly initialize the view if we don't
+            //    go to a defined extent (which we always have) first
+            if (this.options.center) {
+                this.model.setCenter(this.options.center);
+            }
+            if (this.options.targetscale) {
+                this.model.setScale(this.options.targetscale);
+            }
+
+
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();
@@ -245,14 +259,10 @@
         },
         /**
          * Returns the scale list
+         * @deprecated, just get options.scales yourself
          */
         scales: function(){
-            var scales = [];
-            for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
-                var res = this.map.olMap.getResolutionForZoom(i);
-                scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
-            }
-            return scales;
+            return this.options.scales;
         },
         /**
          * Sets opacity to source
