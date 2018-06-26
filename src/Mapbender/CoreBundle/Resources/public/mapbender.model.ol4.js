@@ -136,27 +136,24 @@ Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
     return this.map.getView().calculateExtent();
 };
 
+/** @todo (following methods): put the "default" dpi in a common place? */
 /**
  *
  * @param {number} dpi default 72 DPI
  * @param {boolean} opt_round Whether to round the scale or not.
- * @param {boolean} opt_scaleRating Whether to round the scale rating or not.
+ * @param {boolean} opt_scaleRating Whether to round the scale rating or not. K:X.000 and M:X.000.000
  * @returns {number}
  */
 Mapbender.Model.prototype.getScale = function getScale(dpi, opt_round, opt_scaleRating) {
-    var currentUnit = this.getUnitsOfCurrentProjection();
-    var mpu = this.getMeterPersUnit(currentUnit);
     var resolution = this.map.getView().getResolution();
-    var inchesPerMetre = 39.37;
-    var dpi = dpi ? dpi : 72;
-    var scaleCalc = resolution * mpu * inchesPerMetre * dpi;
+    var scaleCalc = this.resolutionToScale(resolution, dpi);
     var scale = opt_round ? Math.round(scaleCalc) : scaleCalc;
 
     if (opt_scaleRating){
         if (scale >= 9500 && scale <= 950000) {
-            scale = Math.round(scale/ 1000) + ".000";
+            scale = Math.round(scale/ 1000) + "K";
         } else if (scale >= 950000) {
-            scale = Math.round(scale / 1000000) + ".000.000";
+            scale = Math.round(scale / 1000000) + "M";
         } else {
             scale = Math.round(scale);
         }
@@ -164,6 +161,54 @@ Mapbender.Model.prototype.getScale = function getScale(dpi, opt_round, opt_scale
 
     return scale;
 };
+
+/**
+ *
+ * @param {float} resolution
+ * @param {number} [dpi=72]
+ * @returns {number}
+ */
+Mapbender.Model.prototype.resolutionToScale = function(resolution, dpi) {
+    var currentUnit = this.getUnitsOfCurrentProjection();
+    var mpu = this.getMeterPersUnit(currentUnit);
+    var inchesPerMetre = 39.37;
+    return resolution * mpu * inchesPerMetre * (dpi || 72);
+};
+
+/**
+ *
+ * @param {float} scale
+ * @param {number} [dpi]
+ * @returns {number}
+ */
+Mapbender.Model.prototype.scaleToResolution = function(scale, dpi) {
+    var currentUnit = this.getUnitsOfCurrentProjection();
+    var mpu = this.getMeterPersUnit(currentUnit);
+    var inchesPerMetre = 39.37;
+    return scale / (mpu * inchesPerMetre * (dpi || 72));
+};
+
+/**
+ *
+ * @param {float} scale
+ * @param {number} [dpi]
+ * @returns {number}
+ */
+Mapbender.Model.prototype.scaleToZoom = function(scale, dpi) {
+    var resolution = this.scaleToResolution(scale, dpi);
+    return this.map.getView().getZoomForResolution(resolution);
+};
+
+/**
+ *
+ * @param {float} scale
+ * @param {number} [dpi]
+ * @returns {number}
+ */
+Mapbender.Model.prototype.setScale = function(scale, dpi) {
+    this.map.getView().setZoom(this.scaleToZoom(scale, dpi));
+};
+
 
 Mapbender.Model.prototype.center = function center() {
 };
