@@ -105,17 +105,15 @@ Mapbender.Model = {
         var startExtent = this.getInitialExtent();
         var poiData = this.initializePois(startExtent);
 
-        if (!poiData.extentModified) {
-            if (this.mbMap.options['center']) {
-                var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
-                if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-                    this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
-                } else {
-                    this.map.olMap.setCenter(lonlat);
-                }
+        if (this.mbMap.options['center']) {
+            var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
+            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+                this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
             } else {
-                this.map.olMap.zoomToExtent(startExtent, true);
+                this.map.olMap.setCenter(lonlat);
             }
+        } else {
+            this.map.olMap.zoomToExtent(startExtent, true);
         }
         if (addLayers) {
             this.initializeSourceLayers();
@@ -194,22 +192,22 @@ Mapbender.Model = {
             }
         });
         if (!haveBbox && pois.length) {
-            if (pois.length === 1 && pois[0].scale) {
+
+            if (pois.length === 1) {
                 this.map.olMap.setCenter(pois[0].position);
-                this.map.olMap.zoomToScale(pois[0].scale, true);
-            } else {
-                this.map.olMap.zoomToExtent(poiBox.scale(1.5));
+                if (!pois[0].scale) {
+                    this.map.olMap.zoomToExtent(poiBox.scale(1.5));
+                }
             }
+
             return {
                 markerLayer: poiMarkerLayer,
-                popups: poiPopups,
-                extentModified: true
+                popups: poiPopups
             };
         } else {
             return {
                 markerLayer: poiMarkerLayer,
-                popups: poiPopups,
-                extentModified: false
+                popups: poiPopups
             };
         }
     },

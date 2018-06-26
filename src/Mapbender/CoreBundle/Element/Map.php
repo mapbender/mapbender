@@ -170,6 +170,17 @@ class Map extends Element
                 }
                 $extra['pois'][] = $help;
             }
+            // bake position and zoom level of single poi into map initialization
+            // setting center and target scale makes the map initialize in the right place client-side
+            if (count($extra['pois']) === 1) {
+                $configuration["center"] = array(
+                    $extra['pois'][0]['x'],
+                    $extra['pois'][0]['y'],
+                );
+                if (isset($extra['pois'][0]['scale'])) {
+                    $configuration['targetscale'] = $extra['pois'][0]['scale'];
+                }
+            }
         }
 
         $bbox = $this->container->get('request')->get('bbox');
@@ -188,7 +199,9 @@ class Map extends Element
         $center    = $this->container->get('request')->get('center');
         $centerArr = $center !== null ? explode(',', $center) : null;
         if ($center !== null && is_array($centerArr) && count($centerArr) === 2) {
-            $configuration["center"] = $centerArr;
+            $configuration['center'] = array_map('floatval', $centerArr);
+            // remove scale potentially set up by POI
+            unset($configuration['targetscale']);
         }
 
         $configuration['extra'] = $extra;
