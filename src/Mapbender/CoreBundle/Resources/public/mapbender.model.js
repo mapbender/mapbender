@@ -117,7 +117,7 @@ Mapbender.Model = {
         if (addLayers) {
             this.initializeSourceLayers();
         }
-        this.initializePois(startExtent);
+        this.initializePois((this.mbMap.options && this.mbMap.options.extra && this.mbMap.options.extra['pois']) || []);
     },
     getInitialExtent: function() {
         var startExtent = this.mapStartExtent.extent;
@@ -130,41 +130,37 @@ Mapbender.Model = {
 
         return startExtent || null;
     },
-    initializePois: function() {
+    initializePois: function(poiOptionsList) {
         var self = this;
-        var pois = [];
-        if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
-            $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
-                var coord = new OpenLayers.LonLat(poi.x, poi.y);
-                if(poi.srs) {
-                    coord = coord.transform(self.getProj(poi.srs), self.getCurrentProj());
-                }
-                pois.push({
-                    position: coord,
-                    label: poi.label,
-                    scale: poi.scale
-                });
-            });
+        if (!poiOptionsList.length) {
+            return;
         }
+        var pois = poiOptionsList.map(function(poi) {
+            var coord = new OpenLayers.LonLat(poi.x, poi.y);
+            if(poi.srs) {
+                coord = coord.transform(self.getProj(poi.srs), self.getCurrentProj());
+            }
+            return {
+                position: coord,
+                label: poi.label
+            };
+        });
 
-
-        var poiMarkerLayer = null,
-            poiIcon = null,
-            poiPopups = [];
-        if (pois.length) {
-            poiMarkerLayer = new OpenLayers.Layer.Markers();
-            poiIcon = new OpenLayers.Icon(
-                Mapbender.configuration.application.urls.asset + this.mbMap.options.poiIcon.image,
-                {
-                    w: this.mbMap.options.poiIcon.width,
-                    h: this.mbMap.options.poiIcon.height
-                },
+        var poiMarkerLayer = new OpenLayers.Layer.Markers();
+        var poiIcon = new OpenLayers.Icon(
+            Mapbender.configuration.application.urls.asset + this.mbMap.options.poiIcon.image,
+            {
+                w: this.mbMap.options.poiIcon.width,
+                h: this.mbMap.options.poiIcon.height
+            },
             {
                 x: this.mbMap.options.poiIcon.xoffset,
                 y: this.mbMap.options.poiIcon.yoffset
             }
-            );
-        }
+        );
+
+        this.map.olMap.addLayer(poiMarkerLayer);
+
         $.each(pois, function(idx, poi) {
             // Marker
             poiMarkerLayer.addMarker(new OpenLayers.Marker(
@@ -172,7 +168,7 @@ Mapbender.Model = {
                 poiIcon.clone()));
 
             if (poi.label) {
-                poiPopups.push(new OpenLayers.Popup.FramedCloud('chicken',
+                self.map.olMap.addPopup(new OpenLayers.Popup.FramedCloud('chicken',
                     poi.position,
                     null,
                     poi.label,
@@ -184,7 +180,6 @@ Mapbender.Model = {
                     }));
             }
         });
-        this.finishPoiInit(poiMarkerLayer, poiPopups);
     },
     initializeSourceLayers: function() {
         var self = this;
@@ -205,16 +200,6 @@ Mapbender.Model = {
                 });
             });
         });
-    },
-    finishPoiInit: function(markerLayer, popups) {
-        if (markerLayer) {
-            this.map.olMap.addLayer(markerLayer);
-        }
-
-        // Popups have to be set after map extent initialization
-        $.each(popups || [], function(idx, popup) {
-            this.map.olMap.addPopup(popup);
-        }.bind(this));
     },
     getCurrentProj: function() {
         return this.map.olMap.getProjectionObject();
