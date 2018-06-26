@@ -149,8 +149,8 @@ Mapbender.Model = {
             });
         }
 
-        var poiBox = null,
-            poiMarkerLayer = null,
+
+        var poiMarkerLayer = null,
             poiIcon = null,
             poiPopups = [];
         if (pois.length) {
@@ -168,11 +168,6 @@ Mapbender.Model = {
             );
         }
         $.each(pois, function(idx, poi) {
-            if (!poiBox) {
-                poiBox = new OpenLayers.Bounds();
-            }
-            poiBox.extend(poi.position);
-
             // Marker
             poiMarkerLayer.addMarker(new OpenLayers.Marker(
                 poi.position,
@@ -192,14 +187,6 @@ Mapbender.Model = {
             }
         });
         if (!haveBbox && pois.length) {
-
-            if (pois.length === 1) {
-                this.map.olMap.setCenter(pois[0].position);
-                if (!pois[0].scale) {
-                    this.map.olMap.zoomToExtent(poiBox.scale(1.5));
-                }
-            }
-
             return {
                 markerLayer: poiMarkerLayer,
                 popups: poiPopups

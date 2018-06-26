@@ -179,6 +179,14 @@ class Map extends Element
                 );
                 if (isset($extra['pois'][0]['scale'])) {
                     $configuration['targetscale'] = $extra['pois'][0]['scale'];
+                } else {
+                    if (isset($configuration['scales']) && count($configuration['scales'])) {
+                        // use last configured scale (smallest number / closest zoom)
+                        $configuration['targetscale'] = intval($configuration['scales'][count($configuration['scales']) - 1]);
+                    } else {
+                        // fall back to a hopefully reasonable default scale
+                        $configuration['targetscale'] = 500;
+                    }
                 }
             }
         }
@@ -242,6 +250,9 @@ class Map extends Element
         $conf = $this->getConfiguration();
         if ($conf['scales']) {
             $conf['scales'] = array_map('intval', $conf['scales']);
+        }
+        if (isset($conf['targetscale'])) {
+            $conf['targetscale'] = intval($conf['targetscale']);
         }
 
         return array_replace($conf, array(
