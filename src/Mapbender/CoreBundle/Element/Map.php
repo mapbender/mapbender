@@ -226,7 +226,12 @@ class Map extends Element
 
     public function getPublicConfiguration()
     {
-        return array_replace($this->getConfiguration(), array(
+        $conf = $this->getConfiguration();
+        if ($conf['scales']) {
+            $conf['scales'] = array_map('intval', $conf['scales']);
+        }
+
+        return array_replace($conf, array(
             'imgPath' => 'components/mapquery/lib/openlayers/img',
         ));
     }
@@ -234,11 +239,9 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    public function render()
+    public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:map.html.twig', array(
-                    'id' => $this->getId()));
+        return "MapbenderCoreBundle:Element:map{$suffix}";
     }
 
     /**

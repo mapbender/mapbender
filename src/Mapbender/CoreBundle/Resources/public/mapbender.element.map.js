@@ -27,7 +27,7 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
-            this.options = $.extend({}, this.options, {
+            $.extend(this.options, {
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
             });
@@ -225,14 +225,10 @@
         },
         /**
          * Returns the scale list
+         * @deprecated, just get options.scales yourself
          */
         scales: function(){
-            var scales = [];
-            for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
-                var res = this.map.olMap.getResolutionForZoom(i);
-                scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
-            }
-            return scales;
+            return this.options.scales;
         },
         /**
          * Sets opacity to source
