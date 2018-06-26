@@ -103,24 +103,21 @@ Mapbender.Model = {
      */
     setView: function(addLayers) {
         var startExtent = this.getInitialExtent();
-        var poiData = this.initializePois(startExtent);
 
-        if (!poiData.extentModified) {
-            if (this.mbMap.options['center']) {
-                var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
-                if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-                    this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
-                } else {
-                    this.map.olMap.setCenter(lonlat);
-                }
+        if (this.mbMap.options['center']) {
+            var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
+            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+                this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
             } else {
-                this.map.olMap.zoomToExtent(startExtent, true);
+                this.map.olMap.setCenter(lonlat);
             }
+        } else {
+            this.map.olMap.zoomToExtent(startExtent, true);
         }
         if (addLayers) {
             this.initializeSourceLayers();
         }
-        this.finishPoiInit(poiData.markerLayer, poiData.popups);
+        this.initializePois((this.mbMap.options && this.mbMap.options.extra && this.mbMap.options.extra['pois']) || []);
     },
     getInitialExtent: function() {
         var startExtent = this.mapStartExtent.extent;
@@ -133,55 +130,45 @@ Mapbender.Model = {
 
         return startExtent || null;
     },
-    initializePois: function() {
-        var haveBbox = this.mbMap.options.extra && this.mbMap.options.extra['bbox'];
+    initializePois: function(poiOptionsList) {
         var self = this;
-        var pois = [];
-        if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
-            $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
-                var coord = new OpenLayers.LonLat(poi.x, poi.y);
-                if(poi.srs) {
-                    coord = coord.transform(self.getProj(poi.srs), self.getCurrentProj());
-                }
-                pois.push({
-                    position: coord,
-                    label: poi.label,
-                    scale: poi.scale
-                });
-            });
+        if (!poiOptionsList.length) {
+            return;
         }
+        var pois = poiOptionsList.map(function(poi) {
+            var coord = new OpenLayers.LonLat(poi.x, poi.y);
+            if(poi.srs) {
+                coord = coord.transform(self.getProj(poi.srs), self.getCurrentProj());
+            }
+            return {
+                position: coord,
+                label: poi.label
+            };
+        });
 
-        var poiBox = null,
-            poiMarkerLayer = null,
-            poiIcon = null,
-            poiPopups = [];
-        if (pois.length) {
-            poiMarkerLayer = new OpenLayers.Layer.Markers();
-            poiIcon = new OpenLayers.Icon(
-                Mapbender.configuration.application.urls.asset + this.mbMap.options.poiIcon.image,
-                {
-                    w: this.mbMap.options.poiIcon.width,
-                    h: this.mbMap.options.poiIcon.height
-                },
+        var poiMarkerLayer = new OpenLayers.Layer.Markers();
+        var poiIcon = new OpenLayers.Icon(
+            Mapbender.configuration.application.urls.asset + this.mbMap.options.poiIcon.image,
+            {
+                w: this.mbMap.options.poiIcon.width,
+                h: this.mbMap.options.poiIcon.height
+            },
             {
                 x: this.mbMap.options.poiIcon.xoffset,
                 y: this.mbMap.options.poiIcon.yoffset
             }
-            );
-        }
-        $.each(pois, function(idx, poi) {
-            if (!poiBox) {
-                poiBox = new OpenLayers.Bounds();
-            }
-            poiBox.extend(poi.position);
+        );
 
+        this.map.olMap.addLayer(poiMarkerLayer);
+
+        $.each(pois, function(idx, poi) {
             // Marker
             poiMarkerLayer.addMarker(new OpenLayers.Marker(
                 poi.position,
                 poiIcon.clone()));
 
             if (poi.label) {
-                poiPopups.push(new OpenLayers.Popup.FramedCloud('chicken',
+                self.map.olMap.addPopup(new OpenLayers.Popup.FramedCloud('chicken',
                     poi.position,
                     null,
                     poi.label,
@@ -193,25 +180,6 @@ Mapbender.Model = {
                     }));
             }
         });
-        if (!haveBbox && pois.length) {
-            if (pois.length === 1 && pois[0].scale) {
-                this.map.olMap.setCenter(pois[0].position);
-                this.map.olMap.zoomToScale(pois[0].scale, true);
-            } else {
-                this.map.olMap.zoomToExtent(poiBox.scale(1.5));
-            }
-            return {
-                markerLayer: poiMarkerLayer,
-                popups: poiPopups,
-                extentModified: true
-            };
-        } else {
-            return {
-                markerLayer: poiMarkerLayer,
-                popups: poiPopups,
-                extentModified: false
-            };
-        }
     },
     initializeSourceLayers: function() {
         var self = this;
@@ -232,16 +200,6 @@ Mapbender.Model = {
                 });
             });
         });
-    },
-    finishPoiInit: function(markerLayer, popups) {
-        if (markerLayer) {
-            this.map.olMap.addLayer(markerLayer);
-        }
-
-        // Popups have to be set after map extent initialization
-        $.each(popups || [], function(idx, popup) {
-            this.map.olMap.addPopup(popup);
-        }.bind(this));
     },
     getCurrentProj: function() {
         return this.map.olMap.getProjectionObject();
