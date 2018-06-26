@@ -141,9 +141,6 @@ Mapbender.Model.prototype.getCurrentProjectionObject = function getCurrentProj()
 
 };
 
-Mapbender.Model.prototype.getAllSrs = function getAllSrs() {
-};
-
 /**
  *
  * @returns {*|OpenLayers.Bounds}
@@ -1090,6 +1087,55 @@ Mapbender.Model.prototype.getUnitsOfCurrentProjection = function () {
  */
 Mapbender.Model.prototype.setMapCursorStyle = function (style) {
     this.map.getTargetElement().style.cursor = style;
+
+    return this;
+};
+
+/**
+ * Set marker on a map by provided coordinates
+ *
+ * @param {string[]} coordinates
+ * @param {string} owner Element id
+ * @param {string} vectorLayerId
+ * @returns {string} vectorLayerId
+ */
+Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner, vectorLayerId) {
+
+    if (typeof coordinates === 'undefined') {
+        throw new Error("Coordinates are not defined!");
+    }
+
+    var point = new ol.geom.Point(coordinates);
+
+    if (typeof vectorLayerId === 'undefined') {
+
+        vectorLayerId = this.createVectorLayer({
+            source: new ol.source.Vector({wrapX: false}),
+        }, owner);
+
+        this.map.addLayer(this.vectorLayer[owner][vectorLayerId]);
+    }
+
+    this.drawFeatureOnVectorLayer(point, this.vectorLayer[owner][vectorLayerId]);
+
+    return vectorLayerId;
+};
+
+/**
+ * Draw feature on a vector layer
+ *
+ * @param {ol.geom} geometry
+ * @param {ol.layer.Vector} vectorLayer
+ * @returns {Mapbender.Model}
+ */
+Mapbender.Model.prototype.drawFeatureOnVectorLayer = function (geometry, vectorLayer) {
+    var feature = new ol.Feature({
+        geometry: geometry,
+    });
+
+    var source = vectorLayer.getSource();
+
+    source.addFeature(feature);
 
     return this;
 };
