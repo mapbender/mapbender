@@ -117,7 +117,59 @@
                 }
             }
 
+
+            // @todo style mock-up
+            var style = {
+                "fillColor": "#6fb536",
+                "fillOpacity": 0.3,
+                "hoverFillColor": "white",
+                "hoverFillOpacity": 0.8,
+                "strokeColor": "#6fb536",
+                "strokeOpacity": 1,
+                "strokeWidth": 1,
+                "strokeLinecap": "round",
+                "strokeDashstyle": "solid",
+                "hoverStrokeColor": "red",
+                "hoverStrokeOpacity": 1,
+                "hoverStrokeWidth": 0.2,
+                "pointRadius": 6,
+                "hoverPointRadius": 1,
+                "hoverPointUnit": "%",
+                "pointerEvents": "visiblePainted",
+                "cursor": "inherit",
+                "fontColor": "#000000",
+                "labelAlign": "cm",
+                "labelOutlineColor": "white",
+                "labelOutlineWidth": 3
+            };
+
             var vectorLayers = [];
+            var geojsonFormat = this.model.createOlFormatGeoJSON();
+            var allFeatures = this.model.getVectorLayerFeatures();
+            for (var owner in allFeatures) {
+                for (var uuid in allFeatures[owner]) {
+                    var features = allFeatures[owner][uuid];
+                    if (!features) {
+                        continue;
+                    }
+                    var geometries = [];
+                    for (var idx = 0; idx < features.length; idx++) {
+                        var geometry = geojsonFormat.writeGeometryObject( features[ idx ].getGeometry(), geojsonFormat );
+                        if (geometry) {
+                            geometry.style = style;
+                            geometries.push(geometry);
+                        }
+                    }
+
+                    var objectForVectorLayer = {
+                        "type": "GeoJSON+Style",
+                        "opacity": 1, //@todo  immer so oder aus dem VectorLayer bzw. Source holen?
+                        "geometries": geometries
+                    };
+
+                    vectorLayers.push(JSON.stringify(objectForVectorLayer));
+                }
+            }
 
             var data = {
                 requests: printConfigs,
@@ -139,7 +191,6 @@
             form.submit();
             form.remove();
         }
-
     });
 
 })(jQuery);
