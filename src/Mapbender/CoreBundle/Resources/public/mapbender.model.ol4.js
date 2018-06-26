@@ -143,20 +143,20 @@ Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
 /**
  *
  * @param {number} dpi default 72 DPI
- * @param {boolean} opt_round Whether to round the scale or not.
- * @param {boolean} opt_scaleRating Whether to round the scale rating or not. K:X.000 and M:X.000.000
+ * @param {boolean} optRound Whether to round the scale or not.
+ * @param {boolean} optScaleRating Whether to round the scale rating or not. K:X000 and M:X000000
  * @returns {number}
  */
-Mapbender.Model.prototype.getScale = function getScale(dpi, opt_round, opt_scaleRating) {
+Mapbender.Model.prototype.getScale = function getScale(dpi, optRound, optScaleRating) {
     var resolution = this.map.getView().getResolution();
     var scaleCalc = this.resolutionToScale(resolution, dpi);
-    var scale = opt_round ? Math.round(scaleCalc) : scaleCalc;
+    var scale = optRound ? Math.round(scaleCalc) : scaleCalc;
 
-    if (opt_scaleRating){
+    if (optScaleRating){
         if (scale >= 9500 && scale <= 950000) {
-            scale = Math.round(scale/ 1000) + "K";
+            scale = Math.round(scale/ 1000) + '000';
         } else if (scale >= 950000) {
-            scale = Math.round(scale / 1000000) + "M";
+            scale = Math.round(scale / 1000000) + '000000';
         } else {
             scale = Math.round(scale);
         }
