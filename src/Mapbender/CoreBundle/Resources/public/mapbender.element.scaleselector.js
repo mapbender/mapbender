@@ -1,6 +1,6 @@
 (function($) {
 
-    $.widget("mapbender.mbScaleSelector", {
+    $.widget('mapbender.mbScaleSelector', {
 
         options: {
             /**
@@ -40,7 +40,7 @@
             var options = widget.options;
             var target = options.target;
 
-            if(!Mapbender.checkTarget("mbScaleSelector", target)) {
+            if(!Mapbender.checkTarget('mbScaleSelector', target)) {
                 return;
             }
 
@@ -52,28 +52,37 @@
 
         _setup: function() {
             var widget = this;
-            var options = widget.options;
-            var mbMap = widget.map = $('#' + options.target).data('mapbenderMbMap');
-            var olMap = widget.olMap = mbMap.map.olMap;
-            var scale = Math.round(olMap.getScale());
-            var select = $("select", $(widget.element));
 
-            _.each(mbMap.scales(), function(value) {
-                var option = $("<option/>");
-                var formattedValue = Math.round(value);
+            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+            this.olMap = this.map.model.map.getView();
+
+            var mbMap = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+            var model = mbMap.model;
+            var olMap = mbMap.model.map.getView();
+
+            var opt = model.options;
+            var scales = opt.scales;
+            var dpi = opt.dpi;
+
+            var scale = model.getScale(dpi, true, false);
+            var select = $('select', $(widget.element));
+
+            _.each(scales, function(scaleVal) {
+                var option = $('<option/>');
+                var formattedValue = Math.round(scaleVal);
 
                 option.attr('value', formattedValue).html(formattedValue);
                 select.append(option);
             });
 
+            initDropdown.call(this.element.get(0));
+
             select.change($.proxy(widget._zoomToScale, widget));
             select.val(scale);
 
-            initDropdown.call(this.element.get(0));
-
             widget._updateScale();
 
-            olMap.events.register('zoomend', widget, $.proxy(widget._updateScale, widget));
+            model.setOnMoveendHandler($.proxy(widget._updateScale, widget), event);
 
             widget._trigger('ready');
             widget._ready();
@@ -84,12 +93,10 @@
          * @private
          */
         _zoomToScale: function() {
-            var widget = this;
-            var element = $(widget.element);
-            var scale = $("> select", element).val();
-            var map = widget.map;
+            var element = $(this.element);
+            var scale = $('> select', element).val();
 
-            map.zoomToScale(scale, true);
+            this.map.model.setScale(scale);
         },
 
         /**
@@ -99,14 +106,16 @@
          */
         _updateScale: function() {
             var widget = this;
-            var olMap = widget.olMap;
-            var scale = Math.round(olMap.getScale());
+            var model = widget.map.model;
+            var dpi = model.options.dpi;
+
+            var scale = Math.round(model.getScale(dpi));
             var element = $(widget.element);
-            var select = $("> select", element);
+            var select = $('> select', element);
 
             select
                 .val(scale)
-                .siblings(".dropdownValue")
+                .siblings('.dropdownValue')
                 .text(scale);
         },
 
