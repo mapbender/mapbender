@@ -883,9 +883,18 @@ Mapbender.Model.prototype.removeAllFeaturesFromLayer = function removeAllFeature
 
 };
 
-Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature) {
+Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature, type) {
 
-    return this.getLineStringLength(feature.getGeometry());
+    if(type === 'line'){
+        return this.getLineStringLength(feature);
+    }
+    if(type === 'area'){
+        return   this.getPolygonArea(feature);
+    }
+
+
+
+
 
 };
 
@@ -1148,4 +1157,9 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
 Mapbender.Model.prototype.getMeterPersUnit = function getMeterPersUnit(currentUnit) {
     'use strict';
     return ol.proj.METERS_PER_UNIT[currentUnit];
+};
+
+Mapbender.Model.prototype.getGeomFromFeature = function getGeomFromFeature(feature) {
+    'use strict';
+    return feature.getGeometry();
 };
