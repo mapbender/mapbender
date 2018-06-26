@@ -994,3 +994,61 @@ Mapbender.Model.prototype.getSourcePrintConfig = function(sourceId, extent, size
         opacity : sourceObj.options.opacity
     };
 }
+
+/**
+ * @returns {ol.format.GeoJSON}
+ */
+Mapbender.Model.prototype.createOlFormatGeoJSON = function createOlFormatGeoJSON() {
+    'use strict';
+    return new ol.format.GeoJSON;
+};
+
+/**
+ * Returns the features of the VectorLayers hashed by owner and uuid.
+ * @returns {Object.<string>.<string>.<Array.<ol.Feature>>}
+ */
+Mapbender.Model.prototype.getVectorLayerFeatures = function getVectorLayerFeatures() {
+    'use strict';
+    var features = {};
+    for (var owner in this.vectorLayer) {
+        for (var uuid in this.vectorLayer[owner]) {
+            var vectorLayer = this.vectorLayer[owner][uuid];
+            if (!vectorLayer instanceof ol.layer.Vector) {
+                continue;
+            }
+
+            if (!features[owner]) {
+                features[owner] = {};
+            }
+
+            features[owner][uuid] = vectorLayer.getSource().getFeatures();
+        }
+    }
+
+    return features;
+};
+
+/**
+ * Returns the styles of the VectorLayers hashed by owner and uuid.
+ * @returns {Object.<string>.<string>.<ol.style.Style>}
+ */
+Mapbender.Model.prototype.getVectorLayerStyles = function getVectorLayerStyles() {
+    'use strict';
+    var styles = {};
+    for (var owner in this.vectorLayer) {
+        for (var uuid in this.vectorLayer[owner]) {
+            var vectorLayer = this.vectorLayer[owner][uuid];
+            if (!vectorLayer instanceof ol.layer.Vector) {
+                continue;
+            }
+
+            if (!styles[owner]) {
+                styles[owner] = {};
+            }
+
+            styles[owner][uuid] = vectorLayer.getStyle();
+        }
+    }
+
+    return styles;
+};
