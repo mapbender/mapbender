@@ -919,6 +919,11 @@ Mapbender.Model.prototype.getGeometryFromFeatureWrapper = function getGeometryFr
  */
 Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceId, coordinate, resolution) {
     var sourceObj = this.getSourceById(sourceId);
+
+    if (!sourceObj.featureInfoParams.QUERY_LAYERS) {
+        return null;
+    }
+
     var sourceObjParams = sourceObj.featureInfoParams;
     /** @var {ol.source.ImageWMS|ol.source.TileWMS} engineSource */
     var engineSource = sourceObj.getEngineSource();
@@ -928,7 +933,7 @@ Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceI
     // @todo: figure out the purpose of 'resolution' param
 
     console.log(engineSource);
-    return engineSource.getGetFeatureInfoUrl(coordinate || [0, 0], resolution || 5, projection, sourceObjParams);
+    return engineSource.getGetFeatureInfoUrl(coordinate[0] || [0, 0], resolution || 5, projection, sourceObjParams);
 };
 
 /**
@@ -938,7 +943,7 @@ Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceI
  *
  * @returns {string[]}
  */
-Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUrls() {
+Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUrls(coordinate) {
     var urls = [];
     var sourceIds = this.getActiveSourceIds();
     for (var i = 0; i < sourceIds.length; ++i) {
