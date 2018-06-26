@@ -944,55 +944,55 @@ Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUr
     return _.filter(urls);
 };
 
-
 Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
     'use strict';
 
     var textStyle = new ol.style.Text();
 
-    if (options['text']) {
+    if(options['text']) {
         var text = new ol.style.Text(options['text']);
         textStyle.setText(text);
     }
 
-    if (options['fill']) {
+    if(options['fill']) {
         var fill = new ol.style.Fill(options['fill']);
         textStyle.setFill(fill);
     }
 
-    if (options['stroke']) {
+    if(options['stroke']) {
         var stroke = new ol.style.Stroke(options['stroke']);
         textStyle.setStroke(stroke);
     }
     return new ol.style.Text(options);
 },
 
+    /**
+     * Update map view according to selected projection
+     *
+     * @param {string} projectionCode
+     */
+    Mapbender.Model.prototype.updateMapViewForProjection = function(projectionCode) {
 
-/**
- * Update map view according to selected projection
- *
- * @param {string} projectionCode
- */
-Mapbender.Model.prototype.updateMapViewForProjection = function (projectionCode) {
+        if(typeof projectionCode === 'undefined' || projectionCode === this.getCurrentProjectionCode()) {
+            return;
+        }
 
-    if (typeof projectionCode === 'undefined' || projectionCode === this.getCurrentProjectionCode()) {
-        return;
-    }
+        var newProjection = ol.proj.get(projectionCode);
+        var currentExtent = this.map.getView().calculateExtent(this.map.getSize());
+        var transformedExtent = proj4(this.getCurrentProjectionCode(), projectionCode, currentExtent.slice(0, 2)).concat(proj4(this.getCurrentProjectionCode(), projectionCode, currentExtent.slice(2, 4)));
+        var zoom = this.map.getView().getZoom();
 
-    var newProjection = ol.proj.get(projectionCode),
-        currentCenter = this.map.getView().getCenter(),
-        newCenter = ol.proj.transform(currentCenter, this.getCurrentProjectionCode(), projectionCode),
-        zoom = this.map.getView().getZoom();
 
-    var newView = new ol.View({
-        projection: newProjection,
-        center: newCenter,
-        zoom: zoom
-    });
 
-    this.map.setView(newView);
-};
+        var newView = new ol.View({
+            projection:    projectionCode,
+            //zoom:          zoom
 
+        });
+
+        this.map.setView(newView);
+        this.zoomToExtent(transformedExtent);
+    };
 
 /**
  * Set callback function for single click event
