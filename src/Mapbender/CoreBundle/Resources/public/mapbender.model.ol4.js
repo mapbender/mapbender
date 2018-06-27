@@ -1370,8 +1370,12 @@ Mapbender.Model.prototype.createMousePositionControl = function createMousePosit
  */
 Mapbender.Model.prototype.getCustomStyle = function getCustomStyle(customStyle) {
     'use strict';
+    var geometry = undefined;
     var fill = undefined;
+    var image = undefined;
+    var renderer = undefined;
     var stroke = undefined;
+    var text = undefined;
     var zIndex = undefined;
     var keys = Object.keys(customStyle);
     var options = null;
@@ -1381,13 +1385,29 @@ Mapbender.Model.prototype.getCustomStyle = function getCustomStyle(customStyle) 
             var varName = keys[i];
 
             switch(varName) {
+                case 'geometry':
+                    options = customStyle[varName] || '';
+                    fill = new ol.geom.Geometry(options);
+                    break;
                 case 'fill':
                     options = customStyle[varName] || {};
                     fill = new ol.style.Fill(options);
                     break;
+                case 'image':
+                    options = customStyle[varName] || {};
+                    image = new ol.style.Image(options);
+                    break;
+                case 'renderer':
+                    options = customStyle[varName] || {};
+                    stroke = ol.StyleRenderFunction(options);
+                    break;
                 case 'stroke':
                     options = customStyle[varName] || {};
                     stroke = new ol.style.Stroke(options);
+                    break;
+                case 'text':
+                    options = customStyle[varName] || {};
+                    stroke = new ol.style.Text(options);
                     break;
                 case 'zIndex':
                     zIndex = customStyle[varName] ? customStyle[varName] : undefined;
@@ -1398,8 +1418,12 @@ Mapbender.Model.prototype.getCustomStyle = function getCustomStyle(customStyle) 
     }
 
     return new ol.style.Style({
+        geometry: geometry,
         fill: fill,
+        image: image,
+        renderer:renderer,
         stroke: stroke,
+        text: text,
         zIndex: zIndex
     });
 };
