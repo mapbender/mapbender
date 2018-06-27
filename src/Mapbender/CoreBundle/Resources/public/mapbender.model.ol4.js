@@ -1000,26 +1000,52 @@ Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
      * @param {string} projectionCode
      */
     Mapbender.Model.prototype.updateMapViewForProjection = function(projectionCode) {
+        var currentSrsCode = this.getCurrentProjectionCode();
 
-        if(typeof projectionCode === 'undefined' || projectionCode === this.getCurrentProjectionCode()) {
+        if(typeof projectionCode === 'undefined' || projectionCode === currentSrsCode) {
             return;
         }
+        var currentView = this.map.getView();
+        var fromProj = ol.proj.get(currentSrsCode);
+        var toProj = ol.proj.get(projectionCode);
+        if (!fromProj || !fromProj.getUnits() || !toProj || !toProj.getUnits()) {
+            console.error("Missing / incomplete transformations (log order from / to)", [currentSrsCode, projectionCode], [fromProj, toProj]);
+            throw new Error("Missing / incomplete transformations");
+        }
+        for (var i = 0; i < this.pixelSources.length; ++i) {
+            this.pixelSources[i].updateSrs(toProj);
+        }
+        // viewProjection.getUnits() may return undefined, safer this way!
+        var currentUnits = fromProj.getUnits() || "degrees";
+        var newUnits = toProj.getUnits() || "degrees";
+        // transform projection extent (=max extent)
+        // DO NOT use currentView.getProjection().getExtent() here!
+        // Going back and forth between SRSs, there is extreme drift in the
+        // calculated values. Always start from the configured maxExtent.
+        var newMaxExtent = ol.proj.transformExtent(this.options.maxExtent, this.options.srs, toProj);
+
+        var viewPortSize = this.map.getSize();
+        var currentCenter = currentView.getCenter();
+        var newCenter = ol.proj.transform(currentCenter, fromProj, toProj);
 
         var newProjection = ol.proj.get(projectionCode);
-        var currentExtent = this.map.getView().calculateExtent(this.map.getSize());
-        var transformedExtent = proj4(this.getCurrentProjectionCode(), projectionCode, currentExtent.slice(0, 2)).concat(proj4(this.getCurrentProjectionCode(), projectionCode, currentExtent.slice(2, 4)));
-        var zoom = this.map.getView().getZoom();
+        newProjection.setExtent(newMaxExtent);
 
-
-
-        var newView = new ol.View({
-            projection:    projectionCode,
-            //zoom:          zoom
-
+        // Recalculate resolution and allowed resolution steps
+        var _convertResolution = this.convertResolution_.bind(undefined, currentUnits, newUnits);
+        var newResolution = _convertResolution(currentView.getResolution());
+        var newResolutions = this.viewOptions_.resolutions.map(_convertResolution);
+        // Amend this.viewOptions_, we need the applied values for the next SRS switch
+        var newViewOptions = $.extend(this.viewOptions_, {
+            projection: newProjection,
+            resolutions: newResolutions,
+            center: newCenter,
+            size: viewPortSize,
+            resolution: newResolution
         });
 
+        var newView = new ol.View(newViewOptions);
         this.map.setView(newView);
-        this.zoomToExtent(transformedExtent);
     };
 
 /**
@@ -1383,3 +1409,30 @@ Mapbender.Model.prototype.initializeViewOptions = function initializeViewOptions
     }
     return viewOptions;
 };
+
+/**
+ * Recalculate a resolution number valid for fromUnit to an equivalent valid
+ * for toUnit.
+ * This is technically sth like:
+ *   newRes = scaleToRes(resToScale(oldScale, dpi, oldUnit), dpi, newUnit).
+ * If you look at the resolutionToScale and scaleToResolution math,
+ * you'll see that the result of the back-and-forth transformation ONLY
+ * depends on the meters per unit, and on nothing else.
+ *
+ * This allows us to perform the calculation independent of dpi settings.
+ *
+ * @param {string} fromUnits "m", "degrees" etc
+ * @param {string} toUnits "m", "degrees" etc
+ * @param {number} resolution
+ * @returns {number}
+ * @private
+ * @static
+ */
+Mapbender.Model.convertResolution_ = function convertResolution_(fromUnits, toUnits, resolution) {
+    var resolutionFactor =
+        ol.proj.METERS_PER_UNIT[fromUnits] /
+        ol.proj.METERS_PER_UNIT[toUnits];
+    return resolution * resolutionFactor;
+};
+// make available on instance
+Mapbender.Model.prototype.convertResolution_ = Mapbender.Model.convertResolution_;
