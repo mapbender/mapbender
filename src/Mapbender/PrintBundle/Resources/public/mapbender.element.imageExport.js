@@ -117,31 +117,7 @@
                 }
             }
 
-
-            // @todo style mock-up
-            var style = {
-                "fillColor": "#6fb536",
-                "fillOpacity": 0.3,
-                "hoverFillColor": "white",
-                "hoverFillOpacity": 0.8,
-                "strokeColor": "#6fb536",
-                "strokeOpacity": 1,
-                "strokeWidth": 1,
-                "strokeLinecap": "round",
-                "strokeDashstyle": "solid",
-                "hoverStrokeColor": "red",
-                "hoverStrokeOpacity": 1,
-                "hoverStrokeWidth": 0.2,
-                "pointRadius": 6,
-                "hoverPointRadius": 1,
-                "hoverPointUnit": "%",
-                "pointerEvents": "visiblePainted",
-                "cursor": "inherit",
-                "fontColor": "#000000",
-                "labelAlign": "cm",
-                "labelOutlineColor": "white",
-                "labelOutlineWidth": 3
-            };
+            var printStyleOptions = this.model.getVectorLayerPrintStyleOptions();
 
             var vectorLayers = [];
             var geojsonFormat = this.model.createOlFormatGeoJSON();
@@ -156,18 +132,30 @@
                     for (var idx = 0; idx < features.length; idx++) {
                         var geometry = geojsonFormat.writeGeometryObject( features[ idx ].getGeometry(), geojsonFormat );
                         if (geometry) {
-                            geometry.style = style;
+                            var styleOptions = {};
+                            if (printStyleOptions.hasOwnProperty(owner) && printStyleOptions[owner].hasOwnProperty(uuid)) {
+                                styleOptions = printStyleOptions[owner][uuid];
+                            }
+
+                            geometry.style = styleOptions;
                             geometries.push(geometry);
                         }
                     }
 
-                    var objectForVectorLayer = {
+                    var layerOpacity = 1;
+                    if (this.model.vectorLayer.hasOwnProperty(owner)
+                        && this.model.vectorLayer[owner].hasOwnProperty(uuid )
+                    ) {
+                        layerOpacity = this.model.vectorLayer[owner][uuid].getOpacity()
+                    }
+
+                    var objectForVectorLayers = {
                         "type": "GeoJSON+Style",
-                        "opacity": 1, //@todo  immer so oder aus dem VectorLayer bzw. Source holen?
+                        "opacity": layerOpacity,
                         "geometries": geometries
                     };
 
-                    vectorLayers.push(JSON.stringify(objectForVectorLayer));
+                    vectorLayers.push(JSON.stringify(objectForVectorLayers));
                 }
             }
 
