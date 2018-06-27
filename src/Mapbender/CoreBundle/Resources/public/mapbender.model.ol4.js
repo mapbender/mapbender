@@ -748,9 +748,31 @@ Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservab
 };
 
 
+/**
+ * Create olDefaultStyle or olCustomStyle
+ * @param {array} optOptions params from ol.style.Style.
+ * @returns {ol.style.Style}
+ */
+Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(optOptions){
+    var olStyle = null;
+    if (optOptions){
+        olStyle = this.getCustomStyle(optOptions);
+    }else{
+        var fill = new ol.style.Fill({
+            color: 'rgba(255,255,255,0.4)'
+        });
+        var stroke = new ol.style.Stroke({
+            color: '#3399CC',
+            width: 1.25
+        });
 
-Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(){
-    return new ol.style.Style();
+        olStyle= new ol.style.Style({
+            fill: fill,
+            stroke: stroke
+        });
+    }
+
+    return olStyle;
 };
 
 /**
@@ -1148,4 +1170,45 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
 Mapbender.Model.prototype.getMeterPersUnit = function getMeterPersUnit(currentUnit) {
     'use strict';
     return ol.proj.METERS_PER_UNIT[currentUnit];
+};
+
+/**
+ * create ol.style.Style
+ * @param {array} customStyle only fill, stroke, zIndex
+ * @returns {ol.style.Style}
+ */
+Mapbender.Model.prototype.getCustomStyle = function getCustomStyle(customStyle) {
+    'use strict';
+    var fill = undefined;
+    var stroke = undefined;
+    var zIndex = undefined;
+    var keys = Object.keys(customStyle);
+    var options = null;
+
+    if (keys.length){
+        for (var i = 0; i < keys.length; i++) {
+            var varName = keys[i];
+
+            switch(varName) {
+                case 'fill':
+                    options = customStyle[varName] || {};
+                    fill = new ol.style.Fill(options);
+                    break;
+                case 'stroke':
+                    options = customStyle[varName] || {};
+                    stroke = new ol.style.Stroke(options);
+                    break;
+                case 'zIndex':
+                    zIndex = customStyle[varName] ? customStyle[varName] : undefined;
+                    break;
+            }
+
+        }
+    }
+
+    return new ol.style.Style({
+        fill: fill,
+        stroke: stroke,
+        zIndex: zIndex
+    });
 };
