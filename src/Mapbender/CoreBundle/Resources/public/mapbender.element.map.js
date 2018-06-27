@@ -32,7 +32,7 @@
             // Patch missing SRS definitions into proj4
             // This avoids errors when initializing the OL4 view with
             // "exotic" / non-geodesic projections such as EPSG:25832
-            Mapbender.Projection.extendSrsDefintions(this.srsDefinitions);
+            Mapbender.Projection.extendSrsDefintions(this.srsDefinitions, true, true);
 
             this.engineCode = Mapbender.configuration.application.mapEngineCode;
 
