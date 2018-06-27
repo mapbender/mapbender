@@ -545,7 +545,7 @@
         },
 
         _highlightFeature: function (feature, style) {
-            feature.layer.drawFeature(feature, style);
+            feature.setStyle(style);
         },
 
         _showResultState: function() {
