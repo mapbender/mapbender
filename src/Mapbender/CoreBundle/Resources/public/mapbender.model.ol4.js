@@ -1210,6 +1210,7 @@ Mapbender.Model.prototype.getMeterPersUnit = function getMeterPersUnit(currentUn
     return ol.proj.METERS_PER_UNIT[currentUnit];
 };
 
+
 Mapbender.Model.prototype.getGeomFromFeature = function getGeomFromFeature(feature) {
     'use strict';
     return feature.getGeometry();
@@ -1339,4 +1340,32 @@ Mapbender.Model.prototype.createMousePositionControl = function createMousePosit
         undefinedHTML: elementConfig.emptyString
     });
     this.map.addControl(mousePositionControl);
+};
+
+
+Mapbender.Model.prototype.getBoundsFromBinaryUsingFormat = function (binary, format) {
+    console.log()
+    if (typeof ol.format[format] === 'undefined') {
+        console.error("Format is not supported", format);
+        throw new Error("Format" + format + " is not supported");
+    }
+
+    var formatObject = new ol.format[format]();
+    var feature = formatObject.readFeature(binary);
+
+    var extent = feature.getGeometry().getExtent();
+
+    return this.mbExtent(extent);
+};
+
+Mapbender.Model.prototype.getResolutionForZoom = function (zoom) {
+    return this.map.getView().getResolutionForZoom(zoom);
+};
+
+Mapbender.Model.prototype.getZoomForResolution = function(resolution) {
+    return this.map.getView().getZoomForResolution(resolution);
+};
+
+Mapbender.Model.prototype.getResolutionForExtent = function(extent, options) {
+    return this.map.getView().getResolutionForExtent(extent, options);
 };

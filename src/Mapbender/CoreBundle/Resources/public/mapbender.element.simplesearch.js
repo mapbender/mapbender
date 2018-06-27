@@ -9,10 +9,18 @@ $.widget('mapbender.mbSimpleSearch', {
     marker: null,
     layer: null,
 
+    /**
+     * @var {Mapbender.Model}
+     */
+    model: null,
+
     _create: function() {
         var self = this;
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
+
+        var mbMap = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+        this.model = mbMap.model;
 
         // Set up autocomplete
         this.autocomplete = new Mapbender.Autocomplete(searchInput, {
@@ -33,7 +41,6 @@ $.widget('mapbender.mbSimpleSearch', {
         });
 
         // On item selection in autocomplete, parse data and set map bbox
-        var format = new OpenLayers.Format[this.options.geom_format]();
         searchInput.on('mbautocomplete.selected', function(evt, evtData) {
 
             if(!evtData.data[self.options.geom_attribute]) {
@@ -41,9 +48,7 @@ $.widget('mapbender.mbSimpleSearch', {
                 return;
             }
 
-            var feature = format.read(evtData.data[self.options.geom_attribute]);
-            var olMap = Mapbender.Model.map.olMap;
-            var bounds = feature.geometry.getBounds();
+            var bounds = self.model.getBoundsFromBinaryUsingFormat(evtData.data[self.options.geom_attribute], self.options.geom_format);
 
             if(self.options.result.buffer > 0) {
                 bounds.top += self.options.result.buffer;
@@ -52,27 +57,25 @@ $.widget('mapbender.mbSimpleSearch', {
                 bounds.left -= self.options.result.buffer;
             }
 
-            var zoom = olMap.getZoomForExtent(bounds);
+            var extentResolution = self.model.getResolutionForExtent(bounds);
+            var zoom = self.model.getZoomForResolution(extentResolution);
 
             // restrict zoom if needed
             if(self.options.result && (self.options.result.maxscale || self.options.result.minscale)){
-                var res = olMap.getResolutionForZoom(zoom);
-                var units = olMap.baseLayer.units;
-                var scale = OpenLayers.Util.getScaleFromResolution(res, units);
 
                 if(self.options.result.maxscale) {
-                    var maxRes = OpenLayers.Util.getResolutionFromScale(
-                        self.options.result.maxscale, olMap.baseLayer.units);
-                    if(Math.round(res) < maxRes) {
-                        zoom = olMap.getZoomForResolution(maxRes);
+                    var maxRes = self.model.scaleToResolution(self.options.result.maxscale);
+
+                    if(Math.round(extentResolution) < maxRes) {
+                        zoom = self.model.getZoomForResolution(maxRes);
                     }
                 }
 
                 if(self.options.result.minscale) {
-                    var minRes = OpenLayers.Util.getResolutionFromScale(
-                        self.options.result.minscale, olMap.baseLayer.units);
-                    if(Math.round(res) > minRes) {
-                        zoom = olMap.getZoomForResolution(minRes);
+                    var minRes = self.model.scaleToResolution(self.options.result.minscale);
+
+                    if(Math.round(extentResolution) > minRes) {
+                        zoom = self.model.getZoomForResolution(minRes);
                     }
                 }
             }

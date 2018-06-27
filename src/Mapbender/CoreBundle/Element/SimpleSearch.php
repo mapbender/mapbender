@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
@@ -99,6 +100,7 @@ class SimpleSearch extends Element
             $response->headers->set('X-Mapbender-SimpleSearch-URL', $url);
         }
 
-        return $response;
+        //die('123123');
+        return new JsonResponse($data);;
     }
 }
