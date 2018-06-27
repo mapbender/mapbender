@@ -318,6 +318,7 @@
                 feature.setId(Mapbender.UUID());
                 return feature.getId();
             });
+            row.attr('data-layer-id', this.activeControlId);
             $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel, activeTool));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
@@ -331,16 +332,16 @@
         _removeFromGeomList: function(e){
             this._deactivateControl();
             var $tr = $(e.target).parents('tr:first');
-            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
-            this.model.removeFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
+            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
+            this.model.removeFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
             $tr.remove();
             this.selectedFeature = null;
         },
         _modifyFeature: function(e){
             this._deactivateControl();
             var $tr = $(e.target).parents('tr:first');
-            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
-            this.activeControlId = this.model.createModifyInteraction(this.element.attr('id'), this.selectStyle, this.activeControlId, $tr.attr('data-id'));
+            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
+            this.activeControlId = this.model.createModifyInteraction(this.element.attr('id'), this.selectStyle, $tr.attr('data-layer-id'), $tr.attr('data-id'));
             // this.selectedFeature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
             // if(this.selectedFeature.style && this.selectedFeature.style.label) {
             //     this.selectedFeature.style = this._setTextEdit(this.selectedFeature.style);
@@ -356,8 +357,8 @@
         _zoomToFeature: function(e){
             this._deactivateControl();
             var $tr = $(e.target).parents('tr:first');
-            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
-            var extent = this.model.getFeatureExtent(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
+            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
+            var extent = this.model.getFeatureExtent(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
             this.model.zoomToExtent(extent);
             // var feature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
             // var bounds = feature.geometry.getBounds();
