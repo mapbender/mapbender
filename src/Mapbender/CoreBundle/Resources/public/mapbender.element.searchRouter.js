@@ -661,14 +661,24 @@
 
             var route = widget.getCurrentRoute();
 
+            var center = map.model.getMapCenter();
+            var iconFeature = new ol.Feature(
+                new ol.geom.Point(center)
+            );
+            var markersSource = new ol.source.Vector({
+                features: [iconFeature]
+            });
+
             var styleMap = widget._createStyleMap(route.results.styleMap);
+            this.styleMap = styleMap;
 
             layerId = widget.highlightLayer || map.model.createVectorLayer({
-                style: styleMap
+                style: styleMap.default
             }, layerOwner);
 
             widget.highlightLayerId = layerId;
             layer = map.model.getVectorLayerByNameId(layerOwner,layerId);
+            layer.setSource(markersSource);
 
             return layer;
         },
