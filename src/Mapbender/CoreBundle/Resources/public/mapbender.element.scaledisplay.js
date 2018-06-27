@@ -1,47 +1,58 @@
 (function($) {
+    'use strict';
 
-    $.widget("mapbender.mbScaledisplay", {
+    $.widget('mapbender.mbScaledisplay', {
         options: {
-//            unitPrefix: false
+            target: null
         },
         scaledisplay: null,
+
+        map: null,
 
         /**
          * Creates the scale display
          */
         _create: function() {
-            if(!Mapbender.checkTarget("mbScaledisplay", this.options.target)){
+            var self = this;
+
+            if(!Mapbender.checkTarget('mbScaledisplay', this.options.target)){
                 return;
             }
-            var self = this;
+
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-        
+
         /**
          * Initializes the scale display
          */
         _setup: function() {
-            if(typeof this.options.unitPrefix === 'undefined')
+            var widget = this;
+
+            if(typeof this.options.unitPrefix === 'undefined') {
                 this.options.unitPrefix = false;
-            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            
-            var projection = mbMap.map.olMap.getProjectionObject();
-            var options = {
-                geodesic: projection.units === 'degrees' ? true : false
-            };
-            options["updateScale"] =  $.proxy(this._updateScale, this);
-            this.scaledisplay = new OpenLayers.Control.Scale($(this.element).find("span").get(0), options);
-            
-            mbMap.map.olMap.addControl(this.scaledisplay);
-            $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
+            }
+
+            var mbMap = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+            this.map = mbMap;
+            var model = mbMap.model;
+            var projection = model.getCurrentProjectionObject();
+
+            model.setOnMoveendHandler($.proxy(widget._updateScale, widget), event);
+
             this._trigger('ready');
             this._ready();
         },
-        _updateScale: function(){
-            var scale = this.scaledisplay.map.getScale();
+        _updateScale: function() {
+            console.log('_updateScale');
+
+            var widget = this;
+            var model = widget.map.model;
+            var scale = model.getScale(model.options.dpi);
+
             if (!scale) {
                 return;
             }
+
             if(this.options.unitPrefix){
                 if (scale >= 9500 && scale <= 950000) {
                     scale = Math.round(scale / 1000) + "K";
@@ -49,12 +60,14 @@
                     scale = Math.round(scale / 1000000) + "M";
                 } else {
                     scale = Math.round(scale);
-                }    
+                }
             } else{
                 scale = Math.round(scale);
             }
-            this.scaledisplay.element.innerHTML = OpenLayers.i18n(" 1 : ${scaleDenom}", {'scaleDenom':scale});
+
+            $(this.element).text(this.options.scalePrefix + "1 : " + scale);
         },
+
         /**
          * Cahnges the scale bar srs
          */
@@ -81,7 +94,7 @@
             }
             this.readyState = true;
         },
-        
+
     });
 
 })(jQuery);
