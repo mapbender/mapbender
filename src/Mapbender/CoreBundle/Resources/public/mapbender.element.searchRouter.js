@@ -590,9 +590,37 @@
 
         _createStyleMap: function(styles) {
             var map = this.map;
-            var s = null;
-            s = styles ? map.model.createVectorLayerStyle(styles) : map.model.createVectorLayerStyle();
-            return s;
+            var styleMap = {};
+            var styleDefault = null;
+            var styleSelect = null;
+            var keys = styles ? Object.keys(styles): null;
+
+            if (keys){
+                for (var i = 0; i < keys.length; i++) {
+                    var styleMapName = keys[i];
+
+                    switch(styleMapName) {
+                        case 'default':
+                            styleDefault = styleMapName ? map.model.createVectorLayerStyle(styleMapName) : map.model.createVectorLayerStyle();
+                            break;
+                        case 'select':
+                            styleSelect = styleMapName ? map.model.createVectorLayerStyle(styleMapName) : map.model.createVectorLayerStyle();
+                            break;
+                    }
+
+                }
+            }else{
+                styleDefault = map.model.createVectorLayerStyle(this.defaultStyle);
+                styleSelect = map.model.createVectorLayerStyle(this.selectStyle);
+            }
+
+            styleMap = {
+                default: styleDefault,
+                select: styleSelect,
+                temporary: map.model.createVectorLayerStyle(this.temporaryStyle)
+            };
+
+            return styleMap;
         },
 
         /**
