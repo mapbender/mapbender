@@ -29,6 +29,7 @@
                     }
                 },
                 text: {
+                    font: '12px Calibri,sans-serif',
                     fill: {
                         color: 'rgba(255,0,0,0.3)'
                     },

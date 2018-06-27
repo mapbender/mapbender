@@ -8,6 +8,7 @@
                 xoffset: -6,
                 yoffset: -38
             },
+            targetscale: null,
             layersets: []
         },
         srsDefinitions: [],
@@ -16,6 +17,9 @@
         map: null,
         readyState: false,
         readyCallbacks: [],
+        state_: {
+            srs: undefined
+        },
         /**
          * Creates the map widget
          */
@@ -31,25 +35,44 @@
             // Patch missing SRS definitions into proj4
             // This avoids errors when initializing the OL4 view with
             // "exotic" / non-geodesic projections such as EPSG:25832
-            Mapbender.Projection.extendSrsDefintions(this.srsDefinitions);
+            Mapbender.Projection.extendSrsDefintions(this.srsDefinitions, true, true);
 
             this.engineCode = Mapbender.configuration.application.mapEngineCode;
 
             var modelOptions = {
                 srs: this.options.srs,
                 maxExtent: Mapbender.Model.sanitizeExtent(this.options.extents.max),
-                startExtent: Mapbender.Model.sanitizeExtent(this.options.extents.start)
+                startExtent: Mapbender.Model.sanitizeExtent(this.options.extents.start),
+                scales : this.options.scales,
+                dpi: this.options.dpi,
+                tileSize: this.options.tileSize
             };
+
+
             this.model = new Mapbender.Model(this.element.attr('id'), modelOptions);
+            this.state_.srs = this.options.srs;
             _.forEach(this.options.layersets.reverse(), function(layerSetId) {
                 this.model.addLayerSetById(layerSetId);
             }.bind(this));
 
 
-            this.options = $.extend({}, this.options, {
+            $.extend(this.options, {
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
             });
+
+            // NOTE: startExtent is technically mutually exclusive with
+            //    center and / or targetscale
+            //    However, ol may not properly initialize the view if we don't
+            //    go to a defined extent (which we always have) first
+            if (this.options.center) {
+                this.model.setCenter(this.options.center);
+            }
+            if (this.options.targetscale) {
+                this.model.setScale(this.options.targetscale);
+            }
+
+
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();
@@ -170,16 +193,37 @@
         /*
          * Changes the map's projection.
          */
-        changeProjection: function(srs){
-            if(typeof srs === "string")
-                this.model.changeProjection({
-                    projection: this.model.getProj(
-                            srs)
+        changeProjection: function(srs) {
+            if (!srs || typeof srs !== 'string') {
+                console.error("Invalid srs argument", srs);
+                throw new Error("Invalid srs argument");
+            }
+            if (this.state_.srs !== srs) {
+                var previousSrs = this.state_.srs;
+                console.log("mbMap switching srs", {from: previousSrs, to: srs});
+                this.model.updateMapViewForProjection(srs);
+                var newProjection = this.model.getCurrentProjectionObject();
+                var axisOrientation = newProjection.getAxisOrientation();
+                this.fireModelEvent({
+                    name: 'srschanged',
+                    value: {
+                        // @todo: emulate / shim projection object with OL2-compatible signature
+                        projection: newProjection,
+                        // this will stay engine-native
+                        nativeProjection: newProjection,
+                        // following attribs added to event data in OL4 initiative
+                        oldCode: previousSrs,
+                        newCode: srs,
+                        units: newProjection.getUnits(),
+                        axisOrientation: axisOrientation,
+                        yx: ((axisOrientation || "enu").slice(0,2)) !== 'en',
+                        extent: newProjection.getExtent()
+                    }
                 });
-            else
-                this.model.changeProjection({
-                    projection: srs
-                });
+                this.state_.srs = srs;
+            } else {
+                // console.log("mbMap skipping srs switch", srs);
+            }
         },
         /**
          * Zooms the map in
@@ -240,14 +284,10 @@
         },
         /**
          * Returns the scale list
+         * @deprecated, just get options.scales yourself
          */
         scales: function(){
-            var scales = [];
-            for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
-                var res = this.map.olMap.getResolutionForZoom(i);
-                scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
-            }
-            return scales;
+            return this.options.scales;
         },
         /**
          * Sets opacity to source

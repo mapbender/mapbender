@@ -1,11 +1,19 @@
 window.Mapbender = Mapbender || {};
 window.Mapbender.Model = Mapbender.Model || {};
-window.Mapbender.Model.MapPopup = function($markup) {
+/**
+ *
+ * @param $markup jQuery DoucmentFragment
+ * @param model
+ * @constructor
+ */
+window.Mapbender.Model.MapPopup = function($markup, model) {
     if(!$markup) {
         $markup = this.createPopupMarkup()
     }
+    this.model = model;
 
-    $markup.appendTo('body');
+    $markup.appendTo('#templateWrapper');
+
     this.$markup = $markup;
 
     this.overlay = new ol.Overlay({
@@ -15,7 +23,8 @@ window.Mapbender.Model.MapPopup = function($markup) {
             duration: 250
         }
     });
-
+    this.model.map.addOverlay(this.overlay);
+    window.$markup = $markup;
     this.$markup.find('ol-popup-closer').onclick = function(event) {
         this.overlay.setPosition(undefined);
         event.target.blur();
@@ -37,7 +46,7 @@ Mapbender.Model.MapPopup.prototype.createPopupMarkup = function createPopupMarku
 };
 
 Mapbender.Model.MapPopup.prototype.openPopupOnXY = function openPopupOnXY(coord, content) {
-
-    this.$markup.find('popup-content').innerHTML = content(coord);
+    //console.log(this.overlay.setElement(this.$markup));
+    this.$markup.find('.popup-content')[0].innerHTML = content(coord);
     this.overlay.setPosition(coord);
 };

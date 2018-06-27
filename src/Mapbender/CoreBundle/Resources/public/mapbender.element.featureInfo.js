@@ -32,12 +32,9 @@
         _setup: function() {
             var widget = this;
             var options = widget.options;
-            var mapElement = $("#" + options.target);
             var widgetElement = widget.element;
-            widget.target = mapElement.data("mapbenderMbMap");//.getModel();
-            widget.mapClickHandler = new OpenLayers.Handler.Click(widget,
-                {'click': widget._triggerFeatureInfo},
-                {map: mapElement.data('mapQuery').olMap});
+            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+            widget.target = this.map;
 
             widgetElement.addClass('display-as-' + options.displayType);
 
@@ -96,7 +93,7 @@
 
             widget.callback = callback ? callback : null;
             mapElement.addClass('mb-feature-info-active');
-            widget.mapClickHandler.activate();
+            this._setupMapClickHandler();
         },
         deactivate: function() {
             var widget = this;
@@ -121,7 +118,8 @@
                 widget.popup = null;
             }
 
-            widget.mapClickHandler.deactivate();
+            this.map.model.removeEventListenerByKey(this.mapClickHandler);
+            this.mapClickHandler = null;
             widget.callback ? widget.callback.call() : widget.callback = null;
         },
         _isVisible: function() {
@@ -146,26 +144,30 @@
                 id: this.element.attr('id')
             });
             var self = this;
-            var x = e.xy.x;
-            var y = e.xy.y;
             var called = false;
             this.queries = {};
             $('#js-error-featureinfo').addClass('hidden');
-            $.each(this.target.getModel().getSources(), function(idx, src) {
-                var mqLayer = self.target.getModel().map.layersList[src.mqlid];
-                if (Mapbender.source[src.type]) {
-                    var url = Mapbender.source[src.type].featureInfoUrl(mqLayer, x, y, $.proxy(self._setInfo, self));
-                    if (url) {
-                        self.queries[mqLayer.id] = url;
-                        if (!self.options.onlyValid) {
-                            self._addContent(mqLayer, 'wird geladen');
-                            self._open();
-                        }
-                        called = true;
-                        self._setInfo(mqLayer, url);
-                    } else {
-                        self._removeContent(mqLayer);
+            $.each(this.map.model.collectFeatureInfoUrls(e.coordinate), function(idx, url) {
+                var source = self._getSourceByFeatureInfoUrl(url);
+                var mqLayer = {
+                    source: {
+                        configuration: source.configuration
+                    },
+                    label: source.configuration.title,
+                    id: "-" + source.id,
+                    type: source.type
+                };
+
+                if (mqLayer && Mapbender.source[mqLayer.type]) {
+                    self.queries[mqLayer.id] = url;
+
+                    if (!self.options.onlyValid) {
+                        self._addContent(mqLayer, 'wird geladen');
+                        self._open();
                     }
+                    
+                    called = true;
+                    self._setInfo(mqLayer, url);
                 }
             });
             if (!called) {
@@ -537,6 +539,30 @@
                 delete(this.readyCallbacks[callback]);
             }
             this.readyState = true;
+        },
+        _setupMapClickHandler: function () {
+            var widget = this;
+
+            if (!widget.mapClickHandler) {
+                widget.mapClickHandler = this.map.model.setOnSingleClickHandler( $.proxy(this._triggerFeatureInfo, this));
+            }
+
+            return this;
+        },
+        _getSourceByFeatureInfoUrl: function (url) {
+            var model = this.map.model;
+
+            for (var i = 0; i < model.pixelSources.length; ++i) {
+                var source = model.pixelSources[i];
+                var index = url.indexOf(source.baseUrl_);
+
+                if (index !== -1 && index === 0) {
+
+                    return source;
+                }
+            }
+
+            return null;
         }
     });
 })(jQuery);
