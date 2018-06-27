@@ -659,6 +659,12 @@
             if (typeof themeActive !== 'undefined') {
                 active &= themeActive;
             }
+            if (active) {
+                // apply any layer order changes made while the source was inactive
+                // this avoids "blinking in" with wrong data followed by a layer
+                // ordering update
+                this._updateLeafStates($node);
+            }
             sourceObj.setState(!!active);
         },
         _updateLeafStates: function($startNode) {
