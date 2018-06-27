@@ -488,14 +488,18 @@
          * @param {Object} options Backbone options (not used?)
          */
         _searchResultsTable: function(model, results, options){
-            var headers = this.options.routes[this.selected].results.headers,
-                table = $('.search-results table', this.element),
-                tbody = $('<tbody></tbody>'),
-                layer = this._getLayer(true),
-                self = this;
+            var headers = this.options.routes[this.selected].results.headers;
+            var table = $('.search-results table', this.element);
+            var tbody = $('<tbody></tbody>');
+            var layer = this._getLayer(true);
+            var self = this;
 
             $('tbody', table).remove();
-            layer.removeAllFeatures();
+
+            // Check Features of layer
+            if (layer.getSource().getFeatures()){
+                layer.getSource().clear();
+            }
             var features = [];
 
             if(results.length > 0) $('.no-results', this.element).hide();
@@ -511,30 +515,30 @@
                 }
 
                 tbody.append(row);
-
-                features.push(feature.getFeature());
+                var feature = feature.getFeature();
+                features.push(feature);
             });
 
             table.append(tbody);
-            layer.addFeatures(features);
+            layer.getSource().addFeatures(features);
 
             $('.search-results tbody tr')
                 .on('click', function () {
                     var feature = $(this).data('feature').getFeature();
-                    self._highlightFeature(feature, 'select');
+                    self._highlightFeature(feature,self.styleMap['select']);
                 })
                 .on('mouseenter', function () {
                     var feature = $(this).data('feature').getFeature();
 
                     if(feature.renderIntent !== 'select') {
-                        self._highlightFeature(feature, 'temporary');
+                        self._highlightFeature(feature,self.styleMap['temporary']);
                     }
                 })
                 .on('mouseleave', function () {
                     var feature = $(this).data('feature').getFeature();
 
                     if(feature.renderIntent !== 'select') {
-                        self._highlightFeature(feature, 'default');
+                        self._highlightFeature(feature,self.styleMap['default']);
                     }
                 })
             ;
