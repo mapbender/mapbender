@@ -18,6 +18,80 @@
         model: null,
         highlightLayerOwner: 'Search Highlight',
         highlightLayerId: null,
+        defaultStyle: {
+            fill : {
+                color : 'rgba(255,0,0,0.3)'
+            },
+            stroke: {
+                color: 'rgba(255,0,0,1)',
+                width: 2
+            },
+            circle: {
+                radius: 5,
+                color: 'rgba(255,0,0,0.3)',
+                stroke: {
+                    color: 'rgba(255,0,0,1)',
+                    width: 2
+                }
+            },
+            text: {
+                font: '13px Calibri,sans-serif',
+                fill: {
+                    color: 'rgba(255,0,0,1)'
+                },
+                stroke: {
+                    color: 'rgba(255,255,255,1)',
+                    width: 1
+                },
+                offsetY: -15,
+
+            }
+        },
+        selectStyle: {
+            fill : {
+                color : 'rgba(255,170,0,0.3)'
+            },
+            stroke: {
+                color: 'rgba(255,170,0,1)',
+                width: 2
+            },
+            circle: {
+                radius: 5,
+                color: 'rgba(255,170,0,0.3)',
+                stroke: {
+                    color: 'rgba(255,170,0,1)',
+                    width: 2
+                }
+            },
+            text: {
+                font: '12px Calibri,sans-serif',
+                fill: {
+                    color: 'rgba(255,170,0,1)'
+                },
+                stroke: {
+                    color: 'rgba(255,255,255,1)',
+                    width: 2
+                },
+                offsetY: -15
+            }
+        },
+        temporaryStyle: {
+            fill : {
+                color : 'rgba(255,170,0,0.3)'
+            },
+            stroke: {
+                color: 'rgba(255,170,0,1)',
+                width: 2
+            },
+            circle: {
+                radius: 5,
+                color: 'rgba(255,170,0,0.3)',
+                stroke: {
+                    color: 'rgba(255,170,0,1)',
+                    width: 2
+                }
+            }
+        },
         /**
          * Ready event listeners
          *
