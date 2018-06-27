@@ -1538,3 +1538,16 @@ Mapbender.Model.prototype.getCustomStyle = function getCustomStyle(customStyle) 
         zIndex: zIndex
     });
 };
+
+/**
+ *
+ * @param callback
+ * @returns {ol.EventsKey|Array<ol.EventsKey>}
+ */
+Mapbender.Model.prototype.setOnChangeResolutionHandler = function (callback) {
+    'use strict';
+
+    if (typeof callback === 'function') {
+        return this.map.on("change:resolution", callback);
+    }
+};
