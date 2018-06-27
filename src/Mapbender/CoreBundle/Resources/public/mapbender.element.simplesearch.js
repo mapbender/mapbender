@@ -8,6 +8,7 @@ $.widget('mapbender.mbSimpleSearch', {
 
     marker: null,
     layer: null,
+    iconStyle: null,
 
     /**
      * @var {Mapbender.Model}
@@ -48,7 +49,8 @@ $.widget('mapbender.mbSimpleSearch', {
                 return;
             }
 
-            var bounds = self.model.getBoundsFromBinaryUsingFormat(evtData.data[self.options.geom_attribute], self.options.geom_format);
+            var coordinates = self.model.getBoundsFromBinaryUsingFormat(evtData.data[self.options.geom_attribute], self.options.geom_format);
+            var bounds = $.extend(coordinates);
 
             if(self.options.result.buffer > 0) {
                 bounds.top += self.options.result.buffer;
@@ -82,45 +84,40 @@ $.widget('mapbender.mbSimpleSearch', {
 
             // Add marker
             if(self.options.result.icon_url) {
-                if(!self.marker) {
+                if(!self.layer) {
                     var addMarker = function() {
                         var offset = (self.options.result.icon_offset || '').split(new RegExp('[, ;]'));
                         var x = parseInt(offset[0]);
 
-                        var size = {
-                            'w': image.naturalWidth,
-                            'h': image.naturalHeight
-                        };
+                        var size = [
+                            image.naturalWidth,
+                            image.naturalHeight
+                        ];
 
                         var y = parseInt(offset[1]);
 
-                        offset = {
-                            'x': !isNaN(x) ? x : 0,
-                            'y': !isNaN(y) ? y : 0
-                        };
+                        offset = [
+                            !isNaN(x) ? x : 0,
+                            !isNaN(y) ? y : 0
+                        ];
 
-                        var icon = new OpenLayers.Icon(image.src, size, offset);
-                        self.marker = new OpenLayers.Marker(bounds.getCenterLonLat(), icon);
-                        self.layer = new OpenLayers.Layer.Markers();
-                        olMap.addLayer(self.layer);
-                        self.layer.addMarker(self.marker);
-                    }
+                        self.iconStyle = self.model.createIconStyle({src: image.src, size: size, offset: offset});
+                        self.layer = self.model.setMarkerOnCoordinates(coordinates, self.element.attr('id'), self.layer, self.iconStyle);
+                    };
 
                     var image = new Image();
                     image.src = self.options.result.icon_url;
                     image.onload = addMarker;
                     image.onerror = addMarker;
                 } else {
-                    var newPx = olMap.getLayerPxFromLonLat(bounds.getCenterLonLat());
-                    self.marker.moveTo(newPx);
+                    self.model.removeAllFeaturesFromLayer(self.element.attr('id'), self.layer);
+                    self.layer = self.model.setMarkerOnCoordinates(coordinates, self.element.attr('id'), self.layer, self.iconStyle);
                 }
             }
 
             // finally, zoom
-            Mapbender.Model.center({
-                position: [bounds.getCenterLonLat().lon, bounds.getCenterLonLat().lat],
-                zoom: zoom
-            });
+            self.model.zoomToExtent(bounds);
+            self.model.setZoom(zoom);
         });
     },
 

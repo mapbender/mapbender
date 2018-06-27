@@ -583,6 +583,7 @@ Mapbender.Model.prototype.panToExtent = function panToExtent(extent, duration, m
 /**
  *
  * @param mbExtent
+ * @return {Mapbender.Model}
  */
 Mapbender.Model.prototype.zoomToExtent = function(mbExtent) {
     'use strict';
@@ -593,6 +594,8 @@ Mapbender.Model.prototype.zoomToExtent = function(mbExtent) {
         mbExtent.top
     ];
     this.map.getView().fit(extent, this.map.getSize());
+
+    return this;
 };
 
 /**
@@ -1139,9 +1142,10 @@ Mapbender.Model.prototype.setMapCursorStyle = function (style) {
  * @param {string[]} coordinates
  * @param {string} owner Element id
  * @param {string} vectorLayerId
+ * @param {ol.style} style
  * @returns {string} vectorLayerId
  */
-Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner, vectorLayerId) {
+Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner, vectorLayerId, style) {
 
     if (typeof coordinates === 'undefined') {
         throw new Error("Coordinates are not defined!");
@@ -1149,7 +1153,7 @@ Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner,
 
     var point = new ol.geom.Point(coordinates);
 
-    if (typeof vectorLayerId === 'undefined') {
+    if (typeof vectorLayerId === 'undefined' || null === vectorLayerId) {
 
         vectorLayerId = this.createVectorLayer({
             source: new ol.source.Vector({wrapX: false}),
@@ -1158,7 +1162,7 @@ Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner,
         this.map.addLayer(this.vectorLayer[owner][vectorLayerId]);
     }
 
-    this.drawFeatureOnVectorLayer(point, this.vectorLayer[owner][vectorLayerId]);
+    this.drawFeatureOnVectorLayer(point, this.vectorLayer[owner][vectorLayerId], style);
 
     return vectorLayerId;
 };
@@ -1168,12 +1172,15 @@ Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner,
  *
  * @param {ol.geom} geometry
  * @param {ol.layer.Vector} vectorLayer
+ * @param {ol.style} style
  * @returns {Mapbender.Model}
  */
-Mapbender.Model.prototype.drawFeatureOnVectorLayer = function (geometry, vectorLayer) {
+Mapbender.Model.prototype.drawFeatureOnVectorLayer = function (geometry, vectorLayer, style) {
     var feature = new ol.Feature({
         geometry: geometry,
     });
+
+    feature.setStyle(style);
 
     var source = vectorLayer.getSource();
 
@@ -1386,8 +1393,14 @@ Mapbender.Model.prototype.createMousePositionControl = function createMousePosit
     this.map.addControl(mousePositionControl);
 };
 
+/**
+ * Get bounds from binary geometry of a particular format
+ *
+ * @param {string} binary
+ * @param {string} format must be a string identifier of {ol.format} https://openlayers.org/en/latest/apidoc/ol.format.html
+ * @returns {top, right, bottom, left} extent object
+ */
 Mapbender.Model.prototype.getBoundsFromBinaryUsingFormat = function (binary, format) {
-    console.log()
     if (typeof ol.format[format] === 'undefined') {
         console.error("Format is not supported", format);
         throw new Error("Format" + format + " is not supported");
@@ -1401,17 +1414,26 @@ Mapbender.Model.prototype.getBoundsFromBinaryUsingFormat = function (binary, for
     return this.mbExtent(extent);
 };
 
+/**
+ * Get resolution for zoom level
+ *
+ * @param {number} zoom
+ * @returns {number}
+ */
 Mapbender.Model.prototype.getResolutionForZoom = function (zoom) {
     return this.map.getView().getResolutionForZoom(zoom);
 };
 
-Mapbender.Model.prototype.getZoomForResolution = function(resolution) {
+/**
+ * Get zoom for resolution
+ *
+ * @param {number} resolution
+ * @returns {number|undefined}
+ */
+Mapbender.Model.prototype.getZoomForResolution = function (resolution) {
     return this.map.getView().getZoomForResolution(resolution);
 };
 
-Mapbender.Model.prototype.getResolutionForExtent = function(extent, options) {
-    return this.map.getView().getResolutionForExtent(extent, options);
-};
 
 /**
  * @param {object} options
@@ -1466,4 +1488,38 @@ Mapbender.Model.convertResolution_ = function convertResolution_(fromUnits, toUn
 };
 // make available on instance
 Mapbender.Model.prototype.convertResolution_ = Mapbender.Model.convertResolution_;
+
+
+/**
+ * Get resolution for extent
+ *
+ * @param {Array} extent [minx, miny, maxx, maxy]
+ * @param {Array} size [width, height]
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getResolutionForExtent = function (extent, size) {
+    return this.map.getView().getResolutionForExtent(extent, size);
+};
+
+/**
+ * Create style for icon
+ *
+ * @param {*} options
+ * @return {ol.style.Style}
+ */
+Mapbender.Model.prototype.createIconStyle = function (options) {
+    var defaultOptions = {
+        anchor: [0.5, 46],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'pixels',
+    };
+
+    options = $.extend({}, options, defaultOptions);
+
+    const iconStyle = new ol.style.Style({
+        image: new ol.style.Icon(options)
+    });
+
+    return iconStyle;
+};
 
