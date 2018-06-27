@@ -408,9 +408,8 @@ Mapbender.Model.prototype.addLayerSetById = function addLayerSetsById(layerSetId
 };
 
 /**
- *
- * @param  {Object} options (See https://openlayers.org/en/latest/apidoc/ol.layer.Vector.html)
- * @param {ol.style|function} style
+ * @param {Object} options (See https://openlayers.org/en/latest/apidoc/ol.layer.Vector.html)
+ * @param {ol.style|function} options.style (See https://openlayers.org/en/latest/apidoc/ol.style.Style.html)
  * @param {string} owner
  * @returns {string}
  */
@@ -419,6 +418,7 @@ Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
     var uuid = Mapbender.UUID();
     this.vectorLayer[owner] = this.vectorLayer[owner] || {};
     options.map = this.map;
+    options.style = options.style ? this.createVectorLayerStyle(options.style) : this.createVectorLayerStyle();
     this.vectorLayer[owner][uuid] = new ol.layer.Vector(options);
 
     return uuid;
