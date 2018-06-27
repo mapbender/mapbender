@@ -7,8 +7,8 @@ Mapbender.Projection = $.extend(window.Mapbender.Projection || {}, {
      * * 2.x versions (namespace proj4)
      *
      * @param {Object.<string, string>[]} defs should have keys 'code' (legacy alternative: 'name') and 'definition'
-     * @param {bool} [keep=false] keep to avoid replacing already existing projection definitions
-     * @param {bool} [warn=false] warn to warn on console when replacing existing SRS
+     * @param {boolean} [keep=false] keep to avoid replacing already existing projection definitions
+     * @param {boolean} [warn=false] warn to warn on console when replacing existing SRS
      */
     extendSrsDefintions: function(defs, keep, warn) {
         var old;
