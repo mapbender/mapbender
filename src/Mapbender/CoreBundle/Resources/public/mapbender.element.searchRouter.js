@@ -205,9 +205,7 @@
                 });
             }
 
-            map.events.register("zoomend", this, function() {
-                widget.redraw();
-            });
+            map.model.setOnMoveendHandler(widget.redraw());
 
             widget._trigger('ready');
             widget._ready();
