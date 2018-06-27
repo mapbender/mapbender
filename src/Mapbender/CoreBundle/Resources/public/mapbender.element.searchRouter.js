@@ -14,6 +14,10 @@
         searchModel: null,
         autocompleteModel: null,
         popup: null,
+        map: null,
+        model: null,
+        highlightLayerOwner: 'Search Highlight',
+        highlightLayerId: null,
         /**
          * Ready event listeners
          *
@@ -40,8 +44,10 @@
          */
         removeLastResults: function(){
             var widget = this;
+            var map = widget.map;
             widget.searchModel.reset();
-            widget._getLayer().removeAllFeatures();
+            widget._getLayer();
+            widget.map.model.removeVectorLayer(widget.highlightLayerOwner, widget.highlightLayerId);
         },
 
         _setup:         function(){
@@ -51,7 +57,9 @@
             var searchModel = widget.searchModel = new Mapbender.SearchModel(null, null, widget);
             var routeSelect = $('select#search_routes_route', element);
             var routeCount = 0;
-            var map = widget.map = $('#' + options.target).data('mapbenderMbMap').map.olMap;
+            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+            this.model = this.map.model;
+            var map = this.map;
 
             // bind form reset to reset search model
             element.delegate('.search-forms form', 'reset', function(){
@@ -502,18 +510,11 @@
             outer.removeClass('search-active');
         },
 
-        _createStyleMap: function(styles, options) {
-            var o = _.defaults({}, options, {
-                extendDefault: true,
-                defaultBase: OpenLayers.Feature.Vector.style['default']
-            });
-            var s = styles || OpenLayers.Feature.Vector.style;
-
-            _.defaults(s['default'], o.defaultBase);
-
-            return new OpenLayers.StyleMap(s, {
-                extendDefault: o.extendDefault
-            });
+        _createStyleMap: function(styles) {
+            var map = this.map;
+            var s = null;
+            s = styles ? map.model.createVectorLayerStyle(styles) : map.model.createVectorLayerStyle();
+            return s;
         },
 
         /**
@@ -536,24 +537,32 @@
         _getLayer: function(forceRebuild) {
             var widget = this;
             var options = widget.options;
-            var map = $('#' + options.target).data('mapbenderMbMap').map.olMap;
+            var map = widget.map;
             var layer = widget.highlightLayer;
+            var layerOwner = widget.highlightLayerOwner;
+            var layerId = widget.highlightLayerId;
 
-            if(!forceRebuild && layer) {
+            if(!forceRebuild && ( layer && layerId ) ) {
+                layer = map.model.getVectorLayerByNameId(layerOwner,layerId);
                 return layer;
             }
 
-            if(forceRebuild && layer) {
-                map.removeLayer(layer);
+            if(forceRebuild && ( layer && layerId ) ) {
+                map.removeVectorLayer(layer,layerId);
                 widget.highlightLayer = null;
+                widget.highlightLayerId = null;
             }
 
             var route = widget.getCurrentRoute();
+
             var styleMap = widget._createStyleMap(route.results.styleMap);
-            layer = widget.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight', {
-                styleMap: styleMap
-            });
-            map.addLayer(layer);
+
+            layerId = widget.highlightLayer || map.model.createVectorLayer({
+                style: styleMap
+            }, layerOwner);
+
+            widget.highlightLayerId = layerId;
+            layer = map.model.getVectorLayerByNameId(layerOwner,layerId);
 
             return layer;
         },
