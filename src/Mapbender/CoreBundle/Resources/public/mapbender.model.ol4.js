@@ -1462,6 +1462,19 @@ Mapbender.Model.convertResolution_ = function convertResolution_(fromUnits, toUn
 Mapbender.Model.prototype.convertResolution_ = Mapbender.Model.convertResolution_;
 
 /**
+ * Update the layer order of a source to the new sequence of layerIds.
+ * Layers available in the source but not present in layerIds are skipped and remain exactly in their current
+ * place.
+ *
+ * @param {string} sourceId
+ * @param {string[]} layerIds
+ */
+Mapbender.Model.prototype.setSourceLayerOrder = function setSorceLayerOrder(sourceId, layerIds) {
+    var source = this.getSourceById(sourceId);
+    source.updateLayerOrderById(layerIds);
+};
+
+/**
  * create ol.style.Style
  * @param {array} customStyle only fill, stroke, zIndex
  * @returns {ol.style.Style}
