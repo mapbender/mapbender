@@ -102,6 +102,8 @@ Mapbender.Model.prototype.createStyle = function createStyle(options) {
 
     if (options['text']) {
         var text = new ol.style.Text({
+            font: options['text']['font'],
+            text: options['text']['text'],
             fill: new ol.style.Fill({
                 color: options['text']['fill'].color
             }),
@@ -984,7 +986,7 @@ Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
         textStyle.setStroke(stroke);
     }
     return new ol.style.Text(options);
-},
+};
 
     /**
      * Update map view according to selected projection
