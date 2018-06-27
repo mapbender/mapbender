@@ -56,11 +56,17 @@
 
             widget.showLoadingProgress();
 
+            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+            this.map.model.map.once('postrender', function(e) {
+                widget.onMapLoaded(e);
+            });
+            /*
             $(document)
                 .bind('mbmapsourceloadend', $.proxy(widget.onMapLoaded, widget))
                 .bind('mbmapsourceloaderror', function(e) {
                     $.notify("Legend image element(#" + widget.uuid + ") couldn't not be initialized. No map - no legend.");
                 });
+                */
 
             widget._trigger('ready');
             widget._ready();
@@ -163,10 +169,13 @@
         _getSources: function() {
             var widget = this;
             var allLayers = [];
-            var sources = Mapbender.Model.getSources();
-            for (var i = (sources.length - 1); i > -1; i--) {
-                allLayers.push(widget._getSource(sources[i], sources[i].configuration.children[0], 1));
+            var sourceIds = this.map.model.getActiveSourceIds();
+
+            for (var i = (sourceIds.length - 1); i > -1; i--) {
+                var source = this.map.model.getSourceById(sourceIds[i]);
+                allLayers.push(widget._getSource(source, source.configuration.children[0], 1));
             }
+
             return allLayers;
         },
 
