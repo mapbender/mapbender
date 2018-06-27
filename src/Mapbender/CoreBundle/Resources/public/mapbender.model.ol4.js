@@ -141,9 +141,6 @@ Mapbender.Model.prototype.getCurrentProjectionObject = function getCurrentProj()
 
 };
 
-Mapbender.Model.prototype.getAllSrs = function getAllSrs() {
-};
-
 /**
  *
  * @returns {*|OpenLayers.Bounds}
@@ -905,9 +902,18 @@ Mapbender.Model.prototype.removeAllFeaturesFromLayer = function removeAllFeature
 
 };
 
-Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature) {
+Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature, type) {
 
-    return this.getLineStringLength(feature.getGeometry());
+    if(type === 'line'){
+        return this.getLineStringLength(feature);
+    }
+    if(type === 'area'){
+        return   this.getPolygonArea(feature);
+    }
+
+
+
+
 
 };
 
@@ -944,6 +950,11 @@ Mapbender.Model.prototype.getGeometryFromFeatureWrapper = function getGeometryFr
  */
 Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceId, coordinate, resolution) {
     var sourceObj = this.getSourceById(sourceId);
+
+    if (!sourceObj.featureInfoParams.QUERY_LAYERS) {
+        return null;
+    }
+
     var sourceObjParams = sourceObj.featureInfoParams;
     /** @var {ol.source.ImageWMS|ol.source.TileWMS} engineSource */
     var engineSource = sourceObj.getEngineSource();
@@ -953,7 +964,7 @@ Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceI
     // @todo: figure out the purpose of 'resolution' param
 
     console.log(engineSource);
-    return engineSource.getGetFeatureInfoUrl(coordinate || [0, 0], resolution || 5, projection, sourceObjParams);
+    return engineSource.getGetFeatureInfoUrl(coordinate[0] || [0, 0], resolution || 5, projection, sourceObjParams);
 };
 
 /**
@@ -963,7 +974,7 @@ Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceI
  *
  * @returns {string[]}
  */
-Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUrls() {
+Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUrls(coordinate) {
     var urls = [];
     var sourceIds = this.getActiveSourceIds();
     for (var i = 0; i < sourceIds.length; ++i) {
@@ -1103,6 +1114,55 @@ Mapbender.Model.prototype.setMapCursorStyle = function (style) {
 };
 
 /**
+ * Set marker on a map by provided coordinates
+ *
+ * @param {string[]} coordinates
+ * @param {string} owner Element id
+ * @param {string} vectorLayerId
+ * @returns {string} vectorLayerId
+ */
+Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner, vectorLayerId) {
+
+    if (typeof coordinates === 'undefined') {
+        throw new Error("Coordinates are not defined!");
+    }
+
+    var point = new ol.geom.Point(coordinates);
+
+    if (typeof vectorLayerId === 'undefined') {
+
+        vectorLayerId = this.createVectorLayer({
+            source: new ol.source.Vector({wrapX: false}),
+        }, owner);
+
+        this.map.addLayer(this.vectorLayer[owner][vectorLayerId]);
+    }
+
+    this.drawFeatureOnVectorLayer(point, this.vectorLayer[owner][vectorLayerId]);
+
+    return vectorLayerId;
+};
+
+/**
+ * Draw feature on a vector layer
+ *
+ * @param {ol.geom} geometry
+ * @param {ol.layer.Vector} vectorLayer
+ * @returns {Mapbender.Model}
+ */
+Mapbender.Model.prototype.drawFeatureOnVectorLayer = function (geometry, vectorLayer) {
+    var feature = new ol.Feature({
+        geometry: geometry,
+    });
+
+    var source = vectorLayer.getSource();
+
+    source.addFeature(feature);
+
+    return this;
+};
+
+/**
  * Valdiates and fixes an incoming extent. Coordinate values will
  * be cast to float. Inverted coordinates are flipped.
  *
@@ -1170,6 +1230,137 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
 Mapbender.Model.prototype.getMeterPersUnit = function getMeterPersUnit(currentUnit) {
     'use strict';
     return ol.proj.METERS_PER_UNIT[currentUnit];
+};
+
+Mapbender.Model.prototype.getGeomFromFeature = function getGeomFromFeature(feature) {
+    'use strict';
+    return feature.getGeometry();
+};
+
+/**
+ * Returns the size of the map in the DOM (in pixels):
+ * An array of numbers representing a size: [width, height].
+ * @returns {Array.<number>}
+ */
+Mapbender.Model.prototype.getMapSize = function getMapSize() {
+    'use strict';
+    return this.map.getSize();
+};
+
+/**
+ * Returns the view center of a map:
+ * An array of numbers representing an xy coordinate. Example: [16, 48].
+ * @returns {Array.<number>}
+ */
+Mapbender.Model.prototype.getMapCenter = function getMapCenter() {
+    'use strict';
+    return this.map.getView().getCenter();
+};
+
+/**
+ * Returns the width of an extent.
+ * @param extent
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getWidthOfExtent = function getWidthOfExtent(extent) {
+    'use strict';
+    return ol.extent.getWidth(extent);
+};
+
+/**
+ * Returns the height of an extent.
+ * @param {Array} extent
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getHeigthOfExtent = function getHeigthOfExtent(extent) {
+    'use strict';
+    return ol.extent.getHeight(extent);
+};
+
+/**
+ * @param {Object} params
+ * @returns {string}
+ */
+Mapbender.Model.prototype.getUrlParametersAsString = function getUrlParametersAsString(params) {
+    'use strict';
+    var url = '';
+    for (var key in params) {
+        if (params.hasOwnProperty(key)) {
+            url += '&' + key + '=' + params[key];
+        }
+    }
+
+    return url;
+};
+
+/**
+ * @param {string} sourceId
+ * @param {Array} extent
+ * @param {Array} size
+ * @returns {{type: (string|null), url: string, opacity}}
+ */
+Mapbender.Model.prototype.getSourcePrintConfig = function(sourceId, extent, size) {
+    var sourceObj = this.getSourceById(sourceId);
+
+    // Contains VERSION, FORMAT, TRANSPARENT, LAYERS
+    var params = sourceObj.getMapParams;  //engineSource.getParams();
+
+    var v13 = false;
+    if (params.VERSION.indexOf('1.3') !== -1) {
+        v13 = true;
+    }
+
+    // To ensure that only active layers are considered.
+    params.LAYERS = sourceObj.getActiveLayerNames().join(',');
+
+    params.REQUEST = 'GetMap';
+    params.SERVICE = sourceObj.getType().toUpperCase();
+    params.STYLES = ''; //@todo always empty or should it be possible to assign them from a config?
+
+
+    params[v13 ? 'CRS' : 'SRS'] = this.getCurrentProjectionCode();
+
+    var bbox;
+    var axisOrientation = this.getCurrentProjectionObject().getAxisOrientation();
+    if (v13 && axisOrientation.substr(0, 2) === 'ne') {
+        bbox = [extent[1], extent[0], extent[3], extent[2]];
+    } else {
+        bbox = extent;
+    }
+    params.BBOX = bbox.join(',');
+
+    params.WIDTH = size[0];
+    params.HEIGHT = size[1];
+
+    // base url contains the ? sign already.
+    var url = sourceObj.getBaseUrl();
+    url += this.getUrlParametersAsString(params);
+
+    return {
+        type : sourceObj.getType(),
+        url : url,
+        opacity : sourceObj.options.opacity
+    };
+};
+
+/**
+ *
+ * @param elementConfig
+ */
+Mapbender.Model.prototype.createMousePositionControl = function createMousePositionControl(elementConfig){
+    'use strict';
+    var template = elementConfig.prefix + '{x}' + elementConfig.separator + '{y}';
+    var mousePositionControl = new ol.control.MousePosition({
+        coordinateFormat: function(coordinate) {
+
+            return ol.coordinate.format(coordinate, template, elementConfig.numDigits);
+        },
+        projection: elementConfig.displayProjection.projCode,
+        className: 'custom-mouse-position',
+        target: elementConfig.target,
+        undefinedHTML: elementConfig.emptyString
+    });
+    this.map.addControl(mousePositionControl);
 };
 
 /**

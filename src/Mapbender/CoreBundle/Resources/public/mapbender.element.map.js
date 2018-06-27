@@ -8,6 +8,7 @@
                 xoffset: -6,
                 yoffset: -38
             },
+            targetscale: null,
             layersets: []
         },
         srsDefinitions: [],
@@ -55,6 +56,19 @@
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
             });
+
+            // NOTE: startExtent is technically mutually exclusive with
+            //    center and / or targetscale
+            //    However, ol may not properly initialize the view if we don't
+            //    go to a defined extent (which we always have) first
+            if (this.options.center) {
+                this.model.setCenter(this.options.center);
+            }
+            if (this.options.targetscale) {
+                this.model.setScale(this.options.targetscale);
+            }
+
+
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();

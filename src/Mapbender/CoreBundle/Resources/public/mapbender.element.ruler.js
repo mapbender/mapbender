@@ -87,14 +87,13 @@
                         this._reset();
 
                         model.eventFeatureWrapper(event, model.onFeatureChange, [function(f) {
-                            console.log(model.getGeometryCoordinates(f).length);
 
                             if(model.getGeometryCoordinates(f).length !== this.featureVeriticesLength) {
-                                this._handleModify(model.getLineStringLength(f));
+                                this._handleModify(model.getFeatureSize(f,this.options.type));
                             }
                             if(model.getGeometryCoordinates(f).length === this.featureVeriticesLength) {
                                 this.featureVeriticesLength = this.featureVeriticesLength + this.typeMap[this.options.type].increase;
-                                this._handlePartial(model.getLineStringLength(f));
+                                this._handlePartial(model.getFeatureSize(f,this.options.type));
                             }
 
                         }.bind(this), obvservable]);
@@ -103,7 +102,7 @@
 
                     'drawend': function(event) {
                         model.eventFeatureWrapper(event, function(f) {
-                            this._handleFinal(model.getFeatureSize(f));
+                            this._handleFinal(model.getFeatureSize(model.getGeomFromFeature(f),this.options.type));
                         }.bind(this));
                     }.bind(this)
                 }
@@ -146,11 +145,13 @@
          * this group is activated.
          */
         deactivate:  function() {
+            if(this.active){
+                this.active = false;
+                this.map.model.removeAllFeaturesFromLayer(this.id, this.layerId);
+                this.map.model.removeVectorLayer(this.id, this.layerId);
+                $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
+            }
 
-            this.active = false;
-            this.map.model.removeAllFeaturesFromLayer(this.id, this.layerId);
-            this.map.model.removeVectorLayer(this.id, this.layerId);
-            $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
 
         },
         _isGeodesic: function() {
@@ -208,5 +209,6 @@
             return (length / 1000).toFixed(this.options.precision) + unit;
 
         }
+
     });
 })(jQuery);
