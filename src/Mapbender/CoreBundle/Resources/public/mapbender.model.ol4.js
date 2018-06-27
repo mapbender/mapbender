@@ -152,8 +152,9 @@ Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
  * @returns {number}
  */
 Mapbender.Model.prototype.getScale = function getScale(dpi, optRound, optScaleRating) {
+    var dpiNumber = dpi ? dpi : 72;
     var resolution = this.map.getView().getResolution();
-    var scaleCalc = this.resolutionToScale(resolution, dpi);
+    var scaleCalc = this.resolutionToScale(resolution, dpiNumber);
     var scale = optRound ? Math.round(scaleCalc) : scaleCalc;
 
     if (optScaleRating){
