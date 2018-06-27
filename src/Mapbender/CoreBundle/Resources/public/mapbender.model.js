@@ -1110,10 +1110,6 @@ Mapbender.Model = {
      */
     changeProjection: function(srs) {
         var self = this;
-        var oldProj = this.map.olMap.getProjectionObject();
-        if (oldProj.projCode === srs.projection.projCode){
-            return;
-        }
         for(var i = 0; i < this.sourceTree.length; i++) {
             Mapbender.source[this.sourceTree[i].type].changeProjection(this.sourceTree[i], srs.projection);
         }
@@ -1132,12 +1128,6 @@ Mapbender.Model = {
             layer.initResolutions();
         });
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
-        this.mbMap.fireModelEvent({
-            name: 'srschanged',
-            value: {
-                projection: srs.projection
-            }
-        });
     },
     /*
      * Transforms an extent into destProjection projection.
