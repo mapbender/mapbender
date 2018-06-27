@@ -227,11 +227,13 @@
          * Cahnges the overview srs
          */
         _changeSrs: function(event, srs) {
+            console.log("Wow an srschange!", [event, srs]);
+            return;
             var widget = this;
             // @todo 3.1.0: this won't work on OL4, starting here
-            var ovMap = this.control_.ovmap;
-            var oldProj = ovMap.projection;
-            var center = ovMap.getCenter().transform(oldProj, srs.projection);
+            var ovMap = this.control_.ovmap_;
+            var oldProj = ovMap.getView().getProjection();
+            var center = ovMap.getView().getCenter().transform(oldProj, srs.projection);
 
             ovMap.projection = srs.projection;
             ovMap.displayProjection = srs.projection;
