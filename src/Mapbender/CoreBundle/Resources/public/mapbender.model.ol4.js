@@ -98,7 +98,8 @@ Mapbender.Model.prototype.createStyle = function createStyle(options) {
             fill: new ol.style.Fill({
                 color: options['text']['fill'].color
             }),
-            stroke: new ol.style.Stroke(options['text']['stroke'])
+            stroke: new ol.style.Stroke(options['text']['stroke']),
+            offsetY: options['text']['offsetY']
         });
         style.setText(text);
     }
@@ -690,7 +691,8 @@ Mapbender.Model.prototype.createModifyInteraction = function createModifyInterac
     selectInteraction.getFeatures().push(features[0]);
 
     this.vectorLayer[owner][vectorId].interactions = this.vectorLayer[owner][vectorId].interactions  || {};
-    this.vectorLayer[owner][vectorId].interactions[vectorId] = selectInteraction;
+    this.vectorLayer[owner][vectorId].interactions.select = this.vectorLayer[owner][vectorId].interactions.select  || {};
+    this.vectorLayer[owner][vectorId].interactions.select[vectorId] = selectInteraction;
 
     var modify = new ol.interaction.Modify({
         features: selectInteraction.getFeatures()
@@ -703,9 +705,19 @@ Mapbender.Model.prototype.createModifyInteraction = function createModifyInterac
         modify.on(key, value);
     }.bind(this));
 
-    // this.map.addInteraction(selectInteraction);
-    // this.map.addInteraction(modify);
     this.map.getInteractions().extend([selectInteraction, modify]);
+
+    return vectorId;
+};
+
+Mapbender.Model.prototype.deselectFeatureById = function deselectFeatureById(owner, vectorId) {
+    'use strict';
+    var vectorLayer = this.vectorLayer[owner][vectorId];
+    if (!vectorLayer.interactions.select) {
+        return;
+    }
+    var interaction = vectorLayer.interactions.select[vectorId];
+    interaction.getFeatures().clear();
 };
 
 Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,id){
@@ -719,10 +731,10 @@ Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,i
 
 };
 
-Mapbender.Model.prototype.removeInteractions = function removeControls(control){
-    //_.each(controls, function(control, index){
+Mapbender.Model.prototype.removeInteractions = function removeControls(controls){
+    _.each(controls, function(control, index){
         this.map.removeInteraction(control);
-    //}.bind(this));
+    }.bind(this));
 
 
 };

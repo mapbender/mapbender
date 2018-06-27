@@ -29,20 +29,44 @@
                     }
                 },
                 text: {
-                    font: '12px Calibri,sans-serif',
+                    font: '13px Calibri,sans-serif',
                     fill: {
-                        color: 'rgba(255,0,0,0.3)'
+                        color: 'rgba(255,0,0,1)'
                     },
                     stroke: {
-                        color: 'rgba(255,0,0,1)',
-                        width: 2
-                    }
+                        color: 'rgba(255,255,255,1)',
+                        width: 1
+                    },
+                    offsetY: -15,
+
                 }
             },
             selectStyle: {
+                fill : {
+                    color : 'rgba(255,170,0,0.3)'
+                },
                 stroke: {
                     color: 'rgba(255,170,0,1)',
                     width: 2
+                },
+                circle: {
+                    radius: 5,
+                    color: 'rgba(255,170,0,0.3)',
+                    stroke: {
+                        color: 'rgba(255,170,0,1)',
+                        width: 2
+                    }
+                },
+                text: {
+                    font: '12px Calibri,sans-serif',
+                    fill: {
+                        color: 'rgba(255,170,0,1)'
+                    },
+                    stroke: {
+                        color: 'rgba(255,255,255,1)',
+                        width: 2
+                    },
+                    offsetY: -15
                 }
             }
 
@@ -232,14 +256,13 @@
                                 this.model.eventFeatureWrapper(event, function(f) {
                                     f.setId(Mapbender.UUID());
                                     f.setStyle(this.defaultStyle);
-                                    f.getStyle().getText().setText(function() {
-                                        return $('input[name=label-text]', this.element).val();
-                                    });
+                                    f.getStyle().getText().setText($('input[name=label-text]', this.element).val());
                                     if ($('input[name=label-text]', self.element).val().trim() === '') {
                                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                                         this._removeFeature(f);
                                     } else {
                                         this._addToGeomList(f, Mapbender.trans('mb.core.redlining.geometrytype.point'));
+                                        $('input[name=label-text]', this.element).val('');
                                     }
                                 }.bind(this));
                             }.bind(this)
@@ -294,7 +317,7 @@
             //     this.activeControl = null;
             // }
             if(this.activeControlId){
-                this.model.removeInteractions(this.model.vectorLayer[this.element.attr('id')][this.activeControlId].interactions[this.activeControlId]);
+                this.model.removeInteractions(this.model.vectorLayer[this.element.attr('id')][this.activeControlId].interactions);
             }
             $('#redlining-text-wrapper', this.element).addClass('hidden');
             this._deactivateButton();
