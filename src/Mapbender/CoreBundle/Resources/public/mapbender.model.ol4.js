@@ -13,19 +13,10 @@ Mapbender.Model = function(domId, options) {
         throw new Error("Can't initialize model");
     }
     this.options = options;
-    this.maxResolution = this.scaleToResolution(_.max(options.scales));
-    this.minResolution = this.maxResolution / Math.pow(2,options.scales.length);
-
-    var proj = new ol.proj.Projection({
-        code: options.srs,
-        extent: options.maxExtent
-    });
-    var view = new ol.View({
-        projection:  proj,
-        minResolution: this.minResolution,
-        maxResolution : this.maxResolution,
-        zoom: 1
-    });
+    this.viewOptions_ = this.initializeViewOptions(options);
+    var view = new ol.View(this.viewOptions_);
+    // remove zoom after creating view
+    delete this.viewOptions_['zoom'];
     this.map = new ol.Map({
         view: view,
         target: domId
@@ -186,14 +177,33 @@ Mapbender.Model.prototype.getScale = function getScale(dpi, optRound, optScaleRa
  *
  * @param {float} resolution
  * @param {number} [dpi=72]
+ * @param {string} unit "m" or "degrees"
  * @returns {number}
  */
 Mapbender.Model.prototype.resolutionToScale = function(resolution, dpi) {
     var currentUnit = this.getUnitsOfCurrentProjection();
-    var mpu = this.getMeterPersUnit(currentUnit);
+    var mpu = this.getMetersPerUnit(currentUnit);
     var inchesPerMetre = 39.37;
-    return resolution * mpu * inchesPerMetre * (dpi || 72);
+    return resolution * mpu * inchesPerMetre * dpi;
 };
+
+/**
+ * @param {float} scale
+ * @param {number} dpi
+ * @param {string} unit
+ * @returns {number}
+ */
+Mapbender.Model.scaleToResolutionStatic = function(scale, dpi, unit) {
+    if (!dpi || !unit) {
+        console.error("Must supply dpi and unit", scale, dpi, unit);
+        throw new Error("Must supply dpi and unit");
+    }
+    var mpu = this.getMetersPerUnit(unit);
+    var inchesPerMetre = 39.37;
+    return scale / (mpu * inchesPerMetre * dpi);
+};
+// make available on instance
+Mapbender.Model.prototype.scaleToResolutionStatic = Mapbender.Model.scaleToResolutionStatic;
 
 /**
  *
@@ -203,9 +213,7 @@ Mapbender.Model.prototype.resolutionToScale = function(resolution, dpi) {
  */
 Mapbender.Model.prototype.scaleToResolution = function(scale, dpi) {
     var currentUnit = this.getUnitsOfCurrentProjection();
-    var mpu = this.getMeterPersUnit(currentUnit);
-    var inchesPerMetre = 39.37;
-    return scale / (mpu * inchesPerMetre * (dpi || 72));
+    return this.scaleToResolutionStatic(scale, dpi || 72, currentUnit);
 };
 
 /**
@@ -1076,7 +1084,13 @@ Mapbender.Model.prototype.getCoordinatesXYObjectFromMapClickEvent = function (ev
  * @returns {ol.proj.Units}
  */
 Mapbender.Model.prototype.getUnitsOfCurrentProjection = function () {
-    return this.getCurrentProjectionObject().getUnits();
+    var proj = this.getCurrentProjectionObject();
+    var units = proj.getUnits();
+    if (!units) {
+        console.warn("Projection object has undefined units! Defaulting to degrees", proj);
+        units = "degrees";
+    }
+    return units;
 };
 
 /**
@@ -1203,12 +1217,14 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
 /**
  *
  * @param currentUnit
+ * @static
  * @returns {number}
  */
-Mapbender.Model.prototype.getMeterPersUnit = function getMeterPersUnit(currentUnit) {
+Mapbender.Model.prototype.getMetersPerUnit = function getMetersPerUnit(currentUnit) {
     'use strict';
     return ol.proj.METERS_PER_UNIT[currentUnit];
 };
+Mapbender.Model.getMetersPerUnit = Mapbender.Model.prototype.getMetersPerUnit;
 
 Mapbender.Model.prototype.getGeomFromFeature = function getGeomFromFeature(feature) {
     'use strict';
@@ -1339,4 +1355,31 @@ Mapbender.Model.prototype.createMousePositionControl = function createMousePosit
         undefinedHTML: elementConfig.emptyString
     });
     this.map.addControl(mousePositionControl);
+};
+
+/**
+ * @param {object} options
+ * @returns {object}
+ */
+Mapbender.Model.prototype.initializeViewOptions = function initializeViewOptions(options) {
+    'use strict';
+    var proj = ol.proj.get(options.srs);
+    if (options.maxExtent) {
+        proj.setExtent(options.maxExtent);
+    }
+    var viewOptions = {
+        projection:  proj
+    };
+
+    if (options.scales && options.scales.length) {
+        // Sometimes, the units are empty -.-
+        // this seems to happen predominantely with "degrees" SRSs, so...
+        var units = ol.proj.get(options.srs).getUnits();
+        viewOptions['resolutions'] = options.scales.map(function(scale) {
+            return this.scaleToResolutionStatic(scale, 72, proj.getUnits() || "degrees");
+        }.bind(this));
+    } else {
+        viewOptions.zoom = 7; // hope for the best
+    }
+    return viewOptions;
 };
