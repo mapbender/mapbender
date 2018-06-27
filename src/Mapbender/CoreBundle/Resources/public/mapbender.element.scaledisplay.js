@@ -43,8 +43,6 @@
             this._ready();
         },
         _updateScale: function() {
-            console.log('_updateScale');
-
             var widget = this;
             var model = widget.map.model;
             var scale = model.getScale(model.options.dpi);
