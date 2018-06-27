@@ -116,6 +116,7 @@ $.widget('mapbender.mbSimpleSearch', {
             }
 
             // finally, zoom
+            self.model.setCenter(coordinates);
             self.model.zoomToExtent(bounds);
             self.model.setZoom(zoom);
         });

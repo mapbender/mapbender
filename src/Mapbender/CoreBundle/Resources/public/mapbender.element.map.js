@@ -17,6 +17,9 @@
         map: null,
         readyState: false,
         readyCallbacks: [],
+        state_: {
+            srs: undefined
+        },
         /**
          * Creates the map widget
          */
@@ -47,6 +50,7 @@
 
 
             this.model = new Mapbender.Model(this.element.attr('id'), modelOptions);
+            this.state_.srs = this.options.srs;
             _.forEach(this.options.layersets.reverse(), function(layerSetId) {
                 this.model.addLayerSetById(layerSetId);
             }.bind(this));
@@ -189,16 +193,37 @@
         /*
          * Changes the map's projection.
          */
-        changeProjection: function(srs){
-            if(typeof srs === "string")
-                this.model.changeProjection({
-                    projection: this.model.getProj(
-                            srs)
+        changeProjection: function(srs) {
+            if (!srs || typeof srs !== 'string') {
+                console.error("Invalid srs argument", srs);
+                throw new Error("Invalid srs argument");
+            }
+            if (this.state_.srs !== srs) {
+                var previousSrs = this.state_.srs;
+                console.log("mbMap switching srs", {from: previousSrs, to: srs});
+                this.model.updateMapViewForProjection(srs);
+                var newProjection = this.model.getCurrentProjectionObject();
+                var axisOrientation = newProjection.getAxisOrientation();
+                this.fireModelEvent({
+                    name: 'srschanged',
+                    value: {
+                        // @todo: emulate / shim projection object with OL2-compatible signature
+                        projection: newProjection,
+                        // this will stay engine-native
+                        nativeProjection: newProjection,
+                        // following attribs added to event data in OL4 initiative
+                        oldCode: previousSrs,
+                        newCode: srs,
+                        units: newProjection.getUnits(),
+                        axisOrientation: axisOrientation,
+                        yx: ((axisOrientation || "enu").slice(0,2)) !== 'en',
+                        extent: newProjection.getExtent()
+                    }
                 });
-            else
-                this.model.changeProjection({
-                    projection: srs
-                });
+                this.state_.srs = srs;
+            } else {
+                // console.log("mbMap skipping srs switch", srs);
+            }
         },
         /**
          * Zooms the map in

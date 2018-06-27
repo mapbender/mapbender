@@ -265,20 +265,24 @@ window.Mapbender.SourceModelOl4 = (function() {
                 delete this.queryLayerMap_[layerName];
             }
         }
-        var visibleAfter = [];
-        var queryableAfter = [];
+        this.updateLayerParams_();
+    };
+
+    Source.prototype.updateLayerParams_ = function updateLayerParams_() {
+        var visible = [];
+        var queryable = [];
         // loop through layerOrder_, use that to determine layer ordering and rebuild the LAYERS request parameter
         for (var i = 0; i < this.layerOrder_.length; ++i) {
             var nextLayerName = this.layerOrder_[i];
             if (!!this.activeLayerMap_[nextLayerName]) {
-                visibleAfter.push(nextLayerName);
+                visible.push(nextLayerName);
             }
             if (!!this.queryLayerMap_[nextLayerName]) {
-                queryableAfter.push(nextLayerName);
+                queryable.push(nextLayerName);
             }
         }
-        this.getMapParams.LAYERS = visibleAfter.join(',');
-        this.featureInfoParams.QUERY_LAYERS = queryableAfter.join(',');
+        this.getMapParams.LAYERS = visible.join(',');
+        this.featureInfoParams.QUERY_LAYERS = queryable.join(',');
         this.updateEngine();
     };
     /**
@@ -356,6 +360,65 @@ window.Mapbender.SourceModelOl4 = (function() {
      */
     Source.prototype.getEngineSource = function() {
         return this.engineLayer_.getSource();
+    };
+
+    /**
+     *
+     * @param {string} layerId
+     * @returns {string|null}
+     */
+    Source.prototype.getLayerNameFromLayerId = function getLayerNameFromLayerId(layerId) {
+        var match = null;
+        Mapbender.Util.SourceTree.iterateLayers(this, false, function(node, siblingIndex, parents) {
+            if (node.options.id === layerId) {
+                match = node.options.name;
+                // abort iteration
+                return false;
+            }
+        });
+        return match;
+    };
+
+    /**
+     * Update layer ordering by name.
+     *
+     * @param {string[]} layerNames
+     */
+    Source.prototype.updateLayerOrderByName = function updateLayerOrderByName(layerNames) {
+        console.log("Entering updateLayerOrderByName", this.layerOrder_);
+        var i;
+        var reusableIndexes = [];
+        for (i = 0; i < layerNames.length; ++i) {
+            var layerName = layerNames[i];
+            var currentIndex = this.layerOrder_.indexOf(layerName);
+            if (currentIndex === -1) {
+                console.error("Unknown layer", layerName, this.layerOrder_);
+                throw new Error("Unknown layer");
+            }
+            reusableIndexes.push(currentIndex);
+        }
+        var indexOrder = reusableIndexes.sort();
+        if (indexOrder.length !== layerNames.length) {
+            throw new Error("Assertion failed, length mismatch indexOrder vs layerNames");
+        }
+        for (i = 0; i < indexOrder.length; ++i) {
+            var reuseIndex = indexOrder[i];
+            this.layerOrder_[reuseIndex] = layerNames[i];
+        }
+        console.log("Leaving updateLayerOrderByName", this.layerOrder_);
+        this.updateLayerParams_();
+        this.updateEngine();
+    };
+
+    /**
+     * Update layer ordering by id.
+     *
+     * @param {string[]} layerIds
+     */
+    Source.prototype.updateLayerOrderById = function updateLayerOrderById(layerIds) {
+        var layerNames = layerIds.map(this.getLayerNameFromLayerId.bind(this));
+        console.log(layerNames);
+        return this.updateLayerOrderByName(layerNames);
     };
 
     return Source;
