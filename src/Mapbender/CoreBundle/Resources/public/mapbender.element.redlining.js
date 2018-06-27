@@ -301,7 +301,7 @@
             this.map.removeLayer(this.layer);
         },
         _deactivateControl: function(){
-            if(this.selectedFeature) {
+            // if(this.selectedFeature) {
                 // this.activeControl.unselectFeature(this.selectedFeature);
                 // if (this.selectedFeature.style && this.selectedFeature.style.label) {
                 //     $('input[name=label-text]', this.element).off('keyup', $.proxy(this._writeText, this));
@@ -309,6 +309,9 @@
                 //     this.layer.redraw();
                 // }
                 // this.selectedFeature = null;
+            // }
+            if(this.selectedFeature) {
+                this.model.deselectFeatureById(this.element.attr('id'), this.activeControlId);
             }
             // if(this.activeControl !== null) {
             //     this.activeControl.deactivate();
