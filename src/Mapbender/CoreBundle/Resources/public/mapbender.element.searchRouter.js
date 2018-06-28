@@ -43,7 +43,7 @@
                     color: 'rgba(255,255,255,1)',
                     width: 1
                 },
-                offsetY: -15,
+                offsetY: -15
 
             }
         },
@@ -701,7 +701,7 @@
             }
         },
 
-        /** TODO Change of Model und Ol4
+        /**
          * Result callback
          *
          * @param  jQuery.Event event Mouse event
@@ -722,52 +722,48 @@
                 feature.setGeometry(transFeatureGeomtry);
             }
             var featureExtent = feature.getGeometry().getExtent();
-            //var feeatureExtent = map.model.sanitizeExtent(featureExtent);
 
             // buffer, if needed
             if(callbackConf.options && callbackConf.options.buffer){
                 var radius = callbackConf.options.buffer;
-                featureExtent[0] += radius;
-                featureExtent[1] += radius;
-                featureExtent[2] -= radius;
-                featureExtent[3] -= radius;
+                featureExtent[0] -= radius;
+                featureExtent[1] -= radius;
+                featureExtent[2] += radius;
+                featureExtent[3] += radius;
             }
 
             // get zoom for buffered extent
             var mapSize = model.map.getSize();
             var mapView = model.map.getView();
-            var zoom = mapView.fit(featureExtent, mapSize);
+            var extent = model.getMapExtent();
+            var res = model.getResolutionForExtent(extent, mapSize);
+            var zoom = model.getZoomForResolution(res);
 
             // restrict zoom if needed
             if(callbackConf.options &&
                (callbackConf.options.maxScale || callbackConf.options.minScale)){
 
-                var res = model.map.getView().getResolutionForExtent(extent, mapSize);
-                //var units = map.baseLayer.units;
-                //var scale = OpenLayers.Util.getScaleFromResolution(res, units);
-
+                var unit = model.getUnitsOfCurrentProjection();
 
                 if(callbackConf.options.maxScale){
-                    var maxRes = OpenLayers.Util.getResolutionFromScale(
-                        callbackConf.options.maxScale, map.baseLayer.units);
+                    var maxRes = model.getResolutionForScale(callbackConf.options.maxScale,unit);
                     if(Math.round(res) < maxRes){
                         zoom = map.getZoomForResolution(maxRes);
                     }
                 }
 
                 if(callbackConf.options.minScale){
-                    var minRes = OpenLayers.Util.getResolutionFromScale(
-                        callbackConf.options.minScale, map.baseLayer.units);
+                    var minRes = model.getResolutionForScale(callbackConf.options.minScale,unit);
                     if(Math.round(res) > minRes){
                         zoom = map.getZoomForResolution(minRes);
                     }
                 }
             }
 
-            // finally, zoom
-            map.setCenter(featureExtent.getCenterLonLat(), zoom);
+            // finally fit to View with zoom and duration of Animation
+            map.model.panToExtent(featureExtent, {duration: 1000, maxZoom: zoom});
 
-            // And highlight new feature
+            // And highlight new feature TODO Change of Model und Ol4
             var layer = feature.layer;
             $.each(layer.selectedFeatures, function(idx, feature) {
                 layer.drawFeature(feature, 'default');
