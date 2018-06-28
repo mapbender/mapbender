@@ -555,29 +555,34 @@ Mapbender.Model.prototype.containsCoordinate = function containsCoordinate(exten
 };
 
 /**
- *
+ * fit to Extent
  * @param extent
- * @param duration
- * @param maxZoom
+ * @param {array} optOptions
  */
-Mapbender.Model.prototype.panToExtent = function panToExtent(extent, duration, maxZoom) {
+Mapbender.Model.prototype.panToExtent = function panToExtent(extent, optOptions) {
     'use strict';
 
     var view = this.map.getView();
-    var maxZoomNum= view.getZoom();
-    var durationNum = 2000;
-
-    if (maxZoom){
-        maxZoomNum = maxZoom;
-    }
-
-    if (duration){
-        durationNum = duration;
-    }
+    var size = optOptions['size'] ? optOptions['size']: undefined;
+    var padding =  optOptions['padding'] ?optOptions['padding']: undefined;
+    var constrainResolution =  optOptions['constrainResolution'] ?optOptions['constrainResolution']: undefined;
+    var nearest =  optOptions['nearest'] ?optOptions['nearest']: undefined;
+    var minResolution =  optOptions['minResolution'] ?optOptions['minResolution']: undefined;
+    var easing =  optOptions['easing'] ?optOptions['easing']: undefined;
+    var callback =  optOptions['callback'] ?optOptions['callback']: undefined;
+    var maxZoom= optOptions['maxZoom'] ? optOptions['maxZoom']: view.getZoom();
+    var duration = optOptions['duration'] ? optOptions['duration'] : 2000;
 
     view.fit(extent, {
-        duration: durationNum,
-        maxZoom: maxZoomNum
+        size: size,
+        paddig:padding,
+        constrainResolution: constrainResolution,
+        nearest: nearest,
+        minResolution: minResolution,
+        easing:easing,
+        callback: callback,
+        duration: duration,
+        maxZoom: maxZoom
     });
 };
 
