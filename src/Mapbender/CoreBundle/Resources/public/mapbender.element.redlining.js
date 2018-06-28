@@ -29,20 +29,44 @@
                     }
                 },
                 text: {
-                    font: '12px Calibri,sans-serif',
+                    font: '13px Calibri,sans-serif',
                     fill: {
-                        color: 'rgba(255,0,0,0.3)'
+                        color: 'rgba(255,0,0,1)'
                     },
                     stroke: {
-                        color: 'rgba(255,0,0,1)',
-                        width: 2
-                    }
+                        color: 'rgba(255,255,255,1)',
+                        width: 1
+                    },
+                    offsetY: -15,
+
                 }
             },
             selectStyle: {
+                fill : {
+                    color : 'rgba(255,170,0,0.3)'
+                },
                 stroke: {
                     color: 'rgba(255,170,0,1)',
                     width: 2
+                },
+                circle: {
+                    radius: 5,
+                    color: 'rgba(255,170,0,0.3)',
+                    stroke: {
+                        color: 'rgba(255,170,0,1)',
+                        width: 2
+                    }
+                },
+                text: {
+                    font: '12px Calibri,sans-serif',
+                    fill: {
+                        color: 'rgba(255,170,0,1)'
+                    },
+                    stroke: {
+                        color: 'rgba(255,255,255,1)',
+                        width: 2
+                    },
+                    offsetY: -15
                 }
             }
 
@@ -232,14 +256,13 @@
                                 this.model.eventFeatureWrapper(event, function(f) {
                                     f.setId(Mapbender.UUID());
                                     f.setStyle(this.defaultStyle);
-                                    f.getStyle().getText().setText(function() {
-                                        return $('input[name=label-text]', this.element).val();
-                                    });
+                                    f.getStyle().getText().setText($('input[name=label-text]', this.element).val());
                                     if ($('input[name=label-text]', self.element).val().trim() === '') {
                                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                                         this._removeFeature(f);
                                     } else {
                                         this._addToGeomList(f, Mapbender.trans('mb.core.redlining.geometrytype.point'));
+                                        $('input[name=label-text]', this.element).val('');
                                     }
                                 }.bind(this));
                             }.bind(this)
@@ -278,7 +301,7 @@
             this.map.removeLayer(this.layer);
         },
         _deactivateControl: function(){
-            if(this.selectedFeature) {
+            // if(this.selectedFeature) {
                 // this.activeControl.unselectFeature(this.selectedFeature);
                 // if (this.selectedFeature.style && this.selectedFeature.style.label) {
                 //     $('input[name=label-text]', this.element).off('keyup', $.proxy(this._writeText, this));
@@ -286,6 +309,9 @@
                 //     this.layer.redraw();
                 // }
                 // this.selectedFeature = null;
+            // }
+            if(this.selectedFeature) {
+                this.model.deselectFeatureById(this.element.attr('id'), this.activeControlId);
             }
             // if(this.activeControl !== null) {
             //     this.activeControl.deactivate();
@@ -294,7 +320,7 @@
             //     this.activeControl = null;
             // }
             if(this.activeControlId){
-                this.model.removeInteractions(this.model.vectorLayer[this.element.attr('id')][this.activeControlId].interactions[this.activeControlId]);
+                this.model.removeInteractions(this.model.vectorLayer[this.element.attr('id')][this.activeControlId].interactions);
             }
             $('#redlining-text-wrapper', this.element).addClass('hidden');
             this._deactivateButton();
@@ -318,6 +344,7 @@
                 feature.setId(Mapbender.UUID());
                 return feature.getId();
             });
+            row.attr('data-layer-id', this.activeControlId);
             $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel, activeTool));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
@@ -331,16 +358,16 @@
         _removeFromGeomList: function(e){
             this._deactivateControl();
             var $tr = $(e.target).parents('tr:first');
-            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
-            this.model.removeFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
+            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
+            this.model.removeFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
             $tr.remove();
             this.selectedFeature = null;
         },
         _modifyFeature: function(e){
             this._deactivateControl();
             var $tr = $(e.target).parents('tr:first');
-            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
-            this.activeControlId = this.model.createModifyInteraction(this.element.attr('id'), this.selectStyle, this.activeControlId, $tr.attr('data-id'));
+            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
+            this.activeControlId = this.model.createModifyInteraction(this.element.attr('id'), this.selectStyle, $tr.attr('data-layer-id'), $tr.attr('data-id'));
             // this.selectedFeature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
             // if(this.selectedFeature.style && this.selectedFeature.style.label) {
             //     this.selectedFeature.style = this._setTextEdit(this.selectedFeature.style);
@@ -356,8 +383,8 @@
         _zoomToFeature: function(e){
             this._deactivateControl();
             var $tr = $(e.target).parents('tr:first');
-            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
-            var extent = this.model.getFeatureExtent(this.element.attr('id'), this.activeControlId, $tr.attr('data-id'));
+            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
+            var extent = this.model.getFeatureExtent(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
             this.model.zoomToExtent(extent);
             // var feature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
             // var bounds = feature.geometry.getBounds();
