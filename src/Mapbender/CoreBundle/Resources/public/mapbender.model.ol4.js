@@ -146,13 +146,13 @@ Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
 /** @todo (following methods): put the "default" dpi in a common place? */
 /**
  *
- * @param {number} dpi default 72 DPI
+ * @param {number} dpi default this.map.options.dpi
  * @param {boolean} optRound Whether to round the scale or not.
  * @param {boolean} optScaleRating Whether to round the scale rating or not. K:X000 and M:X000000
  * @returns {number}
  */
 Mapbender.Model.prototype.getScale = function getScale(dpi, optRound, optScaleRating) {
-    var dpiNumber = dpi ? dpi : 72;
+    var dpiNumber = dpi ? dpi : this.map.options.dpi;
     var resolution = this.map.getView().getResolution();
     var scaleCalc = this.resolutionToScale(resolution, dpiNumber);
     var scale = optRound ? Math.round(scaleCalc) : scaleCalc;
