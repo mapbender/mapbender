@@ -388,7 +388,9 @@
                 value: null
             });
             // @todo: legacy 'sourcechanged' event with legacy data payload
-
+        },
+        reorderSources: function(sources) {
+            this.model.reorderSources(sources);
         },
         /**
          * Loads the srs definitions from server

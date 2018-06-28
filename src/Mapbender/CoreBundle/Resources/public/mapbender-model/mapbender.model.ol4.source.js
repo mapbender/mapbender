@@ -474,5 +474,26 @@ window.Mapbender.SourceModelOl4 = (function() {
         }
     };
 
+    /**
+     * @returns {number|undefined}
+     */
+    Source.prototype.getZIndex = function getZIndex() {
+        if (!this.engineLayer_) {
+            throw new Error("Layer not initialized, z unknown");
+        }
+        return this.engineLayer_.getZIndex();
+    };
+
+    /**
+     * @param {number|undefined} zIndex
+     * @returns {void}
+     */
+    Source.prototype.setZIndex = function setZIndex(zIndex) {
+        if (!this.engineLayer_) {
+            throw new Error("Layer not initialized, z unknown");
+        }
+        return this.engineLayer_.setZIndex(zIndex);
+    };
+
     return Source;
 })();

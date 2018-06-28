@@ -224,7 +224,7 @@
             var sourceIds = $roots.map(function() {
                 return $(this).attr('data-sourceid');
             }).get().reverse();
-            this.model.reorderSources(sourceIds);
+            this.mbMap.reorderSources(sourceIds);
         },
         _createSortable: function() {
             var self = this;

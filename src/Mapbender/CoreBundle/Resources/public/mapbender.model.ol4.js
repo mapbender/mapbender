@@ -1548,15 +1548,71 @@ Mapbender.Model.prototype.setSourceLayerOrder = function setSorceLayerOrder(sour
 
 /**
  *
- * @param {string|SourceModelOl4} source
+ * @param {string|object|SourceModelOl4} source
  * @param {boolean} visible
  */
 Mapbender.Model.prototype.setSourceState = function setSourceState(source, visible) {
-    var sourceObj;
-    if (typeof source === 'string') {
-        sourceObj = this.model.getSourceById(source);
-    } else {
-        sourceObj = source;
-    }
+    var sourceObj = this.toSourceObj_(source);
     sourceObj.setState(visible);
+};
+
+/**
+ *
+ * @param {string|number|object|SourceModelOl4} input
+ * @returns {Mapbender.SourceModelOl4}
+ * @private
+ */
+Mapbender.Model.prototype.toSourceObj_ = function toSourceObj_(input) {
+    if (input instanceof Mapbender.SourceModelOl4) {
+        return input;
+    }
+    switch (typeof input) {
+        case 'string':
+        case 'number':
+            return this.getSourceById('' + input);
+        case 'object':
+            if (typeof input.id !== 'undefined') {
+                return this.toSourceObj_(input.id);
+            }
+            break;
+    }
+    console.error("Could not identify requested source from input", input);
+    throw new Error("Could not identify requested source");
+};
+
+Mapbender.Model.prototype.reorderSources = function reorderSources(sources) {
+    var self = this;
+    var sourceObjs = sources.map(this.toSourceObj_.bind(this));
+    var newIdOrder = sourceObjs.map(function(source) { return source.id; });
+    // Collect currently set positions and z indexes for given sources.
+    // position := array index in this.sourceTree
+    // z index := mapquery layer position = openlayers map layer index - 1
+    // The collected values will be reused / redistributed to the affected
+    // sources.
+    var oldPositions = [];
+    var zIndexes = [];
+    var sourceIdToSource = {};
+    _.forEach(sourceObjs, function(sourceObj) {
+        var currentPosition = this.pixelSources.indexOf(sourceObj);
+        if (currentPosition === -1) {
+            console.error("Could not find relative position of source", sourceObj, this.pixelSources);
+            throw new Error("Could not find relative position of source");
+        }
+        oldPositions.push(currentPosition);
+        sourceIdToSource[sourceObj.id] = sourceObj;
+        zIndexes.push(sourceObj.getZIndex());
+    }.bind(this));
+    oldPositions.sort();
+    zIndexes.sort();
+    // rewrite pixelSources order and z indexes
+    for (var i = 0; i < oldPositions.length; ++i) {
+        var oldPos = oldPositions[i];
+        var injectSourceId = newIdOrder[i];
+        var injectSourceObj = sourceIdToSource[injectSourceId];
+        var injectSourceZ = zIndexes[i];
+        this.pixelSources[oldPos] = injectSourceObj;
+        injectSourceObj.setZIndex(injectSourceZ);
+    }
+    console.log("Changed source order", this.pixelSources);
+    this.map.render();
 };
