@@ -24,20 +24,16 @@
             this.options.empty = this.options.empty || '';
             this.options.prefix = this.options.prefix || '';
             this.options.separator = this.options.separator || ' ';
-            $(document).on('mbmapsrschanged', $.proxy(this._reset, this));
+            $(document).on('mbmapsrschanged', $.proxy(this._updateProjection, this));
 
             this.options.numDigits = isNaN(parseInt(this.options.numDigits, this.RADIX))
                 ? 0
                 : parseInt(this.options.numDigits, this.RADIX);
             this.options.numDigits = this.options.numDigits < 0 ? 0 : this.options.numDigits;
 
-            this._reset();
-        },
-
-        _reset: function (event, srs) {
             var model = this.map.model;
             var isdeg = model.getCurrentProjectionObject().getUnits() === 'dd';
-            srs = { projection: {projCode: model.getCurrentProjectionCode()}};
+            var srs = {projection: {projCode: model.getCurrentProjectionCode()}};
 
             if (this.crs !== null && (this.crs === srs.projection.projCode)) {
                 return;
@@ -54,6 +50,12 @@
             };
             model.createMousePositionControl(elementConfig);
             this.crs = srs.projection.projCode;
+        },
+
+        _updateProjection: function () {
+          var projection = this.map.model.getCurrentProjectionCode();
+          this.map.model.mousePositionControlUpdateProjection(projection);
+          this.crs = projection;
         }
     });
 

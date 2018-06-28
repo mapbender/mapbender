@@ -1654,6 +1654,19 @@ Mapbender.Model.prototype.getZoomForResolution = function (resolution) {
 
 
 /**
+ *
+ * @param projection
+ */
+Mapbender.Model.prototype.mousePositionControlUpdateProjection = function mousePositionControlUpdateProjection(projection) {
+    'use strict';
+    this.map.getControls().forEach(function (control) {
+        if (control instanceof ol.control.MousePosition) {
+            control.setProjection(projection);
+        }
+    });
+};
+
+/**
  * @param {object} options
  * @returns {object}
  */
