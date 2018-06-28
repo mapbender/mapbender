@@ -310,7 +310,24 @@ window.Mapbender.SourceModelOl4 = (function() {
      * @returns {boolean}
      */
     Source.prototype.isActive = function isActive() {
+
         return this.options.visibility;
+    };
+
+    /**
+     * @returns {boolean}
+     */
+    Source.prototype.isVisible = function isVisible() {
+
+        return this.isActive() && (!!this.getMapParams.LAYERS);
+    };
+
+    /**
+     * @returns {boolean}
+     */
+    Source.prototype.isQueryable = function isQueryable() {
+
+        return this.isActive() && (!!this.featureInfoParams.QUERY_LAYERS);
     };
 
     /**
