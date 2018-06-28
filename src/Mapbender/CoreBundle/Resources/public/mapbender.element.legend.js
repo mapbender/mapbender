@@ -279,7 +279,10 @@
                 if (!sourceId) {
                     console.warn("Detaching source node without id", $source);
                 } else {
-                    sourcesRendered[sourceId] = $source;
+                    // HACK: skip reuse of rendered sources
+                    //   until we figure out how to reorder
+                    //   the dom on layer order changes
+                    // sourcesRendered[sourceId] = $source;
                 }
                 $source.detach();
             });
