@@ -40,5 +40,45 @@ Mapbender.Projection = $.extend(window.Mapbender.Projection || {}, {
                 }
             }
         }
-    }
+    },
+
+    /**
+     * Transform coordinates between srs
+     *
+     * @param fromSrs
+     * @param toSrs
+     * @param coordinates
+     * @return {*}
+     */
+    transform: function (fromSrs, toSrs, coordinates) {
+        this.checkIfSrsIsDefined(fromSrs);
+        this.checkIfSrsIsDefined(toSrs);
+
+        if (window.Proj4js) {
+            return Proj4js.transform(fromSrs, toSrs, coordinates);
+        }
+
+        if (window.proj4) {
+            return Proj4js.transform(proj4.Proj(fromSrs), proj4.Proj(toSrs), coordinates);
+        }
+    },
+
+    /**
+     * Check if a srs is valid
+     *
+     * @param srs
+     */
+    checkIfSrsIsDefined: function (srs) {
+        if (window.Proj4js) {
+            if (!Proj4js.defs[srs]) {
+                throw new Error("SRS + " + srs + ' is not supported!');
+            }
+        }
+
+        if (window.proj4) {
+            if (!proj4.defs(srs)) {
+                throw new Error("SRS + " + srs + ' is not supported!');
+            }
+        }
+    },
 });
