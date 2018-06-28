@@ -37,7 +37,6 @@ window.Mapbender.Model.MapPopup = function($markup, model) {
 };
 
 Mapbender.Model.MapPopup.prototype.createPopupMarkup = function createPopupMarkup() {
-
     var $popupContainer = $('<div />').addClass('ol-popup');
     var $closeButton = $('<a />').attr('href', 'javascript:void(0)').addClass('ol-popup-closer');
     var $popupContent = $('<div />').addClass('popup-content');
@@ -49,4 +48,17 @@ Mapbender.Model.MapPopup.prototype.openPopupOnXY = function openPopupOnXY(coord,
     //console.log(this.overlay.setElement(this.$markup));
     this.$markup.find('.popup-content')[0].innerHTML = content(coord);
     this.overlay.setPosition(coord);
+};
+
+/**
+ * Open popup on given coordinates with provided content
+ *
+ * @TODO May be it needs to merge this function and openPopupOnXY([x,y], callback)
+ *
+ * @param [x,y] coordinates
+ * @param {string} content
+ */
+Mapbender.Model.MapPopup.prototype.openPopupOnXYWithCustomContent = function openPopupOnXY(coordinates, content) {
+    this.$markup.find('.popup-content')[0].innerHTML = content;
+    this.overlay.setPosition(coordinates);
 };

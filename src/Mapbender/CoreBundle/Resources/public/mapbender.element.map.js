@@ -5,13 +5,14 @@
                 image: 'bundles/mapbendercore/image/pin_red.png',
                 width: 32,
                 height: 41,
-                xoffset: -6,
-                yoffset: -38
+                xoffset: 0,//-6,
+                yoffset: 0,//-38
             },
             targetscale: null,
             layersets: []
         },
         srsDefinitions: [],
+        poiLayerId: null,
         elementUrl: null,
         model: null,
         map: null,
@@ -74,9 +75,13 @@
 
 
             this.map = me.data('mapQuery');
+
+            this.initializePois();
+
             self._trigger('ready');
             this._ready();
         },
+
         /**
          * DEPRECATED
          */
@@ -401,7 +406,58 @@
          */
         _loadSrsError: function(response){
             Mapbender.error(Mapbender.trans(response));
-        }
+        },
+
+        /**
+         * Initialize POIs
+         */
+        initializePois: function () {
+            var self = this,
+                poiOptionsList = (this.options && this.options.extra && this.options.extra['pois']) || [];
+
+            if (!poiOptionsList.length) {
+                return;
+            }
+
+            var pois = poiOptionsList.map(function(poi) {
+                var coordinates = [poi.x, poi.y];
+
+                if (poi.srs) {
+                    coordinates = Mapbender.Projection.transform(poi.srs, self.model.getCurrentProjectionCode(), coordinates);
+                }
+
+                return {
+                    position: coordinates,
+                    label: poi.label
+                };
+            });
+
+            var size = [
+                this.options.poiIcon.width,
+                this.options.poiIcon.height
+            ];
+
+            var offset = [
+                this.options.poiIcon.xoffset,
+                this.options.poiIcon.yoffset
+            ];
+
+            var iconStyle = this.model.createIconStyle({
+                src: Mapbender.configuration.application.urls.asset + this.options.poiIcon.image,
+                size: size,
+                offset: offset
+            });
+
+            $.each(pois, function(idx, poi) {
+                self.poiLayerId = self.model.setMarkerOnCoordinates(poi.position, self.element.attr('id'), self.poiLayerId, iconStyle);
+
+                if (poi.label) {
+                    var popupOverlay = new Mapbender.Model.MapPopup(undefined, self.model);
+                    popupOverlay.$markup.addClass('flipped');
+                    popupOverlay.openPopupOnXYWithCustomContent(poi.position, poi.label);
+                }
+            });
+        },
     });
 
 })(jQuery);
