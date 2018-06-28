@@ -1372,8 +1372,8 @@ Mapbender.Model.prototype.getUrlParametersAsString = function getUrlParametersAs
  * @param {Array} size
  * @returns {{type: (string|null), url: string, opacity}}
  */
-Mapbender.Model.prototype.getSourcePrintConfig = function(sourceId, extent, size) {
-    var sourceObj = this.getSourceById(sourceId);
+Mapbender.Model.prototype.getSourcePrintConfig = function(source, extent, size) {
+    var sourceObj = this.toSourceObj_(source);
 
     // Contains VERSION, FORMAT, TRANSPARENT, LAYERS
     var params = sourceObj.getMapParams;  //engineSource.getParams();

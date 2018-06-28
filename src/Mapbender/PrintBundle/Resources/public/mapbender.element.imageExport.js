@@ -108,10 +108,14 @@
             var mapExtent = this.model.getMapExtent();
             var mapCenter = this.model.getMapCenter();
 
-            var activeSourceIds = this.model.getActiveSourceIds();
+            var activeSources = this.model.getActiveSources();
             var printConfigs = [];
-            for (var i = 0; i < activeSourceIds.length; i++) {
-                var printConfig = this.model.getSourcePrintConfig(activeSourceIds[i], mapExtent, mapSize);
+            for (var i = 0; i < activeSources.length; i++) {
+                var source = activeSources[i];
+                if (!source.isVisible()) {
+                    continue;
+                }
+                var printConfig = this.model.getSourcePrintConfig(source, mapExtent, mapSize);
                 if (printConfig) {
                     printConfigs.push(printConfig);
                 }
