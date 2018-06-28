@@ -1552,3 +1552,18 @@ Mapbender.Model.prototype.setOnChangeResolutionHandler = function (callback) {
         return this.map.on("change:resolution", callback);
     }
 };
+
+/**
+ *
+ * @param extent
+ * @param size
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getResolutionForExtent = function getResolutionForExtent(extent, size){
+    'use strict';
+
+    var xResolution = ol.extent.getWidth(extent) / size[0];
+    var yResolution = ol.extent.getHeight(extent) / size[1];
+
+    return Math.max(xResolution, yResolution);
+};
