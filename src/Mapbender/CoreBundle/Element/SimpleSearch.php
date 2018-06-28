@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
@@ -85,20 +86,22 @@ class SimpleSearch extends Element
         $httpKernel = $this->container->get('http_kernel');
         $response   = $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
 
+        $jsonResponse = new JsonResponse();
+
         // Dive into result JSON if needed (Solr for example 'response.docs')
         if (!empty($configuration['collection_path'])) {
             $data = json_decode($response->getContent(), true);
             foreach (explode('.', $configuration['collection_path']) as $key) {
                 $data = $data[ $key ];
             }
-            $response->setContent(json_encode($data));
+            $jsonResponse->setContent(json_encode($data));
         }
 
         // In dev environment, add query URL as response header for easier debugging
         if ($kernel->isDebug()) {
-            $response->headers->set('X-Mapbender-SimpleSearch-URL', $url);
+            $jsonResponse->headers->set('X-Mapbender-SimpleSearch-URL', $url);
         }
 
-        return $response;
+        return $jsonResponse;
     }
 }
