@@ -1,12 +1,7 @@
 (function($){
 
-    $.widget("mapbender.mbRedlining", {
+    $.widget('mapbender.mbRedlining', {
         options: {
-            target: null,
-            display_type: 'dialog',
-            auto_activate: false,
-            deactivate_on_close: true,
-            geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
             paintstyles: {
                 'strokeColor': '#ff0000',
                 'fillColor': '#ff0000',
@@ -14,13 +9,14 @@
             }
         },
         map: null,
+        model: null,
         layer: null,
         activeControl: null,
         selectedFeature: null,
         geomCounter: 0,
         rowTemplate: null,
         _create: function(){
-            if(!Mapbender.checkTarget("mbRedlining", this.options.target)) {
+            if(!Mapbender.checkTarget('mbRedlining', this.options.target)) {
                 return;
             }
             var self = this;
@@ -32,7 +28,7 @@
             this.rowTemplate = this.element.find('.geometry-table tr').remove();
             var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
             this.map.removeControl(selectControl[0]);
-            if(this.options.auto_activate || this.options.display_type === 'element'){
+            if(this.options.autoActivate || this.options.displayType === 'element'){
                 this.activate();
             }
 
@@ -50,12 +46,12 @@
         activate: function(callback){
             this.callback = callback ? callback : null;
             if (!this.layer) {
-                var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], this.options.paintstyles));
+                var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.paintstyles));
                 var styleMap = new OpenLayers.StyleMap({'default': defaultStyle}, {extendDefault: true});
                 this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
                 this.map.addLayer(this.layer);
             }
-            if (this.options.display_type === 'dialog'){
+            if (this.options.displayType === 'dialog'){
                 this._open();
             } else {
                 this.element.removeClass('hidden');
@@ -63,10 +59,10 @@
             $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
         },
         deactivate: function(){
-            if (this.options.display_type === 'dialog'){
+            if (this.options.displayType === 'dialog'){
                 this._close();
             }
-            if (this.options.display_type === 'dialog' && this.options.deactivate_on_close){
+            if (this.options.displayType === 'dialog' && this.options.deactivateOnClose){
                 this._removeAllFeatures();
                 this.callback ? this.callback.call() : this.callback = null;
             }
@@ -238,7 +234,7 @@
             var self = this;
             var activeTool = $('.redlining-tool.active', this.element).attr('name');
             var row = this.rowTemplate.clone();
-            row.attr("data-id", feature.id);
+            row.attr('data-id', feature.id);
             $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel, activeTool));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
@@ -251,7 +247,7 @@
         },
         _removeFromGeomList: function(e){
             this._deactivateControl();
-            var $tr = $(e.target).parents("tr:first");
+            var $tr = $(e.target).parents('tr:first');
             this.selectedFeature = this.layer.getFeatureById($tr.attr('data-id'));
             this._removeFeature(this.selectedFeature);
             $tr.remove();
@@ -259,7 +255,7 @@
         },
         _modifyFeature: function(e){
             this._deactivateControl();
-            this.selectedFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
+            this.selectedFeature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
             if(this.selectedFeature.style && this.selectedFeature.style.label) {
                 this.selectedFeature.style = this._setTextEdit(this.selectedFeature.style);
                 $('input[name=label-text]', this.element).val(this.selectedFeature.style.label);
@@ -273,7 +269,7 @@
         },
         _zoomToFeature: function(e){
             this._deactivateControl();
-            var feature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
+            var feature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
             var bounds = feature.geometry.getBounds();
             this.map.zoomToExtent(bounds);
         },
