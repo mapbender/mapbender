@@ -1414,6 +1414,181 @@ Mapbender.Model.prototype.getSourcePrintConfig = function(sourceId, extent, size
         url : url,
         opacity : sourceObj.options.opacity
     };
+}
+
+/**
+ * @returns {ol.format.GeoJSON}
+ */
+Mapbender.Model.prototype.createOlFormatGeoJSON = function createOlFormatGeoJSON() {
+    'use strict';
+    return new ol.format.GeoJSON;
+};
+
+/**
+ * Returns the features of the vectorLayers hashed by owner and uuid.
+ * @returns {object.<string>.<string>.<Array.<ol.Feature>>}
+ */
+Mapbender.Model.prototype.getVectorLayerFeatures = function getVectorLayerFeatures() {
+    'use strict';
+    var features = {};
+    for (var owner in this.vectorLayer) {
+        for (var uuid in this.vectorLayer[owner]) {
+            var vectorLayer = this.vectorLayer[owner][uuid];
+            if (!vectorLayer instanceof ol.layer.Vector) {
+                continue;
+            }
+
+            if (!features[owner]) {
+                features[owner] = {};
+            }
+
+            features[owner][uuid] = vectorLayer.getSource().getFeatures();
+        }
+    }
+
+    return features;
+};
+
+/**
+ * Returns the styles of the vectorLayers hashed by owner and uuid.
+ * @returns {object.<string>.<string>.<ol.style.Style>}
+ */
+Mapbender.Model.prototype.getVectorLayerStyles = function getVectorLayerStyles() {
+    'use strict';
+    var styles = {};
+    for (var owner in this.vectorLayer) {
+        for (var uuid in this.vectorLayer[owner]) {
+            var vectorLayer = this.vectorLayer[owner][uuid];
+            if (!vectorLayer instanceof ol.layer.Vector) {
+                continue;
+            }
+
+            if (!styles[owner]) {
+                styles[owner] = {};
+            }
+
+            styles[owner][uuid] = vectorLayer.getStyle();
+        }
+    }
+
+    return styles;
+};
+
+/**
+ * Returns the print style options of the vectorLayers hashed by owner and uuid.
+ * @returns {Object.<string>.<string>.<object>}
+ */
+Mapbender.Model.prototype.getVectorLayerPrintStyleOptions = function getVectorLayerPrintStyleOptions() {
+    'use strict';
+    var olVectorLayerStyles = this.getVectorLayerStyles();
+
+    var allStyleOptions = {};
+
+    for (var owner in olVectorLayerStyles) {
+        for (var uuid in olVectorLayerStyles[owner]) {
+            var olStyle = olVectorLayerStyles[owner][uuid];
+
+            if (!olStyle instanceof ol.style.Style) {
+                continue;
+            }
+
+            var styleOptions = {};
+
+            // fill things.
+            var colorAndOpacityObjectFill = this.getHexNormalColorAndOpacityObject(olStyle.getFill().getColor());
+            styleOptions['fillColor'] = colorAndOpacityObjectFill.color;
+            styleOptions['fillOpacity'] = colorAndOpacityObjectFill.opacity;
+
+            // fill hover things.
+            styleOptions['hoverFillColor'] = 'white';
+            styleOptions['hoverFillOpacity'] = 0.8;
+
+            // stroke things.
+            var colorAndOpacityObjectStroke = this.getHexNormalColorAndOpacityObject(olStyle.getStroke().getColor());
+            styleOptions['strokeColor'] = colorAndOpacityObjectStroke.color;
+            styleOptions['strokeOpacity'] = colorAndOpacityObjectStroke.opacity;
+            styleOptions['strokeWidth'] = olStyle.getStroke().getWidth();
+
+            var strokeLinecap = olStyle.getStroke().getLineCap();
+            styleOptions['strokeLinecap'] = strokeLinecap ? strokeLinecap : 'round';
+
+            var strokeDashstyle = olStyle.getStroke().getLineDash();
+            styleOptions['strokeDashstyle'] = strokeDashstyle ? strokeDashstyle : 'solid';
+
+
+            // hover things.
+            styleOptions['hoverStrokeColor'] = 'red';
+            styleOptions['hoverStrokeOpacity'] = 1;
+            styleOptions['hoverStrokeWidth'] = 0.2;
+            styleOptions['pointRadius'] = 6;
+            styleOptions['hoverPointRadius'] = 1;
+            styleOptions['hoverPointUnit'] = '%';
+            styleOptions['pointerEvents'] = 'visiblePainted';
+            styleOptions['cursor'] = 'inherit';
+
+
+            // font/label things.
+            var fontColor = olStyle.getText().getFill().getColor();
+            if (fontColor) {
+                var colorAndOpacityObjectFontColor = this.getHexNormalColorAndOpacityObject(olStyle.getText().getFill().getColor());
+                styleOptions['fontColor'] = colorAndOpacityObjectFontColor.color;
+
+            } else {
+                styleOptions['fontColor'] = '#000000';
+            }
+
+            var labelAlign = olStyle.getText().getTextAlign();
+            styleOptions['labelAlign'] = labelAlign ? labelAlign : 'cm';
+
+            styleOptions['labelOutlineColor'] = 'white';
+            styleOptions['labelOutlineWidth'] = 3;
+
+
+            if (!allStyleOptions[owner]) {
+                allStyleOptions[owner] = {};
+            }
+
+            allStyleOptions[owner][uuid] = styleOptions;
+        }
+    }
+
+    return allStyleOptions;
+};
+
+/**
+ * Returns an object with color and opacity. If the color is in rgb or rgba form, it will be converted
+ * into a hex string.
+ * @param {string} color
+ * @returns {object}
+ */
+Mapbender.Model.prototype.getHexNormalColorAndOpacityObject = function getHexNormalColorAndOpacityObject(color) {
+    'use strict';
+    var opacity = 1;
+    if (color.indexOf('rgb') !== -1) {
+        if (color.indexOf('rgba') !== -1) {
+            opacity = color.replace(/^.*,(.+)\)/,'$1');
+        }
+        color = this.rgb2hex(color);
+    }
+
+    var hexColorAndOpacityObject = {};
+    hexColorAndOpacityObject['color'] = color;
+    hexColorAndOpacityObject['opacity'] = opacity;
+
+    return hexColorAndOpacityObject;
+};
+
+/**
+ * @param {string} orig
+ * @returns {string}
+ */
+Mapbender.Model.prototype.rgb2hex = function rgb2hex(orig) {
+    'use strict';
+    var rgb = orig.replace(/\s/g,'').match(/^rgba?\((\d+),(\d+),(\d+)/i);
+    return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : orig;
 };
 
 /**

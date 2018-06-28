@@ -117,7 +117,47 @@
                 }
             }
 
+            var printStyleOptions = this.model.getVectorLayerPrintStyleOptions();
+
             var vectorLayers = [];
+            var geojsonFormat = this.model.createOlFormatGeoJSON();
+            var allFeatures = this.model.getVectorLayerFeatures();
+            for (var owner in allFeatures) {
+                for (var uuid in allFeatures[owner]) {
+                    var features = allFeatures[owner][uuid];
+                    if (!features) {
+                        continue;
+                    }
+                    var geometries = [];
+                    for (var idx = 0; idx < features.length; idx++) {
+                        var geometry = geojsonFormat.writeGeometryObject( features[ idx ].getGeometry(), geojsonFormat );
+                        if (geometry) {
+                            var styleOptions = {};
+                            if (printStyleOptions.hasOwnProperty(owner) && printStyleOptions[owner].hasOwnProperty(uuid)) {
+                                styleOptions = printStyleOptions[owner][uuid];
+                            }
+
+                            geometry.style = styleOptions;
+                            geometries.push(geometry);
+                        }
+                    }
+
+                    var layerOpacity = 1;
+                    if (this.model.vectorLayer.hasOwnProperty(owner)
+                        && this.model.vectorLayer[owner].hasOwnProperty(uuid )
+                    ) {
+                        layerOpacity = this.model.vectorLayer[owner][uuid].getOpacity()
+                    }
+
+                    var objectForVectorLayers = {
+                        "type": "GeoJSON+Style",
+                        "opacity": layerOpacity,
+                        "geometries": geometries
+                    };
+
+                    vectorLayers.push(JSON.stringify(objectForVectorLayers));
+                }
+            }
 
             var data = {
                 requests: printConfigs,
@@ -139,7 +179,6 @@
             form.submit();
             form.remove();
         }
-
     });
 
 })(jQuery);
