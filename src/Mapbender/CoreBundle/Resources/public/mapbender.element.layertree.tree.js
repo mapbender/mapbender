@@ -212,7 +212,7 @@
                     layerIdOrder.push("" + layerId);
                 }
             });
-            this.model.setSourceLayerOrder(sourceId, layerIdOrder.reverse());
+            this.mbMap.setSourceLayerOrder(sourceId, layerIdOrder.reverse());
         },
         /**
          * Applies the new (going by DOM) ordering between sources.

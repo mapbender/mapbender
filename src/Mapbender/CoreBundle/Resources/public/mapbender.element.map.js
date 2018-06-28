@@ -372,6 +372,15 @@
                 Mapbender.error(Mapbender.trans(response.error));
             }
         },
+        setSourceLayerOrder: function(sourceId, layerIdOrder) {
+            this.model.setSourceLayerOrder(sourceId, layerIdOrder);
+            this.fireModelEvent({
+                name: 'sourcemoved',
+                // no receiver uses the bizarre "changeOptions" return value
+                // on this event
+                value: null
+            });
+        },
         /**
          * Loads the srs definitions from server
          */
