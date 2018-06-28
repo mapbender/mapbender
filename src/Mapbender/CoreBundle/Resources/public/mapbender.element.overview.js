@@ -227,6 +227,15 @@
          * Cahnges the overview srs
          */
         _changeSrs: function(event, srs) {
+            var properties = this.control_.ovmap_.getProperties();
+            properties.view = new ol.View({
+              projection: this.mbMap_.model.getCurrentProjectionObject(),
+              center: this.mbMap_.model.map.getView().getCenter(),
+              extent: this.mbMap_.model.getMaxExtent(),
+              resolution: this.mbMap_.model.map.getView().getResolution()
+            });
+            this.control_.ovmap_.setProperties(properties);
+            /*
             console.log("Wow an srschange!", [event, srs]);
             return;
             var widget = this;
@@ -254,6 +263,7 @@
 
             this.control_.update();
             ovMap.setCenter(center, ovMap.getZoom(), false, true);
+            */
         },
 
         /**
