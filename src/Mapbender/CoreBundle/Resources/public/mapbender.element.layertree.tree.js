@@ -127,6 +127,7 @@
             $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
+            $(document).bind('mbmapsourcemoved', $.proxy(self._onSourceChanged, self));
             this.created = true;
         },
         _addNode: function($toAdd, source) {
@@ -421,7 +422,13 @@
                 this._changeChildren(options.changed);
             } else if (options.changed && options.changed.childRemoved) {
                 this._removeChild(options.changed);
+            } else {
+                console.warn("Layertree: unhandled event", arguments);
+                // @todo: synchronize with new source states from model
+                // _createTree almost works but creates duplicates for every source
+                // this._createTree();
             }
+
         },
         _isThemeChecked: function($li){
             if(this.options.useTheme === false) { // a theme exists
