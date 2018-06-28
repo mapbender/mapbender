@@ -761,17 +761,28 @@ Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerSty
 };
 
 /**
- * @returns {string[]}
+ *
+ * @returns {Array.<Mapbender.SourceModelOl4>}
  */
-Mapbender.Model.prototype.getActiveSourceIds = function() {
-    var ids = [];
+Mapbender.Model.prototype.getActiveSources = function() {
+    var sources = [];
     for (var i = 0; i < this.pixelSources.length; ++i) {
         var source = this.pixelSources[i];
         if (source.isActive()) {
-            ids.push(source.id);
+            sources.push(source);
         }
     }
-    return ids;
+    return sources;
+};
+
+/**
+ * @returns {string[]}
+ */
+Mapbender.Model.prototype.getActiveSourceIds = function() {
+    return this.getActiveSources().map(function(source) {
+        /** @var {Mapbender.SourceModelOl4} source */
+        return source.id;
+    });
 };
 
 /**

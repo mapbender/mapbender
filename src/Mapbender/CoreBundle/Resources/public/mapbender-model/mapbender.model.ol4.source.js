@@ -420,6 +420,42 @@ window.Mapbender.SourceModelOl4 = (function() {
         console.log(layerNames);
         return this.updateLayerOrderByName(layerNames);
     };
+    /**
+     * Iterate through all active leaf layer definitions and invoke the given callback.
+     * Callback is invoked with 1)layerDef, 2)sibling index, 3)list of parents
+     *
+     * If filter callback is supplied, it is invoked first, with same arguments, and the main callback is only
+     * invoked if the filter callback returns trueish.
+     *
+     * Layer leafs are visited / callbacks are invoked in current layer order of this Source instance.
+     *
+     * @see Mapbender.Util.SourceTree.iterateSourceLeaves
+     *
+     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} callback
+     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} [filter]
+     */
+    Source.prototype.iterateActiveLayerDefs = function iterateActiveLayerDefs(callback, filter) {
+        var argsMapByName = {};
+        var _appendArgs = function(node, siblingIndex, parents) {
+            var layerName = node.options.name;
+            if (!layerName || argsMapByName[layerName]) {
+                console.warn("Encountered leaf layer with same name twice", layerName, {current: node, previous: argsMapByName[layerName]});
+            } else {
+                argsMapByName[layerName] = [node, siblingIndex, parents];
+            }
+        };
+        // collect leaves
+        Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, _appendArgs, filter);
+        // bring into set order, additionally filter out inactive layers
+        for (var i = 0; i < this.layerOrder_.length; ++i) {
+            var layerName = this.layerOrder_[i];
+            var layerArgs = argsMapByName[layerName];
+            if (layerArgs) {
+                // Invoke supplied callback with (node, siblingIndex, parents)
+                callback.apply(null, layerArgs);
+            }
+        }
+    };
 
     return Source;
 })();
