@@ -665,7 +665,7 @@
                 // ordering update
                 this._updateLeafStates($node);
             }
-            sourceObj.setState(!!active);
+            this.mbMap.setSourceState(sourceObj,  active);
         },
         _updateLeafStates: function($startNode) {
             var $serviceNode = $startNode.closest('.serviceContainer');

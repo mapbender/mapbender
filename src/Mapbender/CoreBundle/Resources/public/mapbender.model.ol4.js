@@ -1462,3 +1462,18 @@ Mapbender.Model.prototype.setSourceLayerOrder = function setSorceLayerOrder(sour
     var source = this.getSourceById(sourceId);
     source.updateLayerOrderById(layerIds);
 };
+
+/**
+ *
+ * @param {string|SourceModelOl4} source
+ * @param {boolean} visible
+ */
+Mapbender.Model.prototype.setSourceState = function setSourceState(source, visible) {
+    var sourceObj;
+    if (typeof source === 'string') {
+        sourceObj = this.model.getSourceById(source);
+    } else {
+        sourceObj = source;
+    }
+    sourceObj.setState(visible);
+};

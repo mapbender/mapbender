@@ -381,6 +381,15 @@
                 value: null
             });
         },
+        setSourceState: function(source, visible) {
+            this.model.setSourceState(source, !!visible);
+            this.fireModelEvent({
+                name: 'sourcestatechanged',
+                value: null
+            });
+            // @todo: legacy 'sourcechanged' event with legacy data payload
+
+        },
         /**
          * Loads the srs definitions from server
          */

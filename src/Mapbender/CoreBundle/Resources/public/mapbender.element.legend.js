@@ -93,7 +93,7 @@
             widget.onMapLayerChanges();
 
             $(document)
-                .bind('mbmapsourceadded mbmapsourcechanged mbmapsourcemoved', $.proxy(widget.onMapLayerChanges, widget))
+                .bind('mbmapsourcestatechanged mbmapsourceadded mbmapsourcechanged mbmapsourcemoved', $.proxy(widget.onMapLayerChanges, widget))
                 .unbind('mbmapsourceloadend', widget.onMapLoaded);
         },
 
