@@ -155,7 +155,7 @@ Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
  * @returns {number}
  */
 Mapbender.Model.prototype.getScale = function getScale(dpi, optRound, optScaleRating) {
-    var dpiNumber = dpi ? dpi : this.map.options.dpi;
+    var dpiNumber = dpi ? dpi : this.options.dpi;
     var resolution = this.map.getView().getResolution();
     var scaleCalc = this.resolutionToScale(resolution, dpiNumber);
     var scale = optRound ? Math.round(scaleCalc) : scaleCalc;
@@ -190,7 +190,7 @@ Mapbender.Model.prototype.resolutionToScale = function(resolution, dpi) {
     var currentUnit = this.getUnitsOfCurrentProjection();
     var mpu = this.getMetersPerUnit(currentUnit);
     var inchesPerMetre = 39.37;
-    return resolution * mpu * inchesPerMetre * dpi;
+    return resolution * mpu * inchesPerMetre * (dpi || this.options.dpi || 72);
 };
 
 /**
@@ -219,7 +219,7 @@ Mapbender.Model.prototype.scaleToResolutionStatic = Mapbender.Model.scaleToResol
  */
 Mapbender.Model.prototype.scaleToResolution = function(scale, dpi) {
     var currentUnit = this.getUnitsOfCurrentProjection();
-    return this.scaleToResolutionStatic(scale, dpi || 72, currentUnit);
+    return this.scaleToResolutionStatic(scale, dpi || this.options.dpi || 72, currentUnit);
 };
 
 /**
@@ -1497,7 +1497,7 @@ Mapbender.Model.prototype.initializeViewOptions = function initializeViewOptions
         // this seems to happen predominantely with "degrees" SRSs, so...
         var units = ol.proj.get(options.srs).getUnits();
         viewOptions['resolutions'] = options.scales.map(function(scale) {
-            return this.scaleToResolutionStatic(scale, 72, proj.getUnits() || "degrees");
+            return this.scaleToResolutionStatic(scale, options.dpi || 72, proj.getUnits() || "degrees");
         }.bind(this));
     } else {
         viewOptions.zoom = 7; // hope for the best
