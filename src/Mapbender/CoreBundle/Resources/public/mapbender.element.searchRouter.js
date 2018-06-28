@@ -215,14 +215,15 @@
             }
         },
 
-        /**
+        /** TODO Change drawFeature Function
          * Redraw current result layer selected feature
          */
         redraw: function() {
             var widget = this;
             var feature = widget.currentFeature ? widget.currentFeature : null;
             if( widget.currentFeature) {
-                feature.layer.drawFeature(feature, 'select');
+                //feature.layer.drawFeature(feature, 'select');
+                feature.setStyle(this.styleMap['select'])
             }
         },
 
@@ -700,7 +701,7 @@
             }
         },
 
-        /**
+        /** TODO Change of Model und Ol4
          * Result callback
          *
          * @param  jQuery.Event event Mouse event
@@ -708,36 +709,42 @@
         _resultCallback: function(event){
             var widget = this;
             var options = widget.options;
-            var row = $(event.currentTarget),
-                feature = $.extend({}, row.data('feature').getFeature()),
-                map = feature.layer.map,
-                callbackConf = widget.getCurrentRoute().results.callback,
-                srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
-            var mapProj = Mapbender.Model.getCurrentProj();
+            var row = $(event.currentTarget);
+            var feature = $.extend({}, row.data('feature').getFeature());
+            var map = widget.map;
+            var model = map.model;
+            var callbackConf = widget.getCurrentRoute().results.callback;
+            var srs = widget.searchModel.get("srs");
+            var mapProj = model.getCurrentProjectionCode();
             if(srs.projCode !== mapProj.projCode) {
-                feature.geometry = feature.geometry.transform(srs, mapProj);
+                featureGeometry = feature.getGeometry();
+                transFeatureGeomtry = featureGeometry.transform(srs, mapProj);
+                feature.setGeometry(transFeatureGeomtry);
             }
-            var featureExtent = $.extend({},feature.geometry.getBounds());
+            var featureExtent = feature.getGeometry().getExtent();
+            //var feeatureExtent = map.model.sanitizeExtent(featureExtent);
 
             // buffer, if needed
             if(callbackConf.options && callbackConf.options.buffer){
                 var radius = callbackConf.options.buffer;
-                featureExtent.top += radius;
-                featureExtent.right += radius;
-                featureExtent.bottom -= radius;
-                featureExtent.left -= radius;
+                featureExtent[0] += radius;
+                featureExtent[1] += radius;
+                featureExtent[2] -= radius;
+                featureExtent[3] -= radius;
             }
 
             // get zoom for buffered extent
-            var zoom = map.getZoomForExtent(featureExtent);
+            var mapSize = model.map.getSize();
+            var mapView = model.map.getView();
+            var zoom = mapView.fit(featureExtent, mapSize);
 
             // restrict zoom if needed
             if(callbackConf.options &&
                (callbackConf.options.maxScale || callbackConf.options.minScale)){
 
-                var res = map.getResolutionForZoom(zoom);
-                var units = map.baseLayer.units;
-                var scale = OpenLayers.Util.getScaleFromResolution(res, units);
+                var res = model.map.getView().getResolutionForExtent(extent, mapSize);
+                //var units = map.baseLayer.units;
+                //var scale = OpenLayers.Util.getScaleFromResolution(res, units);
 
 
                 if(callbackConf.options.maxScale){
