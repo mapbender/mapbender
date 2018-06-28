@@ -367,20 +367,20 @@
             }
         },
         _renderGroupNode: function($target, layerDef, level) {
-            //var $title = this.createNodeTitle('<h3>');
-            //$title.text("GR " + layerDef.options.id + " / " + layerDef.options.name);
-            var $title = this.createNodeTitle({
-                title: layerDef.options.title,
-                visible: (!this.options.showGroupedTitle && 'hidden') || null,
-                id: layerDef.options.id,
-                level: (level || 0) + 1
-            });
-
             var $node = $('<li class="-fn-layergroup">');
             var $list = $('<ul>');
             $node.attr('data-layerid', layerDef.options.id);
             $list.attr('data-layerid', layerDef.options.id);
-            $list.append($title);
+            // no extra title on root nodes, we use the source title for that
+            if (level > 0) {
+                var $title = this.createNodeTitle({
+                    title: layerDef.options.title,
+                    visible: (!this.options.showGroupedTitle && 'hidden') || null,
+                    id: layerDef.options.id,
+                    level: level
+                });
+                $list.append($title);
+            }
             $node.append($list);
             $target.append($node);
             return $list;
