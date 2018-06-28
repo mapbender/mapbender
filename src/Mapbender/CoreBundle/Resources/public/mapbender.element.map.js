@@ -391,6 +391,10 @@
         },
         reorderSources: function(sources) {
             this.model.reorderSources(sources);
+            this.fireModelEvent({
+                name: 'sourcemoved',
+                value: null
+            });
         },
         /**
          * Loads the srs definitions from server
