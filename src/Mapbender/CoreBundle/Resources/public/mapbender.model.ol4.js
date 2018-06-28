@@ -1655,3 +1655,16 @@ Mapbender.Model.prototype.getResolutionForExtent = function getResolutionForExte
 
     return Math.max(xResolution, yResolution);
 };
+
+/**
+ *
+ * @param scale
+ * @param units
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getResolutionForScale = function getResolutionForScale (scale, units) {
+    var dpi = 25.4 / 0.28;
+    var mpu = ol.proj.METERS_PER_UNIT[units];
+    var inchesPerMeter = 39.37;
+    return parseFloat(scale) / (mpu * inchesPerMeter * dpi);
+};
