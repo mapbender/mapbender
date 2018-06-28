@@ -25,6 +25,9 @@ Mapbender.Model = function(domId, options) {
     // ordered list of WMS / WMTS etc sources that provide pixel tiles
     /** @type {Array.<Mapbender.SourceModelOl4>} **/
     this.pixelSources = [];
+    // OL4 happily assigns all layers a zIndex of 0, and displays them in the order added
+    // we need real z indexes to enable reordering
+    this.pixelSourceZOffset = 0;
     this.zoomToExtent(options.startExtent || options.maxExtent);
     // @todo: ???
     //var popupOverlay = new Mapbender.Model.MapPopup(undefined, this);
@@ -366,6 +369,7 @@ Mapbender.Model.layerFactoryStatic = function layerFactoryStatic(sourceObj, exte
 
     };
     var layer = new (olLayerClass)(layerOptions);
+    layer.setZIndex(this.pixelSourceZOffset++);
     sourceObj.initializeEngineLayer(layer);
     return layer;
 };
@@ -1581,7 +1585,6 @@ Mapbender.Model.prototype.toSourceObj_ = function toSourceObj_(input) {
 };
 
 Mapbender.Model.prototype.reorderSources = function reorderSources(sources) {
-    var self = this;
     var sourceObjs = sources.map(this.toSourceObj_.bind(this));
     var newIdOrder = sourceObjs.map(function(source) { return source.id; });
     // Collect currently set positions and z indexes for given sources.
@@ -1613,6 +1616,5 @@ Mapbender.Model.prototype.reorderSources = function reorderSources(sources) {
         this.pixelSources[oldPos] = injectSourceObj;
         injectSourceObj.setZIndex(injectSourceZ);
     }
-    console.log("Changed source order", this.pixelSources);
     this.map.render();
 };
