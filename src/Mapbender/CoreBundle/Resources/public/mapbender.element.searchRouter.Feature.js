@@ -15,13 +15,15 @@ var Mapbender = Mapbender || {};
 
         getFeature: function() {
             if(this.feature === null) {
-                var geoJSON = new OpenLayers.Format.GeoJSON();
-                this.feature = geoJSON.read({
-                    type: 'Feature',
-                    geometry: this.get('geometry'),
-                    properties: this.get('properties')
-                })[0];
-                this.feature.model = this;
+                var geoJSON = new ol.format.GeoJSON();
+                var geometry = this.attributes['geometry'];
+                var properties = this.attributes['properties'];
+                var jsonTemp = {
+                    'type': 'Feature',
+                    'geometry': geometry,
+                    'properties': properties
+                };
+                this.feature = geoJSON.readFeature(jsonTemp)
             }
             return this.feature;
         }

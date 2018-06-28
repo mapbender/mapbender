@@ -149,14 +149,15 @@ Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
 /** @todo (following methods): put the "default" dpi in a common place? */
 /**
  *
- * @param {number} dpi default 72 DPI
+ * @param {number} dpi default this.map.options.dpi
  * @param {boolean} optRound Whether to round the scale or not.
  * @param {boolean} optScaleRating Whether to round the scale rating or not. K:X000 and M:X000000
  * @returns {number}
  */
 Mapbender.Model.prototype.getScale = function getScale(dpi, optRound, optScaleRating) {
+    var dpiNumber = dpi ? dpi : this.map.options.dpi;
     var resolution = this.map.getView().getResolution();
-    var scaleCalc = this.resolutionToScale(resolution, dpi);
+    var scaleCalc = this.resolutionToScale(resolution, dpiNumber);
     var scale = optRound ? Math.round(scaleCalc) : scaleCalc;
 
     if (optScaleRating){
@@ -422,9 +423,8 @@ Mapbender.Model.prototype.addLayerSetById = function addLayerSetsById(layerSetId
 };
 
 /**
- *
- * @param  {Object} options (See https://openlayers.org/en/latest/apidoc/ol.layer.Vector.html)
- * @param {ol.style|function} style
+ * @param {Object} options (See https://openlayers.org/en/latest/apidoc/ol.layer.Vector.html)
+ * @param {ol.style|function} options.style (See https://openlayers.org/en/latest/apidoc/ol.style.Style.html)
  * @param {string} owner
  * @returns {string}
  */
@@ -433,6 +433,7 @@ Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
     var uuid = Mapbender.UUID();
     this.vectorLayer[owner] = this.vectorLayer[owner] || {};
     options.map = this.map;
+    options.style = options.style ? this.createVectorLayerStyle(options.style) : this.createVectorLayerStyle();
     this.vectorLayer[owner][uuid] = new ol.layer.Vector(options);
 
     return uuid;
@@ -558,29 +559,34 @@ Mapbender.Model.prototype.containsCoordinate = function containsCoordinate(exten
 };
 
 /**
- *
+ * fit to Extent
  * @param extent
- * @param duration
- * @param maxZoom
+ * @param {array} optOptions
  */
-Mapbender.Model.prototype.panToExtent = function panToExtent(extent, duration, maxZoom) {
+Mapbender.Model.prototype.panToExtent = function panToExtent(extent, optOptions) {
     'use strict';
 
     var view = this.map.getView();
-    var maxZoomNum= view.getZoom();
-    var durationNum = 2000;
-
-    if (maxZoom){
-        maxZoomNum = maxZoom;
-    }
-
-    if (duration){
-        durationNum = duration;
-    }
+    var size = optOptions['size'] ? optOptions['size']: undefined;
+    var padding =  optOptions['padding'] ?optOptions['padding']: undefined;
+    var constrainResolution =  optOptions['constrainResolution'] ?optOptions['constrainResolution']: undefined;
+    var nearest =  optOptions['nearest'] ?optOptions['nearest']: undefined;
+    var minResolution =  optOptions['minResolution'] ?optOptions['minResolution']: undefined;
+    var easing =  optOptions['easing'] ?optOptions['easing']: undefined;
+    var callback =  optOptions['callback'] ?optOptions['callback']: undefined;
+    var maxZoom= optOptions['maxZoom'] ? optOptions['maxZoom']: view.getZoom();
+    var duration = optOptions['duration'] ? optOptions['duration'] : 0;
 
     view.fit(extent, {
-        duration: durationNum,
-        maxZoom: maxZoomNum
+        size: size,
+        paddig:padding,
+        constrainResolution: constrainResolution,
+        nearest: nearest,
+        minResolution: minResolution,
+        easing:easing,
+        callback: callback,
+        duration: duration,
+        maxZoom: maxZoom
     });
 };
 
@@ -762,9 +768,31 @@ Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservab
 };
 
 
+/**
+ * Create olDefaultStyle or olCustomStyle
+ * @param {array} optOptions params from ol.style.Style.
+ * @returns {ol.style.Style}
+ */
+Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(optOptions){
+    var olStyle = null;
+    if (optOptions){
+        olStyle = this.getCustomStyle(optOptions);
+    }else{
+        var fill = new ol.style.Fill({
+            color: 'rgba(255,255,255,0.4)'
+        });
+        var stroke = new ol.style.Stroke({
+            color: '#3399CC',
+            width: 1.25
+        });
 
-Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(){
-    return new ol.style.Style();
+        olStyle= new ol.style.Style({
+            fill: fill,
+            stroke: stroke
+        });
+    }
+
+    return olStyle;
 };
 
 /**
@@ -1561,6 +1589,71 @@ Mapbender.Model.prototype.setSourceState = function setSourceState(source, visib
 };
 
 /**
+ * create ol.style.Style
+ * @param {array} customStyle only fill, stroke, zIndex
+ * @returns {ol.style.Style}
+ */
+Mapbender.Model.prototype.getCustomStyle = function getCustomStyle(customStyle) {
+    'use strict';
+    var geometry = undefined;
+    var fill = undefined;
+    var image = undefined;
+    var renderer = undefined;
+    var stroke = undefined;
+    var text = undefined;
+    var zIndex = undefined;
+    var keys = Object.keys(customStyle);
+    var options = null;
+
+    if (keys.length){
+        for (var i = 0; i < keys.length; i++) {
+            var varName = keys[i];
+
+            switch(varName) {
+                case 'geometry':
+                    options = customStyle[varName] || '';
+                    fill = new ol.geom.Geometry(options);
+                    break;
+                case 'fill':
+                    options = customStyle[varName] || {};
+                    fill = new ol.style.Fill(options);
+                    break;
+                case 'image':
+                    options = customStyle[varName] || {};
+                    image = new ol.style.Image(options);
+                    break;
+                case 'renderer':
+                    options = customStyle[varName] || {};
+                    stroke = ol.StyleRenderFunction(options);
+                    break;
+                case 'stroke':
+                    options = customStyle[varName] || {};
+                    stroke = new ol.style.Stroke(options);
+                    break;
+                case 'text':
+                    options = customStyle[varName] || {};
+                    stroke = new ol.style.Text(options);
+                    break;
+                case 'zIndex':
+                    zIndex = customStyle[varName] ? customStyle[varName] : undefined;
+                    break;
+            }
+
+        }
+    }
+
+    return new ol.style.Style({
+        geometry: geometry,
+        fill: fill,
+        image: image,
+        renderer:renderer,
+        stroke: stroke,
+        text: text,
+        zIndex: zIndex
+    });
+};
+
+/**
  *
  * @param {string|number|object|SourceModelOl4} input
  * @returns {Mapbender.SourceModelOl4}
@@ -1617,4 +1710,45 @@ Mapbender.Model.prototype.reorderSources = function reorderSources(sources) {
         injectSourceObj.setZIndex(injectSourceZ);
     }
     this.map.render();
+};
+
+/**
+ *
+ * @param callback
+ * @returns {ol.EventsKey|Array<ol.EventsKey>}
+ */
+Mapbender.Model.prototype.setOnChangeResolutionHandler = function (callback) {
+    'use strict';
+
+    if (typeof callback === 'function') {
+        return this.map.on("change:resolution", callback);
+    }
+};
+
+/**
+ *
+ * @param extent
+ * @param size
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getResolutionForExtent = function getResolutionForExtent(extent, size){
+    'use strict';
+
+    var xResolution = ol.extent.getWidth(extent) / size[0];
+    var yResolution = ol.extent.getHeight(extent) / size[1];
+
+    return Math.max(xResolution, yResolution);
+};
+
+/**
+ *
+ * @param scale
+ * @param units
+ * @returns {number}
+ */
+Mapbender.Model.prototype.getResolutionForScale = function getResolutionForScale (scale, units) {
+    var dpi = 25.4 / 0.28;
+    var mpu = ol.proj.METERS_PER_UNIT[units];
+    var inchesPerMeter = 39.37;
+    return parseFloat(scale) / (mpu * inchesPerMeter * dpi);
 };

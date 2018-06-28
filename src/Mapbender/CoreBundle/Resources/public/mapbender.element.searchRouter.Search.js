@@ -21,7 +21,7 @@ Mapbender.AutocompleteModel = Backbone.Model.extend({
         var properties = {},
             form = input.closest('form'),
             basename = form.attr('name'),
-            map = $('#' + this.router.options.target).data('mapbenderMbMap').map.olMap,
+            map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap,
             name = input.attr('name');
 
         _.each($(':input', form), function(input, idx, all) {
@@ -36,8 +36,8 @@ Mapbender.AutocompleteModel = Backbone.Model.extend({
             key: name.substr(basename.length+1, name.length-basename.length-2),
             value: request.term,
             properties: properties,
-            srs: map.getProjection(),
-            extent: map.getExtent().toArray()
+            srs: map.model.getCurrentProjectionCode(),
+            extent: map.model.getCurrentExtent()
         });
 
         this.save();
@@ -105,13 +105,13 @@ Mapbender.SearchModel = Backbone.Model.extend({
             }
         });
 
-        var map = $('#' + this.router.options.target).data('mapbenderMbMap').map.olMap;
+        var map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
 
         this.set({
             properties: properties,
             autocomplete_keys: autocomplete_keys,
-            srs: map.getProjection(),
-            extent: map.getExtent().toArray()
+            srs: map.model.getCurrentProjectionCode(),
+            extent: map.model.getCurrentExtent()
         });
 
         this.save();
