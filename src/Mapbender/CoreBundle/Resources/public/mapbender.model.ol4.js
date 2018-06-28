@@ -571,7 +571,7 @@ Mapbender.Model.prototype.panToExtent = function panToExtent(extent, optOptions)
     var easing =  optOptions['easing'] ?optOptions['easing']: undefined;
     var callback =  optOptions['callback'] ?optOptions['callback']: undefined;
     var maxZoom= optOptions['maxZoom'] ? optOptions['maxZoom']: view.getZoom();
-    var duration = optOptions['duration'] ? optOptions['duration'] : 2000;
+    var duration = optOptions['duration'] ? optOptions['duration'] : 0;
 
     view.fit(extent, {
         size: size,
