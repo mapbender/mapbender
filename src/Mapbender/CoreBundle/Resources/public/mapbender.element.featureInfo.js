@@ -147,28 +147,18 @@
             var called = false;
             this.queries = {};
             $('#js-error-featureinfo').addClass('hidden');
-            $.each(this.map.model.collectFeatureInfoUrls(e.coordinate), function(idx, url) {
-                var source = self._getSourceByFeatureInfoUrl(url);
-                var mqLayer = {
-                    source: {
-                        configuration: source.configuration
-                    },
-                    label: source.configuration.title,
-                    id: "-" + source.id,
-                    type: source.type
-                };
+            $.each(this.map.model.collectFeatureInfoObjects(e.coordinate), function(idx, obj) {
+                obj.label = obj.source.configuration.title;
+                obj.id = "-" + obj.source.id;
+                self.queries[obj.id] = obj.url;
 
-                if (mqLayer && Mapbender.source[mqLayer.type]) {
-                    self.queries[mqLayer.id] = url;
-
-                    if (!self.options.onlyValid) {
-                        self._addContent(mqLayer, 'wird geladen');
-                        self._open();
-                    }
-                    
-                    called = true;
-                    self._setInfo(mqLayer, url);
+                if (!self.options.onlyValid) {
+                    self._addContent(obj, 'wird geladen');
+                    self._open();
                 }
+
+                called = true;
+                self._setInfo(obj, obj.url);
             });
             if (!called) {
                 $('#js-error-featureinfo').removeClass('hidden');
@@ -548,21 +538,6 @@
             }
 
             return this;
-        },
-        _getSourceByFeatureInfoUrl: function (url) {
-            var model = this.map.model;
-
-            for (var i = 0; i < model.pixelSources.length; ++i) {
-                var source = model.pixelSources[i];
-                var index = url.indexOf(source.baseUrl_);
-
-                if (index !== -1 && index === 0) {
-
-                    return source;
-                }
-            }
-
-            return null;
         }
     });
 })(jQuery);

@@ -975,14 +975,14 @@ Mapbender.Model.prototype.getGeometryFromFeatureWrapper = function getGeometryFr
 };
 
 /**
- * Get feature info url; may return null if feature info is not available.
+ * Get feature info url and source object; may return null if feature info is not available.
  *
  * @param {string} sourceId
  * @param {*} coordinate in current EPSG
  * @param {*} resolution purpose?
- * @returns {string|null}
+ * @returns {object|null}
  */
-Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceId, coordinate, resolution) {
+Mapbender.Model.prototype.getFeatureInfoObject = function getFeatureInfoObject(sourceId, coordinate, resolution) {
     var sourceObj = this.getSourceById(sourceId);
 
     if (!sourceObj.featureInfoParams.QUERY_LAYERS) {
@@ -994,27 +994,30 @@ Mapbender.Model.prototype.getFeatureInfoUrl = function getFeatureInfoUrl(sourceI
     var engineSource = sourceObj.getEngineSource();
     var projection = this.getCurrentProjectionCode();
 
-    // @todo: pass / evaluate coordinate from feature click
     // @todo: figure out the purpose of 'resolution' param
 
-    console.log(engineSource);
-    return engineSource.getGetFeatureInfoUrl(coordinate[0] || [0, 0], resolution || 5, projection, sourceObjParams);
+    var result = {
+        url: engineSource.getGetFeatureInfoUrl(coordinate[0] || [0, 0], resolution || 5, projection, sourceObjParams),
+        source: sourceObj
+    };
+
+    return result;
 };
 
 /**
- * Collects feature info URLs from all active sources
+ * Collects feature info URLs and source object from all active sources
  *
- * @todo: add coordinate / resolution params
+ * @todo: add resolution params
  *
- * @returns {string[]}
+ * @returns {object[]}
  */
-Mapbender.Model.prototype.collectFeatureInfoUrls = function collectFeatureInfoUrls(coordinate) {
+Mapbender.Model.prototype.collectFeatureInfoObjects = function collectFeatureInfoObjects(coordinate) {
     var urls = [];
     var sourceIds = this.getActiveSourceIds();
     for (var i = 0; i < sourceIds.length; ++i) {
         // pass sourceId, forward all remaining arguments
         // @todo: remove this argument-forwarding style once the API has settled
-        urls.push(this.getFeatureInfoUrl.apply(this, [sourceIds[i]].concat(arguments)));
+        urls.push(this.getFeatureInfoObject.apply(this, [sourceIds[i]].concat(arguments)));
     }
     // strip nulls
     return _.filter(urls);
