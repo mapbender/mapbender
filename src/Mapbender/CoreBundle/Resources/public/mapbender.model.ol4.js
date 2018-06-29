@@ -13,6 +13,32 @@ Mapbender.Model = function(domId, options) {
         throw new Error("Can't initialize model");
     }
     this.options = options;
+
+    // @todo are those values as default values ok (digitizer layerVector style)?
+    this.defaultVectorLayerPrintStyleOptions = {
+        "fillColor": "#6fb536",
+        "fillOpacity": 0.3,
+        "hoverFillColor": "white",
+        "hoverFillOpacity": 0.8,
+        "strokeColor": "#6fb536",
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+        "strokeLinecap": "round",
+        "strokeDashstyle": "solid",
+        "hoverStrokeColor": "red",
+        "hoverStrokeOpacity": 1,
+        "hoverStrokeWidth": 0.2,
+        "pointRadius": 6,
+        "hoverPointRadius": 1,
+        "hoverPointUnit": "%",
+        "pointerEvents": "visiblePainted",
+        "cursor": "inherit",
+        "fontColor": "#000000",
+        "labelAlign": "cm",
+        "labelOutlineColor": "white",
+        "labelOutlineWidth": 3
+    };
+
     this.viewOptions_ = this.initializeViewOptions(options);
     var view = new ol.View(this.viewOptions_);
     // remove zoom after creating view
@@ -1510,54 +1536,69 @@ Mapbender.Model.prototype.getVectorLayerPrintStyleOptions = function getVectorLa
             var styleOptions = {};
 
             // fill things.
-            var colorAndOpacityObjectFill = this.getHexNormalColorAndOpacityObject(olStyle.getFill().getColor());
-            styleOptions['fillColor'] = colorAndOpacityObjectFill.color;
-            styleOptions['fillOpacity'] = colorAndOpacityObjectFill.opacity;
-
-            // fill hover things.
-            styleOptions['hoverFillColor'] = 'white';
-            styleOptions['hoverFillOpacity'] = 0.8;
-
-            // stroke things.
-            var colorAndOpacityObjectStroke = this.getHexNormalColorAndOpacityObject(olStyle.getStroke().getColor());
-            styleOptions['strokeColor'] = colorAndOpacityObjectStroke.color;
-            styleOptions['strokeOpacity'] = colorAndOpacityObjectStroke.opacity;
-            styleOptions['strokeWidth'] = olStyle.getStroke().getWidth();
-
-            var strokeLinecap = olStyle.getStroke().getLineCap();
-            styleOptions['strokeLinecap'] = strokeLinecap ? strokeLinecap : 'round';
-
-            var strokeDashstyle = olStyle.getStroke().getLineDash();
-            styleOptions['strokeDashstyle'] = strokeDashstyle ? strokeDashstyle : 'solid';
-
-
-            // hover things.
-            styleOptions['hoverStrokeColor'] = 'red';
-            styleOptions['hoverStrokeOpacity'] = 1;
-            styleOptions['hoverStrokeWidth'] = 0.2;
-            styleOptions['pointRadius'] = 6;
-            styleOptions['hoverPointRadius'] = 1;
-            styleOptions['hoverPointUnit'] = '%';
-            styleOptions['pointerEvents'] = 'visiblePainted';
-            styleOptions['cursor'] = 'inherit';
-
-
-            // font/label things.
-            var fontColor = olStyle.getText().getFill().getColor();
-            if (fontColor) {
-                var colorAndOpacityObjectFontColor = this.getHexNormalColorAndOpacityObject(olStyle.getText().getFill().getColor());
-                styleOptions['fontColor'] = colorAndOpacityObjectFontColor.color;
-
+            if (olStyle.getFill() instanceof ol.style.Fill) {
+                var colorAndOpacityObjectFill = this.getHexNormalColorAndOpacityObject(olStyle.getFill().getColor());
+                styleOptions['fillColor'] = colorAndOpacityObjectFill.color;
+                styleOptions['fillOpacity'] = colorAndOpacityObjectFill.opacity;
             } else {
-                styleOptions['fontColor'] = '#000000';
+                styleOptions['fillColor'] = this.defaultVectorLayerPrintStyleOptions['fillColor'];
+                styleOptions['fillOpacity'] = this.defaultVectorLayerPrintStyleOptions['fillOpacity'];
             }
 
-            var labelAlign = olStyle.getText().getTextAlign();
-            styleOptions['labelAlign'] = labelAlign ? labelAlign : 'cm';
+            // fill hover things.
+            styleOptions['hoverFillColor'] = this.defaultVectorLayerPrintStyleOptions['hoverFillColor'];
+            styleOptions['hoverFillOpacity'] = this.defaultVectorLayerPrintStyleOptions['hoverFillOpacity'];
 
-            styleOptions['labelOutlineColor'] = 'white';
-            styleOptions['labelOutlineWidth'] = 3;
+            // stroke things.
+            if (olStyle.getStroke() instanceof  ol.style.Stroke) {
+                var colorAndOpacityObjectStroke = this.getHexNormalColorAndOpacityObject(olStyle.getStroke().getColor());
+                styleOptions['strokeColor'] = colorAndOpacityObjectStroke.color;
+                styleOptions['strokeOpacity'] = colorAndOpacityObjectStroke.opacity;
+                styleOptions['strokeWidth'] = olStyle.getStroke().getWidth();
+            } else {
+                styleOptions['strokeColor'] = this.defaultVectorLayerPrintStyleOptions['strokeColor'];
+                styleOptions['strokeOpacity'] = this.defaultVectorLayerPrintStyleOptions['strokeOpacity'];
+                styleOptions['strokeWidth'] = this.defaultVectorLayerPrintStyleOptions['strokeWidth'];
+            }
 
+            if (olStyle.getStroke() instanceof  ol.style.Stroke && olStyle.getStroke().getLineCap()) {
+                styleOptions['strokeLinecap'] = olStyle.getStroke().getLineCap();
+            } else {
+                styleOptions['strokeLinecap'] = this.defaultVectorLayerPrintStyleOptions['strokeLinecap'];
+            }
+
+            if (olStyle.getStroke() instanceof  ol.style.Stroke && olStyle.getStroke().getLineDash()) {
+                styleOptions['strokeDashstyle'] = olStyle.getStroke().getLineDash();
+            } else {
+                styleOptions['strokeDashstyle'] = this.defaultVectorLayerPrintStyleOptions['strokeDashstyle'];
+            }
+
+            // hover things.
+            styleOptions['hoverStrokeColor'] = this.defaultVectorLayerPrintStyleOptions['hoverStrokeColor'];
+            styleOptions['hoverStrokeOpacity'] = this.defaultVectorLayerPrintStyleOptions['hoverStrokeOpacity'];
+            styleOptions['hoverStrokeWidth'] = this.defaultVectorLayerPrintStyleOptions['hoverStrokeWidth'];
+            styleOptions['pointRadius'] = this.defaultVectorLayerPrintStyleOptions['pointRadius'];
+            styleOptions['hoverPointRadius'] = this.defaultVectorLayerPrintStyleOptions['hoverPointRadius'];
+            styleOptions['hoverPointUnit'] = this.defaultVectorLayerPrintStyleOptions['hoverPointUnit'];
+            styleOptions['pointerEvents'] = this.defaultVectorLayerPrintStyleOptions['pointerEvents'];
+            styleOptions['cursor'] = this.defaultVectorLayerPrintStyleOptions['cursor'];
+
+            // font/label things.
+            if (olStyle.getText() instanceof ol.style.Text && olStyle.getText().getFill() instanceof ol.style.Fill
+                && olStyle.getText().getFill().getColor()
+            ) {
+                var colorAndOpacityObjectFontColor = this.getHexNormalColorAndOpacityObject(olStyle.getText().getFill().getColor());
+                styleOptions['fontColor'] = colorAndOpacityObjectFontColor.color;
+            } else {
+                styleOptions['fontColor'] = this.defaultVectorLayerPrintStyleOptions['fontColor'];
+            }
+            if (olStyle.getText() instanceof ol.style.Text && olStyle.getText().getTextAlign()) {
+                styleOptions['labelAlign'] = olStyle.getText().getTextAlign();
+            } else {
+                styleOptions['labelAlign'] = this.defaultVectorLayerPrintStyleOptions['labelAlign'];
+            }
+            styleOptions['labelOutlineColor'] = this.defaultVectorLayerPrintStyleOptions['labelOutlineColor'];
+            styleOptions['labelOutlineWidth'] = this.defaultVectorLayerPrintStyleOptions['labelOutlineWidth'];
 
             if (!allStyleOptions[owner]) {
                 allStyleOptions[owner] = {};
