@@ -211,7 +211,7 @@ class PrintClient extends Element
                     $data['legends'] = json_decode($data['legends'], true);
                 }
 
-                $printservice = new PrintService($this->container);
+                $printservice = $this->getPrintService();
 
                 $displayInline = true;
                 $filename = 'mapbender_print.pdf';
@@ -243,5 +243,15 @@ class PrintClient extends Element
 
                 return new JsonResponse($templates);
         }
+    }
+
+    /**
+     * @return PrintService
+     */
+    protected function getPrintService()
+    {
+        $container = $this->container;
+        $printServiceClassName = $container->getParameter('mapbender.print.service.class');
+        return new $printServiceClassName($container);
     }
 }
