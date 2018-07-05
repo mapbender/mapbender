@@ -109,9 +109,17 @@ class ImageExport extends Element
             case 'export':
                 $request = $this->container->get('request');
                 $data = $request->get('data');
-                $exportservice = new ImageExportService($this->container);
+                $exportservice = $this->getExportService();
                 $exportservice->export($data);
         }
     }
 
+    /**
+     * @return ImageExportService
+     */
+    protected function getExportService()
+    {
+        $exportServiceClassName = $this->container->getParameter('mapbender.imageexport.service.class');
+        return new $exportServiceClassName($this->container);
+    }
 }
