@@ -434,7 +434,9 @@ Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
     var uuid = Mapbender.UUID();
     this.vectorLayer[owner] = this.vectorLayer[owner] || {};
     options.map = this.map;
-    options.style = options.style ? this.createVectorLayerStyle(options.style) : this.createVectorLayerStyle();
+    options.style = !(options.style instanceof ol.style.Style) ? this.createVectorLayerStyle(options.style) :
+                    (options.style instanceof ol.style.Style) ? options.style :
+                        this.createVectorLayerStyle();
     this.vectorLayer[owner][uuid] = new ol.layer.Vector(options);
 
     return uuid;
