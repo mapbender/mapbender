@@ -34,6 +34,16 @@ class RunJobCommand extends ContainerAwareCommand
     }
 
     /**
+     * @return PrintService
+     */
+    protected function getPrintService()
+    {
+        $container = $this->getContainer();
+        $printServiceClassName = $container->getParameter('mapbender.print.service.class');
+        return new $printServiceClassName($container);
+    }
+
+    /**
      * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -41,7 +51,7 @@ class RunJobCommand extends ContainerAwareCommand
         $jobArray = $this->getJobArray($input->getArgument('inputFile'));
 
         // PrintService::doPrint returns the PDF body as a binary string
-        $service = new PrintService($this->getContainer());
+        $service = $this->getPrintService();
         $outputBody = $service->doPrint($jobArray);
 
         $outputFileName= $input->getArgument('outputFile');

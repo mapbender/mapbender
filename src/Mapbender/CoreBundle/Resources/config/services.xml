@@ -17,6 +17,8 @@
              Caching machinery can only be safely enabled after these cases have been adressed properly -->
         <parameter key="cachable.mapbender.application.config">false</parameter>
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
+        <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
+        <parameter key="mapbender.imageexport.service.class">Mapbender\PrintBundle\Component\ImageExportService</parameter>
     </parameters>
 
     <services>
