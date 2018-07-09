@@ -39,7 +39,7 @@ Mapbender.Metadata.loadAsPopup = function(sourceId, layerName) {
                     cssClass: 'metadataDialog',
                     content: [
                         $.ajax({
-                            type: "POST",
+                            type: "GET",
                             url: Mapbender.configuration.application.urls['metadata'],
                             data: {
                                 sourceId: sourceId,

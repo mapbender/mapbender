@@ -301,13 +301,22 @@ class ApplicationController extends Controller
      * Metadata controller.
      *
      * @Route("/application/{slug}/metadata")
+     * @param Request $request
+     * @param string $slug
+     * @return Response
      */
-    public function metadataAction($slug)
+    public function metadataAction(Request $request, $slug)
     {
         $securityContext = $this->get('security.context');
-        $sourceId = $this->container->get('request')->get("sourceId", null);
+        $sourceId = $request->get("sourceId", null);
+        if (!strlen($sourceId)) {
+            throw new BadRequestHttpException();
+        }
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
+        if (!$instance) {
+            throw new NotFoundHttpException();
+        }
         if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
             && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
@@ -322,7 +331,7 @@ class ApplicationController extends Controller
         $manager = $managers[$instance->getManagertype()];
 
         $path = array('_controller' => $manager['bundle'] . ":" . "Repository:metadata");
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        $subRequest = $request->duplicate(null, null, $path);
         return $this->container->get('http_kernel')->handle(
                 $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
