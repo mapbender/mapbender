@@ -17,6 +17,7 @@ use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
@@ -466,11 +467,12 @@ class RepositoryController extends Controller
      * Get Metadata for a wms service
      *
      * @ManagerRoute("/instance/metadata")
-     * @Method({ "POST" })
+     * @param Request $request
+     * @return Response
      */
-    public function metadataAction()
+    public function metadataAction(Request $request)
     {
-        $sourceId        = $this->container->get('request')->get("sourceId", null);
+        $sourceId = $request->get("sourceId", null);
         /** @var SourceInstance|null $instance */
         $instance        = $this->loadEntityByPk('Mapbender\CoreBundle\Entity\SourceInstance', $sourceId);
         $securityContext = $this->get('security.authorization_checker');
