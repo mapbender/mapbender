@@ -32,7 +32,7 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
                     cssClass: 'metadataDialog',
                     content: [
                         $.ajax({
-                            type: "POST",
+                            type: "GET",
                             url: Mapbender.configuration.application.urls['metadata'],
                             data: {
                                 sourceId: source[0].origId,
