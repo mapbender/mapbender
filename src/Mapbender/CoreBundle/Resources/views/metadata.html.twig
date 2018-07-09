@@ -60,8 +60,14 @@
                                     {% for item in section.items %}
                                         {% for key,val in item %}
                                             {% set vt=prefix~section.title~'.'~key %}
-                                            <div class="labelText">{{ vt  | trans }}:</div>
-                                            <div class="metaText">{{ val }}</div>
+                                                <div class="labelText">{{ vt  | trans }}:</div>
+                                                {% if (vt == 'mb.wms.metadata.section.common.originUrl') or (vt == 'mb.wms.metadata.section.common.onlineResource') %}
+                                                    <div class="metaText"><a href="{{ val }}" target="_BLANK">{{ val }}</a></div>
+                                                {% elseif (vt == 'mb.wms.metadata.section.contact.electronicMailAddress') %}
+                                                    <div class="metaText"><a href="mailto:{{ val }}">{{ val }}</a></div>                                                    
+                                                {% else %}
+                                                    <div class="metaText">{{ val }}</div>                                          
+                                                {% endif %}
                                             <div class="clearContainer"></div>
                                         {% endfor %}
                                     {% endfor %}
