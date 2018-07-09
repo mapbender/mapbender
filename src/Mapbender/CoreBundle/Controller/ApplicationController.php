@@ -309,8 +309,14 @@ class ApplicationController extends Controller
     {
         $securityContext = $this->get('security.context');
         $sourceId = $request->get("sourceId", null);
+        if (!strlen($sourceId)) {
+            throw new BadRequestHttpException();
+        }
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
+        if (!$instance) {
+            throw new NotFoundHttpException();
+        }
         if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
             && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
