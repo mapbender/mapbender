@@ -1,5 +1,10 @@
 # Changelog
 
+* **dev-release/3.0.7**
+  - "target" selection in elements shows only appropriate other elements (regression fix)
+  - WMS metadata now renders email addresses and links as clickable links (PR#837)
+  - Update Turkish translation (PR#944)
+
 * **v3.0.7.2**
     - Fix dynamic layertree reordering vs reversed layer order (PR#852)
     - Change default prefix for printouts to mapbender (Issue #855)
