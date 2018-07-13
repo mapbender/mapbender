@@ -537,9 +537,6 @@
                         link.click();
 
                         setTimeout(function(){ document.body.removeChild(link); }, 2000);
-                    } else {
-                        // some error handling should be done here...
-
                     }
                 };
 
