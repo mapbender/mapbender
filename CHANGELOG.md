@@ -1,6 +1,6 @@
 # Changelog
 
-* **dev-release/3.0.7**
+* **v3.0.7.3**
   - "target" selection in elements shows only appropriate other elements (regression fix)
   - WMS metadata now renders email addresses and links as clickable links (PR#837)
   - Update Turkish translation (PR#944)
