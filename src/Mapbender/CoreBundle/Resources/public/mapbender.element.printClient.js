@@ -513,9 +513,37 @@
 
             if (lyrCount === 0){
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
-            }else{
-                // we click a hidden submit button to check the required fields
-                form.find('input[type="submit"]').click();
+            } else {
+                var request = new XMLHttpRequest();
+                request.open('POST', url, true);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                request.responseType = 'blob';
+
+                request.onload = function() {
+                    // Only handle status code 200
+                    if(request.status === 200) {
+                        // Try to find out the filename from the content disposition `filename` value
+
+                        var filename = 'mapbender3.pdf';
+
+                        // The actual download
+                        var blob = new Blob([request.response], { type: 'application/pdf' });
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = filename;
+
+                        document.body.appendChild(link);
+
+                        link.click();
+
+                        setTimeout(function(){ document.body.removeChild(link); }, 2000);
+                    } else {
+                        // some error handling should be done here...
+
+                    }
+                };
+
+                request.send(form.serialize());
             }
 
             if(this.options.autoClose){
