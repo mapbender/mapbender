@@ -20,27 +20,9 @@
     </parameters>
 
     <services>
+        <!-- SERVICE -->
         <service id="mapbender" class="Mapbender\CoreBundle\Mapbender">
             <argument type="service" id="service_container" />
-        </service>
-
-        <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
-            <tag name="twig.extension"/>
-        </service>
-
-        <service id="target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
-            <argument type="service" id="service_container" />
-            <tag name="form.type" alias="target_element"/>
-        </service>
-
-        <service id="app_layerset" class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">
-            <argument type="service" id="service_container" />
-            <tag name="form.type" alias="app_layerset"/>
-        </service>
-
-        <service id="layerset_instances" class="Mapbender\CoreBundle\Element\Type\LayersetInstancesAdminType">
-            <argument type="service" id="service_container" />
-            <tag name="form.type" alias="layerset_instances"/>
         </service>
 
         <service id="signer" class="%signer.class%">
@@ -49,10 +31,6 @@
 
         <service id="get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer">
             <tag name="serializer.normalizer" />
-        </service>
-
-        <service id="twig.extension.stringloader" class="Twig_Extension_StringLoader">
-            <tag name="twig.extension" />
         </service>
 
         <service id="mapbender.assetic.filter.sass" class="%assetic.filter.scss.class%">
@@ -68,7 +46,7 @@
             <call method="setCompass">
                 <argument>%assetic.filter.sass.compass%</argument>
             </call>
-			
+
             <!-- default option for SASSC -->
             <call method="setCacheLocation">
                 <argument>false</argument>
@@ -85,6 +63,16 @@
             <call method="addLoadPath">
                 <argument>%kernel.root_dir%/../web</argument>
             </call>
+        </service>
+
+        <service id="transport" class="Mapbender\CoreBundle\Component\Transport">
+            <argument>%ows_proxy3_host%</argument>
+            <argument>%ows_proxy3_port%</argument>
+            <argument>%ows_proxy3_user%</argument>
+            <argument>%ows_proxy3_password%</argument>
+            <argument>%ows_proxy3_noproxy%</argument>
+            <argument>%ows_proxy3_connecttimeout%</argument>
+            <argument>%ows_proxy3_timeout%</argument>
         </service>
 
         <!-- User management -->
@@ -104,6 +92,31 @@
 
         <service id="owsproxy.httpclient" class="%mapbender.owsproxy.httpclient.legacy.class%">
             <argument type="service" id="service_container" />
+        </service>
+
+        <!-- FORM TYPE -->
+        <service id="target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
+            <argument type="service" id="service_container" />
+            <tag name="form.type" alias="target_element"/>
+        </service>
+
+        <service id="app_layerset" class="Mapbender\CoreBundle\Element\Type\LayersetAdminType">
+            <argument type="service" id="service_container" />
+            <tag name="form.type" alias="app_layerset"/>
+        </service>
+
+        <service id="layerset_instances" class="Mapbender\CoreBundle\Element\Type\LayersetInstancesAdminType">
+            <argument type="service" id="service_container" />
+            <tag name="form.type" alias="layerset_instances"/>
+        </service>
+
+        <!-- TWIG EXTENSION -->
+        <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
+            <tag name="twig.extension"/>
+        </service>
+
+        <service id="twig.extension.stringloader" class="Twig_Extension_StringLoader">
+            <tag name="twig.extension" />
         </service>
 
         <!-- layertree "menu" choices; servicy because of DimensionsHandler interaction -->
