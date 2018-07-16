@@ -61,6 +61,7 @@ mb:
         btn:
           ok: Ok
           cancel: Abbrechen
+          position: Positionierung
       class:
         title: 'MeetingPoint (POI)'
         description: 'Element über das eine Treffpunkt generiert und verschickt werden kann.'

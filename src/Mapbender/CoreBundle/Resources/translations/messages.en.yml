@@ -61,6 +61,7 @@ mb:
         btn:
           ok: Ok
           cancel: Cancel
+          position: Positioning
       class:
         title: POI
         description: 'Create a POI for sharing'
