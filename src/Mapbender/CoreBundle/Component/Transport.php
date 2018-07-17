@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Class Transport
  * @package Mapbender\CoreBundle\Component
  */
-class Transport
+class Transport implements TransportInterface
 {
     protected $proxyHost = '';
     protected $proxyPort = '';
