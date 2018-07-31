@@ -1,0 +1,36 @@
+{
+    "name": "mapbender/mapbender",
+    "description": "Mapbender3 library",
+    "keywords": ["mapbender", "module"],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3.3",
+		"symfony/symfony": "^2.3.42",
+		"twig/extensions": "1.x",
+		"doctrine/orm": "^2.2.3",
+		"doctrine/doctrine-fixtures-bundle": "2.3.*",
+		"friendsofsymfony/jsrouting-bundle": "1.5.x",
+
+        "arsgeografica/signing": "1.1.x",
+        "setasign/fpdi-fpdf": "1.6.*",
+
+        "mapbender/fom": "~3.0.5.4",
+        "mapbender/owsproxy": "~3.0.5.4 || ~3.0.6.2",
+
+        "mapbender/mapquery": "1.x"
+    },
+    "autoload": {
+        "psr-4": {"Mapbender\\": "src/Mapbender"}
+    },
+    "scripts": {
+        "post-update-cmd": "git -C . submodule sync && git -C . submodule update --init --recursive",
+        "post-install-cmd": "git -C . submodule sync && git -C . submodule update --init --recursive"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-release/3.0.5": "3.0.5.x-dev",
+            "dev-release/3.0.6": "3.0.6.x-dev"
+        }
+    }
+}

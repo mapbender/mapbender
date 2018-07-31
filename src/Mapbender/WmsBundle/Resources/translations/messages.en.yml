@@ -7,6 +7,7 @@ mb:
           wmsurl: 'Service URL'
           wmsuser: User
           wmspass: Password
+          wmsonlyvalid: 'Only valid?'
         btn:
           cancel: Cancel
           load: Load
@@ -79,6 +80,9 @@ mb:
             cancel2: Cancel
             ratio: 'BBOX factor'
             buffer: 'Tile buffer'
+            layerOrder: Layer ordering
+            layerOrder.standard: standard
+            layerOrder.reverse: QGIS
           vendorspecific:
             label: 'Vendor specific'
         preview:

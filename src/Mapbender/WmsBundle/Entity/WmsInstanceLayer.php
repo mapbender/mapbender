@@ -4,19 +4,20 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\BoundingBox;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
  * WmsInstanceLayer class
  *
  * @author Paul Schmidt
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
+ * @ORM\HasLifeCycleCallbacks()
  */
 class WmsInstanceLayer extends SourceInstanceItem
 {
@@ -128,6 +129,19 @@ class WmsInstanceLayer extends SourceInstanceItem
     }
 
     /**
+     * @ORM\PostLoad()
+     */
+    public function postLoad()
+    {
+        if ($this->minScale == INF) {
+            $this->minScale = null;
+        }
+        if ($this->maxScale == INF) {
+            $this->maxScale = null;
+        }
+    }
+
+    /**
      * Set id
      * @param integer $id
      * @return WmsInstanceLayer
@@ -197,7 +211,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * Get sublayer
      *
-     * @return array
+     * @return ArrayCollection|WmsInstanceLayer[]
      */
     public function getSublayer()
     {
@@ -391,59 +405,121 @@ class WmsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set allowreorder
+     * Set allow reorder
      *
-     * @param boolean $allowreorder
+     * @param boolean $value
      * @return $this
      */
-    public function setAllowreorder($allowreorder)
+    public function setAllowreorder($value)
     {
-        $this->allowreorder = $allowreorder;
+        $this->allowreorder = $value;
         return $this;
     }
 
     /**
      * Set minScale
      *
-     * @param float $minScale
+     * @param float|null $value
      * @return WmsInstanceLayer
      */
-    public function setMinScale($minScale)
+    public function setMinScale($value)
     {
-        $this->minScale = $minScale;
+        $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
         return $this;
     }
 
     /**
      * Get minScale
      *
+     * Recursive path used by frontend config generation and backend instance form
+     * for placeholders only.
+     *
+     * @param boolean $recursive Try to get value from parent
      * @return float
      */
-    public function getMinScale()
+    public function getMinScale($recursive = false)
     {
-        return $this->minScale;
+        $value = $this->minScale;
+
+        if ($recursive && $value === null) {
+            $value = $this->getInheritedMinScale();
+        }
+        return $value;
     }
 
     /**
-     * Set maxScale
+     * Get inherited effective min scale for layer instance
+     * 1) if admin replaced min scale for THE parent layer instance, use that value.
+     * 2) if THE parent instance has no admin-set value, use value from source layer
+     * 3) if neither is set, recurse up the tree, maintaining preference instance first, then source
+     * @return float|null
+     */
+    public function getInheritedMinScale()
+    {
+        $parent = $this->getParent();
+        $parentValue = $parent ? $parent->getMinScale(false) : null;
+        if ($parentValue !== null) {
+            $value = $parentValue;
+        } else {
+            $value = $this->getSourceItem()->getMinScale(false);
+            if ($value === null && $parent) {
+                $value = $parent->getInheritedMinScale();
+            }
+        }
+        return $value;
+    }
+
+    /**
+     * Set maximum scale hint
      *
-     * @param float $maxScale
+     * @param float|null $value
      * @return WmsInstanceLayer
      */
-    public function setMaxScale($maxScale)
+    public function setMaxScale($value)
     {
-        $this->maxScale = $maxScale;
+        $this->maxScale = ($value === null || $value == INF) ? null : floatval($value);
         return $this;
     }
 
     /**
-     * Get maxScale
+     * Get maximums scale hint
      *
-     * @return float
+     * Recursive path used by frontend config generation and backend instance form
+     * for placeholders only.
+     *
+     * @param boolean $recursive Try to get value from parent
+     * @return float|null
      */
-    public function getMaxScale()
+    public function getMaxScale($recursive = false)
     {
-        return $this->maxScale;
+        $value = $this->maxScale;
+
+        if ($recursive && $value === null) {
+            $value = $this->getInheritedMaxScale();
+        }
+        return $value;
+    }
+
+    /**
+     * Get inherited effective max scale for layer instance
+     * 1) if admin replaced max scale for THE parent layer instance, use that value.
+     * 2) if THE parent instance has no admin-set value, use value from source layer
+     * 3) if neither is set, recurse up the tree, maintaining preference instance first, then source
+     * @return float|null
+     */
+    public function getInheritedMaxScale()
+    {
+        $parent = $this->getParent();
+        $parentValue = $parent ? $parent->getMaxScale(false) : null;
+        if ($parentValue !== null) {
+            $value = $parentValue;
+        } else {
+            $value = $this->getSourceItem()->getMaxScale(false);
+            if ($value === null && $parent) {
+                $value = $parent->getInheritedMaxScale();
+            }
+        }
+        return $value;
     }
 
     /**
@@ -535,5 +611,48 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function __toString()
     {
         return (string) $this->getId();
+    }
+
+    /**
+     * @internal
+     * @param WmsInstance $instance source
+     * @param WmsLayerSource $layerSource also the source, purpose unknown
+     * @param int $priority
+     */
+    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, $priority = 0)
+    {
+        $this->setSourceInstance($instance);
+        $this->setSourceItem($layerSource);
+        $this->setTitle($layerSource->getTitle());
+
+        $this->setMinScale($layerSource->getMinScale());
+        $this->setMaxScale($layerSource->getMaxScale());
+
+        $queryable = $layerSource->getQueryable();
+        $this->setInfo(Utils::getBool($queryable));
+        $this->setAllowinfo(Utils::getBool($queryable));
+        $this->setPriority($priority);
+        $instance->addLayer($this);
+        if ($layerSource->getSublayer()->count() > 0) {
+            $this->setToggle(false);
+            $this->setAllowtoggle(true);
+        } else {
+            $this->setToggle(null);
+            $this->setAllowtoggle(null);
+        }
+        foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
+            $subLayerInstance = new static();
+            $subLayerInstance->populateFromSource($instance, $wmslayersourceSub, $priority);
+            $subLayerInstance->setParent($this);
+            $this->addSublayer($subLayerInstance);
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRoot()
+    {
+        return !$this->getParent();
     }
 }

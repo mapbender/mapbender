@@ -1,21 +1,22 @@
 mb:
   wms:
     wmsloader:
+      dialog:
+        label:
+          example: Пример
+          wmsurl: 'Сервис URL'
+          wmsuser: Пользователь
+          wmspass: Пароль
+          wmsonlyvalid: 'Действительно ли?'
+        btn:
+          cancel: Отменить
+          load: Загрузить
       error:
         url: 'WMSLoader: возможности WMS не загружен! Capabilities URL, не является действительным.'
         service: 'WMSLoader: служба% сервис% не поддерживается!'
         operation: 'WMSLoader: WMS Операция %работа% не поддерживается!'
         version: 'WMSLoader:WMS версия %version% не поддерживаются!'
         load: 'WMSLoader: WMS Capabilities не загружен!'
-      dialog:
-        btn:
-          cancel: Отменить
-          load: Загрузить
-        label:
-          example: Пример
-          wmsurl: 'Сервис URL'
-          wmsuser: Пользователь
-          wmspass: Пароль
       repo:
         form:
           label:

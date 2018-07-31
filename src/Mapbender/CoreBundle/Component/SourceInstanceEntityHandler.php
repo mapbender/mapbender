@@ -1,9 +1,13 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
+use Mapbender\CoreBundle\Component\Presenter\SourceService;
+use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmsBundle\Component\InstanceTunnel;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Mapbender\WmsBundle\Component\Dimension;
 
 /**
  * Description of SourceInstanceEntityHandler
@@ -14,7 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 abstract class SourceInstanceEntityHandler extends EntityHandler
 {
-    /** @var InstanceTunnel */
+    /** @var InstanceTunnelService */
     protected $tunnel;
 
     /**
@@ -25,7 +29,9 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function setParameters(array $configuration = array());
 
     /**
-     * Creates a SourceInstance
+     * Copies attributes from bound instance's source to the bound instance
+     * @deprecated
+     * If the source is already bound to the instance....
      */
     abstract public function create();
     
@@ -57,15 +63,25 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function getSensitiveVendorSpecific();
 
     /**
-     * @return InstanceTunnel
+     * @return Endpoint
      */
     protected function getTunnel()
     {
         if (!$this->tunnel) {
-            /** @var UrlGeneratorInterface $router */
-            $router = $this->container->get('router');
-            $this->tunnel = new InstanceTunnel($router, $this->entity);
+            $this->tunnel = $this->getService()->makeTunnelEndpoint($this->entity);
         }
         return $this->tunnel;
+    }
+
+    /**
+     * Returns a source config generating service appropriate for the bound source instance (polymorphic).
+     *
+     * @return SourceService
+     */
+    protected function getService()
+    {
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        return $directory->getSourceService($this->entity);
     }
 }

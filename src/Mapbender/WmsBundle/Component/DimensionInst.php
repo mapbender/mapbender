@@ -88,6 +88,11 @@ class DimensionInst extends Dimension
     {
         $array = is_string($extent) ? explode(",", $extent) : $extent;
         $res   = array();
+
+        if (!$extent) {
+            return $res;
+        }
+
         if (count($array) === 1) {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
@@ -141,5 +146,31 @@ class DimensionInst extends Dimension
             'origextent' => $this->getData($this->getOrigextent()),
             'type' => $this->getType(),
         );
+    }
+
+    /**
+     * Factory method, copies attributes from given Dimension object.
+     * Adds Origextent initially equal to Dimension Extent
+     * Adds Active initially false
+     * Adds Type found from Dimension Extent via @see findType
+     *
+     * @param Dimension $dim
+     * @return static
+     */
+    public static function fromDimension(Dimension $dim)
+    {
+        $diminst = new static();
+        $diminst->setCurrent($dim->getCurrent());
+        $diminst->setDefault($dim->getDefault());
+        $diminst->setMultipleValues($dim->getMultipleValues());
+        $diminst->setName($dim->getName());
+        $diminst->setNearestValue($dim->getNearestValue());
+        $diminst->setUnitSymbol($dim->getUnitSymbol());
+        $diminst->setUnits($dim->getUnits());
+        $diminst->setActive(false);
+        $diminst->setOrigextent($dim->getExtent());
+        $diminst->setExtent($dim->getExtent());
+        $diminst->setType(static::findType($dim->getExtent()));
+        return $diminst;
     }
 }

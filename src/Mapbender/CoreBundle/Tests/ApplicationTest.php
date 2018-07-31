@@ -17,6 +17,8 @@ class ApplicationTest extends TestBase
 {
     /**
      * Test getting applications
+     * @group unit
+     * @group dataIntegrity
      */
     public function testApplicationComponent()
     {
@@ -37,12 +39,18 @@ class ApplicationTest extends TestBase
         }
     }
 
+    /**
+     * @group functional
+     */
     public function testLoginForm()
     {
         $client = $this->getClient()->request('GET', '/user/login');
         $this->assertTrue($client->filter('html:contains("Login")')->count() > 0);
     }
 
+    /**
+     * @group functional
+     */
     public function testMapbenderUserAppAbility()
     {
         $client   = $this->getClient();

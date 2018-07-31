@@ -1,12 +1,13 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
+use Mapbender\CoreBundle\Component\Base\ConfigurationBase;
 
 /**
  * Description of SourceConfigurationOptions
  *
  * @author Paul Schmidt
  */
-abstract class InstanceConfigurationOptions
+abstract class InstanceConfigurationOptions extends ConfigurationBase
 {
     /**
      * ORM\Column(type="string", nullable=true)
@@ -16,17 +17,17 @@ abstract class InstanceConfigurationOptions
     /**
      * ORM\Column(type="float", nullable=true)
      */
-    public $opacity;
+    public $opacity = 1;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    public $proxy;
+    public $proxy = false;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    public $visible;
+    public $visible = true;
 
     /**
      * Sets an url
@@ -114,6 +115,11 @@ abstract class InstanceConfigurationOptions
      *
      * @param Signer $signer
      * @return bool transparency
+     *
+     * @deprecated this should be a getter, not a mutator, if it should exist at all here. URL signing is presentation
+     * layer.
+     * @internal
+     * @todo: find callers
      */
     public function signUrl(Signer $signer = null)
     {
@@ -126,15 +132,13 @@ abstract class InstanceConfigurationOptions
      * Returns InstanceConfigurationOptions as array
      * @return array
      */
-    abstract public function toArray();
-
-    /**
-     * Creates an InstanceConfigurationOptions from options
-     * @param array $options array with options
-     * @return InstanceConfigurationOptions
-     */
-    public static function fromArray($options)
+    public function toArray()
     {
-        
+        return array(
+            "url" => $this->url,
+            "opacity" => $this->opacity,
+            "proxy" => $this->proxy,
+            "visible" => $this->visible,
+        );
     }
 }

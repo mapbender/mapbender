@@ -197,4 +197,18 @@ class BoundingBox
         );
     }
 
+    /**
+     * The entity handlers like to call this, for database storage maybe
+     * @return float[]
+     */
+    public function toCoordsArray()
+    {
+        return array(
+            floatval($this->getMinx()),
+            floatval($this->getMiny()),
+            floatval($this->getMaxx()),
+            floatval($this->getMaxy())
+        );
+    }
+
 }

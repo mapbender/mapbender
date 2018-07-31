@@ -5,30 +5,24 @@
     <div class="clear"></div>
 </div>
 <div id="vendorspecific{{ num }}-content" class="on-off-content hidden" data-json="{{ venspec.json.vars.data }}">
-    <div class="left">
+    <div>
         {{ form_widget(venspec.multipleValues) }}<label for="{{venspec.multipleValues.vars.id}}" class="labelCheck" title="multipleValues">multiple</label>
     </div>
-    <div class="left">
+    <div>
         {{ form_widget(venspec.nearestValue) }}<label for="{{venspec.nearestValue.vars.id}}" class="labelCheck" title="nearestValue">nearest</label>
     </div>
-    <div class="left">
+    <div>
         {{ form_widget(venspec.current) }}<label for="{{venspec.current.vars.id}}" class="labelCheck" title="current">current</label>
     </div>
-    <div class="clear"></div>
     {{ form_label(venspec.name) }}{{ form_widget(venspec.name) }}
-    <div class="clear"></div>
     {{ form_label(venspec.units) }}{{ form_widget(venspec.units) }}
-    <div class="clear"></div>
     {{ form_label(venspec.unitSymbol) }}{{ form_widget(venspec.unitSymbol) }}
-    <div class="clear"></div>
     {% if venspec.default is defined %}
         {{ form_label(venspec.default) }}{{ form_widget(venspec.default) }}
-        <div class="clear"></div>
     {% endif %}
     <label for="{{venspec.extentEdit.vars.id}}" class="labelInput" title="Extent">Extent</label>{{ form_widget(venspec.extentEdit) }}
-    <div class="clear"></div>
-    <div class="clear vendorspecific-type">{{ form_widget(venspec.type) }}</div>
-    <div class="clear vendorspecific-origextent">{{ form_widget(venspec.origextent) }}</div>
-    <div class="clear vendorspecific-exent">{{ form_widget(venspec.extent) }}</div>
+    <div class="vendorspecific-type">{{ form_widget(venspec.type) }}</div>
+    <div class="vendorspecific-origextent">{{ form_widget(venspec.origextent) }}</div>
+    <div class="vendorspecific-exent">{{ form_widget(venspec.extent) }}</div>
     <div id="vendorspecific{{ num }}-extent" class="mb-slider"></div>
 </div>

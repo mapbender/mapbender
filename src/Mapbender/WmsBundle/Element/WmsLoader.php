@@ -3,12 +3,12 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\WmsBundle\Component\Wms\Importer;
+use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
+use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 /**
  * WmsLoader
@@ -159,94 +159,39 @@ class WmsLoader extends Element
     public function httpAction($action)
     {
         switch ($action) {
-            case 'getInstances':
-                return $this->getInstances();
-            case 'getCapabilities':
-                return $this->getCapabilities();
-            case 'signeUrl':
-                return $this->signeUrl();
-            case 'signeSources':
-                return $this->signeSources();
+            case 'loadWms':
+                return $this->loadWms();
             default:
                 throw new NotFoundHttpException('No such action');
         }
     }
 
-    /**
-     * Returns
-     *
-     * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
-     */
-    protected function getCapabilities()
+    protected function loadWms()
     {
-        $gc_url = urldecode($this->container->get('request')->get("url", null));
-        $signer = $this->container->get('signer');
-        $signedUrl = $signer->signUrl($gc_url);
-        $path = array(
-            '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint',
-            'url' => urlencode($signedUrl)
-        );
-        $subRequest = $this->container->get('request')->duplicate(
-            array('url' => urlencode($signedUrl)),
-            $this->container->get('request')->request->all(),
-            $path
-        );
-        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        $request = $this->container->get('request');
+        $wmsSource = $this->getWmsSource($request);
+
+        $wmsSourceEntityHandler = new WmsSourceEntityHandler($this->container, $wmsSource);
+        $wmsInstance = $wmsSourceEntityHandler->createInstance();
+        /** @var TypeDirectoryService $directory */
+        $directory = $this->container->get('mapbender.source.typedirectory.service');
+        $layerConfiguration = $directory->getSourceService($wmsInstance)->getConfiguration($wmsInstance);
+
+        return new JsonResponse($layerConfiguration);
     }
 
-    /**
-     * Returns
-     *
-     * @return Response
-     */
-    protected function signeUrl()
+    protected function getWmsSource($request)
     {
-        $gc_url = urldecode($this->container->get('request')->get("url", null));
-        $signer = $this->container->get('signer');
-        $signedUrl = $signer->signUrl($gc_url);
-        return new JsonResponse(array("success" => $signedUrl));
-    }
+        $requestUrl = $request->get("url");
+        $requestUserName = $request->get("username");
+        $requestPassword = $request->get("password");
+        $onlyValid = false;
 
-    /**
-     * Returns
-     *
-     * @return Response
-     */
-    protected function signeSources()
-    {
-        $sources = json_decode($this->container->get('request')->get("sources", "[]"), true);
-        $signer = $this->container->get('signer');
-        foreach ($sources as &$source) {
-            $source['configuration']['options']['url'] = $signer->signUrl($source['configuration']['options']['url']);
-        }
-        /** @todo: remove double json encoding (adjust consuming code in mapbender.element.wmsloader.js) */
-        return new JsonResponse(array("success" => json_encode($sources)));
-    }
+        $wmsOrigin = new WmsOrigin($requestUrl, $requestUserName, $requestPassword);
+        /** @var Importer $importer */
+        $importer = $this->container->get('mapbender.importer.source.wms.service');
+        $importerResponse = $importer->evaluateServer($wmsOrigin, $onlyValid);
 
-    /**
-     * Creates Instances from sources.
-     * @return Response
-     */
-    protected function getInstances()
-    {
-        $instancesId = $this->container->get('request')->get("instances", null);
-        $instances = array();
-        $instancesIds = explode(',', $instancesId);
-        foreach ($instancesIds as $instanceid) {
-            $securityContext = $this->container->get('security.context');
-            $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-            if (false !== $securityContext->isGranted('VIEW', $oid)) {
-                $instance = $this->container->get('doctrine')
-                    ->getRepository("MapbenderWmsBundle:WmsInstance")->find($instanceid);
-                $entityHandler = EntityHandler::createHandler($this->container, $instance);
-                $entityHandler->create(false);
-                $instConfig = array(
-                    'type' => $entityHandler->getEntity()->getType(),
-                    'title' => $entityHandler->getEntity()->getTitle(),
-                    'configuration' => $entityHandler->getConfiguration($this->container->get('signer')));
-                $instances[] = $instConfig;
-            }
-        }
-        return new JsonResponse(array("success" => $instances));
+        return $importerResponse->getWmsSourceEntity();
     }
 }

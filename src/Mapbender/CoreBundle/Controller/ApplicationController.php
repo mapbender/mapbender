@@ -6,10 +6,13 @@ use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\SecurityContext;
+use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\RequestUtil;
-use Mapbender\WmsBundle\Component\InstanceTunnelHandler;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -17,6 +20,7 @@ use OwsProxy3\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -37,38 +41,13 @@ class ApplicationController extends Controller
 {
 
     /**
-     * Get runtime URLs
-     * Hack to get proper urls when embedded in drupal
-     *
-     * @param string $slug
-     * @return array
+     * @return ConfigService
      */
-    private function getUrls($slug)
+    private function getConfigService()
     {
-        $config        = array('slug' => $slug);
-        $router        = $this->get('router');
-        $searchSubject = 'mapbender';
-        $drupal_mark   = function_exists('mapbender_menu') ? '?q=mapbender' : $searchSubject;
-
-        $urls = array(
-            'base'     => $this->get('request')->getBaseUrl(),
-            'asset'    => $this->get('templating.helper.assets')->getUrl(null),
-            'element'  => $router->generate('mapbender_core_application_element', $config),
-            'trans'    => $router->generate('mapbender_core_translation_trans'),
-            'proxy'    => $router->generate('owsproxy3_core_owsproxy_entrypoint'),
-            'metadata' => $router->generate('mapbender_core_application_metadata', $config),
-            'config'   => $router->generate('mapbender_core_application_configuration', $config));
-
-        if ($searchSubject !== $drupal_mark) {
-            foreach ($urls as $k => $v) {
-                if ($k == "asset") {
-                    continue;
-                }
-                $urls[ $k ] = str_replace($searchSubject, $drupal_mark, $v);
-            }
-        }
-
-        return $urls;
+        /** @var ConfigService $presenter */
+        $presenter = $this->get('mapbender.presenter.application.config.service');
+        return $presenter;
     }
 
     /**
@@ -116,6 +95,7 @@ class ApplicationController extends Controller
             }
         }
 
+        $application = $this->getApplication($slug);
         if ($type == "css") {
             $sourcePath = $request->getBasePath();
             $refs       = array_unique($application->getAssets('css'));
@@ -233,7 +213,9 @@ class ApplicationController extends Controller
      */
     private function getApplication($slug)
     {
-        $application = $this->get('mapbender')->getApplication($slug, $this->getUrls($slug));
+        /** @var Mapbender $mapbender */
+        $mapbender = $this->get('mapbender');
+        $application = $mapbender->getApplication($slug);
 
         if (!$application) {
             throw new NotFoundHttpException(
@@ -252,13 +234,25 @@ class ApplicationController extends Controller
      */
     public function configurationAction($slug)
     {
-        $config  = $this->getApplication($slug)->getConfiguration();
+        $applicationEntity = $this->getApplication($slug)->getEntity();
         $this->get("session")->set("proxyAllowed", true);
-        return new Response(
-            $config,
-            200,
-            array('Content-Type' => 'text/json')
-        );
+        $configService = $this->getConfigService();
+        $cacheService = $configService->getCacheService();
+        $cacheKeyPath = array('config.json');
+        $cachable = !!$this->container->getParameter('cachable.mapbender.application.config');
+        if ($cachable) {
+            $response = $cacheService->getResponse($applicationEntity, $cacheKeyPath, 'application/json');
+        } else {
+            $response = false;
+        }
+        if (!$cachable || !$response) {
+            $freshConfig = $configService->getConfiguration($applicationEntity);
+            $response = new JsonResponse($freshConfig);
+            if ($cachable) {
+                $cacheService->putValue($applicationEntity, $cacheKeyPath, $response->getContent());
+            }
+        }
+        return $response;
     }
 
     /**
@@ -377,7 +371,7 @@ class ApplicationController extends Controller
         $getParams   = $request->query->all();
         $user        = $source->getUsername() ? $source->getUsername() : null;
         $password    = $source->getUsername() ? $source->getPassword() : null;
-        $instHandler = EntityHandler::createHandler($this->container, $instance);
+        $instHandler = SourceInstanceEntityHandler::createHandler($this->container, $instance);
         $vendorspec  = $instHandler->getSensitiveVendorSpecific();
         /* overwrite vendorspecific parameters from handler with get/post parameters */
         if (count($getParams)) {
@@ -392,7 +386,9 @@ class ApplicationController extends Controller
         if (!$requestType) {
             throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
         }
-        $instanceTunnel = new InstanceTunnelHandler($instance);
+        /** @var InstanceTunnelService $tunnelService */
+        $tunnelService = $this->get('mapbender.source.instancetunnel.service');
+        $instanceTunnel = $tunnelService->makeEndpoint($instance);
         $url = $instanceTunnel->getInternalUrl($request);
         if (!$url) {
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');

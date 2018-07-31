@@ -99,15 +99,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
             }
         } elseif (is_array($data)) {
             $result = array();
-            if (ArrayUtil::isAssoc($data)) {
-                foreach ($data as $key => $item) {
-                    $result[$key] = $this->handleData($item);
-                }
-                return $result;
-            } else {
-                while (list($idx, $item) = each($data)) {
-                    $result[$idx] = $this->handleData($item);
-                }
+            foreach ($data as $key => $item) {
+                $result[$key] = $this->handleData($item);
             }
             return $result;
         } elseif ($data === null || is_integer($data) || is_float($data) || is_string($data) || is_bool($data)) {
@@ -290,8 +283,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
                 }
             } else {
                 $help = array();
-                while (list($idx, $item) = each($value)) {
-                    $help[$idx] = $this->handleConfiguration($item);
+                foreach ($value as $key => $subvalue) {
+                    $help[$key] = $this->handleConfiguration($subvalue);
                 }
                 return $help;
             }
@@ -309,7 +302,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
     {
         foreach ($app->getElements() as $element) {
             $elmClass = $element->getClass();
-            $applComp = new ApplicationComponent($this->container, $element->getApplication(), array());
+            $applComp = new ApplicationComponent($this->container, $element->getApplication());
             $elmComp = new $elmClass($applComp, $this->container, $element);
             $configuration = $element->getConfiguration();
             foreach ($configuration as $key => $value) {

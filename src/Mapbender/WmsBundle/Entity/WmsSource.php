@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Authority;
+use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -889,6 +890,7 @@ class WmsSource extends Source implements ContainingKeyword
     }
 
     /**
+<<<<<<< HEAD
      * Replace host name in all URLish attributes.
      *
      * @param string $to new host name
@@ -951,5 +953,23 @@ class WmsSource extends Source implements ContainingKeyword
         $this->setLayers($this->getLayers());
 
         return $this;
+    }
+
+    /**
+     * @return DimensionInst[]
+     */
+    public function dimensionInstancesFactory()
+    {
+        $dimensions = array();
+        foreach ($this->getLayers() as $layer) {
+            /** @var WmsLayerSource $layer */
+            foreach ($layer->getDimension() as $dimension) {
+                $dim = DimensionInst::fromDimension($dimension);
+                if (!in_array($dim, $dimensions)) {
+                    $dimensions[] = $dim;
+                }
+            }
+        }
+        return $dimensions;
     }
 }

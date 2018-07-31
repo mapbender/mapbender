@@ -2,6 +2,9 @@
 
 namespace Mapbender\CoreBundle\Tests\Controller;
 
+/**
+ * @group functional
+ */
 class SeleniumPhantomJsTest extends \PHPUnit_Extensions_Selenium2TestCase
 {
 

@@ -78,22 +78,29 @@ class XmlValidator
     }
 
 
+    /**
+     * @param \DOMDocument $doc
+     * @throws XmlParseException
+     */
     protected function validateDtd(\DOMDocument $doc)
     {
         $docH = new \DOMDocument();
         $filePath = $this->ensureLocalSchema($doc->doctype->name, $doc->doctype->systemId);
         $docStr = str_replace($doc->doctype->systemId, $this->addFileSchema($filePath), $doc->saveXML());
-        $doc->loadXML($docStr);
-        unset($docStr);
-        if (!@$docH->loadXML($doc->saveXML(), LIBXML_DTDLOAD | LIBXML_DTDVALID)) {
+
+        if (!@$docH->loadXML($docStr, LIBXML_DTDLOAD | LIBXML_DTDVALID)) {
             throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
         }
-        $doc = $docH;
-        if (!@$doc->validate()) { // check with DTD
+
+        if (!@$docH->validate()) { // check with DTD
             throw new XmlParseException("mb.wms.repository.parser.not_valid_dtd");
         }
     }
 
+    /**
+     * @param \DOMDocument $doc
+     * @throws XmlParseException
+     */
     protected function validateNonDtd(\DOMDocument $doc)
     {
         $schemaLocations = $this->addSchemas($doc);
@@ -120,7 +127,7 @@ EOF
             foreach ($errors as $error) {
                 $message .= "\n" . $error->message;
             }
-            $this->container->get('logger')->err($message);
+            $this->getLogger()->error($message);
             libxml_clear_errors();
             throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
         }
@@ -156,7 +163,7 @@ EOF
      */
     private function addSchemaLocation(&$schemaLocations, $ns, $path)
     {
-        if (stripos($path, "http:") === 0) {
+        if (stripos($path, "http:") === 0 || stripos($path, "https:") === 0) {
             $this->addSchemaLocationReq($schemaLocations, $ns, $path);
             return true;
         } elseif (is_file($path)) {
@@ -270,8 +277,8 @@ EOF
         // try in shipping schema dir, and return the path if that file exists
         // otherwise, return a file name in download dir, and track it for deletion
         $path = $this->normalizePath($path);
-        $shippingPath = $this->shippingSchemaDir . "/{$path}";
-        if (file_exists($shippingPath)) {
+        $shippingPath = $this->locateShippingSchema($ns, $path, $url);
+        if ($shippingPath && file_exists($shippingPath)) {
             return $shippingPath;
         } else {
             $downloadPath = $this->schemaDownloadDir . "/{$path}";
@@ -282,30 +289,31 @@ EOF
     }
 
     /**
-     * Normalizes a file path: repaces all strings "/ORDERNAME/.." with "".
+     * Removes parent directory traversal from a path by removing all "<parent name>/.." occurences with "".
+     * Supports both Unix and Windows style directory separators.
      *
      * @param string $path
-     * @return string a mormalized file path.
+     * @return string a mormalized file path with native directory separators
      */
     private function normalizePath($path)
     {
-        $path = preg_replace("/[\/\\\][^\/\\\]+[\/\\\][\.]{2}/", "", $path);
+        $path = preg_replace('#[/\\\\][^/\\\\]+[/\\\\][\.]{2}#', '', $path);
         if (!strpos($path, "..")) {
-            return preg_replace("/[\/\\\]/", DIRECTORY_SEPARATOR, $path);
+            return preg_replace('#[/\\\\]#', DIRECTORY_SEPARATOR, $path);
         } else {
             return $this->normalizePath($path);
         }
     }
 
     /**
-     * Adds a schema "file:///" to file path.
+     * Adds a schema "file:///" to file path, enforces Unix-style directory separators.
      *
      * @param string $filePath a file path
      * @return string a file path as url
      */
     private function addFileSchema($filePath)
     {
-        $filePath_ = preg_replace("/[\/\\\]/", "/", $filePath);
+        $filePath_ = preg_replace('#[/\\\\]#', '/', $filePath);
         if (stripos($filePath_, "file:") !== 0) {
             return "file:///" . $filePath_;
         } else {
@@ -380,5 +388,46 @@ EOF
         /** @var LoggerInterface $logger */
         $logger = $this->container->get("logger");
         return $logger;
+    }
+
+    /**
+     * Finds an appropriate schema file in the "shipping" / bundled set, so we can avoid repeated downloads of
+     * common, static schemas.
+     *
+     * @param string $targetNamespace the schema namespace
+     * @param string $initialPath a relative sub-path, e.g. 'schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd'
+     * @param string $url the entire request url for the scheme, used as a fallback for legacy file placement
+     * @return string|null absoulte path to local file or null if not found
+     */
+    protected function locateShippingSchema($targetNamespace, $initialPath, $url)
+    {
+        $newStyleFullPath = "{$this->shippingSchemaDir}/{$initialPath}";
+        if (file_exists($newStyleFullPath)) {
+            return $newStyleFullPath;
+        } else {
+            // Legacy file naming placed all files into a single directory by flattening directory separators into
+            // underscores. Any other non-word characters (dots, '://' etc) are also converted to underscores.
+            /**
+             * @todo: shipping schemas should relocate and adopt a single file naming convention that works on
+             *        Unix and Windows. Then we can remove this entire path.
+             */
+            $legacyCandidates = array(
+                // first form will use the full URL, most notably including the scheme
+                // this produces names like
+                //   "xmlschemas/http___www_w3_org_XML_1998_namespace_http___www_w3_org_2001_xml_xsd"
+                "{$targetNamespace}_{$url}",
+                // second form uses the (already preprocessed) path
+                "{$targetNamespace}_{$initialPath}",
+            );
+            foreach ($legacyCandidates as $candidate) {
+                // flatten non-word / non-digit chars to underscores, prepend base path
+                $underscored = preg_replace('#[^\w\d]#', '_', $candidate);
+                $fullPath = "{$this->shippingSchemaDir}/{$underscored}";
+                if (file_exists($fullPath)) {
+                    return $fullPath;
+                }
+            }
+            return null;
+        }
     }
 }

@@ -6,6 +6,7 @@ use Buzz\Message\Response;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\XmlValidator;
+use Mapbender\WmsBundle\Component\Wms\Importer\DeferredValidation;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Mapbender\WmsBundle\Entity\WmsSource;
@@ -14,6 +15,15 @@ use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Service class that produces WmsSource entities by evaluating a "GetCapabilities" document, either directly
+ * in-memory, or from a given WmsOrigin (which is just url + username + password).
+ * WmsSource is bundled in a Response class with validation errors. This is done because validation exceptions
+ * can be optionally suppressed ("onlyValid"=false). In that case, the Response will contain the exception, if
+ * any. By default, validation exceptions are thrown.
+ *
+ * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
+ */
 class Importer extends ContainerAware
 {
     /**
@@ -52,18 +62,18 @@ class Importer extends ContainerAware
      */
     public function evaluateCapabilitiesDocument(\DOMDocument $document, $onlyValid=true)
     {
-        try {
+        $parser = WmsCapabilitiesParser::getParser($document);
+        if ($onlyValid) {
             $this->validate($document);
+            $sourceEntity = $parser->parse();
+            $sourceEntity->setValid(true);
             $validationError = null;
-        } catch (XmlParseException $e) {
-            if ($onlyValid) {
-                throw $e;
-            } else {
-                $validationError = $e;
-            }
+        } else {
+            $sourceEntity = $parser->parse();
+            $validationError = new DeferredValidation($sourceEntity, $document, $this);
+            // valid attribute on WmsSource will be updated by deferred validation
+            $sourceEntity->setValid(true);
         }
-        $sourceEntity = WmsCapabilitiesParser::getParser($document)->parse();
-        $sourceEntity->setValid(!$validationError);
         return new Importer\Response($sourceEntity, $validationError);
     }
 
@@ -90,6 +100,10 @@ class Importer extends ContainerAware
         return $capsDocument;
     }
 
+    /**
+     * @param \DOMDocument $capsDocument
+     * @throws XmlParseException
+     */
     public function validate(\DOMDocument $capsDocument)
     {
         $validator = new XmlValidator($this->container);

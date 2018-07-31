@@ -4,9 +4,11 @@ namespace Mapbender\CoreBundle\Component;
 use Assetic\Asset\StringAsset;
 use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
+use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -34,7 +36,7 @@ class Application
     protected $template;
 
     /**
-     * @var array $elements The elements, ordered by weight
+     * @var Element[][] $element lists by region
      */
     protected $elements;
 
@@ -44,11 +46,6 @@ class Application
     protected $layers;
 
     /**
-     * @var array $urls Runtime URLs
-     */
-    protected $urls;
-
-    /**
      * @var Entity
      */
     protected $entity;
@@ -56,13 +53,11 @@ class Application
     /**
      * @param ContainerInterface $container The container
      * @param Entity             $entity    The configuration entity
-     * @param array              $urls      Array of runtime URLs
      */
-    public function __construct(ContainerInterface $container, Entity $entity, array $urls)
+    public function __construct(ContainerInterface $container, Entity $entity)
     {
         $this->container = $container;
         $this->entity    = $entity;
-        $this->urls      = $urls;
     }
 
     /**
@@ -164,6 +159,8 @@ class Application
                 '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
+                '@MapbenderCoreBundle/Resources/public/polyfills.js',
             ),
             'css'   => array(),
             'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')
@@ -214,8 +211,8 @@ class Application
         }
 
         // Collect all layer asset definitions
-        foreach ($this->getLayersets() as $layerset) {
-            foreach ($layerset->layerObjects as $layer) {
+        foreach ($this->entity->getLayersets() as $layerset) {
+            foreach ($this->filterActiveSourceInstances($layerset) as $layer) {
                 $assetSources[] = array(
                     'assets' => $layer->getAssets(),
                     'object' => $layer,
@@ -303,6 +300,16 @@ class Application
     }
 
     /**
+     * @return ConfigService
+     */
+    private function getConfigService()
+    {
+        /** @var ConfigService $presenter */
+        $presenter = $this->container->get('mapbender.presenter.application.config.service');
+        return $presenter;
+    }
+
+    /**
      * Get the configuration (application, elements, layers) as an StringAsset.
      * Filters can be applied later on with the ensureFilter method.
      *
@@ -310,68 +317,8 @@ class Application
      */
     public function getConfiguration()
     {
-        /** @var Element[] $elements */
-        /** @var \Mapbender\CoreBundle\Component\Element $elementInstance */
-        $configuration = array(
-            'application' => array(
-                'title'         => $this->entity->getTitle(),
-                'urls'          => $this->urls,
-                'publicOptions' => $this->entity->getPublicOptions(),
-                'slug'          => $this->getSlug()),
-            'elements'    => array(),
-            'layersets'   => array(),
-            // Layer titles
-            'layersetmap' => array(),
-        );
-
-        // Get all element configurations
-        $configuration['elements'] = array();
-        foreach ($this->getElements() as $region => $elements) {
-            foreach ($elements as $element) {
-                $configuration['elements'][ $element->getId() ] = array(
-                    'init'          => $element->getWidgetName(),
-                    'configuration' => $element->getPublicConfiguration());
-            }
-        }
-
-        // Get all layer configurations
-        foreach ($this->getLayersets() as $layerSet) {
-            $layerId       = '' . $layerSet->getId();
-            $layerSetTitle = $layerSet->getTitle() ? $layerSet->getTitle() : $layerId;
-            $layerSets     = array();
-
-            foreach ($layerSet->layerObjects as $layer) {
-                $instHandler = EntityHandler::createHandler($this->container, $layer);
-                $conf        = $instHandler->getConfiguration($this->container->get('signer'));
-
-                if (!$conf) {
-                    continue;
-                }
-
-                $layerSets[] = array(
-                    $layer->getId() => array(
-                        'type'          => strtolower($layer->getType()),
-                        'title'         => $layer->getTitle(),
-                        'configuration' => $conf
-                    )
-                );
-            }
-
-            $configuration['layersets'][ $layerId ]   = $layerSets;
-            $configuration['layersetmap'][ $layerId ] = $layerSetTitle;
-        }
-
-        // Let (active, visible) Elements update the Application config
-        // This is useful for BaseSourceSwitcher, SuggestMap, potentially many more, that influence the initially
-        // visible state of the frontend.
-        $configBeforeElement = $configAfterElements = $configuration;
-        foreach ($this->getElements() as $elementList) {
-            foreach ($elementList as $elementInstance) {
-                $configAfterElements = $configBeforeElement = $elementInstance->updateAppConfig($configBeforeElement);
-            }
-        }
-
-        $configuration = $configAfterElements;
+        $configService = $this->getConfigService();
+        $configuration = $configService->getConfiguration($this->entity);
 
         // Convert to asset
         $asset = new StringAsset(json_encode((object)$configuration));
@@ -447,12 +394,11 @@ class Application
     /**
      * Get region elements, optionally by region
      *
-     * @param string $regionName Region to get elements for. If null, all elements  are returned.
-     * @return PersistentCollection Regions
+     * @param string $regionName deprecated; Region to get elements for. If null, all elements  are returned.
+     * @return Element[][] keyed by region name (string)
      */
     public function getElements($regionName = null)
     {
-        $regions = null;
         if (!$this->elements) {
             $regions = $this->getGrantedRegionElementCollections();
             foreach ($regions as $_regionName => $elements) {
@@ -474,28 +420,37 @@ class Application
     /**
      * Returns all layer sets
      *
+     * @deprecated for entity-modifying side effects, do not use
      * @return Layerset[] Layer sets
      */
     public function getLayersets()
     {
         if ($this->layers === null) {
-            // Set up all elements (by region)
             $this->layers = array();
             foreach ($this->entity->getLayersets() as $layerSet) {
-                $layerSet->layerObjects = array();
-                foreach ($layerSet->getInstances() as $instance) {
-                    if ($this->getEntity()->isYamlBased()) {
-                        $layerSet->layerObjects[] = $instance;
-                    } else {
-                        if ($instance->getEnabled()) {
-                            $layerSet->layerObjects[] = $instance;
-                        }
-                    }
-                }
-                $this->layers[ $layerSet->getId() ] = $layerSet;
+                $layerSet->layerObjects = $this->filterActiveSourceInstances($layerSet);
+                $this->layers[$layerSet->getId()] = $layerSet;
             }
         }
         return $this->layers;
+    }
+
+    /**
+     * Extracts active source instances from given Layerset entity.
+     *
+     * @param Layerset $entity
+     * @return SourceInstance[]
+     */
+    protected static function filterActiveSourceInstances(Layerset $entity)
+    {
+        $isYamlApp = $entity->getApplication()->isYamlBased();
+        $activeInstances = array();
+        foreach ($entity->getInstances() as $instance) {
+            if ($isYamlApp || $instance->getEnabled()) {
+                $activeInstances[] = $instance;
+            }
+        }
+        return $activeInstances;
     }
 
     /**
@@ -580,7 +535,7 @@ class Application
         if ($old_slug === null) {
             $slug_dir = $uploads_dir . "/" . $slug;
             if (!is_dir($slug_dir)) {
-                return mkdir($slug_dir);
+                return mkdir($slug_dir, 0777, true);
             } else {
                 return true;
             }
@@ -667,12 +622,15 @@ class Application
      */
     public static function copyAppWebDir($container, $srcSslug, $destSlug)
     {
-        $src = Application::getAppWebDir($container, $srcSslug);
-        $dst = Application::getAppWebDir($container, $destSlug);
+        $rootPath = $container->get('kernel')->getRootDir() . '/../web/';
+        $src      = Application::getAppWebDir($container, $srcSslug);
+        $dst      = Application::getAppWebDir($container, $destSlug);
+
         if ($src === null || $dst === null) {
             return false;
         }
-        Utils::copyOrderRecursive($src, $dst);
+
+        Utils::copyOrderRecursive($rootPath . $src, $rootPath . $dst);
         return true;
     }
 
@@ -699,6 +657,8 @@ class Application
 
     /**
      * Get granted elements
+     *
+     * @return Element[][] keyed on region name
      */
     protected function getGrantedRegionElementCollections()
     {
@@ -711,6 +671,10 @@ class Application
 
             /** @var \Mapbender\CoreBundle\Element\Button $class */
             $class                     = $elementEntity->getClass();
+            if (!class_exists($class)) {
+                continue;
+            }
+
             $elementComponent          = new $class($this, $this->container, $elementEntity);
             $regionName                = $elementEntity->getRegion();
             $elements[ $regionName ][] = $elementComponent;

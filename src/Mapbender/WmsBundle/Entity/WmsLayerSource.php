@@ -227,7 +227,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
 
     /**
      *
-     * @return ArrayCollection
+     * @return ArrayCollection|WmsLayerSource[]
      */
     public function getSublayer()
     {
@@ -469,9 +469,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get latlonBounds
      *
-     * @return Object
+     * @return BoundingBox
      */
-    public function getLatlonBounds($inherit = true)
+    public function getLatlonBounds($inherit = false)
     {
 //        //@TODO check layer inheritance if layer->latlonBounds === null
         if ($inherit && $this->latlonBounds === null && $this->getParent() !== null) {
@@ -511,7 +511,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @return BoundingBox[]
      */
-    public function getBoundingBoxes()
+    public function getBoundingBoxes($inherit = false)
     {
 //        //@TODO check layer inheritance if count(layer->boundingBoxes) === 0
 //        if(count($this->boundingBoxes) === 0 && $this->getParent() !== null){
@@ -552,7 +552,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      *
      * @return array
      */
-    public function getSrs($inherit = true)
+    public function getSrs($inherit = false)
     {
         if ($inherit && $this->getParent() !== null) { // add crses from parent
             return array_unique(array_merge($this->getParent()->getSrs(), $this->srs));
@@ -623,32 +623,55 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Get scale
+     * Get minimum scale hint
+     *
+     * @param bool $recursive Try to get value from parent
+     * @return float|null
+     */
+    public function getMinScale($recursive = false)
+    {
+        $value = null;
+        $nextSource = $this;
+        do {
+            $scaleObj = $nextSource->getScale();
+            $value = $scaleObj ? $scaleObj->getMin() : null;
+            $nextSource = $nextSource->getParent();
+        } while ($value === null && $recursive && $nextSource);
+
+        return $value === null ? null : floatval($value);
+    }
+
+    /**
+     * Get maximum scale hint
+     *
+     * @param bool $recursive Try to get value from parent
+     * @return float|null
+     */
+    public function getMaxScale($recursive = false)
+    {
+        $value = null;
+        $nextSource = $this;
+        do {
+            $scaleObj = $nextSource->getScale();
+            $value = $scaleObj ? $scaleObj->getMax() : null;
+            $nextSource = $nextSource->getParent();
+        } while ($value === null && $recursive && $nextSource);
+
+        return $value === null ? null : floatval($value);
+    }
+
+    /**
+     * Get scale hint
      *
      * @return MinMax
      */
     public function getScaleRecursive()
     {
-        if ($this->scale !== null) {
-            if ($this->scale->getMin() === null || $this->scale->getMax() === null) {
-                if ($parent_scale = $this->getParent()->getScale()) {
-                    return new MinMax(
-                        $this->scale->getMin() !== null ? $this->scale->getMin() : $parent_scale->getMin(),
-                        $this->scale->getMax() !== null ? $this->scale->getMax() : $parent_scale->getMax()
-                    );
-                } else {
-                    return $this->scale;
-                }
-            } else {
-                return $this->scale;
-            }
-        } else {
-            if ($this->getParent() !== null) {
-                return $this->getParent()->getScale();
-            } else {
-                return null;
-            }
-        }
+        $minScale = $this->getMinScale(true);
+        $maxScale = $this->getMaxScale(true);
+        $mergedScale = new MinMax($minScale, $maxScale);
+
+        return $mergedScale;
     }
 
     /**
@@ -737,7 +760,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function getIdentifierAuthority()
     {
         $result = array();
-        $authorities = $this->getAuthority();
+        $authorities = $this->getAuthority(true);
         if (count($this->identifier) != 0 && count($authorities) != 0) {
             foreach ($this->identifier as $identifier) {
                 foreach ($authorities as $authority) {
@@ -791,11 +814,16 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
 
     /**
      *
+<<<<<<< HEAD
      * @param bool $inherit to include Authorities form parent (default)
      * @return Authority[]
      * @deprecated because of misleading wording (singular / plural)
+=======
+     * @param bool $inherit to append Authrity objects inherited (recursively) from parent, if any
+     * @return ArrayCollection|Authority[]
+>>>>>>> github/release/3.0.5
      */
-    public function getAuthority($inherit = true)
+    public function getAuthority($inherit = false)
     {
         return $this->getAuthorities($inherit);
     }
@@ -1034,5 +1062,21 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
         foreach ($this->getDataUrl() as $du) {
             $du->replaceHost($to, $from);
         }
+    }
+
+    /**
+     * Returns a merged array of the latlon bounds (if set) and other bounding boxes.
+     * This is used by the *EntityHandler machinery frontend config generation.
+     *
+     * @return BoundingBox[]
+     */
+    public function getMergedBoundingBoxes()
+    {
+        $bboxes = array();
+        $latLonBounds = $this->getLatlonBounds();
+        if ($latLonBounds) {
+            $bboxes[] = $latLonBounds;
+        }
+        return array_merge($bboxes, $this->getBoundingBoxes());
     }
 }

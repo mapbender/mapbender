@@ -61,7 +61,7 @@ class Map extends Element
                 'start' => array(5, 45, 15, 55)),
             'maxResolution' => 'auto',
             "scales" => array(25000000, 10000000, 5000000, 1000000, 500000),
-            'imgPath' => 'bundles/mapbendercore/mapquery/lib/openlayers/img');
+        );
     }
 
     /**
@@ -221,6 +221,13 @@ class Map extends Element
         }
 
         return $configuration;
+    }
+
+    public function getPublicConfiguration()
+    {
+        return $this->getConfiguration() + array(
+            'imgPath' => 'bundles/mapbendercore/mapquery/lib/openlayers/img',
+        );
     }
 
     /**

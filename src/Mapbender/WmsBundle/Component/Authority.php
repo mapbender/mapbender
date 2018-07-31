@@ -74,4 +74,15 @@ class Authority
     {
         $this->url = UrlUtil::replaceHost($this->url, $to, $from);
     }
+
+    /**
+     * @return string[]
+     */
+    public function toArray()
+    {
+        return array(
+            'url' => $this->url,
+            'name' => $this->name,
+        );
+    }
 }

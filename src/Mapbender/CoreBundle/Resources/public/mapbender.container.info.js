@@ -7,7 +7,6 @@
  * @author Andriy Oblivantsev <eslider@gmail.com>
  */
 function MapbenderContainerInfo(widget, options) {
-    var self = this;
     var element = (typeof widget === 'object') ? $(widget.element) : $('#' + widget);
 
     var toolBar = element.closest(".toolBar");
@@ -28,71 +27,49 @@ function MapbenderContainerInfo(widget, options) {
         container = sidePane;
     }
 
-    self.isSidePane = function() {
+    this.isSidePane = function() {
         return sidePane.size() > 0;
     };
 
-    self.isContentPane = function() {
+    this.isContentPane = function() {
         return contentPane.size() > 0;
     };
 
-    self.isToolBar = function() {
+    this.isToolBar = function() {
         return toolBar.size() > 0;
     };
 
-    self.isOnTop = function() {
+    this.isOnTop = function() {
         return toolBar.hasClass('top');
     };
 
-    self.isOnBottom = function() {
+    this.isOnBottom = function() {
         return toolBar.hasClass('bottom');
     };
 
-    self.isOnTop = function() {
+    this.isOnTop = function() {
         return toolBar.hasClass('top');
     };
 
-    self.isOnLeft = function() {
+    this.isOnLeft = function() {
         return sidePane.hasClass('left');
     };
 
-    self.isOnRight = function() {
+    this.isOnRight = function() {
         return sidePane.hasClass('right');
     };
 
-    self.getContainer = function() {
+    this.getContainer = function() {
         return container;
     };
 
-    if(self.isSidePane()) {
+    if(this.isSidePane()) {
         var accordion = $(".accordionContainer", sidePane);
         var hasAccordion = accordion.length > 0;
 
         if(hasAccordion) {
             var tabs = accordion.find('> div.accordion');
             var currentTab = accordion.find('> div.accordion.active');
-
-            function handleByTab(tab) {
-                var tabContent = tab.parent().find("> div")[tab.index() + 1];
-                var hasWidget = $(tabContent).find(element).length > 0;
-                var state = hasWidget ? 'active' : 'inactive';
-
-                if(lastState === state) {
-                    return;
-                }
-
-                if(state === "active") {
-                    if(options.onactive) {
-                        options.onactive(element);
-                    }
-                } else {
-                    if(options.oninactive) {
-                        options.oninactive(element);
-                    }
-                }
-
-                lastState = state;
-            }
 
             tabs.on('click', function(e) {
                 var tab = $(e.currentTarget);
@@ -102,4 +79,25 @@ function MapbenderContainerInfo(widget, options) {
         }
     }
 
+    function handleByTab(tab) {
+        var tabContent = tab.parent().find("> div")[tab.index() + 1];
+        var hasWidget = $(tabContent).find(element).length > 0;
+        var state = hasWidget ? 'active' : 'inactive';
+
+        if(lastState === state) {
+            return;
+        }
+
+        if(state === "active") {
+            if(options.onactive) {
+                options.onactive();
+            }
+        } else {
+            if(options.oninactive) {
+                options.oninactive();
+            }
+        }
+
+        lastState = state;
+    }
 }
