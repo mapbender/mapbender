@@ -176,8 +176,14 @@ class WmsLoader extends Element
         /** @var TypeDirectoryService $directory */
         $directory = $this->container->get('mapbender.source.typedirectory.service');
         $layerConfiguration = $directory->getSourceService($wmsInstance)->getConfiguration($wmsInstance);
+        $elementConfig = $this->getConfiguration();
+        if ($elementConfig['splitLayers']) {
+            $layerConfigurations = $this->splitLayers($layerConfiguration);
+        } else {
+            $layerConfigurations = [$layerConfiguration];
+        }
 
-        return new JsonResponse($layerConfiguration);
+        return new JsonResponse($layerConfigurations);
     }
 
     protected function getWmsSource($request)
@@ -193,5 +199,21 @@ class WmsLoader extends Element
         $importerResponse = $importer->evaluateServer($wmsOrigin, $onlyValid);
 
         return $importerResponse->getWmsSourceEntity();
+    }
+
+    protected function splitLayers($layerConfiguration)
+    {
+        $children = $layerConfiguration['configuration']['children'][0]['children'];
+        $layerConfigurations = array();
+        foreach ($children as $child) {
+            $layerConfiguration['configuration']['children'][0]['children'] = [$child];
+            $layerConfiguration['configuration']['children'][0]['options']['title'] = $child['options']['title']
+                . ' ('
+                . $layerConfiguration['configuration']['title']
+                . ')'
+            ;
+            $layerConfigurations[] = $layerConfiguration;
+        }
+        return $layerConfigurations;
     }
 }

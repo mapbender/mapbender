@@ -3,14 +3,14 @@ mb:
     imageexport:
       popup:
         btn:
-          ok: Export
-          cancel: Cancel
+          ok: Exporteer
+          cancel: Annuleren
       info:
         noactivelayer: 'Geen actieve laag!'
       chooseformat: 'Kies Export Formaat'
       class:
         title: 'Afbeelding export'
-        description: 'Afbeelding Export stekt u instaat om het huidige scherm van de map te exporteren. Er kan gekozen worden uit png of jpeg formaat.'
+        description: 'Afbeelding Export stelt u in staat om het huidige scherm van de map te exporteren. Er kan gekozen worden uit png of jpeg formaat.'
       tag:
         image: afbeelding
         export: export

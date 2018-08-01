@@ -93,7 +93,7 @@ class WmsSourceService extends SourceService
      */
     public function postProcessUrls(WmsInstance $sourceInstance, $configuration)
     {
-        $user = $this->container->get('security.context')->getToken()->getUser();
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
         $hide = false;
         $params = array();
         foreach ($sourceInstance->getVendorspecifics() as $key => $vendorspec) {

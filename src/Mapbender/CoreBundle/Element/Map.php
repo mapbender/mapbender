@@ -79,11 +79,12 @@ class Map extends Element
     {
         return array(
             'js' => array(
-                'mapquery/lib/openlayers/OpenLayers.js',
+                '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
                 /* 'mapquery/lib/openlayers/lib/deprecated.js', */
-                'mapquery/lib/jquery/jquery.tmpl.js',
-                'mapquery/src/jquery.mapquery.core.js',
+                '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
+                '/../vendor/mapbender/mapquery/src/jquery.mapquery.core.js',
                 'proj4js/proj4js-compressed.js',
+                'mapbender.element.map.mapaxisorder.js',
                 'mapbender.element.map.js'),
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));
     }
@@ -164,7 +165,7 @@ class Map extends Element
                     'label' => isset($poi['label']) ? htmlentities($poi['label']) : null,
                     'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
-                if ($poi['srs']) {
+                if (!empty($poi['srs'])) {
                     $help['srs'] = $poi['srs'];
                 }
                 $extra['pois'][] = $help;
@@ -225,9 +226,9 @@ class Map extends Element
 
     public function getPublicConfiguration()
     {
-        return $this->getConfiguration() + array(
-            'imgPath' => 'bundles/mapbendercore/mapquery/lib/openlayers/img',
-        );
+        return array_replace($this->getConfiguration(), array(
+            'imgPath' => 'components/mapquery/lib/openlayers/img',
+        ));
     }
 
     /**

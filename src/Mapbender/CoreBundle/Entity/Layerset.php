@@ -165,7 +165,7 @@ class Layerset
     /**
      * Get instances
      *
-     * @return SourceInstance[]|Collection
+     * @return \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]|ArrayCollection
      */
     public function getInstances()
     {

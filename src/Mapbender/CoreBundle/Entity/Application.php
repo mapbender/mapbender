@@ -370,7 +370,7 @@ class Application
     /**
      * Get layersets
      *
-     * @return Layerset[]
+     * @return Layerset[]|ArrayCollection
      */
     public function getLayersets()
     {

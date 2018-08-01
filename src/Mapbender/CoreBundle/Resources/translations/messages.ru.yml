@@ -8,6 +8,7 @@ mb:
       popup:
         btn:
           ok: Закрыть
+          print: Печать
       class:
         title: Инфосвойства
         description: Инфосвойства
@@ -19,8 +20,8 @@ mb:
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: 'Посетите наш Mapbender3'
-        linktitle: 'Посетите наш официальный сайт Mapbender3'
+        learnmore: 'Посетите наш Mapbender'
+        linktitle: 'Посетите наш официальный сайт Mapbender'
         website: сайт
       class:
         title: 'Раздел о программе'
@@ -129,6 +130,9 @@ mb:
         gif: gif
         jpg: jpg
         jpeg: jpeg
+      btn:
+        deactivate: 'Deactivate Print Frame[Placeholder]'
+        activate: 'Activate Print Frame[Placeholder]'
     overview:
       nolayer: 'Обзор элемента не имеет слоя.'
       class:
@@ -318,6 +322,7 @@ mb:
           autoopen: Авто-открытие
           rotatable: Поворачиваемые
           legend: 'Легенда'
+          legend_default_behaviour: 'Legend checkbox active'
       copyright:
         label:
           autoopen: Авто-открытие
@@ -327,17 +332,18 @@ mb:
           autoopen: Авто-открытие
           showheader: 'Показать заголовок'
           showlayerremove: 'Показать удаление слоя'
+          usetheme: 'Тематический слой'
+          themes: Темы
           theme:
-            label: Рубрика
-            useTheme: 'Показать рубрики'
             opened: 'Вкл/Выкл Рубрику'
+            activate: 'Enabling Layer Add / Remove'
+            useTheme: 'Показать рубрики'
             sourceVisibility: 'Рубрика: Сервисы'
             allSelected: 'Рубрика:  Слой'
+            label: Рубрика
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideselect: 'Скрыть видимость у папок'
           hideinfo: 'Скрыть информацию'
-          usetheme: 'Тематический слой'
-          themes: Темы
       redlining:
         label:
           auto_activate: Автоактивирование
@@ -382,4 +388,3 @@ mb:
       datails: 'Карта не отображается'
       exception: 'Ошибка: %exception%'
       statuscode: HTTP-Код
-Search: Поиск

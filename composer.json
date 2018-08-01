@@ -5,32 +5,41 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": ">=5.3.3",
-		"symfony/symfony": "^2.3.42",
-		"twig/extensions": "1.x",
-		"doctrine/orm": "^2.2.3",
-		"doctrine/doctrine-fixtures-bundle": "2.3.*",
-		"friendsofsymfony/jsrouting-bundle": "1.5.x",
+        "php": ">=5.4.30",
+        "symfony/symfony": "^2.3",
+        "twig/extensions": "1.x",
+        "doctrine/orm": "^2.2.3",
+        "doctrine/doctrine-fixtures-bundle": "^2.3",
+        "doctrine/doctrine-migrations-bundle": "^1.3",
 
         "arsgeografica/signing": "1.1.x",
         "setasign/fpdi-fpdf": "1.6.*",
 
-        "mapbender/fom": "~3.0.5.4",
-        "mapbender/owsproxy": "~3.0.5.4 || ~3.0.6.2",
+        "eslider/sasscb":  "3.1.x",
+        "wheregroup/compass-mixins": "0.x",
+        "mapbender/mapbender-icons": "1.x",
+
+        "friendsofsymfony/jsrouting-bundle": "1.5.x",
+        "mapbender/vis-ui.js": "0.0.x",
+        "wheregroup/joii": "3.x",
+        "wheregroup/codemirror": "5.x",
+        "components/underscore": "1.x",
+        "wheregroup/open-sans": "1.x",
+
+        "mapbender/fom": "^3.0.6.2@dev || ~4.0.0@dev",
+        "mapbender/owsproxy": "^3.0.6.2@dev",
 
         "mapbender/mapquery": "1.x"
     },
     "autoload": {
         "psr-4": {"Mapbender\\": "src/Mapbender"}
     },
-    "scripts": {
-        "post-update-cmd": "git -C . submodule sync && git -C . submodule update --init --recursive",
-        "post-install-cmd": "git -C . submodule sync && git -C . submodule update --init --recursive"
-    },
     "extra": {
         "branch-alias": {
             "dev-release/3.0.5": "3.0.5.x-dev",
-            "dev-release/3.0.6": "3.0.6.x-dev"
+            "dev-release/3.0.6": "3.0.6.x-dev",
+            "dev-release/3.0.7": "3.0.7.x-dev",
+            "dev-master": "3.0.7.2-dev"
         }
     }
 }

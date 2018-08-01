@@ -4,7 +4,7 @@
   &.checkboxDisabled{@include opacity(0.4);}
 }
 .checkbox{
-  @include absolute(-9999px '' '' 0);
+  @include absolute(-999999px '' '' 0);
   height: 100%;
   width: 100%;
   @include opacity(0);

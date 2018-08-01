@@ -170,116 +170,61 @@
         },
         _unSortable: function() {
         },
-        _sortItem: function($toMoveItem, $beforeItem, $afterItem) {
-            var before = null;
-            var after = null;
-            var toMove = null;
-            if ($beforeItem) {
-                if ($beforeItem.hasClass('themeContainer')) {
-                    var $beforeSEl = $beforeItem.find('ul.layers:first li[data-type="root"]:last');
-                    var bid = $beforeSEl.attr('data-sourceid');
-                    before = {
-                        sourceIdx: {
-                            id: bid
-                        },
-                        layerIdx: {
-                            id: $beforeSEl.attr("data-id")
-                        }
-                    };
-                } else {
-                    var bid = $beforeItem.attr('data-sourceid');
-                    bid = bid ? bid : $beforeItem.parents('li[data-sourceid]:first').attr('data-sourceid');
-                    before = {
-                        sourceIdx: {
-                            id: bid
-                        },
-                        layerIdx: {
-                            id: $beforeItem.attr("data-id")
-                        }
-                    };
-                }
-            }
-            if ($afterItem) {
-                if ($afterItem.hasClass('themeContainer')) {
-                    var $afterSEl = $afterItem.find('ul.layers:first li[data-type="root"]:first');
-                    var bid = $afterSEl.attr('data-sourceid');
-                    after = {
-                        sourceIdx: {
-                            id: bid
-                        },
-                        layerIdx: {
-                            id: $afterSEl.attr("data-id")
-                        }
-                    };
-                } else {
-                    var bid = $afterItem.attr('data-sourceid');
-                    bid = bid ? bid : $afterItem.parents('li[data-sourceid]:first').attr('data-sourceid');
-                    after = {
-                        sourceIdx: {
-                            id: bid
-                        },
-                        layerIdx: {
-                            id: $afterItem.attr("data-id")
-                        }
-                    };
-                }
-            }
-            var id = $toMoveItem.attr('data-sourceid');
-            id = id ? id : $toMoveItem.parents('li[data-sourceid]:first').attr('data-sourceid');
-            toMove = {
-                sourceIdx: {
-                    id: id
-                }
-            };
-            if ($toMoveItem.attr("data-type") !== this.consts.root) {
-                toMove['layerIdx'] = {
-                    id: $toMoveItem.attr("data-id")
-                };
-            }
-            this.model.changeSource({
-                change: {
-                    move: {
-                        tomove: toMove,
-                        before: after,
-                        after: before
-                    }
+        /**
+         * Applies the new (going by DOM) layer order inside a source.
+         *
+         * @param $sourceContainer
+         * @private
+         */
+        _updateSource($sourceContainer) {
+            // this will capture the "configurationish" layer ids (e.g. "1_0_4_1") from
+            // all layers in the source container in DOM order
+            var sourceId = $sourceContainer.attr('data-sourceid');
+            var layerIdOrder = [];
+            $('li.leave[data-type="simple"]', $sourceContainer).each(function() {
+                var $t = $(this);
+                var layerId = $t.attr('data-id');
+                if (typeof layerId !== "undefined") {
+                    layerIdOrder.push("" + layerId);
                 }
             });
+            this.model.setSourceLayerOrder(sourceId, layerIdOrder.reverse());
         },
-        _sortTheme: function($theme) {
-            var self = this;
-            var $beforeEl = $theme.prev().length !== 0 ? $($theme.prev()[0]) : null;
-            var $afterEl = $theme.next().length !== 0 ? $($theme.next()[0]) : null;
-            var $last = null;
-            $('ul.layers:first li[data-type="root"]', $theme).each(function(idx, item) {
-                var $item = $(item);
-                if ($last) {
-                    $beforeEl = $last;
-                }
-                self._sortItem($item, $beforeEl, $afterEl);
-                $last = $item;
-            });
-        },
-        _sortSource: function($item) {
-            var $beforeEl = $item.prev().length !== 0 ? $($item.prev()[0]) : null;
-            var $afterEl = $item.next().length !== 0 ? $($item.next()[0]) : null;
-            this._sortItem($item, $beforeEl, $afterEl);
+        /**
+         * Applies the new (going by DOM) ordering between sources.
+         *
+         * @private
+         */
+        _updateSourceOrder: function() {
+            var $roots = $('ul.layers li[data-type="root"]', this.element);
+            var sourceIds = $roots.map(function() {
+                return $(this).attr('data-sourceid');
+            }).get().reverse();
+            this.model.reorderSources(sourceIds);
         },
         _createSortable: function() {
             var self = this;
             $("ul.layers", this.element).each(function() {
-                var that = this;
-                $(that).sortable({
+                $(this).sortable({
                     axis: 'y',
                     items: "> li:not(.notreorder)",
                     distance: 6,
                     cursor: "move",
                     update: function(event, ui) {
                         var $elm = $(ui.item);
-                        if ($elm.hasClass('themeContainer')) {
-                            self._sortTheme($elm);
-                        } else {
-                            self._sortSource($elm);
+                        var type = $elm.attr('data-type');
+                        switch (type) {
+                            case 'theme':
+                            case 'root':
+                                self._updateSourceOrder();
+                                break;
+                            case 'simple':
+                            case 'group':
+                                self._updateSource($elm.closest('.serviceContainer'));
+                                break;
+                            default:
+                                console.warn("Warning: unhandled element in layertree sorting", type, $elm);
+                                break;
                         }
                     }
                 });
@@ -599,7 +544,6 @@
         _removeChild: function(changed) {
             var self = this;
             if (changed && changed.sourceIdx && changed.childRemoved) {
-                var source = this.model.getSource(changed.sourceIdx);
                 $('ul.layers:first li[data-id="' + changed.childRemoved.layer.options.id + '"]', self.element).
                     remove();
             }
@@ -926,7 +870,7 @@
                 }
 
                 if ($.inArray("metadata", self.options.menu) === -1 || menu.find(
-                    '.layer-metadata').length === 0 || isNaN(parseInt(source.origId))) {
+                    '.layer-metadata').length === 0 || (source.hasOwnProperty('wmsloader') && source.wmsloader === true) || isNaN(parseInt(source.origId))) {
                     $('.layer-metadata', menu).remove();
                 } else {
                     atLeastOne = true;

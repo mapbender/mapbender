@@ -1,169 +1,162 @@
-(function($) {
+(function ($) {
+    'use strict';
 
-    $.widget("mapbender.mbBaseSourceSwitcher", {
-        options: {
-        },
-        scalebar: null,
-        loadStarted: null,
+    $.widget("mapbender.mbBaseSourceSwitcher", $.mapbender.mbBaseElement, {
+        options: {},
+        loadStarted: [],
         contextAddStart: false,
-        _create: function() {
+
+        _create: function () {
             if (!Mapbender.checkTarget("mbBaseSourceSwitcher", this.options.target)) {
                 return;
             }
-            var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
-        _setup: function() {
-            var self = this;
-            this.loadStarted = {};
-            $('.basesourcesetswitch:not(.basesourcegroup)', this.element).on('click', $.proxy(self._toggleMapset, self));
-            $('.basesourcegroup', this.element).on('click', function(e) {
-                var bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
-                $('.basesourcesubswitcher', $(self.element)).addClass('hidden');
-                if (bsswtch.hasClass('hidden')) {
-                    bsswtch.removeClass('hidden');
-                } else {
-                    bsswtch.addClass('hidden');
-                }
-            });
-            this._hideSources();
+
+        _setup: function () {
+            $('.basesourcesetswitch:not(.basesourcegroup)', this.element).on('click', $.proxy(this._toggleMapset, this));
+
+            $('.basesourcesubswitcher', $(this.element)).addClass('hidden');
+
+            $('.basesourcegroup', this.element).on('mouseenter', $.proxy(this._showMenu, this));
+            $('.basesourcegroup', this.element).on('mouseleave', $.proxy(this._hideMenu, this));
+
             this._showActive();
-            this.element.find('.basesourcesetswitch:first').click();
-            $(document).on('mbmapcontextaddstart', $.proxy(self._onContextAddStart, self));
+
+            $(document).on('mbmapcontextaddstart', $.proxy(this._onContextAddStart, this));
+            $(document).on('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
+            $(document).on('mbmapsourceloadend', $.proxy(this._removeSourceFromLoad, this));
+            $(document).on('mbmapsourceloaderror', $.proxy(this._removeSourceFromLoad, this));
         },
-        _hideSources: function() {
-            var me = $(this.element);
-            var map = $('#' + this.options.target).data('mapbenderMbMap');
-            var model = map.getModel();
-            $.each(me.find('.basesourcesetswitch'), function(idx, elm) {
-                $(elm).attr("data-state", "");
-                var sourcesIds = $(elm).attr("data-sourceset").split(",");
-                for (var i = 0; i < sourcesIds.length; i++) {
-                    if (sourcesIds[i] !== '') {
-                        var source_list = model.findSource({origId: sourcesIds[i]});
-                        if(source_list.length === 0){
-                            Mapbender.error(Mapbender.trans(
-                                    "mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
-                        }
-                        for (var j = 0; j < source_list.length; j++) {
-                            var tochange = {
-                                change: {
-                                    sourceIdx: {id: source_list[j].id},
-                                    options: {
-                                        configuration: {
-                                            options: {visibility: false}
-                                        },
-                                        type: 'selected'
-                                    }
-                                }
-                            };
-                            model.changeSource(tochange);
-                        }
-                    }
+
+        _showMenu: function(e) {
+            var $bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
+
+            $bsswtch.removeClass('hidden');
+        },
+
+        _hideMenu: function(e) {
+            var $bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
+
+            $bsswtch.addClass('hidden');
+        },
+
+        _hideSources: function () {
+            var sourceVisibility = false;
+            this._changeSource('.basesourcesetswitch', sourceVisibility);
+        },
+
+        _showActive: function () {
+            var sourceVisibility = true;
+            this._changeSource('.basesourcesetswitch[data-state="active"]', sourceVisibility);
+        },
+
+        _changeSource: function (selector, visibility) {
+            var $me = $(this.element),
+                $map = $('#' + this.options.target).data('mapbenderMbMap'),
+                model = $map.getModel(),
+                source_list;
+
+            $me.find(selector).each(function (idx, elm) {
+                if (false === visibility) {
+                    $(elm).attr("data-state", "");
                 }
+
+                var sourcesIds = $(elm).attr("data-sourceset").split(",");
+
+                sourcesIds.map(function (sourcesId) {
+                    if (sourcesId.length === 0) {
+                        return;
+                    }
+
+                    source_list = model.findSource({origId: sourcesId});
+
+                    if (source_list.length === 0) {
+                        Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable")
+                            .replace('%id%', sourcesId), {'id': sourcesId});
+                    }
+
+                    source_list.map(function (source) {
+                        model.changeSource({
+                            change: {
+                                sourceIdx: {id: source.id},
+                                options: {
+                                    configuration: {
+                                        options: {visibility: visibility}
+                                    },
+                                    type: 'selected'
+                                }
+                            }
+                        });
+                    });
+                });
             });
         },
-        _showActive: function() {
-            var me = $(this.element);
-            var map = $('#' + this.options.target).data('mapbenderMbMap');
-            var model = map.getModel();
-            $.each(me.find('.basesourcesetswitch[data-state="active"]'), function(idx, elm) {
-                var sourcesIds = $(elm).attr("data-sourceset").split(",");
-                for (var i = 0; i < sourcesIds.length; i++) {
-                    if (sourcesIds[i] !== '') {
-                        var source_list = model.findSource({origId: sourcesIds[i]});
-                        for (var j = 0; j < source_list.length; j++) {
-                            var tochange = {
-                                change: {
-                                    sourceIdx: {id: source_list[j].id},
-                                    options: {
-                                        configuration: {
-                                            options: {visibility: true}
-                                        },
-                                        type: 'selected'
-                                    }
-                                }
-                            };
-                            model.changeSource(tochange);
-                        }
-                    }
-                }
-            });
-        },
-        _toggleMapset: function(event) {
-            var me = $(this.element);
-            var map = $('#' + this.options.target).data('mapbenderMbMap');
-            var a = $(event.currentTarget);
+
+        _toggleMapset: function (event) {
+            var $me = $(this.element),
+                $currentTarget = $(event.currentTarget);
+
             this._hideSources();
-            me.find('.basesourcesetswitch,.basesourcegroup').not(a).attr('data-state', '');
-            a.attr('data-state', 'active');
-            a.parents('.basesourcegroup:first').attr('data-state', 'active');//.addClass('hidden');
-            a.parents('.basesourcesubswitcher:first').addClass('hidden');
-            if(a.hasClass('notgroup')){
-                $('.basesourcesubswitcher', me).addClass('hidden');
+
+            $me.find('.basesourcesetswitch,.basesourcegroup').not($currentTarget).attr('data-state', '');
+
+            $currentTarget.attr('data-state', 'active');
+            $currentTarget.parents('.basesourcegroup:first').attr('data-state', 'active');
+            $currentTarget.parents('.basesourcesubswitcher:first').addClass('hidden');
+
+            if ($currentTarget.hasClass('notgroup')) {
+                $('.basesourcesubswitcher', $me).addClass('hidden');
             }
+
             this._showActive();
-            return false;
         },
-        _onSourceLoadStart: function(event, options) {
-            if (this.contextAddStart && options.source) {
-                this.loadStarted[options.source.id ] = true;
+
+        _onSourceLoadStart: function (event, option) {
+            var position = this.loadStarted.indexOf(option.source.id);
+
+            if (this.contextAddStart && option.source && position < 0) {
+                this.loadStarted.push(option.source.id);
             }
         },
-        _onSourceLoadEnd: function(event, option) {
-            if (option.source && this.loadStarted[option.source.id]) {
-                delete(this.loadStarted[option.source.id]);
+
+        _removeSourceFromLoad : function (event, option) {
+            var position = this.loadStarted.indexOf(option.source.id);
+
+            if (option.source && position >= 0) {
+                this.loadStarted.splice(position, 1);
                 this._checkReset();
             }
         },
-        _onSourceLoadError: function(event, option) {
-            if (option.source && this.loadStarted[option.source.id]) {
-                delete(this.loadStarted[option.source.id]);
-                this._checkReset();
-            }
-        },
-        _onContextAddStart: function(e){
+
+        _onContextAddStart: function () {
             this.contextAddStart = true;
+
             $(document).on('mbmapcontextaddend', $.proxy(this._onContextAddEnd, this));
             $(document).on('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
             $(document).on('mbmapsourceloadend', $.proxy(this._onSourceLoadEnd, this));
             $(document).on('mbmapsourceloaderror', $.proxy(this._onSourceLoadError, this));
         },
-        _onContextAddEnd: function(e){
+
+        _onContextAddEnd: function () {
             this._checkReset();
         },
-        _checkReset: function(){
-            for(var id in this.loadStarted){
+
+        _checkReset: function () {
+            if (this.loadStarted.length > 0) {
                 return;
             }
+
             this.contextAddStart = false;
+
             $(document).off('mbmapcontextaddend', $.proxy(this._onContextAddEnd, this));
             $(document).off('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
             $(document).off('mbmapsourceloadend', $.proxy(this._onSourceLoadEnd, this));
             $(document).off('mbmapsourceloaderror', $.proxy(this._onSourceLoadError, this));
+
             $('.basesourcesetswitch[data-state="active"]:not(.basesourcegroup)', this.element).click();
-        },
-        /**
-         *
-         */
-        ready: function(callback) {
-            if (this.readyState === true) {
-                callback();
-            } else {
-                this.readyCallbacks.push(callback);
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            for (callback in this.readyCallbacks) {
-                callback();
-                delete(this.readyCallbacks[callback]);
-            }
-            this.readyState = true;
-        },
-        _destroy: $.noop
+        }
     });
 
 })(jQuery);

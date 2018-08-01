@@ -5,7 +5,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
-use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
@@ -20,7 +19,6 @@ use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
-use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\Form;
@@ -209,7 +207,7 @@ class ApplicationController extends WelcomeController
      * @Method("POST")
      * @Template("MapbenderManagerBundle:Application:new.html.twig")
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
         $application      = new Application();
         $uploadScreenShot = new UploadScreenshot();
@@ -219,20 +217,19 @@ class ApplicationController extends WelcomeController
         }
 
         $form          = $this->createApplicationForm($application);
-        $request       = $this->getRequest();
+        $form->handleRequest($request);
         $parameters    = $request->request->get('application');
-        $screenShotUrl = null;
 
-        if (!$form->submit($parameters)->isValid()) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return array(
                 'application'         => $application,
                 'form'                => $form->createView(),
                 'form_name'           => $form->getName(),
-                'screenshot_filename' => $screenShotUrl);
+                'screenshot_filename' => null,
+            );
         }
 
         $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
-        $app_web_url   = AppComponent::getAppWebUrl($this->container, $application->getSlug());
         $application->setUpdated(new \DateTime('now'));
         $em = $this->getDoctrine()->getManager();
 
@@ -251,8 +248,6 @@ class ApplicationController extends WelcomeController
             && $parameters['uploadScreenShot'] !== '1'
         ) {
             $uploadScreenShot->upload($app_directory, $scFile, $application);
-            $app_web_url   = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-            $screenShotUrl = $app_web_url . "/" . $application->getScreenshot();
         }
 
         $em->persist($application);
@@ -279,8 +274,8 @@ class ApplicationController extends WelcomeController
             $connection->rollBack();
             $flashBag->set('error', $this->translate('mb.application.create.failure.create.directory'));
         }
-        return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
 
+        return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
     }
 
     /**

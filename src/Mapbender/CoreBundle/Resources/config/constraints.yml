@@ -1,0 +1,20 @@
+services:
+
+    #
+    # Constraints
+    #
+    mapbender.constraint.html:
+        class: Mapbender\CoreBundle\Validator\Constraints\HtmlConstraint
+
+    mapbender.constraint.twig:
+        class: Mapbender\CoreBundle\Validator\Constraints\TwigConstraint
+
+    #
+    # Validators
+    #
+    mapbender.validator.twig:
+        class: Mapbender\CoreBundle\Validator\Constraints\TwigConstraintValidator
+        arguments:
+            - '@translator'
+        tags:
+            - { name: validator.constraint_validator }

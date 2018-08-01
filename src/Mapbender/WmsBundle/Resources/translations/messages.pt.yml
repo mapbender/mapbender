@@ -7,7 +7,6 @@ mb:
           wmsurl: URL
           wmsuser: Usuário
           wmspass: Senha
-          wmsonlyvalid: 'Apenas válido?'
         btn:
           cancel: Cancelar
           load: Carregar
@@ -18,38 +17,75 @@ mb:
         version: 'Carregar WMS: a versão de WMS %version% não é suportado!'
         load: 'Carregar WMS: Não podia carregar o documento WMS Capabilities!'
       repo:
+        macros:
+          label:
+            formats: Formatos
+        view:
+          title:
+            wms: WMS
+          label:
+            backtoservicelist: 'Back to Service List'
+            metadata: Metadados
+            contact: Contato
+            details: Detalhes
+            layers: Camada
+            title: Título
+            name: Nome
+            version: Versão
+            originurl: 'URL de origem'
+            abstract: Descrição
+            onlineresource: 'Recurso online'
+            exceptionformats: 'Formatos de exceção'
+            fees: Taxa
+            accessconstraints: 'Limitações de acesso'
+            person: Pessoa
+            organization: Organização
+            position: Posição
+            telephone: Telefone
+            facsimile: Fax
+            email: Email
+            address: Endereço
+            addresstype: 'Tipo de endereço'
+            city: Cidade
+            state: Estado
+            postcode: 'Código postal'
+            country: País
+          message:
+            cautionscalehint: 'Atenção: O cálculo de escala está sujeito a dissolução limitada de ScaleHint no WMS 1.1.1'
+        instance:
+          title:
+            wmsinstance: 'WMS Instância'
+          btn:
+            save: Guardar
+            cancel: Cancelar
+          label:
+            originurl: 'URL de origem'
+            visible: Visibilidade
+            basesource: Basesource
+            proxy: Proxy
+            transparency: Transparência
+            tiled: 'Em mosaico'
+            title: Título
+            minsc: 'Escala mínima'
+            maxsc: 'Escala máxima'
+            active: Ativo
+            select: Escolhido
+            info: Informação
+            toggle: Abrir
+            reorder: Organizar
+            allow: Permitir
+            'on': Ligado
+            save2: Guardar
+            cancel2: Cancelar
+            ratio: 'Factor de BBox'
+            buffer: 'Buffer de bloco'
+          vendorspecific:
+            label: 'Vendor specific'
         preview:
           title:
             servicerepository: 'Repository de serviços'
           label:
             load: Carregar
-        instancelayerform:
-          label:
-            layerstitle: 'Título da camada'
-            minscale: 'Escala mínima'
-            maxsclase: 'Escala máxima'
-            active: Ativo
-            allowselecttoc: 'Permite a escolha no árvore de camadas'
-            selectedtoc: 'Escolhido no árvore de camadas'
-            allowinfotoc: 'Permite FeatureInfo no árvore de camadas'
-            infotoc: 'FeatureInfo no árvore de camadas'
-            allowtoggletoc: 'Permite mudar no árvore de camadas'
-            toggletoc: 'Mudar no árvore de camadas'
-            allowreordertoc: 'Permite organizar no árvore de camadas'
-            moreinfo: 'Mais informações'
-            id:
-              title: ID
-              description: 'Instance Layer Id: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: Nome
-            style: Estilo
-        form:
-          label:
-            ogcwms: 'OGC WMS'
-            serviceurl: 'URL de serviço'
-            username: 'Nome de usuário'
-            password: Senha
-            load: Carregar
-            cancel: Cancelar
         layer:
           label:
             name: Nome
@@ -84,6 +120,25 @@ mb:
             extent: Extensão
             dataurl: 'URL de dados'
             featurelisturl: 'URL de Featurelist'
+        instancelayerform:
+          label:
+            layerstitle: 'Título da camada'
+            minscale: 'Escala mínima'
+            maxsclase: 'Escala máxima'
+            active: Ativo
+            allowselecttoc: 'Permite a escolha no árvore de camadas'
+            selectedtoc: 'Escolhido no árvore de camadas'
+            allowinfotoc: 'Permite FeatureInfo no árvore de camadas'
+            infotoc: 'FeatureInfo no árvore de camadas'
+            allowtoggletoc: 'Permite mudar no árvore de camadas'
+            toggletoc: 'Mudar no árvore de camadas'
+            allowreordertoc: 'Permite organizar no árvore de camadas'
+            moreinfo: 'Mais informações'
+            id:
+              title: ID
+              description: 'Instance Layer Id: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+            layersname: Nome
+            style: Estilo
         new:
           label:
             addservice: 'Adicionar serviço'
@@ -94,42 +149,15 @@ mb:
             wmsinstancelayers: 'Camade de WMS instância'
           btn:
             save: Guardar
-        instance:
-          title:
-            wmsinstance: 'WMS Instância'
-          btn:
-            save: Guardar
+        form:
+          label:
+            ogcwms: 'OGC WMS'
+            onlyvalid: 'only valid'
+            serviceurl: 'URL de serviço'
+            username: 'Nome de usuário'
+            password: Senha
+            load: Carregar
             cancel: Cancelar
-          label:
-            originurl: 'URL de origem'
-            buffer: 'Buffer de bloco'
-            ratio: 'Factor de BBox'
-            visible: Visibilidade
-            basesource: Basesource
-            proxy: Proxy
-            transparency: Transparência
-            tiled: 'Em mosaico'
-            title: Título
-            minsc: 'Escala mínima'
-            maxsc: 'Escala máxima'
-            active: Ativo
-            select: Escolhido
-            info: Informação
-            toggle: Abrir
-            reorder: Organizar
-            allow: Permitir
-            'on': Ligado
-            save2: Guardar
-            cancel2: Cancelar
-          vendorspecific:
-            label: 'Vendor specific'
-        macros:
-          label:
-            formats: Formatos
-        view:
-          title:
-            wms: WMS
-          label:
             metadata: Metadados
             contact: Contato
             details: Detalhes
@@ -157,36 +185,17 @@ mb:
             country: País
           message:
             cautionscalehint: 'Atenção: O cálculo de escala está sujeito a dissolução limitada de ScaleHint no WMS 1.1.1'
-      admin:
-        label:
-          autoopen: 'Abrir automaticamente'
-          splitlayers: 'Dividir camadas'
-          declarative: 'Usar declarativo'
-      error:
-        url: 'Carregar WMS: Não pode carregar o documento de WMS! URL de Capabilities é inválido.'
-        service: 'Carregar WMS: o serviço %service% não é suportado!'
-        operation: 'Carregar WMS: a operação de WMS %operation% não é suportado!'
-        version: 'Carregar WMS: a versão de WMS %version% não é suportado!'
-        load: 'Carregar WMS: Não podia carregar o documento WMS Capabilities!'
       class:
         title: 'Carregar WMS'
         description: 'Carrega um WMS sobre getCapabilities-Request '
       tag:
         wms: WMS
         loader: carregar
-    repo:
-      instance:
+      admin:
         label:
-          dimensions: Dimensão
-    dimensionsets:
-      no_dimension: 'Não existe nenhuma dimensão'
-    dimhandler:
-      class:
-        title: 'Handler de dimensão'
-        description: Descrição
-      tag:
-        dimension: Dimensão
-        handler: Hander
+          autoopen: 'Abrir automaticamente'
+          splitlayers: 'Dividir camadas'
+          declarative: 'Usar declarativo'
     repository:
       parser:
         couldnotparse: 'Não pode "parse" o documento XML.'
@@ -229,5 +238,24 @@ mb:
           name: Nome
           srs: SRS
           bbox: BoundingBox
-'Apenas validos': {  }
-'Voltar à lista de serviços': {  }
+    repo:
+      instance:
+        label:
+          dimensions: Dimensão
+    dimhandler:
+      class:
+        title: 'Handler de dimensão'
+        description: Descrição
+      tag:
+        dimension: Dimensão
+        handler: Hander
+    dimensionsets:
+      no_dimension: 'Não existe nenhuma dimensão'
+  wmc:
+    wmsloader:
+      class:
+        title: 'Wms Loader'
+        description: 'Opens a dialog in which a WMS can be loaded via the getCapabilities-Request'
+      tag:
+        wms: wms
+        loader: loader

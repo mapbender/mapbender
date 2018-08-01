@@ -20,6 +20,10 @@
   .inputWrapper, select, .choiceExpandedSortable, .collectionContainer {
     width: 70%;
     color: $secondColor;
+
+    .validationMsgBox{
+      min-width: 28%;
+    }
   }
   .collectionContainer {
     position: relative;
@@ -95,6 +99,7 @@
 
 .collectionItem {
   clear: both;
+  position: relative;
   & > .labelInput {
     display: none;
   }
@@ -109,4 +114,8 @@
 
 .collectionRemove {
   line-height: $inputHeight;
+  position: absolute;
+  right: 31px;
+  top: -6px;
+  z-index: 1;
 }

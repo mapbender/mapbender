@@ -255,7 +255,7 @@ abstract class SourceInstance
     /**
      * Returns source
      *
-     * @return Source
+     * @return \Mapbender\WmsBundle\Entity\WmsSource|Source
      */
     abstract public function getSource();
 

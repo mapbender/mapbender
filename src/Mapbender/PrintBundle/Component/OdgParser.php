@@ -2,9 +2,31 @@
 namespace Mapbender\PrintBundle\Component;
 
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Class OdgParser
+ *
+ */
 class OdgParser
 {
+    /** Default orientation */
+    const DEFAULT_ORIENTATION = 'landscape';
+
+    /** Default font name */
+    const DEFAULT_FONT_NAME = 'Arial';
+
+    /** Default font color */
+    const DEFAULT_FONT_COLOR = '#000000';
+
+    /** Default font size */
+    const DEFAULT_FONT_SIZE = '10pt';
+
+    /** Conversion factor for meters to centimeters */
+    const CONVERSION_FACTOR = 10;
+
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
      * OdgParser constructor.
@@ -16,21 +38,25 @@ class OdgParser
         $this->container = $container;
     }
 
+
     /**
+     * Reads zipped ODG file and return content as string
+     *
      * @param $template
      * @param $file
      * @return string
      */
     private function readOdgFile($template, $file)
     {
-        $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-        $odgfile = $resource_dir . '/templates/' . $template . '.odg';
+        $resourcePath = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
+        $odgFile      = $resourcePath . '/templates/' . $template . '.odg';
+        $xml          = null;
 
-        if(!is_file($odgfile)){
+        if(!is_file($odgFile)){
             throw new Exception("Print template '$template' doesn't exists.");
         }
 
-        $open = zip_open($odgfile);
+        $open = zip_open($odgFile);
         while ($zip_entry = zip_read($open)) {
             if (zip_entry_name($zip_entry) == $file) {
                 zip_entry_open($open, $zip_entry);
@@ -43,25 +69,24 @@ class OdgParser
     }
 
     /**
+     * Get map geometry size as JSON object
+     *
      * @param $template
-     * @return string
+     * @return string JSON object {width: n, height: n}
      */
     public function getMapSize($template)
     {
-        $xml = $this->readOdgFile($template, 'content.xml');
-        $doc = new \DOMDocument();
-        $doc->loadXML($xml);
-        $xpath = new \DOMXPath($doc);
+        $doc        = new \DOMDocument();
+        $xmlContent = $this->readOdgFile($template, 'content.xml');
+        $doc->loadXML($xmlContent);
 
-        $node = $xpath->query("//draw:custom-shape[@draw:name='map']");
-        $width = $node->item(0)->getAttribute('svg:width');
-        $height = $node->item(0)->getAttribute('svg:height');
+        /** @var \DOMElement $draMapNode */
+        $draMapNode = (new \DOMXPath($doc))->query("//draw:custom-shape[@draw:name='map']")->item(0);
 
-        $size = array();
-        $size['width'] = substr($width, 0, -2);
-        $size['height'] = substr($height, 0, -2);
-
-        return json_encode($size);
+        return json_encode(array(
+            'width'  => static::parseNumericNodeAttribute($draMapNode, 'svg:width') / static::CONVERSION_FACTOR,
+            'height' => static::parseNumericNodeAttribute($draMapNode, 'svg:height') / static::CONVERSION_FACTOR
+        ));
     }
 
     /**
@@ -72,76 +97,117 @@ class OdgParser
      */
     public function getConf($template)
     {
-        $data = array();
+        /** @var \DOMElement $pageGeometry */
+        /** @var \DOMElement $customShape */
+        /** @var \DOMElement $textNode */
+        /** @var \DOMElement $textParagraph */
+        /** @var \DOMElement $styleNode */
 
-        //orientation
-        $stylexml = $this->readOdgFile($template, 'styles.xml');
         $doc = new \DOMDocument();
-        $doc->loadXML($stylexml);
-        $xpath = new \DOMXPath($doc);
-        $node = $xpath->query("//style:page-layout-properties");
-        $data['orientation'] = $node->item(0)->getAttribute('style:print-orientation');
-        $data['pageSize']['height'] = substr($node->item(0)->getAttribute('fo:page-height'), 0, -2) * 10;
-        $data['pageSize']['width'] = substr($node->item(0)->getAttribute('fo:page-width'), 0, -2) * 10;
+        $doc->loadXML($this->readOdgFile($template, 'styles.xml'));
+        $xPath        = new \DOMXPath($doc);
+        $node         = $xPath->query("//style:page-layout-properties");
+        $pageGeometry = $node->item(0);
+        $data         = array(
+            'orientation' => static::parseNodeAttribute($pageGeometry, 'style:print-orientation', static::DEFAULT_ORIENTATION),
+            'pageSize'    => array(
+                'height' => static::parseNumericNodeAttribute($pageGeometry, 'fo:page-height'),
+                'width'  => static::parseNumericNodeAttribute($pageGeometry, 'fo:page-width'),
+            ),
+            'fields' => array()
+        );
 
-        $contentxml = $this->readOdgFile($template, 'content.xml');
+        $this->xPath = $xPath;
+
         $doc = new \DOMDocument();
-        $doc->loadXML($contentxml);
-        $xpath = new \DOMXPath($doc);
+        $doc->loadXML($this->readOdgFile($template, 'content.xml'));
 
-
-        //$node = $xpath->query("//draw:custom-shape[@draw:name='map']");
-        $imagenodes = $xpath->query("//draw:custom-shape");
-
-        foreach ($imagenodes as $node) {
-            $name = $node->getAttribute('draw:name');
-            $width = $node->getAttribute('svg:width');
-            $height = $node->getAttribute('svg:height');
-            $x = $node->getAttribute('svg:x');
-            $y = $node->getAttribute('svg:y');
-
-            $data[$name]['width'] = substr($width, 0, -2) * 10;
-            $data[$name]['height'] = substr($height, 0, -2) * 10;
-            $data[$name]['x'] = substr($x, 0, -2) * 10;
-            $data[$name]['y'] = substr($y, 0, -2) * 10;
+        $xPath        = new \DOMXPath($doc);
+        $customShapes = $xPath->query("//draw:custom-shape");
+        foreach ($customShapes as $customShape) {
+            $data[ $customShape->getAttribute('draw:name') ] = static::parseShape($customShape);
         }
 
-        $contextnode = $doc->getElementsByTagName('drawing')->item(0);
-        $textnodes = $xpath->query("draw:page/draw:frame", $contextnode);
-        foreach ($textnodes as $node) {
-            $name = $node->getAttribute('draw:name');
-            if ($name == '') {
+        foreach ($xPath->query("draw:page/draw:frame", $doc->getElementsByTagName('drawing')->item(0)) as $node) {
+            $name      = $node->getAttribute('draw:name');
+            $fontSize  = null;
+            $fontColor = null;
+            $style     = null;
+
+            if (empty($name)) {
                 continue;
             }
-            $width  = $node->getAttribute('svg:width');
-            $height = $node->getAttribute('svg:height');
-            $x      = $node->getAttribute('svg:x');
-            $y      = $node->getAttribute('svg:y');
-            $field  = array(
-                'font'     => 'Arial',
-                'width'    => substr($width, 0, -2) * 10,
-                'height'   => substr($height, 0, -2) * 10,
-                'x'        => substr($x, 0, -2) * 10,
-                'y'        => substr($y, 0, -2) * 10,
-            );
 
             // Recognize font name and size
-            $textParagraph = $xpath->query("draw:text-box/text:p", $node)->item(0);
-            $textNode      = $xpath->query("draw:text-box/text:p/text:span", $node)->item(0);
+            $textParagraph = $xPath->query("draw:text-box/text:p", $node)->item(0);
+            $textNode      = $xPath->query("draw:text-box/text:p/text:span", $node)->item(0);
             if ($textNode) {
                 $style = $textNode->getAttribute('text:style-name');
             } elseif ($textParagraph) {
                 $style = $textParagraph->getAttribute('text:style-name');
             }
+
             if ($style) {
-                $styleNode = $xpath->query('//style:style[@style:name="' . $style . '"]/style:text-properties')->item(0);
-                $fontsize = $styleNode->getAttribute('fo:font-size');
-                $color = $styleNode->getAttribute('fo:color');
+                $styleNode = $xPath->query('//style:style[@style:name="' . $style . '"]/style:text-properties')->item(0);
+                $fontSize  = static::parseNodeAttribute($styleNode, 'fo:font-size', static::DEFAULT_FONT_SIZE);
+                $fontColor = static::parseNodeAttribute($styleNode, 'fo:color', static::DEFAULT_FONT_COLOR);
             }
-            $field['fontsize'] = $fontsize != '' ? $fontsize : '10pt';
-            $field['color'] = $color != '' ? $color : '#000000';
-            $data['fields'][ $name ] = $field;
+
+            $data['fields'][ $name ] = array_merge(static::parseShape($node), array(
+                'font'     => self::DEFAULT_FONT_NAME,
+                'fontsize' => !empty($fontSize) ? $fontSize : self::DEFAULT_FONT_SIZE,
+                'color'    => !empty($fontColor) ? $fontColor : self::DEFAULT_FONT_COLOR,
+            ));
         }
         return $data;
+    }
+
+    /**
+     * Parse node attribute
+     *
+     * @param \DOMElement $node
+     * @param  string     $xPath
+     * @param mixed       $defaultValue
+     * @return mixed
+     */
+    static function parseNodeAttribute($node, $xPath, $defaultValue = '')
+    {
+        $value = $node->getAttribute($xPath);
+        return empty($value) ? $defaultValue : $value;
+    }
+
+    /**
+     * Parse float node attribute
+     *
+     * @param \DOMElement $node
+     * @param  string     $xPath
+     * @param mixed       $defaultValue
+     * @return mixed
+     */
+    static function parseNumericNodeAttribute($node, $xPath, $defaultValue = 0)
+    {
+        $value = $node->getAttribute($xPath);
+        if (!empty($value) && is_string($value) && strlen($value) > 2) {
+            $value = substr($value, 0, -2) * static::CONVERSION_FACTOR;
+        } else {
+            $value = $defaultValue;
+        }
+        return $value;
+    }
+
+    /**
+     * Parse shape parameters
+     *
+     * @param $customShape
+     * @return array
+     */
+    public static function parseShape($customShape)
+    {
+        return array(
+            'width'  => static::parseNumericNodeAttribute($customShape, 'svg:width'),
+            'height' => static::parseNumericNodeAttribute($customShape, 'svg:height'),
+            'x'      => static::parseNumericNodeAttribute($customShape, 'svg:x'),
+            'y'      => static::parseNumericNodeAttribute($customShape, 'svg:y'),
+        );
     }
 }

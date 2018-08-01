@@ -97,6 +97,21 @@ class WmcEditor extends Element
     /**
      * @inheritdoc
      */
+    public function getConfiguration()
+    {
+        $configuration = parent::getConfiguration();
+        if(!isset ($configuration["width"])) {
+            $configuration["width"] = 480;
+        }
+        if(!isset ($configuration["height"])) {
+            $configuration["height"] = 500;
+        }
+        return $configuration;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function render()
     {
         $config = $this->getConfiguration();

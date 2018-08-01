@@ -4,10 +4,7 @@
         options: {
             asDialog: true,     // Display as jQuery UI dialog
             timeoutFactor: 2    // use delay * timeoutFactor before showing
-                                // autocomplete again after a search has been
-                                // started
         },
-
         callbackUrl: null,
         selected: null,
         highlightLayer: null,
@@ -17,6 +14,12 @@
         searchModel: null,
         autocompleteModel: null,
         popup: null,
+        /**
+         * Ready event listeners
+         *
+         * @var {Array<Function>}
+         */
+        readyCallbacks: [],
 
         /**
          * Widget creator
@@ -218,7 +221,7 @@
 
             $('form', this.element).each(function(){
                 var form = $(this);
-                if(form.attr('name') == selected){
+                if(form.attr('name') === selected) {
                     form.show();
                 }else{
                     form.hide();
@@ -398,30 +401,33 @@
         /**
          * Rebuilds result table with search result data.
          *
-         * @param SearchModel       model   Search model
-         * @param FeatureCollection results Search result feature collection
-         * @param object            options Backbone options
+         * @param {SearchModel} model
+         * @param {FeatureCollection} results
+         * @param {Object} options Backbone options (not used?)
          */
         _searchResultsTable: function(model, results, options){
             var headers = this.options.routes[this.selected].results.headers,
                 table = $('.search-results table', this.element),
                 tbody = $('<tbody></tbody>'),
-                layer = this._getLayer(true);
+                layer = this._getLayer(true),
+                self = this;
 
             $('tbody', table).remove();
             layer.removeAllFeatures();
-            features = [];
+            var features = [];
 
             if(results.length > 0) $('.no-results', this.element).hide();
 
-            results.each(function(feature, idx){
+            results.each(function(feature, idx) {
                 var row = $('<tr/>');
                 row.addClass(idx % 2 ? "even" : "odd");
                 row.data('feature', feature);
-                for(var header in headers){
+
+                for (var header in headers) {
                     var d = feature.get('properties')[header];
                     row.append($('<td>' + (d || '') + '</td>'));
                 }
+
                 tbody.append(row);
 
                 features.push(feature.getFeature());
@@ -429,6 +435,31 @@
 
             table.append(tbody);
             layer.addFeatures(features);
+
+            $('.search-results tbody tr')
+                .on('click', function () {
+                    var feature = $(this).data('feature').getFeature();
+                    self._highlightFeature(feature, 'select');
+                })
+                .on('mouseenter', function () {
+                    var feature = $(this).data('feature').getFeature();
+
+                    if(feature.renderIntent !== 'select') {
+                        self._highlightFeature(feature, 'temporary');
+                    }
+                })
+                .on('mouseleave', function () {
+                    var feature = $(this).data('feature').getFeature();
+
+                    if(feature.renderIntent !== 'select') {
+                        self._highlightFeature(feature, 'default');
+                    }
+                })
+            ;
+        },
+
+        _highlightFeature: function (feature, style) {
+            feature.layer.drawFeature(feature, style);
         },
 
         _showResultState: function() {
@@ -617,10 +648,7 @@
             layer.selectedFeatures.push(feature);
         },
 
-        /**
-         *
-         */
-        ready: function(callback){
+        ready: function(callback) {
             var widget = this;
             if(widget.readyState === true){
                 callback();
@@ -634,9 +662,11 @@
          */
         _ready: function() {
             var widget = this;
-            for (var callback in widget.readyCallbacks) {
-                callback();
-                delete(widget.readyCallbacks[callback]);
+                for (var callback in widget.readyCallbacks) {
+                    if(widget.readyCallbacks.hasOwnProperty(callback)) {
+                        callback();
+                        delete(widget.readyCallbacks[callback]);
+                    }
             }
             widget.readyState = true;
         },

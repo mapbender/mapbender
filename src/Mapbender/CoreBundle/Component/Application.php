@@ -10,6 +10,9 @@ use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  * Application is the main Mapbender3 class.
@@ -712,5 +715,27 @@ class Application
         }
 
         return $isGranted;
+    }
+
+    /**
+     * Add view permissions
+     */
+    public function addViewPermissions()
+    {
+        $aclProvider       = $this->container->get('security.acl.provider');
+        $applicationEntity = $this->getEntity();
+        $maskBuilder       = new MaskBuilder();
+        $uoid              = ObjectIdentity::fromDomainObject($applicationEntity);
+
+        $maskBuilder->add('VIEW');
+
+        try {
+            $acl = $aclProvider->findAcl($uoid);
+        } catch (\Exception $e) {
+            $acl = $aclProvider->createAcl($uoid);
+        }
+
+        $acl->insertObjectAce(new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'), $maskBuilder->get());
+        $aclProvider->updateAcl($acl);
     }
 }

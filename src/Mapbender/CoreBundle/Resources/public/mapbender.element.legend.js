@@ -1,516 +1,485 @@
-(function($){
+(function($) {
 
     $.widget("mapbender.mbLegend", {
         options: {
-            autoOpen: true,
-            target: null,
-            noLegend: "No legend available",
-            elementType: "dialog",
-            displayType: "list",
-            checkGraphic: false,
-            hideEmptyLayers: true,
+            autoOpen:                 true,
+            target:                   null,
+            noLegend:                 "No legend available",
+            elementType:              "dialog",
+            displayType:              "list",
+            checkGraphic:             false,
+            hideEmptyLayers:          true,
             generateLegendGraphicUrl: false,
-            showSourceTitle: true,
-            showLayerTitle: true,
-            showGrouppedTitle: true,
-            maxImgWidth: 0,
-            maxImgHeight: 0
+            showSourceTitle:          true,
+            showLayerTitle:           true,
+            showGroupedTitle:         true,
+            maxImgWidth:              0,
+            maxImgHeight:             0
         },
-        model: null,
-        layerTitle: "",
-        sourceTitle: "",
-        grouppedTitle: "",
-        hiddeEmpty: "",
-        _create: function(){
-            if(!Mapbender.checkTarget("mbLegend", this.options.target)) {
+
+        readyCallbacks: [],
+        callback:       null,
+
+        /**
+         * Widget constructor
+         *
+         * @private
+         */
+        _create: function() {
+            var widget = this;
+            var options = widget.options;
+            if(!Mapbender.checkTarget("mbLegend", options.target)) {
                 return;
             }
-            var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.onElementReady(options.target, $.proxy(widget._setup, widget));
         },
-        _setup: function(){
-            var self = this;
-            this.options.noLegend = Mapbender.trans("mb.core.legend.nolegend");
-            this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
 
-            this.layerTitle = this.options.showLayerTitle ? "" : "notshow";
-            this.sourceTitle = this.options.showSourceTitle ? "" : "notshow";
-            this.grouppedTitle = this.options.showGrouppedTitle ? "" : "notshow";
-            this.hiddeEmpty = this.options.hideEmptyLayers ? "notshow" : "";
+        /**
+         * Setup widget
+         *
+         * @private
+         */
+        _setup: function() {
+            var widget = this;
+            var options = widget.options;
 
-            if(this.options.autoOpen) {
-                this.open();
-            } else if(this.options.elementType !== 'dialog') {
-                var self = this;
-                var sources = this._getSources();
-                if(this.options.checkGraphic) {
-                    this._createCheckedLegendHtml(sources, 0, 0, "", "", $.proxy(self._createLegend, self));
-                } else {
-                    this._createLegend(this._createLegendHtml(sources));
-                }
-                sources = this.model.getSources();
-                for(var i = 0; i < sources.length; i++) {
-                    this._checkLayers(sources[i]);
-                }
-            }
-            $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
-            $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
-            $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
-            $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
-            $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
-            $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
-            $(document).bind('mbmapsourcemoved', $.proxy(self._onSourceMoved, self));
-            this._trigger('ready');
-            this._ready();
-        },
-        _onSourceAdded: function(event, options){
-            if(!options.added)
-                return;
-            var added = options.added;
-            var self = this;
-            var hasChildren = false;
-            for(layer in added.children) {
-                hasChildren = true;
-            }
-            if(!hasChildren) {
-                var sources = this._getSource(added.source, added.source.configuration.children[0], 1);
-                if(this.options.checkGraphic) {
-                    this._createCheckedLegendHtml([sources], 0, 0, "", "", $.proxy(self._addSource, self), added);
-                } else {
-                    this._addSource(this._createLayerHtml(sources, ""), added);
-                }
-            }
-        },
-        _addSource: function(html, added){
-            var hasChildren = false;
-            for(layer in added.children) {
-                hasChildren = true;
-            }
-            if(!hasChildren) {
-                if(added.after && added.after.source) {
-                    $(this.element).find('[data-sourceid="' + added.after.source.id + '"]:last').after($(html));
-                } else if(added.before && added.before.source) {
-                    $(this.element).find('[data-sourceid="' + added.before.source.id + '"]:first').before($(html));
-                } else {
-                    $(this.element).find('ul').append($(html));
-                }
-            }
-        },
-        _onSourceMoved: function(event, moved){
-            if(moved.layerId) {
-                if(moved.before) {
-                    $(this.element).find('[data-id="' + moved.before.layerId + '"]:first').before($(this.element).find(
-                            '[data-id="' + moved.layerId + '"]'));
-                } else if(moved.after) {
-                    $(this.element).find('[data-id="' + moved.after.layerId + '"]:last').after($(this.element).find(
-                            '[data-id="' + moved.layerId + '"]'));
-                }
-            } else {
-                if(moved.before) {
-                    $(this.element).find('[data-id="' + moved.before.layerId + '"]:first').before($(this.element).find(
-                            '[data-sourceid="' + moved.source.id + '"]'));
-                } else if(moved.after) {
-                    $(this.element).find('[data-id="' + moved.after.layerId + '"]:last').after($(this.element).find(
-                            '[data-sourceid="' + moved.source.id + '"]'));
-                }
-            }
-        },
-        _onSourceChanged: function(event, options){
-            var self = this;
-            var context = null;
-            if(this.options.elementType === "blockelement") {
-                context = this.element;
-            } else if(this.options.elementType === "dialog" && this.popup && this.popup.$element) {
-                context = this.popup.$element;
-            } else {
-                return;
-            }
-            if(options.changed && options.changed.options) {
 
-            } else if(context && options.changed && options.changed.children) {
-                for(layerName in options.changed.children) {
-                    var layer = options.changed.children[layerName];
-                    if(layer.state) {
-                        if(layer.state.visibility) {
-                            $('li[data-id="' + layerName + '"]', context).removeClass('notvisible');
-                        } else {
-                            $('li[data-id="' + layerName + '"]', context).addClass('notvisible');
+            options.noLegend = Mapbender.trans("mb.core.legend.nolegend");
+
+            // Deprecated check if options exists
+            if(options.hasOwnProperty("showGrouppedTitle")) {
+                options.showGroupedTitle = options["showGrouppedTitle"];
+            }
+
+            widget.isPopUpDialog = options.elementType === "dialog";
+            widget.htmlContainer = widget.element.find('> .legends');
+
+            widget.showLoadingProgress();
+
+            $(document)
+                .bind('mbmapsourceloadend', $.proxy(widget.onMapLoaded, widget))
+                .bind('mbmapsourceloaderror', function(e) {
+                    $.notify("Legend image element(#" + widget.uuid + ") couldn't not be initialized. No map - no legend.");
+                });
+
+            widget._trigger('ready');
+            widget._ready();
+        },
+
+        /**
+         * On map loaded
+         *
+         * @param e
+         */
+        onMapLoaded: function(e) {
+            var widget = this;
+            var options = widget.options;
+
+            if(widget.isPopUpDialog) {
+                widget.element.hide(0);
+                if(options.autoOpen) {
+                    widget.open();
+                }
+            }
+
+            widget.onMapLayerChanges();
+
+            $(document)
+                .bind('mbmapsourceadded mbmapsourcechanged mbmapsourcemoved', $.proxy(widget.onMapLayerChanges, widget))
+                .unbind('mbmapsourceloadend', widget.onMapLoaded);
+        },
+
+        /**
+         * Show loading progress
+         */
+        showLoadingProgress: function() {
+            var widget = this;
+            widget.htmlContainer.html($('<i class="fa fa-cog fa-spin fa-fw"></i>'));
+        },
+
+        /**
+         * On map layer changes handler
+         *
+         * @param e
+         */
+        onMapLayerChanges: function(e) {
+            var widget = this;
+            widget.showLoadingProgress();
+
+            var html = widget.render();
+
+            widget.htmlContainer.html(html);
+
+            if(widget.isPopUpDialog && widget.popupWindow && widget.popupWindow.$element) {
+                widget.popupWindow.open(html);
+            }
+        },
+
+        /**
+         * Popup HTML window
+         *
+         * @param html
+         * @return {mapbender.mbLegend.popup}
+         */
+        popup: function(html) {
+            var widget = this;
+            var element = widget.element;
+
+            if(!widget.popupWindow || !widget.popupWindow.$element) {
+                widget.popupWindow = new Mapbender.Popup2({
+                    title:                  element.attr('title'),
+                    draggable:              true,
+                    resizable:              true,
+                    modal:                  false,
+                    closeButton:            false,
+                    closeOnPopupCloseClick: true,
+                    closeOnESC:             false,
+                    destroyOnClose:         true,
+                    content:                (html),
+                    width:                  350,
+                    height:                 500,
+                    buttons:                {
+                        'ok': {
+                            label:    Mapbender.trans('mb.core.legend.popup.btn.ok'),
+                            cssClass: 'button right',
+                            callback: function() {
+                                widget.close();
+                            }
                         }
                     }
-                }
-            } else if(context && options.changed && options.changed.childRemoved) {
-                function layerlist(layer, layers){
-                    layers.push(layer.options.id);
-                    if(layer.children)
-                        $.each(layer.children, function(idx, layer_){
-                            layerlist(layer_, layers);
-                        })
-                }
-                var layers = [];
-                layerlist(options.changed.childRemoved.layer, layers);
-                $.each(layers, function(idx, layerid){
-                    $('li[data-id="' + layerid + '"]', context).remove();
                 });
-            }
-            var source = this.model.getSource(options.changed.sourceIdx);
-            var root = source ? source.configuration.children[0] : null;
-            if(root) {
-                if($('ul[data-id="' + root.options.id + '"] li', context).not('.notshow').not(
-                        '.notvisible').length === 0) {
-                    $('li[data-id="' + root.options.id + '"]', context).addClass('notvisible');
-                } else {
-                    $('li[data-id="' + root.options.id + '"]', context).removeClass('notvisible');
-                }
+            } else {
+                widget.popupWindow.open((html));
             }
 
+            return widget.popupWindow;
         },
-        _onSourceRemoved: function(event, removed){
-            var context = null;
-            if(this.options.elementType === "blockelement") {
-                context = this.element;
-            } else if(this.options.elementType === "dialog" && this.popup && this.popup.$element) {
-                context = this.popup.$element;
-            } else {
-                return;
-            }
-            if(context && removed && removed.source && removed.source.id) {
-                $('ul[data-sourceid="' + removed.source.id + '"]', context).remove();
-                $('li[data-sourceid="' + removed.source.id + '"]', context).remove();
-            }
-        },
-        _onSourceLoadStart: function(event, option){
-        },
-        _onSourceLoadEnd: function(event, option){
-            this._checkLayers(option.source);
-        },
-        _checkLayers: function(source){
-            var self = this, elm = null;
-            if(this.options.elementType === "dialog" && this.popup && this.popup.$element) {
-                elm = this.popup.$element;
-            } else {
-                elm = self.element;
-            }
-            function checkLayers(layer, parent){
-                if(layer.state) {
-                    var $li = $('li[data-id="' + layer.options.id + '"]', elm);
-                    if(layer.state.visibility) {
-                        $li.removeClass('notvisible');
-                    } else {
-                        $li.addClass('notvisible');
-                    }
-                }
-                if(layer.children) {
-                    for(var i = 0; i < layer.children.length; i++) {
-                        checkLayers(layer.children[i], layer);
-                    }
-                }
-            }
-            checkLayers(source.configuration.children[0], null);
-        },
-        _onSourceLoadError: function(event, option){
-            $(this.element).find('ul[data-sourceid="' + option.source.id + '"] li').addClass('notvisible');
-        },
-        _checkMaxImgWidth: function(val){
-            if(this.options.maxImgWidth < val)
-                this.options.maxImgWidth = val;
-        },
-        _checkMaxImgHeight: function(val){
-            if(this.options.maxImgHeight < val)
-                this.options.maxImgHeight = val;
-        },
-        _getSources: function(){
+
+        /**
+         *
+         * @return {Array}
+         * @private
+         */
+        _getSources: function() {
+            var widget = this;
             var allLayers = [];
-            var sources = this.model.getSources();
-            for(var i = (sources.length - 1); i > -1; i--) {
-                allLayers.push(this._getSource(sources[i], sources[i].configuration.children[0], 1));
+            var sources = Mapbender.Model.getSources();
+            for (var i = (sources.length - 1); i > -1; i--) {
+                allLayers.push(widget._getSource(sources[i], sources[i].configuration.children[0], 1));
             }
             return allLayers;
         },
-        _getSource: function(source, layer, level){
-            var children_ = this._getSublayers(source, layer, level + 1, []);
+
+        /**
+         *
+         * @param source
+         * @param layer
+         * @param level
+         * @return {{sourceId, id, visible, title, level: *, children: *, childrenLegend: boolean}}
+         * @private
+         */
+        _getSource: function(source, layer, level) {
+            var widget = this;
+            var children_ = widget._getSubLayers(source, layer, level + 1, []);
             var childrenLeg = false;
-            for(var i = 0; i < children_.length; i++) {
+            for (var i = 0; i < children_.length; i++) {
                 if(children_[i].childrenLegend || (children_[i].legend && children_[i].legend.url)) {
                     childrenLeg = true;
                 }
             }
             return {
-                sourceId: source.id,
-                id: layer.options.id,
-                visible: layer.state.visibility ? '' : 'notvisible',
-                title: layer.options.title,
-                level: level,
-                children: children_,
+                sourceId:       source.id,
+                id:             layer.options.id,
+                visible:        layer.state.visibility,
+                title:          layer.options.title,
+                level:          level,
+                children:       children_,
                 childrenLegend: childrenLeg
             };
         },
-        _getSublayers: function(source, layer, level, children){
-            var self = this;
-            if(layer.children)
-                for(var i = (layer.children.length - 1); i > -1; i--) {
-                    children = children.concat(self._getSublayer(source, layer.children[i], "wms", level, []));
-                }
 
+        /**
+         * Get sub layers
+         * @param source
+         * @param layer
+         * @param level
+         * @param children
+         *
+         * @return {*} Children
+         * @private
+         */
+        _getSubLayers: function(source, layer, level, children) {
+            var widget = this;
+            if(layer.children) {
+                _.chain(layer.children).reverse().each(function(childLayer) {
+                    children = children.concat(widget._getSubLayer(source, childLayer, "wms", level, []));
+                });
+            }
             return children;
         },
-        _getSublayer: function(source, sublayer, type, level, children){
+
+        /**
+         * Get legend
+         *
+         * @param layer
+         * @param generate
+         * @return {*}
+         */
+        getLegend: function(layer, generate) {
+            var legend = null;
+            if(layer.options.legend) {
+                legend = layer.options.legend;
+                if(!legend.url && generate && legend.graphic) {
+                    legend['url'] = legend.graphic;
+                }
+            }
+            return legend;
+        },
+
+        /**
+         *
+         * @param source
+         * @param sublayer
+         * @param type
+         * @param level
+         * @param children
+         * @return {*}
+         * @private
+         */
+        _getSubLayer: function(source, sublayer, type, level, children) {
+            var widget = this;
             var sublayerLeg = {
                 sourceId: source.id,
-                id: sublayer.options.id,
-                visible: sublayer.state.visibility ? '' : ' notvisible',
-                title: sublayer.options.title,
-                level: level,
-                isNode: sublayer.children && sublayer.children.length > 0 ? true : false
+                id:       sublayer.options.id,
+                visible:  sublayer.state.visibility,
+                title:    sublayer.options.title,
+                level:    level,
+                isNode:   sublayer.children && sublayer.children.length
             };
-            function getLegend(layer, generate){
-                var legendObj = null;
-                if(layer.options.legend) {
-                    legendObj = layer.options.legend;
-                    if(!legendObj.url && generate && legendObj.graphic) {
-                        legendObj['url'] = legendObj.graphic;
-                    }
-                }
-                return legendObj;
-            }
-            sublayerLeg["legend"] = getLegend(sublayer, this.options.generateLegendGraphicUrl);
-            if(!sublayerLeg.isNode)
+
+            sublayerLeg["legend"] = widget.getLegend(sublayer, widget.options.generateLegendGraphicUrl);
+
+            if(!sublayerLeg.isNode) {
                 children.push(sublayerLeg);
-            if(sublayer.children) {
-                if(this.options.showGrouppedTitle) {
-                    children.push(sublayerLeg);
-                }
-                var childrenLegend = false;
-                for(var i = (sublayer.children.length - 1); i > -1; i--) {
-                    var layleg = getLegend(sublayer.children[i], this.options.generateLegendGraphicUrl);
-                    if(layleg && layleg.url) {
-                        childrenLegend = true;
-                    }
-                    children = children.concat(this._getSublayer(source, sublayer.children[i], type, level, [
-                    ]));//children
-                }
-                sublayerLeg['childrenLegend'] = childrenLegend;
-            }
-            return children;
-        },
-        _createSourceTitleLine: function(layer){
-            return '<li class="ebene' + layer.level + ' ' + this.sourceTitle + (!layer.childrenLegend ? ' notshow'
-                    : '') + ' title" data-sourceid="' + layer.sourceId + '" data-id="' + layer.id + '">' + layer.title + '</li>';
-        },
-        _createNodeTitleLine: function(layer){
-            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + this.grouppedTitle + (!layer.childrenLegend
-                    ? ' notshow'
-                    : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
-        },
-        _createTitleLine: function(layer, hide){
-            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + this.layerTitle + ' ' + (hide
-                    ? this.hiddeEmpty : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
-        },
-        _createImageLine: function(layer){
-            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' image" data-id="' + layer.id + '"><img src="' + layer.legend.url + '"></img></li>';
-        },
-        _createTextLine: function(layer, hide){
-            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + (hide ? this.hiddeEmpty
-                    : '') + ' text" data-id="' + layer.id + '">' + this.options.noLegend + '</li>';
-        },
-        _createLegendHtml: function(sources){
-            var html = "";
-            for(var i = 0; i < sources.length; i++) {
-                html += this._createLayerHtml(sources[i], "");
-            }
-            return html;
-        },
-        _createLayerHtml: function(layer, html){
-            if(layer.children) {
-                html += this._createSourceTitleLine(layer);
-                html += '<ul class="ebene' + layer.level + '" data-sourceid="' + layer.sourceId + '" data-id="' + layer.id + '">';
-                for(var i = 0; i < layer.children.length; i++) {
-                    if(layer.children[i].visible !== 'notvisible') {
-                        html += this._createLayerHtml(layer.children[i], "");
-                    }
-                }
-                html += '</ul>';
-            } else {
-                if(layer.isNode) {
-                    html += this._createNodeTitleLine(layer);
-                } else {
-                    if(layer.legend && layer.legend.url) {
-                        html += this._createTitleLine(layer, false);
-                        html += this._createImageLine(layer, false);
-                    } else {
-                        html += this._createTitleLine(layer, true);
-                        html += this._createTextLine(layer, true);
-                    }
-                }
-            }
-            return html;
-        },
-        _createCheckedLegendHtml: function(layers, layidx, sublayidx, html, reshtml, callback, added){
-            var self = this;
-            if(layers.length > layidx) {
-                var layer = layers[layidx];
-                if(layers[layidx].children.length > sublayidx) {
-                    if(layers[layidx].children[sublayidx].legend) {
-                        $(self.element).find("#imgtest").html(
-                                '<img id="testload" style="display: none;" src="' + layers[layidx].children[sublayidx].legend.url + '"></img>');
-                        $(self.element).find("#imgtest #testload").load(function(){
-                            self._checkMaxImgWidth(self.width);
-                            self._checkMaxImgHeight(self.height);
-                            if(layers[layidx].children[sublayidx].isNode) {
-                                html += self._createNodeTitleLine(layers[layidx].children[sublayidx]);
-                            } else {
-                                html += self._createTitleLine(layers[layidx].children[sublayidx], false);
-                                html += self._createImageLine(layers[layidx].children[sublayidx]);
-                            }
-                            self._createCheckedLegendHtml(layers, layidx, ++sublayidx, html, reshtml, callback, added);
-                        }).error(function(){
-                            if(layers[layidx].children[sublayidx].isNode) {
-                                html += self._createNodeTitleLine(layers[layidx].children[sublayidx]);
-                            } else {
-                                html += self._createTitleLine(layers[layidx].children[sublayidx], true);
-                                html += self._createImageLine(layers[layidx].children[sublayidx], true);
-                            }
-                            self._createCheckedLegendHtml(layers, layidx, ++sublayidx, html, reshtml, callback, added);
-                        });
-                    } else {
-                        if(layers[layidx].children[sublayidx].isNode) {
-                            html += self._createNodeTitleLine(layers[layidx].children[sublayidx]);
-                        } else {
-                            html += self._createTitleLine(layers[layidx].children[sublayidx], true);
-                            html += self._createImageLine(layers[layidx].children[sublayidx], true);
-                        }
-                        self._createCheckedLegendHtml(layers, layidx, ++sublayidx, html, reshtml, callback, added);
-                    }
-                } else {
-                    var html_ = '';
-                    html_ += _createSourceTitleLine(layer);
-                    html_ += '<ul class="ebene' + layer.level + '" data-sourceid="' + layer.sourceId + '" data-id="' + layer.id + '">';
-                    html_ += html;
-                    html_ += '</ul>';
-                    reshtml += html_;
-                    self._createCheckedLegendHtml(layers, ++layidx, 0, "", reshtml, callback, added);
-                }
-            } else {
-                if(added)
-                    callback(reshtml, added);
-                else
-                    callback(reshtml);
-            }
-        },
-        _createLegend: function(html){
-            var self = this;
-            $(self.element).find("#imgtest").html("");
-            if(this.options.elementType === "dialog") {
-                if(!this.popup || !this.popup.$element) {
-                    this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('title'),
-                        draggable: true,
-                        resizable: true,
-                        modal: false,
-                        closeButton: false,
-                        closeOnPopupCloseClick: true,
-                        closeOnESC: false,
-                        content: ('<ul>' + html + '</ul>'),
-                        width: 350,
-                        height: 500,
-                        cssClass: 'customLegend',
-                        buttons: {
-                            'ok': {
-                                label: Mapbender.trans('mb.core.legend.popup.btn.ok'),
-                                cssClass: 'button right',
-                                callback: function(){
-                                    self.close();
-                                }
-                            }
-                        }
-                    });
-                } else {
-                    this.popup.open(('<ul>' + html + '</ul>'));
-                }
-            } else {
-                $(this.element).find('#legends:eq(0)').html('<ul>' + html + '</ul>');
             }
 
-            // WATCHOUT:
-            // Accordion is not supported in v.3.0.0.0.
-            // Support comes in the next versions
-            // if(this.options.displayType === 'accordion'){
-            //     $(this.element).find('ul.ebene1').each(function(){
-            //         $(this).accordion({
-            //             header: "li.title",
-            //             autoHeight: false,
-            //             collapsible: true,
-            //             active: false
-            //         });
-            //     });
-            //     $(this.element).find('.layerlegends').each(function(){
-            //         $(this).accordion({
-            //             autoHeight: false,
-            //             collapsible: true,
-            //             active: false
-            //         });
-            //     });
-            // }
+            if(sublayer.children) {
+                if(widget.options.showGroupedTitle) {
+                    children.push(sublayerLeg);
+                }
+
+                var childrenLegend = false;
+                _.chain(sublayer.children).reverse().each(function(subLayerChild) {
+                    var legendLayer = widget.getLegend(subLayerChild, widget.options.generateLegendGraphicUrl);
+                    var hasLegendUrl = legendLayer && legendLayer.url;
+
+                    if(hasLegendUrl) {
+                        childrenLegend = true;
+                    }
+
+                    children = children.concat(widget._getSubLayer(source, subLayerChild, type, level, []));//children
+                });
+
+                sublayerLeg['childrenLegend'] = childrenLegend;
+            }
+
+            return children;
         },
+
+        /**
+         *
+         * @param layer
+         * @private
+         */
+        createSourceTitle: function(layer) {
+            return $("<li/>")
+                .text(layer.title)
+                .addClass('ebene' + layer.level)
+                .addClass('title');
+        },
+
+        /**
+         *
+         * @param layer
+         * @private
+         */
+        createNodeTitle: function(layer) {
+            return $("<li/>")
+                .text(layer.title)
+                .addClass('ebene' + layer.level)
+                .addClass(layer.visible)
+                .addClass('subTitle')
+                .data({id: layer.id});
+        },
+
+        /**
+         *
+         * @param layer
+         * @private
+         */
+        createTitle: function(layer) {
+            return $("<div/>")
+                .text(layer.title)
+                // .addClass(layer.visible)
+                .addClass('subTitle')
+                .data({id: layer.id});
+        },
+        /**
+         * Create Image
+         *
+         * @param layer
+         * @private
+         */
+        createImage: function(layer) {
+            return $('<img/>')
+                .css({'display': 'block'})
+                .data({id: layer.id})
+                .attr('src', layer.legend.url);
+        },
+
+        /**
+         * Create Legend Container
+         * @param layer
+         */
+        createLegendContainer: function(layer) {
+            return $('<ul/>')
+                .addClass('ebene' + layer.level)
+                .data({
+                    sourceid: layer.sourceId,
+                    id:       layer.id
+                });
+        },
+
+        _createLayerHtml: function(layer) {
+            var widget = this;
+            var options = widget.options;
+            var html = null;
+
+            if(layer.children) {
+                var visibleChildLayers = _.chain(layer.children).where({visible: true});
+                var ul = widget.createLegendContainer(layer);
+
+                if(options.hideEmptyLayers && visibleChildLayers.size() < 1) {
+                    return null;
+                }
+
+                if(options.showSourceTitle) {
+                    ul.append(widget.createSourceTitle(layer));
+                }
+
+                visibleChildLayers.reverse().each(function(childLayer) {
+                    ul.append(widget._createLayerHtml(childLayer));
+                });
+
+                html = ul;
+            } else {
+                if(layer.isNode) {
+                    if(layer.childrenLegend && options.showGroupedTitle) {
+                        html = widget.createNodeTitle(layer);
+                    }
+                } else if(layer.visible && layer.legend && layer.legend.url) {
+                    html = $('<li/>').addClass('ebene' + layer.level);
+
+                    if(options.showLayerTitle) {
+                        html.append(widget.createTitle(layer));
+                    }
+                    html.append(widget.createImage(layer));
+                }
+            }
+
+            return html;
+        },
+
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(callback){
+        defaultAction: function(callback) {
             this.open(callback);
         },
-        /**
-         * This activates this button and will be called on click
-         */
-        open: function(callback){
-            if(callback)
-                this.callback = callback;
-            else
-                this.callback = null;
-            var self = this;
-            var sources = this._getSources();
-            if(this.options.checkGraphic) {
-                this._createCheckedLegendHtml(sources, 0, 0, "", "", $.proxy(self._createLegend, self));
-            } else {
-                this._createLegend(this._createLegendHtml(sources));
-            }
-            sources = this.model.getSources();
-            for(var i = 0; i < sources.length; i++) {
-                this._checkLayers(sources[i]);
-            }
 
+        /**
+         * Render HTML
+         *
+         * @return strgin HTML jQuery object
+         */
+        render: function() {
+            var widget = this;
+            var sources = widget._getSources();
+            var html = $("<ul/>");
+            _.each(sources, function(source) {
+                html.append(widget._createLayerHtml(source));
+            });
+            return html;
         },
-        close: function(){
-            if(this.options.elementType === "dialog") {
-                if(this.popup) {
-                    if(this.popup.$element)
-                        this.popup.destroy();
-                    this.popup = null;
+
+        /**
+         * On open handler
+         */
+        open: function(callback) {
+            var widget = this;
+
+            widget.callback = callback;
+
+            if(widget.isPopUpDialog) {
+                widget.popup(widget.htmlContainer.html());
+            }
+        },
+
+        /**
+         * On close
+         */
+        close: function() {
+            var widget = this;
+
+            if (widget.isPopUpDialog) {
+
+                if (widget.popup) {
+
+                    if (widget.popupWindow.$element) {
+                        widget.popupWindow.destroy();
+                        widget.popupWindow = null;
+                    }
                 }
 
             }
-            if(this.callback) {
-                this.callback.call();
-                this.callback = null;
+            if (widget.callback) {
+                widget.callback.call();
+                widget.callback = null;
             }
         },
+
         /**
-         *
+         * On ready handler
          */
-        ready: function(callback){
-            if(this.readyState === true) {
-                callback();
+        ready: function(callback) {
+            var widget = this;
+            if(widget.readyState) {
+                if(typeof(callback ) === 'function') {
+                    callback();
+                }
             } else {
-                this.readyCallbacks.push(callback);
+                widget.readyCallbacks.push(callback);
             }
         },
+
         /**
-         *
+         * On ready handler
          */
-        _ready: function(){
-            for(callback in this.readyCallbacks) {
-                callback();
-                delete(this.readyCallbacks[callback]);
-            }
-            this.readyState = true;
+        _ready: function() {
+            var widget = this;
+
+            _.each(widget.readyCallbacks, function(readyCallback){
+                if(typeof(readyCallback ) === 'function') {
+                    readyCallback();
+                }
+            })
+
+            // Mark as ready
+            widget.readyState = true;
+            
+            // Remove handlers
+            widget.readyCallbacks.splice(0, widget.readyCallbacks.length);
+
         }
 
     });

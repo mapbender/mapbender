@@ -40,7 +40,7 @@ Mapbender.Model = {
         OpenLayers.Map.TILE_WIDTH = tileSize;
         OpenLayers.Map.TILE_HEIGHT = tileSize;
 
-        OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + this.mbMap.options.imgPath + '/';
+        OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + 'components/mapquery/lib/openlayers/img/';
 
         this.proj = this.getProj(this.mbMap.options.srs);
         this.units = this.mbMap.options.units; //TODO check if this.units === this.proj.proj.units
@@ -219,9 +219,7 @@ Mapbender.Model = {
                         layerDef['origId'] = idx;
                         self.addSource({
                             add: {
-                                sourceDef: layerDef,
-                                before: null,
-                                after: null
+                                sourceDef: layerDef
                             }
                         });
                     });
@@ -535,17 +533,25 @@ Mapbender.Model = {
      * Checks the source changes and returns the source changes.
      */
     _checkAndRedrawSource: function(toChangeOpts) {
+        return this._checkSource(toChangeOpts, true, true);
+    },
+    _checkSource: function(toChangeOpts, reset, redraw) {
         var source = this.getSource(toChangeOpts.sourceIdx);
-        var result = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
+        var gsResult = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
-        if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers, result.styles)) {
+        if (!mqLayer) {
+            console.error("No mqLayer found", toChangeOpts);
+        }
+        if (mqLayer && reset) {
+            redraw = redraw && this._resetSourceVisibility(mqLayer, gsResult.layers, gsResult.infolayers, gsResult.styles);
+        }
+        if (mqLayer && redraw) {
             mqLayer.olLayer.removeBackBuffer();
             mqLayer.olLayer.createBackBuffer();
             mqLayer.olLayer.redraw(true);
         }
-        return result.changed;
+        return gsResult.changed;
     },
-
     _preCheckChanges: function(e) {
         this._checkChanges(e, true);
     },
@@ -553,38 +559,29 @@ Mapbender.Model = {
     _checkChanges: function(e, isPreEvent) {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
-            var result = Mapbender.source[source.type].changeOptions(
-                source, self.getScale(), {
-                sourceIdx: {
-                    id: source.id
-                },
+            var sourceIdx = {id: source.id};
+            var changeOpts = {
+                sourceIdx: sourceIdx,
                 options: {
                     children: {}
                 }
-            });
-            var mqLayer = self.map.layersList[source.mqlid];
-            if (self._resetSourceVisibility(mqLayer, result.layers, result.infolayers, result.styles)) {
-                if (!isPreEvent) {
-                    mqLayer.olLayer.redraw();
-                }
-            }
-            for (var child in result.changed.children) {
-                if (result.changed.children[child].state
-                    && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
-                    var changed = {
-                        changed: {
-                            children: result.changed.children,
-                            sourceIdx: result.changed.sourceIdx
-                        }
-                    };
+            };
+            var changed = self._checkSource(changeOpts, true, !isPreEvent);
+            for (var child in changed.children) {
+                if (changed.children[child].state
+                    && typeof changed.children[child].state.outOfScale !== 'undefined') {
                     self.mbMap.fireModelEvent({
                         name: 'sourceChanged',
-                        value: changed
-                    });//{options: result}});
+                        value: {
+                            changed: {
+                                children: changed.children,
+                                sourceIdx: sourceIdx
+                            }
+                        }
+                    });
                     break;
                 }
             }
-
         });
     },
 
@@ -811,8 +808,6 @@ Mapbender.Model = {
         var self = this;
         if (addOptions.add) {
             var sourceDef = addOptions.add.sourceDef;
-            var before = addOptions.add.before;
-            var after = addOptions.add.after;
             sourceDef.id = this.generateSourceId();
 
             if (typeof sourceDef.origId === 'undefined') {
@@ -822,25 +817,12 @@ Mapbender.Model = {
                 name: 'beforeSourceAdded',
                 value: {
                     source: sourceDef,
-                    before: before,
-                    after: after
+                    before: null,
+                    after: null
                 }
             });
             if (!this.getSourcePos(sourceDef)) {
-                if (!before && !after) {
-                    before = {
-                        source: this.sourceTree[this.sourceTree.length - 1]
-                    };
-                    after = null;
-                }
                 this.sourceTree.push(sourceDef);
-            } else {
-                if (!before && !after) {
-                    before = {
-                        source: this.sourceTree[this.sourceTree.length - 1]
-                    };
-                    after = null;
-                }
             }
             var source = sourceDef;
             var mapQueryLayer = this.map.layers(this._convertLayerDef(source));
@@ -866,14 +848,15 @@ Mapbender.Model = {
                     value: {
                         added: {
                             source: source,
-                            before: before,
-                            after: after
+                            // legacy: no known consumer evaluates these props,
+                            // but even if, they've historically been wrong anyway
+                            // was: "before": always last source previously in list, even though
+                            // the new source was actually added *after* that
+                            before: null,
+                            after: null
                         }
                     }
                 });
-                if (after) {
-                    this._moveSource(source, before, after);
-                }
                 this._checkAndRedrawSource({
                     sourceIdx: {
                         id: source.id
@@ -974,15 +957,14 @@ Mapbender.Model = {
                 });
                 if (changeOpts.options.type === 'selected') {
                     var result = this._checkAndRedrawSource(changeOpts);
-                    var changed = {
-                        changed: {
-                            children: result.children,
-                            sourceIdx: result.sourceIdx
-                        }
-                    };
                     this.mbMap.fireModelEvent({
                         name: 'sourceChanged',
-                        value: changed
+                        value: {
+                            changed: {
+                                children: result.children,
+                                sourceIdx: result.sourceIdx
+                            }
+                        }
                     });
                 }
                 if (changeOpts.options.type === 'info') {
@@ -1009,30 +991,7 @@ Mapbender.Model = {
                 }
             }
             if (changeOpts.move) {
-                var tomove = {
-                    source: this.getSource(
-                        changeOpts.move.tomove.sourceIdx)
-                };
-                if (changeOpts.move.tomove.layerIdx) {
-                    tomove['layerId'] = changeOpts.move.tomove.layerIdx.id;
-                }
-                var before = changeOpts.move.before;
-                if (before) {
-                    before = {
-                        source: this.getSource(
-                            changeOpts.move.before.sourceIdx),
-                        layerId: changeOpts.move.before.layerIdx.id
-                    };
-                }
-                var after = changeOpts.move.after;
-                if (after) {
-                    after = {
-                        source: this.getSource(
-                            changeOpts.move.after.sourceIdx),
-                        layerId: changeOpts.move.after.layerIdx.id
-                    };
-                }
-                this._moveSourceOrLayer(tomove, before, after);
+                console.error("mapbender.model:changeSource with 'move' is gone", changeOpts);
             }
             if (changeOpts.layerRemove) {
                 var sourceToChange = this.getSource(changeOpts.layerRemove.sourceIdx);
@@ -1084,118 +1043,67 @@ Mapbender.Model = {
         }
 
     },
-    _moveSourceOrLayer: function(tomove, before, after) {
-        var layerToMove;
-        if (before && after
-            && before.source.id.toString() === after.source.id.toString()
-            && before.source.id.toString() === tomove.source.id.toString()) {
-//            window.console && console.log("move layer inside");
-            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {
-                id: before.layerId
-            });
-            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {
-                id: after.layerId
-            });
-            layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
-                id: tomove.layerId
-            });
-            var targetIdx = layerToMove.idx > afterLayer.idx ? beforeLayer.idx + 1 : beforeLayer.idx;
-            this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, targetIdx, before, after);
-        } else if (before && before.source.id.toString() === tomove.source.id.toString()) {
-//            window.console && console.log("move layer into last pos");
-            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {
-                id: before.layerId
-            });
-            layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
-                id: tomove.layerId
-            });
-            this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
-        } else if (after && after.source.id.toString() === tomove.source.id.toString()) {
-//            window.console && console.log("move layer into first pos");
-            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {
-                id: after.layerId
-            });
-            layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
-                id: tomove.layerId
-            });
-            this._reorderLayers(tomove.source, layerToMove.layer, afterLayer.parent, afterLayer.idx, before, after);
-        } else if (before && before.source.origId === tomove.source.origId) {
-            ;
-        } else if (after && after.source.origId === tomove.source.origId) {
-            ;
-        } else if (before && !after) {
-            if (!tomove.layerId) {
-//                window.console && console.log("move source into last pos");
-                this._moveSource(tomove.source, before, after);
-            }
-        } else if (after && !before) { // move source for tree
-            if (!tomove.layerId) {
-                this._moveSource(tomove.source, before, after);
-            }
-        } else {
-            if (!tomove.layerId) { // move source for tree
-                this._moveSource(tomove.source, before, after);
-            }
-        }
-    },
     /**
+     * Updates the source identified by given id with a new layer order.
+     * This will pull styles and "state" (such as visibility) from values
+     * currently stored in the "geosource".
      *
+     * @param {string} sourceId
+     * @param {string[]} newLayerIdOrder
      */
-    _reorderLayers: function(source, layerToMove, targetParent, targetIdx, before, after) {
-        var removed = Mapbender.source[source.type].removeLayer(source, layerToMove);
-        var added = Mapbender.source[source.type].addLayer(source, removed.layer, targetParent, targetIdx);
-        var changed = this.createChangedObj(source);
-        changed.children[added.options.id] = added;
-        changed.layerId = added.options.id;
-        changed.after = after;
-        changed.before = before;
+    setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
+        var sourceIdx = {id: sourceId};
+        var sourceObj = this.getSource(sourceIdx);
+        var geoSource = Mapbender.source[sourceObj.type];
+
+        geoSource.setLayerOrder(sourceObj, newLayerIdOrder);
+
         this.mbMap.fireModelEvent({
             name: 'sourceMoved',
-            value: changed
+            // no receiver uses the bizarre "changeOptions" return value
+            // on this event
+            value: null
         });
         this._checkAndRedrawSource({
-            sourceIdx: {
-                id: source.id
-            },
-            options: {
-                children: {}
-            }
+            sourceIdx: sourceIdx,
+            options: {children: {}}
         });
     },
     /**
+     * Bring the sources identified by the given ids into the given order.
+     * All other sources will be left alone!
      *
+     * @param {string[]} newIdOrder
      */
-    _moveSource: function(source, before, after) {
-        var old_pos = this.getSourcePos(source);
-        var new_pos;
-        if (before && before.source && after && after.source) {
-            var before_pos = this.getSourcePos(before.source);
-            var after_pos = this.getSourcePos(after.source);
-            if (old_pos <= before_pos)
-                new_pos = before_pos;
-            else if (old_pos > before_pos)
-                new_pos = after_pos;
-        } else if (before && before.source) {
-            new_pos = this.getSourcePos(before.source);
-        } else if (after && after.source) {
-            new_pos = this.getSourcePos(after.source);
-        }
-        if (old_pos === new_pos)
-            return;
-        this.sourceTree.splice(new_pos, 0, this.sourceTree.splice(old_pos, 1)[0]);
-        var mqL = this.map.layersList[source.mqlid];
-        if (old_pos > new_pos) {
-            mqL.down(Math.abs(old_pos - new_pos));
-        } else {
-            mqL.up(Math.abs(old_pos - new_pos));
-        }
-        var changed = this.createChangedObj(source);
-        changed.after = after;
-        changed.before = before;
-        this.mbMap.fireModelEvent({
-            name: 'sourceMoved',
-            value: changed
+    reorderSources: function(newIdOrder) {
+        var self = this;
+        var sourceObjs = $.map(newIdOrder, function(sourceId) {
+            return self.findSource({id: sourceId});
         });
+        // Collect currently set positions and z indexes for given sources.
+        // position := array index in this.sourceTree
+        // z index := mapquery layer position = openlayers map layer index - 1
+        // The collected values will be reused / redistributed to the affected
+        // sources.
+        var oldPositions = [];
+        var zIndexes = [];
+        var sourceIdToSource = {};
+        _.forEach(sourceObjs, function(sourceObj) {
+            oldPositions.push(self.getSourcePos(sourceObj));
+            sourceIdToSource[sourceObj.id] = sourceObj;
+            zIndexes.push(self.map.layersList[sourceObj.mqlid].position());
+        });
+        oldPositions.sort();
+        zIndexes.sort();
+        // rewrite sourceTree order and z indexes
+        for (var i = 0; i < oldPositions.length; ++i) {
+            var oldPos = oldPositions[i];
+            var injectSourceId = newIdOrder[i];
+            var injectSourceObj = sourceIdToSource[injectSourceId];
+            var injectSourceZ = zIndexes[i];
+            this.sourceTree[oldPos] = injectSourceObj;
+            self.map.layersList[injectSourceObj.mqlid].position(injectSourceZ);
+        }
     },
     /*
      * Changes the map's projection.

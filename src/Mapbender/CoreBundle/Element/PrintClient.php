@@ -103,7 +103,7 @@ class PrintClient extends Element
                 "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
                 "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))),
             "replace_pattern" => null,
-            "file_prefix" => 'mapbender3'
+            "file_prefix" => 'mapbender'
         );
     }
 
@@ -180,9 +180,11 @@ class PrintClient extends Element
         $request = $this->container->get('request');
         $configuration = $this->getConfiguration();
         switch ($action) {
+            case 'print':
             case 'direct':
                 $data = $this->preparePrintData($request);
-                $printservice = new PrintService($this->container);
+                $printservice = $this->getPrintService();
+
                 $displayInline = true;
 
                 $filename = 'mapbender_print.pdf';
@@ -289,5 +291,15 @@ class PrintClient extends Element
         $token = $this->container->get('security.context')->getToken();
         $user  = $token ? $token->getUser() : null;
         return $user && $user instanceof User ? $user->getId() : null;
+    }
+
+    /**
+     * @return PrintService
+     */
+    protected function getPrintService()
+    {
+        $container = $this->container;
+        $printServiceClassName = $container->getParameter('mapbender.print.service.class');
+        return new $printServiceClassName($container);
     }
 }

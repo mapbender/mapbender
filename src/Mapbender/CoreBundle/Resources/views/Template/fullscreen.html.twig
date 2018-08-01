@@ -1,6 +1,6 @@
 {% extends "MapbenderCoreBundle::frontend.html.twig" %}
 
-{% block title %}Mapbender3 - {{ application.title }}{% endblock %}
+{% block title %}{{ fom.server_name }} - {{ application.title }}{% endblock %}
 
 {% block favicon %}{{ asset('favicon.png') }}{% endblock %}
 
@@ -20,16 +20,15 @@
 
 
 {% block frontend_content %}
-
-  <div id="templateWrapper" class="templateWrapper sidePaneOpened">
+  {% set sidePaneClosed = region_props.sidepane.properties.closed|default(false) %}
+  <div id="templateWrapper" class="templateWrapper {% if sidePaneClosed == false %}sidePaneOpened{% endif %}">
     {% if fom.server_logo is defined %}
       <div class="logoContainer">
         {% block logo %}
-        <img class="logo" height="40" src="{{ asset(fom.server_logo) }}"/>
+          <img class="logo" height="40" src="{{ asset(fom.server_logo) }}"/>
         {% endblock %}
       </div>
     {% endif %}
-
 
     {% if application.elements.toolbar is defined %}
     <ul id="toolbar" class="toolBar itemsRight top">
@@ -45,8 +44,13 @@
       {% set region = application.elements[name] %}
       {% set properties = region_props[name].properties|default({}) %}
       {% set align = properties.align|default('left') %}
+      {% set isRegionClosed = properties.closed|default('false') %}
 
-      <div id="{{ name }}"  class="clear sidePane {{ align }}" {% if properties.width is defined %} style="width: {{ properties.width }}"{% endif %}>
+      <div id="{{ name }}"
+           data-closed="{{ isRegionClosed }}"
+           class="clear sidePane {{ align }}"
+        {% if properties.width is defined %} style="width: {{ properties.width }}"{% endif %}
+      >
         <ul class="sidePaneTabs">
           <li class="sidePaneTabItem toggleSideBar"></li>
         </ul>

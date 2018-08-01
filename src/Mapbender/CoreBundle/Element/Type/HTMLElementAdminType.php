@@ -6,11 +6,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * 
+ * Class HTMLElementAdminType
+ * @package Mapbender\CoreBundle\Element\Type
  */
 class HTMLElementAdminType extends AbstractType
 {
-
     /**
      * @inheritdoc
      */
@@ -35,9 +35,11 @@ class HTMLElementAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('content', 'textarea', array(
-                'required' => false))
-            ->add('classes', 'text', array(
-                'required' => false));
+            ->add('content', 'html', [
+                'required' => false,
+            ])
+            ->add('classes', 'text', [
+                'required' => false,
+            ]);
     }
 }

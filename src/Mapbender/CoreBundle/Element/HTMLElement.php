@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Doctrine\DBAL\Connection;
 use Mapbender\CoreBundle\Component\Element;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 
@@ -40,15 +41,15 @@ class HTMLElement extends Element
     {
         return array(
             'js'  => array(
-                'bundles/mapbendermanager/codemirror/lib/codemirror.js',
-                'bundles/mapbendermanager/codemirror/mode/xml/xml.js',
-                'bundles/mapbendermanager/codemirror/keymap/sublime.js',
-                'bundles/mapbendermanager/codemirror/addon/selection/active-line.js',
+                'components/codemirror/lib/codemirror.js',
+                'components/codemirror/mode/xml/xml.js',
+                'components/codemirror/keymap/sublime.js',
+                'components/codemirror/addon/selection/active-line.js',
                 'bundles/mapbendercore/mapbender.admin.htmlelement.js',
             ),
             'css' => array(
-                'bundles/mapbendermanager/codemirror/lib/codemirror.css',
-                'bundles/mapbendermanager/codemirror/theme/neo.css',
+                'components/codemirror/lib/codemirror.css',
+                'components/codemirror/theme/neo.css',
             )
         );
     }
@@ -189,5 +190,25 @@ class HTMLElement extends Element
             }
         }
         return $assets;
+    }
+
+    /**
+     * Render markup.
+     * Because the entire template is user-configurable, we add some error handling here.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->container->get('logger');
+
+        try {
+            return parent::render();
+        } catch (\Twig_Error $e) {
+            $message = "Invalid content in " . get_class($this) . " caused " . get_class($e);
+            $logger->warning($message . ", suppressing content", $this->getConfiguration());
+            return "<div id=\"{$this->getEntity()->getId()}\"><!-- $message --></div>";
+        }
     }
 }

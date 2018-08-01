@@ -22,6 +22,8 @@
             OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
             var self = this,
                     me = $(this.element);
+            //Todo: Move to a seperate file. ADD ALL THE EPSGCODES!!!!111
+            jQuery.extend(OpenLayers.Projection.defaults, {'EPSG:31466': {yx : true}});
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
@@ -74,9 +76,7 @@
         addSource: function(sourceDef){
             this.model.addSource({
                 add: {
-                    sourceDef: sourceDef,
-                    before: null,
-                    after: null
+                    sourceDef: sourceDef
                 }
             });
         },

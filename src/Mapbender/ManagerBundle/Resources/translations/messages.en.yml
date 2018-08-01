@@ -74,6 +74,7 @@ mb:
         source: 'Filter source'
         layerset: 'Filter layerset'
         application: 'Filter application'
+        element: Filter        
       overview:
         maximize: Maximize
         fix: Fix
@@ -92,14 +93,16 @@ mb:
         show_hide: 'Toggle show/hide instance'
         edit: 'Edit instance'
         delete:
-          title: 'delete instance'
+          title: 'Delete instance'
           confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
         no_instance_added: 'No instance added'
         no_layer_added: 'No layer added'
       template: Template
       application:
         view: View
-        edit: 'Edit application'
+        edit:
+          title: 'Edit application'
+          base_data: 'Base data'
         layouts: Layouts
         layersets: Layersets
         custom_css: CSS

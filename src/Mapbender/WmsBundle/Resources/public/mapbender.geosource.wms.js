@@ -30,6 +30,7 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             rootLayer.options.treeOptions.selected = false;
             rootLayer.options.treeOptions.allow.selected = false;
         }
+        var layerNames = [];
 
         function _setProperties(layer, parent, id, num, options){
             /* set unic id for a layer */
@@ -46,10 +47,13 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
                 for(var i = 0; i < layer.children.length; i++) {
                     _setProperties(layer.children[i], layer, id, i, options);
                 }
+            } else {
+                layerNames.push(layer.options.name);
             }
         }
         
         _setProperties(rootLayer, null, sourceDef.id, 0, sourceDef.configuration.options);
+        Mapbender.Geo.layerOrderMap["" + sourceDef.id] = layerNames;
         var finalUrl = sourceDef.configuration.options.url;
         
         if(sourceDef.configuration.options.proxy === true && !sourceDef.configuration.options.tunnel) {
@@ -89,7 +93,8 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         var wmsgfi = new OpenLayers.Control.WMSGetFeatureInfo({
             url: Mapbender.Util.removeProxy(mqLayer.olLayer.url), 
             layers: [mqLayer.olLayer],
-            queryVisible: true
+            queryVisible: true,
+            maxFeatures: 1000
         });
         wmsgfi.map = mqLayer.map.olMap;
         var reqObj = wmsgfi.buildWMSOptions(

@@ -530,17 +530,19 @@ abstract class Element
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
             $formAssets = array(
                 'js' => array(
-                    'bundles/mapbendermanager/codemirror/lib/codemirror.js',
-                    'bundles/mapbendermanager/codemirror/mode/yaml/yaml.js',
+                    'components/codemirror/lib/codemirror.js',
+                    'components/codemirror/mode/yaml/yaml.js',
                     'bundles/mapbendermanager/js/form-yaml.js'),
                 'css' => array(
-                    'bundles/mapbendermanager/codemirror/lib/codemirror.css'));
+                    'components/codemirror/lib/codemirror.css'));
         } else {
-            $type = new $configurationFormType();
+            $type = self::getAdminFormType($configurationFormType, $container, $class);
+
             $options = array('application' => $application);
             if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
                 $options['element'] = $element;
             }
+
             $formType->add('configuration', $type, $options);
             $formTheme = $class::getFormTemplate();
             $formAssets = $class::getFormAssets();
@@ -550,6 +552,42 @@ abstract class Element
             'form' => $formType->getForm(),
             'theme' => $formTheme,
             'assets' => $formAssets);
+    }
+
+    /**
+     * Get admin form object
+     *
+     * @param string $configurationFormType
+     * @param ContainerInterface $container
+     * @param string $class
+     *
+     * @return $type
+     */
+    protected static function getAdminFormType($configurationFormType, ContainerInterface $container, $class)
+    {
+        $formTypeId = 'mapbender.form_type.element.' . self::getElementName($class);
+        $serviceExists = $container->has($formTypeId);
+
+        if (false !== $serviceExists) {
+            $adminFormType = $container->get($formTypeId);
+        } else {
+            $adminFormType = new $configurationFormType();
+        }
+
+        return $adminFormType;
+    }
+
+    /**
+     * Get lowercase element name from full class namespace
+     *
+     * @param string $class
+     * @return string
+     */
+    protected static function getElementName($class)
+    {
+        $namespaceParts = explode('\\', $class);
+
+        return strtolower(array_pop($namespaceParts));
     }
 
     /**

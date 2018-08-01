@@ -41,14 +41,14 @@ mb:
       tag:
         wmc: wmc
         loader: cargador
-      state:
-        load: Cargar
       load_xml_wmc: 'Cargar XML WMC'
       id: Id
       title: Título
       description: Descripción
       view_wmc: 'Ver WMC'
       no_wmc: 'No WMC.'
+      state:
+        load: Cargar
     error:
       wmcxmlloader_notallowed: 'el cargador WMC XML no es permitido.'
       wmclistloader_notallowed: 'el cargador de lista WMC no es permitido.'
@@ -62,13 +62,6 @@ mb:
       statecannotbesaved: 'Estado no puede ser guardado.'
       statenotfound: 'Estado %stateid% no se encuentra.'
       wmcurlloader_notallowed: 'el cargador WMC URL no es permitido.'
-    wmc:
-      delete_confirm: '¿Realmente quieres remover el WMC con el titulo <em>%wmc_title%</em> y el id <em>%wmc_id%</em>?'
-    admin:
-      wmclist:
-        label: Etiqueta
-      wmcloader:
-        keep_extent: 'Mantener la Extensión'
     list:
       add_wmc: 'Agragar nuevo WMC a'
       id: Id
@@ -79,30 +72,37 @@ mb:
       delete_wmc: 'Borrar WMC'
       no_wmc: 'WMC no aderido.'
     element:
-      wmcloader:
+      suggestmap:
+        error_srs: 'SRS "%state.extent.srs%" no es soportado por esta aplicación.'
         popup:
           btn:
-            ok: Cargar
-            cancel: Cancelar
-            back: Atrás
-      suggestmap:
+            ok: Cerrar
         content:
           email: 'Como e-mail'
           twitter: 'En Twitter'
           facebook: 'En Facebook'
           google+: 'En Google+'
-        error_srs: 'SRS "%state.extent.srs%" no es soportado por esta aplicación.'
-        popup:
-          btn:
-            ok: Cerrar
       wmceditor:
         popup:
           btn:
             ok: Guardar
             cancel: Cancelar
             back: Atrás
+      wmchandler:
+        error_srs: 'SRS "%state.extent.srs%" no es soportado por esta aplicación.'
+      wmcloader:
+        popup:
+          btn:
+            ok: Cargar
+            cancel: Cancelar
+            back: Atrás
       wmclist:
         select:
           def_option: 'Por favor seleccione'
-      wmchandler:
-        error_srs: 'SRS "%state.extent.srs%" no es soportado por esta aplicación.'
+    admin:
+      wmclist:
+        label: Etiqueta
+      wmcloader:
+        keep_extent: 'Mantener la Extensión'
+    wmc:
+      delete_confirm: '¿Realmente quieres remover el WMC con el titulo <em>%wmc_title%</em> y el id <em>%wmc_id%</em>?'

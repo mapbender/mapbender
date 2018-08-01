@@ -1,0 +1,72 @@
+services:
+
+    #
+    # Doctrine Migrations Commands
+    #
+    doctrine_migrations.status_command:
+        class: Doctrine\Bundle\MigrationsBundle\Command\MigrationsStatusDoctrineCommand
+        calls:
+            - method: setMigrationConfiguration
+              arguments:
+                  - '@mapbender.migration.configuration'
+        tags:
+            - { name: console.command }
+
+    doctrine_migrations.diff_command:
+        class: Doctrine\Bundle\MigrationsBundle\Command\MigrationsDiffDoctrineCommand
+        calls:
+            - method: setMigrationConfiguration
+              arguments:
+                  - '@mapbender.migration.configuration'
+        tags:
+            - { name: console.command }
+
+    doctrine_migrations.execute_command:
+        class: Doctrine\Bundle\MigrationsBundle\Command\MigrationsExecuteDoctrineCommand
+        calls:
+            - method: setMigrationConfiguration
+              arguments:
+                  - '@mapbender.migration.configuration'
+        tags:
+            - { name: console.command }
+
+    doctrine_migrations.migrate_command:
+        class: Doctrine\Bundle\MigrationsBundle\Command\MigrationsMigrateDoctrineCommand
+        calls:
+            - method: setMigrationConfiguration
+              arguments:
+                  - '@mapbender.migration.configuration'
+        tags:
+            - { name: console.command }
+
+
+    #
+    # Migrations Configuration
+    #
+    mapbender.migration.configuration:
+        class: Doctrine\DBAL\Migrations\Configuration\Configuration
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '@mapbender.migration.output.writer'
+        calls:
+            - method: setMigrationsFinder
+              arguments:
+                  - '@mapbender.migration.finder'
+
+
+    #
+    # Mapbender Migrations Components
+    #
+    mapbender.migration.finder:
+        class: Mapbender\Component\DoctrineMigrationsHelper\MigrationFinder
+
+    mapbender.migration.output.writer:
+        class: Mapbender\Component\DoctrineMigrationsHelper\MigrationsOutputWriter
+        arguments:
+            - '@symfony.console.output'
+
+    #
+    # Symfony console output
+    #
+    symfony.console.output:
+        class: Symfony\Component\Console\Output\ConsoleOutput

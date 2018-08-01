@@ -17,22 +17,8 @@
     </script>
     {% endblock %}
     {##}
+    <link rel="stylesheet" type="text/css" href="{{ asset('components/cookieconsent/build/cookieconsent.min.css') }}"/>
     <link rel="shortcut icon" href="{% block favicon %}{% endblock %}" />
-
-    <!--[if lt IE 9]>
-    {# This script is the defacto way to enable use of HTML5 sectioning elements in legacy Internet Explorer. #}
-    <script src="{{ asset('components/html5shiv/html5shiv-built.js') }}" type="text/javascript"></script>
-
-    {# A fast & lightweight polyfill for min/max-width CSS3 Media Queries (for IE 6-8, and more) #}
-    <script src="{{ asset('components/respond/dest/respond.min.js') }}" type="text/javascript"></script>
-    <![endif]-->
-
-    <!--[if lt IE 10]>
-    {# Placeholders.js is a JavaScript polyfill for the HTML5 placeholder attribute.
-    It's lightweight, has zero dependencies and works in pretty much any browser you can imagine. #}
-    <script src="{{ asset('components/placeholdersjs/dist/placeholders.min.js') }}" type="text/javascript"></script>
-    <![endif]-->
-
     {% block css %}{% endblock %}
 </head>
 <body class="{% if app.debug %}debug{% endif %}">
@@ -40,7 +26,7 @@
 <script src="{{ asset('components/joii/dist/joii.min.js')}}"></script>
 <script src="{{ asset('components/jquery/jquery.min.js')}}"></script>
 <script src="{{ asset('components/jquery-ui/jquery-ui.min.js')}}"></script>
-
+{% include 'MapbenderCoreBundle::cookieconsent.html.twig' %}
 {% block trans %}{% endblock %}
 {% block js %}{% endblock %}
 </body>

@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  * User provider for Mapbender2 databases
  *
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
- * @deprecated Nowhere used. Will be removed in release/3.0.6
+ * @deprecated Nowhere used. Will be removed in release/3.0.7
  */
 class Mapbender2UserProvider implements UserProviderInterface
 {

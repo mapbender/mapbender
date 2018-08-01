@@ -1,5 +1,21 @@
 mb:
   core:
+    featureinfo:
+      error:
+        nolayer: 'No feature info layer exists.'
+        unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
+        noresult: 'no result'
+      popup:
+        btn:
+          ok: Close
+      class:
+        title: FeatureInfo
+        description: FeatureInfo
+      tag:
+        featureinfo: featureinfo
+        feature: feature
+        info: info
+        dialog: dialog
     aboutdialog:
       content:
         versionprefix: __mb.core.aboutdialog.content.versionprefix
@@ -51,6 +67,8 @@ mb:
         poi: __mb.core.poi.tag.poi
         point: __mb.core.poi.tag.point
         interest: __mb.core.poi.tag.interest
+      label:
+        text: Text
     basesourceswitcher:
       error:
         sourcenotavailable: __mb.core.basesourceswitcher.error.sourcenotavailable
@@ -92,6 +110,7 @@ mb:
         quality: __mb.core.printclient.label.quality
         scale: __mb.core.printclient.label.scale
         rotation: __mb.core.printclient.label.rotation
+        legend: 'Print legend'
       popup:
         btn:
           ok: __mb.core.printclient.popup.btn.ok
@@ -110,6 +129,9 @@ mb:
         gif: __mb.core.printclient.tag.gif
         jpg: __mb.core.printclient.tag.jpg
         jpeg: __mb.core.printclient.tag.jpeg
+      btn:
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'
     overview:
       nolayer: __mb.core.overview.nolayer
       class:
@@ -131,24 +153,13 @@ mb:
         title: __mb.core.sketch.class.title
         description: __mb.core.sketch.class.description
       tag:
-        sketch: __mb.core.sketch.tag.sketch
-        circle: __mb.core.sketch.tag.circle
-    featureinfo:
-      error:
-        nolayer: __mb.core.featureinfo.error.nolayer
-        unknownoption: __mb.core.featureinfo.error.unknownoption
-        noresult: 'no result'
+        sketch: sketch
+        circle: circle
+    metadata:
       popup:
+        title: Metadata
         btn:
-          ok: __mb.core.featureinfo.popup.btn.ok
-      class:
-        title: __mb.core.featureinfo.class.title
-        description: __mb.core.featureinfo.class.description
-      tag:
-        featureinfo: __mb.core.featureinfo.tag.featureinfo
-        feature: __mb.core.featureinfo.tag.feature
-        info: __mb.core.featureinfo.tag.info
-        dialog: __mb.core.featureinfo.tag.dialog
+          ok: Close
     gpsposition:
       error:
         notsupported: __mb.core.gpsposition.error.notsupported
@@ -181,9 +192,11 @@ mb:
         featureinfo_onoff: __mb.core.layertree.label.featureinfo_onoff
         opacity: Opacity
         zoomtolayer: __mb.core.layertree.label.zoomtolayer
+        metadata: __mb.core.layertree.label.metadata
         sources: __mb.core.layertree.label.sources
         deleteallsources: __mb.core.layertree.label.deleteallsources
-        metadata: __mb.core.layertree.label.metadata
+        legend: Legend
+        kmlexport: 'KML export'
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Show sources'
@@ -307,6 +320,8 @@ mb:
         label:
           autoopen: __mb.core.admin.printclient.label.autoopen
           rotatable: __mb.core.admin.printclient.label.rotatable
+          legend: 'Print legend'
+          legend_default_behaviour: 'Legend checkbox active'
       copyright:
         label:
           autoopen: __mb.core.admin.copyright.label.autoopen
@@ -332,21 +347,16 @@ mb:
         label:
           auto_activate: Autoactivate
           deactivate_on_close: 'Deactivate on close'
-    metadata:
-      popup:
-        title: __mb.core.metadata.popup.title
-        btn:
-          ok: __mb.core.metadata.popup.btn.ok
+    htmlelement:
+      class:
+        title: HTML
+        description: 'Add some HTML'
+      tag:
+        html: HTML
     entity:
       app:
         screenshotfile:
-          error: __mb.core.entity.app.screenshotfile.error
-    htmlelement:
-      class:
-        title: __mb.core.htmlelement.class.title
-        description: __mb.core.htmlelement.class.description
-      tag:
-        html: __mb.core.htmlelement.tag.html
+          error: Error
     redlining:
       geometrytype:
         point: Point

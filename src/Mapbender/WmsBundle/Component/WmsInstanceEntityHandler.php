@@ -262,7 +262,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function getSensitiveVendorSpecific()
     {
         $vsarr = array();
-        $user = $this->container->get('security.context')->getToken()->getUser();
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
         if ($user instanceof AdvancedUserInterface) {
             foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
                 $handler = new VendorSpecificHandler($vendorspec);

@@ -45,6 +45,7 @@ class MinMax
 
     /**
      * Set min
+     *
      * @param float|null $value
      * @return $this
      */

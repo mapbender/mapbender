@@ -1,0 +1,4 @@
+services:
+    mapbender.symlink_installer:
+        class: Mapbender\Component\SymlinkInstaller\SymlinkInstaller
+        arguments: ['@filesystem']

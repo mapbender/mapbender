@@ -258,12 +258,16 @@ abstract class SourceMetadata
     public function setContainer($container = null)
     {
         if ($container === null) {
-            $this->container = SourceMetadata::$CONTAINER_NONE;
-        } elseif ($container === SourceMetadata::$CONTAINER_ACCORDION ||
-            $container === SourceMetadata::$CONTAINER_TABS || $container === SourceMetadata::$CONTAINER_NONE) {
-            $this->container = $container;
-        } else {
-            $this->container = SourceMetadata::$CONTAINER_NONE;
+            $container = SourceMetadata::$CONTAINER_NONE;
+        }
+        switch ($container) {
+            case SourceMetadata::$CONTAINER_ACCORDION:
+            case SourceMetadata::$CONTAINER_TABS:
+            case SourceMetadata::$CONTAINER_NONE:
+                $this->container = $container;
+                break;
+            default:
+                throw new \RuntimeException("Invalid container argument " . print_r($container, true));
         }
         $this->data["container"] = $this->container;
         return $this;
@@ -277,12 +281,15 @@ abstract class SourceMetadata
     public function setContenttype($contenttype)
     {
         if ($contenttype === null) {
-            $this->contenttype = SourceMetadata::$CONTENTTYPE_ELEMENT;
-        } elseif ($contenttype === SourceMetadata::$CONTENTTYPE_ELEMENT ||
-            $contenttype === SourceMetadata::$CONTENTTYPE_HTML) {
-            $this->contenttype = $contenttype;
-        } else {
-            $this->contenttype = SourceMetadata::$CONTENTTYPE_ELEMENT;
+            $contenttype = SourceMetadata::$CONTENTTYPE_ELEMENT;
+        }
+        switch ($contenttype) {
+            case SourceMetadata::$CONTENTTYPE_ELEMENT:
+            case SourceMetadata::$CONTENTTYPE_HTML:
+                $this->contenttype = $contenttype;
+                break;
+            default:
+                throw new \RuntimeException("Invalid contenttype argument " . print_r($contenttype, true));
         }
         $this->data["contenttype"] = $this->contenttype;
         return $this;
@@ -351,7 +358,7 @@ abstract class SourceMetadata
      * @param bool $avoidSame to avoid repeating equal $sourceValue and $instanceValue
      * @return string
      */
-    public static function formatAlternatives($sourceValue, $instanceValue, $avoidSame = false)
+    public static function formatAlternatives($sourceValue, $instanceValue, $avoidSame = true)
     {
         // force nulls to empty strings, allow safe comparison without falsely identifying the string "0" as emptyish
         $sourceValue = strval($sourceValue);

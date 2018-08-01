@@ -1,10 +1,27 @@
 mb:
   core:
+    featureinfo:
+      error:
+        nolayer: 'Informationsebene existiert nicht.'
+        unknownoption: 'Unbekannte Option %key% für %namespace%.%widgetname%.'
+        noresult: 'kein Ergebnis'
+      popup:
+        btn:
+          ok: Schließen
+          print: Drucken
+      class:
+        title: Information
+        description: Information
+      tag:
+        featureinfo: Information
+        feature: Objekt
+        info: Info
+        dialog: Dialog
     aboutdialog:
       content:
         versionprefix: Version
-        learnmore: 'Lernen Sie Mapbender3 kennen '
-        linktitle: 'Besuchen Sie die offizielle Mapbender3 Webseite.'
+        learnmore: 'Lernen Sie Mapbender kennen '
+        linktitle: 'Besuchen Sie die offizielle Mapbender Webseite.'
         website: '- zur Webseite'
       class:
         title: Über-Mapbender-Dialog
@@ -55,7 +72,7 @@ mb:
         text: 'Bearbeiten Sie den Text'
     basesourceswitcher:
       error:
-        sourcenotavailable: 'Der Dienst mit der ID %id% ist nicht vorhanden'
+        sourcenotavailable: 'Der Dienst mit der ID %id% ist nicht vorhanden.'
       class:
         title: 'Hintergrund wechseln'
         Description: 'Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.'
@@ -139,25 +156,14 @@ mb:
       tag:
         sketch: Skizzen
         circle: Kreis
-    featureinfo:
-      error:
-        nolayer: 'Informationsebene existiert nicht.'
-        unknownoption: 'Unbekannte Option %key% für %namespace%.%widgetname%.'
-        noresult: 'kein Ergebnis'
+    metadata:
       popup:
+        title: Metadaten
         btn:
           ok: Schließen
-      class:
-        title: Information
-        description: Information
-      tag:
-        featureinfo: Information
-        feature: Objekt
-        info: Info
-        dialog: Dialog
     gpsposition:
       error:
-        notsupported: 'Entschuldigung! Der Geolocation Dienst wird Ihrem Browser nicht unterstützt.'
+        notsupported: 'Entschuldigung! Der Geolocation Dienst wird von Ihrem Browser nicht unterstützt.'
         nosignal: Es ist nicht möglich Ihre Position zu bestimmen.
       class:
         title: GPS-Position
@@ -295,6 +301,9 @@ mb:
         srs: SRS
         selector: Auswahl
     admin:
+      poi:
+        label:
+          usemailto: 'Versenden per Mail - Mailclient öffnen'
       legend:
         label:
           autoopen: 'Automatisches Öffnen'
@@ -336,9 +345,6 @@ mb:
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
           hideselect: 'Visibility bei Ordnern ausblenden'
           hideinfo: 'Info ausblenden'
-      poi:
-        label:
-          usemailto: 'Use mailto'
       redlining:
         label:
           auto_activate: 'Automatisches Aktivieren'
@@ -349,25 +355,11 @@ mb:
         description: 'HTML hinzufügen'
       tag:
         html: HTML
-    metadata:
-      popup:
-        title: Metadaten
-        btn:
-          ok: Schließen
     entity:
       app:
         screenshotfile:
           error: 'Die Datei ist zu groß. Die maximal zulässige Größe beträgt %limit% bytes.'
     redlining:
-      dialog:
-        btn:
-          cancel: Schließen
-      class:
-        title: Redlining
-        description: 'Redlining Werkzeug'
-      tag:
-        redlining: redlining
-        geometry: geometrie
       geometrytype:
         point: Punkt
         line: Linie
@@ -383,6 +375,15 @@ mb:
           remove: 'Entfernen der Geometrie'
           edit: 'Editieren der Geometrie'
           zoom: 'Zoom auf die Geometrie'
+      dialog:
+        btn:
+          cancel: Schließen
+      class:
+        title: Redlining
+        description: 'Redlining Werkzeug'
+      tag:
+        redlining: redlining
+        geometry: geometrie
   geosource:
     image_error:
       datails: 'Die Karte kann nicht angezeigt werden.'

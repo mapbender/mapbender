@@ -7,7 +7,6 @@ mb:
           wmsurl: 'Сервис URL'
           wmsuser: Пользователь
           wmspass: Пароль
-          wmsonlyvalid: 'Действительно ли?'
         btn:
           cancel: Отменить
           load: Загрузить
@@ -18,6 +17,39 @@ mb:
         version: 'WMSLoader:WMS версия %version% не поддерживаются!'
         load: 'WMSLoader: WMS Capabilities не загружен!'
       repo:
+        macros:
+          label:
+            formats: Формиат
+        view:
+          title:
+            wms: WMS
+          label:
+            backtoservicelist: 'Назад к списку услуг'
+            metadata: Метаданные
+            contact: Контакт
+            details: Подробности
+            layers: Слои
+            title: Название
+            name: Имя
+            version: Версия
+            originurl: '>Оригинал URL'
+            abstract: Абстрактный
+            onlineresource: 'Интернет ресурс'
+            exceptionformats: 'Формат Исключение'
+            fees: Сборы
+            accessconstraints: 'Ограничения доступа'
+            person: Человек
+            organization: Организация
+            position: Позиция
+            telephone: Телефон
+            facsimile: Телефакс
+            email: E-mail
+            address: Адрес
+            addresstype: 'Тип Адреса'
+            city: Город
+            state: Государство
+            postcode: 'Почтовые индекс'
+            country: Страна
         form:
           label:
             ogcwms: 'OGC WMS'
@@ -26,7 +58,7 @@ mb:
             password: Пароль
             load: Загрузить
             cancel: Отменить
-            onlyvalid: 'Действительно только'
+            onlyvalid: 'Валидировать'
         new:
           label:
             addservice: 'Добавить сервис'
@@ -59,37 +91,7 @@ mb:
             cancel2: Отменить
           vendorspecific:
             label: 'Vendor определенный'
-        macros:
-          label:
-            formats: Формиат
-        view:
-          label:
-            backtoservicelist: 'Назад к списку услуг'
-            metadata: Метаданные
-            contact: Контакт
-            details: Подробности
-            layers: Слои
-            title: Название
-            name: Имя
-            version: Версия
-            originurl: '>Оригинал URL'
-            abstract: Абстрактный
-            onlineresource: 'Интернет ресурс'
-            exceptionformats: 'Формат Исключение'
-            fees: Сборы
-            accessconstraints: 'Ограничения доступа'
-            person: Человек
-            organization: Организация
-            position: Позиция
-            telephone: Телефон
-            facsimile: Телефакс
-            email: E-mail
-            address: Адрес
-            addresstype: 'Тип Адреса'
-            city: Город
-            state: Государство
-            postcode: 'Почтовые индекс'
-            country: Страна
+
           message:
             cautionscalehint: 'Внимание: расчеты Scale подлежат ограниченное разрешение шкалы в WMS 1.1.1!'
         instancelayer:
@@ -219,3 +221,24 @@ mb:
           name: Имя
           srs: SRS
           bbox: BoundingBox
+    repo:
+      instance:
+        label:
+          dimensions: Dimensions
+    dimhandler:
+      class:
+        title: 'Dimensions handler'
+        description: 'DimensionsHandler groups and calls the dimension supported instances at the map'
+      tag:
+        dimension: dimension
+        handler: handler
+    dimensionsets:
+      no_dimension: 'no dimension'
+  wmc:
+    wmsloader:
+      class:
+        title: 'Wms Loader'
+        description: 'Opens a dialog in which a WMS can be loaded via the getCapabilities-Request'
+      tag:
+        wms: wms
+        loader: loader

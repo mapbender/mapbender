@@ -1,140 +1,131 @@
-(function($) {
+(function ($) {
+    'use strict';
 
-$.widget("mapbender.mbActivityIndicator", {
-    options: {
-        activityClass: 'mb-activity',
-        ajaxActivityClass: 'mb-activity-ajax',
-        tileActivityClass: 'mb-activity-tile'
-    },
+    $.widget("mapbender.mbActivityIndicator", $.mapbender.mbBaseElement, {
+        options: {
+            activityClass: 'mb-activity',
+            ajaxActivityClass: 'mb-activity-ajax',
+            titleActivityClass: 'mb-activity-tile'
+        },
 
-    elementUrl: null,
-    ajaxActivity: false,
-    tileActivity: false,
-    loadingLayers: {},
-    targets: {},
+        elementUrl: null,
+        ajaxActivity: false,
+        tileActivity: false,
+        loadingLayers: [],
+        targets: [],
 
-    _create: function() {
-       for(id in Mapbender.configuration.elements){
-           var element = Mapbender.configuration.elements[id];
-            if(element.init === 'mapbender.mbMap'){
-                this.targets[id] = false;
-                if(!Mapbender.checkTarget("mbActivityIndicator", id)){ // check if target defined
-                    return;
-                }
-                var self = this;
-                Mapbender.elementRegistry.onElementReady(id, $.proxy(self._setup, self, id)); // call _setup if target ready
-            }
-        }
-    },
-    _setup: function(id) {
-        var self = this;
-        $('#'+id).each(function() {
-            var mqMap = $(this).data('mapbenderMbMap').map;
-            $.each(mqMap.layers(), function(idx, mqLayer) {
-                self._bindToLayer(mqLayer);
-                // Is it already loading tiles?
-                if(typeof mqLayer.olLayer.numLoadingTiles === 'number' &&
-                    mqLayer.olLayer.numLoadingTiles > 0) {
-                    self.loadingLayers[mqLayer.olLayer.id] = true;
-                    self._onLayerLoadChange();
+        _create: function () {
+            var widget = this;
+
+            Object.entries(Mapbender.configuration.elements).map(function (entry) {
+                var element = entry.pop(),
+                    id = entry.pop();
+
+                if (element.init === 'mapbender.mbMap') {
+                    widget.targets[id] = false;
+
+                    if (!Mapbender.checkTarget("mbActivityIndicator", id)) {
+                        return;
+                    }
+
+                    Mapbender.elementRegistry.onElementReady(id, $.proxy(widget._setup, widget, id));
                 }
             });
-            mqMap.events.bind('mqAddLayer', function(event, mqLayer) {
-                self._bindToLayer(mqLayer);
+
+        },
+
+        _setup: function (id) {
+            var widget = this,
+                allInitiated = $.inArray(false, this.targets) >= 0;
+
+            $('#' + id).each(function () {
+                var mqMap = $(this).data('mapbenderMbMap').map;
+
+                $.each(mqMap.layers(), function (idx, mqLayer) {
+                    widget._bindToLayer(mqLayer);
+
+                    // Is it already loading tiles?
+                    if (typeof mqLayer.olLayer.numLoadingTiles === 'number' && mqLayer.olLayer.numLoadingTiles > 0) {
+                        widget.loadingLayers.push(mqLayer.olLayer.id);
+                        widget._onLayerLoadChange();
+                    }
+                });
+
+                mqMap.events.on('mqAddLayer', function (event, mqLayer) {
+                    widget._bindToLayer(mqLayer);
+                });
             });
-        });
-        this.targets[id] = true;
-        var allInited = true;
-        for(id in this.targets){
-            if(!this.targets[id])
-                allInited = false;
-        }
-        if(allInited){
-            this.element.bind('ajaxStart', $.proxy(this._onAjaxStart, this));
-            this.element.bind('ajaxStop', $.proxy(this._onAjaxStop, this));
-        }
-    },
 
-    destroy: function() {},
+            this.targets[id] = true;
 
-    _bindToLayer: function(mqLayer) {
-        mqLayer.olLayer.events.on({
-            scope: this,
-            loadstart: function(event) {
-                this.loadingLayers[event.object.id] = true;
-                this._onLayerLoadChange();
-            },
-            loadend: function(event) {
-                delete this.loadingLayers[event.object.id];
-                this._onLayerLoadChange();
+            if (allInitiated) {
+                this.element.on('ajaxStart', $.proxy(this._onAjaxStart, this));
+                this.element.on('ajaxStop', $.proxy(this._onAjaxStop, this));
             }
-        });
-    },
+        },
 
-    _destroy: function() {
-        var classes = [
-            this.options.activityClass,
-            this.options.ajaxActivityClass,
-            this.options.tileActivityClass];
-        $('body').removeClass(classes.join(' '));
-    },
-
-    /**
-     * Listener for global ajaxStart events
-     */
-    _onAjaxStart: function() {
-        this.ajaxActivity = true;
-        this._updateBodyClass();
-    },
-
-    /**
-     * Listener for global ajaxStop events
-     */
-    _onAjaxStop: function() {
-        this.ajaxActivity = false;
-        this._updateBodyClass();
-    },
-
-    _onLayerLoadChange: function() {
-        var keys = Object.keys || function(obj) {
-            var keys = [];
-            for(var key in obj) {
-                if(obj.hasOwnProperty(key)) {
-                    keys[keys.length] = key;
+        _bindToLayer: function (mqLayer) {
+            mqLayer.olLayer.events.on({
+                scope: this,
+                loadstart: function (event) {
+                    this.loadingLayers.push(event.object.id);
+                    this._onLayerLoadChange();
+                },
+                loadend: function (event) {
+                    var position = this.loadingLayers.indexOf(event.object.id);
+                    this.loadingLayers.splice(position, 1);
+                    this._onLayerLoadChange();
                 }
-            }
-            return keys;
-        };
+            });
+        },
 
-        var stillLoading = keys(this.loadingLayers).length > 0;
-        if(stillLoading !== this.tileActivity) {
-            this.tileActivity = stillLoading;
+        /**
+         * Listener for global ajaxStart events
+         */
+        _onAjaxStart: function () {
+            this.ajaxActivity = true;
             this._updateBodyClass();
-        }
-    },
+        },
 
-    /**
-     * Update body classes to match current activity
-     */
-    _updateBodyClass: function() {
-        var body = $('body'),
-            hasAjaxClass = body.hasClass(this.options.ajaxActivityClass),
-            hasTileClass = body.hasClass(this.options.ajaxActivityClass),
-            hasActivityClass = body.hasClass(this.options.activityClass);
+        /**
+         * Listener for global ajaxStop events
+         */
+        _onAjaxStop: function () {
+            this.ajaxActivity = false;
+            this._updateBodyClass();
+        },
 
-        if(this.ajaxActivity !== hasAjaxClass) {
-            body.toggleClass(this.options.ajaxActivityClass);
-        }
+        _onLayerLoadChange: function () {
+            var stillLoading = this.loadingLayers.length > 0;
 
-        if(this.tileActivity !== hasTileClass) {
-            body.toggleClass(this.options.tileActivityClass);
-        }
+            if (stillLoading !== this.tileActivity) {
+                this.tileActivity = stillLoading;
+                this._updateBodyClass();
+            }
+        },
 
-        if((this.tileActivity || this.ajaxActivity) !== hasActivityClass) {
-            body.toggleClass(this.options.activityClass);
+        /**
+         * Update body classes to match current activity
+         */
+        _updateBodyClass: function () {
+            var $body = $('body'),
+                hasAjaxClass = $body.hasClass(this.options.ajaxActivityClass),
+                hasTileClass = $body.hasClass(this.options.titleActivityClass),
+                hasActivityClass = $body.hasClass(this.options.activityClass);
+
+            if (this.ajaxActivity !== hasAjaxClass) {
+                $body.toggleClass(this.options.ajaxActivityClass);
+            }
+
+            if (this.tileActivity !== hasTileClass) {
+                $body.toggleClass(this.options.tileActivityClass);
+            }
+
+            if ((this.tileActivity || this.ajaxActivity) !== hasActivityClass) {
+                $body.toggleClass(this.options.activityClass);
+            }
         }
-    }
-});
+    });
 
 })(jQuery);
 
