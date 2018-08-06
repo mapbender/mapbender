@@ -205,7 +205,7 @@ class Application
             foreach ($elements as $element) {
                 $assetSources[] = array(
                     'object' => $element,
-                    'assets' => $element->listAssets(),
+                    'assets' => $element->getAssets(),
                 );
             }
         }
