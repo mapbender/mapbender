@@ -17,7 +17,7 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Versions (please complete the following information):**
+**Versions (please complete the following information if it helps to narrow down the bug):**
  - Mapbender: [e.g. 3.0.6.3]
  - Database: [e.g. PSQL 9.5.12]
  - Browser [e.g. chrome, safari]
