@@ -10,9 +10,6 @@
     </parameters>
 
     <services>
-        <service class="%mapbender.print_service.class%" id="mapbender.print.engine">
-            <argument type="service" id="service_container" />
-        </service>
         <service id="mapbender.print.queue_manager" class="%mapbender.print.queue_manager.class%">
             <argument type="service" id="service_container" />
             <argument type="service" id="mapbender.print.priority_voter"/>

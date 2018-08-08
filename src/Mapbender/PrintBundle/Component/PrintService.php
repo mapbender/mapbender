@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
-use Mapbender\CoreBundle\Component\Utils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -15,7 +14,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
  */
 class PrintService extends ImageExportService
 {
-    /** @var PDF_Extensions */
+    /** @var PDF_ImageAlpha */
     protected $pdf;
     protected $conf;
     protected $rotation;
@@ -38,11 +37,6 @@ class PrintService extends ImageExportService
 
     public function doPrint($data)
     {
-        $memoryLimit = Utils::getMemoryLimitMegs();
-        if ($memoryLimit && $memoryLimit < 3000) {
-            $this->getLogger()->warning("Increasing memory_limit to 3G");
-            ini_set('memory_limit', '3G');
-        }
         $this->setup($data);
 
         if ($data['rotation'] == 0) {
