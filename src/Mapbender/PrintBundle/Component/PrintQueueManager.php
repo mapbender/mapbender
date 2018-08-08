@@ -97,7 +97,8 @@ class PrintQueueManager extends EntitiesServiceBase
         $this->persist($entity->setStarted(new \DateTime()));
         $this->dispatch(self::STATUS_RENDERING_STARTED, $entity);
 
-        $pdf = $this->container->get('mapbender.print.engine')->doPrint($entity->getPayload());
+        $printService = $this->getPrintService();
+        $pdf = $printService->doPrint($entity->getPayload());
         $this->persist($entity->setCreated(new \DateTime()));
         $this->dispatch(self::STATUS_RENDERING_COMPLETED, $entity);
 
@@ -109,6 +110,24 @@ class PrintQueueManager extends EntitiesServiceBase
             $this->dispatch(self::STATUS_RENDERING_SAVE_ERROR, $entity);
             return self::STATUS_RENDERING_SAVE_ERROR;
         }
+    }
+
+    /**
+     * @return PrintService
+     */
+    public function getPrintService()
+    {
+        $paramNames = array(
+            'mapbender.print_service.class',    // old style
+            'mapbender.print.service.class',    // new style
+        );
+        foreach ($paramNames as $paramName) {
+            if ($this->container->hasParameter($paramName)) {
+                $className = $this->container->getParameter($paramName);
+                return new $className($this->container);
+            }
+        }
+        throw new \RuntimeException("Print service not configured");
     }
 
     /**
