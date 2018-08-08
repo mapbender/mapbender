@@ -1,4 +1,4 @@
-(function($) {
+q(function($) {
     $.widget("mapbender.mbLayertree", {
         options: {
             type: 'element',
@@ -172,7 +172,7 @@
          * @param $sourceContainer
          * @private
          */
-        _updateSource($sourceContainer) {
+        _updateSource: function($sourceContainer) {
             // this will capture the "configurationish" layer ids (e.g. "1_0_4_1") from
             // all layers in the source container in DOM order
             var sourceId = $sourceContainer.attr('data-sourceid');
