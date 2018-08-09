@@ -1,4 +1,4 @@
-q(function($) {
+(function($) {
     $.widget("mapbender.mbLayertree", {
         options: {
             type: 'element',
