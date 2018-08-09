@@ -49,7 +49,7 @@ abstract class Keyword
      */
     public function setValue($value)
     {
-        if (mb_strlen($value) > 256) {
+        if (mb_strlen($value) > 255) {
             $value = mb_substr($value, 0, 255);
         }
         $this->value = $value;
