@@ -194,7 +194,11 @@ class PrintQueueManager extends EntitiesServiceBase
     public function remove($entity, $flush = true)
     {
         $filesystem = new Filesystem();
-        $filesystem->remove($this->getPdfPath($entity));
+        try {
+            $filesystem->remove($this->getPdfPath($entity));
+        } catch (IOException $e) {
+            // ignore error (missing file), proceed to delete entity from db
+        }
         parent::remove($entity, $flush);
     }
 
@@ -298,8 +302,11 @@ class PrintQueueManager extends EntitiesServiceBase
      * @param $id
      * @return PrintQueue
      */
-    public function find($id){
-        return $this->getRepository()->findOneBy(array('id' =>  intval($id)));
+    public function find($id)
+    {
+        /** @var PrintQueue $entity */
+        $entity = $this->getRepository()->findOneBy(array('id' =>  intval($id)));
+        return $entity;
     }
 
     /**
