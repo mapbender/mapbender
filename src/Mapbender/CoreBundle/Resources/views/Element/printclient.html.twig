@@ -5,17 +5,9 @@
         <br>    
     {% endif %}
 
-    {% if configuration.renderMode is defined and configuration.renderMode == 'queued' %}
-    <div class="tab-container">
-        <ul class="tabs">
-            <li><a href="#tabs-1" class="settings">Einstellungen</a></li>
-            <li><a href="#tabs-2" class="own-queue">Druckaufträge</a></li>
-            <li><a href="#tabs-3" class="all-queues">Globale Druckaufträge</a></li>
-        </ul>
-    <div id="tabs-1" class="print-form">
-    {% endif %}
-    
+    {% block print_client_dialog %}
     <form id="formats" action="">
+        {% block print_settings_form %}
 
         <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
         <div class="dropdown">
@@ -84,39 +76,7 @@
         <div id="layers"></div>
         <input type="submit" style="display: none"/>
         <input type="button" class="button printSubmit hidden" value="{{ 'mb.core.printclient.popup.btn.ok' | trans }}"/>
-    
+        {% endblock print_settings_form %}
     </form>
-
-    {% if configuration.renderMode is defined and configuration.renderMode == 'queued' %}        
-    </div >
-
-        <div id="tabs-2" class="own-queues">
-            <table>
-                <thead>
-                <tr>
-                    <th class="id">Id</th>
-                    <th>Datum</th>
-                    <th class="status">Status</th>
-                    <th></th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-
-        <div id="tabs-3" class="all-queues">
-            <table>
-                <thead>
-                <tr>
-                    <th class="id">Id</th>
-                    <th>Datum</th>
-                    <th>Benutzer</th>
-                    <th class="status">Status</th>
-                    <th></th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-
-    </div>
-    {% endif %}
+    {% endblock print_client_dialog %}
 </div>
