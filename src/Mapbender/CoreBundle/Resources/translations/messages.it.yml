@@ -8,6 +8,7 @@ mb:
       popup:
         btn:
           ok: Close
+          print: Print
       class:
         title: FeatureInfo
         description: FeatureInfo
@@ -18,324 +19,324 @@ mb:
         dialog: dialog
     aboutdialog:
       content:
-        versionprefix: __mb.core.aboutdialog.content.versionprefix
-        learnmore: __mb.core.aboutdialog.content.learnmore
-        linktitle: __mb.core.aboutdialog.content.linktitle
-        website: __mb.core.aboutdialog.content.website
+        versionprefix: v.
+        learnmore: 'learn more about Mapbender'
+        linktitle: 'Visit our official Mapbender website'
+        website: sito
       class:
-        title: __mb.core.aboutdialog.class.title
-        description: __mb.core.aboutdialog.class.description
+        title: 'About dialog'
+        description: 'Shows an about dialog'
       tag:
-        help: __mb.core.aboutdialog.tag.help
-        info: __mb.core.aboutdialog.tag.info
-        about: __mb.core.aboutdialog.tag.about
+        help: Aiuto
+        info: Informazione
+        about: about
     simplesearch:
       input:
-        search: __mb.core.simplesearch.input.search
+        search: Cerca
       class:
-        title: __mb.core.simplesearch.class.title
-        description: __mb.core.simplesearch.class.description
+        title: 'Cerca Solr (Simple Search)'
+        description: 'Single field search on JSON sources (e.g. Solr)'
       error:
         geometry:
           missing: The selected entry does not contain a geometry.
     searchrouter:
       popup:
         btn:
-          ok: __mb.core.searchrouter.popup.btn.ok
-          cancel: __mb.core.searchrouter.popup.btn.cancel
-          reset: __mb.core.searchrouter.popup.btn.reset
-      no_results: __mb.core.searchrouter.no_results
-      result_counter: __mb.core.searchrouter.result_counter
+          ok: Cerca
+          cancel: Chiudi
+          reset: Rimettere
+      no_results: 'No results found.'
+      result_counter: 'Esito: %count%'
       class:
-        title: __mb.core.searchrouter.class.title
-        description: __mb.core.searchrouter.class.description
+        title: 'Cerca SQL (SearchRouter)'
+        description: 'Configurable search routing element'
       tag:
-        search: __mb.core.searchrouter.tag.search
-        router: __mb.core.searchrouter.tag.router
+        search: Cerca
+        router: router
     poi:
-      sharepoi: __mb.core.poi.sharepoi
+      sharepoi: 'Share POI'
       text:
-        snippet: __mb.core.poi.text.snippet
+        snippet: 'You can use the following snippet in an email to send the POI'
       popup:
         btn:
-          ok: __mb.core.poi.popup.btn.ok
-          cancel: __mb.core.poi.popup.btn.cancel
+          ok: Ok
+          cancel: Cancella
       class:
-        title: __mb.core.poi.class.title
-        description: __mb.core.poi.class.description
+        title: POI
+        description: 'Create a POI for sharing'
       tag:
-        poi: __mb.core.poi.tag.poi
-        point: __mb.core.poi.tag.point
-        interest: __mb.core.poi.tag.interest
+        poi: poi
+        point: point
+        interest: interest
       label:
         text: Text
     basesourceswitcher:
       error:
-        sourcenotavailable: __mb.core.basesourceswitcher.error.sourcenotavailable
+        sourcenotavailable: 'A source with id %id% is not available.'
       class:
-        title: __mb.core.basesourceswitcher.class.title
-        Description: __mb.core.basesourceswitcher.class.Description
+        title: 'Base source switcher'
+        Description: 'Change the map''s background sources.'
       tag:
-        base: __mb.core.basesourceswitcher.tag.base
-        source: __mb.core.basesourceswitcher.tag.source
-        switcher: __mb.core.basesourceswitcher.tag.switcher
+        base: base
+        source: source
+        switcher: switcher
       form:
-        mesage: __mb.core.basesourceswitcher.form.mesage
+        mesage: 'No basesource set is defined.'
     legend:
-      nolegend: __mb.core.legend.nolegend
+      nolegend: 'No legend available.'
       popup:
         btn:
-          ok: __mb.core.legend.popup.btn.ok
+          ok: Chiudi
       class:
-        title: __mb.core.legend.class.title
-        description: __mb.core.legend.class.description
+        title: Legenda
+        description: 'The legend shows the legend of the map''s layers'
       tag:
-        layer: __mb.core.legend.tag.layer
-        legend: __mb.core.legend.tag.legend
+        layer: layer
+        legend: Legenda
     ruler:
       popup:
         btn:
-          ok: __mb.core.ruler.popup.btn.ok
-      create_error: __mb.core.ruler.create_error
+          ok: Chiudi
+      create_error: 'Ruler: Type must be line or area.'
       class:
-        title: __mb.core.ruler.class.title
-        description: __mb.core.ruler.class.description
+        title: 'Line/Area Ruler'
+        description: 'Ruler to draw a line/area and display length/area in a dialog'
       tag:
-        line: __mb.core.ruler.tag.line
-        area: __mb.core.ruler.tag.area
-        measure: __mb.core.ruler.tag.measure
+        line: line
+        area: area
+        measure: measure
     printclient:
       label:
-        template: __mb.core.printclient.label.template
-        quality: __mb.core.printclient.label.quality
-        scale: __mb.core.printclient.label.scale
-        rotation: __mb.core.printclient.label.rotation
+        template: Template
+        quality: Quality
+        scale: Scale
+        rotation: Rotation
         legend: 'Print legend'
       popup:
         btn:
-          ok: __mb.core.printclient.popup.btn.ok
-          cancel: __mb.core.printclient.popup.btn.cancel
+          ok: Stampa
+          cancel: Cancel
       info:
-        noactivelayer: __mb.core.printclient.info.noactivelayer
+        noactivelayer: 'No active layer!'
       form:
-        required: __mb.core.printclient.form.required
+        required: 'Please fill out this field'
       class:
-        title: __mb.core.printclient.class.title
-        description: __mb.core.printclient.class.description
+        title: 'Print client'
+        description: 'Renders a Print dialog'
       tag:
-        print: __mb.core.printclient.tag.print
-        pdf: __mb.core.printclient.tag.pdf
-        png: __mb.core.printclient.tag.png
-        gif: __mb.core.printclient.tag.gif
-        jpg: __mb.core.printclient.tag.jpg
-        jpeg: __mb.core.printclient.tag.jpeg
+        print: Stampa
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg
       btn:
         deactivate: 'Deactivate Print Frame'
         activate: 'Activate Print Frame'
     overview:
-      nolayer: __mb.core.overview.nolayer
+      nolayer: 'The overview element has no layer.'
       class:
-        title: __mb.core.overview.class.title
-        description: __mb.core.overview.class.description
+        title: Overview
+        description: 'Renders a small overview map'
       tag:
-        overview: __mb.core.overview.tag.overview
-        map: __mb.core.overview.tag.map
+        overview: overview
+        map: mapa
     sketch:
       circle:
         radius:
-          label: __mb.core.sketch.circle.radius.label
-          error: __mb.core.sketch.circle.radius.error
+          label: Raggio
+          error: 'Radius is not valid'
         form:
           button:
-            'yes': __mb.core.sketch.circle.form.button.yes
-            cancel: __mb.core.sketch.circle.form.button.cancel
+            'yes': OK
+            cancel: Cancel
       class:
-        title: __mb.core.sketch.class.title
-        description: __mb.core.sketch.class.description
+        title: Sketch
+        description: 'Adds a vector layer in the map and enables geometry objects to draw.'
       tag:
         sketch: sketch
-        circle: circle
+        circle: cerchio
     metadata:
       popup:
         title: Metadata
         btn:
-          ok: Close
+          ok: Chiudi
     gpsposition:
       error:
-        notsupported: __mb.core.gpsposition.error.notsupported
-        nosignal: Attualmente non è possibile localizzare la Sua posizione.
+        notsupported: I'm sorry, but geolocation services are not supported by your browser.
+        nosignal: Currently it's not possible to locate your position.
       class:
-        title: __mb.core.gpsposition.class.title
-        description: __mb.core.gpsposition.class.description
+        title: 'GPS Position'
+        description: 'Renders a button to show the GPS Position'
       tag:
-        gpsposition: __mb.core.gpsposition.tag.gpsposition
-        gps: __mb.core.gpsposition.tag.gps
-        position: __mb.core.gpsposition.tag.position
-        button: __mb.core.gpsposition.tag.button
+        gpsposition: 'GPS Position'
+        gps: GPS
+        position: position
+        button: button
     layertree:
       confirm:
-        allremove: __mb.core.layertree.confirm.allremove
+        allremove: 'Really all sources delete?'
       popup:
         btn:
-          ok: __mb.core.layertree.popup.btn.ok
+          ok: Chiudi
       const:
-        outofscale: __mb.core.layertree.const.outofscale
-        outofbounds: __mb.core.layertree.const.outofbounds
-        parentinvisible: __mb.core.layertree.const.parentinvisible
+        outofscale: 'Layer out of scale'
+        outofbounds: 'Layer out of bounds'
+        parentinvisible: 'Parent layer invisible'
       tooltip:
-        sublayers_openclose: __mb.core.layertree.tooltip.sublayers_openclose
-        removelayer: __mb.core.layertree.tooltip.removelayer
+        sublayers_openclose: 'Sublayers open/close'
+        removelayer: 'Remove layer'
         menu:
-          close: __mb.core.layertree.tooltip.menu.close
+          close: Chiudi
       label:
-        visibility_onoff: __mb.core.layertree.label.visibility_onoff
-        featureinfo_onoff: __mb.core.layertree.label.featureinfo_onoff
+        visibility_onoff: 'Visibility on/off'
+        featureinfo_onoff: 'Featureinfo on/off'
         opacity: Opacity
-        zoomtolayer: __mb.core.layertree.label.zoomtolayer
-        metadata: __mb.core.layertree.label.metadata
-        sources: __mb.core.layertree.label.sources
-        deleteallsources: __mb.core.layertree.label.deleteallsources
-        legend: Legend
+        zoomtolayer: 'Zoom to layer'
+        metadata: Metadata
+        sources: Fonti
+        deleteallsources: 'Remove all sources'
+        legend: Legenda
         kmlexport: 'KML export'
         dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Show sources'
         allvisibility_on: 'Show all layers'
       class:
-        title: __mb.core.layertree.class.title
-        description: __mb.core.layertree.class.description
+        title: 'Layer tree'
+        description: 'Tree of map''s layers'
       tag:
-        layertree: __mb.core.layertree.tag.layertree
-        layer: __mb.core.layertree.tag.layer
-        tree: __mb.core.layertree.tag.tree
+        layertree: layertree
+        layer: layer
+        tree: tree
       contextmenu:
         nooption: 'Layer has no context menu option'
     zoombar:
-      panup: __mb.core.zoombar.panup
-      panright: __mb.core.zoombar.panright
-      pandown: __mb.core.zoombar.pandown
-      panleft: __mb.core.zoombar.panleft
-      goback: __mb.core.zoombar.goback
-      goforward: __mb.core.zoombar.goforward
-      zoombybox: __mb.core.zoombar.zoombybox
-      zoombyworld: __mb.core.zoombar.zoombyworld
-      zoomin: __mb.core.zoombar.zoomin
-      zoomout: __mb.core.zoombar.zoomout
+      panup: 'Pan up'
+      panright: 'Pan right'
+      pandown: 'Pan down'
+      panleft: 'Pan left'
+      goback: 'Go back'
+      goforward: 'Go forward'
+      zoombybox: 'Zoom by box'
+      zoombyworld: 'Zoom by world'
+      zoomin: Zoomin
+      zoomout: Zoomout
       class:
-        title: __mb.core.zoombar.class.title
-        description: __mb.core.zoombar.class.description
+        title: 'Navigation toolbar'
+        description: 'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
       tag:
-        zoom: __mb.core.zoombar.tag.zoom
-        pan: __mb.core.zoombar.tag.pan
-        control: __mb.core.zoombar.tag.control
-        navigation: __mb.core.zoombar.tag.navigation
-        panel: __mb.core.zoombar.tag.panel
+        zoom: zoom
+        pan: pan
+        control: control
+        navigation: navigation
+        panel: panel
     activityindicator:
       class:
-        title: __mb.core.activityindicator.class.title
-        description: __mb.core.activityindicator.class.description
+        title: 'Activity indicator'
+        description: 'Shows HTTP activity'
       tag:
-        activity: __mb.core.activityindicator.tag.activity
-        indicator: __mb.core.activityindicator.tag.indicator
+        activity: activity
+        indicator: indicator
     button:
       class:
-        title: __mb.core.button.class.title
-        description: __mb.core.button.class.description
+        title: Button
+        description: Button
       tag:
-        button: __mb.core.button.tag.button
+        button: button
     coordinatesdisplay:
       class:
-        title: __mb.core.coordinatesdisplay.class.title
-        description: __mb.core.coordinatesdisplay.class.description
+        title: 'Coordinates display'
+        description: 'The coordinates display shows your mouse position in map coordinates.'
       tag:
-        coordinates: __mb.core.coordinatesdisplay.tag.coordinates
-        display: __mb.core.coordinatesdisplay.tag.display
-        mouse: __mb.core.coordinatesdisplay.tag.mouse
-        position: __mb.core.coordinatesdisplay.tag.position
+        coordinates: coordinates
+        display: display
+        mouse: mouse
+        position: position
     copyright:
       class:
-        title: __mb.core.copyright.class.title
-        description: __mb.core.copyright.class.description
+        title: Copyright
+        description: 'Shows terms of use'
       tag:
-        copyright: __mb.core.copyright.tag.copyright
-        dialog: __mb.core.copyright.tag.dialog
+        copyright: Copyright
+        dialog: dialog
     map:
       class:
-        title: __mb.core.map.class.title
+        title: Mapa
       tag:
-        map: __mb.core.map.tag.map
-        mapquery: __mb.core.map.tag.mapquery
-        openlayers: __mb.core.map.tag.openlayers
-      srsnotfound: __mb.core.map.srsnotfound
+        map: map
+        mapquery: MapQuery
+        openlayers: OpenLayers
+      srsnotfound: 'SRS properties for %srslist% are not found'
     mapabs:
       class:
-        description: __mb.core.mapabs.class.description
+        description: 'MapQuery/OpenLayers based map'
     scalebar:
       class:
-        title: __mb.core.scalebar.class.title
-        description: __mb.core.scalebar.class.description
+        title: 'Scale bar'
+        description: 'The scalebar displays a small line indicator representing the current map scale.'
       tag:
-        scale: __mb.core.scalebar.tag.scale
-        bar: __mb.core.scalebar.tag.bar
+        scale: scale
+        bar: bar
     scaledisplay:
       class:
-        title: __mb.core.scaledisplay.class.title
-        description: __mb.core.scaledisplay.class.description
+        title: 'Scale display'
+        description: 'Displays the current map scale'
       tag:
-        scale: __mb.core.scaledisplay.tag.scale
-        display: __mb.core.scaledisplay.tag.display
+        scale: scale
+        display: display
     scaleselector:
       class:
-        title: __mb.core.scaleselector.class.title
-        description: __mb.core.scaleselector.class.description
+        title: 'Scale selector'
+        description: 'Displays and changes a map scale'
       tag:
-        scale: __mb.core.scaleselector.tag.scale
-        selector: __mb.core.scaleselector.tag.selector
+        scale: scale
+        selector: selector
     srsselector:
       class:
-        title: __mb.core.srsselector.class.title
-        description: __mb.core.srsselector.class.description
+        title: 'SRS selector'
+        description: 'The spatial reference system selector changes the map''s spatial reference system'
       tag:
-        srs: __mb.core.srsselector.tag.srs
-        selector: __mb.core.srsselector.tag.selector
+        srs: SRS
+        selector: selector
     admin:
       poi:
         label:
-          usemailto: __mb.core.admin.poi.label.usemailto
+          usemailto: 'Use Mailto'
       legend:
         label:
-          autoopen: __mb.core.admin.legend.label.autoopen
-          hideemptylayers: __mb.core.admin.legend.label.hideemptylayers
-          generatelegendurl: __mb.core.admin.legend.label.generatelegendurl
-          showsourcetitle: __mb.core.admin.legend.label.showsourcetitle
-          showlayertitle: __mb.core.admin.legend.label.showlayertitle
-          showgroupedlayertitle: __mb.core.admin.legend.label.showgroupedlayertitle
+          autoopen: Autoopen
+          hideemptylayers: 'Hide empty layers'
+          generatelegendurl: 'Generate legend url'
+          showsourcetitle: 'Show source title'
+          showlayertitle: 'Show layer title'
+          showgroupedlayertitle: 'Show grouped layer title'
       featureinfo:
         label:
-          autoopen: __mb.core.admin.featureinfo.label.autoopen
-          deactivateonclose: __mb.core.admin.featureinfo.label.deactivateonclose
+          autoopen: Autoopen
+          deactivateonclose: 'Deactivate on close'
           showoriginal: 'Show original'
           onlyvalid: 'Only valid'
       printclient:
         label:
-          autoopen: __mb.core.admin.printclient.label.autoopen
-          rotatable: __mb.core.admin.printclient.label.rotatable
+          autoopen: Autoopen
+          rotatable: Rotatable
           legend: 'Print legend'
           legend_default_behaviour: 'Legend checkbox active'
       copyright:
         label:
-          autoopen: __mb.core.admin.copyright.label.autoopen
+          autoopen: Autoopen
       layertree:
         label:
-          showbasesources: __mb.core.admin.layertree.label.showbasesources
-          autoopen: __mb.core.admin.layertree.label.autoopen
-          showheader: __mb.core.admin.layertree.label.showheader
-          showlayerremove: __mb.core.admin.layertree.label.showlayerremove
+          showbasesources: 'Show base sources'
+          autoopen: Autoopen
+          showheader: 'Show header'
+          showlayerremove: 'Show layer remove'
           usetheme: 'Thematic layer'
           themes: Themes
           theme:
             opened: opened
-            activate: 'Add activate'
+            activate: 'Enabling Layer Add / Remove'
             useTheme: 'Theme show'
             sourceVisibility: 'Theme: source visibility'
             allSelected: 'Theme: layer visibility'
@@ -372,7 +373,7 @@ mb:
         action:
           remove: 'Remove geometry'
           edit: 'Edit geometry'
-          zoom: 'Zoom to geometryoom'
+          zoom: 'Zoom to geometry'
       dialog:
         btn:
           cancel: Close
@@ -384,6 +385,6 @@ mb:
         geometry: geometry
   geosource:
     image_error:
-      datails: 'La mappa non può essere visualizzata.'
-      exception: 'Eccezione: %exception%'
+      datails: 'The map cannot be displayed.'
+      exception: 'Exception: %exception%'
       statuscode: 'HTTP status code'
