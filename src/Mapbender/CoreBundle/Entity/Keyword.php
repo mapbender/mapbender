@@ -27,7 +27,7 @@ abstract class Keyword
 
     /**
      * @var string $title The source title
-     * @ORM\Column(type="text", nullable=false)
+     * @ORM\Column(type="string", nullable=false)
      */
     protected $value;
 
@@ -49,6 +49,9 @@ abstract class Keyword
      */
     public function setValue($value)
     {
+        if (mb_strlen($value) > 255) {
+            $value = mb_substr($value, 0, 255);
+        }
         $this->value = $value;
 
         return $this;

@@ -80,7 +80,7 @@
                 delete(this.readyCallbacks[callback]);
             }
             this.readyState = true;
-        },
+        }
         
     });
 
