@@ -46,19 +46,13 @@ class PrintQueueManager extends EntitiesServiceBase
     /** Event status rendering save error */
     const STATUS_RENDERING_SAVE_ERROR = 'mapbender.print.rendering.save_error';
 
-    /** @var PriorityVoterInterface */
-    private $priorityVoter;
-
-
 
     /**
      * @param ContainerInterface     $container
-     * @param PriorityVoterInterface $priorityVoter
      */
-    public function __construct(ContainerInterface $container, PriorityVoterInterface $priorityVoter)
+    public function __construct(ContainerInterface $container)
     {
         parent::__construct('PrintQueue', $container);
-        $this->priorityVoter = $priorityVoter;
     }
 
     /**
@@ -141,8 +135,7 @@ class PrintQueueManager extends EntitiesServiceBase
         return $this->createQueryBuilder()
             ->where('q.queued IS NOT NULL')
             ->andWhere('q.started IS NULL')
-            ->orderBy('q.priority', 'DESC')
-            ->addOrderBy('q.queued', 'ASC')
+            ->orderBy('q.queued', 'ASC')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -179,7 +172,7 @@ class PrintQueueManager extends EntitiesServiceBase
                 ->setUserId($userId)
                 ->setQueued(new \DateTime())
                 ->setPayload($payload)
-                ->setPriority($this->priorityVoter->getPriority($payload))
+                ->setPriority(true)
         );
     }
 
@@ -189,7 +182,6 @@ class PrintQueueManager extends EntitiesServiceBase
      * @param PrintQueue $entity
      * @param bool       $flush Flush entity manager (default=true)
      * @internal param bool $pdf remove PDF file? (default=true)
-     * @return array
      */
     public function remove($entity, $flush = true)
     {
@@ -354,8 +346,7 @@ class PrintQueueManager extends EntitiesServiceBase
         $dateFields    = array('queued', 'created', 'started');
         $queryBuilder = $this->createQueryBuilder()
             ->select('q.id, q.queued, q.created, q.started, q.priority, q.idSalt')
-            ->orderBy('q.priority', 'DESC')
-            ->addOrderBy('q.queued', 'ASC');
+            ->orderBy('q.queued', 'ASC');
 
         if ($userId) {
             $queryBuilder
