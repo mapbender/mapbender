@@ -63,10 +63,7 @@ class PrintClientAdminType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
                 'auto_initialize' => false,
-            ))
-            ->add('renderMode', 'choice',
-                array('choices' => array('direct' => 'Direct', 'queued' => 'Queued'))
-            );
+            ));
     }
 
 }

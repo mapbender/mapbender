@@ -157,6 +157,21 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
+    public function render()
+    {
+        return $this->container->get('templating')->render(
+            'MapbenderCoreBundle:Element:printclient.html.twig',
+            array(
+                'id' => $this->getId(),
+                'title' => $this->getTitle(),
+                'configuration' => $this->getConfiguration()
+            )
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function httpAction($action)
     {
         $request = $this->container->get('request');
@@ -228,10 +243,5 @@ class PrintClient extends Element
 
                 return new JsonResponse($templates);
         }
-    }
-
-    public function getFrontendTemplatePath($suffix = '.html.twig')
-    {
-        return "MapbenderCoreBundle:Element:printclient{$suffix}";
     }
 }
