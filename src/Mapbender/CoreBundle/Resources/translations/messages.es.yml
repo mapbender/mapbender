@@ -111,7 +111,7 @@ mb:
         quality: Calidad
         scale: Escala
         rotation: Rotación
-        legend: __mb.core.printclient.label.legend
+        legend: ~
       popup:
         btn:
           ok: Imprimir
