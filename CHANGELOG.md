@@ -1,5 +1,14 @@
 # Changelog
 
+* **dev-release/3.0.7**
+  - [Regression fix] restore compatibility with Internet Explorer 11
+  - [Regression fix] Apply WmsLoader image format / info format settings
+  - Revert keyword column type back to varchar to work around issues on Oracle.
+    Pathologically long Wms keywords will now be silently truncated to 255 characters.
+  - Fix delete cascade error when deleting a Wms Source on PostgreSQL
+  - Work around Doctrine optimizations preventing correct
+    updating of the layer order setting on PostgreSQL
+
 * **v3.0.7.3**
   - "target" selection in elements shows only appropriate other elements (regression fix)
   - WMS metadata now renders email addresses and links as clickable links (PR#837)
