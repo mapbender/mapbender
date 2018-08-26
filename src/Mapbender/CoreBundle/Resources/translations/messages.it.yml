@@ -2,12 +2,12 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: 'No feature info layer exists.'
-        unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
-        noresult: 'no result'
+        nolayer: ~
+        unknownoption: ~
+        noresult: ~
       popup:
         btn:
-          ok: Close
+          ok: ~
       class:
         title: FeatureInfo
         description: FeatureInfo
@@ -37,7 +37,7 @@ mb:
         description: ~
       error:
         geometry:
-          missing: The selected entry does not contain a geometry.
+          missing: ~
     searchrouter:
       popup:
         btn:
@@ -110,7 +110,7 @@ mb:
         quality: ~
         scale: ~
         rotation: ~
-        legend: 'Print legend'
+        legend: ~
       popup:
         btn:
           ok: ~
@@ -130,8 +130,8 @@ mb:
         jpg: ~
         jpeg: ~
       btn:
-        deactivate: 'Deactivate Print Frame'
-        activate: 'Activate Print Frame'
+        deactivate: ~
+        activate: ~
     overview:
       nolayer: ~
       class:
@@ -195,12 +195,12 @@ mb:
         metadata: ~
         sources: ~
         deleteallsources: ~
-        legend: Legend
-        kmlexport: 'KML export'
-        dimension_onoff: 'On/Off Dimension'
-        dimension: Dimension
-        sourcevisibility_onoff: 'Show sources'
-        allvisibility_on: 'Show all layers'
+        legend: ~
+        kmlexport: ~
+        dimension_onoff: ~
+        dimension: ~
+        sourcevisibility_onoff: ~
+        allvisibility_on: ~
       class:
         title: ~
         description: ~
@@ -209,7 +209,7 @@ mb:
         layer: ~
         tree: ~
       contextmenu:
-        nooption: 'Layer has no context menu option'
+        nooption: ~
     zoombar:
       panup: ~
       panright: ~
@@ -314,14 +314,14 @@ mb:
         label:
           autoopen: ~
           deactivateonclose: ~
-          showoriginal: 'Show original'
-          onlyvalid: 'Only valid'
+          showoriginal: ~
+          onlyvalid: ~
       printclient:
         label:
           autoopen: ~
           rotatable: ~
-          legend: 'Print legend'
-          legend_default_behaviour: 'Legend checkbox active'
+          legend: ~
+          legend_default_behaviour: ~
       copyright:
         label:
           autoopen: ~
@@ -331,54 +331,54 @@ mb:
           autoopen: ~
           showheader: ~
           showlayerremove: ~
-          usetheme: 'Thematic layer'
-          themes: Themes
+          usetheme: ~
+          themes: ~
           theme:
-            opened: opened
-            activate: 'Add activate'
-            useTheme: 'Theme show'
-            sourceVisibility: 'Theme: source visibility'
-            allSelected: 'Theme: layer visibility'
-            label: 'theme name'
-          hidenottoggleable: 'Hide not toggleable'
-          hideselect: 'Hide visibility by folders'
-          hideinfo: 'Hide info'
+            opened: ~
+            activate: ~
+            useTheme: ~
+            sourceVisibility: ~
+            allSelected: ~
+            label: ~
+          hidenottoggleable: ~
+          hideselect: ~
+          hideinfo: ~
       redlining:
         label:
-          auto_activate: Autoactivate
-          deactivate_on_close: 'Deactivate on close'
+          auto_activate: ~
+          deactivate_on_close: ~
     htmlelement:
       class:
         title: HTML
-        description: 'Add some HTML'
+        description: ~
       tag:
         html: HTML
     entity:
       app:
         screenshotfile:
-          error: Error
+          error: ~
     redlining:
       geometrytype:
-        point: Point
-        line: Line
-        polygon: Polygon
-        rectangle: Rectangle
+        point: ~
+        line: ~
+        polygon: ~
+        rectangle: ~
         text:
-          title: Text
-          label: Text
+          title: ~
+          label: ~
           error:
-            notext: 'Text required'
+            notext: ~
       geometry:
         action:
-          remove: 'Remove geometry'
-          edit: 'Edit geometry'
-          zoom: 'Zoom to geometryoom'
+          remove: ~
+          edit: ~
+          zoom: ~
       dialog:
         btn:
-          cancel: Close
+          cancel: ~
       class:
-        title: Redlining
-        description: 'Redlining tool'
+        title: ~
+        description: ~
       tag:
         redlining: redlining
         geometry: geometry
@@ -386,4 +386,4 @@ mb:
     image_error:
       datails: 'La mappa non può essere visualizzata.'
       exception: 'Eccezione: %exception%'
-      statuscode: 'HTTP status code'
+      statuscode: ~
