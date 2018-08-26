@@ -55,7 +55,8 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Map',
             'Mapbender\CoreBundle\Element\Overview',
             'Mapbender\CoreBundle\Element\POI',
-            'Mapbender\CoreBundle\Element\PrintClient',
+            // use DBPrintClient ONLY
+            // 'Mapbender\CoreBundle\Element\PrintClient',
             'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\ScaleBar',
             'Mapbender\CoreBundle\Element\ScaleDisplay',
