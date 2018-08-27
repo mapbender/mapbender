@@ -32,7 +32,7 @@ mb:
         about: about
     simplesearch:
       input:
-        search: Search
+        search: ~
       class:
         title: 'Recherche simple'
         description: 'Recherche à un seul champ sur des sources JSON (e.g. Solr)'
@@ -180,8 +180,8 @@ mb:
         btn:
           ok: Fermer
       const:
-        outofscale: 'Layer out of scale'
-        outofbounds: 'Layer out of bounds'
+        outofscale: ~
+        outofbounds: ~
         parentinvisible: 'La couche parent est invisible'
       tooltip:
         sublayers_openclose: 'Ouvrir/Fermer la sous-couche'
@@ -192,7 +192,7 @@ mb:
         visibility_onoff: 'Visibilité On/Off'
         featureinfo_onoff: 'FeatureInfo On/Off'
         opacity: Opacité
-        zoomtolayer: 'Zoom to layer'
+        zoomtolayer: ~
         metadata: Metadonnées
         sources: Sources
         deleteallsources: 'Supprimer toutes les sources'
@@ -210,7 +210,7 @@ mb:
         layer: layer
         tree: tree
       contextmenu:
-        nooption: 'Layer has no context menu option'
+        nooption: ~
     zoombar:
       panup: 'Déplacer vers le haut'
       panright: 'Déplacer vers la droite'
@@ -220,8 +220,8 @@ mb:
       goforward: 'Reculer'
       zoombybox: 'Zoomer sur la boite'
       zoombyworld: 'Zoomer sur l''étendue globale'
-      zoomin: Zoomin
-      zoomout: Zoomout
+      zoomin: ~
+      zoomout: ~
       class:
         title: 'Outils de navigation'
         description: 'Cet élément affiche boîte de contrôle flottante permettant de zoomer et de se déplacer sur la carte (ressemble au contrôle PanZoomBar d''OpenLayers). Cet élément est plus facile à utiliser lorsqu''un style personnalisé est requis.'
@@ -302,10 +302,10 @@ mb:
     admin:
       poi:
         label:
-          usemailto: 'Use Mailto'
+          usemailto: ~
       legend:
         label:
-          autoopen: Autoopen
+          autoopen: ~
           hideemptylayers: 'Cacher les couches vides'
           generatelegendurl: 'Générer l''URL de la légende'
           showsourcetitle: 'Afficher le titre de la source'
@@ -313,19 +313,19 @@ mb:
           showgroupedlayertitle: 'Afficher le titre des groupes de couches'
       featureinfo:
         label:
-          autoopen: Autoopen
-          deactivateonclose: 'Deactivate on close'
-          showoriginal: 'Show original'
-          onlyvalid: 'Only valid'
+          autoopen: ~
+          deactivateonclose: ~
+          showoriginal: ~
+          onlyvalid: ~
       printclient:
         label:
-          autoopen: Autoopen
+          autoopen: ~
           rotatable: Pivotable
           legend: 'Imprimer la légende'
-          legend_default_behaviour: 'Legend checkbox active'
+          legend_default_behaviour: ~
       copyright:
         label:
-          autoopen: Autoopen
+          autoopen: ~
       layertree:
         label:
           showbasesources: 'Afficher les fonds de carte'
@@ -346,7 +346,7 @@ mb:
           hideinfo: 'Ne pas afficher l''information'
       redlining:
         label:
-          auto_activate: Autoactivate
+          auto_activate: ~
           deactivate_on_close: 'Désactiver à la fermeture'
     htmlelement:
       class:

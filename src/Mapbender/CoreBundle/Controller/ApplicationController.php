@@ -56,7 +56,7 @@ class ApplicationController extends Controller
      * Dumps the assets for the given application and type. These are up to
      * date and this controller will be used during development mode.
      *
-     * @Route("/application/{slug}/assets/{type}")
+     * @Route("/application/{slug}/assets/{type}", requirements={"type" = "js|css|trans"})
      * @param string $slug Application slug name
      * @param string $type Asset type
      * @return Response
