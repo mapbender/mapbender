@@ -2,12 +2,12 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: 'No feature info layer exists.'
-        unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
-        noresult: 'no result'
+        nolayer: ~
+        unknownoption: ~
+        noresult: ~
       popup:
         btn:
-          ok: Close
+          ok: ~
       class:
         title: FeatureInfo
         description: FeatureInfo
@@ -18,140 +18,140 @@ mb:
         dialog: dialog
     aboutdialog:
       content:
-        versionprefix: __mb.core.aboutdialog.content.versionprefix
-        learnmore: __mb.core.aboutdialog.content.learnmore
-        linktitle: __mb.core.aboutdialog.content.linktitle
-        website: __mb.core.aboutdialog.content.website
+        versionprefix: ~
+        learnmore: ~
+        linktitle: ~
+        website: ~
       class:
-        title: __mb.core.aboutdialog.class.title
-        description: __mb.core.aboutdialog.class.description
+        title: ~
+        description: ~
       tag:
-        help: __mb.core.aboutdialog.tag.help
-        info: __mb.core.aboutdialog.tag.info
-        about: __mb.core.aboutdialog.tag.about
+        help: ~
+        info: ~
+        about: ~
     simplesearch:
       input:
-        search: __mb.core.simplesearch.input.search
+        search: ~
       class:
-        title: __mb.core.simplesearch.class.title
-        description: __mb.core.simplesearch.class.description
+        title: ~
+        description: ~
       error:
         geometry:
-          missing: The selected entry does not contain a geometry.
+          missing: ~
     searchrouter:
       popup:
         btn:
-          ok: __mb.core.searchrouter.popup.btn.ok
-          cancel: __mb.core.searchrouter.popup.btn.cancel
-          reset: __mb.core.searchrouter.popup.btn.reset
-      no_results: __mb.core.searchrouter.no_results
-      result_counter: __mb.core.searchrouter.result_counter
+          ok: ~
+          cancel: ~
+          reset: ~
+      no_results: ~
+      result_counter: ~
       class:
-        title: __mb.core.searchrouter.class.title
-        description: __mb.core.searchrouter.class.description
+        title: ~
+        description: ~
       tag:
-        search: __mb.core.searchrouter.tag.search
-        router: __mb.core.searchrouter.tag.router
+        search: ~
+        router: ~
     poi:
-      sharepoi: __mb.core.poi.sharepoi
+      sharepoi: ~
       text:
-        snippet: __mb.core.poi.text.snippet
+        snippet: ~
       popup:
         btn:
-          ok: __mb.core.poi.popup.btn.ok
-          cancel: __mb.core.poi.popup.btn.cancel
+          ok: ~
+          cancel: ~
       class:
-        title: __mb.core.poi.class.title
-        description: __mb.core.poi.class.description
+        title: ~
+        description: ~
       tag:
-        poi: __mb.core.poi.tag.poi
-        point: __mb.core.poi.tag.point
-        interest: __mb.core.poi.tag.interest
+        poi: ~
+        point: ~
+        interest: ~
       label:
         text: Text
     basesourceswitcher:
       error:
-        sourcenotavailable: __mb.core.basesourceswitcher.error.sourcenotavailable
+        sourcenotavailable: ~
       class:
-        title: __mb.core.basesourceswitcher.class.title
-        Description: __mb.core.basesourceswitcher.class.Description
+        title: ~
+        Description: ~
       tag:
-        base: __mb.core.basesourceswitcher.tag.base
-        source: __mb.core.basesourceswitcher.tag.source
-        switcher: __mb.core.basesourceswitcher.tag.switcher
+        base: ~
+        source: ~
+        switcher: ~
       form:
-        mesage: __mb.core.basesourceswitcher.form.mesage
+        mesage: ~
     legend:
-      nolegend: __mb.core.legend.nolegend
+      nolegend: ~
       popup:
         btn:
-          ok: __mb.core.legend.popup.btn.ok
+          ok: ~
       class:
-        title: __mb.core.legend.class.title
-        description: __mb.core.legend.class.description
+        title: ~
+        description: ~
       tag:
-        layer: __mb.core.legend.tag.layer
-        legend: __mb.core.legend.tag.legend
+        layer: ~
+        legend: ~
     ruler:
       popup:
         btn:
-          ok: __mb.core.ruler.popup.btn.ok
-      create_error: __mb.core.ruler.create_error
+          ok: ~
+      create_error: ~
       class:
-        title: __mb.core.ruler.class.title
-        description: __mb.core.ruler.class.description
+        title: ~
+        description: ~
       tag:
-        line: __mb.core.ruler.tag.line
-        area: __mb.core.ruler.tag.area
-        measure: __mb.core.ruler.tag.measure
+        line: ~
+        area: ~
+        measure: ~
     printclient:
       label:
-        template: __mb.core.printclient.label.template
-        quality: __mb.core.printclient.label.quality
-        scale: __mb.core.printclient.label.scale
-        rotation: __mb.core.printclient.label.rotation
-        legend: 'Print legend'
+        template: ~
+        quality: ~
+        scale: ~
+        rotation: ~
+        legend: ~
       popup:
         btn:
-          ok: __mb.core.printclient.popup.btn.ok
-          cancel: __mb.core.printclient.popup.btn.cancel
+          ok: ~
+          cancel: ~
       info:
-        noactivelayer: __mb.core.printclient.info.noactivelayer
+        noactivelayer: ~
       form:
-        required: __mb.core.printclient.form.required
+        required: ~
       class:
-        title: __mb.core.printclient.class.title
-        description: __mb.core.printclient.class.description
+        title: ~
+        description: ~
       tag:
-        print: __mb.core.printclient.tag.print
-        pdf: __mb.core.printclient.tag.pdf
-        png: __mb.core.printclient.tag.png
-        gif: __mb.core.printclient.tag.gif
-        jpg: __mb.core.printclient.tag.jpg
-        jpeg: __mb.core.printclient.tag.jpeg
+        print: ~
+        pdf: ~
+        png: ~
+        gif: ~
+        jpg: ~
+        jpeg: ~
       btn:
-        deactivate: 'Deactivate Print Frame'
-        activate: 'Activate Print Frame'
+        deactivate: ~
+        activate: ~
     overview:
-      nolayer: __mb.core.overview.nolayer
+      nolayer: ~
       class:
-        title: __mb.core.overview.class.title
-        description: __mb.core.overview.class.description
+        title: ~
+        description: ~
       tag:
-        overview: __mb.core.overview.tag.overview
-        map: __mb.core.overview.tag.map
+        overview: ~
+        map: ~
     sketch:
       circle:
         radius:
-          label: __mb.core.sketch.circle.radius.label
-          error: __mb.core.sketch.circle.radius.error
+          label: ~
+          error: ~
         form:
           button:
-            'yes': __mb.core.sketch.circle.form.button.yes
-            cancel: __mb.core.sketch.circle.form.button.cancel
+            'yes': ~
+            cancel: ~
       class:
-        title: __mb.core.sketch.class.title
-        description: __mb.core.sketch.class.description
+        title: ~
+        description: ~
       tag:
         sketch: sketch
         circle: circle
@@ -162,223 +162,223 @@ mb:
           ok: Close
     gpsposition:
       error:
-        notsupported: __mb.core.gpsposition.error.notsupported
+        notsupported: ~
         nosignal: Attualmente non è possibile localizzare la Sua posizione.
       class:
-        title: __mb.core.gpsposition.class.title
-        description: __mb.core.gpsposition.class.description
+        title: ~
+        description: ~
       tag:
-        gpsposition: __mb.core.gpsposition.tag.gpsposition
-        gps: __mb.core.gpsposition.tag.gps
-        position: __mb.core.gpsposition.tag.position
-        button: __mb.core.gpsposition.tag.button
+        gpsposition: ~
+        gps: ~
+        position: ~
+        button: ~
     layertree:
       confirm:
-        allremove: __mb.core.layertree.confirm.allremove
+        allremove: ~
       popup:
         btn:
-          ok: __mb.core.layertree.popup.btn.ok
+          ok: ~
       const:
-        outofscale: __mb.core.layertree.const.outofscale
-        outofbounds: __mb.core.layertree.const.outofbounds
-        parentinvisible: __mb.core.layertree.const.parentinvisible
+        outofscale: ~
+        outofbounds: ~
+        parentinvisible: ~
       tooltip:
-        sublayers_openclose: __mb.core.layertree.tooltip.sublayers_openclose
-        removelayer: __mb.core.layertree.tooltip.removelayer
+        sublayers_openclose: ~
+        removelayer: ~
         menu:
-          close: __mb.core.layertree.tooltip.menu.close
+          close: ~
       label:
-        visibility_onoff: __mb.core.layertree.label.visibility_onoff
-        featureinfo_onoff: __mb.core.layertree.label.featureinfo_onoff
+        visibility_onoff: ~
+        featureinfo_onoff: ~
         opacity: Opacity
-        zoomtolayer: __mb.core.layertree.label.zoomtolayer
-        metadata: __mb.core.layertree.label.metadata
-        sources: __mb.core.layertree.label.sources
-        deleteallsources: __mb.core.layertree.label.deleteallsources
-        legend: Legend
-        kmlexport: 'KML export'
-        dimension_onoff: 'On/Off Dimension'
-        dimension: Dimension
-        sourcevisibility_onoff: 'Show sources'
-        allvisibility_on: 'Show all layers'
+        zoomtolayer: ~
+        metadata: ~
+        sources: ~
+        deleteallsources: ~
+        legend: ~
+        kmlexport: ~
+        dimension_onoff: ~
+        dimension: ~
+        sourcevisibility_onoff: ~
+        allvisibility_on: ~
       class:
-        title: __mb.core.layertree.class.title
-        description: __mb.core.layertree.class.description
+        title: ~
+        description: ~
       tag:
-        layertree: __mb.core.layertree.tag.layertree
-        layer: __mb.core.layertree.tag.layer
-        tree: __mb.core.layertree.tag.tree
+        layertree: ~
+        layer: ~
+        tree: ~
       contextmenu:
-        nooption: 'Layer has no context menu option'
+        nooption: ~
     zoombar:
-      panup: __mb.core.zoombar.panup
-      panright: __mb.core.zoombar.panright
-      pandown: __mb.core.zoombar.pandown
-      panleft: __mb.core.zoombar.panleft
-      goback: __mb.core.zoombar.goback
-      goforward: __mb.core.zoombar.goforward
-      zoombybox: __mb.core.zoombar.zoombybox
-      zoombyworld: __mb.core.zoombar.zoombyworld
-      zoomin: __mb.core.zoombar.zoomin
-      zoomout: __mb.core.zoombar.zoomout
+      panup: ~
+      panright: ~
+      pandown: ~
+      panleft: ~
+      goback: ~
+      goforward: ~
+      zoombybox: ~
+      zoombyworld: ~
+      zoomin: ~
+      zoomout: ~
       class:
-        title: __mb.core.zoombar.class.title
-        description: __mb.core.zoombar.class.description
+        title: ~
+        description: ~
       tag:
-        zoom: __mb.core.zoombar.tag.zoom
-        pan: __mb.core.zoombar.tag.pan
-        control: __mb.core.zoombar.tag.control
-        navigation: __mb.core.zoombar.tag.navigation
-        panel: __mb.core.zoombar.tag.panel
+        zoom: ~
+        pan: ~
+        control: ~
+        navigation: ~
+        panel: ~
     activityindicator:
       class:
-        title: __mb.core.activityindicator.class.title
-        description: __mb.core.activityindicator.class.description
+        title: ~
+        description: ~
       tag:
-        activity: __mb.core.activityindicator.tag.activity
-        indicator: __mb.core.activityindicator.tag.indicator
+        activity: ~
+        indicator: ~
     button:
       class:
-        title: __mb.core.button.class.title
-        description: __mb.core.button.class.description
+        title: ~
+        description: ~
       tag:
-        button: __mb.core.button.tag.button
+        button: ~
     coordinatesdisplay:
       class:
-        title: __mb.core.coordinatesdisplay.class.title
-        description: __mb.core.coordinatesdisplay.class.description
+        title: ~
+        description: ~
       tag:
-        coordinates: __mb.core.coordinatesdisplay.tag.coordinates
-        display: __mb.core.coordinatesdisplay.tag.display
-        mouse: __mb.core.coordinatesdisplay.tag.mouse
-        position: __mb.core.coordinatesdisplay.tag.position
+        coordinates: ~
+        display: ~
+        mouse: ~
+        position: ~
     copyright:
       class:
-        title: __mb.core.copyright.class.title
-        description: __mb.core.copyright.class.description
+        title: ~
+        description: ~
       tag:
-        copyright: __mb.core.copyright.tag.copyright
-        dialog: __mb.core.copyright.tag.dialog
+        copyright: ~
+        dialog: ~
     map:
       class:
-        title: __mb.core.map.class.title
+        title: ~
       tag:
-        map: __mb.core.map.tag.map
-        mapquery: __mb.core.map.tag.mapquery
-        openlayers: __mb.core.map.tag.openlayers
-      srsnotfound: __mb.core.map.srsnotfound
+        map: ~
+        mapquery: ~
+        openlayers: ~
+      srsnotfound: ~
     mapabs:
       class:
-        description: __mb.core.mapabs.class.description
+        description: ~
     scalebar:
       class:
-        title: __mb.core.scalebar.class.title
-        description: __mb.core.scalebar.class.description
+        title: ~
+        description: ~
       tag:
-        scale: __mb.core.scalebar.tag.scale
-        bar: __mb.core.scalebar.tag.bar
+        scale: ~
+        bar: ~
     scaledisplay:
       class:
-        title: __mb.core.scaledisplay.class.title
-        description: __mb.core.scaledisplay.class.description
+        title: ~
+        description: ~
       tag:
-        scale: __mb.core.scaledisplay.tag.scale
-        display: __mb.core.scaledisplay.tag.display
+        scale: ~
+        display: ~
     scaleselector:
       class:
-        title: __mb.core.scaleselector.class.title
-        description: __mb.core.scaleselector.class.description
+        title: ~
+        description: ~
       tag:
-        scale: __mb.core.scaleselector.tag.scale
-        selector: __mb.core.scaleselector.tag.selector
+        scale: ~
+        selector: ~
     srsselector:
       class:
-        title: __mb.core.srsselector.class.title
-        description: __mb.core.srsselector.class.description
+        title: ~
+        description: ~
       tag:
-        srs: __mb.core.srsselector.tag.srs
-        selector: __mb.core.srsselector.tag.selector
+        srs: ~
+        selector: ~
     admin:
       poi:
         label:
-          usemailto: __mb.core.admin.poi.label.usemailto
+          usemailto: ~
       legend:
         label:
-          autoopen: __mb.core.admin.legend.label.autoopen
-          hideemptylayers: __mb.core.admin.legend.label.hideemptylayers
-          generatelegendurl: __mb.core.admin.legend.label.generatelegendurl
-          showsourcetitle: __mb.core.admin.legend.label.showsourcetitle
-          showlayertitle: __mb.core.admin.legend.label.showlayertitle
-          showgroupedlayertitle: __mb.core.admin.legend.label.showgroupedlayertitle
+          autoopen: ~
+          hideemptylayers: ~
+          generatelegendurl: ~
+          showsourcetitle: ~
+          showlayertitle: ~
+          showgroupedlayertitle: ~
       featureinfo:
         label:
-          autoopen: __mb.core.admin.featureinfo.label.autoopen
-          deactivateonclose: __mb.core.admin.featureinfo.label.deactivateonclose
-          showoriginal: 'Show original'
-          onlyvalid: 'Only valid'
+          autoopen: ~
+          deactivateonclose: ~
+          showoriginal: ~
+          onlyvalid: ~
       printclient:
         label:
-          autoopen: __mb.core.admin.printclient.label.autoopen
-          rotatable: __mb.core.admin.printclient.label.rotatable
-          legend: 'Print legend'
-          legend_default_behaviour: 'Legend checkbox active'
+          autoopen: ~
+          rotatable: ~
+          legend: ~
+          legend_default_behaviour: ~
       copyright:
         label:
-          autoopen: __mb.core.admin.copyright.label.autoopen
+          autoopen: ~
       layertree:
         label:
-          showbasesources: __mb.core.admin.layertree.label.showbasesources
-          autoopen: __mb.core.admin.layertree.label.autoopen
-          showheader: __mb.core.admin.layertree.label.showheader
-          showlayerremove: __mb.core.admin.layertree.label.showlayerremove
-          usetheme: 'Thematic layer'
-          themes: Themes
+          showbasesources: ~
+          autoopen: ~
+          showheader: ~
+          showlayerremove: ~
+          usetheme: ~
+          themes: ~
           theme:
-            opened: opened
-            activate: 'Add activate'
-            useTheme: 'Theme show'
-            sourceVisibility: 'Theme: source visibility'
-            allSelected: 'Theme: layer visibility'
-            label: 'theme name'
-          hidenottoggleable: 'Hide not toggleable'
-          hideselect: 'Hide visibility by folders'
-          hideinfo: 'Hide info'
+            opened: ~
+            activate: ~
+            useTheme: ~
+            sourceVisibility: ~
+            allSelected: ~
+            label: ~
+          hidenottoggleable: ~
+          hideselect: ~
+          hideinfo: ~
       redlining:
         label:
-          auto_activate: Autoactivate
-          deactivate_on_close: 'Deactivate on close'
+          auto_activate: ~
+          deactivate_on_close: ~
     htmlelement:
       class:
         title: HTML
-        description: 'Add some HTML'
+        description: ~
       tag:
         html: HTML
     entity:
       app:
         screenshotfile:
-          error: Error
+          error: ~
     redlining:
       geometrytype:
-        point: Point
-        line: Line
-        polygon: Polygon
-        rectangle: Rectangle
+        point: ~
+        line: ~
+        polygon: ~
+        rectangle: ~
         text:
-          title: Text
-          label: Text
+          title: ~
+          label: ~
           error:
-            notext: 'Text required'
+            notext: ~
       geometry:
         action:
-          remove: 'Remove geometry'
-          edit: 'Edit geometry'
-          zoom: 'Zoom to geometryoom'
+          remove: ~
+          edit: ~
+          zoom: ~
       dialog:
         btn:
-          cancel: Close
+          cancel: ~
       class:
-        title: Redlining
-        description: 'Redlining tool'
+        title: ~
+        description: ~
       tag:
         redlining: redlining
         geometry: geometry
@@ -386,4 +386,4 @@ mb:
     image_error:
       datails: 'La mappa non può essere visualizzata.'
       exception: 'Eccezione: %exception%'
-      statuscode: 'HTTP status code'
+      statuscode: ~

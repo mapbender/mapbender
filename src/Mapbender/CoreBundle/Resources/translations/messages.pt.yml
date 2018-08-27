@@ -38,7 +38,7 @@ mb:
         description: 'Pesquisa simples sobre dados de JSON (p. ex. Solr)'
       error:
         geometry:
-          missing: The selected entry does not contain a geometry.
+          missing: ~
     searchrouter:
       popup:
         btn:
@@ -69,7 +69,7 @@ mb:
         point: Ponto
         interest: Interesse
       label:
-        text: Text
+        text: ~
     basesourceswitcher:
       error:
         sourcenotavailable: 'O serviço com ID %id% não está disponível.'
@@ -131,8 +131,8 @@ mb:
         jpg: jpg
         jpeg: jpeg
       btn:
-        deactivate: 'Deactivate Print Frame'
-        activate: 'Activate Print Frame'
+        deactivate: ~
+        activate: ~
     overview:
       nolayer: 'Camada não disponível'
       class:
@@ -210,7 +210,7 @@ mb:
         layer: Camada
         tree: Árvore
       contextmenu:
-        nooption: 'Layer has no context menu option'
+        nooption: ~
     zoombar:
       panup: 'Mover para cima'
       panright: 'Mover à direita'
@@ -255,7 +255,7 @@ mb:
         position: Posição
     copyright:
       class:
-        title: Copyright
+        title: ~
         description: 'Mostra os termos de utilização.'
       tag:
         copyright: Copyright
@@ -322,7 +322,7 @@ mb:
           autoopen: 'Abrir automaticamente'
           rotatable: 'Pode girar'
           legend: 'Imprimir legenda'
-          legend_default_behaviour: 'Legend checkbox active'
+          legend_default_behaviour: ~
       copyright:
         label:
           autoopen: 'Abrir automaticamente'
@@ -346,8 +346,8 @@ mb:
           hideinfo: 'Ocultar info'
       redlining:
         label:
-          auto_activate: Autoactivate
-          deactivate_on_close: 'Deactivate on close'
+          auto_activate: ~
+          deactivate_on_close: ~
     htmlelement:
       class:
         title: HTML
@@ -368,7 +368,7 @@ mb:
           title: Texto
           label: Texto
           error:
-            notext: 'Text required'
+            notext: ~
       geometry:
         action:
           remove: 'Tirar geometria'
