@@ -7,6 +7,7 @@
   - Revert keyword column type back to varchar to work around issues on Oracle.
     Pathologically long Wms keywords will now be silently truncated to 255 characters.
   - Fix delete cascade error when deleting a Wms Source on PostgreSQL
+  - Skip empty layer names when collecting feature info QUERY_LAYERS value (pull #1010)
   - Work around Doctrine optimizations preventing correct
     updating of the layer order setting on PostgreSQL
   - Clean up dummy translations ("__mb...", "[Placeholder]") from es, it and ru locales, those will
