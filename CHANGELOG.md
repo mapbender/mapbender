@@ -1,6 +1,6 @@
 # Changelog
 
-* **dev-release/3.0.7**
+* **v3.0.7.4**
   - [Security] Fix potential XSS vector in applicationAssetsAction
   - [Regression fix] restore compatibility with Internet Explorer 11
   - [Regression fix] Apply WmsLoader image format / info format settings
