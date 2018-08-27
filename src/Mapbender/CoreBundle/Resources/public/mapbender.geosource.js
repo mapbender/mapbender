@@ -408,7 +408,12 @@ Mapbender.Geo.SourceHandler = Class({
                 }
             }
             if (layer.options.treeOptions.info === true && layer.state.visibility) {
-                result.infolayers.push(layer.options[self.layerNameIdent]);
+                var layerName = layer.options[self.layerNameIdent];
+                // layer names can be emptyish, most commonly on root layers
+                // we will avoid appending an empty string to the list of queryable layers
+                if (layerName && layerName.length) {
+                    result.infolayers.push(layer.options[self.layerNameIdent]);
+                }
             }
             if (layer.children) {
                 for (var j = 0; j < layer.children.length; j++) {
