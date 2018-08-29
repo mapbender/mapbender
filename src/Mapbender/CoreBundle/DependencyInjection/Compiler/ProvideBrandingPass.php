@@ -40,7 +40,7 @@ class ProvideBrandingPass implements CompilerPassInterface
         $version = $this->selectProjectVersion($container);
         $logo = $this->selectLogo($container);
         $container->setParameter('branding.project_name', $name);
-        $container->setParameter('branding.project_name', $version);
+        $container->setParameter('branding.project_version', $version);
         $container->setParameter('branding.logo', $logo);
         $this->forwardSelectionToFom($container, $name, $version, $logo);
     }
