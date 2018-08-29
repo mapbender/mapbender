@@ -20,7 +20,6 @@
         height: null,
         rotateValue: 0,
         overwriteTemplates: false,
-	queueRefreshDelay: 3000,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -75,7 +74,6 @@
             this.callback = callback ? callback : null;
             var self = this;
             var me = $(this.element);
-	    var tabContainer;
             if (this.options.type === 'dialog') {
                 if(!this.popup || !this.popup.$element){
                     this.popup = new Mapbender.Popup2({
@@ -102,78 +100,13 @@
                                         cssClass: 'button right',
                                         callback: function(){
                                             self._print();
-					    if(self._isQueueMode()) {
-				                tabContainer.tabs({active: 1});
-				                tabContainer.data('dataTable').ajax.reload();
-			                    }
                                         }
                                     }
                             }
                         });
                     this.popup.$element.on('close', $.proxy(this.close, this));
-
-                    self.tabContainer = tabContainer = this.popup.$element.find('.tab-container');
-                    if(!this.options.displayAllQueues) {
-                        // remove global queue list and tab
-                        tabContainer.find('li > a.all-queues, > div.all-queues').remove();
-                    }
-
-                    if(this.options.anonymous) {
-                        // remove tabs and not print-form
-                        tabContainer.find('.tabs, > div:not([class="print-form"])').remove();
-                    }
-
-                    tabContainer.tabs({
-                        active:   0,
-                        activate: function (event, ui) {
-
-                            var panel = ui.newPanel;
-                            var table;
-
-                            self.stopUpdateQueues();
-
-                            if(panel.hasClass('print-form')) {
-                                return;
-                            }
-
-                            // restore table
-                            if(panel.data('table')) {
-                                table = panel.data('table');
-                            } else {
-                                table = panel.find('> table');
-                                panel.data('table', table);
-                            }
-
-                            // table exists?
-                            if(!table.size()) {
-                                return;
-
-                                // try to find initialized table
-                                table = panel.find('table.dataTable');
-                                if(!table.size()) {
-                                    return;
-                                }
-                            }
-
-                            var fields = [];
-                            var dataTable;
-                            var request = {};
-                            if(panel.hasClass('own-queues')) {
-                                fields = ['id', 'created', 'status', 'uri'];
-                                request.type = 'own';
-                            } else if(panel.hasClass('all-queues')) {
-                                fields = ['id', 'created', 'username', 'status', 'uri'];
-                                request.type = 'all';
-                            }
-
-                            dataTable = self.openQueueList(fields, table, request);
-                            tabContainer.data('dataTable',dataTable);
-                            tabContainer.data('currentReloadInterval', setInterval(function () {
-                                dataTable.ajax.reload();
-                            }, self.queueRefreshDelay));
-                        }
-                    });
-
+                }else{
+                     return;
                 }
                 me.show();
                 this._getTemplateSize();
@@ -186,7 +119,6 @@
             if(this.popup){
                 this.element.hide().appendTo($('body'));
                 this._updateElements(false);
-		this.stopUpdateQueues();
                 if(this.popup.$element){
                     this.popup.destroy();
                 }
@@ -198,132 +130,6 @@
                 }
             }
             this.callback ? this.callback.call() : this.callback = null;
-        },
-
-        /**
-         * Stop update queue list
-         */
-        stopUpdateQueues: function () {
-            var tabContainer = this.tabContainer;
-            if(tabContainer.data('currentReloadInterval')) {
-                clearInterval(tabContainer.data('currentReloadInterval'));
-                tabContainer.data('currentReloadInterval', null);
-            }
-        },
-
-        openQueueList: function (fields, table, request) {
-            var self = this;
-            var assetBasePath = Mapbender.configuration.application.urls.asset;
-            var removeTitle = 'Auftrag löschen';
-            var openTitle = 'Öffnen';
-            var dataTable;
-
-            if(!request) {
-                request = {};
-            }
-
-            if(!table.data('firstInit')) {
-                var columns = [];
-
-                table.data('firstInit', true);
-                $.each(fields, function (i, name) {
-                    var column = {
-                        targets:   i,
-                        className: name,
-                        data:      name
-                    };
-
-                    switch (name) {
-                        case 'uri':
-                            column.sortable = false;
-                            column.searchable = false;
-                            column.render = function (val, type, row, meta) {
-                                if(type !== 'display') {
-                                    return val;
-                                }
-                                var link = '';
-                                if(row.status == 'ready') {
-                                    link += '<a href="' + assetBasePath + val + '" class="button pdf" target="' + val + '" title="' + openTitle + '"></a>';
-                                } else {
-                                    link += '<i class="progress"></i>';
-                                }
-                                link += '<a href="#" data-id="' + row.id + '" class="button critical remove" title="' + removeTitle + '"></a>'
-                                return link;
-                            };
-                            break;
-                        case 'created':
-                            column.render = function (val, type, row, meta) {
-                                if(type !== 'display') {
-                                    return val;
-                                }
-
-                                if(row.status != 'ready') {
-                                    val = row.queued;
-                                }
-
-                                var date = new Date(val * 1000);
-                                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-                            };
-                            break;
-                    }
-
-                    columns[i] = column;
-                })
-
-                function onButtonClick(e) {
-                    var button = $(e.currentTarget);
-                    if(button.hasClass('remove')) {
-                        var tr = button.closest('tr');
-                        tr.addClass('remove');
-                        button.closest('a').animate({height: "0px"}, 0);
-                        //self.stopUpdateQueues();
-                        tr.fadeOut(200, function () {
-                            self.removeQueue(button.data('id')).done(function(response){
-                                dataTable.ajax.reload();
-                            });
-                        })
-
-
-                    }
-                }
-
-                dataTable = table.DataTable({
-                    ajax:       {
-                        url: self.getBaseUrl() + '/queuelist',
-                        data: function (data) {
-                            return $.extend({}, data, request);
-                        },
-                        type: "POST"
-                    },
-                    paging:     false,
-                    searching:  false,
-                    info:       false,
-                    autoWidth:  false,
-                    order:      [0, 'desc'],
-                    columnDefs: columns
-                }).on('draw.dt', function () {
-                    table.find(' > tbody > tr > td > a').on('click', onButtonClick);
-                });
-            } else {
-                dataTable = table.DataTable();
-            }
-
-            return dataTable;
-        },
-
-        /**
-         * Remove print queue
-         *
-         * @param id
-         * @param onSuccess
-         * @returns jqXHR
-         */
-        removeQueue: function (id, onSuccess) {
-            return $.ajax({
-                url: this.getBaseUrl() + '/remove',
-                type: 'POST',
-                data: {id: id}
-            });
         },
 
         _setScale: function() {
@@ -699,7 +505,6 @@
             fields.appendTo(form.find('div#layers'));
 
             // Post in neuen Tab (action bei form anpassen)
-	    /*
             var url =  this.elementUrl + 'print';
 
             form.get(0).setAttribute('action', url);
@@ -712,51 +517,10 @@
                 // we click a hidden submit button to check the required fields
                 form.find('input[type="submit"]').click();
             }
-	    */
-
-            if(lyrCount === 0) {
-                Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
-                return;
-            }
 
             if(this.options.autoClose){
                 this.popup.close();
             }
-
-	    return this._isQueueMode() ? this._printQueued(form) : this._printDirect(form);
-        },
-
-	_isQueueMode: function () {
-            return !this.options.anonymous && this.options.renderMode == 'queued';
-        },
-
-        _printDirect: function (form) {
-            form.get(0).setAttribute('action', this.getPrintUrl());
-            form.attr('target', '_blank');
-            form.attr('method', 'post');
-            form.find('input[type="submit"]').click();
-            return form;
-        },
-
-        _printQueued: function (form) {
-            var el = this.element;
-            return $.ajax({
-                url:      Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/queued',
-                type:     'POST',
-                dataType: "json",
-                data:     form.serialize(),
-                success:  function (queueInfo) {
-                    el.trigger('queueCreated', queueInfo);
-                }
-            });
-        },
-
-        getPrintUrl: function () {
-            return this.getBaseUrl() + '/direct';
-        },
-
-        getBaseUrl: function () {
-            return Mapbender.configuration.application.urls.element + '/' + this.element.attr('id');
         },
 
         _changeAxis: function(layer) {
