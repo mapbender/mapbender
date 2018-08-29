@@ -121,7 +121,7 @@ class ProvideBrandingPass implements CompilerPassInterface
             'server_logo' => $logo,
         );
 
-        $fomParam = $container->hasParameter('fom') ? $container->getParameter('fom') : array();
+        $fomParam = static::getFomParameter($container);
         $mergedFomParam = array_replace($fomParam, $fomParamReplacements);
         $container->setParameter('fom', $mergedFomParam);
 
@@ -134,7 +134,7 @@ class ProvideBrandingPass implements CompilerPassInterface
         foreach ($twigMethodCalls as &$methodCall) {
             /** @see \Twig_Environment::addGlobal() */
             if ($methodCall[0] == 'addGlobal' && !empty($methodCall[1][0]) && $methodCall[1][0] == 'fom') {
-                $methodCall[1][1] = array_replace($methodCall[1][1], $mergedFomParam);
+                $methodCall[1][1] = array_replace($methodCall[1][1] ?: array(), $mergedFomParam);
                 $twigDefinition->setMethodCalls($twigMethodCalls);
                 $addGlobalMethodCallFound = true;
                 break;
@@ -151,6 +151,6 @@ class ProvideBrandingPass implements CompilerPassInterface
 
     public static function getFomParameter(ContainerInterface $container, $default = array())
     {
-        return $container->hasParameter('fom') ? $container->getParameter('fom') : $default;
+        return $container->hasParameter('fom') ? ($container->getParameter('fom') ?: $default) : $default;
     }
 }
