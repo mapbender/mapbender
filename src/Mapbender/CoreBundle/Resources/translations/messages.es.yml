@@ -38,7 +38,7 @@ mb:
         description: 'Campo de búsqueda sencillo en base JSON (e.g. Solr)'
       error:
         geometry:
-          missing: The selected entry does not contain a geometry.
+          missing: ~
     searchrouter:
       popup:
         btn:
@@ -74,7 +74,7 @@ mb:
       error:
         sourcenotavailable: 'Una fuente con id %id% no está habilitado'
       class:
-        title: 'Base source switcher'
+        title: ~
         Description: 'Change the map''s background sources'
       tag:
         base: base
@@ -111,7 +111,7 @@ mb:
         quality: Calidad
         scale: Escala
         rotation: Rotación
-        legend: __mb.core.printclient.label.legend
+        legend: ~
       popup:
         btn:
           ok: Imprimir
@@ -131,8 +131,8 @@ mb:
         jpg: jpg
         jpeg: jpeg
       btn:
-        deactivate: 'Deactivate Print Frame[Placeholder]'
-        activate: 'Activate Print Frame[Placeholder]'
+        deactivate: ~
+        activate: ~
     overview:
       nolayer: 'El elemento overview no tiene capa.'
       class:
@@ -198,10 +198,10 @@ mb:
         deleteallsources: 'Quitar todas las fuentes'
         legend: Leyenda
         kmlexport: 'Exportar Kml'
-        dimension_onoff: 'On/Off Dimension'
-        dimension: Dimension
-        sourcevisibility_onoff: 'Show sources'
-        allvisibility_on: 'Show all layers'
+        dimension_onoff: ~
+        dimension: ~
+        sourcevisibility_onoff: ~
+        allvisibility_on: ~
       class:
         title: 'Árbol de capa'
         description: 'Árbol de las capas del mapa'
@@ -210,7 +210,7 @@ mb:
         layer: capa
         tree: árbol
       contextmenu:
-        nooption: 'Layer has no context menu option'
+        nooption: ~
     zoombar:
       panup: 'Mover arriba'
       panright: 'Mover derecha'
@@ -294,7 +294,7 @@ mb:
         selector: selector
     srsselector:
       class:
-        title: 'SRS selector'
+        title: ~
         description: 'El selector del sistema de referencia espacial cambia el sistema de referecia espacial del mapa'
       tag:
         srs: SRS
@@ -315,14 +315,14 @@ mb:
         label:
           autoopen: Autoabrir
           deactivateonclose: 'Desactivar al cerrar'
-          showoriginal: 'Show original'
-          onlyvalid: 'Only valid'
+          showoriginal: ~
+          onlyvalid: ~
       printclient:
         label:
           autoopen: Autoabrir
-          rotatable: Rotatable
-          legend: 'Print legend'
-          legend_default_behaviour: 'Legend checkbox active'
+          rotatable: ~
+          legend: ~
+          legend_default_behaviour: ~
       copyright:
         label:
           autoopen: Autoabrir
@@ -332,54 +332,54 @@ mb:
           autoopen: Autoabrir
           showheader: 'Mostrar encabezado'
           showlayerremove: 'Mostrar quitar capa'
-          usetheme: 'Thematic layer'
-          themes: Themes
+          usetheme: ~
+          themes: ~
           theme:
             opened: opened
-            activate: 'Add activate'
-            useTheme: 'Theme show'
-            sourceVisibility: 'Theme: source visibility'
-            allSelected: 'Theme: layer visibility'
-            label: 'theme name'
-          hidenottoggleable: 'Hide not toggleable'
-          hideselect: 'Hide visibility by folders'
-          hideinfo: 'Hide info'
+            activate: ~
+            useTheme: ~
+            sourceVisibility: ~
+            allSelected: ~
+            label: ~
+          hidenottoggleable: ~
+          hideselect: ~
+          hideinfo: ~
       redlining:
         label:
-          auto_activate: Autoactivate
-          deactivate_on_close: 'Deactivate on close'
+          auto_activate: ~
+          deactivate_on_close: ~
     htmlelement:
       class:
-        title: Title
-        description: Description
+        title: ~
+        description: ~
       tag:
         html: html
     entity:
       app:
         screenshotfile:
-          error: 'Screenshotfile error'
+          error: ~
     redlining:
       geometrytype:
-        point: Point
-        line: Line
-        polygon: Polygon
-        rectangle: Rectangle
+        point: ~
+        line: ~
+        polygon: ~
+        rectangle: ~
         text:
-          title: Text
-          label: Text
+          title: ~
+          label: ~
           error:
-            notext: 'Text required'
+            notext: ~
       geometry:
         action:
-          remove: 'Remove geometry'
-          edit: 'Edit geometry'
-          zoom: 'Zoom to geometryoom'
+          remove: ~
+          edit: ~
+          zoom: ~
       dialog:
         btn:
-          cancel: Close
+          cancel: ~
       class:
-        title: Redlining
-        description: 'Redlining tool'
+        title: ~
+        description: ~
       tag:
         redlining: redlining
         geometry: geometry

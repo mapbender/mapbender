@@ -131,8 +131,8 @@ mb:
         jpg: jpg
         jpeg: jpeg
       btn:
-        deactivate: 'Deactivate Print Frame[Placeholder]'
-        activate: 'Activate Print Frame[Placeholder]'
+        deactivate: ~
+        activate: ~
     overview:
       nolayer: 'Обзор элемента не имеет слоя.'
       class:
