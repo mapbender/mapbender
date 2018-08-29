@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Mapbender\PrintBundle\Component\PrintService;
@@ -174,43 +175,12 @@ class PrintClient extends Element
      */
     public function httpAction($action)
     {
+        /** @var Request $request */
         $request = $this->container->get('request');
         $configuration = $this->getConfiguration();
         switch ($action) {
             case 'print':
-
-                $data = $request->request->all();
-
-                foreach ($data['layers'] as $idx => $layer) {
-                    $data['layers'][$idx] = json_decode($layer, true);
-                }
-
-                if (isset($data['overview'])) {
-                    foreach ($data['overview'] as $idx => $layer) {
-                        $data['overview'][$idx] = json_decode($layer, true);
-                    }
-                }
-
-                if (isset($data['features'])) {
-                    foreach ($data['features'] as $idx => $value) {
-                        $data['features'][$idx] = json_decode($value, true);
-                    }
-                }
-
-                if (isset($configuration['replace_pattern'])) {
-                    foreach ($configuration['replace_pattern'] as $idx => $value) {
-                        $data['replace_pattern'][$idx] = $value;
-                    }
-                }
-
-                if (isset($data['extent_feature'])) {
-                    $data['extent_feature'] = json_decode($data['extent_feature'], true);
-                }
-
-                if (isset($data['legends'])) {
-                    $data['legends'] = json_decode($data['legends'], true);
-                }
-
+                $data = $this->preparePrintData($request, $configuration);
                 $printservice = $this->getPrintService();
 
                 $displayInline = true;
@@ -253,5 +223,46 @@ class PrintClient extends Element
         $container = $this->container;
         $printServiceClassName = $container->getParameter('mapbender.print.service.class');
         return new $printServiceClassName($container);
+    }
+
+    /**
+     * @param Request $request
+     * @param mixed[] $configuration
+     * @return mixed[]
+     */
+    protected function preparePrintData(Request $request, $configuration)
+    {
+        $data = $request->request->all();
+
+        foreach ($data['layers'] as $idx => $layer) {
+            $data['layers'][$idx] = json_decode($layer, true);
+        }
+
+        if (isset($data['overview'])) {
+            foreach ($data['overview'] as $idx => $layer) {
+                $data['overview'][$idx] = json_decode($layer, true);
+            }
+        }
+
+        if (isset($data['features'])) {
+            foreach ($data['features'] as $idx => $value) {
+                $data['features'][$idx] = json_decode($value, true);
+            }
+        }
+
+        if (isset($configuration['replace_pattern'])) {
+            foreach ($configuration['replace_pattern'] as $idx => $value) {
+                $data['replace_pattern'][$idx] = $value;
+            }
+        }
+
+        if (isset($data['extent_feature'])) {
+            $data['extent_feature'] = json_decode($data['extent_feature'], true);
+        }
+
+        if (isset($data['legends'])) {
+            $data['legends'] = json_decode($data['legends'], true);
+        }
+        return $data;
     }
 }
