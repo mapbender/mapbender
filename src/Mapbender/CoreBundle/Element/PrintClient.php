@@ -3,7 +3,10 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
+use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Mapbender\PrintBundle\Component\PrintService;
@@ -174,43 +177,12 @@ class PrintClient extends Element
      */
     public function httpAction($action)
     {
+        /** @var Request $request */
         $request = $this->container->get('request');
         $configuration = $this->getConfiguration();
         switch ($action) {
             case 'print':
-
-                $data = $request->request->all();
-
-                foreach ($data['layers'] as $idx => $layer) {
-                    $data['layers'][$idx] = json_decode($layer, true);
-                }
-
-                if (isset($data['overview'])) {
-                    foreach ($data['overview'] as $idx => $layer) {
-                        $data['overview'][$idx] = json_decode($layer, true);
-                    }
-                }
-
-                if (isset($data['features'])) {
-                    foreach ($data['features'] as $idx => $value) {
-                        $data['features'][$idx] = json_decode($value, true);
-                    }
-                }
-
-                if (isset($configuration['replace_pattern'])) {
-                    foreach ($configuration['replace_pattern'] as $idx => $value) {
-                        $data['replace_pattern'][$idx] = $value;
-                    }
-                }
-
-                if (isset($data['extent_feature'])) {
-                    $data['extent_feature'] = json_decode($data['extent_feature'], true);
-                }
-
-                if (isset($data['legends'])) {
-                    $data['legends'] = json_decode($data['legends'], true);
-                }
-
+                $data = $this->preparePrintData($request, $configuration);
                 $printservice = $this->getPrintService();
 
                 $displayInline = true;
@@ -258,5 +230,101 @@ class PrintClient extends Element
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
         return "MapbenderCoreBundle:Element:printclient{$suffix}";
+    }
+
+    /**
+     * @param Request $request
+     * @param mixed[] $configuration
+     * @return mixed[]
+     */
+    protected function preparePrintData(Request $request, $configuration)
+    {
+        // @todo: define what data we support; do not simply process and forward everything
+        $data = $request->request->all();
+
+        $data['layers'] = $this->prepareLayerDefinitions($data['layers'], false);
+        if (isset($data['overview'])) {
+            $data['overview'] = $this->prepareLayerDefinitions($data['overview'], true);
+        }
+
+        if (isset($data['features'])) {
+            foreach ($data['features'] as $idx => $value) {
+                $data['features'][$idx] = json_decode($value, true);
+            }
+        }
+
+        if (isset($configuration['replace_pattern'])) {
+            foreach ($configuration['replace_pattern'] as $idx => $value) {
+                $data['replace_pattern'][$idx] = $value;
+            }
+        }
+
+        if (isset($data['extent_feature'])) {
+            $data['extent_feature'] = json_decode($data['extent_feature'], true);
+        }
+
+        if (isset($data['legends'])) {
+            $sourceLegendDefs = json_decode($data['legends'], true);
+            $processedLegendDefs = array();
+            foreach ($sourceLegendDefs as $index => $layerDefs) {
+                $processedSourceLegendDef = array();
+                foreach ($layerDefs as $layerTitle => $legendUrl) {
+                    try {
+                        $processedSourceLegendDef[$layerTitle] = $this->resolveTunnelUrl($legendUrl);
+                    } catch (SourceNotFoundException $e) {
+                        // tunnel URL but instance not in database (anymore); skip layer completely
+                        // @todo: log a warning?
+                    }
+                }
+                if ($processedSourceLegendDef) {
+                    $processedLegendDefs[] = $processedSourceLegendDef;
+                }
+            }
+            $data['legends'] = $processedLegendDefs;
+        }
+        return $data;
+    }
+
+    /**
+     * @param string[] $rawDefinitions json encoded!
+     * @param bool $ignoreType for Overview, which doesn't tell us what it wants
+     * @return array[]
+     */
+    protected function prepareLayerDefinitions($rawDefinitions, $ignoreType)
+    {
+        $definitionsOut = array();
+        foreach ($rawDefinitions as $idx => $layer) {
+            // @todo: remove JSON.stringify behaviour from client, remove json_decode here
+            $layerDef = json_decode($layer, true);
+            // @todo: other source types that can be tunneled?
+            if ($ignoreType || $layerDef['type'] == 'wms') {
+                if (!empty($layerDef['url'])) {
+                    try {
+                        $definitionsOut[] = array_replace($layerDef, array(
+                            'url' => $this->resolveTunnelUrl($layerDef['url']),
+                        ));
+                    } catch (SourceNotFoundException $e) {
+                        // tunnel URL but instance not in database (anymore); skip layer completely
+                        // @todo: log a warning?
+                    }
+                }
+            }
+        }
+        return $definitionsOut;
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    protected function resolveTunnelUrl($url)
+    {
+        /** @var InstanceTunnelService $tunnelService */
+        $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
+        $endPoint = $tunnelService->endpointFromUrl($url);
+        if (!$endPoint) {
+            return $url;
+        }
+        return $endPoint->getInternalUrl(Request::create($url), true);
     }
 }
