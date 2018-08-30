@@ -278,14 +278,12 @@ class PrintService extends ImageExportService
             $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
 
             if (!$rawImage) {
+
                 $logger->debug("ERROR! PrintRequest failed: " . $url);
                 $logger->debug($mapRequestResponse->getContent());
                 print_r('an error has occurred. see log for more details <br>');
                 print_r($mapRequestResponse->getContent());
-                foreach ($imageNames as $i => $imageName) {
-                    unlink($imageName);
-                }
-                exit;
+                continue;
             }
 
             if ($rawImage !== null) {
