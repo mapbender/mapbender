@@ -1,6 +1,7 @@
 <?php
 
 namespace Mapbender\CoreBundle\Component\Source\Tunnel;
+use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
@@ -89,13 +90,15 @@ class Endpoint
     public function getInternalUrl(Request $request, $appendQuery = false)
     {
         $baseUrl = $this->getInternalBaseUrl($request);
-        $params = $request->query->all();
-        if ($baseUrl && $appendQuery && $params) {
-            $finalUrl = UrlUtil::appendQueryParams($baseUrl, $params);
+        if ($appendQuery) {
+            $instHandler = SourceInstanceEntityHandler::createHandler($this->service->getContainer(), $this->instance);
+            $vendorSpec  = $instHandler->getSensitiveVendorSpecific();
+            /* replace vendorspecific parameters already explicitly given in GET */
+            $params = array_replace($vendorSpec, $request->query->all());
+            return UrlUtil::appendQueryParams($baseUrl, $params);
         } else {
-            $finalUrl = $baseUrl;
+            return $baseUrl;
         }
-        return $finalUrl;
     }
 
     /**

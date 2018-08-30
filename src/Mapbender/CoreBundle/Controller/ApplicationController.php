@@ -378,6 +378,7 @@ class ApplicationController extends Controller
         /* remove vendorspecific parameters explicitly given in GET */
         $vendorspec = array_diff_key($vendorspec, $request->query->all());
         /* overwrite vendorspecific parameters with received post parameters */
+        // @todo: remove redundant POST params; tunnel does not evaluate / support POSTable URLs for anything
         if (count($postParams)) {
             $postParams = array_merge($vendorspec, $postParams);
         }
@@ -395,7 +396,7 @@ class ApplicationController extends Controller
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
 
-        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $vendorspec, $postParams);
+        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, array(), $postParams);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response        = new Response();

@@ -5,7 +5,9 @@ namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Router;
 
 /**
  * Instance tunnel can both generate and evaluate requests / urls for WMS services that contain sensitive parameters
@@ -19,21 +21,37 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class InstanceTunnelService
 {
-    /** @var UrlGeneratorInterface */
+    /** @var Router */
     protected $router;
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
      * InstanceTunnel constructor.
-     * @param UrlGeneratorInterface $router
+     * @param Router $router
+     * @param ContainerInterface $container only used for VendorSpecifcHandler
+     *      @todo: resolve container dependency of SourceInstanteEntityHandler, then remove container dependency of this class
      */
-    public function __construct(UrlGeneratorInterface $router)
+    public function __construct(Router $router, ContainerInterface $container)
     {
         $this->router = $router;
+        $this->container = $container;
     }
 
     public function makeEndpoint(SourceInstance $instance)
     {
         return new Endpoint($this, $instance);
+    }
+
+    /**
+     * @return ContainerInterface
+     * @deprecated
+     * @internal  Only used by Endpoint to initialize a SourceInstanteEntityHandler to extract 'vendor specifics'
+     * @todo: resolve container dependency of VendorSpecificHandler
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 
     /**
@@ -48,7 +66,8 @@ class InstanceTunnelService
             'mapbender_core_application_instancetunnel',
             array(
                 'slug' => $endpoint->getApplicationEntity()->getSlug(),
-                'instanceId' => $endpoint->getSourceInstance()->getId()),
+                'instanceId' => $endpoint->getSourceInstance()->getId(),
+            ),
             UrlGeneratorInterface::ABSOLUTE_URL
         );
     }
