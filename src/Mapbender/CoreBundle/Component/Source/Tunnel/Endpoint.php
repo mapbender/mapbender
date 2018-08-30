@@ -1,10 +1,12 @@
 <?php
 
 namespace Mapbender\CoreBundle\Component\Source\Tunnel;
+use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,9 +82,29 @@ class Endpoint
      * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object)
      *
      * @param Request $request
+     * @param bool $appendQuery to add query params from Request; this is off by default for legacy reasons (GET
+     *     params were added in @see ApplicationController::instanceTunnelAction()
      * @return string
      */
-    public function getInternalUrl(Request $request)
+    public function getInternalUrl(Request $request, $appendQuery = false)
+    {
+        $baseUrl = $this->getInternalBaseUrl($request);
+        $params = $request->query->all();
+        if ($baseUrl && $appendQuery && $params) {
+            $finalUrl = UrlUtil::appendQueryParams($baseUrl, $params);
+        } else {
+            $finalUrl = $baseUrl;
+        }
+        return $finalUrl;
+    }
+
+    /**
+     * Gets the base url on the wms service that satisfies the given $request (=Symfony Http Request object)
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function getInternalBaseUrl(Request $request)
     {
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
 
@@ -94,6 +116,7 @@ class Endpoint
             case 'getlegendgraphic':
                 return $this->getInternalGetLegendGraphicUrl($request);
             default:
+                // @todo: throw?
                 return null;
         }
     }

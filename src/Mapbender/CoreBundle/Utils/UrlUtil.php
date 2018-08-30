@@ -62,4 +62,41 @@ class UrlUtil
         }
         return $newurl;
     }
+
+    /**
+     * Add more GET params onto the given $baseUrl (assumed to be already well-formed)
+     *
+     * @param string $baseUrl
+     * @param mixed[] $params
+     * @return string
+     */
+    public static function appendQueryParams($baseUrl, $params)
+    {
+        $formattedParams = array();
+        $addSingleParam = function(&$target, $k, $v) use (&$addSingleParam) {
+            if (is_array($v)) {
+                // we support repeats of the same param name
+                foreach ($v as $subValue) {
+                    $addSingleParam($target, $k, $subValue);
+                }
+            } else if ($v) {
+                $target[] = rawurlencode($k) . '=' . rawurlencode($v);
+            }
+        };
+        foreach ($params as $paramKey => $paramValue) {
+            $addSingleParam($formattedParams, $paramKey, $paramValue);
+        }
+        if ($formattedParams) {
+            $finalUrl = rtrim($baseUrl, '&?');
+            if (false === strpos($finalUrl, '?')) {
+                $finalUrl .= '?';
+            } else {
+                $finalUrl .= '&';
+            }
+            $finalUrl .= implode('&', $formattedParams);
+        } else {
+            $finalUrl = $baseUrl;
+        }
+        return $finalUrl;
+    }
 }

@@ -371,15 +371,13 @@ class ApplicationController extends Controller
         /** @var Request $request */
         $request = $this->get("request");
         $postParams  = $request->request->all();
-        $getParams   = $request->query->all();
         $user        = $source->getUsername() ? $source->getUsername() : null;
         $password    = $source->getUsername() ? $source->getPassword() : null;
         $instHandler = SourceInstanceEntityHandler::createHandler($this->container, $instance);
         $vendorspec  = $instHandler->getSensitiveVendorSpecific();
-        /* overwrite vendorspecific parameters from handler with get/post parameters */
-        if (count($getParams)) {
-            $getParams = array_merge($vendorspec, $getParams);
-        }
+        /* remove vendorspecific parameters explicitly given in GET */
+        $vendorspec = array_diff_key($vendorspec, $request->query->all());
+        /* overwrite vendorspecific parameters with received post parameters */
         if (count($postParams)) {
             $postParams = array_merge($vendorspec, $postParams);
         }
@@ -392,12 +390,12 @@ class ApplicationController extends Controller
         /** @var InstanceTunnelService $tunnelService */
         $tunnelService = $this->get('mapbender.source.instancetunnel.service');
         $instanceTunnel = $tunnelService->makeEndpoint($instance);
-        $url = $instanceTunnel->getInternalUrl($request);
+        $url = $instanceTunnel->getInternalUrl($request, true);
         if (!$url) {
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
 
-        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
+        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $vendorspec, $postParams);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response        = new Response();
