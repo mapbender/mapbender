@@ -274,7 +274,6 @@ class PrintService extends ImageExportService
             $mapRequestResponse = $this->mapRequest($url);
 
             $imageName    = $this->makeTempFile('mb_print');
-            $imageNames[] = $imageName;
             $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
 
             if (!$rawImage) {
@@ -282,10 +281,10 @@ class PrintService extends ImageExportService
                     'url' => $url,
                 ));
                 $logger->debug($mapRequestResponse->getContent());
+                unlink($imageName);
                 continue;
-            }
-
-            if ($rawImage !== null) {
+            } else {
+                $imageNames[] = $imageName;
                 $this->forceToRgba($imageName, $rawImage, $this->data['layers'][$i]['opacity']);
             }
         }
