@@ -41,10 +41,6 @@
         _onClick: function () {
             var $me = $(this.element);
 
-            if (this.options.click && (this.options.click.length > 0) && (this.options.click.charAt(0) === '#')) {
-                return;
-            }
-
             if (this.options.click) {
                 window.open(this.options.click, '_blank');
                 return;
