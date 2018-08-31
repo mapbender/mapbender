@@ -12,6 +12,7 @@
 
         active: false,
         button : null,
+        targetWidget: null,
 
         _create: function () {
             var self = this,
@@ -64,51 +65,70 @@
                 this.activate();
             }
         },
+        /**
+         * @returns {null|object} the target widget object (NOT the DOM node; NOT a jQuery selection)
+         * @private
+         */
+        _getTargetWidget: function() {
+            // Initialize only once, remember the result forever.
+            // This makes elements work that move around in / completely out of the DOM, either
+            // by themselves, or because they let certain popups mangle their DOM nodes.
+            if (this.targetWidget === null && this.options.target) {
+                var $target = $('#' + this.options.target);
+                var targetInit = Mapbender.configuration.elements[this.options.target].init;
+                var nameParts = targetInit.split('.');
+                if (nameParts.length === 1) {
+                    // This is a BC construct currently without known or conceivable use cases
+                    this.targetWidget = $target[nameParts];
+                } else {
+                    var namespace = nameParts[0];
+                    var innerName = nameParts[1];
+                    // widget data ends up in a key composed of
+                    // namespace, no dot, innerName with upper-cased first letter
+                    var dataKey = [namespace, innerName.charAt(0).toUpperCase(), innerName.slice(1)].join('');
+                    this.targetWidget = $target.data(dataKey);
+                }
+                if (!this.targetWidget) {
+                    console.warn("Could not identify target element", this.options.target, targetInit);
+                    // Avoid attempting this again
+                    // null: target widget not initialized; false: looked for target widget but got nothing
+                    this.targetWidget = false;
+                }
+            }
+            return this.targetWidget || null;
+        },
 
+        _callTarget: function(methodName, args) {
+            var target = this._getTargetWidget();
+            if (target) {
+                if (typeof target[methodName] === 'function') {
+                    target[methodName].apply(target, args || []);
+                    return true;
+                } else {
+                    console.error("Target widget", this.options.target, target, "does not have a callable method", methodName);
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        },
         activate: function () {
             this.active = true;
 
             if (this.options.target) {
-                var target = $('#' + this.options.target),
-                    widget = Mapbender.configuration.elements[this.options.target].init.split('.'),
-                    action = this.options.action;
-
+                this._callTarget(this.options.action || 'defaultAction', [this.reset.bind(this)]);
                 $(this.button).parent().addClass("toolBarItemActive");
-
-                if (!this.options.action) {
-                    action = "defaultAction";
-                }
-
-                if (widget.length === 1) {
-                    target[widget[0]](action, $.proxy(this.reset, this));
-                } else {
-                    var dataKey = widget[0] + widget[1].charAt(0).toUpperCase() + widget[1].slice(1);
-
-                    if (typeof target.data(dataKey)[action] === 'function') {
-                        target[widget[1]](action, $.proxy(this.reset, this));
-                    }
-                }
             }
-
             if (!this.options.group) {
                 this.deactivate();
             } else {
                 this.button.checked = true;
             }
         },
-
         deactivate: function () {
             $(this.button).parent().removeClass("toolBarItemActive");
-
             if (this.options.target && this.options.deactivate) {
-                var target = $('#' + this.options.target),
-                    widget = Mapbender.configuration.elements[this.options.target].init.split('.');
-
-                if (widget.length === 1) {
-                    target[widget[0]](this.options.deactivate);
-                } else {
-                    target[widget[1]](this.options.deactivate);
-                }
+                this._callTarget(this.options.deactivate);
             }
 
             if (this.active) {
@@ -119,7 +139,6 @@
                 this.button.checked = false;
             }
         },
-
         reset: function () {
             $(this.button).parent().removeClass("toolBarItemActive");
 
