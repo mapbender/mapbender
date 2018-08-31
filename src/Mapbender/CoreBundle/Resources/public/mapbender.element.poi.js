@@ -31,10 +31,6 @@
             if(this.options.gps) {
                 this.gpsElement = $('#' + this.options.gps);
             }
-
-            console.log(this.options);
-            console.log(this.options.gps);
-            console.log(this.gpsElement);
         },
 
         defaultAction: function() {
@@ -58,8 +54,6 @@
          * are extracted and then send to the mapClickWorker
          */
         _mapClickHandler: function(event) {
-            console.log(event);
-
             if(event && event.pageX && event.pageY) {
                 var x, y;
                 x = event.pageX - this.map.offset().left;
@@ -86,8 +80,6 @@
         _setPoiMarkerLayer: function(mbMap, coordinates, latLon) {
             var proj = this.mbMap.map.olMap.getProjectionObject();
             var deci = 0;
-            console.log("loc:");
-            console.log(latLon);
 
             if (!this.poiMarkerLayer) {
                 this.poiMarkerLayer = new OpenLayers.Layer.Markers();

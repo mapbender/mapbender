@@ -31,10 +31,6 @@
             var options = widget.options;
             var target = options.target;
 
-            console.log('target:'+ target);
-            console.log('element:'+ element);
-            console.log(element);
-
             if (!Mapbender.checkTarget("mbGpsPosition", target)) {
                 return;
             }
