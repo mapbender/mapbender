@@ -84,7 +84,7 @@ class Button extends Element
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/button.scss'));
     }
 
-    public function getPublicConfiguration()
+    public function getConfiguration()
     {
         $config = $this->entity->getConfiguration();
         if (!empty($config['click']) && 0 === strpos($config['click'], '#')) {
@@ -94,6 +94,11 @@ class Button extends Element
         } else {
             return $config;
         }
+    }
+
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return "MapbenderCoreBundle:Element:button{$suffix}";
     }
 
     /**

@@ -15,6 +15,12 @@
         targetWidget: null,
 
         _create: function () {
+            if (this.options.click) {
+                // this widget instance is superfluous, we rendered a link
+                // we can't really deactivate mapbender.initElement machinery
+                // so we still need to load the JS asset, and we still end up right here
+                return;
+            }
             var self = this,
                 option = {};
 
@@ -40,11 +46,6 @@
 
         _onClick: function () {
             var $me = $(this.element);
-
-            if (this.options.click) {
-                window.open(this.options.click, '_blank');
-                return;
-            }
 
             // If we're part of a group, deactivate all other actions in this group
             if (this.options.group) {
