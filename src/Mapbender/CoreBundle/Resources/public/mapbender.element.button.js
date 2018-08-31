@@ -11,8 +11,8 @@
         },
 
         active: false,
-        button : null,
         targetWidget: null,
+        $toolBarItem: null,
 
         _create: function () {
             if (this.options.click) {
@@ -24,7 +24,7 @@
             var self = this,
                 option = {};
 
-            this.button = this.element[0];
+            this.$toolBarItem = $(this.element).closest('.toolBarItem');
 
             if (this.options.icon) {
                 $.extend(option, {
@@ -35,11 +35,7 @@
                 });
             }
 
-            if (this.options.group) {
-                this.button.checked = false;
-            }
-
-            $(this.button)
+            $(this.element)
                 .on('click', $.proxy(self._onClick, self))
                 .on('mbButtonDeactivate', $.proxy(self.deactivate, self));
         },
@@ -49,8 +45,7 @@
 
             // If we're part of a group, deactivate all other actions in this group
             if (this.options.group) {
-                var others = $('input[type="checkbox"]')
-                    .filter('[name="mb-button-group[' + this.options.group + ']"]')
+                var others = $('.mb-button[data-group="' + this.options.group + '"]')
                     .not($me);
 
                 others.trigger('mbButtonDeactivate');
@@ -113,6 +108,9 @@
          * Calls 'activate' method on target if defined, and if in group, sets a visual highlight
          */
         activate: function () {
+            if (this.active) {
+                return;
+            }
             this.active = true;
 
             if (this.options.target) {
@@ -120,8 +118,7 @@
 
             }
             if (this.options.group) {
-                this.button.checked = true;
-                $(this.button).parent().addClass("toolBarItemActive");
+                this.$toolBarItem.addClass("toolBarItemActive");
             }
         },
         /**
@@ -138,15 +135,8 @@
          * Clears visual highlighting, marks inactive state
          */
         reset: function () {
-            $(this.button).parent().removeClass("toolBarItemActive");
-
-            if (this.active) {
-                this.active = false;
-            }
-
-            if (this.options.group) {
-                this.button.checked = false;
-            }
+            this.$toolBarItem.removeClass("toolBarItemActive");
+            this.active = false;
         }
     });
 
