@@ -112,33 +112,34 @@
                 return true;
             }
         },
+        /**
+         * Calls 'activate' method on target if defined, and if in group, sets a visual highlight
+         */
         activate: function () {
             this.active = true;
 
             if (this.options.target) {
                 this._callTarget(this.options.action || 'defaultAction', [this.reset.bind(this)]);
+
+            }
+            if (this.options.group) {
+                this.button.checked = true;
                 $(this.button).parent().addClass("toolBarItemActive");
             }
-            if (!this.options.group) {
-                this.deactivate();
-            } else {
-                this.button.checked = true;
-            }
         },
+        /**
+         * Clears visual highlighting, marks inactive state and
+         * calls 'deactivate' method on target (if defined)
+         */
         deactivate: function () {
-            $(this.button).parent().removeClass("toolBarItemActive");
+            this.reset();
             if (this.options.target && this.options.deactivate) {
                 this._callTarget(this.options.deactivate);
             }
-
-            if (this.active) {
-                this.active = false;
-            }
-
-            if (this.options.group) {
-                this.button.checked = false;
-            }
         },
+        /**
+         * Clears visual highlighting, marks inactive state
+         */
         reset: function () {
             $(this.button).parent().removeClass("toolBarItemActive");
 
