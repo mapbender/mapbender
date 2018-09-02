@@ -295,19 +295,8 @@ abstract class Element
     }
 
     /**
-     * Get the element assets.
-     *
-     * Returns an array of references to asset files of the given type.
-     * Assets are grouped by css and javascript.
-     * References can either be filenames/path which are searched for in the
-     * Resources/public directory of the element's bundle or assetic references
-     * indicating the bundle to search in:
-     *
-     * array(
-     *   'foo.css'),
-     *   '@MapbenderCoreBundle/Resources/public/foo.css'));
-     *
-     * @return array
+     * @return string[][]
+     * @deprecated less useful form of getAssets, which you should implement instead
      */
     public static function listAssets()
     {
@@ -315,13 +304,20 @@ abstract class Element
     }
 
     /**
-     * Get the element assets.
+     * Should return 2D array of asset references required by this Element to function.
+     * Top-level keys are 'css', 'js', 'trans' (all optional). Within 'css' and 'js' subarrays, you can use
+     * a) implicit bundle asset reference (based on concrete class namespace)
+     *     'css/element.css'   => resolves to <web>/bundles/mapbendercore/css/element.css
+     * b) explicit bundle asset reference
+     *     '@MapbenderWmsBundle/Resources/public/css/element/something.js'
+     * c) web-relative asset reference
+     *     '/components/select2/select2-built.css
      *
-     * This should be a subset of the static function listAssets. Assets can be
-     * removed from the overall list depending on the configuration for
-     * example. By default, the same list as by listAssets is returned.
+     * The 'trans' sub-array should contain exclusively twig-style asset references (with ':' separators)
+     *      to json.twig files. E.g.
+     *     'MapbenderPrintBundle:Element:imageexport.json.twig'
      *
-     * @return array
+     * @return string[][] grouped asset references
      */
     public function getAssets()
     {
