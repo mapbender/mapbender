@@ -26,7 +26,7 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  *
  * @author Christian Wygoda
  */
-class Application
+class Application implements IAssetDependent
 {
     /**
      * @var ContainerInterface $container The container
@@ -153,7 +153,7 @@ class Application
      *
      * @return array
      */
-    public static function listAssets()
+    public function getAssets()
     {
         return array(
             'js'    => array(
@@ -171,13 +171,13 @@ class Application
     }
 
     /**
-     * Get the assets as an AsseticCollection.
+     * Get the list of asset paths of the given type ('css', 'js', 'trans')
      * Filters can be applied later on with the ensureFilter method.
      *
-     * @param string $type Can be 'css' or 'js' to indicate which assets to dump
-     * @return array
+     * @param string $type use 'css' or 'js' or 'trans'
+     * @return string[]
      */
-    public function getAssets($type)
+    public function getAssetGroup($type)
     {
         if (!\in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \RuntimeException('Asset type \'' . $type .
@@ -189,7 +189,7 @@ class Application
         $assets            = array();
         $templating        = $this->container->get('templating');
 
-        $ownAssets = $this->listAssets();
+        $ownAssets = $this->getAssets();
         if (!empty($ownAssets[$type])) {
             $assets = array_merge($assets, $ownAssets[$type]);
         }
@@ -355,6 +355,7 @@ class Application
      * and the filename/path within that bundles Resources/public folder.
      *
      * @todo: This is duplicated in DumpMapbenderAssetsCommand
+     * @todo: the AssetFactory should do the ref collection and Bundle => path resolution
      *
      * @param object $object
      * @param string $file
