@@ -67,7 +67,7 @@
           }
         }
       }
-      > label, > span {
+      > label, > span, > a span {
         margin-bottom: 0;
         &:hover{
           &:before{
@@ -246,6 +246,9 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
         }
       }
     }
+  }
+  .toolBar a.mb-button {
+    color: inherit;
   }
 }
 
