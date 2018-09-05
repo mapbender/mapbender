@@ -6,13 +6,21 @@
   - Fix service loading error on DNS / routing error in Xml validation
   - Fix invalid markup in about_dialog.html.twig
   - Fix Redlining functionality on second activation in 'dialog' mode (issue #995)
-  - Pre-mark 3.0.8 deprecations:
+  - [Framework] Extend runtime extension of SRS definitions with preliminiary support for proj4js 2.x
+  - [Framework] Provide global boolean Javascript value `Mapbender.configuration.application.debug` to check for `app_dev` environment
+  - [Framework] Pre-calculate internal layer attributes `id` and `origId` and source attribute `origId` server-side
+  - [Framework] New optional widget [mbCheckbox](https://github.com/mapbender/mapbender/blob/eca5cd66296f539945802c4f5d048c4adbabb739/src/Mapbender/CoreBundle/Resources/public/widgets/mapbender.checkbox.js) as a replacement for FOM's `initCheckbox`
+  - [Console debugging] Check / provide appropriate message if Element widget constructor or widget namespace do not exist
+  - [Console debugging] Show original stack trace of widget initialization error instead of new stack trace truncated to Mapbender.setup
+  - [Deprecation] pre-mark 3.0.8 removal:
     * Element::listAsset
     * HTMLElement::isAssoc
     * HTMLElement::prepareItems
     * vis-ui.js support in HTMLElement Javascript  
 
     See c45b0d00dd17d7e3d62dd1acf2106ff81c4fce8d
+   - [Removed] unused asset `mapbender.application.json.js`
+   - [Misc] merge Github issue templates from master
 
 * **v3.0.7.4**
   - [Security] Fix potential XSS vector in applicationAssetsAction
