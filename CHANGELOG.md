@@ -1,5 +1,19 @@
 # Changelog
 
+* **dev-release/3.0.7**
+  - Print: skip Wms layers where the service response can't be fetched or is invalid.
+    Log a warning and continue printing the remaining layers normally (PR #987, PR #1013)
+  - Fix service loading error on DNS / routing error in Xml validation
+  - Fix invalid markup in about_dialog.html.twig
+  - Fix Redlining functionality on second activation in 'dialog' mode (issue #995)
+  - Pre-mark 3.0.8 deprecations:
+    * Element::listAsset
+    * HTMLElement::isAssoc
+    * HTMLElement::prepareItems
+    * vis-ui.js support in HTMLElement Javascript  
+
+    See c45b0d00dd17d7e3d62dd1acf2106ff81c4fce8d
+
 * **v3.0.7.4**
   - [Security] Fix potential XSS vector in applicationAssetsAction
   - [Regression fix] restore compatibility with Internet Explorer 11
