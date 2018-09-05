@@ -1,24 +1,23 @@
 # Changelog
 
-* **dev-release/3.0.7**
+* **dev-release/3.0.7** @ 85a4ef83843adb0ac76ceb2936c0dcb4efde5a54
   - Print: skip Wms layers where the service response can't be fetched or is invalid.
-    Log a warning and continue printing the remaining layers normally (PR #987, PR #1013)
+    Log a warning and continue printing the remaining layers normally ([PR#987](https://github.com/mapbender/mapbender/pull/987), [PR#1013](https://github.com/mapbender/mapbender/pull/1013))
   - Fix service loading error on DNS / routing error in Xml validation
   - Fix invalid markup in about_dialog.html.twig
-  - Fix Redlining functionality on second activation in 'dialog' mode (issue #995)
+  - Fix Button interactions with dialog-type Elements ([PR#1019](https://github.com/mapbender/mapbender/pull/1019))
+  - Fix Redlining functionality on second activation in 'dialog' mode ([Issue #995](https://github.com/mapbender/mapbender/issues/955))
   - [Framework] Extend runtime extension of SRS definitions with preliminiary support for proj4js 2.x
   - [Framework] Provide global boolean Javascript value `Mapbender.configuration.application.debug` to check for `app_dev` environment
   - [Framework] Pre-calculate internal layer attributes `id` and `origId` and source attribute `origId` server-side
   - [Framework] New optional widget [mbCheckbox](https://github.com/mapbender/mapbender/blob/eca5cd66296f539945802c4f5d048c4adbabb739/src/Mapbender/CoreBundle/Resources/public/widgets/mapbender.checkbox.js) as a replacement for FOM's `initCheckbox`
   - [Console debugging] Check / provide appropriate message if Element widget constructor or widget namespace do not exist
   - [Console debugging] Show original stack trace of widget initialization error instead of new stack trace truncated to Mapbender.setup
-  - [Deprecation] pre-mark 3.0.8 removal:
+  - [Deprecation] [pre-mark 3.0.8 removals](https://github.com/mapbender/mapbender/commit/c45b0d00dd17d7e3d62dd1acf2106ff81c4fce8d):
     * Element::listAsset
     * HTMLElement::isAssoc
     * HTMLElement::prepareItems
-    * vis-ui.js support in HTMLElement Javascript  
-
-    See c45b0d00dd17d7e3d62dd1acf2106ff81c4fce8d
+    * vis-ui.js support in HTMLElement Javascript
    - [Removed] unused asset `mapbender.application.json.js`
    - [Misc] merge Github issue templates from master
 
