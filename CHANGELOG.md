@@ -7,6 +7,7 @@
   - Fix invalid markup in about_dialog.html.twig
   - Fix Button interactions with dialog-type Elements ([PR#1019](https://github.com/mapbender/mapbender/pull/1019))
   - Fix Redlining functionality on second activation in 'dialog' mode ([Issue #995](https://github.com/mapbender/mapbender/issues/955))
+  - Fix POI opening additional dialogs on every button click
   - [Framework] Extend runtime extension of SRS definitions with preliminiary support for proj4js 2.x
   - [Framework] Provide global boolean Javascript value `Mapbender.configuration.application.debug` to check for `app_dev` environment
   - [Framework] Pre-calculate internal layer attributes `id` and `origId` and source attribute `origId` server-side
