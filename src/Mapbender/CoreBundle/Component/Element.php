@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
@@ -689,6 +690,8 @@ abstract class Element
      * @param bool|null $inherit allow inheriting template names from parent class, excluding the (abstract)
      *                  Element class itself; null (default) for auto-decide (blacklist controlled)
      * @return string twig-style Bundle:Section:file_name.ext
+     * @deprecated this entire machinery is only relevant to mapbender/data-source::BaseElement and will
+     *    be moved there; each Element should declare its admin template explicitly to facilitate usage searches
      */
     public static function getAutomaticTemplatePath($suffix = '.html.twig', $resourceSection = null, $inherit = null)
     {
@@ -697,7 +700,7 @@ abstract class Element
         }
 
         if ($inherit) {
-            $cls = static::getNonAbstractBaseClassName();
+            $cls = ClassUtil::getBaseClass(get_called_class(), __CLASS__, false);
         } else {
             $cls = get_called_class();
         }
@@ -721,6 +724,8 @@ abstract class Element
      * @param bool|null $inherit allow inheriting admin type from parent class, excluding the (abstract)
      *                  Element class itself; null (default) for auto-decide (blacklist controlled)
      * @return string
+     * @deprecated this entire machinery is only relevant to mapbender/data-source::BaseElement and will
+     *    be moved there; each Element should declare its admin type explicitly to facilitate usage searches
      */
     public static function getAutomaticAdminType($inherit = null)
     {
@@ -728,7 +733,7 @@ abstract class Element
             return static::getAutomaticAdminType(static::autoDetectInheritanceRule());
         }
         if ($inherit) {
-            $cls = static::getNonAbstractBaseClassName();
+            $cls = ClassUtil::getBaseClass(get_called_class(), __CLASS__, false);
         } else {
             $cls = get_called_class();
         }
@@ -745,25 +750,12 @@ abstract class Element
      * Walk up through the class hierarchy and return the name of the first-generation child class immediately
      * inheriting from the abstract Element.
      *
-     * @todo: location
-     *
      * @return string fully qualified class name
+     * @deprecated use ClassUtil::getBaseClass directly
      */
     protected static function getNonAbstractBaseClassName()
     {
-        $nonAbstractBase = get_called_class();
-        $abstractRoot = __CLASS__;      // == "Mapbender\CoreBundle\Component\Element"
-        while (is_subclass_of($nonAbstractBase, $abstractRoot, true)) {
-            $parentClass = get_parent_class($nonAbstractBase);
-            if (is_subclass_of($parentClass, $abstractRoot, true)) {
-                // parent is still not abstract, good to delegate calls to
-                $nonAbstractBase = $parentClass;
-            } else {
-                // we're down all the way, next parent is now the abstract Element
-                break;
-            }
-        }
-        return $nonAbstractBase;
+        return ClassUtil::getBaseClass(get_called_class(), __CLASS__, false);
     }
 
     /**
@@ -776,8 +768,10 @@ abstract class Element
      * Otherwise we do.
      *
      * @return bool
+     * @deprecated this entire machinery is only relevant to mapbender/data-source::BaseElement and will
+     *    be moved there
      */
-    protected static function autodetectInheritanceRule()
+    protected static function autoDetectInheritanceRule()
     {
         $inheritanceBlacklist = array(
             'Mapbender\DataSourceBundle\Element\BaseElement',
