@@ -13,6 +13,9 @@
         active: false,
         targetWidget: null,
         $toolBarItem: null,
+        /** initialized to true if button can determine target's active state and remember its own active state */
+        stateful: null,
+        actionMethods: {},
 
         _create: function () {
             if (this.options.click) {
@@ -51,17 +54,17 @@
                 others.trigger('mbButtonDeactivate');
             }
 
-            if (this.active) {
-                this.deactivate();
-            } else {
+            if (!this.stateful || !this.active) {
                 this.activate();
+            } else {
+                this.deactivate();
             }
         },
         /**
          * @returns {null|object} the target widget object (NOT the DOM node; NOT a jQuery selection)
          * @private
          */
-        _getTargetWidget: function() {
+        _initializeTarget: function() {
             // Initialize only once, remember the result forever.
             // This makes elements work that move around in / completely out of the DOM, either
             // by themselves, or because they let certain popups mangle their DOM nodes.
@@ -80,42 +83,54 @@
                     var dataKey = [namespace, innerName.charAt(0).toUpperCase(), innerName.slice(1)].join('');
                     this.targetWidget = $target.data(dataKey);
                 }
-                if (!this.targetWidget) {
+                if (this.targetWidget) {
+                    this.actionMethods = {
+                        activate: null,
+                        deactivate: null
+                    };
+                    var activateAction = this.options.action || 'defaultAction';
+                    var deactivateAction = this.options.deactivate;
+                    if (activateAction) {
+                        if (typeof this.targetWidget[activateAction] === 'function') {
+                            this.actionMethods.activate = this.targetWidget[activateAction].bind(this.targetWidget, this.reset.bind(this));
+                        } else {
+                            console.error("Target widget", this.options.target, this.targetWidget,
+                                          "does not have a callable method", activateAction);
+                        }
+                    }
+                    if (deactivateAction) {
+                        if (typeof this.targetWidget[deactivateAction] === 'function') {
+                            this.actionMethods.deactivate = this.targetWidget[deactivateAction].bind(this.targetWidget);
+                        } else{
+                            console.error("Target widget", this.options.target, this.targetWidget,
+                                          "does not have a callable method", deactivateAction);
+                        }
+                    }
+                    // If we do not have a deactivate method we have no way to turn the target off, even if we
+                    // can turn it on. This makes internal active state tracking becomes meaningless. We should treat
+                    // every click as an 'activate' action.
+                    this.stateful = !!this.actionMethods.deactivate;
+                } else {
                     console.warn("Could not identify target element", this.options.target, targetInit);
                     // Avoid attempting this again
                     // null: target widget not initialized; false: looked for target widget but got nothing
                     this.targetWidget = false;
+                    this.stateful = false;
                 }
             }
             return this.targetWidget || null;
-        },
-
-        _callTarget: function(methodName, args) {
-            var target = this._getTargetWidget();
-            if (target) {
-                if (typeof target[methodName] === 'function') {
-                    target[methodName].apply(target, args || []);
-                    return true;
-                } else {
-                    console.error("Target widget", this.options.target, target, "does not have a callable method", methodName);
-                    return false;
-                }
-            } else {
-                return true;
-            }
         },
         /**
          * Calls 'activate' method on target if defined, and if in group, sets a visual highlight
          */
         activate: function () {
-            if (this.active) {
+            if (this.stateful && this.active) {
                 return;
             }
-            this.active = true;
-
-            if (this.options.target) {
-                this._callTarget(this.options.action || 'defaultAction', [this.reset.bind(this)]);
-
+            this._initializeTarget();
+            if (this.actionMethods.activate) {
+                (this.actionMethods.activate)();
+                this.active = this.stateful;
             }
             if (this.options.group) {
                 this.$toolBarItem.addClass("toolBarItemActive");
@@ -127,8 +142,10 @@
          */
         deactivate: function () {
             this.reset();
-            if (this.options.target && this.options.deactivate) {
-                this._callTarget(this.options.deactivate);
+            this._initializeTarget();
+            if (this.actionMethods.deactivate) {
+                (this.actionMethods.deactivate)();
+                this.active = false;
             }
         },
         /**
