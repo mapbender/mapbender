@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\Component\BundleUtil;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\ManagerBundle\Component\Mapper;
@@ -704,12 +705,12 @@ abstract class Element
         } else {
             $cls = get_called_class();
         }
-        $classParts = explode('\\', $cls);
-        $nameWithoutNamespace = implode('', array_slice($classParts, -1));
+        $bundleName = BundleUtil::extractBundleNameFromClassName($cls);
+        $postBundleNamespaceParts = explode('\\', BundleUtil::getNameInsideBundleNamespace($cls));
+        $nameWithoutNamespace = implode('', array_slice($postBundleNamespaceParts, -1));
 
-        $bundleName = implode('', array_slice($classParts, 0, 2));  // e.g. "Mapbender" . "CoreBundle"
-        $resourceSection = $resourceSection ?: "Element"; // $classParts[2];
-        $resourcePathParts = array_slice($classParts, 3, -1);   // subfolder under section, often empty
+        $resourceSection = $resourceSection ?: "Element";
+        $resourcePathParts = array_slice($postBundleNamespaceParts, 1, -1);   // subfolder under section, often empty
         $resourcePathParts[] = static::getTemplateName($nameWithoutNamespace);
 
         return "{$bundleName}:{$resourceSection}:" . implode('/', $resourcePathParts) . $suffix;
