@@ -2,7 +2,113 @@
 
 var Mapbender = Mapbender || {};
 
-Mapbender.ElementRegistry = function(){
+Mapbender.ElementRegistry = (function($){
+    'use strict';
+    function ElementRegistry() {
+        this.classIndex = {};
+        this.idIndex = {};
+        this.promises = [];
+    }
+    ElementRegistry.prototype.getPromises_ = function (ident) {
+        var bundle;
+        if (ident.length > 1 && ident[0] === '.') {
+            var candidates = this.classIndex[ident.slice(1)];
+            if (candidates && candidates.length) {
+                /** @todo: find a clean API to support multiple matches */
+                bundle = this.promises[candidates[0]];
+            } else {
+                // element not yet registered
+                // scan the DOM and retry by id, with the caveat that we can still only support a single match
+                var $el = $(ident + '[id]');
+                if (!$el.get(0)) {
+                    throw new Error("Element " + ident + " not found");
+                }
+                return this.getPromises_($el.get(0).id);
+            }
+        } else {
+            // force string id, no leading hash
+            var id = ('' + ident).replace(/^#*/, '');
+            if (typeof this.idIndex[id] !== 'undefined') {
+                bundle = this.promises[this.idIndex[id]];
+            } else {
+                // both unresolved, created will be resolved by register,
+                // ready will be resolved by ready event
+                bundle = {
+                    offset: this.promises.length,
+                    created: $.Deferred(),
+                    ready: $.Deferred()
+                };
+                this.idIndex[id] = bundle.offset;
+                this.promises.push(bundle);
+            }
+        }
+        return bundle;
+    };
+    /**
+     * @param {Object} instance
+     * @param {jQuery} $node
+     * @param {string|int} ident
+     * @param {string|boolean} readyEvent false if already ready
+     */
+    ElementRegistry.prototype.register = function register(instance, ident, $node, readyEvent) {
+        var classNames = ($node.attr('class') || '').split(/\s+/);
+        var mbClasses = _.uniq(classNames.filter(function(c) {
+            return !!c.match(/^mb-element-/);
+        }));
+        var promiseBundle = this.getPromises_(ident);
+        if (readyEvent) {
+            $node.one(readyEvent, function() {
+                promiseBundle.ready.resolveWith(null, [instance]);
+            });
+        } else {
+            promiseBundle.ready.resolveWith(null, [instance]);
+        }
+        // creation is always resolved on register
+        promiseBundle.created.resolveWith(null, [instance]);
+        for (var i = 0; i < mbClasses.length; ++i) {
+            var nextClass = mbClasses[i];
+            if (!this.classIndex[nextClass]) {
+                this.classIndex[nextClass] = [];
+            }
+            this.classIndex[nextClass].push(promiseBundle.offset);
+        }
+    };
+    /**
+     * @param {string} ident id (leading hash optional) or class name (leading '.' required)
+     * @returns {Promise|null}
+     */
+    ElementRegistry.prototype.waitCreated = function(ident) {
+        return this.getPromises_(ident).created || null;
+    };
+    /**
+     * @param {string} ident id (leading hash optional) or class name (leading '.' required)
+     * @returns {Promise|null}
+     */
+    ElementRegistry.prototype.waitReady = function(ident) {
+        return this.getPromises_(ident).ready || null;
+    };
+    ElementRegistry.prototype.markFailed = function(ident) {
+        var bundle = this.getPromises_(ident);
+        bundle.ready.reject();
+        bundle.created.reject();
+    };
+    ElementRegistry.prototype.onElementReady = function(targetId, callback) {
+        return this.waitReady(targetId).then(callback);
+    };
+    ElementRegistry.prototype.listWidgets = function() {
+        var data = {};
+        $('.mb-element').each(function(i, el) {
+            _.assign(data, $(el).data());
+        });
+        return data;
+    };
+    return ElementRegistry;
+}(jQuery));
+
+
+
+
+Mapbender.NotAnymoreElementRegistry = function(){
     var registry = this;
     registry.readyElements = {};
     registry.readyCallbacks = {};
@@ -81,25 +187,18 @@ Mapbender.initElement = function(id, data) {
 
     var mapbenderWidget = mapbenderWidgets[widgetName];
     if (!mapbenderWidget) {
+        Mapbender.elementRegistry.markFailed(id);
         throw new Error("No such widget " + data.init);
     }
-
-    // Register for ready event to operate ElementRegistry
+    var immediatelyReady = [];
     widgetElement.one(readyEvent, function(event) {
-        var elements = Mapbender.configuration.elements;
-        for (var i in elements) {
-            var conf = elements[i];
-            var widget = conf.init.split('.');
-            var widgetName = widget[1];
-            var readyEvent = widgetName.toLowerCase() + 'ready';
-            if(readyEvent === event.type) {
-                Mapbender.elementRegistry.onElementReady(i, true);
-            }
+        if (event.type === readyEvent) {
+            // element ready before even registering!
+            immediatelyReady.push(true);
         }
     });
-
-    // Initialize element
-    mapbenderWidget(data.configuration, widgetId);
+    var instance = mapbenderWidget(data.configuration, widgetId);
+    Mapbender.elementRegistry.register(instance, widgetId, widgetElement, (!immediatelyReady.length) && readyEvent);
 };
 
 Mapbender.source = Mapbender.source || {};
