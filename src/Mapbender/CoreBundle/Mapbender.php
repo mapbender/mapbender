@@ -69,6 +69,7 @@ class Mapbender
             }
 
             $this->elements           = array_merge($this->elements, $bundle->getElements());
+            /** Here's reason 1 why getLayers is deprecated: its return value is basically discared (wrong attribute) */
             $this->layer              = array_merge($this->layers, $bundle->getLayers());
             $this->templates          = array_merge($this->templates, $bundle->getTemplates());
             $this->repositoryManagers = array_merge($this->repositoryManagers, $bundle->getRepositoryManagers());
@@ -99,12 +100,12 @@ class Mapbender
     }
 
     /**
-     * Get list of all declared layer classes.
-     *
-     * Layer classes need to be declared in each bundle's main class getLayers
-     * method.
+     * Get an empty array.
      *
      * @return array
+     * @internal
+     * @deprecated to be removed in 3.0.8
+     *   Return value is always empty, method is not called from anywhere
      */
     public function getLayers()
     {

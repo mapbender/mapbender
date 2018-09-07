@@ -1,6 +1,7 @@
 <?php
 
-namespace Mapbender\IntrospectionBundle\Utils;
+namespace Mapbender\Component;
+
 
 class BundleUtil
 {
@@ -9,11 +10,23 @@ class BundleUtil
      *
      * @param string $className
      * @return string
+     * @throws \RuntimeException if matching fails
      */
     public static function extractBundleNamespace($className)
     {
-        $classNameParts = explode('\\', $className);
-        return implode('\\', array_slice($classNameParts, 0, 2));
+        $parts = array();
+        $matched = false;
+        foreach (explode('\\', $className) as $part) {
+            $parts[] = $part;
+            if (preg_match('#Bundle$#', $part)) {
+                $matched = true;
+                break;
+            }
+        }
+        if (!$matched) {
+            throw new \RuntimeException("No namespace fragment of class name " . var_export($className, true) . " matches 'Bundle$'");
+        }
+        return implode('\\', $parts);
     }
 
     /**
@@ -22,11 +35,13 @@ class BundleUtil
      *
      * @param string $className
      * @return string
+     * @throws \RuntimeException if matching fails
      */
     public static function extractBundleNameFromClassName($className)
     {
-        $classNameParts = explode('\\', $className);
-        return implode('', array_slice($classNameParts, 0, 2));
+        $namespaceParts = explode('\\', static::extractBundleNamespace($className));
+        // convention alert: fuse last two parts
+        return implode('', array_slice($namespaceParts, -2));
     }
 
     /**
@@ -52,5 +67,18 @@ class BundleUtil
     public static function extractBundleNameFromResourcePath($resourcePath)
     {
         return static::extractBundleNameFromTemplatePath(ltrim($resourcePath, '@'));
+    }
+
+    /**
+     * Returns the remaining class path inside the auto-detected bundle namespace
+     * 'Mapbender\ExampleBundle\Extensive\Sub\Namespace\Class' => 'Extensive\Sub\Namespace\Class'
+     *
+     * @param $className
+     * @return bool|string
+     * @throws \RuntimeException if bundle matching fails
+     */
+    public static function getNameInsideBundleNamespace($className)
+    {
+        return substr($className, strlen(static::extractBundleNamespace($className)) + 1);
     }
 }
