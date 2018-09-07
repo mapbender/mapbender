@@ -292,10 +292,19 @@ class PrintClient extends Element
      */
     protected function prepareLayerDefinitions($rawDefinitions, $ignoreType)
     {
+        if (is_string($rawDefinitions)) {
+            $rawDefinitions = json_decode($rawDefinitions, true);
+        }
         $definitionsOut = array();
         foreach ($rawDefinitions as $idx => $layer) {
             // @todo: remove JSON.stringify behaviour from client, remove json_decode here
-            $layerDef = json_decode($layer, true);
+            if (is_string($layer)) {
+                $layerDef = json_decode($layer, true);
+            } elseif (is_array($layer)) {
+                $layerDef = $layer;
+            } else {
+                throw new \InvalidArgumentException("Unsupported layer data type");
+            }
             // @todo: other source types that can be tunneled?
             if ($ignoreType || $layerDef['type'] == 'wms') {
                 if (!empty($layerDef['url'])) {
