@@ -242,9 +242,9 @@ class PrintClient extends Element
         // @todo: define what data we support; do not simply process and forward everything
         $data = $request->request->all();
 
-        $data['layers'] = $this->prepareLayerDefinitions($data['layers'], false);
+        $data['layers'] = $this->prepareLayerDefinitions($data['layers']);
         if (isset($data['overview'])) {
-            $data['overview'] = $this->prepareLayerDefinitions($data['overview'], true);
+            $data['overview'] = $this->prepareLayerDefinitions($data['overview']);
         }
 
         if (isset($data['features'])) {
@@ -290,7 +290,7 @@ class PrintClient extends Element
      * @param bool $ignoreType for Overview, which doesn't tell us what it wants
      * @return array[]
      */
-    protected function prepareLayerDefinitions($rawDefinitions, $ignoreType)
+    protected function prepareLayerDefinitions($rawDefinitions)
     {
         if (is_string($rawDefinitions)) {
             $rawDefinitions = json_decode($rawDefinitions, true);
@@ -306,17 +306,18 @@ class PrintClient extends Element
                 throw new \InvalidArgumentException("Unsupported layer data type");
             }
             // @todo: other source types that can be tunneled?
-            if ($ignoreType || $layerDef['type'] == 'wms') {
-                if (!empty($layerDef['url'])) {
-                    try {
-                        $definitionsOut[] = array_replace($layerDef, array(
-                            'url' => $this->resolveTunnelUrl($layerDef['url']),
-                        ));
-                    } catch (SourceNotFoundException $e) {
-                        // tunnel URL but instance not in database (anymore); skip layer completely
-                        // @todo: log a warning?
-                    }
+            if (!empty($layerDef['url'])) {
+                try {
+                    $definitionsOut[] = array_replace($layerDef, array(
+                        'url' => $this->resolveTunnelUrl($layerDef['url']),
+                    ));
+                } catch (SourceNotFoundException $e) {
+                    // tunnel URL but instance not in database (anymore); skip layer completely
+                    // @todo: log a warning?
                 }
+            } else {
+                // hopefully a feature layer
+                $definitionsOut[] = $layerDef;
             }
         }
         return $definitionsOut;
