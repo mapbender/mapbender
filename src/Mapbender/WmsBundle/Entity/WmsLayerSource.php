@@ -35,7 +35,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     protected $id;
     /**
      * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
-     * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
+     * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $source; # change this variable name together with "get" "set" functions (s. SourceItem too)
     /**
