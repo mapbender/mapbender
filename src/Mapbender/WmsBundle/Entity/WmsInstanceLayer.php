@@ -32,7 +32,7 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsInstance", inversedBy="layers", cascade={"refresh"})
-     * @ORM\JoinColumn(name="wmsinstance", referencedColumnName="id")
+     * @ORM\JoinColumn(name="wmsinstance", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $sourceInstance;
 
@@ -44,7 +44,7 @@ class WmsInstanceLayer extends SourceInstanceItem
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsInstanceLayer",inversedBy="sublayer")
-     * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $parent = null;
 

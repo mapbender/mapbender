@@ -26,6 +26,7 @@ class RegionProperties
     /**
      * @var Application The configuration entity for the application
      * @ORM\ManyToOne(targetEntity="Application", inversedBy="regionProperties")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $application;
 
