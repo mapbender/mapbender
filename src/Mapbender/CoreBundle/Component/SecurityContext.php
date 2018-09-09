@@ -16,19 +16,26 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
 {
+    /** @deprecated this is not a permission, it's a role; remove in 3.0.8 */
     const PERMISSION_MASTER   = "MASTER";
+    /** @deprecated this is not a permission, it's a role; remove in 3.0.8 */
     const PERMISSION_OPERATOR = "OPERATOR";
     const PERMISSION_CREATE   = "CREATE";
     const PERMISSION_DELETE   = "DELETE";
     const PERMISSION_EDIT     = "EDIT";
     const PERMISSION_VIEW     = "VIEW";
+    /** @deprecated remove in 3.0.8 */
     const USER_ANONYMOUS_ID   = 0;
+    /** @deprecated remove in 3.0.8 */
     const USER_ANONYMOUS_NAME = "anon.";
 
     /**
      * Get current logged user by the token
      *
+     * Invents a magic User object with id 0 and name "anon." if there is no User object.
+     *
      * @return User
+     * @deprecated call getToken on your own; this will prevent problems dealing with the "anon." user; remove in 3.0.8
      */
     public function getUser()
     {
@@ -68,34 +75,26 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     }
 
     /**
-     * Checks the grant for an action and an object.
+     * Wraps isGranted in an ObjectIdentity creation for "CREATE" action plus an optional (default enabled)
+     * http execption throw if not granted.
      *
      * @param string $action         action "CREATE"
-     * @param object $object         the object
+     * @param object $object for all grants checks except "CREATE", where we check on a class-type ObjectIdentity
      * @param bool   $throwException Throw exception if current user isn't allowed to do that
      * @return bool
+     * @deprecated access security.authorization_checker::isGranted directly; remove in 3.0.8
+     * @deprecated throw appropriate domain-specific exceptions; this method throws HTTP exceptions for Controllers
+     * @deprecated make your own appropriate decisions about instance checks vs class checks
      */
     public function checkGranted($action, $object, $throwException = true)
     {
-        $permissionGranted = true;
         switch ($action) {
-            case self::PERMISSION_MASTER:
-                $permissionGranted = $this->isUserAnMaster($object);
-                break;
-            case self::PERMISSION_OPERATOR:
-                $permissionGranted = $this->isUserAnOperator($object);
-                break;
             case self::PERMISSION_CREATE:
-                $permissionGranted = $this->isUserAllowedToCreate($object);
+                $oid = $this->getClassIdentity($object);
+                $permissionGranted = $this->isGranted($action, $oid);
                 break;
-            case self::PERMISSION_VIEW:
-                $permissionGranted = $this->isUserAllowedToView($object);
-                break;
-            case self::PERMISSION_EDIT:
-                $permissionGranted = $this->isUserAllowedToEdit($object);
-                break;
-            case self::PERMISSION_DELETE:
-                $permissionGranted = $this->isUserAllowedToDelete($object);
+            default:
+                $permissionGranted = $this->isGranted($action, $object);
                 break;
         }
 
@@ -110,6 +109,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
      *
      * @param $object
      * @return bool
+     * @deprecated not a permission; remove in 3.0.8
      */
     public function isUserAnMaster($object)
     {
@@ -121,6 +121,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
      *
      * @param $object
      * @return bool
+     * @deprecated not a permission; remove in 3.0.8
      */
     public function isUserAnOperator($object)
     {
@@ -135,8 +136,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
      */
     public function isUserAllowedToCreate($object)
     {
-        $identity = $this->getClassIdentity($object);
-        return $this->isGranted(self::PERMISSION_CREATE, $identity);
+        return $this->checkGranted(self::PERMISSION_CREATE, $object, false);
     }
 
     /**
