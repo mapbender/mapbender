@@ -609,7 +609,7 @@ $(function() {
             title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
             subTitle: " - " + self.parent().siblings(".subTitle").text(),
             closeOnOutsideClick: true,
-            height: 400,
+            cssClass: 'new-instance-select',
             content: [
                 $.ajax({url: self.attr("href")})
             ],
