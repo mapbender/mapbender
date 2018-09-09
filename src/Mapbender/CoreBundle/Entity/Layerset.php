@@ -51,7 +51,8 @@ class Layerset
 
     /**
      * @var \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]
-     * @deprecated only abused as a temporary data dumping place by @see ApplicationComponent::getLayersets
+     * @deprecated only abused as a temporary data dumping place by
+     * @see ApplicationComponent::getLayersets()
      */
     public $layerObjects;
 

@@ -201,7 +201,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * @inheritdoc
+     * @return WmsSource
      */
     public function getSource()
     {
