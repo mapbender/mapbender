@@ -58,6 +58,7 @@ class HTMLElement extends Element
      *
      * @param $arr
      * @return bool
+     * @deprecated will be removed in 3.0.8.0
      */
     protected static function isAssoc(&$arr)
     {
@@ -69,6 +70,7 @@ class HTMLElement extends Element
      *
      * @param $items
      * @return array
+     * @deprecated will be removed in 3.0.8.0
      */
     public function prepareItems($items)
     {
@@ -89,7 +91,8 @@ class HTMLElement extends Element
      *
      * @param $item
      * @return mixed
-     * @internal param $type
+     * @internal
+     * @deprecated will be removed in 3.0.8.0
      */
     protected function prepareItem($item)
     {

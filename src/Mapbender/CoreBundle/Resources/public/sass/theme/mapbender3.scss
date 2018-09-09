@@ -67,7 +67,7 @@
           }
         }
       }
-      > label, > span {
+      > label, > span, > a span {
         margin-bottom: 0;
         &:hover{
           &:before{
@@ -181,7 +181,6 @@
 
 .metadataDialog{
   .popupContent {
-    margin-bottom: 0px;
     height: 100%;
     .contentItem {
       height: 100%;
@@ -246,6 +245,9 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
         }
       }
     }
+  }
+  .toolBar a.mb-button {
+    color: inherit;
   }
 }
 

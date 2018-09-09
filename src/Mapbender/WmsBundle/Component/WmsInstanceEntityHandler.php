@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
+use Mapbender\WmsBundle\Controller\RepositoryController;
 use Mapbender\WmsBundle\Element\DimensionsHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -170,14 +171,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
     /**
      * @inheritdoc
+     * @deprecated, inlined to controller
+     * @see RepositoryController::deleteInstanceAction()
+     * @see RepositoryController::deleteAction()
      */
     public function remove()
     {
-        /**
-         * @todo: layerHandler->remve is redundant now, but it may require an automatic
-         *     doctrine:schema:update --force
-         *     before it can be removed
-         */
         $this->container->get('doctrine')->getManager()->persist(
             $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
         $this->container->get('doctrine')->getManager()->remove($this->entity);

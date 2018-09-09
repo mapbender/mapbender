@@ -11,13 +11,23 @@
         },
 
         active: false,
-        button : null,
+        targetWidget: null,
+        $toolBarItem: null,
+        /** initialized to true if button can determine target's active state and remember its own active state */
+        stateful: null,
+        actionMethods: {},
 
         _create: function () {
+            if (this.options.click) {
+                // this widget instance is superfluous, we rendered a link
+                // we can't really deactivate mapbender.initElement machinery
+                // so we still need to load the JS asset, and we still end up right here
+                return;
+            }
             var self = this,
                 option = {};
 
-            this.button = this.element[0];
+            this.$toolBarItem = $(this.element).closest('.toolBarItem');
 
             if (this.options.icon) {
                 $.extend(option, {
@@ -28,11 +38,7 @@
                 });
             }
 
-            if (this.options.group) {
-                this.button.checked = false;
-            }
-
-            $(this.button)
+            $(this.element)
                 .on('click', $.proxy(self._onClick, self))
                 .on('mbButtonDeactivate', $.proxy(self.deactivate, self));
         },
@@ -40,96 +46,114 @@
         _onClick: function () {
             var $me = $(this.element);
 
-            if (this.options.click && (this.options.click.length > 0) && (this.options.click.charAt(0) === '#')) {
-                return;
-            }
-
-            if (this.options.click) {
-                window.open(this.options.click, '_blank');
-                return;
-            }
-
             // If we're part of a group, deactivate all other actions in this group
             if (this.options.group) {
-                var others = $('input[type="checkbox"]')
-                    .filter('[name="mb-button-group[' + this.options.group + ']"]')
+                var others = $('.mb-button[data-group="' + this.options.group + '"]')
                     .not($me);
 
                 others.trigger('mbButtonDeactivate');
             }
 
-            if (this.active) {
-                this.deactivate();
-            } else {
+            if (!this.stateful || !this.active) {
                 this.activate();
-            }
-        },
-
-        activate: function () {
-            this.active = true;
-
-            if (this.options.target) {
-                var target = $('#' + this.options.target),
-                    widget = Mapbender.configuration.elements[this.options.target].init.split('.'),
-                    action = this.options.action;
-
-                $(this.button).parent().addClass("toolBarItemActive");
-
-                if (!this.options.action) {
-                    action = "defaultAction";
-                }
-
-                if (widget.length === 1) {
-                    target[widget[0]](action, $.proxy(this.reset, this));
-                } else {
-                    var dataKey = widget[0] + widget[1].charAt(0).toUpperCase() + widget[1].slice(1);
-
-                    if (typeof target.data(dataKey)[action] === 'function') {
-                        target[widget[1]](action, $.proxy(this.reset, this));
-                    }
-                }
-            }
-
-            if (!this.options.group) {
-                this.deactivate();
             } else {
-                this.button.checked = true;
+                this.deactivate();
             }
         },
-
-        deactivate: function () {
-            $(this.button).parent().removeClass("toolBarItemActive");
-
-            if (this.options.target && this.options.deactivate) {
-                var target = $('#' + this.options.target),
-                    widget = Mapbender.configuration.elements[this.options.target].init.split('.');
-
-                if (widget.length === 1) {
-                    target[widget[0]](this.options.deactivate);
+        /**
+         * @returns {null|object} the target widget object (NOT the DOM node; NOT a jQuery selection)
+         * @private
+         */
+        _initializeTarget: function() {
+            // Initialize only once, remember the result forever.
+            // This makes elements work that move around in / completely out of the DOM, either
+            // by themselves, or because they let certain popups mangle their DOM nodes.
+            if (this.targetWidget === null && this.options.target) {
+                var $target = $('#' + this.options.target);
+                var targetInit = Mapbender.configuration.elements[this.options.target].init;
+                var nameParts = targetInit.split('.');
+                if (nameParts.length === 1) {
+                    // This is a BC construct currently without known or conceivable use cases
+                    this.targetWidget = $target[nameParts];
                 } else {
-                    target[widget[1]](this.options.deactivate);
+                    var namespace = nameParts[0];
+                    var innerName = nameParts[1];
+                    // widget data ends up in a key composed of
+                    // namespace, no dot, innerName with upper-cased first letter
+                    var dataKey = [namespace, innerName.charAt(0).toUpperCase(), innerName.slice(1)].join('');
+                    this.targetWidget = $target.data(dataKey);
+                }
+                if (this.targetWidget) {
+                    this.actionMethods = {
+                        activate: null,
+                        deactivate: null
+                    };
+                    var activateAction = this.options.action || 'defaultAction';
+                    var deactivateAction = this.options.deactivate;
+                    if (activateAction) {
+                        if (typeof this.targetWidget[activateAction] === 'function') {
+                            this.actionMethods.activate = this.targetWidget[activateAction].bind(this.targetWidget, this.reset.bind(this));
+                        } else {
+                            console.error("Target widget", this.options.target, this.targetWidget,
+                                          "does not have a callable method", activateAction);
+                        }
+                    }
+                    if (deactivateAction) {
+                        if (typeof this.targetWidget[deactivateAction] === 'function') {
+                            this.actionMethods.deactivate = this.targetWidget[deactivateAction].bind(this.targetWidget);
+                        } else{
+                            console.error("Target widget", this.options.target, this.targetWidget,
+                                          "does not have a callable method", deactivateAction);
+                        }
+                    }
+                    // If we do not have a deactivate method we have no way to turn the target off, even if we
+                    // can turn it on. This makes internal active state tracking becomes meaningless. We should treat
+                    // every click as an 'activate' action.
+                    this.stateful = !!this.actionMethods.deactivate;
+                } else {
+                    console.warn("Could not identify target element", this.options.target, targetInit);
+                    // Avoid attempting this again
+                    // null: target widget not initialized; false: looked for target widget but got nothing
+                    this.targetWidget = false;
+                    this.stateful = false;
                 }
             }
-
-            if (this.active) {
-                this.active = false;
+            return this.targetWidget || null;
+        },
+        /**
+         * Calls 'activate' method on target if defined, and if in group, sets a visual highlight
+         */
+        activate: function () {
+            if (this.stateful && this.active) {
+                return;
             }
-
+            this._initializeTarget();
+            if (this.actionMethods.activate) {
+                (this.actionMethods.activate)();
+                this.active = this.stateful;
+            }
             if (this.options.group) {
-                this.button.checked = false;
+                this.$toolBarItem.addClass("toolBarItemActive");
             }
         },
-
-        reset: function () {
-            $(this.button).parent().removeClass("toolBarItemActive");
-
-            if (this.active) {
+        /**
+         * Clears visual highlighting, marks inactive state and
+         * calls 'deactivate' method on target (if defined)
+         */
+        deactivate: function () {
+            this.reset();
+            this._initializeTarget();
+            if (this.actionMethods.deactivate) {
+                (this.actionMethods.deactivate)();
                 this.active = false;
             }
-
-            if (this.options.group) {
-                this.button.checked = false;
-            }
+        },
+        /**
+         * Clears visual highlighting, marks inactive state
+         */
+        reset: function () {
+            this.$toolBarItem.removeClass("toolBarItemActive");
+            this.active = false;
         }
     });
 

@@ -69,8 +69,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
      * Recursively remove a nested Layerstructure
      *
      * @param WmsLayerSource $wmslayer
-     * @internal param $WmsLayerSource
-     * @internal param $EntityManager
+     * @internal
      */
     private function removeRecursively(WmsLayerSource $wmslayer)
     {
@@ -144,14 +143,10 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
                     $this->entity
                 );
                 $lay->setPriority($prio + $num);
-//                $manager->persist($lay);
-//                $this->entity->addSublayer($lay);
-//                $manager->persist($this->entity);
             } elseif (count($subItemsOld) === 1) { # update a layer
                 $subItemsOld[0]->setPriority($prio + $num);
                 $subLayerHandler = new WmsLayerSourceEntityHandler($this->container, $subItemsOld[0]);
                 $subLayerHandler->update($subItemNew);
-//                $manager->persist($this->entity);
             } else { # remove all old layers and add new layers
                 foreach ($subItemsOld as $layerToRemove) {
                     $this->removeRecursively($layerToRemove);
@@ -163,12 +158,8 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
                     $this->entity
                 );
                 $lay->setPriority($prio + $num);
-//                $manager->persist($lay);
-//                $this->entity->addSublayer($lay);
-//                $manager->persist($this->entity);
             }
         }
-//        $manager->persist($this->entity);
     }
 
     /**

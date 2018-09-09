@@ -59,7 +59,6 @@ class Map extends Element
             'extents' => array(
                 'max' => array(0, 40, 20, 60),
                 'start' => array(5, 45, 15, 55)),
-            'maxResolution' => 'auto',
             "scales" => array(25000000, 10000000, 5000000, 1000000, 500000),
         );
     }
@@ -257,6 +256,7 @@ class Map extends Element
 
         return array_replace($conf, array(
             'imgPath' => 'components/mapquery/lib/openlayers/img',
+            'maxResolution' => 'auto',
         ));
     }
 

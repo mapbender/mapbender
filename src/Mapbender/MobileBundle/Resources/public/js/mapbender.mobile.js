@@ -37,29 +37,23 @@ $(function(){
         }
     });
 
-    $('#footer').on('click', '.mb-element,.mb-button', function(e) {
-
-        var button = $('#' + $(e.target).attr('for')).data('mapbenderMbButton');
+    $('#footer').on('click', '.mb-button', function(e) {
+        var button = $(e.currentTarget).data('mapbenderMbButton');
         var buttonOptions = button.options;
         var target = $('#' + buttonOptions.target);
+        if (!target) {
+            return;
+        }
         var targets = target.data();
         var pane = target.parents('.mobilePane');
         var paneContent = $('.mobileContent', pane);
         var paneTitle = $('.contentTitle', pane);
         var hasPane = pane.size();
 
-        if(buttonOptions.click) {
-            if(buttonOptions.click && buttonOptions.click.length > 0 && buttonOptions.click.charAt(0) === '#') {
-                return false;
-            } else if(buttonOptions.click) {
-                window.open(buttonOptions.click, '_blank');
-                return false;
-            }
-        }
-
         if(!hasPane) {
             return false;
         }
+        e.stopImmediatePropagation();
 
         // hide frames
         $.each(paneContent.children(), function(idx, item) {
@@ -69,7 +63,7 @@ $(function(){
         target.removeClass('hidden');
         paneTitle.text('undefined');
 
-        var title, _widget, isWidget, _element, isWidget;
+        var _widget, isWidget, _element;
         for (var widgetName in targets) {
             _widget = targets[widgetName];
             isWidget = typeof _widget === 'object' && _widget.options;

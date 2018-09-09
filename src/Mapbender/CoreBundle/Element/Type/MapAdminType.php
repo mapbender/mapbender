@@ -67,8 +67,6 @@ class MapAdminType extends AbstractType
             ->add('scales', 'text', array(
                 'label' => 'Scales (csv)',
                 'required' => true))
-            ->add('maxResolution', 'text', array(
-                'label' => 'Max. resolution'))
             ->add('otherSrs', 'text', array(
                 'label' => 'Other SRS',
                 'required' => false));

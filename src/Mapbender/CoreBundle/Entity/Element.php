@@ -46,6 +46,7 @@ class Element
     /**
      * @var Application The configuration entity for the application
      * @ORM\ManyToOne(targetEntity="Application", inversedBy="elements")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $application;
 

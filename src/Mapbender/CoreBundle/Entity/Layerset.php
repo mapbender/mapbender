@@ -39,6 +39,7 @@ class Layerset
     /**
      * @var Application The configuration entity for the application
      * @ORM\ManyToOne(targetEntity="Application", inversedBy="layersets")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $application;
 
@@ -51,7 +52,8 @@ class Layerset
 
     /**
      * @var \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]
-     * @deprecated only abused as a temporary data dumping place by @see ApplicationComponent::getLayersets
+     * @deprecated only abused as a temporary data dumping place by
+     * @see ApplicationComponent::getLayersets()
      */
     public $layerObjects;
 

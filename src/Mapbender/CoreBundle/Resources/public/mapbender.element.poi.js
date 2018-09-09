@@ -37,7 +37,7 @@ $.widget('mapbender.mbPOI', {
      * be used.
      */
     activate: function() {
-        if(this.map.length !== 0) {
+        if (!this.popup && this.map.length !== 0) {
             this._createDialog();
             this.map.on('click', this.mapClickProxy);
         }
@@ -108,7 +108,7 @@ $.widget('mapbender.mbPOI', {
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         self._reset();
-                        this.close();
+                        self.close();
                     }
                 },
                 'ok': {
@@ -120,17 +120,24 @@ $.widget('mapbender.mbPOI', {
                 }
             }
         });
-        this.popup.$element.on('close', function() {
-            if(self.poiMarkerLayer) {
-                self.poiMarkerLayer.clearMarkers();
-                self.mbMap.map.olMap.removeLayer(self.poiMarkerLayer);
-                self.poiMarkerLayer.destroy();
-                self.poiMarkerLayer = null;
-            }
-            self.map.off('click', self.mapClickProxy);
-        });
+        // For close button top right on Popup...
+        this.popup.$element.on('close', this.close.bind(this));
     },
-
+    close: function() {
+        if (this.poiMarkerLayer) {
+            this.poiMarkerLayer.clearMarkers();
+            this.mbMap.map.olMap.removeLayer(this.poiMarkerLayer);
+            this.poiMarkerLayer.destroy();
+            this.poiMarkerLayer = null;
+        }
+        if (this.popup) {
+            // To disable infinitely recursing event barrage...
+            this.popup.$element.off('close');
+            this.popup.close();
+        }
+        this.popup = null;
+        this.map.off('click', self.mapClickProxy);
+    },
     _sendPoi: function(content) {
         var form = $('form', content);
         var body = $('#body', form).val();
@@ -170,8 +177,7 @@ $.widget('mapbender.mbPOI', {
         }
 
         this._reset();
-        this.popup.close();
-
+        this.close();
     },
 
     _reset: function() {
