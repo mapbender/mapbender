@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\SourceMetadata;
@@ -83,7 +84,7 @@ class RepositoryController extends Controller
      */
     public function createAction()
     {
-        $request       = $this->get('request');
+        $request       = $this->getRequest();
         $wmssource_req = new WmsSource();
 
         $securityContext = $this->get('security.authorization_checker');
@@ -169,7 +170,7 @@ class RepositoryController extends Controller
      */
     public function updateAction($sourceId)
     {
-        $request         = $this->get('request');
+        $request = $this->getRequest();
         /** @var WmsSource|null $wmsOrig */
         $wmsOrig         = $this->loadEntityByPk("MapbenderCoreBundle:Source", $sourceId);
         $securityContext = $this->get('security.authorization_checker');
@@ -178,7 +179,7 @@ class RepositoryController extends Controller
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $wmsOrig)) {
             throw new AccessDeniedException();
         }
-        if ($this->getRequest()->getMethod() === 'POST') { // check form and redirect to update
+        if ($request->getMethod() === 'POST') { // check form and redirect to update
             $wmssource_req = new WmsSource();
             $form          = $this->createForm(new WmsSourceSimpleType(), $wmssource_req);
             $form->submit($request);
@@ -261,8 +262,10 @@ class RepositoryController extends Controller
     public function deleteAction($sourceId)
     {
         $wmssource    = $this->loadEntityByPk("MapbenderWmsBundle:WmsSource", $sourceId);
+        /** @var WmsInstance[] $wmsinstances */
         $wmsinstances = $this->getRepository("MapbenderWmsBundle:WmsInstance")
             ->findBy(array('source' => $sourceId));
+        /** @var EntityManager $em */
         $em           = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
 
@@ -311,13 +314,14 @@ class RepositoryController extends Controller
      */
     public function instanceAction($slug, $instanceId)
     {
+        $request = $this->getRequest();
         $repositoryName = "MapbenderWmsBundle:WmsInstance";
         /** @var WmsInstance|null $wmsinstance */
         $wmsinstance = $this->loadEntityByPk($repositoryName, $instanceId);
 
-        if ($this->getRequest()->getMethod() == 'POST') { //save
+        if ($request->getMethod() == 'POST') { //save
             $form = $this->createForm('wmsinstanceinstancelayers', $wmsinstance);
-            $form->submit($this->get('request'));
+            $form->submit($request);
             if ($form->isValid()) { //save
                 $em = $this->getDoctrine()->getManager();
                 $em->getConnection()->beginTransaction();
@@ -371,7 +375,7 @@ class RepositoryController extends Controller
      */
     public function instanceLayerPriorityAction($slug, $instanceId, $instLayerId)
     {
-        $number  = $this->get("request")->get("number");
+        $number  = $this->getRequest()->get("number");
         /** @var WmsInstanceLayer|null $instLay */
         $instLay = $this->loadEntityByPk('MapbenderWmsBundle:WmsInstanceLayer', $instLayerId);
 
@@ -439,7 +443,7 @@ class RepositoryController extends Controller
      */
     public function instanceEnabledAction($slug, $instanceId)
     {
-        $enabled     = $this->get("request")->get("enabled");
+        $enabled     = $this->getRequest()->get("enabled");
         $wmsinstance = $this->loadEntityByPk("MapbenderWmsBundle:WmsInstance", $instanceId);
         if (!$wmsinstance) {
             return new Response(
@@ -489,7 +493,7 @@ class RepositoryController extends Controller
             && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
-        $layerName = $this->container->get('request')->get("layerName", null);
+        $layerName = $this->getRequest()->get("layerName", null);
         $metadata  = $instance->getMetadata();
         $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
         $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);

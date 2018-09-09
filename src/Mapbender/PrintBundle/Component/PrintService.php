@@ -274,21 +274,17 @@ class PrintService extends ImageExportService
             $mapRequestResponse = $this->mapRequest($url);
 
             $imageName    = $this->makeTempFile('mb_print');
-            $imageNames[] = $imageName;
             $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
 
             if (!$rawImage) {
-                $logger->debug("ERROR! PrintRequest failed: " . $url);
+                $logger->warning("Print request produced no valid image response, skipping layer", array(
+                    'url' => $url,
+                ));
                 $logger->debug($mapRequestResponse->getContent());
-                print_r('an error has occurred. see log for more details <br>');
-                print_r($mapRequestResponse->getContent());
-                foreach ($imageNames as $i => $imageName) {
-                    unlink($imageName);
-                }
-                exit;
-            }
-
-            if ($rawImage !== null) {
+                unlink($imageName);
+                continue;
+            } else {
+                $imageNames[] = $imageName;
                 $this->forceToRgba($imageName, $rawImage, $this->data['layers'][$i]['opacity']);
             }
         }

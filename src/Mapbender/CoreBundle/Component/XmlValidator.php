@@ -125,7 +125,8 @@ EOF
         ;
         libxml_use_internal_errors(true);
         libxml_clear_errors();
-        $valid = $doc->schemaValidateSource($source);
+        // suppress otherwise uncatchable DNS errors
+        $valid = @$doc->schemaValidateSource($source);
         if (!$valid) {
             $errors = libxml_get_errors();
             $message = "";

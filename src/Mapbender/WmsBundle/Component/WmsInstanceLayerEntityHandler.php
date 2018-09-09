@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
@@ -73,8 +74,10 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 
     private function isScheduledForRemoval($entity)
     {
+        /** @var EntityManager $mgr */
         $mgr = $this->container->get('doctrine')->getManager();
         $uow = $mgr->getUnitOfWork();
+        // @todo: find out if there's a difference to $uow->isScheduledForDelete($entity);
         $prop = new \ReflectionProperty(get_class($uow), 'entityDeletions');
         $prop->setAccessible(true);
         $list = $prop->getValue($uow);

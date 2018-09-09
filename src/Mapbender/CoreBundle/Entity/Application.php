@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Mapbender\CoreBundle\Validator\Constraints\Scss;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
@@ -681,5 +682,15 @@ class Application
          * @todo: provide db column + expose in form
          */
         return 'ol4';
+    }
+
+    /**
+     * @param LifecycleEventArgs $args
+     * @ORM\PostPersist
+     * @ORM\PreUpdate
+     */
+    public function bumpUpdate(LifecycleEventArgs $args)
+    {
+        $this->setUpdated(new \DateTime('now'));
     }
 }

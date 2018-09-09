@@ -84,17 +84,21 @@ class Button extends Element
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/button.scss'));
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
+    public function getConfiguration()
     {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:button.html.twig',
-                    array(
-                    'id' => $this->getId(),
-                    'title' => $this->getTitle(),
-                    'configuration' => $this->entity->getConfiguration()));
+        $config = $this->entity->getConfiguration();
+        if (!empty($config['click']) && 0 === strpos($config['click'], '#')) {
+            return array_replace($config, array(
+                'click' => null,
+            ));
+        } else {
+            return $config;
+        }
+    }
+
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return "MapbenderCoreBundle:Element:button{$suffix}";
     }
 
     /**

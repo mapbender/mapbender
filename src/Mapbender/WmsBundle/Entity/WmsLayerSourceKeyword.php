@@ -17,7 +17,7 @@ class WmsLayerSourceKeyword extends Keyword
 {
     /**
      * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="keywords")
-     * @ORM\JoinColumn(name="reference_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="reference_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $reference;
 

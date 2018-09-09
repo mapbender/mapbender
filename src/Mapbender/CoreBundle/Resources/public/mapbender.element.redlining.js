@@ -298,7 +298,7 @@
         },
         _removeAllFeatures: function(){
             $('.geometry-table tr', this.element).remove();
-            this.map.removeLayer(this.layer);
+            this.layer.removeAllFeatures();
         },
         _deactivateControl: function(){
             // if(this.selectedFeature) {

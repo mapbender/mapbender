@@ -113,7 +113,6 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         if (!$transaction) {
             $em->getConnection()->beginTransaction();
         }
-//        $updater = new WmsUpdater($this->entity);
         /* Update source attributes */
         $classMeta = $em->getClassMetadata(EntityUtil::getRealClass($this->entity));
 

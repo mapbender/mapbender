@@ -7,7 +7,7 @@ namespace Mapbender\IntrospectionBundle\Command;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Mapbender;
-use Mapbender\IntrospectionBundle\Utils\BundleUtil;
+use Mapbender\Component\BundleUtil;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\TableHelper;
@@ -106,6 +106,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     /**
      * @param Element $element
      * @return string[]
+     * @throws \ReflectionException
      */
     protected function formatElementInfo($element)
     {
@@ -169,7 +170,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     {
         if (!static::$dummyApplication) {
             $applicationEntity = new \Mapbender\CoreBundle\Entity\Application();
-            static::$dummyApplication = new Application($this->getContainer(), $applicationEntity, array());
+            static::$dummyApplication = new Application($this->getContainer(), $applicationEntity);
         }
         return static::$dummyApplication;
     }
@@ -289,6 +290,7 @@ class ElementClassesCommand extends ContainerAwareCommand
     /**
      * @param Element $element
      * @return string
+     * @throws \ReflectionException
      */
     protected function formatElementComments($element)
     {
