@@ -8,7 +8,7 @@
   }
   .singleRow {
     float: right;
-    width: $elementPopupWidth - $label - $space;
+    width: $elementPopupBodyWidth - $label - $space;
     .labelInput, & > .input {
       float: left;
     }

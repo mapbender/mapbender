@@ -14,7 +14,9 @@
 .popupSubTitle{@extend .labelInput;}
 .popupContent, .popupSubContent{
   padding:0 20px;
-  margin-bottom: $space;
+  &+.popupContent, &+.popupSubcontent {
+    margin-top: $space;
+  }
 }
 .popupSubContent{width: 100%; height: 100%;}
 .popup{
