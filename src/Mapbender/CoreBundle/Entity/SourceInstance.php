@@ -33,7 +33,7 @@ abstract class SourceInstance
 
     /**
      * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"refresh"})
-     * @ORM\JoinColumn(name="layerset", referencedColumnName="id")
+     * @ORM\JoinColumn(name="layerset", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $layerset;
 

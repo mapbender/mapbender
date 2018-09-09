@@ -4,6 +4,6 @@
     width: $label;
   }
   .dropdown, .input {
-    min-width: $elementPopupWidth - $label;
+    min-width: $elementPopupBodyWidth - $label - $space;
   }
 }

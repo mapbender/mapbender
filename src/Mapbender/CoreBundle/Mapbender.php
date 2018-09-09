@@ -82,7 +82,7 @@ class Mapbender
      * Element classes need to be declared in each bundle's main class getElement
      * method.
      *
-     * @return Element[]
+     * @return string[]
      */
     public function getElements()
     {
@@ -187,8 +187,10 @@ class Mapbender
         $repository = $registry->getRepository('MapbenderCoreBundle:Application');
 
         if ($repository instanceof EntityRepository) {
-            /** @var EntityRepository $repository  Sometimes findOneBySlug method is there, but this is a magic */
-            $entity = $repository->findOneBySlug($slug);
+            /** @var EntityRepository $repository */
+            $entity = $repository->findOneBy(array(
+                'slug' => $slug,
+            ));
         }
 
         if ($entity) {
