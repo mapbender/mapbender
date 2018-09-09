@@ -6,10 +6,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  *  Mapbender repository controller
@@ -31,16 +28,13 @@ class RepositoryController extends Controller
      */
     public function indexAction($page)
     {
-        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-
-        $em = $this->getDoctrine()->getManager();
-        $query = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
-        $sources = $query->getResult();
+        $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
+        $sources = $repository->findBy(array(), array('id' => 'ASC'));
 
         $allowed_sources = array();
         foreach ($sources as $source) {
-            if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $source)) {
+            if (!$this->isGranted('VIEW', $oid) && !$this->isGranted('VIEW', $source)) {
                 continue;
             }
             $allowed_sources[] = $source;
@@ -50,25 +44,19 @@ class RepositoryController extends Controller
             'title' => 'Repository',
             'sources' => $allowed_sources,
             'oid' => $oid,
-            'create_permission' => $securityContext->isGranted('CREATE', $oid)
+            'create_permission' => $this->isGranted('CREATE', $oid),
         );
     }
 
     /**
-     * Renders a list of importers
-     *
      * @ManagerRoute("/new")
      * @Method({ "GET" })
      * @Template
      */
     public function newAction()
     {
-        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-
-        if (false === $securityContext->isGranted('CREATE', $oid)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         return array(
@@ -77,27 +65,19 @@ class RepositoryController extends Controller
     }
 
     /**
-     * Renders a list of importers
-     *
      * @ManagerRoute("/create/{managertype}")
      * @Method({ "POST" })
      * @Template()
      */
     public function createAction($managertype)
     {
-        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-
-        if (false === $securityContext->isGranted('CREATE', $oid)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('CREATE', $oid);
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$managertype];
 
-        $path = array('_controller' => $manager['bundle'] . ":" . "Repository:create");
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->forward($manager['bundle'] . ":" . "Repository:create");
     }
 
     /**
@@ -111,12 +91,9 @@ class RepositoryController extends Controller
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
-        $path = array(
-            '_controller' => $manager['bundle'] . ":" . "Repository:view",
-            "id" => $source->getId()
-        );
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->forward($manager['bundle'] . ":" . "Repository:view", array(
+            "id" => $source->getId(),
+        ));
     }
 
     /**
@@ -127,17 +104,16 @@ class RepositoryController extends Controller
      */
     public function confirmdeleteAction($sourceId)
     {
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        $this->denyAccessUnlessGranted('VIEW', $oid);
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $securityContext = $this->get('security.authorization_checker');
-
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('DELETE', $source)) {
-            throw new AccessDeniedException();
+        if (!$source) {
+            throw $this->createNotFoundException();
         }
+        $this->denyAccessUnlessGranted('DELETE', $source);
         return array(
-            'source' => $source
+            'source' => $source,
         );
     }
 
@@ -148,25 +124,22 @@ class RepositoryController extends Controller
      */
     public function deleteAction($sourceId)
     {
+        /** @todo: fold identical preface code shared with confirmdeleteAction */
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        $this->denyAccessUnlessGranted('VIEW', $oid);
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-
-        $securityContext = $this->get('security.authorization_checker');
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('DELETE', $source)) {
-            throw new AccessDeniedException();
+        if (!$source) {
+            throw $this->createNotFoundException();
         }
+        $this->denyAccessUnlessGranted('DELETE', $source);
+        // -- common preface code end --
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
-
-        $path = array(
-            '_controller' => $manager['bundle'] . ":" . "Repository:delete",
-            "sourceId" => $source->getId()
-        );
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->forward($manager['bundle'] . ":" . "Repository:delete", array(
+            "sourceId" => $source->getId(),
+        ));
     }
 
     /**
@@ -178,12 +151,14 @@ class RepositoryController extends Controller
      */
     public function updateformAction($sourceId)
     {
-        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $securityContext = $this->get('security.authorization_checker');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
-            throw new AccessDeniedException();
+        $this->denyAccessUnlessGranted('VIEW', $oid);
+        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        if (!$source) {
+            throw $this->createNotFoundException();
         }
+        $this->denyAccessUnlessGranted('EDIT', $source);
+
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
         return array(
@@ -201,21 +176,21 @@ class RepositoryController extends Controller
      */
     public function updateAction($sourceId)
     {
-        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $securityContext = $this->get('security.authorization_checker');
+        /** @todo: fold identical preface code shared with updateformAction */
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
-            throw new AccessDeniedException();
+        $this->denyAccessUnlessGranted('VIEW', $oid);
+        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        if (!$source) {
+            throw $this->createNotFoundException();
         }
+        $this->denyAccessUnlessGranted('EDIT', $source);
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
-        $path = array(
-            '_controller' => $manager['bundle'] . ":" . "Repository:update",
-            "sourceId" => $source->getId()
-        );
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        // -- common preface code end --
+        return $this->forward($manager['bundle'] . ":" . "Repository:update", array(
+            "sourceId" => $source->getId(),
+        ));
     }
 
     /**
@@ -232,23 +207,17 @@ class RepositoryController extends Controller
             throw $this->createNotFoundException('Instance does not exist');
         }
 
-        $securityContext = $this->get('security.authorization_checker');
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!($securityContext->isGranted('VIEW', $sourceInst->getSource())
-            || $securityContext->isGranted('VIEW', $oid))) {
-            throw new AccessDeniedHttpException();
-        }
+        /** @todo: instance check?! */
+        $this->denyAccessUnlessGranted('VIEW', $sourceInst->getSource());
+        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
 
-        $path = array(
-            '_controller' => $manager['bundle'] . ":" . "Repository:instance",
+        return $this->forward($manager['bundle'] . ":" . "Repository:instance", array(
             "slug" => $slug,
-            "instanceId" => $sourceInst->getId()
-        );
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            "instanceId" => $sourceInst->getId(),
+        ));
     }
 
     /**
@@ -262,7 +231,7 @@ class RepositoryController extends Controller
 
         $instance = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:SourceInstance')
-            ->findOneById($instanceId);
+            ->find($instanceId);
 
         if (!$instance) {
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
@@ -380,14 +349,11 @@ class RepositoryController extends Controller
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
 
-        $path = array(
-            '_controller' => $manager['bundle'] . ":" . "Repository:instanceenabled",
+        return $this->forward($manager['bundle'] . ":" . "Repository:instanceenabled", array(
             "slug" => $slug,
             "layersetId" => $layersetId,
-            "instanceId" => $sourceInst->getId()
-        );
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            "instanceId" => $sourceInst->getId(),
+        ));
     }
 
     /**
@@ -402,13 +368,10 @@ class RepositoryController extends Controller
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
 
-        $path = array(
-            '_controller' => $manager['bundle'] . ":" . "Repository:instancelayerpriority",
+        return $this->forward($manager['bundle'] . ":" . "Repository:instancelayerpriority", array(
             "slug" => $slug,
             "instanceId" => $sourceInst->getId(),
             "instLayerId" => $instLayerId
-        );
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        ));
     }
 }

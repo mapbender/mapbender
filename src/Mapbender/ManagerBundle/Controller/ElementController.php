@@ -9,15 +9,11 @@ use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 use Mapbender\CoreBundle\Component\Element as ComponentElement;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Form\Type\BaseElementType;
-use Mapbender\CoreBundle\Validator\Constraints\ContainsElementTarget;
-use Mapbender\CoreBundle\Validator\Constraints\ContainsElementTargetValidator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Acl\Domain\Acl;
 
 /**
  * Class ElementController
@@ -205,10 +201,10 @@ class ElementController extends Controller
     public function updateAction($slug, $id)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-
+        /** @var Element $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->findOneBy(array('id' => $id));
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -228,6 +224,7 @@ class ElementController extends Controller
 
             $entity_class = $element->getClass();
             $appl = new ApplicationComponent($this->container, $application);
+            /** @var ComponentElement $elComp */
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
             $this->get('session')->getFlashBag()->set('success',

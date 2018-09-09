@@ -182,10 +182,8 @@ class ApplicationController extends WelcomeController
     public function copyDirectlyAction($slug)
     {
         $sourceApplication = $this->get('mapbender')->getApplicationEntity($slug);
+        $this->denyAccessUnlessGranted('EDIT', $sourceApplication);
 
-        if (!$this->getContext()->isUserAllowedToEdit($sourceApplication)) {
-            throw new AccessDeniedException();
-        }
 
         $expHandler = new ExportHandler($this->container);
         $impHandler = new ImportHandler($this->container, true);
@@ -292,10 +290,7 @@ class ApplicationController extends WelcomeController
     {
         /** @var Application $application */
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-
-        if (!$this->getContext()->isUserAllowedToEdit($application)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('EDIT', $application);
 
         $this->checkRegionProperties($application);
         $form = $this->createApplicationForm($application);
@@ -315,10 +310,7 @@ class ApplicationController extends WelcomeController
         /** @var EntityManager $em */
         /** @var Connection $connection */
         $application      = $this->get('mapbender')->getApplicationEntity($slug);
-
-        if (!$this->getContext()->isUserAllowedToEdit($application)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('EDIT', $application);
 
         $oldSlug          = $application->getSlug();
         $templateClassOld = $application->getTemplate();
@@ -397,9 +389,8 @@ class ApplicationController extends WelcomeController
     {
         throw new \Exception('check the action copyform');
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
-        // ACL access check
-        $this->checkGranted(SecurityContext::PERMISSION_CREATE, $tocopy);
-
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+        $this->denyAccessUnlessGranted('CREATE', $oid);
         $form = $this->createForm(new ApplicationCopyType(), $tocopy);
 
         return array('form' => $form->createView());
@@ -415,8 +406,7 @@ class ApplicationController extends WelcomeController
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        // ACL access check
-        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
+        $this->denyAccessUnlessGranted('EDIT', $application);
 
         $em = $this->getDoctrine()->getManager();
 
@@ -468,10 +458,7 @@ class ApplicationController extends WelcomeController
             $flashBag->set('error', $this->translate('mb.application.remove.failure.already.removed'));
             return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
         }
-
-        if (!$this->getContext()->isUserAllowedToEdit($application)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('EDIT', $application);
 
         $id = $application->getId();
         return array(
@@ -488,10 +475,7 @@ class ApplicationController extends WelcomeController
     public function deleteAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-
-        if(!$this->getContext()->isUserAllowedToDelete($application)){
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('DELETE', $application);
 
         $flashBag = $this->get('session')->getFlashBag();
 
@@ -529,8 +513,7 @@ class ApplicationController extends WelcomeController
     public function newLayersetAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-        // ACL access check
-        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
+        $this->denyAccessUnlessGranted('EDIT', $application);
         $layerset    = new Layerset();
         $layerset->setApplication($application);
 
@@ -552,8 +535,7 @@ class ApplicationController extends WelcomeController
     public function editLayersetAction($slug, $layersetId)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-        // ACL access check
-        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
+        $this->denyAccessUnlessGranted('EDIT', $application);
         $layerset    = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
@@ -576,29 +558,28 @@ class ApplicationController extends WelcomeController
      */
     public function saveLayersetAction($slug, $layersetId = null)
     {
+        /** @var Application $application */
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
-
-        if (!$this->getContext()->isUserAllowedToEdit($application)) {
-            throw new AccessDeniedException();
-        };
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $isNew = ($layersetId === null);
 
         $doctrine = $this->getDoctrine();
-        if ($layersetId === null) { // new object
+        if ($isNew) {
             $layerset = new Layerset();
-            $form     = $this->createForm(new LayersetType(), $layerset);
             $layerset->setApplication($application);
         } else {
             $layerset = $doctrine
                 ->getRepository("MapbenderCoreBundle:Layerset")
                 ->find($layersetId);
-            $form     = $this->createForm(new LayersetType(), $layerset);
         }
+        $form = $this->createForm(new LayersetType(), $layerset);
         $form->submit($this->get('request'));
         $flashBag = $this->get('session')->getFlashBag();
         if ($form->isValid()) {
             $objectManager = $doctrine->getManager();
-            $objectManager->persist($application->setUpdated(new \DateTime('now')));
+            $application->setUpdated(new \DateTime('now'));
+            $objectManager->persist($application);
             $objectManager->persist($layerset);
             $objectManager->flush();
             $this->get("logger")->debug("Layerset saved");
@@ -619,7 +600,7 @@ class ApplicationController extends WelcomeController
     public function confirmDeleteLayersetAction($slug, $layersetId)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
+        $this->denyAccessUnlessGranted('EDIT', $application);
         $layerset    = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
@@ -639,7 +620,7 @@ class ApplicationController extends WelcomeController
     public function deleteLayersetAction($slug, $layersetId)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-        $this->checkGranted(SecurityContext::PERMISSION_EDIT, $application);
+        $this->denyAccessUnlessGranted('EDIT', $application);
         $layerset    = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
@@ -648,7 +629,8 @@ class ApplicationController extends WelcomeController
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
             $em->remove($layerset);
-            $this->getDoctrine()->getManager()->persist($application->setUpdated(new \DateTime('now')));
+            $application->setUpdated(new \DateTime('now'));
+            $this->getDoctrine()->getManager()->persist($application);
             $em->flush();
             $em->getConnection()->commit();
             $this->get("logger")->debug('The layerset "' . $layerset->getId() . '"has been deleted.');
@@ -674,9 +656,7 @@ class ApplicationController extends WelcomeController
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        if (!$this->getContext()->isUserAllowedToEdit($application)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('EDIT', $application);
 
         $layerset = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
@@ -763,9 +743,7 @@ class ApplicationController extends WelcomeController
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        if (!$this->getContext()->isUserAllowedToEdit($application)) {
-            throw new AccessDeniedException();
-        };
+        $this->denyAccessUnlessGranted('EDIT', $application);
 
         $sourceInst = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:SourceInstance")
