@@ -2,6 +2,10 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Mapbender\CoreBundle\Mapbender;
+use Doctrine\ORM\EntityRepository;
+use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -249,110 +253,41 @@ class RepositoryController extends Controller
      */
     public function instanceWeightAction(Request $request, $slug, $layersetId, $instanceId)
     {
-        $number = $request->get("number");
-        $layersetId_new = $request->get("new_layersetId");
 
-        $instance = $this->getDoctrine()
-            ->getRepository('MapbenderCoreBundle:SourceInstance')
-            ->find($instanceId);
+        $newWeight = $request->get("number");
+        $targetLayersetId = $request->get("new_layersetId");
+        $em = $this->getDoctrine()->getManager();
+        /** @var EntityRepository $instanceRepository */
+        $instanceRepository = $this->getDoctrine()->getRepository('MapbenderCoreBundle:SourceInstance');
+        $lsRepository = $this->getDoctrine()->getRepository('MapbenderCoreBundle:Layerset');
+
+        /** @var SourceInstance $instance */
+        $instance = $instanceRepository->findOneBy(array('id' => $instanceId));
 
         if (!$instance) {
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
         }
-        if (intval($number) === $instance->getWeight() && $layersetId === $layersetId_new) {
+        if (intval($newWeight) === $instance->getWeight() && $layersetId === $targetLayersetId) {
             return new JsonResponse(array(
                 'error' => '',      // why?
                 'result' => 'ok',   // why?
             ));
         }
 
-        if ($layersetId === $layersetId_new) {
-            $em = $this->getDoctrine()->getManager();
-            $instance->setWeight($number);
-            $em->persist($instance);
-            $em->flush();
-            $query = $em->createQuery(
-                "SELECT i FROM MapbenderCoreBundle:SourceInstance i WHERE i.layerset=:lsid ORDER BY i.weight ASC"
-            );
-            $query->setParameters(array("lsid" => $layersetId));
-            $instList = $query->getResult();
-
-            $num = 0;
-            foreach ($instList as $inst) {
-                if ($num === intval($instance->getWeight())) {
-                    if ($instance->getId() === $inst->getId()) {
-                        $num++;
-                    } else {
-                        $num++;
-                        $inst->setWeight($num);
-                        $num++;
-                    }
-                } else {
-                    if ($instance->getId() !== $inst->getId()) {
-                        $inst->setWeight($num);
-                        $num++;
-                    }
-                }
-            }
-            foreach ($instList as $inst) {
-                $em->persist($inst);
-            }
-            $em->flush();
+        /** @var Layerset $layerset */
+        $layerset = $lsRepository->findOneBy(array('id' => $layersetId));
+        if ($layersetId === $targetLayersetId) {
+            WeightSortedCollectionUtil::updateSingleWeight($layerset->getInstances(), $instance, $newWeight);
         } else {
-            $layerset_new = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Layerset")
-                ->find($layersetId_new);
-            $em = $this->getDoctrine()->getManager();
-            $instance->setLayerset($layerset_new);
-            $layerset_new->addInstance($instance);
-            $instance->setWeight($number);
-            $em->persist($layerset_new);
-            $em->persist($instance);
-            $em->flush();
-
-            // order instances of the old layerset
-            $query = $em->createQuery(
-                "SELECT i FROM MapbenderCoreBundle:SourceInstance i WHERE i.layerset=:lsid ORDER BY i.weight ASC"
-            );
-            $query->setParameters(array("lsid" => $layersetId));
-            $instList = $query->getResult();
-
-            $num = 0;
-            foreach ($instList as $inst) {
-                $inst->setWeight($num);
-                $em->persist($inst);
-                $num++;
-            }
-            $em->flush();
-
-            // order instances of the new layerset
-            $query = $em->createQuery(
-                "SELECT i FROM MapbenderCoreBundle:SourceInstance i WHERE i.layerset=:lsid ORDER BY i.weight ASC"
-            );
-            $query->setParameters(array("lsid" => $layersetId_new));
-            $instList = $query->getResult();
-            $num = 0;
-            foreach ($instList as $inst) {
-                if ($num === intval($instance->getWeight())) {
-                    if ($instance->getId() === $inst->getId()) {
-                        $num++;
-                    } else {
-                        $num++;
-                        $inst->setWeight($num);
-                        $num++;
-                    }
-                } else {
-                    if ($instance->getId() !== $inst->getId()) {
-                        $inst->setWeight($num);
-                        $num++;
-                    }
-                }
-            }
-            foreach ($instList as $inst) {
-                $em->persist($inst);
-                $em->flush();
-            }
+            /** @var Layerset $targetLayerset */
+            $targetLayerset = $lsRepository->findOneBy(array('id' => $targetLayersetId));
+            $targetCollection = $targetLayerset->getInstances();
+            WeightSortedCollectionUtil::moveBetweenCollections($targetCollection, $layerset->getInstances(), $instance, $newWeight);
+            $instance->setLayerset($targetLayerset);
+            $em->persist($targetLayerset);
         }
+        $em->persist($layerset);
+        $em->flush();
 
         return new JsonResponse(array(
             'error' => '',      // why?

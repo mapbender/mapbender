@@ -1,6 +1,9 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -12,7 +15,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -391,109 +393,58 @@ class ElementController extends Controller
      */
     public function weightAction(Request $request, $id)
     {
+        $request = $this->getRequest();
+        /** @var Element $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->find($id);
+            ->findOneBy(array('id' => $id));
+        $em = $this->getDoctrine()->getManager();
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
                 . $id . '" does not exist.');
         }
-        $number = $request->get("number");
-        $newregion = $request->get("region");
-        if (intval($number) === $element->getWeight() && $element->getRegion() ===
-            $newregion) {
+        $number = intval($request->get("number"));
+        $targetRegionName = $request->get("region");
+        if ($number === $element->getWeight() && $element->getRegion() === $targetRegionName) {
             return new JsonResponse(array(
                 'error' => '',      // why?
                 'result' => 'ok',   // why?
             ));
         }
-        if ($element->getRegion() === $newregion) {
-            $em = $this->getDoctrine()->getManager();
-            $element->setWeight($number);
-            $em->persist($element);
-            $em->flush();
-            $query = $em->createQuery(
-                "SELECT e FROM MapbenderCoreBundle:Element e"
-                . " WHERE e.region=:reg AND e.application=:app"
-                . " ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $newregion,
-                "app" => $element->getApplication()->getId()));
-            $elements = $query->getResult();
+        $application = $element->getApplication();
+        $currentRegionName = $element->getRegion();
+        $affectedRegionNames = array(
+            $currentRegionName,
+            $targetRegionName,
+        );
 
-            $num = 0;
-            foreach ($elements as $elm) {
-                if ($num === intval($element->getWeight())) {
-                    if ($element->getId() === $elm->getId()) {
-                        $num++;
-                    } else {
-                        $num++;
-                        $elm->setWeight($num);
-                        $num++;
-                    }
-                } else {
-                    if ($element->getId() !== $elm->getId()) {
-                        $elm->setWeight($num);
-                        $num++;
-                    }
-                }
-            }
-            foreach ($elements as $elm) {
-                $em->persist($elm);
-            }
-            $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
-            $em->persist($application);
-            $em->flush();
+        /** @var ArrayCollection[]|Element[][] $partitions */
+        $partitions = $application->getElements()->partition(function($_, $entity) use ($affectedRegionNames) {
+            /** @var Element $entity */
+            return in_array($entity->getRegion(), $affectedRegionNames, true);
+        });
+        $affectedRegions = $partitions[0];
+        $unaffectedRegions = $partitions[1];
+        if ($currentRegionName === $targetRegionName) {
+            WeightSortedCollectionUtil::updateSingleWeight($affectedRegions, $element, $number);
         } else {
-            // handle old region
-            $em = $this->getDoctrine()->getManager();
-            $query = $em->createQuery(
-                "SELECT e FROM MapbenderCoreBundle:Element e"
-                . " WHERE e.region=:reg AND e.application=:app"
-                . " AND e.weight>=:min ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $element->getRegion(),
-                "app" => $element->getApplication()->getId(),
-                "min" => $element->getWeight()));
-            $elements = $query->getResult();
-            foreach ($elements as $elm) {
-                if ($elm->getId() !== $element->getId()) {
-                    $elm->setWeight($elm->getWeight() - 1);
-                }
-            }
-            foreach ($elements as $elm) {
-                $em->persist($elm);
-            }
-            $em->flush();
-            // handle new region
-            $query = $em->createQuery(
-                "SELECT e FROM MapbenderCoreBundle:Element e"
-                . " WHERE e.region=:reg AND e.application=:app"
-                . " AND e.weight>=:min ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $newregion,
-                "app" => $element->getApplication()->getId(),
-                "min" => $number));
-            $elements = $query->getResult();
-            foreach ($elements as $elm) {
-                if ($elm->getId() !== $element->getId()) {
-                    $elm->setWeight($elm->getWeight() + 1);
-                }
-            }
-            foreach ($elements as $elm) {
-                $em->persist($elm);
-            }
-            $em->flush();
-            $element->setWeight($number);
-            $element->setRegion($newregion);
-            $em->persist($element);
-            $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
-            $em->persist($application);
-            $em->flush();
+            $partitions = $affectedRegions->partition(function($_, $entity) use ($targetRegionName) {
+                /** @var Element $entity */
+                return $entity->getRegion() === $targetRegionName;
+            });
+            // move from current region to target region, reassign weights in both
+            WeightSortedCollectionUtil::moveBetweenCollections($partitions[0], $partitions[1], $element, $number);
+            $element->setRegion($targetRegionName);
         }
+        $rebuiltElementCollection = $unaffectedRegions;
+        foreach ($affectedRegions as $elementToReAdd) {
+            $rebuiltElementCollection->add($elementToReAdd);
+        }
+        $application->setElements($unaffectedRegions);
+        $application->setUpdated(new \DateTime());
+        $em->persist($application);
+        $em->flush();
         return new JsonResponse(array(
             'error' => '',      // why?
             'result' => 'ok',   // why?
