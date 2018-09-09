@@ -30,7 +30,7 @@ class WmsInstance extends SourceInstance
 
     /**
      * @ORM\ManyToOne(targetEntity="Mapbender\WmsBundle\Entity\WmsSource", inversedBy="instances", cascade={"refresh"})
-     * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
+     * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $source;
 

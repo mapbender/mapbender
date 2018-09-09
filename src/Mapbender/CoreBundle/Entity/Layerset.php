@@ -39,6 +39,7 @@ class Layerset
     /**
      * @var Application The configuration entity for the application
      * @ORM\ManyToOne(targetEntity="Application", inversedBy="layersets")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $application;
 

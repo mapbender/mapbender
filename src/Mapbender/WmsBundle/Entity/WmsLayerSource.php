@@ -35,7 +35,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     protected $id;
     /**
      * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
-     * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
+     * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $source; # change this variable name together with "get" "set" functions (s. SourceItem too)
     /**
@@ -44,7 +44,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     protected $parent = null;
     /**
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent")
+     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $sublayer;
