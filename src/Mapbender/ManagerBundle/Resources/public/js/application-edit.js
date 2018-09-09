@@ -276,9 +276,7 @@ $(function() {
                 $.ajax({
                     url: self.attr("data-url"),
                     complete: function() {
-                        $(".popupContent").removeClass("popupContent")
-                                .addClass("popupSubContent")
-                                .find('form').submit(submitHandler);
+                        $(".popupContent").find('form').submit(submitHandler);
                     }
                 })
             ],
