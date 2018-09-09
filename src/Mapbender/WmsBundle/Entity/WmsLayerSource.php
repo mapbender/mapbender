@@ -794,53 +794,27 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
-     * Set authoritIES
+     * Set authority
      *
-     * @param Authority[] $authorities
-     * @return WmsLayerSource
-     * @deprecated because of misleading wording (singular / plural)
-     */
-    public function setAuthority($authorities)
-    {
-        return $this->setAuthorities($authorities);
-    }
-
-    /**
-     * Set authorities
-     *
-     * @param Authority[] $authorities
+     * @param array $authority
      * @return WmsLayerSource
      */
-    public function setAuthorities($authorities)
+    public function setAuthority($authority)
     {
-        $this->authority = $authorities ? $authorities : array();
+        $this->authority = $authority ? $authority : array();
         return $this;
     }
 
     /**
+     * Get authority
      *
-<<<<<<< HEAD
-     * @param bool $inherit to include Authorities form parent (default)
-     * @return Authority[]
-     * @deprecated because of misleading wording (singular / plural)
-=======
      * @param bool $inherit to append Authrity objects inherited (recursively) from parent, if any
      * @return ArrayCollection|Authority[]
->>>>>>> github/release/3.0.5
      */
     public function getAuthority($inherit = false)
     {
-        return $this->getAuthorities($inherit);
-    }
-
-    /**
-     * @param bool $inherit to include Authorities form parent (default)
-     * @return Authority[]
-     */
-    public function getAuthorities($inherit = true)
-    {
-        if ($inherit && $this->getParent() && $this->getParent()->getAuthorities()) {
-            return array_merge($this->getParent()->getAuthorities(), $this->authority);
+        if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) {
+            return array_merge($this->getParent()->getAuthority(), $this->authority);
         } else {
             return $this->authority;
         }
