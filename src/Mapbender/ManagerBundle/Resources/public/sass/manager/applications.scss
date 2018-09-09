@@ -160,7 +160,14 @@
     color:lighten($darkFontColor, 10%);
   }
 }
-.elementPopup{width:$popupModalWidth;}
+.elementPopup {
+  width: $elementPopupWidth;
+  min-width: $popupModalWidth;
+  min-height: $elementPopupHeight;
+  .popupContent, .popupSubContent {
+    min-width: $elementPopupBodyWidth;
+  }
+}
 
 
 

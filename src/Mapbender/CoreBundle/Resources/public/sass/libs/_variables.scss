@@ -18,7 +18,9 @@ $popupModalWidth:500px;
 $popupMaxHeight:370px;
 $inputHeight:28px;
 
-$elementPopupWidth: $popupModalWidth - ($space * 3);
+$elementPopupWidth: $popupModalWidth;
+$elementPopupBodyWidth: $elementPopupWidth - ($space * 3);
+$elementPopupHeight: 550px;
 //----------------------------------------------------------------colors
 $firstColor:#404040; // dark gray
 $secondColor:#858585; // middle gray
