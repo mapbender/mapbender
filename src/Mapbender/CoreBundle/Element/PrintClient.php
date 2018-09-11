@@ -237,15 +237,13 @@ class PrintClient extends Element
         // @todo: define what data we support; do not simply process and forward everything
         $data = $request->request->all();
 
-        $data['layers'] = $this->prepareLayerDefinitions($data['layers'], false);
+        $data['layers'] = $this->prepareLayerDefinitions($data['layers']);
         if (isset($data['overview'])) {
-            $data['overview'] = $this->prepareLayerDefinitions($data['overview'], true);
+            $data['overview'] = $this->prepareLayerDefinitions($data['overview']);
         }
 
         if (isset($data['features'])) {
-            foreach ($data['features'] as $idx => $value) {
-                $data['features'][$idx] = json_decode($value, true);
-            }
+            $data['features'] = $this->prepareFeatures($data['features']);
         }
 
         if (isset($configuration['replace_pattern'])) {
@@ -259,53 +257,9 @@ class PrintClient extends Element
         }
 
         if (isset($data['legends'])) {
-            $sourceLegendDefs = json_decode($data['legends'], true);
-            $processedLegendDefs = array();
-            foreach ($sourceLegendDefs as $index => $layerDefs) {
-                $processedSourceLegendDef = array();
-                foreach ($layerDefs as $layerTitle => $legendUrl) {
-                    try {
-                        $processedSourceLegendDef[$layerTitle] = $this->resolveTunnelUrl($legendUrl);
-                    } catch (SourceNotFoundException $e) {
-                        // tunnel URL but instance not in database (anymore); skip layer completely
-                        // @todo: log a warning?
-                    }
-                }
-                if ($processedSourceLegendDef) {
-                    $processedLegendDefs[] = $processedSourceLegendDef;
-                }
-            }
-            $data['legends'] = $processedLegendDefs;
+            $data['legends'] = $this->prepareLegends($data['legends']);
         }
         return $data;
-    }
-
-    /**
-     * @param string[] $rawDefinitions json encoded!
-     * @param bool $ignoreType for Overview, which doesn't tell us what it wants
-     * @return array[]
-     */
-    protected function prepareLayerDefinitions($rawDefinitions, $ignoreType)
-    {
-        $definitionsOut = array();
-        foreach ($rawDefinitions as $idx => $layer) {
-            // @todo: remove JSON.stringify behaviour from client, remove json_decode here
-            $layerDef = json_decode($layer, true);
-            // @todo: other source types that can be tunneled?
-            if ($ignoreType || $layerDef['type'] == 'wms') {
-                if (!empty($layerDef['url'])) {
-                    try {
-                        $definitionsOut[] = array_replace($layerDef, array(
-                            'url' => $this->resolveTunnelUrl($layerDef['url']),
-                        ));
-                    } catch (SourceNotFoundException $e) {
-                        // tunnel URL but instance not in database (anymore); skip layer completely
-                        // @todo: log a warning?
-                    }
-                }
-            }
-        }
-        return $definitionsOut;
     }
 
     /**
@@ -321,5 +275,117 @@ class PrintClient extends Element
             return $url;
         }
         return $endPoint->getInternalUrl(Request::create($url), true);
+    }
+
+    /**
+     * Trivial json-decode of input; provided as an override hook for customization.
+     * Processes 'features' value from client.
+     *
+     * @param array|string|string[] $rawFeatureData
+     * @return mixed[][]
+     */
+    protected function prepareFeatures($rawFeatureData)
+    {
+        // feature definition list is a 2+ levels nested array
+        /** @var mixed[][] $featureDefs */
+        $featureDefs = $this->unravelJson($rawFeatureData, 1);
+        return $featureDefs;
+    }
+
+    /**
+     * Trivial json-decode of input; provided as an override hook for customization.
+     * Processes both 'layers' and 'overview' values from client.
+     *
+     * @param array|string|string[] $rawDefinitions
+     * @return mixed[][]
+     * @throws \InvalidArgumentException
+     */
+    protected function prepareLayerDefinitions($rawDefinitions)
+    {
+        $definitionsOut = array();
+        foreach ($this->unravelJson($rawDefinitions, 2) as $layerDef) {
+            // 'url' is mandatory for WMS, also mandatory for 'overview', which doesn't have a 'type',
+            // and it may also be present on other layer types
+            if ($layerDef['type'] == 'wms' || !empty($layerDef['url'])) {
+                try {
+                    $definitionsOut[] = array_replace($layerDef, array(
+                        'url' => $this->resolveTunnelUrl($layerDef['url']),
+                    ));
+                } catch (SourceNotFoundException $e) {
+                    // tunnel URL but instance not in database (anymore); skip layer completely
+                    // @todo: log a warning?
+                }
+            } else {
+                // let's hope it's a feature layer
+                $definitionsOut[] = $layerDef;
+            }
+        }
+        return $definitionsOut;
+    }
+
+    /**
+     * Trivial json-decode of input; provided as an override hook for customization.
+     * Processes 'features' value from client.
+     *
+     * @param array|string|string[] $rawLegendData
+     * @return string[]
+     */
+    protected function prepareLegends($rawLegendData)
+    {
+        $processedLegendDefs = array();
+        foreach ($this->unravelJson($rawLegendData, 1) as $sourceLegendDefs) {
+            foreach ($sourceLegendDefs as $index => $layerDefs) {
+                $processedSourceLegendDef = array();
+                foreach ($layerDefs as $layerTitle => $legendUrl) {
+                    try {
+                        $processedSourceLegendDef[$layerTitle] = $this->resolveTunnelUrl($legendUrl);
+                    } catch (SourceNotFoundException $e) {
+                        // tunnel URL but instance not in database (anymore); skip layer completely
+                        // @todo: log a warning?
+                    }
+                }
+                if ($processedSourceLegendDef) {
+                    $processedLegendDefs[] = $processedSourceLegendDef;
+                }
+            }
+        }
+        return $processedLegendDefs;
+    }
+
+    /**
+     * Turn a json-encoded string into an array, while letting arrays pass through unchanged.
+     * This can be done recursively.
+     * Keys are preserved.
+     *
+     * @todo this could be a util; unknown if other elements or components have similar needs
+     * @param string|string[] $rawInput
+     * @param int $maxDepth for recursion; 0 = unlimited; 1 = top level only (default)
+     * @return mixed[]
+     * @throws \InvalidArgumentException if the top-level output is not an array; it's not generally safe
+     *    to multi-decode json scalars
+     * @throws \InvalidArgumentException if the input is neither string nor array
+     */
+    protected static function unravelJson($rawInput, $maxDepth = 1)
+    {
+        if (is_string($rawInput)) {
+            $a = json_decode($rawInput, true);
+            if (!is_array($a)) {
+                throw new \InvalidArgumentException("Unsafe scalar type " . gettype($a));
+            }
+        } elseif (is_array($rawInput)) {
+            $a = $rawInput;
+        } else {
+            throw new \InvalidArgumentException("Unhandled input type " . gettype($rawInput));
+        }
+        if (!$maxDepth || $maxDepth > 1) {
+            foreach ($a as $k => $v) {
+                try {
+                    $a[$k] = static::unravelJson($v, max(0, $maxDepth - 1));
+                } catch (\InvalidArgumentException $e) {
+                    $a[$k] = $v;
+                }
+            }
+        }
+        return $a;
     }
 }
