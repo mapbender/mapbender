@@ -12,6 +12,8 @@ use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Base class for all Mapbender elements.
@@ -380,6 +382,24 @@ abstract class Element
     public function httpAction($action)
     {
         throw new NotFoundHttpException('This element has no Ajax handler.');
+    }
+
+    /**
+     * Gets the user making the current request. Useful for httpAction.
+     * Return type is a bit flexible, @see AbstractToken::setUser
+     *
+     * @return UserInterface|string|object|null
+     */
+    protected function getUser()
+    {
+        /** @var TokenStorageInterface $tokenStorage */
+        $tokenStorage = $this->container->get('security.token_storage');
+        $token = $tokenStorage->getToken();
+        if ($token) {
+            return $token->getUser();
+        } else {
+            return null;
+        }
     }
 
     /**
