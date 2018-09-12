@@ -340,19 +340,15 @@ class PrintClient extends Element
     {
         $processedLegendDefs = array();
         foreach ($this->unravelJson($rawLegendData, 1) as $sourceLegendDefs) {
-            foreach ($sourceLegendDefs as $index => $layerDefs) {
-                $processedSourceLegendDef = array();
-                foreach ($layerDefs as $layerTitle => $legendUrl) {
-                    try {
-                        $processedSourceLegendDef[$layerTitle] = $this->resolveTunnelUrl($legendUrl);
-                    } catch (SourceNotFoundException $e) {
-                        // tunnel URL but instance not in database (anymore); skip layer completely
-                        // @todo: log a warning?
-                    }
+            foreach ($sourceLegendDefs as $layerTitle => $legendUrl) {
+                try {
+                    $legendUrl = $this->resolveTunnelUrl($legendUrl);
+                } catch (SourceNotFoundException $e) {
+                    // tunnel URL but instance not in database (anymore); skip layer completely
+                    // @todo: log a warning?
+                    continue;
                 }
-                if ($processedSourceLegendDef) {
-                    $processedLegendDefs[] = $processedSourceLegendDef;
-                }
+                $processedLegendDefs[] = array($layerTitle => $legendUrl);
             }
         }
         return $processedLegendDefs;
