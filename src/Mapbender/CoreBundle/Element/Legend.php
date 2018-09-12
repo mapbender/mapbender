@@ -64,7 +64,6 @@ class Legend extends Element
             "tooltip" => "Legend",
             "checkGraphic" => false,
             "hideEmptyLayers" => true,
-            "generateLegendGraphicUrl" => false,
             "showSourceTitle" => true,
             "showLayerTitle" => true,
             "showGrouppedTitle" => true);

@@ -9,7 +9,6 @@
             displayType:              "list",
             checkGraphic:             false,
             hideEmptyLayers:          true,
-            generateLegendGraphicUrl: false,
             showSourceTitle:          true,
             showLayerTitle:           true,
             showGroupedTitle:         true,
@@ -220,18 +219,10 @@
          * Get legend
          *
          * @param layer
-         * @param generate
          * @return {*}
          */
-        getLegend: function(layer, generate) {
-            var legend = null;
-            if(layer.options.legend) {
-                legend = layer.options.legend;
-                if(!legend.url && generate && legend.graphic) {
-                    legend['url'] = legend.graphic;
-                }
-            }
-            return legend;
+        getLegend: function(layer) {
+            return layer && layer.legend || null;
         },
 
         /**
@@ -255,7 +246,7 @@
                 isNode:   sublayer.children && sublayer.children.length
             };
 
-            sublayerLeg["legend"] = widget.getLegend(sublayer, widget.options.generateLegendGraphicUrl);
+            sublayerLeg["legend"] = widget.getLegend(sublayer);
 
             if(!sublayerLeg.isNode) {
                 children.push(sublayerLeg);
@@ -268,7 +259,7 @@
 
                 var childrenLegend = false;
                 _.chain(sublayer.children).each(function(subLayerChild) {
-                    var legendLayer = widget.getLegend(subLayerChild, widget.options.generateLegendGraphicUrl);
+                    var legendLayer = widget.getLegend(subLayerChild);
                     var hasLegendUrl = legendLayer && legendLayer.url;
 
                     if(hasLegendUrl) {
