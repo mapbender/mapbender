@@ -47,7 +47,7 @@
 
             element.addClass(options.anchor);
 
-            $.each(layerSet.reverse(), function(idx, item) {
+            $.each(layerSet, function(idx, item) {
                 $.each(item, function(idx2, layerDef) {
                     if(layerDef.type !== "wms") {
                         return;
