@@ -307,7 +307,7 @@ class PrintClient extends Element
         foreach ($this->unravelJson($rawDefinitions, 2) as $layerDef) {
             // 'url' is mandatory for WMS, also mandatory for 'overview', which doesn't have a 'type',
             // and it may also be present on other layer types
-            if ($layerDef['type'] == 'wms' || !empty($layerDef['url'])) {
+            if ((!empty($layerDef['type']) && $layerDef['type'] == 'wms') || !empty($layerDef['url'])) {
                 try {
                     $definitionsOut[] = array_replace($layerDef, array(
                         'url' => $this->resolveTunnelUrl($layerDef['url']),
