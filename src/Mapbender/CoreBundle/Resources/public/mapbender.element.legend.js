@@ -219,7 +219,7 @@
          * @return {*}
          */
         getLegend: function(layer) {
-            return layer && layer.legend || null;
+            return layer && layer.options && layer.options.legend || null;
         },
 
         /**
