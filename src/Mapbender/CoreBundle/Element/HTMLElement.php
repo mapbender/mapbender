@@ -6,7 +6,6 @@ use Doctrine\DBAL\Connection;
 use Mapbender\CoreBundle\Component\Element;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
  * HTMLElement.
@@ -55,14 +54,15 @@ class HTMLElement extends Element
     }
 
     /**
-     * @deprecated use ArrayUtil::isAssoc directly
+     * Is associative array given?
+     *
      * @param $arr
      * @return bool
      * @deprecated will be removed in 3.0.8.0
      */
-    protected static function isAssoc($arr)
+    protected static function isAssoc(&$arr)
     {
-        return ArrayUtil::isAssoc($arr);
+        return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
     /**
@@ -76,7 +76,7 @@ class HTMLElement extends Element
     {
         if (!is_array($items)) {
             return $items;
-        } elseif (ArrayUtil::isAssoc($items)) {
+        } elseif (self::isAssoc($items)) {
             $items = $this->prepareItem($items);
         } else {
             foreach ($items as $key => $item) {
