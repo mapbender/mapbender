@@ -361,10 +361,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 } else {
                     $publicLegendUrl = $glgLegendUrl;
                 }
-                if (false === strpos('?', $publicLegendUrl)) {
-                    $publicLegendUrl .= '?';
-                }
-                $publicLegendUrl = rtrim($publicLegendUrl, '&') . '&layer=' . urlencode($layerName);
                 return array(
                     // this entry in the emitted config is only evaluated by the legend element if configured with
                     // "generateLegendUrl": true
