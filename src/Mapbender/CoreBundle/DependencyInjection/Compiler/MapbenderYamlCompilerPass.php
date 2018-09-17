@@ -82,6 +82,9 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      */
     public function loadYamlApplications($path)
     {
+        if (!is_dir($path)) {
+            return;
+        }
         $container = $this->container;
         $finder    = new Finder();
         $finder
