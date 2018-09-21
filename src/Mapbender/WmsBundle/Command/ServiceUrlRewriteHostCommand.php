@@ -2,8 +2,12 @@
 
 namespace Mapbender\WmsBundle\Command;
 
-use Mapbender\CoreBundle\Component\EntityHandler;
+use DBSIMM\ImmoBundle\Element\TileControl;
+use Doctrine\ORM\EntityRepository;
+use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -36,6 +40,7 @@ class ServiceUrlRewriteHostCommand extends ContainerAwareCommand
         $this->updateWmsSources($input, $output, $dryRun);
         $this->updateWmsInstances($input, $output, $dryRun);
         $this->updateWfsUrls($input, $output, $dryRun);
+        $this->updateTileControl($input, $output, $dryRun);
         if (!$dryRun) {
             $doctrine = $this->getContainer()->get('doctrine');
             $doctrine->getManager()->flush();
@@ -51,20 +56,18 @@ class ServiceUrlRewriteHostCommand extends ContainerAwareCommand
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
 
-        // Get ALL sources
-        $instanceRepository = $doctrine->getRepository('MapbenderWmsBundle:WmsSource');
-        $sources = $instanceRepository->findAll();
 
+        $sources = $this->getRepository('MapbenderWmsBundle:WmsSource')->findAll();
 
         $nSources = count($sources);
         $output->writeln("<info>Updating WMS sources</info> ($nSources)");
         $progress = $this->createProgressBar($output, $nSources);
 
         foreach ($sources as $source) {
+            /** @var WmsSource $source */
             $em->persist($source);
             $em->persist($source->getContact());
-            $eh = EntityHandler::createHandler($this->getContainer(), $source);
-            /** @var WmsSourceEntityHandler $eh */
+            $eh = WmsSourceEntityHandler::createHandler($this->getContainer(), $source);
             /** @var WmsSource $source */
             $source->replaceHost($to, $from);
 
@@ -120,6 +123,17 @@ class ServiceUrlRewriteHostCommand extends ContainerAwareCommand
         $progress->finish();
     }
 
+    /**
+     * @param $entityName
+     * @return EntityRepository
+     */
+    protected function getRepository($entityName)
+    {
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry $doctrine */
+        $doctrine = $this->getContainer()->get('doctrine');
+        return $doctrine->getRepository($entityName);
+    }
+
     protected function updateWmsInstances(InputInterface $input, OutputInterface $output, $dryRun = false)
     {
         $from = $input->getArgument('from');
@@ -130,7 +144,7 @@ class ServiceUrlRewriteHostCommand extends ContainerAwareCommand
         $em = $doctrine->getManager();
 
         // Get ALL WMS instances from db
-        $instanceRepository = $doctrine->getRepository('MapbenderWmsBundle:WmsInstance');
+        $instanceRepository = $this->getRepository('MapbenderWmsBundle:WmsInstance');
         $iqb = $instanceRepository->createQueryBuilder('i');
         $instances = $iqb
             ->orderBy('i.title')
@@ -151,8 +165,7 @@ class ServiceUrlRewriteHostCommand extends ContainerAwareCommand
             $instance->getSource()->replaceHost($to, $from);
             $instance->setSource($instance->getSource());
 
-            $handler = EntityHandler::createHandler($this->getContainer(), $instance);
-            $handler->generateConfiguration();
+            $handler = WmsInstanceEntityHandler::createHandler($this->getContainer(), $instance);
 
             if (!$dryRun) {
                 $handler->save();
@@ -163,23 +176,79 @@ class ServiceUrlRewriteHostCommand extends ContainerAwareCommand
         $progress->finish();
     }
 
+    /**
+     * @param string $className
+     * @return Element[]
+     */
+    protected function getElementsByClassName($className)
+    {
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry $doctrine */
+        $doctrine = $this->getContainer()->get('doctrine');
+        /** @var EntityRepository $elementRepository */
+        $elementRepository = $doctrine->getRepository('MapbenderCoreBundle:Element');
+
+        $eqb = $elementRepository->createQueryBuilder('e');
+        $elements = $eqb->where('e.class = :class')
+            ->setParameter('class', $className)
+            ->getQuery()
+            ->getResult();
+        return $elements;
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager
+     */
+    protected function getEntityManager()
+    {
+        /** @var \Doctrine\Bundle\DoctrineBundle\Registry $doctrine */
+        $doctrine = $this->getContainer()->get('doctrine');
+        return $doctrine->getManager();
+    }
+
+    protected function updateTileControl(InputInterface $input, OutputInterface $output, $dryRun = false)
+    {
+        $from = $input->getArgument('from');
+        $to = $input->getArgument('to');
+        $elements = $this->getElementsByClassName('DBSIMM\ImmoBundle\Element\TileControl');
+        $nElements = count($elements);
+        if ($nElements) {
+            $title = TileControl::getClassTitle();
+            $output->writeln("<info>Updating {$nElements} {$title} elements</info> ()");
+            $progress = $this->createProgressBar($output, $nElements);
+        } else {
+            return;
+        }
+
+        $em = $this->getEntityManager();
+
+        foreach ($elements as $e) {
+            $config = $e->getConfiguration();
+
+            $targetUrl = ArrayUtil::getDefault($config, 'substituteUrl', null);
+            if (!$targetUrl) {
+                continue;
+            }
+            $newTargetUrl = str_replace($from, $to, $targetUrl);
+            if ($newTargetUrl !== $targetUrl) {
+                if (!$dryRun) {
+                    $em->persist($e);
+                    $config['substituteUrl'] = $newTargetUrl;
+                    $e->setConfiguration($config);
+                    $em->flush();
+                }
+            }
+            $progress->advance(1);
+        }
+        $progress->finish();
+    }
+
     protected function updateWfsUrls(InputInterface $input, OutputInterface $output, $dryRun = false)
     {
         $from = $input->getArgument('from');
         $to = $input->getArgument('to');
+        $em = $this->getEntityManager();
 
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry $doctrine */
-        $doctrine = $this->getContainer()->get('doctrine');
-        $em = $doctrine->getManager();
-
-        $elementRepository = $doctrine->getRepository('MapbenderCoreBundle:Element');
-        $eqb = $elementRepository->createQueryBuilder('e');
-        $elements = $eqb->where('e.class = :class')
-            ->setParameter('class', 'DBSIMM\ImmoBundle\Element\WFS')
-            ->getQuery()
-            ->getResult();
-
-
+        $elements = $this->getElementsByClassName('DBSIMM\ImmoBundle\Element\WFS');
         $nElements = count($elements);
         $output->writeln("<info>Updating WFS elements</info> ($nElements)");
         $progress = $this->createProgressBar($output, $nElements);
