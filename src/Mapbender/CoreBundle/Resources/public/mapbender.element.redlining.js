@@ -16,7 +16,6 @@
         map: null,
         layer: null,
         activeControl: null,
-        selectedFeature: null,
         geomCounter: 0,
         rowTemplate: null,
         _create: function(){
@@ -128,9 +127,8 @@
         },
         _newControl: function(e){
             var self = this;
-            this.editControl.deactivate();
+            this._endEdit();
             if($(e.target).hasClass('active') === true) {
-                this._deactivateControl();
                 return;
             }
             this._deactivateControl();
@@ -207,15 +205,16 @@
             $('.geometry-table tr', this.element).remove();
             this.layer.removeAllFeatures();
         },
-        _deactivateControl: function(){
-            if (this.selectedFeature) {
-                if (this.selectedFeature.style && this.selectedFeature.style.label) {
-                    $('input[name=label-text]', this.element).off('keyup');
-                    this.selectedFeature.style = this._setTextDefault(this.selectedFeature.style);
-                    this.layer.redraw();
-                }
-                this.selectedFeature = null;
+        _endEdit: function() {
+            var editFeature = (this.editControl || {}).feature;
+            this.editControl.deactivate();
+            if (editFeature && editFeature.style && editFeature.style.label) {
+                editFeature.style = this._setTextDefault(editFeature.style);
+                editFeature.layer.redraw();
             }
+        },
+        _deactivateControl: function(){
+            $('input[name=label-text]', this.element).off('keyup');
             if (this.activeControl !== null) {
                 this.activeControl.deactivate();
                 this.activeControl.destroy();
@@ -256,9 +255,6 @@
             var eventFeature = this.layer.getFeatureById($tr.attr('data-id'));
             this._removeFeature(eventFeature);
             $tr.remove();
-            if (eventFeature === this.selectedFeature) {
-                this.selectedFeature = null;
-            }
         },
         _modifyFeature: function(e){
             var eventFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
