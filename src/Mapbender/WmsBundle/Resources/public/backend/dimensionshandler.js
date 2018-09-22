@@ -20,23 +20,6 @@ $(function () {
             $('input[data-name="units"]', $div).val(!dimension ? "" : dimension.getOptions().units);
             $('input[data-name="name"]', $div).val(!dimension ? "" : dimension.getOptions().name);
         },
-        groupedFromVals: function ($div) {
-            var dim = {
-                'extent': $('input[data-name="extent"]', $div).val(),
-                'origextent': $('input[data-name="origextent"]', $div).val(),
-                'type': $('input[data-name="type"]', $div).val(),
-                'current': $('input[data-name="current"]', $div).val(),
-                'nearestValue': $('input[data-name="nearestValue"]', $div).val(),
-                'multipleValues': $('input[data-name="multipleValues"]', $div).val(),
-                'default': $('input[data-name="default"]', $div).val(),
-                'unitSymbol': $('input[data-name="unitSymbol"]', $div).val(),
-                'units': $('input[data-name="units"]', $div).val(),
-                'name': $('input[data-name="name"]', $div).val()
-            };
-            dim.extent = JSON.parse(dim.extent);
-            dim.origextent = JSON.parse(dim.origextent);
-            return  Mapbender.Dimension(dim);
-        },
         generateGrouped: function ($select, $last) {
             var dims = JSON.parse($select.attr('data-dimension-group'));
             var last = null;
@@ -73,7 +56,8 @@ $(function () {
             var self = this;
             var $div = $select.parents('.collectionItem:first').find('input[data-extent="group-dimension-extent"]').parent();
             if ($select.val() && $select.val().length > 0) {
-                var grouped = $last ? this.generateGrouped($select, $last) : this.groupedFromVals($div);
+                var grouped = this.generateGrouped($select, $last);
+                console.log("grouped is now", grouped);
                 var gopts = grouped.getOptions();
                 var options = $.extend(true, {}, gopts);
                 gopts.extent = gopts.origextent;
@@ -110,8 +94,8 @@ $(function () {
         }
     }
 
-    $(document).on('click', 'select[data-dimension-group] option', function (event) {
-        var $opt = $(event.target);
+    $(document).on('change', 'select[data-dimension-group]', function (event) {
+        var $opt = $('option:selected', event.target);
         var $sel = $opt.parent();
         var last = $sel.data("selected") ? $sel.data("selected") : [];
         if ($opt.prop("selected")) {
