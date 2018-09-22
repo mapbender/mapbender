@@ -207,11 +207,14 @@ Mapbender.Model = {
             this.map.olMap.events.register('movestart', this, $.proxy(this._preCheckChanges, this));
 
             this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
-            $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
+            // Array.protoype.reverse is in-place
+            // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
+            // Do not use .reverse on centrally shared values without making your own copy
+            $.each(this.mbMap.options.layersets.slice().reverse(), function(idx, layersetId) {
                 if(!Mapbender.configuration.layersets[layersetId]) {
                     return;
                 }
-                $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
+                $.each(Mapbender.configuration.layersets[layersetId].slice().reverse(), function(lsidx, defArr) {
                     $.each(defArr, function(idx, layerDef) {
                         layerDef['origId'] = idx;
                         self.addSource({
