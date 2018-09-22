@@ -54,6 +54,8 @@
                 var styleMap = new OpenLayers.StyleMap({'default': defaultStyle}, {extendDefault: true});
                 this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
                 this.map.addLayer(this.layer);
+                this.editControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true, active: false});
+                this.map.addControl(this.editControl);
             }
             if (this.options.display_type === 'dialog'){
                 this._open();
@@ -205,8 +207,8 @@
             this.layer.removeAllFeatures();
         },
         _deactivateControl: function(){
-            if(this.selectedFeature) {
-                this.activeControl.unselectFeature(this.selectedFeature);
+            if (this.selectedFeature) {
+                this.editControl.deactivate();
                 if (this.selectedFeature.style && this.selectedFeature.style.label) {
                     $('input[name=label-text]', this.element).off('keyup', $.proxy(this._writeText, this));
                     this.selectedFeature.style = this._setTextDefault(this.selectedFeature.style);
@@ -214,7 +216,7 @@
                 }
                 this.selectedFeature = null;
             }
-            if(this.activeControl !== null) {
+            if (this.activeControl !== null) {
                 this.activeControl.deactivate();
                 this.activeControl.destroy();
                 this.map.removeControl(this.activeControl);
@@ -258,18 +260,16 @@
             this.selectedFeature = null;
         },
         _modifyFeature: function(e){
+            var eventFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
             this._deactivateControl();
-            this.selectedFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
-            if(this.selectedFeature.style && this.selectedFeature.style.label) {
-                this.selectedFeature.style = this._setTextEdit(this.selectedFeature.style);
-                $('input[name=label-text]', this.element).val(this.selectedFeature.style.label);
+            if (eventFeature.style && eventFeature.style.label) {
+                eventFeature.style = this._setTextEdit(eventFeature.style);
+                $('input[name=label-text]', this.element).val(eventFeature.style.label);
                 $('#redlining-text-wrapper', this.element).removeClass('hidden');
                 $('input[name=label-text]', this.element).on('keyup', $.proxy(this._writeText, this));
             }
-            this.activeControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true});
-            this.map.addControl(this.activeControl);
-            this.activeControl.selectFeature(this.selectedFeature);
-            this.activeControl.activate();
+            this.editControl.selectFeature(eventFeature);
+            this.editControl.activate();
         },
         _zoomToFeature: function(e){
             this._deactivateControl();
