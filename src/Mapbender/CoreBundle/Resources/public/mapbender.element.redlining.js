@@ -268,7 +268,11 @@
                 $('#redlining-text-wrapper', this.element).removeClass('hidden');
                 $('input[name=label-text]', this.element).on('keyup', $.proxy(this._writeText, this, eventFeature));
             }
+            this.editControl.activate();
             this.editControl.selectFeature(eventFeature);
+            // This might seem redundant, but without a second activate, the first edit in the session
+            // just does not work; Style changes, vertices are displayed, but you can't pull them.
+            // Second call to activate() fixes this.
             this.editControl.activate();
         },
         _zoomToFeature: function(e){
