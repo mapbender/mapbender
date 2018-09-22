@@ -128,6 +128,7 @@
         },
         _newControl: function(e){
             var self = this;
+            this.editControl.deactivate();
             if($(e.target).hasClass('active') === true) {
                 this._deactivateControl();
                 return;
@@ -208,9 +209,8 @@
         },
         _deactivateControl: function(){
             if (this.selectedFeature) {
-                this.editControl.deactivate();
                 if (this.selectedFeature.style && this.selectedFeature.style.label) {
-                    $('input[name=label-text]', this.element).off('keyup', $.proxy(this._writeText, this));
+                    $('input[name=label-text]', this.element).off('keyup');
                     this.selectedFeature.style = this._setTextDefault(this.selectedFeature.style);
                     this.layer.redraw();
                 }
@@ -252,12 +252,13 @@
             $('.geometry-zoom', $geomtable).on('click', $.proxy(self._zoomToFeature, self));
         },
         _removeFromGeomList: function(e){
-            this._deactivateControl();
             var $tr = $(e.target).parents("tr:first");
-            this.selectedFeature = this.layer.getFeatureById($tr.attr('data-id'));
-            this._removeFeature(this.selectedFeature);
+            var eventFeature = this.layer.getFeatureById($tr.attr('data-id'));
+            this._removeFeature(eventFeature);
             $tr.remove();
-            this.selectedFeature = null;
+            if (eventFeature === this.selectedFeature) {
+                this.selectedFeature = null;
+            }
         },
         _modifyFeature: function(e){
             var eventFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
@@ -266,7 +267,7 @@
                 eventFeature.style = this._setTextEdit(eventFeature.style);
                 $('input[name=label-text]', this.element).val(eventFeature.style.label);
                 $('#redlining-text-wrapper', this.element).removeClass('hidden');
-                $('input[name=label-text]', this.element).on('keyup', $.proxy(this._writeText, this));
+                $('input[name=label-text]', this.element).on('keyup', $.proxy(this._writeText, this, eventFeature));
             }
             this.editControl.selectFeature(eventFeature);
             this.editControl.activate();
@@ -299,16 +300,16 @@
             return style;
         },
         
-        _writeText: function(e) {
-            if (this.selectedFeature && this.selectedFeature.style && this.selectedFeature.style.label) {
-                var value;
-                if ((value = $('input[name=label-text]', this.element).val().trim()) === '') {
+        _writeText: function(feature) {
+            if (feature.style && feature.style.label) {
+                var inputText = $('input[name=label-text]', this.element).val().trim();
+                if (!inputText) {
                     Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                 } else {
-                    this.selectedFeature.style.label = value;
-                    var label = this._getGeomLabel(this.selectedFeature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'), 'text');
-                    $('.geometry-table tr[data-id="'+this.selectedFeature.id+'"] .geometry-name', this.element).text(label);
-                    this.layer.redraw();
+                    feature.style.label = inputText;
+                    var label = this._getGeomLabel(feature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'), 'text');
+                    $('.geometry-table tr[data-id="'+feature.id+'"] .geometry-name', this.element).text(label);
+                    feature.layer.redraw();
                 }
             }
         },
