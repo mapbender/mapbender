@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -74,17 +75,13 @@ abstract class SourceService
      */
     public function validateInnerConfiguration($configuration)
     {
+        $rootLayerContainer = ArrayUtil::getDefault($configuration, 'children', array(null));
         // TODO another tests for instance configuration
         /* check if root exists and has children */
-        if (count($configuration['children']) !== 1 || !isset($configuration['children'][0]['children'])) {
+        if (count($rootLayerContainer) !== 1 || !isset($rootLayerContainer[0])) {
             return false;
         } else {
-            foreach ($configuration['children'][0]['children'] as $childConfig) {
-                if ($this->validateLayerConfiguration($childConfig)) {
-                    return true;
-                }
-            }
-            return false;
+            return $this->validateSubLayerConfiguration($rootLayerContainer[0]);
         }
     }
 
@@ -94,18 +91,15 @@ abstract class SourceService
      * @param mixed[] $configuration
      * @return bool
      */
-    public function validateLayerConfiguration($configuration)
+    public function validateSubLayerConfiguration($configuration)
     {
-        if (isset($configuration['children'])) { // > 2 simple layers -> OK.
-            foreach ($configuration['children'] as $childConfig) {
-                if ($this->validateLayerConfiguration($childConfig)) {
-                    return true;
-                }
+        $childConfigs = ArrayUtil::getDefault($configuration, 'children', array());
+        foreach ($childConfigs as $childConfig) {
+            if (!$this->validateSubLayerConfiguration($childConfig)) {
+                return false;
             }
-            return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     /**
