@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7** @ 828fe57
+* **dev-release/3.0.7** @ 611f7df
   - [Security] Remove obsolete TranslationController (potential XSS vector)
   - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
   - Fix layer order reversals depending on Element population and order ([PR#1025](https://github.com/mapbender/mapbender/pull/1025))
@@ -27,6 +27,7 @@
     * HTMLElement::prepareItems
     * vis-ui.js support in HTMLElement Javascript
   - [Removed] unused asset `mapbender.application.json.js`
+  - [Removed] processing of `app/config/mapbender.yml` ([deprecated since 2016](https://github.com/mapbender/mapbender-starter/commit/f8de52fd0d49d26ea0faf07babd2a093a5d5458a))
   - [Misc] merge Github issue templates from master
   - [Misc] non-functional type annotation fixes
 
