@@ -1,8 +1,8 @@
 # Changelog
-* **dev-release/3.0.7** @ 338e203
+* **dev-release/3.0.7** @ 0192e0c
   - [Security] Remove obsolete TranslationController (potential XSS vector)
   - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
-  - [Regression fix] Restore support for Wms services advertising only a root layer ([338e203](https://github.com/mapbender/mapbender/commit/338e203f7b4099d18d49bb05989a76b5c8f53e98))
+  - [Regression fix] Restore support for Wms services advertising only a root layer ([0192e0c](https://github.com/mapbender/mapbender/commit/0192e0c135af44c5c7ff55a718069d2dc3a646d1))
   - Fix layer order reversals depending on Element population and order ([PR#1025](https://github.com/mapbender/mapbender/pull/1025))
   - Fix Redlining hang after edit mode ([PR#1027](https://github.com/mapbender/mapbender/pull/1027))
   - Print: skip Wms layers where the service response can't be fetched or is invalid.
