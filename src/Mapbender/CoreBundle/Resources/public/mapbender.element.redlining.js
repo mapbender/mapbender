@@ -205,9 +205,11 @@
             $('.geometry-table tr', this.element).remove();
             this.layer.removeAllFeatures();
         },
-        _endEdit: function() {
+        _endEdit: function(nextControl) {
             var editFeature = (this.editControl || {}).feature;
-            this.editControl.deactivate();
+            if (nextControl !== this.editControl) {
+                this.editControl.deactivate();
+            }
             if (editFeature && editFeature.style && editFeature.style.label) {
                 editFeature.style = this._setTextDefault(editFeature.style);
                 editFeature.layer.redraw();
@@ -259,6 +261,7 @@
         _modifyFeature: function(e){
             var eventFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
             this._deactivateControl();
+            this._endEdit(this.editControl);
             if (eventFeature.style && eventFeature.style.label) {
                 eventFeature.style = this._setTextEdit(eventFeature.style);
                 $('input[name=label-text]', this.element).val(eventFeature.style.label);
