@@ -180,15 +180,15 @@
                     $('#redlining-text-wrapper', this.element).removeClass('hidden');
                     this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
                             OpenLayers.Handler.Point, {
-                                featureAdded: function (e) {
+                                featureAdded: function (feature) {
                                     if ($('input[name=label-text]', self.element).val().trim() === '') {
                                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
-                                        self._removeFeature(e);
+                                        self._removeFeature(feature);
                                     } else {
-                                        e.style = self._generateTextStyle($('input[name=label-text]', this.element).val());
-                                        self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
+                                        feature.style = self._generateTextStyle($('input[name=label-text]', self.element).val());
+                                        self._addToGeomList(feature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
                                         self.layer.redraw();
-                                        $('input[name=label-text]', this.element).val('');
+                                        $('input[name=label-text]', self.element).val('');
                                     }
                                 }
                             });
