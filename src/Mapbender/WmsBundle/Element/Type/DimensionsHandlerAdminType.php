@@ -105,7 +105,9 @@ class DimensionsHandlerAdminType extends AbstractType implements ExtendedCollect
                         foreach ($layerset_->getInstances() as $instance) {
                             if ($instance instanceof WmsInstance) {
                                 foreach ($instance->getDimensions() ?: array() as $ix => $dimension) {
+                                    /** @var DimensionInst $dimension */
                                     $key = "{$instance->getId()}-{$ix}";
+                                    $dimension->id = $key;
                                     $dimensions[$key] = $dimension;
                                 }
                             }

@@ -17,17 +17,8 @@ class DimensionInst extends Dimension
     public $origextent = null;
     public $active;
     public $type;
+    public $id;
 
-    public function getCreater()
-    {
-        return $this->creater;
-    }
-
-    public function setCreater($creater)
-    {
-        $this->creater = $creater;
-        return $this;
-    }
 
     public function getOrigextent()
     {

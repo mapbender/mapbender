@@ -36,18 +36,11 @@ $(function () {
             $('input[data-name="name"]', $div).val(!dimension ? "" : dimension.getOptions().name);
         },
         generateGrouped: function ($select, values) {
-            var dimsConfig;
-            if (!$select.data('dims-config')) {
-                var dimsJson = $select.attr('data-dimension-group');
-                dimsConfig = JSON.parse(dimsJson);
-                $select.data('dims-config', dimsConfig);
-            } else {
-                dimsConfig = $select.data('dims-config');
-            }
-            var selectedValues = $select.val() || [];
+            var $selectedOptions = $('option:selected', $select);
             var grouped = null;
-            for (var i = 0; i < selectedValues.length; ++i) {
-                var dimConfig = _.assign({}, dimsConfig[selectedValues[i]], values);
+            for (var i = 0; i < $selectedOptions.length; ++i) {
+                var optionConfig = JSON.parse($($selectedOptions.get(i)).attr('data-config'));
+                var dimConfig = _.assign({}, optionConfig, values);
                 var dim = Mapbender.Dimension(dimConfig);
                 if (grouped) {
                     grouped = grouped.innerJoin(dim) || grouped;
@@ -93,7 +86,7 @@ $(function () {
         }
     };
     var usedValues = [];
-    var selectSelector = '#form_configuration_dimensionsets .collectionItem select[data-dimension-group]';
+    var selectSelector = '#form_configuration_dimensionsets .collectionItem select[data-name="group"]';
     var updateCollection = function updateCollection() {
         var $selects = $(selectSelector);
 
@@ -113,7 +106,7 @@ $(function () {
         });
     };
 
-    $(document).on('change', 'select[data-dimension-group]', function (event) {
+    $(document).on('change', 'select[data-name="group"]', function (event) {
         var $opt = $('option:selected', event.target);
         var $sel = $opt.parent();
         updateCollection();
@@ -127,8 +120,10 @@ $(function () {
             // return false;   // no worky, we can't prevent creation from here :\
         }
         var $new = $('.collectionItem', $collection).last();    // :)
+        $('select[data-name="group"]', $new).trigger('change');
+        // console.log("We got a new one", $new);
         updateCollection();
         dimHandler.initSlider($new);
     });
-    $('select[data-dimension-group]').trigger('change');
+    $('select[data-name="group"]').trigger('change');
 });

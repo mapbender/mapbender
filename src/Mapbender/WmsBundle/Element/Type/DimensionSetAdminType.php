@@ -5,6 +5,7 @@ namespace Mapbender\WmsBundle\Element\Type;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -27,7 +28,7 @@ class DimensionSetAdminType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'dimensions' => array()
+            'dimensions' => array(),
         ));
     }
 
@@ -48,12 +49,12 @@ class DimensionSetAdminType extends AbstractType
             ->add('title', 'text', array(
                 'required' => true,
             ))
-            ->add('group', 'choice', array(
+            ->add('group', new DimensionSetDimensionChoiceType(), array(
                 'required' => true,
-                'choices' => $dimChioces,
                 'multiple' => true,
+                'dimensionInsts' => $options['dimensions'],
                 'attr' => array(
-                    'data-dimension-group' => json_encode($dimJson),
+                    'data-name' => 'group',
                 ),
             ))
             ->add('extent', 'text', array(
