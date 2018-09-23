@@ -2,7 +2,6 @@
 
 namespace Mapbender\WmsBundle\Form\DataTransformer;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Utils\ArrayObject;
 use Mapbender\WmsBundle\Component\VendorSpecific;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -24,6 +23,8 @@ class VendorSpecificTransformer implements DataTransformerInterface
     {
         if (!$data) {
             return null;
+        } elseif (!$data instanceof VendorSpecific) {
+            throw new \RuntimeException("Unexpected type " . is_object($data) ? get_class($data) : gettype($data));
         }
         return ArrayObject::objectToArray($data);
     }
@@ -41,5 +42,4 @@ class VendorSpecificTransformer implements DataTransformerInterface
         }
         return ArrayObject::arrayToObject("Mapbender\WmsBundle\Component\VendorSpecific", $data);
     }
-
 }

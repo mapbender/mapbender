@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Element\Type;
 
+use Mapbender\WmsBundle\Component\DimensionInst;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -37,33 +38,37 @@ class DimensionSetAdminType extends AbstractType
     {
         $dimChioces = array();
         $dimJson = array();
-        foreach ($options['dimensions'] as $instId => $dims) {
-            $dimJson[$instId] = array();
-            foreach ($dims as $dim) {
-                $dimChioces[$instId . "-" . $dim->getName() . "-" . $dim->getType()] = $instId . "-" . $dim->getName() . "-" . $dim->getType();
-                $dimJson[$instId][] = $dim->getConfiguration();
-            }
+        foreach ($options['dimensions'] as $instId => $dim) {
+            /** @var DimensionInst $dim */
+            $dimChioces[$instId] = $instId . "-" . $dim->getName() . "-" . $dim->getType();
+            $dimJson[$instId] = $dim->getConfiguration();
         }
-        $builder->add('title', 'text',
-                      array(
+        // die(var_export($dimJson, true));
+        $builder
+            ->add('title', 'text', array(
                 'required' => true,
-                'property_path' => '[title]'))
-            ->add('group', 'choice',
-                  array(
+            ))
+            ->add('group', 'choice', array(
                 'required' => true,
                 'choices' => $dimChioces,
                 'multiple' => true,
                 'attr' => array(
-                    'data-dimension-group' => json_encode($dimJson))))
-            ->add('Extent', 'text',
-                      array(
+                    'data-dimension-group' => json_encode($dimJson),
+                ),
+            ))
+            ->add('extent', 'text', array(
                 'required' => false,
                 'mapped' => false,
                 'property_path' => '[display]',
                 'read_only' => true,
-                'attr' => array('data-name' => 'display', )))
+                'attr' => array(
+                    'data-name' => 'display',
+                ),
+            ))
             ->add('dimension', new DimensionInstElmType(), array(
-                'required' => false,));
+                'required' => false,
+            ))
+        ;
     }
 
 }

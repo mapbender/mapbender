@@ -97,7 +97,6 @@ Mapbender.DimensionScalar.prototype.partFromValue = function(val) {
                     return index / (this.getStepsNum() + 1);
                 }
             }, this);
-
     }
 
     return 0;
@@ -137,9 +136,6 @@ Mapbender.DimensionScalar.prototype.innerJoin = function() {
 Mapbender.DimensionScalar.prototype.getInRange = function(min, max, value) {
     var partMin = this.partFromValue(min);
     var partMax = this.partFromValue(max);
-    if(partMin < 0 || partMax > 1) {
-        return null;
-    }
     var partValue = this.partFromValue(value);
     var isPartValueSmallerOrEqualsPartMin = partValue <= partMin;
     var isPartValueGreaterOrEqulasPartMax = partValue >= partMax;

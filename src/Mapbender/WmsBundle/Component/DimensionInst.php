@@ -142,7 +142,7 @@ class DimensionInst extends Dimension
             'nearestValue' => $this->getNearestValue(),
             'unitSymbol' => $this->getUnitSymbol(),
             'units' => $this->getUnits(),
-            'extent' => $this->getData($this->getExtent()),
+            'extent' => $this->getData($this->getExtent()) ?: $this->getData($this->getOrigextent()),
             'origextent' => $this->getData($this->getOrigextent()),
             'type' => $this->getType(),
         );

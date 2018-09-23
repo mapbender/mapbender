@@ -3,6 +3,8 @@
 namespace Mapbender\WmsBundle\Element\Type;
 
 use Mapbender\CoreBundle\Component\ExtendedCollection;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -51,47 +53,69 @@ class DimensionsHandlerAdminType extends AbstractType implements ExtendedCollect
         $element = $options["element"];
         $dimensions = array();
         if ($element !== null && $element->getId() !== null) {
-            foreach ($application->getElements() as $appl_element) {
-                $configuration = $element->getConfiguration();
-                if ($appl_element->getId() === intval($configuration["target"])) {
-                    $mapconfig = $appl_element->getConfiguration();
-                    if (!isset($mapconfig['layersets']) && isset($mapconfig['layerset'])
-                        && $mapconfig['layerset'] === null && is_int($mapconfig['layerset'])) {
-                        $mapconfig['layersets'] = array(intval($mapconfig['layerset']));
-                    }
-                    foreach ($application->getLayersets() as $layerset_) {
-                        if (in_array($layerset_->getId(), $mapconfig['layersets'])) {
-                            foreach ($layerset_->getInstances() as $instance) {
-                                if ($instance instanceof WmsInstance && count($instance->getDimensions()) > 0) {
-                                    foreach ($instance->getDimensions() as $dimension) {
-                                        $dimensions[$instance->getId() . ""][] = $dimension;
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                    }
-                    break;
-                }
+            $configuration = $element->getConfiguration();
+            if (!empty($configuration['target'])) {
+                $mapId = $configuration['target'];
+                $dimensions = $this->collectDimensions($application, intval($mapId));
             }
         }
-        $builder->add('tooltip', 'text', array('required' => false))->add('target', 'target_element',
-                  array(
+        $builder
+            ->add('tooltip', 'text', array(
+                'required' => false,
+            ))
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
-                'required' => false));
-        if (count($dimensions) > 0) {
-            $builder->add('dimensionsets', "collection",
-                          array(
-                'property_path' => '[dimensionsets]',
-                'type' => new DimensionSetAdminType(),
-                'allow_add' => true,
-                'allow_delete' => true,
-                'auto_initialize' => false,
-                'options' => array('dimensions' => $dimensions)
-            ));
+                'required' => false,
+            ))
+        ;
+        if ($dimensions) {
+            $builder
+                ->add('dimensionsets', "collection", array(
+                    'type' => new DimensionSetAdminType(),
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'auto_initialize' => false,
+                    'options' => array(
+                        'dimensions' => $dimensions,
+                    ),
+                ))
+            ;
         }
     }
 
+    /**
+     * @param Application $application
+     * @param int $mapId
+     * @return DimensionInst[]
+     */
+    protected function collectDimensions($application, $mapId)
+    {
+        $dimensions = array();
+        foreach ($application->getElements() as $appl_element) {
+            if ($appl_element->getId() === $mapId) {
+                $mapconfig = $appl_element->getConfiguration();
+                if (!isset($mapconfig['layersets']) && isset($mapconfig['layerset'])
+                    && $mapconfig['layerset'] === null && is_int($mapconfig['layerset'])) {
+                    $mapconfig['layersets'] = array(intval($mapconfig['layerset']));
+                }
+                foreach ($application->getLayersets() as $layerset_) {
+                    if (in_array($layerset_->getId(), $mapconfig['layersets'])) {
+                        foreach ($layerset_->getInstances() as $instance) {
+                            if ($instance instanceof WmsInstance) {
+                                foreach ($instance->getDimensions() ?: array() as $ix => $dimension) {
+                                    $key = "{$instance->getId()}-{$ix}";
+                                    $dimensions[$key] = $dimension;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        return $dimensions;
+    }
 }

@@ -1,14 +1,30 @@
 .mb-element-dimensionshandler{
-    .dimensionset{
-        position: relative;
-        padding: 0 $space/4 0 $space/4;
+  .dimensionset {
+    line-height: 19px;
+  }
+  .mb-slider {
+    display: inline-block;
+    width: 100%;
+  }
+  /*
+     This is the original Bootstrap 4 declaration for a gutter-less grid.
+     See https://getbootstrap.com/docs/4.0/layout/grid/#no-gutters
+     We haven't universally adopted Bootstrap 4 yet, but this should remain compatible
+     if / when we do.
+   */
+  .no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+
+    > .col,
+    > [class*="col-"] {
+      padding-right: 0;
+      padding-left: 0;
     }
-/*    .dimensionset-title{ }*/
-    .dimensionset-value{
-        position: absolute;
-        padding-right: $space/4;
-        right: 0px;
-    }
+  }
+  .slider-wrap, .no-gutters .slider-wrap {
+    padding: 0 1em;
+  }
 }
 
 .toolBarItem .mb-element-dimensionshandler{
@@ -16,17 +32,11 @@
   width: 140px;
   height:$space;
   @extend .iconBig;
-  /*padding-top: 5px;*/
-  padding-left: 0px;
-  /*div{display:none;}*/
+  padding-left: 0;
   .dimensionset{
     height: 100%;
     width:100%;
     .mb-slider.ui-slider {
-      position:absolute;
-      bottom:4px;
-      left:0px;
-      width:100%;
       border: 2px solid lighten($middleFontColor, 20%) !important;
       height: 8px;
       .ui-slider-handle{
@@ -37,21 +47,21 @@
         top: -5px;
       }
     }
-    .dimensionset-title{
-      /*display:none;*/
-      position: absolute;
-      left: 0px;
-      top:-$space/2;
+    .dimensionset-title {
+      float:none;
+      width: 100%;
+      &:after {
+        display:block;
+        content: '';
+        clear: both;
+      }
     }
-    .dimensionset-value{
-      /*display:none;*/
-      position: absolute;
-      right: -5px;
-      top:-$space/2;
+    .slider-wrap {
+      padding-left: 0.25em;
+      width: 60%;
     }
-
+    .dimensionset-value {
+      width: 39%;
+    }
   }
-/*  .dimensionset:hover{
-    .dimensionset-title,.dimensionset-value{display:block;}
-  }*/
 }
