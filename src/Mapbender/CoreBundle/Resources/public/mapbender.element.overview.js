@@ -221,8 +221,6 @@
         ready: function(callback){
             if(this.readyState === true){
                 callback();
-            }else{
-                this.readyCallbacks.push(callback);
             }
         },
 
@@ -233,10 +231,6 @@
             var widget = this;
             widget._trigger('ready');
 
-            for (var callback in widget.readyCallbacks) {
-                callback();
-                delete(widget.readyCallbacks[callback]);
-            }
             widget.readyState = true;
         }
 
