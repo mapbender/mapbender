@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7** @ 2102fec
+* **v3.0.7.5**
   - [Security] Remove obsolete TranslationController (potential XSS vector)
   - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
   - [Regression fix] Restore support for Wms services advertising only a root layer ([0192e0c](https://github.com/mapbender/mapbender/commit/0192e0c135af44c5c7ff55a718069d2dc3a646d1))
