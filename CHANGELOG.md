@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7** @ b76082e
+* **dev-release/3.0.7** @ 2102fec
   - [Security] Remove obsolete TranslationController (potential XSS vector)
   - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
   - [Regression fix] Restore support for Wms services advertising only a root layer ([0192e0c](https://github.com/mapbender/mapbender/commit/0192e0c135af44c5c7ff55a718069d2dc3a646d1))
@@ -22,6 +22,7 @@
   - [Framework] Provide global boolean Javascript value `Mapbender.configuration.application.debug` to check for `app_dev` environment
   - [Framework] Pre-calculate internal layer attributes `id` and `origId` and source attribute `origId` server-side
   - [Framework] New optional widget [mbCheckbox](https://github.com/mapbender/mapbender/blob/eca5cd66296f539945802c4f5d048c4adbabb739/src/Mapbender/CoreBundle/Resources/public/widgets/mapbender.checkbox.js) as a replacement for FOM's `initCheckbox`
+  - [Framework] Move Mapbender version knowledge from Mapbender Starter into Mapbender ([PR#1012](https://github.com/mapbender/mapbender/pull/1012))
   - [Database] add delete cascade to foreign keys referencing Application or Source,
     allowing such objects to be deleted on the database (non-Doctrine) level
   - [Console debugging] Check / provide appropriate message if Element widget constructor or widget namespace do not exist
