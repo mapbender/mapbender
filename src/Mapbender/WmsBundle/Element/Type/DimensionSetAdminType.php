@@ -2,15 +2,15 @@
 
 namespace Mapbender\WmsBundle\Element\Type;
 
+use Mapbender\WmsBundle\Element\Type\Transformer\DimensionSetTransformer;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * 
  */
-class DimensionSetAdminType extends AbstractType implements DataTransformerInterface
+class DimensionSetAdminType extends AbstractType
 {
 
     /**
@@ -28,10 +28,9 @@ class DimensionSetAdminType extends AbstractType implements DataTransformerInter
     {
         $resolver->setDefaults(array(
             'dimensions' => array(),
-            'error_bubbling' => false,
-            'allow_extra_fields' => true,
             'title' => null,
             'group' => null,
+            'dimension' => null,
         ));
     }
 
@@ -48,15 +47,15 @@ class DimensionSetAdminType extends AbstractType implements DataTransformerInter
                 ),
             ))
             ->add('group', new DimensionSetDimensionChoiceType(), array(
-                'required' => false,
+                'required' => true,
                 'multiple' => true,
                 'mapped' => true,
-                'dimensionInsts' => $options['dimensions'],
+                'dimensions' => $options['dimensions'],
                 'attr' => array(
                     'data-name' => 'group',
                 ),
             ))
-            ->add('dimension', new DimensionSetExtentType(), array(
+            ->add('dimension', 'hidden', array(
                 'required' => true,
                 'mapped' => true,
                 'attr' => array(
@@ -64,30 +63,6 @@ class DimensionSetAdminType extends AbstractType implements DataTransformerInter
                 ),
             ))
         ;
-        $builder->addModelTransformer($this);
-    }
-
-    public function transform($value)
-    {
-        if ($value && !empty($value['dimension'])) {
-            if (!is_string($value['dimension'])) {
-                $value['dimension'] = json_encode($value['dimension']);
-            } else {
-                $value['dimension'] = null;
-            }
-        }
-        return $value;
-    }
-
-    public function reverseTransform($value)
-    {
-        if ($value && !empty($value['dimension'])) {
-            if (is_string($value['dimension'])) {
-                $value['dimension'] = json_decode($value['dimension']);
-            } else {
-                $value['dimension'] = null;
-            }
-        }
-        return $value;
+        $builder->addModelTransformer(new DimensionSetTransformer($options['dimensions']));
     }
 }

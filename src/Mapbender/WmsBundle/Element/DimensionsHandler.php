@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 
@@ -113,8 +114,13 @@ class DimensionsHandler extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        foreach ($configuration['dimensionsets'] as $key => &$value) {
-            $value['dimension'] = $value['dimension']->getConfiguration();
+        foreach ($configuration['dimensionsets'] as $setKey => $setConfig) {
+            if (!empty($setConfig['dimension']) && is_object($setConfig['dimension'])) {
+                /** @var DimensionInst $dimension */
+                $dimension = $setConfig['dimension'];
+                $dimensionConfig = $dimension->getConfiguration();
+                $configuration['dimensionsets'][$setKey]['dimension'] = $dimensionConfig;
+            }
         }
         return $configuration;
     }
@@ -130,8 +136,12 @@ class DimensionsHandler extends Element
         $configuration = parent::getConfiguration();
         $instances = array();
         foreach ($configuration['dimensionsets'] as $key => $value) {
-            for ($i = 0; isset($value['group']) && count($value['group']) > $i; $i++) {
-                $item = explode("-", $value['group'][$i]);
+            foreach (ArrayUtil::getDefault($value, 'group', array()) as $group) {
+                if (is_object($group)) {
+//                    die(var_export($configuration, true));
+//                    die(var_export(array($value, $group->getConfiguration()), true));
+                }
+                $item = explode("-", $group);
                 $instances[$item[0]] = $value['dimension'];
             }
         }

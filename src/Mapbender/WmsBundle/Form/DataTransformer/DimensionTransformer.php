@@ -35,11 +35,6 @@ class DimensionTransformer implements DataTransformerInterface
             return array();
         }
         $arrayData = ArrayObject::objectToArray($data);
-        foreach ($this->getExtentKeys() as $extentKey) {
-            if (!empty($arrayData[$extentKey])) {
-                $arrayData[$extentKey] = $this->transformExtent($arrayData, $arrayData[$extentKey]);
-            }
-        }
         return $arrayData;
     }
 
@@ -54,45 +49,40 @@ class DimensionTransformer implements DataTransformerInterface
         if (!$data) {
             return "";
         }
-        foreach ($this->getExtentKeys() as $extentKey) {
-            if (isset($data[$extentKey])) {
-                $data[$extentKey] = $this->revTransformExtent($data, $data[$extentKey]);
-            }
-        }
         return ArrayObject::arrayToObject('Mapbender\WmsBundle\Component\DimensionInst', $data);
     }
 
     /**
-     * @param array $data
+     * @param string $type
      * @param mixed $extentValue
      * @return string|null
      */
-    protected function transformExtent($data, $extentValue)
+    protected function transformExtent($type, $extentValue)
     {
-        switch ($data['type']) {
-            case DimensionInst::TYPE_MULTIPLE:
-                return implode(',', $extentValue);
-            case DimensionInst::TYPE_INTERVAL:
-                return implode('/', $extentValue);
-            default:
-                throw new \RuntimeException("Unhandled type " . var_export($data['type'], true));
-        }
-    }
-
-    /**
-     * @param array $data
-     * @param mixed $extentValue
-     * @return string|null
-     */
-    protected function revTransformExtent($data, $extentValue)
-    {
-        switch ($data['type']) {
+        switch ($type) {
             case DimensionInst::TYPE_MULTIPLE:
                 return explode(',', $extentValue);
             case DimensionInst::TYPE_INTERVAL:
                 return explode('/', $extentValue);
             default:
-                throw new \RuntimeException("Unhandled type " . var_export($data['type'], true));
+                throw new \RuntimeException("Unhandled type " . var_export($type, true));
+        }
+    }
+
+    /**
+     * @param string $type
+     * @param mixed $extentValue
+     * @return string|null
+     */
+    protected function revTransformExtent($type, $extentValue)
+    {
+        switch ($type) {
+            case DimensionInst::TYPE_MULTIPLE:
+                return implode(',', $extentValue);
+            case DimensionInst::TYPE_INTERVAL:
+                return implode('/', $extentValue);
+            default:
+                throw new \RuntimeException("Unhandled type " . var_export($type, true));
         }
     }
 }

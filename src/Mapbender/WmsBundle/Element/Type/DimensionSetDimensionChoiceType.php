@@ -20,18 +20,19 @@ class DimensionSetDimensionChoiceType extends AbstractType
     {
         // NOTE: `use ($this)` not allowed in PHP lambda definitions...
         $resolver->setDefaults(array(
-            'dimensionInsts' => array(),
+            'dimensions' => array(),
             'choices' => function (Options $options) {
-                $choices = array();
-                foreach ($options['dimensionInsts'] as $dim) {
-                    /** @var DimensionInst $dim */
-                    $optionLabel = $dim->id . "-" . $dim->getName() . "-" . $dim->getType();
-                    $choices[$optionLabel] = $dim;
-                }
-                return $choices;
+                return $options['dimensions'];
             },
-            'choice_value' => function (DimensionInst $inst) {
-                return $inst->id;
+            'choice_label' => function (DimensionInst $inst) {
+                return $inst->id . "-" . $inst->getName() . "-" . $inst->getType();
+            },
+            'choice_value' => function (DimensionInst $inst = null) {
+                if (!$inst) {
+                    return null;
+                } else {
+                    return $inst->id . "-" . $inst->getName() . "-" . $inst->getType();
+                }
             },
             'choice_attr' => function (DimensionInst $inst, $key, $label) {
                 return array(
@@ -40,18 +41,5 @@ class DimensionSetDimensionChoiceType extends AbstractType
             },
             'choices_as_values' => true,
         ));
-    }
-
-    /**
-     * @param DimensionInst[] $dimensionInsts
-     * @return string[];
-     */
-    protected function getDimensionChoices($dimensionInsts)
-    {
-        $choices = array();
-        foreach ($dimensionInsts as $instId => $dim) {
-            $choices[$instId] = $instId . "-" . $dim->getName() . "-" . $dim->getType();
-        }
-        return $choices;
     }
 }

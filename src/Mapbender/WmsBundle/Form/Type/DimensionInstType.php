@@ -35,7 +35,7 @@ class DimensionInstType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new DimensionSubscriber($builder->getFormFactory());
+        $subscriber = new DimensionSubscriber();
         $builder->addEventSubscriber($subscriber);
         $transformer = new DimensionTransformer();
         $builder->addModelTransformer($transformer);
