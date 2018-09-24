@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7** @ 2556066
+* **dev-release/3.0.7** @ b76082e
   - [Security] Remove obsolete TranslationController (potential XSS vector)
   - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
   - [Regression fix] Restore support for Wms services advertising only a root layer ([0192e0c](https://github.com/mapbender/mapbender/commit/0192e0c135af44c5c7ff55a718069d2dc3a646d1))
@@ -17,6 +17,7 @@
   - [Frontend] suppress unneeded scroll bars on popup dialogs ([PR#1022](https://github.com/mapbender/mapbender/pull/1022))
   - [Backend] popup sizing changes, add CSS-level customizability ([PR#1022](https://github.com/mapbender/mapbender/pull/1022))
   - [Backend] reformulate non-framework conformant security and response interactions ([PR#1028](https://github.com/mapbender/mapbender/pull/1028))
+  - [Backend] Add new form types for source instances, source instance layers ([ee0099e](https://github.com/mapbender/mapbender/commit/ee0099e1d49bfdbe916fa83f5121e3150418a612))
   - [Framework] Extend runtime extension of SRS definitions with preliminiary support for proj4js 2.x
   - [Framework] Provide global boolean Javascript value `Mapbender.configuration.application.debug` to check for `app_dev` environment
   - [Framework] Pre-calculate internal layer attributes `id` and `origId` and source attribute `origId` server-side
