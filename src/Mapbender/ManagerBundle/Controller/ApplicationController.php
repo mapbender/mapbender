@@ -22,6 +22,7 @@ use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -430,16 +431,11 @@ class ApplicationController extends WelcomeController
                 break;
         }
 
-        return new Response(
-            json_encode(
-                array(
-                'oldState' => $currentState ? 'enabled' : 'disabled',
-                'newState' => $newState ? 'enabled' : 'disabled',
-                'message' => $message)
-            ),
-            200,
-            array('Content-Type' => 'application/json')
-        );
+        return new JsonResponse(array(
+            'oldState' => $currentState ? 'enabled' : 'disabled',
+            'newState' => $newState ? 'enabled' : 'disabled',
+            'message' => $message
+        ));
     }
 
     /**

@@ -5,7 +5,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 /**
@@ -237,9 +237,10 @@ class RepositoryController extends Controller
             throw $this->createNotFoundException('The source instance id:"' . $instanceId . '" does not exist.');
         }
         if (intval($number) === $instance->getWeight() && $layersetId === $layersetId_new) {
-            return new Response(json_encode(array(
-                    'error' => '',
-                    'result' => 'ok')), 200, array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                'error' => '',      // why?
+                'result' => 'ok',   // why?
+            ));
         }
 
         if ($layersetId === $layersetId_new) {
@@ -330,10 +331,10 @@ class RepositoryController extends Controller
             }
         }
 
-        return new Response(json_encode(array(
-                'error' => '',
-                'result' => 'ok')), 200, array(
-            'Content-Type' => 'application/json'));
+        return new JsonResponse(array(
+            'error' => '',      // why?
+            'result' => 'ok',   // why?
+        ));
     }
 
     /**
