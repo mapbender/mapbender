@@ -1,0 +1,21 @@
+{# form skin (widget + row) for a DimensionInst extent, composed of a (read-only) text field and a slider #}
+{# This uses a bootstrap grid but makes it look like the default FOM form fields ito widths and margins... #}
+{% block _form_configuration_dimensionsets_entry_dimension_widget %}
+{% spaceless %}
+    <input data-name="extentDisplay" type="text" readonly="readonly" disabled="disabled" class="input" />
+    <div class="mb-slider" style="margin: 0.5em 0;"></div>
+    <div style="display:none;">
+    {{ block('form_widget_simple') }}
+    </div>
+{% endspaceless %}
+{% endblock %}
+{% block _form_configuration_dimensionsets_entry_dimension_row %}
+    <div class="row">
+        <div class="col-xs-3" style="width:auto; padding-right:0;">
+            {{ form_label(form) }}
+        </div>
+        <div class="col-xs-9" style="width:70%; padding-left:0;">
+            {{ block('_form_configuration_dimensionsets_entry_dimension_widget') }}
+        </div>
+    </div>
+{% endblock %}

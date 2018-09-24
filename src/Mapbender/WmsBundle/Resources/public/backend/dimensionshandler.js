@@ -1,94 +1,90 @@
 var dimHandler = null;
 $(function () {
+    var collectionSelector = '#form_configuration_dimensionsets .collectionItem';
+    var selectSelector = 'select[data-name="group"]';
     dimHandler = {
-        updateExtents: function ($div, extent, default_) {
-            var text = extent ? extent[0] + '/' + extent[1] + '/' + extent[2] + ' - ' + default_ : '';
-            $('input[data-name="display"]', $div.parents('.collectionItem:first')).val(text);
-            $('input[data-name="extent"]', $div).val(extent ? JSON.stringify(extent) : '');
-            $('input[data-name="default"]', $div).val(default_ ? default_ : '');
+        updateExtents: function ($item, extent, default_) {
+            var text = extent && ([extent.join('/'), default_].join(' - ')) || '';
+            $('input[data-name="extentDisplay"]', $item).val(text);
         },
-        getInputValues: function($div) {
-            var r = {};
-            var extent = JSON.parse($('input[data-name="extent"]', $div).val() || '""') || null;
-            var origextent = JSON.parse($('input[data-name="origextent"]', $div).val() || '""') || null;
-            var default_ = $('input[data-name="default"]', $div).val() || null;
-            if (extent) {
-                r.extent = extent;
-            }
-            if (origextent) {
-                r.origextent = origextent;
-            }
-            if (default_) {
-                r.default = default_;
-            }
-            return r;
+        getInputValues: function($item) {
+            return JSON.parse($('input[data-name="dimension"]', $item).val() || '""') || {};
         },
-        setVals: function ($div, dimension) {
-            $('input[data-name="extent"]', $div).val(!dimension ? "" : JSON.stringify(dimension.getOptions().extent));
-            // $('input[data-name="origextent"]', $div).val(!dimension ? "" : JSON.stringify(dimension.getOptions().origextent));
-            $('input[data-name="type"]', $div).val(!dimension ? "" : dimension.getOptions().type);
-            $('input[data-name="current"]', $div).val(!dimension ? "" : dimension.getOptions().current);
-            $('input[data-name="nearestValue"]', $div).val(!dimension ? "" : dimension.getOptions().nearestValue);
-            $('input[data-name="multipleValues"]', $div).val(!dimension ? "" : dimension.getOptions().multipleValues);
-            $('input[data-name="default"]', $div).val(!dimension ? "" : dimension.getOptions()['default']);
-            $('input[data-name="unitSymbol"]', $div).val(!dimension ? "" : dimension.getOptions().unitSymbol);
-            $('input[data-name="units"]', $div).val(!dimension ? "" : dimension.getOptions().units);
-            $('input[data-name="name"]', $div).val(!dimension ? "" : dimension.getOptions().name);
+        setVals: function ($item, dimension, extent) {
+            var gopts;
+            if (dimension) {
+                gopts = dimension.getOptions();
+                if (extent) {
+                    gopts = _.assign({}, gopts, {extent: extent});
+                }
+                $('input[data-name="dimension"]', $item).val(JSON.stringify(gopts || ''));
+                this.updateExtents($item, gopts.extent, dimension.getDefault());
+            } else {
+                $('input[data-name="dimension"]', $item).val('');
+                this.updateExtents($item, null, null);
+            }
         },
-        generateGrouped: function ($select, values) {
+        merge: function (dimension, $select) {
             var $selectedOptions = $('option:selected', $select);
-            var grouped = null;
+            var dim = dimension;
             for (var i = 0; i < $selectedOptions.length; ++i) {
                 var optionConfig = JSON.parse($($selectedOptions.get(i)).attr('data-config'));
-                var dimConfig = _.assign({}, optionConfig, values);
-                var dim = Mapbender.Dimension(dimConfig);
-                if (grouped) {
-                    grouped = grouped.innerJoin(dim) || grouped;
-                } else {
-                    grouped = dim;
+                var dimConfig = _.assign({}, optionConfig);
+                var nextDim = Mapbender.Dimension(dimConfig);
+                if (!dim) {
+                    dim = nextDim;
+                } else if (nextDim) {
+                    dim = dim.innerJoin(nextDim) || dim;
                 }
             }
-            return grouped;
+            return dim;
         },
-        initSlider: function ($select) {
+        initItem: function($item) {
+            var values = this.getInputValues($item);
+            var dim = Mapbender.Dimension(values);
+            $item.data('dimension-instance', dim);
+        },
+        initSlider: function ($item) {
             var self = this;
-            var $div = $select.parents('.collectionItem:first').find('input[data-extent="group-dimension-extent"]').parent();
-            var values = this.getInputValues($div);
+            var $slider = $('.mb-slider', $item);
+            var $select = $(selectSelector, $item);
+            var dimension = $item.data('dimension-instance');
             if ($select.val() && $select.val().length > 0) {
-                var grouped = this.generateGrouped($select, values);
-                var gopts = grouped.getOptions();
-                $div.addClass('sliderDiv').addClass('mb-slider');
-                var extentStepNum = grouped.getStepsNum();
-                var sliderValues = [extentStepNum * grouped.partFromValue(gopts.extent[0]), extentStepNum * grouped.partFromValue(gopts.extent[1])];
-                var sliderRange = [extentStepNum * grouped.partFromValue(gopts.origextent[0]), extentStepNum * grouped.partFromValue(gopts.origextent[1])];
-                this.setVals($div, grouped);
-                this.updateExtents($div, gopts.extent, grouped.getDefault());
-                $div.slider({
+                dimension = this.merge(dimension, $select);
+                $item.data('dimension-instance', dimension);
+                this.setVals($item, dimension);
+            }
+            if (dimension) {
+                var gopts = dimension.getOptions();
+                var extentStepNum = dimension.getStepsNum();
+                var sliderValues = [extentStepNum * dimension.partFromValue(gopts.extent[0]), extentStepNum * dimension.partFromValue(gopts.extent[1])];
+                var sliderRange = [extentStepNum * dimension.partFromValue(gopts.origextent[0]), extentStepNum * dimension.partFromValue(gopts.origextent[1])];
+                $slider.slider({
                     range: true,
                     min: sliderRange[0],
                     max: sliderRange[1],
                     steps: 1,
                     values: sliderValues,
                     slide: function (event, ui) {
-                        var extent = [grouped.valueFromPart(ui.values[0] / extentStepNum), grouped.valueFromPart(ui.values[1] / extentStepNum), gopts.origextent[2]];
-                        grouped.setDefault(grouped.getInRange(extent[0], extent[1], grouped.getDefault()));
-                        self.updateExtents($div, extent, grouped.getDefault());
+                        var extent = [dimension.valueFromPart(ui.values[0] / extentStepNum), dimension.valueFromPart(ui.values[1] / extentStepNum), gopts.origextent[2]];
+                        dimension.setDefault(dimension.getInRange(extent[0], extent[1], dimension.getDefault()));
+                        self.setVals($item, dimension, extent);
                     }
                 });
+                $slider.addClass('-created');
             } else {
-                this.setVals($div, null);
-                this.updateExtents($div);
-                if ($div.hasClass('mb-slider')) {
-                    $div.slider("destroy");
+                this.setVals($item, null);
+                if ($slider.hasClass('-created')) {
+                    $slider.slider("destroy");
+                    $slider.removeClass('-created');
                 }
-                $div.removeClass('sliderDiv').removeClass('mb-slider');
             }
         }
     };
     var usedValues = [];
-    var selectSelector = '#form_configuration_dimensionsets .collectionItem select[data-name="group"]';
     var updateCollection = function updateCollection() {
-        var $selects = $(selectSelector);
+        var $selects = $([collectionSelector, selectSelector].join(' '));
+        usedValues = [];
 
         $selects.each(function(i, el) {
             var v = $(el).val();
@@ -107,10 +103,9 @@ $(function () {
     };
 
     $(document).on('change', 'select[data-name="group"]', function (event) {
-        var $opt = $('option:selected', event.target);
-        var $sel = $opt.parent();
+        var $item = $(event.target).closest('.collectionItem');
+        dimHandler.initSlider($item);
         updateCollection();
-        dimHandler.initSlider($sel);
         return false;
     });
     $(document).on('click', '.collectionAdd', function (event) {
@@ -121,9 +116,12 @@ $(function () {
         }
         var $new = $('.collectionItem', $collection).last();    // :)
         $('select[data-name="group"]', $new).trigger('change');
-        // console.log("We got a new one", $new);
-        updateCollection();
         dimHandler.initSlider($new);
+        updateCollection();
     });
-    $('select[data-name="group"]').trigger('change');
+    $(collectionSelector).each(function(ix, item) {
+        var $item = $(item);
+        dimHandler.initItem($item);
+        dimHandler.initSlider($item);
+    });
 });

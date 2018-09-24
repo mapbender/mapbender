@@ -2,16 +2,15 @@
 
 namespace Mapbender\WmsBundle\Element\Type;
 
-use Mapbender\WmsBundle\Component\DimensionInst;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * 
  */
-class DimensionSetAdminType extends AbstractType
+class DimensionSetAdminType extends AbstractType implements DataTransformerInterface
 {
 
     /**
@@ -29,6 +28,10 @@ class DimensionSetAdminType extends AbstractType
     {
         $resolver->setDefaults(array(
             'dimensions' => array(),
+            'error_bubbling' => false,
+            'allow_extra_fields' => true,
+            'title' => null,
+            'group' => null,
         ));
     }
 
@@ -37,39 +40,54 @@ class DimensionSetAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $dimChioces = array();
-        $dimJson = array();
-        foreach ($options['dimensions'] as $instId => $dim) {
-            /** @var DimensionInst $dim */
-            $dimChioces[$instId] = $instId . "-" . $dim->getName() . "-" . $dim->getType();
-            $dimJson[$instId] = $dim->getConfiguration();
-        }
-        // die(var_export($dimJson, true));
         $builder
             ->add('title', 'text', array(
                 'required' => true,
+                'attr' => array(
+                    'data-name' => 'title',
+                ),
             ))
             ->add('group', new DimensionSetDimensionChoiceType(), array(
-                'required' => true,
+                'required' => false,
                 'multiple' => true,
+                'mapped' => true,
                 'dimensionInsts' => $options['dimensions'],
                 'attr' => array(
                     'data-name' => 'group',
                 ),
             ))
-            ->add('extent', 'text', array(
-                'required' => false,
-                'mapped' => false,
-                'property_path' => '[display]',
-                'read_only' => true,
+            ->add('dimension', new DimensionSetExtentType(), array(
+                'required' => true,
+                'mapped' => true,
                 'attr' => array(
-                    'data-name' => 'display',
+                    'data-name' => 'dimension',
                 ),
             ))
-            ->add('dimension', new DimensionInstElmType(), array(
-                'required' => false,
-            ))
         ;
+        $builder->addModelTransformer($this);
     }
 
+    public function transform($value)
+    {
+        if ($value && !empty($value['dimension'])) {
+            if (!is_string($value['dimension'])) {
+                $value['dimension'] = json_encode($value['dimension']);
+            } else {
+                $value['dimension'] = null;
+            }
+        }
+        return $value;
+    }
+
+    public function reverseTransform($value)
+    {
+        if ($value && !empty($value['dimension'])) {
+            if (is_string($value['dimension'])) {
+                $value['dimension'] = json_decode($value['dimension']);
+            } else {
+                $value['dimension'] = null;
+            }
+        }
+        return $value;
+    }
 }

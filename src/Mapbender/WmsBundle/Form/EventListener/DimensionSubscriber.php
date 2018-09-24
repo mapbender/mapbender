@@ -3,14 +3,43 @@
 namespace Mapbender\WmsBundle\Form\EventListener;
 
 use Mapbender\WmsBundle\Component\DimensionInst;
-use Mapbender\WmsBundle\Element\EventListener\AbstractDimensionSubscriber;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 
 /**
  * DimensionSubscriber class
  */
-class DimensionSubscriber extends AbstractDimensionSubscriber
+class DimensionSubscriber implements EventSubscriberInterface
 {
+
+    /**
+     * Returns defined events
+     *
+     * @return array events
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(FormEvents::PRE_SET_DATA => 'preSetData');
+    }
+
+    /**
+     * Presets a form data
+     *
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $data = $event->getData();
+        $form = $event->getForm();
+
+        if (null === $data) {
+            return;
+        }
+        $this->addFields($form, $data);
+    }
+
     /**
      * @param FormInterface $form
      * @param DimensionInst $data
@@ -117,7 +146,26 @@ class DimensionSubscriber extends AbstractDimensionSubscriber
      */
     protected function addExtentFields($form, $data)
     {
-        parent::addExtentFields($form, $data);
+        $form
+            ->add('extent', 'hidden', array(
+                'required' => true,
+                'auto_initialize' => false,
+                'attr' => array(
+                    'data-extent' => 'group-dimension-extent',
+                    'data-name' => 'extent',
+                ),
+            ))
+            ->add('origextent', 'hidden', array(
+                'required' => true,
+                'auto_initialize' => false,
+                'mapped' => false,
+                'attr' => array(
+                    'data-extent' => 'group-dimension-origextent',
+                    'data-name' => 'origextent',
+                ),
+            ))
+        ;
+
         $dimJs = $data->getConfiguration();
         $form
             ->add('json', 'hidden', array(

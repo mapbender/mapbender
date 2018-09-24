@@ -40,7 +40,7 @@ class DimensionsHandlerAdminType extends AbstractType implements ExtendedCollect
     {
         $resolver->setDefaults(array(
             'application' => null,
-            'element' => null
+            'element' => null,
         ));
     }
 
