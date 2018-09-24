@@ -16,3 +16,14 @@ parameters:
             published: true
             anonymous: true
             roles: [IS_AUTHENTICATED_ANONYMOUSLY]
+
+    mapbender.branding.name: Mapbender
+    mapbender.version: 3.0.7.4
+    mapbender.branding.logo: bundles/mapbendercore/image/logo_mb3.png
+    # These should all remain empty here, they are just for IDE search results.
+    # Customize these in your parameters.yml.
+    # The name will show up in page titles; the version will show in your backend;
+    # the logo will display on your login page, the backend again, and some of the application templates.
+    branding.project_name: ~
+    branding.project_version: ~
+    branding.logo: ~                # web-relative path
