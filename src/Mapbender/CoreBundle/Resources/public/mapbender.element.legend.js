@@ -58,10 +58,7 @@
 
             $(document)
                 .bind('mbmapsourceloadend', $.proxy(widget.onMapLoaded, widget))
-                .bind('mbmapsourceloaderror', function(e) {
-                    $.notify("Legend image element(#" + widget.uuid + ") couldn't not be initialized. No map - no legend.");
-                });
-
+            ;
             widget._trigger('ready');
             widget._ready();
         },
