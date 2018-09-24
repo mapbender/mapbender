@@ -4,15 +4,8 @@ namespace Mapbender\CoreBundle\Component;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Model\ObjectIdentityInterface;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * Class SecurityContext
@@ -22,100 +15,28 @@ use Symfony\Component\Security\Core\Security;
  * @author    Mohamed Tahrioui <mohamed.tahrioui@wheregroup.com>
  * @copyright 2015 by WhereGroup GmbH & Co. KG
  */
-class SecurityContext implements TokenStorageInterface, AuthorizationCheckerInterface
+class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
 {
-    const ACCESS_DENIED_ERROR  = Security::ACCESS_DENIED_ERROR;
-    const AUTHENTICATION_ERROR = Security::AUTHENTICATION_ERROR;
-    const LAST_USERNAME        = Security::LAST_USERNAME;
-    const MAX_USERNAME_LENGTH  = Security::MAX_USERNAME_LENGTH;
-
+    /** @deprecated this is not a permission, it's a role; remove in 3.0.8 */
     const PERMISSION_MASTER   = "MASTER";
+    /** @deprecated this is not a permission, it's a role; remove in 3.0.8 */
     const PERMISSION_OPERATOR = "OPERATOR";
     const PERMISSION_CREATE   = "CREATE";
     const PERMISSION_DELETE   = "DELETE";
     const PERMISSION_EDIT     = "EDIT";
     const PERMISSION_VIEW     = "VIEW";
+    /** @deprecated remove in 3.0.8 */
     const USER_ANONYMOUS_ID   = 0;
+    /** @deprecated remove in 3.0.8 */
     const USER_ANONYMOUS_NAME = "anon.";
-
-
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
-     * For backwards compatibility, the signature of sf <2.6 still works.
-     *
-     * @param TokenStorageInterface|AuthenticationManagerInterface         $tokenStorage
-     * @param AuthorizationCheckerInterface|AccessDecisionManagerInterface $authorizationChecker
-     * @param bool                                                         $alwaysAuthenticate   only applicable with old signature
-     */
-    public function __construct($tokenStorage, $authorizationChecker, $alwaysAuthenticate = false)
-    {
-        /**
-          * $securityContext = $this->get('security.authorization_checker');
-        $tokenStorage = $this->get('security.token_storage');
-         */
-        $oldSignature = $tokenStorage instanceof AuthenticationManagerInterface && $authorizationChecker instanceof AccessDecisionManagerInterface;
-        $newSignature = $tokenStorage instanceof TokenStorageInterface && $authorizationChecker instanceof AuthorizationCheckerInterface;
-
-        // confirm possible signatures
-        if (!$oldSignature && !$newSignature) {
-            throw new \BadMethodCallException('Unable to construct SecurityContext, please provide the correct arguments');
-        }
-
-        if ($oldSignature) {
-            // renamed for clarity
-            $authenticationManager = $tokenStorage;
-            $accessDecisionManager = $authorizationChecker;
-            $tokenStorage = new TokenStorage();
-            $authorizationChecker = new AuthorizationChecker($tokenStorage, $authenticationManager, $accessDecisionManager, $alwaysAuthenticate);
-        }
-
-        $this->tokenStorage = $tokenStorage;
-        $this->authorizationChecker = $authorizationChecker;
-    }
-
-    /**
-     * @deprecated since version 2.6, to be removed in 3.0. Use TokenStorageInterface::getToken() instead.
-     *
-     * {@inheritdoc}
-     */
-    public function getToken()
-    {
-        return $this->tokenStorage->getToken();
-    }
-
-    /**
-     * @deprecated since version 2.6, to be removed in 3.0. Use TokenStorageInterface::setToken() instead.
-     *
-     * {@inheritdoc}
-     */
-    public function setToken(TokenInterface $token = null)
-    {
-        return $this->tokenStorage->setToken($token);
-    }
-
-    /**
-     * @deprecated since version 2.6, to be removed in 3.0. Use AuthorizationCheckerInterface::isGranted() instead.
-     *
-     * {@inheritdoc}
-     */
-    public function isGranted($attributes, $object = null)
-    {
-        return $this->authorizationChecker->isGranted($attributes, $object);
-    }
 
     /**
      * Get current logged user by the token
      *
+     * Invents a magic User object with id 0 and name "anon." if there is no User object.
+     *
      * @return User
+     * @deprecated call getToken on your own; this will prevent problems dealing with the "anon." user; remove in 3.0.8
      */
     public function getUser()
     {
@@ -150,39 +71,31 @@ class SecurityContext implements TokenStorageInterface, AuthorizationCheckerInte
      */
     public function isUserLoggedIn()
     {
-        $user = $this->getToken()->getUser();
-        return is_object($user);
+        $token = $this->getToken();
+        return $token && (!$token instanceof AnonymousToken) && $token->getUser();
     }
 
     /**
-     * Checks the grant for an action and an object.
+     * Wraps isGranted in an ObjectIdentity creation for "CREATE" action plus an optional (default enabled)
+     * http execption throw if not granted.
      *
      * @param string $action         action "CREATE"
-     * @param object $object         the object
+     * @param object $object for all grants checks except "CREATE", where we check on a class-type ObjectIdentity
      * @param bool   $throwException Throw exception if current user isn't allowed to do that
      * @return bool
+     * @deprecated access security.authorization_checker::isGranted directly; remove in 3.0.8
+     * @deprecated throw appropriate domain-specific exceptions; this method throws HTTP exceptions for Controllers
+     * @deprecated make your own appropriate decisions about instance checks vs class checks
      */
     public function checkGranted($action, $object, $throwException = true)
     {
-        $permissionGranted = true;
         switch ($action) {
-            case self::PERMISSION_MASTER:
-                $permissionGranted = $this->isUserAnMaster($object);
-                break;
-            case self::PERMISSION_OPERATOR:
-                $permissionGranted = $this->isUserAnOperator($object);
-                break;
             case self::PERMISSION_CREATE:
-                $permissionGranted = $this->isUserAllowedToCreate($object);
+                $oid = $this->getClassIdentity($object);
+                $permissionGranted = $this->isGranted($action, $oid);
                 break;
-            case self::PERMISSION_VIEW:
-                $permissionGranted = $this->isUserAllowedToView($object);
-                break;
-            case self::PERMISSION_EDIT:
-                $permissionGranted = $this->isUserAllowedToEdit($object);
-                break;
-            case self::PERMISSION_DELETE:
-                $permissionGranted = $this->isUserAllowedToDelete($object);
+            default:
+                $permissionGranted = $this->isGranted($action, $object);
                 break;
         }
 
@@ -197,6 +110,7 @@ class SecurityContext implements TokenStorageInterface, AuthorizationCheckerInte
      *
      * @param $object
      * @return bool
+     * @deprecated not a permission; remove in 3.0.8
      */
     public function isUserAnMaster($object)
     {
@@ -208,6 +122,7 @@ class SecurityContext implements TokenStorageInterface, AuthorizationCheckerInte
      *
      * @param $object
      * @return bool
+     * @deprecated not a permission; remove in 3.0.8
      */
     public function isUserAnOperator($object)
     {
@@ -222,8 +137,7 @@ class SecurityContext implements TokenStorageInterface, AuthorizationCheckerInte
      */
     public function isUserAllowedToCreate($object)
     {
-        $identity = $this->getClassIdentity($object);
-        return $this->isGranted(self::PERMISSION_CREATE, $identity);
+        return $this->checkGranted(self::PERMISSION_CREATE, $object, false);
     }
 
     /**

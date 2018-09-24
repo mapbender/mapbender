@@ -47,7 +47,7 @@
 
             element.addClass(options.anchor);
 
-            $.each(layerSet.reverse(), function(idx, item) {
+            $.each(layerSet, function(idx, item) {
                 $.each(item, function(idx2, layerDef) {
                     if(layerDef.type !== "wms") {
                         return;
@@ -221,8 +221,6 @@
         ready: function(callback){
             if(this.readyState === true){
                 callback();
-            }else{
-                this.readyCallbacks.push(callback);
             }
         },
 
@@ -233,10 +231,6 @@
             var widget = this;
             widget._trigger('ready');
 
-            for (var callback in widget.readyCallbacks) {
-                callback();
-                delete(widget.readyCallbacks[callback]);
-            }
             widget.readyState = true;
         }
 

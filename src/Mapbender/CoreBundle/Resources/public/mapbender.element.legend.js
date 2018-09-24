@@ -58,10 +58,7 @@
 
             $(document)
                 .bind('mbmapsourceloadend', $.proxy(widget.onMapLoaded, widget))
-                .bind('mbmapsourceloaderror', function(e) {
-                    $.notify("Legend image element(#" + widget.uuid + ") couldn't not be initialized. No map - no legend.");
-                });
-
+            ;
             widget._trigger('ready');
             widget._ready();
         },
@@ -210,11 +207,9 @@
          */
         _getSubLayers: function(source, layer, level, children) {
             var widget = this;
-            if(layer.children) {
-                _.chain(layer.children).reverse().each(function(childLayer) {
-                    children = children.concat(widget._getSubLayer(source, childLayer, "wms", level, []));
-                });
-            }
+            (layer.children || []).map(function(childLayer) {
+                children = children.concat(widget._getSubLayer(source, childLayer, "wms", level, []));
+            });
             return children;
         },
 
@@ -269,7 +264,7 @@
                 }
 
                 var childrenLegend = false;
-                _.chain(sublayer.children).reverse().each(function(subLayerChild) {
+                _.chain(sublayer.children).each(function(subLayerChild) {
                     var legendLayer = widget.getLegend(subLayerChild, widget.options.generateLegendGraphicUrl);
                     var hasLegendUrl = legendLayer && legendLayer.url;
 
