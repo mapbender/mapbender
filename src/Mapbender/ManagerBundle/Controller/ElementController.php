@@ -176,7 +176,7 @@ class ElementController extends Controller
 
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -257,7 +257,7 @@ class ElementController extends Controller
         $doctrine          = $this->getDoctrine();
         $entityManager     = $doctrine->getManager();
         $elementRepository = $doctrine->getRepository('MapbenderCoreBundle:Element');
-        $element           = $elementRepository->findOneById($id);
+        $element           = $elementRepository->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException("The element with the id \"$id\" does not exist.");
@@ -309,11 +309,9 @@ class ElementController extends Controller
      */
     public function confirmDeleteAction($slug, $id)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
-
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -337,7 +335,7 @@ class ElementController extends Controller
 
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -382,7 +380,7 @@ class ElementController extends Controller
     {
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -500,7 +498,7 @@ class ElementController extends Controller
     {
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         $enabled = $this->get("request")->get("enabled");
         if (!$element) {
