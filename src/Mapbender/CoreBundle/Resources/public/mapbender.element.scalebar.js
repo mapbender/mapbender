@@ -87,8 +87,6 @@
         ready: function(callback) {
             if(this.readyState === true) {
                 callback();
-            } else {
-                this.readyCallbacks.push(callback);
             }
         },
 
@@ -96,10 +94,6 @@
          *
          */
         _ready: function() {
-            for(callback in this.readyCallbacks) {
-                callback();
-                delete(this.readyCallbacks[callback]);
-            }
             this.readyState = true;
         }
 

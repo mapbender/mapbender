@@ -97,7 +97,6 @@ class ConfigService
             'base'     => $this->container->get('request')->getBaseUrl(),
             'asset'    => $this->container->get('templating.helper.assets')->getUrl(null),
             'element'  => $router->generate('mapbender_core_application_element', $config),
-            'trans'    => $router->generate('mapbender_core_translation_trans'),
             'proxy'    => $router->generate('owsproxy3_core_owsproxy_entrypoint'),
             'metadata' => $router->generate('mapbender_core_application_metadata', $config),
             'config'   => $router->generate('mapbender_core_application_configuration', $config));

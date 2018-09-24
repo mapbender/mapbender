@@ -65,11 +65,8 @@
             /*
             $(document)
                 .bind('mbmapsourceloadend', $.proxy(widget.onMapLoaded, widget))
-                .bind('mbmapsourceloaderror', function(e) {
-                    $.notify("Legend image element(#" + widget.uuid + ") couldn't not be initialized. No map - no legend.");
-                });
-                */
-
+            ;
+            */
             widget._trigger('ready');
             widget._ready();
         },
@@ -162,6 +159,68 @@
 
             return widget.popupWindow;
         },
+
+        /**
+         *
+         * @return {Array}
+         * @private
+         */
+        _getSources: function() {
+            var widget = this;
+            var allLayers = [];
+            var sources = Mapbender.Model.getSources();
+            for (var i = (sources.length - 1); i > -1; i--) {
+                allLayers.push(widget._getSource(sources[i], sources[i].configuration.children[0], 1));
+            }
+            return allLayers;
+        },
+
+        /**
+         *
+         * @param source
+         * @param layer
+         * @param level
+         * @return {{sourceId, id, visible, title, level: *, children: *, childrenLegend: boolean}}
+         * @private
+         */
+        _getSource: function(source, layer, level) {
+            var widget = this;
+            var children_ = widget._getSubLayers(source, layer, level + 1, []);
+            var childrenLeg = false;
+            for (var i = 0; i < children_.length; i++) {
+                if(children_[i].childrenLegend || (children_[i].legend && children_[i].legend.url)) {
+                    childrenLeg = true;
+                }
+            }
+            return {
+                sourceId:       source.id,
+                id:             layer.options.id,
+                visible:        layer.state.visibility,
+                title:          layer.options.title,
+                level:          level,
+                children:       children_,
+                childrenLegend: childrenLeg
+            };
+        },
+
+        /**
+         * Get sub layers
+         * @param source
+         * @param layer
+         * @param level
+         * @param children
+         *
+         * @return {*} Children
+         * @private
+         */
+        _getSubLayers: function(source, layer, level, children) {
+            var widget = this;
+            (layer.children || []).map(function(childLayer) {
+                children = children.concat(widget._getSubLayer(source, childLayer, "wms", level, []));
+            });
+            return children;
+        },
+
         /**
          * Get legend
          *
@@ -179,6 +238,57 @@
             }
             return legend;
         },
+
+        /**
+         *
+         * @param source
+         * @param sublayer
+         * @param type
+         * @param level
+         * @param children
+         * @return {*}
+         * @private
+         */
+        _getSubLayer: function(source, sublayer, type, level, children) {
+            var widget = this;
+            var sublayerLeg = {
+                sourceId: source.id,
+                id:       sublayer.options.id,
+                visible:  sublayer.state.visibility,
+                title:    sublayer.options.title,
+                level:    level,
+                isNode:   sublayer.children && sublayer.children.length
+            };
+
+            sublayerLeg["legend"] = widget.getLegend(sublayer, widget.options.generateLegendGraphicUrl);
+
+            if(!sublayerLeg.isNode) {
+                children.push(sublayerLeg);
+            }
+
+            if(sublayer.children) {
+                if(widget.options.showGroupedTitle) {
+                    children.push(sublayerLeg);
+                }
+
+                var childrenLegend = false;
+                _.chain(sublayer.children).each(function(subLayerChild) {
+                    var legendLayer = widget.getLegend(subLayerChild, widget.options.generateLegendGraphicUrl);
+                    var hasLegendUrl = legendLayer && legendLayer.url;
+
+                    if(hasLegendUrl) {
+                        childrenLegend = true;
+                    }
+
+                    children = children.concat(widget._getSubLayer(source, subLayerChild, type, level, []));//children
+                });
+
+                sublayerLeg['childrenLegend'] = childrenLegend;
+            }
+
+            return children;
+        },
+
         /**
          *
          * @param layer

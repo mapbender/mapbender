@@ -92,12 +92,6 @@
                 }
             }
         },
-        /**
-         * Ready event listeners
-         *
-         * @var {Array<Function>}
-         */
-        readyCallbacks: [],
 
         /**
          * Widget creator
@@ -778,8 +772,6 @@
             var widget = this;
             if(widget.readyState === true){
                 callback();
-            }else{
-                widget.readyCallbacks.push(callback);
             }
         },
 
@@ -788,12 +780,6 @@
          */
         _ready: function() {
             var widget = this;
-                for (var callback in widget.readyCallbacks) {
-                    if(widget.readyCallbacks.hasOwnProperty(callback)) {
-                        callback();
-                        delete(widget.readyCallbacks[callback]);
-                    }
-            }
             widget.readyState = true;
         },
 

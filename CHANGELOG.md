@@ -1,19 +1,28 @@
 # Changelog
-
-* **dev-release/3.0.7** @ 9a7b45f
+* **v3.0.7.5**
+  - [Security] Remove obsolete TranslationController (potential XSS vector)
+  - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
+  - [Regression fix] Restore support for Wms services advertising only a root layer ([0192e0c](https://github.com/mapbender/mapbender/commit/0192e0c135af44c5c7ff55a718069d2dc3a646d1))
+  - Fix layer order reversals depending on Element population and order ([PR#1025](https://github.com/mapbender/mapbender/pull/1025))
+  - Fix Redlining hang after edit mode ([PR#1027](https://github.com/mapbender/mapbender/pull/1027))
   - Print: skip Wms layers where the service response can't be fetched or is invalid.
     Log a warning and continue printing the remaining layers normally ([PR#987](https://github.com/mapbender/mapbender/pull/987), [PR#1013](https://github.com/mapbender/mapbender/pull/1013))
+  - Print: move extra fields marked as required to top of form to avoid confusion ([d0630fa](https://github.com/mapbender/mapbender/commit/d0630fa208a9f116894fc446d003aa26b5194233))
   - Fix service loading error on DNS / routing error in Xml validation
   - Fix invalid markup in about_dialog.html.twig
   - Fix Button interactions with dialog-type Elements ([PR#1019](https://github.com/mapbender/mapbender/pull/1019))
   - Fix Redlining functionality on second activation in 'dialog' mode ([Issue #995](https://github.com/mapbender/mapbender/issues/955))
   - Fix POI opening additional dialogs on every button click
+  - Silence untranslated and redundant map load error announcement from legend element  ([059673e](https://github.com/mapbender/mapbender/commit/059673e94ed5285b378e4f708fbdef4a9ae136d4))
   - [Frontend] suppress unneeded scroll bars on popup dialogs ([PR#1022](https://github.com/mapbender/mapbender/pull/1022))
   - [Backend] popup sizing changes, add CSS-level customizability ([PR#1022](https://github.com/mapbender/mapbender/pull/1022))
+  - [Backend] reformulate non-framework conformant security and response interactions ([PR#1028](https://github.com/mapbender/mapbender/pull/1028))
+  - [Backend] Add new form types for source instances, source instance layers ([ee0099e](https://github.com/mapbender/mapbender/commit/ee0099e1d49bfdbe916fa83f5121e3150418a612))
   - [Framework] Extend runtime extension of SRS definitions with preliminiary support for proj4js 2.x
   - [Framework] Provide global boolean Javascript value `Mapbender.configuration.application.debug` to check for `app_dev` environment
   - [Framework] Pre-calculate internal layer attributes `id` and `origId` and source attribute `origId` server-side
   - [Framework] New optional widget [mbCheckbox](https://github.com/mapbender/mapbender/blob/eca5cd66296f539945802c4f5d048c4adbabb739/src/Mapbender/CoreBundle/Resources/public/widgets/mapbender.checkbox.js) as a replacement for FOM's `initCheckbox`
+  - [Framework] Move Mapbender version knowledge from Mapbender Starter into Mapbender ([PR#1012](https://github.com/mapbender/mapbender/pull/1012))
   - [Database] add delete cascade to foreign keys referencing Application or Source,
     allowing such objects to be deleted on the database (non-Doctrine) level
   - [Console debugging] Check / provide appropriate message if Element widget constructor or widget namespace do not exist
@@ -24,6 +33,9 @@
     * HTMLElement::prepareItems
     * vis-ui.js support in HTMLElement Javascript
   - [Removed] unused asset `mapbender.application.json.js`
+  - [Removed] processing of `app/config/mapbender.yml` ([deprecated since 2016](https://github.com/mapbender/mapbender-starter/commit/f8de52fd0d49d26ea0faf07babd2a093a5d5458a))
+  - [Removed] broken `readyCallback` handling in multiple Element scripts ([PR#1029](https://github.com/mapbender/mapbender/pull/1029))
+  - [Misc] Mapbender can now run with zero yaml applications and with the `app/config/applications`directory removed
   - [Misc] merge Github issue templates from master
   - [Misc] non-functional type annotation fixes
 

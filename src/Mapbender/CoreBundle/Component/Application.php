@@ -2,7 +2,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Assetic\Asset\StringAsset;
-use Doctrine\ORM\PersistentCollection;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
@@ -520,11 +520,12 @@ class Application implements IAssetDependent
         } else {
             $count = 0;
         }
+        /** @var ObjectRepository $rep */
         $rep = $container->get('doctrine')->getRepository('MapbenderCoreBundle:Application');
         do {
             $copySlug = $slug . "_" . $suffix . ($count > 0 ? '_' . $count : '');
             $count++;
-        } while ($rep->findOneBySlug($copySlug));
+        } while ($rep->findOneBy(array('slug' => $copySlug)));
         return $copySlug;
     }
 

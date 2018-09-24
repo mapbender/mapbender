@@ -5,12 +5,11 @@ namespace Mapbender\CoreBundle\Controller;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
-use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
-use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\WmsBundle\Entity\WmsSource;
@@ -25,9 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Application controller.
@@ -259,8 +256,7 @@ class ApplicationController extends Controller
      */
     public function checkApplicationAccess(Application $application)
     {
-        /** @var SecurityContext $securityContext */
-        $securityContext = $this->get('security.context');
+        $user = $this->getUser();
         $application     = $application->getEntity();
 
         if ($application->isYamlBased()
@@ -268,7 +264,7 @@ class ApplicationController extends Controller
         ) {
 
             // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
-            if (!$securityContext->getToken()) {
+            if (!$user) {
                 if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application->getYamlRoles())) {
                     return;
                 }
@@ -276,38 +272,35 @@ class ApplicationController extends Controller
 
             $passed = false;
             foreach ($application->getYamlRoles() as $role) {
-                if ($securityContext->isGranted($role)) {
+                if ($this->isGranted($role)) {
                     $passed = true;
                     break;
                 }
             }
             if (!$passed) {
-                throw new AccessDeniedException('You are not granted view permissions for this application.');
+                throw $this->createAccessDeniedException('You are not granted view permissions for this application.');
             }
         }
+        $this->denyAccessUnlessGranted('VIEW', $application, 'You are not granted view permissions for this application.');
 
-        if (!$securityContext->isUserAllowedToView($application)) {
-            throw new AccessDeniedException('You are not granted view permissions for this application.');
-        }
-
-        if (!$application->isPublished()
-            && !$securityContext->isUserAllowedToEdit($application)
-        ) {
-            throw new AccessDeniedException('This application is not published at the moment');
+        if (!$application->isPublished()) {
+            $this->denyAccessUnlessGranted('EDIT', $application, 'This application is not published at the moment');
         }
     }
 
     /**
-     * Metadata controller.
+     * Metadata action.
      *
      * @Route("/application/{slug}/metadata")
      * @param Request $request
      * @param string $slug
      * @return Response
+     * @todo: param sourceId is required => it should be part of the route
+     * @todo: param layerName is required => it should be part of the route
+     * @todo: param slug is ignored; it should either go away, or be used to restrict possible instances to the Application's instances
      */
     public function metadataAction(Request $request, $slug)
     {
-        $securityContext = $this->get('security.context');
         $sourceId = $request->get("sourceId", null);
         if (!strlen($sourceId)) {
             throw new BadRequestHttpException();
@@ -317,27 +310,24 @@ class ApplicationController extends Controller
         if (!$instance) {
             throw new NotFoundHttpException();
         }
-        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
-            && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
-            throw new AccessDeniedException();
-        }
+        /** @var SourceInstance $instance */
+        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'));
+        $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
 // TODO source access ?
-//        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'))
-//            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
-//            throw new AccessDeniedException();
-//        }
+//        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
+//        $this->denyAccessUnlessGranted('VIEW', new $instance->getSource());
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$instance->getManagertype()];
-
-        $path = array('_controller' => $manager['bundle'] . ":" . "Repository:metadata");
-        $subRequest = $request->duplicate(null, null, $path);
-        return $this->container->get('http_kernel')->handle(
-                $subRequest, HttpKernelInterface::SUB_REQUEST);
+        return $this->forward($manager['bundle']. ':' . 'Repository:metadata', array(
+            'sourceId' => $sourceId,
+            'layerName' => $request->get('layerName', null)
+        ));
     }
 
     /**
-     * Get SourceInstances via HTTP Basic Authentication
+     * Get SourceInstances via tunnel
+     * @see InstanceTunnelService
      *
      * @Route("/application/{slug}/instance/{instanceId}/tunnel")
      */
@@ -350,23 +340,14 @@ class ApplicationController extends Controller
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }
-
-        $securityContext = $this->get('security.context');
-
-        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
-            && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'));
+        $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
 
         /** @var WmsSource $source */
         $source = $instance->getSource();
 // TODO source access ?
-//        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'))
-//            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
-//            throw new AccessDeniedException();
-//        }
-//        $params = $this->getRequest()->getMethod() == 'POST' ?
-//            $this->get("request")->request->all() : $this->get("request")->query->all();
+//        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
+//        $this->denyAccessUnlessGranted('VIEW', $source);
         $headers     = array();
         /** @var Request $request */
         $request = $this->get("request");

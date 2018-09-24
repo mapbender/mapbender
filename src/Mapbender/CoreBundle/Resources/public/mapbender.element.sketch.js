@@ -57,8 +57,6 @@
         ready: function(callback) {
             if(this.readyState === true){
                 callback();
-            } else {
-                this.readyCallbacks.push(callback);
             }
         },
 

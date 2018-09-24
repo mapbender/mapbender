@@ -57,8 +57,13 @@
   &.modal{
     height:100%;
     width:100%;
+    padding: $space*2.5;
     display: block;
-    .popup{margin-top:$space*4;}
+    .popup{
+      margin: 0 auto;
+      max-height: 100%;
+      height: 100%;
+    }
     .overlay{
       @include opacity(0.9);
       @include fixed(0 0 0 0);

@@ -18,6 +18,18 @@
             <ul class="dropdownList"></ul>
         </div>
 
+        {# render required extra fields on top of the form #}
+        {% if configuration.optional_fields is not empty %}
+            {% for key,field in configuration.optional_fields %}
+                {% if field.options.required %}
+                    <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" class="input validationInput" name="extra[{{ key }}]" required="required">
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
         <label class="labelInput">{{ 'mb.core.printclient.label.quality' | trans }}</label>
         <div class="dropdown">
             <select name="quality" class="hiddenDropdown">
@@ -47,16 +59,15 @@
 			<input class="input" type="text" name="rotation" value="0" style="display: none"/>
         {% endif %}
 
-        {% if configuration.optional_fields is defined %}
+        {# render non-required extra fields here #}
+        {% if configuration.optional_fields is not empty %}
             {% for key,field in configuration.optional_fields %}
-                {% set required = '' %}
-                <label class="labelInput">{{ field.label }}
-                    {% if field.options.required == true %}
+                {% if not field.options.required %}
+                    <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}
                         <span class="required">*</span>
-                        {% set required = 'required=required' %}
-                    {% endif %}
-                </label>
-                <input type="text" class="input validationInput" name="extra[{{ key }}]" {{ required }}>
+                    </label>
+                    <input type="text" class="input validationInput" name="extra[{{ key }}]">
+                {% endif %}
             {% endfor %}
         {% endif %}
         
