@@ -3,21 +3,16 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 use Mapbender\CoreBundle\Component\Element as ComponentElement;
-use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Form\Type\BaseElementType;
-use Mapbender\CoreBundle\Validator\Constraints\ContainsElementTarget;
-use Mapbender\CoreBundle\Validator\Constraints\ContainsElementTargetValidator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Acl\Domain\Acl;
 
 /**
  * Class ElementController
@@ -180,7 +175,7 @@ class ElementController extends Controller
 
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -205,10 +200,10 @@ class ElementController extends Controller
     public function updateAction($slug, $id)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
-
+        /** @var Element $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->findOneBy(array('id' => $id));
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -228,6 +223,7 @@ class ElementController extends Controller
 
             $entity_class = $element->getClass();
             $appl = new ApplicationComponent($this->container, $application);
+            /** @var ComponentElement $elComp */
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
             $this->get('session')->getFlashBag()->set('success',
@@ -260,7 +256,7 @@ class ElementController extends Controller
         $doctrine          = $this->getDoctrine();
         $entityManager     = $doctrine->getManager();
         $elementRepository = $doctrine->getRepository('MapbenderCoreBundle:Element');
-        $element           = $elementRepository->findOneById($id);
+        $element           = $elementRepository->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException("The element with the id \"$id\" does not exist.");
@@ -312,11 +308,9 @@ class ElementController extends Controller
      */
     public function confirmDeleteAction($slug, $id)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
-
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -340,7 +334,7 @@ class ElementController extends Controller
 
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -385,7 +379,7 @@ class ElementController extends Controller
     {
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
@@ -395,10 +389,10 @@ class ElementController extends Controller
         $newregion = $this->get("request")->get("region");
         if (intval($number) === $element->getWeight() && $element->getRegion() ===
             $newregion) {
-            return new Response(json_encode(array(
-                    'error' => '',
-                    'result' => 'ok')), 200,
-                array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                'error' => '',      // why?
+                'result' => 'ok',   // why?
+            ));
         }
         if ($element->getRegion() === $newregion) {
             $em = $this->getDoctrine()->getManager();
@@ -486,11 +480,10 @@ class ElementController extends Controller
             $em->persist($application);
             $em->flush();
         }
-        return new Response(json_encode(array(
-                'error' => '',
-                'result' => 'ok')), 200,
-            array(
-            'Content-Type' => 'application/json'));
+        return new JsonResponse(array(
+            'error' => '',      // why?
+            'result' => 'ok',   // why?
+        ));
     }
 
     /**
@@ -503,13 +496,15 @@ class ElementController extends Controller
     {
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneById($id);
+            ->find($id);
 
         $enabled = $this->get("request")->get("enabled");
         if (!$element) {
-            return new Response(json_encode(array(
-                    'error' => 'An element with the id "' . $id . '" does not exist.')),
-                200, array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                /** @todo: use http status codes to communicate error conditions */
+                'error' => 'An element with the id "' . $id . '" does not exist.',
+            ));
+
         } else {
             $enabled_before = $element->getEnabled();
             $enabled = $enabled === "true" ? true : false;
@@ -518,14 +513,16 @@ class ElementController extends Controller
             $em->persist($element->getApplication()->setUpdated(new \DateTime('now')));
             $em->persist($element);
             $em->flush();
-            return new Response(json_encode(array(
-                    'success' => array(
-                        "id" => $element->getId(),
-                        "type" => "element",
-                        "enabled" => array(
-                            'before' => $enabled_before,
-                            'after' => $enabled)))), 200,
-                array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                'success' => array(         // why?
+                    "id" => $element->getId(),
+                    "type" => "element",
+                    "enabled" => array(
+                        'before' => $enabled_before,
+                        'after' => $enabled,
+                    ),
+                ),
+            ));
         }
     }
 

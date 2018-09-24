@@ -18,6 +18,7 @@ use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -380,15 +381,18 @@ class RepositoryController extends Controller
         $instLay = $this->loadEntityByPk('MapbenderWmsBundle:WmsInstanceLayer', $instLayerId);
 
         if (!$instLay) {
-            return new Response(json_encode(array(
-                    'error' => 'The wms instance layer with'
+            return new JsonResponse(array(
+                /** @todo: use http status codes to communicate error conditions */
+                'error' => 'The wms instance layer with'
                     .' the id "'.$instanceId.'" does not exist.',
-                    'result' => '')), 200, array('Content-Type' => 'application/json'));
+                'result' => '',     // why?
+            ));
         }
         if (intval($number) === $instLay->getPriority()) {
-            return new Response(json_encode(array(
-                    'error' => '',
-                    'result' => 'ok')), 200, array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                'error' => '',      // why?
+                'result' => 'ok',   // why?
+            ));
         }
         $em       = $this->getDoctrine()->getManager();
         $instLay->setPriority($number);
@@ -429,10 +433,10 @@ class RepositoryController extends Controller
         $wmsinsthandler->save();
         $em->flush();
         $em->getConnection()->commit();
-        return new Response(json_encode(array(
-                'error' => '',
-                'result' => 'ok')), 200, array(
-            'Content-Type' => 'application/json'));
+        return new JsonResponse(array(
+            'error' => '',      // why?
+            'result' => 'ok',   // why?
+        ));
     }
 
     /**
@@ -446,11 +450,10 @@ class RepositoryController extends Controller
         $enabled     = $this->getRequest()->get("enabled");
         $wmsinstance = $this->loadEntityByPk("MapbenderWmsBundle:WmsInstance", $instanceId);
         if (!$wmsinstance) {
-            return new Response(
-                json_encode(array('error' => 'The wms instance with the id "'.$instanceId.'" does not exist.')),
-                200,
-                array('Content-Type' => 'application/json')
-            );
+            return new JsonResponse(array(
+                /** @todo: use http status codes to communicate error conditions */
+                'error' => 'The wms instance with the id "'.$instanceId.'" does not exist.',
+            ));
         } else {
             $enabled_before = $wmsinstance->getEnabled();
             $enabled        = $enabled === "true";
@@ -459,13 +462,16 @@ class RepositoryController extends Controller
                 $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime('now')));
             $this->getDoctrine()->getManager()->persist($wmsinstance);
             $this->getDoctrine()->getManager()->flush();
-            return new Response(json_encode(array(
-                    'success' => array(
-                        "id" => $wmsinstance->getId(),
-                        "type" => "instance",
-                        "enabled" => array(
-                            'before' => $enabled_before,
-                            'after' => $enabled)))), 200, array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                'success' => array(         // why?
+                    "id" => $wmsinstance->getId(),
+                    "type" => "instance",
+                    "enabled" => array(
+                        'before' => $enabled_before,
+                        'after' => $enabled,
+                    ),
+                ),
+            ));
         }
     }
 

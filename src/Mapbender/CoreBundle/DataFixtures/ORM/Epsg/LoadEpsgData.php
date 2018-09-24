@@ -34,7 +34,7 @@ class LoadEpsgData implements FixtureInterface
             if ($temp[0] === null || strlen($temp[0]) === 0) {
                 continue;
             }
-            $srs = $repo->findOneByName($temp[0]);
+            $srs = $repo->findOneBy(array('name' => $temp[0]));
             if ($srs) {
                 $srs->setTitle($temp[1]);
                 $srs->setDefinition($temp[2]);
