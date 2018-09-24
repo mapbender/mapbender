@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7** @ 5512cb7
+* **dev-release/3.0.7** @ 2556066
   - [Security] Remove obsolete TranslationController (potential XSS vector)
   - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
   - [Regression fix] Restore support for Wms services advertising only a root layer ([0192e0c](https://github.com/mapbender/mapbender/commit/0192e0c135af44c5c7ff55a718069d2dc3a646d1))
@@ -13,8 +13,10 @@
   - Fix Button interactions with dialog-type Elements ([PR#1019](https://github.com/mapbender/mapbender/pull/1019))
   - Fix Redlining functionality on second activation in 'dialog' mode ([Issue #995](https://github.com/mapbender/mapbender/issues/955))
   - Fix POI opening additional dialogs on every button click
+  - Silence untranslated and redundant map load error announcement from legend element  ([059673e](https://github.com/mapbender/mapbender/commit/059673e94ed5285b378e4f708fbdef4a9ae136d4))
   - [Frontend] suppress unneeded scroll bars on popup dialogs ([PR#1022](https://github.com/mapbender/mapbender/pull/1022))
   - [Backend] popup sizing changes, add CSS-level customizability ([PR#1022](https://github.com/mapbender/mapbender/pull/1022))
+  - [Backend] reformulate non-framework conformant security and response interactions ([PR#1028](https://github.com/mapbender/mapbender/pull/1028))
   - [Framework] Extend runtime extension of SRS definitions with preliminiary support for proj4js 2.x
   - [Framework] Provide global boolean Javascript value `Mapbender.configuration.application.debug` to check for `app_dev` environment
   - [Framework] Pre-calculate internal layer attributes `id` and `origId` and source attribute `origId` server-side
@@ -30,6 +32,7 @@
     * vis-ui.js support in HTMLElement Javascript
   - [Removed] unused asset `mapbender.application.json.js`
   - [Removed] processing of `app/config/mapbender.yml` ([deprecated since 2016](https://github.com/mapbender/mapbender-starter/commit/f8de52fd0d49d26ea0faf07babd2a093a5d5458a))
+  - [Removed] broken `readyCallback` handling in multiple Element scripts ([PR#1029](https://github.com/mapbender/mapbender/pull/1029))
   - [Misc] Mapbender can now run with zero yaml applications and with the `app/config/applications`directory removed
   - [Misc] merge Github issue templates from master
   - [Misc] non-functional type annotation fixes
