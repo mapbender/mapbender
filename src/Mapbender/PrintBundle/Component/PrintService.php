@@ -79,14 +79,6 @@ class PrintService extends ImageExportService
             $centerx = $data['center']['x'];
             $centery = $data['center']['y'];
 
-            // switch axis for some EPSG if WMS Version 1.3.0
-            if (!empty($layer['changeAxis'])){
-                $extentWidth = $data['extent']['height'];
-                $extentHeight = $data['extent']['width'];
-                $centerx = $data['center']['y'];
-                $centery = $data['center']['x'];
-            }
-
             // switch if image is rotated
             $this->rotation = $rotation = $data['rotation'];
             if ($rotation == 0) {
@@ -125,8 +117,12 @@ class PrintService extends ImageExportService
                 $width = '&WIDTH=' . $neededImageWidth;
                 $height =  '&HEIGHT=' . $neededImageHeight;
             }
+            if (!empty($layer['changeAxis'])){
+                $request .= '&BBOX=' . $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
+            } else {
+                $request .= '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
+            }
 
-            $request .= '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
             $request .= $width . $height;
 
             if(!isset($this->data['replace_pattern'])){
@@ -477,8 +473,6 @@ class PrintService extends ImageExportService
         $width = '&WIDTH=' . $ovImageWidth;
         $height = '&HEIGHT=' . $ovImageHeight;
 
-        $changeAxis = false;
-
         // get images
         $tempNames = array();
         $logger = $this->getLogger();
@@ -489,19 +483,15 @@ class PrintService extends ImageExportService
             $centerx = $this->data['center']['x'];
             $centery = $this->data['center']['y'];
 
-            if (!empty($layer['changeAxis'])) {
-                $ovWidth = $this->conf['overview']['height'] * $layer['scale'] / 1000;
-                $ovHeight = $this->conf['overview']['width'] * $layer['scale'] / 1000;
-                $centerx = $this->data['center']['y'];
-                $centery = $this->data['center']['x'];
-                $changeAxis = true;
-            }
-
             $minX = $centerx - $ovWidth * 0.5;
             $minY = $centery - $ovHeight * 0.5;
             $maxX = $centerx + $ovWidth * 0.5;
             $maxY = $centery + $ovHeight * 0.5;
-            $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
+            if (!empty($layer['changeAxis'])) {
+                $bbox = '&BBOX=' . $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
+            } else {
+                $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
+            }
 
             $url = strstr($layer['url'], '&BBOX', true);
             $url .= $bbox . $width . $height;
@@ -542,38 +532,20 @@ class PrintService extends ImageExportService
 
         $image = imagecreatefrompng($finalImageName);
 
-        // add red extent rectangle
-        if (!$changeAxis) {
-            $ll_x = $this->data['extent_feature'][3]['x'];
-            $ll_y = $this->data['extent_feature'][3]['y'];
-            $ul_x = $this->data['extent_feature'][0]['x'];
-            $ul_y = $this->data['extent_feature'][0]['y'];
+        $ul_x = $this->data['extent_feature'][3]['x'];
+        $ul_y = $this->data['extent_feature'][3]['y'];
+        $ll_x = $this->data['extent_feature'][0]['x'];
+        $ll_y = $this->data['extent_feature'][0]['y'];
 
-            $lr_x = $this->data['extent_feature'][2]['x'];
-            $lr_y = $this->data['extent_feature'][2]['y'];
-            $ur_x = $this->data['extent_feature'][1]['x'];
-            $ur_y = $this->data['extent_feature'][1]['y'];
+        $ur_x = $this->data['extent_feature'][2]['x'];
+        $ur_y = $this->data['extent_feature'][2]['y'];
+        $lr_x = $this->data['extent_feature'][1]['x'];
+        $lr_y = $this->data['extent_feature'][1]['y'];
 
-            $p1 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $ll_x, $ll_y);
-            $p2 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $ul_x, $ul_y);
-            $p3 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $ur_x, $ur_y);
-            $p4 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $lr_x, $lr_y);
-        } else {
-            $ul_x = $this->data['extent_feature'][3]['x'];
-            $ul_y = $this->data['extent_feature'][3]['y'];
-            $ll_x = $this->data['extent_feature'][0]['x'];
-            $ll_y = $this->data['extent_feature'][0]['y'];
-
-            $ur_x = $this->data['extent_feature'][2]['x'];
-            $ur_y = $this->data['extent_feature'][2]['y'];
-            $lr_x = $this->data['extent_feature'][1]['x'];
-            $lr_y = $this->data['extent_feature'][1]['y'];
-
-            $p1 = $this->realWorld2ovMapPos($ovHeight, $ovWidth, $ll_x, $ll_y);
-            $p2 = $this->realWorld2ovMapPos($ovHeight, $ovWidth, $ul_x, $ul_y);
-            $p3 = $this->realWorld2ovMapPos($ovHeight, $ovWidth, $ur_x, $ur_y);
-            $p4 = $this->realWorld2ovMapPos($ovHeight, $ovWidth, $lr_x, $lr_y);
-        }
+        $p1 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $ll_x, $ll_y);
+        $p2 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $ul_x, $ul_y);
+        $p3 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $ur_x, $ur_y);
+        $p4 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $lr_x, $lr_y);
 
         $red = ImageColorAllocate($image,255,0,0);
         imageline ( $image, $p1[0], $p1[1], $p2[0], $p2[1], $red);
