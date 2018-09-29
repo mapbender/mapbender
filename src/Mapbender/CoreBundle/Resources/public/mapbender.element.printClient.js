@@ -20,6 +20,7 @@
         height: null,
         rotateValue: 0,
         overwriteTemplates: false,
+        digitizerData: null,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -300,74 +301,24 @@
             return data;
         },
 
-        _print: function() {
-            var form = $('form#formats', this.element);
-            var extent = this._getPrintExtent();
-
-            // Felder für extent, center und layer dynamisch einbauen
-            var fields = $();
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'extent[width]',
-                value: extent.extent.width
-            }));
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'extent[height]',
-                value: extent.extent.height
-            }));
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'center[x]',
-                value: extent.center.x
-            }));
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'center[y]',
-                value: extent.center.y
-            }));
-
-            // extent feature
-            var feature_coords = this.feature.geometry.components[0].components.map(function(component) {
-                return {
-                    x: component.x,
-                    y: component.y
-                };
-            });
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'extent_feature',
-                value: JSON.stringify(feature_coords)
-            }));
-
+        _collectSourcesAndLegends: function() {
             // wms layer
-            var sources = this.map.getSourceTree(), lyrCount = 0;
+            var sources = this.map.getSourceTree();
 
             function _getLegends(layer) {
-                var legend = null;
-                if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected == true) {
-                    legend = {};
+                var legend = {};
+                if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected) {
                     legend[layer.options.title] = layer.options.legend.url;
                 }
                 if (layer.children) {
                     for (var i = 0; i < layer.children.length; i++) {
-                        var help = _getLegends(layer.children[i]);
-                        if (help) {
-                            legend = legend ? legend : {};
-                            for (key in help) {
-                                legend[key] = help[key];
-                            }
-                        }
+                        _.assign(legend, _getLegends(layer.children[i]));
                     }
                 }
                 return legend;
             }
             var legends = [];
+            var sourceLayersOut = [];
 
             for (var i = 0; i < sources.length; i++) {
                 var layer = this.map.map.layersList[sources[i].mqlid],
@@ -391,19 +342,12 @@
                         var opacity = sources[i].configuration.options.opacity;
                         var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
                         lyrConf.opacity = opacity;
-
                         // flag to change axis order
                         lyrConf.changeAxis = this._changeAxis(layer.olLayer);
+                        sourceLayersOut.push(lyrConf);
 
-                        $.merge(fields, $('<input />', {
-                            type: 'hidden',
-                            name: 'layers[' + lyrCount + ']',
-                            value: JSON.stringify(lyrConf),
-                            weight: this.map.map.olMap.getLayerIndex(layer.olLayer)
-                        }));
                         layer.olLayer.params.LAYERS = prevLayers;
                         layer.olLayer.params.STYLES = prevStyles;
-                        lyrCount++;
 
                         if (sources[i].type === 'wms') {
                             var ll = _getLegends(sources[i].configuration.children[0]);
@@ -415,104 +359,179 @@
                 }
             }
 
-            //legend
-            if($('input[name="printLegend"]',form).prop('checked')){
-                $.merge(fields, $('<input />', {
-                    type: 'hidden',
-                    name: 'legends',
-                    value: JSON.stringify(legends)
-                }));
-            }
-
+            return {
+                layers: sourceLayersOut,
+                legends: legends
+            };
+        },
+        _collectGeometryLayers: function() {
+            var self = this;
             // Iterating over all vector layers, not only the ones known to MapQuery
             var geojsonFormat = new OpenLayers.Format.GeoJSON();
-            for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
-                var layer = this.map.map.olMap.layers[i];
+            var intersectFeature = this.feature;
+            return this.map.map.olMap.layers.filter(function(layer) {
                 if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
-                    continue;
+                    return false;
+                }
+                if (!(layer.features && layer.features.length)) {
+                    return false;
+                }
+                // don't print own print extent preview layer
+                if (layer === self.layer) {
+                    return false;
                 }
 
-                if (layer.features.length === 0){
-                    continue;
-                }
-                var geometries = [];
-                for(var idx = 0; idx < layer.features.length; idx++) {
-                    var feature = layer.features[idx];
+                return true;
+            }).map(function(layer) {
+                var geometries = layer.features.filter(function(feature) {
                     // onScreen throws an error if geometry is not populated, see
                     // https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L198
-                    if (!feature.geometry || !feature.onScreen(true)) {
-                        continue;
+                    if (!feature.geometry || !feature.onScreen(true) || !feature.geometry.intersects(intersectFeature.geometry)) {
+                        return false;
                     }
-
-                    if(this.feature.geometry.intersects(feature.geometry)){
-                        var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
-
-                        if(feature.style !== null){
-                            geometry.style = feature.style;
-                        }else{
-                            geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
-                        }
-                        // only visible features
-                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){
-                            geometries.push(geometry);
-                        } else if (geometry.style.label !== undefined){
-                            geometries.push(geometry);
-                        }
+                    // don't print own print extent preview feature
+                    if (feature === intersectFeature) {
+                        return false;
                     }
-                }
+                    return true;
+                }).map(function(feature) {
+                    var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
+                    if (feature.style !== null) {
+                        geometry.style = feature.style;
+                    } else {
+                        geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
+                    }
+                    return geometry;
+                }).filter(function(geometry) {
+                    if (geometry.style.fillOpacity > 0 || geometry.style.strokeOpacity > 0) {
+                        return true;
+                    }
+                    if (geometry.style.label !== undefined) {
+                        return true;
+                    }
+                    return false;
+                });
 
-                var lyrConf = {
+                return {
                     type: 'GeoJSON+Style',
                     opacity: 1,
                     geometries: geometries
                 };
+            });
+        },
+        _collectOverview: function() {
+            // overview map
+            var ovMap = (this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap') || [null])[0];
+            var overviewLayers = (ovMap && ovMap.layers || []).map(function(layer) {
+                var url = layer.getURL(ovMap.map.getExtent());
+                var extent = ovMap.map.getExtent();
+                var mwidth = extent.getWidth();
+                var size = ovMap.size;
+                var width = size.w;
+                var res = mwidth / width;
+                var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
 
+                return {
+                    url: url,
+                    scale: scale
+                };
+            });
+
+            return overviewLayers.length ? overviewLayers : null;
+        },
+        _collectPrintData: function() {
+            var extent = this._getPrintExtent();
+            var extentFeature = this.feature.geometry.components[0].components.map(function(component) {
+                return {
+                    x: component.x,
+                    y: component.y
+                };
+            });
+            var sourcesAndLegends = this._collectSourcesAndLegends();
+            var geometryLayers = this._collectGeometryLayers();
+            var overview = this._collectOverview();
+
+            var data = {
+                extent: {
+                    width: extent.extent.width,
+                    height: extent.extent.height
+                },
+                center: {
+                    x: extent.center.x,
+                    y: extent.center.y
+                },
+                // @todo: this is pretty wild for an inlined expression, extract a method
+                'extent_feature': extentFeature,
+                layers: sourcesAndLegends.layers.concat(geometryLayers),
+                legends: sourcesAndLegends.legends,
+                overview: overview
+            };
+            if (this.digitizerData) {
+                _.assign(data, this.digitizerData);
+            }
+            return data;
+        },
+        _submitPrintData: function(data) {
+            var form = $('form#formats', this.element);
+            var fields = $();
+            var appendField = function(name, value) {
                 $.merge(fields, $('<input />', {
                     type: 'hidden',
-                    name: 'layers[' + (lyrCount + i) + ']',
-                    value: JSON.stringify(lyrConf),
-                    weight: this.map.map.olMap.getLayerIndex(layer)
+                    name: name,
+                    value: value
                 }));
-            }
-
-            // overview map
-            var ovMap = this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap')[0],
-            count = 0;
-            if (undefined !== ovMap){
-                for(var i = 0; i < ovMap.layers.length; i++) {
-                    var url = ovMap.layers[i].getURL(ovMap.map.getExtent());
-                    var extent = ovMap.map.getExtent();
-                    var mwidth = extent.getWidth();
-                    var size = ovMap.size;
-                    var width = size.w;
-                    var res = mwidth / width;
-                    var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
-
-                    var overview = {};
-                    overview.url = url;
-                    overview.scale = scale;
-
-                    // flag to change axis order
-                    overview.changeAxis = this._changeAxis(ovMap.layers[i]);
-
-                    $.merge(fields, $('<input />', {
-                        type: 'hidden',
-                        name: 'overview[' + count + ']',
-                        value: JSON.stringify(overview)
-                    }));
-                    count++;
+            };
+            _.forEach(data, function(value, key) {
+                if (value === null || typeof value === 'undefined') {
+                    return;
                 }
-            }
-
+                switch (key) {
+                    case 'legends':
+                        if ($('input[name="printLegend"]',form).prop('checked')) {
+                            appendField(key, JSON.stringify(value));
+                        }
+                        break;
+                    case 'extent_feature':
+                        appendField(key, JSON.stringify(value));
+                        break;
+                    default:
+                        if ($.isArray(value)) {
+                            for (var i = 0; i < value.length; ++i) {
+                                switch (key) {
+                                    case 'layers':
+                                    case 'overview':
+                                        appendField('' + key + '[' + i + ']', JSON.stringify(value[i]));
+                                        break;
+                                    default:
+                                        appendField('' + key + '[' + i + ']', value[i]);
+                                        break;
+                                }
+                            }
+                        } else if (typeof value === 'string') {
+                            appendField(key, value);
+                        } else if (Object.keys(value).length) {
+                            Object.keys(value).map(function(k) {
+                                appendField('' + key + '['+k+']', value[k]);
+                            });
+                        } else {
+                            appendField(key, value);
+                        }
+                        break;
+                }
+            });
             $('div#layers', form).empty();
             fields.appendTo(form.find('div#layers'));
 
-            if(lyrCount === 0) {
+            form.find('input[type="submit"]').click();
+        },
+        _print: function() {
+            var d = this._collectPrintData();
+            if (!d.layers.length) {
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
                 return;
             }
 
-            form.find('input[type="submit"]').click();
+            this._submitPrintData(d);
         },
         _onSubmit: function(evt) {
             if (this.options.autoClose){
@@ -552,21 +571,13 @@
         },
 
         printDigitizerFeature: function(schemaName,featureId){
-            // add hidden fields to submit featureId and schemaName
-            var form = $('form#formats', this.element);
-
-            if(!form.has('input[name="digitizer_feature[id]"]').length) {
-                form.append($('<input />', {
-                    type: 'hidden',
-                    name: 'digitizer_feature[id]'
-                })).append($('<input />', {
-                    type: 'hidden',
-                    name: 'digitizer_feature[schemaName]'
-                }));
-            }
-
-            $('input[name="digitizer_feature[id]"]', form).val(featureId);
-            $('input[name="digitizer_feature[schemaName]"]', form).val(schemaName);
+            // Sonderlocke Digitizer
+            this.digitizerData = {
+                digitizer_feature: {
+                    id: featureId,
+                    schemaName: schemaName
+                }
+            };
 
             this._getDigitizerTemplates(schemaName);
         },
