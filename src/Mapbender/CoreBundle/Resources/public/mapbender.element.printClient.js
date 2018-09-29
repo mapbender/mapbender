@@ -304,23 +304,6 @@
             return data;
         },
         /**
-         * @returns {Array<Object>} sourceTreeish configuration objects
-         * @private
-         */
-        _getActiveRasterSourceDefs: function() {
-            var sourceTree = this.map.getSourceTree();
-            return sourceTree.filter(function(sourceDef) {
-                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-                if (0 !== layer.CLASS_NAME.indexOf('OpenLayers.Layer.')) {
-                    return false;
-                }
-                if (typeof (Mapbender.source[sourceDef.type] || {}).getPrintConfig !== 'function') {
-                    return false;
-                }
-                return true;
-            }.bind(this));
-        },
-        /**
          *
          * @param sourceDef
          * @param {number} [scale]
@@ -356,7 +339,7 @@
                 }
                 return legend;
             }
-            var sources = this._getActiveRasterSourceDefs();
+            var sources = this._getRasterSourceDefs();
             for (var i = 0; i < sources.length; ++i) {
                 var source = sources[i];
                 if (source.type === 'wms' && this._getRasterVisibilityInfo(source, scale).layers.length) {
@@ -369,7 +352,7 @@
             return legends;
         },
         _collectRasterLayerData: function() {
-            var sources = this._getActiveRasterSourceDefs();
+            var sources = this._getRasterSourceDefs();
             var scale = this._getPrintScale();
 
             var dataOut = [];

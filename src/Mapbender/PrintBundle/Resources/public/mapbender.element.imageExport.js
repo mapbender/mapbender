@@ -96,30 +96,56 @@
         _ready: function(){
             this.readyState = true;
         },
-        _exportImage: function(){
-            var self = this;
-            var sources = this.map.getSourceTree(), num = 0;
-            var layers = new Array();
-            var imageSize = this.map.map.olMap.getCurrentSize();
-            for(var i = 0; i < sources.length; i++){
-                var layer = this.map.map.layersList[sources[i].mqlid];
-
-                if(layer.olLayer.params.LAYERS.length === 0){
-                    continue;
+        /**
+         *
+         * @param sourceDef
+         * @returns {{layers: *, styles: *}}
+         * @private
+         */
+        _getRasterVisibilityInfo: function(sourceDef) {
+            var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+            return {
+                layers: layer.params.LAYERS,
+                styles: layer.params.STYLES
+            };
+        },
+        /**
+         * @returns {Array<Object>} sourceTreeish configuration objects
+         * @private
+         */
+        _getRasterSourceDefs: function() {
+            var sourceTree = this.map.getSourceTree();
+            return sourceTree.filter(function(sourceDef) {
+                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+                if (0 !== layer.CLASS_NAME.indexOf('OpenLayers.Layer.')) {
+                    return false;
                 }
+                if (typeof (Mapbender.source[sourceDef.type] || {}).getPrintConfig !== 'function') {
+                    return false;
+                }
+                return true;
+            }.bind(this));
+        },
+        _exportImage: function() {
+            var sources = this._getRasterSourceDefs();
+            var layers = [];
+            var imageSize = this.map.map.olMap.getCurrentSize();
+            for(var i = 0; i < sources.length; i++) {
+                var sourceDef = sources[i];
+                var visLayers = this._getRasterVisibilityInfo(sourceDef);
 
-                if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function'){
-                    var layerConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
-                    layerConf.opacity = sources[i].configuration.options.opacity;
-                    layers[num] = layerConf;
-                    num++;
+                if (visLayers.layers.length) {
+                    var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+                    var layerConf = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.map.map.olMap.getExtent(), sourceDef.configuration.options.proxy);
+                    layerConf.opacity = sourceDef.configuration.options.opacity;
+                    layers.push(layerConf);
                 }
             }
 
             var vectorLayers = this._collectGeometryLayers();
             var mapExtent = this.map.map.olMap.getExtent();
 
-            if(num === 0){
+            if (!layers.length) {
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
             }else{
                 var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/export';
