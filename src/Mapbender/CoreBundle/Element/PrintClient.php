@@ -155,19 +155,25 @@ class PrintClient extends Element
         return 'mapbender.mbPrintClient';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
+    public function getFrontendTemplateVars()
     {
-        return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:printclient.html.twig',
-            array(
-                'id' => $this->getId(),
-                'title' => $this->getTitle(),
-                'configuration' => $this->getConfiguration()
-            )
+        $config = $this->getConfiguration();
+        $router = $this->container->get('router');
+        $submitUrl = $router->generate('mapbender_core_application_element', array(
+            'slug' => $this->application->getEntity()->getSlug(),
+            'id' => $this->entity->getId(),
+            'action' => 'print',
+        ));
+        return array(
+            'configuration' => $config,
+            'submitUrl' => $submitUrl,
+            'formTarget' => '_blank',
         );
+    }
+
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return "MapbenderCoreBundle:Element:printclient{$suffix}";
     }
 
     /**
@@ -181,14 +187,16 @@ class PrintClient extends Element
         switch ($action) {
             case 'print':
                 $data = $this->preparePrintData($request, $configuration);
-                $printservice = $this->getPrintService();
+                $printService = $this->getPrintService();
 
                 $displayInline = true;
-                $filename = 'mapbender_print.pdf';
+
                 if(array_key_exists('file_prefix', $configuration)) {
                     $filename = $configuration['file_prefix'] . '_' . date("YmdHis") . '.pdf';
+                } else {
+                    $filename = 'mapbender_print.pdf';
                 }
-                $response = new Response($printservice->doPrint($data), 200, array(
+                $response = new Response($printService->doPrint($data), 200, array(
                     'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
                     'Content-Disposition' => 'attachment; filename=' . $filename
                 ));

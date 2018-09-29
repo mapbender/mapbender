@@ -61,7 +61,7 @@
                 });
                 $('.printSubmit', this.element).on('click', $.proxy(this._print, this));
             }
-
+            $('form', this.element).on('submit', this._onSubmit.bind(this));
             this._trigger('ready');
             this._ready();
         },
@@ -335,13 +335,12 @@
             }));
 
             // extent feature
-            var feature_coords = new Array();
-            var feature_comp = this.feature.geometry.components[0].components;
-            for(var i = 0; i < feature_comp.length-1; i++) {
-                feature_coords[i] = new Object();
-                feature_coords[i]['x'] = feature_comp[i].x;
-                feature_coords[i]['y'] = feature_comp[i].y;
-            }
+            var feature_coords = this.feature.geometry.components[0].components.map(function(component) {
+                return {
+                    x: component.x,
+                    y: component.y
+                };
+            });
 
             $.merge(fields, $('<input />', {
                 type: 'hidden',
@@ -412,7 +411,7 @@
                         if (sources[i].type === 'wms') {
                             var ll = _getLegends(sources[i].configuration.children[0]);
                             if (ll) {
-                                legends.push(ll);
+                                legends = legends.concat(ll);
                             }
                         }
                     }
@@ -504,21 +503,15 @@
             $('div#layers', form).empty();
             fields.appendTo(form.find('div#layers'));
 
-            // Post in neuen Tab (action bei form anpassen)
-            var url =  this.elementUrl + 'print';
-
-            form.get(0).setAttribute('action', url);
-            form.attr('target', '_blank');
-            form.attr('method', 'post');
-
-            if (lyrCount === 0){
+            if(lyrCount === 0) {
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
-            }else{
-                // we click a hidden submit button to check the required fields
-                form.find('input[type="submit"]').click();
+                return;
             }
 
-            if(this.options.autoClose){
+            form.find('input[type="submit"]').click();
+        },
+        _onSubmit: function(evt) {
+            if (this.options.autoClose){
                 this.popup.close();
             }
         },
