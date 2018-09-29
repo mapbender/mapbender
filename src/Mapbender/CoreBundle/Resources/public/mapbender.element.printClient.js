@@ -397,7 +397,8 @@
                 }).map(function(feature) {
                     var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
                     if (feature.style !== null) {
-                        geometry.style = feature.style;
+                        // stringify => decode: makes a deep copy of the style at the moment of capture
+                        geometry.style = JSON.parse(JSON.stringify(feature.style));
                     } else {
                         geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
                     }
