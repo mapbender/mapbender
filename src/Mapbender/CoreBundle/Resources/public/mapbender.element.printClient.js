@@ -306,11 +306,47 @@
 
             return data;
         },
-
-        _collectSourcesAndLegends: function() {
-            // wms layer
-            var sources = this.map.getSourceTree();
-
+        /**
+         * @returns {Array<Object>} sourceTreeish configuration objects
+         * @private
+         */
+        _getActiveRasterSourceDefs: function() {
+            var sourceTree = this.map.getSourceTree();
+            return sourceTree.filter(function(sourceDef) {
+                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+                if (0 !== layer.CLASS_NAME.indexOf('OpenLayers.Layer.')) {
+                    return false;
+                }
+                if (typeof (Mapbender.source[sourceDef.type] || {}).getPrintConfig !== 'function') {
+                    return false;
+                }
+                return true;
+            }.bind(this));
+        },
+        /**
+         *
+         * @param sourceDef
+         * @param {number} [scale]
+         * @returns {{layers: *, styles: *}}
+         * @private
+         */
+        _getRasterVisibilityInfo: function(sourceDef, scale) {
+            var scale_ = scale || this._getPrintScale();
+            var toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: sourceDef.mqlid}};
+            var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale_, toChangeOpts);
+            return {
+                layers: geoSourceResponse.layers,
+                styles: geoSourceResponse.styles
+            };
+        },
+        /**
+         *
+         * @returns {Array<Object.<string, string>>} legend image urls mapped to layer title
+         * @private
+         */
+        _collectLegends: function() {
+            var legends = [];
+            var scale = this._getPrintScale();
             function _getLegends(layer) {
                 var legend = {};
                 if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected) {
@@ -323,52 +359,47 @@
                 }
                 return legend;
             }
-            var legends = [];
-            var sourceLayersOut = [];
-
-            for (var i = 0; i < sources.length; i++) {
-                var layer = this.map.map.layersList[sources[i].mqlid],
-                        type = layer.olLayer.CLASS_NAME;
-
-                if (0 !== type.indexOf('OpenLayers.Layer.')) {
-                    continue;
-                }
-
-                if (Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
-                    var source = sources[i],
-                            scale = this._getPrintScale(),
-                            toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: source.mqlid}};
-                    var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
-                    if (visLayers.layers.length > 0) {
-                        var prevLayers = layer.olLayer.params.LAYERS;
-                        var prevStyles = layer.olLayer.params.STYLES;
-                        layer.olLayer.params.LAYERS = visLayers.layers;
-                        layer.olLayer.params.STYLES = visLayers.styles;
-
-                        var opacity = sources[i].configuration.options.opacity;
-                        var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
-                        lyrConf.opacity = opacity;
-                        // flag to change axis order
-                        lyrConf.changeAxis = this._changeAxis(layer.olLayer);
-                        sourceLayersOut.push(lyrConf);
-
-                        layer.olLayer.params.LAYERS = prevLayers;
-                        layer.olLayer.params.STYLES = prevStyles;
-
-                        if (sources[i].type === 'wms') {
-                            var ll = _getLegends(sources[i].configuration.children[0]);
-                            if (ll) {
-                                legends = legends.concat(ll);
-                            }
-                        }
+            var sources = this._getActiveRasterSourceDefs();
+            for (var i = 0; i < sources.length; ++i) {
+                var source = sources[i];
+                if (source.type === 'wms' && this._getRasterVisibilityInfo(source, scale).layers.length) {
+                    var ll = _getLegends(sources[i].configuration.children[0]);
+                    if (ll) {
+                        legends = legends.concat(ll);
                     }
                 }
             }
+            return legends;
+        },
+        _collectRasterLayerData: function() {
+            var sources = this._getActiveRasterSourceDefs();
+            var scale = this._getPrintScale();
 
-            return {
-                layers: sourceLayersOut,
-                legends: legends
-            };
+            var dataOut = [];
+
+            for (var i = 0; i < sources.length; i++) {
+                var sourceDef = sources[i];
+                var visLayers = this._getRasterVisibilityInfo(sourceDef, scale);
+                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+                if (visLayers.layers.length > 0) {
+                    var prevLayers = layer.params.LAYERS;
+                    var prevStyles = layer.params.STYLES;
+                    layer.params.LAYERS = visLayers.layers;
+                    layer.params.STYLES = visLayers.styles;
+
+                    var opacity = sourceDef.configuration.options.opacity;
+                    var layerData = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.map.map.olMap.getExtent(), sourceDef.configuration.options.proxy);
+                    layerData.opacity = opacity;
+                    // flag to change axis order
+                    layerData.changeAxis = this._changeAxis(layer);
+                    dataOut.push(layerData);
+
+                    layer.params.LAYERS = prevLayers;
+                    layer.params.STYLES = prevStyles;
+                }
+            }
+
+            return dataOut;
         },
         /**
          * Should return true if the given layer needs to be included in print
@@ -498,7 +529,7 @@
                     y: component.y
                 };
             });
-            var sourcesAndLegends = this._collectSourcesAndLegends();
+            var rasterLayers = this._collectRasterLayerData();
             var geometryLayers = this._collectGeometryLayers();
             var overview = this._collectOverview();
 
@@ -513,8 +544,8 @@
                 },
                 // @todo: this is pretty wild for an inlined expression, extract a method
                 'extent_feature': extentFeature,
-                layers: sourcesAndLegends.layers.concat(geometryLayers),
-                legends: sourcesAndLegends.legends,
+                layers: rasterLayers.concat(geometryLayers),
+                legends: this._collectLegends(),
                 overview: overview
             };
             if (this.digitizerData) {
