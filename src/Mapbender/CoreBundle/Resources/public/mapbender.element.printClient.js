@@ -406,12 +406,7 @@
             var ovMap = (this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap') || [null])[0];
             var overviewLayers = (ovMap && ovMap.layers || []).map(function(layer) {
                 var url = layer.getURL(ovMap.map.getExtent());
-                var extent = ovMap.map.getExtent();
-                var mwidth = extent.getWidth();
-                var size = ovMap.size;
-                var width = size.w;
-                var res = mwidth / width;
-                var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
+                var scale = Math.round(ovMap.ovmap.getScale());
 
                 return {
                     url: url,
