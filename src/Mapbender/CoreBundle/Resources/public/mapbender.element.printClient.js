@@ -73,7 +73,6 @@
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
-            var me = $(this.element);
             if (this.options.type === 'dialog') {
                 if(!this.popup || !this.popup.$element){
                     this.popup = new Mapbender.Popup2({
@@ -105,13 +104,11 @@
                             }
                         });
                     this.popup.$element.on('close', $.proxy(this.close, this));
-                }else{
-                     return;
+                    this._getTemplateSize();
+                    this._updateElements(true);
+                    this._setScale();
                 }
-                me.show();
-                this._getTemplateSize();
-                this._updateElements(true);
-                this._setScale();
+                $(this.element).show();
             }
         },
 
