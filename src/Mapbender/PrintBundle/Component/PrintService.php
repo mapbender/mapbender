@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
  */
 class PrintService extends ImageExportService
 {
-    /** @var PDF_ImageAlpha */
+    /** @var PDF_Extensions|\FPDF */
     protected $pdf;
     protected $conf;
     protected $rotation;
@@ -300,6 +300,7 @@ class PrintService extends ImageExportService
             $orientation = 'L';
         }
 
+        /** @var PDF_Extensions|\FPDF|\FPDF_TPL $pdf */
         $this->pdf = $pdf = new PDF_Extensions();
 
         $template = $this->data['template'];
