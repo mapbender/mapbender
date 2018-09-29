@@ -10,13 +10,10 @@
         _geometryToGeoJson: null,
 
         _create: function(){
-            if(!Mapbender.checkTarget("mbImageExport", this.options.target)){
+            if(!Mapbender.checkTarget(this.widgetName, this.options.target)){
                 return;
             }
-            var self = this;
-            var me = this.element;
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
             var olGeoJson = new OpenLayers.Format.GeoJSON();
             this._geometryToGeoJson = olGeoJson.extract.geometry.bind(olGeoJson);
         },
@@ -33,7 +30,6 @@
             this.callback = callback ? callback : null;
             var self = this;
             var me = $(this.element);
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
@@ -57,7 +53,6 @@
                             cssClass: 'button right',
                             callback: function(){
                                 self._exportImage();
-                                self.close();
                             }
                         }
                     }
@@ -162,8 +157,9 @@
             var jobData = this._collectJobData();
             if (!jobData.requests.length) {
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
-            }else{
+            } else {
                 this._submitJob(jobData);
+                self.close();
             }
         },
         _submitJob: function(jobData) {

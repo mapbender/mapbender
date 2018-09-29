@@ -21,22 +21,10 @@
         rotateValue: 0,
         overwriteTemplates: false,
         digitizerData: null,
-        _geometryToGeoJson: null,
-
-        _create: function() {
-            if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
-                return;
-            }
-            var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
-            var olGeoJson = new OpenLayers.Format.GeoJSON();
-            this._geometryToGeoJson = olGeoJson.extract.geometry.bind(olGeoJson);
-        },
 
         _setup: function(){
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.map = $('#' + this.options.target).data('mapbenderMbMap');
 
             $('select[name="scale_select"]', this.element)
                 .on('change', $.proxy(this._updateGeometry, this));
@@ -66,12 +54,7 @@
                 $('.printSubmit', this.element).on('click', $.proxy(this._print, this));
             }
             $('form', this.element).on('submit', this._onSubmit.bind(this));
-            this._trigger('ready');
-            this._ready();
-        },
-
-        defaultAction: function(callback) {
-            this.open(callback);
+            this._super();
         },
 
         open: function(callback){
