@@ -1,8 +1,5 @@
 (function($) {
 
-    /**
-     * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~print
-     */
     $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
             style: {
@@ -409,10 +406,7 @@
          * @private
          */
         _filterGeometryLayer: function(layer) {
-            if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
-                return false;
-            }
-            if (!(layer.features && layer.features.length)) {
+            if (!this._super(layer)) {
                 return false;
             }
             // don't print own print extent preview layer
@@ -429,77 +423,17 @@
          * @private
          */
         _filterFeature: function(feature) {
-            // onScreen throws an error if geometry is not populated, see
-            // https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L198
-            if (!feature.geometry || !feature.onScreen(true) || !feature.geometry.intersects(this.feature.geometry)) {
+            if (!this._super(feature)) {
                 return false;
             }
-            // don't print own print extent preview feature
+            if (!feature.geometry.intersects(this.feature.geometry)) {
+                return false;
+            }
+            // don't print own print extent preview feature}
             if (feature === this.feature) {
                 return false;
             }
             return true;
-        },
-        /**
-         * Extracts and preprocesses the geometry from a feature for print backend consumption.
-         *
-         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
-         * @param {OpenLayers.Feature.Vector} feature
-         * @returns {Object} geojsonish, with (non-conformant) "style" entry bolted on (native Openlayers format!)
-         * @private
-         */
-        _extractFeatureGeometry: function(layer, feature) {
-            var geometry = this._geometryToGeoJson(feature.geometry);
-            if (feature.style !== null) {
-                // stringify => decode: makes a deep copy of the style at the moment of capture
-                geometry.style = JSON.parse(JSON.stringify(feature.style));
-            } else {
-                geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
-            }
-            return geometry;
-        },
-        /**
-         * Should return true if the given feature geometry should be included in print.
-         *
-         * @param geometry
-         * @returns {boolean}
-         * @private
-         */
-        _filterFeatureGeometry: function(geometry) {
-            if (geometry.style.fillOpacity > 0 || geometry.style.strokeOpacity > 0) {
-                return true;
-            }
-            if (geometry.style.label !== undefined) {
-                return true;
-            }
-            return false;
-        },
-        /**
-         * Should return print data (sent to backend) for the given geometry layer. Given layer is guaranteed
-         * to have passsed through the _filterGeometryLayer check positively.
-         *
-         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
-         * @returns VectorLayerData~print
-         * @private
-         */
-        _extractGeometryLayerData: function(layer) {
-            var geometries = layer.features
-                .filter(this._filterFeature.bind(this))
-                .map(this._extractFeatureGeometry.bind(this, layer))
-                .filter(this._filterFeatureGeometry.bind(this))
-            ;
-            return {
-                type: 'GeoJSON+Style',
-                opacity: 1,
-                geometries: geometries
-            };
-        },
-        _collectGeometryLayers: function() {
-            // Iterating over all vector layers, not only the ones known to MapQuery
-            return this.map.map.olMap.layers
-                .filter(this._filterGeometryLayer.bind(this))
-                .map(this._extractGeometryLayerData.bind(this))
-            ;
         },
         _collectOverview: function() {
             // overview map

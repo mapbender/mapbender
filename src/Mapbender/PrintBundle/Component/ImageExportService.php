@@ -83,12 +83,6 @@ class ImageExportService
             $this->mapRequests[$i] = $layer['url'];
         }
 
-        if(isset($this->data['vectorLayers'])){
-            foreach ($this->data['vectorLayers'] as $idx => $layer){
-                $this->data['vectorLayers'][$idx] = json_decode($this->data['vectorLayers'][$idx], true);
-            }
-        }
-
         $imagePath = $this->getImages();
         $this->emitImageToBrowser($imagePath);
         unlink($imagePath);
