@@ -435,10 +435,17 @@
                     continue;
                 }
 
+                if (layer.features.length === 0){
+                    continue;
+                }
                 var geometries = [];
                 for(var idx = 0; idx < layer.features.length; idx++) {
                     var feature = layer.features[idx];
-                    if (!feature.onScreen(true)) continue
+                    // onScreen throws an error if geometry is not populated, see
+                    // https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L198
+                    if (!feature.geometry || !feature.onScreen(true)) {
+                        continue;
+                    }
 
                     if(this.feature.geometry.intersects(feature.geometry)){
                         var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
