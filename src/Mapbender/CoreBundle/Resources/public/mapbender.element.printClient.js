@@ -438,7 +438,7 @@
 
             return overviewLayers.length ? overviewLayers : null;
         },
-        _collectPrintData: function() {
+        _collectJobData: function() {
             var extent = this._getPrintExtent();
             var extentFeature = this.feature.geometry.components[0].components.map(function(component) {
                 return {
@@ -470,7 +470,7 @@
             }
             return data;
         },
-        _submitPrintData: function(data) {
+        _submitJob: function(jobData) {
             var form = $('form#formats', this.element);
             var fields = $();
             var appendField = function(name, value) {
@@ -480,7 +480,7 @@
                     value: value
                 }));
             };
-            _.forEach(data, function(value, key) {
+            _.forEach(jobData, function(value, key) {
                 if (value === null || typeof value === 'undefined') {
                     return;
                 }
@@ -524,13 +524,13 @@
             form.find('input[type="submit"]').click();
         },
         _print: function() {
-            var d = this._collectPrintData();
-            if (!d.layers.length) {
+            var jobData = this._collectJobData();
+            if (!jobData.layers.length) {
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
                 return;
             }
 
-            this._submitPrintData(d);
+            this._submitJob(jobData);
         },
         _onSubmit: function(evt) {
             if (this.options.autoClose){

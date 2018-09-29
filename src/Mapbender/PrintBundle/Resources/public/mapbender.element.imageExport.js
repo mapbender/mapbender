@@ -126,10 +126,9 @@
                 return true;
             }.bind(this));
         },
-        _exportImage: function() {
+        _collectRasterLayerData: function() {
             var sources = this._getRasterSourceDefs();
-            var layers = [];
-            var imageSize = this.map.map.olMap.getCurrentSize();
+            var dataOut = [];
             for(var i = 0; i < sources.length; i++) {
                 var sourceDef = sources[i];
                 var visLayers = this._getRasterVisibilityInfo(sourceDef);
@@ -138,36 +137,46 @@
                     var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
                     var layerConf = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.map.map.olMap.getExtent(), sourceDef.configuration.options.proxy);
                     layerConf.opacity = sourceDef.configuration.options.opacity;
-                    layers.push(layerConf);
+                    dataOut.push(layerConf);
                 }
             }
-
-            var vectorLayers = this._collectGeometryLayers();
+            return dataOut;
+        },
+        _collectJobData: function() {
             var mapExtent = this.map.map.olMap.getExtent();
-
-            if (!layers.length) {
+            var imageSize = this.map.map.olMap.getCurrentSize();
+            return {
+                requests: this._collectRasterLayerData(),
+                // @todo: fix unscoped input lookup
+                format: $("input[name='imageformat']:checked").val(),
+                width: imageSize.w,
+                height: imageSize.h,
+                centerx: mapExtent.getCenterLonLat().lon,
+                centery: mapExtent.getCenterLonLat().lat,
+                extentwidth: mapExtent.getWidth(),
+                extentheight: mapExtent.getHeight(),
+                vectorLayers: this._collectGeometryLayers()
+            };
+        },
+        _exportImage: function() {
+            var jobData = this._collectJobData();
+            if (!jobData.requests.length) {
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
             }else{
-                var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/export';
-                var format = $("input[name='imageformat']:checked").val();
-
-                var data = {
-                    requests: layers,
-                    format: format,
-                    width: imageSize.w,
-                    height: imageSize.h,
-                    centerx: mapExtent.getCenterLonLat().lon,
-                    centery: mapExtent.getCenterLonLat().lat,
-                    extentwidth: mapExtent.getWidth(),
-                    extentheight: mapExtent.getHeight(),
-                    vectorLayers: vectorLayers
-                };
-                var form = $('<form method="POST" action="' + url + '"  />');
-                $('<input></input>').attr('type', 'hidden').attr('name', 'data').val(JSON.stringify(data)).appendTo(form);
-                form.appendTo($('body'));
-                form.submit();
-                form.remove();
+                this._submitJob(jobData);
             }
+        },
+        _submitJob: function(jobData) {
+            var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/export';
+
+            var form = $('<form method="POST" action="' + url + '"  />');
+            var submitValue = JSON.stringify(jobData);
+            var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
+            $input.val(submitValue);
+            $input.appendTo(form);
+            form.appendTo($('body'));
+            form.submit();
+            form.remove();
         },
         /**
          * Should return true if the given layer needs to be included in export
