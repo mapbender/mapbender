@@ -167,16 +167,14 @@
             }
         },
         _submitJob: function(jobData) {
-            var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/export';
-
-            var form = $('<form method="POST" action="' + url + '"  />');
+            var $form = $('form', this.element);
+            var $hiddenArea = $('.-fn-hidden-fields', $form);
+            $hiddenArea.empty();
             var submitValue = JSON.stringify(jobData);
             var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
             $input.val(submitValue);
-            $input.appendTo(form);
-            form.appendTo($('body'));
-            form.submit();
-            form.remove();
+            $input.appendTo($hiddenArea);
+            $('.-fn-submit', $form).click();
         },
         /**
          * Should return true if the given layer needs to be included in export
