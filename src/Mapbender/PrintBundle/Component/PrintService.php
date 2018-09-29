@@ -39,7 +39,7 @@ class PrintService extends ImageExportService
     {
         $this->setup($data);
 
-        $this->createFinalRotatedMapImage();
+        $this->createMapImage();
 
         return $this->buildPdf();
     }
@@ -156,7 +156,7 @@ class PrintService extends ImageExportService
         }
     }
 
-    private function createFinalRotatedMapImage()
+    private function createMapImage()
     {
         $rotation = $this->rotation;
         $neededImageWidth = $this->neededImageWidth;
@@ -694,7 +694,7 @@ class PrintService extends ImageExportService
 
             $points = array();
             foreach($ring as $c) {
-                $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+                $p = $this->transformToPixelSpace($c[0], $c[1]);
                 $points[] = floatval($p[0]);
                 $points[] = floatval($p[1]);
             }
@@ -731,7 +731,7 @@ class PrintService extends ImageExportService
 
                 $points = array();
                 foreach($ring as $c) {
-                    $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+                    $p = $this->transformToPixelSpace($c[0], $c[1]);
                     $points[] = floatval($p[0]);
                     $points[] = floatval($p[1]);
                 }
@@ -771,10 +771,10 @@ class PrintService extends ImageExportService
         imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
 
         for($i = 1; $i < count($geometry['coordinates']); $i++) {
-            $from = $this->realWorld2rotatedMapPos(
+            $from = $this->transformToPixelSpace(
                 $geometry['coordinates'][$i - 1][0],
                 $geometry['coordinates'][$i - 1][1]);
-            $to = $this->realWorld2rotatedMapPos(
+            $to = $this->transformToPixelSpace(
                 $geometry['coordinates'][$i][0],
                 $geometry['coordinates'][$i][1]);
 
@@ -797,10 +797,10 @@ class PrintService extends ImageExportService
 
         foreach($geometry['coordinates'] as $coords) {
             for($i = 1; $i < count($coords); $i++) {
-                $from = $this->realWorld2rotatedMapPos(
+                $from = $this->transformToPixelSpace(
                         $coords[$i - 1][0],
                         $coords[$i - 1][1]);
-                $to = $this->realWorld2rotatedMapPos(
+                $to = $this->transformToPixelSpace(
                         $coords[$i][0],
                         $coords[$i][1]);
                 imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
@@ -814,7 +814,7 @@ class PrintService extends ImageExportService
         $c = $geometry['coordinates'];
         $resizeFactor = $this->getResizeFactor();
 
-        $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+        $p = $this->transformToPixelSpace($c[0], $c[1]);
 
         if(isset($style['label'])){
             // draw label with halo
@@ -1094,7 +1094,7 @@ class PrintService extends ImageExportService
         return array($pixPos_x, $pixPos_y);
     }
 
-    private function realWorld2rotatedMapPos($rw_x, $rw_y)
+    private function transformToPixelSpace($projectedX, $projectedY)
     {
         $centerx  = $this->data['center']['x'];
         $centery  = $this->data['center']['y'];
@@ -1104,8 +1104,8 @@ class PrintService extends ImageExportService
         $maxY     = $centery + $this->neededExtentHeight * 0.5;
         $extentx  = $maxX - $minX;
         $extenty  = $maxY - $minY;
-        $pixPos_x = (($rw_x - $minX) / $extentx) * $this->neededImageWidth;
-        $pixPos_y = (($maxY - $rw_y) / $extenty) * $this->neededImageHeight;
+        $pixPos_x = (($projectedX - $minX) / $extentx) * $this->neededImageWidth;
+        $pixPos_y = (($maxY - $projectedY) / $extenty) * $this->neededImageHeight;
 
         return array($pixPos_x, $pixPos_y);
     }
