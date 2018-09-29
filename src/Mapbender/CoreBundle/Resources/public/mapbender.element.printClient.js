@@ -3,7 +3,7 @@
     /**
      * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~print
      */
-    $.widget("mapbender.mbPrintClient",  {
+    $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
             style: {
                 fillColor:     '#ffffff',

@@ -52,11 +52,20 @@ class PrintClient extends Element
      */
     public static function listAssets()
     {
-        return array('js' => array('mapbender.element.printClient.js',
+        return array(
+            'js' => array(
+                '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
+                'mapbender.element.printClient.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/printclient.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:printclient.json.twig'));
+                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
+            ),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/printclient.scss',
+            ),
+            'trans' => array(
+                'MapbenderCoreBundle:Element:printclient.json.twig',
+            ),
+        );
     }
 
     /**
