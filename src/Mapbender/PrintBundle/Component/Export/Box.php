@@ -95,4 +95,23 @@ class Box
     {
         return $this->top - $this->bottom;
     }
+
+    /**
+     * Self-modifying; quantize left / right / bottom / top to integers
+     */
+    public function roundToIntegerBoundaries()
+    {
+        // base calculations on width / height and current center to minimize drift
+        $roundWidth = round($this->getWidth());
+        $roundHeight = round($this->getHeight());
+        // try to hit a half-integer at the center
+        $center = array(
+            ($this->right - $this->left) * 0.5 + $this->left,
+            ($this->top - $this->bottom) * 0.5 + $this->bottom,
+        );
+        $this->left = round($center[0] - 0.5 * $roundWidth);
+        $this->bottom = round($center[1] - 0.5 * $roundHeight);
+        $this->right = $this->left + $roundWidth;
+        $this->top = $this->bottom + $roundHeight;
+    }
 }

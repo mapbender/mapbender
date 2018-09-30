@@ -56,6 +56,7 @@ class PrintService extends ImageExportService
     protected function initializeCanvasBox(array $jobData)
     {
         $rotatedBox = $this->targetBox->getExpandedForRotation(intval($jobData['rotation']));
+        $rotatedBox->roundToIntegerBoundaries();
         // re-anchor rotated box to put top left at (0,0); note: gd pixel coords are top down
         return new Box(0, abs($rotatedBox->getHeight()), abs($rotatedBox->getWidth()), 0);
     }
@@ -105,8 +106,8 @@ class PrintService extends ImageExportService
             $request = strstr($layer['url'], '&BBOX', true);
 
 
-            $width = '&WIDTH=' . abs(intval($this->canvasBox->getWidth()));
-            $height =  '&HEIGHT=' . abs(intval($this->canvasBox->getHeight()));
+            $width = '&WIDTH=' . abs($this->canvasBox->getWidth());
+            $height =  '&HEIGHT=' . abs($this->canvasBox->getHeight());
 
             $mExt = $this->mapRequestBox;
             if (!empty($layer['changeAxis'])){
@@ -165,8 +166,8 @@ class PrintService extends ImageExportService
     private function createMapImage()
     {
         $rotation = $this->rotation;
-        $neededImageWidth = abs(intval($this->canvasBox->getWidth()));
-        $neededImageHeight = abs(intval($this->canvasBox->getHeight()));
+        $neededImageWidth = abs($this->canvasBox->getWidth());
+        $neededImageHeight = abs($this->canvasBox->getHeight());
 
         $imageNames = $this->getImages($neededImageWidth,$neededImageHeight);
 
