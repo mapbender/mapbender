@@ -23,17 +23,13 @@ class PrintService extends ImageExportService
     protected $resourceDir;
     protected $finalImageName;
     protected $user;
-    protected $imageWidth;
-    protected $imageHeight;
-    protected $neededExtentWidth;
-    protected $neededExtentHeight;
-    protected $neededImageWidth;
-    protected $neededImageHeight;
 
     /** @var Affine2DTransform */
     protected $featureTransform;
     /** @var Box */
     protected $mapRequestBox;
+    /** @var Box */
+    protected $targetBox;
     /** @var Box */
     protected $canvasBox;
 
@@ -59,9 +55,7 @@ class PrintService extends ImageExportService
      */
     protected function initializeCanvasBox(array $jobData)
     {
-        // center of unrotated box irrelevant, use (0,0) for simplicity
-        $unrotatedBox = Box::fromCenterAndSize(0, 0, $this->imageWidth, $this->imageHeight);
-        $rotatedBox = $unrotatedBox->getExpandedForRotation(intval($jobData['rotation']));
+        $rotatedBox = $this->targetBox->getExpandedForRotation(intval($jobData['rotation']));
         // re-anchor rotated box to put top left at (0,0); note: gd pixel coords are top down
         return new Box(0, abs($rotatedBox->getHeight()), abs($rotatedBox->getWidth()), 0);
     }
@@ -94,9 +88,11 @@ class PrintService extends ImageExportService
         $odgParser = new OdgParser($this->container);
         $this->conf = $conf = $odgParser->getConf($data['template']);
 
-        $this->imageWidth = round($conf['map']['width'] / 25.4 * $data['quality']);
-        $this->imageHeight = round($conf['map']['height'] / 25.4 * $data['quality']);
+        $targetWidth = round($conf['map']['width'] / 25.4 * $data['quality']);
+        $targetHeight = round($conf['map']['height'] / 25.4 * $data['quality']);
         $this->mapRequestBox = $this->initializeMapRequestBox($data);
+        // NOTE: gd pixel coords are top down
+        $this->targetBox = new Box(0, $targetHeight, $targetWidth, 0);
         $this->canvasBox = $this->initializeCanvasBox($data);
         $this->featureTransform = Affine2DTransform::boxToBox($this->mapRequestBox, $this->canvasBox);
 
@@ -213,10 +209,8 @@ class PrintService extends ImageExportService
      */
     protected function rotateAndCrop($sourceImageName, $rotation)
     {
-        $neededImageWidth = $this->canvasBox->getWidth();
-        $neededImageHeight = $this->canvasBox->getHeight();
-        $imageWidth = $this->imageWidth;
-        $imageHeight = $this->imageHeight;
+        $imageWidth = $this->targetBox->getWidth();
+        $imageHeight = abs($this->targetBox->getHeight());
 
         // rotate temp image
         $tempImage2 = imagecreatefrompng($sourceImageName);
@@ -228,18 +222,13 @@ class PrintService extends ImageExportService
         imagepng($rotatedImage, $rotatedImageName);
         unlink($rotatedImageName);
 
-        // clip final image from rotated
-        $rotatedWidth = round(abs(sin(deg2rad($rotation)) * $neededImageHeight) +
-            abs(cos(deg2rad($rotation)) * $neededImageWidth));
-        $rotatedHeight = round(abs(sin(deg2rad($rotation)) * $neededImageWidth) +
-            abs(cos(deg2rad($rotation)) * $neededImageHeight));
-        $newx = ($rotatedWidth - $imageWidth ) / 2;
-        $newy = ($rotatedHeight - $imageHeight ) / 2;
+        $offsetX = (imagesx($rotatedImage) - $this->targetBox->getWidth()) * 0.5;
+        $offsetY = (imagesy($rotatedImage) - abs($this->targetBox->getHeight())) * 0.5;
 
         $clippedImage = imagecreatetruecolor($imageWidth, $imageHeight);
         imagealphablending($clippedImage, false);
         imagesavealpha($clippedImage, true);
-        imagecopy($clippedImage, $rotatedImage, 0, 0, $newx, $newy,
+        imagecopy($clippedImage, $rotatedImage, 0, 0, $offsetX, $offsetY,
             $imageWidth, $imageHeight);
         return $clippedImage;
     }
