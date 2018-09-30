@@ -56,8 +56,9 @@ class Box
     {
         $sine = abs(sin(deg2rad($degrees)));
         $cosine = abs(cos(deg2rad($degrees)));
-        $widthScale = $cosine + $sine * $this->getHeight() / $this->getWidth();
-        $heightScale = $cosine + $sine * $this->getWidth() / $this->getHeight();
+        $aspectRatio = $this->getWidth() / $this->getHeight();
+        $widthScale = $cosine + $sine / abs($aspectRatio);
+        $heightScale = $cosine + $sine * abs($aspectRatio);
         return $this->getScaled($widthScale, $heightScale);
     }
 
