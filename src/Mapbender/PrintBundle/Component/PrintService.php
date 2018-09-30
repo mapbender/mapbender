@@ -59,16 +59,11 @@ class PrintService extends ImageExportService
      */
     protected function initializeCanvasBox(array $jobData)
     {
-        $rotation = intval($jobData['rotation']);
-
-        // calculate needed image size
-        $neededImageWidth = round(abs(sin(deg2rad($rotation)) * $this->imageHeight) +
-            abs(cos(deg2rad($rotation)) * $this->imageWidth));
-        $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->imageWidth) +
-            abs(cos(deg2rad($rotation)) * $this->imageHeight));
-
-        // gd pixel coords are top down!
-        return new Box(0, $neededImageHeight, $neededImageWidth, 0);
+        // center of unrotated box irrelevant, use (0,0) for simplicity
+        $unrotatedBox = Box::fromCenterAndSize(0, 0, $this->imageWidth, $this->imageHeight);
+        $rotatedBox = $unrotatedBox->getExpandedForRotation(intval($jobData['rotation']));
+        // re-anchor rotated box to put top left at (0,0); note: gd pixel coords are top down
+        return new Box(0, abs($rotatedBox->getHeight()), abs($rotatedBox->getWidth()), 0);
     }
 
     /**
@@ -77,24 +72,12 @@ class PrintService extends ImageExportService
      */
     protected function initializeMapRequestBox(array $jobData)
     {
-        $rotation = intval($jobData['rotation']);
-
-        $extentWidth = $jobData['extent']['width'];
-        $extentHeight = $jobData['extent']['height'];
+        $width = $jobData['extent']['width'];
+        $height = $jobData['extent']['height'];
         $centerx = $jobData['center']['x'];
         $centery = $jobData['center']['y'];
-
-        $neededExtentWidth = abs(sin(deg2rad($rotation)) * $extentHeight) +
-            abs(cos(deg2rad($rotation)) * $extentWidth);
-        $neededExtentHeight = abs(sin(deg2rad($rotation)) * $extentWidth) +
-            abs(cos(deg2rad($rotation)) * $extentHeight);
-
-        $minX = $centerx - $neededExtentWidth * 0.5;
-        $minY = $centery - $neededExtentHeight * 0.5;
-        $maxX = $centerx + $neededExtentWidth * 0.5;
-        $maxY = $centery + $neededExtentHeight * 0.5;
-
-        return new Box($minX, $minY, $maxX, $maxY);
+        $unrotatedBox = Box::fromCenterAndSize($centerx, $centery, $width, $height);
+        return $unrotatedBox->getExpandedForRotation(intval($jobData['rotation']));
     }
 
     private function setup($data)
