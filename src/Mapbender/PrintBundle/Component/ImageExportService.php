@@ -148,7 +148,7 @@ class ImageExportService
         // create final merged image
         $finalImageName = $this->makeTempFile('mb_imgexp_merged');
         $mergedImage = imagecreatetruecolor($width, $height);
-        $bg = ImageColorAllocate($mergedImage, 255, 255, 255);
+        $bg = imagecolorallocate($mergedImage, 255, 255, 255);
         imagefilledrectangle($mergedImage, 0, 0, $width, $height, $bg);
         imagepng($mergedImage, $finalImageName);
         foreach ($temp_names as $temp_name) {
@@ -356,7 +356,7 @@ class ImageExportService
         list($r, $g, $b) = CSSColorParser::parse($color);
 
         if(0 == $alpha) {
-            return ImageColorAllocate($image, $r, $g, $b);
+            return imagecolorallocate($image, $r, $g, $b);
         } else {
             $a = (1 - $alpha) * 127.0;
             return imagecolorallocatealpha($image, $r, $g, $b, $a);

@@ -173,7 +173,7 @@ class PrintService extends ImageExportService
         // create temp merged image
         $tempImageName = $this->makeTempFile('mb_print_temp');
         $tempImage = imagecreatetruecolor($neededImageWidth, $neededImageHeight);
-        $bg = ImageColorAllocate($tempImage, 255, 255, 255);
+        $bg = imagecolorallocate($tempImage, 255, 255, 255);
         imagefilledrectangle($tempImage, 0, 0, $neededImageWidth, $neededImageHeight, $bg);
         imagepng($tempImage, $tempImageName);
 
@@ -489,7 +489,7 @@ class PrintService extends ImageExportService
         // create final merged image
         $finalImageName = $this->makeTempFile('mb_print_merged');
         $finalImage = imagecreatetruecolor($ovImageWidth, $ovImageHeight);
-        $bg = ImageColorAllocate($finalImage, 255, 255, 255);
+        $bg = imagecolorallocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $ovImageWidth,
             $ovImageHeight, $bg);
         imagepng($finalImage, $finalImageName);
@@ -522,7 +522,7 @@ class PrintService extends ImageExportService
         $p3 = array_values($points[2]);
         $p4 = array_values($points[3]);
 
-        $red = ImageColorAllocate($image,255,0,0);
+        $red = imagecolorallocate($image,255,0,0);
         imageline ( $image, $p1[0], $p1[1], $p2[0], $p2[1], $red);
         imageline ( $image, $p2[0], $p2[1], $p3[0], $p3[1], $red);
         imageline ( $image, $p3[0], $p3[1], $p4[0], $p4[1], $red);
@@ -667,7 +667,7 @@ class PrintService extends ImageExportService
         list($r, $g, $b) = CSSColorParser::parse($color);
 
         if(0 == $alpha) {
-            return ImageColorAllocate($image, $r, $g, $b);
+            return imagecolorallocate($image, $r, $g, $b);
         } else {
             $a = (1 - $alpha) * 127.0;
             return imagecolorallocatealpha($image, $r, $g, $b, $a);
@@ -958,7 +958,7 @@ class PrintService extends ImageExportService
                 if ($legendConf == true) {
                     // add legend in legend region on first page
                     // To Be doneCell(0,0,  utf8_decode($title));
-                    $this->pdf->setXY($x,$y);
+                    $this->pdf->SetXY($x,$y);
                     $this->pdf->Cell(0,0,  utf8_decode($title));
                     $this->pdf->Image($image,
                                 $x,
@@ -985,7 +985,7 @@ class PrintService extends ImageExportService
 
                   }else{
                       // print legend on second page
-                      $this->pdf->setXY($x,$y);
+                      $this->pdf->SetXY($x,$y);
                       $this->pdf->Cell(0,0,  utf8_decode($title));
                       $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
 
