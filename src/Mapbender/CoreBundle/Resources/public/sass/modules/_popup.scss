@@ -25,13 +25,15 @@
   }
 }
 .popupSubContent{width: 100%; height: 100%;}
-.popup{
-  min-width: 300px;
-  min-height: 250px;
+
+.popup {
+  &.fom-popup {
+    min-width: 300px;
+    min-height: 250px;
+    width: $popupModalWidth;
+  }
   position:relative;
   z-index:9999;
-  width: $popupModalWidth;
-  margin:-1000px auto 0 auto;
   background-color:#f4f4f4;
   padding-bottom:$space;
   background-image:url($contentPatternUrl);
@@ -48,12 +50,7 @@
   }
 }
 .popupContainer{
-  // need to hide the container if the popup is not modal
-  height:0px;
-  width:0px;
   z-index:999;
-  @include fixed(0 0 0 0);
-
   &.ui-draggable-dragging{@include opacity(0.6);}
   &.ui-draggable{
     position:absolute !important; // avoid strange popup growing behaviour
@@ -61,6 +58,7 @@
     .popupHead{cursor:move;}
   }
   &.modal{
+    @include fixed(0 0 0 0);
     height:100%;
     width:100%;
     padding: $space*2.5;
@@ -68,7 +66,11 @@
     .popup{
       margin: 0 auto;
       max-height: 100%;
-      height: 100%;
+      &.fom-popup {
+        // .fom-popup buttons are styled with position: absolute; forcing max height on the poopup prevents them from
+        // leaking into content or going off-screen
+        height: 100%;
+      }
     }
     .overlay{
       @include opacity(0.9);
