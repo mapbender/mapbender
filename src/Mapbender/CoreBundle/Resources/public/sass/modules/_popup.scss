@@ -54,8 +54,11 @@
   &.ui-draggable-dragging{@include opacity(0.6);}
   &.ui-draggable{
     position:absolute !important; // avoid strange popup growing behaviour
-    .popup{margin:80px 0 0 100px;}
     .popupHead{cursor:move;}
+  }
+  .popup {
+    margin-left:80px;
+    margin-top:100px;
   }
   &.modal{
     @include fixed(0 0 0 0);
