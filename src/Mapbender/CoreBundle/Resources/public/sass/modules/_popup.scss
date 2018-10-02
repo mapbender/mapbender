@@ -10,7 +10,13 @@
   border-bottom:dashed 1px darken(#fff, 30%);
   &.draggable{cursor:move;}
 }
-.popupButtons{@include absolute('' $space $space 0);}
+
+.fom-popup {
+  .popupButtons{@include absolute('' $space $space 0);}
+}
+.mapbender-popup .footer {
+  margin: $space $space 0;
+}
 .popupSubTitle{@extend .labelInput;}
 .popupContent, .popupSubContent{
   padding:0 20px;
@@ -85,5 +91,7 @@
 }
 .popupScroll{
   overflow: auto;
+}
+.fom-popup .popupScroll {
   @include absolute(70px 0 $space*3 0);
 }
