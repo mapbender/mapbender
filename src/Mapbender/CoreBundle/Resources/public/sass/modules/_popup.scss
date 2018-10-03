@@ -11,6 +11,11 @@
   margin:0 $space $space $space;
   padding: $space 0 $space/2 0;
 }
+.popup .popupButtons {
+  .button{
+    margin-left:3px;
+  }
+}
 .fom-popup {
   .popupButtons{
     @include absolute('' $space $space 0);
@@ -114,8 +119,6 @@
       @include fixed(0 0 0 0);
     }
   }
-
-  .button{margin-left:3px;}
 }
 .ui-resizable-se{
   font-size: 16px;
