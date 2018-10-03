@@ -54,11 +54,14 @@
         // Create DOM element
         this.$element = $(this.options.template)
             .attr('id', 'mbpopup-' + counter++);
+        if (this.options.modal) {
+            this.$modalWrap = $('<div class="popupContainer modal"><div class="overlay"></div></div>');
+        }
 
         // use the options mechanism to set up most of the things
         $.each(this.options, function(key, value) {
             // Skip options which already have been used or have to be used late
-            if(key == 'template' || key == 'autoOpen') {
+            if(key == 'template' || key == 'autoOpen' || key === 'modal') {
                 return;
             }
 
@@ -87,7 +90,6 @@
          */
         defaults: {
             template: [
-                '<div class="popupContainer mapbender-popup-container">',
                 '  <div class="popup mapbender-popup">',
                 '    <div class="popupHead">',
                 '      <span class="popupTitle"></span>',
@@ -102,9 +104,8 @@
                 '       <div class="popupButtons right"></div>',
                 '       <div class="clear"></div>',
                 '   </div>',
-                '  </div>',
-                '  <div class="overlay"></div>',
-                '</div>'].join("\n"),
+                '  </div>'
+                ].join("\n"),
 
             // Is popup draggable (showHeader must be true)
             draggable: false,
@@ -207,23 +208,29 @@
          * Open the popup, optionally giving new content.
          * This will insert the popup into the container.
          *
-         * @param  {mixed}  content  New content, if any
+         * @param {*} [content]  New content, if any
          */
         open: function(content) {
             var self = this;
-            var selfElement = this.$element;
 
             if(content) {
                 this.content(content);
             }
 
-            selfElement.trigger('open');
-            if(!this.options.detachOnClose || !$.contains(document, selfElement[0])) {
-                selfElement.appendTo(this.$container);
+            // why?
+            this.$element.trigger('open');  // why?
+            if(!this.options.detachOnClose || !$.contains(document, this.$element[0])) {
+                if (this.$modalWrap) {
+                    this.$modalWrap.prepend(this.$element);
+                    this.$modalWrap.appendTo(this.$container);
+                } else {
+                    this.$element.appendTo(this.$container);
+                }
             }
+            // why?
             window.setTimeout(function() {
                 self.focus();
-                selfElement.trigger('openend');
+                self.$element.trigger('openend');   // why?
             }, 100);
         },
 
@@ -234,12 +241,10 @@
          * @fires "focus"
          */
         focus: function (event) {
-          var self = this;
-          var selfElement = this.$element;
-          selfElement.css("z-index",++currentZindex);
-          if(!event) {
+        this.$element.css("z-index",++currentZindex);
+        if(!event) {
             // Only trigger event this method was called programmatically.
-            selfElement.trigger('focus');
+            this.$element.trigger('focus'); // why?
           }
         },
 
@@ -250,22 +255,24 @@
          * will be aborted.
          */
         close: function() {
-            var selfElement = this.$element;
-
             var token = { cancel: false };
-            selfElement.trigger('close', token);
+            this.$element.trigger('close', token);  // why?
             if(token.cancel) {
               return;
             }
 
-            selfElement.removeClass("show");
+            this.$element.removeClass("show");  // why? It's never added and doesn't do anything.
+            if (this.$modalWrap) {
+                this.$element.detach();
+                this.$modalWrap.detach();
+            }
             if(this.options.detachOnClose || this.options.destroyOnClose) {
-                selfElement.detach();
+                this.$element.detach();
             }
             if(this.options.destroyOnClose) {
                 this.destroy();
             }
-            selfElement.trigger('closed');
+            this.$element.trigger('closed'); // why?
         },
 
         /**
@@ -273,7 +280,7 @@
          */
         destroy: function() {
             if(this.$element){
-                this.$element.trigger('destroy');
+                this.$element.trigger('destroy'); // why?
                 this.$element.remove();
                 this.$element = null;
             }
@@ -364,26 +371,6 @@
             }
             this.options.subtitle = subtitle;
         },
-
-        /**
-         * Set or get modal
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        modal: function(state) {
-            if(undefined === state) {
-                return this.options.modal;
-            }
-
-            if(state){
-              this.$element.addClass("modal");
-            }else{
-              this.$element.removeClass("modal");
-            }
-
-            this.options.modal = state;
-        },
-
 
         /**
          * Set or get resizable status
@@ -483,17 +470,10 @@
             }
 
             element.on('openend', function() {
-                var marginLeft = 100;
-                var marginTop = 80;
-                var popupContainer = $(">.popup", element);
-                var document = $("body");
-                element.draggable({
-                    handle:      $('.popupHead', element),//, //,
-                    containment: [
-                        -marginLeft,
-                        -marginTop,
-                        document.width() - popupContainer.width() - marginLeft,
-                        document.height() - popupContainer.height() - marginTop]
+                var $body = $("body");
+                $(element).draggable({
+                    handle:      $('.popupHead', element),
+                    containment: $body
                 });
             });
 
@@ -598,13 +578,11 @@
          * @param  {mixed}  width, null will unset
          */
         width: function(width) {
-            var popup = $('.popup', this.$element.get(0));
-
             if(undefined === width) {
                 return this.options.width;
             }
 
-            popup.css('width', (null === width ? '' : width));
+            this.$element.css('width', (null === width ? '' : width));
         },
 
         /**
@@ -612,13 +590,11 @@
          * @param  {mixed}  height, any falsy value will unset height
          */
         height: function(height) {
-            var popup = $('.popup', this.$element.get(0));
-
             if(undefined === height) {
                 return this.options.height;
             }
 
-            popup.css('height', (null === height ? '' : height));
+            this.$element.css('height', (null === height ? '' : height));
         },
 
         /**
@@ -626,16 +602,14 @@
          * @param  {string}  cssClass, null unsets, undefined gets
          */
         cssClass: function(cssClass) {
-            var popup = $('.popup', this.$element.get(0));
-
             if(undefined === cssClass) {
                 return this.options.cssClass;
             }
 
             if(null === cssClass) {
-                popup.removeClass(this.options.cssClass);
+                this.$element.removeClass(this.options.cssClass);
             } else {
-                popup.addClass(cssClass);
+                this.$element.addClass(cssClass);
             }
             this.options.cssClass = cssClass;
         }
