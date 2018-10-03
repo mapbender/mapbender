@@ -87,9 +87,16 @@
 .popupContainer{
   z-index:999;
   @include absolute(0 0 0 0);
+  // FOM popup uses containers around non-modals
+  // => force zero size to prevent the container from eating click events
+  // This rule never applies to Mapbender popups, because they only use a container if rendering as a modal,
+  // and that brings in different rules (see below)
+  width: 0;
+  height: 0;
+  // FOM popup attaches draggable on the container, not the popup!
   &.ui-draggable-dragging{@include opacity(0.6);}
   &.ui-draggable{
-    // position:absolute !important; // avoid strange popup growing behaviour
+    position:absolute !important; // avoid strange popup growing behaviour
     .popupHead{cursor:move;}
   }
   .popup {
@@ -106,6 +113,7 @@
     padding: $space*2.5;
     display: block;
     .popup{
+      z-index: 1000;
       margin: 0 auto;
       max-height: 100%;
       &.fom-popup {
