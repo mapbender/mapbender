@@ -486,14 +486,14 @@ class PrintService extends ImageExportService
             // calculate needed bbox
             $ovWidth = $this->conf['overview']['width'] * $layer['scale'] / 1000;
             $ovHeight = $this->conf['overview']['height'] * $layer['scale'] / 1000;
-            $centerx = $this->data['center']['x'];
-            $centery = $this->data['center']['y'];
+            $centerx = $layer['center']['x'];
+            $centery = $layer['center']['y'];
 
             if (!empty($layer['changeAxis'])) {
                 $ovWidth = $this->conf['overview']['height'] * $layer['scale'] / 1000;
                 $ovHeight = $this->conf['overview']['width'] * $layer['scale'] / 1000;
-                $centerx = $this->data['center']['y'];
-                $centery = $this->data['center']['x'];
+                $centerx = $layer['center']['y'];
+                $centery = $layer['center']['x'];
                 $changeAxis = true;
             }
 
@@ -1184,8 +1184,8 @@ class PrintService extends ImageExportService
     private function realWorld2ovMapPos($ovWidth, $ovHeight, $rw_x, $rw_y)
     {
         $quality  = $this->data['quality'];
-        $centerx  = $this->data['center']['x'];
-        $centery  = $this->data['center']['y'];
+        $centerx  = $this->data['overview'][0]['center']['x'];
+        $centery  = $this->data['overview'][0]['center']['y'];
         $minX     = $centerx - $ovWidth * 0.5;
         $minY     = $centery - $ovHeight * 0.5;
         $maxX     = $centerx + $ovWidth * 0.5;
