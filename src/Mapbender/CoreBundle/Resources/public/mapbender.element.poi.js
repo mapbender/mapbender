@@ -43,7 +43,7 @@
          * be used.
          */
         activate: function() {
-            if(this.map.length !== 0) {
+            if (!this.popup && this.map.length !== 0) {
                 this._createDialog();
                 this.map.on('click', this.mapClickProxy);
             }
@@ -134,7 +134,7 @@
                             if(self.gpsElement) {
                                 self.gpsElement.mbGpsPosition('deactivate');
                             }
-                            this.close();
+                            self.close();
                         }
                     },
                     'ok': {
@@ -172,22 +172,27 @@
                     }
                 }});
             }
+            // For close button top right on Popup...
+            this.popup.$element.on('close', this.close.bind(this));
+        },
 
-            this.popup.$element.on('close', function() {
-
-                if(self.poiMarkerLayer) {
-                    self.poiMarkerLayer.clearMarkers();
-                    self.mbMap.map.olMap.removeLayer(self.poiMarkerLayer);
-                    self.poiMarkerLayer.destroy();
-                    self.poiMarkerLayer = null;
-                }
-
-                if(self.gpsElement) {
-                    self.gpsElement.mbGpsPosition('deactivate');
-                }
-
-                self.map.off('click', self.mapClickProxy);
-            });
+        close: function() {
+            if (this.poiMarkerLayer) {
+                this.poiMarkerLayer.clearMarkers();
+                this.mbMap.map.olMap.removeLayer(this.poiMarkerLayer);
+                this.poiMarkerLayer.destroy();
+                this.poiMarkerLayer = null;
+            }
+            if (this.popup) {
+                // To disable infinitely recursing event barrage...
+                this.popup.$element.off('close');
+                this.popup.close();
+            }
+            if (this.gpsElement) {
+                this.gpsElement.mbGpsPosition('deactivate');
+            }
+            this.popup = null;
+            this.map.off('click', self.mapClickProxy);
         },
 
         _sendPoi: function(content) {
