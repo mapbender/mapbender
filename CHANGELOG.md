@@ -1,4 +1,7 @@
 # Changelog
+* **dev-release/3.0.7**
+  - Fix button group behavior of Legend Element ([PR#1034](https://github.com/mapbender/mapbender/pull/1034))
+
 * **v3.0.7.5**
   - [Security] Remove obsolete TranslationController (potential XSS vector)
   - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
