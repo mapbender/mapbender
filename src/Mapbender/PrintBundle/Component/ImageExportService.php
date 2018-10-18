@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
+use Mapbender\PrintBundle\Component\Export\Box;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +30,9 @@ class ImageExportService
     protected $data;
     /** @var string[] plain WMS URLs */
     protected $mapRequests = array();
+
+    /** @var Affine2DTransform */
+    protected $featureTransform;
 
     public function __construct($container)
     {
@@ -69,6 +74,8 @@ class ImageExportService
         $this->mapRequests = array();
         $this->data = json_decode($content, true);
 
+        $this->featureTransform = $this->initializeFeatureTransform($this->data);
+
         foreach ($this->data['requests'] as $i => $layer) {
             if ($layer['type'] != 'wms') {
                 continue;
@@ -85,6 +92,27 @@ class ImageExportService
         $imagePath = $this->getImages();
         $this->emitImageToBrowser($imagePath);
         unlink($imagePath);
+    }
+
+    /**
+     * @param $jobData
+     * @return Affine2DTransform
+     */
+    protected function initializeFeatureTransform($jobData)
+    {
+        $map_width = $this->data['extentwidth'];
+        $map_height = $this->data['extentheight'];
+        $centerx = $this->data['centerx'];
+        $centery = $this->data['centery'];
+
+        $minX = $centerx - $map_width * 0.5;
+        $minY = $centery - $map_height * 0.5;
+        $maxX = $centerx + $map_width * 0.5;
+        $maxY = $centery + $map_height * 0.5;
+
+        $pixelBox = new Box(0, $jobData['height'], $jobData['width'], 0);
+        $projectedBox = new Box($minX, $minY, $maxX, $maxY);
+        return Affine2DTransform::boxToBox($projectedBox, $pixelBox);
     }
 
     /**
@@ -120,7 +148,7 @@ class ImageExportService
         // create final merged image
         $finalImageName = $this->makeTempFile('mb_imgexp_merged');
         $mergedImage = imagecreatetruecolor($width, $height);
-        $bg = ImageColorAllocate($mergedImage, 255, 255, 255);
+        $bg = imagecolorallocate($mergedImage, 255, 255, 255);
         imagefilledrectangle($mergedImage, 0, 0, $width, $height, $bg);
         imagepng($mergedImage, $finalImageName);
         foreach ($temp_names as $temp_name) {
@@ -328,7 +356,7 @@ class ImageExportService
         list($r, $g, $b) = CSSColorParser::parse($color);
 
         if(0 == $alpha) {
-            return ImageColorAllocate($image, $r, $g, $b);
+            return imagecolorallocate($image, $r, $g, $b);
         } else {
             $a = (1 - $alpha) * 127.0;
             return imagecolorallocatealpha($image, $r, $g, $b, $a);
@@ -344,7 +372,7 @@ class ImageExportService
 
             $points = array();
             foreach($ring as $c) {
-                $p = $this->realWorld2mapPos($c[0], $c[1]);
+                $p = $this->featureTransform->transformPair($c);
                 $points[] = floatval($p[0]);
                 $points[] = floatval($p[1]);
             }
@@ -376,7 +404,7 @@ class ImageExportService
 
             $points = array();
             foreach($ring as $c) {
-                $p = $this->realWorld2mapPos($c[0], $c[1]);
+                $p = $this->featureTransform->transformPair($c);
                 $points[] = floatval($p[0]);
                 $points[] = floatval($p[1]);
             }
@@ -409,12 +437,8 @@ class ImageExportService
 
         for($i = 1; $i < count($geometry['coordinates']); $i++) {
 
-            $from = $this->realWorld2mapPos(
-                $geometry['coordinates'][$i - 1][0],
-                $geometry['coordinates'][$i - 1][1]);
-            $to = $this->realWorld2mapPos(
-                $geometry['coordinates'][$i][0],
-                $geometry['coordinates'][$i][1]);
+            $from = $this->featureTransform->transformPair($geometry['coordinates'][$i - 1]);
+            $to = $this->featureTransform->transformPair($geometry['coordinates'][$i]);
 
             imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
         }
@@ -422,9 +446,7 @@ class ImageExportService
 
     private function drawPoint($geometry, $image)
     {
-        $c = $geometry['coordinates'];
-
-        $p = $this->realWorld2mapPos($c[0], $c[1]);
+        $p = $this->featureTransform->transformPair($geometry['coordinates']);
 
         if(isset($geometry['style']['label'])){
             // draw label with white halo
@@ -455,33 +477,6 @@ class ImageExportService
             $geometry['style']['strokeOpacity'],
             $image);
         imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
-    }
-
-    private function realWorld2mapPos($rw_x,$rw_y)
-    {
-        $quality = 72;
-        $map_width = $this->data['extentwidth'];
-        $map_height = $this->data['extentheight'];
-        $centerx = $this->data['centerx'];
-        $centery = $this->data['centery'];
-
-        $height = $this->data['height'];
-        $width = $this->data['width'];
-
-        $minX = $centerx - $map_width * 0.5;
-        $minY = $centery - $map_height * 0.5;
-        $maxX = $centerx + $map_width * 0.5;
-        $maxY = $centery + $map_height * 0.5;
-
-        $extentx = $maxX - $minX ;
-	$extenty = $maxY - $minY ;
-
-        $pixPos_x = (($rw_x - $minX)/$extentx) * $width;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * $height;
-
-        $pixPos = array($pixPos_x, $pixPos_y);
-
-	return $pixPos;
     }
 
     /**
