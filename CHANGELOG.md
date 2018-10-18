@@ -2,6 +2,7 @@
 * **dev-release/3.0.7**
   - Fix button group behavior of Legend Element ([PR#1034](https://github.com/mapbender/mapbender/pull/1034))
   - Integrate GPS and POI Elements ([PR#985](https://github.com/mapbender/mapbender/pull/985), [PR#1015](https://github.com/mapbender/mapbender/pull/1015))
+  - More robust sizing of backend Element editing modal popups ([PR#1035](https://github.com/mapbender/mapbender/pull/1035))
 
 * **v3.0.7.5**
   - [Security] Remove obsolete TranslationController (potential XSS vector)
