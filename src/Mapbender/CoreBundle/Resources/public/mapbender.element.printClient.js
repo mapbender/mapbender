@@ -487,8 +487,7 @@
 
                     var ovCenter = ovMap.map.getCenter();
                     var ovElement = $('.mb-element-overview').data('mapbenderMbOverview');
-                    var ovFixed = ovElement.options.fixed;
-                    if (ovElement !== undefined && ovFixed === true){
+                    if (ovElement && ovElement.options.fixed) {
                         mwidth = this.map.model.mapMaxExtent.extent.getWidth();
                         res = mwidth / ovMap.size.w;
                         scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
@@ -499,7 +498,6 @@
                     overview.url = url;
                     overview.scale = scale;
                     overview.center = {'x': ovCenter['lon'], 'y': ovCenter['lat']};
-                    overview.fixed = ovFixed;
 
                     // flag to change axis order
                     overview.changeAxis = this._changeAxis(ovMap.layers[i]);
