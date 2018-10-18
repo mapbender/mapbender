@@ -28,6 +28,7 @@ window.Mapbender.Util.SourceTree = (function() {
         }
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Callable type passed into iterateLayersets and iterateSources for both 'callback' and 'filter'. Receives
      * 1) an id -- this is stored one level up, outside the configuration, inside the config tree
@@ -43,6 +44,7 @@ window.Mapbender.Util.SourceTree = (function() {
      */
     var _cbTypeNodeId;              // inconsequential, helps IDE separate callback type declaration from next real symbol
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Callable type passed into iterateLayers and friends for both 'callback' and 'filter'. Receives
      * 1) Ref to a data object with the full layer configuration (including children and everything)
@@ -62,6 +64,7 @@ window.Mapbender.Util.SourceTree = (function() {
      */
     var _cbTypeNodeOffsetParents;   // inconsequential, helps IDE separate callback type declaration from next real symbol
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Callable type passed into iterateChildLayers. Receives
      * 1) Ref to a data object with the full layer configuration (including children and everything)
@@ -97,7 +100,8 @@ window.Mapbender.Util.SourceTree = (function() {
              */
             var _p = parents.slice();
             _p.unshift(node);
-            var _ch = node.children[reverse ? 'reverse' : 'slice']();
+            var _ch = node.children;
+            _ch = (reverse && _ch.slice().reverse()) || _ch;
             for (var i = 0; i < _ch.length; ++i) {
                 if (false === _itLayersRecursive(_ch[i], reverse, callback, filter, _p, i)) {
                     return false;
@@ -200,10 +204,12 @@ window.Mapbender.Util.SourceTree = (function() {
          * @param {Mapbender.Util.SourceTree~cbTypeNodeId} [filter] - also receives def,id
          */
         iterateSources: function iterateSources(layerset, reverse, callback, filter) {
-            var _ls = _anyToLsConf(layerset)[reverse ? 'reverse' : 'slice']();
+            var _ls = _anyToLsConf(layerset);
+            _ls = (reverse && _ls.slice().reverse()) || _ls;
             for (var i = 0; i < _ls.length; ++i) {
                 var srcDefWrap = _ls[i];
-                var lsKeys = Object.keys(srcDefWrap)[reverse ? 'reverse' : 'slice']();
+                var lsKeys = Object.keys(srcDefWrap);
+                lsKeys = (reverse && lsKeys.reverse()) || lsKeys;
                 for (var j = 0; j < lsKeys.length; ++j) {
                     var srcId = lsKeys[j];
                     var srcDef = srcDefWrap[srcId];

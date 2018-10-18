@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -9,7 +10,7 @@ class POI extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.poi.class.title";
     }
@@ -17,7 +18,7 @@ class POI extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.poi.class.description";
     }
@@ -25,12 +26,13 @@ class POI extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.poi.tag.poi",
             "mb.core.poi.tag.point",
-            "mb.core.poi.tag.interest");
+            "mb.core.poi.tag.interest"
+        );
     }
 
     /**
@@ -48,12 +50,11 @@ class POI extends Element
     {
         return array(
             'useMailto' => true,
-            'body' => 'Please take a look at this POI',
-            'target' => null
+            'body'      => 'Please take a look at this POI',
+            'target'    => null,
+            'gps'       => null
         );
     }
-
-
 
     /**
      * @inheritdoc
@@ -69,13 +70,14 @@ class POI extends Element
     public function getAssets()
     {
         return array(
-            'js' => array(
+            'js'    => array(
                 'mapbender.element.poi.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-// to call social networks '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
+                // to call social networks '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
             ),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/poi.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:poi.json.twig'));
+            'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/poi.scss'),
+            'trans' => array('MapbenderCoreBundle:Element:poi.json.twig')
+        );
     }
 
     /**
@@ -91,12 +93,13 @@ class POI extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')->render('MapbenderCoreBundle:Element:poi.html.twig',
-                array(
+        return $this->container->get('templating')->render(
+            'MapbenderCoreBundle:Element:poi.html.twig',
+            array(
                 'id' => $this->getId(),
                 'title' => $this->getTitle(),
-                'configuration' => $this->getConfiguration())
+                'configuration' => $this->getConfiguration()
+            )
         );
     }
-
 }

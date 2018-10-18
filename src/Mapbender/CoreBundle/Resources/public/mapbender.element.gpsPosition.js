@@ -1,15 +1,11 @@
-/*jslint browser: true, nomen: true*/
-/*globals Mapbender, OpenLayers, _, jQuery*/
-
+/**
+ *
+ * @author Arne Schubert <atd.schubert@gmail.com>
+ * @namespace mapbender.mbGpsPosition
+ */
 (function ($) {
     'use strict';
-    /*jslint nomen: true*/
-    /**
-     * Description of what this does.
-     *
-     * @author Arne Schubert <atd.schubert@gmail.com>
-     * @namespace mapbender.mbGpsPosition
-     */
+
     $.widget("mapbender.mbGpsPosition", {
         options: {
             follow: false,
@@ -182,6 +178,7 @@
             if (!accuracy) {
                 return; // no accurancy
             }
+
             if (!this.options.zoomToAccuracy && !(this.options.zoomToAccuracyOnFirstPosition && this.firstPosition)) {
                 return;
             }
@@ -207,12 +204,16 @@
             olmap.model.zoomToExtent(extent);
         },
 
+        defaultAction: function() {
+            return this.activate();
+        },
+
         /**
          * Is button active?
          */
         isActive: function() {
             var widget = this;
-            return widget.observer != null;
+            return widget.observer !== null;
         },
 
         /**
@@ -227,10 +228,11 @@
             }
             return widget.activate();
         },
+
         /**
          * Activate GPS positioning
          *
-         * @returns {self}
+         * @returns {object}
          */
         activate: function () {
             var widget = this;
@@ -264,7 +266,6 @@
                         widget.firstPosition = false;
                     }
 
-
                 }, function error(msg) {
                     Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.nosignal"));
                     widget.deactivate();
@@ -277,18 +278,19 @@
             }
             return widget;
         },
+
         /**
          * Deactivate GPS positioning
-         *
-         * @param
-         * @returns {self}
+         * @returns {object}
          */
         deactivate: function() {
-            if(this.isActive()) {
-                navigator.geolocation.clearWatch(this.observer);
-                $(this.element).parent().removeClass("toolBarItemActive");
-                this.firstPosition = true;
-                this.observer = null;
+            var widget = this;
+
+            if(widget.isActive()) {
+                navigator.geolocation.clearWatch(widget.observer);
+                $(widget.element).parent().removeClass("toolBarItemActive");
+                widget.firstPosition = true;
+                widget.observer = null;
             }
 
             // Check if id of Position and Accuracy has been set
@@ -313,6 +315,53 @@
                 return this;
             }
         },
+
+        getGPSPosition: function(callback) {
+            var widget = this;
+            var openLayerMap = widget.map.map.olMap;
+
+            if (navigator.geolocation) {
+                widget.observer = navigator.geolocation.getCurrentPosition(function success(position) {
+                    var epsgProjectionCode = new OpenLayers.Projection("EPSG:4326"),
+                        newProj = openLayerMap.getProjectionObject(),
+                        p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
+
+                    p.transform(epsgProjectionCode, newProj);
+
+                    /*
+                    widget.stack.push(p);
+                    if (widget.stack.length > widget.options.average) {
+                        widget.stack.splice(0, 1);
+                    }
+                    // ...and reducing it.
+                    p = _.reduce(widget.stack, function (memo, p) {
+                        memo.lon += p.lon / widget.stack.length;
+                        memo.lat += p.lat / widget.stack.length;
+                        return memo;
+                    }, new OpenLayers.LonLat(0, 0));
+                    */
+
+                    widget._createMarker(p, position.coords.accuracy);
+                    widget._centerMap(p);
+                    widget._zoomMap(p, position.coords.accuracy);
+
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+
+                }, function error(msg) {
+                    Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.nosignal"));
+                    widget.deactivate();
+                }, { enableHighAccuracy: true, maximumAge: 0 });
+
+                $(widget.element).parent().addClass("toolBarItemActive");
+            } else {
+                Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
+            }
+
+            return widget;
+        },
+
         /**
          * Determinate ready state of plugin
          *
@@ -321,21 +370,16 @@
          */
         ready: function (callback) {
             if (this.readyState === true) {
-                /**
-                 * Description of what this does.
-                 *
-                 * @callback mapbender.mbGpsPosition~readyCallback
-                 * @param
-                 */
+                /** @callback mapbender.mbGpsPosition~readyCallback */
                 callback();
             } else {
                 this.readyCallbacks.push(callback);
             }
             return this;
         },
+
         _ready: function () {
-            var i;
-            for (i = 0; i <  this.readyCallbacks.length; i += 1) {
+            for (var i = 0,len = this.readyCallbacks.length; i < len; i += 1) {
                 this.readyCallbacks.splice(0, 1)();
             }
             this.readyState = true;
