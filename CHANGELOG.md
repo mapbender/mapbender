@@ -2,6 +2,7 @@
 * **dev-release/3.0.7 @ fbb5841**
   - [Regression fix] Remove 'required' asterisk from non-required fields configured into print client form ([PR#1036](https://github.com/mapbender/mapbender/pull/1036))
   - [Framework] Add [Mapbender.Util.SourceTree](https://github.com/mapbender/mapbender/blob/656fae688b2b292687c628f10cb521663abdcf30/src/Mapbender/CoreBundle/Resources/public/mapbender-model/sourcetree-util.js) static method collection to unify layerset / source traversal
+  - Support Elements requiring (uncommpiled) CSS assets in all the same ways as for JS assets ([PR#1020](https://github.com/mapbender/mapbender/pull/1020))
   - Geosource: add missing change event when toggling layer ([6ea27e1](https://github.com/mapbender/mapbender/commit/6ea27e11136c7c243ee6c25d7fde21525a214bc0))
   - Layertree: misc rendering / logic cleanups
   - WmsLoader now calculates its own source and layer ids for dynamically added sources
@@ -9,6 +10,8 @@
     - Scales cast to numbers server-side ([ab16ada](https://github.com/mapbender/mapbender/commit/ab16ada6a1d5967fe2f950d73f01b22132acf45f))
     - Resolved widget options self-destruct in initialization ([136e4ab](https://github.com/mapbender/mapbender/commit/136e4ab66f2b0799c2ce8b5058ad143e690cfb7f))
     - Calculation / prioritization of initial center + scale from a) map default, b) POI, c) explicit URL parameters passed to application now performed server side
+  - Print cleanups
+    - Server-side cleanups ([PR#1031](https://github.com/mapbender/mapbender/pull/1031))
 
 
 * **v3.0.7.6**
