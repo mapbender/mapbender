@@ -28,6 +28,7 @@ window.Mapbender.Util.SourceTree = (function() {
         }
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Callable type passed into iterateLayersets and iterateSources for both 'callback' and 'filter'. Receives
      * 1) an id -- this is stored one level up, outside the configuration, inside the config tree
@@ -43,6 +44,7 @@ window.Mapbender.Util.SourceTree = (function() {
      */
     var _cbTypeNodeId;              // inconsequential, helps IDE separate callback type declaration from next real symbol
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Callable type passed into iterateLayers and friends for both 'callback' and 'filter'. Receives
      * 1) Ref to a data object with the full layer configuration (including children and everything)
@@ -62,6 +64,7 @@ window.Mapbender.Util.SourceTree = (function() {
      */
     var _cbTypeNodeOffsetParents;   // inconsequential, helps IDE separate callback type declaration from next real symbol
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Callable type passed into iterateChildLayers. Receives
      * 1) Ref to a data object with the full layer configuration (including children and everything)
