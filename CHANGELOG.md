@@ -1,6 +1,6 @@
 # Changelog
-* **dev-release/3.0.7 @ 80ac9ea**
-  - [Framework] Add [Mapbender.Util.SourceTree](https://github.com/mapbender/mapbender/blob/80ac9ea78b47b438560cad567c11f161e17e8cd5/src/Mapbender/CoreBundle/Resources/public/mapbender-model/sourcetree-util.js) static method collection to unify layerset / source traversal
+* **dev-release/3.0.7 @ 656fae6**
+  - [Framework] Add [Mapbender.Util.SourceTree](https://github.com/mapbender/mapbender/blob/656fae688b2b292687c628f10cb521663abdcf30/src/Mapbender/CoreBundle/Resources/public/mapbender-model/sourcetree-util.js) static method collection to unify layerset / source traversal
   - Geosource: add missing change event when toggling layer ([6ea27e1](https://github.com/mapbender/mapbender/commit/6ea27e11136c7c243ee6c25d7fde21525a214bc0))
   - Layertree: misc rendering / logic cleanups
   - WmsLoader now calculates its own source and layer ids for dynamically added sources
