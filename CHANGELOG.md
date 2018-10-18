@@ -1,4 +1,15 @@
 # Changelog
+* **dev-release/3.0.7 @ 80ac9ea**
+  - [Framework] Add [Mapbender.Util.SourceTree](https://github.com/mapbender/mapbender/blob/80ac9ea78b47b438560cad567c11f161e17e8cd5/src/Mapbender/CoreBundle/Resources/public/mapbender-model/sourcetree-util.js) static method collection to unify layerset / source traversal
+  - Geosource: add missing change event when toggling layer ([6ea27e1](https://github.com/mapbender/mapbender/commit/6ea27e11136c7c243ee6c25d7fde21525a214bc0))
+  - Layertree: misc rendering / logic cleanups
+  - WmsLoader now calculates its own source and layer ids for dynamically added sources
+  - Map initialization cleanups
+    - Scales cast to numbers server-side ([ab16ada](https://github.com/mapbender/mapbender/commit/ab16ada6a1d5967fe2f950d73f01b22132acf45f))
+    - Resolved widget options self-destruct in initialization ([136e4ab](https://github.com/mapbender/mapbender/commit/136e4ab66f2b0799c2ce8b5058ad143e690cfb7f))
+    - Calculation / prioritization of initial center + scale from a) map default, b) POI, c) explicit URL parameters passed to application now performed server side
+
+
 * **v3.0.7.6**
   - Fix button group behavior of Legend Element ([PR#1034](https://github.com/mapbender/mapbender/pull/1034))
   - Fix broken 'queryable' state of source added via WmsLoader ([91e7d4e](https://github.com/mapbender/mapbender/commit/91e7d4e29dcd9bf4096df3bdd7d6714be7ba360b))
