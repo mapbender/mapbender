@@ -478,21 +478,12 @@
             if (undefined !== ovMap){
                 for(var i = 0; i < ovMap.layers.length; i++) {
                     var url = ovMap.layers[i].getURL(ovMap.map.getExtent());
-                    var extent = ovMap.map.getExtent();
-                    var mwidth = extent.getWidth();
+                    var mwidth = ovMap.ovmap.getExtent().getWidth();
+                    var ovCenter = ovMap.ovmap.getCenter();
                     var size = ovMap.size;
                     var width = size.w;
                     var res = mwidth / width;
                     var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
-
-                    var ovCenter = ovMap.map.getCenter();
-                    var ovElement = $('.mb-element-overview').data('mapbenderMbOverview');
-                    if (ovElement && ovElement.options.fixed) {
-                        mwidth = this.map.model.mapMaxExtent.extent.getWidth();
-                        res = mwidth / ovMap.size.w;
-                        scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
-                        ovCenter = this.map.model.mapMaxExtent.extent.centerLonLat;
-                    }
 
                     var overview = {};
                     overview.url = url;
