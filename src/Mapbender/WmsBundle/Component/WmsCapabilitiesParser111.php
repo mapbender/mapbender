@@ -221,7 +221,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
      */
     private function parseLayer(WmsSource $wms, WmsLayerSource $wmslayer, \DOMElement $contextElm)
     {
-        $wmslayer->setQueryable($this->getValue("./@queryable", $contextElm));
+        $wmslayer->setQueryable($this->getBoolean("./@queryable", $contextElm));
         $wmslayer->setCascaded($this->getValue("./@cascaded", $contextElm));
         $wmslayer->setOpaque($this->getValue("./@opaque", $contextElm));
         $wmslayer->setNoSubset($this->getValue("./@noSubsets", $contextElm));
