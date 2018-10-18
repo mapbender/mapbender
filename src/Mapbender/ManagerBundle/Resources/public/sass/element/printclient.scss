@@ -1,27 +1,13 @@
 .elementFormPrintClient {
-  $label: 110px;
-  .labelInput {
-    width: $label;
+  .section-label label {
+    width: 100%;
   }
-  .checkWrapper {
-    margin-bottom: $space/2;
-  }
-  .labelCheck {
-    margin-right: $space;
-  }
-  .singleRow {
-    .labelInput, & > .input {
-      float: left;
-    }
+  .quality-grid {
     .labelInput {
       width: 25px;
-      margin-right: $space/2;
-    }
-    .left:first-child {
-      margin-right: $space;
     }
     .inputWrapper {
-      width: 120px;
+      float: right;
     }
   }
 }
