@@ -63,8 +63,7 @@
         {% if configuration.optional_fields is not empty %}
             {% for key,field in configuration.optional_fields %}
                 {% if not field.options.required %}
-                    <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}
-                    </label>
+                    <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}</label>
                     <input type="text" class="input validationInput" name="extra[{{ key }}]">
                 {% endif %}
             {% endfor %}
