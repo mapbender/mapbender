@@ -165,66 +165,28 @@ fieldset{
 /* ------------------------------------------------------------------- LAYOUT */
 @import "modules/layout";
 /* -------------------------------------------------------------------- POPUP */
+@import "modules/popup";   // from /bundles/mapbendercore
 .overlay{
   @include noUserSelect();
-  @include opacity(0);
   @include transition(opacity 0.4s ease-in-out);
 }
-.popupHead{
-  @extend .title;
-  margin:0 $space $space $space;
-  padding: $space 0 $space/2 0;
-  border-bottom:dashed 1px darken(#fff, 30%);
-  &.draggable{cursor:move;}
-}
+
 .popupButtons{margin-right:$space;}
-.popupSubTitle{@extend .labelInput;}
-.popupContent, .popupSubContent{
-  padding:0 $space/2 0 $space;
-  margin:0 $space $space 0;
-  max-height: $popupMaxHeight; // hack hack discothek
-  overflow-y:auto;
-}
 .popupSubContent{width: $popupModalWidth;}
 .popup{
-  position:relative;
-  z-index:9999;
-  width: $popupModalWidth;
-  margin:-1000px auto 0 auto;
-  background-color:#f4f4f4;
-  padding-bottom:$space;
   @include transition(margin 0.4s ease-in-out);
   @include border-radius($radius);
   @include box-shadow(1px 1px 2px rgba(0, 0, 0, 0.9),
                       inset 0px 0px 2px #fff);
 
-  &.popupOverflow{
-    .popupContent, .popupSubContent{overflow:visible;}
-  }
 }
 .popupContainer{
-  // need to hide the container if the popup is not modal
-  height:0px;
-  width:0px;
-  z-index:999;
-  @include fixed(0 0 0 0);
-
   &.show .popup{margin:80px auto 0 auto;}
-  &.ui-draggable-dragging{@include opacity(0.6);}
-  &.ui-draggable{
-    position:absolute !important; // avoid strange popup growing behaviour
-    .popupHead{cursor:move;}
-  }
   &.modal{
-    height:100%;
-    width:100%;
-    .overlay{
-      @include opacity(0.9);
-      @include fixed(0 0 0 0);
-    }
+    padding: 0;
   }
-  .button{margin-left:3px;}
 }
+
 /* ---------------------------------------------------------------- SEPERATOR */
 .seperator{
   border:none;

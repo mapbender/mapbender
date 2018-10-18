@@ -24,6 +24,7 @@ class ManagerTemplate extends Template
         '/bundles/fosjsrouting/js/router.js',
         '@MapbenderManagerBundle/Resources/public/js/SymfonyAjaxManager.js',
 
+        '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
         '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
         '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
         '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',

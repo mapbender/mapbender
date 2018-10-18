@@ -1,4 +1,5 @@
 $(function() {
+    var popupCls = Mapbender.Popup;
     $("table.elementsTable tbody").sortable({
         connectWith: "table.elementsTable tbody",
         items: "tr:not(.dummy)",
@@ -200,7 +201,7 @@ $(function() {
         if (popup) {
             popup = popup.destroy();
         }
-        popup = new Mapbender.Popup2({
+        popup = new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.add_element.title"),
             subtitle: " - " + Mapbender.trans(self.parent().siblings(".subTitle").text()),
             closeOnOutsideClick: true,
@@ -268,7 +269,7 @@ $(function() {
         if (popup) {
             popup = popup.destroy();
         }
-        popup = new Mapbender.Popup2({
+        popup = new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.edit_element.title"),
             closeOnOutsideClick: true,
             cssClass: "elementPopup",
@@ -347,7 +348,7 @@ $(function() {
         if (popup) {
             popup = popup.destroy();
         }
-        popup = new Mapbender.Popup2({
+        popup = new popupCls({
             title: "Secure element",
             closeOnOutsideClick: true,
             height: 600,
@@ -497,7 +498,7 @@ $(function() {
         if (popup) {
             popup = popup.destroy();
         }
-        popup = new Mapbender.Popup2({
+        popup = new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.delete_element.title"),
             subTitle: " - " + Mapbender.trans("mb.manager.components.popup.delete_element.subtitle"),
             closeOnOutsideClick: true,
@@ -536,7 +537,7 @@ $(function() {
         if (popup) {
             popup = popup.destroy();
         }
-        popup = new Mapbender.Popup2({
+        popup = new popupCls({
             title: ((self.hasClass("editLayerset")) ? Mapbender.trans("mb.manager.components.popup.add_edit_layerset.title_edit")
                     : Mapbender.trans("mb.manager.components.popup.add_edit_layerset.title_add")),
             closeOnOutsideClick: true,
@@ -573,7 +574,7 @@ $(function() {
         if (popup) {
             popup = popup.destroy();
         }
-        popup = new Mapbender.Popup2({
+        popup = new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.delete_layerset.title"),
             subTitle: " - " + $(this).siblings("legend").text(),
             closeOnOutsideClick: true,
@@ -605,7 +606,7 @@ $(function() {
         if (popup) {
             popup = popup.destroy();
         }
-        popup = new Mapbender.Popup2({
+        popup = new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
             subTitle: " - " + self.parent().siblings(".subTitle").text(),
             closeOnOutsideClick: true,
@@ -635,7 +636,7 @@ $(function() {
             popup = popup.destroy();
         }
 
-        popup = new Mapbender.Popup2({
+        popup = new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.delete_instance.title"),
             subtitle: " - layerset",
             closeOnOutsideClick: true,
