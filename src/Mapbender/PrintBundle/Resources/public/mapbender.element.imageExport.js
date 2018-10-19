@@ -1,9 +1,14 @@
 (function($){
 
+    /**
+     * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~print
+     */
     $.widget("mapbender.mbImageExport", {
         options: {},
         map: null,
         popupIsOpen: true,
+        _geometryToGeoJson: null,
+
         _create: function(){
             if(!Mapbender.checkTarget("mbImageExport", this.options.target)){
                 return;
@@ -12,6 +17,8 @@
             var me = this.element;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            var olGeoJson = new OpenLayers.Format.GeoJSON();
+            this._geometryToGeoJson = olGeoJson.extract.geometry.bind(olGeoJson);
         },
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
@@ -89,90 +96,180 @@
         _ready: function(){
             this.readyState = true;
         },
-        _exportImage: function(){
-            var self = this;
-            var sources = this.map.getSourceTree(), num = 0;
-            var layers = new Array();
-            var imageSize = this.map.map.olMap.getCurrentSize();
-            for(var i = 0; i < sources.length; i++){
-                var layer = this.map.map.layersList[sources[i].mqlid];
-
-                if(layer.olLayer.params.LAYERS.length === 0){
-                    continue;
+        /**
+         *
+         * @param sourceDef
+         * @returns {{layers: *, styles: *}}
+         * @private
+         */
+        _getRasterVisibilityInfo: function(sourceDef) {
+            var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+            return {
+                layers: layer.params.LAYERS,
+                styles: layer.params.STYLES
+            };
+        },
+        /**
+         * @returns {Array<Object>} sourceTreeish configuration objects
+         * @private
+         */
+        _getRasterSourceDefs: function() {
+            var sourceTree = this.map.getSourceTree();
+            return sourceTree.filter(function(sourceDef) {
+                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+                if (0 !== layer.CLASS_NAME.indexOf('OpenLayers.Layer.')) {
+                    return false;
                 }
+                if (typeof (Mapbender.source[sourceDef.type] || {}).getPrintConfig !== 'function') {
+                    return false;
+                }
+                return true;
+            }.bind(this));
+        },
+        _collectRasterLayerData: function() {
+            var sources = this._getRasterSourceDefs();
+            var dataOut = [];
+            for(var i = 0; i < sources.length; i++) {
+                var sourceDef = sources[i];
+                var visLayers = this._getRasterVisibilityInfo(sourceDef);
 
-                if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function'){
-                    var layerConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
-                    layerConf.opacity = sources[i].configuration.options.opacity;
-                    layers[num] = layerConf;
-                    num++;
+                if (visLayers.layers.length) {
+                    var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+                    var layerConf = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.map.map.olMap.getExtent(), sourceDef.configuration.options.proxy);
+                    layerConf.opacity = sourceDef.configuration.options.opacity;
+                    dataOut.push(layerConf);
                 }
             }
-
-            // Iterating over all vector layers, not only the ones known to MapQuery
-            var geojsonFormat = new OpenLayers.Format.GeoJSON();
-            var vectorLayers = [];
-            for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
-                var layer = this.map.map.olMap.layers[i];
-                if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
-                    continue;
-                }
-
-                var geometries = [];
-                for(var idx = 0; idx < layer.features.length; idx++) {
-                    var feature = layer.features[idx];
-                    if (!feature.onScreen(true)) continue
-                        var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
-
-                        if(feature.style !== null){
-                            geometry.style = feature.style;
-                        }else{
-                            geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
-                        }
-                        // only visible features
-                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){
-                            geometries.push(geometry);
-                        } else if (geometry.style.label !== undefined){
-                            geometries.push(geometry);
-                        }
-                }
-
-                var lyrConf = {
-                    type: 'GeoJSON+Style',
-                    opacity: 1,
-                    geometries: geometries
-                };
-
-                vectorLayers.push(JSON.stringify(lyrConf))
-            }
-
+            return dataOut;
+        },
+        _collectJobData: function() {
             var mapExtent = this.map.map.olMap.getExtent();
-
-            if(num === 0){
+            var imageSize = this.map.map.olMap.getCurrentSize();
+            return {
+                requests: this._collectRasterLayerData(),
+                // @todo: fix unscoped input lookup
+                format: $("input[name='imageformat']:checked").val(),
+                width: imageSize.w,
+                height: imageSize.h,
+                centerx: mapExtent.getCenterLonLat().lon,
+                centery: mapExtent.getCenterLonLat().lat,
+                extentwidth: mapExtent.getWidth(),
+                extentheight: mapExtent.getHeight(),
+                vectorLayers: this._collectGeometryLayers()
+            };
+        },
+        _exportImage: function() {
+            var jobData = this._collectJobData();
+            if (!jobData.requests.length) {
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
             }else{
-                var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/export';
-                var format = $("input[name='imageformat']:checked").val();
-
-                var data = {
-                    requests: layers,
-                    format: format,
-                    width: imageSize.w,
-                    height: imageSize.h,
-                    centerx: mapExtent.getCenterLonLat().lon,
-                    centery: mapExtent.getCenterLonLat().lat,
-                    extentwidth: mapExtent.getWidth(),
-                    extentheight: mapExtent.getHeight(),
-                    vectorLayers: vectorLayers
-                };
-                var form = $('<form method="POST" action="' + url + '"  />');
-                $('<input></input>').attr('type', 'hidden').attr('name', 'data').val(JSON.stringify(data)).appendTo(form);
-                form.appendTo($('body'));
-                form.submit();
-                form.remove();
+                this._submitJob(jobData);
             }
-        }
+        },
+        _submitJob: function(jobData) {
+            var $form = $('form', this.element);
+            var $hiddenArea = $('.-fn-hidden-fields', $form);
+            $hiddenArea.empty();
+            var submitValue = JSON.stringify(jobData);
+            var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
+            $input.val(submitValue);
+            $input.appendTo($hiddenArea);
+            $('.-fn-submit', $form).click();
+        },
+        /**
+         * Should return true if the given layer needs to be included in export
+         *
+         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
+         * @returns {boolean}
+         * @private
+         */
+        _filterGeometryLayer: function(layer) {
+            if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
+                return false;
+            }
+            if (!(layer.features && layer.features.length)) {
+                return false;
+            }
+            return true;
+        },
+        /**
+         * Should return true if the given feature should be included in export.
+         *
+         * @param {OpenLayers.Feature.Vector} feature
+         * @returns {boolean}
+         * @private
+         */
+        _filterFeature: function(feature) {
+            // onScreen throws an error if geometry is not populated, see
+            // https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L198
+            if (!feature.geometry || !feature.onScreen(true)) {
+                return false;
+            }
+            return true;
+        },
+        /**
+         * Extracts and preprocesses the geometry from a feature for export backend consumption.
+         *
+         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
+         * @param {OpenLayers.Feature.Vector} feature
+         * @returns {Object} geojsonish, with (non-conformant) "style" entry bolted on (native Openlayers format!)
+         * @private
+         */
+        _extractFeatureGeometry: function(layer, feature) {
+            var geometry = this._geometryToGeoJson(feature.geometry);
+            if (feature.style !== null) {
+                // stringify => decode: makes a deep copy of the style at the moment of capture
+                geometry.style = JSON.parse(JSON.stringify(feature.style));
+            } else {
+                geometry.style = layer.styleMap.createSymbolizer(feature, feature.renderIntent);
+            }
+            return geometry;
+        },
+        /**
+         * Should return true if the given feature geometry should be included in export.
+         *
+         * @param geometry
+         * @returns {boolean}
+         * @private
+         */
+        _filterFeatureGeometry: function(geometry) {
+            if (geometry.style.fillOpacity > 0 || geometry.style.strokeOpacity > 0) {
+                return true;
+            }
+            if (geometry.style.label !== undefined) {
+                return true;
+            }
+            return false;
+        },
+        /**
+         * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
+         * to have passsed through the _filterGeometryLayer check positively.
+         *
+         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
+         * @returns VectorLayerData~export
+         * @private
+         */
+        _extractGeometryLayerData: function(layer) {
+            var geometries = layer.features
+                .filter(this._filterFeature.bind(this))
+                .map(this._extractFeatureGeometry.bind(this, layer))
+                .filter(this._filterFeatureGeometry.bind(this))
+            ;
+            return {
+                type: 'GeoJSON+Style',
+                opacity: 1,
+                geometries: geometries
+            };
+        },
+        _collectGeometryLayers: function() {
+            // Iterating over all vector layers, not only the ones known to MapQuery
+            return this.map.map.olMap.layers
+                .filter(this._filterGeometryLayer.bind(this))
+                .map(this._extractGeometryLayerData.bind(this))
+            ;
+        },
 
+        _noDanglingCommaDummy: null
     });
 
 })(jQuery);
