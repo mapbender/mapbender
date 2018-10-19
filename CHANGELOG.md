@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ fbb5841**
+* **dev-release/3.0.7 @ e8ec884**
   - [Regression fix] Remove 'required' asterisk from non-required fields configured into print client form ([PR#1036](https://github.com/mapbender/mapbender/pull/1036))
   - [Framework] Add [Mapbender.Util.SourceTree](https://github.com/mapbender/mapbender/blob/656fae688b2b292687c628f10cb521663abdcf30/src/Mapbender/CoreBundle/Resources/public/mapbender-model/sourcetree-util.js) static method collection to unify layerset / source traversal
   - Support Elements requiring (uncommpiled) CSS assets in all the same ways as for JS assets ([PR#1020](https://github.com/mapbender/mapbender/pull/1020))
@@ -11,7 +11,8 @@
     - Resolved widget options self-destruct in initialization ([136e4ab](https://github.com/mapbender/mapbender/commit/136e4ab66f2b0799c2ce8b5058ad143e690cfb7f))
     - Calculation / prioritization of initial center + scale from a) map default, b) POI, c) explicit URL parameters passed to application now performed server side
   - Print cleanups
-    - Server-side cleanups ([PR#1031](https://github.com/mapbender/mapbender/pull/1031))
+    - Refactored and simplified server-side rotation and transformation handling ([PR#1031](https://github.com/mapbender/mapbender/pull/1031))
+    - Improved Element customizability by separating methods for job data preprocessing and current user lookup ([PR#1037](https://github.com/mapbender/mapbender/pull/1037))
 
 
 * **v3.0.7.6**
