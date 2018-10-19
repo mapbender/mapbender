@@ -1,5 +1,12 @@
 <div id="{{ id }}" class="mb-element mb-element-imageexport" title="{{ title|trans }}">
+  <form action="{{ submitUrl }}" method="post" target="{{ formTarget }}">
   <p>{{ 'mb.print.imageexport.chooseformat'| trans }}</p>
   <input type="radio" value="png" name="imageformat" checked>PNG<br>
   <input type="radio" value="jpeg" name="imageformat">JPG
+    <div class="hidden -fn-hidden-fields">
+    </div>
+    <div class="hidden">
+      <input type="submit" class="-fn-submit"/>
+    </div>
+  </form>
 </div>

@@ -405,6 +405,7 @@ class Application implements IAssetDependent
      * and the filename/path within that bundles Resources/public folder.
      *
      * @todo: This is duplicated in DumpMapbenderAssetsCommand
+     * @todo: the AssetFactory should do the ref collection and Bundle => path resolution
      *
      * @param object $object
      * @param string $file

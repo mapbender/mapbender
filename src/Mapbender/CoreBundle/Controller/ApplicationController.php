@@ -96,6 +96,7 @@ class ApplicationController extends Controller
             if ($custom) {
                 $refs[] = $custom;
             }
+            /** @todo: use route to assets action, not REQUEST_URI, so this can move away from here */
             $factory = new AssetFactory($this->container, $refs, 'css', $request->server->get('REQUEST_URI'), empty($sourcePath) ? "." : $sourcePath);
             $content = $factory->compile();
         } else {

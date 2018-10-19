@@ -1,11 +1,12 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
+use Mapbender\PrintBundle\Component\Export\Box;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 /**
  * Mapbender3 Print Service.
@@ -14,19 +15,22 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
  */
 class PrintService extends ImageExportService
 {
-    /** @var PDF_ImageAlpha */
+    /** @var PDF_Extensions|\FPDF */
     protected $pdf;
     protected $conf;
     protected $rotation;
     protected $resourceDir;
     protected $finalImageName;
     protected $user;
-    protected $imageWidth;
-    protected $imageHeight;
-    protected $neededExtentWidth;
-    protected $neededExtentHeight;
-    protected $neededImageWidth;
-    protected $neededImageHeight;
+
+    /** @var Affine2DTransform */
+    protected $featureTransform;
+    /** @var Box */
+    protected $mapRequestBox;
+    /** @var Box */
+    protected $targetBox;
+    /** @var Box */
+    protected $canvasBox;
 
     /**
      * @var array Default geometry style
@@ -39,13 +43,35 @@ class PrintService extends ImageExportService
     {
         $this->setup($data);
 
-        if ($data['rotation'] == 0) {
-            $this->createFinalMapImage();
-        } else {
-            $this->createFinalRotatedMapImage();
-        }
+        $this->createMapImage();
 
         return $this->buildPdf();
+    }
+
+    /**
+     * @param array $jobData
+     * @return Box
+     */
+    protected function initializeCanvasBox(array $jobData)
+    {
+        $rotatedBox = $this->targetBox->getExpandedForRotation(intval($jobData['rotation']));
+        $rotatedBox->roundToIntegerBoundaries();
+        // re-anchor rotated box to put top left at (0,0); note: gd pixel coords are top down
+        return new Box(0, abs($rotatedBox->getHeight()), abs($rotatedBox->getWidth()), 0);
+    }
+
+    /**
+     * @param array $jobData
+     * @return Box
+     */
+    protected function initializeMapRequestBox(array $jobData)
+    {
+        $width = $jobData['extent']['width'];
+        $height = $jobData['extent']['height'];
+        $centerx = $jobData['center']['x'];
+        $centery = $jobData['center']['y'];
+        $unrotatedBox = Box::fromCenterAndSize($centerx, $centery, $width, $height);
+        return $unrotatedBox->getExpandedForRotation(intval($jobData['rotation']));
     }
 
     private function setup($data)
@@ -53,7 +79,7 @@ class PrintService extends ImageExportService
         // resource dir
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
 
-        $this->user      = $this->getUser();
+        $this->user      = $data['user'];
 
         // data from client
         $this->data = $data;
@@ -62,9 +88,13 @@ class PrintService extends ImageExportService
         $odgParser = new OdgParser($this->container);
         $this->conf = $conf = $odgParser->getConf($data['template']);
 
-        // image size
-        $this->imageWidth = round($conf['map']['width'] / 25.4 * $data['quality']);
-        $this->imageHeight = round($conf['map']['height'] / 25.4 * $data['quality']);
+        $targetWidth = round($conf['map']['width'] / 25.4 * $data['quality']);
+        $targetHeight = round($conf['map']['height'] / 25.4 * $data['quality']);
+        $this->mapRequestBox = $this->initializeMapRequestBox($data);
+        // NOTE: gd pixel coords are top down
+        $this->targetBox = new Box(0, $targetHeight, $targetWidth, 0);
+        $this->canvasBox = $this->initializeCanvasBox($data);
+        $this->featureTransform = Affine2DTransform::boxToBox($this->mapRequestBox, $this->canvasBox);
 
         // map requests array
         $this->mapRequests = array();
@@ -74,59 +104,17 @@ class PrintService extends ImageExportService
             }
             $request = strstr($layer['url'], '&BBOX', true);
 
-            $extentWidth = $data['extent']['width'];
-            $extentHeight = $data['extent']['height'];
-            $centerx = $data['center']['x'];
-            $centery = $data['center']['y'];
 
-            // switch axis for some EPSG if WMS Version 1.3.0
+            $width = '&WIDTH=' . abs($this->canvasBox->getWidth());
+            $height =  '&HEIGHT=' . abs($this->canvasBox->getHeight());
+
+            $mExt = $this->mapRequestBox;
             if (!empty($layer['changeAxis'])){
-                $extentWidth = $data['extent']['height'];
-                $extentHeight = $data['extent']['width'];
-                $centerx = $data['center']['y'];
-                $centery = $data['center']['x'];
+                $request .= '&BBOX=' . $mExt->bottom . ',' . $mExt->left . ',' . $mExt->top . ',' . $mExt->right;
+            } else {
+                $request .= '&BBOX=' . $mExt->left . ',' . $mExt->bottom . ',' . $mExt->right . ',' . $mExt->top;
             }
 
-            // switch if image is rotated
-            $this->rotation = $rotation = $data['rotation'];
-            if ($rotation == 0) {
-                // calculate needed bbox
-                $minX = $centerx - $extentWidth * 0.5;
-                $minY = $centery - $extentHeight * 0.5;
-                $maxX = $centerx + $extentWidth * 0.5;
-                $maxY = $centery + $extentHeight * 0.5;
-
-                $width = '&WIDTH=' . $this->imageWidth;
-                $height =  '&HEIGHT=' . $this->imageHeight;
-            }else{
-                // calculate needed bbox
-                $neededExtentWidth = abs(sin(deg2rad($rotation)) * $extentHeight) +
-                    abs(cos(deg2rad($rotation)) * $extentWidth);
-                $neededExtentHeight = abs(sin(deg2rad($rotation)) * $extentWidth) +
-                    abs(cos(deg2rad($rotation)) * $extentHeight);
-
-                $this->neededExtentWidth = $neededExtentWidth;
-                $this->neededExtentHeight = $neededExtentHeight;
-
-                $minX = $centerx - $neededExtentWidth * 0.5;
-                $minY = $centery - $neededExtentHeight * 0.5;
-                $maxX = $centerx + $neededExtentWidth * 0.5;
-                $maxY = $centery + $neededExtentHeight * 0.5;
-
-                // calculate needed image size
-                $neededImageWidth = round(abs(sin(deg2rad($rotation)) * $this->imageHeight) +
-                    abs(cos(deg2rad($rotation)) * $this->imageWidth));
-                $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->imageWidth) +
-                    abs(cos(deg2rad($rotation)) * $this->imageHeight));
-
-                $this->neededImageWidth = $neededImageWidth;
-                $this->neededImageHeight = $neededImageHeight;
-
-                $width = '&WIDTH=' . $neededImageWidth;
-                $height =  '&HEIGHT=' . $neededImageHeight;
-            }
-
-            $request .= '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
             $request .= $width . $height;
 
             if(!isset($this->data['replace_pattern'])){
@@ -141,7 +129,7 @@ class PrintService extends ImageExportService
         if(isset($this->data['replace_pattern'])){
             $this->addReplacePattern();
         }
-
+        $this->rotation = intval($data['rotation']);
     }
 
     private function addReplacePattern()
@@ -174,47 +162,18 @@ class PrintService extends ImageExportService
         }
     }
 
-    private function createFinalMapImage()
-    {
-        $width = $this->imageWidth;
-        $height = $this->imageHeight;
-        $imageNames = $this->getImages($width, $height);
-
-        // create final merged image
-        $this->finalImageName = $this->makeTempFile('mb_print_final');
-        $finalImage = imagecreatetruecolor($width, $height);
-        $bg = ImageColorAllocate($finalImage, 255, 255, 255);
-        imagefilledrectangle($finalImage, 0, 0, $width, $height, $bg);
-
-        foreach ($imageNames as $imageName) {
-            // Note: suppressing the errors IS bad, bad PHP wants us to do it that way
-                $src = imagecreatefrompng($imageName);
-            // Check that imagecreatefrompng did yield something
-            if ($src) {
-                $dest = $finalImage;
-                imagecopy($dest, $src, 0, 0, 0, 0, $width, $height);
-                imagepng($dest, $this->finalImageName);
-                unlink($imageName);
-            }
-        }
-        //draw features
-        $this->drawFeatures();
-    }
-
-    private function createFinalRotatedMapImage()
+    private function createMapImage()
     {
         $rotation = $this->rotation;
-        $neededImageWidth = $this->neededImageWidth;
-        $neededImageHeight = $this->neededImageHeight;
-        $imageWidth = $this->imageWidth;
-        $imageHeight = $this->imageHeight;
+        $neededImageWidth = abs($this->canvasBox->getWidth());
+        $neededImageHeight = abs($this->canvasBox->getHeight());
 
         $imageNames = $this->getImages($neededImageWidth,$neededImageHeight);
 
         // create temp merged image
         $tempImageName = $this->makeTempFile('mb_print_temp');
         $tempImage = imagecreatetruecolor($neededImageWidth, $neededImageHeight);
-        $bg = ImageColorAllocate($tempImage, 255, 255, 255);
+        $bg = imagecolorallocate($tempImage, 255, 255, 255);
         imagefilledrectangle($tempImage, 0, 0, $neededImageWidth, $neededImageHeight, $bg);
         imagepng($tempImage, $tempImageName);
 
@@ -235,33 +194,43 @@ class PrintService extends ImageExportService
         $this->finalImageName = $tempImageName;
         $this->drawFeatures();
 
+        if ($rotation) {
+            $clippedImage = $this->rotateAndCrop($tempImageName, $rotation);
+            unlink($tempImageName);
+            $this->finalImageName = $this->makeTempFile('mb_print_final');
+            imagepng($clippedImage, $this->finalImageName);
+        }
+    }
+
+    /**
+     * @param string $sourceImageName
+     * @param number $rotation
+     * @return resource GD image
+     */
+    protected function rotateAndCrop($sourceImageName, $rotation)
+    {
+        $imageWidth = $this->targetBox->getWidth();
+        $imageHeight = abs($this->targetBox->getHeight());
+
         // rotate temp image
-        $tempImage2 = imagecreatefrompng($tempImageName);
+        $tempImage2 = imagecreatefrompng($sourceImageName);
         $transColor = imagecolorallocatealpha($tempImage2, 255, 255, 255, 127);
         $rotatedImage = imagerotate($tempImage2, $rotation, $transColor);
         imagealphablending($rotatedImage, false);
         imagesavealpha($rotatedImage, true);
         $rotatedImageName = $this->makeTempFile('mb_print_rotated');
         imagepng($rotatedImage, $rotatedImageName);
-        unlink($tempImageName);
         unlink($rotatedImageName);
 
-        // clip final image from rotated
-        $rotatedWidth = round(abs(sin(deg2rad($rotation)) * $neededImageHeight) +
-            abs(cos(deg2rad($rotation)) * $neededImageWidth));
-        $rotatedHeight = round(abs(sin(deg2rad($rotation)) * $neededImageWidth) +
-            abs(cos(deg2rad($rotation)) * $neededImageHeight));
-        $newx = ($rotatedWidth - $imageWidth ) / 2;
-        $newy = ($rotatedHeight - $imageHeight ) / 2;
+        $offsetX = (imagesx($rotatedImage) - $this->targetBox->getWidth()) * 0.5;
+        $offsetY = (imagesy($rotatedImage) - abs($this->targetBox->getHeight())) * 0.5;
 
         $clippedImage = imagecreatetruecolor($imageWidth, $imageHeight);
         imagealphablending($clippedImage, false);
         imagesavealpha($clippedImage, true);
-        imagecopy($clippedImage, $rotatedImage, 0, 0, $newx, $newy,
+        imagecopy($clippedImage, $rotatedImage, 0, 0, $offsetX, $offsetY,
             $imageWidth, $imageHeight);
-
-        $this->finalImageName = $this->makeTempFile('mb_print_final');
-        imagepng($clippedImage, $this->finalImageName);
+        return $clippedImage;
     }
 
     private function getImages($width, $height)
@@ -304,6 +273,7 @@ class PrintService extends ImageExportService
             $orientation = 'L';
         }
 
+        /** @var PDF_Extensions|\FPDF|\FPDF_TPL $pdf */
         $this->pdf = $pdf = new PDF_Extensions();
 
         $template = $this->data['template'];
@@ -476,8 +446,10 @@ class PrintService extends ImageExportService
         $ovImageHeight = round($this->conf['overview']['height'] / 25.4 * $quality);
         $width = '&WIDTH=' . $ovImageWidth;
         $height = '&HEIGHT=' . $ovImageHeight;
-
-        $changeAxis = false;
+        // gd pixel coords are top down!
+        $ovPixelBox = new Box(0, $ovImageHeight, $ovImageWidth, 0);
+        $centerx = $this->data['center']['x'];
+        $centery = $this->data['center']['y'];
 
         // get images
         $tempNames = array();
@@ -486,22 +458,19 @@ class PrintService extends ImageExportService
             // calculate needed bbox
             $ovWidth = $this->conf['overview']['width'] * $layer['scale'] / 1000;
             $ovHeight = $this->conf['overview']['height'] * $layer['scale'] / 1000;
-            $centerx = $this->data['center']['x'];
-            $centery = $this->data['center']['y'];
-
-            if (!empty($layer['changeAxis'])) {
-                $ovWidth = $this->conf['overview']['height'] * $layer['scale'] / 1000;
-                $ovHeight = $this->conf['overview']['width'] * $layer['scale'] / 1000;
-                $centerx = $this->data['center']['y'];
-                $centery = $this->data['center']['x'];
-                $changeAxis = true;
-            }
+            $centerx = $layer['center']['x'];
+            $centery = $layer['center']['y'];
 
             $minX = $centerx - $ovWidth * 0.5;
             $minY = $centery - $ovHeight * 0.5;
             $maxX = $centerx + $ovWidth * 0.5;
             $maxY = $centery + $ovHeight * 0.5;
-            $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
+            $ovProjectedBox = new Box($minX, $minY, $maxX, $maxY);
+            if (!empty($layer['changeAxis'])) {
+                $bbox = '&BBOX=' . $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
+            } else {
+                $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
+            }
 
             $url = strstr($layer['url'], '&BBOX', true);
             $url .= $bbox . $width . $height;
@@ -522,7 +491,7 @@ class PrintService extends ImageExportService
         // create final merged image
         $finalImageName = $this->makeTempFile('mb_print_merged');
         $finalImage = imagecreatetruecolor($ovImageWidth, $ovImageHeight);
-        $bg = ImageColorAllocate($finalImage, 255, 255, 255);
+        $bg = imagecolorallocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $ovImageWidth,
             $ovImageHeight, $bg);
         imagepng($finalImage, $finalImageName);
@@ -541,41 +510,21 @@ class PrintService extends ImageExportService
         }
 
         $image = imagecreatefrompng($finalImageName);
+        $ovTransform = Affine2DTransform::boxToBox($ovProjectedBox, $ovPixelBox);
 
-        // add red extent rectangle
-        if (!$changeAxis) {
-            $ll_x = $this->data['extent_feature'][3]['x'];
-            $ll_y = $this->data['extent_feature'][3]['y'];
-            $ul_x = $this->data['extent_feature'][0]['x'];
-            $ul_y = $this->data['extent_feature'][0]['y'];
+        $points = array(
+            $ovTransform->transformXy($this->data['extent_feature'][0]),
+            $ovTransform->transformXy($this->data['extent_feature'][3]),
+            $ovTransform->transformXy($this->data['extent_feature'][2]),
+            $ovTransform->transformXy($this->data['extent_feature'][1]),
+        );
 
-            $lr_x = $this->data['extent_feature'][2]['x'];
-            $lr_y = $this->data['extent_feature'][2]['y'];
-            $ur_x = $this->data['extent_feature'][1]['x'];
-            $ur_y = $this->data['extent_feature'][1]['y'];
+        $p1 = array_values($points[0]);
+        $p2 = array_values($points[1]);
+        $p3 = array_values($points[2]);
+        $p4 = array_values($points[3]);
 
-            $p1 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $ll_x, $ll_y);
-            $p2 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $ul_x, $ul_y);
-            $p3 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $ur_x, $ur_y);
-            $p4 = $this->realWorld2ovMapPos($ovWidth, $ovHeight, $lr_x, $lr_y);
-        } else {
-            $ul_x = $this->data['extent_feature'][3]['x'];
-            $ul_y = $this->data['extent_feature'][3]['y'];
-            $ll_x = $this->data['extent_feature'][0]['x'];
-            $ll_y = $this->data['extent_feature'][0]['y'];
-
-            $ur_x = $this->data['extent_feature'][2]['x'];
-            $ur_y = $this->data['extent_feature'][2]['y'];
-            $lr_x = $this->data['extent_feature'][1]['x'];
-            $lr_y = $this->data['extent_feature'][1]['y'];
-
-            $p1 = $this->realWorld2ovMapPos($ovHeight, $ovWidth, $ll_x, $ll_y);
-            $p2 = $this->realWorld2ovMapPos($ovHeight, $ovWidth, $ul_x, $ul_y);
-            $p3 = $this->realWorld2ovMapPos($ovHeight, $ovWidth, $ur_x, $ur_y);
-            $p4 = $this->realWorld2ovMapPos($ovHeight, $ovWidth, $lr_x, $lr_y);
-        }
-
-        $red = ImageColorAllocate($image,255,0,0);
+        $red = imagecolorallocate($image,255,0,0);
         imageline ( $image, $p1[0], $p1[1], $p2[0], $p2[1], $red);
         imageline ( $image, $p2[0], $p2[1], $p3[0], $p3[1], $red);
         imageline ( $image, $p3[0], $p3[1], $p4[0], $p4[1], $red);
@@ -720,7 +669,7 @@ class PrintService extends ImageExportService
         list($r, $g, $b) = CSSColorParser::parse($color);
 
         if(0 == $alpha) {
-            return ImageColorAllocate($image, $r, $g, $b);
+            return imagecolorallocate($image, $r, $g, $b);
         } else {
             $a = (1 - $alpha) * 127.0;
             return imagecolorallocatealpha($image, $r, $g, $b, $a);
@@ -747,11 +696,7 @@ class PrintService extends ImageExportService
 
             $points = array();
             foreach($ring as $c) {
-                if($this->rotation == 0){
-                    $p = $this->realWorld2mapPos($c[0], $c[1]);
-                }else{
-                    $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
-                }
+                $p = $this->featureTransform->transformPair($c);
                 $points[] = floatval($p[0]);
                 $points[] = floatval($p[1]);
             }
@@ -788,11 +733,7 @@ class PrintService extends ImageExportService
 
                 $points = array();
                 foreach($ring as $c) {
-                    if($this->rotation == 0){
-                        $p = $this->realWorld2mapPos($c[0], $c[1]);
-                    }else{
-                        $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
-                    }
+                    $p = $this->featureTransform->transformPair($c);
                     $points[] = floatval($p[0]);
                     $points[] = floatval($p[1]);
                 }
@@ -832,22 +773,8 @@ class PrintService extends ImageExportService
         imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
 
         for($i = 1; $i < count($geometry['coordinates']); $i++) {
-
-            if($this->rotation == 0){
-                $from = $this->realWorld2mapPos(
-                    $geometry['coordinates'][$i - 1][0],
-                    $geometry['coordinates'][$i - 1][1]);
-                $to = $this->realWorld2mapPos(
-                    $geometry['coordinates'][$i][0],
-                    $geometry['coordinates'][$i][1]);
-            }else{
-                $from = $this->realWorld2rotatedMapPos(
-                    $geometry['coordinates'][$i - 1][0],
-                    $geometry['coordinates'][$i - 1][1]);
-                $to = $this->realWorld2rotatedMapPos(
-                    $geometry['coordinates'][$i][0],
-                    $geometry['coordinates'][$i][1]);
-            }
+            $from = $this->featureTransform->transformPair($geometry['coordinates'][$i - 1]);
+            $to = $this->featureTransform->transformPair($geometry['coordinates'][$i]);
 
             imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
         }
@@ -868,21 +795,8 @@ class PrintService extends ImageExportService
 
         foreach($geometry['coordinates'] as $coords) {
             for($i = 1; $i < count($coords); $i++) {
-                if($this->rotation == 0){
-                        $from = $this->realWorld2mapPos(
-                                $coords[$i - 1][0],
-                                $coords[$i - 1][1]);
-                        $to = $this->realWorld2mapPos(
-                                $coords[$i][0],
-                                $coords[$i][1]);
-                }else{
-                        $from = $this->realWorld2rotatedMapPos(
-                                $coords[$i - 1][0],
-                                $coords[$i - 1][1]);
-                        $to = $this->realWorld2rotatedMapPos(
-                                $coords[$i][0],
-                                $coords[$i][1]);
-                }
+                $from = $this->featureTransform->transformPair($coords[$i - 1]);
+                $to = $this->featureTransform->transformPair($coords[$i]);
                 imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
             }
         }
@@ -891,14 +805,9 @@ class PrintService extends ImageExportService
     private function drawPoint($geometry, $image)
     {
         $style = $this->getStyle($geometry);
-        $c = $geometry['coordinates'];
         $resizeFactor = $this->getResizeFactor();
 
-        if($this->rotation == 0){
-            $p = $this->realWorld2mapPos($c[0], $c[1]);
-        }else{
-            $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
-        }
+        $p = $this->featureTransform->transformPair($geometry['coordinates']);
 
         if(isset($style['label'])){
             // draw label with halo
@@ -1051,7 +960,7 @@ class PrintService extends ImageExportService
                 if ($legendConf == true) {
                     // add legend in legend region on first page
                     // To Be doneCell(0,0,  utf8_decode($title));
-                    $this->pdf->setXY($x,$y);
+                    $this->pdf->SetXY($x,$y);
                     $this->pdf->Cell(0,0,  utf8_decode($title));
                     $this->pdf->Image($image,
                                 $x,
@@ -1078,7 +987,7 @@ class PrintService extends ImageExportService
 
                   }else{
                       // print legend on second page
-                      $this->pdf->setXY($x,$y);
+                      $this->pdf->SetXY($x,$y);
                       $this->pdf->Cell(0,0,  utf8_decode($title));
                       $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
 
@@ -1135,26 +1044,6 @@ class PrintService extends ImageExportService
     }
 
 
-
-    private function realWorld2mapPos($rw_x, $rw_y)
-    {
-        $quality   = $this->data['quality'];
-        $mapWidth  = $this->data['extent']['width'];
-        $mapHeight = $this->data['extent']['height'];
-        $centerx   = $this->data['center']['x'];
-        $centery   = $this->data['center']['y'];
-        $minX      = $centerx - $mapWidth * 0.5;
-        $minY      = $centery - $mapHeight * 0.5;
-        $maxX      = $centerx + $mapWidth * 0.5;
-        $maxY      = $centery + $mapHeight * 0.5;
-        $extentx   = $maxX - $minX;
-        $extenty   = $maxY - $minY;
-        $pixPos_x  = (($rw_x - $minX) / $extentx) * round($this->conf['map']['width'] / 25.4 * $quality);
-        $pixPos_y  = (($maxY - $rw_y) / $extenty) * round($this->conf['map']['height'] / 25.4 * $quality);
-
-        return array($pixPos_x, $pixPos_y);
-    }
-
     private function addLegendPageImage()
     {
 
@@ -1181,39 +1070,6 @@ class PrintService extends ImageExportService
         }
     }
 
-    private function realWorld2ovMapPos($ovWidth, $ovHeight, $rw_x, $rw_y)
-    {
-        $quality  = $this->data['quality'];
-        $centerx  = $this->data['center']['x'];
-        $centery  = $this->data['center']['y'];
-        $minX     = $centerx - $ovWidth * 0.5;
-        $minY     = $centery - $ovHeight * 0.5;
-        $maxX     = $centerx + $ovWidth * 0.5;
-        $maxY     = $centery + $ovHeight * 0.5;
-        $extentx  = $maxX - $minX;
-        $extenty  = $maxY - $minY;
-        $pixPos_x = (($rw_x - $minX) / $extentx) * round($this->conf['overview']['width'] / 25.4 * $quality);
-        $pixPos_y = (($maxY - $rw_y) / $extenty) * round($this->conf['overview']['height'] / 25.4 * $quality);
-
-        return array($pixPos_x, $pixPos_y);
-    }
-
-    private function realWorld2rotatedMapPos($rw_x, $rw_y)
-    {
-        $centerx  = $this->data['center']['x'];
-        $centery  = $this->data['center']['y'];
-        $minX     = $centerx - $this->neededExtentWidth * 0.5;
-        $minY     = $centery - $this->neededExtentHeight * 0.5;
-        $maxX     = $centerx + $this->neededExtentWidth * 0.5;
-        $maxY     = $centery + $this->neededExtentHeight * 0.5;
-        $extentx  = $maxX - $minX;
-        $extenty  = $maxY - $minY;
-        $pixPos_x = (($rw_x - $minX) / $extentx) * $this->neededImageWidth;
-        $pixPos_y = (($maxY - $rw_y) / $extenty) * $this->neededImageHeight;
-
-        return array($pixPos_x, $pixPos_y);
-    }
-
     /**
      * Get geometry style
      *
@@ -1237,20 +1093,5 @@ class PrintService extends ImageExportService
         }
 
         return false;
-    }
-
-    /**
-     * @return mixed|null
-     */
-    protected function getUser()
-    {
-        /** @var TokenStorage $tokenStorage */
-        $tokenStorage = $this->container->get('security.token_storage');
-        $token = $tokenStorage->getToken();
-        if ($token) {
-            return $token->getUser();
-        } else {
-            return null;
-        }
     }
 }
