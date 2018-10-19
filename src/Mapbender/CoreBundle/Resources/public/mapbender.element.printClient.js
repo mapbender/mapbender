@@ -21,6 +21,7 @@
         rotateValue: 0,
         overwriteTemplates: false,
         digitizerData: null,
+        printBounds: null,
 
         _setup: function(){
             var self = this;
@@ -147,9 +148,7 @@
         },
 
         _updateGeometry: function(reset) {
-            var width = this.width,
-                height = this.height,
-                scale = this._getPrintScale(),
+            var scale = this._getPrintScale(),
                 rotationField = $(this.element).find('input[name="rotation"]');
 
             // remove all not numbers from input
@@ -158,30 +157,19 @@
             if (rotationField.val() === '' && this.rotateValue > '0'){
                 rotationField.val('0');
             }
-            var rotation = rotationField.val();
-            this.rotateValue = rotation;
+            this.rotateValue = rotationField.val();
 
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
-                if(null !== this.lastScale) {
-                //$('input[name="scale_text"]').val(this.lastScale).change();
-                }
                 return;
             }
             scale = parseInt(scale);
 
-            if(!(!isNaN(parseFloat(rotation)) && isFinite(rotation))) {
+            if (isNaN(parseFloat(this.rotateValue)) || !isFinite(this.rotateValue)) {
                 if(null !== this.lastRotation) {
                     rotationField.val(this.lastRotation).change();
                 }
             }
-            rotation= parseInt(-rotation);
-
-            this.lastScale = scale;
-
-            var world_size = {
-                x: width * scale / 100,
-                y: height * scale / 100
-            };
+            var rotation = parseInt(this.rotateValue) || 0;
 
             var center = (reset === true || !this.feature) ?
             this.map.map.olMap.getCenter() :
@@ -192,45 +180,30 @@
                 this.feature = null;
             }
 
+            // adjust for geodesic pixel aspect ratio so
+            // a) our print region selection rectangle appears with ~the same visual aspect ratio as
+            //    the main map region in the template, for any projection
+            // b) any pixel aspect distortion on geodesic projections is matched WYSIWIG in generated printout
+            var centerPixel = this.map.map.olMap.getPixelFromLonLat(center);
+            var kmPerPixel = this.map.map.olMap.getGeodesicPixelSize(centerPixel);
+            var pixelHeight = this.height * scale / (kmPerPixel.h * 1000);
+            var pixelAspectRatio = kmPerPixel.w / kmPerPixel.h;
+            var pixelWidth = this.width * scale * pixelAspectRatio / (kmPerPixel.w * 1000);
+
+            var pxBottomLeft = centerPixel.add(-0.5 * pixelWidth, -0.5 * pixelHeight);
+            var pxTopRight = centerPixel.add(0.5 * pixelWidth, 0.5 * pixelHeight);
+            var llBottomLeft = this.map.map.olMap.getLonLatFromPixel(pxBottomLeft);
+            var llTopRight = this.map.map.olMap.getLonLatFromPixel(pxTopRight);
             this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-                center.lon - 0.5 * world_size.x,
-                center.lat - 0.5 * world_size.y,
-                center.lon + 0.5 * world_size.x,
-                center.lat + 0.5 * world_size.y).toGeometry(), {});
-            this.feature.world_size = world_size;
+                llBottomLeft.lon,
+                llBottomLeft.lat,
+                llTopRight.lon,
+                llTopRight.lat
+            ).toGeometry(), {});
+            // copy bounds before rotation
+            this.printBounds = this.feature.geometry.getBounds().clone();
 
-            if(this.map.map.olMap.units === 'degrees' || this.map.map.olMap.units === 'dd') {
-                var centroid = this.feature.geometry.getCentroid();
-                var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
-                var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
-                var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
-
-                var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
-
-                var geodes_width = width * scale / (geodes_diag);
-                var geodes_height = height * scale / (geodes_diag);
-
-                var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
-                var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
-                var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
-                var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
-                var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
-                var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
-                var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
-                var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
-
-                this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-                    ll_lonlat.lon,
-                    ur_lonlat.lat,
-                    ur_lonlat.lon,
-                    ll_lonlat.lat).toGeometry(), {});
-                this.feature.world_size = {
-                    x: ur_lonlat.lon - ll_lonlat.lon,
-                    y: ur_lonlat.lat - ll_lonlat.lat
-                };
-            }
-
-            this.feature.geometry.rotate(rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
+            this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
             this.layer.addFeatures(this.feature);
             this.layer.redraw();
         },
@@ -274,17 +247,16 @@
         },
 
         _getPrintExtent: function() {
-            var data = {
-                extent: {},
-                center: {}
+            return {
+                extent: {
+                    width: this.printBounds.getWidth(),
+                    height: this.printBounds.getHeight()
+                },
+                center: {
+                    x: this.printBounds.getCenterLonLat().lon,
+                    y: this.printBounds.getCenterLonLat().lat
+                }
             };
-
-            data.extent.width = this.feature.world_size.x;
-            data.extent.height = this.feature.world_size.y;
-            data.center.x = this.feature.geometry.getBounds().getCenterLonLat().lon;
-            data.center.y = this.feature.geometry.getBounds().getCenterLonLat().lat;
-
-            return data;
         },
         /**
          *
@@ -351,7 +323,7 @@
                     layer.params.STYLES = visLayers.styles;
 
                     var opacity = sourceDef.configuration.options.opacity;
-                    var layerData = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.map.map.olMap.getExtent(), sourceDef.configuration.options.proxy);
+                    var layerData = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.printBounds, sourceDef.configuration.options.proxy);
                     layerData.opacity = opacity;
                     // flag to change axis order
                     layerData.changeAxis = this._changeAxis(layer);
@@ -546,8 +518,9 @@
                 data: {template: template},
                 dataType: "json",
                 success: function(data) {
-                    self.width = data.width;
-                    self.height = data.height;
+                    // dimensions delivered in cm, we need m
+                    self.width = data.width / 100.0;
+                    self.height = data.height / 100.0;
                     self._updateGeometry();
                 }
             });
