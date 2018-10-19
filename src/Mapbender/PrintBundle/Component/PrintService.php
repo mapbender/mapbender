@@ -448,20 +448,15 @@ class PrintService extends ImageExportService
         $height = '&HEIGHT=' . $ovImageHeight;
         // gd pixel coords are top down!
         $ovPixelBox = new Box(0, $ovImageHeight, $ovImageWidth, 0);
-        $centerx = $this->data['center']['x'];
-        $centery = $this->data['center']['y'];
+        $centerx = $this->data['overview']['center']['x'];
+        $centery = $this->data['overview']['center']['y'];
+        $ovHeight = $this->data['overview']['height'];
+        $ovWidth = $ovHeight * $this->conf['overview']['width'] / $this->conf['overview']['height'];
 
         // get images
         $tempNames = array();
         $logger = $this->getLogger();
-        foreach ($this->data['overview'] as $i => $layer) {
-            // calculate needed bbox
-            $ovHeight = $layer['height'];
-            $ovWidth = $ovHeight * $this->conf['overview']['width'] / $this->conf['overview']['height'];
-
-            $centerx = $layer['center']['x'];
-            $centery = $layer['center']['y'];
-
+        foreach ($this->data['overview']['layers'] as $i => $layerUrl) {
             $minX = $centerx - $ovWidth * 0.5;
             $minY = $centery - $ovHeight * 0.5;
             $maxX = $centerx + $ovWidth * 0.5;
@@ -473,7 +468,7 @@ class PrintService extends ImageExportService
                 $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
             }
 
-            $url = strstr($layer['url'], '&BBOX', true);
+            $url = strstr($layerUrl, '&BBOX', true);
             $url .= $bbox . $width . $height;
 
             $logger->debug("Print Overview Request Nr.: " . $i . ' ' . $url);

@@ -377,22 +377,27 @@
             // overview map
             var self = this;
             var ovMap = (this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap') || [null])[0];
+            var changeAxis = false;
             var overviewLayers = (ovMap && ovMap.layers || []).map(function(layer) {
-                var url = layer.getURL(ovMap.map.getExtent());
+                // this is the same for all layers, basically set on first iteration
+                changeAxis = self._changeAxis(layer);
+                // NOTE: bbox / width / height are discarded and replaced by print backend
+                return layer.getURL(ovMap.map.getExtent());
+            });
+            if (overviewLayers.length) {
                 var ovCenter = ovMap.ovmap.getCenter();
-
                 return {
-                    url: url,
+                    layers: overviewLayers,
                     center: {
                         x: ovCenter.lon,
                         y: ovCenter.lat
                     },
                     height: ovMap.ovmap.getExtent().getHeight(),
-                    changeAxis: self._changeAxis(layer)
+                    changeAxis: changeAxis
                 };
-            });
-
-            return overviewLayers.length ? overviewLayers : null;
+            } else {
+                return null;
+            }
         },
         _collectJobData: function() {
             var extent = this._getPrintExtent();
@@ -454,7 +459,6 @@
                             for (var i = 0; i < value.length; ++i) {
                                 switch (key) {
                                     case 'layers':
-                                    case 'overview':
                                         appendField('' + key + '[' + i + ']', JSON.stringify(value[i]));
                                         break;
                                     default:
@@ -465,9 +469,13 @@
                         } else if (typeof value === 'string') {
                             appendField(key, value);
                         } else if (Object.keys(value).length) {
-                            Object.keys(value).map(function(k) {
-                                appendField('' + key + '['+k+']', value[k]);
-                            });
+                            if (key === 'overview') {
+                                appendField('' + key, JSON.stringify(value));
+                            } else {
+                                Object.keys(value).map(function(k) {
+                                    appendField('' + key + '['+k+']', value[k]);
+                                });
+                            }
                         } else {
                             appendField(key, value);
                         }
