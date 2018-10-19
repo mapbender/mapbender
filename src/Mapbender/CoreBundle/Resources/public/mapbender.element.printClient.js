@@ -403,10 +403,10 @@
         },
         _collectOverview: function() {
             // overview map
+            var self = this;
             var ovMap = (this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap') || [null])[0];
             var overviewLayers = (ovMap && ovMap.layers || []).map(function(layer) {
                 var url = layer.getURL(ovMap.map.getExtent());
-                var scale = Math.round(ovMap.ovmap.getScale());
                 var ovCenter = ovMap.ovmap.getCenter();
 
                 return {
@@ -415,7 +415,8 @@
                         x: ovCenter.lon,
                         y: ovCenter.lat
                     },
-                    scale: scale
+                    height: ovMap.ovmap.getExtent().getHeight(),
+                    changeAxis: self._changeAxis(layer)
                 };
             });
 
