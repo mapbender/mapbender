@@ -364,7 +364,7 @@ class PrintService extends ImageExportService
 
         // add overview map
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
-            $this->addOverviewMap();
+            $this->addOverviewMap($this->data['overview']);
         }
 
         // add scalebar
@@ -438,7 +438,7 @@ class PrintService extends ImageExportService
         }
     }
 
-    private function addOverviewMap()
+    private function addOverviewMap($ovData)
     {
         // calculate needed image size
         $quality = $this->data['quality'];
@@ -448,26 +448,25 @@ class PrintService extends ImageExportService
         $height = '&HEIGHT=' . $ovImageHeight;
         // gd pixel coords are top down!
         $ovPixelBox = new Box(0, $ovImageHeight, $ovImageWidth, 0);
-        $centerx = $this->data['overview']['center']['x'];
-        $centery = $this->data['overview']['center']['y'];
-        $ovHeight = $this->data['overview']['height'];
+        $centerx = $ovData['center']['x'];
+        $centery = $ovData['center']['y'];
+        $ovHeight = $ovData['height'];
         $ovWidth = $ovHeight * $this->conf['overview']['width'] / $this->conf['overview']['height'];
+        $minX = $centerx - $ovWidth * 0.5;
+        $minY = $centery - $ovHeight * 0.5;
+        $maxX = $centerx + $ovWidth * 0.5;
+        $maxY = $centery + $ovHeight * 0.5;
+        $ovProjectedBox = new Box($minX, $minY, $maxX, $maxY);
+        if (!empty($data['overview']['changeAxis'])) {
+            $bbox = '&BBOX=' . $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
+        } else {
+            $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
+        }
 
         // get images
         $tempNames = array();
         $logger = $this->getLogger();
-        foreach ($this->data['overview']['layers'] as $i => $layerUrl) {
-            $minX = $centerx - $ovWidth * 0.5;
-            $minY = $centery - $ovHeight * 0.5;
-            $maxX = $centerx + $ovWidth * 0.5;
-            $maxY = $centery + $ovHeight * 0.5;
-            $ovProjectedBox = new Box($minX, $minY, $maxX, $maxY);
-            if (!empty($layer['changeAxis'])) {
-                $bbox = '&BBOX=' . $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
-            } else {
-                $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
-            }
-
+        foreach ($ovData['layers'] as $i => $layerUrl) {
             $url = strstr($layerUrl, '&BBOX', true);
             $url .= $bbox . $width . $height;
 
