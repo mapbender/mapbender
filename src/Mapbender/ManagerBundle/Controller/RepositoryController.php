@@ -207,8 +207,6 @@ class RepositoryController extends Controller
             throw $this->createNotFoundException('Instance does not exist');
         }
 
-        /** @todo: instance check?! */
-        $this->denyAccessUnlessGranted('VIEW', $sourceInst->getSource());
         $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
