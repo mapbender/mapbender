@@ -407,9 +407,14 @@
             var overviewLayers = (ovMap && ovMap.layers || []).map(function(layer) {
                 var url = layer.getURL(ovMap.map.getExtent());
                 var scale = Math.round(ovMap.ovmap.getScale());
+                var ovCenter = ovMap.ovmap.getCenter();
 
                 return {
                     url: url,
+                    center: {
+                        x: ovCenter.lon,
+                        y: ovCenter.lat
+                    },
                     scale: scale
                 };
             });

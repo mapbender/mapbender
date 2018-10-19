@@ -458,6 +458,8 @@ class PrintService extends ImageExportService
             // calculate needed bbox
             $ovWidth = $this->conf['overview']['width'] * $layer['scale'] / 1000;
             $ovHeight = $this->conf['overview']['height'] * $layer['scale'] / 1000;
+            $centerx = $layer['center']['x'];
+            $centery = $layer['center']['y'];
 
             $minX = $centerx - $ovWidth * 0.5;
             $minY = $centery - $ovHeight * 0.5;
