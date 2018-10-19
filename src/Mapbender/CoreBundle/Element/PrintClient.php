@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Mapbender\PrintBundle\Component\PrintService;
@@ -174,43 +175,12 @@ class PrintClient extends Element
      */
     public function httpAction($action)
     {
+        /** @var Request $request */
         $request = $this->container->get('request');
         $configuration = $this->getConfiguration();
         switch ($action) {
             case 'print':
-
-                $data = $request->request->all();
-
-                foreach ($data['layers'] as $idx => $layer) {
-                    $data['layers'][$idx] = json_decode($layer, true);
-                }
-
-                if (isset($data['overview'])) {
-                    foreach ($data['overview'] as $idx => $layer) {
-                        $data['overview'][$idx] = json_decode($layer, true);
-                    }
-                }
-
-                if (isset($data['features'])) {
-                    foreach ($data['features'] as $idx => $value) {
-                        $data['features'][$idx] = json_decode($value, true);
-                    }
-                }
-
-                if (isset($configuration['replace_pattern'])) {
-                    foreach ($configuration['replace_pattern'] as $idx => $value) {
-                        $data['replace_pattern'][$idx] = $value;
-                    }
-                }
-
-                if (isset($data['extent_feature'])) {
-                    $data['extent_feature'] = json_decode($data['extent_feature'], true);
-                }
-
-                if (isset($data['legends'])) {
-                    $data['legends'] = json_decode($data['legends'], true);
-                }
-
+                $data = $this->preparePrintData($request, $configuration);
                 $printservice = $this->getPrintService();
 
                 $displayInline = true;
@@ -253,5 +223,124 @@ class PrintClient extends Element
         $container = $this->container;
         $printServiceClassName = $container->getParameter('mapbender.print.service.class');
         return new $printServiceClassName($container);
+    }
+
+    /**
+     * @param Request $request
+     * @param mixed[] $configuration
+     * @return mixed[]
+     */
+    protected function preparePrintData(Request $request, $configuration)
+    {
+        // @todo: define what data we support; do not simply process and forward everything
+        $data = $request->request->all();
+
+        $data['layers'] = $this->prepareLayerDefinitions($data['layers']);
+        if (isset($data['overview'])) {
+            $data['overview'] = $this->prepareLayerDefinitions($data['overview']);
+        }
+
+        if (isset($data['features'])) {
+            $data['features'] = $this->prepareFeatures($data['features']);
+        }
+
+        if (isset($configuration['replace_pattern'])) {
+            foreach ($configuration['replace_pattern'] as $idx => $value) {
+                $data['replace_pattern'][$idx] = $value;
+            }
+        }
+
+        if (isset($data['extent_feature'])) {
+            $data['extent_feature'] = json_decode($data['extent_feature'], true);
+        }
+
+        if (isset($data['legends'])) {
+            $data['legends'] = $this->prepareLegends($data['legends']);
+        }
+        $data['user'] = $this->getUser();
+        return $data;
+    }
+
+    /**
+     * Trivial json-decode of input; provided as an override hook for customization.
+     * Processes 'features' value from client.
+     *
+     * @param array|string|string[] $rawFeatureData
+     * @return mixed[][]
+     */
+    protected function prepareFeatures($rawFeatureData)
+    {
+        // feature definition list is a 2+ levels nested array
+        /** @var mixed[][] $featureDefs */
+        $featureDefs = $this->unravelJson($rawFeatureData, 1);
+        return $featureDefs;
+    }
+
+    /**
+     * Trivial json-decode of input; provided as an override hook for customization.
+     * Processes both 'layers' and 'overview' values from client.
+     *
+     * @param array|string|string[] $rawDefinitions
+     * @return mixed[][]
+     * @throws \InvalidArgumentException
+     */
+    protected function prepareLayerDefinitions($rawDefinitions)
+    {
+        // layer definition list is a 2D array
+        /** @var mixed[][] $layerDefs */
+        $layerDefs = $this->unravelJson($rawDefinitions, 2);
+        return $layerDefs;
+    }
+
+    /**
+     * Trivial json-decode of input; provided as an override hook for customization.
+     * Processes 'features' value from client.
+     *
+     * @param array|string|string[] $rawLegendData
+     * @return string[]
+     */
+    protected function prepareLegends($rawLegendData)
+    {
+        // legend value is a 1D array with layer title as keys and legend image urls as values
+        /** @var string[] $legendDefs */
+        $legendDefs = $this->unravelJson($rawLegendData, 1);
+        return $legendDefs;
+    }
+
+    /**
+     * Turn a json-encoded string into an array, while letting arrays pass through unchanged.
+     * This can be done recursively.
+     * Keys are preserved.
+     *
+     * @todo this could be a util; unknown if other elements or components have similar needs
+     * @param string|string[] $rawInput
+     * @param int $maxDepth for recursion; 0 = unlimited; 1 = top level only (default)
+     * @return mixed[]
+     * @throws \InvalidArgumentException if the top-level output is not an array; it's not generally safe
+     *    to multi-decode json scalars
+     * @throws \InvalidArgumentException if the input is neither string nor array
+     */
+    protected static function unravelJson($rawInput, $maxDepth = 1)
+    {
+        if (is_string($rawInput)) {
+            $a = json_decode($rawInput, true);
+            if (!is_array($a)) {
+                throw new \InvalidArgumentException("Unsafe scalar type " . gettype($a));
+            }
+        } elseif (is_array($rawInput)) {
+            $a = $rawInput;
+        } else {
+            throw new \InvalidArgumentException("Unhandled input type " . gettype($rawInput));
+        }
+        if (!$maxDepth || $maxDepth > 1) {
+            foreach ($a as $k => $v) {
+                try {
+                    $a[$k] = static::unravelJson($v, max(0, $maxDepth - 1));
+                } catch (\InvalidArgumentException $e) {
+                    $a[$k] = $v;
+                }
+            }
+        }
+        return $a;
     }
 }

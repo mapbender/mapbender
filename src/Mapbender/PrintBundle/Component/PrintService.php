@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 /**
  * Mapbender3 Print Service.
@@ -80,7 +79,7 @@ class PrintService extends ImageExportService
         // resource dir
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
 
-        $this->user      = $this->getUser();
+        $this->user      = $data['user'];
 
         // data from client
         $this->data = $data;
@@ -1092,20 +1091,5 @@ class PrintService extends ImageExportService
         }
 
         return false;
-    }
-
-    /**
-     * @return mixed|null
-     */
-    protected function getUser()
-    {
-        /** @var TokenStorage $tokenStorage */
-        $tokenStorage = $this->container->get('security.token_storage');
-        $token = $tokenStorage->getToken();
-        if ($token) {
-            return $token->getUser();
-        } else {
-            return null;
-        }
     }
 }
