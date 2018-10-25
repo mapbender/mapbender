@@ -1,6 +1,6 @@
 "use strict";
 
-var Mapbender = Mapbender || {};
+window.Mapbender = Mapbender || {};
 
 Mapbender.ElementRegistry = function(){
     var registry = this;
