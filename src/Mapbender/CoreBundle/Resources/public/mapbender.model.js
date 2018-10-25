@@ -1090,12 +1090,18 @@ Mapbender.Model = {
             sourceIdToSource[sourceObj.id] = sourceObj;
             zIndexes.push(self.map.layersList[sourceObj.mqlid].position());
         });
-        oldPositions.sort();
-        zIndexes.sort();
+        // Process the reording from high target z index to low; setting z index on a layer
+        // will splice and move it around, which means any other layer previously following the targetted
+        // layer in z order will also move around. Reversing the processing order avoids unwanted
+        // collateral changes on following layers, because anything that follows is brought into the desired order
+        // first.
+        oldPositions.sort().reverse();
+        zIndexes.sort().reverse();
+        var newIdOrderRev = newIdOrder.slice().reverse();
         // rewrite sourceTree order and z indexes
         for (var i = 0; i < oldPositions.length; ++i) {
             var oldPos = oldPositions[i];
-            var injectSourceId = newIdOrder[i];
+            var injectSourceId = newIdOrderRev[i];
             var injectSourceObj = sourceIdToSource[injectSourceId];
             var injectSourceZ = zIndexes[i];
             this.sourceTree[oldPos] = injectSourceObj;
