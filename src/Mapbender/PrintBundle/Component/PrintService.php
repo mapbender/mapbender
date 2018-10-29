@@ -457,7 +457,7 @@ class PrintService extends ImageExportService
         $maxX = $centerx + $ovWidth * 0.5;
         $maxY = $centery + $ovHeight * 0.5;
         $ovProjectedBox = new Box($minX, $minY, $maxX, $maxY);
-        if (!empty($data['overview']['changeAxis'])) {
+        if (!empty($ovData['changeAxis'])) {
             $bbox = '&BBOX=' . $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
         } else {
             $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
