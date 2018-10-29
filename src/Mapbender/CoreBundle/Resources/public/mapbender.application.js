@@ -103,6 +103,9 @@ Mapbender.ElementRegistry = (function($){
         // and we want to resolve the ready promise WITH that instance.
         $.when(bundle.created, bundle.readyEvent).then(function() {
             bundle.ready.resolveWith(null, [bundle.instance]);
+        }, function() {
+            // Also reject ready promise if created promise rejects
+            bundle.ready.reject();
         });
         // record promises bundle in id index for id based lookups
         if (this.idIndex[id_]) {
