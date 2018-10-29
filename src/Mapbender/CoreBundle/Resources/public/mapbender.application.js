@@ -21,6 +21,51 @@ Mapbender.ElementRegistry = (function($){
     }
 
     /**
+     * Legacy API for registering callbacks on widget ready event.
+     * @param {string|int} targetId
+     * @param {function} callback
+     * @returns {Promise<any | never>}
+     */
+    ElementRegistry.prototype.onElementReady = function(targetId, callback) {
+        return this.waitReady(targetId).then(callback);
+    };
+    /**
+     * Return an object mapping widget name (string; e.g. 'mapbenderMbMap') to widget instance.
+     * NOTE: cannot differentiate between multiple instances of the same widget type
+     * @returns {*}
+     */
+    ElementRegistry.prototype.listWidgets = function() {
+        var data = {};
+        $('.mb-element').each(function(i, el) {
+            _.assign(data, $(el).data());
+        });
+        return data;
+    };
+    /**
+     * Return a promise that will resolve once the widget with given ident has been
+     * created (=immediately after return from widget constructor call).
+     * This promise will reject if the widget constructor throws an error.
+     *
+     * @param {string} ident id (leading hash optional) or class name (leading '.' required)
+     * @returns {Promise|null}
+     */
+    ElementRegistry.prototype.waitCreated = function(ident) {
+        return this.getPromises_(ident).created.promise();
+    };
+    /**
+     * Return a promise that will resolve once the widget with given ident has fired
+     * its ready event.
+     * This promise will reject if the widget constructor throws an error.
+     *
+     * @param {string} ident id (leading hash optional) or class name (leading '.' required)
+     * @returns {Promise|null}
+     */
+    ElementRegistry.prototype.waitReady = function(ident) {
+        return this.getPromises_(ident).ready.promise();
+    };
+    /**
+     * Adds given dom node to tracking, assuming it will be the target of an element widget
+     * constructor.
      *
      * @param {HTMLElement|jQuery} node
      * @param {string} readyEventName
@@ -115,28 +160,6 @@ Mapbender.ElementRegistry = (function($){
         // No match => error
         throw new Error("No tracking promises bundle for given element ident " + ident);
     };
-    /**
-     * Return a promise that will resolve once the widget with given ident has been
-     * created (=immediately after return from widget constructor call).
-     * This promise will reject if the widget constructor throws an error.
-     *
-     * @param {string} ident id (leading hash optional) or class name (leading '.' required)
-     * @returns {Promise|null}
-     */
-    ElementRegistry.prototype.waitCreated = function(ident) {
-        return this.getPromises_(ident).created.promise();
-    };
-    /**
-     * Return a promise that will resolve once the widget with given ident has fired
-     * its ready event.
-     * This promise will reject if the widget constructor throws an error.
-     *
-     * @param {string} ident id (leading hash optional) or class name (leading '.' required)
-     * @returns {Promise|null}
-     */
-    ElementRegistry.prototype.waitReady = function(ident) {
-        return this.getPromises_(ident).ready.promise();
-    };
     ElementRegistry.prototype.markCreated = function(ident, instance) {
         var bundle = this.getPromises_(ident);
         bundle.instance = instance;
@@ -156,26 +179,6 @@ Mapbender.ElementRegistry = (function($){
         var bundle = this.getPromises_(ident);
         bundle.ready.reject();
         bundle.created.reject();
-    };
-    /**
-     * Legacy API for registering callbacks on widget ready event.
-     * @param {string|int} targetId
-     * @param {function} callback
-     * @returns {Promise<any | never>}
-     */
-    ElementRegistry.prototype.onElementReady = function(targetId, callback) {
-        return this.waitReady(targetId).then(callback);
-    };
-    /**
-     * Return an object mapping widget name (string; e.g. 'mapbenderMbMap') to widget instance.
-     * @returns {*}
-     */
-    ElementRegistry.prototype.listWidgets = function() {
-        var data = {};
-        $('.mb-element').each(function(i, el) {
-            _.assign(data, $(el).data());
-        });
-        return data;
     };
     return ElementRegistry;
 }(jQuery));
