@@ -249,7 +249,9 @@
                         self._addContent(mqLayer, iframe);
                         var doc = document.getElementById(uuid).contentWindow.document;
                         iframe.on('load', function(){
-                            Mapbender.Util.addDispatcher(doc);
+                            if (Mapbender.declarative) {
+                               Mapbender.Util.addDispatcher(doc);
+                            }
                             iframe.data('loaded', true);
                             $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
                             iframe.contents().find("body").css("background","transparent");
