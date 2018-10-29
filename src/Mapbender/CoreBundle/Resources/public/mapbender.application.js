@@ -18,6 +18,10 @@ Mapbender.ElementRegistry = (function($){
         this.classIndex = {};
         this.idIndex = {};
         this.promisesBundles = [];
+        // Prepare a prerejected Promise. This will be returned by waitCreated / waitReady
+        // if no tracked element matches
+        this.rejected_ = $.Deferred();
+        this.rejected_.reject();
     }
 
     /**
@@ -50,7 +54,16 @@ Mapbender.ElementRegistry = (function($){
      * @returns {Promise|null}
      */
     ElementRegistry.prototype.waitCreated = function(ident) {
-        return this.getPromises_(ident).created.promise();
+        var matches = this.match_(ident);
+        if (matches.length > 1) {
+            console.warn("Matched multiple elements, waiting on first", ident, matches);
+        }
+        if (matches.length) {
+            return matches[0].created.promise();
+        } else {
+            console.error("No element match for ident", ident);
+            return this.rejected_.promise();
+        }
     };
     /**
      * Return a promise that will resolve once the widget with given ident has fired
@@ -61,7 +74,16 @@ Mapbender.ElementRegistry = (function($){
      * @returns {Promise|null}
      */
     ElementRegistry.prototype.waitReady = function(ident) {
-        return this.getPromises_(ident).ready.promise();
+        var matches = this.match_(ident);
+        if (matches.length > 1) {
+            console.warn("Matched multiple elements, waiting on first", ident, matches);
+        }
+        if (matches.length) {
+            return matches[0].ready.promise();
+        } else {
+            console.error("No element match for ident", ident);
+            return this.rejected_.promise();
+        }
     };
     /**
      * Adds given dom node to tracking, assuming it will be the target of an element widget
@@ -141,45 +163,78 @@ Mapbender.ElementRegistry = (function($){
             }
         }
     };
-    ElementRegistry.prototype.getPromises_ = function(ident) {
+    /**
+     * Look for tracked element(s) matching given ident (id or .class-name) and
+     * return the corresponding promise bundles (as Array).
+     *
+     * @param {string|int} ident
+     * @returns {Array<ElementRegistry~promisesBundle>}
+     * @private
+     */
+    ElementRegistry.prototype.match_ = function(ident) {
         if (ident.length > 1 && ident[0] === '.') {
             // Leading dot: treat ident as a class name
-            var candidates = this.classIndex[ident.slice(1)];
-            if (candidates && candidates.length) {
-                if (candidates.length > 1) {
-                    console.warn("Matched multiple elements, returning first", ident, candidates);
-                }
-                /** @todo: find a clean API to support multiple matches */
-                return this.promisesBundles[candidates[0]];
+            var candidateOffsets = this.classIndex[ident.slice(1)];
+            if (candidateOffsets && candidateOffsets.length) {
+                var bundles = this.promisesBundles;
+                return candidateOffsets.map(offset, function(offset) {
+                    return bundles[offset];
+                });
             }
         } else {
             // Treat ident as a DOM id
             // Force string, no leading hash
             var id = ('' + ident).replace(/^#*/, '');
             if (typeof this.idIndex[id] !== 'undefined') {
-                return this.promisesBundles[this.idIndex[id]];
+                return [this.promisesBundles[this.idIndex[id]]];
             }
         }
-        // No match => error
-        throw new Error("No tracking promises bundle for given element ident " + ident);
+        // No matches
+        return [];
     };
+    /**
+     * Look for a single tracked element matching given ident (id or .class-name).
+     * Unlike basic match_, this method throws an Error unless we match exactly one
+     * element.
+     *
+     * @param {string|int} ident
+     * @returns ElementRegistry~promisesBundle
+     * @private
+     */
+    ElementRegistry.prototype.matchSingle_ = function(ident) {
+        var matches = this.match_(ident);
+        if (!matches.length) {
+            throw new Error("No matching element for " + ident);
+        }
+        if (matches.length > 1) {
+            throw new Error("Unexpected multiple matches for " + ident);
+        }
+        return matches[0];
+    };
+    /**
+     * @param {string|int} ident can be id or .class-name, but must be unique in the DOM.
+     * @param instance
+     */
     ElementRegistry.prototype.markCreated = function(ident, instance) {
-        var bundle = this.getPromises_(ident);
+        var bundle = this.matchSingle_(ident);
         bundle.instance = instance;
         bundle.created.resolveWith(null, [instance]);
     };
+    /**
+     * @param {string|int} ident can be id or .class-name, but must be unique in the DOM.
+     */
     ElementRegistry.prototype.markReady = function(ident) {
-        var bundle = this.getPromises_(ident);
+        var bundle = this.matchSingle_(ident);
         bundle.readyEvent.resolve();
     };
     /**
      * Notify all dependents on widget with given ident that creation has failed and ready event
      * will never fire.
      *
-     * @param {string|int} ident either '.class-name' or the dom id
+     * @param {string|int} ident can be id or .class-name, but must be unique in the DOM.
      */
     ElementRegistry.prototype.markFailed = function(ident) {
-        var bundle = this.getPromises_(ident);
+        var bundle = this.matchSingle_(ident);
         bundle.ready.reject();
         bundle.created.reject();
     };
