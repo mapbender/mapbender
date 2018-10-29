@@ -14,9 +14,6 @@
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
                 return;
             }
-            if (this.options.useDeclarative === true) {
-                Mapbender.Util.addDispatcher(document);
-            }
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){

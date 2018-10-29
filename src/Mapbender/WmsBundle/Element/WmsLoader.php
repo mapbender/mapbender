@@ -75,7 +75,8 @@ class WmsLoader extends Element
         $files = array(
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                'mapbender.element.wmsloader.js'),
+                'mapbender.element.wmsloader.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js'),
             'css' => array('@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss'),
             'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));
         return $files;
@@ -106,6 +107,21 @@ class WmsLoader extends Element
             $configuration['wms_id'] = $wmsId;
         }
         return $configuration;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAssets()
+    {
+        $files = self::listAssets();
+
+        $config = $this->getConfiguration();
+        if (!(isset($config['useDeclarative']) && $config['useDeclarative'] === true)) {
+            $idx = array_search('@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js', $files['js']);
+            unset($files['js'][$idx]);
+        }
+        return $files;
     }
 
     /**

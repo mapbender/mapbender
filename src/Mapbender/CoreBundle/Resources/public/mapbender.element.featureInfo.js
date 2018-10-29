@@ -249,7 +249,7 @@
                         self._addContent(mqLayer, iframe);
                         var doc = document.getElementById(uuid).contentWindow.document;
                         iframe.on('load', function(){
-                            if (Mapbender.declarative) {
+                            if (Mapbender.Util.addDispatcher) {
                                Mapbender.Util.addDispatcher(doc);
                             }
                             iframe.data('loaded', true);
