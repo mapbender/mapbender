@@ -98,6 +98,9 @@ Mapbender.ElementRegistry = (function($){
             // Leading dot: treat ident as a class name
             var candidates = this.classIndex[ident.slice(1)];
             if (candidates && candidates.length) {
+                if (candidates.length > 1) {
+                    console.warn("Matched multiple elements, returning first", ident, candidates);
+                }
                 /** @todo: find a clean API to support multiple matches */
                 return this.promisesBundles[candidates[0]];
             }
