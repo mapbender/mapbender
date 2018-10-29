@@ -51,19 +51,10 @@ Mapbender.ElementRegistry = (function($){
      * This promise will reject if the widget constructor throws an error.
      *
      * @param {string} ident id (leading hash optional) or class name (leading '.' required)
-     * @returns {Promise|null}
+     * @returns {Promise}
      */
     ElementRegistry.prototype.waitCreated = function(ident) {
-        var matches = this.match_(ident);
-        if (matches.length > 1) {
-            console.warn("Matched multiple elements, waiting on first", ident, matches);
-        }
-        if (matches.length) {
-            return matches[0].created.promise();
-        } else {
-            console.error("No element match for ident", ident);
-            return this.rejected_.promise();
-        }
+        return this.wait_(ident, 'created');
     };
     /**
      * Return a promise that will resolve once the widget with given ident has fired
@@ -71,15 +62,27 @@ Mapbender.ElementRegistry = (function($){
      * This promise will reject if the widget constructor throws an error.
      *
      * @param {string} ident id (leading hash optional) or class name (leading '.' required)
-     * @returns {Promise|null}
+     * @returns {Promise}
      */
     ElementRegistry.prototype.waitReady = function(ident) {
+        return this.wait_(ident, 'ready');
+    };
+    /**
+     * Returns the Promise at bundleKey in the promises bundle matched by given ident.
+     * If no tracked element matches ident, returns an already rejected Promise.
+     *
+     * @param {string} ident id (leading hash optional) or class name (leading '.' required)
+     * @param {string} bundleKey 'created' or 'ready'
+     * @returns {Promise}
+     * @private
+     */
+    ElementRegistry.prototype.wait_ = function(ident, bundleKey) {
         var matches = this.match_(ident);
         if (matches.length > 1) {
             console.warn("Matched multiple elements, waiting on first", ident, matches);
         }
         if (matches.length) {
-            return matches[0].ready.promise();
+            return matches[0][bundleKey].promise();
         } else {
             console.error("No element match for ident", ident);
             return this.rejected_.promise();
