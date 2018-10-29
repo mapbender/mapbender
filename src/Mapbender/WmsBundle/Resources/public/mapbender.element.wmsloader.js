@@ -207,6 +207,9 @@
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
+                if (sourceOpts.global.options.treeOptions.selected !== true) {
+                    self._setSelected(sourceDef, sourceOpts);
+                }
                 if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
                     mbMap.addSource(sourceDef, false);
                 }
@@ -215,6 +218,17 @@
             // @todo: find a way to do this directly on the map, without using the layertree
             // @todo: fix default for newly added source (no fi) to match default layertree visual (fi on)
              $('.mb-element-layertree .featureInfoWrapper input[type="checkbox"]').trigger('change');
+        },
+        _setSelected: function(sourceDef, sourceOpts) {
+            $.each(sourceDef.configuration.children, function(idx, group) {
+                $.each(group.children, function(idy, child) {
+                    if (sourceOpts.layers.hasOwnProperty(child.options.name)) {
+                        child.options.treeOptions.selected = sourceOpts.layers[child.options.name].options.treeOptions.selected;
+                    } else {
+                        child.options.treeOptions.selected = false;
+                    }
+                });
+            });
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
             Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
