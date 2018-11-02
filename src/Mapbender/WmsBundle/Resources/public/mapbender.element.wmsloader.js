@@ -205,7 +205,7 @@
                 sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
                 if (sourceOpts.global.options.treeOptions.selected !== true) {
-                    self._setSelected(sourceDef, sourceOpts);
+                    self._setSelected(sourceDef.configuration, sourceOpts);
                 }
                 if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
                     mbMap.addSource(sourceDef, false);
@@ -216,15 +216,24 @@
             // @todo: fix default for newly added source (no fi) to match default layertree visual (fi on)
              $('.mb-element-layertree .featureInfoWrapper input[type="checkbox"]').trigger('change');
         },
-        _setSelected: function(sourceDef, sourceOpts) {
-            $.each(sourceDef.configuration.children, function(idx, group) {
-                $.each(group.children, function(idy, child) {
+        _setSelected: function(config, sourceOpts) {
+            var self = this;
+            $.each(config.children, function(idx, child) {
+                if (child.options && child.options.treeOptions) {
                     if (sourceOpts.layers.hasOwnProperty(child.options.name)) {
-                        child.options.treeOptions.selected = sourceOpts.layers[child.options.name].options.treeOptions.selected;
+                        var layerOpts = sourceOpts.layers[child.options.name];
+                        if (layerOpts.options && layerOpts.options.treeOptions) {
+                            child.options.treeOptions.selected = layerOpts.options.treeOptions.selected;
+                        } else {
+                            child.options.treeOptions.selected = false;
+                        }
                     } else {
                         child.options.treeOptions.selected = false;
                     }
-                });
+                }
+                if (child.children) {
+                    self._setSelected(child, sourceOpts);
+                }
             });
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
