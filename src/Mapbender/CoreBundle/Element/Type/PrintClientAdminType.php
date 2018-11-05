@@ -57,6 +57,9 @@ class PrintClientAdminType extends AbstractType
             ->add('legend', 'checkbox',array('required' => false))
             ->add('legend_default_behaviour', 'checkbox',array('required' => false))
             ->add('optional_fields', new YAMLConfigurationType(), array('required' => false,'attr' => array('class' => 'code-yaml')))
+            ->add('required_fields_first', 'checkbox', array(
+                'required' => false,
+            ))
             ->add('replace_pattern', new YAMLConfigurationType(),array('required' => false,'attr' => array('class' => 'code-yaml')))
             ->add('templates', 'collection', array(
                 'type' => new PrintClientTemplateAdminType(),

@@ -325,6 +325,7 @@ mb:
           rotatable: Drehbar
           legend: 'Legende drucken'
           legend_default_behaviour: 'Legenden Checkbox aktiv'
+          required_fields_first: Pflichtfelder ganz oben anzeigen
       copyright:
         label:
           autoopen: 'Automatisches Öffnen'
