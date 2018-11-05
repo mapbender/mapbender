@@ -1,10 +1,16 @@
-(function($){
-    $(document).on('click', '[mb-action]', function(e){
-        var clel = $(e.target);
-        if(Mapbender.declarative && Mapbender.declarative[clel.attr('mb-action')] && typeof Mapbender.declarative[clel.attr('mb-action')] === 'function'){
-            e.preventDefault();
-            Mapbender.declarative[clel.attr('mb-action')](clel);
-        }
-        return false;
-    });
+(function($) {
+    window.Mapbender = Mapbender || {};
+    Mapbender.Util = Mapbender.Util || {};
+    Mapbender.Util.addDispatcher = function (doc) {
+        $(doc).on('click', '[mb-action]', function(e) {
+            var clel = $(e.target);
+            var actionValue = clel.attr('mb-action');
+            if(Mapbender.declarative && Mapbender.declarative[actionValue] && typeof Mapbender.declarative[actionValue] === 'function') {
+                e.preventDefault();
+                Mapbender.declarative[actionValue](clel);
+            }
+            return false;
+        });
+    };
+    Mapbender.Util.addDispatcher(document);
 })(jQuery);
