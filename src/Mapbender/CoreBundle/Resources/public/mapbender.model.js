@@ -1125,6 +1125,9 @@ Mapbender.Model = {
             var indexB = olMap.getLayerIndex(self.map.layersList[b.mqlid].olLayer);
             return indexA - indexB;
         });
+        this.mbMap.fireModelEvent({
+            name: 'sourcesreordered'
+        });
     },
     /*
      * Changes the map's projection.
