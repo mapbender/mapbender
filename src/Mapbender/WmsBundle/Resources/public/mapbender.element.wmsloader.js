@@ -205,7 +205,9 @@
                 sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
                 if (sourceOpts.global.options.treeOptions.selected !== true) {
-                    self._setSelected(sourceDef.configuration, sourceOpts);
+                    $.each(sourceDef.configuration.children, function(idx, child) {
+                        self._setSelected(child, sourceOpts);
+                    });
                 }
                 if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
                     mbMap.addSource(sourceDef, false);
