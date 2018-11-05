@@ -6,17 +6,6 @@
     {% endif %}
     
     <form id="formats" action="{{ submitUrl }}" method="post" target="{{ formTarget }}">
-        <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
-        <div class="dropdown">
-            <select name="template" class="hiddenDropdown">
-                {% for id, template in configuration.templates %}
-                    <option value="{{ id }}">{{ template.label }}</option>
-                {% endfor %}
-            </select>
-            <div class="dropdownValue iconDown"></div>
-            <ul class="dropdownList"></ul>
-        </div>
-
         {# render required extra fields on top of the form if configured #}
         {% if configuration.optional_fields is not empty and configuration.required_fields_first %}
             {% for key,field in configuration.optional_fields %}
@@ -28,6 +17,17 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
+
+        <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
+        <div class="dropdown">
+            <select name="template" class="hiddenDropdown">
+                {% for id, template in configuration.templates %}
+                    <option value="{{ id }}">{{ template.label }}</option>
+                {% endfor %}
+            </select>
+            <div class="dropdownValue iconDown"></div>
+            <ul class="dropdownList"></ul>
+        </div>
 
         <label class="labelInput">{{ 'mb.core.printclient.label.quality' | trans }}</label>
         <div class="dropdown">
