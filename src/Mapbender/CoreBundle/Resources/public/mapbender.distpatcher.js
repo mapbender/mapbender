@@ -1,5 +1,5 @@
 (function($) {
-    Mapbender = Mapbender || {};
+    window.Mapbender = Mapbender || {};
     Mapbender.Util = Mapbender.Util || {};
     Mapbender.Util.addDispatcher = function (doc) {
         $(doc).on('click', '[mb-action]', function(e) {
