@@ -36,7 +36,9 @@
     {{ form_label(form.configuration.templates) }}{{ form_widget(form.configuration.templates) }}
     <hr>
     <br>
-    {{ form_label(form.configuration.optional_fields) }}{{ form_widget(form.configuration.optional_fields) }}
+    {{ form_row(form.configuration.optional_fields) }}
+    {{ form_widget(form.configuration.required_fields_first) }}<label for="{{form.configuration.required_fields_first.vars.id}}" class="labelCheck">{{'mb.core.admin.printclient.label.required_fields_first'|trans}}</label>
+    <div class="clearContainer"></div>
     {{ form_label(form.configuration.replace_pattern) }}{{ form_widget(form.configuration.replace_pattern) }}
     
 </div>
