@@ -1,13 +1,16 @@
 # Changelog
-* **dev-release/3.0.7 @ 341bf11**
+* **dev-release/3.0.7 @ dffb97f**
   - [Regression fix] Restore either-or privilege checking behaviour for access to instance tunnel and metadata actions ([341bf11](https://github.com/mapbender/mapbender/commit/341bf117812173b3d9e211be8d5498750d73bf2d))
   - [Regression fix] Fix erratic behaviour when dynamically reodering sources ([09050ee](https://github.com/mapbender/mapbender/commit/09050eeecd81bd6a003e62c3a0d54f1de8a03cbb))
   - [Regression fix] Remove 'required' asterisk from non-required fields configured into print client form ([PR#1036](https://github.com/mapbender/mapbender/pull/1036))
   - [Regression fix] Remove impossible grants check preventing non-root users from editing a source instance ([e1919a0](https://github.com/mapbender/mapbender/commit/e1919a012addb523fc21d50deab6f23bd64bc520))
+  - FeatureInfo: extend support for "declarative" WmsLoader links to "show original" iframe rendering mode ([PR#1042](https://github.com/mapbender/mapbender/pull/1042))
   - Print: Fix broken overview for non-metric current map units ([c77fc88](https://github.com/mapbender/mapbender/commit/c77fc881af8290e5246f3804bc84948adcdd9e6f))
   - Print: Fix zoom level and center for overview when Overview Element is set to 'fixed' ([PR#1032](https://github.com/mapbender/mapbender/pull/1032))
   - Print: Fix non-updating print region when reopening PrintClient dialog after zooming the map ([PR#1038](https://github.com/mapbender/mapbender/pull/1038) collateral)
   - Print / ImageExport: pre-filter null geometries, avoiding followup server errors ([PR#1038](https://github.com/mapbender/mapbender/pull/1038) collateral)
+  - PrintClient frontend form: allow control of ordering of "optional fields" marked as required versus the rest of the generated form ([PR#1043](https://github.com/mapbender/mapbender/pull/1043), followup to v3.0.7.5 form ordering changes)
+  - [Framework] Client ElementRegistry now based on promises ([PR#1041](https://github.com/mapbender/mapbender/pull/1041))
   - [Framework] Add [Mapbender.Util.SourceTree](https://github.com/mapbender/mapbender/blob/656fae688b2b292687c628f10cb521663abdcf30/src/Mapbender/CoreBundle/Resources/public/mapbender-model/sourcetree-util.js) static method collection to unify layerset / source traversal
   - Support Elements requiring (uncommpiled) CSS assets in all the same ways as for JS assets ([PR#1020](https://github.com/mapbender/mapbender/pull/1020))
   - Geosource: add missing change event when toggling layer ([6ea27e1](https://github.com/mapbender/mapbender/commit/6ea27e11136c7c243ee6c25d7fde21525a214bc0))
