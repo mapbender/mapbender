@@ -180,7 +180,7 @@ Mapbender.ElementRegistry = (function($){
             var candidateOffsets = this.classIndex[ident.slice(1)];
             if (candidateOffsets && candidateOffsets.length) {
                 var bundles = this.promisesBundles;
-                return candidateOffsets.map(offset, function(offset) {
+                return candidateOffsets.map(function(offset) {
                     return bundles[offset];
                 });
             }
