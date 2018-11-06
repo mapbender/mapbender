@@ -419,13 +419,10 @@
 
             if (widget.isPopUpDialog) {
 
-                if (widget.popup) {
-
-                    if (widget.popupWindow.$element) {
+                    if (widget.popupWindow && widget.popupWindow.$element) {
                         widget.popupWindow.destroy();
                         widget.popupWindow = null;
                     }
-                }
 
             }
             if (widget.callback) {

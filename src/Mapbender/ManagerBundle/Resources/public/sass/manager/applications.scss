@@ -163,7 +163,6 @@
 .elementPopup {
   width: $elementPopupWidth;
   min-width: $popupModalWidth;
-  min-height: $elementPopupHeight;
   .popupContent, .popupSubContent {
     min-width: $elementPopupBodyWidth;
   }
@@ -171,8 +170,6 @@
 
 .popup.new-instance-select {
   min-width: max($popupModalWidth, $elementPopupWidth);
-  min-height: $elementPopupHeight;
-  height: 80%;
   width: 70%;
 }
 

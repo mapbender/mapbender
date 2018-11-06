@@ -249,6 +249,9 @@
                         self._addContent(mqLayer, iframe);
                         var doc = document.getElementById(uuid).contentWindow.document;
                         iframe.on('load', function(){
+                            if (Mapbender.Util.addDispatcher) {
+                               Mapbender.Util.addDispatcher(doc);
+                            }
                             iframe.data('loaded', true);
                             $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
                             iframe.contents().find("body").css("background","transparent");
@@ -524,18 +527,12 @@
         ready: function(callback) {
             if (this.readyState === true) {
                 callback();
-            } else {
-                this.readyCallbacks.push(callback);
             }
         },
         /**
          *
          */
         _ready: function() {
-            for (callback in this.readyCallbacks) {
-                callback();
-                delete(this.readyCallbacks[callback]);
-            }
             this.readyState = true;
         }
     });

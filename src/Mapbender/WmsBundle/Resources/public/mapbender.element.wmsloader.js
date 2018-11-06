@@ -7,13 +7,13 @@
             splitLayers: false,
             wms_url: null
         },
+        loadedSourcesCount: 0,
         elementUrl: null,
         _create: function(){
             var self = this;
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
                 return;
             }
-
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
@@ -193,16 +193,22 @@
             });
         },
         _addSources: function(sourceDefs, sourceOpts) {
+            var srcIdPrefix = 'wmsloader-' + $(this.element).attr('id');
             var self = this;
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
             $.each(sourceDefs, function(idx, sourceDef) {
-                var opts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
+                var findOpts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
+                var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
+                sourceDef.id = sourceId;
+                sourceDef.origId = sourceId;
+                Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
-                if(!sourceOpts.global.mergeSource){
-                    mbMap.addSource(sourceDef);
-                }else if(mbMap.model.findSource(opts).length === 0){
-                    mbMap.addSource(sourceDef);
+                if (sourceOpts.global.options.treeOptions.selected !== true) {
+                    self._setSelected(sourceDef.configuration, sourceOpts);
+                }
+                if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
+                    mbMap.addSource(sourceDef, false);
                 }
             });
             // Enable feature info
@@ -210,21 +216,35 @@
             // @todo: fix default for newly added source (no fi) to match default layertree visual (fi on)
              $('.mb-element-layertree .featureInfoWrapper input[type="checkbox"]').trigger('change');
         },
+        _setSelected: function(config, sourceOpts) {
+            var self = this;
+            $.each(config.children, function(idx, child) {
+                if (child.options && child.options.treeOptions) {
+                    if (sourceOpts.layers.hasOwnProperty(child.options.name)) {
+                        var layerOpts = sourceOpts.layers[child.options.name];
+                        if (layerOpts.options && layerOpts.options.treeOptions) {
+                            child.options.treeOptions.selected = layerOpts.options.treeOptions.selected;
+                        } else {
+                            child.options.treeOptions.selected = false;
+                        }
+                    } else {
+                        child.options.treeOptions.selected = false;
+                    }
+                }
+                if (child.children) {
+                    self._setSelected(child, sourceOpts);
+                }
+            });
+        },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
             Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
         },
         ready: function(callback){
             if(this.readyState === true){
                 callback();
-            }else{
-                this.readyCallbacks.push(callback);
             }
         },
         _ready: function(){
-            for(callback in this.readyCallbacks){
-                callback();
-                delete(this.readyCallbacks[callback]);
-            }
             this.readyState = true;
         },
         _destroy: $.noop

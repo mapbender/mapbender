@@ -14,7 +14,7 @@
         model: null,
         map: null,
         readyState: false,
-        readyCallbacks: [],
+
         /**
          * Creates the map widget
          */
@@ -27,10 +27,10 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
-            this.options = {
+            $.extend(this.options, {
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
-            };
+            });
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();
@@ -73,12 +73,9 @@
         /**
          *
          */
-        addSource: function(sourceDef){
-            this.model.addSource({
-                add: {
-                    sourceDef: sourceDef
-                }
-            });
+        addSource: function(sourceDef, mangleIds) {
+            // legacy support: callers that do not know about the mangleIds argument most certainly want ids mangled
+            this.model.addSourceFromConfig(sourceDef, !!mangleIds || typeof mangleIds === 'undefined');
         },
         /**
          *
@@ -228,14 +225,10 @@
         },
         /**
          * Returns the scale list
+         * @deprecated, just get options.scales yourself
          */
         scales: function(){
-            var scales = [];
-            for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
-                var res = this.map.olMap.getResolutionForZoom(i);
-                scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
-            }
-            return scales;
+            return this.options.scales;
         },
         /**
          * Sets opacity to source
@@ -258,18 +251,12 @@
         ready: function(callback){
             if(this.readyState === true) {
                 callback();
-            } else {
-                this.readyCallbacks.push(callback);
             }
         },
         /**
          *
          */
         _ready: function(){
-            for(callback in this.readyCallbacks) {
-                callback();
-                delete(this.readyCallbacks[callback]);
-            }
             this.readyState = true;
         },
         /**

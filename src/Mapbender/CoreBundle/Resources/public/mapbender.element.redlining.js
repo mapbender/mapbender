@@ -16,7 +16,6 @@
         map: null,
         layer: null,
         activeControl: null,
-        selectedFeature: null,
         geomCounter: 0,
         rowTemplate: null,
         _create: function(){
@@ -54,6 +53,8 @@
                 var styleMap = new OpenLayers.StyleMap({'default': defaultStyle}, {extendDefault: true});
                 this.layer = new OpenLayers.Layer.Vector('Redlining', {styleMap: styleMap});
                 this.map.addLayer(this.layer);
+                this.editControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true, active: false});
+                this.map.addControl(this.editControl);
             }
             if (this.options.display_type === 'dialog'){
                 this._open();
@@ -126,8 +127,8 @@
         },
         _newControl: function(e){
             var self = this;
+            this._endEdit();
             if($(e.target).hasClass('active') === true) {
-                this._deactivateControl();
                 return;
             }
             this._deactivateControl();
@@ -179,15 +180,15 @@
                     $('#redlining-text-wrapper', this.element).removeClass('hidden');
                     this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
                             OpenLayers.Handler.Point, {
-                                featureAdded: function (e) {
+                                featureAdded: function (feature) {
                                     if ($('input[name=label-text]', self.element).val().trim() === '') {
                                         Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
-                                        self._removeFeature(e);
+                                        self._removeFeature(feature);
                                     } else {
-                                        e.style = self._generateTextStyle($('input[name=label-text]', this.element).val());
-                                        self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
+                                        feature.style = self._generateTextStyle($('input[name=label-text]', self.element).val());
+                                        self._addToGeomList(feature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
                                         self.layer.redraw();
-                                        $('input[name=label-text]', this.element).val('');
+                                        $('input[name=label-text]', self.element).val('');
                                     }
                                 }
                             });
@@ -204,17 +205,19 @@
             $('.geometry-table tr', this.element).remove();
             this.layer.removeAllFeatures();
         },
-        _deactivateControl: function(){
-            if(this.selectedFeature) {
-                this.activeControl.unselectFeature(this.selectedFeature);
-                if (this.selectedFeature.style && this.selectedFeature.style.label) {
-                    $('input[name=label-text]', this.element).off('keyup', $.proxy(this._writeText, this));
-                    this.selectedFeature.style = this._setTextDefault(this.selectedFeature.style);
-                    this.layer.redraw();
-                }
-                this.selectedFeature = null;
+        _endEdit: function(nextControl) {
+            var editFeature = (this.editControl || {}).feature;
+            if (nextControl !== this.editControl) {
+                this.editControl.deactivate();
             }
-            if(this.activeControl !== null) {
+            if (editFeature && editFeature.style && editFeature.style.label) {
+                editFeature.style = this._setTextDefault(editFeature.style);
+                editFeature.layer.redraw();
+            }
+        },
+        _deactivateControl: function(){
+            $('input[name=label-text]', this.element).off('keyup');
+            if (this.activeControl !== null) {
                 this.activeControl.deactivate();
                 this.activeControl.destroy();
                 this.map.removeControl(this.activeControl);
@@ -250,26 +253,27 @@
             $('.geometry-zoom', $geomtable).on('click', $.proxy(self._zoomToFeature, self));
         },
         _removeFromGeomList: function(e){
-            this._deactivateControl();
             var $tr = $(e.target).parents("tr:first");
-            this.selectedFeature = this.layer.getFeatureById($tr.attr('data-id'));
-            this._removeFeature(this.selectedFeature);
+            var eventFeature = this.layer.getFeatureById($tr.attr('data-id'));
+            this._removeFeature(eventFeature);
             $tr.remove();
-            this.selectedFeature = null;
         },
         _modifyFeature: function(e){
+            var eventFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
             this._deactivateControl();
-            this.selectedFeature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
-            if(this.selectedFeature.style && this.selectedFeature.style.label) {
-                this.selectedFeature.style = this._setTextEdit(this.selectedFeature.style);
-                $('input[name=label-text]', this.element).val(this.selectedFeature.style.label);
+            this._endEdit(this.editControl);
+            if (eventFeature.style && eventFeature.style.label) {
+                eventFeature.style = this._setTextEdit(eventFeature.style);
+                $('input[name=label-text]', this.element).val(eventFeature.style.label);
                 $('#redlining-text-wrapper', this.element).removeClass('hidden');
-                $('input[name=label-text]', this.element).on('keyup', $.proxy(this._writeText, this));
+                $('input[name=label-text]', this.element).on('keyup', $.proxy(this._writeText, this, eventFeature));
             }
-            this.activeControl = new OpenLayers.Control.ModifyFeature(this.layer, {standalone: true});
-            this.map.addControl(this.activeControl);
-            this.activeControl.selectFeature(this.selectedFeature);
-            this.activeControl.activate();
+            this.editControl.activate();
+            this.editControl.selectFeature(eventFeature);
+            // This might seem redundant, but without a second activate, the first edit in the session
+            // just does not work; Style changes, vertices are displayed, but you can't pull them.
+            // Second call to activate() fixes this.
+            this.editControl.activate();
         },
         _zoomToFeature: function(e){
             this._deactivateControl();
@@ -299,16 +303,16 @@
             return style;
         },
         
-        _writeText: function(e) {
-            if (this.selectedFeature && this.selectedFeature.style && this.selectedFeature.style.label) {
-                var value;
-                if ((value = $('input[name=label-text]', this.element).val().trim()) === '') {
+        _writeText: function(feature) {
+            if (feature.style && feature.style.label) {
+                var inputText = $('input[name=label-text]', this.element).val().trim();
+                if (!inputText) {
                     Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
                 } else {
-                    this.selectedFeature.style.label = value;
-                    var label = this._getGeomLabel(this.selectedFeature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'), 'text');
-                    $('.geometry-table tr[data-id="'+this.selectedFeature.id+'"] .geometry-name', this.element).text(label);
-                    this.layer.redraw();
+                    feature.style.label = inputText;
+                    var label = this._getGeomLabel(feature, Mapbender.trans('mb.core.redlining.geometrytype.text.label'), 'text');
+                    $('.geometry-table tr[data-id="'+feature.id+'"] .geometry-name', this.element).text(label);
+                    feature.layer.redraw();
                 }
             }
         },
@@ -328,18 +332,12 @@
         ready: function(callback){
             if(this.readyState === true) {
                 callback();
-            } else {
-                this.readyCallbacks.push(callback);
             }
         },
         /**
          *
          */
         _ready: function(){
-            for(callback in this.readyCallbacks) {
-                callback();
-                delete(this.readyCallbacks[callback]);
-            }
             this.readyState = true;
         }
     });

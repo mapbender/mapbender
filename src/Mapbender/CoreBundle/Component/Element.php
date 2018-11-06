@@ -12,6 +12,7 @@ use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -679,6 +680,23 @@ abstract class Element
     public function updateAppConfig($configIn)
     {
         return $configIn;
+    }
+
+    /**
+     * @param string $action
+     * @param mixed $referenceType optional; one of the UrlGenerator constants
+     * @return string
+     */
+    public function getHttpActionUrl($action, $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    {
+        /** @var UrlGeneratorInterface $router */
+        $router = $this->container->get('router');
+        $params = array(
+            'slug' => $this->application->getEntity()->getSlug(),
+            'id' => $this->entity->getId(),
+            'action' => $action,
+        );
+        return $router->generate('mapbender_core_application_element', $params, $referenceType);
     }
 
     ##### Automagic calculation for template paths and admin type ####

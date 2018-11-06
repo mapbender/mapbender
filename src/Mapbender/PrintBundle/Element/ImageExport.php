@@ -86,17 +86,25 @@ class ImageExport extends Element
         return 'MapbenderPrintBundle:ElementAdmin:imageexport.html.twig';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
+    public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return $this->container->get('templating')
-                ->render('MapbenderPrintBundle:Element:imageexport.html.twig', array(
-                    'id' => $this->getId(),
-                    'title' => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()
+        return 'MapbenderPrintBundle:Element:imageexport.html.twig';
+    }
+
+    public function getFrontendTemplateVars()
+    {
+        $router = $this->container->get('router');
+        $submitUrl = $router->generate('mapbender_core_application_element', array(
+            'slug' => $this->application->getEntity()->getSlug(),
+            'id' => $this->entity->getId(),
+            'action' => 'export',
         ));
+        return array(
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'submitUrl' => $submitUrl,
+            'formTarget' => '',
+        );
     }
 
     /**

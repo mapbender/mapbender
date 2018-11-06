@@ -1,6 +1,6 @@
 (function($) {
 
-    $.widget("mapbender.mbPrintClient",  {
+    $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
             style: {
                 fillColor:     '#ffffff',
@@ -20,19 +20,12 @@
         height: null,
         rotateValue: 0,
         overwriteTemplates: false,
-
-        _create: function() {
-            if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
-                return;
-            }
-            var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
-        },
+        digitizerData: null,
+        printBounds: null,
 
         _setup: function(){
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.map = $('#' + this.options.target).data('mapbenderMbMap');
 
             $('select[name="scale_select"]', this.element)
                 .on('change', $.proxy(this._updateGeometry, this));
@@ -61,19 +54,13 @@
                 });
                 $('.printSubmit', this.element).on('click', $.proxy(this._print, this));
             }
-
-            this._trigger('ready');
-            this._ready();
-        },
-
-        defaultAction: function(callback) {
-            this.open(callback);
+            $('form', this.element).on('submit', this._onSubmit.bind(this));
+            this._super();
         },
 
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
-            var me = $(this.element);
             if (this.options.type === 'dialog') {
                 if(!this.popup || !this.popup.$element){
                     this.popup = new Mapbender.Popup2({
@@ -105,13 +92,11 @@
                             }
                         });
                     this.popup.$element.on('close', $.proxy(this.close, this));
-                }else{
-                     return;
+                    this._getTemplateSize();
+                    this._updateElements(true);
+                    this._setScale();
                 }
-                me.show();
-                this._getTemplateSize();
-                this._updateElements(true);
-                this._setScale();
+                $(this.element).show();
             }
         },
 
@@ -163,9 +148,7 @@
         },
 
         _updateGeometry: function(reset) {
-            var width = this.width,
-                height = this.height,
-                scale = this._getPrintScale(),
+            var scale = this._getPrintScale(),
                 rotationField = $(this.element).find('input[name="rotation"]');
 
             // remove all not numbers from input
@@ -174,30 +157,19 @@
             if (rotationField.val() === '' && this.rotateValue > '0'){
                 rotationField.val('0');
             }
-            var rotation = rotationField.val();
-            this.rotateValue = rotation;
+            this.rotateValue = rotationField.val();
 
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
-                if(null !== this.lastScale) {
-                //$('input[name="scale_text"]').val(this.lastScale).change();
-                }
                 return;
             }
             scale = parseInt(scale);
 
-            if(!(!isNaN(parseFloat(rotation)) && isFinite(rotation))) {
+            if (isNaN(parseFloat(this.rotateValue)) || !isFinite(this.rotateValue)) {
                 if(null !== this.lastRotation) {
                     rotationField.val(this.lastRotation).change();
                 }
             }
-            rotation= parseInt(-rotation);
-
-            this.lastScale = scale;
-
-            var world_size = {
-                x: width * scale / 100,
-                y: height * scale / 100
-            };
+            var rotation = parseInt(this.rotateValue) || 0;
 
             var center = (reset === true || !this.feature) ?
             this.map.map.olMap.getCenter() :
@@ -208,45 +180,30 @@
                 this.feature = null;
             }
 
+            // adjust for geodesic pixel aspect ratio so
+            // a) our print region selection rectangle appears with ~the same visual aspect ratio as
+            //    the main map region in the template, for any projection
+            // b) any pixel aspect distortion on geodesic projections is matched WYSIWIG in generated printout
+            var centerPixel = this.map.map.olMap.getPixelFromLonLat(center);
+            var kmPerPixel = this.map.map.olMap.getGeodesicPixelSize(centerPixel);
+            var pixelHeight = this.height * scale / (kmPerPixel.h * 1000);
+            var pixelAspectRatio = kmPerPixel.w / kmPerPixel.h;
+            var pixelWidth = this.width * scale * pixelAspectRatio / (kmPerPixel.w * 1000);
+
+            var pxBottomLeft = centerPixel.add(-0.5 * pixelWidth, -0.5 * pixelHeight);
+            var pxTopRight = centerPixel.add(0.5 * pixelWidth, 0.5 * pixelHeight);
+            var llBottomLeft = this.map.map.olMap.getLonLatFromPixel(pxBottomLeft);
+            var llTopRight = this.map.map.olMap.getLonLatFromPixel(pxTopRight);
             this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-                center.lon - 0.5 * world_size.x,
-                center.lat - 0.5 * world_size.y,
-                center.lon + 0.5 * world_size.x,
-                center.lat + 0.5 * world_size.y).toGeometry(), {});
-            this.feature.world_size = world_size;
+                llBottomLeft.lon,
+                llBottomLeft.lat,
+                llTopRight.lon,
+                llTopRight.lat
+            ).toGeometry(), {});
+            // copy bounds before rotation
+            this.printBounds = this.feature.geometry.getBounds().clone();
 
-            if(this.map.map.olMap.units === 'degrees' || this.map.map.olMap.units === 'dd') {
-                var centroid = this.feature.geometry.getCentroid();
-                var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
-                var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
-                var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
-
-                var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
-
-                var geodes_width = width * scale / (geodes_diag);
-                var geodes_height = height * scale / (geodes_diag);
-
-                var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
-                var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
-                var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
-                var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
-                var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
-                var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
-                var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
-                var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
-
-                this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-                    ll_lonlat.lon,
-                    ur_lonlat.lat,
-                    ur_lonlat.lon,
-                    ll_lonlat.lat).toGeometry(), {});
-                this.feature.world_size = {
-                    x: ur_lonlat.lon - ll_lonlat.lon,
-                    y: ur_lonlat.lat - ll_lonlat.lat
-                };
-            }
-
-            this.feature.geometry.rotate(rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
+            this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
             this.layer.addFeatures(this.feature);
             this.layer.redraw();
         },
@@ -290,235 +247,257 @@
         },
 
         _getPrintExtent: function() {
-            var data = {
-                extent: {},
-                center: {}
+            return {
+                extent: {
+                    width: this.printBounds.getWidth(),
+                    height: this.printBounds.getHeight()
+                },
+                center: {
+                    x: this.printBounds.getCenterLonLat().lon,
+                    y: this.printBounds.getCenterLonLat().lat
+                }
             };
-
-            data.extent.width = this.feature.world_size.x;
-            data.extent.height = this.feature.world_size.y;
-            data.center.x = this.feature.geometry.getBounds().getCenterLonLat().lon;
-            data.center.y = this.feature.geometry.getBounds().getCenterLonLat().lat;
-
-            return data;
         },
-
-        _print: function() {
-            var form = $('form#formats', this.element);
-            var extent = this._getPrintExtent();
-
-            // Felder für extent, center und layer dynamisch einbauen
-            var fields = $();
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'extent[width]',
-                value: extent.extent.width
-            }));
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'extent[height]',
-                value: extent.extent.height
-            }));
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'center[x]',
-                value: extent.center.x
-            }));
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'center[y]',
-                value: extent.center.y
-            }));
-
-            // extent feature
-            var feature_coords = new Array();
-            var feature_comp = this.feature.geometry.components[0].components;
-            for(var i = 0; i < feature_comp.length-1; i++) {
-                feature_coords[i] = new Object();
-                feature_coords[i]['x'] = feature_comp[i].x;
-                feature_coords[i]['y'] = feature_comp[i].y;
-            }
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'extent_feature',
-                value: JSON.stringify(feature_coords)
-            }));
-
-            // wms layer
-            var sources = this.map.getSourceTree(), lyrCount = 0;
-
+        /**
+         *
+         * @param sourceDef
+         * @param {number} [scale]
+         * @returns {{layers: *, styles: *}}
+         * @private
+         */
+        _getRasterVisibilityInfo: function(sourceDef, scale) {
+            var scale_ = scale || this._getPrintScale();
+            var toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: sourceDef.mqlid}};
+            var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale_, toChangeOpts);
+            return {
+                layers: geoSourceResponse.layers,
+                styles: geoSourceResponse.styles
+            };
+        },
+        /**
+         *
+         * @returns {Array<Object.<string, string>>} legend image urls mapped to layer title
+         * @private
+         */
+        _collectLegends: function() {
+            var legends = [];
+            var scale = this._getPrintScale();
             function _getLegends(layer) {
-                var legend = null;
-                if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected == true) {
-                    legend = {};
+                var legend = {};
+                if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected) {
                     legend[layer.options.title] = layer.options.legend.url;
                 }
                 if (layer.children) {
                     for (var i = 0; i < layer.children.length; i++) {
-                        var help = _getLegends(layer.children[i]);
-                        if (help) {
-                            legend = legend ? legend : {};
-                            for (key in help) {
-                                legend[key] = help[key];
-                            }
-                        }
+                        _.assign(legend, _getLegends(layer.children[i]));
                     }
                 }
                 return legend;
             }
-            var legends = [];
+            var sources = this._getRasterSourceDefs();
+            for (var i = 0; i < sources.length; ++i) {
+                var source = sources[i];
+                if (source.type === 'wms' && this._getRasterVisibilityInfo(source, scale).layers.length) {
+                    var ll = _getLegends(sources[i].configuration.children[0]);
+                    if (ll) {
+                        legends = legends.concat(ll);
+                    }
+                }
+            }
+            return legends;
+        },
+        _collectRasterLayerData: function() {
+            var sources = this._getRasterSourceDefs();
+            var scale = this._getPrintScale();
+
+            var dataOut = [];
 
             for (var i = 0; i < sources.length; i++) {
-                var layer = this.map.map.layersList[sources[i].mqlid],
-                        type = layer.olLayer.CLASS_NAME;
+                var sourceDef = sources[i];
+                var visLayers = this._getRasterVisibilityInfo(sourceDef, scale);
+                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+                if (visLayers.layers.length > 0) {
+                    var prevLayers = layer.params.LAYERS;
+                    var prevStyles = layer.params.STYLES;
+                    layer.params.LAYERS = visLayers.layers;
+                    layer.params.STYLES = visLayers.styles;
 
-                if (0 !== type.indexOf('OpenLayers.Layer.')) {
-                    continue;
-                }
-
-                if (Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
-                    var source = sources[i],
-                            scale = this._getPrintScale(),
-                            toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: source.mqlid}};
-                    var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
-                    if (visLayers.layers.length > 0) {
-                        var prevLayers = layer.olLayer.params.LAYERS;
-                        var prevStyles = layer.olLayer.params.STYLES;
-                        layer.olLayer.params.LAYERS = visLayers.layers;
-                        layer.olLayer.params.STYLES = visLayers.styles;
-
-                        var opacity = sources[i].configuration.options.opacity;
-                        var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
-                        lyrConf.opacity = opacity;
-
-                        // flag to change axis order
-                        lyrConf.changeAxis = this._changeAxis(layer.olLayer);
-
-                        $.merge(fields, $('<input />', {
-                            type: 'hidden',
-                            name: 'layers[' + lyrCount + ']',
-                            value: JSON.stringify(lyrConf),
-                            weight: this.map.map.olMap.getLayerIndex(layer.olLayer)
-                        }));
-                        layer.olLayer.params.LAYERS = prevLayers;
-                        layer.olLayer.params.STYLES = prevStyles;
-                        lyrCount++;
-
-                        if (sources[i].type === 'wms') {
-                            var ll = _getLegends(sources[i].configuration.children[0]);
-                            if (ll) {
-                                legends.push(ll);
-                            }
-                        }
-                    }
-                }
-            }
-
-            //legend
-            if($('input[name="printLegend"]',form).prop('checked')){
-                $.merge(fields, $('<input />', {
-                    type: 'hidden',
-                    name: 'legends',
-                    value: JSON.stringify(legends)
-                }));
-            }
-
-            // Iterating over all vector layers, not only the ones known to MapQuery
-            var geojsonFormat = new OpenLayers.Format.GeoJSON();
-            for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
-                var layer = this.map.map.olMap.layers[i];
-                if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
-                    continue;
-                }
-
-                var geometries = [];
-                for(var idx = 0; idx < layer.features.length; idx++) {
-                    var feature = layer.features[idx];
-                    if (!feature.onScreen(true)) continue
-
-                    if(this.feature.geometry.intersects(feature.geometry)){
-                        var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
-
-                        if(feature.style !== null){
-                            geometry.style = feature.style;
-                        }else{
-                            geometry.style = layer.styleMap.createSymbolizer(feature,feature.renderIntent);
-                        }
-                        // only visible features
-                        if(geometry.style.fillOpacity > 0 && geometry.style.strokeOpacity > 0){
-                            geometries.push(geometry);
-                        } else if (geometry.style.label !== undefined){
-                            geometries.push(geometry);
-                        }
-                    }
-                }
-
-                var lyrConf = {
-                    type: 'GeoJSON+Style',
-                    opacity: 1,
-                    geometries: geometries
-                };
-
-                $.merge(fields, $('<input />', {
-                    type: 'hidden',
-                    name: 'layers[' + (lyrCount + i) + ']',
-                    value: JSON.stringify(lyrConf),
-                    weight: this.map.map.olMap.getLayerIndex(layer)
-                }));
-            }
-
-            // overview map
-            var ovMap = this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap')[0],
-            count = 0;
-            if (undefined !== ovMap){
-                for(var i = 0; i < ovMap.layers.length; i++) {
-                    var url = ovMap.layers[i].getURL(ovMap.map.getExtent());
-                    var extent = ovMap.map.getExtent();
-                    var mwidth = extent.getWidth();
-                    var size = ovMap.size;
-                    var width = size.w;
-                    var res = mwidth / width;
-                    var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
-
-                    var overview = {};
-                    overview.url = url;
-                    overview.scale = scale;
-
+                    var opacity = sourceDef.configuration.options.opacity;
+                    var layerData = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.printBounds, sourceDef.configuration.options.proxy);
+                    layerData.opacity = opacity;
                     // flag to change axis order
-                    overview.changeAxis = this._changeAxis(ovMap.layers[i]);
+                    layerData.changeAxis = this._changeAxis(layer);
+                    dataOut.push(layerData);
 
-                    $.merge(fields, $('<input />', {
-                        type: 'hidden',
-                        name: 'overview[' + count + ']',
-                        value: JSON.stringify(overview)
-                    }));
-                    count++;
+                    layer.params.LAYERS = prevLayers;
+                    layer.params.STYLES = prevStyles;
                 }
             }
 
+            return dataOut;
+        },
+        /**
+         * Should return true if the given layer needs to be included in print
+         *
+         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
+         * @returns {boolean}
+         * @private
+         */
+        _filterGeometryLayer: function(layer) {
+            if (!this._super(layer)) {
+                return false;
+            }
+            // don't print own print extent preview layer
+            if (layer === this.layer) {
+                return false;
+            }
+            return true;
+        },
+        /**
+         * Should return true if the given feature should be included in print.
+         *
+         * @param {OpenLayers.Feature.Vector} feature
+         * @returns {boolean}
+         * @private
+         */
+        _filterFeature: function(feature) {
+            if (!this._super(feature)) {
+                return false;
+            }
+            if (!feature.geometry.intersects(this.feature.geometry)) {
+                return false;
+            }
+            // don't print own print extent preview feature}
+            if (feature === this.feature) {
+                return false;
+            }
+            return true;
+        },
+        _collectOverview: function() {
+            // overview map
+            var self = this;
+            var ovMap = (this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap') || [null])[0];
+            var changeAxis = false;
+            var overviewLayers = (ovMap && ovMap.layers || []).map(function(layer) {
+                // this is the same for all layers, basically set on first iteration
+                changeAxis = self._changeAxis(layer);
+                // NOTE: bbox / width / height are discarded and replaced by print backend
+                return layer.getURL(ovMap.map.getExtent());
+            });
+            if (overviewLayers.length) {
+                var ovCenter = ovMap.ovmap.getCenter();
+                return {
+                    layers: overviewLayers,
+                    center: {
+                        x: ovCenter.lon,
+                        y: ovCenter.lat
+                    },
+                    height: ovMap.ovmap.getExtent().getHeight(),
+                    changeAxis: changeAxis
+                };
+            } else {
+                return null;
+            }
+        },
+        _collectJobData: function() {
+            var extent = this._getPrintExtent();
+            var extentFeature = this.feature.geometry.components[0].components.map(function(component) {
+                return {
+                    x: component.x,
+                    y: component.y
+                };
+            });
+            var rasterLayers = this._collectRasterLayerData();
+            var geometryLayers = this._collectGeometryLayers();
+            var overview = this._collectOverview();
+
+            var data = {
+                extent: {
+                    width: extent.extent.width,
+                    height: extent.extent.height
+                },
+                center: {
+                    x: extent.center.x,
+                    y: extent.center.y
+                },
+                // @todo: this is pretty wild for an inlined expression, extract a method
+                'extent_feature': extentFeature,
+                layers: rasterLayers.concat(geometryLayers),
+                legends: this._collectLegends(),
+                overview: overview
+            };
+            if (this.digitizerData) {
+                _.assign(data, this.digitizerData);
+            }
+            return data;
+        },
+        _submitJob: function(jobData) {
+            var form = $('form#formats', this.element);
+            var fields = $();
+            var appendField = function(name, value) {
+                $.merge(fields, $('<input />', {
+                    type: 'hidden',
+                    name: name,
+                    value: value
+                }));
+            };
+            _.forEach(jobData, function(value, key) {
+                if (value === null || typeof value === 'undefined') {
+                    return;
+                }
+                switch (key) {
+                    case 'legends':
+                        if ($('input[name="printLegend"]',form).prop('checked')) {
+                            appendField(key, JSON.stringify(value));
+                        }
+                        break;
+                    case 'extent_feature':
+                        appendField(key, JSON.stringify(value));
+                        break;
+                    default:
+                        if ($.isArray(value)) {
+                            for (var i = 0; i < value.length; ++i) {
+                                switch (key) {
+                                    case 'layers':
+                                        appendField('' + key + '[' + i + ']', JSON.stringify(value[i]));
+                                        break;
+                                    default:
+                                        appendField('' + key + '[' + i + ']', value[i]);
+                                        break;
+                                }
+                            }
+                        } else if (typeof value === 'string') {
+                            appendField(key, value);
+                        } else if (Object.keys(value).length) {
+                            if (key === 'overview') {
+                                appendField('' + key, JSON.stringify(value));
+                            } else {
+                                Object.keys(value).map(function(k) {
+                                    appendField('' + key + '['+k+']', value[k]);
+                                });
+                            }
+                        } else {
+                            appendField(key, value);
+                        }
+                        break;
+                }
+            });
             $('div#layers', form).empty();
             fields.appendTo(form.find('div#layers'));
 
-            // Post in neuen Tab (action bei form anpassen)
-            var url =  this.elementUrl + 'print';
-
-            form.get(0).setAttribute('action', url);
-            form.attr('target', '_blank');
-            form.attr('method', 'post');
-
-            if (lyrCount === 0){
+            form.find('input[type="submit"]').click();
+        },
+        _print: function() {
+            var jobData = this._collectJobData();
+            if (!jobData.layers.length) {
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
-            }else{
-                // we click a hidden submit button to check the required fields
-                form.find('input[type="submit"]').click();
+                return;
             }
 
-            if(this.options.autoClose){
+            this._submitJob(jobData);
+        },
+        _onSubmit: function(evt) {
+            if (this.options.autoClose){
                 this.popup.close();
             }
         },
@@ -547,29 +526,22 @@
                 data: {template: template},
                 dataType: "json",
                 success: function(data) {
-                    self.width = data.width;
-                    self.height = data.height;
+                    // dimensions delivered in cm, we need m
+                    self.width = data.width / 100.0;
+                    self.height = data.height / 100.0;
                     self._updateGeometry();
                 }
             });
         },
 
         printDigitizerFeature: function(schemaName,featureId){
-            // add hidden fields to submit featureId and schemaName
-            var form = $('form#formats', this.element);
-
-            if(!form.has('input[name="digitizer_feature[id]"]').length) {
-                form.append($('<input />', {
-                    type: 'hidden',
-                    name: 'digitizer_feature[id]'
-                })).append($('<input />', {
-                    type: 'hidden',
-                    name: 'digitizer_feature[schemaName]'
-                }));
-            }
-
-            $('input[name="digitizer_feature[id]"]', form).val(featureId);
-            $('input[name="digitizer_feature[schemaName]"]', form).val(schemaName);
+            // Sonderlocke Digitizer
+            this.digitizerData = {
+                digitizer_feature: {
+                    id: featureId,
+                    schemaName: schemaName
+                }
+            };
 
             this._getDigitizerTemplates(schemaName);
         },
@@ -623,18 +595,12 @@
         ready: function(callback) {
             if(this.readyState === true) {
                 callback();
-            } else {
-                this.readyCallbacks.push(callback);
             }
         },
         /**
          *
          */
         _ready: function() {
-            for(callback in this.readyCallbacks) {
-                callback();
-                delete(this.readyCallbacks[callback]);
-            }
             this.readyState = true;
         }
     });

@@ -1,4 +1,4 @@
-<div class="elementFormPrintClient elementForm">
+<div class="elementFormPrintClient elementForm defaultForm">
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
@@ -15,28 +15,30 @@
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.file_prefix) }}{{ form_widget(form.configuration.file_prefix) }}
     <div class="clearContainer"></div>
-    {{ form_label(form.configuration.quality_levels) }}
+    {# Section label needs to be full width; FOM's form_label does not merge extra CSS class passed in label_attr ... #}
+    <div class="section-label">
+        {{ form_label(form.configuration.quality_levels) }}
+    </div>
     {% for level in form.configuration.quality_levels %}
-        <div class="singleRow">
-            <div class="left">
+        <div class="row quality-grid">
+            <div class="col-xs-6">
                 {{form_label(level.dpi)}}
-                {{ form_widget(level.dpi) }}
+                {{form_widget(level.dpi) }}
             </div>
-            <div class="left">
+            <div class="col-xs-6">
                 {{form_label(level.label)}}
                 {{ form_widget(level.label) }}
             </div>
         </div>
-        <div class="clearContainer"></div>
-        <span class="labelInput"></span>
     {% endfor %}
-    <div class="clearContainer"></div>
     <hr>
     <br>
     {{ form_label(form.configuration.templates) }}{{ form_widget(form.configuration.templates) }}
     <hr>
     <br>
-    {{ form_label(form.configuration.optional_fields) }}{{ form_widget(form.configuration.optional_fields) }}
+    {{ form_row(form.configuration.optional_fields) }}
+    {{ form_widget(form.configuration.required_fields_first) }}<label for="{{form.configuration.required_fields_first.vars.id}}" class="labelCheck">{{'mb.core.admin.printclient.label.required_fields_first'|trans}}</label>
+    <div class="clearContainer"></div>
     {{ form_label(form.configuration.replace_pattern) }}{{ form_widget(form.configuration.replace_pattern) }}
     
 </div>

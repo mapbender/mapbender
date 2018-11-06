@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Model\ObjectIdentityInterface;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -70,8 +71,8 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
      */
     public function isUserLoggedIn()
     {
-        $user = $this->getToken()->getUser();
-        return is_object($user);
+        $token = $this->getToken();
+        return $token && (!$token instanceof AnonymousToken) && $token->getUser();
     }
 
     /**

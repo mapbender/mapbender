@@ -1,19 +1,61 @@
 # Changelog
+* **v3.0.7.7**
+  - [Regression fix] Restore either-or privilege checking behaviour for access to instance tunnel and metadata actions ([341bf11](https://github.com/mapbender/mapbender/commit/341bf117812173b3d9e211be8d5498750d73bf2d))
+  - [Regression fix] Fix erratic behaviour when dynamically reodering sources ([09050ee](https://github.com/mapbender/mapbender/commit/09050eeecd81bd6a003e62c3a0d54f1de8a03cbb))
+  - [Regression fix] Remove 'required' asterisk from non-required fields configured into print client form ([PR#1036](https://github.com/mapbender/mapbender/pull/1036))
+  - [Regression fix] Remove impossible grants check preventing non-root users from editing a source instance ([e1919a0](https://github.com/mapbender/mapbender/commit/e1919a012addb523fc21d50deab6f23bd64bc520))
+  - FeatureInfo: extend support for "declarative" WmsLoader links to "show original" iframe rendering mode ([PR#1042](https://github.com/mapbender/mapbender/pull/1042))
+  - Print: Fix broken overview for non-metric current map units ([c77fc88](https://github.com/mapbender/mapbender/commit/c77fc881af8290e5246f3804bc84948adcdd9e6f))
+  - Print: Fix zoom level and center for overview when Overview Element is set to 'fixed' ([PR#1032](https://github.com/mapbender/mapbender/pull/1032))
+  - Print: Fix non-updating print region when reopening PrintClient dialog after zooming the map ([PR#1038](https://github.com/mapbender/mapbender/pull/1038) collateral)
+  - Print / ImageExport: pre-filter null geometries, avoiding followup server errors ([PR#1038](https://github.com/mapbender/mapbender/pull/1038) collateral)
+  - PrintClient frontend form: allow control of ordering of "optional fields" marked as required versus the rest of the generated form ([PR#1043](https://github.com/mapbender/mapbender/pull/1043), followup to v3.0.7.5 form ordering changes)
+  - [Framework] Client ElementRegistry now based on promises ([PR#1041](https://github.com/mapbender/mapbender/pull/1041))
+  - [Framework] Add [Mapbender.Util.SourceTree](https://github.com/mapbender/mapbender/blob/656fae688b2b292687c628f10cb521663abdcf30/src/Mapbender/CoreBundle/Resources/public/mapbender-model/sourcetree-util.js) static method collection to unify layerset / source traversal
+  - Support Elements requiring (uncommpiled) CSS assets in all the same ways as for JS assets ([PR#1020](https://github.com/mapbender/mapbender/pull/1020))
+  - Geosource: add missing change event when toggling layer ([6ea27e1](https://github.com/mapbender/mapbender/commit/6ea27e11136c7c243ee6c25d7fde21525a214bc0))
+  - Layertree: misc rendering / logic cleanups
+  - WmsLoader now calculates its own source and layer ids for dynamically added sources
+  - Map initialization cleanups
+    - Scales cast to numbers server-side ([ab16ada](https://github.com/mapbender/mapbender/commit/ab16ada6a1d5967fe2f950d73f01b22132acf45f))
+    - Resolved widget options self-destruct in initialization ([136e4ab](https://github.com/mapbender/mapbender/commit/136e4ab66f2b0799c2ce8b5058ad143e690cfb7f))
+    - Calculation / prioritization of initial center + scale from a) map default, b) POI, c) explicit URL parameters passed to application now performed server side
+  - Extensive Print + ImageExport cleanups
+    - Refactored and simplified server-side rotation and transformation handling ([PR#1031](https://github.com/mapbender/mapbender/pull/1031))
+    - Improved Element PHP customizability by separating methods for job data preprocessing and current user lookup ([PR#1037](https://github.com/mapbender/mapbender/pull/1037))
+    - Improved ImageExport and PrintClient JS customizability by breaking up monolithic job data collection + sumbission into multiple smaller methods ([PR#1038](https://github.com/mapbender/mapbender/pull/1038))
 
-* **dev-release/3.0.7** @ 9a7b45f
+
+* **v3.0.7.6**
+  - Fix button group behavior of Legend Element ([PR#1034](https://github.com/mapbender/mapbender/pull/1034))
+  - Fix broken 'queryable' state of source added via WmsLoader ([91e7d4e](https://github.com/mapbender/mapbender/commit/91e7d4e29dcd9bf4096df3bdd7d6714be7ba360b))
+  - Integrate GPS and POI Elements ([PR#985](https://github.com/mapbender/mapbender/pull/985), [PR#1015](https://github.com/mapbender/mapbender/pull/1015))
+  - More robust sizing of backend Element editing modal popups ([PR#1035](https://github.com/mapbender/mapbender/pull/1035))
+
+* **v3.0.7.5**
+  - [Security] Remove obsolete TranslationController (potential XSS vector)
+  - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
+  - [Regression fix] Restore support for Wms services advertising only a root layer ([0192e0c](https://github.com/mapbender/mapbender/commit/0192e0c135af44c5c7ff55a718069d2dc3a646d1))
+  - Fix layer order reversals depending on Element population and order ([PR#1025](https://github.com/mapbender/mapbender/pull/1025))
+  - Fix Redlining hang after edit mode ([PR#1027](https://github.com/mapbender/mapbender/pull/1027))
   - Print: skip Wms layers where the service response can't be fetched or is invalid.
     Log a warning and continue printing the remaining layers normally ([PR#987](https://github.com/mapbender/mapbender/pull/987), [PR#1013](https://github.com/mapbender/mapbender/pull/1013))
+  - Print: move extra fields marked as required to top of form to avoid confusion ([d0630fa](https://github.com/mapbender/mapbender/commit/d0630fa208a9f116894fc446d003aa26b5194233))
   - Fix service loading error on DNS / routing error in Xml validation
   - Fix invalid markup in about_dialog.html.twig
   - Fix Button interactions with dialog-type Elements ([PR#1019](https://github.com/mapbender/mapbender/pull/1019))
   - Fix Redlining functionality on second activation in 'dialog' mode ([Issue #995](https://github.com/mapbender/mapbender/issues/955))
   - Fix POI opening additional dialogs on every button click
+  - Silence untranslated and redundant map load error announcement from legend element  ([059673e](https://github.com/mapbender/mapbender/commit/059673e94ed5285b378e4f708fbdef4a9ae136d4))
   - [Frontend] suppress unneeded scroll bars on popup dialogs ([PR#1022](https://github.com/mapbender/mapbender/pull/1022))
   - [Backend] popup sizing changes, add CSS-level customizability ([PR#1022](https://github.com/mapbender/mapbender/pull/1022))
+  - [Backend] reformulate non-framework conformant security and response interactions ([PR#1028](https://github.com/mapbender/mapbender/pull/1028))
+  - [Backend] Add new form types for source instances, source instance layers ([ee0099e](https://github.com/mapbender/mapbender/commit/ee0099e1d49bfdbe916fa83f5121e3150418a612))
   - [Framework] Extend runtime extension of SRS definitions with preliminiary support for proj4js 2.x
   - [Framework] Provide global boolean Javascript value `Mapbender.configuration.application.debug` to check for `app_dev` environment
   - [Framework] Pre-calculate internal layer attributes `id` and `origId` and source attribute `origId` server-side
   - [Framework] New optional widget [mbCheckbox](https://github.com/mapbender/mapbender/blob/eca5cd66296f539945802c4f5d048c4adbabb739/src/Mapbender/CoreBundle/Resources/public/widgets/mapbender.checkbox.js) as a replacement for FOM's `initCheckbox`
+  - [Framework] Move Mapbender version knowledge from Mapbender Starter into Mapbender ([PR#1012](https://github.com/mapbender/mapbender/pull/1012))
   - [Database] add delete cascade to foreign keys referencing Application or Source,
     allowing such objects to be deleted on the database (non-Doctrine) level
   - [Console debugging] Check / provide appropriate message if Element widget constructor or widget namespace do not exist
@@ -24,6 +66,9 @@
     * HTMLElement::prepareItems
     * vis-ui.js support in HTMLElement Javascript
   - [Removed] unused asset `mapbender.application.json.js`
+  - [Removed] processing of `app/config/mapbender.yml` ([deprecated since 2016](https://github.com/mapbender/mapbender-starter/commit/f8de52fd0d49d26ea0faf07babd2a093a5d5458a))
+  - [Removed] broken `readyCallback` handling in multiple Element scripts ([PR#1029](https://github.com/mapbender/mapbender/pull/1029))
+  - [Misc] Mapbender can now run with zero yaml applications and with the `app/config/applications`directory removed
   - [Misc] merge Github issue templates from master
   - [Misc] non-functional type annotation fixes
 

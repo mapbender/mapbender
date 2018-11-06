@@ -336,44 +336,27 @@ Mapbender.Geo.SourceHandler = Class({
         }
     },
     'public function findLayer': function(source, optionToFind) {
-        var rootLayer = source.configuration.children[0];
         var options = {
             level: 0,
             idx: 0,
             layer: null,
             parent: null
         };
-        options = _findLayer(rootLayer, optionToFind, options, 0);
-        return options;
-        function _findLayer(layer, optionToFind, options, levelTmp) {
-            if (layer.children) {
-                levelTmp++;
-                for (var i = 0; i < layer.children.length; i++) {
-                    for (var key in optionToFind) {
-                        if (layer.children[i].options[key].toString() === optionToFind[key].toString()) {
-                            options.idx = i;
-                            options.parent = layer;
-                            options.level = levelTmp;
-                            options.layer = layer.children[i];
-                            return options;
-                        }
-                    }
-                    options = _findLayer(layer.children[i], optionToFind, options, levelTmp);
-                }
-                levelTmp--;
-            }
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, i, parents) {
             for (var key in optionToFind) {
                 if (layer.options[key].toString() === optionToFind[key].toString()) {
-                    options.level = levelTmp;
+                    options.idx = i;
+                    options.parent = parents[0] || null;
+                    options.level = parents.length;
                     options.layer = layer;
-                    return options;
+                    // abort iteration
+                    return false;
                 }
             }
-            return options;
-        }
+        });
+        return options;
     },
     'public function checkInfoLayers': function(source, scale, tochange, result) {
-        var self = this;
         if (!result)
             result = {
                 infolayers: [
@@ -385,42 +368,31 @@ Mapbender.Geo.SourceHandler = Class({
                     children: {}
                 }
             };
-        var rootLayer = source.configuration.children[0];
-        _checkInfoLayers(rootLayer, scale, {
-            state: {
-                visibility: true
-            }
-        },
-        tochange,
-            result);
-        return result;
 
-        function _checkInfoLayers(layer, scale, parent, tochange, result) {
-            var layerChanged;
+
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
             if (typeof layer.options.treeOptions.info === 'undefined') {
                 layer.options.treeOptions.info = false;
             }
-            if (tochange.options.children[layer.options.id] && layer.options[self.layerNameIdent] && layer.options[self.layerNameIdent].length > 0) {
-                layerChanged = tochange.options.children[layer.options.id];
+            var layerChanged = tochange.options.children[layer.options.id];
+            if (layerChanged && layer.options.name) {
                 if (layerChanged.options.treeOptions.info !== layer.options.treeOptions.info) {
                     layer.options.treeOptions.info = layerChanged.options.treeOptions.info;
                     result.changed.children[layer.options.id] = layerChanged;
                 }
             }
-            if (layer.options.treeOptions.info === true && layer.state.visibility) {
-                var layerName = layer.options[self.layerNameIdent];
+            if (layer.options.treeOptions.info && layer.state.visibility) {
+                var layerName = layer.options.name;
                 // layer names can be emptyish, most commonly on root layers
                 // we will avoid appending an empty string to the list of queryable layers
                 if (layerName && layerName.length) {
-                    result.infolayers.push(layer.options[self.layerNameIdent]);
+                    result.infolayers.push(layerName);
                 }
+                result.infolayers.push(layer.options.name);
             }
-            if (layer.children) {
-                for (var j = 0; j < layer.children.length; j++) {
-                    _checkInfoLayers(layer.children[j], scale, layer, tochange, result);
-                }
-            }
-        }
+        });
+
+        return result;
     },
     /**
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };
@@ -494,7 +466,7 @@ Mapbender.Geo.SourceHandler = Class({
         toChangeOpts,
             result);
         return result;
-        function _createState(layer) {
+        function _copyState(layer) {
             return {
                 outOfScale: layer.state.outOfScale,
                 outOfBounds: layer.state.outOfBounds,
@@ -502,105 +474,75 @@ Mapbender.Geo.SourceHandler = Class({
             };
         }
         function _changeOptions(layer, scale, parentState, toChangeOpts, result) {
-            var layerChanged,
+            var layerChanges,
                 elchanged = false;
-            if (toChangeOpts.options.children[layer.options.id]) {
-                layerChanged = toChangeOpts.options.children[layer.options.id];
-                layerChanged.state = _createState(layer);
-                if (typeof layerChanged.options.treeOptions !== 'undefined') {
-                    var treeOptions = layerChanged.options.treeOptions;
-                    if (typeof treeOptions.selected !== 'undefined'
-                        && layer.options.treeOptions.allow.selected === true) {
-                        if (layer.options.treeOptions.selected === treeOptions.selected)
-                            delete(treeOptions.selected);
-                        else {
-                            layer.options.treeOptions.selected = treeOptions.selected;
-                            elchanged = true;
+            layerChanges = toChangeOpts.options.children[layer.options.id];
+            if (layerChanges) {
+                layerChanges.state = _copyState(layer);
+                var treeChanges = layerChanges.options.treeOptions;
+                var treeOptions = layer.options.treeOptions;
+                if (typeof treeChanges !== 'undefined') {
+                    var optionsTasks = [['selected', true], ['info', true], ['toggle', false]];
+                    for (var oti = 0; oti < optionsTasks.length; ++oti) {
+                        var optionName = optionsTasks[oti][0];
+                        var checkAllow = optionsTasks[oti][1];
+                        if (typeof treeChanges[optionName] !== undefined && (!checkAllow || treeOptions.allow[optionName])) {
+                            if (treeOptions[optionName] === treeChanges[optionName]) {
+                                delete(treeChanges[optionName]);
+                            } else {
+                                treeOptions[optionName] = treeChanges[optionName];
+                                elchanged = true;
+                            }
                         }
-                    }
-                    if (typeof treeOptions.info !== 'undefined'
-                        && layer.options.treeOptions.allow.info === true) {
-                        if (layer.options.treeOptions.info === treeOptions.info)
-                            delete(treeOptions.info);
-                        else {
-                            layer.options.treeOptions.info = treeOptions.info;
-                            elchanged = true;
-                        }
-                    }
-                    if (typeof treeOptions.toggle !== 'undefined') {
-                        if (layer.options.treeOptions.toggle === treeOptions.toggle)
-                            delete(treeOptions.toggle);
-                        else
-                            layer.options.treeOptions.toggle = treeOptions.toggle;
                     }
                 }
             } else {
-                layerChanged = {
-                    state: _createState(
-                        layer)
-                };
+                layerChanges = {state: _copyState(layer)};
             }
             layer.state.outOfScale = !Mapbender.Util.isInScale(scale, layer.options.minScale,
                 layer.options.maxScale);
             /* @TODO outOfBounds for layers ?  */
-            if (layer.children) {
-                if (parentState.state.visibility
+            var newVisibilityState = parentState.state.visibility
                     && layer.options.treeOptions.selected
                     && !layer.state.outOfScale
-                    && !layer.state.outOfBounds) {
-                    layer.state.visibility = true;
-                } else {
-                    layer.state.visibility = false;
-                }
-                var child_visible = false;
+                    && !layer.state.outOfBounds;
+            if (layer.children) {
+                // Store preliminary visibility for the recursive check, where current layer state will be "parentState"
+                layer.state.visibility = !!newVisibilityState;
+                var atLeastOneChildVisible = false;
                 for (var j = 0; j < layer.children.length; j++) {
                     var child = _changeOptions(layer.children[j], scale, layer, toChangeOpts, result);
                     if (child.state.visibility) {
-                        child_visible = true;
+                        atLeastOneChildVisible = true;
                     }
                 }
-                if (child_visible) {
-                    layer.state.visibility = true;
-                } else {
-                    layer.state.visibility = false;
-                }
+                // NOTE: Children can only be visible if this layer was already set visible before we called the
+                //       recursive check. Thus if you think this should be a &&, you're not wrong, but the result is
+                //       the same anyway.
+                layer.state.visibility = atLeastOneChildVisible;
             } else {
-                if (parentState.state.visibility
-                    && layer.options.treeOptions.selected
-                    && !layer.state.outOfScale
-                    && !layer.state.outOfBounds
-                    && layer.options[self.layerNameIdent].length > 0) {
-                    layer.state.visibility = true;
+                layer.state.visibility = !!(newVisibilityState && layer.options[self.layerNameIdent].length);
+                if (layer.state.visibility) {
                     result.layers.push(layer.options[self.layerNameIdent]);
                     result.styles.push(layer.options.style ? layer.options.style : '');
                     if (layer.options.treeOptions.info === true) {
                         result.infolayers.push(layer.options[self.layerNameIdent]);
                     }
-                } else {
-                    layer.state.visibility = false;
                 }
             }
-            if (layerChanged.state.outOfScale !== layer.state.outOfScale) {
-                layerChanged.state.outOfScale = layer.state.outOfScale;
-                elchanged = true;
-            } else {
-                delete(layerChanged.state.outOfScale);
-            }
-            if (layerChanged.state.outOfBounds !== layer.state.outOfBounds) {
-                layerChanged.state.outOfBounds = layer.state.outOfBounds;
-                elchanged = true;
-            } else {
-                delete(layerChanged.state.outOfBounds);
-            }
-            if (layerChanged.state.visibility !== layer.state.visibility) {
-                layerChanged.state.visibility = layer.state.visibility;
-                elchanged = true;
-            } else {
-                delete(layerChanged.state.visibility);
+            var stateNames = ['outOfScale', 'outOfBounds', 'visibility'];
+            for (var sni = 0; sni < stateNames.length; ++ sni) {
+                var stateName = stateNames[sni];
+                if (layerChanges.state[stateName] !== layer.state[stateName]) {
+                    layerChanges.state[stateName] = layer.state[stateName];
+                    elchanged = true;
+                } else {
+                    delete(layerChanges.state[stateName]);
+                }
             }
             if (elchanged) {
-                layerChanged.state = layer.state;
-                result.changed.children[layer.options.id] = layerChanged;
+                layerChanges.state = layer.state;
+                result.changed.children[layer.options.id] = layerChanges;
             }
             var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
             if (customLayerOrder && customLayerOrder.length && result.layers && result.layers.length) {
@@ -709,31 +651,26 @@ Mapbender.Geo.SourceHandler = Class({
         };
     },
     /**
-     * Gets a layer extent or an extent from layer parents
-     * @param {object} source wms source
-     * @param {object} changeOptions options in form of:
-     * @returns {object} extent of form {projectionCode: OpenLayers.Bounds.toArray, ...}
+     * Gets a layer extent, or the source extent as a fallback
+     *
+     * @param {object} source config object
+     * @param {string} layerId
+     * @returns {Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair
      */
     'public function getLayerExtents': function(source, layerId) {
-        function _layerExtent(layer, toFindLayerId) {
-            if (layer.options.id === toFindLayerId) {
-                return layer.options.bbox ? layer.options.bbox : null;
+        var extents = null;
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layerDef) {
+            if (layerDef.options.id === layerId) {
+                extents = layerDef.options.bbox || null;
+                // abort iteration
+                return false;
             }
-            if (layer.children) {
-                for (var j = 0; j < layer.children.length; j++) {
-                    var temp = _layerExtent(layer.children[j], toFindLayerId);
-                    if (temp) {
-                        return temp;
-                    }
-                }
-            }
-            return null;
-        }
-        var extents = _layerExtent(source.configuration.children[0], layerId);
-        for (srs in extents) {
+        });
+
+        if (extents && Object.keys(extents).length) {
             return extents;
         }
-        for (srs in source.configuration.options.bbox) {
+        if (source.configuration.options.bbox && Object.keys(source.configuration.options.bbox).length) {
             return source.configuration.options.bbox;
         }
         return null;

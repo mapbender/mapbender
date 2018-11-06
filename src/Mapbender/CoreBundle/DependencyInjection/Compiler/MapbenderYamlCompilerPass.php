@@ -24,9 +24,6 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
     /** @var ContainerBuilder|ContainerInterface Container */
     protected $container;
 
-    /** @var string Application YAML file path */
-    protected $applicationsFilePath;
-
     /** @var string Applications directory path where YAML files are */
     protected $applicationDir;
 
@@ -34,19 +31,12 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
      * MapbenderYamlCompilerPass constructor.
      *
      * @param string             $applicationDir       Applications directory path
-     * @param bool               $applicationsFilePath Application YAML file path
      */
-    public function __construct(
-        $applicationDir = null,
-        $applicationsFilePath = null)
+    public function __construct($applicationDir)
     {
 
         if ($applicationDir) {
             $this->applicationDir = $applicationDir;
-        }
-
-        if ($applicationsFilePath) {
-            $this->applicationsFilePath = $applicationsFilePath;
         }
     }
 
@@ -67,9 +57,6 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
             $this->setContainer($container);
         }
 
-        if ($this->applicationsFilePath) {
-            $this->loadAndMergeYamlParameters($this->applicationsFilePath);
-        }
         if ($this->applicationDir) {
             $this->loadYamlApplications($this->applicationDir);
         }
