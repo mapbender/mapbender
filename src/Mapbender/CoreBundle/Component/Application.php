@@ -250,12 +250,6 @@ class Application implements IAssetDependent
             }
             $assets[] = new StringAsset('Mapbender.i18n = ' . json_encode($translations, JSON_FORCE_OBJECT) . ';');
         } else {
-            if ($type === 'js') {
-                $appLoader = new StringAsset($templating->render(
-                    '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig',
-                    array('application' => $this)));
-                $assets[] = $appLoader;
-            }
             $assetRefs = array();
             foreach ($assetSources as $assetSource) {
                 if (!empty($assetSource['assets'][$type])) {
@@ -276,6 +270,13 @@ class Application implements IAssetDependent
             foreach ($extra_assets[ $type ] as $asset) {
                 $assets[] = trim($asset);
             }
+        }
+        // add client initialization last, so everything is already in place
+        if ($type === 'js') {
+            $appLoader = new StringAsset($templating->render(
+                '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig',
+                array('application' => $this)));
+            $assets[] = $appLoader;
         }
 
         return $assets;
