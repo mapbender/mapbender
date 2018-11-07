@@ -98,8 +98,18 @@ abstract class Template
      */
     public function getAssets($type)
     {
-        $assets = $this::listAssets();
-        return array_key_exists($type, $assets) ? $assets[ $type ] : array();
+        $allAssets = $this::listAssets();
+        $ownAssets = array_key_exists($type, $allAssets) ? $allAssets[$type] : array();
+        $parent = get_parent_class($this);
+        // Merge up all JavaScript assets, so we get all the required libraries into all
+        // extending templates.
+        if ($type === 'js' && $parent) {
+            $allBaseAssets = call_user_func(array($parent, 'listAssets'), $type);
+            $baseAssets = $ownAssets = array_key_exists($type, $allBaseAssets) ? $allBaseAssets[$type] : array();
+            return array_unique(array_merge($baseAssets, $ownAssets));
+        } else {
+            return $ownAssets;
+        }
     }
 
     /**

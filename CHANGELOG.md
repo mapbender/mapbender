@@ -4,6 +4,7 @@
   - [Regression fix] Fix erratic behaviour when dynamically reodering sources ([09050ee](https://github.com/mapbender/mapbender/commit/09050eeecd81bd6a003e62c3a0d54f1de8a03cbb))
   - [Regression fix] Remove 'required' asterisk from non-required fields configured into print client form ([PR#1036](https://github.com/mapbender/mapbender/pull/1036))
   - [Regression fix] Remove impossible grants check preventing non-root users from editing a source instance ([e1919a0](https://github.com/mapbender/mapbender/commit/e1919a012addb523fc21d50deab6f23bd64bc520))
+  - [Regression fix] Restore function of `Classic` template
   - FeatureInfo: extend support for "declarative" WmsLoader links to "show original" iframe rendering mode ([PR#1042](https://github.com/mapbender/mapbender/pull/1042))
   - FeatureInfo: respect configured info format on Layerset; fix text/plain response handling
   - FeatureInfo: support direct requests; bypass owsproxy unless required to get around [CORB](https://chromium.googlesource.com/chromium/src/+/master/services/network/cross_origin_read_blocking_explainer.md#What-kinds-of-requests-are-CORB_eligible)
