@@ -12,6 +12,7 @@
   - Print: Fix non-updating print region when reopening PrintClient dialog after zooming the map ([PR#1038](https://github.com/mapbender/mapbender/pull/1038) collateral)
   - Print / ImageExport: pre-filter null geometries, avoiding followup server errors ([PR#1038](https://github.com/mapbender/mapbender/pull/1038) collateral)
   - PrintClient frontend form: allow control of ordering of "optional fields" marked as required versus the rest of the generated form ([PR#1043](https://github.com/mapbender/mapbender/pull/1043), followup to v3.0.7.5 form ordering changes)
+  - Modify proxy URL signing to no longer check URL path (compatibility for WMTS / UTFGrid and similarly structured URLs)
   - [Framework] Client ElementRegistry now based on promises ([PR#1041](https://github.com/mapbender/mapbender/pull/1041))
   - [Framework] Add [Mapbender.Util.SourceTree](https://github.com/mapbender/mapbender/blob/656fae688b2b292687c628f10cb521663abdcf30/src/Mapbender/CoreBundle/Resources/public/mapbender-model/sourcetree-util.js) static method collection to unify layerset / source traversal
   - Support Elements requiring (uncommpiled) CSS assets in all the same ways as for JS assets ([PR#1020](https://github.com/mapbender/mapbender/pull/1020))
