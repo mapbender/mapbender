@@ -450,6 +450,14 @@ Mapbender.Util.isInScale = function(scale, min_scale, max_scale){
     return (min_scale ? min_scale <= scale : true) && (max_scale ? max_scale >= scale : true);
 };
 
+Mapbender.Util.isSameSchemeAndHost = function(urlA, urlB) {
+    var a = document.createElement('a');
+    var b = document.createElement('a');
+    a.href = urlA;
+    b.href = urlB;
+    return a.host === b.host && a.protocol && b.protocol;
+};
+
 Mapbender.Util.addProxy = function(url) {
     return OpenLayers.ProxyHost + encodeURIComponent(url);
 };

@@ -184,22 +184,20 @@
                 contentType_ += contentType_.length > 0 ? ";"
                     : "" + mqLayer.source.configuration.options.info_charset;
             }
-            var _ajaxreq = null;
-            if (mqLayer.source.configuration.options.tunnel) {
-                 _ajaxreq = {
-                    url: url,
-                    contentType: contentType_
+            var ajaxOptions = {
+                url: url,
+                contentType: contentType_
+            };
+            var useProxy = mqLayer.source.configuration.options.proxy;
+            // also use proxy on different host / scheme to avoid CORB
+            useProxy |= !Mapbender.Util.isSameSchemeAndHost(url, window.location.href);
+            if (useProxy) {
+                ajaxOptions.data = {
+                    url: ajaxOptions.url
                 };
-            } else {
-                _ajaxreq = {
-                    url: Mapbender.configuration.application.urls.proxy,
-                    contentType: contentType_,
-                    data: {
-                        url: mqLayer.source.configuration.options.proxy ? url : encodeURIComponent(url)
-                    }
-                };
+                ajaxOptions.url = Mapbender.configuration.application.urls.proxy;
             }
-            var request = $.ajax(_ajaxreq);
+            var request = $.ajax(ajaxOptions);
             request.done(function(data, textStatus, jqXHR) {
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 if (self.options.showOriginal) {
