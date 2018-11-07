@@ -154,7 +154,7 @@
             $.each(this.target.getModel().getSources(), function(idx, src) {
                 var mqLayer = self.target.getModel().map.layersList[src.mqlid];
                 if (Mapbender.source[src.type]) {
-                    var url = Mapbender.source[src.type].featureInfoUrl(mqLayer, x, y, $.proxy(self._setInfo, self));
+                    var url = Mapbender.source[src.type].featureInfoUrl(mqLayer, x, y);
                     if (url) {
                         self.queries[mqLayer.id] = url;
                         if (!self.options.onlyValid) {
@@ -184,26 +184,24 @@
                 contentType_ += contentType_.length > 0 ? ";"
                     : "" + mqLayer.source.configuration.options.info_charset;
             }
-            var _ajaxreq = null;
-            if (mqLayer.source.configuration.options.tunnel) {
-                 _ajaxreq = {
-                    url: url,
-                    contentType: contentType_
+            var ajaxOptions = {
+                url: url,
+                contentType: contentType_
+            };
+            var useProxy = mqLayer.source.configuration.options.proxy;
+            // also use proxy on different host / scheme to avoid CORB
+            useProxy |= !Mapbender.Util.isSameSchemeAndHost(url, window.location.href);
+            if (useProxy) {
+                ajaxOptions.data = {
+                    url: ajaxOptions.url
                 };
-            } else {
-                _ajaxreq = {
-                    url: Mapbender.configuration.application.urls.proxy,
-                    contentType: contentType_,
-                    data: {
-                        url: mqLayer.source.configuration.options.proxy ? url : encodeURIComponent(url)
-                    }
-                };
+                ajaxOptions.url = Mapbender.configuration.application.urls.proxy;
             }
-            var request = $.ajax(_ajaxreq);
+            var request = $.ajax(ajaxOptions);
             request.done(function(data, textStatus, jqXHR) {
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 if (self.options.showOriginal) {
-                    self._showOriginal(mqLayer, data, mimetype, url);
+                    self._showOriginal(mqLayer, data, mimetype);
                 } else {
                     self._showEmbedded(mqLayer, data, mimetype);
                 }
@@ -216,77 +214,54 @@
         _isDataValid: function(data, mimetype) {
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    var help = data.replace(/\r|\n/g, "");
-                    var found = (/<body>(.+?)<\/body>/gi).exec(help);
-                    if (found && $.isArray(found) && found[1] && found[1].trim() !== '') {
-                        /* valid "text/html" response */
-                        return true;
-                    } else {
-                        /* not valid "text/html" response, but ... */
-                        var found = (/<[a-zA-Z]+>[^<]+<\/[a-zA-Z]+>/gi).exec(help);
-                        if (found && $.isArray(found)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
+                    return !!("" + data).match(/<[a-z]+>\s*[^<]+\s*<[/][a-z]+>/gi);
                 case 'text/plain':
-                    return data.trim() === '';
+                    return !!("" + data).match(/[^\s]/g);
                 default: // TODO other mimetypes ?
                     return true;
             }
         },
-        _showOriginal: function(mqLayer, data, mimetype, url) {
+        _showOriginal: function(mqLayer, data, mimetype) {
             var self = this;
+            if (this.options.onlyValid && !this._isDataValid(data, mimetype)) {
+                this._removeContent(mqLayer);
+                Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                return;
+            }
+            var eventData = {
+                action: "haveresult",
+                title: self.element.attr('title'),
+                content: self._contentRef(mqLayer).attr('id'),
+                mqlid: mqLayer.id,
+                id: self.element.attr('id')
+            };
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    if (! this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
-                        /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
-                        this._open();
-                        var uuid = Mapbender.Util.UUID();
-                        var iframe = $(self._getIframeDeclaration(uuid, null));
-                        self._addContent(mqLayer, iframe);
-                        var doc = document.getElementById(uuid).contentWindow.document;
-                        iframe.on('load', function(){
-                            if (Mapbender.Util.addDispatcher) {
-                               Mapbender.Util.addDispatcher(doc);
-                            }
-                            iframe.data('loaded', true);
-                            $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
-                            iframe.contents().find("body").css("background","transparent");
-                            self._trigger('featureinfo', null, {
-                                action: "haveresult",
-                                title: self.element.attr('title'),
-                                content: self._contentRef(mqLayer).attr('id'),
-                                mqlid: mqLayer.id,
-                                id: self.element.attr('id')
-                        });
-                        });
-                        doc.open();
-                        doc.write(data);
-                        doc.close();
-                    } else {
-                        this._removeContent(mqLayer);
-                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    }
+                    /* add a blank iframe and replace it's content (document.domain == iframe.document.domain */
+                    this._open();
+                    var uuid = Mapbender.Util.UUID();
+                    var iframe = $(self._getIframeDeclaration(uuid, null));
+                    self._addContent(mqLayer, iframe);
+                    var doc = document.getElementById(uuid).contentWindow.document;
+                    iframe.on('load', function() {
+                        if (Mapbender.Util.addDispatcher) {
+                           Mapbender.Util.addDispatcher(doc);
+                        }
+                        iframe.data('loaded', true);
+                        $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
+                        iframe.contents().find("body").css("background","transparent");
+                        self._trigger('featureinfo', null, eventData);
+                    });
+                    doc.open();
+                    doc.write(data);
+                    doc.close();
                     break;
                 case 'text/plain':
                 default:
-                    if (this.options.onlyValid && this._isDataValid(data, mimetype)) {
-                        this._addContent(mqLayer, '<pre>' + data + '</pre>');
-                        this._trigger('featureinfo', null, {
-                            action: "haveresult",
-                            title: this.element.attr('title'),
-                            content: this._contentRef(mqLayer).attr('id'),
-                            mqlid: mqLayer.id,
-                            id: this.element.attr('id')
-                        });
-                        this._open();
-                    } else {
-                        this._removeContent(mqLayer);
-                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    }
+                    this._addContent(mqLayer, '<pre>' + data + '</pre>');
+                    this._trigger('featureinfo', null, eventData);
+                    this._open();
                     break;
             }
         },
