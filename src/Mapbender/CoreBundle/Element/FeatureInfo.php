@@ -48,14 +48,12 @@ class FeatureInfo extends Element
     public function getConfiguration()
     {
         $config = parent::getConfiguration();
-        if (!isset($config['width']) || !$config['width']) {
-            $default = self::getDefaultConfiguration();
-            $config['width'] = $default['width'];
+        $defaults = self::getDefaultConfiguration();
+        if (empty($config['width'])) {
+            $config['width'] = $defaults['width'];
         }
-
-        if (!isset($config['height']) || !$config['height']) {
-            $default = $default ? $default : self::getDefaultConfiguration();
-            $config['height'] = $default['height'];
+        if (empty($config['height'])) {
+            $config['height'] = $defaults['height'];
         }
         return $config;
     }
