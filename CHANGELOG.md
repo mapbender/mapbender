@@ -5,6 +5,8 @@
   - [Regression fix] Remove 'required' asterisk from non-required fields configured into print client form ([PR#1036](https://github.com/mapbender/mapbender/pull/1036))
   - [Regression fix] Remove impossible grants check preventing non-root users from editing a source instance ([e1919a0](https://github.com/mapbender/mapbender/commit/e1919a012addb523fc21d50deab6f23bd64bc520))
   - FeatureInfo: extend support for "declarative" WmsLoader links to "show original" iframe rendering mode ([PR#1042](https://github.com/mapbender/mapbender/pull/1042))
+  - FeatureInfo: respect configured info format on Layerset; fix text/plain response handling
+  - FeatureInfo: support direct requests; bypass owsproxy unless required to get around [CORB](https://chromium.googlesource.com/chromium/src/+/master/services/network/cross_origin_read_blocking_explainer.md#What-kinds-of-requests-are-CORB_eligible)
   - Print: Fix broken overview for non-metric current map units ([c77fc88](https://github.com/mapbender/mapbender/commit/c77fc881af8290e5246f3804bc84948adcdd9e6f))
   - Print: Fix zoom level and center for overview when Overview Element is set to 'fixed' ([PR#1032](https://github.com/mapbender/mapbender/pull/1032))
   - Print: Fix non-updating print region when reopening PrintClient dialog after zooming the map ([PR#1038](https://github.com/mapbender/mapbender/pull/1038) collateral)
