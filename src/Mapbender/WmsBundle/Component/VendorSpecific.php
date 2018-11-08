@@ -11,13 +11,6 @@ use Mapbender\CoreBundle\Component\Source\CustomParameter;
  */
 class VendorSpecific extends CustomParameter
 {
-    /** @deprecated, remove after cleaning up extent processing from VendorSpecificTransformer */
-    const TYPE_SINGLE           = 'single';
-    /** @deprecated, remove after cleaning up extent processing from VendorSpecificTransformer */
-    const TYPE_INTERVAL         = 'interval';
-    /** @deprecated, remove after cleaning up extent processing from VendorSpecificTransformer */
-    const TYPE_MULTIPLE         = 'multiple';
-
     const TYPE_VS_SIMPLE = 'simple';
     const TYPE_VS_USER = 'user';
     const TYPE_VS_GROUP = 'groups';
@@ -61,22 +54,5 @@ class VendorSpecific extends CustomParameter
             'hidden' => $this->getHidden(),
             'vstype' => $this->getVstype(),
         );
-    }
-
-    /**
-     * @deprecated, remove after cleaning up extent processing from VendorSpecificTransformer
-     */
-    final public function getType()
-    {
-        return -1;
-    }
-
-    /**
-     * @return null
-     * @deprecated, remove after cleaning up extent processing from VendorSpecificTransformer
-     */
-    final public function getExtent()
-    {
-        return null;
     }
 }

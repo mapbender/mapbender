@@ -57,7 +57,8 @@ class VendorSpecificType extends AbstractType
             ->add('hidden', 'checkbox', array(
                 'required' => false,
             ))
-            ->addModelTransformer(new VendorSpecificTransformer());
+            ->addModelTransformer(new VendorSpecificTransformer())
+        ;
     }
 
 }
