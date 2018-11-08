@@ -30,7 +30,6 @@ class VendorSpecificType extends AbstractType
         $resolver->setDefaults(array(
             'type' => VS::TYPE_SINGLE,
             'name' => '',
-            'extent' => '',
             'vstype' => VS::TYPE_VS_SIMPLE,
             'hidden' => false,
         ));
@@ -51,8 +50,6 @@ class VendorSpecificType extends AbstractType
             ->add('name', 'text', array(
                 'required' => true))
             ->add('default', 'text', array(
-                'required' => true,))
-            ->add('extent', 'text', array(
                 'required' => true,))
             ->add('vstype', 'choice',
                   array(
