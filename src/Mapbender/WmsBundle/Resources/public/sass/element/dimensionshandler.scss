@@ -28,14 +28,14 @@
 }
 
 .toolBarItem .mb-element-dimensionshandler{
-  /*position: relative;*/
   width: 140px;
   height:$space;
+  margin-top: -1px; // eat into toolbar item padding to center vertically with other toolbar items
   @extend .iconBig;
   padding-left: 0;
-  .dimensionset{
-    height: 100%;
-    width:100%;
+  .dimensionset {
+    font-size: 11px;
+    line-height: 11px;
     .mb-slider.ui-slider {
       border: 2px solid lighten($middleFontColor, 20%) !important;
       height: 8px;
@@ -48,20 +48,10 @@
       }
     }
     .dimensionset-title {
-      float:none;
-      width: 100%;
-      &:after {
-        display:block;
-        content: '';
-        clear: both;
-      }
+      text-align: left; // counter text-align right inherited from toolbar list item
     }
     .slider-wrap {
-      padding-left: 0.25em;
-      width: 60%;
-    }
-    .dimensionset-value {
-      width: 39%;
+      padding: 0;
     }
   }
 }

@@ -93,21 +93,16 @@ class DimensionsHandler extends Element
         return 'MapbenderWmsBundle:ElementAdmin:dimensionshandler.html.twig';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
+    public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return $this->container->get('templating')->render(
-            'MapbenderWmsBundle:Element:dimensionshandler.html.twig',
-            array(
-                'id' => $this->getId(),
-                "title" => $this->getTitle(),
-                'configuration' => $this->getConfiguration()
-            )
-        );
+
+        if (in_array($this->entity->getRegion(), array('toolbar', 'footer'))) {
+            return "MapbenderWmsBundle:Element:dimensionshandler.toolbar{$suffix}";
+        } else {
+            return "MapbenderWmsBundle:Element:dimensionshandler{$suffix}";
+        }
     }
-    
+
     /**
      * @inheritdoc
      */

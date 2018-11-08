@@ -1,0 +1,13 @@
+<div id="{{ id }}" class="mb-element mb-element-dimensionshandler" title="{{ title |trans }}">
+{% for key,dimensionset in configuration.dimensionsets %}
+  <div id="{{key}}" class="dimensionset">
+      <div class="row no-gutters">
+          <div class="col-xs-6 dimensionset-title">{{ dimensionset.title ?: (dimensionset.dimension.name | humanize) }}</div>
+          <div class="col-xs-6 dimensionset-value"></div>
+      </div>
+      <div class="row no-gutters">
+          <div class="col-xs-12 slider-wrap"><div class="mb-slider" id="dimensionset-{{key}}"></div></div>
+      </div>
+  </div>
+{% endfor %}
+</div>
