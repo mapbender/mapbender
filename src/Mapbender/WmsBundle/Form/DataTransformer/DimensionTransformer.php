@@ -13,29 +13,6 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class DimensionTransformer implements DataTransformerInterface
 {
-//    /**
-//     * @var ObjectManager an object manager
-//     */
-//    private $om;
-//    /**
-//     *
-//     * @var string  an entity class name
-//     */
-//    private $classname;
-
-    /**
-     * Creates an instance.
-     * 
-     * @param ObjectManager $om an object manager
-     * @param string $classname an entity class name
-     */
-    public function __construct()#ObjectManager $om, $classname)
-    {
-        $a = 0;
-//        $this->om = $om;
-//        $this->classname = $classname;
-    }
-
     /**
      * Transforms an object to an array.
      *
