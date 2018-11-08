@@ -312,8 +312,9 @@ class ApplicationController extends Controller
             throw new NotFoundHttpException();
         }
         /** @var SourceInstance $instance */
-        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'));
-        $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
+        if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
+            $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
+        }
 // TODO source access ?
 //        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
 //        $this->denyAccessUnlessGranted('VIEW', new $instance->getSource());
@@ -341,8 +342,9 @@ class ApplicationController extends Controller
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }
-        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'));
-        $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
+        if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
+            $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
+        }
 
         /** @var WmsSource $source */
         $source = $instance->getSource();

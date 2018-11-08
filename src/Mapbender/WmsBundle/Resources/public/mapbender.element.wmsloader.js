@@ -14,7 +14,6 @@
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
                 return;
             }
-
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
@@ -205,6 +204,9 @@
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
+                if (sourceOpts.global.options.treeOptions.selected !== true) {
+                    self._setSelected(sourceDef.configuration, sourceOpts);
+                }
                 if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
                     mbMap.addSource(sourceDef, false);
                 }
@@ -213,6 +215,26 @@
             // @todo: find a way to do this directly on the map, without using the layertree
             // @todo: fix default for newly added source (no fi) to match default layertree visual (fi on)
              $('.mb-element-layertree .featureInfoWrapper input[type="checkbox"]').trigger('change');
+        },
+        _setSelected: function(config, sourceOpts) {
+            var self = this;
+            $.each(config.children, function(idx, child) {
+                if (child.options && child.options.treeOptions) {
+                    if (sourceOpts.layers.hasOwnProperty(child.options.name)) {
+                        var layerOpts = sourceOpts.layers[child.options.name];
+                        if (layerOpts.options && layerOpts.options.treeOptions) {
+                            child.options.treeOptions.selected = layerOpts.options.treeOptions.selected;
+                        } else {
+                            child.options.treeOptions.selected = false;
+                        }
+                    } else {
+                        child.options.treeOptions.selected = false;
+                    }
+                }
+                if (child.children) {
+                    self._setSelected(child, sourceOpts);
+                }
+            });
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
             Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));

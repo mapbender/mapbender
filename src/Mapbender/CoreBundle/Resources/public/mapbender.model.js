@@ -1074,33 +1074,57 @@ Mapbender.Model = {
      */
     reorderSources: function(newIdOrder) {
         var self = this;
+        var olMap = self.map.olMap;
         var sourceObjs = $.map(newIdOrder, function(sourceId) {
             return self.findSource({id: sourceId});
         });
-        // Collect currently set positions and z indexes for given sources.
-        // position := array index in this.sourceTree
-        // z index := mapquery layer position = openlayers map layer index - 1
-        // The collected values will be reused / redistributed to the affected
-        // sources.
-        var oldPositions = [];
-        var zIndexes = [];
-        var sourceIdToSource = {};
+        // Collect current positions used by the layers to be reordered
+        // position := array index in olMap.layers
+        // The collected positions will be reused / redistributed to the affected
+        // layers, while all other layers stay in their current slots.
+        var layersToMove = [];
+        var oldIndexes = [];
+        var olLayerIdsToMove = {};
         _.forEach(sourceObjs, function(sourceObj) {
-            oldPositions.push(self.getSourcePos(sourceObj));
-            sourceIdToSource[sourceObj.id] = sourceObj;
-            zIndexes.push(self.map.layersList[sourceObj.mqlid].position());
+            var olLayer = self.map.layersList[sourceObj.mqlid].olLayer;
+            layersToMove.push(olLayer);
+            oldIndexes.push(olMap.getLayerIndex(olLayer));
+            olLayerIdsToMove[olLayer.id] = true;
         });
-        oldPositions.sort();
-        zIndexes.sort();
-        // rewrite sourceTree order and z indexes
-        for (var i = 0; i < oldPositions.length; ++i) {
-            var oldPos = oldPositions[i];
-            var injectSourceId = newIdOrder[i];
-            var injectSourceObj = sourceIdToSource[injectSourceId];
-            var injectSourceZ = zIndexes[i];
-            this.sourceTree[oldPos] = injectSourceObj;
-            self.map.layersList[injectSourceObj.mqlid].position(injectSourceZ);
+        oldIndexes.sort();
+
+        var unmovedLayers = olMap.layers.filter(function(olLayer) {
+            return !olLayerIdsToMove[olLayer.id];
+        });
+
+        // rebuild the layer list, mixing in unmoving layers with reordered layers
+        var newLayers = [];
+        var unmovedIndex = 0;
+        for (var i = 0; i < oldIndexes.length; ++i) {
+            var nextIndex = oldIndexes[i];
+            while (nextIndex > newLayers.length) {
+                newLayers.push(unmovedLayers[unmovedIndex]);
+                ++unmovedIndex;
+            }
+            newLayers.push(layersToMove[i]);
         }
+        while (unmovedIndex < unmovedLayers.length) {
+            newLayers.push(unmovedLayers[unmovedIndex]);
+            ++unmovedIndex;
+        }
+        // set new layer list, let OpenLayers reassign z indexes in list order
+        olMap.layers = newLayers;
+        olMap.resetLayersZIndex();
+        // Re-sort 'sourceTree' structure (inspected by legend etc for source order) according to actual, applied
+        // layer order.
+        this.sourceTree.sort(function(a, b) {
+            var indexA = olMap.getLayerIndex(self.map.layersList[a.mqlid].olLayer);
+            var indexB = olMap.getLayerIndex(self.map.layersList[b.mqlid].olLayer);
+            return indexA - indexB;
+        });
+        this.mbMap.fireModelEvent({
+            name: 'sourcesreordered'
+        });
     },
     /*
      * Changes the map's projection.

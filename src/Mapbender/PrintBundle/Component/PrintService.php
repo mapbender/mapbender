@@ -364,7 +364,7 @@ class PrintService extends ImageExportService
 
         // add overview map
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
-            $this->addOverviewMap();
+            $this->addOverviewMap($this->data['overview']);
         }
 
         // add scalebar
@@ -438,7 +438,7 @@ class PrintService extends ImageExportService
         }
     }
 
-    private function addOverviewMap()
+    private function addOverviewMap($ovData)
     {
         // calculate needed image size
         $quality = $this->data['quality'];
@@ -448,31 +448,26 @@ class PrintService extends ImageExportService
         $height = '&HEIGHT=' . $ovImageHeight;
         // gd pixel coords are top down!
         $ovPixelBox = new Box(0, $ovImageHeight, $ovImageWidth, 0);
-        $centerx = $this->data['center']['x'];
-        $centery = $this->data['center']['y'];
+        $centerx = $ovData['center']['x'];
+        $centery = $ovData['center']['y'];
+        $ovHeight = $ovData['height'];
+        $ovWidth = $ovHeight * $this->conf['overview']['width'] / $this->conf['overview']['height'];
+        $minX = $centerx - $ovWidth * 0.5;
+        $minY = $centery - $ovHeight * 0.5;
+        $maxX = $centerx + $ovWidth * 0.5;
+        $maxY = $centery + $ovHeight * 0.5;
+        $ovProjectedBox = new Box($minX, $minY, $maxX, $maxY);
+        if (!empty($ovData['changeAxis'])) {
+            $bbox = '&BBOX=' . $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
+        } else {
+            $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
+        }
 
         // get images
         $tempNames = array();
         $logger = $this->getLogger();
-        foreach ($this->data['overview'] as $i => $layer) {
-            // calculate needed bbox
-            $ovWidth = $this->conf['overview']['width'] * $layer['scale'] / 1000;
-            $ovHeight = $this->conf['overview']['height'] * $layer['scale'] / 1000;
-            $centerx = $layer['center']['x'];
-            $centery = $layer['center']['y'];
-
-            $minX = $centerx - $ovWidth * 0.5;
-            $minY = $centery - $ovHeight * 0.5;
-            $maxX = $centerx + $ovWidth * 0.5;
-            $maxY = $centery + $ovHeight * 0.5;
-            $ovProjectedBox = new Box($minX, $minY, $maxX, $maxY);
-            if (!empty($layer['changeAxis'])) {
-                $bbox = '&BBOX=' . $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
-            } else {
-                $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
-            }
-
-            $url = strstr($layer['url'], '&BBOX', true);
+        foreach ($ovData['layers'] as $i => $layerUrl) {
+            $url = strstr($layerUrl, '&BBOX', true);
             $url .= $bbox . $width . $height;
 
             $logger->debug("Print Overview Request Nr.: " . $i . ' ' . $url);
@@ -519,16 +514,11 @@ class PrintService extends ImageExportService
             $ovTransform->transformXy($this->data['extent_feature'][1]),
         );
 
-        $p1 = array_values($points[0]);
-        $p2 = array_values($points[1]);
-        $p3 = array_values($points[2]);
-        $p4 = array_values($points[3]);
-
         $red = imagecolorallocate($image,255,0,0);
-        imageline ( $image, $p1[0], $p1[1], $p2[0], $p2[1], $red);
-        imageline ( $image, $p2[0], $p2[1], $p3[0], $p3[1], $red);
-        imageline ( $image, $p3[0], $p3[1], $p4[0], $p4[1], $red);
-        imageline ( $image, $p4[0], $p4[1], $p1[0], $p1[1], $red);
+        imageline ( $image, $points[0]['x'], $points[0]['y'], $points[1]['x'], $points[1]['y'], $red);
+        imageline ( $image, $points[1]['x'], $points[1]['y'], $points[2]['x'], $points[2]['y'], $red);
+        imageline ( $image, $points[2]['x'], $points[2]['y'], $points[3]['x'], $points[3]['y'], $red);
+        imageline ( $image, $points[3]['x'], $points[3]['y'], $points[0]['x'], $points[0]['y'], $red);
 
         imagepng($image, $finalImageName);
 

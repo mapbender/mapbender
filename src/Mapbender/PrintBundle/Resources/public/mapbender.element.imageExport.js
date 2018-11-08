@@ -172,7 +172,7 @@
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
             } else {
                 this._submitJob(jobData);
-                self.close();
+                this.close();
             }
         },
         _submitJob: function(jobData) {

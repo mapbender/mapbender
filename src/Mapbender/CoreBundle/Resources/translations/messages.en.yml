@@ -324,6 +324,7 @@ mb:
           rotatable: Rotatable
           legend: 'Print legend'
           legend_default_behaviour: 'Legend checkbox active'
+          required_fields_first: Display required fields first
       copyright:
         label:
           autoopen: Auto-open
