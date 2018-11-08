@@ -12,23 +12,11 @@ Mapbender.Dimension = function(options) {
     }
 };
 
-Mapbender.DimensionScalar  = function(){};
-Mapbender.DimensionScalar.prototype.options = {
-    default: null,
-    extend:  []
-
-};
-
-
-Mapbender.DimensionScalar.prototype.default = null;
-Mapbender.DimensionScalar.prototype.stepsNum = -1;
-Mapbender.DimensionScalar.prototype.Types = {
-    INTERVAL: 'interval',
-    MULTIPLE: 'multiple'
-};
-Mapbender.DimensionScalar.prototype.constructor = function(options, initDefault) {
+Mapbender.DimensionScalar = function(options, initDefault) {
 
     var min, max, value, hasDefaultOptions;
+    this.stepsNum = -1;
+    this.default = null;
 
     if(Object.prototype.toString.call(options.extent) !== '[object Array]') {
         throw 'DimensionScalar extent option has to be type [object Array]:' + Object.prototype.toString.call(options.extent) + 'given'
@@ -48,6 +36,11 @@ Mapbender.DimensionScalar.prototype.constructor = function(options, initDefault)
         value = !hasDefaultOptions ? options.extent[0] : options['default'];
         this.setDefault(min, max, value);
     }
+};
+
+Mapbender.DimensionScalar.Types = {
+    INTERVAL: 'interval',
+    MULTIPLE: 'multiple'
 };
 
 Mapbender.DimensionScalar.prototype.getOptions = function() {
@@ -91,7 +84,7 @@ Mapbender.DimensionScalar.prototype.getStepsNum = function() {
 
 };
 
-    Mapbender.DimensionScalar.prototype.partFromValue =   function(val) {
+Mapbender.DimensionScalar.prototype.partFromValue = function(val) {
 
     switch(this.options.type){
         case Mapbender.DimensionScalar.Types.INTERVAL :
@@ -137,7 +130,6 @@ Mapbender.DimensionScalar.prototype.valueFromEnd = function() {
     return this.options.extent[this.options.extent.length - 1];
 };
 Mapbender.DimensionScalar.prototype.innerJoin = function() {
-    //Todo
     console.warn('DimensionScalar.innerJoin() is not implemented yet!');
     return null;
 };
@@ -178,322 +170,308 @@ Mapbender.DimensionFormat = function(value, numDig) {
 
 
 
-Mapbender.DimensionTime = function(){};
+Mapbender.DimensionTime = function DimensionTime(options) {
+    if (options.extent) {
+        options.extent = options.extent.map(function(x) {
+            return '' + x;
+        });
+    }
+    Mapbender.DimensionScalar.call(this, options, false);
+    this.start = new TimeISO8601(options.extent[0]);
+    this.end = new TimeISO8601(options.extent[1]);
+    this.step = new PeriodISO8601(options.extent[2]);
+    this.asc = this.end.getTime().getTime() > this.start.getTime().getTime();
+    this.setDefault(this.getInRange(this.valueFromPart(0), this.valueFromPart(1), this.options['default'] === null ? options.extent[0] : options['default']));
+};
 
-Mapbender.DimensionTime
+Mapbender.DimensionTime.prototype = Object.create(Mapbender.DimensionScalar.prototype);
+Mapbender.DimensionTime.prototype.constructor = Mapbender.DimensionTime;
 
 
-
-
-Mapbender.DimensionTime = Class({'extends': Mapbender.DimensionScalar}, {//,implements: Mapbender.IDimension}, {
-    'private object start': null,
-    'private object end':   null,
-    'private object step':  null,
-    'private boolean asc':  true,
-    __construct:            function(options) {
-        options.extent[0] = '' + options.extent[0];
-        options.extent[1] = '' + options.extent[1];
-        this['super']('__construct', options, false);
-        this.start = new TimeISO8601(options.extent[0]);
-        this.end = new TimeISO8601(options.extent[1]);
-        this.step = new PeriodISO8601(options.extent[2]);
-        this.asc = this.end.getTime().getTime() > this.start.getTime().getTime();
-        this.setDefault(this.getInRange(this.valueFromPart(0), this.valueFromPart(1), this.options['default'] === null ? options.extent[0] : options['default']));
-    },
-    'public getStepsNum':   function() {
-        if(this.stepsNum !== -1) {
-            return this.stepsNum;
-        } else {
-            if(this.step.getType() === 'year') {
-                this.stepsNum = Math.floor(Math.abs(this.end.getYear() - this.start.getYear()) / this.step.getYears());
-            } else if(this.step.getType() === 'msec') {
-                var stepTst = this.step.asMsec();
-                this.stepsNum = Math.floor(Math.abs(this.end.getTime().getTime() - this.start.getTime().getTime()) / stepTst);
-            } else if(this.step.getType() === 'month') {
-                var startMonth = (this.start.getYear() * 12 + this.start.getMonth());
-                var endMonth = (this.end.getYear() * 12 + this.end.getMonth());
-                var stepMonth = (this.step.getYears() * 12 + this.step.getMonths());
-                this.stepsNum = Math.floor(Math.abs(endMonth - startMonth) / stepMonth);
-            } else if(this.step.getType() === 'date') {
-                /* TODO optimize? */
-                var stepTime = new TimeISO8601(this.start.getTime().toJSON());
-                this.stepsNum = 0;
-                var endtime = this.end.getTime().getTime();
-                if(this.asc) {
-                    while (stepTime.time.getTime() <= endtime) {
-                        this.stepsNum++;
-                        stepTime.add(this.step);
-                    }
-                } else {
-                    while (stepTime.time.getTime() >= endtime) {
-                        this.stepsNum++;
-                        stepTime.substract(this.step);
-                    }
-                }
-            }
-            return this.stepsNum;
-        }
-    },
-    'public partFromValue': function(isoDate) {
-        var givenTime = new TimeISO8601(isoDate);
+Mapbender.DimensionTime.prototype.getStepsNum = function getStepsNum() {
+    if(this.stepsNum !== -1) {
+        return this.stepsNum;
+    } else {
         if(this.step.getType() === 'year') {
-            var part = (givenTime.getYear() - this.start.getYear()) / (this.end.getYear() - this.start.getYear());
-            return part;
+            this.stepsNum = Math.floor(Math.abs(this.end.getYear() - this.start.getYear()) / this.step.getYears());
         } else if(this.step.getType() === 'msec') {
-            var part = (givenTime.time.getTime() - this.start.getTime().getTime()) / (this.end.getTime().getTime() - this.start.getTime().getTime());
-            return part;
+            var stepTst = this.step.asMsec();
+            this.stepsNum = Math.floor(Math.abs(this.end.getTime().getTime() - this.start.getTime().getTime()) / stepTst);
         } else if(this.step.getType() === 'month') {
             var startMonth = (this.start.getYear() * 12 + this.start.getMonth());
             var endMonth = (this.end.getYear() * 12 + this.end.getMonth());
-            var timeMonth = (givenTime.getYear() * 12 + givenTime.getMonth());
-            var part = (timeMonth - startMonth) / (endMonth - startMonth);
-            return part;
+            var stepMonth = (this.step.getYears() * 12 + this.step.getMonths());
+            this.stepsNum = Math.floor(Math.abs(endMonth - startMonth) / stepMonth);
         } else if(this.step.getType() === 'date') {
             /* TODO optimize? */
             var stepTime = new TimeISO8601(this.start.getTime().toJSON());
-            var stepsNum = 0;
-            var endtime = givenTime.time.getTime();
+            this.stepsNum = 0;
+            var endtime = this.end.getTime().getTime();
             if(this.asc) {
                 while (stepTime.time.getTime() <= endtime) {
-                    stepsNum++;
+                    this.stepsNum++;
                     stepTime.add(this.step);
                 }
             } else {
                 while (stepTime.time.getTime() >= endtime) {
-                    stepsNum++;
+                    this.stepsNum++;
                     stepTime.substract(this.step);
                 }
             }
-            return stepsNum / this.stepsNum;
         }
-    },
-    stepFromPart:           function(part) {
-        //        if (this.step.getType() === 'msec') {
-        //            return Math.round(part * (this.getStepsNum()));
-        //        } else if (this.step.getType() === 'month') {
-        //            return Math.round(part * (this.getStepsNum()));
-        //        } else if (this.step.getType() === 'date') {
-        return Math.round(part * (this.getStepsNum()));
-        /* ??? */
-        //        }
-    },
-    stepFromValue:          function(value) {
-        //        if (this.step.getType() === 'msec') {
-        //            return this.stepFromPart(this.partFromValue(value));
-        //        } else if (this.step.getType() === 'month') {
-        //            return this.stepFromPart(this.partFromValue(value));
-        //        } else if (this.step.getType() === 'date') {
-        return this.stepFromPart(this.partFromValue(value));
-        /* ??? */
-        //        }
-    },
-    valueFromPart:          function(part) {
-        var step = this.stepFromPart(part);
-        var time;
-        if(this.step.getType() === 'year') {
-            var years;
-            if(this.asc) {
-                years = this.start.getYear() + step * this.step.getYears();
-            } else {
-                years = this.start.getYear() - step * this.step.getYears();
+        return this.stepsNum;
+    }
+};
+
+Mapbender.DimensionTime.prototype.partFromValue = function partFromValue(isoDate) {
+    var givenTime = new TimeISO8601(isoDate);
+    if(this.step.getType() === 'year') {
+        var part = (givenTime.getYear() - this.start.getYear()) / (this.end.getYear() - this.start.getYear());
+        return part;
+    } else if(this.step.getType() === 'msec') {
+        var part = (givenTime.time.getTime() - this.start.getTime().getTime()) / (this.end.getTime().getTime() - this.start.getTime().getTime());
+        return part;
+    } else if(this.step.getType() === 'month') {
+        var startMonth = (this.start.getYear() * 12 + this.start.getMonth());
+        var endMonth = (this.end.getYear() * 12 + this.end.getMonth());
+        var timeMonth = (givenTime.getYear() * 12 + givenTime.getMonth());
+        var part = (timeMonth - startMonth) / (endMonth - startMonth);
+        return part;
+    } else if(this.step.getType() === 'date') {
+
+        var stepTime = new TimeISO8601(this.start.getTime().toJSON());
+        var stepsNum = 0;
+        var endtime = givenTime.time.getTime();
+        if(this.asc) {
+            while (stepTime.time.getTime() <= endtime) {
+                stepsNum++;
+                stepTime.add(this.step);
             }
-            time = new TimeISO8601(Mapbender.DimensionFormat('' + years, 4));
-            return time.toString();
-        } else if(this.step.getType() === 'msec') {
-            var stepTst = this.step.asMsec();//msecs
-            if(this.asc) {
-                time = new TimeISO8601(new Date(this.start.getTime().getTime() + step * stepTst));
-            } else {
-                time = new TimeISO8601(new Date(this.start.getTime().getTime() - step * stepTst));
+        } else {
+            while (stepTime.time.getTime() >= endtime) {
+                stepsNum++;
+                stepTime.substract(this.step);
             }
-            return time.toString();
-        } else if(this.step.getType() === 'month') {
-            var startMonth = (this.start.getYear() * 12 + this.start.getMonth());
-            var stepMonth = (this.step.getYears() * 12 + this.step.getMonths());
-            var months;
-            if(this.asc) {
-                months = startMonth + step * stepMonth;
-            } else {
-                months = startMonth - step * stepMonth;
-            }
-            var years = Math.floor(months / 12);
-            time = new TimeISO8601(Mapbender.DimensionFormat(years, 4) + "-" + Mapbender.DimensionFormat(months - years * 12 + 1, 2));
-            return time.toString();
-        } else if(this.step.getType() === 'date') {
-            /* TODO optimize? */
-            var tempStep = 0;
-            var stepTime = new TimeISO8601(this.start.getTime().toJSON());
-            if(this.asc) {
-                while (tempStep !== step) {
-                    stepTime.add(this.step);
-                    tempStep++;
-                }
-            } else {
-                while (tempStep !== step) {
-                    stepTime.substract(this.step);
-                    tempStep++;
-                }
-            }
-            return stepTime.toString();
         }
-    },
-    valueFromStart:         function() {
-        return this.start.getTime().toJSON();
-    },
-    valueFromEnd:           function() {
-        return this.end.getTime().toJSON();
-    },
-    intervalAsMonth:        function(absolut) {
-        if(this.step.getType() === 'month') {
-            var startMonth = this.start.getYear() * 12 + this.start.getMonth();
-            var endMonth = this.end.getYear() * 12 + this.end.getMonth();
-            return absolut ? Math.abs(endMonth - startMonth) : endMonth - startMonth;
+        return stepsNum / this.stepsNum;
+    }
+};
+
+Mapbender.DimensionTime.prototype.stepFromPart = function stepFromPart(part) {
+    return Math.round(part * (this.getStepsNum()));
+};
+Mapbender.DimensionTime.prototype.stepFromValue = function stepFromValue(value) {
+    return this.stepFromPart(this.partFromValue(value));
+};
+Mapbender.DimensionTime.prototype.valueFromPart = function valueFromPart(part) {
+    var step = this.stepFromPart(part);
+    var time;
+    if(this.step.getType() === 'year') {
+        var years;
+        if(this.asc) {
+            years = this.start.getYear() + step * this.step.getYears();
+        } else {
+            years = this.start.getYear() - step * this.step.getYears();
         }
-    },
-    innerJoin:              function(another) {
-        if(this.asc !== another.asc || !this.step.equals(another.step)) {
+        time = new TimeISO8601(Mapbender.DimensionFormat('' + years, 4));
+        return time.toString();
+    } else if(this.step.getType() === 'msec') {
+        var stepTst = this.step.asMsec();//msecs
+        if(this.asc) {
+            time = new TimeISO8601(new Date(this.start.getTime().getTime() + step * stepTst));
+        } else {
+            time = new TimeISO8601(new Date(this.start.getTime().getTime() - step * stepTst));
+        }
+        return time.toString();
+    } else if(this.step.getType() === 'month') {
+        var startMonth = (this.start.getYear() * 12 + this.start.getMonth());
+        var stepMonth = (this.step.getYears() * 12 + this.step.getMonths());
+        var months;
+        if(this.asc) {
+            months = startMonth + step * stepMonth;
+        } else {
+            months = startMonth - step * stepMonth;
+        }
+        var years = Math.floor(months / 12);
+        time = new TimeISO8601(Mapbender.DimensionFormat(years, 4) + "-" + Mapbender.DimensionFormat(months - years * 12 + 1, 2));
+        return time.toString();
+    } else if(this.step.getType() === 'date') {
+        var tempStep = 0;
+        var stepTime = new TimeISO8601(this.start.getTime().toJSON());
+        if(this.asc) {
+            while (tempStep !== step) {
+                stepTime.add(this.step);
+                tempStep++;
+            }
+        } else {
+            while (tempStep !== step) {
+                stepTime.substract(this.step);
+                tempStep++;
+            }
+        }
+        return stepTime.toString();
+    }
+};
+
+Mapbender.DimensionTime.prototype.valueFromStart = function valueFromStart() {
+    return this.start.getTime().toJSON();
+};
+
+Mapbender.DimensionTime.prototype.valueFromEnd = function valueFromEnd() {
+    return this.end.getTime().toJSON();
+};
+
+Mapbender.DimensionTime.prototype.intervalAsMonth = function intervalAsMonth(absolut) {
+    if(this.step.getType() === 'month') {
+        var startMonth = this.start.getYear() * 12 + this.start.getMonth();
+        var endMonth = this.end.getYear() * 12 + this.end.getMonth();
+        return absolut ? Math.abs(endMonth - startMonth) : endMonth - startMonth;
+    }
+};
+
+Mapbender.DimensionTime.prototype.innerJoin = function innerJoin(another) {
+    if(this.asc !== another.asc || !this.step.equals(another.step)) {
+        return null;
+    }
+    var start, end;
+    var options = $.extend(true, {}, this.options);
+
+    function joinOptions(opts, one, two, startStr, endStr) {
+        opts.extent = [startStr, endStr, one.step.toString()];
+        opts.origextent = opts.extent;
+        opts.current = one.options.current === two.options.current ? one.options.current : null;
+        opts.multipleValues = one.options.multipleValues === two.options.multipleValues ? one.options.multipleValues : false;
+        opts.nearestValue = one.options.nearestValue === two.options.nearestValue ? one.options.nearestValue : false;
+        opts.unitSymbol = one.options.unitSymbol === two.options.unitSymbol ? one.options.unitSymbol : null;
+        opts.units = one.options.units === two.options.units ? one.options.units : null;
+        return opts;
+    }
+
+    if(this.step.getType() === 'year') {
+        var testMin = Math.abs(this.start.getYear() - another.start.getYear()) / this.step.getYears();
+        var testMax = Math.abs(this.end.getYear() - another.end.getYear()) / this.step.getYears();
+        if(testMin !== parseInt(testMin) || testMax !== parseInt(testMax)) {
             return null;
         }
-        var start, end;
-        var options = $.extend(true, {}, this.options);
+        if(this.asc) {
+            start = this.start.getYear() >= another.start.getYear() ? this.start : another.start;
+            end = this.end.getYear() <= another.end.getYear() ? this.end : another.end;
+        } else {
+            start = this.start.getYear() <= another.start.getYear() ? this.start : another.start;
+            end = this.end.getYear() >= another.end.getYear() ? this.end : another.end;
+        }
+        options = joinOptions(options, this, another, start.toString(), end.toString());
+        var joined = Mapbender.Dimension(options);
+        return joined;
+    } else if(this.step.getType() === 'msec') {
+        var testMin = Math.abs(this.start.getTime().getTime() - another.start.getTime().getTime()) / this.step.asMsec();
+        var testMax = Math.abs(this.end.getTime().getTime() - another.end.getTime().getTime()) / this.step.asMsec();
+        if(testMin !== parseInt(testMin) || testMax !== parseInt(testMax)) {
+            return null;
+        }
+        if(this.asc) {
+            start = this.start.getTime().getTime() >= another.start.getTime().getTime() ? this.start : another.start;
+            end = this.end.getTime().getTime() <= another.end.getTime().getTime() ? this.end : another.end;
+        } else {
+            start = this.start.getTime().getTime() <= another.start.getTime().getTime() ? this.start : another.start;
+            end = this.end.getTime().getTime() >= another.end.getTime().getTime() ? this.end : another.end;
+        }
+        options = joinOptions(options, this, another, start.toString(), end.toString());
+        var joined = Mapbender.Dimension(options);
+        return joined;
+    } else if(this.step.getType() === 'month') {
+        var thisStartMonth = (this.start.getYear() * 12 + this.start.getMonth());
+        var anotherStartMonth = (another.start.getYear() * 12 + another.start.getMonth());
+        var thisEndMonth = (this.end.getYear() * 12 + this.end.getMonth());
+        var anotherEndMonth = (another.end.getYear() * 12 + another.end.getMonth());
+        var stepMonth = (this.step.getYears() * 12 + this.step.getMonths());
 
-        function joinOptions(opts, one, two, startStr, endStr) {
-            opts.extent = [startStr, endStr, one.step.toString()];
-            opts.origextent = opts.extent;
-            opts.current = one.options.current === two.options.current ? one.options.current : null;
-            opts.multipleValues = one.options.multipleValues === two.options.multipleValues ? one.options.multipleValues : false;
-            opts.nearestValue = one.options.nearestValue === two.options.nearestValue ? one.options.nearestValue : false;
-            opts.unitSymbol = one.options.unitSymbol === two.options.unitSymbol ? one.options.unitSymbol : null;
-            opts.units = one.options.units === two.options.units ? one.options.units : null;
-            return opts;
+        var testMin = Math.abs(thisStartMonth - anotherStartMonth) / stepMonth;
+        var testMax = Math.abs(thisEndMonth - anotherEndMonth) / stepMonth;
+        if(testMin !== parseInt(testMin) || testMax !== parseInt(testMax)) {
+            return null;
         }
 
-        if(this.step.getType() === 'year') {
-            var testMin = Math.abs(this.start.getYear() - another.start.getYear()) / this.step.getYears();
-            var testMax = Math.abs(this.end.getYear() - another.end.getYear()) / this.step.getYears();
-            if(testMin !== parseInt(testMin) || testMax !== parseInt(testMax)) {
-                return null;
-            }
-            if(this.asc) {
-                start = this.start.getYear() >= another.start.getYear() ? this.start : another.start;
-                end = this.end.getYear() <= another.end.getYear() ? this.end : another.end;
-            } else {
-                start = this.start.getYear() <= another.start.getYear() ? this.start : another.start;
-                end = this.end.getYear() >= another.end.getYear() ? this.end : another.end;
-            }
-            options = joinOptions(options, this, another, start.toString(), end.toString());
-            var joined = Mapbender.Dimension(options);
-            return joined;
-        } else if(this.step.getType() === 'msec') {
-            var testMin = Math.abs(this.start.getTime().getTime() - another.start.getTime().getTime()) / this.step.asMsec();
-            var testMax = Math.abs(this.end.getTime().getTime() - another.end.getTime().getTime()) / this.step.asMsec();
-            if(testMin !== parseInt(testMin) || testMax !== parseInt(testMax)) {
-                return null;
-            }
-            if(this.asc) {
-                start = this.start.getTime().getTime() >= another.start.getTime().getTime() ? this.start : another.start;
-                end = this.end.getTime().getTime() <= another.end.getTime().getTime() ? this.end : another.end;
-            } else {
-                start = this.start.getTime().getTime() <= another.start.getTime().getTime() ? this.start : another.start;
-                end = this.end.getTime().getTime() >= another.end.getTime().getTime() ? this.end : another.end;
-            }
-            options = joinOptions(options, this, another, start.toString(), end.toString());
-            var joined = Mapbender.Dimension(options);
-            return joined;
-        } else if(this.step.getType() === 'month') {
-            var thisStartMonth = (this.start.getYear() * 12 + this.start.getMonth());
-            var anotherStartMonth = (another.start.getYear() * 12 + another.start.getMonth());
-            var thisEndMonth = (this.end.getYear() * 12 + this.end.getMonth());
-            var anotherEndMonth = (another.end.getYear() * 12 + another.end.getMonth());
-            var stepMonth = (this.step.getYears() * 12 + this.step.getMonths());
-
-            var testMin = Math.abs(thisStartMonth - anotherStartMonth) / stepMonth;
-            var testMax = Math.abs(thisEndMonth - anotherEndMonth) / stepMonth;
-            if(testMin !== parseInt(testMin) || testMax !== parseInt(testMax)) {
-                return null;
-            }
-
-            if(this.asc) {
-                start = this.start.getTime().getTime() >= another.start.getTime().getTime() ? this.start : another.start;
-                end = this.end.getTime().getTime() <= another.end.getTime().getTime() ? this.end : another.end;
-            } else {
-                start = this.start.getTime().getTime() <= another.start.getTime().getTime() ? this.start : another.start;
-                end = this.end.getTime().getTime() >= another.end.getTime().getTime() ? this.end : another.end;
-            }
-            options = joinOptions(options, this, another, start.toString(), end.toString());
-            var joined = Mapbender.Dimension(options);
-            return joined;
-        } else if(this.step.getType() === 'date') {
-            var joinStart, joinEnd;
-            if(this.asc) {
-                if(this.start.getTime().getTime() >= another.start.getTime().getTime()) {
-                    joinStart = this.start;
-                    start = another.start;
-                } else {
-                    joinStart = another.start;
-                    start = this.start;
-                }
-                if(this.end.getTime().getTime() >= another.end.getTime().getTime()) {
-                    joinEnd = another.end;
-                    end = this.end;
-                } else {
-                    joinEnd = this.end;
-                    end = another.end;
-                }
-            } else {
-                if(this.start.getTime().getTime() >= another.start.getTime().getTime()) {
-                    joinStart = another.start;
-                    start = this.start;
-                } else {
-                    joinStart = this.start;
-                    start = another.start;
-                }
-                if(this.end.getTime().getTime() >= another.end.getTime().getTime()) {
-                    joinEnd = this.end;
-                    end = another.end;
-                } else {
-                    joinEnd = another.end;
-                    end = this.end;
-                }
-            }
-            //            var endtime = end.time.getTime();
-            var joinStartTime = joinStart.time.getTime();
-            var joinEndTime = joinEnd.time.getTime();
-            var stepTime = start;
-            var startOk = false;
-            var endOk = false;
-            var stepSt;
-            var stepsNum = 0;
-            while (true) {
-                stepSt = stepTime.time.getTime();
-                if(stepSt === joinStartTime) {
-                    startOk = true;
-                }
-                if(stepSt === joinEndTime) {
-                    endOk = true;
-                }
-                if(this.asc) {
-                    if(stepSt >= joinEndTime || (startOk === true && endOk === true)) {
-                        break;
-                    }
-                    stepTime.add(this.step);
-                } else {
-                    if(stepSt <= joinEndTime || (startOk === true && endOk === true)) {
-                        break;
-                    }
-                    stepTime.substract(this.step);
-                }
-                stepsNum++;
-            }
-            if(startOk !== true || endOk !== true || stepsNum === 0) {
-                return null;
-            }
-            options = joinOptions(options, this, another, start.toString(), end.toString());
-            var joined = Mapbender.Dimension(options);
-            return joined;
+        if(this.asc) {
+            start = this.start.getTime().getTime() >= another.start.getTime().getTime() ? this.start : another.start;
+            end = this.end.getTime().getTime() <= another.end.getTime().getTime() ? this.end : another.end;
+        } else {
+            start = this.start.getTime().getTime() <= another.start.getTime().getTime() ? this.start : another.start;
+            end = this.end.getTime().getTime() >= another.end.getTime().getTime() ? this.end : another.end;
         }
+        options = joinOptions(options, this, another, start.toString(), end.toString());
+        var joined = Mapbender.Dimension(options);
+        return joined;
+    } else if(this.step.getType() === 'date') {
+        var joinStart, joinEnd;
+        if(this.asc) {
+            if(this.start.getTime().getTime() >= another.start.getTime().getTime()) {
+                joinStart = this.start;
+                start = another.start;
+            } else {
+                joinStart = another.start;
+                start = this.start;
+            }
+            if(this.end.getTime().getTime() >= another.end.getTime().getTime()) {
+                joinEnd = another.end;
+                end = this.end;
+            } else {
+                joinEnd = this.end;
+                end = another.end;
+            }
+        } else {
+            if(this.start.getTime().getTime() >= another.start.getTime().getTime()) {
+                joinStart = another.start;
+                start = this.start;
+            } else {
+                joinStart = this.start;
+                start = another.start;
+            }
+            if(this.end.getTime().getTime() >= another.end.getTime().getTime()) {
+                joinEnd = this.end;
+                end = another.end;
+            } else {
+                joinEnd = another.end;
+                end = this.end;
+            }
+        }
+        var joinStartTime = joinStart.time.getTime();
+        var joinEndTime = joinEnd.time.getTime();
+        var stepTime = start;
+        var startOk = false;
+        var endOk = false;
+        var stepSt;
+        var stepsNum = 0;
+        while (true) {
+            stepSt = stepTime.time.getTime();
+            if(stepSt === joinStartTime) {
+                startOk = true;
+            }
+            if(stepSt === joinEndTime) {
+                endOk = true;
+            }
+            if(this.asc) {
+                if(stepSt >= joinEndTime || (startOk === true && endOk === true)) {
+                    break;
+                }
+                stepTime.add(this.step);
+            } else {
+                if(stepSt <= joinEndTime || (startOk === true && endOk === true)) {
+                    break;
+                }
+                stepTime.substract(this.step);
+            }
+            stepsNum++;
+        }
+        if(startOk !== true || endOk !== true || stepsNum === 0) {
+            return null;
+        }
+        options = joinOptions(options, this, another, start.toString(), end.toString());
+        var joined = Mapbender.Dimension(options);
+        return joined;
     }
-});
+};
+
 
 TimeStr = Class({
     'public string years':  null,
