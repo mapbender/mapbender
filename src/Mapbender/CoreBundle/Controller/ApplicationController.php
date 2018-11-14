@@ -18,6 +18,7 @@ use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,41 +55,39 @@ class ApplicationController extends Controller
      * date and this controller will be used during development mode.
      *
      * @Route("/application/{slug}/assets/{type}", requirements={"type" = "js|css|trans"})
+     * @param Request $request
      * @param string $slug Application slug name
      * @param string $type Asset type
      * @return Response
      */
-    public function assetsAction($slug, $type)
+    public function assetsAction(Request $request, $slug, $type)
     {
-        $response         = new Response();
-        $request          = $this->getRequest();
-        $env              = $this->container->get("kernel")->getEnvironment();
-        $isProduction     = $env == "prod";
-        $cacheFile        = $this->getCachedAssetPath($slug, $env, $type);
-        $needCache        = $isProduction && !file_exists($cacheFile);
-        $modificationDate = new \DateTime();
-        $appEntity        = $this->get('mapbender')->getApplicationEntity($slug);
+        $isProduction = $this->isProduction();
+        $cacheFile        = $this->getCachedAssetPath($slug, $type);
+        $application = $this->getApplication($slug);
 
-        $response->headers->set('Content-Type', $this->getMimeType($type));
+        $headers = array(
+            'Content-Type' => $this->getMimeType($type),
+        );
 
-
-        if ($isProduction && !$needCache) {
+        $useCached = $isProduction && file_exists($cacheFile);
+        if ($useCached) {
+            $appEntity = $application->getEntity();
+            $isAppDbBased = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
             $modificationTs = filectime($cacheFile);
-            $isAppDbBased   = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
-            $modificationDate->setTimestamp($modificationTs);
+            // Always reuse cache entry for YAML applications
+            // Check the update timestamp only for DB applications,
+            $useCached = !$isAppDbBased || ($appEntity->getUpdated()->getTimestamp() < $modificationTs);
 
-            if (!$isAppDbBased || ($isAppDbBased && $appEntity->getUpdated() < $modificationDate)) {
-                $response->setLastModified($modificationDate);
-                $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
-                if ($response->isNotModified($request)) {
-                    return $response;
-                }
-                $response->setContent(file_get_contents($cacheFile));
+            if ($useCached) {
+                $response = new BinaryFileResponse($cacheFile, 200, $headers);
+                // allow file timestamp to be read again correctly for 'Last-Modified' header
+                clearstatcache();
+                $response->isNotModified($request);
                 return $response;
             }
         }
 
-        $application = $this->getApplication($slug);
         $refs = $application->getAssetGroup($type);
         if ($type == "css") {
             $sourcePath = $request->getBasePath();
@@ -105,11 +104,12 @@ class ApplicationController extends Controller
             $content = $assets->dump();
         }
 
-        if ($isProduction && $needCache) {
+        if ($isProduction) {
             file_put_contents($cacheFile, $content);
+            return new BinaryFileResponse($cacheFile, 200, $headers);
+        } else {
+            return new Response($content, 200, $headers);
         }
-
-        return $response->setContent($content);
     }
 
     /**
@@ -137,61 +137,34 @@ class ApplicationController extends Controller
      * Main application controller.
      *
      * @Route("/application/{slug}.{_format}", defaults={ "_format" = "html" })
+     * @param Request $request
      * @param string $slug Application
      * @return Response
      */
-    public function applicationAction($slug)
+    public function applicationAction(Request $request, $slug)
     {
-        $env          = $this->container->get("kernel")->getEnvironment();
-        $isProduction = $env == "prod";
-        $response     = new Response();
         $session      = $this->get("session");
         $application  = $this->getApplication($slug);
+        $appEntity = $application->getEntity();
+        // @todo: figure out why YAML applications should be excluded from html caching; they do use asset caching
+        $useCache = $this->isProduction() && ($appEntity->getSource() === ApplicationEntity::SOURCE_DB);
+        $session->set("proxyAllowed", true); // @todo: ...why?
 
-        if ($isProduction) {
-
-            // Render YAML application
-            if ($application->getEntity()->getSource() !== ApplicationEntity::SOURCE_DB) {
-                $session->set("proxyAllowed", true);
-                $response->setContent($application->render());
-                return $response;
-            }
-
-            $cacheFile        = $this->getCachedAssetPath($slug . "-" . session_id(), $env, "html");
-            $hasCache         = is_file($cacheFile);
-            // If no cache or DB application is update, but cache is deprecated
-            if (!$hasCache || $application->getEntity()->getUpdated()->getTimestamp() > filectime($cacheFile)) {
+        if ($useCache) {
+            $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), "html");
+            $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
+            if (!$cacheValid) {
                 $content = $application->render();
                 file_put_contents($cacheFile, $content);
-                $session->set("proxyAllowed", true);
-                $response->setContent($content);
-
-                // Update application and remove assets cache
-                if($hasCache){
-                    foreach(array(
-                                $this->getCachedAssetPath($slug,$env,'css'),
-                                $this->getCachedAssetPath($slug,$env,'js')) as $assetFileSrc){
-                        if(is_file($assetFileSrc)){
-                            unlink($assetFileSrc);
-                        }
-                    }
-                }
-            } else {
-                $modificationDate = new \DateTime();
-                $modificationDate->setTimestamp(filectime($cacheFile));
-                $response->setLastModified($modificationDate);
-                $response->headers->set('X-Asset-Modification-Time', $modificationDate->format('c'));
-                if ($response->isNotModified($this->getRequest())) {
-                    return $response;
-                }
-                $response->setContent(file_get_contents($cacheFile));
+                // allow file timestamp to be read again correctly for 'Last-Modified' header
+                clearstatcache();
             }
+            $response = new BinaryFileResponse($cacheFile);
+            $response->isNotModified($request);
+            return $response;
         } else {
-            $session->set("proxyAllowed", true);
-            $response->setContent($application->render());
+            return new Response($application->render());
         }
-
-        return $response;
     }
 
     /**
@@ -220,9 +193,10 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Main application controller.
      *
      * @Route("/application/{slug}/config")
+     * @param string $slug
+     * @return Response
      */
     public function configurationAction($slug)
     {
@@ -332,8 +306,12 @@ class ApplicationController extends Controller
      * @see InstanceTunnelService
      *
      * @Route("/application/{slug}/instance/{instanceId}/tunnel")
+     * @param Request $request
+     * @param string $slug
+     * @param string $instanceId
+     * @return Response
      */
-    public function instanceTunnelAction($slug, $instanceId)
+    public function instanceTunnelAction(Request $request, $slug, $instanceId)
     {
         // @todo: instance tunnel handling should move into a service component in WmsBundle
         /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
@@ -352,8 +330,6 @@ class ApplicationController extends Controller
 //        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
 //        $this->denyAccessUnlessGranted('VIEW', $source);
         $headers     = array();
-        /** @var Request $request */
-        $request = $this->get("request");
         $postParams  = $request->request->all();
         $getParams   = $request->query->all();
         $user        = $source->getUsername() ? $source->getUsername() : null;
@@ -386,9 +362,8 @@ class ApplicationController extends Controller
         $browserResponse = $proxy->handle();
         $response        = new Response();
 
-        $cookies_req = $this->get("request")->cookies;
         Utils::setHeadersFromBrowserResponse($response, $browserResponse);
-        foreach ($cookies_req as $key => $value) {
+        foreach ($request->cookies as $key => $value) {
             $response->headers->removeCookie($key);
             $response->headers->setCookie(new Cookie($key, $value));
         }
@@ -398,13 +373,12 @@ class ApplicationController extends Controller
 
     /**
      * @param $slug
-     * @param $env
      * @param $type
      * @return string
      */
-    public function getCachedAssetPath($slug, $env, $type)
+    protected function getCachedAssetPath($slug, $type)
     {
-        return $this->container->getParameter('kernel.root_dir') . "/cache/" . $env . "/" . $slug . ".min." . $type;
+        return $this->container->getParameter('kernel.cache_dir') . "/{$slug}.min.{$type}";
     }
 
     /**
@@ -420,5 +394,21 @@ class ApplicationController extends Controller
             'js'    => 'application/javascript',
             'trans' => 'application/javascript');
         return $types[$type];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getKernelEnvironment()
+    {
+        return $this->container->get('kernel')->getEnvironment();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isProduction()
+    {
+        return $this->getKernelEnvironment() == "prod";
     }
 }
