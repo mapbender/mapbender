@@ -5,6 +5,7 @@ use Assetic\Asset\StringAsset;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
+use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -201,13 +202,14 @@ class Application implements IAssetDependent
         );
 
         // Collect asset definitions from elements configured in the application
-        foreach ($this->getElements() as $regionName => $elements) {
-            foreach ($elements as $element) {
-                $assetSources[] = array(
-                    'object' => $element,
-                    'assets' => $element->getAssets(),
-                );
-            }
+        // Skip grants checks here to avoid issues with application asset caching.
+        // Non-granted Elements will skip HTML rendering and config and will not be initialized.
+        // Emitting the base js / css / translation assets OTOH is always safe to do
+        foreach ($this->getService()->getActiveElements($this->entity, false) as $element) {
+            $assetSources[] = array(
+                'object' => $element,
+                'assets' => $element->getAssets(),
+            );
         }
 
         // Collect all layer asset definitions
@@ -723,5 +725,15 @@ class Application implements IAssetDependent
 
         $acl->insertObjectAce(new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'), $maskBuilder->get());
         $aclProvider->updateAcl($acl);
+    }
+
+    /**
+     * @return ApplicationService
+     */
+    protected function getService()
+    {
+        /** @var ApplicationService $service */
+        $service = $this->container->get('mapbender.presenter.application.service');
+        return $service;
     }
 }
