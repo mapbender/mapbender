@@ -276,18 +276,14 @@ class Application implements IAssetDependent
             $assets[] = new StringAsset($appLoaderContent);
         }
 
-        return $assets;
-    }
-
-    /**
-     * @return StringAsset
-     */
-    public function getCustomCssAsset()
-    {
-        $entity = $this->getEntity();
-        if ($entity->getCustomCss()) {
-            return new StringAsset($entity->getCustomCss());
+        if ($type === 'css') {
+            $customCss = $this->getEntity()->getCustomCss();
+            if ($customCss) {
+                $assets[] = new StringAsset($customCss);
+            }
         }
+
+        return $assets;
     }
 
     /**
