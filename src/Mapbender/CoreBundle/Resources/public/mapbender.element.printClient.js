@@ -284,6 +284,9 @@
             var scale = this._getPrintScale();
             function _getLegends(layer) {
                 var legend = {};
+                if (!layer.options.treeOptions.selected) {
+                    return legend;
+                }
                 if (layer.children) {
                     for (var i = 0; i < layer.children.length; i++) {
                         _.assign(legend, _getLegends(layer.children[i]));
