@@ -122,17 +122,12 @@ class Application implements IAssetDependent
     /**
      * Render the application
      *
-     * @param string  $format Output format, defaults to HTML
-     * @param boolean $html   Whether to render the HTML itself
-     * @param boolean $css    Whether to include the CSS links
-     * @param boolean $js     Whether to include the JavaScript
-     * @param bool    $trans
      * @return string $html The rendered HTML
      */
-    public function render($format = 'html', $html = true, $css = true, $js = true, $trans = true)
+    public function render()
     {
         $template = $this->getTemplate();
-        return $template->render($format, $html, $css, $js, $trans);
+        return $template->render();
     }
 
     /**
