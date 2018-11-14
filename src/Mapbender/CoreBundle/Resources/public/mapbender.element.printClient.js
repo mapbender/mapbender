@@ -306,7 +306,7 @@
                 var source = sources[i];
                 if (source.type === 'wms' && this._getRasterVisibilityInfo(source, scale).layers.length) {
                     var ll = _getLegends(sources[i].configuration.children[0]);
-                    if (ll) {
+                    if (ll && Object.keys(ll).length) {
                         legends = legends.concat(ll);
                     }
                 }
