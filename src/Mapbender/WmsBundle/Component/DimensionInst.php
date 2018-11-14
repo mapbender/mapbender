@@ -17,6 +17,8 @@ class DimensionInst extends Dimension
     public $origextent = null;
     public $active;
     public $type;
+    public $id;
+
 
     public function getOrigextent()
     {
@@ -131,10 +133,26 @@ class DimensionInst extends Dimension
             'nearestValue' => $this->getNearestValue(),
             'unitSymbol' => $this->getUnitSymbol(),
             'units' => $this->getUnits(),
-            'extent' => $this->getData($this->getExtent()),
+            'extent' => $this->getData($this->getExtent()) ?: $this->getData($this->getOrigextent()),
             'origextent' => $this->getData($this->getOrigextent()),
             'type' => $this->getType(),
         );
+    }
+
+    public static function fromConfiguration(array $config)
+    {
+        $inst = new static();
+        $inst->current = $config['current'];
+        $inst->default = $config['default'];
+        $inst->multipleValues = $config['multipleValues'];
+        $inst->name = $config['name'];
+        $inst->nearestValue = $config['nearestValue'];
+        $inst->unitSymbol = $config['unitSymbol'];
+        $inst->units = $config['units'];
+        $inst->extent = $config['extent'];
+        $inst->origextent = $config['origextent'];
+        $inst->type = $config['type'];
+        return $inst;
     }
 
     /**

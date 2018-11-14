@@ -1,0 +1,35 @@
+{# form skin (widget + row) for a DimensionInst extent, composed of a (read-only) text field and a slider #}
+{# This uses a bootstrap grid but makes it look like the default FOM form fields ito widths and margins... #}
+
+{% block _form_configuration_dimensionsets_entry_rows %}
+    {{ form_row(form.title) }}
+    <div class="clear"></div>
+    {{ form_row(form.group) }}
+    <div class="clear"></div>
+    <div class="row">
+        <div class="col-xs-3" style="width:auto; padding-right:0;">
+            {{ form_label(form.dimension) }}
+        </div>
+        <div class="col-xs-9" style="width:70%; padding-left:0;">
+            <input data-name="extentDisplay" type="text" readonly="readonly" disabled="disabled" class="input" />
+            <div class="mb-slider" style="margin: 0.5em 0;"></div>
+            <div style="display:none;">
+                {{ form_widget(form.dimension) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _form_configuration_dimensionsets_entry_row %}
+    <div class="collectionItem">
+      {% if form.vars.prototype is defined  and form.vars.allow_add is defined %}
+      <a href="#add" class="collectionAdd iconAdd iconSmall"></a>
+      {% endif %}
+      {% if form.parent and 'allow_delete' in form.parent.vars | keys and form.parent.vars['allow_delete'] %}
+        <a href="#delete" class="collectionRemove iconSmall iconRemove"></a>
+      {% endif %}
+
+        {{ block('_form_configuration_dimensionsets_entry_rows') }}
+
+    </div>
+{% endblock %}
