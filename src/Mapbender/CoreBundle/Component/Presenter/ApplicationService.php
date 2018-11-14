@@ -36,15 +36,21 @@ class ApplicationService
     }
 
     /**
-     * Returns the list of Elements from the given Application that are enabled and granted for the current user
+     * Returns the list of Elements from the given Application that are enabled and (optionally) granted for
+     * the current user.
+     *
      * @param ApplicationEntity $entity
+     * @param bool $requireGrant return only VIEW-granted entries (default true)
      * @return ElementComponent[]
      */
-    public function getActiveElements(ApplicationEntity $entity)
+    public function getActiveElements(ApplicationEntity $entity, $requireGrant = true)
     {
         $elements    = array();
         foreach ($entity->getElements() as $elementEntity) {
-            if (!$elementEntity->getEnabled() || !$this->isElementGranted($elementEntity)) {
+            if (!$elementEntity->getEnabled()) {
+                continue;
+            }
+            if ($requireGrant && !$this->isElementGranted($elementEntity)) {
                 continue;
             }
             $elementComponent = $this->makeElementComponent($entity, $elementEntity);

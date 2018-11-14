@@ -5,6 +5,7 @@ use Assetic\Asset\StringAsset;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
+use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -122,17 +123,25 @@ class Application implements IAssetDependent
     /**
      * Render the application
      *
-     * @param string  $format Output format, defaults to HTML
-     * @param boolean $html   Whether to render the HTML itself
-     * @param boolean $css    Whether to include the CSS links
-     * @param boolean $js     Whether to include the JavaScript
-     * @param bool    $trans
      * @return string $html The rendered HTML
      */
-    public function render($format = 'html', $html = true, $css = true, $js = true, $trans = true)
+    public function render()
     {
         $template = $this->getTemplate();
-        return $template->render($format, $html, $css, $js, $trans);
+        return $template->render();
+    }
+
+    /**
+     *
+     * @return string[]
+     */
+    public function getValidAssetTypes()
+    {
+        return array(
+            'js',
+            'css',
+            'trans',
+        );
     }
 
     /**
@@ -168,7 +177,7 @@ class Application implements IAssetDependent
      */
     public function getAssetGroup($type)
     {
-        if ($type !== 'css' && $type !== 'js' && $type !== 'trans') {
+        if (!\in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \RuntimeException('Asset type \'' . $type .
                 '\' is unknown.');
         }
@@ -176,121 +185,107 @@ class Application implements IAssetDependent
         // Add all assets to an asset manager first to avoid duplication
         //$assets = new LazyAssetManager($this->container->get('assetic.asset_factory'));
         $assets            = array();
-        $translations      = array();
-        $layerTranslations = array();
         $templating        = $this->container->get('templating');
-        $_assets           = $this->getAssets();
+        $appTemplate = $this->getTemplate();
 
-        foreach ($_assets[ $type ] as $asset) {
-            $this->addAsset($assets, $type, $asset);
+        $ownAssets = $this->getAssets();
+        if (!empty($ownAssets[$type])) {
+            $assets = array_merge($assets, $ownAssets[$type]);
+        }
+        $assetSources = array(
+            array(
+                'object' => $appTemplate,
+                'assets' => array(
+                    $type => $appTemplate->getAssets($type),
+                ),
+            ),
+        );
+
+        // Collect asset definitions from elements configured in the application
+        // Skip grants checks here to avoid issues with application asset caching.
+        // Non-granted Elements will skip HTML rendering and config and will not be initialized.
+        // Emitting the base js / css / translation assets OTOH is always safe to do
+        foreach ($this->getService()->getActiveElements($this->entity, false) as $element) {
+            $assetSources[] = array(
+                'object' => $element,
+                'assets' => $element->getAssets(),
+            );
         }
 
-        // Load all elements assets
-        foreach ($this->getTemplate()->getAssets($type) as $asset) {
-            if ($type === 'trans') {
-                $elementTranslations = json_decode($templating->render($asset), true);
-                $translations        = array_merge($translations, $elementTranslations);
-            } else {
-                $file = $this->getReference($this->template, $asset);
-                $this->addAsset($assets, $type, $file);
-            }
-        }
-
-        /** @var Element[] $elements */
-        foreach ($this->getElements() as $region => $elements) {
-            foreach ($elements as $element) {
-                $element_assets = $element->getAssets();
-                if (isset($element_assets[ $type ])) {
-                    foreach ($element_assets[ $type ] as $asset) {
-                        if ($type === 'trans') {
-                            $elementTranslations = json_decode($templating->render($asset), true);
-                            $translations        = array_merge($translations, $elementTranslations);
-                        } else {
-                            $this->addAsset($assets, $type, $this->getReference($element, $asset));
-                        }
-                    }
-                }
-            }
-        }
-
-        // Load all layer assets
+        // Collect all layer asset definitions
         foreach ($this->entity->getLayersets() as $layerset) {
             foreach ($this->filterActiveSourceInstances($layerset) as $layer) {
-                $layer_assets = $layer->getAssets();
-                if (isset($layer_assets[ $type ])) {
-                    foreach ($layer_assets[ $type ] as $asset) {
-                        if ($type === 'trans') {
-                            if (!isset($layerTranslations[ $asset ])) {
-                                $layerTranslations[ $asset ] =
-                                    json_decode($templating->render($asset), true);
-                            }
-                        } else {
-                            $this->addAsset($assets, $type, $this->getReference($layer, $asset));
+                $assetSources[] = array(
+                    'object' => $layer,
+                    'assets' => $layer->getAssets(),
+                );
+            }
+        }
+
+        // Load the late template assets last, so they can overwrite element and layer assets
+        $assetSources[] = array(
+            'object' => $appTemplate,
+            'assets' => array(
+                $type => $appTemplate->getLateAssets($type),
+            ),
+        );
+
+        if ($type === 'trans') {
+            // mimic old behavior: ONLY for trans assets, avoid processing repeated inputs
+            $transAssetInputs = array();
+            $translations = array();
+            foreach ($assetSources as $assetSource) {
+                if (!empty($assetSource['assets'][$type])) {
+                    foreach (array_unique($assetSource['assets'][$type]) as $transAsset) {
+                        $transAssetInputs[$transAsset] = $transAsset;
+                    }
+                }
+            }
+            foreach ($transAssetInputs as $transAsset) {
+                $renderedTranslations = json_decode($templating->render($transAsset), true);
+                $translations         = array_merge($translations, $renderedTranslations);
+            }
+            $assets[] = new StringAsset('Mapbender.i18n = ' . json_encode($translations, JSON_FORCE_OBJECT) . ';');
+        } else {
+            $assetRefs = array();
+            foreach ($assetSources as $assetSource) {
+                if (!empty($assetSource['assets'][$type])) {
+                    foreach ($assetSource['assets'][$type] as $asset) {
+                        $assetRef = $this->getReference($assetSource['object'], $asset);
+                        if (!array_key_exists($assetRef, $assetRefs)) {
+                            $assets[] = $assetRef;
+                            $assetRefs[$assetRef] = true;
                         }
                     }
                 }
             }
         }
-        foreach ($layerTranslations as $key => $value) {
-            $translations = array_merge($translations, $value);
-        }
-        if ($type === 'trans') {
-            $transAsset = new StringAsset('Mapbender.i18n = ' . json_encode($translations, JSON_FORCE_OBJECT) . ';');
-            $this->addAsset($assets, $type, $transAsset);
-        }
 
-        // Load the late template assets last, so it can easily overwrite element
-        // and layer assets for application specific styling for example
-        foreach ($this->getTemplate()->getLateAssets($type) as $asset) {
-            if ($type === 'trans') {
-                $elementTranslations = json_decode($templating->render($asset), true);
-                $translations        = array_merge($translations, $elementTranslations);
-            } else {
-                $file = $this->getReference($this->template, $asset);
-                $this->addAsset($assets, $type, $file);
+        // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
+        $extraYamlAssets = $this->getEntity()->getExtraAssets();
+        if (is_array($extraYamlAssets) && array_key_exists($type, $extraYamlAssets)) {
+            foreach ($extraYamlAssets[$type] as $asset) {
+                $assets[] = trim($asset);
             }
         }
 
-        // Load extra assets given by application
-        $extra_assets = $this->getEntity()->getExtraAssets();
-        if (is_array($extra_assets) && array_key_exists($type, $extra_assets)) {
-            foreach ($extra_assets[ $type ] as $asset) {
-                $asset = trim($asset);
-                $this->addAsset($assets, $type, $asset);
-            }
-        }
-
+        // add client initialization last, so everything is already in place
         if ($type === 'js') {
-            $app_loader = new StringAsset($templating->render(
-                '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig',
-                array('application' => $this)));
-            $this->addAsset($assets, $type, $app_loader);
+            $appLoaderTemplate = '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig';
+            $appLoaderContent = $templating->render($appLoaderTemplate, array(
+                'application' => $this,
+            ));
+            $assets[] = new StringAsset($appLoaderContent);
+        }
+
+        if ($type === 'css') {
+            $customCss = $this->getEntity()->getCustomCss();
+            if ($customCss) {
+                $assets[] = new StringAsset($customCss);
+            }
         }
 
         return $assets;
-    }
-
-    /**
-     * @return StringAsset
-     */
-    public function getCustomCssAsset()
-    {
-        $entity = $this->getEntity();
-        if ($entity->getCustomCss()) {
-            return new StringAsset($entity->getCustomCss());
-        }
-    }
-
-    /**
-     * @param $manager
-     * @param $type
-     * @param $reference
-     * @return array
-     */
-    private function addAsset(&$manager, $type, $reference)
-    {
-        $manager[] = $reference;
-        return $manager;
     }
 
     /**
@@ -361,6 +356,9 @@ class Application implements IAssetDependent
         } elseif ($firstChar == ".") {
             return $file;
         } elseif ($firstChar !== '@') {
+            if (!$object) {
+                throw new \RuntimeException("Can't resolve asset path $file with empty object context");
+            }
             $namespaces = explode('\\', get_class($object));
             $bundle     = sprintf('%s%s', $namespaces[0], $namespaces[1]);
             return sprintf('@%s/Resources/public/%s', $bundle, $file);
@@ -727,5 +725,15 @@ class Application implements IAssetDependent
 
         $acl->insertObjectAce(new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'), $maskBuilder->get());
         $aclProvider->updateAcl($acl);
+    }
+
+    /**
+     * @return ApplicationService
+     */
+    protected function getService()
+    {
+        /** @var ApplicationService $service */
+        $service = $this->container->get('mapbender.presenter.application.service');
+        return $service;
     }
 }
