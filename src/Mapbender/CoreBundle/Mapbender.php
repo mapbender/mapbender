@@ -37,9 +37,6 @@ class Mapbender
     /** @var Element[] */
     private $elements = array();
 
-    /** @var array */
-    private $layers = array();
-
     /** @var Template[] */
     private $templates = array();
 
@@ -69,8 +66,6 @@ class Mapbender
             }
 
             $this->elements           = array_merge($this->elements, $bundle->getElements());
-            /** Here's reason 1 why getLayers is deprecated: its return value is basically discared (wrong attribute) */
-            $this->layer              = array_merge($this->layers, $bundle->getLayers());
             $this->templates          = array_merge($this->templates, $bundle->getTemplates());
             $this->repositoryManagers = array_merge($this->repositoryManagers, $bundle->getRepositoryManagers());
         }
@@ -109,7 +104,7 @@ class Mapbender
      */
     public function getLayers()
     {
-        return $this->layers;
+        return array();
     }
 
     /**

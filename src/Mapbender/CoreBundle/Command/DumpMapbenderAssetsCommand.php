@@ -37,7 +37,6 @@ EOT
         $assetProviders = array_merge(
             $mapbender->getElements(),
             $mapbender->getTemplates(),
-            $mapbender->getLayers(),
             $extraProviders);
 
         $assets = array();
