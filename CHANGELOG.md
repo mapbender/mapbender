@@ -1,7 +1,9 @@
 # Changelog
-* **dev-release/3.0.7 @ 10d441f**
-  - Remove unused fields from VendorSpecifics form, remove JOII dependency [PR#1047](https://github.com/mapbender/mapbender/pull/1047)
-
+* **dev-release/3.0.7 @ acbf14e**
+  - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
+  - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
+  - Remove unused fields from VendorSpecifics form, remove JOII dependency ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
+  - Typo fixes in WmsCapabilitiesParser130, thanks jef-n ([PR#1046](https://github.com/mapbender/mapbender/pull/1046))
 
 * **v3.0.7.7**
   - [Regression fix] Restore either-or privilege checking behaviour for access to instance tunnel and metadata actions ([341bf11](https://github.com/mapbender/mapbender/commit/341bf117812173b3d9e211be8d5498750d73bf2d))
