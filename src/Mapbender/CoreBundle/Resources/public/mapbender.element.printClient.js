@@ -284,12 +284,16 @@
             var scale = this._getPrintScale();
             function _getLegends(layer) {
                 var legend = {};
-                if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected) {
-                    legend[layer.options.title] = layer.options.legend.url;
-                }
                 if (layer.children) {
                     for (var i = 0; i < layer.children.length; i++) {
                         _.assign(legend, _getLegends(layer.children[i]));
+                    }
+                }
+                // Only include the legend for a "group" / non-leaf layer if we haven't collected any
+                // legend images from leaf layers yet.
+                if (!Object.keys(legend).length) {
+                    if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected) {
+                        legend[layer.options.title] = layer.options.legend.url;
                     }
                 }
                 return legend;
