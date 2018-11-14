@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
+use Mapbender\CoreBundle\Mapbender;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
@@ -795,7 +796,9 @@ class ApplicationController extends WelcomeController
     private function getElementList()
     {
         $available_elements = array();
-        foreach ($this->get('mapbender')->getElements() as $elementClassName) {
+        /** @var Mapbender $mapbender */
+        $mapbender = $this->get('mapbender');
+        foreach ($mapbender->getElements() as $elementClassName) {
             $available_elements[$elementClassName] = array(
                 'title' => $elementClassName::getClassTitle(),
                 'description' => $elementClassName::getClassDescription(),

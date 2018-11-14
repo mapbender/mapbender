@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Element\Type;
 
 use Mapbender\CoreBundle\Component\ExtendedCollection;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -47,6 +48,7 @@ class DimensionsHandlerAdminType extends AbstractType implements ExtendedCollect
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var Application $application */
         $application = $options["application"];
         $element = $options["element"];
         $dimensions = array();

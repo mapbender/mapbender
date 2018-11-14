@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Command;
 
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
+use Mapbender\CoreBundle\Mapbender;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,6 +28,7 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var Mapbender $mapbender */
         $mapbender = $this->getContainer()->get('mapbender');
         $extraProviders = array(
             'Mapbender\CoreBundle\Component\Application',
