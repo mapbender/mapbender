@@ -166,6 +166,14 @@
   .popupContent, .popupSubContent {
     min-width: $elementPopupBodyWidth;
   }
+  /*
+    Temporary hack for FOM's legacy form field theme:
+    Ensure enough vertical space that certain element popups ending with a dropdown
+    (usually 1 or 2 text fields followed by a "target" <select>) size properly, so that the
+    absolute-positioned dropdown overlay does not vanish into the scrollable area below the body
+    of the popup. E.g. scale selector, image export.
+   */
+  min-height: 520px;
 }
 
 .popup.new-instance-select {
