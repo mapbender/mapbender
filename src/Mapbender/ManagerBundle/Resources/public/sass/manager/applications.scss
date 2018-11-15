@@ -160,7 +160,11 @@
     color:lighten($darkFontColor, 10%);
   }
 }
-.elementPopup {
+.mapbender-popup {
+  // modal mapbender popups only appear in the backend, aka manager application
+  width: max($popupModalWidth, $elementPopupWidth);
+}
+.popup.elementPopup {
   width: $elementPopupWidth;
   min-width: $popupModalWidth;
   .popupContent, .popupSubContent {
