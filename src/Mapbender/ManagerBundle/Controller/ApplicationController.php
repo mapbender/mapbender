@@ -26,6 +26,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Exception\Exception;
@@ -403,18 +404,20 @@ class ApplicationController extends WelcomeController
      *
      * @ManagerRoute("/application/{slug}/state", options={"expose"=true})
      * @Method("POST")
+     * @param Request $request
+     * @param string $slug
+     * @return Response
      */
-    public function toggleStateAction($slug)
+    public function toggleStateAction(Request $request, $slug)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $application = $this->getMapbender()->getApplicationEntity($slug);
 
         $this->denyAccessUnlessGranted('EDIT', $application);
 
         $em = $this->getDoctrine()->getManager();
 
-        $requestedState = $this->get('request')->get('state');
-        $currentState   = $application->isPublished();
-        $newState       = $currentState;
+        $requestedState = $request->request->get('state');
+        $oldState = $application->isPublished();
 
         switch ($requestedState) {
             case 'enabled':
@@ -422,21 +425,13 @@ class ApplicationController extends WelcomeController
                 $newState = $requestedState === 'enabled' ? true : false;
                 $application->setPublished($newState);
                 $em->flush();
-                $message  = 'State switched';
-                break;
-            case null:
-                $message  = 'No state given';
-                break;
+                return new JsonResponse(array(
+                    'oldState' => ($oldState ? 'enabled' : 'disabled'),
+                    'newState' => ($newState ? 'enabled' : 'disabled'),
+                ));
             default:
-                $message  = 'Unknown state requested';
-                break;
+                throw new BadRequestHttpException();
         }
-
-        return new JsonResponse(array(
-            'oldState' => $currentState ? 'enabled' : 'disabled',
-            'newState' => $newState ? 'enabled' : 'disabled',
-            'message' => $message
-        ));
     }
 
     /**
@@ -951,5 +946,16 @@ class ApplicationController extends WelcomeController
             'screenshot'          => $screenShotUrl,
             'screenshot_filename' => $application->getScreenshot(),
             'time'                => new \DateTime());
+    }
+
+    /**
+     * Get Mapbender core service
+     * @return Mapbender
+     */
+    protected function getMapbender()
+    {
+        /** @var Mapbender $service */
+        $service = $this->get('mapbender');
+        return $service;
     }
 }
