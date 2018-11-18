@@ -2,25 +2,22 @@
 
 namespace Mapbender\ManagerBundle\Template;
 
-use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateAssetDependencyInterface;
 
 /**
- * Application manager template
+ * Not an application template.
  *
- * @copyright 03.02.2015 by WhereGroup GmbH & Co. KG
+ * The actual twigs used to render the backend pages vary signficantly by controller action.
+ *
+ * The only commonality of the manager application is that it uses the same mechanism as proper
+ * application templates to declare and generate its required assets. See (currently in FOM):
+ * https://github.com/mapbender/fom/blob/v3.0.6.2/src/FOM/ManagerBundle/Resources/views/manager.html.twig#L8
  */
-class ManagerTemplate extends Template
+class ManagerTemplate implements IApplicationTemplateAssetDependencyInterface
 {
-    public static function getTitle()
-    {
-        throw new \RuntimeException("This is never called");
-    }
-
-    public static function getRegions()
-    {
-        throw new \RuntimeException("This is never called");
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function getAssets($type)
     {
         switch ($type) {
@@ -50,17 +47,25 @@ class ManagerTemplate extends Template
                     '@MapbenderManagerBundle/Resources/views/translations.json.twig',
                 );
             default:
-                return parent::getAssets($type);
+                throw new \InvalidArgumentException("Unsupported late asset type " . print_r($type, true));
         }
     }
 
-    public function getTwigTemplate()
+    /**
+     * ManagerTemplate does not use late assets. Required only for compatibility with application assets action.
+     *
+     * @param string $type one of 'css', 'js' or 'trans'
+     * @return string[]
+     */
+    public function getLateAssets($type)
     {
-        // NOTE: Old versions had an overriden render method that returns an empty string.
-        //       Url path /application/manager itself never functioned
-        //       Actual rendering of the backend is in WelcomeController::listAction, which uses the template
-        //       MapbenderCoreBundle:Welcome:list.html.twig
-        //       Url paths /application/manager/assets/js et al
-        throw new \RuntimeException("ManagerTemplate does not support standard rendering, only provides asset dependencies");
+        switch ($type) {
+            case 'js':
+            case 'css':
+            case 'trans':
+                return array();
+            default:
+                throw new \InvalidArgumentException("Unsupported late asset type " . print_r($type, true));
+        }
     }
 }

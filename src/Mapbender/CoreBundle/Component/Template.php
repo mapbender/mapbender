@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -9,13 +10,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author Christian Wygoda
  */
-abstract class Template implements IApplicationTemplateInterface
+abstract class Template implements IApplicationTemplateInterface, IApplicationTemplateAssetDependencyInterface
 {
     protected $container;
 
     /** @var Application */
     protected $application;
-
 
     /**
      * Template constructor.
@@ -38,19 +38,7 @@ abstract class Template implements IApplicationTemplateInterface
     }
 
     /**
-     * Get the element assets.
-     *
-     * Returns an array of references to asset files of the given type.
-     * References can either be filenames/path which are searched for in the
-     * Resources/public directory of the element's bundle or assetic references
-     * indicating the bundle to search in:
-     *
-     * array(
-     *   'foo.css'),
-     *   '@MapbenderCoreBundle/Resources/public/foo.css'));
-     *
-     * @param string $type Asset type to list, can be 'css' or 'js'
-     * @return array
+     * {@inheritdoc}
      */
     public function getAssets($type)
     {
@@ -69,9 +57,7 @@ abstract class Template implements IApplicationTemplateInterface
     }
 
     /**
-     * Get assets for late including. These will be appended to the asset output last.
-     * @param string $type Asset type to list, can be 'css' or 'js'
-     * @return array
+     * {@inheritdoc}
      */
     public function getLateAssets($type)
     {
