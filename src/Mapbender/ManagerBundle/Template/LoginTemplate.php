@@ -9,8 +9,15 @@ namespace Mapbender\ManagerBundle\Template;
  */
 class LoginTemplate extends ManagerTemplate
 {
-    protected static $translations = array();
-    protected static $css          = array(
-        '@MapbenderManagerBundle/Resources/public/sass/manager/login.scss'
-    );
+    public function getAssets($type)
+    {
+        switch ($type) {
+            case 'css':
+                return array(
+                    '@MapbenderManagerBundle/Resources/public/sass/manager/login.scss'
+                );
+            default:
+                return parent::getAssets($type);
+        }
+    }
 }

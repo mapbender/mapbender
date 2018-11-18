@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\MobileBundle\Template;
 
-use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Template;
 
 /**
@@ -12,9 +11,6 @@ class Mobile extends Template
 {
     /** @var string Application title */
     protected static $title = 'Mapbender Mobile template';
-
-    /** @var string Application TWIG template path */
-    protected $twigTemplate = 'MapbenderMobileBundle:Template:mobile.html.twig';
 
     /** @var array Late assets */
     protected $lateAssets = array(
@@ -36,19 +32,8 @@ class Mobile extends Template
     /**  @var array Region names */
     protected static $regions = array('footer', 'content', 'mobilePane');
 
-    /**
-     * @inheritdoc
-     */
-    public function render($format = 'html', $html = true, $css = true, $js = true)
+    public function getTwigTemplate()
     {
-        $templateEngine = $this->container->get('templating');
-        return $templateEngine->render($this->twigTemplate, array(
-                'html'        => $html,
-                'css'         => $css,
-                'js'          => $js,
-                'application' => $this->application,
-                'uploads_dir' => Application::getAppWebDir($this->container, $this->application->getSlug())
-            )
-        );
+        return 'MapbenderMobileBundle:Template:mobile.html.twig';
     }
 }

@@ -69,23 +69,9 @@ class FullscreenAlternative extends Template
         return array('toolbar', 'sidepane', 'content', 'footer');
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render($format = 'html', $html = true, $css = true, $js = true)
+    public function getTwigTemplate()
     {
-        $region_props = $this->application->getEntity()->getNamedRegionProperties();
-        $default_region_props = $this->getRegionsProperties();
-
-        $templating = $this->container->get('templating');
-        return $templating
-                ->render('MapbenderCoreBundle:Template:fullscreen_alternative.html.twig', array(
-                    'html' => $html,
-                    'css' => $css,
-                    'js' => $js,
-                    'application' => $this->application,
-                    'region_props' => $region_props,
-                    'default_region_props' => $default_region_props));
+        return 'MapbenderCoreBundle:Template:fullscreen_alternative.html.twig';
     }
 
 }

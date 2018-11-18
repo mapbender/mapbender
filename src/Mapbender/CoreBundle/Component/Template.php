@@ -119,14 +119,16 @@ abstract class Template
         $application       = $this->application;
         $applicationEntity = $application->getEntity();
         $templateRender    = $this->container->get('templating');
+        $uploadsDir = Application::getAppWebDir($this->container, $this->application->getSlug());
 
-        return $templateRender->render($this->twigTemplate, array(
+        return $templateRender->render($this->getTwigTemplate(), array(
                 'html'                 => $html,
                 'css'                  => $css,
                 'js'                   => $js,
                 'application'          => $application,
                 'region_props'         => $applicationEntity->getNamedRegionProperties(),
-                'default_region_props' => static::getRegionsProperties()
+                'default_region_props' => static::getRegionsProperties(),
+                'uploads_dir' => $uploadsDir,
             )
         );
     }
@@ -164,9 +166,6 @@ abstract class Template
     /**
      * @return string TWIG template path
      */
-    public function getTwigTemplate()
-    {
-        return $this->twigTemplate;
-    }
+    abstract public function getTwigTemplate();
 }
 
