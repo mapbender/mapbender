@@ -7,11 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Base class for all application templates.
  *
  * @author Christian Wygoda
- * @author Andriy Oblivantsev
  */
 abstract class Template
 {
-    /** @var ContainerInterface */
     protected $container;
 
     /** @var Application */
@@ -20,24 +18,6 @@ abstract class Template
     /** @var string Bundle public resource path */
     protected static $resourcePath;
 
-    /** @var string Application title */
-    protected static $title;
-
-    /** @var string Application TWIG template path */
-    protected $twigTemplate;
-
-    /** @var array Late assets */
-    protected $lateAssets = array(
-        'js'    => array(),
-        'css'   => array(),
-        'trans' => array(),
-    );
-
-    /** @var array Region properties */
-    protected static $regionsProperties = array();
-
-    /**  @var array Region names */
-    protected static $regions = array();
 
     /**
      * Template constructor.
@@ -62,7 +42,7 @@ abstract class Template
      */
     static public function getTitle()
     {
-        return static::$title;
+        throw new \RuntimeException('getTitle must be implemented in subclasses');
     }
 
     /**
@@ -107,13 +87,12 @@ abstract class Template
     /**
      * Get assets for late including. These will be appended to the asset output last.
      * Remember to list them in listAssets!
-     *
      * @param string $type Asset type to list, can be 'css' or 'js'
      * @return array
      */
     public function getLateAssets($type)
     {
-        return $this->lateAssets[ $type ];
+        return array();
     }
 
     /**
@@ -123,16 +102,16 @@ abstract class Template
      */
     static public function getRegions()
     {
-        return static::$regions;
+        throw new \RuntimeException('getTitle must be implemented in subclasses');
     }
 
     /**
      * Render the application
      *
-     * @param string  $format Output format, defaults to HTML
-     * @param boolean $html   Whether to render the HTML itself
-     * @param boolean $css    Whether to include the CSS links
-     * @param boolean $js     Whether to include the JavaScript
+     * @param string $format Output format, defaults to HTML
+     * @param boolean $html Whether to render the HTML itself
+     * @param boolean $css  Whether to include the CSS links
+     * @param boolean $js   Whether to include the JavaScript
      * @return string $html The rendered HTML
      */
     public function render($format = 'html', $html = true, $css = true, $js = true)
@@ -159,7 +138,7 @@ abstract class Template
      */
     public static function getRegionsProperties()
     {
-        return static::$regionsProperties;
+        return array();
     }
 
     /**
@@ -167,8 +146,7 @@ abstract class Template
      *
      * @return string Bundle name
      */
-    public function getBundleName()
-    {
+    public function getBundleName() {
         $reflection = new \ReflectionClass(get_class($this));
         return preg_replace('/\\\\|Template$/', '', $reflection->getNamespaceName());
     }
@@ -181,22 +159,6 @@ abstract class Template
     public static function getResourcePath()
     {
         return static::$resourcePath;
-    }
-
-    /**
-     * @param Application $twigTemplate
-     */
-    public function setTwigTemplate($twigTemplate)
-    {
-        $this->twigTemplate = $twigTemplate;
-    }
-
-    /**
-     * @param $title string Title
-     */
-    public static function setTitle($title)
-    {
-        static::$title = $title;
     }
 
     /**

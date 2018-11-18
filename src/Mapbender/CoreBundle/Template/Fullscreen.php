@@ -11,27 +11,39 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class Fullscreen extends Template
 {
-    protected static $title             = "Fullscreen";
-    protected static $regions           = array('toolbar', 'sidepane', 'content', 'footer');
-    protected static $regionsProperties = array(
-        'sidepane' => array(
-            'tabs'      => array(
-                'name'  => 'tabs',
-                'label' => 'mb.manager.template.region.tabs.label'),
-            'accordion' => array(
-                'name'  => 'accordion',
-                'label' => 'mb.manager.template.region.accordion.label')
-        )
-    );
-
     public $twigTemplate = 'MapbenderCoreBundle:Template:fullscreen.html.twig';
+
+    /**
+     * @inheritdoc
+     */
+    public static function getRegionsProperties()
+    {
+        return array(
+            'sidepane' => array(
+                'tabs' => array(
+                    'name' => 'tabs',
+                    'label' => 'mb.manager.template.region.tabs.label'),
+                'accordion' => array(
+                    'name' => 'accordion',
+                    'label' => 'mb.manager.template.region.accordion.label')
+            )
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getTitle()
+    {
+        return 'Fullscreen';
+    }
 
     /**
      * @inheritdoc
      */
     static public function listAssets()
     {
-        return array(
+        $assets = array(
             'css'   => array('@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
             'js'    => array(
                 '/components/underscore/underscore-min.js',
@@ -46,6 +58,57 @@ class Fullscreen extends Template
 
             ),
             'trans' => array()
+        );
+        return $assets;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLateAssets($type)
+    {
+        $assets = array(
+            'css' => array(),
+            'js' => array(),
+            'trans' => array()
+        );
+        return $assets[$type];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAssets($type)
+    {
+        $assets = $this::listAssets();
+        return $assets[$type];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getRegions()
+    {
+        return array('toolbar', 'sidepane', 'content', 'footer');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function render($format = 'html', $html = true, $css = true, $js = true)
+    {
+        $application       = $this->application;
+        $applicationEntity = $application->getEntity();
+        $templating        = $this->container->get('templating');
+
+        return $templating->render($this->twigTemplate, array(
+                'html'                 => $html,
+                'css'                  => $css,
+                'js'                   => $js,
+                'application'          => $application,
+                'region_props'         => $applicationEntity->getNamedRegionProperties(),
+                'default_region_props' => $this->getRegionsProperties()
+            )
         );
     }
 }
