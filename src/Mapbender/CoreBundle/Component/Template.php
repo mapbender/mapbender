@@ -39,10 +39,6 @@ abstract class Template
     /**  @var array Region names */
     protected static $regions = array();
 
-    protected static $css          = array();
-    protected static $js           = array();
-    protected static $translations = array();
-
     /**
      * Template constructor.
      *
@@ -74,11 +70,7 @@ abstract class Template
      */
     static public function listAssets()
     {
-        return array(
-            'css'   => static::$css,
-            'js'    => static::$js,
-            'trans' => static::$translations
-        );
+        return array();
     }
 
     /**
@@ -213,17 +205,6 @@ abstract class Template
     public function getTwigTemplate()
     {
         return $this->twigTemplate;
-    }
-
-    /**
-     * Add and merge unique assets
-     *
-     * @param       $type
-     * @param array $assets
-     */
-    public static function addAndMergeUniqueAssets($type, array $assets)
-    {
-        static::${$type} = array_values(array_unique(array_merge(static::${$type}, $assets)));
     }
 }
 
