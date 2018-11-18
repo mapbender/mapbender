@@ -9,28 +9,47 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class Mobile extends Template
 {
-    /** @var string Application title */
-    protected static $title = 'Mapbender Mobile template';
+    public static function getTitle()
+    {
+        return 'Mapbender Mobile template';
+    }
 
-    /** @var array Late assets */
-    protected $lateAssets = array(
-        'js'    => array(),
-        'css'   => array(
-            '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
-        ),
-        'trans' => array(),
-    );
+    public static function getRegions()
+    {
+        return array(
+            'footer',
+            'content',
+            'mobilePane',
+        );
+    }
 
-    protected static $js  = array(
-        '/components/underscore/underscore-min.js',
-        '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
-        '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
-        '@MapbenderMobileBundle/Resources/public/js/mobile.js',
-        '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js'
-    );
+    public function getLateAssets($type)
+    {
+        switch ($type) {
+            case 'css':
+                return array(
+                    '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss',
+                );
+            default:
+                return parent::getLateAssets($type);
+        }
+    }
 
-    /**  @var array Region names */
-    protected static $regions = array('footer', 'content', 'mobilePane');
+    public function getAssets($type)
+    {
+        switch ($type) {
+            case 'js':
+                return array(
+                    '/components/underscore/underscore-min.js',
+                    '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
+                    '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
+                    '@MapbenderMobileBundle/Resources/public/js/mobile.js',
+                    '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js',
+                );
+            default:
+                return parent::getAssets($type);
+        }
+    }
 
     public function getTwigTemplate()
     {

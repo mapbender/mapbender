@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -8,15 +9,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author Christian Wygoda
  */
-abstract class Template
+abstract class Template implements IApplicationTemplateInterface
 {
     protected $container;
 
     /** @var Application */
     protected $application;
-
-    /** @var string Bundle public resource path */
-    protected static $resourcePath;
 
 
     /**
@@ -27,22 +25,8 @@ abstract class Template
      */
     public function __construct(ContainerInterface $container, Application $application)
     {
-        static::$resourcePath = '@' . $this->getBundleName() . '/Resources/public';
         $this->container    = $container;
         $this->application  = $application;
-    }
-
-    /**
-     * Get the template title.
-     *
-     * This title is mainly used in the backend manager when creating a new
-     * application.
-     *
-     * @return string
-     */
-    static public function getTitle()
-    {
-        throw new \RuntimeException('getTitle must be implemented in subclasses');
     }
 
     /**
@@ -86,23 +70,19 @@ abstract class Template
 
     /**
      * Get assets for late including. These will be appended to the asset output last.
-     * Remember to list them in listAssets!
      * @param string $type Asset type to list, can be 'css' or 'js'
      * @return array
      */
     public function getLateAssets($type)
     {
-        return array();
-    }
-
-    /**
-     * Get the template regions available in the Twig template.
-     *
-     * @return array
-     */
-    static public function getRegions()
-    {
-        throw new \RuntimeException('getTitle must be implemented in subclasses');
+        switch ($type) {
+            case 'js':
+            case 'css':
+            case 'trans':
+                return array();
+            default:
+                throw new \InvalidArgumentException("Unsupported late asset type " . print_r($type, true));
+        }
     }
 
     /**
@@ -141,26 +121,6 @@ abstract class Template
     public static function getRegionsProperties()
     {
         return array();
-    }
-
-    /**
-     * Get template bundle name
-     *
-     * @return string Bundle name
-     */
-    public function getBundleName() {
-        $reflection = new \ReflectionClass(get_class($this));
-        return preg_replace('/\\\\|Template$/', '', $reflection->getNamespaceName());
-    }
-
-    /**
-     * Get resource path
-     *
-     * @return string
-     */
-    public static function getResourcePath()
-    {
-        return static::$resourcePath;
     }
 
     /**

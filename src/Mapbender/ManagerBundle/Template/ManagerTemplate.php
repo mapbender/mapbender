@@ -11,6 +11,16 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class ManagerTemplate extends Template
 {
+    public static function getTitle()
+    {
+        throw new \RuntimeException("This is never called");
+    }
+
+    public static function getRegions()
+    {
+        throw new \RuntimeException("This is never called");
+    }
+
     public function getAssets($type)
     {
         switch ($type) {

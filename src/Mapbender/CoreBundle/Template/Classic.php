@@ -52,19 +52,6 @@ class Classic extends Template
     /**
      * @inheritdoc
      */
-    public function getLateAssets($type)
-    {
-        $assets = array(
-            'css' => array(),
-            'js' => array(),
-            'trans' => array()
-        );
-        return $assets[$type];
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets($type)
     {
         $assets = $this::listAssets();
