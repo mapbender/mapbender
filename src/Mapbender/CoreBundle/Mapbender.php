@@ -108,12 +108,12 @@ class Mapbender
     }
 
     /**
-     * Get list of all declared template classes.
+     * Get list of names of all declared template classes.
      *
      * Template classes need to be declared in each bundle's main class
      * getTemplates method.
      *
-     * @return Template[]
+     * @return string[]
      */
     public function getTemplates()
     {
