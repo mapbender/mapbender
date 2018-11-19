@@ -36,31 +36,29 @@ class Regional extends Template
     /**
      * @inheritdoc
      */
-    static public function listAssets()
-    {
-        $assets = array('css'   => array('@MapbenderCoreBundle/Resources/public/sass/template/responsive.scss'),
-                        'js'    => array(
-                            '/components/underscore/underscore-min.js',
-                            '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                            '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
-                            '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
-                            '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js',
-                            "/components/datatables/media/js/jquery.dataTables.min.js",
-                            '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
-                            "/components/vis-ui.js/vis-ui.js-built.js",
-                            '@MapbenderCoreBundle/Resources/public/js/responsive.js'
-                        ),
-                        'trans' => array());
-        return $assets;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getAssets($type)
     {
-        $arr = self::listAssets();
-        return $arr[$type];
+        switch ($type) {
+            case 'css':
+                return array(
+                    '@MapbenderCoreBundle/Resources/public/sass/template/responsive.scss',
+                );
+            case 'js':
+                return array(
+                    '/components/underscore/underscore-min.js',
+                    '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                    '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
+                    '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
+                    '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js',
+                    "/components/datatables/media/js/jquery.dataTables.min.js",
+                    '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
+                    "/components/vis-ui.js/vis-ui.js-built.js",
+                    '@MapbenderCoreBundle/Resources/public/js/responsive.js',
+                );
+            case 'trans':
+            default:
+                return parent::getAssets($type);
+        }
     }
 
     /**

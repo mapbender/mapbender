@@ -5,11 +5,16 @@ namespace Mapbender\ManagerBundle\Template;
 use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateAssetDependencyInterface;
 
 /**
- * Not an application template.
+ * Not an application template. Models (only) the common asset dependencies of backend sections.
  *
  * The actual twigs used to render the backend pages vary signficantly by controller action.
+ * Manager template has no regions, no region properties and no title, and thus cannot be popuplated with
+ * Elements and cannot be assigned to an Application manually.
  *
- * The only commonality of the manager application is that it uses the same mechanism as proper
+ * ManagerTemplate is assigned fixed to the magic 'manager' application via predefined YAML magic. See
+ * https://github.com/mapbender/mapbender/blob/HEAD/src/Mapbender/CoreBundle/Resources/config/mapbender.yml#L4
+ *
+ * The only similarity with regular Application templates is that ManagerTemplate uses the same mechanism as proper
  * application templates to declare and generate its required assets. See (currently in FOM):
  * https://github.com/mapbender/fom/blob/v3.0.6.2/src/FOM/ManagerBundle/Resources/views/manager.html.twig#L8
  */

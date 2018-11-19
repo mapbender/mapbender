@@ -2,31 +2,11 @@
 
 namespace Mapbender\CoreBundle\Template;
 
-use Mapbender\CoreBundle\Component\Template;
-
 /**
  * Template Classic
  */
-class Classic extends Template
+class Classic extends Fullscreen
 {
-
-    /**
-     * @inheritdoc
-     */
-    public static function getRegionsProperties()
-    {
-        return array(
-            'sidepane' => array(
-                'tabs' => array(
-                    'name' => 'tabs',
-                    'label' => 'mb.manager.template.region.tabs.label'),
-                'accordion' => array(
-                    'name' => 'accordion',
-                    'label' => 'mb.manager.template.region.accordion.label')
-            )
-        );
-    }
-
     /**
      * @inheritdoc
      */
@@ -36,34 +16,20 @@ class Classic extends Template
     }
 
     /**
-     * @inheritdoc
-     */
-    static public function listAssets()
-    {
-        $assets = array(
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/template/classic.scss'),
-            'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
-            'trans' => array()
-        );
-        return $assets;
-    }
-
-    /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAssets($type)
     {
-        $assets = $this::listAssets();
-        return $assets[$type];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getRegions()
-    {
-        return array('toolbar', 'sidepane', 'content', 'footer');
+        switch ($type) {
+            case 'css':
+                return array(
+                    '@MapbenderCoreBundle/Resources/public/sass/template/classic.scss',
+                );
+            case 'js':
+            case 'trans':
+            default:
+                return parent::getAssets($type);
+        }
     }
 
     public function getTwigTemplate()

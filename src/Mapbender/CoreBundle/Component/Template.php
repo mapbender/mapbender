@@ -6,7 +6,9 @@ use Mapbender\CoreBundle\Component\Application\Template\IApplicationTemplateInte
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Base class for all application templates.
+ * Defines twig template and asset dependencies and regions for an Application template.
+ * Also defines the displayable title of the template that is displayed in the backend when choosing or
+ * displaying the template assigned to an Application.
  *
  * @author Christian Wygoda
  */
@@ -30,29 +32,17 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
     }
 
     /**
-     * @return array
-     */
-    static public function listAssets()
-    {
-        return array();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getAssets($type)
     {
-        $allAssets = $this::listAssets();
-        $ownAssets = array_key_exists($type, $allAssets) ? $allAssets[$type] : array();
-        $parent = get_parent_class($this);
-        // Merge up all JavaScript assets, so we get all the required libraries into all
-        // extending templates.
-        if ($type === 'js' && $parent) {
-            $allBaseAssets = call_user_func(array($parent, 'listAssets'), $type);
-            $baseAssets = $ownAssets = array_key_exists($type, $allBaseAssets) ? $allBaseAssets[$type] : array();
-            return array_unique(array_merge($baseAssets, $ownAssets));
-        } else {
-            return $ownAssets;
+        switch ($type) {
+            case 'js':
+            case 'css':
+            case 'trans':
+                return array();
+            default:
+                throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
     }
 
