@@ -507,7 +507,7 @@ abstract class Element
      * Create form for given element
      *
      * @param ContainerInterface $container
-     * @param Application        $application
+     * @param \Mapbender\CoreBundle\Entity\Application $application
      * @param Entity             $element
      * @param bool               $onlyAcl
      * @return array
