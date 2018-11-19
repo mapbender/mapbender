@@ -1,11 +1,14 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Mapbender\CoreBundle\Mapbender;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 /**
@@ -25,6 +28,7 @@ class RepositoryController extends Controller
      * @ManagerRoute("/{page}", defaults={ "page"=1 }, requirements={ "page"="\d+" })
      * @Method({ "GET" })
      * @Template
+     * @return Response|array
      */
     public function indexAction($page)
     {
@@ -52,13 +56,14 @@ class RepositoryController extends Controller
      * @ManagerRoute("/new")
      * @Method({ "GET" })
      * @Template
+     * @return Response|array
      */
     public function newAction()
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
-        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $managers = $this->getRepositoryManagers();
         return array(
             'managers' => $managers
         );
@@ -68,13 +73,15 @@ class RepositoryController extends Controller
      * @ManagerRoute("/create/{managertype}")
      * @Method({ "POST" })
      * @Template()
+     * @param string $managertype
+     * @return Response
      */
     public function createAction($managertype)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('CREATE', $oid);
 
-        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $managers = $this->getRepositoryManagers();
         $manager = $managers[$managertype];
 
         return $this->forward($manager['bundle'] . ":" . "Repository:create");
@@ -84,12 +91,14 @@ class RepositoryController extends Controller
      * @ManagerRoute("/source/{sourceId}")
      * @Method({"GET"})
      * @Template
+     * @param string $sourceId
+     * @return Response
      */
     public function viewAction($sourceId)
     {
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $managers = $this->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
         return $this->forward($manager['bundle'] . ":" . "Repository:view", array(
             "id" => $source->getId(),
@@ -101,6 +110,8 @@ class RepositoryController extends Controller
      * @ManagerRoute("/source/{sourceId}/confirmdelete")
      * @Method({"GET"})
      * @Template("MapbenderManagerBundle:Repository:confirmdelete.html.twig")
+     * @param string $sourceId
+     * @return Response|array
      */
     public function confirmdeleteAction($sourceId)
     {
@@ -121,6 +132,8 @@ class RepositoryController extends Controller
      * deletes a Source
      * @ManagerRoute("/source/{sourceId}/delete")
      * @Method({"POST"})
+     * @param string $sourceId
+     * @return Response
      */
     public function deleteAction($sourceId)
     {
@@ -135,7 +148,7 @@ class RepositoryController extends Controller
         $this->denyAccessUnlessGranted('DELETE', $source);
         // -- common preface code end --
 
-        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $managers = $this->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
         return $this->forward($manager['bundle'] . ":" . "Repository:delete", array(
             "sourceId" => $source->getId(),
@@ -148,6 +161,8 @@ class RepositoryController extends Controller
      * @ManagerRoute("/source/{sourceId}/updateform")
      * @Method({"GET"})
      * @Template
+     * @param string $sourceId
+     * @return Response|array
      */
     public function updateformAction($sourceId)
     {
@@ -159,7 +174,7 @@ class RepositoryController extends Controller
         }
         $this->denyAccessUnlessGranted('EDIT', $source);
 
-        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $managers = $this->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
         return array(
             'manager' => $manager,
@@ -173,6 +188,8 @@ class RepositoryController extends Controller
      * @ManagerRoute("/source/{sourceId}/update")
      * @Method({"POST"})
      * @Template
+     * @param string $sourceId
+     * @return Response
      */
     public function updateAction($sourceId)
     {
@@ -185,7 +202,7 @@ class RepositoryController extends Controller
         }
         $this->denyAccessUnlessGranted('EDIT', $source);
 
-        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $managers = $this->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
         // -- common preface code end --
         return $this->forward($manager['bundle'] . ":" . "Repository:update", array(
@@ -196,6 +213,9 @@ class RepositoryController extends Controller
     /**
      *
      * @ManagerRoute("/application/{slug}/instance/{instanceId}")
+     * @param string $slug
+     * @param string $instanceId
+     * @return Response
      */
     public function instanceAction($slug, $instanceId)
     {
@@ -209,7 +229,7 @@ class RepositoryController extends Controller
 
         $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
 
-        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $managers = $this->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
 
         return $this->forward($manager['bundle'] . ":" . "Repository:instance", array(
@@ -221,11 +241,16 @@ class RepositoryController extends Controller
     /**
      *
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/weight/{instanceId}")
+     * @param Request $request
+     * @param string $slug
+     * @param string $layersetId
+     * @param string $instanceId
+     * @return Response
      */
-    public function instanceWeightAction($slug, $layersetId, $instanceId)
+    public function instanceWeightAction(Request $request, $slug, $layersetId, $instanceId)
     {
-        $number = $this->get("request")->get("number");
-        $layersetId_new = $this->get("request")->get("new_layersetId");
+        $number = $request->get("number");
+        $layersetId_new = $request->get("new_layersetId");
 
         $instance = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:SourceInstance')
@@ -339,13 +364,17 @@ class RepositoryController extends Controller
      *
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/enabled/{instanceId}")
      * @Method({ "POST" })
+     * @param string $slug
+     * @param string $layersetId
+     * @param string $instanceId
+     * @return Response
      */
     public function instanceEnabledAction($slug, $layersetId, $instanceId)
     {
         $sourceInst = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:SourceInstance")
             ->find($instanceId);
-        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $managers = $this->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
 
         return $this->forward($manager['bundle'] . ":" . "Repository:instanceenabled", array(
@@ -358,13 +387,17 @@ class RepositoryController extends Controller
     /**
      *
      * @ManagerRoute("/application/{slug}/instanceLayer/{instanceId}/weight/{instLayerId}")
+     * @param string $slug
+     * @param string $instanceId
+     * @param string $instLayerId
+     * @return Response
      */
     public function instanceLayerWeightAction($slug, $instanceId, $instLayerId)
     {
         $sourceInst = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:SourceInstance")
             ->find($instanceId);
-        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $managers = $this->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
 
         return $this->forward($manager['bundle'] . ":" . "Repository:instancelayerpriority", array(
@@ -372,5 +405,15 @@ class RepositoryController extends Controller
             "instanceId" => $sourceInst->getId(),
             "instLayerId" => $instLayerId
         ));
+    }
+
+    /**
+     * @return array[]
+     */
+    protected function getRepositoryManagers()
+    {
+        /** @var Mapbender $service */
+        $service = $this->get('mapbender');
+        return $service->getRepositoryManagers();
     }
 }
