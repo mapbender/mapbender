@@ -116,8 +116,15 @@ class ApplicationController extends Controller
      * @Route("/application/{slug}/element/{id}/{action}",
      *     defaults={ "id" = null, "action" = null },
      *     requirements={ "action" = ".+" })
+     * @param Request $request
+     * @param string $slug
+     * @param string $id
+     * @param string $action
+     * @return Response
+     *
+     * @todo Symfony 3.x: update Element API to accept injected Request
      */
-    public function elementAction($slug, $id, $action)
+    public function elementAction(Request $request, $slug, $id, $action)
     {
         $application = $this->getApplication($slug);
         $element     = $application->getElement($id);

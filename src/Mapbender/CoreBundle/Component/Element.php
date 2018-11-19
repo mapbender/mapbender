@@ -10,7 +10,9 @@ use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -379,6 +381,8 @@ abstract class Element
      *
      * @param string $action The action to perform
      * @return Response
+     * @throws HttpException
+     * @todo Symfony 3.x: update Element API to accept injected Request from controller
      */
     public function httpAction($action)
     {
@@ -507,11 +511,11 @@ abstract class Element
      * @param Entity             $element
      * @param bool               $onlyAcl
      * @return array
-     * @internal param string $class
+     * @internal
      */
     public static function getElementForm($container, $application, Entity $element, $onlyAcl = false)
     {
-        /** @var Element $class */
+        /** @var string $class */
         $class = $element->getClass();
 
         // Create base form shared by all elements
@@ -581,7 +585,7 @@ abstract class Element
      * @param ContainerInterface $container
      * @param string $class
      *
-     * @return $type
+     * @return AbstractType
      */
     protected static function getAdminFormType($configurationFormType, ContainerInterface $container, $class)
     {
@@ -593,7 +597,7 @@ abstract class Element
         } else {
             $adminFormType = new $configurationFormType();
         }
-
+        /** @var AbstractType $adminFormType */
         return $adminFormType;
     }
 

@@ -89,7 +89,7 @@ class ApplicationController extends WelcomeController
         return array(
             'form' => $expHandler
                 ->createForm()
-                ->createView()
+                ->createView(),
         );
     }
 
@@ -114,12 +114,12 @@ class ApplicationController extends WelcomeController
         if ($job->isFormatAnJson()) {
             $headers = array(
                 'Content-Type'        => 'application/json',
-                'Content-disposition' => 'attachment; filename=export.json'
+                'Content-disposition' => 'attachment; filename=export.json',
             );
         } elseif ($job->isFormatAnYaml()) {
             $headers = array(
                 'Content-Type'        => 'text/plain',
-                'Content-disposition' => 'attachment; filename=export.yaml'
+                'Content-disposition' => 'attachment; filename=export.yaml',
             );
         } else {
             throw new AccessDeniedException("mb.manager.controller.application.method_not_supported");
@@ -144,7 +144,7 @@ class ApplicationController extends WelcomeController
         return array(
             'form' => $impHandler
                 ->createForm()
-                ->createView()
+                ->createView(),
         );
     }
 
@@ -600,7 +600,7 @@ class ApplicationController extends WelcomeController
         return array(
             'application' => $application,
             'layerset' => $layerset,
-            'form' => $this->createDeleteForm($layerset->getId())->createView()
+            'form' => $this->createDeleteForm($layerset->getId())->createView(),
         );
     }
 
@@ -736,12 +736,12 @@ class ApplicationController extends WelcomeController
             ->getRepository("MapbenderCoreBundle:SourceInstance")
             ->find($instanceId);
 
-        $managers   = $this->get('mapbender')->getRepositoryManagers();
+        $managers   = $this->getMapbender()->getRepositoryManagers();
         $manager    = $managers[ $sourceInst->getSource()->getManagertype() ];
         $path       = array(
             '_controller' => $manager['bundle'] . ":" . "Repository:deleteInstance",
             "slug"        => $slug,
-            "instanceId"  => $instanceId
+            "instanceId"  => $instanceId,
         );
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
         return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
@@ -775,7 +775,7 @@ class ApplicationController extends WelcomeController
                 'available_properties' => $availableProperties,
                 'maxFileSize'          => 2097152,
                 'screenshotWidth'      => 200,
-                'screenshotHeight'     => 200
+                'screenshotHeight'     => 200,
             )
         );
     }
