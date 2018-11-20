@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Exception\Exception;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -188,9 +187,6 @@ class ApplicationController extends WelcomeController
 
         $expHandler = new ExportHandler($this->container);
         $impHandler = new ImportHandler($this->container, true);
-        $expJob     = $expHandler->getJob()
-            ->setApplication($sourceApplication)
-            ->setAddSources(false);
         $data       = $expHandler->makeJob();
 
         $importJob  = $impHandler->getJob();
@@ -267,7 +263,7 @@ class ApplicationController extends WelcomeController
         $aclManager = $this->get('fom.acl.manager');
         $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
         $connection->commit();
-        $flashBag = $this->get('session')->getFlashBag();
+        $flashBag = $request->getSession()->getFlashBag();
         if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
             $flashBag->set('success', $this->translate('mb.application.create.success'));
         } else {
@@ -340,7 +336,7 @@ class ApplicationController extends WelcomeController
         $em->persist($application);
         $em->flush();
 
-        $flashBug  = $this->get('session')->getFlashBag();
+        $flashBug  = $request->getSession()->getFlashBag();
         $container = $this->container;
         try {
             if (AppComponent::createAppWebDir($container, $application->getSlug(), $oldSlug)) {
@@ -440,14 +436,15 @@ class ApplicationController extends WelcomeController
      * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:delete.html.twig")
-     * @param $slug
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @param Request $request
+     * @param string $slug
+     * @return array|Response
      */
-    public function confirmDeleteAction($slug)
+    public function confirmDeleteAction(Request $request, $slug)
     {
         $application = $this->getMapbender()->getApplicationEntity($slug);
         if ($application === null) {
-            $flashBag = $this->get('session')->getFlashBag();
+            $flashBag = $request->getSession()->getFlashBag();
             $flashBag->set('error', $this->translate('mb.application.remove.failure.already.removed'));
             return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
         }
@@ -464,13 +461,16 @@ class ApplicationController extends WelcomeController
      *
      * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
      * @Method("POST")
+     * @param Request $request
+     * @param string $slug
+     * @return Response
      */
-    public function deleteAction($slug)
+    public function deleteAction(Request $request, $slug)
     {
         $application = $this->getMapbender()->getApplicationEntity($slug);
         $this->denyAccessUnlessGranted('DELETE', $application);
 
-        $flashBag = $this->get('session')->getFlashBag();
+        $flashBag = $request->getSession()->getFlashBag();
 
         try {
             $em          = $this->getDoctrine()->getManager();
@@ -548,8 +548,12 @@ class ApplicationController extends WelcomeController
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/save")
      * @Method("POST")
      * @Template("MapbenderManagerBundle:Application:form-layerset.html.twig")
+     * @param Request $request
+     * @param string $slug
+     * @param string|null $layersetId
+     * @return Response
      */
-    public function saveLayersetAction($slug, $layersetId = null)
+    public function saveLayersetAction(Request $request, $slug, $layersetId = null)
     {
         /** @var Application $application */
         $application = $this->getMapbender()->getApplicationEntity($slug);
@@ -567,8 +571,8 @@ class ApplicationController extends WelcomeController
                 ->find($layersetId);
         }
         $form = $this->createForm(new LayersetType(), $layerset);
-        $form->submit($this->get('request'));
-        $flashBag = $this->get('session')->getFlashBag();
+        $form->submit($request);
+        $flashBag = $request->getSession()->getFlashBag();
         if ($form->isValid()) {
             $objectManager = $doctrine->getManager();
             $application->setUpdated(new \DateTime('now'));
@@ -589,6 +593,9 @@ class ApplicationController extends WelcomeController
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/confirmdelete")
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:deleteLayerset.html.twig")
+     * @param string $slug
+     * @param string $layersetId
+     * @return Response|array
      */
     public function confirmDeleteLayersetAction($slug, $layersetId)
     {
@@ -609,15 +616,19 @@ class ApplicationController extends WelcomeController
      *
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete")
      * @Method("POST")
+     * @param Request $request
+     * @param string $slug
+     * @param string $layersetId
+     * @return Response
      */
-    public function deleteLayersetAction($slug, $layersetId)
+    public function deleteLayersetAction(Request $request, $slug, $layersetId)
     {
         $application = $this->getMapbender()->getApplicationEntity($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
         $layerset    = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
-        $flashBag    = $this->get('session')->getFlashBag();
+        $flashBag    = $request->getSession()->getFlashBag();
         if ($layerset !== null) {
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
@@ -679,14 +690,14 @@ class ApplicationController extends WelcomeController
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add")
      * @Method("GET")
      *
+     * @param Request $request
      * @param string  $slug Application slug
      * @param int     $layersetId Layer set ID
      * @param int     $sourceId Layer set source ID
-     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Doctrine\DBAL\ConnectionException
      */
-    public function addInstanceAction($slug, $layersetId, $sourceId, Request $request)
+    public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
     {
         /** @var Connection $connection */
         $application     = $this->getMapbender()->getApplicationEntity($slug);
@@ -707,7 +718,7 @@ class ApplicationController extends WelcomeController
         $connection->commit();
         $this->get("logger")
             ->debug('A new instance "' . $sourceInstance->getId() . '"has been created. Please edit it!');
-        $flashBag = $this->get('session')->getFlashBag();
+        $flashBag = $request->getSession()->getFlashBag();
         $flashBag->set('success', $this->translate('mb.source.instance.create.success'));
         return $this->redirect($this->generateUrl(
             "mapbender_manager_repository_instance",
@@ -720,7 +731,7 @@ class ApplicationController extends WelcomeController
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete")
      * @Method("POST")
      *
-     * @param sting $slug
+     * @param string $slug
      * @param int   $layersetId
      * @param int   $instanceId
      * @return Response
@@ -738,13 +749,10 @@ class ApplicationController extends WelcomeController
 
         $managers   = $this->getMapbender()->getRepositoryManagers();
         $manager    = $managers[ $sourceInst->getSource()->getManagertype() ];
-        $path       = array(
-            '_controller' => $manager['bundle'] . ":" . "Repository:deleteInstance",
+        return $this->forward("{$manager['bundle']}:Repository:deleteInstance", array(
             "slug"        => $slug,
             "instanceId"  => $instanceId,
-        );
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        ));
     }
 
     /**

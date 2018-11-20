@@ -255,13 +255,14 @@ class ElementController extends Controller
      *
      * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"})
      * @Template("MapbenderManagerBundle:Element:security.html.twig")
+     * @param Request $request
      * @param $slug string Application short name
      * @param $id int Element ID
-     * @return array Response
+     * @return array
      * @throws \Doctrine\DBAL\ConnectionException
      * @throws \Exception
      */
-    public function securityAction($slug, $id)
+    public function securityAction(Request $request, $slug, $id)
     {
         /** @var EntityManager $entityManager */
         /** @var Element $element */
@@ -281,7 +282,6 @@ class ElementController extends Controller
         /** @var Connection  */
         $application = $this->getMapbender()->getApplicationEntity($slug);
         $connection  = $entityManager->getConnection();
-        $request     = $this->getRequest();
         $response    = ComponentElement::getElementForm($this->container, $application, $element, true);
         $form        = $response["form"];
         $aclForm     = $form->get('acl');
@@ -393,7 +393,6 @@ class ElementController extends Controller
      */
     public function weightAction(Request $request, $id)
     {
-        $request = $this->getRequest();
         /** @var Element $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
