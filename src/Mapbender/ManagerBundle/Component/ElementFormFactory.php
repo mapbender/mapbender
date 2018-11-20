@@ -41,8 +41,8 @@ class ElementFormFactory
      */
     public function getConfigurationForm($application, $element)
     {
-        /** @var string $class */
-        $class = $element->getClass();
+        /** @var string $componentClassName */
+        $componentClassName = $element->getClass();
 
         // Create base form shared by all elements
         $formType = $this->formFactory->createBuilder('form', $element, array());
@@ -51,36 +51,78 @@ class ElementFormFactory
             ->add('class', 'hidden')
             ->add('region', 'hidden')
         ;
-        // Get configuration form, either basic YAML one or special form
-        $configurationFormType = $class::getType();
-        if ($configurationFormType === null) {
-            $formType->add(
-                'configuration',
-                new YAMLConfigurationType(),
-                array(
-                    'required' => false,
-                    'attr' => array(
-                        'class' => 'code-yaml'
-                    )
-                )
-            );
-            $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
-        } else {
-            $type = $this->getAdminFormType($configurationFormType, $class);
+        $configurationType = $this->getConfigurationFormType($element);
 
-            $options = array('application' => $application);
-            if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
-                $options['element'] = $element;
-            }
-
-            $formType->add('configuration', $type, $options);
-            $formTheme = $class::getFormTemplate();
+        $options = array('application' => $application);
+        if ($configurationType instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
+            $options['element'] = $element;
         }
+        if ($configurationType === null) {
+            $configurationType = $this->getFallbackConfigurationFormType($element);
+            $twigTemplate = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
+        } else {
+            $twigTemplate = $componentClassName::getFormTemplate();
+        }
+
+        $formType->add('configuration', $configurationType, $options);
 
         return array(
             'form' => $formType->getForm(),
-            'theme' => $formTheme,
+            'theme' => $twigTemplate,
         );
+    }
+
+    /**
+     * @param Element $element
+     * @return FormTypeInterface|null
+     * @throws \RuntimeException
+     */
+    public function getConfigurationFormType(Element $element)
+    {
+        $componentClassName = $element->getClass();
+        $type = $this->getServicyConfigurationFormType($element) ?: ($componentClassName::getType());
+        if ($type === null) {
+            return null;
+        }
+
+        if (is_string($type)) {
+            if (is_a($type, 'Symfony\Component\Form\FormTypeInterface', true)) {
+                return new $type();
+            } else {
+                throw new \RuntimeException("No such form type " . print_r($type, true));
+            }
+        }
+
+        if ($type instanceof FormTypeInterface) {
+            return $type;
+        } else {
+            throw new \RuntimeException("Invalid form type from " . print_r($componentClassName, true));
+        }
+    }
+
+    public function getFallbackConfigurationFormType(Element $element)
+    {
+        return new YAMLConfigurationType();
+    }
+
+    /**
+     * Look up service-type form type for element. This looks for a service with an id
+     * prefixed with 'mapbender.form_type.element.' followed by the all-lowercased class
+     * name of the Element component.
+     *
+     * Currently only HTMLElement has this (service id: mapbender.form_type.element.htmlelement),
+     * if only for demonstration purposes.
+     *
+     * @param Element $element
+     * @return object|null
+     */
+    protected function getServicyConfigurationFormType(Element $element)
+    {
+        $className = $element->getClass();
+        $classNamespaceParts = explode('\\', $className);
+        $baseName = strtolower(array_pop($classNamespaceParts));
+        $formTypeId = 'mapbender.form_type.element.' . $baseName;
+        return $this->container->get($formTypeId, ContainerInterface::NULL_ON_INVALID_REFERENCE);
     }
 
     /**
@@ -101,21 +143,5 @@ class ElementFormFactory
         return array(
             'form' => $formType->getForm(),
         );
-    }
-
-    protected function getAdminFormType($configurationFormType, $class)
-    {
-        $classNamespaceParts = explode('\\', $class);
-        $baseName = strtolower(array_pop($classNamespaceParts));
-        $formTypeId = 'mapbender.form_type.element.' . $baseName;
-        $serviceExists = $this->container->has($formTypeId);
-
-        if ($serviceExists) {
-            $adminFormType = $this->container->get($formTypeId);
-        } else {
-            $adminFormType = new $configurationFormType();
-        }
-        /** @var FormTypeInterface $adminFormType */
-        return $adminFormType;
     }
 }
