@@ -78,7 +78,7 @@ class ScaleBar extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         return array(
             'js' => array('mapbender.element.scalebar.js'),

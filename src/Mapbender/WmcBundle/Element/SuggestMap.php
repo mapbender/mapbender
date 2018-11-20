@@ -71,7 +71,7 @@ class SuggestMap extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         $js = array(
             'mapbender.element.suggestmap.js',
