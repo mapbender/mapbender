@@ -451,18 +451,6 @@ abstract class Element
     }
 
     /**
-     * Get the form assets.
-     *
-     * @return array
-     */
-    public static function getFormAssets()
-    {
-        return array(
-            'js' => array(),
-            'css' => array());
-    }
-
-    /**
      *  Merges the default configuration array and the configuration array
      *
      * @param array $default the default configuration of an element
@@ -552,13 +540,6 @@ abstract class Element
                 )
             );
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
-            $formAssets = array(
-                'js' => array(
-                    'components/codemirror/lib/codemirror.js',
-                    'components/codemirror/mode/yaml/yaml.js',
-                    'bundles/mapbendermanager/js/form-yaml.js'),
-                'css' => array(
-                    'components/codemirror/lib/codemirror.css'));
         } else {
             $type = self::getAdminFormType($configurationFormType, $container, $class);
 
@@ -569,13 +550,12 @@ abstract class Element
 
             $formType->add('configuration', $type, $options);
             $formTheme = $class::getFormTemplate();
-            $formAssets = $class::getFormAssets();
         }
 
         return array(
             'form' => $formType->getForm(),
             'theme' => $formTheme,
-            'assets' => $formAssets);
+        );
     }
 
     /**

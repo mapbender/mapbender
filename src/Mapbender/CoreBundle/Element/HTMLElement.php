@@ -49,26 +49,6 @@ class HTMLElement extends Element
     }
 
     /**
-     * @inheritdoc
-     */
-    public static function getFormAssets()
-    {
-        return array(
-            'js'  => array(
-                'components/codemirror/lib/codemirror.js',
-                'components/codemirror/mode/xml/xml.js',
-                'components/codemirror/keymap/sublime.js',
-                'components/codemirror/addon/selection/active-line.js',
-                'bundles/mapbendercore/mapbender.admin.htmlelement.js',
-            ),
-            'css' => array(
-                'components/codemirror/lib/codemirror.css',
-                'components/codemirror/theme/neo.css',
-            )
-        );
-    }
-
-    /**
      * Is associative array given?
      *
      * @param $arr

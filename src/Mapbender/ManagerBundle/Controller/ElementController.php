@@ -168,7 +168,7 @@ class ElementController extends Controller
             return array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
-                'assets' => $form['assets']);
+            );
         }
     }
 
@@ -195,7 +195,7 @@ class ElementController extends Controller
         return array(
             'form' => $form['form']->createView(),
             'theme' => $form['theme'],
-            'assets' => $form['assets']);
+        );
     }
 
     /**
@@ -246,7 +246,7 @@ class ElementController extends Controller
             return array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
-                'assets' => $form['assets']);
+            );
         }
     }
 
