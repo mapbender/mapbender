@@ -116,6 +116,11 @@ class ElementController extends Controller
 
         $response         = ComponentElement::getElementForm($this->container, $application, $elementComponent->getEntity());
         $response["form"] = $response['form']->createView();
+        $response += array(
+            'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
+                'slug' => $slug,
+            )),
+        );
 
         return $response;
     }
@@ -168,6 +173,9 @@ class ElementController extends Controller
             return array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
+                'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
+                    'slug' => $slug,
+                )),
             );
         }
     }
@@ -175,7 +183,7 @@ class ElementController extends Controller
     /**
      * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"})
      * @Method("GET")
-     * @Template
+     * @Template("MapbenderManagerBundle:Element:edit.html.twig")
      */
     public function editAction($slug, $id)
     {
@@ -195,6 +203,10 @@ class ElementController extends Controller
         return array(
             'form' => $form['form']->createView(),
             'theme' => $form['theme'],
+            'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
+                'slug' => $slug,
+                'id' => $id,
+            )),
         );
     }
 
@@ -246,6 +258,10 @@ class ElementController extends Controller
             return array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
+                'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
+                    'slug' => $slug,
+                    'id' => $id,
+                )),
             );
         }
     }
