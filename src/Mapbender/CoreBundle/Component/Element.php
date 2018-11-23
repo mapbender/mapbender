@@ -6,11 +6,10 @@ use Mapbender\Component\BundleUtil;
 use Mapbender\Component\ClassUtil;
 use Mapbender\Component\StringUtil;
 use Mapbender\CoreBundle\Entity\Element as Entity;
+use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -499,86 +498,18 @@ abstract class Element
      * @param Entity             $element
      * @param bool               $onlyAcl
      * @return array
+     * @deprecated use the service
      * @internal
      */
     public static function getElementForm($container, $application, Entity $element, $onlyAcl = false)
     {
-        /** @var string $class */
-        $class = $element->getClass();
-
-        // Create base form shared by all elements
-        $formType = $container->get('form.factory')->createBuilder('form', $element, array());
-        if (!$onlyAcl) {
-            $formType->add('title', 'text')
-                ->add('class', 'hidden')
-                ->add('region', 'hidden');
-        }
-        $formType->add(
-            'acl',
-            'acl',
-            array(
-                'mapped' => false,
-                'data' => $element,
-                'create_standard_permissions' => false,
-                'permissions' => array(
-                    1 => 'View'
-                )
-            )
-        );
-
-        // Get configuration form, either basic YAML one or special form
-        $configurationFormType = $class::getType();
-        if ($configurationFormType === null) {
-            $formType->add(
-                'configuration',
-                new YAMLConfigurationType(),
-                array(
-                    'required' => false,
-                    'attr' => array(
-                        'class' => 'code-yaml'
-                    )
-                )
-            );
-            $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
+        /** @var ElementFormFactory $formFactory */
+        $formFactory = $container->get('mapbender.manager.element_form_factory.service');
+        if ($onlyAcl) {
+            return $formFactory->getSecurityForm($element);
         } else {
-            $type = self::getAdminFormType($configurationFormType, $container, $class);
-
-            $options = array('application' => $application);
-            if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
-                $options['element'] = $element;
-            }
-
-            $formType->add('configuration', $type, $options);
-            $formTheme = $class::getFormTemplate();
+            return $formFactory->getConfigurationForm($application, $element);
         }
-
-        return array(
-            'form' => $formType->getForm(),
-            'theme' => $formTheme,
-        );
-    }
-
-    /**
-     * Get admin form object
-     *
-     * @param string $configurationFormType
-     * @param ContainerInterface $container
-     * @param string $class
-     *
-     * @return AbstractType
-     */
-    protected static function getAdminFormType($configurationFormType, ContainerInterface $container, $class)
-    {
-        $formTypeId = 'mapbender.form_type.element.' . self::getElementName($class);
-        $serviceExists = $container->has($formTypeId);
-
-        if (false !== $serviceExists) {
-            $adminFormType = $container->get($formTypeId);
-        } else {
-            $adminFormType = new $configurationFormType();
-        }
-        /** @var AbstractType $adminFormType */
-        return $adminFormType;
     }
 
     /**
