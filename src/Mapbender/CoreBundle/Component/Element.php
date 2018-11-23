@@ -57,13 +57,13 @@ abstract class Element
     /** @var array Element fefault configuration */
     protected static $defaultConfiguration = array();
 
-    /** @var string Element description translation subject */
+    /** @var string translation subject */
     protected static $description  = "mb.core.element.class.description";
 
-    /** @var string Element title translation subject */
+    /** @var string[] translation subject */
     protected static $tags = array();
 
-    /** @var string[] Element tag translation subjects */
+    /** @var string[] translation subjects */
     protected static $title = "mb.core.element.class.title";
 
     /**

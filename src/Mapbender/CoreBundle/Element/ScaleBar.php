@@ -14,7 +14,7 @@ class ScaleBar extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.scalebar.class.title";
     }
@@ -22,7 +22,7 @@ class ScaleBar extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.scalebar.class.description";
     }
@@ -30,11 +30,12 @@ class ScaleBar extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.scalebar.tag.scale",
-            "mb.core.scalebar.tag.bar");
+            "mb.core.scalebar.tag.bar",
+        );
     }
 
     /**
@@ -48,7 +49,10 @@ class ScaleBar extends Element
             'target' => null,
             'maxWidth' => 200,
             'anchor' => 'right-bottom',
-            'units' => array("km"));
+            'units' => array(
+                "km",
+            ),
+        );
     }
 
     /**

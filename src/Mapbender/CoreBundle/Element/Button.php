@@ -18,7 +18,7 @@ class Button extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.button.class.title";
     }
@@ -26,7 +26,7 @@ class Button extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.button.class.description";
     }
@@ -34,7 +34,7 @@ class Button extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array("mb.core.button.tag.button");
     }
@@ -53,7 +53,8 @@ class Button extends Element
             'click' => null,
             'group' => null,
             'action' => null,
-            'deactivate' => null);
+            'deactivate' => null,
+        );
     }
 
     /**

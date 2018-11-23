@@ -12,15 +12,30 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class HTMLElement extends Element
 {
-    protected static $title                = "mb.core.htmlelement.class.title";
-    protected static $description          = "mb.core.htmlelement.class.description";
-    protected static $tags                 = array(
-        "mb.core.htmlelement.tag.html"
-    );
-    protected static $defaultConfiguration = array(
-        'classes' => 'html-element-inline',
-        'content' => ''
-    );
+    public static function getClassTitle()
+    {
+        return 'mb.core.htmlelement.class.title';
+    }
+
+    public static function getClassDescription()
+    {
+        return 'mb.core.htmlelement.class.description';
+    }
+
+    public static function getClassTags()
+    {
+        return array(
+            'mb.core.htmlelement.tag.html',
+        );
+    }
+
+    public static function getDefaultConfiguration()
+    {
+        return array(
+            'classes' => 'html-element-inline',
+            'content' => ''
+        );
+    }
 
     /**
      * @inheritdoc
