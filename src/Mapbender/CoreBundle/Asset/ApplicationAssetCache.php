@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Asset;
 use Assetic\Asset\AssetCollection;
 use Assetic\Asset\StringAsset;
 use Assetic\AssetManager;
-use Assetic\Cache\FilesystemCache;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -52,17 +51,12 @@ class ApplicationAssetCache extends AssetFactoryBase
      */
     public function fill($slug = null, $useTimestamp = false)
     {
-        $static_assets_cache_path = $this->container->getParameter('mapbender.static_assets_cache_path');
-
-        // For each asset build compiled, cached asset
         $assetRootPath = $this->getWebDir();
 
         $assets = new AssetCollection(array(), array(), $assetRootPath);
         $assets->setTargetPath($this->targetPath);
 
         $manager = new AssetManager();
-        $cache = new FilesystemCache($static_assets_cache_path);
-        $devCache = new FilesystemCache($static_assets_cache_path . '/.dev-cache');
 
         $stringAssetCounter = 0;
 
@@ -79,35 +73,7 @@ class ApplicationAssetCache extends AssetFactoryBase
             $name = str_replace(array('@', 'Resources/public/'), '', $input);
             $name = str_replace(array('/', '.', '-'), '__', $name);
 
-            // Only assets which need to be compiled need to be cached. Twice that is. Once while in dev mode, taking
-            // the timestamp into consideration and once for when compiling is not possible/required (regular dev or
-            // prod mode). This second cache will also get updated whenever a assets needs to get updated in the dev
-            // cache.
-            //
-            // All other assets get passed trough.
-            $isDevPlus = $this->container->get('kernel')->isDebug() && $this->container->getParameter('mapbender.sass_assets');
-            $needsCompiling = false;
-
-            // SASS things need to be compiled.
-            if('scss' === pathinfo($fileAsset->getSourcePath(), PATHINFO_EXTENSION)) $needsCompiling = true;
-
-            if($needsCompiling) {
-                if($isDevPlus) {
-                    $devCachedAsset = new NamedAssetCache($name, $fileAsset, $devCache, '.' . $this->type, true, $this->force);
-                    if(!$devCachedAsset->isCached()) {
-                        $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, false, true);
-                        $cachedAsset->dump();
-                    }
-                    $devCachedAsset->dump();
-                    $manager->set($name, $devCachedAsset);
-                } else {
-                    $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, false, $this->force);
-                    $cachedAsset->dump();
-                    $manager->set($name, $cachedAsset);
-                }
-            } else {
-                $manager->set($name, $fileAsset);
-            }
+            $manager->set($name, $fileAsset);
         }
 
         // Finally, wrap everything into a single asset collection
