@@ -1,17 +1,21 @@
 <?php
 namespace Mapbender\ManagerBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 use Mapbender\CoreBundle\Component\Element as ComponentElement;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Mapbender;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -32,14 +36,15 @@ class ElementController extends Controller
      * @ManagerRoute("/application/{slug}/element/select")
      * @Method({"GET","POST"})
      * @Template
+     * @param Request $request
      * @param string $slug
      * @return array
      */
-    public function selectAction($slug)
+    public function selectAction(Request $request, $slug)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $application = $this->getMapbender()->getApplicationEntity($slug);
         $template    = $application->getTemplate();
-        $region      = $this->get('request')->get('region');
+        $region      = $request->get('region');
         $whitelist   = null;
         $classNames  = null;
 
@@ -60,7 +65,7 @@ class ElementController extends Controller
         // get them all
         //
         $classNames = ($whitelist) ? $whitelist
-                                   : $this->get('mapbender')->getElements();
+                                   : $this->getMapbender()->getElements();
 
         foreach ($classNames as $elementClassName) {
             $title = $trans->trans($elementClassName::getClassTitle());
@@ -88,22 +93,22 @@ class ElementController extends Controller
      * @ManagerRoute("/application/{slug}/element/new")
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Element:edit.html.twig")
+     * @param Request $request
      * @param string $slug
      * @return array Response
      */
-    public function newAction($slug)
+    public function newAction(Request $request, $slug)
     {
         /** @var \Mapbender\CoreBundle\Component\Element $elementComponent */
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
-        $class       = $this->getRequest()->get('class'); // Get class for element
+        $application = $this->getMapbender()->getApplicationEntity($slug);
+        $class       = $request->get('class'); // Get class for element
 
         if (!class_exists($class)) {
             throw new \RuntimeException('An Element class "' . $class
                 . '" does not exist.');
         }
 
-        $template             = $application->getTemplate();
-        $region               = $this->get('request')->get('region');
+        $region               = $request->get('region');
         $applicationComponent = new ApplicationComponent($this->container, $application);
         $elementComponent     = new $class($applicationComponent, $this->container, ComponentElement::getDefaultElement($class, $region));
 
@@ -111,6 +116,11 @@ class ElementController extends Controller
 
         $response         = ComponentElement::getElementForm($this->container, $application, $elementComponent->getEntity());
         $response["form"] = $response['form']->createView();
+        $response += array(
+            'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
+                'slug' => $slug,
+            )),
+        );
 
         return $response;
     }
@@ -121,18 +131,21 @@ class ElementController extends Controller
      * @ManagerRoute("/application/{slug}/element/new")
      * @Method("POST")
      * @Template("MapbenderManagerBundle:Element:edit.html.twig")
+     * @param Request $request
+     * @param string $slug
+     * @return Response|array
      */
-    public function createAction($slug)
+    public function createAction(Request $request, $slug)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $application = $this->getMapbender()->getApplicationEntity($slug);
 
-        $data = $this->get('request')->get('form');
+        $data = $request->get('form');
         $element = ComponentElement::getDefaultElement($data['class'],
                 $data['region']);
         $element->setApplication($application);
         $form = ComponentElement::getElementForm($this->container, $application,
             $element);
-        $form['form']->submit($this->get('request'));
+        $form['form']->submit($request);
 
         if ($form['form']->isValid()) {
             $em    = $this->getDoctrine()->getManager();
@@ -160,18 +173,21 @@ class ElementController extends Controller
             return array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
-                'assets' => $form['assets']);
+                'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
+                    'slug' => $slug,
+                )),
+            );
         }
     }
 
     /**
      * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"})
      * @Method("GET")
-     * @Template
+     * @Template("MapbenderManagerBundle:Element:edit.html.twig")
      */
     public function editAction($slug, $id)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $application = $this->getMapbender()->getApplicationEntity($slug);
 
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
@@ -187,7 +203,11 @@ class ElementController extends Controller
         return array(
             'form' => $form['form']->createView(),
             'theme' => $form['theme'],
-            'assets' => $form['assets']);
+            'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
+                'slug' => $slug,
+                'id' => $id,
+            )),
+        );
     }
 
     /**
@@ -196,10 +216,14 @@ class ElementController extends Controller
      * @ManagerRoute("/application/{slug}/element/{id}", requirements = {"id" = "\d+" })
      * @Method("POST")
      * @Template("MapbenderManagerBundle:Element:edit.html.twig")
+     * @param Request $request
+     * @param string $slug
+     * @param string $id
+     * @return Response|array
      */
-    public function updateAction($slug, $id)
+    public function updateAction(Request $request, $slug, $id)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $application = $this->getMapbender()->getApplicationEntity($slug);
         /** @var Element $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
@@ -212,7 +236,7 @@ class ElementController extends Controller
         $form = ComponentElement::getElementForm($this->container, $application,
                 $element);
 //        $form = $this->getElementForm($application, $element);
-        $form['form']->submit($this->get('request'));
+        $form['form']->submit($request);
 
         if ($form['form']->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -234,7 +258,11 @@ class ElementController extends Controller
             return array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
-                'assets' => $form['assets']);
+                'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
+                    'slug' => $slug,
+                    'id' => $id,
+                )),
+            );
         }
     }
 
@@ -243,13 +271,14 @@ class ElementController extends Controller
      *
      * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"})
      * @Template("MapbenderManagerBundle:Element:security.html.twig")
+     * @param Request $request
      * @param $slug string Application short name
      * @param $id int Element ID
-     * @return array Response
+     * @return array
      * @throws \Doctrine\DBAL\ConnectionException
      * @throws \Exception
      */
-    public function securityAction($slug, $id)
+    public function securityAction(Request $request, $slug, $id)
     {
         /** @var EntityManager $entityManager */
         /** @var Element $element */
@@ -267,9 +296,8 @@ class ElementController extends Controller
         /** @var Form $form */
         /** @var Form $aclForm */
         /** @var Connection  */
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $application = $this->getMapbender()->getApplicationEntity($slug);
         $connection  = $entityManager->getConnection();
-        $request     = $this->getRequest();
         $response    = ComponentElement::getElementForm($this->container, $application, $element, true);
         $form        = $response["form"];
         $aclForm     = $form->get('acl');
@@ -286,7 +314,7 @@ class ElementController extends Controller
                 $this->get('session')->getFlashBag()->set('success', "Your element's access has been changed.");
             } catch (\Exception $e) {
                 $this->get('session')->getFlashBag()->set('error', "There was an error trying to change your element's access.");
-                $connection->rollback();
+                $connection->rollBack();
                 $entityManager->close();
                 if ($this->container->getParameter('kernel.debug')) {
                     throw($e);
@@ -330,7 +358,7 @@ class ElementController extends Controller
      */
     public function deleteAction($slug, $id)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $application = $this->getMapbender()->getApplicationEntity($slug);
 
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
@@ -341,6 +369,7 @@ class ElementController extends Controller
                 . $id . '" does not exist.');
         }
 
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
             "SELECT e FROM MapbenderCoreBundle:Element e"
@@ -374,112 +403,63 @@ class ElementController extends Controller
      *
      * @ManagerRoute("application/element/{id}/weight")
      * @Method("POST")
+     * @param Request $request
+     * @param string $id
+     * @return Response
      */
-    public function weightAction($id)
+    public function weightAction(Request $request, $id)
     {
+        /** @var Element $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
-            ->find($id);
+            ->findOneBy(array('id' => $id));
+        $em = $this->getDoctrine()->getManager();
 
         if (!$element) {
             throw $this->createNotFoundException('The element with the id "'
                 . $id . '" does not exist.');
         }
-        $number = $this->get("request")->get("number");
-        $newregion = $this->get("request")->get("region");
-        if (intval($number) === $element->getWeight() && $element->getRegion() ===
-            $newregion) {
+        $number = intval($request->get("number"));
+        $targetRegionName = $request->get("region");
+        if ($number === $element->getWeight() && $element->getRegion() === $targetRegionName) {
             return new JsonResponse(array(
                 'error' => '',      // why?
                 'result' => 'ok',   // why?
             ));
         }
-        if ($element->getRegion() === $newregion) {
-            $em = $this->getDoctrine()->getManager();
-            $element->setWeight($number);
-            $em->persist($element);
-            $em->flush();
-            $query = $em->createQuery(
-                "SELECT e FROM MapbenderCoreBundle:Element e"
-                . " WHERE e.region=:reg AND e.application=:app"
-                . " ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $newregion,
-                "app" => $element->getApplication()->getId()));
-            $elements = $query->getResult();
+        $application = $element->getApplication();
+        $currentRegionName = $element->getRegion();
+        $affectedRegionNames = array(
+            $currentRegionName,
+            $targetRegionName,
+        );
 
-            $num = 0;
-            foreach ($elements as $elm) {
-                if ($num === intval($element->getWeight())) {
-                    if ($element->getId() === $elm->getId()) {
-                        $num++;
-                    } else {
-                        $num++;
-                        $elm->setWeight($num);
-                        $num++;
-                    }
-                } else {
-                    if ($element->getId() !== $elm->getId()) {
-                        $elm->setWeight($num);
-                        $num++;
-                    }
-                }
-            }
-            foreach ($elements as $elm) {
-                $em->persist($elm);
-            }
-            $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
-            $em->persist($application);
-            $em->flush();
+        /** @var ArrayCollection[]|Element[][] $partitions */
+        $partitions = $application->getElements()->partition(function($_, $entity) use ($affectedRegionNames) {
+            /** @var Element $entity */
+            return in_array($entity->getRegion(), $affectedRegionNames, true);
+        });
+        $affectedRegions = $partitions[0];
+        $unaffectedRegions = $partitions[1];
+        if ($currentRegionName === $targetRegionName) {
+            WeightSortedCollectionUtil::updateSingleWeight($affectedRegions, $element, $number);
         } else {
-            // handle old region
-            $em = $this->getDoctrine()->getManager();
-            $query = $em->createQuery(
-                "SELECT e FROM MapbenderCoreBundle:Element e"
-                . " WHERE e.region=:reg AND e.application=:app"
-                . " AND e.weight>=:min ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $element->getRegion(),
-                "app" => $element->getApplication()->getId(),
-                "min" => $element->getWeight()));
-            $elements = $query->getResult();
-            foreach ($elements as $elm) {
-                if ($elm->getId() !== $element->getId()) {
-                    $elm->setWeight($elm->getWeight() - 1);
-                }
-            }
-            foreach ($elements as $elm) {
-                $em->persist($elm);
-            }
-            $em->flush();
-            // handle new region
-            $query = $em->createQuery(
-                "SELECT e FROM MapbenderCoreBundle:Element e"
-                . " WHERE e.region=:reg AND e.application=:app"
-                . " AND e.weight>=:min ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $newregion,
-                "app" => $element->getApplication()->getId(),
-                "min" => $number));
-            $elements = $query->getResult();
-            foreach ($elements as $elm) {
-                if ($elm->getId() !== $element->getId()) {
-                    $elm->setWeight($elm->getWeight() + 1);
-                }
-            }
-            foreach ($elements as $elm) {
-                $em->persist($elm);
-            }
-            $em->flush();
-            $element->setWeight($number);
-            $element->setRegion($newregion);
-            $em->persist($element);
-            $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
-            $em->persist($application);
-            $em->flush();
+            $partitions = $affectedRegions->partition(function($_, $entity) use ($targetRegionName) {
+                /** @var Element $entity */
+                return $entity->getRegion() === $targetRegionName;
+            });
+            // move from current region to target region, reassign weights in both
+            WeightSortedCollectionUtil::moveBetweenCollections($partitions[0], $partitions[1], $element, $number);
+            $element->setRegion($targetRegionName);
         }
+        $rebuiltElementCollection = $unaffectedRegions;
+        foreach ($affectedRegions as $elementToReAdd) {
+            $rebuiltElementCollection->add($elementToReAdd);
+        }
+        $application->setElements($unaffectedRegions);
+        $application->setUpdated(new \DateTime());
+        $em->persist($application);
+        $em->flush();
         return new JsonResponse(array(
             'error' => '',      // why?
             'result' => 'ok',   // why?
@@ -491,14 +471,17 @@ class ElementController extends Controller
      *
      * @ManagerRoute("application/element/{id}/enable")
      * @Method("POST")
+     * @param Request $request
+     * @param string $id
+     * @return Response
      */
-    public function enableAction($id)
+    public function enableAction(Request $request, $id)
     {
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
             ->find($id);
 
-        $enabled = $this->get("request")->get("enabled");
+        $enabled = $request->get("enabled");
         if (!$element) {
             return new JsonResponse(array(
                 /** @todo: use http status codes to communicate error conditions */
@@ -536,4 +519,14 @@ class ElementController extends Controller
                 ->getForm();
     }
 
+    /**
+     * Get Mapbender core service
+     * @return Mapbender
+     */
+    protected function getMapbender()
+    {
+        /** @var Mapbender $service */
+        $service = $this->get('mapbender');
+        return $service;
+    }
 }

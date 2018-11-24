@@ -25,8 +25,7 @@
           </tr>
         </thead>
         <tbody>
-          {% if application.getElementsByRegion(region)|length > 0 %}
-            {% for element in application.getElementsByRegion(region) %}
+        {% for element in application.getElementsByRegion(region) %}
               <tr class="element" data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
                 <td class="titleColumn description">{{ element.title | trans }}</td>
                 <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
@@ -53,15 +52,13 @@
                         data-url="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}"></span>
                 </td>
               </tr>
-            {% endfor %}
-              <tr class="placeholderRow"></tr>
-          {% else %}
+        {% else %}
             <tr class="dummy">
               <td class="description">{{"mb.manager.admin.element.no_element_added."|trans}}</td>
               <td></td>
               <td></td>
             </tr>
-          {% endif %}
+        {% endfor %}
         </tbody>
       </table>
   </div>

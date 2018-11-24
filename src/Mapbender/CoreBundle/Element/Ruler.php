@@ -9,7 +9,7 @@ class Ruler extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.ruler.class.title";
     }
@@ -17,7 +17,7 @@ class Ruler extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.ruler.class.description";
     }
@@ -25,12 +25,13 @@ class Ruler extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.ruler.tag.line",
             "mb.core.ruler.tag.area",
-            "mb.core.ruler.tag.measure");
+            "mb.core.ruler.tag.measure",
+        );
     }
 
     /**

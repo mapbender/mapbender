@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -172,6 +173,7 @@ abstract class ExchangeHandler
 
     /**
      * Creates a Job form
+     * @return FormInterface
      */
     abstract public function createForm();
 

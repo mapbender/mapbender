@@ -284,12 +284,27 @@
             var scale = this._getPrintScale();
             function _getLegends(layer) {
                 var legend = {};
-                if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected) {
-                    legend[layer.options.title] = layer.options.legend.url;
+                if (!layer.options.treeOptions.selected) {
+                    return false;
                 }
                 if (layer.children) {
+                    var childrenActive = false;
                     for (var i = 0; i < layer.children.length; i++) {
-                        _.assign(legend, _getLegends(layer.children[i]));
+                        var childLegends = _getLegends(layer.children[i]);
+                        if (childLegends !== false) {
+                            _.assign(legend, childLegends);
+                            childrenActive = true;
+                        }
+                    }
+                    if (!childrenActive) {
+                        return false;
+                    }
+                }
+                // Only include the legend for a "group" / non-leaf layer if we haven't collected any
+                // legend images from leaf layers yet, but at least one leaf layer is actually active
+                if (!Object.keys(legend).length) {
+                    if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected) {
+                        legend[layer.options.title] = layer.options.legend.url;
                     }
                 }
                 return legend;
@@ -299,7 +314,7 @@
                 var source = sources[i];
                 if (source.type === 'wms' && this._getRasterVisibilityInfo(source, scale).layers.length) {
                     var ll = _getLegends(sources[i].configuration.children[0]);
-                    if (ll) {
+                    if (ll && Object.keys(ll).length) {
                         legends = legends.concat(ll);
                     }
                 }

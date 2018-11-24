@@ -10,7 +10,9 @@ use Mapbender\ManagerBundle\Component\Mapper;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -55,13 +57,13 @@ abstract class Element
     /** @var array Element fefault configuration */
     protected static $defaultConfiguration = array();
 
-    /** @var string Element description translation subject */
+    /** @var string translation subject */
     protected static $description  = "mb.core.element.class.description";
 
-    /** @var string Element title translation subject */
+    /** @var string[] translation subject */
     protected static $tags = array();
 
-    /** @var string[] Element tag translation subjects */
+    /** @var string[] translation subjects */
     protected static $title = "mb.core.element.class.title";
 
     /**
@@ -379,6 +381,8 @@ abstract class Element
      *
      * @param string $action The action to perform
      * @return Response
+     * @throws HttpException
+     * @todo Symfony 3.x: update Element API to accept injected Request from controller
      */
     public function httpAction($action)
     {
@@ -447,18 +451,6 @@ abstract class Element
     }
 
     /**
-     * Get the form assets.
-     *
-     * @return array
-     */
-    public static function getFormAssets()
-    {
-        return array(
-            'js' => array(),
-            'css' => array());
-    }
-
-    /**
      *  Merges the default configuration array and the configuration array
      *
      * @param array $default the default configuration of an element
@@ -503,15 +495,15 @@ abstract class Element
      * Create form for given element
      *
      * @param ContainerInterface $container
-     * @param Application        $application
+     * @param \Mapbender\CoreBundle\Entity\Application $application
      * @param Entity             $element
      * @param bool               $onlyAcl
      * @return array
-     * @internal param string $class
+     * @internal
      */
     public static function getElementForm($container, $application, Entity $element, $onlyAcl = false)
     {
-        /** @var Element $class */
+        /** @var string $class */
         $class = $element->getClass();
 
         // Create base form shared by all elements
@@ -548,13 +540,6 @@ abstract class Element
                 )
             );
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
-            $formAssets = array(
-                'js' => array(
-                    'components/codemirror/lib/codemirror.js',
-                    'components/codemirror/mode/yaml/yaml.js',
-                    'bundles/mapbendermanager/js/form-yaml.js'),
-                'css' => array(
-                    'components/codemirror/lib/codemirror.css'));
         } else {
             $type = self::getAdminFormType($configurationFormType, $container, $class);
 
@@ -565,13 +550,12 @@ abstract class Element
 
             $formType->add('configuration', $type, $options);
             $formTheme = $class::getFormTemplate();
-            $formAssets = $class::getFormAssets();
         }
 
         return array(
             'form' => $formType->getForm(),
             'theme' => $formTheme,
-            'assets' => $formAssets);
+        );
     }
 
     /**
@@ -581,7 +565,7 @@ abstract class Element
      * @param ContainerInterface $container
      * @param string $class
      *
-     * @return $type
+     * @return AbstractType
      */
     protected static function getAdminFormType($configurationFormType, ContainerInterface $container, $class)
     {
@@ -593,7 +577,7 @@ abstract class Element
         } else {
             $adminFormType = new $configurationFormType();
         }
-
+        /** @var AbstractType $adminFormType */
         return $adminFormType;
     }
 

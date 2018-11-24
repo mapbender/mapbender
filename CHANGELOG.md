@@ -1,4 +1,12 @@
 # Changelog
+* **dev-release/3.0.7 @ 103d845**
+  - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
+  - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
+  - Fixed dynamic (layertree) source reordering errors with many layers
+  - Print: Suppress redundant group layer legend images and legend images for deactivated layers ([PR#1053](https://github.com/mapbender/mapbender/pull/1053))
+  - Remove unused fields from VendorSpecifics form, remove JOII dependency ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
+  - Typo fixes in WmsCapabilitiesParser130, thanks jef-n ([PR#1046](https://github.com/mapbender/mapbender/pull/1046))
+
 * **v3.0.7.7**
   - [Regression fix] Restore either-or privilege checking behaviour for access to instance tunnel and metadata actions ([341bf11](https://github.com/mapbender/mapbender/commit/341bf117812173b3d9e211be8d5498750d73bf2d))
   - [Regression fix] Fix erratic behaviour when dynamically reodering sources ([09050ee](https://github.com/mapbender/mapbender/commit/09050eeecd81bd6a003e62c3a0d54f1de8a03cbb))

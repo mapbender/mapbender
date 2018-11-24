@@ -47,7 +47,8 @@
               {% endif %}
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-                <a href="#" class="iconPublish iconBig {% if application.published %}enabled iconPublishActive{% else %}disabled{% endif %}" title="{{ 'mb.manager.admin.application.public.on_off' | trans }} {{ application.title }}" data-application-slug="{{ application.slug }}"></a>
+                <a href="#" class="iconPublish iconBig {% if application.published %}enabled iconPublishActive{% else %}disabled{% endif %}" title="{{ 'mb.manager.admin.application.public.on_off' | trans }} {{ application.title }}"
+                   data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"></a>
               {% endif %}
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}

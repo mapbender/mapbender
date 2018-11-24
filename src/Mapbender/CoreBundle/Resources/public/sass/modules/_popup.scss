@@ -38,11 +38,11 @@
     }
     .popupContent, .popupSubContent {
       padding: 0;   // we already have our padding on the wrapping .popup-body
+      margin-bottom: $space;
     }
   }
 
   .footer {
-    margin-top: $space;
     padding: $space;
   }
 }
@@ -53,13 +53,14 @@
     padding:0 20px;
   }
 }
-
-.popupContent, .popupSubContent {
-  &+.popupContent, &+.popupSubcontent {
-    margin-top: $space;
+.fom-popup {
+  .popupContent, .popupSubContent {
+    &+.popupContent, &+.popupSubcontent {
+      margin-top: $space;
+    }
   }
+  .popupSubContent{width: 100%; height: 100%;}
 }
-.fom-popup .popupSubContent{width: 100%; height: 100%;}
 
 .popup {
   &.fom-popup {

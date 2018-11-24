@@ -14,16 +14,17 @@
         <div class="left">
             {{ form_widget(dim.current) }}<label for="{{dim.current.vars.id}}" class="labelCheck" title="current">current</label>
         </div>
+        <div class="clear"></div>
     </div>
-    {{ form_label(dim.name) }}{{ form_widget(dim.name) }}
-    {{ form_label(dim.units) }}{{ form_widget(dim.units) }}
-    {{ form_label(dim.unitSymbol) }}{{ form_widget(dim.unitSymbol) }}
+    {{ form_row(dim.name) }}
+    {{ form_row(dim.units) }}
+    {{ form_row(dim.unitSymbol) }}
     {% if dim.default is defined %}
-        {{ form_label(dim.default) }}{{ form_widget(dim.default) }}
+        {{ form_row(dim.default) }}
     {% endif %}
+
     <label for="{{dim.extentEdit.vars.id}}" class="labelInput" title="Extent">Extent</label>{{ form_widget(dim.extentEdit) }}
     <div class="dimension-type">{{ form_widget(dim.type) }}</div>
-    <div class="dimension-origextent">{{ form_widget(dim.origextent) }}</div>
     <div class="dimension-exent">{{ form_widget(dim.extent) }}</div>
     <div id="dimension{{ num }}-extent" class="mb-slider"></div>
 </div>

@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element\EventListener;
 
 use Mapbender\CoreBundle\Element\Type\LayerThemeType;
+use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -14,22 +15,15 @@ use Symfony\Component\Form\FormEvents;
 class LayertreeSubscriber implements EventSubscriberInterface
 {
 
-    /**
-     * A FormFactoryInterface 's Factory
-     *
-     * @var \Symfony\Component\Form\FormFactoryInterface
-     */
+    /** @var FormFactoryInterface */
     private $factory;
 
-    /**
-     * The application
-     *
-     * @var application
-     */
+    /** @var Application */
     private $application;
 
     /**
-     * @inheritdoc
+     * @param FormFactoryInterface $factory
+     * @param Application $application
      */
     public function __construct(FormFactoryInterface $factory, $application)
     {

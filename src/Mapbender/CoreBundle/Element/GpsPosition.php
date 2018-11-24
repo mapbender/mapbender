@@ -36,7 +36,7 @@ class GpsPosition extends Element
             "mb.core.gpsposition.tag.gpsposition",
             "mb.core.gpsposition.tag.gps",
             "mb.core.gpsposition.tag.position",
-            "mb.core.gpsposition.tag.button"
+            "mb.core.gpsposition.tag.button",
         );
     }
 
@@ -48,7 +48,7 @@ class GpsPosition extends Element
         return array(
             'js'    => array(
                 'mapbender.element.button.js',
-                'mapbender.element.gpsPosition.js'
+                'mapbender.element.gpsPosition.js',
             ),
             'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/gpsposition.scss'),
             'trans' => array('MapbenderCoreBundle:Element:gpsposition.json.twig')
@@ -79,7 +79,7 @@ class GpsPosition extends Element
             'follow'                => false,
             'centerOnFirstPosition' => true,
             'zoomToAccuracy'        => false,
-            'zoomToAccuracyOnFirstPosition' => true
+            'zoomToAccuracyOnFirstPosition' => true,
         );
     }
 

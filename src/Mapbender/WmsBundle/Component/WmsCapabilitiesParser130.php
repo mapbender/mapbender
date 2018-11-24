@@ -185,20 +185,20 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
      */
     private function parseOperationRequestInformation(\DOMElement $contextElm)
     {
-        $requestImformation = new RequestInformation();
+        $requestInformation = new RequestInformation();
         $tempList = $this->xpath->query("./wms:Format", $contextElm);
         if ($tempList !== null) {
             foreach ($tempList as $item) {
-                $requestImformation->addFormat($this->getValue("./text()", $item));
+                $requestInformation->addFormat($this->getValue("./text()", $item));
             }
         }
-        $requestImformation->setHttpGet(
+        $requestInformation->setHttpGet(
             $this->getValue("./wms:DCPType/wms:HTTP/wms:Get/wms:OnlineResource/@xlink:href", $contextElm)
         );
-        $requestImformation->setHttpPost(
+        $requestInformation->setHttpPost(
             $this->getValue("./wms:DCPType/wms:HTTP/wms:Post/wms:OnlineResource/@xlink:href", $contextElm)
         );
-        return $requestImformation;
+        return $requestInformation;
     }
 
     /**
@@ -341,9 +341,9 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
                 $wmslayer->addMetadataUrl($metadataUrl);
             }
         }
-        $dimentionList = $this->xpath->query("./wms:Dimension", $contextElm);
-        if ($dimentionList !== null) {
-            foreach ($dimentionList as $dimensionEl) {
+        $dimensionList = $this->xpath->query("./wms:Dimension", $contextElm);
+        if ($dimensionList !== null) {
+            foreach ($dimensionList as $dimensionEl) {
                 $dimension = new Dimension();
                 $dimension->setName($this->getValue("./@name", $dimensionEl)); //($this->getValue("./@CRS", $item));
                 $dimension->setUnits($this->getValue("./@units", $dimensionEl));
