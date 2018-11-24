@@ -2,6 +2,7 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\DBAL\Connection;
@@ -109,12 +110,8 @@ class ElementController extends Controller
         }
 
         $region               = $request->get('region');
-        $applicationComponent = new ApplicationComponent($this->container, $application);
-        $elementComponent     = new $class($applicationComponent, $this->container, ComponentElement::getDefaultElement($class, $region));
-
-        $elementComponent->getEntity()->setTitle($elementComponent->trans($elementComponent->getClassTitle()));
-
-        $response         = ComponentElement::getElementForm($this->container, $application, $elementComponent->getEntity());
+        $element = $this->getFactory()->newEntity($class, $region);
+        $response         = ComponentElement::getElementForm($this->container, $application, $element);
         $response["form"] = $response['form']->createView();
         $response += array(
             'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
@@ -140,9 +137,7 @@ class ElementController extends Controller
         $application = $this->getMapbender()->getApplicationEntity($slug);
 
         $data = $request->get('form');
-        $element = ComponentElement::getDefaultElement($data['class'],
-                $data['region']);
-        $element->setApplication($application);
+        $element = $this->getFactory()->newEntity($data['class'], $data['region'], $application);
         $form = ComponentElement::getElementForm($this->container, $application,
             $element);
         $form['form']->submit($request);
@@ -527,6 +522,16 @@ class ElementController extends Controller
     {
         /** @var Mapbender $service */
         $service = $this->get('mapbender');
+        return $service;
+    }
+
+    /**
+     * @return ElementFactory
+     */
+    protected function getFactory()
+    {
+        /** @var ElementFactory $service */
+        $service = $this->get('mapbender.element_factory.service');
         return $service;
     }
 }

@@ -595,27 +595,6 @@ abstract class Element
     }
 
     /**
-     * Create default element
-     *
-     * @param Element $class
-     * @param string $region
-     * @return \Mapbender\CoreBundle\Entity\Element
-     */
-    public static function getDefaultElement($class, $region)
-    {
-        $element = new Entity();
-        $configuration = $class::getDefaultConfiguration();
-        $element
-            ->setClass($class)
-            ->setRegion($region)
-            ->setWeight(0)
-            ->setTitle($class::getClassTitle())
-            ->setConfiguration($configuration);
-
-        return $element;
-    }
-
-    /**
      * Changes a element entity configuration while exporting.
      *
      * @param array $formConfiguration element entity configuration
