@@ -4,6 +4,9 @@
 namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\Asset\FileAsset;
+use Assetic\Asset\AssetCollection;
+use Assetic\Asset\StringAsset;
+use Assetic\AssetManager;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -12,28 +15,54 @@ class AssetFactoryBase
     /** @var ContainerInterface  */
     protected $container;
 
-    public function __construct(ContainerInterface $container)
+    /** @var string  */
+    protected $targetPath;
+
+    public function __construct(ContainerInterface $container, $targetPath)
     {
         $this->container = $container;
+        $this->targetPath = $targetPath;
     }
 
     /**
-     * @param string $fileName
-     * @param string $assetType one of 'js', 'css', 'trans'
-     * @return object[]
-     * @todo: figure out assetic filter base class
+     * @param (StringAsset|string)[] $inputs
+     * @return AssetCollection
      */
-    protected function getFilters($fileName, $assetType)
+    protected function buildAssetCollection($inputs)
     {
-        return array();
+        $assetRootPath = $this->getWebDir();
+
+        $collection = new AssetCollection(array(), array(), $assetRootPath);
+        $collection->setTargetPath($this->targetPath);
+        $manager = new AssetManager();
+        $stringAssetCounter = 0;
+
+        foreach ($inputs as $input) {
+            if ($input instanceof StringAsset) {
+                $name = 'stringasset_' . $stringAssetCounter++;
+                $manager->set($name, $input);
+            } else {
+                $fileAsset = $this->makeFileAsset($input);
+                $fileAsset->setTargetPath($this->targetPath);
+                $name = str_replace(array('@', 'Resources/public/'), '', $input);
+                $name = str_replace(array('/', '.', '-'), '__', $name);
+                $manager->set($name, $fileAsset);
+            }
+        }
+
+        // Finally, wrap everything into a single asset collection
+        foreach($manager->getNames() as $name) {
+            $collection->add($manager->get($name));
+        }
+
+        return $collection;
     }
 
     /**
      * @param string $input reference to an asset file
-     * @param string $type
      * @return FileAsset
      */
-    protected function makeFileAsset($input, $type)
+    protected function makeFileAsset($input)
     {
         /** @var FileLocator $locator */
         $locator = $this->container->get('file_locator');
@@ -44,9 +73,7 @@ class AssetFactoryBase
         } else {
             $file = $locator->locate($input);
         }
-        // Build filter list (None for JS/Trans, Compass for SASS and Rewrite for SASS/CSS)
-        $filters = $this->getFilters($file, $type);
-        $fileAsset = new FileAsset($file, $filters, null, null);
+        $fileAsset = new FileAsset($file);
 
         return $fileAsset;
     }
