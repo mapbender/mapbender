@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Component;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -21,6 +22,10 @@ class ElementFactory
     protected $container;
     /** @var TranslatorInterface */
     protected $translator;
+    /** @var Component\Element[] */
+    protected $components = array();
+    /** @var Component\Application[] */
+    protected $appComponents = array();
 
     /**
      * @param TranslatorInterface $translator
@@ -28,9 +33,25 @@ class ElementFactory
      */
     public function __construct(TranslatorInterface $translator, ContainerInterface $container)
     {
-        $this->applicationComponentDummy = new Application($container, new Entity\Application());
         $this->translator = $translator;
         $this->container = $container;
+        $this->applicationComponentDummy = $this->appComponentFromEntity(new Entity\Application());
+    }
+
+    /**
+     * @param Entity\Element $entity
+     * @param bool $reuse to return the same instance again if both entites are the same (via spl object hash)
+     * @return Component\Element
+     */
+    public function componentFromEntity(Entity\Element $entity, $reuse=true)
+    {
+        $entityObjectId = spl_object_hash($entity);
+        if (!$reuse || !array_key_exists($entityObjectId, $this->components)) {
+            $appComponent = $this->appComponentFromEntity($entity->getApplication(), $reuse);
+            $instance = $this->instantiateComponent($entity->getClass(), $entity, $appComponent);
+            $this->components[$entityObjectId] = $instance;
+        }
+        return $this->components[$entityObjectId];
     }
 
     /**
@@ -76,12 +97,31 @@ class ElementFactory
      * @param Application $appComponent
      * @return Element
      */
-    public function instantiateComponent($className, Entity\Element $entity, Application $appComponent)
+    protected function instantiateComponent($className, Entity\Element $entity, Application $appComponent)
     {
-        // @todo: throw custom exception if !class_exists($className)
-        // @todo: throw custom exception if !$instance instanceof Element
-        // @todo: check API conformance and generate deprecation warnings via trigger_error(E_USER_DEPRECATED, ...)
+        if (!class_exists($className, true)) {
+            throw new Component\Exception\UndefinedElementClassException($className);
+        }
         $instance = new $className($appComponent, $this->container, $entity);
+        if (!$instance instanceof Component\Element) {
+            throw new Component\Exception\InvalidElementClassException($className);
+        }
+        // @todo: check API conformance and generate deprecation warnings via trigger_error(E_USER_DEPRECATED, ...)
         return $instance;
+    }
+
+    /**
+     * @param Entity\Application $appEntity
+     * @param bool $reuse
+     * @return Component\Application
+     */
+    public function appComponentFromEntity(Entity\Application $appEntity, $reuse=true)
+    {
+        $entityObjectId = spl_object_hash($appEntity);
+        if (!$reuse || !array_key_exists($entityObjectId, $this->appComponents)) {
+            $instance = new Component\Application($this->container, $appEntity);
+            $this->appComponents[$entityObjectId] = $instance;
+        }
+        return $this->appComponents[$entityObjectId];
     }
 }

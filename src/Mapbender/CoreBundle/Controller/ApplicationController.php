@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
+use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
@@ -126,14 +127,14 @@ class ApplicationController extends Controller
      */
     public function elementAction(Request $request, $slug, $id, $action)
     {
-        $application = $this->getApplication($slug);
-        $element     = $application->getElement($id);
-
-        if(!$element){
+        $application = $this->getApplicationEntity($slug);
+        /** @var ApplicationService $appService */
+        $appService = $this->get('mapbender.presenter.application.service');
+        $elementComponent = $appService->getSingleElementComponent($application, $id);
+        if (!$elementComponent){
             throw new NotFoundHttpException();
         }
-
-        return $element->httpAction($action);
+        return $elementComponent->httpAction($action);
     }
 
     /**
@@ -175,6 +176,7 @@ class ApplicationController extends Controller
      *
      * Checks existance and grants and throws accordingly.
      *
+     * @param string $slug
      * @return Application
      * @throws NotFoundHttpException
      * @throws AccessDeniedHttpException
@@ -198,8 +200,7 @@ class ApplicationController extends Controller
         $entity = $mapbender->getApplicationEntity($slug);
 
         if (!$entity) {
-            throw new NotFoundHttpException(
-            'The application can not be found.');
+            throw new NotFoundHttpException('The application can not be found.');
         }
         $this->checkApplicationAccess($entity);
         return $entity;
@@ -213,7 +214,7 @@ class ApplicationController extends Controller
      */
     public function configurationAction($slug)
     {
-        $applicationEntity = $this->getApplication($slug)->getEntity();
+        $applicationEntity = $this->getApplicationEntity($slug);
         $this->get("session")->set("proxyAllowed", true);
         $configService = $this->getConfigService();
         $cacheService = $configService->getCacheService();

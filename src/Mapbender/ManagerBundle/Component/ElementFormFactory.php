@@ -41,8 +41,6 @@ class ElementFormFactory
      */
     public function getConfigurationForm($application, $element)
     {
-        /** @var string $componentClassName */
-        $componentClassName = $element->getClass();
 
         // Create base form shared by all elements
         $formType = $this->formFactory->createBuilder('form', $element, array());
@@ -61,6 +59,7 @@ class ElementFormFactory
             $configurationType = $this->getFallbackConfigurationFormType($element);
             $twigTemplate = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
         } else {
+            $componentClassName = $element->getClass();
             $twigTemplate = $componentClassName::getFormTemplate();
         }
 

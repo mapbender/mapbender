@@ -115,7 +115,9 @@
             <tag name="form.type" alias="layertree_menu" />
         </service>
         <service id="mapbender.presenter.application.service" class="%mapbender.presenter.application.service.class%">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="fom.acl.manager" />
         </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
             <argument type="service" id="service_container" />

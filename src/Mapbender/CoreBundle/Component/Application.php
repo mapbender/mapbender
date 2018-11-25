@@ -7,9 +7,9 @@ use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
-use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
@@ -315,28 +315,6 @@ class Application implements IAssetDependent
     }
 
     /**
-     * Return the element with the given id
-     *
-     * @param string $id The element id
-     * @return ElementComponent
-     */
-    public function getElement($id)
-    {
-        /** @var Element[] $elements */
-        $regions = $this->getElements();
-        $r       = null;
-        foreach ($regions as $region => $elements) {
-            foreach ($elements as $element) {
-                if ($id == $element->getId()) {
-                    $r = $element;
-                    break;
-                }
-            }
-        }
-        return $r;
-    }
-
-    /**
      * Build an Assetic reference path from a given objects bundle name(space)
      * and the filename/path within that bundles Resources/public folder.
      *
@@ -382,30 +360,31 @@ class Application implements IAssetDependent
     }
 
     /**
-     * Get region elements, optionally by region
+     * Get region elements, optionally by region.
+     * This called almost exclusively from twig templates, with or without the region paraemter.
      *
      * @param string $regionName deprecated; Region to get elements for. If null, all elements  are returned.
      * @return Element[][] keyed by region name (string)
      */
     public function getElements($regionName = null)
     {
-        if (!$this->elements) {
-            $regions = $this->getGrantedRegionElementCollections();
-            foreach ($regions as $_regionName => $elements) {
-                //$_elements               = $this->sortElementsByWidth($elements);
-                $regions[ $_regionName ] = $elements;
+        $appService = $this->getService();
+        if ($this->elements === null) {
+            $activeElements = $appService->getActiveElements($this->entity, true);
+            $this->elements = array();
+            foreach ($activeElements as $elementComponent) {
+                $elementRegion = $elementComponent->getEntity()->getRegion();
+                if (!array_key_exists($elementRegion, $this->elements)) {
+                    $this->elements[$elementRegion] = array();
+                }
+                $this->elements[$elementRegion][] = $elementComponent;
             }
-            $this->elements = $regions;
         }
-
         if ($regionName) {
-            $hasRegionElements = array_key_exists($regionName, $this->elements);
-            $regions           = $hasRegionElements ? $this->elements[ $regionName ] : array();
+            return ArrayUtil::getDefault($this->elements, $regionName, array());
         } else {
-            $regions = $this->elements;
+            return $this->elements;
         }
-
-        return $regions;
     }
 
     /**
@@ -642,67 +621,6 @@ class Application implements IAssetDependent
             }
             return ($wa < $wb) ? -1 : 1;
         });
-    }
-
-
-
-    /**
-     * Get granted elements
-     *
-     * @return Element[][] keyed on region name
-     */
-    protected function getGrantedRegionElementCollections()
-    {
-        $application = $this->entity;
-        $elements    = array();
-        foreach ($application->getElements() as $elementEntity) {
-            if (!$elementEntity->getEnabled() || !$this->isElementGranted($elementEntity)) {
-                continue;
-            }
-
-            /** @var \Mapbender\CoreBundle\Element\Button $class */
-            $class                     = $elementEntity->getClass();
-            if (!class_exists($class)) {
-                continue;
-            }
-
-            $elementComponent          = new $class($this, $this->container, $elementEntity);
-            $regionName                = $elementEntity->getRegion();
-            $elements[ $regionName ][] = $elementComponent;
-        }
-        return $elements;
-    }
-
-    /**
-     * Is element granted?
-     *
-     * If there is no ACL's or roles then ever granted
-     *
-     * @param Element|ElementEntity $element
-     * @param string $permission SecurityContext::PERMISSION_
-     * @return bool
-     */
-    public function isElementGranted(ElementEntity $element, $permission = SecurityContext::PERMISSION_VIEW)
-    {
-        $applicationEntity = $this->getEntity();
-        $securityContext   = $this->container->get('security.context');
-        $aclManager        = $this->container->get("fom.acl.manager");
-        $isGranted         = true;
-
-        if ($aclManager->hasObjectAclEntries($element)) {
-            $isGranted = $securityContext->isGranted($permission, $element);
-        }
-
-        if ($applicationEntity->isYamlBased() && count($element->getYamlRoles())) {
-            foreach ($element->getYamlRoles() as $role) {
-                if ($securityContext->isGranted($role)) {
-                    $isGranted = true;
-                    break;
-                }
-            }
-        }
-
-        return $isGranted;
     }
 
     /**

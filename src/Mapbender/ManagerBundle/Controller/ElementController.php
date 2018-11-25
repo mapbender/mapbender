@@ -9,8 +9,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
-use Mapbender\CoreBundle\Component\Element as ComponentElement;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Mapbender;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
