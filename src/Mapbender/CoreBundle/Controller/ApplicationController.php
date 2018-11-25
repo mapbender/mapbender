@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -64,7 +65,7 @@ class ApplicationController extends Controller
     {
         $isProduction = $this->isProduction();
         $cacheFile        = $this->getCachedAssetPath($slug, $type);
-        $application = $this->getApplication($slug);
+        $appEntity = $this->getApplicationEntity($slug);
 
         $headers = array(
             'Content-Type' => $this->getMimeType($type),
@@ -72,7 +73,6 @@ class ApplicationController extends Controller
 
         $useCached = $isProduction && file_exists($cacheFile);
         if ($useCached) {
-            $appEntity = $application->getEntity();
             $isAppDbBased = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
             $modificationTs = filectime($cacheFile);
             // Always reuse cache entry for YAML applications
@@ -87,7 +87,7 @@ class ApplicationController extends Controller
                 return $response;
             }
         }
-
+        $application = new Application($this->container, $appEntity);
         $refs = $application->getAssetGroup($type);
         if ($type == "css") {
             /** @todo: use route to assets action, not REQUEST_URI, so this can move away from here */
@@ -171,28 +171,38 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Get the application by slug.
+     * Get the application component by slug.
      *
-     * Tries to get the application with the given slug and throws an 404
-     * exception if it can not be found. This also checks access control and
-     * therefore may throw an AuthorizationException.
+     * Checks existance and grants and throws accordingly.
      *
      * @return Application
+     * @throws NotFoundHttpException
+     * @throws AccessDeniedHttpException
      */
     private function getApplication($slug)
     {
+        $entity = $this->getApplicationEntity($slug);
+        return new Application($this->container, $entity);
+    }
+
+    /**
+     * @param string $slug
+     * @return ApplicationEntity
+     * @throws NotFoundHttpException
+     * @throws AccessDeniedHttpException
+     */
+    private function getApplicationEntity($slug)
+    {
         /** @var Mapbender $mapbender */
         $mapbender = $this->get('mapbender');
-        $application = $mapbender->getApplication($slug);
+        $entity = $mapbender->getApplicationEntity($slug);
 
-        if (!$application) {
+        if (!$entity) {
             throw new NotFoundHttpException(
             'The application can not be found.');
         }
-
-        $this->checkApplicationAccess($application);
-
-        return $application;
+        $this->checkApplicationAccess($entity);
+        return $entity;
     }
 
     /**
@@ -230,12 +240,11 @@ class ApplicationController extends Controller
      * This will check if any ACE in the ACL for the given applications entity
      * grants the VIEW permission.
      *
-     * @param Application $application
+     * @param ApplicationEntity $application
      */
-    public function checkApplicationAccess(Application $application)
+    private function checkApplicationAccess(ApplicationEntity $application)
     {
         $user = $this->getUser();
-        $application     = $application->getEntity();
 
         if ($application->isYamlBased()
             && count($application->getYamlRoles())

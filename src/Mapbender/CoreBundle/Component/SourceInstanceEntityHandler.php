@@ -52,12 +52,6 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function generateConfiguration();
     
     /**
-     * Merges a fiving dimension with an existing.
-     * @param Dimension $dimension a diemsion
-     */
-    abstract public function mergeDimension($dimension);
-    
-    /**
      * Returns an array with sensitive vendor specific parameters
      */
     abstract public function getSensitiveVendorSpecific();

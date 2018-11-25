@@ -159,10 +159,6 @@ class ElementController extends Controller
             $this->getDoctrine()->getManager()->persist($application->setUpdated(new \DateTime('now')));
             $em->persist($element);
             $em->flush();
-            $entity_class = $element->getClass();
-            $appl = new ApplicationComponent($this->container, $application);
-            $elComp = new $entity_class($appl, $this->container, $element);
-            $elComp->postSave();
             $this->get('session')->getFlashBag()->set('success',
                 'Your element has been saved.');
 
@@ -243,11 +239,6 @@ class ElementController extends Controller
             $em->persist($element);
             $em->flush();
 
-            $entity_class = $element->getClass();
-            $appl = new ApplicationComponent($this->container, $application);
-            /** @var ComponentElement $elComp */
-            $elComp = new $entity_class($appl, $this->container, $element);
-            $elComp->postSave();
             $this->get('session')->getFlashBag()->set('success',
                 'Your element has been saved.');
 

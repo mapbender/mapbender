@@ -296,20 +296,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * Copies Extent and Default from passed DimensionInst to any DimensionInst stored
-     * in bound WmsInstance that match the same Type.
-     *
-     * @param DimensionInst $dimension
-     * @deprecated we do not modify entities for presentation or frontend purposes
-     *    This was only used by DimensionsHandler::postSave, which is now removed.
-     *    The implementation has been moved directly into DimensionsHandler.
-     */
-    public function mergeDimension($dimension)
-    {
-        DimensionsHandler::reconfigureDimensions($this->entity, $dimension);
-    }
-
-    /**
      * @param \Mapbender\WmsBundle\Component\DimensionInst $dimension
      * @param  DimensionInst[]                             $dimensionList
      * @return null

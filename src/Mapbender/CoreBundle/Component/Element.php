@@ -483,14 +483,6 @@ abstract class Element
     }
 
     /**
-     * Changes Element after save.
-     */
-    public function postSave()
-    {
-
-    }
-
-    /**
      * Create form for given element
      *
      * @param ContainerInterface $container
