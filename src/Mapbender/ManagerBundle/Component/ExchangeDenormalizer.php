@@ -331,10 +331,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements Mapper
         if ($isSuperClass) {
             foreach ($this->mapper as $key => $value) {
                 if (class_exists($key) && $this->findSuperClass($key, $className)) {
-                    $result = $this->getAfterFromBefore($key, array('id' => $id));
-                    if ($result && isset($result['criteria']) && isset($result['criteria']['id'])) {
-                        return $result['criteria']['id'];
-                    }
+                    return $this->getIdentFromMapper($key, $id, false);
                 }
             }
             return null;

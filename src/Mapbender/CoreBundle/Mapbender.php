@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Component\YamlApplicationImporter;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
@@ -191,7 +192,6 @@ class Mapbender
         if ($entity) {
             $entity->setSource(Entity::SOURCE_DB);
         } else {
-            /** @var ObjectRepository $repository */
             $yamlMapper = new ApplicationYAMLMapper($this->container);
             $entity     = $yamlMapper->getApplication($slug);
         }
@@ -268,14 +268,14 @@ class Mapbender
 
         $manager              = $this->getManager();
         $connection           = $this->getConnection();
-        $applicationComponent = $this->getApplication($slug, array());
-        $application          = $applicationComponent->getEntity();
+        $application          = $this->getApplicationEntity($slug);
         $newSlug              = $newSlug ? $newSlug : EntityUtil::getUniqueValue($manager, get_class($application), 'slug', $application->getSlug() . '_yml', '');
         $newTitle             = $newTitle ? $newTitle : EntityUtil::getUniqueValue($manager, get_class($application), 'title', $application->getSlug() . ' YAML', '');
         $elements             = array();
         $lays                 = array();
         $translator           = $this->container->get("translator");
 
+        // @todo: move all the following code into the YamlApplicationImporter service
 
         $application->setSlug($newSlug);
         $application->setTitle($newTitle);
@@ -409,7 +409,9 @@ class Mapbender
         $manager->flush();
         $connection->commit();
 
-        $applicationComponent->addViewPermissions();
+        /** @var YamlApplicationImporter $importerService */
+        $importerService = $this->container->get('mapbender.yaml_application_importer.service');
+        $importerService->addViewPermissions($application);
     }
 
     /**

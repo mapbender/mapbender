@@ -20,6 +20,7 @@
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
         <parameter key="mapbender.imageexport.service.class">Mapbender\PrintBundle\Component\ImageExportService</parameter>
         <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
+        <parameter key="mapbender.yaml_application_importer.service.class">Mapbender\CoreBundle\Component\YamlApplicationImporter</parameter>
     </parameters>
 
     <services>
@@ -133,6 +134,9 @@
         <service id="mapbender.element_factory.service" class="%mapbender.element_factory.service.class%">
             <argument key="translator" type="service" id="translator" />
             <argument type="service" id="service_container" />
+        </service>
+        <service id="mapbender.yaml_application_importer.service" class="%mapbender.yaml_application_importer.service.class%">
+            <argument type="service" id="security.acl.provider" />
         </service>
         <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">
             <argument type="service" id="logger" />

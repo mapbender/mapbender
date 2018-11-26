@@ -3,7 +3,6 @@ namespace Mapbender\CoreBundle\Component;
 
 use Assetic\Asset\StringAsset;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
@@ -11,20 +10,12 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
- * Application is the main Mapbender3 class.
+ * Collection of servicy behaviors related to application
  *
- * This class is the controller for each application instance.
- * The application class will not perform any access checks, this is due to
- * the controller instantiating an application. The controller should check
- * with the configuration entity to get a list of allowed roles and only then
- * decide to instantiate a new application instance based on the configuration
- * entity.
- *
+ * @deprecated
+ * @internal
  * @author Christian Wygoda
  */
 class Application implements IAssetDependent
@@ -132,7 +123,6 @@ class Application implements IAssetDependent
     }
 
     /**
-     *
      * @return string[]
      */
     public function getValidAssetTypes()
@@ -222,7 +212,6 @@ class Application implements IAssetDependent
             }
         }
 
-        // Load the late template assets last, so they can overwrite element and layer assets
         $assetSources[] = array(
             'object' => $appTemplate,
             'assets' => array(
@@ -606,43 +595,14 @@ class Application implements IAssetDependent
     }
 
     /**
-     * Sort region elements by width
-     *
-     * @param $elements
-     * @return ElementComponent[]
-     */
-    protected function sortElementsByWidth($elements)
-    {
-        return usort($elements, function (ElementComponent $a, ElementComponent $b) {
-            $wa = $a->getEntity()->getWeight();
-            $wb = $b->getEntity()->getWeight();
-            if ($wa == $wb) {
-                return 0;
-            }
-            return ($wa < $wb) ? -1 : 1;
-        });
-    }
-
-    /**
-     * Add view permissions
+     * @deprected
+     * @internal
      */
     public function addViewPermissions()
     {
-        $aclProvider       = $this->container->get('security.acl.provider');
-        $applicationEntity = $this->getEntity();
-        $maskBuilder       = new MaskBuilder();
-        $uoid              = ObjectIdentity::fromDomainObject($applicationEntity);
-
-        $maskBuilder->add('VIEW');
-
-        try {
-            $acl = $aclProvider->findAcl($uoid);
-        } catch (\Exception $e) {
-            $acl = $aclProvider->createAcl($uoid);
-        }
-
-        $acl->insertObjectAce(new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'), $maskBuilder->get());
-        $aclProvider->updateAcl($acl);
+        /** @var YamlApplicationImporter $service */
+        $service = $this->container->get('mapbender.yaml_application_importer.service');
+        $service->addViewPermissions($this->getEntity());
     }
 
     /**

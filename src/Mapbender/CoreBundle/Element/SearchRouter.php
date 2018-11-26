@@ -299,7 +299,7 @@ class SearchRouter extends Element
         $configuration = parent::getConfiguration();
         $routes        = &$configuration["routes"];
         foreach ($routes as $k => $route) {
-            $routes[ $k ] = static::mergeArrays(static::$defaultRouteConfiguration, $route, array());
+            $routes[ $k ] = static::mergeArrays(static::$defaultRouteConfiguration, $route);
         }
         return $configuration;
     }
