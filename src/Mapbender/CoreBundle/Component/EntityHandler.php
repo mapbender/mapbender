@@ -180,6 +180,8 @@ class EntityHandler
      * @param array              $criteria
      * @param null               $accessControl
      * @return array|ArrayCollection
+     * @deprecated
+     * @internal
      */
     public static function findAll(
         ContainerInterface $container,

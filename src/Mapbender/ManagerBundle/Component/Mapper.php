@@ -14,12 +14,4 @@ interface Mapper
      * @param boolean $isSuperClass flag if class name is a super class.
      */
     public function getIdentFromMapper($className, $id, $isSuperClass = false);
-
-    /**
-     * Checks if given class or it parent is a class to find.
-     * @param type $classIs
-     * @param type $classToFind
-     * @return boolean true if found, otherwise false
-     */
-    public function findSuperClass($classIs, $classToFind);
 }
