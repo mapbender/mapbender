@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 /**
  * Collection of servicy behaviors related to application
@@ -439,100 +440,93 @@ class Application implements IAssetDependent
 
     /**
      * Returns the public "uploads" directory.
+     * NOTE: this has nothing to with applications. Some legacy usages passed in an application
+     * slug as a second argument, but it was only ever evaluated as a boolean.
      *
      * @param ContainerInterface $container Container
      * @param bool               $webRelative
      * @return string the path to uploads dir or null.
+     * @deprecated use the uploads_manager service
      */
     public static function getUploadsDir($container, $webRelative = false)
     {
-        $uploads_dir = $container->get('kernel')->getRootDir() . '/../web/'
-            . $container->getParameter("mapbender.uploads_dir");
-        $ok          = true;
-        if (!is_dir($uploads_dir)) {
-            $ok = mkdir($uploads_dir);
-        }
-        if ($ok) {
-            if (!$webRelative) {
-                return $uploads_dir;
+        $ulm = self::getServiceStatic($container)->getUploadsManager();
+        try {
+
+            if ($webRelative) {
+                return $ulm->getWebRelativeBasePath(true);
             } else {
-                return $container->getParameter("mapbender.uploads_dir");
+                return $ulm->getAbsoluteBasePath(true);
             }
-        } else {
+        } catch (\RuntimeException $e) {
             return null;
         }
     }
 
     /**
-     * Returns the application's public directory.
+     * Returns the web-relative path to the application's uploads directory.
      *
      * @param ContainerInterface $container Container
      * @param string             $slug      application's slug
-     * @return boolean true if the application's directories are created or exist otherwise false.
+     * @return boolean true if the application's directory already existed or has just been successfully created
+     * @deprecated use the uploads_manager service
      */
     public static function getAppWebDir($container, $slug)
     {
-        return Application::createAppWebDir($container, $slug)
-            ? Application::getUploadsDir($container, $slug) . "/" . $slug
-            : null;
+        $ulm = static::getServiceStatic($container)->getUploadsManager();
+        try {
+            $ulm->getSubdirectoryPath($slug, true);
+            return $ulm->getWebRelativeBasePath(false) . '/' . $slug;
+        } catch (IOException $e) {
+            return null;
+        }
     }
 
     /**
-     * Creates or checks if the application's public directory is created or exist.
+     * If $oldSlug emptyish: Ensures Application-owned subdirectory under uploads exists,
+     * returns true if creation succcessful or it already existed.
+     *
+     * If $oldSlug non-emptyish: Move / rename subdirectory from  $oldSlug to $slug and
+     * returns a boolean indicating success.
+     *
+     * @deprecated for parameter-variadic behavior and swallowing exceptions; use the application_uploads_manager service directly
      *
      * @param ContainerInterface $container Container
-     * @param string             $slug      application's slug
-     * @param string             $old_slug  the old application's slug.
-     * @return boolean true if the application's directories are created or
-     *                                      exist otherwise false.
+     * @param string $slug subdirectory name for presence check / creation
+     * @param string|null $oldSlug source subdirectory that will be renamed to $slug
+     * @return boolean to indicate success or presence
      */
-    public static function createAppWebDir($container, $slug, $old_slug = null)
+    public static function createAppWebDir($container, $slug, $oldSlug = null)
     {
-        $uploads_dir = Application::getUploadsDir($container);
-        if ($uploads_dir === null) {
+        $ulm = static::getServiceStatic($container)->getUploadsManager();
+        try {
+            if ($oldSlug) {
+                $ulm->renameSubdirectory($slug, $oldSlug, true);
+            } else {
+                $ulm->getSubdirectoryPath($slug, true);
+            }
+            return true;
+        } catch (IOException $e) {
             return false;
         }
-        if ($old_slug === null) {
-            $slug_dir = $uploads_dir . "/" . $slug;
-            if (!is_dir($slug_dir)) {
-                return mkdir($slug_dir, 0777, true);
-            } else {
-                return true;
-            }
-        } else {
-            $old_slug_dir = $uploads_dir . "/" . $old_slug;
-            if (is_dir($old_slug_dir)) {
-                $slug_dir = $uploads_dir . "/" . $slug;
-                return rename($old_slug_dir, $slug_dir);
-            } else {
-                if (mkdir($old_slug_dir)) {
-                    $slug_dir = $uploads_dir . "/" . $slug;
-                    return rename($old_slug_dir, $slug_dir);
-                } else {
-                    return false;
-                }
-            }
-        }
     }
 
     /**
-     * Removes application's public directoriy.
+     * Removes application's public directory, if present.
      *
      * @param ContainerInterface $container Container
      * @param string             $slug      application's slug
-     * @return boolean true if the directories are removed or not exist otherwise false
+     * @return boolean true if the directory was removed or did not exist before the call.
+     * @deprecated use uploads_manager or filesystem service directly
      */
     public static function removeAppWebDir($container, $slug)
     {
-        $uploads_dir = Application::getUploadsDir($container);
-        if (!is_dir($uploads_dir)) {
+        $ulm = static::getServiceStatic($container)->getUploadsManager();
+        try {
+            $ulm->removeSubdirectory($slug);
             return true;
-        }
-        $slug_dir = $uploads_dir . "/" . $slug;
-        if (!is_dir($slug_dir)) {
-            return true;
-        } else {
-            return Utils::deleteFileAndDir($slug_dir);
+        } catch (IOException $e) {
+            return false;
         }
     }
 
@@ -576,22 +570,19 @@ class Application implements IAssetDependent
      * Copies an application web order.
      *
      * @param ContainerInterface $container Container
-     * @param string             $srcSslug  source application slug
+     * @param string             $srcSlug  source application slug
      * @param string             $destSlug  destination application slug
      * @return boolean true if the application  order has been copied otherwise false.
      */
-    public static function copyAppWebDir($container, $srcSslug, $destSlug)
+    public static function copyAppWebDir($container, $srcSlug, $destSlug)
     {
-        $rootPath = $container->get('kernel')->getRootDir() . '/../web/';
-        $src      = Application::getAppWebDir($container, $srcSslug);
-        $dst      = Application::getAppWebDir($container, $destSlug);
-
-        if ($src === null || $dst === null) {
+        $ulm = static::getServiceStatic($container)->getUploadsManager();
+        try {
+            $ulm->copySubdirectory($srcSlug, $destSlug);
+            return true;
+        } catch (IOException $e) {
             return false;
         }
-
-        Utils::copyOrderRecursive($rootPath . $src, $rootPath . $dst);
-        return true;
     }
 
     /**
@@ -612,6 +603,17 @@ class Application implements IAssetDependent
     {
         /** @var ApplicationService $service */
         $service = $this->container->get('mapbender.presenter.application.service');
+        return $service;
+    }
+
+    /**
+     * @param ContainerInterface $container
+     * @return ApplicationService
+     */
+    private static function getServiceStatic(ContainerInterface $container)
+    {
+        /** @var ApplicationService $service */
+        $service = $container->get('mapbender.presenter.application.service');
         return $service;
     }
 }

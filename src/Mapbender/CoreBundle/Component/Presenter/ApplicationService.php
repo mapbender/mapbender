@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Component\Presenter;
 
 use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component;
@@ -21,6 +22,8 @@ class ApplicationService
 {
     /** @var ElementFactory */
     protected $elementFactory;
+    /** @var UploadsManager */
+    protected $uploadsManager;
     /** @var AuthorizationCheckerInterface  */
     protected $authorizationChecker;
     /** @var AclManager */
@@ -30,10 +33,12 @@ class ApplicationService
 
 
     public function __construct(ElementFactory $elementFactory,
+                                UploadsManager $uploadsManager,
                                 AuthorizationCheckerInterface $authorizationChecker,
                                 AclManager $aclManager)
     {
         $this->elementFactory = $elementFactory;
+        $this->uploadsManager = $uploadsManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->aclManager = $aclManager;
     }
@@ -67,6 +72,14 @@ class ApplicationService
             }
         }
         return null;
+    }
+
+    /**
+     * @return UploadsManager
+     */
+    public function getUploadsManager()
+    {
+        return $this->uploadsManager;
     }
 
     /**

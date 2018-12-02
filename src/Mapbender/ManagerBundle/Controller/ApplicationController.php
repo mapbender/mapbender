@@ -8,6 +8,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Controller\WelcomeController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
@@ -25,13 +26,13 @@ use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Exception\Exception;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -181,6 +182,8 @@ class ApplicationController extends WelcomeController
     {
         $sourceApplication = $this->getMapbender()->getApplicationEntity($slug);
         $this->denyAccessUnlessGranted('EDIT', $sourceApplication);
+        $applicationOid = new ObjectIdentity('class', get_class(new Application()));
+        $this->denyAccessUnlessGranted('CREATE', $applicationOid);
 
         $expHandler = $this->getApplicationExporter();
         $impHandler = $this->getApplicationImporter();
@@ -229,7 +232,12 @@ class ApplicationController extends WelcomeController
             );
         }
 
-        $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
+        try {
+            $appDirectory = $this->getUploadsManager()->getSubdirectoryPath($application->getSlug(), true);
+        } catch (IOException $e) {
+            $this->addFlash('error', $this->translate('mb.application.create.failure.create.directory'));
+            return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
+        }
         $application->setUpdated(new \DateTime('now'));
         $em = $this->getDoctrine()->getManager();
 
@@ -247,7 +255,7 @@ class ApplicationController extends WelcomeController
             && $parameters['removeScreenShot'] !== '1'
             && $parameters['uploadScreenShot'] !== '1'
         ) {
-            $uploadScreenShot->upload($app_directory, $scFile, $application);
+            $uploadScreenShot->upload($appDirectory, $scFile, $application);
         }
 
         $em->persist($application);
@@ -267,13 +275,7 @@ class ApplicationController extends WelcomeController
         $aclManager = $this->get('fom.acl.manager');
         $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
         $connection->commit();
-        $flashBag = $request->getSession()->getFlashBag();
-        if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
-            $flashBag->set('success', $this->translate('mb.application.create.success'));
-        } else {
-            $connection->rollBack();
-            $flashBag->set('error', $this->translate('mb.application.create.failure.create.directory'));
-        }
+        $this->addFlash('success', $this->translate('mb.application.create.success'));
 
         return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
     }
@@ -340,41 +342,38 @@ class ApplicationController extends WelcomeController
         $em->persist($application);
         $em->flush();
 
-        $flashBug  = $request->getSession()->getFlashBag();
-        $container = $this->container;
         try {
-            if (AppComponent::createAppWebDir($container, $application->getSlug(), $oldSlug)) {
-                $uploadPath = AppComponent::getAppWebDir($container, $application->getSlug());
-                $scFile     = $application->getScreenshotFile();
-                if ($scFile) {
-                    $fileType = getimagesize($scFile);
-                    $parameters = $request->request->get('application');
-                    if ($parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1'
-                        && strpos($fileType['mime'], 'image') !== false
-                    ) {
-                        $uploadScreenShot = new UploadScreenshot();
-                        $uploadScreenShot->upload($uploadPath, $scFile, $application);
-                    }
-                }
-                $em->persist($application);
-                $em->flush();
-                $aclManager = $this->get('fom.acl.manager');
-                $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-                $connection->commit();
-                $flashBug->set('success', $this->translate('mb.application.save.success'));
+            $ulm = $this->getUploadsManager();
+            if ($oldSlug !== $application->getSlug()) {
+                $uploadPath = $ulm->renameSubdirectory($oldSlug, $application->getSlug(), true);
             } else {
-                $flashBug->set('error', $this->translate('mb.application.save.failure.create.directory'));
-                $connection->rollBack();
-                $em->close();
+                $uploadPath = $ulm->getSubdirectoryPath($application->getSlug(), true);
             }
-        } catch (\Exception $e) {
-            $flashBug->set('error', $this->translate('mb.application.save.failure.general'));
+            $scFile = $application->getScreenshotFile();
+            if ($scFile) {
+                $fileType = getimagesize($scFile);
+                $parameters = $request->request->get('application');
+                if ($parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1'
+                    && strpos($fileType['mime'], 'image') !== false
+                ) {
+                    $uploadScreenShot = new UploadScreenshot();
+                    $uploadScreenShot->upload($uploadPath, $scFile, $application);
+                }
+            }
+            $em->persist($application);
+            $em->flush();
+            $aclManager = $this->get('fom.acl.manager');
+            $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
+            $connection->commit();
+            $this->addFlash('success', $this->translate('mb.application.save.success'));
+        } catch (IOException $e) {
+            $this->addFlash('error', $this->translate('mb.application.save.failure.create.directory') . ": {$e->getMessage()}");
             $connection->rollBack();
             $em->close();
-
-            if ($container->getParameter('kernel.debug')) {
-                throw($e);
-            }
+        } catch (\Exception $e) {
+            $this->addFlash('error', $this->translate('mb.application.save.failure.general'));
+            $connection->rollBack();
+            $em->close();
         }
         return $this->redirect($this->generateUrl(
             'mapbender_manager_application_edit',
@@ -474,8 +473,6 @@ class ApplicationController extends WelcomeController
         $application = $this->getMapbender()->getApplicationEntity($slug);
         $this->denyAccessUnlessGranted('DELETE', $application);
 
-        $flashBag = $request->getSession()->getFlashBag();
-
         try {
             $em          = $this->getDoctrine()->getManager();
             $aclProvider = $this->get('security.acl.provider');
@@ -485,16 +482,12 @@ class ApplicationController extends WelcomeController
             $em->remove($application);
             $em->flush();
             $em->commit();
-            if (AppComponent::removeAppWebDir($this->container, $slug)) {
-                $flashBag->set('success', $this->translate('mb.application.remove.success'));
-            } else {
-                $flashBag->set(
-                    'error',
-                    $this->translate('mb.application.failure.remove.directory')
-                );
-            }
-        } catch (Exception $e) {
-            $flashBag->set('error', $this->translate('mb.application.remove.failure.general'));
+            $this->getUploadsManager()->removeSubdirectory($slug);
+            $this->addFlash('success', $this->translate('mb.application.remove.success'));
+        } catch (IOException $e) {
+            $this->addFlash('error', $this->translate('mb.application.failure.remove.directory'));
+        } catch (\Exception $e) {
+            $this->addFlash('error', $this->translate('mb.application.remove.failure.general'));
         }
 
         return new Response();
@@ -957,6 +950,16 @@ class ApplicationController extends WelcomeController
     {
         /** @var ExportHandler $service */
         $service = $this->get('mapbender.application_exporter.service');
+        return $service;
+    }
+
+    /**
+     * @return UploadsManager
+     */
+    protected function getUploadsManager()
+    {
+        /** @var UploadsManager $service */
+        $service = $this->get('mapbender.uploads_manager.service');
         return $service;
     }
 }

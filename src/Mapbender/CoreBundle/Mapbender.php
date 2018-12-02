@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Component\YamlApplicationImporter;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -283,8 +284,9 @@ class Mapbender
         $application->setPublished(true);
         $application->setUpdated(new \DateTime('now'));
 
-        Application::createAppWebDir($this->container, $application->getSlug());
-        Application::copyAppWebDir($this->container, $slug, $newSlug);
+        /** @var UploadsManager $ulm */
+        $ulm = $this->container->get('mapbender.uploads_manager.service');
+        $ulm->copySubdirectory($slug, $newSlug);
 
         $connection->beginTransaction();
 
