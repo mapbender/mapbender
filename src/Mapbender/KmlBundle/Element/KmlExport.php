@@ -27,7 +27,8 @@ class KmlExport extends Element {
         return 'mapbender.mbKmlExport';
     }
 
-    static public function listAssets() {
+    public function getAssets()
+    {
         return array(
             'js' => array(
                 'mapbender.element.kmlexport.js'

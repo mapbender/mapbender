@@ -1,9 +1,13 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\ManagerBundle\Form\Type\ExportJobType;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Description of ExportHandler
@@ -12,13 +16,20 @@ use Symfony\Component\Yaml\Dumper;
  */
 class ExportHandler extends ExchangeHandler
 {
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
     /**
-     * @inheritdoc
+     * @param EntityManager $entityManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param FormFactoryInterface $formFactory
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(EntityManager $entityManager,
+                                AuthorizationCheckerInterface $authorizationChecker,
+                                FormFactoryInterface $formFactory)
     {
-        parent::__construct($container);
-        $this->job = new ExchangeJob();
+        parent::__construct($entityManager, $formFactory);
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -27,42 +38,48 @@ class ExportHandler extends ExchangeHandler
     public function createForm()
     {
         $allowedApps = $this->getAllowedApplications();
-        $type        = new ExportJobType();
-        return $this->container->get('form.factory')
-                ->create($type, $this->job, array('application' => $allowedApps));
+        $type = new ExportJobType();
+        $data = new ExportJob();
+        return $this->formFactory->create($type, $data, array('application' => $allowedApps));
     }
 
     /**
-     * @inheritdoc
+     * Get current user allowed applications
+     *
+     * @return Application[]
      */
-    public function bindForm()
+    protected function getAllowedApplications()
     {
-        $form    = $this->createForm();
-        $request = $this->container->get('request');
-        $form->bind($request);
-        if ($form->isValid()) {
-            return true;
-        } else {
-            return false;
+        $repository = $this->em->getRepository('Mapbender\CoreBundle\Entity\Application');
+        $allowedApps = array();
+        foreach ($repository->findAll() as $application) {
+            /** @var Application $application */
+            if ($this->authorizationChecker->isGranted('EDIT', $application)) {
+                $allowedApps[] = $application;
+            }
         }
+        return $allowedApps;
     }
 
     /**
-     * @inheritdoc
+     * @param Application $application
+     * @return array
      */
-    public function makeJob()
+    public function exportApplication(Application $application)
     {
         gc_enable();
-        $normalizer = new ExchangeNormalizer($this->container);
+        $normalizer = new ExchangeNormalizer($this->em);
         $time = array(
             'start' => microtime(true)
         );
-        $this->exportSources($normalizer);
+        $this->exportSources($application, $normalizer);
         $time['sources'] = microtime(true);
         $time['sources'] = $time['sources'] . '/' . ($time['sources'] - $time['start']);
 
         gc_collect_cycles();
-        $this->exportApps($normalizer);
+        // export Application entity itself
+        $normalizer->handleValue($application);
+        gc_collect_cycles();
         $time['end'] = microtime(true);
         $time['total'] = $time['end'] - $time['start'];
         gc_collect_cycles();
@@ -73,53 +90,36 @@ class ExportHandler extends ExchangeHandler
     }
 
     /**
-     * Encode array to given format (YAML|JSON).
-     *
-     * @param $data
-     * @return string
-     */
-    public function format($data)
-    {
-        if ($this->job->getFormat() === ExchangeJob::FORMAT_JSON) {
-            return json_encode($data);
-        } elseif ($this->job->getFormat() === ExchangeJob::FORMAT_YAML) {
-            $dumper = new Dumper();
-            $yaml   = $dumper->dump($data, 20);
-            return $yaml;
-        }
-    }
-
-    /**
+     * @param Application $application
      * @param $normalizer
      */
-    private function exportApps(ExchangeNormalizer $normalizer)
+    private function exportSources(Application $application, ExchangeNormalizer $normalizer)
     {
-        $normalizer->handleValue($this->job->getApplication());
-        gc_collect_cycles();
-    }
-
-    /**
-     * @param $normalizer
-     */
-    private function exportSources(ExchangeNormalizer $normalizer)
-    {
-        $sources     = array();
-        $application = $this->job->getApplication();
-        $help        = $this->getAllowedApplicationSources($application);
-        foreach ($help as $src) {
-            if (isset($sources[ $src->getId() ])) {
-                continue;
-            }
+        foreach ($this->getAllowedApplicationSources($application) as $src) {
             $normalizer->handleValue($src);
             gc_collect_cycles();
         }
     }
 
     /**
-     * @return ExchangeJob
+     * Get current user allowed application sources
+     *
+     * @param Application $app
+     * @return Source[]|ArrayCollection
      */
-    public function getJob()
+    protected function getAllowedApplicationSources(Application $app)
     {
-        return parent::getJob();
+        $sources = new ArrayCollection();
+        if ($this->authorizationChecker->isGranted('EDIT', $app)) {
+            foreach ($app->getLayersets() as $layerSet) {
+                foreach ($layerSet->getInstances() as $instance) {
+                    $source = $instance->getSource();
+                    if ($this->authorizationChecker->isGranted('EDIT', $source)) {
+                        $sources->add($source);
+                    }
+                }
+            }
+        }
+        return $sources;
     }
 }

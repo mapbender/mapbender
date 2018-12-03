@@ -6,11 +6,12 @@ use Mapbender\Component\BundleUtil;
 use Mapbender\Component\ClassUtil;
 use Mapbender\Component\StringUtil;
 use Mapbender\CoreBundle\Entity\Element as Entity;
+use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Component\Mapper;
-use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -55,13 +56,13 @@ abstract class Element
     /** @var array Element fefault configuration */
     protected static $defaultConfiguration = array();
 
-    /** @var string Element description translation subject */
+    /** @var string translation subject */
     protected static $description  = "mb.core.element.class.description";
 
-    /** @var string Element title translation subject */
+    /** @var string[] translation subject */
     protected static $tags = array();
 
-    /** @var string[] Element tag translation subjects */
+    /** @var string[] translation subjects */
     protected static $title = "mb.core.element.class.title";
 
     /**
@@ -379,6 +380,8 @@ abstract class Element
      *
      * @param string $action The action to perform
      * @return Response
+     * @throws HttpException
+     * @todo Symfony 3.x: update Element API to accept injected Request from controller
      */
     public function httpAction($action)
     {
@@ -447,43 +450,25 @@ abstract class Element
     }
 
     /**
-     * Get the form assets.
-     *
-     * @return array
-     */
-    public static function getFormAssets()
-    {
-        return array(
-            'js' => array(),
-            'css' => array());
-    }
-
-    /**
      *  Merges the default configuration array and the configuration array
      *
      * @param array $default the default configuration of an element
      * @param array $main the configuration of an element
-     * @param array $result the result configuration
      * @return array the result configuration
      */
-    public static function mergeArrays($default, $main, $result)
+    public static function mergeArrays($default, $main)
     {
+        $result = array();
         foreach ($main as $key => $value) {
-            if ($value === null) {
-                $result[$key] = null;
-            } elseif (is_array($value)) {
-                if (isset($default[$key])) {
-                    $result[$key] = Element::mergeArrays($default[$key], $main[$key], array());
-                } else {
-                    $result[$key] = $main[$key];
-                }
+            if (is_array($value) && isset($default[$key])) {
+                $result[$key] = Element::mergeArrays($default[$key], $main[$key]);
             } else {
                 $result[$key] = $value;
             }
         }
-        if ($default !== null && is_array($default)) {
+        if (is_array($default)) {
             foreach ($default as $key => $value) {
-                if (!isset($result[$key]) || (isset($result[$key]) && $result[$key] === null && $value !== null)) {
+                if (!isset($result[$key])) {
                     $result[$key] = $value;
                 }
             }
@@ -492,109 +477,25 @@ abstract class Element
     }
 
     /**
-     * Changes Element after save.
-     */
-    public function postSave()
-    {
-
-    }
-
-    /**
      * Create form for given element
      *
      * @param ContainerInterface $container
-     * @param Application        $application
+     * @param \Mapbender\CoreBundle\Entity\Application $application
      * @param Entity             $element
      * @param bool               $onlyAcl
      * @return array
-     * @internal param string $class
+     * @deprecated use the service
+     * @internal
      */
     public static function getElementForm($container, $application, Entity $element, $onlyAcl = false)
     {
-        /** @var Element $class */
-        $class = $element->getClass();
-
-        // Create base form shared by all elements
-        $formType = $container->get('form.factory')->createBuilder('form', $element, array());
-        if (!$onlyAcl) {
-            $formType->add('title', 'text')
-                ->add('class', 'hidden')
-                ->add('region', 'hidden');
-        }
-        $formType->add(
-            'acl',
-            'acl',
-            array(
-                'mapped' => false,
-                'data' => $element,
-                'create_standard_permissions' => false,
-                'permissions' => array(
-                    1 => 'View'
-                )
-            )
-        );
-
-        // Get configuration form, either basic YAML one or special form
-        $configurationFormType = $class::getType();
-        if ($configurationFormType === null) {
-            $formType->add(
-                'configuration',
-                new YAMLConfigurationType(),
-                array(
-                    'required' => false,
-                    'attr' => array(
-                        'class' => 'code-yaml'
-                    )
-                )
-            );
-            $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
-            $formAssets = array(
-                'js' => array(
-                    'components/codemirror/lib/codemirror.js',
-                    'components/codemirror/mode/yaml/yaml.js',
-                    'bundles/mapbendermanager/js/form-yaml.js'),
-                'css' => array(
-                    'components/codemirror/lib/codemirror.css'));
+        /** @var ElementFormFactory $formFactory */
+        $formFactory = $container->get('mapbender.manager.element_form_factory.service');
+        if ($onlyAcl) {
+            return $formFactory->getSecurityForm($element);
         } else {
-            $type = self::getAdminFormType($configurationFormType, $container, $class);
-
-            $options = array('application' => $application);
-            if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
-                $options['element'] = $element;
-            }
-
-            $formType->add('configuration', $type, $options);
-            $formTheme = $class::getFormTemplate();
-            $formAssets = $class::getFormAssets();
+            return $formFactory->getConfigurationForm($application, $element);
         }
-
-        return array(
-            'form' => $formType->getForm(),
-            'theme' => $formTheme,
-            'assets' => $formAssets);
-    }
-
-    /**
-     * Get admin form object
-     *
-     * @param string $configurationFormType
-     * @param ContainerInterface $container
-     * @param string $class
-     *
-     * @return $type
-     */
-    protected static function getAdminFormType($configurationFormType, ContainerInterface $container, $class)
-    {
-        $formTypeId = 'mapbender.form_type.element.' . self::getElementName($class);
-        $serviceExists = $container->has($formTypeId);
-
-        if (false !== $serviceExists) {
-            $adminFormType = $container->get($formTypeId);
-        } else {
-            $adminFormType = new $configurationFormType();
-        }
-
-        return $adminFormType;
     }
 
     /**
@@ -608,27 +509,6 @@ abstract class Element
         $namespaceParts = explode('\\', $class);
 
         return strtolower(array_pop($namespaceParts));
-    }
-
-    /**
-     * Create default element
-     *
-     * @param Element $class
-     * @param string $region
-     * @return \Mapbender\CoreBundle\Entity\Element
-     */
-    public static function getDefaultElement($class, $region)
-    {
-        $element = new Entity();
-        $configuration = $class::getDefaultConfiguration();
-        $element
-            ->setClass($class)
-            ->setRegion($region)
-            ->setWeight(0)
-            ->setTitle($class::getClassTitle())
-            ->setConfiguration($configuration);
-
-        return $element;
     }
 
     /**

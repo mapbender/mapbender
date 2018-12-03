@@ -14,7 +14,7 @@ class ScaleDisplay extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.scaledisplay.class.title";
     }
@@ -22,7 +22,7 @@ class ScaleDisplay extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.scaledisplay.class.description";
     }
@@ -30,11 +30,12 @@ class ScaleDisplay extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.scaledisplay.tag.scale",
-            "mb.core.scaledisplay.tag.display");
+            "mb.core.scaledisplay.tag.display",
+        );
     }
 
     /**
@@ -48,7 +49,8 @@ class ScaleDisplay extends Element
             'target' => null,
             'unitPrefix' => false,
             'scalePrefix' => 'Scale = ',
-            'anchor' => 'right-bottom');
+            'anchor' => 'right-bottom',
+        );
     }
 
     /**
@@ -78,7 +80,7 @@ class ScaleDisplay extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         return array(
             'js' => array('mapbender.element.scaledisplay.js'),

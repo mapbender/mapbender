@@ -40,10 +40,6 @@ class MapbenderCoreExtension extends Extension
         $container->setParameter("mapbender.max_registration_time", intval($config["max_registration_time"]));
         $container->setParameter("mapbender.max_reset_time", intval($config["max_reset_time"]));
 
-        $container->setParameter("mapbender.static_assets", !$config["sass_assets"]);
-        $container->setParameter("mapbender.sass_assets", $config["sass_assets"]);
-        $container->setParameter("mapbender.static_assets_cache_path", $config["static_assets_cache_path"]);
-
         $now = new \DateTime('now');
         $container->setParameter("mapbender.cache_creation", $now->format('c'));
 

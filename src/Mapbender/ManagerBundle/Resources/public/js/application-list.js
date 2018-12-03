@@ -1,40 +1,29 @@
 $(function(){
     // Switch application state via Ajax when the current state icon is clicked
-    $('#listFilterApplications').find(".iconPublish").bind('click', function() {
-        var me             = $(this);
-        var url            = Routing.generate('mapbender_manager_application_togglestate', 
-                                              {slug: me.attr('data-application-slug')})
+    $('#listFilterApplications .iconPublish[data-url]').bind('click', function() {
+        var $this = $(this);
+        var url = $this.attr('data-url');
         var requestedState;
 
-        if(me.hasClass("enabled")){
+        if($this.hasClass("enabled")){
             requestedState = "disabled";
-            me.removeClass("enabled").removeClass("iconPublishActive").addClass(requestedState);
         }else{
             requestedState = "enabled";
-            me.removeClass("disabled").addClass(requestedState).addClass("iconPublishActive");
-        }
-
-        var errorHandler = function() {
-            me.removeClass(requestedState);
-            me.addClass(me.hasClass("enabled") ? 'disabled' : 'enabled');
-            if(!$('body').data('mbPopup')) {
-                $("body").mbPopup();
-                $("body").mbPopup('showHint', {content:"Unfortunately, there was an error switching states."});
-            }
         }
 
         $.ajax({
             url: url,
             type: 'POST',
-            data: {'state': requestedState},
-            success: function(data) {
-                if(data.newState !== requestedState) {
-                    errorHandler();
-                }
-            },
-            error: errorHandler
+            data: {state: requestedState}
+        }).done(function(response) {
+            if (response.newState === 'enabled') {
+                $this.removeClass("disabled").addClass('enabled iconPublishActive');
+            } else {
+                $this.removeClass('enabled iconPublishActive').addClass('disabled');
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            Mapbender.error(errorThrown);
         });
-
         return false;
     });
 
@@ -80,4 +69,4 @@ $(function(){
         });
         return false;
     });
-})
+});

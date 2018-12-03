@@ -191,7 +191,7 @@
             var useProxy = mqLayer.source.configuration.options.proxy;
             // also use proxy on different host / scheme to avoid CORB
             useProxy |= !Mapbender.Util.isSameSchemeAndHost(url, window.location.href);
-            if (useProxy) {
+            if (useProxy && !mqLayer.source.configuration.options.tunnel) {
                 ajaxOptions.data = {
                     url: ajaxOptions.url
                 };

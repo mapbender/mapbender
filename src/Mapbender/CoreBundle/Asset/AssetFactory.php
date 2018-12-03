@@ -1,10 +1,8 @@
 <?php
 namespace Mapbender\CoreBundle\Asset;
 
-use Assetic\Asset\AssetCollection;
 use Assetic\Asset\FileAsset;
 use Assetic\Asset\StringAsset;
-use Assetic\AssetManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,70 +17,23 @@ class AssetFactory extends AssetFactoryBase
     /** @var array|\Assetic\Asset\FileAsset[]|\Assetic\Asset\StringAsset[]  */
     protected $inputs;
 
-    /** @var string  */
-    protected $type;
-
-    /** @var string  */
-    protected $targetPath;
-
     /** @var string string */
     protected $sourcePath;
-
-    /** @var AssetCollection */
-    protected $collection;
 
     /**
      * AssetFactory constructor.
      *
      * @param ContainerInterface              $container
      * @param StringAsset[]|FileAsset[]|array $inputs
-     * @param string                          $type Asset type
      * @param string                          $targetPath
      * @param string                          $sourcePath
      */
-    public function __construct(ContainerInterface $container, array $inputs, $type, $targetPath, $sourcePath)
+    public function __construct(ContainerInterface $container, array $inputs, $targetPath, $sourcePath)
     {
-        parent::__construct($container);
+        parent::__construct($container, $targetPath);
         $this->sourcePath = $sourcePath;
         $this->container  = $container;
         $this->inputs     = $inputs;
-        $this->type       = $type;
-        $this->targetPath = $targetPath;
-    }
-
-    /**
-     * @return AssetCollection
-     */
-    public function getAssetCollection()
-    {
-        if(!$this->collection) {
-            $assetRootPath = dirname($this->container->getParameter('kernel.root_dir')) . '/web';
-            $this->collection = new AssetCollection(array(), array(), $assetRootPath);
-            $this->collection->setTargetPath($this->targetPath);
-            $manager = new AssetManager();
-            $stringAssetCounter = 0;
-
-            foreach($this->inputs as $input) {
-                // GUI declared CSS
-                if ($input instanceof StringAsset) {
-                    $name = 'stringasset_' . $stringAssetCounter++;
-                    $manager->set($name, $input);
-                } else {
-                    $fileAsset = $this->makeFileAsset($input, $this->type);
-                    $fileAsset->setTargetPath($this->targetPath);
-                    $name = str_replace(array('@', 'Resources/public/'), '', $input);
-                    $name = str_replace(array('/', '.', '-'), '__', $name);
-                    $manager->set($name, $fileAsset);
-                }
-            }
-
-            // Finally, wrap everything into a single asset collection
-            foreach($manager->getNames() as $name) {
-                $this->collection->add($manager->get($name));
-            }
-        }
-
-        return $this->collection;
     }
 
     /**
@@ -94,15 +45,16 @@ class AssetFactory extends AssetFactoryBase
         $filters   = array();
         $container = $this->container;
         $isDebug   = $container->get('kernel')->isDebug();
-        $content   = $this->getAssetCollection()->dump();
+        $sass = clone $container->get('mapbender.assetic.filter.sass');
+        $sass->setStyle($isDebug ? 'nested' : 'compressed');
+        $content = $this->buildAssetCollection($this->inputs)->dump();
 
-        if('css' === $this->type) {
-            $sass = clone $container->get('mapbender.assetic.filter.sass');
-            $sass->setStyle($isDebug ? 'nested' : 'compressed');
-            $filters[] = $sass;
-            $filters[] = $container->get("assetic.filter.cssrewrite");
-            $content = $this->squashImports($content);
-        }
+        $sass = clone $container->get('mapbender.assetic.filter.sass');
+        $sass->setStyle($isDebug ? 'nested' : 'compressed');
+        $filters[] = $sass;
+        $filters[] = $container->get("assetic.filter.cssrewrite");
+        $content = $this->squashImports($content);
+
         // Web source path
         $assets = new StringAsset($content, $filters, '/', $this->sourcePath);
         $assets->setTargetPath($this->targetPath);

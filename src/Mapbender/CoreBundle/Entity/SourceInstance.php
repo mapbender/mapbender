@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\IAssetDependent;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 
 /**
@@ -14,7 +15,7 @@ use Mapbender\CoreBundle\Component\SourceMetadata;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_sourceinstance" = "SourceInstance"})
  */
-abstract class SourceInstance
+abstract class SourceInstance implements IAssetDependent
 {
 
     /**
@@ -117,40 +118,6 @@ abstract class SourceInstance
     public function getClassname()
     {
         return get_class();
-    }
-
-    /**
-     * Get the source assets.
-     *
-     * Returns an array of references to asset files of the given type.
-     * Assets are grouped by css and javascript.
-     * References can either be filenames/path which are searched for in the
-     * Resources/public directory of the element's bundle or assetic references
-     * indicating the bundle to search in:
-     *
-     * array(
-     *   'foo.css'),
-     *   '@MapbenderCoreBundle/Resources/public/foo.css'));
-     *
-     * @return array
-     */
-    public static function listAssets()
-    {
-        return array();
-    }
-
-    /**
-     * Get the source assets.
-     *
-     * This should be a subset of the static function listAssets. Assets can be
-     * removed from the overall list depending on the configuration for
-     * example. By default, the same list as by listAssets is returned.
-     *
-     * @return array
-     */
-    public function getAssets()
-    {
-        return $this::listAssets();
     }
 
     /**

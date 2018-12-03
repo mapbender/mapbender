@@ -12,15 +12,30 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class HTMLElement extends Element
 {
-    protected static $title                = "mb.core.htmlelement.class.title";
-    protected static $description          = "mb.core.htmlelement.class.description";
-    protected static $tags                 = array(
-        "mb.core.htmlelement.tag.html"
-    );
-    protected static $defaultConfiguration = array(
-        'classes' => 'html-element-inline',
-        'content' => ''
-    );
+    public static function getClassTitle()
+    {
+        return 'mb.core.htmlelement.class.title';
+    }
+
+    public static function getClassDescription()
+    {
+        return 'mb.core.htmlelement.class.description';
+    }
+
+    public static function getClassTags()
+    {
+        return array(
+            'mb.core.htmlelement.tag.html',
+        );
+    }
+
+    public static function getDefaultConfiguration()
+    {
+        return array(
+            'classes' => 'html-element-inline',
+            'content' => ''
+        );
+    }
 
     /**
      * @inheritdoc
@@ -30,26 +45,6 @@ class HTMLElement extends Element
         return array(
             'js'  => array('/bundles/mapbendercore/mapbender.element.htmlelement.js'),
             'css' => array('/bundles/mapbendercore/sass/element/htmlelement.scss')
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getFormAssets()
-    {
-        return array(
-            'js'  => array(
-                'components/codemirror/lib/codemirror.js',
-                'components/codemirror/mode/xml/xml.js',
-                'components/codemirror/keymap/sublime.js',
-                'components/codemirror/addon/selection/active-line.js',
-                'bundles/mapbendercore/mapbender.admin.htmlelement.js',
-            ),
-            'css' => array(
-                'components/codemirror/lib/codemirror.css',
-                'components/codemirror/theme/neo.css',
-            )
         );
     }
 

@@ -10,6 +10,8 @@ use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Component\UploadsManager;
+use Mapbender\CoreBundle\Component\YamlApplicationImporter;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
@@ -36,9 +38,6 @@ class Mapbender
 
     /** @var Element[] */
     private $elements = array();
-
-    /** @var array */
-    private $layers = array();
 
     /** @var Template[] */
     private $templates = array();
@@ -69,8 +68,6 @@ class Mapbender
             }
 
             $this->elements           = array_merge($this->elements, $bundle->getElements());
-            /** Here's reason 1 why getLayers is deprecated: its return value is basically discared (wrong attribute) */
-            $this->layer              = array_merge($this->layers, $bundle->getLayers());
             $this->templates          = array_merge($this->templates, $bundle->getTemplates());
             $this->repositoryManagers = array_merge($this->repositoryManagers, $bundle->getRepositoryManagers());
         }
@@ -109,16 +106,16 @@ class Mapbender
      */
     public function getLayers()
     {
-        return $this->layers;
+        return array();
     }
 
     /**
-     * Get list of all declared template classes.
+     * Get list of names of all declared template classes.
      *
      * Template classes need to be declared in each bundle's main class
      * getTemplates method.
      *
-     * @return Template[]
+     * @return string[]
      */
     public function getTemplates()
     {
@@ -196,7 +193,6 @@ class Mapbender
         if ($entity) {
             $entity->setSource(Entity::SOURCE_DB);
         } else {
-            /** @var ObjectRepository $repository */
             $yamlMapper = new ApplicationYAMLMapper($this->container);
             $entity     = $yamlMapper->getApplication($slug);
         }
@@ -273,14 +269,14 @@ class Mapbender
 
         $manager              = $this->getManager();
         $connection           = $this->getConnection();
-        $applicationComponent = $this->getApplication($slug, array());
-        $application          = $applicationComponent->getEntity();
+        $application          = $this->getApplicationEntity($slug);
         $newSlug              = $newSlug ? $newSlug : EntityUtil::getUniqueValue($manager, get_class($application), 'slug', $application->getSlug() . '_yml', '');
         $newTitle             = $newTitle ? $newTitle : EntityUtil::getUniqueValue($manager, get_class($application), 'title', $application->getSlug() . ' YAML', '');
         $elements             = array();
         $lays                 = array();
         $translator           = $this->container->get("translator");
 
+        // @todo: move all the following code into the YamlApplicationImporter service
 
         $application->setSlug($newSlug);
         $application->setTitle($newTitle);
@@ -288,8 +284,9 @@ class Mapbender
         $application->setPublished(true);
         $application->setUpdated(new \DateTime('now'));
 
-        Application::createAppWebDir($this->container, $application->getSlug());
-        Application::copyAppWebDir($this->container, $slug, $newSlug);
+        /** @var UploadsManager $ulm */
+        $ulm = $this->container->get('mapbender.uploads_manager.service');
+        $ulm->copySubdirectory($slug, $newSlug);
 
         $connection->beginTransaction();
 
@@ -414,7 +411,9 @@ class Mapbender
         $manager->flush();
         $connection->commit();
 
-        $applicationComponent->addViewPermissions();
+        /** @var YamlApplicationImporter $importerService */
+        $importerService = $this->container->get('mapbender.yaml_application_importer.service');
+        $importerService->addViewPermissions($application);
     }
 
     /**

@@ -11,33 +11,44 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class SimpleSearch extends Element
 {
-    /** @var string[] Element tag translation subjects */
-    protected static $title = "mb.core.simplesearch.class.title";
+    public static function getClassTitle()
+    {
+        return 'mb.core.simplesearch.class.title';
+    }
 
-    /** @var string Element description translation subject */
-    protected static $description = "mb.core.simplesearch.class.description";
+    public static function getClassDescription()
+    {
+        return 'mb.core.simplesearch.class.description';
+    }
 
-    /** @var string Element title translation subject */
-    protected static $tags = array("mb.core.search.tag.search");
+    public static function getClassTags()
+    {
+        return array(
+            'mb.core.search.tag.search',
+        );
+    }
 
-    /** @var array Element fefault configuration */
-    protected static $defaultConfiguration = array(
-        'query_url'       => 'http://',
-        'query_key'       => 'q',
-        'query_format'    => '%s',
-        'token_regex'     => '[^a-zA-Z0-9äöüÄÖÜß]',
-        'token_regex_in'  => '([a-zA-ZäöüÄÖÜß]{3,})',
-        'token_regex_out' => '$1*',
-        'collection_path' => '',
-        'label_attribute' => 'label',
-        'geom_attribute'  => 'geom',
-        'geom_format'     => 'WKT',
-        'delay'           => 300);
+    public static function getDefaultConfiguration()
+    {
+        return array(
+            'query_url'       => 'http://',
+            'query_key'       => 'q',
+            'query_format'    => '%s',
+            'token_regex'     => '[^a-zA-Z0-9äöüÄÖÜß]',
+            'token_regex_in'  => '([a-zA-ZäöüÄÖÜß]{3,})',
+            'token_regex_out' => '$1*',
+            'collection_path' => '',
+            'label_attribute' => 'label',
+            'geom_attribute'  => 'geom',
+            'geom_format'     => 'WKT',
+            'delay'           => 300,
+        );
+    }
 
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         return array(
             'js'    => array(

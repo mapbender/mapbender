@@ -19,6 +19,9 @@
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
         <parameter key="mapbender.imageexport.service.class">Mapbender\PrintBundle\Component\ImageExportService</parameter>
+        <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
+        <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
+        <parameter key="mapbender.yaml_application_importer.service.class">Mapbender\CoreBundle\Component\YamlApplicationImporter</parameter>
     </parameters>
 
     <services>
@@ -116,7 +119,10 @@
             <tag name="form.type" alias="layertree_menu" />
         </service>
         <service id="mapbender.presenter.application.service" class="%mapbender.presenter.application.service.class%">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="mapbender.uploads_manager.service" />
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="fom.acl.manager" />
         </service>
         <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
             <argument type="service" id="service_container" />
@@ -128,6 +134,18 @@
             <call method="setDefaultService">
                 <argument>mapbender.source.default.service</argument>
             </call>
+        </service>
+        <service id="mapbender.element_factory.service" class="%mapbender.element_factory.service.class%">
+            <argument key="translator" type="service" id="translator" />
+            <argument type="service" id="service_container" />
+        </service>
+        <service id="mapbender.uploads_manager.service" class="%mapbender.uploads_manager.service.class%">
+            <argument key="fileSystem" type="service" id="filesystem" />
+            <argument key="absoluteWebPath">%kernel.root_dir%/../web</argument>
+            <argument key="relativePath">%mapbender.uploads_dir%</argument>
+        </service>
+        <service id="mapbender.yaml_application_importer.service" class="%mapbender.yaml_application_importer.service.class%">
+            <argument type="service" id="security.acl.provider" />
         </service>
         <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">
             <argument type="service" id="logger" />

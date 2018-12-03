@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Element\Type;
 
+use Mapbender\WmsBundle\Element\Type\Transformer\DimensionSetTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -26,7 +27,10 @@ class DimensionSetAdminType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'dimensions' => array()
+            'dimensions' => array(),
+            'title' => null,
+            'group' => null,
+            'dimension' => null,
         ));
     }
 
@@ -35,35 +39,30 @@ class DimensionSetAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $dimChioces = array();
-        $dimJson = array();
-        foreach ($options['dimensions'] as $instId => $dims) {
-            $dimJson[$instId] = array();
-            foreach ($dims as $dim) {
-                $dimChioces[$instId . "-" . $dim->getName() . "-" . $dim->getType()] = $instId . "-" . $dim->getName() . "-" . $dim->getType();
-                $dimJson[$instId][] = $dim->getConfiguration();
-            }
-        }
-        $builder->add('title', 'text',
-                      array(
+        $builder
+            ->add('title', 'text', array(
                 'required' => true,
-                'property_path' => '[title]'))
-            ->add('group', 'choice',
-                  array(
-                'required' => true,
-                'choices' => $dimChioces,
-                'multiple' => true,
                 'attr' => array(
-                    'data-dimension-group' => json_encode($dimJson))))
-            ->add('Extent', 'text',
-                      array(
-                'required' => false,
-                'mapped' => false,
-                'property_path' => '[display]',
-                'read_only' => true,
-                'attr' => array('data-name' => 'display', )))
-            ->add('dimension', new DimensionInstElmType(), array(
-                'required' => false,));
+                    'data-name' => 'title',
+                ),
+            ))
+            ->add('group', new DimensionSetDimensionChoiceType(), array(
+                'required' => true,
+                'multiple' => true,
+                'mapped' => true,
+                'dimensions' => $options['dimensions'],
+                'attr' => array(
+                    'data-name' => 'group',
+                ),
+            ))
+            ->add('dimension', 'hidden', array(
+                'required' => true,
+                'mapped' => true,
+                'attr' => array(
+                    'data-name' => 'dimension',
+                ),
+            ))
+        ;
+        $builder->addModelTransformer(new DimensionSetTransformer($options['dimensions']));
     }
-
 }

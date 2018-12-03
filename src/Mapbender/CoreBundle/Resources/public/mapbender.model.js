@@ -1095,7 +1095,10 @@ Mapbender.Model = {
             oldIndexes.push(olMap.getLayerIndex(olLayer));
             olLayerIdsToMove[olLayer.id] = true;
         });
-        oldIndexes.sort();
+        oldIndexes.sort(function(a, b) {
+            // sort numerically (default sort performs string comparison)
+            return a - b;
+        });
 
         var unmovedLayers = olMap.layers.filter(function(olLayer) {
             return !olLayerIdsToMove[olLayer.id];

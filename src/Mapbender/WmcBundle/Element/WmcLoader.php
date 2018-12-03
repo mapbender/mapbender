@@ -80,7 +80,7 @@ class WmcLoader extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         $js = array(
             'jquery.form.js',

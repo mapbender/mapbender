@@ -48,7 +48,7 @@ class Sketch extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         return array(
             'js' => array('mapbender.element.sketch.js'),

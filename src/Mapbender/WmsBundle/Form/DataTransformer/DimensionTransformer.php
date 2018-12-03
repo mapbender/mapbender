@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\WmsBundle\Form\DataTransformer;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Utils\ArrayObject;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -13,58 +12,77 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class DimensionTransformer implements DataTransformerInterface
 {
-//    /**
-//     * @var ObjectManager an object manager
-//     */
-//    private $om;
-//    /**
-//     *
-//     * @var string  an entity class name
-//     */
-//    private $classname;
-
     /**
-     * Creates an instance.
-     * 
-     * @param ObjectManager $om an object manager
-     * @param string $classname an entity class name
+     * @return string[]
      */
-    public function __construct()#ObjectManager $om, $classname)
+    protected static function getExtentKeys()
     {
-        $a = 0;
-//        $this->om = $om;
-//        $this->classname = $classname;
+        return array(
+            'extent',
+            'origextent',
+        );
     }
 
     /**
      * Transforms an object to an array.
      *
-     * @param mixed $data object | array
+     * @param DimensionInst $data
      * @return array a transformed object
      */
     public function transform($data)
     {
         if (!$data) {
-            return null;
+            return array();
         }
-        return ArrayObject::objectToArray($data);
+        $arrayData = ArrayObject::objectToArray($data);
+        return $arrayData;
     }
 
     /**
      * Transforms an array into an object
      *
      * @param array $data array with data for an object of the 'classname'
-     * @return object of the 'classname'
+     * @return DimensionInst|string
      */
     public function reverseTransform($data)
     {
-        if (null === $data) {
+        if (!$data) {
             return "";
         }
-        if(isset($data['extent']) && is_array($data['extent']) && $data['type'] === DimensionInst::TYPE_MULTIPLE){
-            $data['extent'] = implode(",", $data['extent']);
-        }
-        return ArrayObject::arrayToObject("Mapbender\WmsBundle\Component\DimensionInst", $data);
+        return ArrayObject::arrayToObject('Mapbender\WmsBundle\Component\DimensionInst', $data);
     }
 
+    /**
+     * @param string $type
+     * @param mixed $extentValue
+     * @return string|null
+     */
+    protected function transformExtent($type, $extentValue)
+    {
+        switch ($type) {
+            case DimensionInst::TYPE_MULTIPLE:
+                return explode(',', $extentValue);
+            case DimensionInst::TYPE_INTERVAL:
+                return explode('/', $extentValue);
+            default:
+                throw new \RuntimeException("Unhandled type " . var_export($type, true));
+        }
+    }
+
+    /**
+     * @param string $type
+     * @param mixed $extentValue
+     * @return string|null
+     */
+    protected function revTransformExtent($type, $extentValue)
+    {
+        switch ($type) {
+            case DimensionInst::TYPE_MULTIPLE:
+                return implode(',', $extentValue);
+            case DimensionInst::TYPE_INTERVAL:
+                return implode('/', $extentValue);
+            default:
+                throw new \RuntimeException("Unhandled type " . var_export($type, true));
+        }
+    }
 }

@@ -3,27 +3,20 @@ namespace Mapbender\CoreBundle\Component;
 
 use Assetic\Asset\StringAsset;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
+use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
-use Mapbender\CoreBundle\Entity\Element as ElementEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 /**
- * Application is the main Mapbender3 class.
+ * Collection of servicy behaviors related to application
  *
- * This class is the controller for each application instance.
- * The application class will not perform any access checks, this is due to
- * the controller instantiating an application. The controller should check
- * with the configuration entity to get a list of allowed roles and only then
- * decide to instantiate a new application instance based on the configuration
- * entity.
- *
+ * @deprecated
+ * @internal
  * @author Christian Wygoda
  */
 class Application implements IAssetDependent
@@ -122,21 +115,15 @@ class Application implements IAssetDependent
     /**
      * Render the application
      *
-     * @param string  $format Output format, defaults to HTML
-     * @param boolean $html   Whether to render the HTML itself
-     * @param boolean $css    Whether to include the CSS links
-     * @param boolean $js     Whether to include the JavaScript
-     * @param bool    $trans
      * @return string $html The rendered HTML
      */
-    public function render($format = 'html', $html = true, $css = true, $js = true, $trans = true)
+    public function render()
     {
         $template = $this->getTemplate();
-        return $template->render($format, $html, $css, $js, $trans);
+        return $template->render();
     }
 
     /**
-     *
      * @return string[]
      */
     public function getValidAssetTypes()
@@ -190,6 +177,7 @@ class Application implements IAssetDependent
         //$assets = new LazyAssetManager($this->container->get('assetic.asset_factory'));
         $assets            = array();
         $templating        = $this->container->get('templating');
+        $appTemplate = $this->getTemplate();
 
         $ownAssets = $this->getAssets();
         if (!empty($ownAssets[$type])) {
@@ -197,40 +185,39 @@ class Application implements IAssetDependent
         }
         $assetSources = array(
             array(
-                'object' => $this->getTemplate(),
+                'object' => $appTemplate,
                 'assets' => array(
-                    $type => $this->getTemplate()->getAssets($type),
+                    $type => $appTemplate->getAssets($type),
                 ),
             ),
         );
 
-        // Collect asset definitions from actual configured elements in the application
-        /** @var Element[] $elements */
-        foreach ($this->getElements() as $regionName => $elements) {
-            foreach ($elements as $element) {
-                $assetSources[] = array(
-                    'object' => $element,
-                    'assets' => $element->getAssets(),
-                );
-            }
+        // Collect asset definitions from elements configured in the application
+        // Skip grants checks here to avoid issues with application asset caching.
+        // Non-granted Elements will skip HTML rendering and config and will not be initialized.
+        // Emitting the base js / css / translation assets OTOH is always safe to do
+        foreach ($this->getService()->getActiveElements($this->entity, false) as $element) {
+            $assetSources[] = array(
+                'object' => $element,
+                'assets' => $element->getAssets(),
+            );
         }
 
         // Collect all layer asset definitions
         foreach ($this->entity->getLayersets() as $layerset) {
             foreach ($this->filterActiveSourceInstances($layerset) as $layer) {
                 $assetSources[] = array(
-                    'assets' => $layer->getAssets(),
                     'object' => $layer,
+                    'assets' => $layer->getAssets(),
                 );
             }
         }
 
-        // Load the late template assets last, so they can overwrite element and layer assets
         $assetSources[] = array(
+            'object' => $appTemplate,
             'assets' => array(
-                $type => $this->getTemplate()->getLateAssets($type),
+                $type => $appTemplate->getLateAssets($type),
             ),
-            'object' => $this->getTemplate(),
         );
 
         if ($type === 'trans') {
@@ -264,45 +251,31 @@ class Application implements IAssetDependent
             }
         }
 
-        // append extra assets given by application
-        $extra_assets = $this->getEntity()->getExtraAssets();
-        if (is_array($extra_assets) && array_key_exists($type, $extra_assets)) {
-            foreach ($extra_assets[ $type ] as $asset) {
+        // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
+        $extraYamlAssets = $this->getEntity()->getExtraAssets();
+        if (is_array($extraYamlAssets) && array_key_exists($type, $extraYamlAssets)) {
+            foreach ($extraYamlAssets[$type] as $asset) {
                 $assets[] = trim($asset);
             }
         }
+
         // add client initialization last, so everything is already in place
         if ($type === 'js') {
-            $appLoader = new StringAsset($templating->render(
-                '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig',
-                array('application' => $this)));
-            $assets[] = $appLoader;
+            $appLoaderTemplate = '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig';
+            $appLoaderContent = $templating->render($appLoaderTemplate, array(
+                'application' => $this,
+            ));
+            $assets[] = new StringAsset($appLoaderContent);
+        }
+
+        if ($type === 'css') {
+            $customCss = $this->getEntity()->getCustomCss();
+            if ($customCss) {
+                $assets[] = new StringAsset($customCss);
+            }
         }
 
         return $assets;
-    }
-
-    /**
-     * @return StringAsset
-     */
-    public function getCustomCssAsset()
-    {
-        $entity = $this->getEntity();
-        if ($entity->getCustomCss()) {
-            return new StringAsset($entity->getCustomCss());
-        }
-    }
-
-    /**
-     * @param $manager
-     * @param $type
-     * @param $reference
-     * @return array
-     */
-    private function addAsset(&$manager, $type, $reference)
-    {
-        $manager[] = $reference;
-        return $manager;
     }
 
     /**
@@ -329,28 +302,6 @@ class Application implements IAssetDependent
         // Convert to asset
         $asset = new StringAsset(json_encode((object)$configuration));
         return $asset->dump();
-    }
-
-    /**
-     * Return the element with the given id
-     *
-     * @param string $id The element id
-     * @return ElementComponent
-     */
-    public function getElement($id)
-    {
-        /** @var Element[] $elements */
-        $regions = $this->getElements();
-        $r       = null;
-        foreach ($regions as $region => $elements) {
-            foreach ($elements as $element) {
-                if ($id == $element->getId()) {
-                    $r = $element;
-                    break;
-                }
-            }
-        }
-        return $r;
     }
 
     /**
@@ -399,29 +350,31 @@ class Application implements IAssetDependent
     }
 
     /**
-     * Get region elements, optionally by region
+     * Get region elements, optionally by region.
+     * This called almost exclusively from twig templates, with or without the region paraemter.
      *
      * @param string $regionName deprecated; Region to get elements for. If null, all elements  are returned.
      * @return Element[][] keyed by region name (string)
      */
     public function getElements($regionName = null)
     {
-        if (!$this->elements) {
-            $regions = $this->getGrantedRegionElementCollections();
-            foreach ($regions as $_regionName => $elements) {
-                $regions[ $_regionName ] = $elements;
+        $appService = $this->getService();
+        if ($this->elements === null) {
+            $activeElements = $appService->getActiveElements($this->entity, true);
+            $this->elements = array();
+            foreach ($activeElements as $elementComponent) {
+                $elementRegion = $elementComponent->getEntity()->getRegion();
+                if (!array_key_exists($elementRegion, $this->elements)) {
+                    $this->elements[$elementRegion] = array();
+                }
+                $this->elements[$elementRegion][] = $elementComponent;
             }
-            $this->elements = $regions;
         }
-
         if ($regionName) {
-            $hasRegionElements = array_key_exists($regionName, $this->elements);
-            $regions           = $hasRegionElements ? $this->elements[ $regionName ] : array();
+            return ArrayUtil::getDefault($this->elements, $regionName, array());
         } else {
-            $regions = $this->elements;
+            return $this->elements;
         }
-
-        return $regions;
     }
 
     /**
@@ -487,100 +440,93 @@ class Application implements IAssetDependent
 
     /**
      * Returns the public "uploads" directory.
+     * NOTE: this has nothing to with applications. Some legacy usages passed in an application
+     * slug as a second argument, but it was only ever evaluated as a boolean.
      *
      * @param ContainerInterface $container Container
      * @param bool               $webRelative
      * @return string the path to uploads dir or null.
+     * @deprecated use the uploads_manager service
      */
     public static function getUploadsDir($container, $webRelative = false)
     {
-        $uploads_dir = $container->get('kernel')->getRootDir() . '/../web/'
-            . $container->getParameter("mapbender.uploads_dir");
-        $ok          = true;
-        if (!is_dir($uploads_dir)) {
-            $ok = mkdir($uploads_dir);
-        }
-        if ($ok) {
-            if (!$webRelative) {
-                return $uploads_dir;
+        $ulm = self::getServiceStatic($container)->getUploadsManager();
+        try {
+
+            if ($webRelative) {
+                return $ulm->getWebRelativeBasePath(true);
             } else {
-                return $container->getParameter("mapbender.uploads_dir");
+                return $ulm->getAbsoluteBasePath(true);
             }
-        } else {
+        } catch (\RuntimeException $e) {
             return null;
         }
     }
 
     /**
-     * Returns the application's public directory.
+     * Returns the web-relative path to the application's uploads directory.
      *
      * @param ContainerInterface $container Container
      * @param string             $slug      application's slug
-     * @return boolean true if the application's directories are created or exist otherwise false.
+     * @return boolean true if the application's directory already existed or has just been successfully created
+     * @deprecated use the uploads_manager service
      */
     public static function getAppWebDir($container, $slug)
     {
-        return Application::createAppWebDir($container, $slug)
-            ? Application::getUploadsDir($container, $slug) . "/" . $slug
-            : null;
+        $ulm = static::getServiceStatic($container)->getUploadsManager();
+        try {
+            $ulm->getSubdirectoryPath($slug, true);
+            return $ulm->getWebRelativeBasePath(false) . '/' . $slug;
+        } catch (IOException $e) {
+            return null;
+        }
     }
 
     /**
-     * Creates or checks if the application's public directory is created or exist.
+     * If $oldSlug emptyish: Ensures Application-owned subdirectory under uploads exists,
+     * returns true if creation succcessful or it already existed.
+     *
+     * If $oldSlug non-emptyish: Move / rename subdirectory from  $oldSlug to $slug and
+     * returns a boolean indicating success.
+     *
+     * @deprecated for parameter-variadic behavior and swallowing exceptions; use the application_uploads_manager service directly
      *
      * @param ContainerInterface $container Container
-     * @param string             $slug      application's slug
-     * @param string             $old_slug  the old application's slug.
-     * @return boolean true if the application's directories are created or
-     *                                      exist otherwise false.
+     * @param string $slug subdirectory name for presence check / creation
+     * @param string|null $oldSlug source subdirectory that will be renamed to $slug
+     * @return boolean to indicate success or presence
      */
-    public static function createAppWebDir($container, $slug, $old_slug = null)
+    public static function createAppWebDir($container, $slug, $oldSlug = null)
     {
-        $uploads_dir = Application::getUploadsDir($container);
-        if ($uploads_dir === null) {
+        $ulm = static::getServiceStatic($container)->getUploadsManager();
+        try {
+            if ($oldSlug) {
+                $ulm->renameSubdirectory($slug, $oldSlug, true);
+            } else {
+                $ulm->getSubdirectoryPath($slug, true);
+            }
+            return true;
+        } catch (IOException $e) {
             return false;
         }
-        if ($old_slug === null) {
-            $slug_dir = $uploads_dir . "/" . $slug;
-            if (!is_dir($slug_dir)) {
-                return mkdir($slug_dir, 0777, true);
-            } else {
-                return true;
-            }
-        } else {
-            $old_slug_dir = $uploads_dir . "/" . $old_slug;
-            if (is_dir($old_slug_dir)) {
-                $slug_dir = $uploads_dir . "/" . $slug;
-                return rename($old_slug_dir, $slug_dir);
-            } else {
-                if (mkdir($old_slug_dir)) {
-                    $slug_dir = $uploads_dir . "/" . $slug;
-                    return rename($old_slug_dir, $slug_dir);
-                } else {
-                    return false;
-                }
-            }
-        }
     }
 
     /**
-     * Removes application's public directoriy.
+     * Removes application's public directory, if present.
      *
      * @param ContainerInterface $container Container
      * @param string             $slug      application's slug
-     * @return boolean true if the directories are removed or not exist otherwise false
+     * @return boolean true if the directory was removed or did not exist before the call.
+     * @deprecated use uploads_manager or filesystem service directly
      */
     public static function removeAppWebDir($container, $slug)
     {
-        $uploads_dir = Application::getUploadsDir($container);
-        if (!is_dir($uploads_dir)) {
+        $ulm = static::getServiceStatic($container)->getUploadsManager();
+        try {
+            $ulm->removeSubdirectory($slug);
             return true;
-        }
-        $slug_dir = $uploads_dir . "/" . $slug;
-        if (!is_dir($slug_dir)) {
-            return true;
-        } else {
-            return Utils::deleteFileAndDir($slug_dir);
+        } catch (IOException $e) {
+            return false;
         }
     }
 
@@ -624,123 +570,50 @@ class Application implements IAssetDependent
      * Copies an application web order.
      *
      * @param ContainerInterface $container Container
-     * @param string             $srcSslug  source application slug
+     * @param string             $srcSlug  source application slug
      * @param string             $destSlug  destination application slug
      * @return boolean true if the application  order has been copied otherwise false.
      */
-    public static function copyAppWebDir($container, $srcSslug, $destSlug)
+    public static function copyAppWebDir($container, $srcSlug, $destSlug)
     {
-        $rootPath = $container->get('kernel')->getRootDir() . '/../web/';
-        $src      = Application::getAppWebDir($container, $srcSslug);
-        $dst      = Application::getAppWebDir($container, $destSlug);
-
-        if ($src === null || $dst === null) {
+        $ulm = static::getServiceStatic($container)->getUploadsManager();
+        try {
+            $ulm->copySubdirectory($srcSlug, $destSlug);
+            return true;
+        } catch (IOException $e) {
             return false;
         }
-
-        Utils::copyOrderRecursive($rootPath . $src, $rootPath . $dst);
-        return true;
     }
 
     /**
-     * Do absolutely nothing
-     *
-     * @param $elements
-     * @return boolean
-     * @deprecated
-     */
-    protected function sortElementsByWidth($elements)
-    {
-        return usort($elements, function (ElementComponent $a, ElementComponent $b) {
-            $wa = $a->getEntity()->getWeight();
-            $wb = $b->getEntity()->getWeight();
-            if ($wa == $wb) {
-                return 0;
-            }
-            return ($wa < $wb) ? -1 : 1;
-        });
-    }
-
-
-
-    /**
-     * Get granted elements
-     *
-     * @return Element[][] keyed on region name
-     */
-    protected function getGrantedRegionElementCollections()
-    {
-        $application = $this->entity;
-        $elements    = array();
-        foreach ($application->getElements() as $elementEntity) {
-            if (!$elementEntity->getEnabled() || !$this->isElementGranted($elementEntity)) {
-                continue;
-            }
-
-            /** @var \Mapbender\CoreBundle\Element\Button $class */
-            $class                     = $elementEntity->getClass();
-            if (!class_exists($class)) {
-                continue;
-            }
-
-            $elementComponent          = new $class($this, $this->container, $elementEntity);
-            $regionName                = $elementEntity->getRegion();
-            $elements[ $regionName ][] = $elementComponent;
-        }
-        return $elements;
-    }
-
-    /**
-     * Is element granted?
-     *
-     * If there is no ACL's or roles then ever granted
-     *
-     * @param Element|ElementEntity $element
-     * @param string $permission SecurityContext::PERMISSION_
-     * @return bool
-     */
-    public function isElementGranted(ElementEntity $element, $permission = SecurityContext::PERMISSION_VIEW)
-    {
-        $applicationEntity = $this->getEntity();
-        $securityContext   = $this->container->get('security.context');
-        $aclManager        = $this->container->get("fom.acl.manager");
-        $isGranted         = true;
-
-        if ($aclManager->hasObjectAclEntries($element)) {
-            $isGranted = $securityContext->isGranted($permission, $element);
-        }
-
-        if ($applicationEntity->isYamlBased() && count($element->getYamlRoles())) {
-            foreach ($element->getYamlRoles() as $role) {
-                if ($securityContext->isGranted($role)) {
-                    $isGranted = true;
-                    break;
-                }
-            }
-        }
-
-        return $isGranted;
-    }
-
-    /**
-     * Add view permissions
+     * @deprected
+     * @internal
      */
     public function addViewPermissions()
     {
-        $aclProvider       = $this->container->get('security.acl.provider');
-        $applicationEntity = $this->getEntity();
-        $maskBuilder       = new MaskBuilder();
-        $uoid              = ObjectIdentity::fromDomainObject($applicationEntity);
+        /** @var YamlApplicationImporter $service */
+        $service = $this->container->get('mapbender.yaml_application_importer.service');
+        $service->addViewPermissions($this->getEntity());
+    }
 
-        $maskBuilder->add('VIEW');
+    /**
+     * @return ApplicationService
+     */
+    protected function getService()
+    {
+        /** @var ApplicationService $service */
+        $service = $this->container->get('mapbender.presenter.application.service');
+        return $service;
+    }
 
-        try {
-            $acl = $aclProvider->findAcl($uoid);
-        } catch (\Exception $e) {
-            $acl = $aclProvider->createAcl($uoid);
-        }
-
-        $acl->insertObjectAce(new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'), $maskBuilder->get());
-        $aclProvider->updateAcl($acl);
+    /**
+     * @param ContainerInterface $container
+     * @return ApplicationService
+     */
+    private static function getServiceStatic(ContainerInterface $container)
+    {
+        /** @var ApplicationService $service */
+        $service = $container->get('mapbender.presenter.application.service');
+        return $service;
     }
 }

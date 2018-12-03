@@ -69,6 +69,7 @@ class ApplicationYAMLMapper
      */
     public function getApplication($slug)
     {
+
         $definitions = $this->container->getParameter('applications');
         if (!array_key_exists($slug, $definitions)) {
             return null;
@@ -144,7 +145,7 @@ class ApplicationYAMLMapper
                     unset($configuration_['class']);
                     unset($configuration_['title']);
                     $entity_class = $elementDefinition['class'];
-                    $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
+                    $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application);
                     if (!class_exists($entity_class)) {
                         $this->logger->notice("Element isn't exists ", array(
                             'className'   => $entity_class,
@@ -161,7 +162,7 @@ class ApplicationYAMLMapper
                     $elm_class = get_class($elComp);
                     if ($elm_class::$merge_configurations) {
                         $configuration =
-                            ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
+                            ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_);
                     } else {
                         $configuration = $configuration_;
                     }

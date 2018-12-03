@@ -50,7 +50,6 @@ class WmsSourceService extends SourceService
             'transparent' => $sourceInstance->getTransparency(),
             'tiled' => $sourceInstance->getTiled(),
             'bbox' => $this->getBboxConfiguration($sourceInstance),
-            'vendorspecifics' => $this->getVendorSpecificsConfiguration($sourceInstance),
             'dimensions' => $this->getDimensionsConfiguration($sourceInstance),
             'buffer' => $buffer,
             'ratio' => $ratio,
@@ -199,18 +198,6 @@ class WmsSourceService extends SourceService
             }
         }
         return $dimensions;
-    }
-
-    public function getVendorSpecificsConfiguration(WmsInstance $sourceInstance)
-    {
-        $vendorSpecific = array();
-        foreach ($sourceInstance->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
-                $vendorSpecific[] = $handler->getConfiguration();
-            }
-        }
-        return $vendorSpecific;
     }
 
     /**
