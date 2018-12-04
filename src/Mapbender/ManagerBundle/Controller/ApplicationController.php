@@ -22,7 +22,6 @@ use Mapbender\ManagerBundle\Component\ExportJob;
 use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\ManagerBundle\Component\ImportJob;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
-use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -379,24 +378,6 @@ class ApplicationController extends WelcomeController
             'mapbender_manager_application_edit',
             array('slug' => $application->getSlug())
         ));
-    }
-
-    /**
-     * Creates an application form to copy
-     *
-     * @ManagerRoute("/application/{slug}/copyform", requirements = { "slug" = "[\w-]+" })
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Application:form-basic.html.twig")
-     */
-    public function copyformAction($slug)
-    {
-        throw new \Exception('check the action copyform');
-        $tocopy = $this->getMapbender()->getApplicationEntity($slug);
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-        $this->denyAccessUnlessGranted('CREATE', $oid);
-        $form = $this->createForm(new ApplicationCopyType(), $tocopy);
-
-        return array('form' => $form->createView());
     }
 
     /**
