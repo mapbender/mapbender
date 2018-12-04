@@ -62,7 +62,7 @@ abstract class SourceService
         return array(
             'type' => strtolower($sourceInstance->getType()),
             'title' => $sourceInstance->getTitle(),
-            'isBaseSource' => $sourceInstance->isBaseSource(),
+            'isBaseSource' => $sourceInstance->isBasesource(),
         );
     }
 

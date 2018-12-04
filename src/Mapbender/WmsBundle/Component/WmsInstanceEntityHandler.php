@@ -32,7 +32,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function setParameters(array $configuration = array())
     {
-        /** @var WmsInstance $sourceInstance */
         if (!$this->entity->getSource()) {
             $this->entity->setSource(new WmsSource());
         }
@@ -62,7 +61,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setTransparency(ArrayUtil::hasSet($configuration, 'transparent', true))
             ->setOpacity(ArrayUtil::hasSet($configuration, 'opacity', 100))
             ->setTiled(ArrayUtil::hasSet($configuration, 'tiled', false))
-            ->setBaseSource(ArrayUtil::hasSet($configuration, 'isBaseSource', true));
+            ->setBasesource(ArrayUtil::hasSet($configuration, 'isBaseSource', true));
 
         $rootMinScale = !isset($configuration["minScale"]) ? null : $configuration["minScale"];
         $rootMaxScale =!isset($configuration["maxScale"]) ? null : $configuration["maxScale"];

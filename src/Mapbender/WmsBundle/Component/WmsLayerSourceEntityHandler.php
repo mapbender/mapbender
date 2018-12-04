@@ -231,7 +231,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
         $cloned->setSource($wms);
         $cloned->setPriority($parent !== null ? $parent->getPriority() : null);
         $entityManager->persist($cloned);
-        $parent->addSubLayer($parent);
+        $parent->addSublayer($parent);
         $entityManager->persist($cloned);
         $entityManager->persist($parent);
         $wms->addLayer($cloned);
