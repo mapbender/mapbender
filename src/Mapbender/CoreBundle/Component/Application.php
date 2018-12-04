@@ -378,24 +378,6 @@ class Application implements IAssetDependent
     }
 
     /**
-     * Returns all layer sets
-     *
-     * @deprecated for entity-modifying side effects, do not use
-     * @return Layerset[] Layer sets
-     */
-    public function getLayersets()
-    {
-        if ($this->layers === null) {
-            $this->layers = array();
-            foreach ($this->entity->getLayersets() as $layerSet) {
-                $layerSet->layerObjects = $this->filterActiveSourceInstances($layerSet);
-                $this->layers[$layerSet->getId()] = $layerSet;
-            }
-        }
-        return $this->layers;
-    }
-
-    /**
      * Extracts active source instances from given Layerset entity.
      *
      * @param Layerset $entity

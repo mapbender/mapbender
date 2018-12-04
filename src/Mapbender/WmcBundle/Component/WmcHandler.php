@@ -29,7 +29,7 @@ class WmcHandler
     /**
      * Returns a state from a state id
      *
-     * @return Mapbender\CoreBundle\Entity\State or null.
+     * @return State|null
      */
     public function findState($stateid)
     {

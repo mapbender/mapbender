@@ -153,7 +153,9 @@ class ApplicationController extends Controller
         // @todo: figure out why YAML applications should be excluded from html caching; they do use asset caching
         $useCache = $this->isProduction() && ($appEntity->getSource() === ApplicationEntity::SOURCE_DB);
         $session->set("proxyAllowed", true); // @todo: ...why?
-
+        $headers = array(
+            'Content-Type' => 'text/html; charset=UTF-8',
+        );
         if ($useCache) {
             $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
@@ -163,11 +165,11 @@ class ApplicationController extends Controller
                 // allow file timestamp to be read again correctly for 'Last-Modified' header
                 clearstatcache();
             }
-            $response = new BinaryFileResponse($cacheFile);
+            $response = new BinaryFileResponse($cacheFile, 200, $headers);
             $response->isNotModified($request);
             return $response;
         } else {
-            return new Response($application->render());
+            return new Response($application->render(), 200, $headers);
         }
     }
 
