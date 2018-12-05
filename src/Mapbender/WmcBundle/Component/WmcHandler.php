@@ -1,8 +1,7 @@
 <?php
 namespace Mapbender\WmcBundle\Component;
 
-use Mapbender\CoreBundle\Component\Application;
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\CoreBundle\Entity\State;
 use Mapbender\WmcBundle\Entity\Wmc;
@@ -11,8 +10,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class WmcHandler
 {
     public static $WMC_DIR = "wmc";
-    /** @var Element */
-    protected $element;
     /** @var ContainerInterface */
     protected $container;
     /** @var Application */
@@ -21,13 +18,11 @@ class WmcHandler
     /**
      * Creates a wmc handler
      *
-     * @param Element $element
      * @param Application $application
      * @param ContainerInterface $container
      */
-    public function __construct(Element $element, $application, $container)
+    public function __construct($application, $container)
     {
-        $this->element = $element;
         $this->application = $application;
         $this->container = $container;
     }

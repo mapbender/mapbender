@@ -14,6 +14,6 @@ abstract class WmcBase extends Element
      */
     protected function wmcHandlerFactory()
     {
-        return new WmcHandler($this, $this->application, $this->container);
+        return new WmcHandler($this->getEntity()->getApplication(), $this->container);
     }
 }
