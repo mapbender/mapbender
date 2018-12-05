@@ -322,8 +322,7 @@ class WmcLoader extends Element
                 $parser = WmcParser::getParser($this->container, $doc);
                 $wmc = $parser->parse();
             } catch (\Exception $e) {
-                $this->get("logger")->err($e->getMessage());
-                $this->get('session')->getFlashBag()->set('error', $e->getMessage());
+                // absolutely nothing
             }
             if ($wmc) {
                 return new Response(json_encode(array(

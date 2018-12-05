@@ -138,44 +138,7 @@ abstract class Element
         return static::$defaultConfiguration;
     }
 
-    /*************************************************************************
-     *                                                                       *
-     *                    Configuration entity handling                      *
-     *                                                                       *
-     *************************************************************************/
-
     /**
-     * Get a configuration value by path.
-     *
-     * Get the configuration value or null if the path is not defined. If you
-     * ask for an path which has children, the configuration array with these
-     * children will be returned.
-     *
-     * Configuration paths are lists of parameter keys seperated with a slash
-     * like "targets/map".
-     *
-     * @param string $path The configuration path to retrieve.
-     * @return mixed
-     */
-    final public function get($path)
-    {
-        throw new \RuntimeException('NIY get ' . $path . ' ' . get_class($this));
-    }
-
-    /**
-     * Set a configuration value by path.
-     *
-     * @param string $path the configuration path to set
-     * @param mixed $value the value to set
-     */
-    final public function set($path, $value)
-    {
-        throw new \RuntimeException('NIY set');
-    }
-
-    /**
-     * Get the configuration entity.
-     *
      * @return \Mapbender\CoreBundle\Entity\Element $entity
      */
     public function getEntity()
