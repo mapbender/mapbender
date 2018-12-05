@@ -6,12 +6,14 @@
         <parameter key="mapbender.manager.element_form_factory.service.class">Mapbender\ManagerBundle\Component\ElementFormFactory</parameter>
         <parameter key="mapbender.application_importer.service.class">Mapbender\ManagerBundle\Component\ImportHandler</parameter>
         <parameter key="mapbender.application_exporter.service.class">Mapbender\ManagerBundle\Component\ExportHandler</parameter>
+        <parameter key="mapbender.strict.element_api.form_type">%mapbender.strict.element_api%</parameter>
     </parameters>
 
     <services>
         <service id="mapbender.manager.element_form_factory.service" class="%mapbender.manager.element_form_factory.service.class%">
             <argument type="service" id="form.factory" />
             <argument type="service" id="service_container" />
+            <argument key="strict">%mapbender.strict.element_api.form_type%</argument>
         </service>
         <service id="mapbender.application_importer.service" class="%mapbender.application_importer.service.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />

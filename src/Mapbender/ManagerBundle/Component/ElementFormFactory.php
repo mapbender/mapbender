@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
@@ -23,15 +24,24 @@ class ElementFormFactory
     protected $formFactory;
     /** @var ContainerInterface */
     protected $container;
+    /** @var bool */
+    protected $strict;
 
     /**
      * @param FormFactoryInterface $formFactory
      * @param ContainerInterface $container
+     * @param bool $strict
      */
-    public function __construct(FormFactoryInterface $formFactory, ContainerInterface $container)
+    public function __construct(FormFactoryInterface $formFactory, ContainerInterface $container, $strict = false)
     {
         $this->formFactory = $formFactory;
         $this->container = $container;
+        $this->setStrict($strict);
+    }
+
+    public function setStrict($enable)
+    {
+        $this->strict = !!$enable;
     }
 
     /**
@@ -71,10 +81,20 @@ class ElementFormFactory
         );
     }
 
+    protected function deprecated($message)
+    {
+        if ($this->strict) {
+            throw new \RuntimeException($message);
+        } else {
+            @trigger_error("Deprecated: {$message}", E_USER_DEPRECATED);
+        }
+    }
+
     /**
      * @param Element $element
      * @return FormTypeInterface|null
      * @throws \RuntimeException
+     * @throws ServiceNotFoundException
      */
     public function getConfigurationFormType(Element $element)
     {
@@ -105,23 +125,33 @@ class ElementFormFactory
     }
 
     /**
-     * Look up service-type form type for element. This looks for a service with an id
-     * prefixed with 'mapbender.form_type.element.' followed by the all-lowercased class
-     * name of the Element component.
+     * Look up service-type form type for element. If the Element Component's getType return value looks like
+     * a service id (=string containing at least one dot), that service will be returned.
      *
-     * Currently only HTMLElement has this (service id: mapbender.form_type.element.htmlelement),
-     * if only for demonstration purposes.
+     * Otherwise, looks for a service with an automatically inferred id composed of a 'mapbender.form_type.element.'
+     * prefix followed by the all-lowercased class name of the Element Component.
+     *
+     * Automatic service id inference is deprecated and will throw in strict mode.
      *
      * @param Element $element
      * @return object|null
+     * @throws ServiceNotFoundException
      */
     protected function getServicyConfigurationFormType(Element $element)
     {
-        $className = $element->getClass();
-        $classNamespaceParts = explode('\\', $className);
+        $componentClassName = $element->getClass();
+        $typeDeclaration = $componentClassName::getType();
+        if (is_string($typeDeclaration) && false !== strpos($typeDeclaration, '.')) {
+            return $this->container->get($typeDeclaration);
+        }
+        $classNamespaceParts = explode('\\', $componentClassName);
         $baseName = strtolower(array_pop($classNamespaceParts));
-        $formTypeId = 'mapbender.form_type.element.' . $baseName;
-        return $this->container->get($formTypeId, ContainerInterface::NULL_ON_INVALID_REFERENCE);
+        $automaticServiceId = 'mapbender.form_type.element.' . $baseName;
+        $automaticService = $this->container->get($automaticServiceId, ContainerInterface::NULL_ON_INVALID_REFERENCE);
+        if ($automaticService && $typeDeclaration !== $automaticServiceId) {
+            $this->deprecated("Located undeclared servicy form type {$automaticServiceId} for {$componentClassName}, please return the full service name explicitly from your getType implementation");
+        }
+        return $automaticService; // may also be null
     }
 
     /**

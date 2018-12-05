@@ -427,10 +427,17 @@ abstract class Element
      *************************************************************************/
 
     /**
-     * Get the element configuration form type. By default, this class needs to have the same name
-     * as the element, suffixed with "AdminType" and located in the Element\Type sub-namespace.
+     * Should return the element configuration form type for backend configuration. Acceptable values are
+     * * fully qualified service id (string)
+     * * fully qualified PHP class name (string)
+     * * Any object implementing Symfony FormTypeInterface (this also includes AbstractType children)
+     * * null for a fallback Yaml textarea
      *
-     * Override this method and return null to get a simple YAML entry form.
+     * Automatic fallback when not implemented by concrete Element will concatenate "AdminType" to the
+     * Element Component class name and look for that class in the Element\Type subnamespace of the originating
+     * bundle.
+     * Automatic class name calculation is deprecated and will be removed in a future release. This method
+     * will become abstract. Return your form types explicitly.
      *
      * @return string Administration type class name
      */

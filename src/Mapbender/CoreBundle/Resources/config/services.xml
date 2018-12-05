@@ -22,6 +22,8 @@
         <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
         <parameter key="mapbender.yaml_application_importer.service.class">Mapbender\CoreBundle\Component\YamlApplicationImporter</parameter>
+        <parameter key="mapbender.strict">false</parameter>
+        <parameter key="mapbender.strict.element_api">%mapbender.strict%</parameter>
     </parameters>
 
     <services>
