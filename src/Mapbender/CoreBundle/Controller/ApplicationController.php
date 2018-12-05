@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Controller;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
+use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
@@ -113,7 +114,7 @@ class ApplicationController extends Controller
      * Element action controller.
      *
      * Passes the request to
-     * the element's httpAction.
+     * the element's handleHttpRequest.
      * @Route("/application/{slug}/element/{id}/{action}",
      *     defaults={ "id" = null, "action" = null },
      *     requirements={ "action" = ".+" })
@@ -122,8 +123,6 @@ class ApplicationController extends Controller
      * @param string $id
      * @param string $action
      * @return Response
-     *
-     * @todo Symfony 3.x: update Element API to accept injected Request
      */
     public function elementAction(Request $request, $slug, $id, $action)
     {
@@ -131,10 +130,10 @@ class ApplicationController extends Controller
         /** @var ApplicationService $appService */
         $appService = $this->get('mapbender.presenter.application.service');
         $elementComponent = $appService->getSingleElementComponent($application, $id);
-        if (!$elementComponent){
+        if (!$elementComponent || !$elementComponent instanceof ElementHttpHandlerInterface) {
             throw new NotFoundHttpException();
         }
-        return $elementComponent->httpAction($action);
+        return $elementComponent->handleHttpRequest($request);
     }
 
     /**
