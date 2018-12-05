@@ -244,7 +244,7 @@ class WmcLoader extends Element
                 if ($state !== null && $state->getJson() !== null) {
                     $wmchandler = new WmcHandler($this, $this->application, $this->container);
                     $state->setServerurl($wmchandler->getBaseUrl());
-                    $state->setSlug($this->application->getSlug());
+                    $state->setSlug($this->entity->getApplication()->getSlug());
                     $state->setTitle("Mapbender State");
                     $wmc->setWmcid(round((microtime(true) * 1000)));
                     $wmc->setState($wmchandler->unSignUrls($state));

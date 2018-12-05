@@ -199,7 +199,7 @@ class WmcEditor extends Element
             $wmc->setState(new State());
             $state = $wmc->getState();
             $state->setServerurl($wmchandler->getBaseUrl());
-            $state->setSlug($this->application->getSlug());
+            $state->setSlug($this->entity->getApplication()->getSlug());
             $state = $wmchandler->signUrls($state);
             $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
             $html = $this->container->get('templating')

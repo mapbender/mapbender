@@ -579,7 +579,7 @@ abstract class Element
         /** @var UrlGeneratorInterface $router */
         $router = $this->container->get('router');
         $params = array(
-            'slug' => $this->application->getEntity()->getSlug(),
+            'slug' => $this->getEntity()->getApplication()->getSlug(),
             'id' => $this->entity->getId(),
             'action' => $action,
         );
