@@ -1,4 +1,4 @@
-<form action="{{ path('mapbender_manager_application_export') }}" method="post" id="exportForm" name="exportForm" {{ form_enctype(form)}}  novalidate="novalidate" target="_blank">
+{{ form_start(form, {"attr": {"novalidate": "novalidate", "target": "_blank"}}) }}
   <div class="defaultForm elementForm">
     {{ form_label(form.format) }}{{ form_widget(form.format) }}
     <div class="clearContainer"></div>
@@ -13,4 +13,4 @@
   </div>
   <div class="clearContainer"></div>
   {{ form_row(form._token) }}
-</form>
+{{ form_end(form, {"render_rest": false}) }}

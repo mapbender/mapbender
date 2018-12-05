@@ -4,7 +4,7 @@
     {% set form_url =  path('mapbender_manager_application_savelayerset_1', { 'slug': application.slug, 'layersetId': form.vars.data.id}) %}
 {% endif %}
 
-<form id="layersetForm" class="layersetForm" action="{{ form_url }}" method="post" name="{{ form.vars.name }}" {{ form_enctype(form)}} novalidate="novalidate">
+{{ form_start(form, {"attr": {"id": "layersetForm", "novalidate": "novalidate", "action": form_url}}) }}
     {{form_label(form.title)}}{{form_widget(form.title)}}
     {{ form_row(form._token) }}
-</form>
+{{ form_end(form) }}

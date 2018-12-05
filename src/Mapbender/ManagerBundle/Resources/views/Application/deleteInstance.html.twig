@@ -1,11 +1,8 @@
-{% set instance_title = instance.title %}
-{% set instance_id = instance.id %}
-
 {% block manager_content %}
 
-<form id="instance-delete" action="{{ path('mapbender_manager_application_deleteinstance', { 'slug': application.slug, 'layersetId': layerset.id, 'instanceId' : instance.id }) }}" method="post" {{ form_enctype(form)}}>
-    {% trans with {'%instance_title%': instance_title} %} mb.manager.admin.instance.delete.confirm {% endtrans %}
+{{ form_start(form, {"attr": {"action": path('mapbender_manager_application_deleteinstance', {'slug': application.slug, 'layersetId': layerset.id, 'instanceId': instance.id})}}) }}
+    {% trans with {'%instance_title%': instance.title} %} mb.manager.admin.instance.delete.confirm {% endtrans %}
     {{ form_widget(form) }}
-</form>
+{{ form_end(form) }}
 
 {% endblock %}
