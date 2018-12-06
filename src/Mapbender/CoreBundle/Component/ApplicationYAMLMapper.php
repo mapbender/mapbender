@@ -1,14 +1,13 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Component\Element as ElementComponent;
+use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Psr\Log\LoggerInterface;
-use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -87,7 +86,7 @@ class ApplicationYAMLMapper
         }
 
         // First, create an application entity
-        $application = new ApplicationEntity();
+        $application = new Application();
         $application
                 ->setScreenshot(key_exists("screenshot", $definition) ? $definition['screenshot'] : null)
                 ->setSlug($slug)
@@ -98,10 +97,6 @@ class ApplicationYAMLMapper
                 ->setPublished($definition['published']);
         if (isset($definition['custom_css'])) {
             $application->setCustomCss($definition['custom_css']);
-        }
-
-        if (isset($definition['publicOptions'])) {
-            $application->setPublicOptions($definition['publicOptions']);
         }
 
         if (isset($definition['publicOptions'])) {
@@ -124,68 +119,14 @@ class ApplicationYAMLMapper
             $definition['elements'] = array();
         }
 
-        // Then create elements
         foreach ($definition['elements'] as $region => $elementsDefinition) {
             $weight = 0;
-            if ($elementsDefinition !== null) {
-                foreach ($elementsDefinition as $id => $elementDefinition) {
-                    /**
-                     * MAP Layersets handling
-                     */
-                    if ($elementDefinition['class'] == "Mapbender\\CoreBundle\\Element\\Map") {
-                        if (!isset($elementDefinition['layersets'])) {
-                            $elementDefinition['layersets'] = array();
-                        }
-                        if (isset($elementDefinition['layerset'])) {
-                            $elementDefinition['layersets'][] = $elementDefinition['layerset'];
-                        }
-                    }
-
-                    $configuration_ = $elementDefinition;
-                    unset($configuration_['class']);
-                    unset($configuration_['title']);
-                    $entity_class = $elementDefinition['class'];
-                    $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application);
-                    if (!class_exists($entity_class)) {
-                        $this->logger->notice("Element isn't exists ", array(
-                            'className'   => $entity_class,
-                            'application' => array(
-                                'id'    => $application->getId(),
-                                'title' => $application->getTitle(),
-                                'slug'  => $application->getSlug(),
-                            )
-                        ));
-                        continue;
-                    }
-                    $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());
-
-                    $elm_class = get_class($elComp);
-                    if ($elm_class::$merge_configurations) {
-                        $configuration =
-                            ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_);
-                    } else {
-                        $configuration = $configuration_;
-                    }
-
-                    $class = $elementDefinition['class'];
-                    $title = array_key_exists('title', $elementDefinition) ?
-                            $elementDefinition['title'] :
-                            $class::getClassTitle();
-
-                    $element = new Element();
-
-                    $element->setId($id)
-                            ->setClass($elementDefinition['class'])
-                            ->setTitle($title)
-                            ->setConfiguration($configuration)
-                            ->setRegion($region)
-                            ->setWeight($weight++)
-                            ->setApplication($application);
-
-                    // set Roles
-                    $element->setYamlRoles(array_key_exists('roles', $elementDefinition) ? $elementDefinition['roles'] : array());
-                    $application->addElement($element);
-                }
+            foreach ($elementsDefinition ?: array() as $id => $elementDefinition) {
+                $element = $this->createElement($id, $region, $elementDefinition);
+                $element->setWeight($weight++);
+                $element->setApplication($application);
+                $element->setYamlRoles(array_key_exists('roles', $elementDefinition) ? $elementDefinition['roles'] : array());
+                $application->addElement($element);
             }
         }
 
@@ -193,45 +134,103 @@ class ApplicationYAMLMapper
 
         if (!isset($definition['layersets'])) {
             $definition['layersets'] = array();
-
-            /**
-             * @deprecated definition
-             */
             if (isset($definition['layerset'])) {
+                // @todo: add strict mode support and throw if enabled
+                @trigger_error("Deprecated: your YAML application defines legacy 'layerset' (single item), should define 'layersets' (array)", E_USER_DEPRECATED);
                 $definition['layersets'][] = $definition['layerset'];
             }
         }
-
-        // TODO: Add roles, entity needs work first
-        // Create layersets and layers
-        /** @var SourceInstanceEntityHandler $entityHandler */
-        foreach ($definition['layersets'] as $id => $layerDefinitions) {
-            $layerset = new Layerset();
-            $layerset
-                ->setId($id)
-                ->setTitle('YAML - ' . $id)
-                ->setApplication($application);
-
-            $weight = 0;
-            foreach ($layerDefinitions as $id => $layerDefinition) {
-                $class = $layerDefinition['class'];
-                unset($layerDefinition['class']);
-                $instance = new $class();
-                $entityHandler    = EntityHandler::createHandler($this->container, $instance);
-                $internDefinition = array(
-                    'weight'   => $weight++,
-                    "id"       => $id,
-                    "layerset" => $layerset
-                );
-                /** @var WmsInstanceEntityHandler */
-                $entityHandler->setParameters(array_merge($layerDefinition, $internDefinition));
-                $layerset->addInstance($instance);
-            }
+        foreach ($definition['layersets'] as $layersetId => $layersetDefinition) {
+            $layerset = $this->createLayerset($layersetId, $layersetDefinition);
+            $layerset->setApplication($application);
             $application->addLayerset($layerset);
         }
-
-        $application->setSource(ApplicationEntity::SOURCE_YAML);
-
+        $application->setSource(Application::SOURCE_YAML);
         return $application;
+    }
+
+    /**
+     * @param string $id
+     * @param string $region
+     * @param mixed[] $elementDefinition
+     * @return Element
+     */
+    protected function createElement($id, $region, $elementDefinition)
+    {
+        /**
+         * MAP Layersets handling
+         */
+        if ($elementDefinition['class'] == "Mapbender\\CoreBundle\\Element\\Map") {
+            if (!isset($elementDefinition['layersets'])) {
+                $elementDefinition['layersets'] = array();
+            }
+            if (isset($elementDefinition['layerset'])) {
+                // @todo: add strict mode support and throw if enabled
+                @trigger_error("Deprecated: your YAML Map Element defines legacy 'layerset' (single item), should define 'layersets' (array)", E_USER_DEPRECATED);
+                $elementDefinition['layersets'][] = $elementDefinition['layerset'];
+            }
+        }
+
+        $configuration = $elementDefinition;
+        unset($configuration['class']);
+        unset($configuration['title']);
+        $element = $this->getElementFactory()->newEntity($elementDefinition['class'], $region);
+        $element->setId($id);
+        try {
+            $elComp = $this->getElementFactory()->componentFromEntity($element);
+            $title = ArrayUtil::getDefault($elementDefinition, 'title', $elComp->getTitle());
+            if ($elComp::$merge_configurations) {
+                $configuration = $elComp->mergeArrays($elComp->getDefaultConfiguration(), $configuration);
+            }
+        } catch (ElementErrorException $e) {
+            // @todo: add strict mode support and throw if enabled
+            $this->logger->warning("Your YAML application contains an invalid Elemenet {$elementDefinition['class']}: {$e->getMessage()}");
+            $title = ArrayUtil::getDefault($elementDefinition, 'title', '<missing title>');
+        }
+
+        $element->setTitle($title);
+        $element->setConfiguration($configuration);
+        return $element;
+    }
+
+    /**
+     * @param string $layersetId
+     * @param mixed[] $layersetDefinition
+     * @return Layerset
+     */
+    protected function createLayerset($layersetId, $layersetDefinition)
+    {
+        // TODO: Add roles
+        $layerset = new Layerset();
+        $layerset
+            ->setId($layersetId)
+            ->setTitle(strval($layersetId))
+        ;
+
+        $weight = 0;
+        foreach ($layersetDefinition as $layerId => $layerDefinition) {
+            $class = $layerDefinition['class'];
+            unset($layerDefinition['class']);
+            $instance = new $class();
+            $entityHandler = SourceInstanceEntityHandler::createHandler($this->container, $instance);
+            $layerParams = array_merge($layerDefinition, array(
+                'weight'   => $weight++,
+                "id"       => $layerId,
+                "layerset" => $layerset,
+            ));
+            $entityHandler->setParameters($layerParams);
+            $layerset->addInstance($instance);
+        }
+        return $layerset;
+    }
+
+    /**
+     * @return ElementFactory
+     */
+    protected function getElementFactory()
+    {
+        /** @var ElementFactory $service */
+        $service = $this->container->get('mapbender.element_factory.service');
+        return $service;
     }
 }
