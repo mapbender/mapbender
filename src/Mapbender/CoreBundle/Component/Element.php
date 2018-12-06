@@ -10,6 +10,7 @@ use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -25,7 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @author Christian Wygoda
  */
-abstract class Element
+abstract class Element implements ElementInterface, ElementHttpHandlerInterface
 {
     /**
      * Extended API. The ext_api defines, if an element can be used as a target
@@ -66,8 +67,8 @@ abstract class Element
     protected static $title = "mb.core.element.class.title";
 
     /**
-     * The constructor. Every element needs an application to live within and
-     * the container to do useful things.
+     * Do not override or even copy this constructor into your child class.
+     * This method will be made final in a future release.
      *
      * @param Application        $application Application component
      * @param ContainerInterface $container   Container service
@@ -88,12 +89,7 @@ abstract class Element
      *************************************************************************/
 
     /**
-     * Returns the element class title
-     *
-     * This is primarily used in the manager backend when a list of available
-     * elements is given.
-     *
-     * @return string
+     * @inheritdoc
      */
     public static function getClassTitle()
     {
@@ -101,12 +97,7 @@ abstract class Element
     }
 
     /**
-     * Returns the element class description.
-     *
-     * This is primarily used in the manager backend when a list of available
-     * elements is given.
-     *
-     * @return string
+     * @inheritdoc
      */
     public static function getClassDescription()
     {
@@ -114,10 +105,7 @@ abstract class Element
     }
 
     /**
-     * Returns the element class tags.
-     *
-     * These tags are used in the manager backend to quickly filter the list
-     * of available elements.
+     * Returns the element class tags, which have absolutely no effect on anything.
      *
      * @return array
      */
@@ -138,44 +126,7 @@ abstract class Element
         return static::$defaultConfiguration;
     }
 
-    /*************************************************************************
-     *                                                                       *
-     *                    Configuration entity handling                      *
-     *                                                                       *
-     *************************************************************************/
-
     /**
-     * Get a configuration value by path.
-     *
-     * Get the configuration value or null if the path is not defined. If you
-     * ask for an path which has children, the configuration array with these
-     * children will be returned.
-     *
-     * Configuration paths are lists of parameter keys seperated with a slash
-     * like "targets/map".
-     *
-     * @param string $path The configuration path to retrieve.
-     * @return mixed
-     */
-    final public function get($path)
-    {
-        throw new \RuntimeException('NIY get ' . $path . ' ' . get_class($this));
-    }
-
-    /**
-     * Set a configuration value by path.
-     *
-     * @param string $path the configuration path to set
-     * @param mixed $value the value to set
-     */
-    final public function set($path, $value)
-    {
-        throw new \RuntimeException('NIY set');
-    }
-
-    /**
-     * Get the configuration entity.
-     *
      * @return \Mapbender\CoreBundle\Entity\Element $entity
      */
     public function getEntity()
@@ -248,22 +199,7 @@ abstract class Element
     }
 
     /**
-     * Should return the variables available for the frontend template. By default, this
-     * is a single "configuration" value holding the entirety of the configuration from the element entity.
-     * Override this if you want to unravel / strip / extract / otherwise prepare specific values for your
-     * element template.
-     *
-     * NOTE: the default implementation of render automatically makes the following available:
-     * * "element" (Element component instance)
-     * * "application" (Application component instance)
-     * * "entity" (Element entity instance)
-     * * "id" (Element id, string)
-     * * "title" (Element title from entity, string)
-     *
-     * You do not need to, and should not, produce them yourself again. If you do, your values will replace
-     * the defaults!
-     *
-     * @return array
+     * @inheritdoc
      */
     public function getFrontendTemplateVars()
     {
@@ -273,13 +209,7 @@ abstract class Element
     }
 
     /**
-     * Return twig-style BundleName:section:file_name.engine.twig path to template file.
-     *
-     * Base implementation automatically calculates this from the class name. Override if
-     * you cannot follow naming / placement conventions.
-     *
-     * @param string $suffix defaults to '.html.twig'
-     * @return string
+     * @inheritdoc
      */
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
@@ -287,14 +217,7 @@ abstract class Element
     }
 
     /**
-     * Should return the values available to the JavaScript client code. By default, this is the entirety
-     * of the "configuration" array from the element entity, which is insecure if your element configuration
-     * stores API keys, users / passwords embedded into URLs etc.
-     *
-     * If you have sensitive data anywhere near your element entity's configuration, you should override this
-     * method and emit only the values you need for your JavaScript to work.
-     *
-     * @return array
+     * @inheritdoc
      */
     public function getPublicConfiguration()
     {
@@ -311,20 +234,7 @@ abstract class Element
     }
 
     /**
-     * Should return 2D array of asset references required by this Element to function.
-     * Top-level keys are 'css', 'js', 'trans' (all optional). Within 'css' and 'js' subarrays, you can use
-     * a) implicit bundle asset reference (based on concrete class namespace)
-     *     'css/element.css'   => resolves to <web>/bundles/mapbendercore/css/element.css
-     * b) explicit bundle asset reference
-     *     '@MapbenderWmsBundle/Resources/public/css/element/something.js'
-     * c) web-relative asset reference
-     *     '/components/select2/select2-built.css
-     *
-     * The 'trans' sub-array should contain exclusively twig-style asset references (with ':' separators)
-     *      to json.twig files. E.g.
-     *     'MapbenderPrintBundle:Element:imageexport.json.twig'
-     *
-     * @return string[][] grouped asset references
+     * @inheritdoc
      */
     public function getAssets()
     {
@@ -332,39 +242,21 @@ abstract class Element
     }
 
     /**
-     * Get the configuration from the element entity.
-     *
-     * This should primarily be used for exporting / importing.
-     *
-     * You SHOULD NOT do transformations specifically for your twig template or your JavaScript here,
-     * there are now dedicated methods exactly for that (see getFrontendTemplateVars and getPublicConfiguration).
-     * Anything you do here in a method override needs to be verified against application export + reimport.
-     *
-     * The backend usually accesses the entity instance directly, so it won't be affected.
-     *
+     * Legacy fallback for both getPublicConfiguration and getFrontendTemplateVars. Defaults to returning the bound
+     * Entity's 'configuration' attribute.
      * @return array
      */
     public function getConfiguration()
     {
-
-//        $configuration = $this->entity->getConfiguration();
-
-        $configuration = $this->entity->getConfiguration();
-//        $config = $this->entity->getConfiguration();
-//        //@TODO merge recursive $this->entity->getConfiguration() and $this->getDefaultConfiguration()
-//        $def_configuration = $this->getDefaultConfiguration();
-//        $configuration = array();
-//        foreach ($def_configuration as $key => $val) {
-//            if(isset($config[$key])){
-//                $configuration[$key] = $config[$key];
-//            }
-//        }
-        return $configuration;
+        return $this->entity->getConfiguration();
     }
 
     /**
-     * Get the function name of the JavaScript widget for this element. This
-     * will be called to initialize the element.
+     * Should return the (namespaced) JavaScript widget constructor name. E.g. 'mapbender.mbAboutDialog'.
+     *
+     * Default implementation returns the concrete class name prefixed with 'mapbender.mb'.
+     * Automatic calculation is deprecated. The default implementation will be removed in a future release,
+     * making this method abstract. Return your widget constructor names explicitly.
      *
      * @return string
      */
@@ -374,14 +266,34 @@ abstract class Element
     }
 
     /**
-     * Handle element Ajax requests.
+     * Should respond to the incoming http request.
+     * Default implmentation delegates to the old-style httpAction method, which will cause problems in Symfony 3.
      *
-     * Do your magic here.
+     * Modern Element implementations should override this method, and not httpAction, so they can access the
+     * controller's injected request object instead of attempting to get it from the container.
+     *
+     * NOTE: If you require access to the matched 'action' portion of the url route, you can get it like this:
+     *       $action = $request->attributes->get('action');
+     *       The controller route definition guarantees that this value will be present and non-empty.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function handleHttpRequest(Request $request)
+    {
+        @trigger_error("Deprecated: " . get_class($this) . " only implements the old httpAction that does not support request injection, and will be incompatible with Symfony >=3", E_USER_DEPRECATED);
+        return $this->httpAction($request->attributes->get('action'));
+    }
+
+    /**
+     * Handle element Ajax requests.
+     * Should only be implemented for compatibility with older Mapbender releases.
+     * For current developments, implementation of handleHttpRequest is preferable because it will avoid issues
+     * with newer Symfony versions.
      *
      * @param string $action The action to perform
      * @return Response
      * @throws HttpException
-     * @todo Symfony 3.x: update Element API to accept injected Request from controller
      */
     public function httpAction($action)
     {
@@ -415,7 +327,7 @@ abstract class Element
      * @param null  $locale
      * @return string
      */
-    public function trans($key, array $parameters = array(), $domain = null, $locale = null)
+    protected function trans($key, array $parameters = array(), $domain = null, $locale = null)
     {
         return $this->container->get('translator')->trans($key, $parameters);
     }
@@ -427,12 +339,18 @@ abstract class Element
      *************************************************************************/
 
     /**
-     * Get the element configuration form type. By default, this class needs to have the same name
-     * as the element, suffixed with "AdminType" and located in the Element\Type sub-namespace.
+     * Should return the element configuration form type for backend configuration. Acceptable values are
+     * * fully qualified service id (string)
+     * * fully qualified PHP class name (string)
+     * * Any object implementing Symfony FormTypeInterface (this also includes AbstractType children)
+     * * null for a fallback Yaml textarea
      *
-     * Override this method and return null to get a simple YAML entry form.
+     * Default implementation will concatenate "AdminType" to the Element Component class name and look for that
+     * class in the Element\Type subnamespace of the originating bundle.
+     * Automatic class name calculation is deprecated. The default implementation will be removed in a future release,
+     * making this method abstract. Return your form types explicitly.
      *
-     * @return string Administration type class name
+     * @return string
      */
     public static function getType()
     {
@@ -440,7 +358,13 @@ abstract class Element
     }
 
     /**
-     * Get the form template to use.
+     * Should return a twig-style 'BundleName:section:filename.html.twig' reference to the HTML template used
+     * for rendering the backend configuration form.
+     *
+     * Default implementation will convert the class name using camel to snake case, append '.html.twig' and look
+     * for that file in the originating bundle's Resources/views/ElementAdmin section.
+     * Automatic template inference is deprecated. The default implementation will be removed in a future
+     * release, making this method abstract. Return your form templates explicitly.
      *
      * @return string
      */
@@ -572,7 +496,7 @@ abstract class Element
         /** @var UrlGeneratorInterface $router */
         $router = $this->container->get('router');
         $params = array(
-            'slug' => $this->application->getEntity()->getSlug(),
+            'slug' => $this->getEntity()->getApplication()->getSlug(),
             'id' => $this->entity->getId(),
             'action' => $action,
         );

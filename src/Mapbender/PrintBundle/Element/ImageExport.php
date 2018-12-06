@@ -93,16 +93,10 @@ class ImageExport extends Element
 
     public function getFrontendTemplateVars()
     {
-        $router = $this->container->get('router');
-        $submitUrl = $router->generate('mapbender_core_application_element', array(
-            'slug' => $this->application->getEntity()->getSlug(),
-            'id' => $this->entity->getId(),
-            'action' => 'export',
-        ));
         return array(
             'id' => $this->getId(),
             'title' => $this->getTitle(),
-            'submitUrl' => $submitUrl,
+            'submitUrl' => $this->getHttpActionUrl('export'),
             'formTarget' => '',
         );
     }

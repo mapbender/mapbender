@@ -174,7 +174,7 @@ class PrintClient extends Element
         );
         $router = $this->container->get('router');
         $submitUrl = $router->generate('mapbender_core_application_element', array(
-            'slug' => $this->application->getEntity()->getSlug(),
+            'slug' => $this->entity->getApplication()->getSlug(),
             'id' => $this->entity->getId(),
             'action' => 'print',
         ));

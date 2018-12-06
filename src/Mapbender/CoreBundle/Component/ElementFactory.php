@@ -42,12 +42,17 @@ class ElementFactory
      * @param Entity\Element $entity
      * @param bool $reuse to return the same instance again if both entites are the same (via spl object hash)
      * @return Component\Element
+     * @throws Component\Exception\ElementErrorException
      */
     public function componentFromEntity(Entity\Element $entity, $reuse=true)
     {
         $entityObjectId = spl_object_hash($entity);
         if (!$reuse || !array_key_exists($entityObjectId, $this->components)) {
-            $appComponent = $this->appComponentFromEntity($entity->getApplication(), $reuse);
+            if ($entity->getApplication()) {
+                $appComponent = $this->appComponentFromEntity($entity->getApplication(), $reuse);
+            } else {
+                $appComponent = $this->applicationComponentDummy;
+            }
             $instance = $this->instantiateComponent($entity->getClass(), $entity, $appComponent);
             $this->components[$entityObjectId] = $instance;
         }
@@ -96,6 +101,7 @@ class ElementFactory
      * @param Entity\Element $entity
      * @param Application $appComponent
      * @return Element
+     * @throws Component\Exception\ElementErrorException
      */
     protected function instantiateComponent($className, Entity\Element $entity, Application $appComponent)
     {

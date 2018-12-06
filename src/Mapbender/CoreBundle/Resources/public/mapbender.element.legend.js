@@ -7,7 +7,6 @@
             noLegend:                 "No legend available",
             elementType:              "dialog",
             displayType:              "list",
-            checkGraphic:             false,
             hideEmptyLayers:          true,
             showSourceTitle:          true,
             showLayerTitle:           true,

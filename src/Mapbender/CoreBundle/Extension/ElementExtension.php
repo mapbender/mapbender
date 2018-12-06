@@ -24,7 +24,8 @@ class ElementExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'element_class_title' => new \Twig_Function_Method($this, 'element_class_title'));
+            'element_class_title' => new \Twig_SimpleFunction('element_class_title', array($this, 'element_class_title')),
+        );
     }
 
     /**
