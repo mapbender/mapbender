@@ -304,6 +304,12 @@
             this.options.buttons = buttons;
         },
 
+        /**
+         * add buttons to popup
+         * @param  {Object} buttons
+         * @param  {string} offset, length in px or perecent
+         */
+
         addButtons: function(buttons, offset) {
             var self = this,
                 buttonset = $('');
@@ -328,8 +334,10 @@
                 buttonset = buttonset.add(button);
             });
 
-            // @todo use offset if given
             $('.popupButtons', this.$element.get(0)).append(buttonset);
+            if (offset) {
+                $('.popupButtons', this.$element.get(0)).css('margin-right',offset);
+            }
         },
 
         /**
