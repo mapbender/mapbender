@@ -16,3 +16,10 @@ mb:
         export: export
         jpeg: jpeg
         png: png
+    admin:
+      printclient:
+        renderMode:
+          label: Mode
+          choice:
+            direct: direct
+            queued: queued

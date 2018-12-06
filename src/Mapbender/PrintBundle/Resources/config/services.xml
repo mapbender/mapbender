@@ -7,6 +7,9 @@
         <parameter key="mapbender.print_plugin_host.service.class">Mapbender\PrintBundle\Component\Service\PrintPluginHost</parameter>
         <parameter key="mapbender.print.plugin.digitizer.class">Mapbender\PrintBundle\Component\Plugin\DigitizerPrintPlugin</parameter>
         <parameter key="mapbender.print.plugin.digitizer.paramkey.featuretypes">featuretypes</parameter>
+        <!-- can only be activated safely if there is a cron job executing the queued jobs -->
+        <parameter key="mapbender.print.queueable">false</parameter>
+        <parameter key="mapbender.form_type.element.printclient.class">Mapbender\PrintBundle\Element\Type\PrintClientAdminType</parameter>
     </parameters>
     <services>
         <service id="mapbender.print_service_bridge.service" class="%mapbender.print_service_bridge.service.class%">
@@ -21,6 +24,9 @@
             <!-- NOTE: AddBasePrintPluginsPass needs to inspect this argument and can only identify it by its key
                        'featureTypeParam'. That key must be retained. The value may be changed of course. -->
             <argument key="featureTypeParamName">%mapbender.print.plugin.digitizer.paramkey.featuretypes%</argument>
+        </service>
+        <service id="mapbender.form_type.element.printclient" class="%mapbender.form_type.element.printclient.class%">
+            <argument key="queuable">%mapbender.print.queueable%</argument>
         </service>
     </services>
 </container>
