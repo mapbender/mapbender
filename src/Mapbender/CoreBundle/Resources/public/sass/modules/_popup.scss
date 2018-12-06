@@ -145,7 +145,7 @@
   @extend .icon;
   @include absolute('' 3px -3px '');
   @include transform(rotate(45deg));
-  cursor: default;
+  cursor: se-resize;
   &:before{
     content: "\f054";
     display: block;

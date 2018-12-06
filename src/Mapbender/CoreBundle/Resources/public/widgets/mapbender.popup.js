@@ -383,15 +383,19 @@
                 return this.options.resizable;
             }
 
+            //var popup = $(this.$element); // invasive
+            var popup = $(this.$element).is('.popup') ? $(this.$element) : $('.popup',this.$element); // minimally invasive
+
             if(state) {
-                $('.popup', this.$element).resizable($.isPlainObject(state) ? state : null);
+                popup.resizable($.isPlainObject(state) ? state : null);
             } else {
-                var popup = $('.popup', this.$element);
+
                 if(popup.data('uiResizable')) {
                     popup.resizable('destroy');
                 }
             }
         },
+
 
 
         /**
