@@ -225,17 +225,6 @@ class PrintClient extends Element
 
                 return new Response($size);
 
-            case 'getDigitizerTemplates':
-                $featureType = $request->get('schemaName');
-                $featureTypeConfig = $this->container->getParameter('featureTypes');
-                $templates = $featureTypeConfig[$featureType]['print']['templates'];
-
-                if (!isset($templates)) {
-                    throw new \Exception('Template configuration missing');
-                }
-
-                return new JsonResponse($templates);
-
             default:
                 $response = $bridgeService->handleHttpRequest($request);
                 if ($response) {

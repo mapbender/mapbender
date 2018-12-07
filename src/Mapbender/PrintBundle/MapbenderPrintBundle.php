@@ -2,6 +2,8 @@
 namespace Mapbender\PrintBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Mapbender\PrintBundle\DependencyInjection\Compiler\AddBasePrintPluginsPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * PrintBundle.
@@ -10,6 +12,12 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
  */
 class MapbenderPrintBundle extends MapbenderBundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new AddBasePrintPluginsPass());
+        parent::build($container);
+    }
+
     /**
      * @inheritdoc
      */

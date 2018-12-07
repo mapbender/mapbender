@@ -48,10 +48,13 @@ class PrintServiceBridge implements PrintServiceInterface
      * Register a plugin at runtime.
      * This is intended to be called by container compiler passes.
      *
-     * @param object $plugin
+     * @param string|object $plugin container service id or instance
      */
     public function registerPlugin($plugin)
     {
+        if (is_string($plugin)) {
+            $plugin = $this->container->get($plugin);
+        }
         $valid = false;
         $t = is_object($plugin) ? get_class($plugin) : gettype($plugin);
         if ($plugin instanceof PrintClientHttpPluginInterface) {

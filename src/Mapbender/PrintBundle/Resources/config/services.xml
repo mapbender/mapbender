@@ -4,10 +4,18 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="mapbender.print_service_bridge.service.class">Mapbender\PrintBundle\Component\Service\PrintServiceBridge</parameter>
+        <parameter key="mapbender.print.plugin.digitizer.class">Mapbender\PrintBundle\Component\Plugin\DigitizerPrintPlugin</parameter>
+        <parameter key="mapbender.print.plugin.digitizer.paramkey.featuretypes">featuretypes</parameter>
     </parameters>
     <services>
         <service id="mapbender.print_service_bridge.service" class="%mapbender.print_service_bridge.service.class%">
             <argument type="service" id="service_container" />
+        </service>
+        <service id="mapbender.print.plugin.digitizer" class="%mapbender.print.plugin.digitizer.class%">
+            <argument type="service" id="service_container" />
+            <!-- NOTE: AddBasePrintPluginsPass needs to inspect this argument and can only identify it by its key
+                       'featureTypeParam'. That key must be retained. The value may be changed of course. -->
+            <argument key="featureTypeParamName">%mapbender.print.plugin.digitizer.paramkey.featuretypes%</argument>
         </service>
     </services>
 </container>
