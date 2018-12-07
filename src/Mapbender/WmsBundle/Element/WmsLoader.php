@@ -111,7 +111,8 @@ class WmsLoader extends Element
                 'MapbenderWmsBundle:Element:wmsloader.json.twig',
             ),
         );
-        if (!empty($config['useDeclarative'])) {
+        $config = $this->getConfiguration();
+        if (!empty($config['useDeclarative']) && $config['useDeclarative'] === true) {
             $assetRefs['js'][] = '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js';
         }
         return $assetRefs;

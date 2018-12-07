@@ -458,12 +458,14 @@
                                     initCheckbox.call(chk_selected);
                                 }
                             }
-                            if (changed.children[layerId].options.treeOptions.selected) {
+                            if (changed.children[layerId].options.treeOptions.selected !== undefined) {
                                 var chk_selected = $('input[name="selected"]:first', $li);
                                 if (changed.children[layerId].options.treeOptions.selected === true) {
                                     chk_selected.prop('checked', true);
+                                    initCheckbox.call(chk_selected);
                                 } else if (changed.children[layerId].options.treeOptions.selected === false) {
                                     chk_selected.prop('checked', false);
+                                    initCheckbox.call(chk_selected);
                                 }
                             }
                         }
