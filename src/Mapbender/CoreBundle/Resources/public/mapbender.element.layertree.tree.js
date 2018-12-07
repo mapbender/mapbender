@@ -458,6 +458,14 @@
                                     initCheckbox.call(chk_selected);
                                 }
                             }
+                            if (changed.children[layerId].options.treeOptions.selected) {
+                                var chk_selected = $('input[name="selected"]:first', $li);
+                                if (changed.children[layerId].options.treeOptions.selected === true) {
+                                    chk_selected.prop('checked', true);
+                                } else if (changed.children[layerId].options.treeOptions.selected === false) {
+                                    chk_selected.prop('checked', false);
+                                }
+                            }
                         }
                     }
                 }
