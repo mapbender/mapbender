@@ -27,7 +27,8 @@ class KmlExport extends Element {
         return 'mapbender.mbKmlExport';
     }
 
-    static public function listAssets() {
+    public function getAssets()
+    {
         return array(
             'js' => array(
                 'mapbender.element.kmlexport.js'
@@ -105,12 +106,18 @@ class KmlExport extends Element {
         return $response;
     }
 
-    public function render() {
-        return $this->container->get('templating')
-            ->render('MapbenderKmlBundle:Element:kmlexport.html.twig', array(
-            'id' => $this->getId(),
-            'application' => $this->application->getSlug(),
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderKmlBundle:Element:kmlexport.html.twig';
+    }
+
+    public function getFrontendTemplateVars()
+    {
+        return array(
+            'label' => $this->getClassTitle(),
+            // application is neither Entity nor Component here, but the slug!
+            'application' => $this->getEntity()->getApplication()->getSlug(),
             'configuration' => $this->getConfiguration(),
-            'label' => $this->getClassTitle()));
+        );
     }
 }

@@ -51,13 +51,6 @@ class Layerset
     protected $instances;
 
     /**
-     * @var \Mapbender\WmsBundle\Entity\WmsInstance[]|SourceInstance[]
-     * @deprecated only abused as a temporary data dumping place by
-     * @see ApplicationComponent::getLayersets()
-     */
-    public $layerObjects;
-
-    /**
      * Layerset constructor.
      */
     public function __construct()

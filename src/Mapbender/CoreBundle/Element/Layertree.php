@@ -57,7 +57,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    public static function listAssets()
+    public function getAssets()
     {
         $assets = array(
             'js' => array(

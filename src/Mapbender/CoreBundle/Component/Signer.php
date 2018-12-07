@@ -37,7 +37,9 @@ class Signer extends BaseSigner
      */
     public function getSignature($url)
     {
-        $baseUrl = preg_replace('#\?.*$#', '', $url);
+        // cut URL at first slash after hostname / port
+        // => allow all requests to same scheme + host + port (+ username + password for basic auth)
+        $baseUrl = preg_replace('#(?<=[^:/])/.*$#', '', $url);
         return implode($this->sep, array(
             strlen($baseUrl),
             $this->signature($baseUrl),

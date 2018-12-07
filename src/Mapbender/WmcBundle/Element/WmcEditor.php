@@ -2,9 +2,7 @@
 
 namespace Mapbender\WmcBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Entity\State;
-use Mapbender\WmcBundle\Component\WmcHandler;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmcBundle\Form\Type\WmcDeleteType;
 use Mapbender\WmcBundle\Form\Type\WmcType;
@@ -13,7 +11,7 @@ use Mapbender\WmsBundle\Component\OnlineResource;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class WmcEditor extends Element
+class WmcEditor extends WmcBase
 {
 
     /**
@@ -78,7 +76,7 @@ class WmcEditor extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         $js = array(
             'jquery.form.js',
@@ -184,7 +182,7 @@ class WmcEditor extends Element
     protected function getWmc()
     {
         $wmcid = $this->container->get("request")->get("wmcid", null);
-        $wmchandler = new WmcHandler($this, $this->application, $this->container);
+        $wmchandler = $this->wmcHandlerFactory();
         if ($wmcid) {
             $wmc = $wmchandler->getWmc($wmcid, false);
             $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
@@ -199,7 +197,7 @@ class WmcEditor extends Element
             $wmc->setState(new State());
             $state = $wmc->getState();
             $state->setServerurl($wmchandler->getBaseUrl());
-            $state->setSlug($this->application->getSlug());
+            $state->setSlug($this->entity->getApplication()->getSlug());
             $state = $wmchandler->signUrls($state);
             $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
             $html = $this->container->get('templating')
@@ -220,7 +218,7 @@ class WmcEditor extends Element
     {
         $wmcid = $this->container->get('request')->get("_id", null);
         if ($wmcid) {
-            $wmchandler = new WmcHandler($this, $this->application, $this->container);
+            $wmchandler = $this->wmcHandlerFactory();
             $wmc = $wmchandler->getWmc($wmcid, false);
             $id = $wmc->getId();
             return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))), 200,
@@ -238,12 +236,12 @@ class WmcEditor extends Element
      */
     protected function getWmcList()
     {
-        $wmchandler = new WmcHandler($this, $this->application, $this->container);
+        $wmchandler = $this->wmcHandlerFactory();
         $wmclist = $wmchandler->getWmcList(false);
         $responseBody = $this->container->get('templating')
             ->render('MapbenderWmcBundle:Wmc:wmceditor-list.html.twig',
             array(
-            'application' => $this->application,
+            'application' => $this->getEntity()->getApplication(),
             'id' => $this->getId(),
             'wmclist' => $wmclist)
         );
@@ -258,7 +256,7 @@ class WmcEditor extends Element
      */
     protected function saveWmc()
     {
-        $wmchandler = new WmcHandler($this, $this->application, $this->container);
+        $wmchandler = $this->wmcHandlerFactory();
         $request = $this->container->get('request');
         $wmc = Wmc::create();
         $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
@@ -302,7 +300,7 @@ class WmcEditor extends Element
                             }
                             $state = $wmc->getState();
                             $state->setServerurl($wmchandler->getBaseUrl());
-                            $state->setSlug($this->application->getSlug());
+                            $state->setSlug($this->getEntity()->getApplication()->getSlug());
                         }
                     } else {
                         $wmc->setScreenshotPath(null);
@@ -332,13 +330,13 @@ class WmcEditor extends Element
     {
         $wmcid = $this->container->get('request')->get("_id", null);
         if ($wmcid) {
-            $wmchandler = new WmcHandler($this, $this->application, $this->container);
+            $wmchandler = $this->wmcHandlerFactory();
             $wmc = $wmchandler->getWmc($wmcid, false);
             $form = $this->container->get("form.factory")->create(new WmcDeleteType(), $wmc);
             $html = $this->container->get('templating')
                 ->render('MapbenderWmcBundle:Wmc:deletewmc.html.twig',
                 array(
-                'application' => $this->application,
+                'application' => $this->getEntity()->getApplication(),
                 'form' => $form->createView(),
                 'id' => $this->getEntity()->getId(),
                 'wmc' => $wmc));
@@ -362,7 +360,7 @@ class WmcEditor extends Element
         if ($this->container->get('request')->getMethod() === 'POST') {
             $form->bind($this->container->get('request'));
             if ($form->isValid()) {
-                $wmchandler = new WmcHandler($this, $this->application, $this->container);
+                $wmchandler = $this->wmcHandlerFactory();
                 $wmcid = $wmc->getId();
                 $wmc = $wmchandler->getWmc($wmcid, false);
                 $em = $this->container->get('doctrine')->getManager();

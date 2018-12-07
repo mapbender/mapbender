@@ -3,6 +3,8 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Mapbender\CoreBundle\Validator\Constraints\Scss;
@@ -36,9 +38,6 @@ class Application
 
     /** @var array YAML roles */
     protected $yamlRoles;
-
-    /** @var  Element[]|ArrayCollection */
-    private $preparedElements;
 
     /** @var integer $source Application source type (self::SOURCE_*) */
     protected $source = self::SOURCE_DB;
@@ -327,7 +326,7 @@ class Application
     /**
      * Get elements
      *
-     * @return Element[]
+     * @return Element[]|ArrayCollection
      */
     public function getElements()
     {
@@ -514,43 +513,44 @@ class Application
     }
 
     /**
-     * Get region elements
+     * Get elements matching $criteria.
      *
-     * @param null $region
-     * @return Element[]|null
+     * @param Criteria $criteria
+     * @param Collection|null $collection containing Element entities; null to use own elements collection
+     * @return Collection filtered by $criteria, by default sorted by region, weight
      */
-    public function getElementsByRegion($region = null)
+    public function filterElementCollection(Criteria $criteria, Collection $collection=null)
     {
-        if ($this->preparedElements === null) {
-            $this->preparedElements = array();
-
-            foreach ($this->getElements() as $element) {
-                $elementRegion = $element->getRegion();
-                if (!array_key_exists($elementRegion, $this->preparedElements)) {
-                    $this->preparedElements[$elementRegion] = array();
-                }
-                $this->preparedElements[$elementRegion][] = $element;
-            }
-
-            foreach ($this->preparedElements as $elementRegion => $elements) {
-                usort(
-                    $elements,
-                    function (Element $a, Element $b) {
-                        return $a->getWeight() - $b->getWeight();
-                    }
-                );
-            }
+        if (null === $collection) {
+            $collection = $this->getElements();
         }
-
-        if ($this->preparedElements !== null) {
-            if (array_key_exists($region, $this->preparedElements)) {
-                return $this->preparedElements[$region];
-            } else {
-                return null;
-            }
-        } else {
-            return $this->preparedElements;
+        $criteria = clone $criteria;
+        if (!$criteria->getOrderings()) {
+            $criteria->orderBy(array(
+                'region' => Criteria::ASC,
+                'weight' => Criteria::ASC,
+            ));
         }
+        return $collection->matching($criteria);
+    }
+
+    /**
+     * Get elements in a region as a native array instead of a Collection
+     * This is a BC construct used exclusively by ManagerBundle:Resources/views/Application/form-elements.html.twig,
+     * which uses a |count Twig filter that doesn't support Countables...
+     *
+     * @param string
+     * @return Element[]
+     */
+    public function getElementsByRegion($region)
+    {
+        if (!$region) {
+            throw new \InvalidArgumentException("Region must not be empty");
+        }
+        $criteria = new Criteria(Criteria::expr()->eq('region', $region), array(
+            'weight' => Criteria::ASC,
+        ));
+        return $this->getElements()->matching($criteria)->getValues();
     }
 
     /**

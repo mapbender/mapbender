@@ -1,11 +1,10 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\Common\Persistence\Mapping\MappingException;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * ExchangeNormalizer class normalizes objects to array.
@@ -15,21 +14,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ExchangeNormalizer extends ExchangeSerializer
 {
 
-    protected $em;
-
     protected $export;
 
     protected $inProcess;
 
     /**
-     * @param ContainerInterface $container container
+     * @param EntityManagerInterface $em
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(EntityManagerInterface $em)
     {
         gc_enable();
-        parent::__construct($container);
-        $this->em = $this->container->get('doctrine')->getManager();
-        $this->em
+        parent::__construct($em);
+        $em
             ->getConnection()
             ->getConfiguration()
             ->setSQLLogger(null);
@@ -125,20 +121,6 @@ class ExchangeNormalizer extends ExchangeSerializer
     }
 
     /**
-     * @param object             $object
-     * @param ClassMetadata|null $classMeta
-     * @return array
-     */
-    private function handleIdentParams($object, ClassMetadata $classMeta = null)
-    {
-        if (!$classMeta) {
-            $classMeta = $this->getClassMetadata($this->getRealClass($object));
-        }
-        $params = $this->getIdentCriteria($object, $classMeta);
-        return $this->createInstanceIdent($object, $params);
-    }
-
-    /**
      * Normalizes an array.
      *
      * @param array $array array
@@ -166,61 +148,55 @@ class ExchangeNormalizer extends ExchangeSerializer
         } elseif (is_object($value)) {
             $realClass = $this->getRealClass($value);
             try {
-                $this->em->getRepository($realClass);
-                return $this->normalizeEntity($value, $this->getClassMetadata($realClass));
+                return $this->normalizeEntity($value, $this->em->getClassMetadata($realClass));
             } catch (MappingException $e) {
                 return $this->normalizeObject($value, $this->getReflectionClass($realClass));
             }
         } else {
+            // why??
             return 'unsupported';
         }
     }
 
     /**
      * @param object $object
-     * @param ClassMetadata $classMeta
+     * @param ClassMetadata|null $classMeta
      * @return array
      */
-    public function normalizeEntity($object, ClassMetadata $classMeta)
+    public function normalizeEntity($object, ClassMetadata $classMeta=null)
     {
-        $this->em
-            ->getConnection()
-            ->getConfiguration()
-            ->setSQLLogger(null);
         gc_enable();
         $this->em->refresh($object);
-        $data = $this->handleIdentParams($object, $classMeta);
-        $this->addInProcess($data, $classMeta);
-        foreach ($classMeta->getFieldNames() as $fieldName) {
-            if (!in_array($fieldName, $classMeta->getIdentifier())
-                && $getMethod = $this->getReturnMethod($fieldName, $classMeta->getReflectionClass())) {
-                $data[$fieldName] = $this->handleValue($getMethod->invoke($object));
-            }
+        if (!$classMeta) {
+            $classMeta = $this->em->getClassMetadata($this->getRealClass($object));
         }
+
+        $identFieldNames = $classMeta->getIdentifier();
+        $refl = $classMeta->getReflectionClass();
+        $identValues = $this->extractProperties($object, $identFieldNames, $refl);
+        $data = $this->createInstanceIdent($object, $identValues);
+        if ($this->isInProcess($data, $classMeta)) {
+            return $data;
+        }
+        $this->addInProcess($data, $classMeta);
+        $regularFields = array_diff($classMeta->getFieldNames(), $identFieldNames);
+        foreach ($this->extractProperties($object, $regularFields, $refl) as $fieldName => $fieldValue) {
+            $data[$fieldName] = $this->handleValue($fieldValue);
+        }
+
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
-            if ($getMethod = $this->getReturnMethod($fieldName, $classMeta->getReflectionClass())) {
+            if ($getMethod = $this->getReturnMethod($fieldName, $refl)) {
                 $subObject = $getMethod->invoke($object);
                 if (!$subObject) {
                     $data[$fieldName] = null;
                 } elseif ($subObject instanceof PersistentCollection) {
                     $data[$fieldName] = array();
                     foreach ($subObject as $item) {
-                        $ident = $this->handleIdentParams($item);
-                        $data[$fieldName][] = $ident;
-                        $itemRealClass = $this->getRealClass($item);
-                        $itemClassMeta = $this->getClassMetadata($itemRealClass);
-                        if (!$this->isInProcess($ident, $itemClassMeta)) {
-                            $this->normalizeEntity($item, $itemClassMeta);
-                        }
+                        $data[$fieldName][] = $this->normalizeEntity($item);
                     }
                 } else {
-                    $data[$fieldName] = $this->handleIdentParams($subObject);
-                    $subObjectRealClass = $this->getRealClass($subObject);
-                    $subObjectClassMeta = $this->getClassMetadata($subObjectRealClass);
-                    if (!$this->isInProcess($data[$fieldName], $subObjectClassMeta)) {
-                        $this->normalizeEntity($subObject, $subObjectClassMeta);
-                    }
+                    $data[$fieldName] = $this->normalizeEntity($subObject);
                 }
             }
         }
@@ -231,13 +207,20 @@ class ExchangeNormalizer extends ExchangeSerializer
 
     public function normalizeObject($object, \ReflectionClass $class)
     {
-        $data = $this->createInstanceIdent($object);
-        foreach ($class->getProperties() as $property) {
-            if ($getMethod = $this->getReturnMethod($property->getName(), $class)) {
-                $data[$property->getName()] = $this->handleValue($getMethod->invoke($object));
-            }
-        }
-        gc_collect_cycles();
-        return $data;
+        $params = $this->extractProperties($object, $this->getPropertyNames($class), $class);
+        return $this->createInstanceIdent($object, $params);
+    }
+
+    public function createInstanceIdent($object, $params = array())
+    {
+        return array_merge(
+            array(
+                self::KEY_CLASS => array(
+                    $this->getRealClass($object),
+                    array()
+                )
+            ),
+            $params
+        );
     }
 }

@@ -40,7 +40,7 @@ class Legend extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         return array(
             'js' => array(
@@ -62,7 +62,6 @@ class Legend extends Element
             "displayType" => null,
             "autoOpen" => true,
             "tooltip" => "Legend",
-            "checkGraphic" => false,
             "hideEmptyLayers" => true,
             "generateLegendGraphicUrl" => false,
             "showSourceTitle" => true,

@@ -180,7 +180,7 @@ Mapbender.ElementRegistry = (function($){
             var candidateOffsets = this.classIndex[ident.slice(1)];
             if (candidateOffsets && candidateOffsets.length) {
                 var bundles = this.promisesBundles;
-                return candidateOffsets.map(offset, function(offset) {
+                return candidateOffsets.map(function(offset) {
                     return bundles[offset];
                 });
             }
@@ -448,6 +448,14 @@ Mapbender.Util.Url = function(urlString){
 
 Mapbender.Util.isInScale = function(scale, min_scale, max_scale){
     return (min_scale ? min_scale <= scale : true) && (max_scale ? max_scale >= scale : true);
+};
+
+Mapbender.Util.isSameSchemeAndHost = function(urlA, urlB) {
+    var a = document.createElement('a');
+    var b = document.createElement('a');
+    a.href = urlA;
+    b.href = urlB;
+    return a.host === b.host && a.protocol && b.protocol;
 };
 
 Mapbender.Util.addProxy = function(url) {

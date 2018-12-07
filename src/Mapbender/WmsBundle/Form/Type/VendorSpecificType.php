@@ -28,9 +28,7 @@ class VendorSpecificType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'type' => VS::TYPE_SINGLE,
             'name' => '',
-            'extent' => '',
             'vstype' => VS::TYPE_VS_SIMPLE,
             'hidden' => false,
         ));
@@ -41,30 +39,26 @@ class VendorSpecificType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('type', 'choice',
-                      array(
-                'required' => true,
-                'choices' => array(
-                    VS::TYPE_SINGLE => VS::TYPE_SINGLE,
-                    VS::TYPE_MULTIPLE => VS::TYPE_MULTIPLE,
-                    VS::TYPE_INTERVAL => VS::TYPE_INTERVAL)))
-            ->add('name', 'text', array(
-                'required' => true))
-            ->add('default', 'text', array(
-                'required' => true,))
-            ->add('extent', 'text', array(
-                'required' => true,))
-            ->add('vstype', 'choice',
-                  array(
+        $builder
+            ->add('vstype', 'choice', array(
                 'required' => true,
                 'choices' => array(
                     VS::TYPE_VS_SIMPLE => VS::TYPE_VS_SIMPLE,
                     VS::TYPE_VS_USER => VS::TYPE_VS_USER,
-                    VS::TYPE_VS_GROUP => VS::TYPE_VS_GROUP)))
-            ->add('hidden', 'checkbox',
-                  array(
-                'required' => false))
-            ->addModelTransformer(new VendorSpecificTransformer());
+                    VS::TYPE_VS_GROUP => VS::TYPE_VS_GROUP
+                ),
+            ))
+            ->add('name', 'text', array(
+                'required' => true,
+            ))
+            ->add('default', 'text', array(
+                'required' => true,
+            ))
+            ->add('hidden', 'checkbox', array(
+                'required' => false,
+            ))
+            ->addModelTransformer(new VendorSpecificTransformer())
+        ;
     }
 
 }

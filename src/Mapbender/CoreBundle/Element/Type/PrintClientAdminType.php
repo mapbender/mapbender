@@ -37,36 +37,52 @@ class PrintClientAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new PrintClientSubscriber($builder->getFormFactory(),
-            $options["application"]);
+        $subscriber = new PrintClientSubscriber($builder->getFormFactory(), $options["application"]);
         $builder->addEventSubscriber($subscriber);
-        $builder->add('target', 'target_element',
-                array(
+        $builder
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
-                'required' => false))
+                'required' => false,
+            ))
             ->add('type', 'choice', array(
                     'required' => true,
                     'choices' => array(
                         'dialog' => 'Dialog',
-                        'element' => 'Element')))
-            ->add('scales', 'text', array('required' => false))
-            ->add('file_prefix', 'text', array('required' => false))
-            ->add('rotatable', 'checkbox',array('required' => false))
-            ->add('legend', 'checkbox',array('required' => false))
-            ->add('legend_default_behaviour', 'checkbox',array('required' => false))
-            ->add('optional_fields', new YAMLConfigurationType(), array('required' => false,'attr' => array('class' => 'code-yaml')))
+                        'element' => 'Element',
+                    ),
+            ))
+            ->add('scales', 'text', array(
+                'required' => false,
+            ))
+            ->add('file_prefix', 'text', array(
+                'required' => false,
+            ))
+            ->add('rotatable', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('legend', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('legend_default_behaviour', 'checkbox', array(
+                'required' => false,
+            ))
+            ->add('optional_fields', new YAMLConfigurationType(), array(
+                'required' => false,
+            ))
             ->add('required_fields_first', 'checkbox', array(
                 'required' => false,
             ))
-            ->add('replace_pattern', new YAMLConfigurationType(),array('required' => false,'attr' => array('class' => 'code-yaml')))
+            ->add('replace_pattern', new YAMLConfigurationType(), array(
+                'required' => false,
+            ))
             ->add('templates', 'collection', array(
                 'type' => new PrintClientTemplateAdminType(),
                 'allow_add' => true,
                 'allow_delete' => true,
                 'auto_initialize' => false,
-            ));
+            ))
+        ;
     }
-
 }

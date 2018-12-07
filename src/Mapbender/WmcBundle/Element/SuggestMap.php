@@ -1,11 +1,9 @@
 <?php
 namespace Mapbender\WmcBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
-use Mapbender\WmcBundle\Component\WmcHandler;
 use Symfony\Component\HttpFoundation\Response;
 
-class SuggestMap extends Element
+class SuggestMap extends WmcBase
 {
 
     /**
@@ -71,7 +69,7 @@ class SuggestMap extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public function getAssets()
     {
         $js = array(
             'mapbender.element.suggestmap.js',
@@ -163,7 +161,7 @@ class SuggestMap extends Element
      */
     protected function loadState($stateid)
     {
-        $wmchandler = new WmcHandler($this, $this->application, $this->container);
+        $wmchandler = $this->wmcHandlerFactory();
         $state = $wmchandler->findState($stateid);
         if ($state) {
             $id = $state->getId();
@@ -183,7 +181,7 @@ class SuggestMap extends Element
      */
     protected function saveState()
     {
-        $wmchandler = new WmcHandler($this, $this->application, $this->container);
+        $wmchandler = $this->wmcHandlerFactory();
         $json = $this->container->get('request')->get("state", null);
         $state = $wmchandler->saveState($json);
         if ($state !== null) {

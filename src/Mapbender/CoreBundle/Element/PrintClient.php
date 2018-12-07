@@ -50,7 +50,7 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    public static function listAssets()
+    public function getAssets()
     {
         return array(
             'js' => array(
@@ -167,10 +167,12 @@ class PrintClient extends Element
 
     public function getFrontendTemplateVars()
     {
-        $config = $this->getConfiguration();
+        $config = $this->getConfiguration() + array(
+            'required_fields_first' => false,
+        );
         $router = $this->container->get('router');
         $submitUrl = $router->generate('mapbender_core_application_element', array(
-            'slug' => $this->application->getEntity()->getSlug(),
+            'slug' => $this->entity->getApplication()->getSlug(),
             'id' => $this->entity->getId(),
             'action' => 'print',
         ));

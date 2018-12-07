@@ -102,19 +102,25 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'required' => false))
             ->add('ratio', 'number', array(
                 'required' => false,
-                'precision' => 2))
+                'precision' => 2,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.ratio',
+            ))
             ->add('buffer', 'integer', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.buffer',
+            ))
             ->add('dimensions', 'collection', array(
                 'required' => false,
                 'type' => new DimensionInstType(),
-                'allow_add' => true,
-                'allow_delete' => true,))
+                'allow_add' => false,
+                'allow_delete' => false,
+            ))
             ->add('vendorspecifics', 'collection', array(
                 'required' => false,
                 'type' => new VendorSpecificType(),
                 'allow_add' => true,
-                'allow_delete' => true,))
+                'allow_delete' => true,
+            ))
             ->add('layers', 'collection', array(
                 'type' => new WmsInstanceLayerType(),
                 'options' => array(
