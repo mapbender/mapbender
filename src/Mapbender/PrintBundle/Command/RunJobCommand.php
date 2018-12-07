@@ -3,7 +3,7 @@
 
 namespace Mapbender\PrintBundle\Command;
 
-use Mapbender\PrintBundle\Component\PrintService;
+use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,13 +34,13 @@ class RunJobCommand extends ContainerAwareCommand
     }
 
     /**
-     * @return PrintService
+     * @return PrintServiceBridge
      */
-    protected function getPrintService()
+    protected function getPrintServiceBridge()
     {
-        $container = $this->getContainer();
-        $printServiceClassName = $container->getParameter('mapbender.print.service.class');
-        return new $printServiceClassName($container);
+        /** @var PrintServiceBridge $bridgeService */
+        $bridgeService = $this->getContainer()->get('mapbender.print_service_bridge.service');
+        return $bridgeService;
     }
 
     /**
@@ -50,9 +50,7 @@ class RunJobCommand extends ContainerAwareCommand
     {
         $jobArray = $this->getJobArray($input->getArgument('inputFile'));
 
-        // PrintService::doPrint returns the PDF body as a binary string
-        $service = $this->getPrintService();
-        $outputBody = $service->doPrint($jobArray);
+        $outputBody = $this->getPrintServiceBridge()->buildPdf($jobArray);
 
         $outputFileName= $input->getArgument('outputFile');
         file_put_contents($outputFileName, $outputBody);

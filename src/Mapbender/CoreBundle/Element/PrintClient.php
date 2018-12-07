@@ -4,10 +4,11 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Mapbender\PrintBundle\Component\PrintService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  *
@@ -195,11 +196,13 @@ class PrintClient extends Element
     {
         /** @var Request $request */
         $request = $this->container->get('request');
+        $bridgeService = $this->getServiceBridge();
         $configuration = $this->getConfiguration();
         switch ($action) {
             case 'print':
                 $data = $this->preparePrintData($request, $configuration);
-                $printService = $this->getPrintService();
+
+                $pdfBody = $bridgeService->buildPdf($data);
 
                 $displayInline = true;
 
@@ -208,7 +211,7 @@ class PrintClient extends Element
                 } else {
                     $filename = 'mapbender_print.pdf';
                 }
-                $response = new Response($printService->doPrint($data), 200, array(
+                $response = new Response($pdfBody, 200, array(
                     'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
                     'Content-Disposition' => 'attachment; filename=' . $filename
                 ));
@@ -232,17 +235,25 @@ class PrintClient extends Element
                 }
 
                 return new JsonResponse($templates);
+
+            default:
+                $response = $bridgeService->handleHttpRequest($request);
+                if ($response) {
+                    return $response;
+                } else {
+                    throw new NotFoundHttpException();
+                }
         }
     }
 
     /**
-     * @return PrintService
+     * @return PrintServiceBridge
      */
-    protected function getPrintService()
+    protected function getServiceBridge()
     {
-        $container = $this->container;
-        $printServiceClassName = $container->getParameter('mapbender.print.service.class');
-        return new $printServiceClassName($container);
+        /** @var PrintServiceBridge $bridgeService */
+        $bridgeService = $this->container->get('mapbender.print_service_bridge.service');
+        return $bridgeService;
     }
 
     /**
