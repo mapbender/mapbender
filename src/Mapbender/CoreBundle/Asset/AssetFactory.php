@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\CoreBundle\Asset;
 
-use Assetic\Asset\FileAsset;
 use Assetic\Asset\StringAsset;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -14,50 +13,49 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class AssetFactory extends AssetFactoryBase
 {
-    /** @var array|\Assetic\Asset\FileAsset[]|\Assetic\Asset\StringAsset[]  */
-    protected $inputs;
-
-    /** @var string string */
-    protected $sourcePath;
-
     /**
      * AssetFactory constructor.
      *
      * @param ContainerInterface              $container
-     * @param StringAsset[]|FileAsset[]|array $inputs
-     * @param string                          $targetPath
-     * @param string                          $sourcePath
      */
-    public function __construct(ContainerInterface $container, array $inputs, $targetPath, $sourcePath)
+    public function __construct(ContainerInterface $container)
     {
-        parent::__construct($container, $targetPath);
-        $this->sourcePath = $sourcePath;
-        $this->container  = $container;
-        $this->inputs     = $inputs;
+        parent::__construct($container);
     }
 
     /**
+     * Perform simple concatenation of all input assets. Some uniquification will take place.
      *
+     * @param (FileAsset|StringAsset)[] $inputs
      * @return string
      */
-    public function compile()
+    public function compileRaw($inputs)
     {
-        $filters   = array();
+        return $this->buildAssetCollection($inputs, null)->dump();
+    }
+
+    /**
+     * @param (StringAsset|string)[] $inputs
+     * @param string $sourcePath for adjusting relative urls in css rewrite filter
+     * @param string $targetPath
+     * @return string
+     */
+    public function compileCss($inputs, $sourcePath, $targetPath)
+    {
         $container = $this->container;
         $isDebug   = $container->get('kernel')->isDebug();
-        $sass = clone $container->get('mapbender.assetic.filter.sass');
-        $sass->setStyle($isDebug ? 'nested' : 'compressed');
-        $content = $this->buildAssetCollection($this->inputs)->dump();
+        $content = $this->buildAssetCollection($inputs, $targetPath)->dump();
 
         $sass = clone $container->get('mapbender.assetic.filter.sass');
         $sass->setStyle($isDebug ? 'nested' : 'compressed');
-        $filters[] = $sass;
-        $filters[] = $container->get("assetic.filter.cssrewrite");
+        $filters = array(
+            $sass,
+            $container->get("assetic.filter.cssrewrite"),
+        );
         $content = $this->squashImports($content);
 
-        // Web source path
-        $assets = new StringAsset($content, $filters, '/', $this->sourcePath);
-        $assets->setTargetPath($this->targetPath);
+        $assets = new StringAsset($content, $filters, '/', $sourcePath);
+        $assets->setTargetPath($targetPath);
         return $assets->dump();
     }
 

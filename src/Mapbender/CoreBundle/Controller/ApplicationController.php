@@ -91,15 +91,16 @@ class ApplicationController extends Controller
         }
         $application = new Application($this->container, $appEntity);
         $refs = $application->getAssetGroup($type);
+        $factory = new AssetFactory($this->container);
         if ($type == "css") {
-            /** @todo: use route to assets action, not REQUEST_URI, so this can move away from here */
             $sourcePath = $request->getBasePath() ?: '.';
-            $factory = new AssetFactory($this->container, $refs, $request->server->get('REQUEST_URI'), $sourcePath);
-            $content = $factory->compile();
+            $targetPath = $this->generateUrl('mapbender_core_application_assets', array(
+                'slug' => $slug,
+                'type' => $type,
+            ));
+            $content = $factory->compileCss($refs, $sourcePath, $targetPath);
         } else {
-            $cache   = new ApplicationAssetCache($this->container, $refs);
-            $assets  = $cache->fill();
-            $content = $assets->dump();
+            $content = $factory->compileRaw($refs);
         }
 
         if ($isProduction) {
