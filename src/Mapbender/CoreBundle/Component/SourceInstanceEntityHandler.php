@@ -27,7 +27,22 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * If the source is already bound to the instance....
      */
     abstract public function create();
-    
+
+    /**
+     * @inheritdoc
+     * @deprecated Should be inlined to controller. All instance types can use the same logic
+     * @see \Mapbender\WmsBundle\Controller\RepositoryController::deleteInstanceAction()
+     * @see \Mapbender\WmsBundle\Controller\RepositoryController::deleteAction()
+     */
+    public function remove()
+    {
+        $entityManager = $this->getEntityManager();
+        $application = $this->entity->getLayerset()->getApplication();
+        $application->setUpdated(new \DateTime('now'));
+        $entityManager->persist($application);
+        $entityManager->remove($this->entity);
+    }
+
     /**
      * Update instance parameters
      */
@@ -40,10 +55,13 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function getConfiguration(Signer $signer);
     
     /**
-     * Generates an instance configuration
+     * Does nothing, returns nothing, is never called
+     * @deprecated
      */
-    abstract public function generateConfiguration();
-    
+    public function generateConfiguration()
+    {
+    }
+
     /**
      * Returns ALL vendorspecific parameters, NOT just the hidden ones
      * @return string[]

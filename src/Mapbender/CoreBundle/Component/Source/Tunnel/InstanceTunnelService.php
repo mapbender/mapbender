@@ -87,9 +87,9 @@ class InstanceTunnelService
         throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
     }
 
-    public function getVendorSpecificParams(SourceInstance $instance)
+    public function getHiddenParams(SourceInstance $instance)
     {
         $vsHandler = new VendorSpecificHandler();
-        return $vsHandler->getAllParams($instance, $this->tokenStorage->getToken());
+        return $vsHandler->getHiddenParams($instance, $this->tokenStorage->getToken());
     }
 }

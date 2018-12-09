@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
@@ -45,9 +44,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function save()
     {
-        /** @var ObjectManager $manager */
-        $manager = $this->container->get('doctrine')->getManager();
-        $this->persistRecursive($manager, $this->entity);
+        $this->persistRecursive($this->getEntityManager(), $this->entity);
     }
 
     /**
@@ -67,51 +64,21 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * @inheritdoc
      */
-    public function remove()
-    {
-        $this->container->get('doctrine')->getManager()->remove($this->entity);
-    }
-
-    private function isScheduledForRemoval($entity)
-    {
-        /** @var EntityManager $mgr */
-        $mgr = $this->container->get('doctrine')->getManager();
-        $uow = $mgr->getUnitOfWork();
-        // @todo: find out if there's a difference to $uow->isScheduledForDelete($entity);
-        $prop = new \ReflectionProperty(get_class($uow), 'entityDeletions');
-        $prop->setAccessible(true);
-        $list = $prop->getValue($uow);
-        $cls = $mgr->getClassMetadata(get_class($entity))->getName();
-        foreach ($list as $obj) {
-            if ($mgr->getClassMetadata(get_class($obj))->getName() === $cls
-                && $obj->getId() === $entity->getId()
-            ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function update(SourceInstance $instance, SourceItem $wmslayersource)
     {
         /** @var WmsInstance $instance */
         /** @var WmsLayerSource $wmslayersource */
-        $manager = $this->container->get('doctrine')->getManager();
+        $manager = $this->getEntityManager();
         /* remove instance layers for missed layer sources */
         $toRemove = array();
         foreach ($this->entity->getSublayer() as $wmsinstlayer) {
-            /** @var WmsInstanceLayer $wmsinstlayer */
-            if ($this->isScheduledForRemoval($wmsinstlayer->getSourceItem())) {
+            if ($manager->getUnitOfWork()->isScheduledForDelete($wmsinstlayer->getSourceItem())) {
                 $toRemove[] = $wmsinstlayer;
             }
         }
         foreach ($toRemove as $rem) {
             $this->entity->getSublayer()->removeElement($rem);
-            $removeHandler = new WmsInstanceLayerEntityHandler($this->container, $rem);
-            $removeHandler->remove();
+            $manager->remove($rem);
         }
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
             $layer = $this->findLayer($wmslayersourceSub, $this->entity->getSublayer());

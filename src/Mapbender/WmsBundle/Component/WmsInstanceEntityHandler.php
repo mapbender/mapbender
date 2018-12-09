@@ -1,12 +1,10 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
-use Mapbender\WmsBundle\Controller\RepositoryController;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -145,6 +143,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function save()
     {
+        $entityManager = $this->getEntityManager();
         if ($this->entity->getRootlayer()) {
             $rootlayerSaveHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
             $rootlayerSaveHandler->save();
@@ -154,29 +153,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         foreach ($layerSet->getInstances() as $instance) {
             /** @var WmsInstance $instance */
             $instance->setWeight($num);
-            $this->container->get('doctrine')->getManager()->persist($instance);
+            $entityManager->persist($instance);
             $num++;
         }
         $application = $layerSet->getApplication();
         $application->setUpdated(new \DateTime('now'));
-        /** @var EntityManager $entityManager */
-        $entityManager = $this->container->get('doctrine')->getManager();
         $entityManager->persist($application);
         $entityManager->persist($this->entity);
-    }
-    
-
-    /**
-     * @inheritdoc
-     * @deprecated, inlined to controller
-     * @see RepositoryController::deleteInstanceAction()
-     * @see RepositoryController::deleteAction()
-     */
-    public function remove()
-    {
-        $this->container->get('doctrine')->getManager()->persist(
-            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
-        $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
     /**
@@ -202,14 +185,14 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $dimensions = $this->updateDimension($this->entity->getDimensions(), $layerDimensionInsts);
         $this->entity->setDimensions($dimensions);
 
-        # TODO vendorspecific for layer specific parameters
-        /** @var WmsInstanceLayerEntityHandler $rootUpdateHandler */
         $rootUpdateHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
         $rootUpdateHandler->update($this->entity, $this->entity->getSource()->getRootlayer());
 
-        $this->container->get('doctrine')->getManager()->persist(
-            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        $entityManager = $this->getEntityManager();
+        $application = $this->entity->getLayerset()->getApplication();
+        $application->setUpdated(new \DateTime('now'));
+        $entityManager->persist($application);
+        $entityManager->persist($this->entity);
     }
 
     /**
@@ -220,14 +203,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     {
         $service = $this->getService();
         return $service->getConfiguration($this->entity);
-    }
-
-    /**
-     * Does nothing, returns nothing
-     * @deprecated
-     */
-    public function generateConfiguration()
-    {
     }
 
     /**

@@ -78,20 +78,35 @@ class Endpoint
     }
 
     /**
-     * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object)
+     * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object).
+     * Get params from hidden vendor specifics and the given request are appended.
+     * Params from the request override params from hidden vendorspecs with the same name.
      *
      * @param Request $request
-     * @return string
+     * @return string|null
      */
     public function getInternalUrl(Request $request)
     {
-        $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
+        $baseUrl = $this->getInternalBaseUrl($request);
+        if ($baseUrl) {
+            $hiddenParams = $this->service->getHiddenParams($this->instance);
+            $params = array_replace($hiddenParams, $request->query->all());
+            return UrlUtil::validateUrl($baseUrl, $params);
+        } else {
+            return null;
+        }
+    }
 
+    /**
+     * @param Request $request
+     * @return string|null
+     */
+    protected function getInternalBaseUrl(Request $request)
+    {
+        $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
         switch (strtolower($requestType)) {
             case 'getmap':
-                $vsParams = $this->service->getVendorSpecificParams($this->instance);
-                $baseUrl = $this->source->getGetMap()->getHttpGet();
-                return UrlUtil::validateUrl($baseUrl, $vsParams);
+                return $this->source->getGetMap()->getHttpGet();
             case 'getfeatureinfo':
                 return $this->source->getGetFeatureInfo()->getHttpGet();
             case 'getlegendgraphic':

@@ -346,9 +346,7 @@ class ApplicationController extends Controller
 // TODO source access ?
 //        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
 //        $this->denyAccessUnlessGranted('VIEW', $source);
-        $headers     = array();
-        $postParams  = $request->request->all();
-        $getParams   = $request->query->all();
+
         $user        = $source->getUsername() ? $source->getUsername() : null;
         $password    = $source->getUsername() ? $source->getPassword() : null;
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
@@ -366,7 +364,7 @@ class ApplicationController extends Controller
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
 
-        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
+        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response        = new Response();
