@@ -2,14 +2,12 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
-use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
-use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
@@ -328,15 +326,19 @@ class ApplicationController extends Controller
      */
     public function instanceTunnelAction(Request $request, $slug, $instanceId)
     {
-        // @todo: instance tunnel handling should move into a service component in WmsBundle
         /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
         $instance        = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }
+        // Deny forged cross-requests to an instance that doesn't belong to this application
+        $application = $instance->getLayerset()->getApplication();
+        if ($application->getSlug() !== $slug) {
+            throw new NotFoundHttpException("No such instance");
+        }
         if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
+            $this->denyAccessUnlessGranted('VIEW', $application);
         }
 
         /** @var WmsSource $source */
@@ -349,15 +351,6 @@ class ApplicationController extends Controller
         $getParams   = $request->query->all();
         $user        = $source->getUsername() ? $source->getUsername() : null;
         $password    = $source->getUsername() ? $source->getPassword() : null;
-        $instHandler = SourceInstanceEntityHandler::createHandler($this->container, $instance);
-        $vendorspec  = $instHandler->getSensitiveVendorSpecific();
-        /* overwrite vendorspecific parameters from handler with get/post parameters */
-        if (count($getParams)) {
-            $getParams = array_merge($vendorspec, $getParams);
-        }
-        if (count($postParams)) {
-            $postParams = array_merge($vendorspec, $postParams);
-        }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
 
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
@@ -368,6 +361,7 @@ class ApplicationController extends Controller
         $tunnelService = $this->get('mapbender.source.instancetunnel.service');
         $instanceTunnel = $tunnelService->makeEndpoint($instance);
         $url = $instanceTunnel->getInternalUrl($request);
+
         if (!$url) {
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }

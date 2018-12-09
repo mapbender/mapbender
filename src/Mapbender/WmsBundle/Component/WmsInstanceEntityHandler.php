@@ -7,12 +7,10 @@ use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Controller\RepositoryController;
-use Mapbender\WmsBundle\Element\DimensionsHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * Description of WmsSourceHandler
@@ -215,17 +213,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * Creates DimensionInst object, copies attributes from given Dimension object
-     * @param \Mapbender\WmsBundle\Component\Dimension $dim
-     * @return \Mapbender\WmsBundle\Component\DimensionInst
-     * @deprecated for redundant container dependency, call DimensionInst::fromDimension directly
-     */
-    public function createDimensionInst(Dimension $dim)
-    {
-        return DimensionInst::fromDimension($dim);
-    }
-
-    /**
      * @inheritdoc
      * @deprecated, use the appropriate service directly
      */
@@ -255,43 +242,16 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * @inheritdoc
+     * Returns ALL vendorspecific parameters, NOT just the hidden ones
+     * @return string[]
+     * @deprecated for bad wording, limited utility; last remaining use was in InnstanceTunnelService, which now
+     *     handles this itself
      */
     public function getSensitiveVendorSpecific()
     {
-        $vsarr = array();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        if ($user instanceof AdvancedUserInterface) {
-            foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-                $handler = new VendorSpecificHandler($vendorspec);
-                if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_USER) {
-                    $value = $handler->getVendorSpecificValue($user);
-                    if ($value) {
-                        $vsarr[$vendorspec->getParameterName()] = $value;
-                    }
-                } elseif ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_GROUP) {
-                    $groups = array();
-                    foreach ($user->getGroups() as $group) {
-                        $value = $handler->getVendorSpecificValue($group);
-                        if ($value) {
-                            $vsarr[$vendorspec->getParameterName()] = $value;
-                        }
-                    }
-                    if (count($groups)) {
-                        $vsarr[$vendorspec->getParameterName()] = implode(',', $groups);
-                    }
-                }
-            }
-        }
-        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
-                $value = $handler->getVendorSpecificValue(null);
-                if ($value) {
-                    $vsarr[$vendorspec->getParameterName()] = $value;
-                }
-            }
-        }
-        return $vsarr;
+        $handler = new VendorSpecificHandler();
+        $token = $this->container->get('security.token_storage')->getToken();
+        return $handler->getAllParams($this->entity, $token);
     }
 
     /**

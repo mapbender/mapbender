@@ -107,6 +107,7 @@
 
         <service id="mapbender.source.instancetunnel.service" class="%mapbender.source.instancetunnel.service.class%">
             <argument type="service" id="router" />
+            <argument type="service" id="security.token_storage" />
         </service>
 
         <service id="owsproxy.httpclient" class="%mapbender.owsproxy.httpclient.legacy.class%">

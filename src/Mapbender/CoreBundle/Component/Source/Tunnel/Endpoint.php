@@ -5,6 +5,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -88,7 +89,9 @@ class Endpoint
 
         switch (strtolower($requestType)) {
             case 'getmap':
-                return $this->source->getGetMap()->getHttpGet();
+                $vsParams = $this->service->getVendorSpecificParams($this->instance);
+                $baseUrl = $this->source->getGetMap()->getHttpGet();
+                return UrlUtil::validateUrl($baseUrl, $vsParams);
             case 'getfeatureinfo':
                 return $this->source->getGetFeatureInfo()->getHttpGet();
             case 'getlegendgraphic':

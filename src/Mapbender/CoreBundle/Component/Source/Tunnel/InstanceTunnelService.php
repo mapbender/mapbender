@@ -5,14 +5,16 @@ namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\VendorSpecificHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Instance tunnel can both generate and evaluate requests / urls for WMS services that contain sensitive parameters
  * (credentials, "vendorSpecifics") that need to be hidden from the browser.
  *
  * @see ApplicationController::instanceTunnelAction()
- * @see WmsInstanceEntityHandler::getConfiguration()
+ * @see WmsSourceService::postProcessUrls()
  * @see WmsInstanceLayerEntityHandler::getLegendConfig()
  *
  * By default registered in container as mapbender.source.instancetunnel.service, see services.xml
@@ -21,14 +23,18 @@ class InstanceTunnelService
 {
     /** @var UrlGeneratorInterface */
     protected $router;
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
 
     /**
      * InstanceTunnel constructor.
      * @param UrlGeneratorInterface $router
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(UrlGeneratorInterface $router)
+    public function __construct(UrlGeneratorInterface $router, TokenStorageInterface $tokenStorage)
     {
         $this->router = $router;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function makeEndpoint(SourceInstance $instance)
@@ -44,11 +50,14 @@ class InstanceTunnelService
      */
     public function getPublicBaseUrl(Endpoint $endpoint)
     {
+        $vsHandler = new VendorSpecificHandler();
+        $vsParams = $vsHandler->getPublicParams($endpoint->getSourceInstance(), $this->tokenStorage->getToken());
         return $this->router->generate(
             'mapbender_core_application_instancetunnel',
-            array(
+            array_replace($vsParams, array(
                 'slug' => $endpoint->getApplicationEntity()->getSlug(),
-                'instanceId' => $endpoint->getSourceInstance()->getId()),
+                'instanceId' => $endpoint->getSourceInstance()->getId(),
+            )),
             UrlGeneratorInterface::ABSOLUTE_URL
         );
     }
@@ -76,5 +85,11 @@ class InstanceTunnelService
             }
         }
         throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
+    }
+
+    public function getVendorSpecificParams(SourceInstance $instance)
+    {
+        $vsHandler = new VendorSpecificHandler();
+        return $vsHandler->getAllParams($instance, $this->tokenStorage->getToken());
     }
 }

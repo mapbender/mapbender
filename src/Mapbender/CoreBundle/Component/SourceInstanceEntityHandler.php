@@ -1,13 +1,9 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
-use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
-use Mapbender\WmsBundle\Component\Dimension;
 
 /**
  * Description of SourceInstanceEntityHandler
@@ -18,9 +14,6 @@ use Mapbender\WmsBundle\Component\Dimension;
  */
 abstract class SourceInstanceEntityHandler extends EntityHandler
 {
-    /** @var InstanceTunnelService */
-    protected $tunnel;
-
     /**
      * @param array $configuration
      * @return SourceInstance
@@ -52,20 +45,10 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function generateConfiguration();
     
     /**
-     * Returns an array with sensitive vendor specific parameters
+     * Returns ALL vendorspecific parameters, NOT just the hidden ones
+     * @return string[]
      */
     abstract public function getSensitiveVendorSpecific();
-
-    /**
-     * @return Endpoint
-     */
-    protected function getTunnel()
-    {
-        if (!$this->tunnel) {
-            $this->tunnel = $this->getService()->makeTunnelEndpoint($this->entity);
-        }
-        return $this->tunnel;
-    }
 
     /**
      * Returns a source config generating service appropriate for the bound source instance (polymorphic).
