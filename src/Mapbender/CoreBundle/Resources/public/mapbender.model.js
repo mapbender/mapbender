@@ -2,14 +2,10 @@ Mapbender.Model = {
     mbMap: null,
     map: null,
     sourceTree: [],
-    extent: null,
     resolution: null,
-    units: null,
-    proj: null,
     srsDefs: null,
     mapMaxExtent: null,
     mapStartExtent: null,
-    layersMaxExtent: {},
     highlightLayer: null,
     baseId: 0,
     // Hash map query layers settings
@@ -39,27 +35,27 @@ Mapbender.Model = {
 
         OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + 'components/mapquery/lib/openlayers/img/';
 
-        this.proj = this.getProj(this.mbMap.options.srs);
-        this.units = this.mbMap.options.units; //TODO check if this.units === this.proj.proj.units
+        var proj = this.getProj(this.mbMap.options.srs);
 
         this.mapMaxExtent = {
-            projection: this.getProj(this.mbMap.options.srs),
-            extent: this.mbMap.options.extents.max ?
-                OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max) : null
+            projection: proj,
+            // using null or open bounds here causes failures in map, overview and other places
+            // @todo: make applications work with open / undefined max extent
+            extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max)
         };
 
         this.mapStartExtent = {
-            projection: this.getProj(this.mbMap.options.srs),
+            projection: proj,
             extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start || this.mbMap.options.extents.max)
         };
         var mapOptions = {
-            maxExtent: this._transformExtent(this.mapMaxExtent, this.proj).toArray(),
+            maxExtent: this.mapMaxExtent.extent.toArray(),
             zoomToMaxExtent: false,
             maxResolution: this.mbMap.options.maxResolution,
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
-            projection: this.proj,
-            displayProjection: this.proj,
-            units: this.proj.proj.units,
+            projection: proj,
+            displayProjection: proj,
+            units: proj.proj.units,
             allOverlays: true,
             theme: null,
             transitionEffect: null,
@@ -83,7 +79,6 @@ Mapbender.Model = {
         this.map = $(this.mbMap.element).data('mapQuery');
         this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
         this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
-        this._addLayerMaxExtent(this.map.layersList.mapquery0);
         this.map.olMap.tileManager = null; // fix WMS tiled setVisibility(false) for outer scale
         this.setView(true);
         this.parseURL();
@@ -208,18 +203,15 @@ Mapbender.Model = {
         return this.map.olMap.getProjectionObject();
     },
     getProj: function(srscode) {
-        var proj = null;
-        for(var name in Proj4js.defs){
-            if(srscode === name){
-                proj = new OpenLayers.Projection(name);
-                if (!proj.proj.units) {
-                    proj.proj.units = 'degrees';
-                }
-                return proj;
+        if (Proj4js.defs[srscode]) {
+            var proj = new OpenLayers.Projection(srscode);
+            if (!proj.proj.units) {
+                proj.proj.units = 'degrees';
             }
+            return proj;
         }
         // Mapbender.error("CRS: " + srscode + " is not defined.");
-        return proj;
+        return null;
     },
     getAllSrs: function() {
         return this.srsDefs;
@@ -747,24 +739,22 @@ Mapbender.Model = {
         if (sources.length === 1) {
             var extents = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
             var proj = this.map.olMap.getProjectionObject();
+            var bounds;
             if (extents && extents[proj.projCode]) {
-                this.mbMap.zoomToExtent(OpenLayers.Bounds.fromArray(extents[proj.projCode]), true);
+                bounds = OpenLayers.Bounds.fromArray(extents[proj.projCode]);
             } else {
-                var ext = null;
-                var extProj = null;
                 for (var srs in extents) {
-                    extProj = this.getProj(srs);
+                    var extProj = this.getProj(srs);
                     if (extProj !== null) {
-                        ext = OpenLayers.Bounds.fromArray(extents[srs]);
-                        var extObj = {
-                            projection: extProj,
-                            extent: OpenLayers.Bounds.fromArray(extents[srs])
-                        };
-                        var ext_new = this._transformExtent(extObj, proj);
-                        this.mbMap.zoomToExtent(ext_new, true);
+                        var bounds0 = OpenLayers.Bounds.fromArray(extents[srs]);
+                        // reproject to current system
+                        bounds = this._transformExtent(bounds0, extProj, proj);
                         break;
                     }
                 }
+            }
+            if (bounds) {
+                this.mbMap.zoomToExtent(bounds, true);
             }
         }
     },
@@ -811,61 +801,47 @@ Mapbender.Model = {
             }
         }
 
-        this.mbMap.fireModelEvent({
-            name: 'beforeSourceAdded',
-            value: {
-                source: sourceDef,
-                before: null,
-                after: null
-            }
-        });
         if (!this.getSourcePos(sourceDef)) {
             this.sourceTree.push(sourceDef);
         }
-        var source = sourceDef;
-        var mapQueryLayer = this.map.layers(this._convertLayerDef(source, mangleIds));
-        if (mapQueryLayer) {
-            source.mqlid = mapQueryLayer.id;
-            source.ollid = mapQueryLayer.olLayer.id;
-            mapQueryLayer.source = source;
-            this._addLayerMaxExtent(mapQueryLayer);
-            Mapbender.source[source.type.toLowerCase()].postCreate(source, mapQueryLayer);
-            mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e) {
-                self._sourceLoadStart(e);
-            });
-            mapQueryLayer.olLayer.events.register("loadend", mapQueryLayer.olLayer, function(e) {
-                var imgEl = $('div[id="' + e.element.id + '"]  .olImageLoadError');
-                if (imgEl.length > 0) {
-                    self._sourceLoadError(e, imgEl);
-                } else {
-                    self._sourceLoadeEnd(e);
+        var mapQueryLayer = this.map.layers(this._convertLayerDef(sourceDef, mangleIds));
+        sourceDef.mqlid = mapQueryLayer.id;
+        sourceDef.ollid = mapQueryLayer.olLayer.id;
+        mapQueryLayer.source = sourceDef;
+        Mapbender.source[sourceDef.type.toLowerCase()].postCreate(sourceDef, mapQueryLayer);
+        mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e) {
+            self._sourceLoadStart(e);
+        });
+        mapQueryLayer.olLayer.events.register("loadend", mapQueryLayer.olLayer, function(e) {
+            var imgEl = $('div[id="' + e.element.id + '"]  .olImageLoadError');
+            if (imgEl.length > 0) {
+                self._sourceLoadError(e, imgEl);
+            } else {
+                self._sourceLoadeEnd(e);
+            }
+        });
+        this.mbMap.fireModelEvent({
+            name: 'sourceAdded',
+            value: {
+                added: {
+                    source: sourceDef,
+                    // legacy: no known consumer evaluates these props,
+                    // but even if, they've historically been wrong anyway
+                    // was: "before": always last source previously in list, even though
+                    // the new source was actually added *after* that
+                    before: null,
+                    after: null
                 }
-            });
-            this.mbMap.fireModelEvent({
-                name: 'sourceAdded',
-                value: {
-                    added: {
-                        source: source,
-                        // legacy: no known consumer evaluates these props,
-                        // but even if, they've historically been wrong anyway
-                        // was: "before": always last source previously in list, even though
-                        // the new source was actually added *after* that
-                        before: null,
-                        after: null
-                    }
-                }
-            });
-            this._checkAndRedrawSource({
-                sourceIdx: {
-                    id: source.id
-                },
-                options: {
-                    children: {}
-                }
-            });
-        } else {
-            this.sourceTree.splice(this.getSourcePos(sourceDef), 1);
-        }
+            }
+        });
+        this._checkAndRedrawSource({
+            sourceIdx: {
+                id: sourceDef.id
+            },
+            options: {
+                children: {}
+            }
+        });
         return sourceDef;
     },
     /**
@@ -893,7 +869,6 @@ Mapbender.Model = {
                     }
                     var removedMq = mqLayer.remove();
                     if (removedMq) {
-                        this._removeLayerMaxExtent(mqLayer);
                         for (var i = 0; i < this.sourceTree.length; i++) {
                             if (this.sourceTree[i].id.toString() === sourceToRemove.id.toString()) {
                                 this.sourceTree.splice(i, 1);
@@ -1141,7 +1116,7 @@ Mapbender.Model = {
     changeProjection: function(srs) {
         var self = this;
         var oldProj = this.map.olMap.getProjectionObject();
-        if (oldProj.projCode === srs.projection.projCode){
+        if (oldProj.projCode === srs.projection.projCode) {
             return;
         }
         for(var i = 0; i < this.sourceTree.length; i++) {
@@ -1151,14 +1126,13 @@ Mapbender.Model = {
         this.map.olMap.projection = srs.projection;
         this.map.olMap.displayProjection = srs.projection;
         this.map.olMap.units = srs.projection.proj.units;
-        this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent, srs.projection);
+        this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, oldProj, srs.projection);
         $.each(self.map.olMap.layers, function(idx, layer) {
             layer.projection = srs.projection;
             layer.units = srs.projection.proj.units;
-            if (!self.layersMaxExtent[layer.id])
-                self._addLayerMaxExtent(layer);
-            if (layer.maxExtent && layer.maxExtent != self.map.olMap.maxExtent)
-                layer.maxExtent = self._transformExtent(self.layersMaxExtent[layer.id], srs.projection);
+            if (layer.maxExtent) {
+                layer.maxExtent = self._transformExtent(layer.maxExtent, oldProj, srs.projection);
+            }
             layer.initResolutions();
         });
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
@@ -1169,63 +1143,19 @@ Mapbender.Model = {
             }
         });
     },
-    /*
-     * Transforms an extent into destProjection projection.
-     */
-    _transformExtent: function(extentObj, destProjection) {
-        if (extentObj.extent != null) {
-            if (extentObj.projection.projCode == destProjection.projCode) {
-                return extentObj.extent.clone();
-            } else {
-                var newextent = extentObj.extent.clone();
-                newextent.transform(extentObj.projection, destProjection);
-                return newextent;
-            }
-        } else {
-            return null;
-        }
-    },
+
     /**
-     * Adds a layer's original extent into the widget layersOrigExtent.
+     * @param {OpenLayers.Bounds|null} extent
+     * @param {OpenLayers.Projection} fromProj
+     * @param {OpenLayers.Projection} toProj
+     * @returns {OpenLayers.Bounds|null}
      */
-    _addLayerMaxExtent: function(layer) {
-        if (layer.olLayer) {
-            layer = layer.olLayer;
+    _transformExtent: function(extent, fromProj, toProj) {
+        var extentOut = (extent && extent.clone()) || null;
+        if (extent && fromProj.projCode !== toProj. projCode) {
+            extentOut.transform(fromProj, toProj);
         }
-        if (!this.layersMaxExtent[layer.id]) {
-            var proj;
-            var maxExt;
-            if (layer.options.configuration) {
-                var bboxes = layer.options.configuration.configuration.options.bbox;
-                /* TODO? add "if" for source type 'wms' etc. */
-                for (var srs in bboxes) {
-                    if (this.getProj(srs)) {
-                        proj = this.getProj(srs);
-                        maxExt = OpenLayers.Bounds.fromArray(bboxes[srs]);
-                        break;
-                    }
-                }
-            }
-            if (!proj || !maxExt) {
-                proj = this.proj;
-                maxExt = layer.maxExtent ? layer.maxExtent.clone() : null;
-            }
-            this.layersMaxExtent[layer.id] = {
-                projection: proj,
-                extent: maxExt
-            };
-        }
-    },
-    /**
-     * Removes a layer's origin extent from the widget layersOrigExtent.
-     */
-    _removeLayerMaxExtent: function(layer) {
-        if (layer.olLayer) {
-            layer = layer.olLayer;
-        }
-        if (this.layersMaxExtent[layer.id]) {
-            delete(this.layersMaxExtent[layer.id]);
-        }
+        return extentOut;
     },
     parseURL: function() {
         var self = this;
