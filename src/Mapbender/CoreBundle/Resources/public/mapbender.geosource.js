@@ -187,38 +187,6 @@ Mapbender.Geo.SourceHandler = Class({
             }
         });
     },
-    'public function hasLayers': function(source, withoutGrouped) {
-        var options = this.layerCount(source);
-        if (withoutGrouped) {
-            return options.simpleCount > 0;
-        } else { // without root layer
-            return options.simpleCount + options.groupedCount - 1 > 0;
-        }
-    },
-    'public function layerCount': function(source) {
-        if (source.configuration.children.length === 0) {
-            return {
-                simpleCount: 0,
-                grouppedCount: 0
-            };
-        }
-        var options = {
-            simpleCount: 0,
-            groupedCount: 0
-        }
-        return _layerCount(source.configuration.children[0], options);
-        function _layerCount(layer, options) {
-            if (layer.children) {
-                options.grouppedCount++;
-                for (var i = 0; i < layer.children.length; i++) {
-                    options = _layerCount(layer.children[i], options);
-                }
-            } else {
-                options.simpleCount++;
-            }
-            return options;
-        }
-    },
     'public function getLayersList': function(source, offsetLayer, includeOffset) {
         var rootLayer,
             _source;

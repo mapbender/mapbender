@@ -84,8 +84,7 @@ Mapbender.Model = {
         this.parseURL();
         if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
             this.changeProjection({
-                projection: this.getProj(
-                    this.mbMap.options.targetsrs)
+                projection: this.getProj(this.mbMap.options.targetsrs)
             });
         }
         if (this.mbMap.options.targetscale) {
@@ -436,9 +435,6 @@ Mapbender.Model = {
         }
         return null;
     },
-    getMqLayer: function(source) {
-        return this.map.layersList[source.mqlid];
-    },
     /**
      * Returns the source's position
      */
@@ -463,31 +459,6 @@ Mapbender.Model = {
         } else {
             return null;
         }
-    },
-    /**
-     *Creates a "tochange" object
-     */
-    createToChange: function(idxKey, idxValue) {
-        var tochange = {
-            sourceIdx: {}
-        };
-        tochange.sourceIdx[idxKey] = idxValue;
-        if (this.getSource(tochange.sourceIdx))
-            return tochange;
-        else
-            return null;
-    },
-    /**
-     *Creates a "changed" object
-     */
-    createChangedObj: function(source) {
-        if (!source || !source.id) {
-            return null;
-        }
-        return {
-            source: source,
-            children: {}
-        };
     },
     /**
      * Returns the current map's scale
@@ -599,65 +570,49 @@ Mapbender.Model = {
         this.map.center(options);
     },
     /**
-     *
+     * @param {Object} e
+     * @param {OpenLayers.Layer} e.object
      */
     _sourceLoadStart: function(e) {
-        var src = this.getSource({
-            ollid: e.element.id
+        var source = this.getSource({origId: e.object.mapbenderId});
+        this.mbMap.fireModelEvent({
+            name: 'sourceloadstart',
+            value: {
+                source: source
+            }
         });
-        var mqLayer = this.map.layersList[src.mqlid];
-//        Mapbender.source[src.type].onLoadStart(src);
-        if (mqLayer.olLayer.getVisibility()) {
-            this.mbMap.fireModelEvent({
-                name: 'sourceloadstart',
-                value: {
-                    source: this.getSource(
-                        {
-                            ollid: e.element.id
-                        })
-                }
-            });
-        }
     },
     /**
-     *
+     * @param {Object} e
+     * @param {OpenLayers.Layer} e.object
      */
     _sourceLoadeEnd: function(e) {
+        var source = this.getSource({origId: e.object.mapbenderId});
         this.mbMap.fireModelEvent({
             name: 'sourceloadend',
             value: {
-                source: this.getSource({
-                    ollid: e.element.id
-                })
+                source: source
             }
         });
     },
     /**
-     *
+     * @param {Object} e
+     * @param {OpenLayers.Tile} e.tile
      */
-    _sourceLoadError: function(e, imgEl) {
-        var source = this.getSource({
-            ollid: e.element.id
-        });
-        var mqLayer = this.map.layersList[source.mqlid];
-        if (mqLayer.olLayer.getVisibility()) {
-            Mapbender.source[source.type].onLoadError(imgEl, source.id, this.map.olMap.getProjectionObject(), $.proxy(
-                this.sourceLoadErrorCallback, this));
-        } else {
-            this._sourceLoadeEnd(e);
+    _sourceLoadError: function(e) {
+        if (e.tile.layer && e.tile.layer.getVisibility()) {
+            var source = this.getSource({origId: e.tile.layer.mapbenderId});
+            this.mbMap.fireModelEvent({
+                name: 'sourceloaderror',
+                value: {
+                    source: source,
+                    error: {
+                        sourceId: source.origId,
+                        details: Mapbender.trans('mb.geosource.image_error.datails') // sic!
+                    }
+                }
+            });
         }
-    },
-    sourceLoadErrorCallback: function(loadError) {
-        var source = this.getSource({
-            'id': loadError.sourceId
-        });
-        this.mbMap.fireModelEvent({
-            name: 'sourceloaderror',
-            value: {
-                source: source,
-                    error: loadError
-            }
-        });
     },
     /**
      *
@@ -809,17 +764,10 @@ Mapbender.Model = {
         sourceDef.ollid = mapQueryLayer.olLayer.id;
         mapQueryLayer.source = sourceDef;
         Mapbender.source[sourceDef.type.toLowerCase()].postCreate(sourceDef, mapQueryLayer);
-        mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e) {
-            self._sourceLoadStart(e);
-        });
-        mapQueryLayer.olLayer.events.register("loadend", mapQueryLayer.olLayer, function(e) {
-            var imgEl = $('div[id="' + e.element.id + '"]  .olImageLoadError');
-            if (imgEl.length > 0) {
-                self._sourceLoadError(e, imgEl);
-            } else {
-                self._sourceLoadeEnd(e);
-            }
-        });
+        mapQueryLayer.olLayer.events.register("loadstart", this, this._sourceLoadStart);
+        mapQueryLayer.olLayer.events.register("tileerror", this, this._sourceLoadError);
+        mapQueryLayer.olLayer.events.register("loadend", this, this._sourceLoadeEnd);
+
         this.mbMap.fireModelEvent({
             name: 'sourceAdded',
             value: {

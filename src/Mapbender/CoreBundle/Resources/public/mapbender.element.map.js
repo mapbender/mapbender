@@ -81,9 +81,7 @@
          * options.value.mapquerylayer - for a MapQuery.Layer,
          * options.value.source - for a source from the model.sourceTree,
          * options.value.tochange - for a "tochange" object
-         * (see model.createToChangeObj(id)),
          * options.value.changed -  for a "changed" object
-         * (see model.createChangedObj(id)).
          */
         fireModelEvent: function(options){
 //            window.console && console.log(options.name, options.value);
