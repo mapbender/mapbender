@@ -257,7 +257,7 @@ class PrintClient extends Element
 
         $data['layers'] = $this->prepareLayerDefinitions($data['layers']);
         if (isset($data['overview'])) {
-            $data['overview'] = $this->prepareLayerDefinitions($data['overview']);
+            $data['overview'] = $this->prepareOverview($data['overview']);
         }
 
         if (isset($data['features'])) {
@@ -296,6 +296,18 @@ class PrintClient extends Element
         return $featureDefs;
     }
 
+    protected function prepareOverview($rawData)
+    {
+        $overviewDef = $this->unravelJson($rawData, 0);
+        if (!empty($overviewDef['layers'])) {
+            $urlProcessor = $this->getUrlProcessor();
+            foreach ($overviewDef['layers'] as $index => $url) {
+                $overviewDef['layers'][$index] = $urlProcessor->getInternalUrl($url);
+            }
+        }
+        return $overviewDef;
+    }
+
     /**
      * Trivial json-decode of input; provided as an override hook for customization.
      * Processes both 'layers' and 'overview' values from client.
@@ -309,22 +321,40 @@ class PrintClient extends Element
         // layer definition list is a 2D array
         /** @var mixed[][] $layerDefs */
         $layerDefs = $this->unravelJson($rawDefinitions, 2);
-        return $layerDefs;
+        $urlProcessor = $this->getUrlProcessor();
+        $layerDefsOut = array();
+        foreach ($layerDefs as $layerDef) {
+            if (!empty($layerDef['url'])) {
+                $layerDef['url'] = $urlProcessor->getInternalUrl($layerDef['url']);
+            }
+            $layerDefsOut[] = $layerDef;
+        }
+        return $layerDefsOut;
     }
 
     /**
      * Trivial json-decode of input; provided as an override hook for customization.
-     * Processes 'features' value from client.
+     * Processes 'legends' value from client.
      *
      * @param array|string|string[] $rawLegendData
      * @return string[]
      */
     protected function prepareLegends($rawLegendData)
     {
-        // legend value is a 1D array with layer title as keys and legend image urls as values
-        /** @var string[] $legendDefs */
+        // legend value is list of 1D arrays, one per source, with layer titles as
+        // keys and legend image urls as values
+        /** @var string[][] $legendDefs */
         $legendDefs = $this->unravelJson($rawLegendData, 1);
-        return $legendDefs;
+        $urlProcessor = $this->getUrlProcessor();
+        $legendDefsOut = array();
+        foreach ($legendDefs as $ix => $imageList) {
+            $legendDefsOut[$ix] = array();
+            foreach ($imageList as $title => $legendImageUrl) {
+                $internalUrl = $urlProcessor->getInternalUrl($legendImageUrl);
+                $legendDefsOut[$ix][$title] = $internalUrl;
+            }
+        };
+        return $legendDefsOut;
     }
 
     /**
@@ -362,5 +392,15 @@ class PrintClient extends Element
             }
         }
         return $a;
+    }
+
+    /**
+     * @return UrlProcessor
+     */
+    protected function getUrlProcessor()
+    {
+        /** @var UrlProcessor $service */
+        $service = $this->container->get('mapbender.source.url_processor.service');
+        return $service;
     }
 }
