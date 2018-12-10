@@ -1,11 +1,13 @@
 # Changelog
-* **dev-release/3.0.7 @ efe70d9**
+* **dev-release/3.0.7 @ 70b6e04**
   - Fix buttons with invalid targets breaking buttons in the same group
   - Fix element-order dependent script initialization error in mobile template
   - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
   - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
   - Fixed dynamic (layertree) source reordering errors with many layers
   - Print: Suppress redundant group layer legend images and legend images for deactivated layers ([PR#1053](https://github.com/mapbender/mapbender/pull/1053))
+  - Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
+  - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
   - Remove unused fields from VendorSpecifics form, remove JOII dependency ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
   - Typo fixes in WmsCapabilitiesParser130, thanks jef-n ([PR#1046](https://github.com/mapbender/mapbender/pull/1046))
   - Fix Application import from pretty-printed JSON input
