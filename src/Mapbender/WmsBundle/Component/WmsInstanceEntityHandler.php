@@ -1,18 +1,14 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
-use Mapbender\WmsBundle\Controller\RepositoryController;
-use Mapbender\WmsBundle\Element\DimensionsHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * Description of WmsSourceHandler
@@ -147,6 +143,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function save()
     {
+        $entityManager = $this->getEntityManager();
         if ($this->entity->getRootlayer()) {
             $rootlayerSaveHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
             $rootlayerSaveHandler->save();
@@ -156,29 +153,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         foreach ($layerSet->getInstances() as $instance) {
             /** @var WmsInstance $instance */
             $instance->setWeight($num);
-            $this->container->get('doctrine')->getManager()->persist($instance);
+            $entityManager->persist($instance);
             $num++;
         }
         $application = $layerSet->getApplication();
         $application->setUpdated(new \DateTime('now'));
-        /** @var EntityManager $entityManager */
-        $entityManager = $this->container->get('doctrine')->getManager();
         $entityManager->persist($application);
         $entityManager->persist($this->entity);
-    }
-    
-
-    /**
-     * @inheritdoc
-     * @deprecated, inlined to controller
-     * @see RepositoryController::deleteInstanceAction()
-     * @see RepositoryController::deleteAction()
-     */
-    public function remove()
-    {
-        $this->container->get('doctrine')->getManager()->persist(
-            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
-        $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
     /**
@@ -204,25 +185,14 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $dimensions = $this->updateDimension($this->entity->getDimensions(), $layerDimensionInsts);
         $this->entity->setDimensions($dimensions);
 
-        # TODO vendorspecific for layer specific parameters
-        /** @var WmsInstanceLayerEntityHandler $rootUpdateHandler */
         $rootUpdateHandler = new WmsInstanceLayerEntityHandler($this->container, $this->entity->getRootlayer());
         $rootUpdateHandler->update($this->entity, $this->entity->getSource()->getRootlayer());
 
-        $this->container->get('doctrine')->getManager()->persist(
-            $this->entity->getLayerset()->getApplication()->setUpdated(new \DateTime('now')));
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
-    }
-
-    /**
-     * Creates DimensionInst object, copies attributes from given Dimension object
-     * @param \Mapbender\WmsBundle\Component\Dimension $dim
-     * @return \Mapbender\WmsBundle\Component\DimensionInst
-     * @deprecated for redundant container dependency, call DimensionInst::fromDimension directly
-     */
-    public function createDimensionInst(Dimension $dim)
-    {
-        return DimensionInst::fromDimension($dim);
+        $entityManager = $this->getEntityManager();
+        $application = $this->entity->getLayerset()->getApplication();
+        $application->setUpdated(new \DateTime('now'));
+        $entityManager->persist($application);
+        $entityManager->persist($this->entity);
     }
 
     /**
@@ -233,14 +203,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     {
         $service = $this->getService();
         return $service->getConfiguration($this->entity);
-    }
-
-    /**
-     * Does nothing, returns nothing
-     * @deprecated
-     */
-    public function generateConfiguration()
-    {
     }
 
     /**
@@ -255,43 +217,16 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * @inheritdoc
+     * Returns ALL vendorspecific parameters, NOT just the hidden ones
+     * @return string[]
+     * @deprecated for bad wording, limited utility; last remaining use was in InnstanceTunnelService, which now
+     *     handles this itself
      */
     public function getSensitiveVendorSpecific()
     {
-        $vsarr = array();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        if ($user instanceof AdvancedUserInterface) {
-            foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-                $handler = new VendorSpecificHandler($vendorspec);
-                if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_USER) {
-                    $value = $handler->getVendorSpecificValue($user);
-                    if ($value) {
-                        $vsarr[$vendorspec->getParameterName()] = $value;
-                    }
-                } elseif ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_GROUP) {
-                    $groups = array();
-                    foreach ($user->getGroups() as $group) {
-                        $value = $handler->getVendorSpecificValue($group);
-                        if ($value) {
-                            $vsarr[$vendorspec->getParameterName()] = $value;
-                        }
-                    }
-                    if (count($groups)) {
-                        $vsarr[$vendorspec->getParameterName()] = implode(',', $groups);
-                    }
-                }
-            }
-        }
-        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
-                $value = $handler->getVendorSpecificValue(null);
-                if ($value) {
-                    $vsarr[$vendorspec->getParameterName()] = $value;
-                }
-            }
-        }
-        return $vsarr;
+        $handler = new VendorSpecificHandler();
+        $token = $this->container->get('security.token_storage')->getToken();
+        return $handler->getAllParams($this->entity, $token);
     }
 
     /**

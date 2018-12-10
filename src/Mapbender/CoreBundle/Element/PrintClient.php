@@ -3,13 +3,12 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
-use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Mapbender\PrintBundle\Component\PrintService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  *
@@ -197,11 +196,13 @@ class PrintClient extends Element
     {
         /** @var Request $request */
         $request = $this->container->get('request');
+        $bridgeService = $this->getServiceBridge();
         $configuration = $this->getConfiguration();
         switch ($action) {
             case 'print':
                 $data = $this->preparePrintData($request, $configuration);
-                $printService = $this->getPrintService();
+
+                $pdfBody = $bridgeService->buildPdf($data);
 
                 $displayInline = true;
 
@@ -210,7 +211,7 @@ class PrintClient extends Element
                 } else {
                     $filename = 'mapbender_print.pdf';
                 }
-                $response = new Response($printService->doPrint($data), 200, array(
+                $response = new Response($pdfBody, 200, array(
                     'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
                     'Content-Disposition' => 'attachment; filename=' . $filename
                 ));
@@ -224,27 +225,24 @@ class PrintClient extends Element
 
                 return new Response($size);
 
-            case 'getDigitizerTemplates':
-                $featureType = $request->get('schemaName');
-                $featureTypeConfig = $this->container->getParameter('featureTypes');
-                $templates = $featureTypeConfig[$featureType]['print']['templates'];
-
-                if (!isset($templates)) {
-                    throw new \Exception('Template configuration missing');
+            default:
+                $response = $bridgeService->handleHttpRequest($request);
+                if ($response) {
+                    return $response;
+                } else {
+                    throw new NotFoundHttpException();
                 }
-
-                return new JsonResponse($templates);
         }
     }
 
     /**
-     * @return PrintService
+     * @return PrintServiceBridge
      */
-    protected function getPrintService()
+    protected function getServiceBridge()
     {
-        $container = $this->container;
-        $printServiceClassName = $container->getParameter('mapbender.print.service.class');
-        return new $printServiceClassName($container);
+        /** @var PrintServiceBridge $bridgeService */
+        $bridgeService = $this->container->get('mapbender.print_service_bridge.service');
+        return $bridgeService;
     }
 
     /**
@@ -259,7 +257,7 @@ class PrintClient extends Element
 
         $data['layers'] = $this->prepareLayerDefinitions($data['layers']);
         if (isset($data['overview'])) {
-            $data['overview'] = $this->prepareLayerDefinitions($data['overview']);
+            $data['overview'] = $this->prepareOverview($data['overview']);
         }
 
         if (isset($data['features'])) {
@@ -284,21 +282,6 @@ class PrintClient extends Element
     }
 
     /**
-     * @param string $url
-     * @return string
-     */
-    protected function resolveTunnelUrl($url)
-    {
-        /** @var InstanceTunnelService $tunnelService */
-        $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
-        $endPoint = $tunnelService->endpointFromUrl($url);
-        if (!$endPoint) {
-            return $url;
-        }
-        return $endPoint->getInternalUrl(Request::create($url), true);
-    }
-
-    /**
      * Trivial json-decode of input; provided as an override hook for customization.
      * Processes 'features' value from client.
      *
@@ -313,6 +296,18 @@ class PrintClient extends Element
         return $featureDefs;
     }
 
+    protected function prepareOverview($rawData)
+    {
+        $overviewDef = $this->unravelJson($rawData, 0);
+        if (!empty($overviewDef['layers'])) {
+            $urlProcessor = $this->getUrlProcessor();
+            foreach ($overviewDef['layers'] as $index => $url) {
+                $overviewDef['layers'][$index] = $urlProcessor->getInternalUrl($url);
+            }
+        }
+        return $overviewDef;
+    }
+
     /**
      * Trivial json-decode of input; provided as an override hook for customization.
      * Processes both 'layers' and 'overview' values from client.
@@ -323,50 +318,43 @@ class PrintClient extends Element
      */
     protected function prepareLayerDefinitions($rawDefinitions)
     {
-        $definitionsOut = array();
-        foreach ($this->unravelJson($rawDefinitions, 2) as $layerDef) {
-            // 'url' is mandatory for WMS, also mandatory for 'overview', which doesn't have a 'type',
-            // and it may also be present on other layer types
-            if ((!empty($layerDef['type']) && $layerDef['type'] == 'wms') || !empty($layerDef['url'])) {
-                try {
-                    $definitionsOut[] = array_replace($layerDef, array(
-                        'url' => $this->resolveTunnelUrl($layerDef['url']),
-                    ));
-                } catch (SourceNotFoundException $e) {
-                    // tunnel URL but instance not in database (anymore); skip layer completely
-                    // @todo: log a warning?
-                }
-            } else {
-                // let's hope it's a feature layer
-                $definitionsOut[] = $layerDef;
+        // layer definition list is a 2D array
+        /** @var mixed[][] $layerDefs */
+        $layerDefs = $this->unravelJson($rawDefinitions, 2);
+        $urlProcessor = $this->getUrlProcessor();
+        $layerDefsOut = array();
+        foreach ($layerDefs as $layerDef) {
+            if (!empty($layerDef['url'])) {
+                $layerDef['url'] = $urlProcessor->getInternalUrl($layerDef['url']);
             }
+            $layerDefsOut[] = $layerDef;
         }
-        return $definitionsOut;
+        return $layerDefsOut;
     }
 
     /**
      * Trivial json-decode of input; provided as an override hook for customization.
-     * Processes 'features' value from client.
+     * Processes 'legends' value from client.
      *
      * @param array|string|string[] $rawLegendData
      * @return string[]
      */
     protected function prepareLegends($rawLegendData)
     {
-        $processedLegendDefs = array();
-        foreach ($this->unravelJson($rawLegendData, 1) as $sourceLegendDefs) {
-            foreach ($sourceLegendDefs as $layerTitle => $legendUrl) {
-                try {
-                    $legendUrl = $this->resolveTunnelUrl($legendUrl);
-                } catch (SourceNotFoundException $e) {
-                    // tunnel URL but instance not in database (anymore); skip layer completely
-                    // @todo: log a warning?
-                    continue;
-                }
-                $processedLegendDefs[] = array($layerTitle => $legendUrl);
+        // legend value is list of 1D arrays, one per source, with layer titles as
+        // keys and legend image urls as values
+        /** @var string[][] $legendDefs */
+        $legendDefs = $this->unravelJson($rawLegendData, 1);
+        $urlProcessor = $this->getUrlProcessor();
+        $legendDefsOut = array();
+        foreach ($legendDefs as $ix => $imageList) {
+            $legendDefsOut[$ix] = array();
+            foreach ($imageList as $title => $legendImageUrl) {
+                $internalUrl = $urlProcessor->getInternalUrl($legendImageUrl);
+                $legendDefsOut[$ix][$title] = $internalUrl;
             }
-        }
-        return $processedLegendDefs;
+        };
+        return $legendDefsOut;
     }
 
     /**
@@ -404,5 +392,15 @@ class PrintClient extends Element
             }
         }
         return $a;
+    }
+
+    /**
+     * @return UrlProcessor
+     */
+    protected function getUrlProcessor()
+    {
+        /** @var UrlProcessor $service */
+        $service = $this->container->get('mapbender.source.url_processor.service');
+        return $service;
     }
 }

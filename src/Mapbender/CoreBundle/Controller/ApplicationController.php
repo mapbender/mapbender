@@ -2,14 +2,12 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
-use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
-use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
@@ -91,15 +89,16 @@ class ApplicationController extends Controller
         }
         $application = new Application($this->container, $appEntity);
         $refs = $application->getAssetGroup($type);
+        $factory = new AssetFactory($this->container);
         if ($type == "css") {
-            /** @todo: use route to assets action, not REQUEST_URI, so this can move away from here */
             $sourcePath = $request->getBasePath() ?: '.';
-            $factory = new AssetFactory($this->container, $refs, $request->server->get('REQUEST_URI'), $sourcePath);
-            $content = $factory->compile();
+            $targetPath = $this->generateUrl('mapbender_core_application_assets', array(
+                'slug' => $slug,
+                'type' => $type,
+            ));
+            $content = $factory->compileCss($refs, $sourcePath, $targetPath);
         } else {
-            $cache   = new ApplicationAssetCache($this->container, $refs);
-            $assets  = $cache->fill();
-            $content = $assets->dump();
+            $content = $factory->compileRaw($refs);
         }
 
         if ($isProduction) {
@@ -327,15 +326,19 @@ class ApplicationController extends Controller
      */
     public function instanceTunnelAction(Request $request, $slug, $instanceId)
     {
-        // @todo: instance tunnel handling should move into a service component in WmsBundle
         /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
         $instance        = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }
+        // Deny forged cross-requests to an instance that doesn't belong to this application
+        $application = $instance->getLayerset()->getApplication();
+        if ($application->getSlug() !== $slug) {
+            throw new NotFoundHttpException("No such instance");
+        }
         if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
+            $this->denyAccessUnlessGranted('VIEW', $application);
         }
 
         /** @var WmsSource $source */
@@ -343,19 +346,9 @@ class ApplicationController extends Controller
 // TODO source access ?
 //        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
 //        $this->denyAccessUnlessGranted('VIEW', $source);
-        $headers     = array();
-        $postParams  = $request->request->all();
+
         $user        = $source->getUsername() ? $source->getUsername() : null;
         $password    = $source->getUsername() ? $source->getPassword() : null;
-        $instHandler = SourceInstanceEntityHandler::createHandler($this->container, $instance);
-        $vendorspec  = $instHandler->getSensitiveVendorSpecific();
-        /* remove vendorspecific parameters explicitly given in GET */
-        $vendorspec = array_diff_key($vendorspec, $request->query->all());
-        /* overwrite vendorspecific parameters with received post parameters */
-        // @todo: remove redundant POST params; tunnel does not evaluate / support POSTable URLs for anything
-        if (count($postParams)) {
-            $postParams = array_merge($vendorspec, $postParams);
-        }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
 
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
@@ -365,12 +358,13 @@ class ApplicationController extends Controller
         /** @var InstanceTunnelService $tunnelService */
         $tunnelService = $this->get('mapbender.source.instancetunnel.service');
         $instanceTunnel = $tunnelService->makeEndpoint($instance);
-        $url = $instanceTunnel->getInternalUrl($request, true);
+        $url = $instanceTunnel->getInternalUrl($request);
+
         if (!$url) {
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
 
-        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, array(), $postParams);
+        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response        = new Response();

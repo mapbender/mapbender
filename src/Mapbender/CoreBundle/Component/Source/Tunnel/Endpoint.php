@@ -1,11 +1,10 @@
 <?php
 
 namespace Mapbender\CoreBundle\Component\Source\Tunnel;
-use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
-use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
@@ -80,37 +79,36 @@ class Endpoint
     }
 
     /**
-     * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object)
+     * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object).
+     * Get params from hidden vendor specifics and the given request are appended.
+     * Params from the request override params from hidden vendorspecs with the same name.
      *
      * @param Request $request
-     * @param bool $appendQuery to add query params from Request; this is off by default for legacy reasons (GET
-     *     params were added in @see ApplicationController::instanceTunnelAction()
-     * @return string
+     * @return string|null
      */
-    public function getInternalUrl(Request $request, $appendQuery = false)
+    public function getInternalUrl(Request $request)
     {
         $baseUrl = $this->getInternalBaseUrl($request);
-        if ($appendQuery) {
-            $instHandler = SourceInstanceEntityHandler::createHandler($this->service->getContainer(), $this->instance);
-            $vendorSpec  = $instHandler->getSensitiveVendorSpecific();
-            /* replace vendorspecific parameters already explicitly given in GET */
-            $params = array_replace($vendorSpec, $request->query->all());
-            return UrlUtil::appendQueryParams($baseUrl, $params);
+        if ($baseUrl) {
+            $hiddenParams = $this->service->getHiddenParams($this->instance);
+            $requestParams = $request->query->all();
+            if (strtolower(ArrayUtil::getDefaultCaseInsensitive($requestParams, 'request', null)) === 'getlegendgraphic') {
+                unset($requestParams['_glgmode']);
+            }
+            $params = array_replace($hiddenParams, $requestParams);
+            return UrlUtil::validateUrl($baseUrl, $params);
         } else {
-            return $baseUrl;
+            return null;
         }
     }
 
     /**
-     * Gets the base url on the wms service that satisfies the given $request (=Symfony Http Request object)
-     *
      * @param Request $request
-     * @return string
+     * @return string|null
      */
-    public function getInternalBaseUrl(Request $request)
+    protected function getInternalBaseUrl(Request $request)
     {
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
-
         switch (strtolower($requestType)) {
             case 'getmap':
                 return $this->source->getGetMap()->getHttpGet();
@@ -119,7 +117,6 @@ class Endpoint
             case 'getlegendgraphic':
                 return $this->getInternalGetLegendGraphicUrl($request);
             default:
-                // @todo: throw?
                 return null;
         }
     }

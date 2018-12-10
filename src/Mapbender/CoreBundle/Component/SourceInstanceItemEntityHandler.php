@@ -18,7 +18,6 @@ abstract class SourceInstanceItemEntityHandler extends EntityHandler
      * @param SourceInstance $instance
      * @param SourceItem     $item
      * @param int            $num
-     * @return
      */
     abstract public function create(SourceInstance $instance, SourceItem $item, $num = 0);
 

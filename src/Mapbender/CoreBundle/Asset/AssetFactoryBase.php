@@ -6,7 +6,6 @@ namespace Mapbender\CoreBundle\Asset;
 use Assetic\Asset\FileAsset;
 use Assetic\Asset\AssetCollection;
 use Assetic\Asset\StringAsset;
-use Assetic\AssetManager;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,45 +14,37 @@ class AssetFactoryBase
     /** @var ContainerInterface  */
     protected $container;
 
-    /** @var string  */
-    protected $targetPath;
-
-    public function __construct(ContainerInterface $container, $targetPath)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->targetPath = $targetPath;
     }
 
     /**
      * @param (StringAsset|string)[] $inputs
+     * @param string|null $targetPath
      * @return AssetCollection
      */
-    protected function buildAssetCollection($inputs)
+    protected function buildAssetCollection($inputs, $targetPath)
     {
         $assetRootPath = $this->getWebDir();
-
-        $collection = new AssetCollection(array(), array(), $assetRootPath);
-        $collection->setTargetPath($this->targetPath);
-        $manager = new AssetManager();
+        $uniqueAssets = array();
         $stringAssetCounter = 0;
 
         foreach ($inputs as $input) {
             if ($input instanceof StringAsset) {
-                $name = 'stringasset_' . $stringAssetCounter++;
-                $manager->set($name, $input);
+                $uniqueKey = 'stringasset_' . $stringAssetCounter++;
+                $uniqueAssets[$uniqueKey] = $input;
             } else {
                 $fileAsset = $this->makeFileAsset($input);
-                $fileAsset->setTargetPath($this->targetPath);
-                $name = str_replace(array('@', 'Resources/public/'), '', $input);
-                $name = str_replace(array('/', '.', '-'), '__', $name);
-                $manager->set($name, $fileAsset);
+                $fileAsset->setTargetPath($targetPath);
+                $uniqueKey = str_replace(array('@', 'Resources/public/'), '', $input);
+                $uniqueKey = str_replace(array('/', '.', '-'), '__', $uniqueKey);
+                $uniqueAssets[$uniqueKey] = $fileAsset;
             }
         }
 
-        // Finally, wrap everything into a single asset collection
-        foreach($manager->getNames() as $name) {
-            $collection->add($manager->get($name));
-        }
+        $collection = new AssetCollection($uniqueAssets, array(), $assetRootPath);
+        $collection->setTargetPath($targetPath);
 
         return $collection;
     }

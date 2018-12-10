@@ -341,16 +341,17 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
                 }
             }
         }
+        $vsHandler = new VendorSpecificHandler();
         $vendorSpecific = array();
-        foreach ($instance->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            /* add to url only simple vendor specific with valid default value */
-            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
-                $vendorSpecific[] = $handler->getConfiguration();
-                $help             = $handler->getKvpConfiguration(null);
-                $effectiveUrl = UrlUtil::validateUrl($effectiveUrl, $help, array());
+        foreach ($instance->getVendorspecifics() as $vendorspec) {
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $vsHandler->isVendorSpecificValueValid($vendorspec)) {
+                $vendorSpecific[] = $vendorspec->getConfiguration();
             }
-        }
+        };
+        // Add only non-user-specific params to url
+        $defaultVsParams = $vsHandler->getPublicParams($instance, null);
+        $effectiveUrl = UrlUtil::validateUrl($effectiveUrl, $defaultVsParams, array());
+
         $rootLayer = $instance->getRootlayer();
         $boundingBoxMap = array();
         foreach ($rootLayer->getSourceItem()->getMergedBoundingBoxes() as $bbox) {

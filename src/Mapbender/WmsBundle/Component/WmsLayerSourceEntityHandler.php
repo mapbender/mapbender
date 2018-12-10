@@ -34,9 +34,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
      */
     public function save()
     {
-        /** @var ObjectManager $manager */
-        $manager = $this->container->get('doctrine')->getManager();
-        $this->persistRecursive($manager, $this->entity);
+        $this->persistRecursive($this->getEntityManager(), $this->entity);
     }
 
     /**
@@ -86,7 +84,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
         if ($wmslayer->getSource()) {
             $wmslayer->getSource()->getLayers()->removeElement($wmslayer);
         }
-        $this->container->get('doctrine')->getManager()->remove($wmslayer);
+        $this->getEntityManager()->remove($wmslayer);
     }
 
     /**
@@ -95,7 +93,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
     public function update(SourceItem $itemNew)
     {
         $prio = $this->entity->getPriority();
-        $manager = $this->container->get('doctrine')->getManager();
+        $manager = $this->getEntityManager();
         $classMeta = $manager->getClassMetadata(EntityUtil::getRealClass($this->entity));
         // set attribute values from $itemNew
         foreach ($classMeta->getFieldNames() as $fieldName) {
@@ -139,7 +137,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
                 $lay = $this->cloneLayer(
                     $this->entity->getSource(),
                     $subItemNew,
-                    $this->container->get('doctrine')->getManager(),
+                    $manager,
                     $this->entity
                 );
                 $lay->setPriority($prio + $num);
@@ -154,7 +152,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
                 $lay = $this->addLayer(
                     $this->entity->getSource(),
                     $subItemNew,
-                    $this->container->get('doctrine')->getManager(),
+                    $manager,
                     $this->entity
                 );
                 $lay->setPriority($prio + $num);
@@ -184,7 +182,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
     private function cloneLayer(
         WmsSource $wms,
         WmsLayerSource $toClone,
-        $entityManager,
+        ObjectManager $entityManager,
         WmsLayerSource $parentForCloned = null
     ) {
         $cloned = clone $toClone;
@@ -220,7 +218,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
     private function addLayer(
         WmsSource $wms,
         WmsLayerSource $toClone,
-        $entityManager,
+        ObjectManager $entityManager,
         WmsLayerSource $parent = null
     ) {
         $cloned = clone $toClone;

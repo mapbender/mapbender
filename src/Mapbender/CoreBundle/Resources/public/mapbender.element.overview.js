@@ -5,9 +5,6 @@
             layerset: []
         },
         overview: null,
-        layersOrigExtents: {},
-        mapOrigExtents: {},
-        startproj: null,
 
         /**
          * Creates the overview
@@ -29,21 +26,11 @@
             var mbMap = $('#' + options.target).data('mapbenderMbMap');
             var model = mbMap.model;
             var element = $(widget.element);
-            var mapMaxExtent = model.mapMaxExtent;
-            var projection = mapMaxExtent.projection;
-            var maxExtent = mapMaxExtent.extent;
+            var projection = model.map.olMap.projection;
+            var maxExtent = model.map.olMap.maxExtent;
             var overviewLayers = [];
             var layerSet = Mapbender.configuration.layersets[options.layerset];
             var overviewContainer = $('.overviewContainer', widget.element).get(0);
-
-            widget.mapOrigExtents = {
-                max: {
-                    projection: projection,
-                    extent: maxExtent
-                }
-            };
-
-            widget.startproj = projection;
 
             element.addClass(options.anchor);
 
@@ -57,7 +44,6 @@
                     });
 
                     overviewLayers.push(wmsLayer);
-                    widget._addOrigLayerExtent(layerDef);
                 });
             });
 
@@ -72,7 +58,7 @@
                 size: new OpenLayers.Size(options.width, options.height),
                 //maximized: widget.options.maximized,
                 mapOptions: {
-                    maxExtent: maxExtent,
+                    maxExtent: (maxExtent && maxExtent.clone()) || null,
                     projection: projection,
                     theme: null
                 }
@@ -147,71 +133,42 @@
         },
 
         /**
-         * Transforms an extent into 'projection' projection.
-         */
-        _transformExtent: function(extentObj, projection){
-            if(extentObj.extent != null){
-                if(extentObj.projection.projCode == projection.projCode){
-                    return extentObj.extent.clone();
-                }else{
-                    var newextent = extentObj.extent.clone();
-                    newextent.transform(extentObj.projection, projection);
-                    return newextent;
-                }
-            }else{
-                return null;
-            }
-        },
-
-        /**
          * Cahnges the overview srs
          */
         _changeSrs: function(event, srs) {
+            console.log("Overview changesrs event", event, srs);
             var widget = this;
             var overview = widget.overview;
+            /**
+             * @type {null|OpenLayers.Map}
+             */
             var ovMap = overview.ovmap;
-            var oldProj = ovMap.projection;
+            var oldProj = ovMap.getProjectionObject();
+            if (oldProj.projCode === srs.projection.projCode) {
+                return;
+            }
             var center = ovMap.getCenter().transform(oldProj, srs.projection);
 
             ovMap.projection = srs.projection;
             ovMap.displayProjection = srs.projection;
             ovMap.units = srs.projection.proj.units;
-            ovMap.maxExtent = widget._transformExtent(widget.mapOrigExtents.max, srs.projection);
+            if (ovMap.maxExtent) {
+                ovMap.maxExtent = ovMap.maxExtent.clone();
+                ovMap.maxExtent.transform(oldProj, srs.projection);
+            }
 
             $.each(ovMap.layers, function(idx, layer) {
                 layer.projection = srs.projection;
                 layer.units = srs.projection.proj.units;
-                if(!widget.layersOrigExtents[layer.id]) {
-                    widget._addOrigLayerExtent(layer);
-                }
-                if(layer.maxExtent && layer.maxExtent != widget.overview.ovmap.maxExtent) {
-                    layer.maxExtent = widget._transformExtent(widget.layersOrigExtents[layer.id].max, srs.projection);
+                if (layer.maxExtent) {
+                    layer.maxExtent = layer.maxExtent.clone();
+                    layer.maxExtent.transform(oldProj, srs.projection);
                 }
                 layer.initResolutions();
             });
+            console.log("New overview params", center, ovMap.getZoom());
 
-            overview.update();
             ovMap.setCenter(center, ovMap.getZoom(), false, true);
-        },
-
-        /**
-         * Adds a layer's original extent into the widget layersOrigExtent.
-         */
-        _addOrigLayerExtent: function(layer) {
-            var widget = this;
-            var extents = widget.layersOrigExtents;
-
-            if(layer.olLayer) {
-                layer = layer.olLayer;
-            }
-            if(!extents[layer.id]) {
-                extents[layer.id] = {
-                    max: {
-                        projection: widget.startproj,
-                        extent:     layer.maxExtent ? layer.maxExtent.clone() : null
-                    }
-                };
-            }
         },
 
         /**

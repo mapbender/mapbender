@@ -607,9 +607,6 @@
                (callbackConf.options.maxScale || callbackConf.options.minScale)){
 
                 var res = map.getResolutionForZoom(zoom);
-                var units = map.baseLayer.units;
-                var scale = OpenLayers.Util.getScaleFromResolution(res, units);
-
 
                 if(callbackConf.options.maxScale){
                     var maxRes = OpenLayers.Util.getResolutionFromScale(

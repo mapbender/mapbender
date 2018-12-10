@@ -1,13 +1,9 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
-use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
-use Mapbender\WmsBundle\Component\Dimension;
 
 /**
  * Description of SourceInstanceEntityHandler
@@ -18,9 +14,6 @@ use Mapbender\WmsBundle\Component\Dimension;
  */
 abstract class SourceInstanceEntityHandler extends EntityHandler
 {
-    /** @var InstanceTunnelService */
-    protected $tunnel;
-
     /**
      * @param array $configuration
      * @return SourceInstance
@@ -34,7 +27,22 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * If the source is already bound to the instance....
      */
     abstract public function create();
-    
+
+    /**
+     * @inheritdoc
+     * @deprecated Should be inlined to controller. All instance types can use the same logic
+     * @see \Mapbender\WmsBundle\Controller\RepositoryController::deleteInstanceAction()
+     * @see \Mapbender\WmsBundle\Controller\RepositoryController::deleteAction()
+     */
+    public function remove()
+    {
+        $entityManager = $this->getEntityManager();
+        $application = $this->entity->getLayerset()->getApplication();
+        $application->setUpdated(new \DateTime('now'));
+        $entityManager->persist($application);
+        $entityManager->remove($this->entity);
+    }
+
     /**
      * Update instance parameters
      */
@@ -47,25 +55,18 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function getConfiguration(Signer $signer);
     
     /**
-     * Generates an instance configuration
+     * Does nothing, returns nothing, is never called
+     * @deprecated
      */
-    abstract public function generateConfiguration();
-    
-    /**
-     * Returns an array with sensitive vendor specific parameters
-     */
-    abstract public function getSensitiveVendorSpecific();
+    public function generateConfiguration()
+    {
+    }
 
     /**
-     * @return Endpoint
+     * Returns ALL vendorspecific parameters, NOT just the hidden ones
+     * @return string[]
      */
-    protected function getTunnel()
-    {
-        if (!$this->tunnel) {
-            $this->tunnel = $this->getService()->makeTunnelEndpoint($this->entity);
-        }
-        return $this->tunnel;
-    }
+    abstract public function getSensitiveVendorSpecific();
 
     /**
      * Returns a source config generating service appropriate for the bound source instance (polymorphic).
