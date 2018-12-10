@@ -3,10 +3,6 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
 use Mapbender\PrintBundle\Component\Export\Box;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use OwsProxy3\CoreBundle\Component\ProxyQuery;
-use OwsProxy3\CoreBundle\Component\CommonProxy;
 
 /**
  * Mapbender3 Print Service.
@@ -19,7 +15,6 @@ class PrintService extends ImageExportService
     protected $pdf;
     protected $conf;
     protected $rotation;
-    protected $resourceDir;
     protected $finalImageName;
     protected $user;
 
@@ -31,6 +26,8 @@ class PrintService extends ImageExportService
     protected $targetBox;
     /** @var Box */
     protected $canvasBox;
+    /** @var array */
+    protected $data;
 
     /**
      * @var array Default geometry style
@@ -74,11 +71,34 @@ class PrintService extends ImageExportService
         return $unrotatedBox->getExpandedForRotation(intval($jobData['rotation']));
     }
 
+    protected function preprocessRasterUrl($layerDef, $width, $height)
+    {
+        $request = strstr($layerDef['url'], '&BBOX', true);
+
+        $widthParam = '&WIDTH=' . abs($this->canvasBox->getWidth());
+        $heightParam =  '&HEIGHT=' . abs($this->canvasBox->getHeight());
+
+        $mExt = $this->mapRequestBox;
+        if (!empty($layerDef['changeAxis'])){
+            $request .= '&BBOX=' . $mExt->bottom . ',' . $mExt->left . ',' . $mExt->top . ',' . $mExt->right;
+        } else {
+            $request .= '&BBOX=' . $mExt->left . ',' . $mExt->bottom . ',' . $mExt->right . ',' . $mExt->top;
+        }
+
+        $request .= $widthParam . $heightParam;
+
+        if (!isset($this->data['replace_pattern'])){
+            if ($this->data['quality'] != '72') {
+                $request .= '&map_resolution=' . $this->data['quality'];
+            }
+        } else {
+            $request = $this->addReplacePattern($request, $this->data['quality']);
+        }
+        return $request;
+    }
+
     private function setup($data)
     {
-        // resource dir
-        $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-
         $this->user      = $data['user'];
 
         // data from client
@@ -95,71 +115,26 @@ class PrintService extends ImageExportService
         $this->targetBox = new Box(0, $targetHeight, $targetWidth, 0);
         $this->canvasBox = $this->initializeCanvasBox($data);
         $this->featureTransform = Affine2DTransform::boxToBox($this->mapRequestBox, $this->canvasBox);
-
-        // map requests array
-        $this->mapRequests = array();
-        foreach ($data['layers'] as $i => $layer) {
-            if ($layer['type'] != 'wms') {
-                continue;
-            }
-            $request = strstr($layer['url'], '&BBOX', true);
-
-
-            $width = '&WIDTH=' . abs($this->canvasBox->getWidth());
-            $height =  '&HEIGHT=' . abs($this->canvasBox->getHeight());
-
-            $mExt = $this->mapRequestBox;
-            if (!empty($layer['changeAxis'])){
-                $request .= '&BBOX=' . $mExt->bottom . ',' . $mExt->left . ',' . $mExt->top . ',' . $mExt->right;
-            } else {
-                $request .= '&BBOX=' . $mExt->left . ',' . $mExt->bottom . ',' . $mExt->right . ',' . $mExt->top;
-            }
-
-            $request .= $width . $height;
-
-            if(!isset($this->data['replace_pattern'])){
-                if ($this->data['quality'] != '72') {
-                    $request .= '&map_resolution=' . $this->data['quality'];
-                }
-            }
-
-            $this->mapRequests[$i] = $request;
-        }
-
-        if(isset($this->data['replace_pattern'])){
-            $this->addReplacePattern();
-        }
         $this->rotation = intval($data['rotation']);
     }
 
-    private function addReplacePattern()
+    private function addReplacePattern($url, $dpi)
     {
-        $quality = $this->data['quality'];
         $default = '';
-        foreach ($this->mapRequests as $k => $url) {
-            foreach ($this->data['replace_pattern'] as $rKey => $pattern) {
-                if(isset($pattern['default'])){
-                    if(isset($pattern['default'][$quality])){
-                        $default = $pattern['default'][$quality];
-                    }
-                    continue;
+        foreach ($this->data['replace_pattern'] as $pattern) {
+            if (isset($pattern['default'])){
+                if (isset($pattern['default'][$dpi])){
+                    $default = $pattern['default'][$dpi];
                 }
-                if(strpos($url,$pattern['pattern']) === false){
-                    continue;
+            } elseif (strpos($url, $pattern['pattern']) !== false){
+                if (isset($pattern['replacement'][$dpi])){
+                    $url = str_replace($pattern['pattern'], $pattern['replacement'][$dpi], $url);
+                    $signer = $this->container->get('signer');
+                    return $signer->signUrl($url);
                 }
-                if(strpos($url,$pattern['pattern']) !== false){
-                    if(isset($pattern['replacement'][$quality])){
-                        $url = str_replace($pattern['pattern'], $pattern['replacement'][$quality], $url);
-                        $signer = $this->container->get('signer');
-                        $this->mapRequests[$k] = $signer->signUrl($url);
-                        continue 2;
-                    }
-                }
-
             }
-            $url .= $default;
-            $this->mapRequests[$k] = $url;
         }
+        return $url . $default;
     }
 
     private function createMapImage()
@@ -167,60 +142,38 @@ class PrintService extends ImageExportService
         $rotation = $this->rotation;
         $neededImageWidth = abs($this->canvasBox->getWidth());
         $neededImageHeight = abs($this->canvasBox->getHeight());
+        $targetImage = $this->buildExportImage(array(
+            'layers' => $this->data['layers'],
+            'width' => $neededImageWidth,
+            'height' => $neededImageHeight,
+        ));
 
-        $imageNames = $this->getImages($neededImageWidth,$neededImageHeight);
-
-        // create temp merged image
-        $tempImageName = $this->makeTempFile('mb_print_temp');
-        $tempImage = imagecreatetruecolor($neededImageWidth, $neededImageHeight);
-        $bg = imagecolorallocate($tempImage, 255, 255, 255);
-        imagefilledrectangle($tempImage, 0, 0, $neededImageWidth, $neededImageHeight, $bg);
-        imagepng($tempImage, $tempImageName);
-
-        foreach ($imageNames as $imageName) {
-            // Note: suppressing the errors IS bad, bad PHP wants us to do it that way
-            $src = imagecreatefrompng($imageName);
-            // Check that imagecreatefrompng did yield something
-            if ($src) {
-                $dest = imagecreatefrompng($tempImageName);
-                imagecopy($dest, $src, 0, 0, 0, 0, $neededImageWidth,
-                    $neededImageHeight);
-                imagepng($dest, $tempImageName);
-                unlink($imageName);
-            }
-        }
-
-        // draw features
-        $this->finalImageName = $tempImageName;
-        $this->drawFeatures();
-
+        $this->finalImageName = $this->makeTempFile('mb_print_final');
         if ($rotation) {
-            $clippedImage = $this->rotateAndCrop($tempImageName, $rotation);
-            unlink($tempImageName);
-            $this->finalImageName = $this->makeTempFile('mb_print_final');
+            $clippedImage = $this->rotateAndCrop($targetImage, $rotation);
             imagepng($clippedImage, $this->finalImageName);
+            imagedestroy($clippedImage);
+            imagedestroy($targetImage);
+        } else {
+            imagepng($targetImage, $this->finalImageName);
+            imagedestroy($targetImage);
         }
     }
 
     /**
-     * @param string $sourceImageName
+     * @param resource GDish $sourceImage
      * @param number $rotation
      * @return resource GD image
      */
-    protected function rotateAndCrop($sourceImageName, $rotation)
+    protected function rotateAndCrop($sourceImage, $rotation)
     {
         $imageWidth = $this->targetBox->getWidth();
         $imageHeight = abs($this->targetBox->getHeight());
 
-        // rotate temp image
-        $tempImage2 = imagecreatefrompng($sourceImageName);
-        $transColor = imagecolorallocatealpha($tempImage2, 255, 255, 255, 127);
-        $rotatedImage = imagerotate($tempImage2, $rotation, $transColor);
+        $transColor = imagecolorallocatealpha($sourceImage, 255, 255, 255, 127);
+        $rotatedImage = imagerotate($sourceImage, $rotation, $transColor);
         imagealphablending($rotatedImage, false);
         imagesavealpha($rotatedImage, true);
-        $rotatedImageName = $this->makeTempFile('mb_print_rotated');
-        imagepng($rotatedImage, $rotatedImageName);
-        unlink($rotatedImageName);
 
         $offsetX = (imagesx($rotatedImage) - $this->targetBox->getWidth()) * 0.5;
         $offsetY = (imagesy($rotatedImage) - abs($this->targetBox->getHeight())) * 0.5;
@@ -230,34 +183,9 @@ class PrintService extends ImageExportService
         imagesavealpha($clippedImage, true);
         imagecopy($clippedImage, $rotatedImage, 0, 0, $offsetX, $offsetY,
             $imageWidth, $imageHeight);
+        imagedestroy($rotatedImage);
+        unset($rotatedImage);
         return $clippedImage;
-    }
-
-    private function getImages($width, $height)
-    {
-        $logger        = $this->getLogger();
-        $imageNames    = array();
-        foreach ($this->mapRequests as $i => $url) {
-            $this->getLogger()->debug("Print Request Nr.: " . $i . ' ' . $url);
-
-            $mapRequestResponse = $this->mapRequest($url);
-
-            $imageName    = $this->makeTempFile('mb_print');
-            $rawImage = $this->serviceResponseToGdImage($imageName, $mapRequestResponse);
-
-            if (!$rawImage) {
-                $logger->warning("Print request produced no valid image response, skipping layer", array(
-                    'url' => $url,
-                ));
-                $logger->debug($mapRequestResponse->getContent());
-                unlink($imageName);
-                continue;
-            } else {
-                $imageNames[] = $imageName;
-                $this->forceToRgba($imageName, $rawImage, $this->data['layers'][$i]['opacity']);
-            }
-        }
-        return $imageNames;
     }
 
     private function buildPdf()
@@ -278,7 +206,7 @@ class PrintService extends ImageExportService
 
         $template = $this->data['template'];
         $pdfFile = $this->resourceDir . '/templates/' . $template . '.pdf';
-        $pageCount = $pdf->setSourceFile($pdfFile);
+        $pdf->setSourceFile($pdfFile);
         $tplidx = $pdf->importPage(1);
         $pdf->SetAutoPageBreak(false);
         $pdf->addPage($orientation, $format);
@@ -444,8 +372,8 @@ class PrintService extends ImageExportService
         $quality = $this->data['quality'];
         $ovImageWidth = round($this->conf['overview']['width'] / 25.4 * $quality);
         $ovImageHeight = round($this->conf['overview']['height'] / 25.4 * $quality);
-        $width = '&WIDTH=' . $ovImageWidth;
-        $height = '&HEIGHT=' . $ovImageHeight;
+        $widthParam = '&WIDTH=' . $ovImageWidth;
+        $heightParam = '&HEIGHT=' . $ovImageHeight;
         // gd pixel coords are top down!
         $ovPixelBox = new Box(0, $ovImageHeight, $ovImageWidth, 0);
         $centerx = $ovData['center']['x'];
@@ -463,48 +391,23 @@ class PrintService extends ImageExportService
             $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
         }
 
-        // get images
-        $tempNames = array();
-        $logger = $this->getLogger();
+        $image = $this->makeBlank($ovImageWidth, $ovImageHeight);
         foreach ($ovData['layers'] as $i => $layerUrl) {
             $url = strstr($layerUrl, '&BBOX', true);
-            $url .= $bbox . $width . $height;
-
-            $logger->debug("Print Overview Request Nr.: " . $i . ' ' . $url);
-
-            $overviewRequestResponse = $this->mapRequest($url);
-            $imageName = $this->makeTempFile('mb_print');
-            $tempNames[] = $imageName;
-            $im = $this->serviceResponseToGdImage($imageName, $overviewRequestResponse);
-
-            if ($im !== null) {
-                imagesavealpha($im, true);
-                imagepng($im, $imageName);
+            $url .= $bbox . $widthParam . $heightParam;
+            $layerImage = $this->downloadImage($url);
+            if ($layerImage) {
+                imagecopyresampled($image, $layerImage,
+                    0, 0, 0, 0,
+                    $ovImageWidth, $ovImageHeight,
+                    imagesx($layerImage), imagesy($layerImage));
+                imagedestroy($layerImage);
+                unset($layerImage);
+            } else {
+                $this->getLogger()->warn("Failed overview request to {$url}");
             }
         }
 
-        // create final merged image
-        $finalImageName = $this->makeTempFile('mb_print_merged');
-        $finalImage = imagecreatetruecolor($ovImageWidth, $ovImageHeight);
-        $bg = imagecolorallocate($finalImage, 255, 255, 255);
-        imagefilledrectangle($finalImage, 0, 0, $ovImageWidth,
-            $ovImageHeight, $bg);
-        imagepng($finalImage, $finalImageName);
-        foreach ($tempNames as $tempName) {
-            // Note: suppressing the errors IS bad, bad PHP wants us to do it that way
-            $src = imagecreatefrompng($tempName);
-            // Check that imagecreatefrompng did yield something
-            if ($src) {
-                $dest = imagecreatefrompng($finalImageName);
-                $src = imagecreatefrompng($tempName);
-                imagecopy($dest, $src, 0, 0, 0, 0, $ovImageWidth,
-                    $ovImageHeight);
-                imagepng($dest, $finalImageName);
-            }
-            unlink($tempName);
-        }
-
-        $image = imagecreatefrompng($finalImageName);
         $ovTransform = Affine2DTransform::boxToBox($ovProjectedBox, $ovPixelBox);
 
         $points = array(
@@ -520,22 +423,24 @@ class PrintService extends ImageExportService
         imageline ( $image, $points[2]['x'], $points[2]['y'], $points[3]['x'], $points[3]['y'], $red);
         imageline ( $image, $points[3]['x'], $points[3]['y'], $points[0]['x'], $points[0]['y'], $red);
 
-        imagepng($image, $finalImageName);
+        $tempPath = $this->makeTempFile('mb_print_temp_overview');
+        imagepng($image, $tempPath);
 
         // add image to pdf
-        $this->pdf->Image($finalImageName,
+        $this->pdf->Image($tempPath,
                     $this->conf['overview']['x'],
                     $this->conf['overview']['y'],
                     $this->conf['overview']['width'],
                     $this->conf['overview']['height'],
                     'png');
+        unlink($tempPath);
+
         // draw border rectangle
         $this->pdf->Rect($this->conf['overview']['x'],
                          $this->conf['overview']['y'],
                          $this->conf['overview']['width'],
                          $this->conf['overview']['height']);
 
-        unlink($finalImageName);
     }
 
     private function addScaleBar()
@@ -652,18 +557,6 @@ class PrintService extends ImageExportService
         $featureType = $featureTypeService->get($schemaName);
         $feature = $featureType->get($featureId);
         return $feature;
-    }
-
-    private function getColor($color, $alpha, $image)
-    {
-        list($r, $g, $b) = CSSColorParser::parse($color);
-
-        if(0 == $alpha) {
-            return imagecolorallocate($image, $r, $g, $b);
-        } else {
-            $a = (1 - $alpha) * 127.0;
-            return imagecolorallocatealpha($image, $r, $g, $b, $a);
-        }
     }
 
     private function getResizeFactor()
@@ -835,27 +728,26 @@ class PrintService extends ImageExportService
         }
     }
 
-    private function drawFeatures()
+    /**
+     * Seemingly redundant override is necessary because the drawSomething methods are all private...
+     *
+     * @param resource $image
+     * @param mixed[] $vectorLayers
+     */
+    protected function drawFeatures($image, $vectorLayers)
     {
-        $image = imagecreatefrompng($this->finalImageName);
         imagesavealpha($image, true);
         imagealphablending($image, true);
 
-        foreach ($this->data['layers'] as $idx => $layer) {
-            if ('GeoJSON+Style' !== $layer['type']) {
-                continue;
-            }
-
+        foreach ($vectorLayers as $layer) {
             foreach ($layer['geometries'] as $geometry) {
                 $renderMethodName = 'draw' . $geometry['type'];
                 if (!method_exists($this, $renderMethodName)) {
                     continue;
-                    //throw new \RuntimeException('Can not draw geometries of type "' . $geometry['type'] . '".');
                 }
                 $this->$renderMethodName($geometry, $image);
             }
         }
-        imagepng($image, $this->finalImageName);
     }
 
     private function addLegend()
@@ -895,7 +787,7 @@ class PrintService extends ImageExportService
                 }
 
                 $image = $this->getLegendImage($legendUrl);
-                if (false === @imagecreatefromstring(@file_get_contents($image))) {
+                if (!$image) {
                     continue;
                 }
                 $size  = getimagesize($image);
@@ -1006,31 +898,15 @@ class PrintService extends ImageExportService
 
     private function getLegendImage($url)
     {
-
-        $url      = urldecode($url);
-        $parsed   = parse_url($url);
-        $host = isset($parsed['host']) ? $parsed['host'] : $this->container->get('request')->getHttpHost();
-        $hostpath = $host . $parsed['path'];
-        $pos      = strpos($hostpath, $this->urlHostPath);
-        if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-            $attributes = $this->container->get('router')->match($routeStr);
-            $gets       = array();
-            parse_str($parsed['query'], $gets);
-            $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
-            $response   = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-            $imagename  = $this->makeTempFile('mb_printlegend');
-            file_put_contents($imagename, $response->getContent());
+        $imagename = $this->makeTempFile('mb_printlegend');
+        $image = $this->downloadImage($url);
+        if ($image) {
+            imagepng($image, $imagename);
+            imagedestroy($image);
+            return $imagename;
         } else {
-            $proxy_config    = $this->container->getParameter("owsproxy.proxy");
-            $proxy_query     = ProxyQuery::createFromUrl($url);
-            $proxy           = new CommonProxy($proxy_config, $proxy_query);
-            $browserResponse = $proxy->handle();
-
-            $imagename = $this->makeTempFile('mb_printlegend');
-            file_put_contents($imagename, $browserResponse->getContent());
+            return null;
         }
-
-        return $imagename;
     }
 
 
@@ -1063,8 +939,8 @@ class PrintService extends ImageExportService
     /**
      * Get geometry style
      *
-     * @param string $geometry Geometry
-     * @return array Style
+     * @param mixed[] $geometry
+     * @return array
      */
     private function getStyle($geometry)
     {

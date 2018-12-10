@@ -10,8 +10,6 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Psr\Log\LoggerInterface;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
-use OwsProxy3\CoreBundle\Component\WmsProxy;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Image export service.
@@ -26,10 +24,8 @@ class ImageExportService
     protected $tempDir;
     /** @var string */
     protected $urlHostPath;
-    /** @var array */
-    protected $data;
-    /** @var string[] plain WMS URLs */
-    protected $mapRequests = array();
+    /** @var string */
+    protected $resourceDir;
 
     /** @var Affine2DTransform */
     protected $featureTransform;
@@ -37,6 +33,7 @@ class ImageExportService
     public function __construct($container)
     {
         $this->container = $container;
+        $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $this->tempDir = sys_get_temp_dir();
         # Extract URL base path so we can later decide to let Symfony handle internal requests or make proper
         # HTTP connections.
@@ -59,33 +56,55 @@ class ImageExportService
         return $logger;
     }
 
+    protected function buildExportImage($jobData)
+    {
+        $mapImage = $this->makeBlank($jobData['width'], $jobData['height']);
+        $this->addLayers($mapImage, $jobData['layers'], $jobData['width'], $jobData['height']);
+        return $mapImage;
+    }
+
+    /**
+     * @param string $format
+     * @return string
+     */
+    public function getMimetype($format)
+    {
+        switch ($format) {
+            case 'png':
+                return 'image/png';
+            case 'jpeg':
+            case 'jpg':
+                return 'image/jpeg';
+            default:
+                throw new \InvalidArgumentException("Unsupported format $format");
+        }
+    }
+
     /**
      * Builds a png image and emits it directly to the browser
      *
      * @param string $content the job description in valid JSON
      * @return void
+     * @deprecated
      *
      * @todo: converting from JSON encoding is controller responsibility
      * @todo: emitting to browser is controller responsibility
      */
     public function export($content)
     {
+        $jobData = json_decode($content, true);
         // Clean up internally modified / collected state
-        $this->mapRequests = array();
-        $this->data = json_decode($content, true);
-
-        $this->featureTransform = $this->initializeFeatureTransform($this->data);
-
-        foreach ($this->data['requests'] as $i => $layer) {
-            if ($layer['type'] != 'wms') {
-                continue;
-            }
-            $this->mapRequests[$i] = $layer['url'];
+        $this->featureTransform = $this->initializeFeatureTransform($jobData);
+        $layers = $jobData['requests'];
+        if (!empty($jobData['vectorLayers'])) {
+            $layers = array_merge($layers, $jobData['vectorLayers']);
         }
+        unset($jobData['requests']);
+        unset($jobData['vectorLayers']);
+        $jobData['layers'] = $layers;
+        $image = $this->buildExportImage($jobData);
 
-        $imagePath = $this->getImages();
-        $this->emitImageToBrowser($imagePath);
-        unlink($imagePath);
+        $this->emitImageToBrowser($image, $jobData['format']);
     }
 
     /**
@@ -94,96 +113,96 @@ class ImageExportService
      */
     protected function initializeFeatureTransform($jobData)
     {
-        $map_width = $this->data['extentwidth'];
-        $map_height = $this->data['extentheight'];
-        $centerx = $this->data['centerx'];
-        $centery = $this->data['centery'];
-
-        $minX = $centerx - $map_width * 0.5;
-        $minY = $centery - $map_height * 0.5;
-        $maxX = $centerx + $map_width * 0.5;
-        $maxY = $centery + $map_height * 0.5;
-
+        $projectedBox = Box::fromCenterAndSize(
+            $jobData['centerx'], $jobData['centery'],
+            $jobData['extentwidth'], $jobData['extentheight']);
         $pixelBox = new Box(0, $jobData['height'], $jobData['width'], 0);
-        $projectedBox = new Box($minX, $minY, $maxX, $maxY);
         return Affine2DTransform::boxToBox($projectedBox, $pixelBox);
+    }
+
+    /**
+     * @param int $width
+     * @param int $height
+     * @return resource GDish
+     */
+    protected function makeBlank($width, $height)
+    {
+        $image = imagecreatetruecolor($width, $height);
+        $bg = imagecolorallocate($image, 255, 255, 255);
+        imagefilledrectangle($image, 0, 0, $width, $height, $bg);
+        imagecolordeallocate($image, $bg);
+        return $image;
     }
 
     /**
      * Collect and merge WMS tiles and vector layers into a PNG file.
      *
-     * @return string path to merged PNG file
+     * @param resource $targetImage GDish
+     * @param mixed[] $layers
+     * @param int $width
+     * @param int $height
+     * @return resource GDish
      */
-    private function getImages()
+    protected function addLayers($targetImage, $layers, $width, $height)
     {
-        $temp_names = array();
-        foreach ($this->mapRequests as $k => $url) {
-            
-            $url = strstr($url, '&WIDTH', true);
-            $width = '&WIDTH=' . $this->data['width'];
-            $height = '&HEIGHT=' . $this->data['height'];
-            $url .= $width . $height;
-            
-            $this->getLogger()->debug("Image Export Request Nr.: " . $k . ' ' . $url);
-
-            $mapRequestResponse = $this->mapRequest($url);
-
-            $imagename = $this->makeTempFile('mb_imgexp');
-            $temp_names[] = $imagename;
-            $rawImage = $this->serviceResponseToGdImage($imagename, $mapRequestResponse);
-
-
-            if ($rawImage !== null) {
-                $this->forceToRgba($imagename, $rawImage, $this->data['requests'][$k]['opacity']);
-                $width = imagesx($rawImage);
-                $height = imagesy($rawImage);
+        foreach ($layers as $k => $layerDef) {
+            if (!empty($layerDef['url'])) {
+                $this->addRasterLayer($targetImage, $layerDef, $width, $height);
+            } elseif ($layerDef['type'] === 'GeoJSON+Style') {
+                $this->drawFeatures($targetImage, array($layerDef));
             }
         }
-        // create final merged image
-        $finalImageName = $this->makeTempFile('mb_imgexp_merged');
-        $mergedImage = imagecreatetruecolor($width, $height);
-        $bg = imagecolorallocate($mergedImage, 255, 255, 255);
-        imagefilledrectangle($mergedImage, 0, 0, $width, $height, $bg);
-        imagepng($mergedImage, $finalImageName);
-        foreach ($temp_names as $temp_name) {
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
-                $dest = imagecreatefrompng($finalImageName);
-                $src = imagecreatefrompng($temp_name);
-                imagecopy($dest, $src, 0, 0, 0, 0, $width, $height);
-                imagepng($dest, $finalImageName);
-            }
-            unlink($temp_name);
-            finfo_close($finfo);
-        }
+        return $targetImage;
+    }
 
-        if (isset($this->data['vectorLayers'])) {
-            $this->drawFeatures($finalImageName);
+    protected function preprocessRasterUrl($layerDef, $width, $height)
+    {
+        $url = strstr($layerDef['url'], '&WIDTH', true);
+        $url .= "&WIDTH={$width}&HEIGHT={$height}";
+        return $url;
+    }
+
+    protected function addRasterLayer($targetImage, $layerDef, $width, $height)
+    {
+        if (empty($layerDef['url'])) {
+                return;
         }
-        return $finalImageName;
+        $url = $this->preprocessRasterUrl($layerDef, $width, $height);
+
+        $layerImage = $this->downloadImage($url, $layerDef['opacity']);
+        if ($layerImage) {
+            imagecopyresampled($targetImage, $layerImage,
+                0, 0, 0, 0,
+                $width, $height,
+                imagesx($layerImage), imagesy($layerImage));
+            imagedestroy($layerImage);
+            unset($layerImage);
+        } else {
+            $this->getLogger()->warn("Failed request to {$url}");
+        }
     }
 
     /**
      * Convert a GD image to true-color RGBA and write it back to the file
      * system.
      *
-     * @param string $imageName will be overwritten
-     * @param resource $imageResource source image
+     * @param resource $input source image
      * @param float $opacity in [0;1]
+     * @return resource GDish
      */
-    protected function forceToRgba($imageName, $imageResource, $opacity)
+    protected function forceToRgba($input, $opacity)
     {
-        $width = imagesx($imageResource);
-        $height = imagesy($imageResource);
+        $width = imagesx($input);
+        $height = imagesy($input);
 
         // Make sure input image is truecolor with alpha, regardless of input mode!
         $image = imagecreatetruecolor($width, $height);
         imagealphablending($image, false);
         imagesavealpha($image, true);
-        imagecopyresampled($image, $imageResource, 0, 0, 0, 0, $width, $height, $width, $height);
+        imagecopyresampled($image, $input, 0, 0, 0, 0, $width, $height, $width, $height);
 
-        // Taking the painful way to alpha blending. Stupid PHP-GD
-        if (1.0 !== $opacity) {
+        // Taking the painful way to alpha blending
+        if ($opacity < 1) {
             for ($x = 0; $x < $width; $x++) {
                 for ($y = 0; $y < $height; $y++) {
                     $colorIn = imagecolorsforindex($image, imagecolorat($image, $x, $y));
@@ -200,7 +219,23 @@ class ImageExportService
                 }
             }
         }
-        imagepng($image, $imageName);
+        return $image;
+    }
+
+    /**
+     * @param string $url
+     * @param float $opacity
+     * @return resource|null GDish
+     */
+    protected function downloadImage($url, $opacity=1.0)
+    {
+        $response = $this->mapRequest($url);
+        $image = @imagecreatefromstring($response->getContent());
+        if ($image) {
+            return $this->forceToRgba($image, $opacity);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -226,24 +261,8 @@ class ImageExportService
             $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
         } else {
             $proxyQuery = ProxyQuery::createFromUrl($url);
-            try {
-                $serviceType = strtolower($proxyQuery->getServiceType());
-            } catch (\Exception $e) {
-                // fired when null "content" is loaded as an XML document...
-                $serviceType = null;
-            }
             $proxyConfig = $this->container->getParameter('owsproxy.proxy');
-            switch ($serviceType) {
-                case "wms":
-                    /** @var EventDispatcherInterface $eventDispatcher */
-                    $eventDispatcher = $this->container->get('event_dispatcher');
-                    $proxy = new WmsProxy($eventDispatcher, $proxyConfig, $proxyQuery, $this->getLogger());
-                    break;
-                default:
-                    $proxy = new CommonProxy($proxyConfig, $proxyQuery, $this->getLogger());
-                    break;
-            }
-            /** @var \Buzz\Message\Response $buzzResponse */
+            $proxy = new CommonProxy($proxyConfig, $proxyQuery, $this->getLogger());
             $buzzResponse = $proxy->handle();
             $response = $this->convertBuzzResponse($buzzResponse);
         }
@@ -278,74 +297,43 @@ class ImageExportService
     }
 
     /**
-     * Converts a http response to a GD image, respecting the mimetype.
-     *
-     * @param string $storagePath for temp file storage
-     * @param Response $response
-     * @return resource|null GD image or null on failure
+     * @param resource $image GDish
+     * @param string $format
      */
-    protected function serviceResponseToGdImage($storagePath, $response)
+    protected function emitImageToBrowser($image, $format)
     {
-        file_put_contents($storagePath, $response->getContent());
-        $contentType = trim($response->headers->get('content-type'));
-        switch ($contentType) {
-            case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
-                return imagecreatefrompng($storagePath);
-                break;
-            case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
-                return imagecreatefromjpeg($storagePath);
-                break;
-            case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
-                return imagecreatefromgif($storagePath);
-                break;
-            default:
-                return null;
-                $this->getLogger()->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
-            //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
-        }
-    }
-
-    /**
-     * @param string $imagePath
-     */
-    protected function emitImageToBrowser($imagePath)
-    {
-        $finalImage = imagecreatefrompng($imagePath);
-        if ($this->data['format'] == 'png') {
+        if ($format == 'png') {
             header("Content-type: image/png");
             header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".png");
             //header('Content-Length: ' . filesize($file));
-            imagepng($finalImage);
+            imagepng($image);
         } else {
             header("Content-type: image/jpeg");
             header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".jpg");
             //header('Content-Length: ' . filesize($file));
-            imagejpeg($finalImage, null, 85);
+            imagejpeg($image, null, 85);
         }
     }
 
-    private function drawFeatures($finalImageName)
+    protected function drawFeatures($image, $vectorLayers)
     {
-        $image = imagecreatefrompng($finalImageName);
         imagesavealpha($image, true);
         imagealphablending($image, true);
 
-        foreach($this->data['vectorLayers'] as $idx => $layer) {
+        foreach ($vectorLayers as $idx => $layer) {
             foreach($layer['geometries'] as $geometry) {
                 $renderMethodName = 'draw' . $geometry['type'];
 
                 if(!method_exists($this, $renderMethodName)) {
                     continue;
-                    //throw new \RuntimeException('Can not draw geometries of type "' . $geometry['type'] . '".');
                 }
 
                 $this->$renderMethodName($geometry, $image);
             }
         }
-        imagepng($image, $finalImageName);
     }
 
-    private function getColor($color, $alpha, $image)
+    protected function getColor($color, $alpha, $image)
     {
         list($r, $g, $b) = CSSColorParser::parse($color);
 
@@ -446,7 +434,7 @@ class ImageExportService
             // draw label with white halo
             $color = $this->getColor('#ff0000', 1, $image);
             $bgcolor = $this->getColor('#ffffff', 1, $image);
-            $fontPath = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle/fonts/';
+            $fontPath = "{$this->resourceDir}/fonts/";
             $font = $fontPath . 'OpenSans-Bold.ttf';
             imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
             imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
