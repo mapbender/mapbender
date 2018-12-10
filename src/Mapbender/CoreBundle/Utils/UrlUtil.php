@@ -1,6 +1,9 @@
 <?php
 namespace Mapbender\CoreBundle\Utils;
 
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
+
 /**
  * Description of UrlUtil
  *
@@ -61,5 +64,36 @@ class UrlUtil
             $newurl .= '?' . implode("&", $help);
         }
         return $newurl;
+    }
+
+    /**
+     * Matches the given $url against configured routes and, on match, returns the routing
+     * params (including extracted attributes, but also _route and _controller)
+     * @see UrlMatcherInterface::match
+     *
+     * @param UrlMatcherInterface $matcher
+     * @param string $url
+     * @param bool $anyHost to require the same hostname as in the current request context
+     * @return array|null
+     */
+    public static function routeParamsFromUrl(UrlMatcherInterface $matcher, $url, $anyHost = false)
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+        $path = parse_url($url, PHP_URL_PATH);
+        $routerContext = $matcher->getContext();
+        if (!$anyHost && $host && $host !== $routerContext->getHost()) {
+            return null;
+        }
+        // To support installation in non-name-vhost / non-root configs, strip context base url first.
+        // Context base commonly looks like ~'/somedir/mapender/local-fun-version/app_dev.php'
+        if (0 === strpos($path, $routerContext->getBaseUrl())) {
+            $path = '/' . ltrim(substr($path, strlen($routerContext->getBaseUrl())), '/');
+        }
+        try {
+            return $matcher->match($path);
+        } catch (ResourceNotFoundException $e) {
+            // no match
+            return null;
+        }
     }
 }

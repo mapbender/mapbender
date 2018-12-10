@@ -12,7 +12,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         }
         var layerNames = [];
 
-        var options = sourceDef.configuration.options;
         Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layer, index, parents) {
             /* set unic id for a layer */
             if (mangleIds) {
@@ -23,13 +22,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
                     layer.options.origId = layer.options.id;
                 }
             }
-            if(options.proxy && layer.options.legend && !options.tunnel) {
-                if(layer.options.legend.graphic) {
-                    layer.options.legend.graphic = Mapbender.Util.addProxy(layer.options.legend.graphic);
-                } else if(layer.options.legend.url) {
-                    layer.options.legend.url = Mapbender.Util.addProxy(layer.options.legend.url);
-                }
-            }
             if (!layer.children) {
                 layerNames.push(layer.options.name);
             }
@@ -38,10 +30,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         Mapbender.Geo.layerOrderMap["" + sourceDef.id] = layerNames;
         var finalUrl = sourceDef.configuration.options.url;
         
-        if(sourceDef.configuration.options.proxy === true && !sourceDef.configuration.options.tunnel) {
-            finalUrl = Mapbender.Util.addProxy(finalUrl);
-        }
-
         var mqLayerDef = {
             type: 'wms',
             wms_parameters: {
@@ -262,10 +250,10 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             return null;
         }
     },
-    getPrintConfig: function(layer, bounds, isProxy){
+    getPrintConfig: function(layer, bounds) {
         var printConfig = {
             type: 'wms',
-            url: isProxy ? Mapbender.Util.removeProxy(layer.getURL(bounds)) : layer.getURL(bounds)
+            url: Mapbender.Util.removeProxy(layer.getURL(bounds))
         };
         return printConfig;
     }

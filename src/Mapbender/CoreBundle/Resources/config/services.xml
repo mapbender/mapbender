@@ -22,8 +22,10 @@
         <parameter key="mapbender.element_factory.service.class">Mapbender\CoreBundle\Component\ElementFactory</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
         <parameter key="mapbender.yaml_application_importer.service.class">Mapbender\CoreBundle\Component\YamlApplicationImporter</parameter>
+        <parameter key="mapbender.source.url_processor.service.class">Mapbender\CoreBundle\Component\Source\UrlProcessor</parameter>
         <parameter key="mapbender.strict">false</parameter>
         <parameter key="mapbender.strict.element_api">%mapbender.strict%</parameter>
+        <parameter key="owsproxy.baseroute">owsproxy3_core_owsproxy_entrypoint</parameter>
     </parameters>
 
     <services>
@@ -136,6 +138,12 @@
             <call method="setDefaultService">
                 <argument>mapbender.source.default.service</argument>
             </call>
+        </service>
+        <service id="mapbender.source.url_processor.service" class="%mapbender.source.url_processor.service.class%">
+            <argument type="service" id="router" />
+            <argument type="service" id="signer" />
+            <argument type="service" id="mapbender.source.instancetunnel.service" />
+            <argument>%owsproxy.baseroute%</argument>
         </service>
         <service id="mapbender.element_factory.service" class="%mapbender.element_factory.service.class%">
             <argument key="translator" type="service" id="translator" />

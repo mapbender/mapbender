@@ -3,11 +3,11 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**

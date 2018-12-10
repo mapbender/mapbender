@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
@@ -90,7 +91,11 @@ class Endpoint
         $baseUrl = $this->getInternalBaseUrl($request);
         if ($baseUrl) {
             $hiddenParams = $this->service->getHiddenParams($this->instance);
-            $params = array_replace($hiddenParams, $request->query->all());
+            $requestParams = $request->query->all();
+            if (strtolower(ArrayUtil::getDefaultCaseInsensitive($requestParams, 'request', null)) === 'getlegendgraphic') {
+                unset($requestParams['_glgmode']);
+            }
+            $params = array_replace($hiddenParams, $requestParams);
             return UrlUtil::validateUrl($baseUrl, $params);
         } else {
             return null;

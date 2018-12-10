@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -139,23 +140,21 @@ class InstanceTunnelService
      */
     public function matchUrl($url, $localOnly = false)
     {
-        $host = parse_url($url, PHP_URL_HOST);
-        $path = parse_url($url, PHP_URL_PATH);
-        $routerContext = $this->router->getContext();
-        if ($localOnly && $host && $host !== $routerContext->getHost()) {
+        $routerMatch = UrlUtil::routeParamsFromUrl($this->router, $url, !$localOnly);
+        if ($routerMatch) {
+            return $this->matchRouteParams($routerMatch);
+        } else {
             return null;
         }
-        // To support installation in non-name-vhost / non-root configs, strip context base url first.
-        // Context base commonly looks like ~'/somedir/mapender/local-fun-version/app_dev.php'
-        if (0 === strpos($path, $routerContext->getBaseUrl())) {
-            $path = '/' . trim(substr($path, strlen($routerContext->getBaseUrl())), '/');
-        }
-        try {
-            $routerMatch = $this->router->match($path);
-        } catch (ResourceNotFoundException $e) {
-            // no match, not an error
-            return null;
-        }
+    }
+
+    /**
+     * @param mixed[] $routerMatch return value from UrlMatcherInterface::match
+     * @return Endpoint|null
+     * @throws SourceNotFoundException if route matched but entity missing from db repository
+     */
+    public function matchRouteParams($routerMatch)
+    {
         if ($routerMatch['_route'] === $this->tunnelRouteName) {
             $instanceId = $routerMatch['instanceId'];
             $repository = $this->entityManager->getRepository('MapbenderCoreBundle:SourceInstance');

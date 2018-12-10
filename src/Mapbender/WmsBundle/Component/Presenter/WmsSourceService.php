@@ -93,14 +93,17 @@ class WmsSourceService extends SourceService
     {
         $vsHandler = new VendorSpecificHandler();
         if ($sourceInstance->getSource()->getUsername() || $vsHandler->hasHiddenParams($sourceInstance)) {
-            $url = $this->makeTunnelEndpoint($sourceInstance)->getPublicBaseUrl();
+            $url = $this->urlProcessor->getPublicTunnelBaseUrl($sourceInstance);
             $configuration['options']['url'] = $url;
             // remove ows proxy for a tunnel connection
             $configuration['options']['tunnel'] = true;
-        } elseif ($this->signer) {
-            $configuration['options']['url'] = $this->signer->signUrl($configuration['options']['url']);
+        } else {
             if ($sourceInstance->getProxy()) {
-                $this->signLayerUrls($configuration['children'][0]);
+                $configuration['options']['url'] = $this->urlProcessor->proxifyUrl($configuration['options']['url']);
+                $configuration['children'][0] = $this->proxifyLayerUrls($configuration['children'][0]);
+            } else {
+                // Don't proxify, but do provide signature to allow OpenLayers to bypass CORB
+                $configuration['options']['url'] = $this->urlProcessor->signUrl($configuration['options']['url']);
             }
         }
         return $configuration;

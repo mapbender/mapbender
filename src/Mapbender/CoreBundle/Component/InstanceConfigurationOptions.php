@@ -111,24 +111,6 @@ abstract class InstanceConfigurationOptions extends ConfigurationBase
     }
 
     /**
-     * Sings a url
-     *
-     * @param Signer $signer
-     * @return bool transparency
-     *
-     * @deprecated this should be a getter, not a mutator, if it should exist at all here. URL signing is presentation
-     * layer.
-     * @internal
-     * @todo: find callers
-     */
-    public function signUrl(Signer $signer = null)
-    {
-        if ($signer) {
-            $this->url = $signer->signUrl($this->url);
-        }
-    }
-
-    /**
      * Returns InstanceConfigurationOptions as array
      * @return array
      */
