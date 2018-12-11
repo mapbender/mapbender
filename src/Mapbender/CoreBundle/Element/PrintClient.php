@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Doctrine\Common\Collections\Collection;
+use FOM\UserBundle\Entity\Group;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -10,6 +12,8 @@ use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  *
@@ -284,7 +288,7 @@ class PrintClient extends Element
         if (isset($data['legends'])) {
             $data['legends'] = $this->prepareLegends($data['legends']);
         }
-        $data['user'] = $this->getUser();
+        $data = $data + $this->getUserSpecifics();
         return $data;
     }
 
@@ -340,6 +344,48 @@ class PrintClient extends Element
             }
         };
         return $legendDefsOut;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getUserSpecifics()
+    {
+        /** @var TokenStorageInterface $tokenStorage */
+        $tokenStorage = $this->container->get('security.token_storage');
+        $token = $tokenStorage->getToken();
+        if ($token && !$token instanceof AnonymousToken) {
+            try {
+                /** @var Collection|Group[] $groups */
+                $groups = $token->getUser()->getGroups();
+                if ($groups && count($groups)) {
+                    return array(
+                        'legendpage_image' => array(
+                            'type' => 'resource',
+                            'path' => 'images/' . $groups[0]->getTitle() . '.png',
+                        ),
+                        'dynamic_image' => array(
+                            'type' => 'resource',
+                            'path' => 'images/' . $groups[0]->getTitle() . '.png',
+                        ),
+                        'dynamic_text' => array(
+                            'type' => 'text',
+                            'text' => $groups[0]->getDescription(),
+                        ),
+                    );
+                }
+
+            } catch (\Exception $e) {
+                // wrong user entity type, nothing we can do (fall through to default)
+            }
+        }
+        // return default fallback for legendpage_image, nothing for dynamic_image and dynamic_text
+        return array(
+            'legendpage_image' => array(
+                'type' => 'resource',
+                'path' => 'images/legendpage_image.png',
+            ),
+        );
     }
 
     /**

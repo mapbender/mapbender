@@ -17,7 +17,6 @@ class PrintService extends ImageExportService
     protected $conf;
     protected $rotation;
     protected $finalImageName;
-    protected $user;
 
     /** @var Affine2DTransform */
     protected $featureTransform;
@@ -90,8 +89,6 @@ class PrintService extends ImageExportService
 
     private function setup($data)
     {
-        $this->user      = $data['user'];
-
         // data from client
         $this->data = $data;
 
@@ -280,14 +277,12 @@ class PrintService extends ImageExportService
         }
 
         // add dynamic logo
-        if (isset($this->conf['dynamic_image']) && $this->conf['dynamic_image']){
+        if (!empty($this->conf['dynamic_image']) && !empty($this->data['dynamic_image'])) {
             $this->addDynamicImage();
         }
 
         // add dynamic text
-        if (isset($this->conf['fields'])
-            && isset($this->conf['fields']['dynamic_text'])
-            && $this->conf['fields']['dynamic_text']){
+        if (!empty($this->conf['fields']['dynamic_text']) && !empty($this->data['dynamic_text'])) {
             $this->addDynamicText();
         }
 
@@ -480,18 +475,7 @@ class PrintService extends ImageExportService
 
     private function addDynamicImage()
     {
-        if (!$this->user || $this->user == 'anon.') {
-            return;
-        }
-
-        $groups = $this->user->getGroups();
-        $group = $groups[0];
-
-        if(!isset($group)){
-            return;
-        }
-
-        $dynImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png';
+        $dynImage = $this->resourceDir . '/' . $this->data['dynamic_image']['path'];
         if(file_exists ($dynImage)){
             $this->pdf->Image($dynImage,
                             $this->conf['dynamic_image']['x'],
@@ -506,22 +490,10 @@ class PrintService extends ImageExportService
 
     private function addDynamicText()
     {
-        if (!$this->user || $this->user == 'anon.'){
-            return;
-        }
-
-        $groups = $this->user->getGroups();
-        $group = $groups[0];
-
-        if(!isset($group)){
-            return;
-        }
-
         $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
         $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
                 $this->conf['fields']['dynamic_text']['height'],
-                utf8_decode($group->getDescription()));
-
+                utf8_decode($this->data['dynamic_text']['text']));
     }
 
     private function getFeature($schemaName, $featureId)
@@ -885,20 +857,7 @@ class PrintService extends ImageExportService
 
     private function addLegendPageImage()
     {
-
-        $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
-
-        if (!$this->user || $this->user == 'anon.') {
-            $legendpageImage = $this->resourceDir . '/images/' . 'legendpage_image'. '.png';
-        }else{
-          $groups = $this->user->getGroups();
-          $group = $groups[0];
-
-          if(isset($group)){
-              $legendpageImage = $this->resourceDir . '/images/' . $group->getTitle() . '.png';
-          }
-        }
-
+        $legendpageImage = $this->resourceDir . '/' . $this->data['legendpage_image']['path'];
         if(file_exists ($legendpageImage)){
             $this->pdf->Image($legendpageImage,
                             $this->conf['legendpage_image']['x'],
