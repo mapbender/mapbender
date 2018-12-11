@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Element\ImageExport;
@@ -158,9 +159,10 @@ class ImageExportService
 
     protected function preprocessRasterUrl($layerDef, $width, $height)
     {
-        $url = strstr($layerDef['url'], '&WIDTH', true);
-        $url .= "&WIDTH={$width}&HEIGHT={$height}";
-        return $url;
+        return UrlUtil::validateUrl($layerDef['url'], array(
+            'width' => $width,
+            'height' => $height,
+        ));
     }
 
     protected function addRasterLayer($targetImage, $layerDef, $width, $height)

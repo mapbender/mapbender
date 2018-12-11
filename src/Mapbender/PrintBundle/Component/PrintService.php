@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
 use Mapbender\PrintBundle\Component\Export\Box;
 
@@ -73,19 +74,18 @@ class PrintService extends ImageExportService
 
     protected function preprocessRasterUrl($layerDef, $width, $height)
     {
-        $request = strstr($layerDef['url'], '&BBOX', true);
-
-        $widthParam = '&WIDTH=' . abs($this->canvasBox->getWidth());
-        $heightParam =  '&HEIGHT=' . abs($this->canvasBox->getHeight());
+        $newParams = array(
+            'width' => abs($this->canvasBox->getWidth()),
+            'height' => abs($this->canvasBox->getHeight()),
+        );
 
         $mExt = $this->mapRequestBox;
         if (!empty($layerDef['changeAxis'])){
-            $request .= '&BBOX=' . $mExt->bottom . ',' . $mExt->left . ',' . $mExt->top . ',' . $mExt->right;
+            $newParams['bbox'] = $mExt->bottom . ',' . $mExt->left . ',' . $mExt->top . ',' . $mExt->right;
         } else {
-            $request .= '&BBOX=' . $mExt->left . ',' . $mExt->bottom . ',' . $mExt->right . ',' . $mExt->top;
+            $newParams['bbox'] = $mExt->left . ',' . $mExt->bottom . ',' . $mExt->right . ',' . $mExt->top;
         }
-
-        $request .= $widthParam . $heightParam;
+        $request = UrlUtil::validateUrl($layerDef['url'], $newParams);
 
         if (!isset($this->data['replace_pattern'])){
             if ($this->data['quality'] != '72') {
@@ -372,8 +372,6 @@ class PrintService extends ImageExportService
         $quality = $this->data['quality'];
         $ovImageWidth = round($this->conf['overview']['width'] / 25.4 * $quality);
         $ovImageHeight = round($this->conf['overview']['height'] / 25.4 * $quality);
-        $widthParam = '&WIDTH=' . $ovImageWidth;
-        $heightParam = '&HEIGHT=' . $ovImageHeight;
         // gd pixel coords are top down!
         $ovPixelBox = new Box(0, $ovImageHeight, $ovImageWidth, 0);
         $centerx = $ovData['center']['x'];
@@ -385,16 +383,19 @@ class PrintService extends ImageExportService
         $maxX = $centerx + $ovWidth * 0.5;
         $maxY = $centery + $ovHeight * 0.5;
         $ovProjectedBox = new Box($minX, $minY, $maxX, $maxY);
+        $newParams = array(
+            'width' => $ovImageWidth,
+            'height' => $ovImageHeight,
+        );
         if (!empty($ovData['changeAxis'])) {
-            $bbox = '&BBOX=' . $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
+            $newParams['bbox'] = $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
         } else {
-            $bbox = '&BBOX=' . $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
+            $newParams['bbox'] = $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
         }
 
         $image = $this->makeBlank($ovImageWidth, $ovImageHeight);
         foreach ($ovData['layers'] as $i => $layerUrl) {
-            $url = strstr($layerUrl, '&BBOX', true);
-            $url .= $bbox . $widthParam . $heightParam;
+            $url = UrlUtil::validateUrl($layerUrl, $newParams);
             $layerImage = $this->downloadImage($url);
             if ($layerImage) {
                 imagecopyresampled($image, $layerImage,
