@@ -4,9 +4,7 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Psr\Log\LoggerInterface;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -23,8 +21,6 @@ class ImageExportService
     /** @var string */
     protected $tempDir;
     /** @var string */
-    protected $urlHostPath;
-    /** @var string */
     protected $resourceDir;
 
     /** @var Affine2DTransform */
@@ -35,15 +31,6 @@ class ImageExportService
         $this->container = $container;
         $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $this->tempDir = sys_get_temp_dir();
-        # Extract URL base path so we can later decide to let Symfony handle internal requests or make proper
-        # HTTP connections.
-        # NOTE: This is only possible in web, not CLI
-        if (php_sapi_name() != "cli") {
-            $request = $this->container->get('request');
-            $this->urlHostPath = $request->getHttpHost() . $request->getBaseURL();
-        } else {
-            $this->urlHostPath = null;
-        }
     }
 
     /**
@@ -276,27 +263,11 @@ class ImageExportService
      */
     protected function mapRequest($url)
     {
-        // find urls from this host (tunnel connection for secured services)
-        $parsed   = parse_url($url);
-        $host = isset($parsed['host']) ? $parsed['host'] : $this->container->get('request')->getHttpHost();
-        $hostpath = $host . $parsed['path'];
-        $pos      = strpos($hostpath, $this->urlHostPath);
-        if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-            $attributes = $this->container->get('router')->match($routeStr);
-            $gets       = array();
-            parse_str($parsed['query'], $gets);
-            $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
-            /** @var HttpKernelInterface $kernel */
-            $kernel = $this->container->get('http_kernel');
-            $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-        } else {
-            $proxyQuery = ProxyQuery::createFromUrl($url);
-            $proxyConfig = $this->container->getParameter('owsproxy.proxy');
-            $proxy = new CommonProxy($proxyConfig, $proxyQuery, $this->getLogger());
-            $buzzResponse = $proxy->handle();
-            $response = $this->convertBuzzResponse($buzzResponse);
-        }
-        return $response;
+        $proxyQuery = ProxyQuery::createFromUrl($url);
+        $proxyConfig = $this->container->getParameter('owsproxy.proxy');
+        $proxy = new CommonProxy($proxyConfig, $proxyQuery, $this->getLogger());
+        $buzzResponse = $proxy->handle();
+        return $this->convertBuzzResponse($buzzResponse);
     }
 
     /**

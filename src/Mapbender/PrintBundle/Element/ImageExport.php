@@ -3,8 +3,12 @@
 namespace Mapbender\PrintBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\ImageExportService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  *
@@ -110,7 +114,7 @@ class ImageExport extends Element
         switch ($action) {
             case 'export':
                 $request = $this->container->get('request');
-                $data = json_decode($request->get('data'), true);
+                $data = $this->prepareJobData($request, $this->entity->getConfiguration());
                 $format = $data['format'];
                 $exportservice = $this->getExportService();
                 $image = $exportservice->runJob($data);
@@ -118,9 +122,22 @@ class ImageExport extends Element
                     'Content-Disposition' => 'attachment; filename=export_' . date('YmdHis') . ".{$format}",
                     'Content-Type' => $exportservice->getMimetype($format),
                 ));
-
-                $exportservice->export($data);
+            default:
+                throw new BadRequestHttpException("No such action");
         }
+    }
+
+    protected function prepareJobData(Request $request, $configuration)
+    {
+        $data = json_decode($request->get('data'), true);
+        // resolve tunnel requests
+        $processor = $this->getUrlProcessor();
+        foreach (ArrayUtil::getDefault($data, 'layers', array()) as $ix => $layerData) {
+            if (!empty($layerData['url'])) {
+                $data['layers'][$ix]['url'] = $processor->getInternalUrl($layerData['url']);
+            }
+        }
+        return $data;
     }
 
     /**
@@ -130,5 +147,15 @@ class ImageExport extends Element
     {
         $exportServiceClassName = $this->container->getParameter('mapbender.imageexport.service.class');
         return new $exportServiceClassName($this->container);
+    }
+
+    /**
+     * @return UrlProcessor
+     */
+    protected function getUrlProcessor()
+    {
+        /** @var UrlProcessor $service */
+        $service = $this->container->get('mapbender.source.url_processor.service');
+        return $service;
     }
 }
