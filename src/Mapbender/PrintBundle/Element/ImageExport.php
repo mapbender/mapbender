@@ -120,7 +120,7 @@ class ImageExport extends Element
                 $image = $exportservice->runJob($data);
                 return new Response($exportservice->dumpImage($image, $data['format']), 200, array(
                     'Content-Disposition' => 'attachment; filename=export_' . date('YmdHis') . ".{$format}",
-                    'Content-Type' => $exportservice->getMimetype($format),
+                    'Content-Type' => $this->getMimetype($format),
                 ));
             default:
                 throw new BadRequestHttpException("No such action");
@@ -138,6 +138,23 @@ class ImageExport extends Element
             }
         }
         return $data;
+    }
+
+    /**
+     * @param string $format
+     * @return string
+     */
+    public static function getMimetype($format)
+    {
+        switch ($format) {
+            case 'png':
+                return 'image/png';
+            case 'jpeg':
+            case 'jpg':
+                return 'image/jpeg';
+            default:
+                throw new \InvalidArgumentException("Unsupported format $format");
+        }
     }
 
     /**

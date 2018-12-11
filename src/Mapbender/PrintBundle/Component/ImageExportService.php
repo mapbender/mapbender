@@ -3,6 +3,7 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
 use Mapbender\PrintBundle\Component\Export\Box;
+use Mapbender\PrintBundle\Element\ImageExport;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Psr\Log\LoggerInterface;
@@ -77,23 +78,6 @@ class ImageExportService
             throw $e;
         }
         return ob_get_clean();
-    }
-
-    /**
-     * @param string $format
-     * @return string
-     */
-    public function getMimetype($format)
-    {
-        switch ($format) {
-            case 'png':
-                return 'image/png';
-            case 'jpeg':
-            case 'jpg':
-                return 'image/jpeg';
-            default:
-                throw new \InvalidArgumentException("Unsupported format $format");
-        }
     }
 
     /**
@@ -300,11 +284,12 @@ class ImageExportService
     /**
      * @param resource $image GDish
      * @param string $format
+     * @deprecated service layer should never do http
      */
     protected function emitImageToBrowser($image, $format)
     {
         $fileName = "export_" . date("YmdHis") . ($format === 'png' ? ".png" : 'jpg');
-        header("Content-Type: " . $this->getMimetype($format));
+        header("Content-Type: " . ImageExport::getMimetype($format));
         header("Content-Disposition: attachment; filename={$fileName}");
         echo $this->dumpImage($image, $format);
     }
@@ -330,13 +315,8 @@ class ImageExportService
     protected function getColor($color, $alpha, $image)
     {
         list($r, $g, $b) = CSSColorParser::parse($color);
-
-        if(0 == $alpha) {
-            return imagecolorallocate($image, $r, $g, $b);
-        } else {
-            $a = (1 - $alpha) * 127.0;
-            return imagecolorallocatealpha($image, $r, $g, $b, $a);
-        }
+        $a = (1 - $alpha) * 127.0;
+        return imagecolorallocatealpha($image, $r, $g, $b, $a);
     }
 
     private function drawPolygon($geometry, $image)

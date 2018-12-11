@@ -447,60 +447,14 @@
             return data;
         },
         _submitJob: function(jobData) {
-            var form = $('form#formats', this.element);
-            var fields = $();
-            var appendField = function(name, value) {
-                $.merge(fields, $('<input />', {
-                    type: 'hidden',
-                    name: name,
-                    value: value
-                }));
-            };
-            _.forEach(jobData, function(value, key) {
-                if (value === null || typeof value === 'undefined') {
-                    return;
-                }
-                switch (key) {
-                    case 'legends':
-                        if ($('input[name="printLegend"]',form).prop('checked')) {
-                            appendField(key, JSON.stringify(value));
-                        }
-                        break;
-                    case 'extent_feature':
-                        appendField(key, JSON.stringify(value));
-                        break;
-                    default:
-                        if ($.isArray(value)) {
-                            for (var i = 0; i < value.length; ++i) {
-                                switch (key) {
-                                    case 'layers':
-                                        appendField('' + key + '[' + i + ']', JSON.stringify(value[i]));
-                                        break;
-                                    default:
-                                        appendField('' + key + '[' + i + ']', value[i]);
-                                        break;
-                                }
-                            }
-                        } else if (typeof value === 'string') {
-                            appendField(key, value);
-                        } else if (Object.keys(value).length) {
-                            if (key === 'overview') {
-                                appendField('' + key, JSON.stringify(value));
-                            } else {
-                                Object.keys(value).map(function(k) {
-                                    appendField('' + key + '['+k+']', value[k]);
-                                });
-                            }
-                        } else {
-                            appendField(key, value);
-                        }
-                        break;
-                }
-            });
-            $('div#layers', form).empty();
-            fields.appendTo(form.find('div#layers'));
-
-            form.find('input[type="submit"]').click();
+            var $form = $('form#formats', this.element);
+            var $hiddenArea = $('div#layers', $form);
+            $hiddenArea.empty();
+            var submitValue = JSON.stringify(jobData);
+            var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
+            $input.val(submitValue);
+            $input.appendTo($hiddenArea);
+            $form.find('input[type="submit"]').click();
         },
         _print: function() {
             var jobData = this._collectJobData();
