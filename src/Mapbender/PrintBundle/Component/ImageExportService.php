@@ -56,11 +56,40 @@ class ImageExportService
         return $logger;
     }
 
+    /**
+     * @param array $jobData
+     * @return resource
+     */
     protected function buildExportImage($jobData)
     {
         $mapImage = $this->makeBlank($jobData['width'], $jobData['height']);
         $this->addLayers($mapImage, $jobData['layers'], $jobData['width'], $jobData['height']);
         return $mapImage;
+    }
+
+    /**
+     * @param resource $image GDish
+     * @param string $format
+     */
+    public function dumpImage($image, $format)
+    {
+        ob_start();
+        try {
+            switch ($format) {
+                case 'png':
+                    imagepng($image);
+                    break;
+                case 'jpeg':
+                case 'jpg':
+                default:
+                    imagejpeg($image, null, 85);
+                    break;
+            }
+        } catch (\Exception $e) {
+            ob_end_clean();
+            throw $e;
+        }
+        return ob_get_clean();
     }
 
     /**
@@ -81,6 +110,16 @@ class ImageExportService
     }
 
     /**
+     * @param array $jobData
+     * @return resource GDish
+     */
+    public function runJob(array $jobData)
+    {
+        $this->featureTransform = $this->initializeFeatureTransform($jobData);
+        return $this->buildExportImage($jobData);
+    }
+
+    /**
      * Builds a png image and emits it directly to the browser
      *
      * @param string $content the job description in valid JSON
@@ -93,16 +132,14 @@ class ImageExportService
     public function export($content)
     {
         $jobData = json_decode($content, true);
-        // Clean up internally modified / collected state
-        $this->featureTransform = $this->initializeFeatureTransform($jobData);
-        $image = $this->buildExportImage($jobData);
-
+        $image = $this->runJob($jobData);
         $this->emitImageToBrowser($image, $jobData['format']);
     }
 
     /**
      * @param $jobData
      * @return Affine2DTransform
+     * @todo: do this without using an instance attribute
      */
     protected function initializeFeatureTransform($jobData)
     {
@@ -295,17 +332,10 @@ class ImageExportService
      */
     protected function emitImageToBrowser($image, $format)
     {
-        if ($format == 'png') {
-            header("Content-type: image/png");
-            header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".png");
-            //header('Content-Length: ' . filesize($file));
-            imagepng($image);
-        } else {
-            header("Content-type: image/jpeg");
-            header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".jpg");
-            //header('Content-Length: ' . filesize($file));
-            imagejpeg($image, null, 85);
-        }
+        $fileName = "export_" . date("YmdHis") . ($format === 'png' ? ".png" : 'jpg');
+        header("Content-Type: " . $this->getMimetype($format));
+        header("Content-Disposition: attachment; filename={$fileName}");
+        echo $this->dumpImage($image, $format);
     }
 
     protected function drawFeatures($image, $vectorLayers)

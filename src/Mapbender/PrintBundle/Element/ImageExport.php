@@ -3,7 +3,8 @@
 namespace Mapbender\PrintBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\PrintBundle\Component\ImageExportService;;
+use Mapbender\PrintBundle\Component\ImageExportService;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -107,11 +108,17 @@ class ImageExport extends Element
     public function httpAction($action)
     {
         switch ($action) {
-
             case 'export':
                 $request = $this->container->get('request');
-                $data = $request->get('data');
+                $data = json_decode($request->get('data'), true);
+                $format = $data['format'];
                 $exportservice = $this->getExportService();
+                $image = $exportservice->runJob($data);
+                return new Response($exportservice->dumpImage($image, $data['format']), 200, array(
+                    'Content-Disposition' => 'attachment; filename=export_' . date('YmdHis') . ".{$format}",
+                    'Content-Type' => $exportservice->getMimetype($format),
+                ));
+
                 $exportservice->export($data);
         }
     }
