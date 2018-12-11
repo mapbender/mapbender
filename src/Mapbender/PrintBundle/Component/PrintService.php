@@ -85,16 +85,7 @@ class PrintService extends ImageExportService
         } else {
             $newParams['bbox'] = $mExt->left . ',' . $mExt->bottom . ',' . $mExt->right . ',' . $mExt->top;
         }
-        $request = UrlUtil::validateUrl($layerDef['url'], $newParams);
-
-        if (!isset($this->data['replace_pattern'])){
-            if ($this->data['quality'] != '72') {
-                $request .= '&map_resolution=' . $this->data['quality'];
-            }
-        } else {
-            $request = $this->addReplacePattern($request, $this->data['quality']);
-        }
-        return $request;
+        return UrlUtil::validateUrl($layerDef['url'], $newParams);
     }
 
     private function setup($data)
@@ -116,25 +107,6 @@ class PrintService extends ImageExportService
         $this->canvasBox = $this->initializeCanvasBox($data);
         $this->featureTransform = Affine2DTransform::boxToBox($this->mapRequestBox, $this->canvasBox);
         $this->rotation = intval($data['rotation']);
-    }
-
-    private function addReplacePattern($url, $dpi)
-    {
-        $default = '';
-        foreach ($this->data['replace_pattern'] as $pattern) {
-            if (isset($pattern['default'])){
-                if (isset($pattern['default'][$dpi])){
-                    $default = $pattern['default'][$dpi];
-                }
-            } elseif (strpos($url, $pattern['pattern']) !== false){
-                if (isset($pattern['replacement'][$dpi])){
-                    $url = str_replace($pattern['pattern'], $pattern['replacement'][$dpi], $url);
-                    $signer = $this->container->get('signer');
-                    return $signer->signUrl($url);
-                }
-            }
-        }
-        return $url . $default;
     }
 
     private function createMapImage()

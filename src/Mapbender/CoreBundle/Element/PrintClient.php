@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
@@ -259,16 +260,25 @@ class PrintClient extends Element
             unset($data['data']);
             $data = array_replace($data, json_decode($d0, true));
         }
-
-        $data['layers'] = $this->prepareLayerDefinitions($data['layers']);
-        if (isset($data['overview'])) {
-            $data['overview'] = $this->prepareOverview($data['overview']);
+        $urlProcessor = $this->getUrlProcessor();
+        foreach ($data['layers'] as $ix => $layerDef) {
+            if (!empty($layerDef['url'])) {
+                $updatedUrl = $urlProcessor->getInternalUrl($layerDef['url']);
+                if (!isset($configuration['replace_pattern'])) {
+                    if ($data['quality'] != 72) {
+                        $updatedUrl = UrlUtil::validateUrl($updatedUrl, array(
+                            'map_resolution' => $data['quality'],
+                        ));
+                    }
+                } else {
+                    $updatedUrl = $this->addReplacePattern($updatedUrl, $configuration['replace_pattern'], $data['quality']);
+                }
+                $data['layers'][$ix]['url'] = $updatedUrl;
+            }
         }
 
-        if (isset($configuration['replace_pattern'])) {
-            foreach ($configuration['replace_pattern'] as $idx => $value) {
-                $data['replace_pattern'][$idx] = $value;
-            }
+        if (isset($data['overview'])) {
+            $data['overview'] = $this->prepareOverview($data['overview']);
         }
 
         if (isset($data['legends'])) {
@@ -290,21 +300,28 @@ class PrintClient extends Element
     }
 
     /**
-     * @param array[] $layerDefs
-     * @return mixed[][]
-     * @throws \InvalidArgumentException
+     * Apply "replace_pattern" backend configuration to given $url, either
+     * rewriting a part of it or appending something, depending on $dpi
+     * value.
+     *
+     * @param string $url
+     * @param array $rplConfig
+     * @param int $dpi
+     * @return string updated $url
      */
-    protected function prepareLayerDefinitions($layerDefs)
+    protected function addReplacePattern($url, $rplConfig, $dpi)
     {
-        $urlProcessor = $this->getUrlProcessor();
-        $layerDefsOut = array();
-        foreach ($layerDefs as $layerDef) {
-            if (!empty($layerDef['url'])) {
-                $layerDef['url'] = $urlProcessor->getInternalUrl($layerDef['url']);
+        foreach ($rplConfig as $pattern) {
+            if (isset($pattern['default'][$dpi])) {
+                return $url . $pattern['default'][$dpi];
+            } elseif (strpos($url, $pattern['pattern']) !== false) {
+                if (isset($pattern['replacement'][$dpi])){
+                    return str_replace($pattern['pattern'], $pattern['replacement'][$dpi], $url);
+                }
             }
-            $layerDefsOut[] = $layerDef;
         }
-        return $layerDefsOut;
+        // no match, no change
+        return $url;
     }
 
     /**
