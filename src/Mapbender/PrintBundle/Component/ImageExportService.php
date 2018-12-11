@@ -95,13 +95,6 @@ class ImageExportService
         $jobData = json_decode($content, true);
         // Clean up internally modified / collected state
         $this->featureTransform = $this->initializeFeatureTransform($jobData);
-        $layers = $jobData['requests'];
-        if (!empty($jobData['vectorLayers'])) {
-            $layers = array_merge($layers, $jobData['vectorLayers']);
-        }
-        unset($jobData['requests']);
-        unset($jobData['vectorLayers']);
-        $jobData['layers'] = $layers;
         $image = $this->buildExportImage($jobData);
 
         $this->emitImageToBrowser($image, $jobData['format']);
@@ -114,8 +107,8 @@ class ImageExportService
     protected function initializeFeatureTransform($jobData)
     {
         $projectedBox = Box::fromCenterAndSize(
-            $jobData['centerx'], $jobData['centery'],
-            $jobData['extentwidth'], $jobData['extentheight']);
+            $jobData['center']['x'], $jobData['center']['y'],
+            $jobData['extent']['width'], $jobData['extent']['height']);
         $pixelBox = new Box(0, $jobData['height'], $jobData['width'], 0);
         return Affine2DTransform::boxToBox($projectedBox, $pixelBox);
     }

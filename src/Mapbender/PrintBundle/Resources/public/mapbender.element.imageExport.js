@@ -140,22 +140,27 @@
         _collectJobData: function() {
             var mapExtent = this.map.map.olMap.getExtent();
             var imageSize = this.map.map.olMap.getCurrentSize();
+            var rasterLayers = this._collectRasterLayerData();
+            var geometryLayers = this._collectGeometryLayers();
             return {
-                requests: this._collectRasterLayerData(),
+                layers: rasterLayers.concat(geometryLayers),
                 // @todo: fix unscoped input lookup
                 format: $("input[name='imageformat']:checked").val(),
                 width: imageSize.w,
                 height: imageSize.h,
-                centerx: mapExtent.getCenterLonLat().lon,
-                centery: mapExtent.getCenterLonLat().lat,
-                extentwidth: mapExtent.getWidth(),
-                extentheight: mapExtent.getHeight(),
-                vectorLayers: this._collectGeometryLayers()
+                center: {
+                    x: mapExtent.getCenterLonLat().lon,
+                    y: mapExtent.getCenterLonLat().lat
+                },
+                extent: {
+                    width: mapExtent.getWidth(),
+                    height: mapExtent.getHeight()
+                }
             };
         },
         _exportImage: function() {
             var jobData = this._collectJobData();
-            if (!jobData.requests.length) {
+            if (!jobData.layers.length) {
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
             } else {
                 this._submitJob(jobData);
