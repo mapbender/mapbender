@@ -11,32 +11,40 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class ManagerTemplate extends Template
 {
-    protected static $css = array(
-        '@MapbenderManagerBundle/Resources/public/sass/manager/applications.scss',
-    );
+    public function getAssets($type)
+    {
+        switch ($type) {
+            case 'js':
+                return array(
+                    '/components/underscore/underscore-min.js',
+                    '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
+                    '/components/datatables/media/js/jquery.dataTables.min.js',
+                    '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
+                    '/components/vis-ui.js/vis-ui.js-built.js',
 
-    protected static $js = array(
-        '/components/underscore/underscore-min.js',
-        '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
-        '/components/datatables/media/js/jquery.dataTables.min.js',
-        '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
-        '/components/vis-ui.js/vis-ui.js-built.js',
-        '/bundles/fosjsrouting/js/router.js',
-        '@MapbenderManagerBundle/Resources/public/js/SymfonyAjaxManager.js',
+                    '@MapbenderManagerBundle/Resources/public/js/SymfonyAjaxManager.js',
 
-        '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/radiobuttonExtended.js',
-        '@FOMCoreBundle/Resources/public/js/components.js',
-        '@FOMCoreBundle/Resources/public/js/widgets/collection.js',
-        '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
-    );
-
-    protected static $translations = array(
-        '@MapbenderManagerBundle/Resources/views/translations.json.twig'
-    );
+                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+                    '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                    '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
+                    '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
+                    '@FOMCoreBundle/Resources/public/js/widgets/radiobuttonExtended.js',
+                    '@FOMCoreBundle/Resources/public/js/components.js',
+                    '@FOMCoreBundle/Resources/public/js/widgets/collection.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
+                );
+            case 'css':
+                return array(
+                    '@MapbenderManagerBundle/Resources/public/sass/manager/applications.scss',
+                );
+            case 'trans':
+                return array(
+                    '@MapbenderManagerBundle/Resources/views/translations.json.twig'
+                );
+            default:
+                throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
+        }
+    }
 
     /**
      * @inheritdoc
