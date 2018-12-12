@@ -172,14 +172,12 @@
             return dataOut;
         },
         _collectJobData: function() {
-            var mapExtent = this.map.map.olMap.getExtent();
+            var mapExtent = this._getExportExtent();
             var imageSize = this.map.map.olMap.getCurrentSize();
             var rasterLayers = this._collectRasterLayerData();
             var geometryLayers = this._collectGeometryLayers();
             return {
                 layers: rasterLayers.concat(geometryLayers),
-                // @todo: fix unscoped input lookup
-                format: $("input[name='imageformat']:checked").val(),
                 width: imageSize.w,
                 height: imageSize.h,
                 center: {
@@ -311,10 +309,10 @@
          * @private
          */
         _changeAxis: function(layer) {
-            var currentProj = layer.map.displayProjection.projCode;
+            var projCode = (layer.map.displayProjection || layer.map.projection).projCode;
 
             if (layer.params.VERSION === '1.3.0') {
-                if (OpenLayers.Projection.defaults.hasOwnProperty(currentProj) && OpenLayers.Projection.defaults[currentProj].yx) {
+                if (OpenLayers.Projection.defaults.hasOwnProperty(projCode) && OpenLayers.Projection.defaults[projCode].yx) {
                     return true;
                 }
             }

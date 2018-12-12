@@ -115,10 +115,10 @@ class ImageExport extends Element
             case 'export':
                 $request = $this->container->get('request');
                 $data = $this->prepareJobData($request, $this->entity->getConfiguration());
-                $format = $data['format'];
+                $format = $request->request->get('imageformat');
                 $exportservice = $this->getExportService();
                 $image = $exportservice->runJob($data);
-                return new Response($exportservice->dumpImage($image, $data['format']), 200, array(
+                return new Response($exportservice->dumpImage($image, $format), 200, array(
                     'Content-Disposition' => 'attachment; filename=export_' . date('YmdHis') . ".{$format}",
                     'Content-Type' => $this->getMimetype($format),
                 ));

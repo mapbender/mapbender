@@ -15,10 +15,6 @@ class PrintService extends ImageExportService
     protected $pdf;
     protected $conf;
 
-    /** @var Affine2DTransform */
-    protected $featureTransform;
-    /** @var Box */
-    protected $targetBox;
     /** @var array */
     protected $data;
 
@@ -42,12 +38,13 @@ class PrintService extends ImageExportService
     }
 
     /**
+     * @param Box $targetBox
      * @param array $jobData
      * @return Box
      */
-    protected function initializeCanvasBox(array $jobData)
+    protected function initializeCanvasBox(Box $targetBox, array $jobData)
     {
-        $rotatedBox = $this->targetBox->getExpandedForRotation(intval($jobData['rotation']));
+        $rotatedBox = $targetBox->getExpandedForRotation(intval($jobData['rotation']));
         $rotatedBox->roundToIntegerBoundaries();
         // re-anchor rotated box to put top left at (0,0); note: gd pixel coords are top down
         return new Box(0, abs($rotatedBox->getHeight()), abs($rotatedBox->getWidth()), 0);
@@ -87,11 +84,14 @@ class PrintService extends ImageExportService
         $this->data = $jobData;
         // @todo: eliminate instance variable $this->conf
         $this->conf = $templateData;
+    }
 
+    protected function getTargetBox($templateData, $jobData)
+    {
         $targetWidth = round($templateData['map']['width'] / 25.4 * $jobData['quality']);
         $targetHeight = round($templateData['map']['height'] / 25.4 * $jobData['quality']);
         // NOTE: gd pixel coords are top down
-        $this->targetBox = new Box(0, $targetHeight, $targetWidth, 0);
+        return new Box(0, $targetHeight, $targetWidth, 0);
     }
 
     /**
@@ -102,7 +102,8 @@ class PrintService extends ImageExportService
     private function createMapImage($templateData, $jobData)
     {
         $rotation = intval($jobData['rotation']);
-        $canvasBox = $this->initializeCanvasBox($jobData);
+        $targetBox = $this->getTargetBox($templateData, $jobData);
+        $canvasBox = $this->initializeCanvasBox($targetBox, $jobData);
         $extentBox = $this->initializeMapRequestBox($jobData);
         $this->featureTransform = Affine2DTransform::boxToBox($extentBox, $canvasBox);
         $mapImage = $this->buildExportImage(array(
@@ -119,7 +120,7 @@ class PrintService extends ImageExportService
         // dump to file system immediately to recoup some memory before building PDF
         $mapImageName = $this->makeTempFile('mb_print_final');
         if ($rotation) {
-            $mapImage = $this->rotateAndCrop($mapImage, $rotation, true);
+            $mapImage = $this->rotateAndCrop($mapImage, $targetBox, $rotation, true);
         }
         imagepng($mapImage, $mapImageName);
         imagedestroy($mapImage);
@@ -128,14 +129,15 @@ class PrintService extends ImageExportService
 
     /**
      * @param resource $sourceImage GD image
+     * @param Box $targetBox
      * @param number $rotation
      * @param bool $destructive set to true to discard original image resource (saves memory)
      * @return resource GD image
      */
-    protected function rotateAndCrop($sourceImage, $rotation, $destructive = false)
+    protected function rotateAndCrop($sourceImage, $targetBox, $rotation, $destructive = false)
     {
-        $imageWidth = $this->targetBox->getWidth();
-        $imageHeight = abs($this->targetBox->getHeight());
+        $imageWidth = $targetBox->getWidth();
+        $imageHeight = abs($targetBox->getHeight());
 
         $transColor = imagecolorallocatealpha($sourceImage, 255, 255, 255, 127);
         $rotatedImage = imagerotate($sourceImage, $rotation, $transColor);
@@ -145,8 +147,8 @@ class PrintService extends ImageExportService
         imagealphablending($rotatedImage, false);
         imagesavealpha($rotatedImage, true);
 
-        $offsetX = (imagesx($rotatedImage) - $this->targetBox->getWidth()) * 0.5;
-        $offsetY = (imagesy($rotatedImage) - abs($this->targetBox->getHeight())) * 0.5;
+        $offsetX = (imagesx($rotatedImage) - $targetBox->getWidth()) * 0.5;
+        $offsetY = (imagesy($rotatedImage) - abs($targetBox->getHeight())) * 0.5;
 
         $cropped = $this->cropImage($rotatedImage, $offsetX, $offsetY, $imageWidth, $imageHeight);
         imagedestroy($rotatedImage);

@@ -257,23 +257,6 @@
             return this.printBounds;
         },
         /**
-         * Return print bounds reformatted for job submission
-         * @returns {{extent: {width: *, height: *}, center: {x: *, y: *}}}
-         * @private
-         */
-        _getExtentData: function() {
-            return {
-                extent: {
-                    width: this.printBounds.getWidth(),
-                    height: this.printBounds.getHeight()
-                },
-                center: {
-                    x: this.printBounds.getCenterLonLat().lon,
-                    y: this.printBounds.getCenterLonLat().lat
-                }
-            };
-        },
-        /**
          *
          * @returns {Array<Object.<string, string>>} legend image urls mapped to layer title
          * @private
@@ -384,36 +367,23 @@
             }
         },
         _collectJobData: function() {
-            var extent = this._getExtentData();
+            var jobData = this._super();
+            var overview = this._collectOverview();
             var extentFeature = this.feature.geometry.components[0].components.map(function(component) {
                 return {
                     x: component.x,
                     y: component.y
                 };
             });
-            var rasterLayers = this._collectRasterLayerData();
-            var geometryLayers = this._collectGeometryLayers();
-            var overview = this._collectOverview();
-
-            var data = {
-                extent: {
-                    width: extent.extent.width,
-                    height: extent.extent.height
-                },
-                center: {
-                    x: extent.center.x,
-                    y: extent.center.y
-                },
-                // @todo: this is pretty wild for an inlined expression, extract a method
-                'extent_feature': extentFeature,
-                layers: rasterLayers.concat(geometryLayers),
+            _.assign(jobData, {
                 legends: this._collectLegends(),
-                overview: overview
-            };
+                overview: overview,
+                'extent_feature': extentFeature
+            });
             if (this.digitizerData) {
-                _.assign(data, this.digitizerData);
+                _.assign(jobData, this.digitizerData);
             }
-            return data;
+            return jobData;
         },
         _submitJob: function(jobData) {
             var $form = $('form#formats', this.element);
