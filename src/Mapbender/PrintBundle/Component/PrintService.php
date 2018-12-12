@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
-use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
 use Mapbender\PrintBundle\Component\Export\Box;
 
@@ -15,14 +14,11 @@ class PrintService extends ImageExportService
     /** @var PDF_Extensions|\FPDF */
     protected $pdf;
     protected $conf;
-    protected $rotation;
 
     /** @var Affine2DTransform */
     protected $featureTransform;
     /** @var Box */
     protected $targetBox;
-    /** @var Box */
-    protected $canvasBox;
     /** @var array */
     protected $data;
 
@@ -215,8 +211,8 @@ class PrintService extends ImageExportService
         }
 
         // add northarrow
-        if (isset($this->conf['northarrow'])) {
-            $this->addNorthArrow($pdf, $this->conf, $this->data);
+        if (isset($templateData['northarrow'])) {
+            $this->addNorthArrow($pdf, $templateData, $jobData);
         }
 
         // fill text fields
@@ -349,57 +345,48 @@ class PrintService extends ImageExportService
         $ovImageHeight = round($region['height'] / 25.4 * $quality);
         // gd pixel coords are top down!
         $ovPixelBox = new Box(0, $ovImageHeight, $ovImageWidth, 0);
-        $centerx = $ovData['center']['x'];
-        $centery = $ovData['center']['y'];
-        $ovHeight = $ovData['height'];
-        $ovWidth = $ovHeight * $region['width'] / $region['height'];
-        $minX = $centerx - $ovWidth * 0.5;
-        $minY = $centery - $ovHeight * 0.5;
-        $maxX = $centerx + $ovWidth * 0.5;
-        $maxY = $centery + $ovHeight * 0.5;
-        $ovProjectedBox = new Box($minX, $minY, $maxX, $maxY);
-        $newParams = array(
+        // fix job data to be compatible with image export:
+        // 1: 'changeAxis' is only on top level, not per layer
+        // 2: Layer type is missing, we only have a URL
+        // 3: opacity is missing
+        // 4: pixel width is inferred from height + template region aspect ratio
+        $layerDefs = array();
+        foreach ($ovData['layers'] as $layerUrl) {
+            $layerDefs[] = array(
+                'url' => $layerUrl,
+                'type' => 'wms',        // HACK (same behavior as old code)
+                'changeAxis' => $ovData['changeAxis'],
+                'opacity' => 1,
+            );
+        }
+        $cnt = $ovData['center'];
+        $ovWidth = $ovData['height'] * $region['width'] / $region['height'];
+        $ovExtent = Box::fromCenterAndSize($cnt['x'], $cnt['y'], $ovWidth, $ovData['height']);
+        $image = $this->buildExportImage(array(
+            'layers' => $layerDefs,
             'width' => $ovImageWidth,
             'height' => $ovImageHeight,
-        );
-        if (!empty($ovData['changeAxis'])) {
-            $newParams['bbox'] = $minY . ',' . $minX . ',' . $maxY . ',' . $maxX;
-        } else {
-            $newParams['bbox'] = $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
-        }
+            'extent' => array(
+                'width' => $ovExtent->getWidth(),
+                'height' => $ovExtent->getHeight(),
+            ),
+            'center' => $ovExtent->getCenterXy(),
+        ));
 
-        $image = $this->makeBlankImageResource($ovImageWidth, $ovImageHeight);
-        foreach ($ovData['layers'] as $i => $layerUrl) {
-            $url = UrlUtil::validateUrl($layerUrl, $newParams);
-            $layerImage = $this->downloadImage($url);
-            if ($layerImage) {
-                imagecopyresampled($image, $layerImage,
-                    0, 0, 0, 0,
-                    $ovImageWidth, $ovImageHeight,
-                    imagesx($layerImage), imagesy($layerImage));
-                imagedestroy($layerImage);
-                unset($layerImage);
-            } else {
-                $this->getLogger()->warn("Failed overview request to {$url}");
-            }
-        }
-
-        $ovTransform = Affine2DTransform::boxToBox($ovProjectedBox, $ovPixelBox);
-
-        $points = array(
+        $ovTransform = Affine2DTransform::boxToBox($ovExtent, $ovPixelBox);
+        $red = imagecolorallocate($image,255,0,0);
+        // GD imagepolygon expects a flat, numerically indexed, 1d list of concatenated coordinates,
+        // and we have 2D sub-arrays with 'x' and 'y' keys. Convert.
+        $flatPoints = call_user_func_array('array_merge', array_map('array_values', array(
             $ovTransform->transformXy($jobData['extent_feature'][0]),
             $ovTransform->transformXy($jobData['extent_feature'][3]),
             $ovTransform->transformXy($jobData['extent_feature'][2]),
             $ovTransform->transformXy($jobData['extent_feature'][1]),
-        );
-
-        $red = imagecolorallocate($image,255,0,0);
-        imageline ( $image, $points[0]['x'], $points[0]['y'], $points[1]['x'], $points[1]['y'], $red);
-        imageline ( $image, $points[1]['x'], $points[1]['y'], $points[2]['x'], $points[2]['y'], $red);
-        imageline ( $image, $points[2]['x'], $points[2]['y'], $points[3]['x'], $points[3]['y'], $red);
-        imageline ( $image, $points[3]['x'], $points[3]['y'], $points[0]['x'], $points[0]['y'], $red);
+        )));
+        imagepolygon($image, $flatPoints, 4, $red);
 
         $this->addImageToPdf($pdf, $image, $region['x'], $region['y'], $region['width'], $region['height']);
+        imagecolordeallocate($image, $red);
         imagedestroy($image);
         // draw border rectangle
         $pdf->Rect($region['x'], $region['y'], $region['width'], $region['height']);
