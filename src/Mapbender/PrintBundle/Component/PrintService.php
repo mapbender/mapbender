@@ -287,12 +287,12 @@ class PrintService extends ImageExportService
 
         // add overview map
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
-            $this->addOverviewMap($this->data['overview']);
+            $this->addOverviewMap($pdf, $templateData, $jobData);
         }
 
         // add scalebar
         if (isset($this->conf['scalebar']) ) {
-            $this->addScaleBar($pdf, $this->conf, $this->data);
+            $this->addScaleBar($pdf, $templateData, $jobData);
         }
 
         // add coordinates
@@ -347,18 +347,25 @@ class PrintService extends ImageExportService
         $this->addImageToPdf($pdf, $northarrow, $region['x'], $region['y'], $region['width'], $region['height']);
     }
 
-    private function addOverviewMap($ovData)
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param array $templateData
+     * @param array $jobData
+     */
+    protected function addOverviewMap($pdf, $templateData, $jobData)
     {
+        $ovData = $jobData['overview'];
+        $region = $templateData['overview'];
+        $quality = $jobData['quality'];
         // calculate needed image size
-        $quality = $this->data['quality'];
-        $ovImageWidth = round($this->conf['overview']['width'] / 25.4 * $quality);
-        $ovImageHeight = round($this->conf['overview']['height'] / 25.4 * $quality);
+        $ovImageWidth = round($region['width'] / 25.4 * $quality);
+        $ovImageHeight = round($region['height'] / 25.4 * $quality);
         // gd pixel coords are top down!
         $ovPixelBox = new Box(0, $ovImageHeight, $ovImageWidth, 0);
         $centerx = $ovData['center']['x'];
         $centery = $ovData['center']['y'];
         $ovHeight = $ovData['height'];
-        $ovWidth = $ovHeight * $this->conf['overview']['width'] / $this->conf['overview']['height'];
+        $ovWidth = $ovHeight * $region['width'] / $region['height'];
         $minX = $centerx - $ovWidth * 0.5;
         $minY = $centery - $ovHeight * 0.5;
         $maxX = $centerx + $ovWidth * 0.5;
@@ -374,7 +381,7 @@ class PrintService extends ImageExportService
             $newParams['bbox'] = $minX . ',' . $minY . ',' . $maxX . ',' . $maxY;
         }
 
-        $image = $this->makeBlank($ovImageWidth, $ovImageHeight);
+        $image = $this->makeBlankImageResource($ovImageWidth, $ovImageHeight);
         foreach ($ovData['layers'] as $i => $layerUrl) {
             $url = UrlUtil::validateUrl($layerUrl, $newParams);
             $layerImage = $this->downloadImage($url);
@@ -393,10 +400,10 @@ class PrintService extends ImageExportService
         $ovTransform = Affine2DTransform::boxToBox($ovProjectedBox, $ovPixelBox);
 
         $points = array(
-            $ovTransform->transformXy($this->data['extent_feature'][0]),
-            $ovTransform->transformXy($this->data['extent_feature'][3]),
-            $ovTransform->transformXy($this->data['extent_feature'][2]),
-            $ovTransform->transformXy($this->data['extent_feature'][1]),
+            $ovTransform->transformXy($jobData['extent_feature'][0]),
+            $ovTransform->transformXy($jobData['extent_feature'][3]),
+            $ovTransform->transformXy($jobData['extent_feature'][2]),
+            $ovTransform->transformXy($jobData['extent_feature'][1]),
         );
 
         $red = imagecolorallocate($image,255,0,0);
@@ -405,24 +412,10 @@ class PrintService extends ImageExportService
         imageline ( $image, $points[2]['x'], $points[2]['y'], $points[3]['x'], $points[3]['y'], $red);
         imageline ( $image, $points[3]['x'], $points[3]['y'], $points[0]['x'], $points[0]['y'], $red);
 
-        $tempPath = $this->makeTempFile('mb_print_temp_overview');
-        imagepng($image, $tempPath);
-
-        // add image to pdf
-        $this->pdf->Image($tempPath,
-                    $this->conf['overview']['x'],
-                    $this->conf['overview']['y'],
-                    $this->conf['overview']['width'],
-                    $this->conf['overview']['height'],
-                    'png');
-        unlink($tempPath);
-
+        $this->addImageToPdf($pdf, $image, $region['x'], $region['y'], $region['width'], $region['height']);
+        imagedestroy($image);
         // draw border rectangle
-        $this->pdf->Rect($this->conf['overview']['x'],
-                         $this->conf['overview']['y'],
-                         $this->conf['overview']['width'],
-                         $this->conf['overview']['height']);
-
+        $pdf->Rect($region['x'], $region['y'], $region['width'], $region['height']);
     }
 
     /**

@@ -51,9 +51,29 @@ class ImageExportService
      */
     protected function buildExportImage($jobData)
     {
-        $mapImage = $this->makeBlank($jobData['width'], $jobData['height']);
+        $mapImage = $this->makeBlankImageResource($jobData['width'], $jobData['height']);
         $this->addLayers($mapImage, $jobData['layers'], $jobData['width'], $jobData['height']);
         return $mapImage;
+    }
+
+    /**
+     * Echoes binary image data directly to stdout
+     *
+     * @param resource $image
+     * @param string $format
+     */
+    public function echoImage($image, $format)
+    {
+        switch ($format) {
+            case 'png':
+                imagepng($image);
+                break;
+            case 'jpeg':
+            case 'jpg':
+            default:
+                imagejpeg($image, null, 85);
+                break;
+        }
     }
 
     /**
@@ -64,16 +84,7 @@ class ImageExportService
     {
         ob_start();
         try {
-            switch ($format) {
-                case 'png':
-                    imagepng($image);
-                    break;
-                case 'jpeg':
-                case 'jpg':
-                default:
-                    imagejpeg($image, null, 85);
-                    break;
-            }
+            $this->echoImage($image, $format);
         } catch (\Exception $e) {
             ob_end_clean();
             throw $e;
@@ -127,7 +138,7 @@ class ImageExportService
      * @param int $height
      * @return resource GDish
      */
-    protected function makeBlank($width, $height)
+    protected function makeBlankImageResource($width, $height)
     {
         $image = imagecreatetruecolor($width, $height);
         $bg = imagecolorallocate($image, 255, 255, 255);
