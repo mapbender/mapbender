@@ -745,7 +745,6 @@ Mapbender.Model = {
      * @returns {object} sourceDef same ref, potentially modified
      */
     addSourceFromConfig: function(sourceDef, mangleIds) {
-        var self = this;
         if (!sourceDef.origId) {
             sourceDef.origId = '' + sourceDef.id;
         }

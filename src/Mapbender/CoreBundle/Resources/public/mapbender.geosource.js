@@ -67,41 +67,14 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'abstract public function createSourceDefinitions': function(xml, options) {
     }, // to remove
-    'public function changeDefaultOptions': function(defaultOptions) {
-        $.extend(this.defaultOptions, defaultOptions);
-    },
-    'public function fire': function(eventName) {
-
-    },
     'public function on': function(eventName) {
 
     },
     'public function postCreate': function(olLayer) {
 
     },
-//    _addProxy: function(url){
-//        return OpenLayers.ProxyHost + encodeURIComponent(url);
-//    },
-//    _removeProxy: function(url){
-//        if(url.indexOf(OpenLayers.ProxyHost) === 0) {
-//            return decodeURIComponent(url.substring(OpenLayers.ProxyHost.length));
-//        }
-//        return url;
-//    },
     'public function removeSignature': function(url){
-        var pos = -1;
-        pos = url.indexOf("_signature");
-        if(pos !== -1) {
-            var url_new = url.substring(0, pos);
-            if(url_new.lastIndexOf('&') === url_new.length - 1) {
-                url_new = url_new.substring(0, url_new.lastIndexOf('&'));
-            }
-            if(url_new.lastIndexOf('?') === url_new.length - 1) {
-                url_new = url_new.substring(0, url_new.lastIndexOf('?'));
-            }
-            return url_new;
-        }
-        return url;
+        return Mapbender.Util.removeSignature(url);
     },
     'public function changeProjection': function(source, projection) {
     },

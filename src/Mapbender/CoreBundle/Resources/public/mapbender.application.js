@@ -470,8 +470,7 @@ Mapbender.Util.removeProxy = function(url) {
 };
 
 Mapbender.Util.removeSignature = function(url) {
-    var pos = -1;
-    pos = url.indexOf("_signature");
+    var pos = url.indexOf("_signature");
     if (pos !== -1) {
         var url_new = url.substring(0, pos);
         if (url_new.lastIndexOf('&') === url_new.length - 1) {
