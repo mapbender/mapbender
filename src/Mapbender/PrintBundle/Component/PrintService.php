@@ -38,33 +38,6 @@ class PrintService extends ImageExportService
     }
 
     /**
-     * @param Box $targetBox
-     * @param array $jobData
-     * @return Box
-     */
-    protected function initializeCanvasBox(Box $targetBox, array $jobData)
-    {
-        $rotatedBox = $targetBox->getExpandedForRotation(intval($jobData['rotation']));
-        $rotatedBox->roundToIntegerBoundaries();
-        // re-anchor rotated box to put top left at (0,0); note: gd pixel coords are top down
-        return new Box(0, abs($rotatedBox->getHeight()), abs($rotatedBox->getWidth()), 0);
-    }
-
-    /**
-     * @param array $jobData
-     * @return Box
-     */
-    protected function initializeMapRequestBox(array $jobData)
-    {
-        $width = $jobData['extent']['width'];
-        $height = $jobData['extent']['height'];
-        $centerx = $jobData['center']['x'];
-        $centery = $jobData['center']['y'];
-        $unrotatedBox = Box::fromCenterAndSize($centerx, $centery, $width, $height);
-        return $unrotatedBox->getExpandedForRotation(intval($jobData['rotation']));
-    }
-
-    /**
      * @param array $jobData
      * @return array
      */
@@ -101,58 +74,18 @@ class PrintService extends ImageExportService
      */
     private function createMapImage($templateData, $jobData)
     {
-        $rotation = intval($jobData['rotation']);
         $targetBox = $this->getTargetBox($templateData, $jobData);
-        $canvasBox = $this->initializeCanvasBox($targetBox, $jobData);
-        $extentBox = $this->initializeMapRequestBox($jobData);
-        $this->featureTransform = Affine2DTransform::boxToBox($extentBox, $canvasBox);
-        $mapImage = $this->buildExportImage(array(
-            'layers' => $this->data['layers'],
-            'width' => abs($canvasBox->getWidth()),
-            'height' => abs($canvasBox->getHeight()),
-            'extent' => array(
-                'width' => $extentBox->getWidth(),
-                'height' => abs($extentBox->getHeight()),
-            ),
-            'center' => $extentBox->getCenterXy(),
+        $exportJob = array_replace($jobData, array(
+            'width' => $targetBox->getWidth(),
+            'height' => abs($targetBox->getHeight()),
         ));
+        $mapImage = $this->buildExportImage($exportJob);
 
         // dump to file system immediately to recoup some memory before building PDF
         $mapImageName = $this->makeTempFile('mb_print_final');
-        if ($rotation) {
-            $mapImage = $this->rotateAndCrop($mapImage, $targetBox, $rotation, true);
-        }
         imagepng($mapImage, $mapImageName);
         imagedestroy($mapImage);
         return $mapImageName;
-    }
-
-    /**
-     * @param resource $sourceImage GD image
-     * @param Box $targetBox
-     * @param number $rotation
-     * @param bool $destructive set to true to discard original image resource (saves memory)
-     * @return resource GD image
-     */
-    protected function rotateAndCrop($sourceImage, $targetBox, $rotation, $destructive = false)
-    {
-        $imageWidth = $targetBox->getWidth();
-        $imageHeight = abs($targetBox->getHeight());
-
-        $transColor = imagecolorallocatealpha($sourceImage, 255, 255, 255, 127);
-        $rotatedImage = imagerotate($sourceImage, $rotation, $transColor);
-        if ($destructive) {
-            imagedestroy($sourceImage);
-        }
-        imagealphablending($rotatedImage, false);
-        imagesavealpha($rotatedImage, true);
-
-        $offsetX = (imagesx($rotatedImage) - $targetBox->getWidth()) * 0.5;
-        $offsetY = (imagesy($rotatedImage) - abs($targetBox->getHeight())) * 0.5;
-
-        $cropped = $this->cropImage($rotatedImage, $offsetX, $offsetY, $imageWidth, $imageHeight);
-        imagedestroy($rotatedImage);
-        return $cropped;
     }
 
     /**

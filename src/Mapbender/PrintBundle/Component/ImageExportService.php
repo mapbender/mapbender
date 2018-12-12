@@ -46,17 +46,51 @@ class ImageExportService
     }
 
     /**
+     * Extracts a convenient Box from $jobData; deliberately ignores rotation
+     *
+     * @param $jobData
+     * @return Box
+     */
+    protected function getJobExtent($jobData)
+    {
+        $ext = $jobData['extent'];
+        $cnt = $jobData['center'];
+        return Box::fromCenterAndSize($cnt['x'], $cnt['y'], $ext['width'], $ext['height']);
+    }
+
+    /**
      * @param array $jobData
      * @return resource
      */
     protected function buildExportImage($jobData)
     {
-        $cnt = $jobData['center'];
-        $ext = $jobData['extent'];
-        $extentBox = Box::fromCenterAndSize($cnt['x'], $cnt['y'], $ext['width'], $ext['height']);
-        $mapImage = $this->makeBlankImageResource($jobData['width'], $jobData['height']);
-        $this->addLayers($mapImage, $jobData['layers'], $jobData['width'], $jobData['height'], $extentBox);
-        return $mapImage;
+        // NOTE: gd pixel coords are top down
+        $targetBox = new Box(0, $jobData['height'], $jobData['width'], 0);
+        $extentBox = $this->getJobExtent($jobData);
+        if (isset($jobData['rotation']) && intval($jobData['rotation'])) {
+            $rotation = intval($jobData['rotation']);
+            $expandedCanvas = $targetBox->getExpandedForRotation($rotation);
+            $expandedCanvas->roundToIntegerBoundaries();
+            $expandedExtent = $extentBox->getExpandedForRotation($rotation);
+
+            $rotatedJob = array_replace($jobData, array(
+                'rotation' => 0,
+                'width' => abs($expandedCanvas->getWidth()),
+                'height' => abs($expandedCanvas->getHeight()),
+                'extent' => array(
+                    'width' => $expandedExtent->getWidth(),
+                    'height' => abs($expandedExtent->getHeight()),
+                ),
+                'center' => $expandedExtent->getCenterXy(),
+            ));
+            // self-delegate
+            $rotatedImage = $this->buildExportImage($rotatedJob);
+            return $this->rotateAndCrop($rotatedImage, $targetBox, $rotation, true);
+        } else {
+            $mapImage = $this->makeBlankImageResource($jobData['width'], $jobData['height']);
+            $this->addLayers($mapImage, $jobData['layers'], $jobData['width'], $jobData['height'], $extentBox);
+            return $mapImage;
+        }
     }
 
     /**
@@ -501,6 +535,35 @@ class ImageExportService
             return $newImage;
         }
     }
+
+    /**
+     * @param resource $sourceImage GD image
+     * @param Box $targetBox
+     * @param number $rotation
+     * @param bool $destructive set to true to discard original image resource (saves memory)
+     * @return resource GD image
+     */
+    protected function rotateAndCrop($sourceImage, $targetBox, $rotation, $destructive = false)
+    {
+        $imageWidth = $targetBox->getWidth();
+        $imageHeight = abs($targetBox->getHeight());
+
+        $transColor = imagecolorallocatealpha($sourceImage, 255, 255, 255, 127);
+        $rotatedImage = imagerotate($sourceImage, $rotation, $transColor);
+        if ($destructive) {
+            imagedestroy($sourceImage);
+        }
+        imagealphablending($rotatedImage, false);
+        imagesavealpha($rotatedImage, true);
+
+        $offsetX = (imagesx($rotatedImage) - $targetBox->getWidth()) * 0.5;
+        $offsetY = (imagesy($rotatedImage) - abs($targetBox->getHeight())) * 0.5;
+
+        $cropped = $this->cropImage($rotatedImage, $offsetX, $offsetY, $imageWidth, $imageHeight);
+        imagedestroy($rotatedImage);
+        return $cropped;
+    }
+
 
     /**
      * Creates a ~randomly named temp file with given $prefix and returns its name
