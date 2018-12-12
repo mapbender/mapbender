@@ -20,8 +20,6 @@ class PrintService extends ImageExportService
     /** @var Affine2DTransform */
     protected $featureTransform;
     /** @var Box */
-    protected $mapRequestBox;
-    /** @var Box */
     protected $targetBox;
     /** @var Box */
     protected $canvasBox;
@@ -40,7 +38,7 @@ class PrintService extends ImageExportService
         $templateData = $this->getTemplateData($jobData);
         $this->setup($templateData, $jobData);
 
-        $mapImageName = $this->createMapImage();
+        $mapImageName = $this->createMapImage($templateData, $jobData);
 
         $pdf = $this->buildPdf($mapImageName, $templateData, $jobData);
 
@@ -73,22 +71,6 @@ class PrintService extends ImageExportService
         return $unrotatedBox->getExpandedForRotation(intval($jobData['rotation']));
     }
 
-    protected function preprocessRasterUrl($layerDef, $width, $height)
-    {
-        $newParams = array(
-            'width' => abs($this->canvasBox->getWidth()),
-            'height' => abs($this->canvasBox->getHeight()),
-        );
-
-        $mExt = $this->mapRequestBox;
-        if (!empty($layerDef['changeAxis'])){
-            $newParams['bbox'] = $mExt->bottom . ',' . $mExt->left . ',' . $mExt->top . ',' . $mExt->right;
-        } else {
-            $newParams['bbox'] = $mExt->left . ',' . $mExt->bottom . ',' . $mExt->right . ',' . $mExt->top;
-        }
-        return UrlUtil::validateUrl($layerDef['url'], $newParams);
-    }
-
     /**
      * @param array $jobData
      * @return array
@@ -112,28 +94,33 @@ class PrintService extends ImageExportService
 
         $targetWidth = round($templateData['map']['width'] / 25.4 * $jobData['quality']);
         $targetHeight = round($templateData['map']['height'] / 25.4 * $jobData['quality']);
-        $this->mapRequestBox = $this->initializeMapRequestBox($jobData);
         // NOTE: gd pixel coords are top down
         $this->targetBox = new Box(0, $targetHeight, $targetWidth, 0);
-        $this->canvasBox = $this->initializeCanvasBox($jobData);
-        $this->featureTransform = Affine2DTransform::boxToBox($this->mapRequestBox, $this->canvasBox);
-        $this->rotation = intval($jobData['rotation']);
     }
 
     /**
+     * @param array $templateData
+     * @param array $jobData
      * @return string path to stored image
      */
-    private function createMapImage()
+    private function createMapImage($templateData, $jobData)
     {
-        $rotation = $this->rotation;
-        $neededImageWidth = abs($this->canvasBox->getWidth());
-        $neededImageHeight = abs($this->canvasBox->getHeight());
+        $rotation = intval($jobData['rotation']);
+        $canvasBox = $this->initializeCanvasBox($jobData);
+        $extentBox = $this->initializeMapRequestBox($jobData);
+        $this->featureTransform = Affine2DTransform::boxToBox($extentBox, $canvasBox);
         $mapImage = $this->buildExportImage(array(
             'layers' => $this->data['layers'],
-            'width' => $neededImageWidth,
-            'height' => $neededImageHeight,
+            'width' => abs($canvasBox->getWidth()),
+            'height' => abs($canvasBox->getHeight()),
+            'extent' => array(
+                'width' => $extentBox->getWidth(),
+                'height' => abs($extentBox->getHeight()),
+            ),
+            'center' => $extentBox->getCenterXy(),
         ));
 
+        // dump to file system immediately to recoup some memory before building PDF
         $mapImageName = $this->makeTempFile('mb_print_final');
         if ($rotation) {
             $mapImage = $this->rotateAndCrop($mapImage, $rotation, true);

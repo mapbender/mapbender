@@ -51,8 +51,11 @@ class ImageExportService
      */
     protected function buildExportImage($jobData)
     {
+        $cnt = $jobData['center'];
+        $ext = $jobData['extent'];
+        $extentBox = Box::fromCenterAndSize($cnt['x'], $cnt['y'], $ext['width'], $ext['height']);
         $mapImage = $this->makeBlankImageResource($jobData['width'], $jobData['height']);
-        $this->addLayers($mapImage, $jobData['layers'], $jobData['width'], $jobData['height']);
+        $this->addLayers($mapImage, $jobData['layers'], $jobData['width'], $jobData['height'], $extentBox);
         return $mapImage;
     }
 
@@ -154,13 +157,14 @@ class ImageExportService
      * @param mixed[] $layers
      * @param int $width
      * @param int $height
+     * @param Box $extent projected
      * @return resource GDish
      */
-    protected function addLayers($targetImage, $layers, $width, $height)
+    protected function addLayers($targetImage, $layers, $width, $height, Box $extent)
     {
         foreach ($layers as $k => $layerDef) {
             if (!empty($layerDef['url'])) {
-                $this->addRasterLayer($targetImage, $layerDef, $width, $height);
+                $this->addRasterLayer($targetImage, $layerDef, $width, $height, $extent);
             } elseif ($layerDef['type'] === 'GeoJSON+Style') {
                 $this->drawFeatures($targetImage, array($layerDef));
             }
@@ -168,20 +172,40 @@ class ImageExportService
         return $targetImage;
     }
 
-    protected function preprocessRasterUrl($layerDef, $width, $height)
+    /**
+     * @param $layerDef
+     * @param $width
+     * @param $height
+     * @param Box $extent
+     * @return string
+     */
+    protected function preprocessRasterUrl($layerDef, $width, $height, Box $extent)
     {
-        return UrlUtil::validateUrl($layerDef['url'], array(
+        $params = array(
             'width' => $width,
             'height' => $height,
-        ));
+        );
+        if (!empty($layerDef['changeAxis'])){
+            $params['bbox'] = $extent->bottom . ',' . $extent->left . ',' . $extent->top . ',' . $extent->right;
+        } else {
+            $params['bbox'] = $extent->left . ',' . $extent->bottom . ',' . $extent->right . ',' . $extent->top;
+        }
+        return UrlUtil::validateUrl($layerDef['url'], $params);
     }
 
-    protected function addRasterLayer($targetImage, $layerDef, $width, $height)
+    /**
+     * @param resource $targetImage
+     * @param array $layerDef
+     * @param int $width
+     * @param int $height
+     * @param Box $extent
+     */
+    protected function addRasterLayer($targetImage, $layerDef, $width, $height, $extent)
     {
         if (empty($layerDef['url'])) {
                 return;
         }
-        $url = $this->preprocessRasterUrl($layerDef, $width, $height);
+        $url = $this->preprocessRasterUrl($layerDef, $width, $height, $extent);
 
         $layerImage = $this->downloadImage($url, $layerDef['opacity']);
         if ($layerImage) {

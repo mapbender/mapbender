@@ -245,8 +245,23 @@
         _getPrintScale: function() {
             return $(this.element).find('select[name="scale_select"]').val();
         },
-
-        _getPrintExtent: function() {
+        /**
+         * Alias to hook into imgExport base class raster layer processing
+         * @returns {*}
+         * @private
+         */
+        _getExportScale: function() {
+            return this._getPrintScale();
+        },
+        _getExportExtent: function() {
+            return this.printBounds;
+        },
+        /**
+         * Return print bounds reformatted for job submission
+         * @returns {{extent: {width: *, height: *}, center: {x: *, y: *}}}
+         * @private
+         */
+        _getExtentData: function() {
             return {
                 extent: {
                     width: this.printBounds.getWidth(),
@@ -256,22 +271,6 @@
                     x: this.printBounds.getCenterLonLat().lon,
                     y: this.printBounds.getCenterLonLat().lat
                 }
-            };
-        },
-        /**
-         *
-         * @param sourceDef
-         * @param {number} [scale]
-         * @returns {{layers: *, styles: *}}
-         * @private
-         */
-        _getRasterVisibilityInfo: function(sourceDef, scale) {
-            var scale_ = scale || this._getPrintScale();
-            var toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: sourceDef.mqlid}};
-            var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale_, toChangeOpts);
-            return {
-                layers: geoSourceResponse.layers,
-                styles: geoSourceResponse.styles
             };
         },
         /**
@@ -320,36 +319,6 @@
                 }
             }
             return legends;
-        },
-        _collectRasterLayerData: function() {
-            var sources = this._getRasterSourceDefs();
-            var scale = this._getPrintScale();
-
-            var dataOut = [];
-
-            for (var i = 0; i < sources.length; i++) {
-                var sourceDef = sources[i];
-                var visLayers = this._getRasterVisibilityInfo(sourceDef, scale);
-                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-                if (visLayers.layers.length > 0) {
-                    var prevLayers = layer.params.LAYERS;
-                    var prevStyles = layer.params.STYLES;
-                    layer.params.LAYERS = visLayers.layers;
-                    layer.params.STYLES = visLayers.styles;
-
-                    var opacity = sourceDef.configuration.options.opacity;
-                    var layerData = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.printBounds, sourceDef.configuration.options.proxy);
-                    layerData.opacity = opacity;
-                    // flag to change axis order
-                    layerData.changeAxis = this._changeAxis(layer);
-                    dataOut.push(layerData);
-
-                    layer.params.LAYERS = prevLayers;
-                    layer.params.STYLES = prevStyles;
-                }
-            }
-
-            return dataOut;
         },
         /**
          * Should return true if the given layer needs to be included in print
@@ -415,7 +384,7 @@
             }
         },
         _collectJobData: function() {
-            var extent = this._getPrintExtent();
+            var extent = this._getExtentData();
             var extentFeature = this.feature.geometry.components[0].components.map(function(component) {
                 return {
                     x: component.x,
@@ -470,20 +439,6 @@
                 this.popup.close();
             }
         },
-
-        _changeAxis: function(layer) {
-            var olMap = this.map.map.olMap;
-            var currentProj = olMap.displayProjection.projCode;
-
-            if (layer.params.VERSION === '1.3.0') {
-                if (OpenLayers.Projection.defaults.hasOwnProperty(currentProj) && OpenLayers.Projection.defaults[currentProj].yx) {
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
         _getTemplateSize: function() {
             var self = this;
             var template = $('select[name="template"]', this.element).val();

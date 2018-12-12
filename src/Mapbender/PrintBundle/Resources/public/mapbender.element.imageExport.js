@@ -93,16 +93,26 @@
         },
         /**
          *
-         * @param sourceDef
+         * @param {*} sourceDef
+         * @param {number} [scale]
          * @returns {{layers: *, styles: *}}
          * @private
          */
-        _getRasterVisibilityInfo: function(sourceDef) {
+        _getRasterVisibilityInfo: function(sourceDef, scale) {
             var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-            return {
-                layers: layer.params.LAYERS,
-                styles: layer.params.STYLES
-            };
+            if (scale) {
+                var toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: sourceDef.mqlid}};
+                var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale, toChangeOpts);
+                return {
+                    layers: geoSourceResponse.layers,
+                    styles: geoSourceResponse.styles
+                };
+            } else {
+                return {
+                    layers: layer.params.LAYERS,
+                    styles: layer.params.STYLES
+                };
+            }
         },
         /**
          * @returns {Array<Object>} sourceTreeish configuration objects
@@ -121,18 +131,42 @@
                 return true;
             }.bind(this));
         },
+        _getExportScale: function() {
+            return null;
+        },
+        _getExportExtent: function() {
+            return this.map.map.olMap.getExtent();
+        },
         _collectRasterLayerData: function() {
             var sources = this._getRasterSourceDefs();
+            var scale = this._getExportScale();
+            var extent = this._getExportExtent();
+
             var dataOut = [];
-            for(var i = 0; i < sources.length; i++) {
+
+            for (var i = 0; i < sources.length; i++) {
                 var sourceDef = sources[i];
-                var visLayers = this._getRasterVisibilityInfo(sourceDef);
+                var visLayers = this._getRasterVisibilityInfo(sourceDef, scale);
 
                 if (visLayers.layers.length) {
                     var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-                    var layerConf = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.map.map.olMap.getExtent(), sourceDef.configuration.options.proxy);
-                    layerConf.opacity = sourceDef.configuration.options.opacity;
-                    dataOut.push(layerConf);
+                    var prevLayers = layer.params.LAYERS;
+                    var prevStyles = layer.params.STYLES;
+                    if (scale) {
+                        layer.params.LAYERS = visLayers.layers;
+                        layer.params.STYLES = visLayers.styles;
+                    }
+
+                    var layerData = Mapbender.source[sourceDef.type].getPrintConfig(layer, extent);
+                    layerData.opacity = sourceDef.configuration.options.opacity;
+                    // flag to change axis order
+                    layerData.changeAxis = this._changeAxis(layer);
+                    dataOut.push(layerData);
+
+                    if (scale) {
+                        layer.params.LAYERS = prevLayers;
+                        layer.params.STYLES = prevStyles;
+                    }
                 }
             }
             return dataOut;
@@ -268,6 +302,24 @@
                 .filter(this._filterGeometryLayer.bind(this))
                 .map(this._extractGeometryLayerData.bind(this))
             ;
+        },
+        /**
+         * Check BBOX format inversion
+         *
+         * @param {OpenLayers.Layer.HTTPRequest} layer
+         * @returns {boolean}
+         * @private
+         */
+        _changeAxis: function(layer) {
+            var currentProj = layer.map.displayProjection.projCode;
+
+            if (layer.params.VERSION === '1.3.0') {
+                if (OpenLayers.Projection.defaults.hasOwnProperty(currentProj) && OpenLayers.Projection.defaults[currentProj].yx) {
+                    return true;
+                }
+            }
+
+            return false;
         },
 
         _noDanglingCommaDummy: null

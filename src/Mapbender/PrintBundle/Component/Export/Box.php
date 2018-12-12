@@ -97,6 +97,17 @@ class Box
     }
 
     /**
+     * @return float[] array with keys 'x' and 'y'
+     */
+    public function getCenterXy()
+    {
+        return array(
+            'x' => 0.5 * ($this->left + $this->right),
+            'y' => 0.5 * ($this->top + $this->bottom),
+        );
+    }
+
+    /**
      * Self-modifying; quantize left / right / bottom / top to integers
      */
     public function roundToIntegerBoundaries()
