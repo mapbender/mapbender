@@ -232,11 +232,15 @@ class ImageExportService
      */
     protected function downloadImage($url, $opacity=1.0)
     {
-        $response = $this->mapRequest($url);
-        $image = @imagecreatefromstring($response->getContent());
-        if ($image) {
-            return $this->forceToRgba($image, $opacity);
-        } else {
+        try {
+            $response = $this->mapRequest($url);
+            $image = @imagecreatefromstring($response->getContent());
+            if ($image) {
+                return $this->forceToRgba($image, $opacity);
+            } else {
+                return null;
+            }
+        } catch (\RuntimeException $e) {
             return null;
         }
     }
@@ -438,6 +442,32 @@ class ImageExportService
     }
 
     /**
+     * @param resource $image GDish
+     * @param int $x0 source offset
+     * @param int $y0 source offset
+     * @param int $width target witdth
+     * @param int $height target height
+     * @return bool|resource a NEW image resource
+     */
+    protected function cropImage($image, $x0, $y0, $width, $height)
+    {
+        if (PHP_VERSION_ID >= 55000) {
+            // imagecrop requires PHP >= 5.5, see http://php.net/manual/de/function.imagecrop.php
+            return imagecrop($image, array(
+                'x' => $x0,
+                'y' => $y0,
+                'width' => $width,
+                'height' => $height,
+            ));
+        } else {
+            $newImage = imagecreatetruecolor($width, $height);
+            imagesavealpha($newImage, true);
+            imagecopy($newImage, $image, 0, 0, $x0, $y0, $width, $height);
+            return $newImage;
+        }
+    }
+
+    /**
      * Creates a ~randomly named temp file with given $prefix and returns its name
      *
      * @param $prefix
@@ -453,4 +483,8 @@ class ImageExportService
         return $filePath;
     }
 
+    protected function getResizeFactor()
+    {
+        return 1;
+    }
 }

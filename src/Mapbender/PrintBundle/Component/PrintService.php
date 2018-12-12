@@ -16,7 +16,6 @@ class PrintService extends ImageExportService
     protected $pdf;
     protected $conf;
     protected $rotation;
-    protected $finalImageName;
 
     /** @var Affine2DTransform */
     protected $featureTransform;
@@ -36,13 +35,16 @@ class PrintService extends ImageExportService
         "strokeWidth" => 1
     );
 
-    public function doPrint($data)
+    public function doPrint($jobData)
     {
-        $this->setup($data);
+        $templateData = $this->getTemplateData($jobData);
+        $this->setup($templateData, $jobData);
 
-        $this->createMapImage();
+        $mapImageName = $this->createMapImage();
 
-        return $this->buildPdf();
+        $pdf = $this->buildPdf($mapImageName, $templateData, $jobData);
+
+        return $this->dumpPdf($pdf);
     }
 
     /**
@@ -87,123 +89,147 @@ class PrintService extends ImageExportService
         return UrlUtil::validateUrl($layerDef['url'], $newParams);
     }
 
-    private function setup($data)
+    /**
+     * @param array $jobData
+     * @return array
+     */
+    protected function getTemplateData($jobData)
     {
-        // data from client
-        $this->data = $data;
-
-        // template configuration from odg
         $odgParser = new OdgParser($this->container);
-        $this->conf = $conf = $odgParser->getConf($data['template']);
-
-        $targetWidth = round($conf['map']['width'] / 25.4 * $data['quality']);
-        $targetHeight = round($conf['map']['height'] / 25.4 * $data['quality']);
-        $this->mapRequestBox = $this->initializeMapRequestBox($data);
-        // NOTE: gd pixel coords are top down
-        $this->targetBox = new Box(0, $targetHeight, $targetWidth, 0);
-        $this->canvasBox = $this->initializeCanvasBox($data);
-        $this->featureTransform = Affine2DTransform::boxToBox($this->mapRequestBox, $this->canvasBox);
-        $this->rotation = intval($data['rotation']);
+        return $odgParser->getConf($jobData['template']);
     }
 
+    /**
+     * @param array $templateData
+     * @param array $jobData
+     */
+    protected function setup($templateData, $jobData)
+    {
+        // @todo: eliminate instance variable $this->data
+        $this->data = $jobData;
+        // @todo: eliminate instance variable $this->conf
+        $this->conf = $templateData;
+
+        $targetWidth = round($templateData['map']['width'] / 25.4 * $jobData['quality']);
+        $targetHeight = round($templateData['map']['height'] / 25.4 * $jobData['quality']);
+        $this->mapRequestBox = $this->initializeMapRequestBox($jobData);
+        // NOTE: gd pixel coords are top down
+        $this->targetBox = new Box(0, $targetHeight, $targetWidth, 0);
+        $this->canvasBox = $this->initializeCanvasBox($jobData);
+        $this->featureTransform = Affine2DTransform::boxToBox($this->mapRequestBox, $this->canvasBox);
+        $this->rotation = intval($jobData['rotation']);
+    }
+
+    /**
+     * @return string path to stored image
+     */
     private function createMapImage()
     {
         $rotation = $this->rotation;
         $neededImageWidth = abs($this->canvasBox->getWidth());
         $neededImageHeight = abs($this->canvasBox->getHeight());
-        $targetImage = $this->buildExportImage(array(
+        $mapImage = $this->buildExportImage(array(
             'layers' => $this->data['layers'],
             'width' => $neededImageWidth,
             'height' => $neededImageHeight,
         ));
 
-        $this->finalImageName = $this->makeTempFile('mb_print_final');
+        $mapImageName = $this->makeTempFile('mb_print_final');
         if ($rotation) {
-            $clippedImage = $this->rotateAndCrop($targetImage, $rotation);
-            imagepng($clippedImage, $this->finalImageName);
-            imagedestroy($clippedImage);
-            imagedestroy($targetImage);
-        } else {
-            imagepng($targetImage, $this->finalImageName);
-            imagedestroy($targetImage);
+            $mapImage = $this->rotateAndCrop($mapImage, $rotation, true);
         }
+        imagepng($mapImage, $mapImageName);
+        imagedestroy($mapImage);
+        return $mapImageName;
     }
 
     /**
-     * @param resource GDish $sourceImage
+     * @param resource $sourceImage GD image
      * @param number $rotation
+     * @param bool $destructive set to true to discard original image resource (saves memory)
      * @return resource GD image
      */
-    protected function rotateAndCrop($sourceImage, $rotation)
+    protected function rotateAndCrop($sourceImage, $rotation, $destructive = false)
     {
         $imageWidth = $this->targetBox->getWidth();
         $imageHeight = abs($this->targetBox->getHeight());
 
         $transColor = imagecolorallocatealpha($sourceImage, 255, 255, 255, 127);
         $rotatedImage = imagerotate($sourceImage, $rotation, $transColor);
+        if ($destructive) {
+            imagedestroy($sourceImage);
+        }
         imagealphablending($rotatedImage, false);
         imagesavealpha($rotatedImage, true);
 
         $offsetX = (imagesx($rotatedImage) - $this->targetBox->getWidth()) * 0.5;
         $offsetY = (imagesy($rotatedImage) - abs($this->targetBox->getHeight())) * 0.5;
 
-        $clippedImage = imagecreatetruecolor($imageWidth, $imageHeight);
-        imagealphablending($clippedImage, false);
-        imagesavealpha($clippedImage, true);
-        imagecopy($clippedImage, $rotatedImage, 0, 0, $offsetX, $offsetY,
-            $imageWidth, $imageHeight);
+        $cropped = $this->cropImage($rotatedImage, $offsetX, $offsetY, $imageWidth, $imageHeight);
         imagedestroy($rotatedImage);
-        unset($rotatedImage);
-        return $clippedImage;
+        return $cropped;
     }
 
-    private function buildPdf()
+    /**
+     * @param $templateData
+     * @param $templateName
+     * @return \FPDF|\FPDF_TPL|PDF_Extensions
+     * @throws \Exception
+     */
+    protected function makeBlankPdf($templateData, $templateName)
     {
         require_once('PDF_Extensions.php');
 
-        // set format
-        if($this->conf['orientation'] == 'portrait'){
-            $format = array($this->conf['pageSize']['width'],$this->conf['pageSize']['height']);
+        /** @var PDF_Extensions|\FPDF|\FPDF_TPL $pdf */
+        $pdf =  new PDF_Extensions();
+        $pdfFile = $this->resourceDir . '/templates/' . $templateName . '.pdf';
+        $pdf->setSourceFile($pdfFile);
+        $pdf->SetAutoPageBreak(false);
+        if ($templateData['orientation'] == 'portrait') {
+            $format = array($templateData['pageSize']['width'], $templateData['pageSize']['height']);
             $orientation = 'P';
-        }else{
-            $format = array($this->conf['pageSize']['height'],$this->conf['pageSize']['width']);
+        } else {
+            $format = array($templateData['pageSize']['height'], $templateData['pageSize']['width']);
             $orientation = 'L';
         }
-
-        /** @var PDF_Extensions|\FPDF|\FPDF_TPL $pdf */
-        $this->pdf = $pdf = new PDF_Extensions();
-
-        $template = $this->data['template'];
-        $pdfFile = $this->resourceDir . '/templates/' . $template . '.pdf';
-        $pdf->setSourceFile($pdfFile);
-        $tplidx = $pdf->importPage(1);
-        $pdf->SetAutoPageBreak(false);
         $pdf->addPage($orientation, $format);
+        return $pdf;
+    }
 
+    /**
+     * @param string $mapImageName
+     * @param array $templateData
+     * @param array $jobData
+     * @return \FPDF|\FPDF_TPL|PDF_Extensions
+     * @throws \Exception
+     */
+    protected function buildPdf($mapImageName, $templateData, $jobData)
+    {
+        // @todo: eliminate instance variable $this->pdf
+        $this->pdf = $pdf = $this->makeBlankPdf($templateData, $jobData['template']);
+        $tplidx = $pdf->importPage(1);
         $hasTransparentBg = $this->checkPdfBackground($pdf);
-        if ($hasTransparentBg == false){
+        if (!$hasTransparentBg){
             $pdf->useTemplate($tplidx);
         }
-
         // add final map image
         $mapUlX = $this->conf['map']['x'];
         $mapUlY = $this->conf['map']['y'];
         $mapWidth = $this->conf['map']['width'];
         $mapHeight = $this->conf['map']['height'];
+        $this->addImageToPdf($pdf, $mapImageName, $mapUlX, $mapUlY, $mapWidth, $mapHeight);
 
-        $pdf->Image($this->finalImageName, $mapUlX, $mapUlY,
-                $mapWidth, $mapHeight, 'png', '', false, 0, 5, -1 * 0);
         // add map border (default is black)
         $pdf->Rect($mapUlX, $mapUlY, $mapWidth, $mapHeight);
-        unlink($this->finalImageName);
+        unlink($mapImageName);
 
-        if ($hasTransparentBg == true){
+        if ($hasTransparentBg) {
             $pdf->useTemplate($tplidx);
         }
 
         // add northarrow
         if (isset($this->conf['northarrow'])) {
-            $this->addNorthArrow();
+            $this->addNorthArrow($pdf, $this->conf, $this->data);
         }
 
         // fill text fields
@@ -222,7 +248,7 @@ class PrintService extends ImageExportService
 
                 switch ($k) {
                     case 'date' :
-                        $date = new \DateTime;
+                        $date = new \DateTime();
                         $pdf->Cell($this->conf['fields']['date']['width'],
                             $this->conf['fields']['date']['height'],
                             $date->format('d.m.Y'));
@@ -266,7 +292,7 @@ class PrintService extends ImageExportService
 
         // add scalebar
         if (isset($this->conf['scalebar']) ) {
-            $this->addScaleBar();
+            $this->addScaleBar($pdf, $this->conf, $this->data);
         }
 
         // add coordinates
@@ -290,47 +316,35 @@ class PrintService extends ImageExportService
         if (isset($this->data['legends']) && !empty($this->data['legends'])){
             $this->addLegend();
         }
+        return $pdf;
+    }
 
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @return string
+     */
+    protected function dumpPdf($pdf)
+    {
         return $pdf->Output(null, 'S');
     }
 
-    private function addNorthArrow()
+    protected function addNorthArrow($pdf, $templateData, $jobData)
     {
         $northarrow = $this->resourceDir . '/images/northarrow.png';
-        $rotation = $this->rotation;
-        $rotatedImageName = null;
+        $rotation = intval($jobData['rotation']);
 
-        if($rotation != 0){
+        $region = $templateData['northarrow'];
+        if ($rotation != 0) {
             $image = imagecreatefrompng($northarrow);
             $transColor = imagecolorallocatealpha($image, 255, 255, 255, 0);
             $rotatedImage = imagerotate($image, $rotation, $transColor);
-            $rotatedImageName = $this->makeTempFile('mb_northarrow');
-            imagepng($rotatedImage, $rotatedImageName);
-
-            if ($rotation == 90 || $rotation == 270) {
-                //
-            } else {
-                $srcImage = imagecreatefrompng($rotatedImageName);
-                $srcSize = getimagesize($rotatedImageName);
-                $destSize = getimagesize($northarrow);
-                $x = ($srcSize[0] - $destSize[0]) / 2;
-                $y = ($srcSize[1] - $destSize[1]) / 2;
-                $destImage = imagecreatetruecolor($destSize[0], $destSize[1]);
-                imagecopy($destImage, $srcImage, 0, 0, $x, $y, $srcSize[0], $srcSize[1]);
-                imagepng($destImage, $rotatedImageName);
-            }
-            $northarrow = $rotatedImageName;
+            $srcSize = array(imagesx($image), imagesy($image));
+            $destSize = array(imagesx($rotatedImage), imagesy($rotatedImage));
+            $x = abs(($srcSize[0] - $destSize[0]) / 2);
+            $y = abs(($srcSize[1] - $destSize[1]) / 2);
+            $northarrow = $this->cropImage($rotatedImage, $x, $y, $srcSize[0], $srcSize[1]);
         }
-
-        $this->pdf->Image($northarrow,
-                            $this->conf['northarrow']['x'],
-                            $this->conf['northarrow']['y'],
-                            $this->conf['northarrow']['width'],
-                            $this->conf['northarrow']['height'],
-                            'png');
-        if($rotatedImageName){
-            unlink($rotatedImageName);
-        }
+        $this->addImageToPdf($pdf, $northarrow, $region['x'], $region['y'], $region['width'], $region['height']);
     }
 
     private function addOverviewMap($ovData)
@@ -411,29 +425,36 @@ class PrintService extends ImageExportService
 
     }
 
-    private function addScaleBar()
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param array $templateData
+     * @param array $jobData
+     */
+    protected function addScaleBar($pdf, $templateData, $jobData)
     {
-        $pdf = $this->pdf;
-        $pdf->SetLineWidth(0.1);
-        $pdf->SetDrawColor(0, 0, 0);
-        $pdf->SetFillColor(0,0,0);
+        $region = $templateData['scalebar'];
+        $totalWidth = $region['width'];
         $pdf->SetFont('arial', '', 10 );
 
-        $length = 0.01 * $this->data['scale_select'] * 5;
+        $length = 0.01 * $jobData['scale_select'] * 5;
         $suffix = 'm';
 
-        $pdf->Text( $this->conf['scalebar']['x'] -1 , $this->conf['scalebar']['y'] - 1 , '0' );
-        $pdf->Text( $this->conf['scalebar']['x'] + 46, $this->conf['scalebar']['y'] - 1 , $length . '' . $suffix);
+        $pdf->Text($region['x'] , $region['y'] - 1 , '0' );
+        $pdf->Text($region['x'] + $totalWidth - 7, $region['y'] - 1 , $length . '' . $suffix);
 
-        $pdf->Rect($this->conf['scalebar']['x'], $this->conf['scalebar']['y'], 10, 2, 'FD');
-        $pdf->SetFillColor(255, 255, 255);
-        $pdf->Rect($this->conf['scalebar']['x'] + 10 , $this->conf['scalebar']['y'], 10, 2, 'FD');
-        $pdf->SetFillColor(0,0,0);
-        $pdf->Rect($this->conf['scalebar']['x'] + 20  , $this->conf['scalebar']['y'], 10, 2, 'FD');
-        $pdf->SetFillColor(255, 255, 255);
-        $pdf->Rect($this->conf['scalebar']['x'] + 30 , $this->conf['scalebar']['y'], 10, 2, 'FD');
-        $pdf->SetFillColor(0,0,0);
-        $pdf->Rect($this->conf['scalebar']['x'] + 40  , $this->conf['scalebar']['y'], 10, 2, 'FD');
+        $nSections = 5;
+        $sectionWidth = $totalWidth / $nSections;
+
+        $pdf->SetLineWidth(0.1);
+        $pdf->SetDrawColor(0, 0, 0);
+        for ($i = 0; $i < $nSections; ++$i) {
+            if ($i & 1) {
+                $pdf->SetFillColor(255, 255, 255);
+            } else {
+                $pdf->SetFillColor(0, 0, 0);
+            }
+            $pdf->Rect($region['x'] + round($i * $sectionWidth), $region['y'], $sectionWidth, 2, 'FD');
+        }
     }
 
     private function addCoordinates()
@@ -504,7 +525,7 @@ class PrintService extends ImageExportService
         return $feature;
     }
 
-    private function getResizeFactor()
+    protected function getResizeFactor()
     {
         if ($this->data['quality'] != 72) {
             return $this->data['quality'] / 72;
@@ -715,9 +736,7 @@ class PrintService extends ImageExportService
           $height = $this->pdf->getHeight();
           $width = $this->pdf->getWidth();
           $legendConf = false;
-          if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
-             $this->addLegendPageImage();
-          }
+          $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
           $xStartPosition = 0;
           $yStartPosition = 0;
         }
@@ -743,16 +762,12 @@ class PrintService extends ImageExportService
                     if($y + $tempY + 10 > ($this->pdf->getHeight()) && $legendConf == false){
                         $x += 105;
                         $y = 10;
-                        if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
-                           $this->addLegendPageImage();
-                        }
+                        $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                         if($x + 20 > ($this->pdf->getWidth())){
                             $this->pdf->addPage('P');
                             $x = 5;
                             $y = 10;
-                            if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){
-                               $this->addLegendPageImage();
-                            }
+                            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                         }
                     }
 
@@ -767,18 +782,15 @@ class PrintService extends ImageExportService
                                 $x = 5;
                                 $y = 10;
                                 $legendConf = false;
-                                if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
-                                   $this->addLegendPageImage();
-                                } 
+                                $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
+
                             }
                         }else if (($y-$yStartPosition) + $tempY + 10 > $height){
                                 $this->pdf->addPage('P');
                                 $x = 5;
                                 $y = 10;
                                 $legendConf = false;
-                                if(isset($this->conf['legendpage_image']) && $this->conf['legendpage_image']){ 
-                                   $this->addLegendPageImage();
-                                } 
+                                $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                         }
                     }
                 }
@@ -807,9 +819,7 @@ class PrintService extends ImageExportService
                             $height = $this->pdf->getHeight();
                             $width = $this->pdf->getWidth();
                             $legendConf = false;
-                            if (!empty($this->conf['legendpage_image'])) {
-                               $this->addLegendPageImage();
-                            }
+                            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                         }
 
                   }else{
@@ -827,9 +837,7 @@ class PrintService extends ImageExportService
                           $this->pdf->addPage('P');
                           $x = 5;
                           $y = 10;
-                            if (!empty($this->conf['legendpage_image'])) {
-                               $this->addLegendPageImage();
-                            }
+                          $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                       }
 
                   }
@@ -854,17 +862,25 @@ class PrintService extends ImageExportService
         }
     }
 
-
-    private function addLegendPageImage()
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param array $templateData
+     * @param array $jobData
+     */
+    protected function addLegendPageImage($pdf, $templateData, $jobData)
     {
-        $legendpageImage = $this->resourceDir . '/' . $this->data['legendpage_image']['path'];
-        if(file_exists ($legendpageImage)){
-            $this->pdf->Image($legendpageImage,
-                            $this->conf['legendpage_image']['x'],
-                            $this->conf['legendpage_image']['y'],
-                            0,
-                            $this->conf['legendpage_image']['height'],
-                            'png');
+        if (empty($templateData['legendpage_image']) || empty($jobData['legendpage_image'])) {
+            return;
+        }
+        $sourcePath = $this->resourceDir . '/' . $jobData['legendpage_image']['path'];
+        $region = $templateData['legendpage_image'];
+        if (file_exists($sourcePath)) {
+            $this->addImageToPdf($pdf, $sourcePath, $region['x'], $region['y'], 0, $region['height']);
+        } else {
+            $defaultPath = $this->resourceDir . '/images/legendpage_image.png';
+            if ($defaultPath !== $sourcePath && file_exists($defaultPath)) {
+                $this->addImageToPdf($pdf, $defaultPath, $region['x'], $region['y'], 0, $region['height']);
+            }
         }
     }
 
@@ -891,5 +907,25 @@ class PrintService extends ImageExportService
         }
 
         return false;
+    }
+
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param resource|string $gdResOrPath
+     * @param int $xOffset
+     * @param int $yOffset
+     * @param int $width optional, to rescale image
+     * @param int $height optional, to rescale image
+     */
+    protected function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
+    {
+        if (is_resource($gdResOrPath)) {
+            $imageName = $this->makeTempFile('mb_print_pdfbuild');
+            imagepng($gdResOrPath, $imageName);
+            $this->addImageToPdf($pdf, $imageName, $xOffset, $yOffset, $width, $height);
+            unlink($imageName);
+        } else {
+            $pdf->Image($gdResOrPath, $xOffset, $yOffset, $width, $height, 'png', '', false, 0);
+        }
     }
 }
