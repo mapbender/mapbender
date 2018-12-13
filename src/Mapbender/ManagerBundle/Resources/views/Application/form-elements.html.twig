@@ -21,7 +21,7 @@
             <th>{{ 'mb.manager.admin.element.title' | trans }}</th>
             <th class="type">{{ 'mb.manager.admin.element.type' | trans }}</th>
             <th class="iconColumn">
-              <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'mb.manager.admin.element.add'|trans}} {{region}}"></a>
+              <a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'mb.manager.admin.element.add'|trans}} {{region}}"></a>
             </th>
           </tr>
         </thead>
