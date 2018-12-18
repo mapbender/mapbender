@@ -130,120 +130,155 @@ class PrintService extends ImageExportService
         if (!$hasTransparentBg){
             $pdf->useTemplate($tplidx);
         }
-        // add final map image
-        $mapUlX = $this->conf['map']['x'];
-        $mapUlY = $this->conf['map']['y'];
-        $mapWidth = $this->conf['map']['width'];
-        $mapHeight = $this->conf['map']['height'];
-        $this->addImageToPdf($pdf, $mapImageName, $mapUlX, $mapUlY, $mapWidth, $mapHeight);
-
-        // add map border (default is black)
-        $pdf->Rect($mapUlX, $mapUlY, $mapWidth, $mapHeight);
+        $this->addMapImage($pdf, $mapImageName, $templateData);
         unlink($mapImageName);
 
         if ($hasTransparentBg) {
             $pdf->useTemplate($tplidx);
         }
 
-        // add northarrow
-        if (isset($templateData['northarrow'])) {
-            $this->addNorthArrow($pdf, $templateData, $jobData);
-        }
-
-        // fill text fields
-        if (isset($this->conf['fields']) ) {
-            foreach ($this->conf['fields'] as $k => $v) {
-                list($r, $g, $b) = CSSColorParser::parse($this->conf['fields'][$k]['color']);
-                $pdf->SetTextColor($r,$g,$b);
-                $pdf->SetFont('Arial', '', intval($this->conf['fields'][$k]['fontsize']));
-                $pdf->SetXY($this->conf['fields'][$k]['x'] - 1,
-                    $this->conf['fields'][$k]['y']);
-
-                // continue if extent field is set
-                if(preg_match("/^extent/", $k)){
-                    continue;
-                }
-
-                switch ($k) {
-                    case 'date' :
-                        $date = new \DateTime();
-                        $pdf->Cell($this->conf['fields']['date']['width'],
-                            $this->conf['fields']['date']['height'],
-                            $date->format('d.m.Y'));
-                        break;
-                    case 'scale' :
-                        $pdf->Cell($this->conf['fields']['scale']['width'],
-                            $this->conf['fields']['scale']['height'],
-                            '1 : ' . $this->data['scale_select']);
-                        break;
-                    default:
-                        if (isset($this->data['extra'][$k])) {
-                            $pdf->MultiCell($this->conf['fields'][$k]['width'],
-                                $this->conf['fields'][$k]['height'],
-                                utf8_decode($this->data['extra'][$k]));
-                        }
-
-                        // fill digitizer feature fields
-                        if (isset($this->data['digitizer_feature']) && preg_match("/^feature./", $k)) {
-                            $dfData = $this->data['digitizer_feature'];
-                            $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
-                            $attribute = substr(strrchr($k, "."), 1);
-
-                            if ($feature && $attribute) {
-                                $pdf->MultiCell($this->conf['fields'][$k]['width'],
-                                    $this->conf['fields'][$k]['height'],
-                                    utf8_decode($feature->getAttribute($attribute)));
-                            }
-                        }
-                        break;
-                }
-            }
-        }
-
-        // reset text color to default black
-        $pdf->SetTextColor(0,0,0);
-
-        // add overview map
-        if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
-            $this->addOverviewMap($pdf, $templateData, $jobData);
-        }
-
-        // add scalebar
-        if (isset($this->conf['scalebar']) ) {
-            $this->addScaleBar($pdf, $templateData, $jobData);
-        }
-
-        // add coordinates
-        if (isset($this->conf['fields']['extent_ur_x']) && isset($this->conf['fields']['extent_ur_y'])
-                && isset($this->conf['fields']['extent_ll_x']) && isset($this->conf['fields']['extent_ll_y']))
-        {
-            $this->addCoordinates();
-        }
-
-        // add dynamic logo
-        if (!empty($this->conf['dynamic_image']) && !empty($this->data['dynamic_image'])) {
-            $this->addDynamicImage();
-        }
-
-        // add dynamic text
-        if (!empty($this->conf['fields']['dynamic_text']) && !empty($this->data['dynamic_text'])) {
-            $this->addDynamicText();
-        }
+        $this->afterMainMap($pdf, $templateData, $jobData);
 
         // add legend
-        if (isset($this->data['legends']) && !empty($this->data['legends'])){
+        if (!empty($jobData['legends'])){
             $this->addLegend();
         }
         return $pdf;
     }
 
     /**
+     * Returns the binary string representation of the $pdf
+     *
      * @param PDF_Extensions|\FPDF $pdf
      * @return string
      */
     protected function dumpPdf($pdf)
     {
         return $pdf->Output(null, 'S');
+    }
+
+    /**
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param string $mapImageName
+     * @param array $templateData
+     */
+    protected function addMapImage($pdf, $mapImageName, $templateData)
+    {
+        $region = $templateData['map'];
+        $this->addImageToPdf($pdf, $mapImageName, $region['x'], $region['y'], $region['width'], $region['height']);
+        // add map border (default is black)
+        $pdf->Rect($region['x'], $region['y'], $region['width'], $region['height']);
+    }
+
+    /**
+     * Renders the remaining regions on the first page after the main map image has been added.
+     * This excludes the legend, because the legend rendering process, if it begins on the first
+     * page, may spill over and start adding more pages.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param array $templateData
+     * @param array $jobData
+     */
+    protected function afterMainMap($pdf, $templateData, $jobData)
+    {
+        // add northarrow
+        if (!empty($templateData['northarrow'])) {
+            $this->addNorthArrow($pdf, $templateData, $jobData);
+        }
+
+        if (!empty($templateData['fields'])) {
+            $this->addTextFields($pdf, $templateData, $jobData);
+        }
+
+        // add overview map
+        if (!empty($jobData['overview']) && !empty($templateData['overview'])) {
+            $this->addOverviewMap($pdf, $templateData, $jobData);
+        }
+
+        // add scalebar
+        if (!empty($templateData['scalebar'])) {
+            $this->addScaleBar($pdf, $templateData, $jobData);
+        }
+
+        // add coordinates
+        if (isset($templateData['fields']['extent_ur_x']) && isset($templateData['fields']['extent_ur_y'])
+                && isset($templateData['fields']['extent_ll_x']) && isset($templateData['fields']['extent_ll_y']))
+        {
+            $this->addCoordinates();
+        }
+
+        // add dynamic logo
+        if (!empty($templateData['dynamic_image']) && !empty($templateData['dynamic_image'])) {
+            $this->addDynamicImage();
+        }
+
+        // add dynamic text
+        if (!empty($templateData['fields']['dynamic_text']) && !empty($templateData['dynamic_text'])) {
+            $this->addDynamicText();
+        }
+    }
+
+    /**
+     * Renders the remaining regions on the first page after the main map image has been added.
+     * This excludes the legend, because the legend rendering process, if it begins on the first
+     * page, may spill over and start adding more pages.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param array $templateData
+     * @param array $jobData
+     */
+    protected function addTextFields($pdf, $templateData, $jobData)
+    {
+        foreach ($templateData['fields'] as $fieldName => $region) {
+            $text = $this->getTextFieldContent($fieldName, $jobData);
+            if ($text !== null) {
+                list($r, $g, $b) = CSSColorParser::parse($region['color']);
+                $pdf->SetTextColor($r, $g, $b);
+                $pdf->SetFont('Arial', '', intval($region['fontsize']));
+                $pdf->SetXY($region['x'] - 1, $region['y']);
+                $pdf->MultiCell($region['width'], $region['height'], utf8_decode($text));
+            }
+        }
+        // reset text color to default black
+        $pdf->SetTextColor(0, 0, 0);
+    }
+
+    /**
+     * Should return text to be printed into a 'field' (=textual template region).
+     * A null return value completely skips processing of the field.
+     *
+     * @param string $fieldName
+     * @param array $jobData
+     * @return string|null
+     */
+    protected function getTextFieldContent($fieldName, $jobData)
+    {
+        // skip extent field (???)
+        if (preg_match("/^extent/", $fieldName)) {
+            return null;
+        }
+
+        switch ($fieldName) {
+            case 'date' :
+                return date('d.m.Y');
+            case 'scale' :
+                return '1 : ' . $jobData['scale_select'];
+            default:
+                if (isset($jobData['extra'][$fieldName])) {
+                    return $jobData['extra'][$fieldName];
+                }
+                // fill digitizer feature fields
+                if (isset($jobData['digitizer_feature']) && preg_match("/^feature./", $fieldName)) {
+                    $dfData = $jobData['digitizer_feature'];
+                    $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
+                    $attribute = substr(strrchr($fieldName, "."), 1);
+
+                    if ($feature && $attribute) {
+                        return $feature->getAttribute($attribute);
+                    }
+                }
+                return null;
+        }
     }
 
     protected function addNorthArrow($pdf, $templateData, $jobData)
