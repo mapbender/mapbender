@@ -4,7 +4,7 @@
 namespace Mapbender\PrintBundle\Component\Service;
 
 
-use Mapbender\PrintBundle\Component\Plugin\PrintClientHttpPluginInterface;
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,8 +19,8 @@ class PrintServiceBridge implements PrintServiceInterface
 {
     /** @var ContainerInterface */
     protected $container;
-    /** @var PrintClientHttpPluginInterface[] */
-    protected $httpPlugins = array();
+    /** @var PrintPluginHost */
+    protected $pluginHost;
 
     private static $instance = null;
 
@@ -32,8 +32,9 @@ class PrintServiceBridge implements PrintServiceInterface
 
     /**
      * @param ContainerInterface $container only used for instantiation old-style non-service service
+     * @param PrintPluginHost $pluginHost
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, PrintPluginHost $pluginHost)
     {
         // strict singleton enforcement: no two instances may be created, including child class instances
         if (self::$instance) {
@@ -42,49 +43,25 @@ class PrintServiceBridge implements PrintServiceInterface
             self::$instance = $this;
         }
         $this->container = $container;
+        $this->pluginHost = $pluginHost;
     }
 
     /**
-     * Register a plugin at runtime.
-     * This is intended to be called by container compiler passes.
-     *
-     * @param string|object $plugin container service id or instance
+     * @return PrintPluginHost
      */
-    public function registerPlugin($plugin)
+    public function getPluginHost()
     {
-        if (is_string($plugin)) {
-            $plugin = $this->container->get($plugin);
-        }
-        $valid = false;
-        $t = is_object($plugin) ? get_class($plugin) : gettype($plugin);
-        if ($plugin instanceof PrintClientHttpPluginInterface) {
-            $key = $plugin->getDomainKey();
-            if (!$key || !is_string($key)) {
-                throw new \LogicException("Invalid domain key " . print_r($key, true) . " from plugin type {$t}");
-            }
-            $this->httpPlugins[$key] = $plugin;
-            $valid = true;
-        }
-        // @todo: support plugins for other stuff (modifying pdf, modifying map image) here?
-        if (!$valid) {
-            throw new \InvalidArgumentException("Type {$t} does not implement a supported plugin interface, don't know what to do with it");
-        }
+        return $this->pluginHost;
     }
 
     /**
      * @param Request $request
+     * @param Element $elementEntity
      * @return \Symfony\Component\HttpFoundation\Response|null
      */
-    final public function handleHttpRequest(Request $request)
+    final public function handleHttpRequest(Request $request, Element $elementEntity)
     {
-        foreach ($this->httpPlugins as $plugin) {
-            $responseOrNull = $plugin->handleHttpRequest($request);
-            if ($responseOrNull) {
-                return $responseOrNull;
-            }
-        }
-        // not handled by any plugin
-        return null;
+        return $this->pluginHost->handleHttpRequest($request, $elementEntity);
     }
 
     /**

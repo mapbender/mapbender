@@ -3,6 +3,7 @@
 
 namespace Mapbender\PrintBundle\Component\Plugin;
 
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +38,7 @@ class DigitizerPrintPlugin implements PluginBaseInterface, PrintClientHttpPlugin
         return 'digitizer';
     }
 
-    public function handleHttpRequest(Request $request)
+    public function handleHttpRequest(Request $request, Element $elementEntity)
     {
         switch ($request->attributes->get('action')) {
             case 'getDigitizerTemplates':

@@ -231,7 +231,7 @@ class PrintClient extends Element
                 return new Response($size);
 
             default:
-                $response = $bridgeService->handleHttpRequest($request);
+                $response = $bridgeService->handleHttpRequest($request, $this->entity);
                 if ($response) {
                     return $response;
                 } else {

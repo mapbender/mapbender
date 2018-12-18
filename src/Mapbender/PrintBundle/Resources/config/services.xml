@@ -4,11 +4,16 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="mapbender.print_service_bridge.service.class">Mapbender\PrintBundle\Component\Service\PrintServiceBridge</parameter>
+        <parameter key="mapbender.print_plugin_host.service.class">Mapbender\PrintBundle\Component\Service\PrintPluginHost</parameter>
         <parameter key="mapbender.print.plugin.digitizer.class">Mapbender\PrintBundle\Component\Plugin\DigitizerPrintPlugin</parameter>
         <parameter key="mapbender.print.plugin.digitizer.paramkey.featuretypes">featuretypes</parameter>
     </parameters>
     <services>
         <service id="mapbender.print_service_bridge.service" class="%mapbender.print_service_bridge.service.class%">
+            <argument type="service" id="service_container" />
+            <argument type="service" id="mapbender.print_plugin_host.service" />
+        </service>
+        <service id="mapbender.print_plugin_host.service" class="%mapbender.print_plugin_host.service.class%">
             <argument type="service" id="service_container" />
         </service>
         <service id="mapbender.print.plugin.digitizer" class="%mapbender.print.plugin.digitizer.class%">
