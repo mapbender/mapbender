@@ -68,16 +68,29 @@ class PrintServiceBridge implements PrintServiceInterface
      * @param array $printJobData
      * @return string the (binary) body of the generated PDF
      */
-    public function buildPdf(array $printJobData)
+    public function dumpPrint(array $printJobData)
     {
         $serviceOrMaybeNot = $this->getPrintServiceInstance();
         if ($serviceOrMaybeNot instanceof PrintServiceInterface) {
-            return $serviceOrMaybeNot->buildPdf($printJobData);
+            return $serviceOrMaybeNot->dumpPrint($printJobData);
         } else {
             // Legacy path
             // NOTE: Retrieved object could be anything, not even necessarily a child of the old default class.
             /** @var \Mapbender\PrintBundle\Component\PrintService $serviceOrMaybeNot */
             return $serviceOrMaybeNot->doPrint($printJobData);
+        }
+    }
+
+    public function storePrint(array $printJobData, $fileName)
+    {
+        $serviceOrMaybeNot = $this->getPrintServiceInstance();
+        if ($serviceOrMaybeNot instanceof PrintServiceInterface) {
+            $serviceOrMaybeNot->storePrint($printJobData, $fileName);
+        } else {
+            // Legacy path
+            // NOTE: Retrieved object could be anything, not even necessarily a child of the old default class.
+            /** @var \Mapbender\PrintBundle\Component\PrintService $serviceOrMaybeNot */
+            file_put_contents($fileName, $serviceOrMaybeNot->doPrint($printJobData));
         }
     }
 

@@ -50,7 +50,7 @@ class RunJobCommand extends ContainerAwareCommand
     {
         $jobArray = $this->getJobArray($input->getArgument('inputFile'));
 
-        $outputBody = $this->getPrintServiceBridge()->buildPdf($jobArray);
+        $outputBody = $this->getPrintServiceBridge()->dumpPrint($jobArray);
 
         $outputFileName= $input->getArgument('outputFile');
         file_put_contents($outputFileName, $outputBody);

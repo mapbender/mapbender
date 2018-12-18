@@ -207,7 +207,7 @@ class PrintClient extends Element
             case 'print':
                 $data = $this->preparePrintData($request, $configuration);
 
-                $pdfBody = $bridgeService->buildPdf($data);
+                $pdfBody = $bridgeService->dumpPrint($data);
 
                 $displayInline = true;
 
