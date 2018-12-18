@@ -1110,6 +1110,20 @@ Mapbender.Model = {
         console.error("Cannot find configuration in given source", source);
         throw new Error("Cannot find configuration in given source");
     },
+    /**
+     * Get the "geosource" object for given source from Mapbender.source
+     * @param {OpenLayers.Layer|MapQuery.Layer|Object} source
+     * @param {boolean} [strict] to throw on missing geosource object (default true)
+     * @returns {*|null}
+     */
+    getGeoSourceHandler: function(source, strict) {
+        var type = this.getMbConfig(source).type;
+        var gs = Mapbender.source[type];
+        if (!gs && (strict || typeof strict === 'undefined')) {
+            throw new Error("No geosource for type " + type);
+        }
+        return gs || null;
+    },
     _getActiveLayerInfo: function(olLayer, scale) {
         var mbConfig = this.getMbConfig(olLayer);
         var activeLayers = [];
