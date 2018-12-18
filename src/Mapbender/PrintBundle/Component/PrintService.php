@@ -3,6 +3,7 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
 use Mapbender\PrintBundle\Component\Export\Box;
+use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 
 /**
  * Mapbender3 Print Service.
@@ -219,9 +220,7 @@ class PrintService extends ImageExportService
     }
 
     /**
-     * Renders the remaining regions on the first page after the main map image has been added.
-     * This excludes the legend, because the legend rendering process, if it begins on the first
-     * page, may spill over and start adding more pages.
+     * Fills textual regions on the first page.
      *
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
      * @param array $templateData
@@ -230,6 +229,10 @@ class PrintService extends ImageExportService
     protected function addTextFields($pdf, $templateData, $jobData)
     {
         foreach ($templateData['fields'] as $fieldName => $region) {
+            // skip extent fields, see special handling in addCoordinates method
+            if (preg_match("/^extent/", $fieldName)) {
+                continue;
+            }
             $text = $this->getTextFieldContent($fieldName, $jobData);
             if ($text !== null) {
                 list($r, $g, $b) = CSSColorParser::parse($region['color']);
@@ -253,9 +256,9 @@ class PrintService extends ImageExportService
      */
     protected function getTextFieldContent($fieldName, $jobData)
     {
-        // skip extent field (???)
-        if (preg_match("/^extent/", $fieldName)) {
-            return null;
+        $pluginText = $this->getPluginHost()->getTextFieldContent($fieldName, $jobData);
+        if ($pluginText !== null) {
+            return $pluginText;
         }
 
         switch ($fieldName) {
@@ -266,18 +269,10 @@ class PrintService extends ImageExportService
             default:
                 if (isset($jobData['extra'][$fieldName])) {
                     return $jobData['extra'][$fieldName];
+                } else {
+                    // @todo: log warning?
+                    return null;
                 }
-                // fill digitizer feature fields
-                if (isset($jobData['digitizer_feature']) && preg_match("/^feature./", $fieldName)) {
-                    $dfData = $jobData['digitizer_feature'];
-                    $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
-                    $attribute = substr(strrchr($fieldName, "."), 1);
-
-                    if ($feature && $attribute) {
-                        return $feature->getAttribute($attribute);
-                    }
-                }
-                return null;
         }
     }
 
@@ -452,14 +447,6 @@ class PrintService extends ImageExportService
         $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
                 $this->conf['fields']['dynamic_text']['height'],
                 utf8_decode($this->data['dynamic_text']['text']));
-    }
-
-    private function getFeature($schemaName, $featureId)
-    {
-        $featureTypeService = $this->container->get('features');
-        $featureType = $featureTypeService->get($schemaName);
-        $feature = $featureType->get($featureId);
-        return $feature;
     }
 
     protected function getResizeFactor()
@@ -864,5 +851,16 @@ class PrintService extends ImageExportService
         } else {
             $pdf->Image($gdResOrPath, $xOffset, $yOffset, $width, $height, 'png', '', false, 0);
         }
+    }
+
+    /**
+     * @return PrintPluginHost
+     */
+    protected function getPluginHost()
+    {
+        // @todo: in a registered service, this should be injected into the constructor
+        /** @var PrintPluginHost $service */
+        $service = $this->container->get('mapbender.print_plugin_host.service');
+        return $service;
     }
 }

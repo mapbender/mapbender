@@ -4,7 +4,9 @@
 namespace Mapbender\PrintBundle\Component\Plugin;
 
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\DataSourceBundle\Component\FeatureTypeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @todo: TBD if there's any reason against performing the entire template rewriting magic server side, with no http
  *        interaction at all.
  */
-class DigitizerPrintPlugin implements PluginBaseInterface, PrintClientHttpPluginInterface
+class DigitizerPrintPlugin implements PrintClientHttpPluginInterface, TextFieldPluginInterface
 {
     /** @var ContainerInterface */
     protected $container;
@@ -53,5 +55,40 @@ class DigitizerPrintPlugin implements PluginBaseInterface, PrintClientHttpPlugin
             default:
                 return null;
         }
+    }
+
+    public function getTextFieldContent($fieldName, $jobData)
+    {
+        if (isset($jobData['digitizer_feature']) && preg_match("/^feature./", $fieldName)) {
+            $dfData = $jobData['digitizer_feature'];
+            try {
+                $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
+            } catch (ServiceNotFoundException $e) {
+                // occurs if a configured dbal connection is missing or
+                // the feature type service is not registered at all
+                // => return null to leave field unhandled
+                return null;
+            }
+            $attribute = substr(strrchr($fieldName, "."), 1);
+
+            if ($feature && $attribute) {
+                return $feature->getAttribute($attribute);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param $schemaName
+     * @param $featureId
+     * @return array|\Mapbender\DataSourceBundle\Entity\DataItem
+     */
+    protected function getFeature($schemaName, $featureId)
+    {
+        /** @var FeatureTypeService $featureTypeService */
+        $featureTypeService = $this->container->get('features');
+        $featureType = $featureTypeService->get($schemaName);
+        $feature = $featureType->get($featureId);
+        return $feature;
     }
 }
