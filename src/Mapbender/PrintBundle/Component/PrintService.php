@@ -615,13 +615,13 @@ class PrintService extends ImageExportService
     /**
      * Seemingly redundant override is necessary because the drawSomething methods are all private...
      *
-     * @param resource $image
+     * @param GdCanvas $canvas
      * @param mixed[] $vectorLayers
      */
-    protected function drawFeatures($image, $vectorLayers)
+    protected function drawFeatures($canvas, $vectorLayers)
     {
-        imagesavealpha($image, true);
-        imagealphablending($image, true);
+        imagesavealpha($canvas->resource, true);
+        imagealphablending($canvas->resource, true);
 
         foreach ($vectorLayers as $layer) {
             foreach ($layer['geometries'] as $geometry) {
@@ -629,7 +629,7 @@ class PrintService extends ImageExportService
                 if (!method_exists($this, $renderMethodName)) {
                     continue;
                 }
-                $this->$renderMethodName($geometry, $image);
+                $this->$renderMethodName($geometry, $canvas->resource);
             }
         }
     }

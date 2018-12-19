@@ -84,9 +84,11 @@ class ImageExportService
             $rotatedImage = $this->buildExportImage($rotatedJob);
             return $this->rotateAndCrop($rotatedImage, $targetBox, $rotation, true);
         } else {
-            $mapImage = $this->makeBlankImageResource($jobData['width'], $jobData['height']);
-            $this->addLayers($mapImage, $jobData['layers'], $jobData['width'], $jobData['height'], $extentBox);
-            return $mapImage;
+            $canvas = new GdCanvas($jobData['width'], $jobData['height']);
+            /** @todo: eliminate instance variable featureTransform */
+            $this->featureTransform = $this->initializeFeatureTransform($jobData);
+            $this->addLayers($canvas, $jobData['layers'], $extentBox);
+            return $canvas->resource;
         }
     }
 
@@ -132,7 +134,6 @@ class ImageExportService
      */
     public function runJob(array $jobData)
     {
-        $this->featureTransform = $this->initializeFeatureTransform($jobData);
         return $this->buildExportImage($jobData);
     }
 
@@ -185,13 +186,11 @@ class ImageExportService
      * Produce and merge a single image layer onto $targetImage.
      * Override this to handle more layer types.
      *
-     * @param resource $targetImage GDish
+     * @param GdCanvas $canvas
      * @param array $layerDef
-     * @param int $width in pixels
-     * @param int $height in pixels
      * @param Box $extent projected
      */
-    protected function addImageLayer($targetImage, $layerDef, $width, $height, Box $extent)
+    protected function addImageLayer($canvas, $layerDef, Box $extent)
     {
         if (empty($layerDef['type'])) {
             $this->getLogger()->warning("Missing 'type' in layer definition", $layerDef);
@@ -200,10 +199,10 @@ class ImageExportService
 
         switch ($layerDef['type']) {
             case 'wms':
-                $this->addWmsLayer($targetImage, $layerDef, $width, $height, $extent);
+                $this->addWmsLayer($canvas, $layerDef, $extent);
                 break;
             case 'GeoJSON+Style':
-                $this->drawFeatures($targetImage, array($layerDef));
+                $this->drawFeatures($canvas, array($layerDef));
                 break;
             default:
                 $this->getLogger()->warning("Unhandled layer type {$layerDef['type']}");
@@ -214,33 +213,28 @@ class ImageExportService
     /**
      * Collect and merge WMS tiles and vector layers into a PNG file.
      *
-     * @param resource $targetImage GDish
+     * @param GdCanvas $canvas
      * @param mixed[] $layers
-     * @param int $width
-     * @param int $height
      * @param Box $extent projected
-     * @return resource GDish
      */
-    protected function addLayers($targetImage, $layers, $width, $height, Box $extent)
+    protected function addLayers($canvas, $layers, Box $extent)
     {
         foreach ($layers as $k => $layerDef) {
-            $this->addImageLayer($targetImage, $layerDef, $width, $height, $extent);
+            $this->addImageLayer($canvas, $layerDef, $extent);
         }
-        return $targetImage;
     }
 
     /**
      * @param $layerDef
-     * @param $width
-     * @param $height
+     * @param GdCanvas $canvas
      * @param Box $extent
      * @return string
      */
-    protected function preprocessRasterUrl($layerDef, $width, $height, Box $extent)
+    protected function preprocessWmsUrl($layerDef, $canvas, Box $extent)
     {
         $params = array(
-            'width' => $width,
-            'height' => $height,
+            'width' => $canvas->width,
+            'height' => $canvas->height,
         );
         if (!empty($layerDef['changeAxis'])){
             $params['bbox'] = $extent->bottom . ',' . $extent->left . ',' . $extent->top . ',' . $extent->right;
@@ -251,25 +245,23 @@ class ImageExportService
     }
 
     /**
-     * @param resource $targetImage
+     * @param GdCanvas $canvas
      * @param array $layerDef
-     * @param int $width
-     * @param int $height
      * @param Box $extent
      */
-    protected function addWmsLayer($targetImage, $layerDef, $width, $height, $extent)
+    protected function addWmsLayer($canvas, $layerDef, $extent)
     {
         if (empty($layerDef['url'])) {
             $this->getLogger()->warning("Missing url in WMS layer", $layerDef);
             return;
         }
-        $url = $this->preprocessRasterUrl($layerDef, $width, $height, $extent);
+        $url = $this->preprocessWmsUrl($layerDef, $canvas, $extent);
 
         $layerImage = $this->downloadImage($url, $layerDef['opacity']);
         if ($layerImage) {
-            imagecopyresampled($targetImage, $layerImage,
+            imagecopyresampled($canvas->resource, $layerImage,
                 0, 0, 0, 0,
-                $width, $height,
+                $canvas->width, $canvas->height,
                 imagesx($layerImage), imagesy($layerImage));
             imagedestroy($layerImage);
             unset($layerImage);
@@ -393,10 +385,14 @@ class ImageExportService
         echo $this->dumpImage($image, $format);
     }
 
-    protected function drawFeatures($image, $vectorLayers)
+    /**
+     * @param GdCanvas $canvas
+     * @param array[][] $vectorLayers
+     */
+    protected function drawFeatures($canvas, $vectorLayers)
     {
-        imagesavealpha($image, true);
-        imagealphablending($image, true);
+        imagesavealpha($canvas->resource, true);
+        imagealphablending($canvas->resource, true);
 
         foreach ($vectorLayers as $idx => $layer) {
             foreach($layer['geometries'] as $geometry) {
@@ -406,7 +402,7 @@ class ImageExportService
                     continue;
                 }
 
-                $this->$renderMethodName($geometry, $image);
+                $this->$renderMethodName($geometry, $canvas->resource);
             }
         }
     }
