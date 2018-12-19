@@ -182,6 +182,36 @@ class ImageExportService
     }
 
     /**
+     * Produce and merge a single image layer onto $targetImage.
+     * Override this to handle more layer types.
+     *
+     * @param resource $targetImage GDish
+     * @param array $layerDef
+     * @param int $width in pixels
+     * @param int $height in pixels
+     * @param Box $extent projected
+     */
+    protected function addImageLayer($targetImage, $layerDef, $width, $height, Box $extent)
+    {
+        if (empty($layerDef['type'])) {
+            $this->getLogger()->warning("Missing 'type' in layer definition", $layerDef);
+            return;
+        }
+
+        switch ($layerDef['type']) {
+            case 'wms':
+                $this->addWmsLayer($targetImage, $layerDef, $width, $height, $extent);
+                break;
+            case 'GeoJSON+Style':
+                $this->drawFeatures($targetImage, array($layerDef));
+                break;
+            default:
+                $this->getLogger()->warning("Unhandled layer type {$layerDef['type']}");
+                break;
+        }
+    }
+
+    /**
      * Collect and merge WMS tiles and vector layers into a PNG file.
      *
      * @param resource $targetImage GDish
@@ -194,11 +224,7 @@ class ImageExportService
     protected function addLayers($targetImage, $layers, $width, $height, Box $extent)
     {
         foreach ($layers as $k => $layerDef) {
-            if (!empty($layerDef['url'])) {
-                $this->addRasterLayer($targetImage, $layerDef, $width, $height, $extent);
-            } elseif ($layerDef['type'] === 'GeoJSON+Style') {
-                $this->drawFeatures($targetImage, array($layerDef));
-            }
+            $this->addImageLayer($targetImage, $layerDef, $width, $height, $extent);
         }
         return $targetImage;
     }
@@ -231,10 +257,11 @@ class ImageExportService
      * @param int $height
      * @param Box $extent
      */
-    protected function addRasterLayer($targetImage, $layerDef, $width, $height, $extent)
+    protected function addWmsLayer($targetImage, $layerDef, $width, $height, $extent)
     {
         if (empty($layerDef['url'])) {
-                return;
+            $this->getLogger()->warning("Missing url in WMS layer", $layerDef);
+            return;
         }
         $url = $this->preprocessRasterUrl($layerDef, $width, $height, $extent);
 
@@ -247,7 +274,7 @@ class ImageExportService
             imagedestroy($layerImage);
             unset($layerImage);
         } else {
-            $this->getLogger()->warn("Failed request to {$url}");
+            $this->getLogger()->warning("Failed request to {$url}");
         }
     }
 
