@@ -375,9 +375,11 @@
                     y: component.y
                 };
             });
+            var mapDpi = (this.map.options || {}).dpi || 72;
             _.assign(jobData, {
                 legends: this._collectLegends(),
                 overview: overview,
+                mapDpi: mapDpi,
                 'extent_feature': extentFeature
             });
             if (this.digitizerData) {
