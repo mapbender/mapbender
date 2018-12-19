@@ -76,10 +76,7 @@ class PrintService extends ImageExportService
     private function createMapImage($templateData, $jobData)
     {
         $targetBox = $this->getTargetBox($templateData, $jobData);
-        $exportJob = array_replace($jobData, array(
-            'width' => $targetBox->getWidth(),
-            'height' => abs($targetBox->getHeight()),
-        ));
+        $exportJob = array_replace($jobData, $targetBox->getAbsWidthAndHeight());
         $mapImage = $this->buildExportImage($exportJob);
 
         // dump to file system immediately to recoup some memory before building PDF
@@ -331,10 +328,7 @@ class PrintService extends ImageExportService
             'layers' => $layerDefs,
             'width' => $ovImageWidth,
             'height' => $ovImageHeight,
-            'extent' => array(
-                'width' => $ovExtent->getWidth(),
-                'height' => $ovExtent->getHeight(),
-            ),
+            'extent' => $ovExtent->getAbsWidthAndHeight(),
             'center' => $ovExtent->getCenterXy(),
         ));
 

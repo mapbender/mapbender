@@ -108,6 +108,20 @@ class Box
     }
 
     /**
+     * Convenience method to get absolute width and height in an
+     * array with keys 'width' and 'height'.
+     *
+     * @return float[]
+     */
+    public function getAbsWidthAndHeight()
+    {
+        return array(
+            'width' => abs($this->getWidth()),
+            'height' => abs($this->getHeight()),
+        );
+    }
+
+    /**
      * Self-modifying; quantize left / right / bottom / top to integers
      */
     public function roundToIntegerBoundaries()

@@ -77,10 +77,7 @@ class ImageExportService
                 'rotation' => 0,
                 'width' => abs($expandedCanvas->getWidth()),
                 'height' => abs($expandedCanvas->getHeight()),
-                'extent' => array(
-                    'width' => $expandedExtent->getWidth(),
-                    'height' => abs($expandedExtent->getHeight()),
-                ),
+                'extent' => $expandedExtent->getAbsWidthAndHeight(),
                 'center' => $expandedExtent->getCenterXy(),
             ));
             // self-delegate
