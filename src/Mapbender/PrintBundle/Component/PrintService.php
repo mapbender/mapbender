@@ -1,8 +1,8 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
-use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
 use Mapbender\PrintBundle\Component\Export\Box;
+use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 
 /**
@@ -332,7 +332,7 @@ class PrintService extends ImageExportService
             'center' => $ovExtent->getCenterXy(),
         ));
 
-        $ovTransform = Affine2DTransform::boxToBox($ovExtent, $ovPixelBox);
+        $ovTransform = FeatureTransform::boxToBox($ovExtent, $ovPixelBox, 1.0);
         $red = imagecolorallocate($image,255,0,0);
         // GD imagepolygon expects a flat, numerically indexed, 1d list of concatenated coordinates,
         // and we have 2D sub-arrays with 'x' and 'y' keys. Convert.
@@ -443,18 +443,35 @@ class PrintService extends ImageExportService
                 utf8_decode($this->data['dynamic_text']['text']));
     }
 
-    protected function getResizeFactor()
+    /**
+     * @param array $jobData
+     * @return float
+     */
+    protected function getDefaultDpi($jobData)
     {
-        if ($this->data['quality'] != 72) {
-            return $this->data['quality'] / 72;
+        if (empty($jobData['mapDpi'])) {
+            return 72.0;
         } else {
-            return 1;
+            return floatval($jobData['mapDpi']);
+        }
+    }
+
+    /**
+     * @param array $jobData
+     * @return float
+     */
+    protected function getLineScale($jobData)
+    {
+        if (empty($jobData['quality'])) {
+            return 1.0;
+        } else {
+            return floatval($jobData['quality']) / $this->getDefaultDpi($jobData);
         }
     }
 
     private function drawPolygon($geometry, $image)
     {
-        $resizeFactor = $this->getResizeFactor();
+        $resizeFactor = $this->featureTransform->lineScale;
         $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $ring) {
             if(count($ring) < 3) {
@@ -490,7 +507,7 @@ class PrintService extends ImageExportService
 
     private function drawMultiPolygon($geometry, $image)
     {
-        $resizeFactor = $this->getResizeFactor();
+        $resizeFactor = $this->featureTransform->lineScale;
         $style = $this->getStyle($geometry);
         foreach($geometry['coordinates'] as $element) {
             foreach($element as $ring) {
@@ -528,7 +545,7 @@ class PrintService extends ImageExportService
 
     private function drawLineString($geometry, $image)
     {
-        $resizeFactor = $this->getResizeFactor();
+        $resizeFactor = $this->featureTransform->lineScale;
         $style = $this->getStyle($geometry);
         $color = $this->getColor(
             $style['strokeColor'],
@@ -549,7 +566,7 @@ class PrintService extends ImageExportService
 
     private function drawMultiLineString($geometry, $image)
     {
-        $resizeFactor = $this->getResizeFactor();
+        $resizeFactor = $this->featureTransform->lineScale;
         $style = $this->getStyle($geometry);
         $color = $this->getColor(
             $style['strokeColor'],
@@ -572,7 +589,7 @@ class PrintService extends ImageExportService
     private function drawPoint($geometry, $image)
     {
         $style = $this->getStyle($geometry);
-        $resizeFactor = $this->getResizeFactor();
+        $resizeFactor = $this->featureTransform->lineScale;
 
         $p = $this->featureTransform->transformPair($geometry['coordinates']);
 

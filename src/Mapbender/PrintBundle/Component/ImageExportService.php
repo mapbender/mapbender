@@ -2,8 +2,8 @@
 namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\CoreBundle\Utils\UrlUtil;
-use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
 use Mapbender\PrintBundle\Component\Export\Box;
+use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Element\ImageExport;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +25,7 @@ class ImageExportService
     /** @var string */
     protected $resourceDir;
 
-    /** @var Affine2DTransform */
+    /** @var FeatureTransform */
     protected $featureTransform;
 
     public function __construct($container)
@@ -115,6 +115,7 @@ class ImageExportService
     /**
      * @param resource $image GDish
      * @param string $format
+     * @return string
      */
     public function dumpImage($image, $format)
     {
@@ -155,8 +156,19 @@ class ImageExportService
     }
 
     /**
+     * Should return the "natural" pixel width for a rendered line.
+     *
+     * @param array $jobData
+     * @return float
+     */
+    protected function getLineScale($jobData)
+    {
+        return 1.0;
+    }
+
+    /**
      * @param $jobData
-     * @return Affine2DTransform
+     * @return FeatureTransform
      * @todo: do this without using an instance attribute
      */
     protected function initializeFeatureTransform($jobData)
@@ -165,7 +177,8 @@ class ImageExportService
             $jobData['center']['x'], $jobData['center']['y'],
             $jobData['extent']['width'], $jobData['extent']['height']);
         $pixelBox = new Box(0, $jobData['height'], $jobData['width'], 0);
-        return Affine2DTransform::boxToBox($projectedBox, $pixelBox);
+        $lineScale = $this->getLineScale($jobData);
+        return FeatureTransform::boxToBox($projectedBox, $pixelBox, $lineScale);
     }
 
     /**
@@ -599,10 +612,5 @@ class ImageExportService
             throw new \RuntimeException("Failed to create temp file with prefix '$prefix' in '{$this->tempDir}'");
         }
         return $filePath;
-    }
-
-    protected function getResizeFactor()
-    {
-        return 1;
     }
 }
