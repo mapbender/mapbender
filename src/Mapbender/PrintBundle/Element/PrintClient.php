@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -177,6 +178,19 @@ class PrintClient extends Element
     }
 
     /**
+     * @return string
+     */
+    protected function generateFilename()
+    {
+        $configuration = $this->entity->getConfiguration();
+        if (!empty($configuration['file_prefix'])) {
+            return $configuration['file_prefix'] . '_' . date("YmdHis") . '.pdf';
+        } else {
+            return 'mapbender_print.pdf';
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function httpAction($action)
@@ -192,12 +206,8 @@ class PrintClient extends Element
                 $pdfBody = $bridgeService->dumpPrint($data);
 
                 $displayInline = true;
+                $filename = $this->generateFilename();
 
-                if(array_key_exists('file_prefix', $configuration)) {
-                    $filename = $configuration['file_prefix'] . '_' . date("YmdHis") . '.pdf';
-                } else {
-                    $filename = 'mapbender_print.pdf';
-                }
                 $response = new Response($pdfBody, 200, array(
                     'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
                     'Content-Disposition' => 'attachment; filename=' . $filename
@@ -216,9 +226,17 @@ class PrintClient extends Element
                 $response = $bridgeService->handleHttpRequest($request, $this->entity);
                 if ($response) {
                     return $response;
-                } else {
-                    throw new NotFoundHttpException();
                 }
+                if ($this->isQueueModeEnabled()) {
+                    $queuePlugin = $bridgeService->getPluginHost()->getPlugin('print-queue');
+                    /** @var PrintQueuePlugin|null $queuePlugin */
+                    if ($queuePlugin && $action == $queuePlugin->getQueueActionName()) {
+                        $jobData = $this->preparePrintData($request, $configuration);
+                        $queuePlugin->putJob($jobData, $this->generateFilename());
+                        return new Response('', 204);
+                    }
+                }
+                throw new NotFoundHttpException();
         }
     }
 
@@ -391,6 +409,18 @@ class PrintClient extends Element
             }
         }
         return $values;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isQueueModeEnabled()
+    {
+        if (!$this->container->getParameter('mapbender.print.queueable')) {
+            return false;
+        }
+        $config = $this->entity->getConfiguration();
+        return !(empty($config['renderMode']) || $config['renderMode'] != 'queued');
     }
 
     /**
