@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  *
@@ -351,15 +352,37 @@ class PrintClient extends Element
      */
     protected function getUserSpecifics()
     {
+        // initialize safe defaults
+        $values = array(
+            'userId' => null,
+            'userName' => null,
+            'legendpage_image' => array(
+                'type' => 'resource',
+                'path' => 'images/legendpage_image.png',
+            ),
+        );
         /** @var TokenStorageInterface $tokenStorage */
         $tokenStorage = $this->container->get('security.token_storage');
         $token = $tokenStorage->getToken();
         if ($token && !$token instanceof AnonymousToken) {
+            $user = $token->getUser();
+            // getUser's return value can be ...
+            if ($user instanceof UserInterface) {
+                // a) a UserInterface
+                $values = array_replace($values, array(
+                    'userId' => $user->getId(),
+                    'userName' => $user->getUsername(),
+                ));
+            } elseif ($user) {
+                // b) an object with a __toString method or just a string
+                $values['userName'] = "{$user}";
+            }
             try {
+                // this only works for FOM user entity
                 /** @var Collection|Group[] $groups */
-                $groups = $token->getUser()->getGroups();
+                $groups = $user->getGroups();
                 if ($groups && count($groups)) {
-                    return array(
+                    $values = array_replace($values, array(
                         'legendpage_image' => array(
                             'type' => 'resource',
                             'path' => 'images/' . $groups[0]->getTitle() . '.png',
@@ -372,20 +395,14 @@ class PrintClient extends Element
                             'type' => 'text',
                             'text' => $groups[0]->getDescription(),
                         ),
-                    );
+                    ));
                 }
 
             } catch (\Exception $e) {
                 // wrong user entity type, nothing we can do (fall through to default)
             }
         }
-        // return default fallback for legendpage_image, nothing for dynamic_image and dynamic_text
-        return array(
-            'legendpage_image' => array(
-                'type' => 'resource',
-                'path' => 'images/legendpage_image.png',
-            ),
-        );
+        return $values;
     }
 
     /**
