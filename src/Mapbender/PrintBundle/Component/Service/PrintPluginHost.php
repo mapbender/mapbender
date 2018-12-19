@@ -76,6 +76,26 @@ class PrintPluginHost
         return $valid;
     }
 
+    /**
+     * Find and return a plugin instance from its string domain key.
+     *
+     * @param string $domainKey
+     * @return PluginBaseInterface|null
+     */
+    public function getPlugin($domainKey)
+    {
+        $lists = array(
+            $this->httpPlugins,
+            $this->textFieldPlugins,
+        );
+        foreach ($lists as $pluginList) {
+            if (!empty($pluginList[$domainKey])) {
+                return $pluginList[$domainKey];
+            }
+        }
+        return null;
+    }
+
     final public function handleHttpRequest(Request $request, Element $elementEntity)
     {
         foreach ($this->httpPlugins as $plugin) {
