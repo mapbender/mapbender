@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author    Andriy Oblivantsev <eslider@gmail.com>
  * @copyright 2014 by WhereGroup GmbH & Co. KG
  */
-class PrintQueue
+class QueuedPrintJob
 {
     /**
      * @ORM\Id

@@ -5,12 +5,12 @@ namespace Mapbender\PrintBundle\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Mapbender\PrintBundle\Entity\PrintQueue;
+use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 
 class QueuedPrintJobRepository extends EntityRepository
 {
     /**
-     * @return PrintQueue[]
+     * @return QueuedPrintJob[]
      */
     public function findReadyForProcessing()
     {
@@ -22,7 +22,7 @@ class QueuedPrintJobRepository extends EntityRepository
 
     /**
      * @param \DateTime $cutoff
-     * @return PrintQueue[]
+     * @return QueuedPrintJob[]
      */
     public function findOlderThan(\DateTime $cutoff)
     {
@@ -34,7 +34,7 @@ class QueuedPrintJobRepository extends EntityRepository
 
     /**
      * Find jobs where processing was started but that haven't finished yet.
-     * @return PrintQueue[]
+     * @return QueuedPrintJob[]
      */
     public function findHung()
     {
@@ -49,18 +49,18 @@ class QueuedPrintJobRepository extends EntityRepository
 
     /**
      * @inheritdoc
-     * @return PrintQueue|null
+     * @return QueuedPrintJob|null
      */
     public function find($id, $lockMode = null, $lockVersion = null)
     {
-        /** @var PrintQueue|null $result */
+        /** @var QueuedPrintJob|null $result */
         $result = parent::find($id, $lockMode, $lockVersion);
         return $result;
     }
 
     /**
      * @inheritdoc
-     * @return PrintQueue[]
+     * @return QueuedPrintJob[]
      */
     public function findAll()
     {
@@ -69,7 +69,7 @@ class QueuedPrintJobRepository extends EntityRepository
 
     /**
      * @inheritdoc
-     * @return PrintQueue[]
+     * @return QueuedPrintJob[]
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
@@ -78,11 +78,11 @@ class QueuedPrintJobRepository extends EntityRepository
 
     /**
      * @inheritdoc
-     * @return PrintQueue|null
+     * @return QueuedPrintJob|null
      */
     public function findOneBy(array $criteria, array $orderBy = null)
     {
-        /** @var PrintQueue|null $result */
+        /** @var QueuedPrintJob|null $result */
         $result = parent::findOneBy($criteria, $orderBy);
         return $result;
     }
