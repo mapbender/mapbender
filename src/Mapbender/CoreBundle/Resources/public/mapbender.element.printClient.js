@@ -10,15 +10,12 @@
                 strokeWidth:    2
             }
         },
-        map: null,
         layer: null,
         control: null,
         feature: null,
-        lastScale: null,
         lastRotation: null,
         width: null,
         height: null,
-        rotateValue: 0,
         overwriteTemplates: false,
         digitizerData: null,
         printBounds: null,
@@ -27,11 +24,11 @@
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
 
-            $('select[name="scale_select"]', this.element)
+            $('select[name="scale_select"]', this.$form)
                 .on('change', $.proxy(this._updateGeometry, this));
-            $('input[name="rotation"]', this.element)
+            $('input[name="rotation"]', this.$form)
                 .on('keyup', $.proxy(this._updateGeometry, this));
-            $('select[name="template"]', this.element)
+            $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._getTemplateSize, this));
 
             if (this.options.type === 'element') {
@@ -47,11 +44,11 @@
                     self._updateElements(!wasActive);
                     self._setScale();
 
-                    $('.printSubmit', self.element).toggleClass('hidden', wasActive);
+                    $('.printSubmit', self.$form).toggleClass('hidden', wasActive);
                 });
-                $('.printSubmit', this.element).on('click', $.proxy(this._print, this));
+                $('.printSubmit', this.$form).on('click', $.proxy(this._print, this));
             }
-            $('form', this.element).on('submit', this._onSubmit.bind(this));
+            this.$form.on('submit', this._onSubmit.bind(this));
             this._super();
         },
 
@@ -93,29 +90,22 @@
                     this._updateElements(true);
                     this._setScale();
                 }
-                $(this.element).show();
             }
         },
 
         close: function() {
-            if(this.popup){
-                this.element.hide().appendTo($('body'));
+            if (this.popup) {
                 this._updateElements(false);
-                if(this.popup.$element){
-                    this.popup.destroy();
-                }
-                this.popup = null;
-                // reset template select if overwritten
-                if(this.overwriteTemplates){
+                if (this.overwriteTemplates) {
                     this._overwriteTemplateSelect(this.options.templates);
                     this.overwriteTemplates = false;
                 }
             }
-            this.callback ? this.callback.call() : this.callback = null;
+            this._super();
         },
 
         _setScale: function() {
-            var select = $(this.element).find("select[name='scale_select']");
+            var select = $("select[name='scale_select']", this.$form);
             var styledSelect = select.parent().find(".dropdownValue.iconDown");
             var scales = this.options.scales;
             var currentScale = Math.round(this.map.map.olMap.getScale());
@@ -146,27 +136,14 @@
 
         _updateGeometry: function(reset) {
             var scale = this._getPrintScale(),
-                rotationField = $(this.element).find('input[name="rotation"]');
-
-            // remove all not numbers from input
-            rotationField.val(rotationField.val().replace(/[^\d]+/,''));
-
-            if (rotationField.val() === '' && this.rotateValue > '0'){
-                rotationField.val('0');
-            }
-            this.rotateValue = rotationField.val();
+                rotationField = $('input[name="rotation"]', this.$form);
 
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
                 return;
             }
             scale = parseInt(scale);
 
-            if (isNaN(parseFloat(this.rotateValue)) || !isFinite(this.rotateValue)) {
-                if(null !== this.lastRotation) {
-                    rotationField.val(this.lastRotation).change();
-                }
-            }
-            var rotation = parseInt(this.rotateValue) || 0;
+            var rotation = parseInt(rotationField.val()) || 0;
 
             var center = (reset === true || !this.feature) ?
             this.map.map.olMap.getCenter() :
@@ -209,14 +186,14 @@
             var self = this;
 
             if(true === active){
-                if(null === this.layer) {
+                if (!this.layer) {
                     this.layer = new OpenLayers.Layer.Vector("Print", {
                         styleMap: new OpenLayers.StyleMap({
                             'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
                         })
                     });
                 }
-                if(null === this.control) {
+                if (!this.control) {
                     this.control = new OpenLayers.Control.DragFeature(this.layer,  {
                         onComplete: function() {
                             self._updateGeometry(false);
@@ -229,18 +206,20 @@
 
                 this._updateGeometry(true);
             }else{
-                if(null !== this.control) {
+                if (this.control) {
                     this.control.deactivate();
                     this.map.map.olMap.removeControl(this.control);
+                    this.control = null;
                 }
-                if(null !== this.layer) {
+                if (this.layer) {
                     this.map.map.olMap.removeLayer(this.layer);
+                    this.layer = null;
                 }
             }
         },
 
         _getPrintScale: function() {
-            return $(this.element).find('select[name="scale_select"]').val();
+            return $('select[name="scale_select"]', this.$form).val();
         },
         /**
          * Alias to hook into imgExport base class raster layer processing
@@ -400,7 +379,7 @@
         },
         _getTemplateSize: function() {
             var self = this;
-            var template = $('select[name="template"]', this.element).val();
+            var template = $('select[name="template"]', this.$form).val();
 
             var url =  this.elementUrl + 'getTemplateSize';
             $.ajax({

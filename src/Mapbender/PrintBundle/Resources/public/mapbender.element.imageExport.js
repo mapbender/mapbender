@@ -6,16 +6,19 @@
     $.widget("mapbender.mbImageExport", {
         options: {},
         map: null,
-        popupIsOpen: true,
         _geometryToGeoJson: null,
+        $form: null,
 
         _create: function(){
             if(!Mapbender.checkTarget(this.widgetName, this.options.target)){
                 return;
             }
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            this.$form = $('form', this.element);
+            $(this.element).show();
+
             var olGeoJson = new OpenLayers.Format.GeoJSON();
             this._geometryToGeoJson = olGeoJson.extract.geometry.bind(olGeoJson);
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
@@ -29,7 +32,6 @@
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
-            var me = $(this.element);
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
@@ -58,21 +60,15 @@
                     }
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
-            }else{
-                if(this.popupIsOpen === false){
-                    this.popup.open(self.element);
-                }
             }
-            me.show();
-            this.popupIsOpen = true;
         },
         close: function(){
-            if(this.popup){
-                this.element.hide().appendTo($('body'));
-                this.popupIsOpen = false;
-                if(this.popup.$element){
-                    this.popup.destroy();
+            if (this.popup) {
+                if (this.popup.$element) {
+                    // prevent infinite event handling recursion
+                    this.popup.$element.off('close');
                 }
+                this.popup.close();
                 this.popup = null;
             }
             this.callback ? this.callback.call() : this.callback = null;
@@ -200,14 +196,13 @@
             }
         },
         _submitJob: function(jobData) {
-            var $form = $('form', this.element);
-            var $hiddenArea = $('.-fn-hidden-fields', $form);
+            var $hiddenArea = $('.-fn-hidden-fields', this.$form);
             $hiddenArea.empty();
             var submitValue = JSON.stringify(jobData);
             var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
             $input.val(submitValue);
             $input.appendTo($hiddenArea);
-            $('input[type="submit"]', $form).click();
+            $('input[type="submit"]', this.$form).click();
         },
         /**
          * Should return true if the given layer needs to be included in export
