@@ -2,13 +2,19 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Doctrine\Common\Collections\Collection;
+use FOM\UserBundle\Entity\Group;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  *
@@ -202,7 +208,7 @@ class PrintClient extends Element
             case 'print':
                 $data = $this->preparePrintData($request, $configuration);
 
-                $pdfBody = $bridgeService->buildPdf($data);
+                $pdfBody = $bridgeService->dumpPrint($data);
 
                 $displayInline = true;
 
@@ -226,7 +232,7 @@ class PrintClient extends Element
                 return new Response($size);
 
             default:
-                $response = $bridgeService->handleHttpRequest($request);
+                $response = $bridgeService->handleHttpRequest($request, $this->entity);
                 if ($response) {
                     return $response;
                 } else {
@@ -254,51 +260,41 @@ class PrintClient extends Element
     {
         // @todo: define what data we support; do not simply process and forward everything
         $data = $request->request->all();
-
-        $data['layers'] = $this->prepareLayerDefinitions($data['layers']);
-        if (isset($data['overview'])) {
-            $data['overview'] = $this->prepareOverview($data['overview']);
+        if (isset($data['data'])) {
+            $d0 = $data['data'];
+            unset($data['data']);
+            $data = array_replace($data, json_decode($d0, true));
         }
-
-        if (isset($data['features'])) {
-            $data['features'] = $this->prepareFeatures($data['features']);
-        }
-
-        if (isset($configuration['replace_pattern'])) {
-            foreach ($configuration['replace_pattern'] as $idx => $value) {
-                $data['replace_pattern'][$idx] = $value;
+        $urlProcessor = $this->getUrlProcessor();
+        foreach ($data['layers'] as $ix => $layerDef) {
+            if (!empty($layerDef['url'])) {
+                $updatedUrl = $urlProcessor->getInternalUrl($layerDef['url']);
+                if (!isset($configuration['replace_pattern'])) {
+                    if ($data['quality'] != 72) {
+                        $updatedUrl = UrlUtil::validateUrl($updatedUrl, array(
+                            'map_resolution' => $data['quality'],
+                        ));
+                    }
+                } else {
+                    $updatedUrl = $this->addReplacePattern($updatedUrl, $configuration['replace_pattern'], $data['quality']);
+                }
+                $data['layers'][$ix]['url'] = $updatedUrl;
             }
         }
 
-        if (isset($data['extent_feature'])) {
-            $data['extent_feature'] = json_decode($data['extent_feature'], true);
+        if (isset($data['overview'])) {
+            $data['overview'] = $this->prepareOverview($data['overview']);
         }
 
         if (isset($data['legends'])) {
             $data['legends'] = $this->prepareLegends($data['legends']);
         }
-        $data['user'] = $this->getUser();
+        $data = $data + $this->getUserSpecifics();
         return $data;
     }
 
-    /**
-     * Trivial json-decode of input; provided as an override hook for customization.
-     * Processes 'features' value from client.
-     *
-     * @param array|string|string[] $rawFeatureData
-     * @return mixed[][]
-     */
-    protected function prepareFeatures($rawFeatureData)
+    protected function prepareOverview($overviewDef)
     {
-        // feature definition list is a 2+ levels nested array
-        /** @var mixed[][] $featureDefs */
-        $featureDefs = $this->unravelJson($rawFeatureData, 1);
-        return $featureDefs;
-    }
-
-    protected function prepareOverview($rawData)
-    {
-        $overviewDef = $this->unravelJson($rawData, 0);
         if (!empty($overviewDef['layers'])) {
             $urlProcessor = $this->getUrlProcessor();
             foreach ($overviewDef['layers'] as $index => $url) {
@@ -309,42 +305,36 @@ class PrintClient extends Element
     }
 
     /**
-     * Trivial json-decode of input; provided as an override hook for customization.
-     * Processes both 'layers' and 'overview' values from client.
+     * Apply "replace_pattern" backend configuration to given $url, either
+     * rewriting a part of it or appending something, depending on $dpi
+     * value.
      *
-     * @param array|string|string[] $rawDefinitions
-     * @return mixed[][]
-     * @throws \InvalidArgumentException
+     * @param string $url
+     * @param array $rplConfig
+     * @param int $dpi
+     * @return string updated $url
      */
-    protected function prepareLayerDefinitions($rawDefinitions)
+    protected function addReplacePattern($url, $rplConfig, $dpi)
     {
-        // layer definition list is a 2D array
-        /** @var mixed[][] $layerDefs */
-        $layerDefs = $this->unravelJson($rawDefinitions, 2);
-        $urlProcessor = $this->getUrlProcessor();
-        $layerDefsOut = array();
-        foreach ($layerDefs as $layerDef) {
-            if (!empty($layerDef['url'])) {
-                $layerDef['url'] = $urlProcessor->getInternalUrl($layerDef['url']);
+        foreach ($rplConfig as $pattern) {
+            if (isset($pattern['default'][$dpi])) {
+                return $url . $pattern['default'][$dpi];
+            } elseif (strpos($url, $pattern['pattern']) !== false) {
+                if (isset($pattern['replacement'][$dpi])){
+                    return str_replace($pattern['pattern'], $pattern['replacement'][$dpi], $url);
+                }
             }
-            $layerDefsOut[] = $layerDef;
         }
-        return $layerDefsOut;
+        // no match, no change
+        return $url;
     }
 
     /**
-     * Trivial json-decode of input; provided as an override hook for customization.
-     * Processes 'legends' value from client.
-     *
-     * @param array|string|string[] $rawLegendData
+     * @param array[] $legendDefs
      * @return string[]
      */
-    protected function prepareLegends($rawLegendData)
+    protected function prepareLegends($legendDefs)
     {
-        // legend value is list of 1D arrays, one per source, with layer titles as
-        // keys and legend image urls as values
-        /** @var string[][] $legendDefs */
-        $legendDefs = $this->unravelJson($rawLegendData, 1);
         $urlProcessor = $this->getUrlProcessor();
         $legendDefsOut = array();
         foreach ($legendDefs as $ix => $imageList) {
@@ -358,40 +348,61 @@ class PrintClient extends Element
     }
 
     /**
-     * Turn a json-encoded string into an array, while letting arrays pass through unchanged.
-     * This can be done recursively.
-     * Keys are preserved.
-     *
-     * @todo this could be a util; unknown if other elements or components have similar needs
-     * @param string|string[] $rawInput
-     * @param int $maxDepth for recursion; 0 = unlimited; 1 = top level only (default)
-     * @return mixed[]
-     * @throws \InvalidArgumentException if the top-level output is not an array; it's not generally safe
-     *    to multi-decode json scalars
-     * @throws \InvalidArgumentException if the input is neither string nor array
+     * @return array
      */
-    protected static function unravelJson($rawInput, $maxDepth = 1)
+    protected function getUserSpecifics()
     {
-        if (is_string($rawInput)) {
-            $a = json_decode($rawInput, true);
-            if (!is_array($a)) {
-                throw new \InvalidArgumentException("Unsafe scalar type " . gettype($a));
+        // initialize safe defaults
+        $values = array(
+            'userId' => null,
+            'userName' => null,
+            'legendpage_image' => array(
+                'type' => 'resource',
+                'path' => 'images/legendpage_image.png',
+            ),
+        );
+        /** @var TokenStorageInterface $tokenStorage */
+        $tokenStorage = $this->container->get('security.token_storage');
+        $token = $tokenStorage->getToken();
+        if ($token && !$token instanceof AnonymousToken) {
+            $user = $token->getUser();
+            // getUser's return value can be ...
+            if ($user instanceof UserInterface) {
+                // a) a UserInterface
+                $values = array_replace($values, array(
+                    'userId' => $user->getId(),
+                    'userName' => $user->getUsername(),
+                ));
+            } elseif ($user) {
+                // b) an object with a __toString method or just a string
+                $values['userName'] = "{$user}";
             }
-        } elseif (is_array($rawInput)) {
-            $a = $rawInput;
-        } else {
-            throw new \InvalidArgumentException("Unhandled input type " . gettype($rawInput));
-        }
-        if (!$maxDepth || $maxDepth > 1) {
-            foreach ($a as $k => $v) {
-                try {
-                    $a[$k] = static::unravelJson($v, max(0, $maxDepth - 1));
-                } catch (\InvalidArgumentException $e) {
-                    $a[$k] = $v;
+            try {
+                // this only works for FOM user entity
+                /** @var Collection|Group[] $groups */
+                $groups = $user->getGroups();
+                if ($groups && count($groups)) {
+                    $values = array_replace($values, array(
+                        'legendpage_image' => array(
+                            'type' => 'resource',
+                            'path' => 'images/' . $groups[0]->getTitle() . '.png',
+                        ),
+                        'dynamic_image' => array(
+                            'type' => 'resource',
+                            'path' => 'images/' . $groups[0]->getTitle() . '.png',
+                        ),
+                        'dynamic_text' => array(
+                            'type' => 'text',
+                            'text' => $groups[0]->getDescription(),
+                        ),
+                    ));
                 }
+
+            } catch (\Exception $e) {
+                // wrong user entity type, nothing we can do (fall through to default)
             }
         }
-        return $a;
+        return $values;
     }
 
     /**

@@ -749,7 +749,6 @@ Mapbender.Model = {
      * @returns {object} sourceDef same ref, potentially modified
      */
     addSourceFromConfig: function(sourceDef, mangleIds) {
-        var self = this;
         if (!sourceDef.origId) {
             sourceDef.origId = '' + sourceDef.id;
         }
@@ -768,6 +767,7 @@ Mapbender.Model = {
         sourceDef.ollid = mapQueryLayer.olLayer.id;
         mapQueryLayer.source = sourceDef;
         Mapbender.source[sourceDef.type.toLowerCase()].postCreate(sourceDef, mapQueryLayer);
+        mapQueryLayer.olLayer.mbConfig = sourceDef;
         mapQueryLayer.olLayer.events.register("loadstart", this, this._sourceLoadStart);
         mapQueryLayer.olLayer.events.register("tileerror", this, this._sourceLoadError);
         mapQueryLayer.olLayer.events.register("loadend", this, this._sourceLoadeEnd);
@@ -1094,6 +1094,71 @@ Mapbender.Model = {
                 projection: srs.projection
             }
         });
+    },
+    /**
+     * @param {OpenLayers.Layer.HTTPRequest|Object} source can be a sourceDef
+     */
+    getMbConfig: function(source) {
+        if (source.mbConfig) {
+            // monkey-patched OpenLayers.Layer
+            return source.mbConfig;
+        }
+        if (source.source) {
+            // MapQuery layer
+            return source.source;
+        }
+        if (source.configuration) {
+            // sourceTreeish
+            return source.configuration;
+        }
+        console.error("Cannot find configuration in given source", source);
+        throw new Error("Cannot find configuration in given source");
+    },
+    /**
+     * Get the "geosource" object for given source from Mapbender.source
+     * @param {OpenLayers.Layer|MapQuery.Layer|Object} source
+     * @param {boolean} [strict] to throw on missing geosource object (default true)
+     * @returns {*|null}
+     */
+    getGeoSourceHandler: function(source, strict) {
+        var type = this.getMbConfig(source).type;
+        var gs = Mapbender.source[type];
+        if (!gs && (strict || typeof strict === 'undefined')) {
+            throw new Error("No geosource for type " + type);
+        }
+        return gs || null;
+    },
+    _getActiveLayerInfo: function(olLayer, scale) {
+        var mbConfig = this.getMbConfig(olLayer);
+        var activeLayers = [];
+        var resFromScale = function(scale) {
+            return scale && (OpenLayers.Util.getResolutionFromScale(scale, olLayer.units)) || null;
+        };
+        var resolution = resFromScale(scale);
+
+        Mapbender.Util.SourceTree.iterateSourceLeaves(mbConfig, false, function(node, offset, parents) {
+            var skip = !node.state.visibility;
+            parents.map(function(p) {
+                skip = skip || !p.state.visibility;
+            });
+            var leafData = {
+                name: node.options.name,
+                maxResolution: resFromScale(node.options.maxScale),
+                minResolution: resFromScale(node.options.minScale),
+                config: node
+            };
+            if (leafData.maxResolution && resolution > leafData.maxResolution) {
+                skip = true;
+            }
+            if (leafData.minResolution && resolution < leafData.minResolution) {
+                skip = true;
+            }
+
+            if (!skip) {
+                activeLayers.push(leafData);
+            }
+        });
+        return activeLayers;
     },
 
     /**

@@ -10,15 +10,12 @@
                 strokeWidth:    2
             }
         },
-        map: null,
         layer: null,
         control: null,
         feature: null,
-        lastScale: null,
         lastRotation: null,
         width: null,
         height: null,
-        rotateValue: 0,
         overwriteTemplates: false,
         digitizerData: null,
         printBounds: null,
@@ -27,34 +24,31 @@
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
 
-            $('select[name="scale_select"]', this.element)
+            $('select[name="scale_select"]', this.$form)
                 .on('change', $.proxy(this._updateGeometry, this));
-            $('input[name="rotation"]', this.element)
+            $('input[name="rotation"]', this.$form)
                 .on('keyup', $.proxy(this._updateGeometry, this));
-            $('select[name="template"]', this.element)
+            $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._getTemplateSize, this));
 
             if (this.options.type === 'element') {
                 $(this.element).show();
-                $(this.element).on('click', '#printToggle', function(){
-                    var active = $(this).attr('active');
-                    if(active === 'true') {// deactivate
-                        $(this).attr('active','false').removeClass('active');
-                        $(this).val(Mapbender.trans('mb.core.printclient.btn.activate'));
-                        self._updateElements(false);
-                        $('.printSubmit', this.element).addClass('hidden');
-                    }else{ // activate
-                        $(this).attr('active','true').addClass('active');
-                        $(this).val(Mapbender.trans('mb.core.printclient.btn.deactivate'));
-                        self._getTemplateSize();
-                        self._updateElements(true);
-                        self._setScale();
-                        $('.printSubmit', this.element).removeClass('hidden');
-                    }
+                $(this.element).on('click', '.-fn-toggle-frame', function() {
+                    var wasActive = $(this).attr('active') === 'true';
+                    $(this).attr('active', wasActive ? 'false' : 'true');
+                    $(this).toggleClass('active', !wasActive);
+                    var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
+                                               : 'mb.core.printclient.btn.deactivate';
+                    $(this).val(Mapbender.trans(buttonText));
+                    self._getTemplateSize();
+                    self._updateElements(!wasActive);
+                    self._setScale();
+
+                    $('.printSubmit', self.$form).toggleClass('hidden', wasActive);
                 });
-                $('.printSubmit', this.element).on('click', $.proxy(this._print, this));
+                $('.printSubmit', this.$form).on('click', $.proxy(this._print, this));
             }
-            $('form', this.element).on('submit', this._onSubmit.bind(this));
+            this.$form.on('submit', this._onSubmit.bind(this));
             this._super();
         },
 
@@ -96,29 +90,22 @@
                     this._updateElements(true);
                     this._setScale();
                 }
-                $(this.element).show();
             }
         },
 
         close: function() {
-            if(this.popup){
-                this.element.hide().appendTo($('body'));
+            if (this.popup) {
                 this._updateElements(false);
-                if(this.popup.$element){
-                    this.popup.destroy();
-                }
-                this.popup = null;
-                // reset template select if overwritten
-                if(this.overwriteTemplates){
+                if (this.overwriteTemplates) {
                     this._overwriteTemplateSelect(this.options.templates);
                     this.overwriteTemplates = false;
                 }
             }
-            this.callback ? this.callback.call() : this.callback = null;
+            this._super();
         },
 
         _setScale: function() {
-            var select = $(this.element).find("select[name='scale_select']");
+            var select = $("select[name='scale_select']", this.$form);
             var styledSelect = select.parent().find(".dropdownValue.iconDown");
             var scales = this.options.scales;
             var currentScale = Math.round(this.map.map.olMap.getScale());
@@ -149,27 +136,14 @@
 
         _updateGeometry: function(reset) {
             var scale = this._getPrintScale(),
-                rotationField = $(this.element).find('input[name="rotation"]');
-
-            // remove all not numbers from input
-            rotationField.val(rotationField.val().replace(/[^\d]+/,''));
-
-            if (rotationField.val() === '' && this.rotateValue > '0'){
-                rotationField.val('0');
-            }
-            this.rotateValue = rotationField.val();
+                rotationField = $('input[name="rotation"]', this.$form);
 
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
                 return;
             }
             scale = parseInt(scale);
 
-            if (isNaN(parseFloat(this.rotateValue)) || !isFinite(this.rotateValue)) {
-                if(null !== this.lastRotation) {
-                    rotationField.val(this.lastRotation).change();
-                }
-            }
-            var rotation = parseInt(this.rotateValue) || 0;
+            var rotation = parseInt(rotationField.val()) || 0;
 
             var center = (reset === true || !this.feature) ?
             this.map.map.olMap.getCenter() :
@@ -212,14 +186,14 @@
             var self = this;
 
             if(true === active){
-                if(null === this.layer) {
+                if (!this.layer) {
                     this.layer = new OpenLayers.Layer.Vector("Print", {
                         styleMap: new OpenLayers.StyleMap({
                             'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
                         })
                     });
                 }
-                if(null === this.control) {
+                if (!this.control) {
                     this.control = new OpenLayers.Control.DragFeature(this.layer,  {
                         onComplete: function() {
                             self._updateGeometry(false);
@@ -232,47 +206,31 @@
 
                 this._updateGeometry(true);
             }else{
-                if(null !== this.control) {
+                if (this.control) {
                     this.control.deactivate();
                     this.map.map.olMap.removeControl(this.control);
+                    this.control = null;
                 }
-                if(null !== this.layer) {
+                if (this.layer) {
                     this.map.map.olMap.removeLayer(this.layer);
+                    this.layer = null;
                 }
             }
         },
 
         _getPrintScale: function() {
-            return $(this.element).find('select[name="scale_select"]').val();
-        },
-
-        _getPrintExtent: function() {
-            return {
-                extent: {
-                    width: this.printBounds.getWidth(),
-                    height: this.printBounds.getHeight()
-                },
-                center: {
-                    x: this.printBounds.getCenterLonLat().lon,
-                    y: this.printBounds.getCenterLonLat().lat
-                }
-            };
+            return $('select[name="scale_select"]', this.$form).val();
         },
         /**
-         *
-         * @param sourceDef
-         * @param {number} [scale]
-         * @returns {{layers: *, styles: *}}
+         * Alias to hook into imgExport base class raster layer processing
+         * @returns {*}
          * @private
          */
-        _getRasterVisibilityInfo: function(sourceDef, scale) {
-            var scale_ = scale || this._getPrintScale();
-            var toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: sourceDef.mqlid}};
-            var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale_, toChangeOpts);
-            return {
-                layers: geoSourceResponse.layers,
-                styles: geoSourceResponse.styles
-            };
+        _getExportScale: function() {
+            return this._getPrintScale();
+        },
+        _getExportExtent: function() {
+            return this.printBounds;
         },
         /**
          *
@@ -320,36 +278,6 @@
                 }
             }
             return legends;
-        },
-        _collectRasterLayerData: function() {
-            var sources = this._getRasterSourceDefs();
-            var scale = this._getPrintScale();
-
-            var dataOut = [];
-
-            for (var i = 0; i < sources.length; i++) {
-                var sourceDef = sources[i];
-                var visLayers = this._getRasterVisibilityInfo(sourceDef, scale);
-                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-                if (visLayers.layers.length > 0) {
-                    var prevLayers = layer.params.LAYERS;
-                    var prevStyles = layer.params.STYLES;
-                    layer.params.LAYERS = visLayers.layers;
-                    layer.params.STYLES = visLayers.styles;
-
-                    var opacity = sourceDef.configuration.options.opacity;
-                    var layerData = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.printBounds, sourceDef.configuration.options.proxy);
-                    layerData.opacity = opacity;
-                    // flag to change axis order
-                    layerData.changeAxis = this._changeAxis(layer);
-                    dataOut.push(layerData);
-
-                    layer.params.LAYERS = prevLayers;
-                    layer.params.STYLES = prevStyles;
-                }
-            }
-
-            return dataOut;
         },
         /**
          * Should return true if the given layer needs to be included in print
@@ -415,92 +343,25 @@
             }
         },
         _collectJobData: function() {
-            var extent = this._getPrintExtent();
+            var jobData = this._super();
+            var overview = this._collectOverview();
             var extentFeature = this.feature.geometry.components[0].components.map(function(component) {
                 return {
                     x: component.x,
                     y: component.y
                 };
             });
-            var rasterLayers = this._collectRasterLayerData();
-            var geometryLayers = this._collectGeometryLayers();
-            var overview = this._collectOverview();
-
-            var data = {
-                extent: {
-                    width: extent.extent.width,
-                    height: extent.extent.height
-                },
-                center: {
-                    x: extent.center.x,
-                    y: extent.center.y
-                },
-                // @todo: this is pretty wild for an inlined expression, extract a method
-                'extent_feature': extentFeature,
-                layers: rasterLayers.concat(geometryLayers),
+            var mapDpi = (this.map.options || {}).dpi || 72;
+            _.assign(jobData, {
                 legends: this._collectLegends(),
-                overview: overview
-            };
-            if (this.digitizerData) {
-                _.assign(data, this.digitizerData);
-            }
-            return data;
-        },
-        _submitJob: function(jobData) {
-            var form = $('form#formats', this.element);
-            var fields = $();
-            var appendField = function(name, value) {
-                $.merge(fields, $('<input />', {
-                    type: 'hidden',
-                    name: name,
-                    value: value
-                }));
-            };
-            _.forEach(jobData, function(value, key) {
-                if (value === null || typeof value === 'undefined') {
-                    return;
-                }
-                switch (key) {
-                    case 'legends':
-                        if ($('input[name="printLegend"]',form).prop('checked')) {
-                            appendField(key, JSON.stringify(value));
-                        }
-                        break;
-                    case 'extent_feature':
-                        appendField(key, JSON.stringify(value));
-                        break;
-                    default:
-                        if ($.isArray(value)) {
-                            for (var i = 0; i < value.length; ++i) {
-                                switch (key) {
-                                    case 'layers':
-                                        appendField('' + key + '[' + i + ']', JSON.stringify(value[i]));
-                                        break;
-                                    default:
-                                        appendField('' + key + '[' + i + ']', value[i]);
-                                        break;
-                                }
-                            }
-                        } else if (typeof value === 'string') {
-                            appendField(key, value);
-                        } else if (Object.keys(value).length) {
-                            if (key === 'overview') {
-                                appendField('' + key, JSON.stringify(value));
-                            } else {
-                                Object.keys(value).map(function(k) {
-                                    appendField('' + key + '['+k+']', value[k]);
-                                });
-                            }
-                        } else {
-                            appendField(key, value);
-                        }
-                        break;
-                }
+                overview: overview,
+                mapDpi: mapDpi,
+                'extent_feature': extentFeature
             });
-            $('div#layers', form).empty();
-            fields.appendTo(form.find('div#layers'));
-
-            form.find('input[type="submit"]').click();
+            if (this.digitizerData) {
+                _.assign(jobData, this.digitizerData);
+            }
+            return jobData;
         },
         _print: function() {
             var jobData = this._collectJobData();
@@ -516,23 +377,9 @@
                 this.popup.close();
             }
         },
-
-        _changeAxis: function(layer) {
-            var olMap = this.map.map.olMap;
-            var currentProj = olMap.displayProjection.projCode;
-
-            if (layer.params.VERSION === '1.3.0') {
-                if (OpenLayers.Projection.defaults.hasOwnProperty(currentProj) && OpenLayers.Projection.defaults[currentProj].yx) {
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
         _getTemplateSize: function() {
             var self = this;
-            var template = $('select[name="template"]', this.element).val();
+            var template = $('select[name="template"]', this.$form).val();
 
             var url =  this.elementUrl + 'getTemplateSize';
             $.ajax({

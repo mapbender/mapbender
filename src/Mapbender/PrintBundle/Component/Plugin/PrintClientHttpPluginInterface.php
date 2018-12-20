@@ -2,6 +2,7 @@
 
 namespace Mapbender\PrintBundle\Component\Plugin;
 
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -10,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
  * The handleRequest implementation should return null (*not* throw http exceptions) if the requested action is not
  * recognized by the plugin instance. This allows other plugins (or the host Element) to continue searching for handlers.
  */
-interface PrintClientHttpPluginInterface extends PluginBaseInterface, \Mapbender\CoreBundle\Component\ElementHttpHandlerInterface
+interface PrintClientHttpPluginInterface extends PluginBaseInterface
 {
     /**
      * Should respond to the incoming http request.
@@ -19,7 +20,8 @@ interface PrintClientHttpPluginInterface extends PluginBaseInterface, \Mapbender
      * in handling the request.
      *
      * @param Request $request
+     * @param Element $elementEntity
      * @return Response|null
      */
-    public function handleHttpRequest(Request $request);
+    public function handleHttpRequest(Request $request, Element $elementEntity);
 }

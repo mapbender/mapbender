@@ -11,11 +11,11 @@ class AddBasePrintPluginsPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $printBridgeDefinition = $container->getDefinition('mapbender.print_service_bridge.service');
-        $this->tryAddDigitizerPlugin($container, $printBridgeDefinition);
+        $hostDefinition = $container->getDefinition('mapbender.print_plugin_host.service');
+        $this->tryAddDigitizerPlugin($container, $hostDefinition);
     }
 
-    protected function tryAddDigitizerPlugin(ContainerBuilder $container, Definition $bridgeDefinition)
+    protected function tryAddDigitizerPlugin(ContainerBuilder $container, Definition $hostDefinition)
     {
         // Only add the digitizer plugin if its 'featureTypesParamName' references a parameter present in the container
         // and non-empty (i.e. null / empty array is treated the same as no parameter definition at all)
@@ -24,7 +24,7 @@ class AddBasePrintPluginsPass implements CompilerPassInterface
         $ftParamName0 = $digitizerPluginDefinition->getArgument('featureTypeParamName');
         $ftParamName = $this->resolveParameterReference($container, $ftParamName0);
         if ($container->hasParameter($ftParamName) && $container->getParameter($ftParamName)) {
-            $bridgeDefinition->addMethodCall('registerPlugin', array($digitizerPluginId));
+            $hostDefinition->addMethodCall('registerPlugin', array($digitizerPluginId));
         }
     }
 

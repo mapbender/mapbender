@@ -88,20 +88,6 @@ class Utils
     }
 
     /**
-     * DEPRECATED, use Mapbender\CoreBundle\Utils\UrlUtil::validateUrl()
-     * Validates an URL
-     *
-     * @param string $url URL
-     * @param array $paramsToRemove  array of lower case parameter names to
-     * remove from url
-     * @return string URL without parameter $paramName
-     */
-    public static function validateUrl($url, $paramsToRemove)
-    {
-        return UrlUtil::validateUrl($url, array(), $paramsToRemove);
-    }
-
-    /**
      * Copies an order recursively.
      * @param string $sourceOrder path to source order
      * @param string $destinationOrder path to destination order

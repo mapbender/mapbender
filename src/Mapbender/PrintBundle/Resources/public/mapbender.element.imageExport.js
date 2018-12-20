@@ -6,16 +6,19 @@
     $.widget("mapbender.mbImageExport", {
         options: {},
         map: null,
-        popupIsOpen: true,
         _geometryToGeoJson: null,
+        $form: null,
 
         _create: function(){
             if(!Mapbender.checkTarget(this.widgetName, this.options.target)){
                 return;
             }
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            this.$form = $('form', this.element);
+            $(this.element).show();
+
             var olGeoJson = new OpenLayers.Format.GeoJSON();
             this._geometryToGeoJson = olGeoJson.extract.geometry.bind(olGeoJson);
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
@@ -29,7 +32,6 @@
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
-            var me = $(this.element);
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
@@ -58,21 +60,15 @@
                     }
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
-            }else{
-                if(this.popupIsOpen === false){
-                    this.popup.open(self.element);
-                }
             }
-            me.show();
-            this.popupIsOpen = true;
         },
         close: function(){
-            if(this.popup){
-                this.element.hide().appendTo($('body'));
-                this.popupIsOpen = false;
-                if(this.popup.$element){
-                    this.popup.destroy();
+            if (this.popup) {
+                if (this.popup.$element) {
+                    // prevent infinite event handling recursion
+                    this.popup.$element.off('close');
                 }
+                this.popup.close();
                 this.popup = null;
             }
             this.callback ? this.callback.call() : this.callback = null;
@@ -93,16 +89,26 @@
         },
         /**
          *
-         * @param sourceDef
+         * @param {*} sourceDef
+         * @param {number} [scale]
          * @returns {{layers: *, styles: *}}
          * @private
          */
-        _getRasterVisibilityInfo: function(sourceDef) {
+        _getRasterVisibilityInfo: function(sourceDef, scale) {
             var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-            return {
-                layers: layer.params.LAYERS,
-                styles: layer.params.STYLES
-            };
+            if (scale) {
+                var toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: sourceDef.mqlid}};
+                var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale, toChangeOpts);
+                return {
+                    layers: geoSourceResponse.layers,
+                    styles: geoSourceResponse.styles
+                };
+            } else {
+                return {
+                    layers: layer.params.LAYERS,
+                    styles: layer.params.STYLES
+                };
+            }
         },
         /**
          * @returns {Array<Object>} sourceTreeish configuration objects
@@ -121,41 +127,68 @@
                 return true;
             }.bind(this));
         },
+        _getExportScale: function() {
+            return null;
+        },
+        _getExportExtent: function() {
+            return this.map.map.olMap.getExtent();
+        },
         _collectRasterLayerData: function() {
             var sources = this._getRasterSourceDefs();
+            var scale = this._getExportScale();
+            var extent = this._getExportExtent();
+
             var dataOut = [];
-            for(var i = 0; i < sources.length; i++) {
+
+            for (var i = 0; i < sources.length; i++) {
                 var sourceDef = sources[i];
-                var visLayers = this._getRasterVisibilityInfo(sourceDef);
+                var visLayers = this._getRasterVisibilityInfo(sourceDef, scale);
 
                 if (visLayers.layers.length) {
                     var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-                    var layerConf = Mapbender.source[sourceDef.type].getPrintConfig(layer, this.map.map.olMap.getExtent(), sourceDef.configuration.options.proxy);
-                    layerConf.opacity = sourceDef.configuration.options.opacity;
-                    dataOut.push(layerConf);
+                    var prevLayers = layer.params.LAYERS;
+                    var prevStyles = layer.params.STYLES;
+                    if (scale) {
+                        layer.params.LAYERS = visLayers.layers;
+                        layer.params.STYLES = visLayers.styles;
+                    }
+
+                    var layerData = Mapbender.source[sourceDef.type].getPrintConfig(layer, extent);
+                    layerData.opacity = sourceDef.configuration.options.opacity;
+                    // flag to change axis order
+                    layerData.changeAxis = this._changeAxis(layer);
+                    dataOut.push(layerData);
+
+                    if (scale) {
+                        layer.params.LAYERS = prevLayers;
+                        layer.params.STYLES = prevStyles;
+                    }
                 }
             }
             return dataOut;
         },
         _collectJobData: function() {
-            var mapExtent = this.map.map.olMap.getExtent();
+            var mapExtent = this._getExportExtent();
             var imageSize = this.map.map.olMap.getCurrentSize();
+            var rasterLayers = this._collectRasterLayerData();
+            var geometryLayers = this._collectGeometryLayers();
             return {
-                requests: this._collectRasterLayerData(),
-                // @todo: fix unscoped input lookup
-                format: $("input[name='imageformat']:checked").val(),
+                layers: rasterLayers.concat(geometryLayers),
                 width: imageSize.w,
                 height: imageSize.h,
-                centerx: mapExtent.getCenterLonLat().lon,
-                centery: mapExtent.getCenterLonLat().lat,
-                extentwidth: mapExtent.getWidth(),
-                extentheight: mapExtent.getHeight(),
-                vectorLayers: this._collectGeometryLayers()
+                center: {
+                    x: mapExtent.getCenterLonLat().lon,
+                    y: mapExtent.getCenterLonLat().lat
+                },
+                extent: {
+                    width: mapExtent.getWidth(),
+                    height: mapExtent.getHeight()
+                }
             };
         },
         _exportImage: function() {
             var jobData = this._collectJobData();
-            if (!jobData.requests.length) {
+            if (!jobData.layers.length) {
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
             } else {
                 this._submitJob(jobData);
@@ -163,14 +196,13 @@
             }
         },
         _submitJob: function(jobData) {
-            var $form = $('form', this.element);
-            var $hiddenArea = $('.-fn-hidden-fields', $form);
+            var $hiddenArea = $('.-fn-hidden-fields', this.$form);
             $hiddenArea.empty();
             var submitValue = JSON.stringify(jobData);
             var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
             $input.val(submitValue);
             $input.appendTo($hiddenArea);
-            $('.-fn-submit', $form).click();
+            $('input[type="submit"]', this.$form).click();
         },
         /**
          * Should return true if the given layer needs to be included in export
@@ -263,6 +295,24 @@
                 .filter(this._filterGeometryLayer.bind(this))
                 .map(this._extractGeometryLayerData.bind(this))
             ;
+        },
+        /**
+         * Check BBOX format inversion
+         *
+         * @param {OpenLayers.Layer.HTTPRequest} layer
+         * @returns {boolean}
+         * @private
+         */
+        _changeAxis: function(layer) {
+            var projCode = (layer.map.displayProjection || layer.map.projection).projCode;
+
+            if (layer.params.VERSION === '1.3.0') {
+                if (OpenLayers.Projection.defaults.hasOwnProperty(projCode) && OpenLayers.Projection.defaults[projCode].yx) {
+                    return true;
+                }
+            }
+
+            return false;
         },
 
         _noDanglingCommaDummy: null

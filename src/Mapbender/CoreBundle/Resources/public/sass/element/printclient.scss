@@ -4,6 +4,26 @@
   display: none;
   overflow: visible;
 
+  label.labelInput {
+    width: auto;
+    font-weight: inherit;
+    margin-bottom: inherit;
+    line-height: $labelHeight;
+    height: $labelHeight;
+  }
+  .input, .dropdown {
+    min-width: 190px;
+    width: 100%;
+    margin-bottom: $space/2;
+  }
+  .printSubmit {
+    float: right;
+  }
+
+  .printToggle.active {
+    background-color: #538e24;
+  }
+
   .tab-container {
     position: relative;
     margin-top: 0px;
@@ -48,28 +68,12 @@
 
 
 
-    label.labelInput {
-      width: 80px;
-      font-weight: inherit;
-      margin-bottom: inherit;
-      line-height: $labelHeight;
-      height: $labelHeight;
-    }
-
-    .input, .dropdown {
-      min-width: 190px;
-      width: 100%;
-      margin-bottom: $space/2;
-    }
-    .printSubmit {
-      float: right;
-    }
 
     #printToggle.active {
       background-color: #538e24;
     }
 
-  
+
   table.dataTable {
     width: 100%;
     > thead {
@@ -170,5 +174,4 @@
       }
     }
   }
-
 }

@@ -11,6 +11,7 @@
   - Remove unused fields from VendorSpecifics form, remove JOII dependency ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
   - Typo fixes in WmsCapabilitiesParser130, thanks jef-n ([PR#1046](https://github.com/mapbender/mapbender/pull/1046))
   - Fix Application import from pretty-printed JSON input
+  - Add new `mapbender:config:check` console command
   - Misc deprecation cleanups for Symfony 3+ compatibility
 
 * **v3.0.7.7**

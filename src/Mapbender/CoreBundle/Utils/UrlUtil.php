@@ -24,7 +24,6 @@ class UrlUtil
     {
         $rawUrl      = parse_url($url);
         $schemelower = strtolower($rawUrl["scheme"]);
-        $newurl      = "";
         if ($schemelower === 'http' || $schemelower === 'https' || $schemelower === 'ftp') {
             $newurl = $rawUrl["scheme"] . "://" . $rawUrl['host'];
         } elseif ($schemelower === 'file') {
@@ -42,26 +41,18 @@ class UrlUtil
             $newurl .= $rawUrl['path'];
         }
         $queries   = array();
-        $getParams = array();
         if (isset($rawUrl["query"])) {
             parse_str($rawUrl["query"], $queries);
         }
-        foreach ($getParams as $key => $value) {
-            $queries[$key] = $value;
-        }
-        foreach ($paramsToAdd as $key => $value) {
-            $queries[$key] = $value;
-        }
-        $help = array();
+        $paramsToRemove = array_map('strtolower', array_merge($paramsToRemove, array_keys($paramsToAdd)));
         foreach ($queries as $key => $value) {
             if (in_array(strtolower($key), $paramsToRemove)) {
                 unset($queries[$key]);
-            } else {
-                $help[] = $key . "=" . $value;
             }
         }
-        if (count($queries) > 0) {
-            $newurl .= '?' . implode("&", $help);
+        $queries = array_replace($queries, $paramsToAdd);
+        if ($queries) {
+            $newurl .= '?' . http_build_query($queries);
         }
         return $newurl;
     }
