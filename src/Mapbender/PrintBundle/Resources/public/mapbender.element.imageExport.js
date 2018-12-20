@@ -207,7 +207,7 @@
             var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
             $input.val(submitValue);
             $input.appendTo($hiddenArea);
-            $('.-fn-submit', $form).click();
+            $('input[type="submit"]', $form).click();
         },
         /**
          * Should return true if the given layer needs to be included in export

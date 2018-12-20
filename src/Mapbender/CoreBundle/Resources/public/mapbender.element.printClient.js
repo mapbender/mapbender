@@ -387,16 +387,6 @@
             }
             return jobData;
         },
-        _submitJob: function(jobData) {
-            var $form = $('form#formats', this.element);
-            var $hiddenArea = $('div#layers', $form);
-            $hiddenArea.empty();
-            var submitValue = JSON.stringify(jobData);
-            var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
-            $input.val(submitValue);
-            $input.appendTo($hiddenArea);
-            $form.find('input[type="submit"]').click();
-        },
         _print: function() {
             var jobData = this._collectJobData();
             if (!jobData.layers.length) {
