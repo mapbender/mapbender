@@ -1,7 +1,7 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
     {% block printclient_main %}
     {%  if configuration['type'] is defined and configuration.type == 'element' %}
-        <input type="button" class="button" id="printToggle" active="false" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
+        <input type="button" class="button -fn-toggle-frame" active="false" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
         <br>    
     {% endif %}
     

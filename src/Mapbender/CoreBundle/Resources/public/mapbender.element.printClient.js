@@ -36,21 +36,18 @@
 
             if (this.options.type === 'element') {
                 $(this.element).show();
-                $(this.element).on('click', '#printToggle', function(){
-                    var active = $(this).attr('active');
-                    if(active === 'true') {// deactivate
-                        $(this).attr('active','false').removeClass('active');
-                        $(this).val(Mapbender.trans('mb.core.printclient.btn.activate'));
-                        self._updateElements(false);
-                        $('.printSubmit', this.element).addClass('hidden');
-                    }else{ // activate
-                        $(this).attr('active','true').addClass('active');
-                        $(this).val(Mapbender.trans('mb.core.printclient.btn.deactivate'));
-                        self._getTemplateSize();
-                        self._updateElements(true);
-                        self._setScale();
-                        $('.printSubmit', this.element).removeClass('hidden');
-                    }
+                $(this.element).on('click', '.-fn-toggle-frame', function() {
+                    var wasActive = $(this).attr('active') === 'true';
+                    $(this).attr('active', wasActive ? 'false' : 'true');
+                    $(this).toggleClass('active', !wasActive);
+                    var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
+                                               : 'mb.core.printclient.btn.deactivate';
+                    $(this).val(Mapbender.trans(buttonText));
+                    self._getTemplateSize();
+                    self._updateElements(!wasActive);
+                    self._setScale();
+
+                    $('.printSubmit', self.element).toggleClass('hidden', wasActive);
                 });
                 $('.printSubmit', this.element).on('click', $.proxy(this._print, this));
             }
