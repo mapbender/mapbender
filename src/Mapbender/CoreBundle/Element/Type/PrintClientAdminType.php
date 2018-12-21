@@ -3,7 +3,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mapbender\CoreBundle\Form\EventListener\PrintClientSubscriber;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Mapbender\CoreBundle\Element\Type\PrintClientTemplateAdminType;
@@ -25,7 +25,7 @@ class PrintClientAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'application' => null
