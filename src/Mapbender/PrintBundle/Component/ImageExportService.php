@@ -744,13 +744,11 @@ class ImageExportService
      */
     protected function generatePointOutlineCoords($centerX, $centerY, $radius)
     {
-        $radius = round($radius);
         $step = min(M_PI / 8, M_PI / 4 / $radius);
-        // die(var_export(array($radius, 2 * M_PI / $step), true));
         $points = array();
         for ($a = 0; $a < 2 * M_PI; $a += $step) {
-            $x = round($centerX) + sin($a) * $radius;
-            $y = round($centerY) + cos($a) * $radius;
+            $x = round($centerX + sin($a) * $radius);
+            $y = round($centerY + cos($a) * $radius);
             $points[] = array($x, $y);
         }
         return $points;
