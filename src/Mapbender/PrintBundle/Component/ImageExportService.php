@@ -298,14 +298,20 @@ class ImageExportService
         if ($opacity < 1) {
             for ($x = 0; $x < $width; $x++) {
                 for ($y = 0; $y < $height; $y++) {
-                    $colorIn = imagecolorsforindex($image, imagecolorat($image, $x, $y));
-                    $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
+                    $colorIn = imagecolorat($image, $x, $y);
+                    $alphaIn = $colorIn >> 24 & 0xFF;
+                    if ($alphaIn === 127) {
+                        // pixel is already fully transparent, no point
+                        // modifying it
+                        continue;
+                    }
+                    $alphaOut = intval(127 - (127 - $alphaIn) * $opacity);
 
                     $colorOut = imagecolorallocatealpha(
                         $image,
-                        $colorIn['red'],
-                        $colorIn['green'],
-                        $colorIn['blue'],
+                        $colorIn >> 16 & 0xFF,
+                        $colorIn >> 8 & 0xFF,
+                        $colorIn & 0xFF,
                         $alphaOut);
                     imagesetpixel($image, $x, $y, $colorOut);
                     imagecolordeallocate($image, $colorOut);
