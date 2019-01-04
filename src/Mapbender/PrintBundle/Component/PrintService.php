@@ -138,7 +138,7 @@ class PrintService extends ImageExportService
         $this->afterMainMap($pdf, $templateData, $jobData);
 
         // add legend
-        if (!empty($jobData['legends'])){
+        if (!empty($jobData['legends'])) {
             $this->addLegend();
         }
         return $pdf;

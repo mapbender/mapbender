@@ -353,11 +353,15 @@
             });
             var mapDpi = (this.map.options || {}).dpi || 72;
             _.assign(jobData, {
-                legends: this._collectLegends(),
                 overview: overview,
                 mapDpi: mapDpi,
                 'extent_feature': extentFeature
             });
+            if ($('input[name="printLegend"]', this.$form).prop('checked')) {
+                _.assign(jobData, {
+                    legends: this._collectLegends()
+                });
+            }
             if (this.digitizerData) {
                 _.assign(jobData, this.digitizerData);
             }

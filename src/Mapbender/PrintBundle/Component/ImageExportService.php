@@ -448,10 +448,13 @@ class ImageExportService
         $this->drawMultiPolygon($canvas, $multiPolygon);
     }
 
+    /**
+     * @param ExportCanvas $canvas
+     * @param mixed[] $geometry
+     */
     protected function drawMultiPolygon($canvas, $geometry)
     {
         $image = $canvas->resource;
-        $resizeFactor = $canvas->featureTransform->lineScale;
         $style = $this->getFeatureStyle($geometry);
         foreach ($geometry['coordinates'] as $polygon) {
             foreach ($polygon as $ring) {
@@ -461,27 +464,14 @@ class ImageExportService
 
                 $points = array();
                 foreach ($ring as $c) {
-                    $p = $canvas->featureTransform->transformPair($c);
-                    $points[] = floatval($p[0]);
-                    $points[] = floatval($p[1]);
+                    $points[] = $canvas->featureTransform->transformPair($c);
                 }
-                imagesetthickness($image, 0);
-                // Filled area
                 if ($style['fillOpacity'] > 0){
-                    $color = $this->getColor(
-                        $style['fillColor'],
-                        $style['fillOpacity'],
-                        $image);
-                    imagefilledpolygon($image, $points, count($ring), $color);
+                    $color = $this->getColor($style['fillColor'], $style['fillOpacity'], $image);
+                    $canvas->drawPolygonBody($points, $color);
                 }
-                // Border
-                if ($style['strokeWidth'] > 0) {
-                    $color = $this->getColor(
-                        $style['strokeColor'],
-                        $style['strokeOpacity'],
-                        $image);
-                    imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
-                    imagepolygon($image, $points, count($ring), $color);
+                if ($this->applyStrokeStyle($canvas, $style)) {
+                    $canvas->drawPolygonOutline($points, IMG_COLOR_STYLED);
                 }
             }
         }
@@ -507,27 +497,17 @@ class ImageExportService
      */
     protected function drawMultiLineString($canvas, $geometry)
     {
-        $image = $canvas->resource;
-        $resizeFactor = $canvas->featureTransform->lineScale;
         $style = $this->getFeatureStyle($geometry);
-        $color = $this->getColor(
-            $style['strokeColor'],
-            $style['strokeOpacity'],
-            $image);
-        if ($style['strokeWidth'] == 0) {
-            return;
-        }
-        imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
-
-        foreach ($geometry['coordinates'] as $coords) {
-            for ($i = 1; $i < count($coords); $i++) {
-                $from = $canvas->featureTransform->transformPair($coords[$i - 1]);
-                $to = $canvas->featureTransform->transformPair($coords[$i]);
-                imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
+        if ($this->applyStrokeStyle($canvas, $style)) {
+            foreach ($geometry['coordinates'] as $lineString) {
+                $pixelCoords = array();
+                foreach ($lineString as $coord) {
+                    $pixelCoords[] = $canvas->featureTransform->transformPair($coord);
+                }
+                $canvas->drawLineString($pixelCoords, IMG_COLOR_STYLED);
             }
         }
     }
-
 
     /**
      * @param ExportCanvas $canvas
@@ -540,6 +520,8 @@ class ImageExportService
         $resizeFactor = $canvas->featureTransform->lineScale;
 
         $p = $canvas->featureTransform->transformPair($geometry['coordinates']);
+        $p[0] = round($p[0]);
+        $p[1] = round($p[1]);
 
         if (isset($style['label'])) {
             // draw label with halo
@@ -572,7 +554,7 @@ class ImageExportService
                 $color, $font, $text);
         }
 
-        $diameter = 2 * $style['pointRadius'] * $resizeFactor;
+        $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
         // Filled circle
         if ($style['fillOpacity'] > 0) {
             $color = $this->getColor(
@@ -583,13 +565,14 @@ class ImageExportService
             imagefilledellipse($image, $p[0], $p[1], $diameter, $diameter, $color);
         }
         // Circle border
-        if ($style['strokeWidth'] > 0 && $style['strokeOpacity'] > 0) {
-            $color = $this->getColor(
-                $style['strokeColor'],
-                $style['strokeOpacity'],
-                $image);
-            imagesetthickness($image, $style['strokeWidth'] * $resizeFactor);
-            imageellipse($image, $p[0], $p[1], $diameter, $diameter, $color);
+        if ($this->applyStrokeStyle($canvas, $style)) {
+            // Imageellipse DOES NOT support IMG_COLOR_STYLED-based line styling
+            // It does not even support line thickness.
+            // To support properly styled and patterned point outlining, we have
+            // to generate ~circle geometry ourselves and use a styling-aware drawing
+            // function.
+            $coords = $this->generatePointOutlineCoords($p[0], $p[1], $diameter / 2);
+            $canvas->drawPolygonOutline($coords, IMG_COLOR_STYLED);
         }
     }
 
@@ -674,6 +657,7 @@ class ImageExportService
             'strokeWidth' => 1,
             'fontColor' => '#ff0000',
             'labelOutlineColor' => '#ffffff',
+            'strokeDashstyle' => 'solid',
         );
     }
 
@@ -685,5 +669,88 @@ class ImageExportService
     {
         $defaults = $this->getDefaultFeatureStyle($geometry['type']);
         return array_replace($defaults, $geometry['style']);
+    }
+
+    /**
+     * Return an array appropriate for gd imagesetstyle that will impact lines
+     * drawn with a 'color' value of IMG_COLOR_STYLED.
+     * @see http://php.net/manual/en/function.imagesetstyle.php
+     *
+     * @param int $color from imagecollorallocate
+     * @param float $thickness
+     * @param string $patternName
+     * @param float $patternScale
+     * @return array
+     */
+    protected function getStrokeStyle($color, $thickness, $patternName='solid', $patternScale = 1.0)
+    {
+        $dotLength = max(1, intval(round($thickness * $patternScale)));
+        $dashLength = max(1, intval(round($patternScale * 15)));
+        $longDashLength = max(1, intval(round($patternScale * 25)));
+        $spaceLength = max(1, intval(round($patternScale * 10)));
+
+        $dot = array_fill(0, $dotLength, $color);
+        $dash = array_fill(0, $dashLength, $color);
+        $longdash = array_fill(0, $longDashLength, $color);
+        $space = array_fill(0, $spaceLength, IMG_COLOR_TRANSPARENT);
+
+        switch ($patternName) {
+            case 'solid' :
+                return array($color);
+            case 'dot' :
+                return array_merge($dot, $space);
+            case 'dash' :
+                return array_merge($dash, $space);
+            case 'dashdot' :
+                return array_merge($dash, $space, $dot, $space);
+            case 'longdash' :
+                return array_merge($longdash, $space);
+            case 'longdashdot' :
+                return array_merge($longdash, $space, $dot, $space);
+            default:
+                throw new \InvalidArgumentException("Unsupported pattern name " . print_r($patternName, true));
+        }
+    }
+
+    /**
+     * Generate and apply extended (OpenLayers 2) stroke style.
+     * Returns false to indicate that stroke style is degenerate (zero width or zero opacity).
+     * Callers should check the return value and skip line rendering completely if false.
+     *
+     * @param ExportCanvas $canvas
+     * @param mixed[] $style
+     * @return bool
+     */
+    protected function applyStrokeStyle($canvas, $style)
+    {
+        if ($style['strokeOpacity'] && $style['strokeWidth']) {
+            $resizeFactor = $canvas->featureTransform->lineScale;
+            $thickness = $style['strokeWidth'] * $resizeFactor;
+            $color = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
+            imagesetthickness($canvas->resource, $thickness);
+            $strokeStyle = $this->getStrokeStyle($color, $thickness, $style['strokeDashstyle'], $resizeFactor);
+            imagesetstyle($canvas->resource, $strokeStyle);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param float $centerX in pixel space
+     * @param float $centerY in pixel space
+     * @param float $radius in pixel space
+     * @return float[][]
+     */
+    protected function generatePointOutlineCoords($centerX, $centerY, $radius)
+    {
+        $step = min(M_PI / 8, M_PI / 4 / $radius);
+        $points = array();
+        for ($a = 0; $a < 2 * M_PI; $a += $step) {
+            $x = round($centerX + sin($a) * $radius);
+            $y = round($centerY + cos($a) * $radius);
+            $points[] = array($x, $y);
+        }
+        return $points;
     }
 }
