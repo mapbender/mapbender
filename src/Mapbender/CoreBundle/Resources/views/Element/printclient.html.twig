@@ -78,12 +78,12 @@
 
         {% block printclient_form_bottom %}
         {% if configuration.legend is defined and configuration.legend == 1 %}
-            {% set legend_checked = 'checked' %}
+            {% set legend_checked = 'checked="checked"' %}
             {% if configuration.legend_default_behaviour is defined and configuration.legend_default_behaviour == 0 %}
                 {% set legend_checked = '' %}
             {% endif %}    
             <div class="checkWrapper left iconCheckbox iconCheckboxActive " data-icon="iconCheckbox">
-                <input class="checkbox" type="checkbox" name="printLegend" value="1" {{ legend_checked }}>
+                <input class="checkbox" type="checkbox" name="printLegend" value="1" {{ legend_checked | raw}}>
             </div>
             <label class="labelCheck">{{ 'mb.core.printclient.label.legend' | trans }}</label>
         {% endif %}
