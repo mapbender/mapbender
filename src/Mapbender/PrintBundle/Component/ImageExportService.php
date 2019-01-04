@@ -276,46 +276,50 @@ class ImageExportService
     }
 
     /**
-     * Convert a GD image to true-color RGBA and write it back to the file
-     * system.
+     * Multiply the alpha channgel of the whole $image with the given $opacity.
+     * May return a different image than given if the input $image is not
+     * in truecolor format.
      *
-     * @param resource $input source image
-     * @param float $opacity in [0;1]
+     * @param resource $image GDish
+     * @param float $opacity
      * @return resource GDish
      */
-    protected function forceToRgba($input, $opacity)
+    protected function multiplyAlpha($image, $opacity)
     {
-        $width = imagesx($input);
-        $height = imagesy($input);
-
-        // Make sure input image is truecolor with alpha, regardless of input mode!
-        $image = imagecreatetruecolor($width, $height);
+        $width = imagesx($image);
+        $height = imagesy($image);
+        if (!imageistruecolor($image)) {
+            // promote to RGBA image first
+            $imageCopy = imagecreatetruecolor($width, $height);
+            imagesavealpha($imageCopy, true);
+            imagealphablending($imageCopy, false);
+            imagecopyresampled($imageCopy, $image, 0, 0, 0, 0, $width, $height, $width, $height);
+            imagedestroy($image);
+            $image = $imageCopy;
+            unset($imageCopy);
+        }
         imagealphablending($image, false);
-        imagesavealpha($image, true);
-        imagecopyresampled($image, $input, 0, 0, 0, 0, $width, $height, $width, $height);
 
         // Taking the painful way to alpha blending
-        if ($opacity < 1) {
-            for ($x = 0; $x < $width; $x++) {
-                for ($y = 0; $y < $height; $y++) {
-                    $colorIn = imagecolorat($image, $x, $y);
-                    $alphaIn = $colorIn >> 24 & 0xFF;
-                    if ($alphaIn === 127) {
-                        // pixel is already fully transparent, no point
-                        // modifying it
-                        continue;
-                    }
-                    $alphaOut = intval(127 - (127 - $alphaIn) * $opacity);
-
-                    $colorOut = imagecolorallocatealpha(
-                        $image,
-                        $colorIn >> 16 & 0xFF,
-                        $colorIn >> 8 & 0xFF,
-                        $colorIn & 0xFF,
-                        $alphaOut);
-                    imagesetpixel($image, $x, $y, $colorOut);
-                    imagecolordeallocate($image, $colorOut);
+        for ($x = 0; $x < $width; $x++) {
+            for ($y = 0; $y < $height; $y++) {
+                $colorIn = imagecolorat($image, $x, $y);
+                $alphaIn = $colorIn >> 24 & 0xFF;
+                if ($alphaIn === 127) {
+                    // pixel is already fully transparent, no point
+                    // modifying it
+                    continue;
                 }
+                $alphaOut = intval(127 - (127 - $alphaIn) * $opacity);
+
+                $colorOut = imagecolorallocatealpha(
+                    $image,
+                    $colorIn >> 16 & 0xFF,
+                    $colorIn >> 8 & 0xFF,
+                    $colorIn & 0xFF,
+                    $alphaOut);
+                imagesetpixel($image, $x, $y, $colorOut);
+                imagecolordeallocate($image, $colorOut);
             }
         }
         return $image;
@@ -332,7 +336,12 @@ class ImageExportService
             $response = $this->mapRequest($url);
             $image = @imagecreatefromstring($response->getContent());
             if ($image) {
-                return $this->forceToRgba($image, $opacity);
+                imagesavealpha($image, true);
+                if ($opacity < (1.0 - 1 / 127)) {
+                    return $this->multiplyAlpha($image, $opacity);
+                } else {
+                    return $image;
+                }
             } else {
                 return null;
             }
