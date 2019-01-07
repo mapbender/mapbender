@@ -677,22 +677,24 @@ class ImageExportService
      * @see http://php.net/manual/en/function.imagesetstyle.php
      *
      * @param int $color from imagecollorallocate
-     * @param float $thickness
+     * @param int $thickness
      * @param string $patternName
      * @param float $patternScale
      * @return array
      */
     protected function getStrokeStyle($color, $thickness, $patternName='solid', $patternScale = 1.0)
     {
+        // NOTE: GD actually counts one style entry per produced pixel, NOT per pixel-space length unit.
+        // => Length of the style array must scale with the line thickness
         $dotLength = max(1, intval(round($thickness * $patternScale)));
-        $dashLength = max(1, intval(round($patternScale * 15)));
-        $longDashLength = max(1, intval(round($patternScale * 25)));
-        $spaceLength = max(1, intval(round($patternScale * 10)));
+        $dashLength = max(1, intval(round($patternScale * 45)));
+        $longDashLength = max(1, intval(round($patternScale * 85)));
+        $spaceLength = max(1, intval(round($patternScale * 45)));
 
-        $dot = array_fill(0, $dotLength, $color);
-        $dash = array_fill(0, $dashLength, $color);
-        $longdash = array_fill(0, $longDashLength, $color);
-        $space = array_fill(0, $spaceLength, IMG_COLOR_TRANSPARENT);
+        $dot = array_fill(0, $thickness * $dotLength, $color);
+        $dash = array_fill(0, $thickness * $dashLength, $color);
+        $longdash = array_fill(0, $thickness * $longDashLength, $color);
+        $space = array_fill(0, $thickness * $spaceLength, IMG_COLOR_TRANSPARENT);
 
         switch ($patternName) {
             case 'solid' :
@@ -723,12 +725,18 @@ class ImageExportService
      */
     protected function applyStrokeStyle($canvas, $style)
     {
-        if ($style['strokeOpacity'] && $style['strokeWidth']) {
-            $resizeFactor = $canvas->featureTransform->lineScale;
-            $thickness = $style['strokeWidth'] * $resizeFactor;
+        // NOTE: gd imagesetstyle patterns are not based on distance from starting point
+        //       on the line, but rather on integral pixel quantities, making it
+        //       a) scale proportionally to stroke width
+        //       b) fundamentally incompatible with non-integral line widths
+        // To generate any functional stroke style, the width must be quantized to an
+        // integer, and that integral with must be provided to the style generation function.
+        $lineScale = $canvas->featureTransform->lineScale;
+        $intThickness = intval(round($style['strokeWidth'] * $lineScale));
+        if ($style['strokeOpacity'] && $intThickness >= 1) {
             $color = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
-            imagesetthickness($canvas->resource, $thickness);
-            $strokeStyle = $this->getStrokeStyle($color, $thickness, $style['strokeDashstyle'], $resizeFactor);
+            imagesetthickness($canvas->resource, $intThickness);
+            $strokeStyle = $this->getStrokeStyle($color, $intThickness, $style['strokeDashstyle'], $lineScale);
             imagesetstyle($canvas->resource, $strokeStyle);
             return true;
         } else {
