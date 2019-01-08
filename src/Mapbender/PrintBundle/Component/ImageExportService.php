@@ -238,13 +238,13 @@ class ImageExportService
     protected function preprocessWmsUrl($layerDef, $canvas, Box $extent)
     {
         $params = array(
-            'width' => $canvas->width,
-            'height' => $canvas->height,
+            'WIDTH' => $canvas->width,
+            'HEIGHT' => $canvas->height,
         );
         if (!empty($layerDef['changeAxis'])){
-            $params['bbox'] = $extent->bottom . ',' . $extent->left . ',' . $extent->top . ',' . $extent->right;
+            $params['BBOX'] = $extent->bottom . ',' . $extent->left . ',' . $extent->top . ',' . $extent->right;
         } else {
-            $params['bbox'] = $extent->left . ',' . $extent->bottom . ',' . $extent->right . ',' . $extent->top;
+            $params['BBOX'] = $extent->left . ',' . $extent->bottom . ',' . $extent->right . ',' . $extent->top;
         }
         return UrlUtil::validateUrl($layerDef['url'], $params);
     }
