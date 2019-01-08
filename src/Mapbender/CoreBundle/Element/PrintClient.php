@@ -377,11 +377,18 @@ class PrintClient extends Element
                 // b) an object with a __toString method or just a string
                 $values['userName'] = "{$user}";
             }
+
             try {
-                // this only works for FOM user entity
-                /** @var Collection|Group[] $groups */
-                $groups = $user->getGroups();
+                // This only works for FOM user entity; getGroups is not part of
+                // the framework's base UserInterface.
+                if ($user instanceof \FOM\UserBundle\Entity\User) {
+                    /** @var Collection|Group[] $groups */
+                    $groups = $user->getGroups();
+                } else {
+                    $groups = null;
+                }
                 if ($groups && count($groups)) {
+                    /** @var Collection|Group[] $groups */
                     $values = array_replace($values, array(
                         'legendpage_image' => array(
                             'type' => 'resource',

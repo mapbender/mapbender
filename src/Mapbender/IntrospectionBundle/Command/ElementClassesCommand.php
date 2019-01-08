@@ -51,9 +51,10 @@ class ElementClassesCommand extends ContainerAwareCommand
         $headers = array(
             'Name',
             'Comments',
-            'Template (auto-calculated)',
+            'Frontend template',
             'AdminType',
             'AdminTemplate',
+            'Implicit asset references',
         );
 
         $rows = array();
@@ -88,7 +89,7 @@ class ElementClassesCommand extends ContainerAwareCommand
             if ($tail[0] != 'Element') {
                 $shortenedClassName = "<comment>{$tail[0]}</comment>" . implode('\\', $tail);
             } elseif (count($tail) != 2) {
-                $shortenedClassName = "<comment>" . implode('\\', $tail) . "<comment>";
+                $shortenedClassName = "<comment>" . implode('\\', $tail) . "</comment>";
             } else {
                 $shortenedClassName = $tail[1];
             }
@@ -110,17 +111,13 @@ class ElementClassesCommand extends ContainerAwareCommand
      */
     protected function formatElementInfo($element)
     {
-        $templates = array(
-            $element->getFrontendTemplatePath(),
-            $element->getFormTemplate(),
-        );
-        $autoAdminTemplate = $element->getAutomaticTemplatePath('.html.twig', 'ElementAdmin');
         $cells = array(
             get_class($element),
             $this->formatElementComments($element),
-            $this->formatTemplatePath($element, $templates[0], null),
+            $this->formatFrontendTemplateInfo($element),
             $this->formatAdminType($element),
-            $this->formatTemplatePath($element, $templates[1], $autoAdminTemplate),
+            $this->formatAdminTemplateInfo($element),
+            $this->formatAssetRefStatus($element),
         );
         return $cells;
     }
@@ -134,7 +131,16 @@ class ElementClassesCommand extends ContainerAwareCommand
         $adminType = $element->getType();
         $autoAdminType = $element->getAutomaticAdminType();
         $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
-        $adminTypeBNS = BundleUtil::extractBundleNamespace($adminType);
+        try {
+            $adminTypeBNS = BundleUtil::extractBundleNamespace($adminType);
+        } catch (\RuntimeException $e) {
+            // assume servicy admin type
+            if (false === strpos($adminType, '\\')) {
+                return "service <info>{$adminType}</info>";
+            } else {
+                throw $e;
+            }
+        }
 
         if (!class_exists($adminType)) {
             // mark missing class as error
@@ -147,6 +153,32 @@ class ElementClassesCommand extends ContainerAwareCommand
             return "<comment>$adminType</comment>\n(vs {$autoAdminType})";
         } else {
             return $adminType;
+        }
+    }
+
+    /**
+     * @param Element $element
+     * @return string
+     */
+    protected function formatAssetRefStatus($element)
+    {
+        $explicitRefPattern = '^(/|(@[\w]+Bundle/)|([\w]+Bundle:))';
+        $assetRefs = $element->getAssets();
+        $implicitRefs = array();
+        foreach (call_user_func_array('array_merge', $assetRefs) as $ref) {
+            if (!preg_match("#{$explicitRefPattern}#", $ref)) {
+                $implicitRefs[] = $ref;
+            }
+        }
+        if (!$implicitRefs) {
+            return '<info>none</info>';
+        } else {
+            $glue = array(
+                '</comment>',
+                "\n",
+                '<comment>',
+            );
+            return $glue[2] . implode(implode('', $glue), $implicitRefs) . $glue[0];
         }
     }
 
@@ -264,15 +296,42 @@ class ElementClassesCommand extends ContainerAwareCommand
 
     /**
      * @param Element $element
+     * @return string
+     * @throws \ReflectionException
+     */
+    protected function formatFrontendTemplateInfo($element)
+    {
+        $refl = new \ReflectionClass($element);
+        $template = $element->getFrontendTemplatePath();
+        $abstractBaseClass = 'Mapbender\CoreBundle\Component\Element';
+        $templateMethod = $refl->getMethod('getFrontendTemplatePath');
+        $isAuto = $templateMethod->class === $abstractBaseClass;
+        return $this->formatTemplatePath($element, $template, $isAuto);
+    }
+
+    /**
+     * @param Element $element
+     * @return string
+     * @throws \ReflectionException
+     */
+    protected function formatAdminTemplateInfo($element)
+    {
+        $refl = new \ReflectionClass($element);
+        $template = $element->getFormTemplate();
+        $abstractBaseClass = 'Mapbender\CoreBundle\Component\Element';
+        $templateMethod = $refl->getMethod('getFormTemplate');
+        $isAuto = $templateMethod->class === $abstractBaseClass;
+        return $this->formatTemplatePath($element, $template, $isAuto);
+    }
+
+    /**
+     * @param Element $element
      * @param string $path twig-style
-     * @param string|null $expected also twig-style
+     * @param bool $isAutomatic
      * @return string
      */
-    protected function formatTemplatePath($element, $path, $expected)
+    protected function formatTemplatePath($element, $path, $isAutomatic)
     {
-        if (!$this->templateExists($path)) {
-            return "<error>$path</error>";
-        }
         $templateBundle = BundleUtil::extractBundleNameFromTemplatePath($path);
         $elementBundle = BundleUtil::extractBundleNameFromClassName(get_class($element));
         if ($templateBundle != $elementBundle) {
@@ -281,10 +340,14 @@ class ElementClassesCommand extends ContainerAwareCommand
         } else {
             $info = $path;
         }
-        if ($expected && $path != $expected) {
-            $info = "<comment>{$info}</comment>\n(vs {$expected})";
+        if (!$this->templateExists($path)) {
+            $info = "<error>{$info}</error>";
         }
-        return $info;
+        if ($isAutomatic) {
+            return "{$info} <comment>(auto)</comment>";
+        } else {
+            return $info;
+        }
     }
 
     /**
@@ -301,14 +364,18 @@ class ElementClassesCommand extends ContainerAwareCommand
             $issues[] = "<comment>deprecated</comment>";
         }
         $detectOverrides = array(
-            'getConfiguration' => 'error',
-            'render' => 'comment',
-            'getType'=> 'comment',
-            'getFormTemplate' => 'comment',
+            'getConfiguration' => array(null, 'error'),
+            'render' => array(null, 'error'),
+            'getType'=> array('comment', null),
+            'getFormTemplate' => array('comment', null),
+            'getFrontendTemplatePath' => array('comment', null),
         );
-        foreach ($detectOverrides as $methodName => $messageStyle) {
-            if ($this->detectMethodOverride($rc, $methodName)) {
-                $message = "<$messageStyle>own {$methodName}</$messageStyle>";
+        foreach ($detectOverrides as $methodName => $treatment) {
+            $isOverridden = $this->detectMethodOverride($rc, $methodName);
+            $messageStyle = $treatment[intval($isOverridden)];
+            if ($messageStyle !== null) {
+                $messagePrefix = $isOverridden ? 'own' : 'missing';
+                $message = "<$messageStyle>{$messagePrefix} {$methodName}</$messageStyle>";
                 if ($issues && !(count($issues) % 2)) {
                     $message = "\n$message";
                 }
