@@ -1,6 +1,6 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
     {% block printclient_main %}
-    {%  if configuration['type'] is defined and configuration.type == 'element' %}
+    {% if configuration.type == 'element' %}
         <input type="button" class="button -fn-toggle-frame" active="false" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
         <br>    
     {% endif %}
@@ -23,8 +23,8 @@
         <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
         <div class="dropdown">
             <select name="template" class="hiddenDropdown">
-                {% for id, template in configuration.templates %}
-                    <option value="{{ id }}">{{ template.label }}</option>
+                {% for template in configuration.templates %}
+                    <option value="{{ template.template }}">{{ template.label }}</option>
                 {% endfor %}
             </select>
             <div class="dropdownValue iconDown"></div>
@@ -34,8 +34,8 @@
         <label class="labelInput">{{ 'mb.core.printclient.label.quality' | trans }}</label>
         <div class="dropdown">
             <select name="quality" class="hiddenDropdown">
-                {% for key , label in configuration.quality_levels %}
-                    <option value="{{ key }}">{{ label }}</option>
+                {% for qualityLevel in configuration.quality_levels %}
+                    <option value="{{ qualityLevel.dpi }}">{{ qualityLevel.label }}</option>
                 {% endfor %}
             </select>
             <div class="dropdownValue iconDown"></div>

@@ -125,32 +125,6 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    public function getConfiguration()
-    {
-        $config = parent::getConfiguration();
-        if (isset($config["templates"])) {
-            $templates = array();
-            foreach ($config["templates"] as $template) {
-                $templates[$template['template']] = $template;
-            }
-            $config["templates"] = $templates;
-        }
-        if (isset($config["quality_levels"])) {
-            $levels = array();
-            foreach ($config["quality_levels"] as $level) {
-                $levels[$level['dpi']] = $level['label'];
-            }
-            $config["quality_levels"] = $levels;
-        }
-        if (!isset($config["type"])) {
-            $config["type"] = "dialog";
-        }
-        return $config;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\PrintClientAdminType';
@@ -172,10 +146,18 @@ class PrintClient extends Element
         return 'mapbender.mbPrintClient';
     }
 
+    public function getPublicConfiguration()
+    {
+        return $this->entity->getConfiguration() + array(
+            'type' => 'dialog',
+        );
+    }
+
     public function getFrontendTemplateVars()
     {
-        $config = $this->getConfiguration() + array(
+        $config = array_filter($this->entity->getConfiguration()) + array(
             'required_fields_first' => false,
+            'type' => 'dialog',
         );
         $router = $this->container->get('router');
         $submitUrl = $router->generate('mapbender_core_application_element', array(
@@ -203,7 +185,7 @@ class PrintClient extends Element
         /** @var Request $request */
         $request = $this->container->get('request');
         $bridgeService = $this->getServiceBridge();
-        $configuration = $this->getConfiguration();
+        $configuration = $this->entity->getConfiguration();
         switch ($action) {
             case 'print':
                 $data = $this->preparePrintData($request, $configuration);
