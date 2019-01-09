@@ -73,6 +73,14 @@
         }
         this.$element.toggleClass('noCloseButton', !this.options.closeButton);
         $('.popupHead', this.$element).toggleClass('hidden', !this.options.header);
+        if (this.options.scrollable) {
+            $('.popup-body', this.$element).addClass('popupScroll');
+        } else {
+            if (this.options.height) {
+                console.warn("Ignoring height option on non-scrollable popup");
+            }
+            this.options.height = null;
+        }
         if (this.options.resizable) {
             var resizableOptions = this.options.resizable;
             if (!$.isPlainObject(resizableOptions)) {
@@ -86,11 +94,12 @@
             $('.popupClose', this.$element).remove();
         }
 
+
         var staticOptions = [
             'template', 'autoOpen', 'modal',
             'header', 'closeButton',
             'destroyOnClose', 'detachOnClose',
-            'resizable'
+            'scrollable', 'resizable'
         ];
         // use the options mechanism to set up most of the things
         $.each(this.options, function(key, value) {
@@ -129,7 +138,7 @@
                 '      <span class="popupClose right iconCancel iconBig"></span>',
                 '      <div class="clear"></div>',
                 '    </div>',
-                '   <div class="popup-body popupScroll">',
+                '   <div class="popup-body">',
                 '      <div class="popupContent"></div>',
                 '   </div>',
                 '   <div class="footer row no-gutters">',
@@ -154,6 +163,7 @@
             destroyOnClose: false,
             modal: true,
 
+            scrollable: true,
             // Width, if not set, use custom CSS for cssClass
             width: null,
             // Height, if not set, use custom CSS for cssClass
