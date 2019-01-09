@@ -67,41 +67,14 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'abstract public function createSourceDefinitions': function(xml, options) {
     }, // to remove
-    'public function changeDefaultOptions': function(defaultOptions) {
-        $.extend(this.defaultOptions, defaultOptions);
-    },
-    'public function fire': function(eventName) {
-
-    },
     'public function on': function(eventName) {
 
     },
     'public function postCreate': function(olLayer) {
 
     },
-//    _addProxy: function(url){
-//        return OpenLayers.ProxyHost + encodeURIComponent(url);
-//    },
-//    _removeProxy: function(url){
-//        if(url.indexOf(OpenLayers.ProxyHost) === 0) {
-//            return decodeURIComponent(url.substring(OpenLayers.ProxyHost.length));
-//        }
-//        return url;
-//    },
     'public function removeSignature': function(url){
-        var pos = -1;
-        pos = url.indexOf("_signature");
-        if(pos !== -1) {
-            var url_new = url.substring(0, pos);
-            if(url_new.lastIndexOf('&') === url_new.length - 1) {
-                url_new = url_new.substring(0, url_new.lastIndexOf('&'));
-            }
-            if(url_new.lastIndexOf('?') === url_new.length - 1) {
-                url_new = url_new.substring(0, url_new.lastIndexOf('?'));
-            }
-            return url_new;
-        }
-        return url;
+        return Mapbender.Util.removeSignature(url);
     },
     'public function changeProjection': function(source, projection) {
     },
@@ -186,38 +159,6 @@ Mapbender.Geo.SourceHandler = Class({
                 callback(loadError);
             }
         });
-    },
-    'public function hasLayers': function(source, withoutGrouped) {
-        var options = this.layerCount(source);
-        if (withoutGrouped) {
-            return options.simpleCount > 0;
-        } else { // without root layer
-            return options.simpleCount + options.groupedCount - 1 > 0;
-        }
-    },
-    'public function layerCount': function(source) {
-        if (source.configuration.children.length === 0) {
-            return {
-                simpleCount: 0,
-                grouppedCount: 0
-            };
-        }
-        var options = {
-            simpleCount: 0,
-            groupedCount: 0
-        }
-        return _layerCount(source.configuration.children[0], options);
-        function _layerCount(layer, options) {
-            if (layer.children) {
-                options.grouppedCount++;
-                for (var i = 0; i < layer.children.length; i++) {
-                    options = _layerCount(layer.children[i], options);
-                }
-            } else {
-                options.simpleCount++;
-            }
-            return options;
-        }
     },
     'public function getLayersList': function(source, offsetLayer, includeOffset) {
         var rootLayer,

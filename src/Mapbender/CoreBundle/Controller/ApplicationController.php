@@ -2,12 +2,12 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
-use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
+use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
+use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
-use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -64,7 +65,7 @@ class ApplicationController extends Controller
     {
         $isProduction = $this->isProduction();
         $cacheFile        = $this->getCachedAssetPath($slug, $type);
-        $application = $this->getApplication($slug);
+        $appEntity = $this->getApplicationEntity($slug);
 
         $headers = array(
             'Content-Type' => $this->getMimeType($type),
@@ -72,7 +73,6 @@ class ApplicationController extends Controller
 
         $useCached = $isProduction && file_exists($cacheFile);
         if ($useCached) {
-            $appEntity = $application->getEntity();
             $isAppDbBased = $appEntity->getSource() === ApplicationEntity::SOURCE_DB;
             $modificationTs = filectime($cacheFile);
             // Always reuse cache entry for YAML applications
@@ -87,17 +87,18 @@ class ApplicationController extends Controller
                 return $response;
             }
         }
-
+        $application = new Application($this->container, $appEntity);
         $refs = $application->getAssetGroup($type);
+        $factory = new AssetFactory($this->container);
         if ($type == "css") {
-            /** @todo: use route to assets action, not REQUEST_URI, so this can move away from here */
             $sourcePath = $request->getBasePath() ?: '.';
-            $factory = new AssetFactory($this->container, $refs, 'css', $request->server->get('REQUEST_URI'), $sourcePath);
-            $content = $factory->compile();
+            $targetPath = $this->generateUrl('mapbender_core_application_assets', array(
+                'slug' => $slug,
+                'type' => $type,
+            ));
+            $content = $factory->compileCss($refs, $sourcePath, $targetPath);
         } else {
-            $cache   = new ApplicationAssetCache($this->container, $refs, $type);
-            $assets  = $cache->fill($slug, 0);
-            $content = $assets->dump();
+            $content = $factory->compileRaw($refs);
         }
 
         if ($isProduction) {
@@ -112,7 +113,7 @@ class ApplicationController extends Controller
      * Element action controller.
      *
      * Passes the request to
-     * the element's httpAction.
+     * the element's handleHttpRequest.
      * @Route("/application/{slug}/element/{id}/{action}",
      *     defaults={ "id" = null, "action" = null },
      *     requirements={ "action" = ".+" })
@@ -121,19 +122,17 @@ class ApplicationController extends Controller
      * @param string $id
      * @param string $action
      * @return Response
-     *
-     * @todo Symfony 3.x: update Element API to accept injected Request
      */
     public function elementAction(Request $request, $slug, $id, $action)
     {
-        $application = $this->getApplication($slug);
-        $element     = $application->getElement($id);
-
-        if(!$element){
+        $application = $this->getApplicationEntity($slug);
+        /** @var ApplicationService $appService */
+        $appService = $this->get('mapbender.presenter.application.service');
+        $elementComponent = $appService->getSingleElementComponent($application, $id);
+        if (!$elementComponent || !$elementComponent instanceof ElementHttpHandlerInterface) {
             throw new NotFoundHttpException();
         }
-
-        return $element->httpAction($action);
+        return $elementComponent->handleHttpRequest($request);
     }
 
     /**
@@ -152,7 +151,9 @@ class ApplicationController extends Controller
         // @todo: figure out why YAML applications should be excluded from html caching; they do use asset caching
         $useCache = $this->isProduction() && ($appEntity->getSource() === ApplicationEntity::SOURCE_DB);
         $session->set("proxyAllowed", true); // @todo: ...why?
-
+        $headers = array(
+            'Content-Type' => 'text/html; charset=UTF-8',
+        );
         if ($useCache) {
             $cacheFile = $this->getCachedAssetPath($slug . "-" . session_id(), "html");
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
@@ -162,37 +163,47 @@ class ApplicationController extends Controller
                 // allow file timestamp to be read again correctly for 'Last-Modified' header
                 clearstatcache();
             }
-            $response = new BinaryFileResponse($cacheFile);
+            $response = new BinaryFileResponse($cacheFile, 200, $headers);
             $response->isNotModified($request);
             return $response;
         } else {
-            return new Response($application->render());
+            return new Response($application->render(), 200, $headers);
         }
     }
 
     /**
-     * Get the application by slug.
+     * Get the application component by slug.
      *
-     * Tries to get the application with the given slug and throws an 404
-     * exception if it can not be found. This also checks access control and
-     * therefore may throw an AuthorizationException.
+     * Checks existance and grants and throws accordingly.
      *
+     * @param string $slug
      * @return Application
+     * @throws NotFoundHttpException
+     * @throws AccessDeniedHttpException
      */
     private function getApplication($slug)
     {
+        $entity = $this->getApplicationEntity($slug);
+        return new Application($this->container, $entity);
+    }
+
+    /**
+     * @param string $slug
+     * @return ApplicationEntity
+     * @throws NotFoundHttpException
+     * @throws AccessDeniedHttpException
+     */
+    private function getApplicationEntity($slug)
+    {
         /** @var Mapbender $mapbender */
         $mapbender = $this->get('mapbender');
-        $application = $mapbender->getApplication($slug);
+        $entity = $mapbender->getApplicationEntity($slug);
 
-        if (!$application) {
-            throw new NotFoundHttpException(
-            'The application can not be found.');
+        if (!$entity) {
+            throw new NotFoundHttpException('The application can not be found.');
         }
-
-        $this->checkApplicationAccess($application);
-
-        return $application;
+        $this->checkApplicationAccess($entity);
+        return $entity;
     }
 
     /**
@@ -203,7 +214,7 @@ class ApplicationController extends Controller
      */
     public function configurationAction($slug)
     {
-        $applicationEntity = $this->getApplication($slug)->getEntity();
+        $applicationEntity = $this->getApplicationEntity($slug);
         $this->get("session")->set("proxyAllowed", true);
         $configService = $this->getConfigService();
         $cacheService = $configService->getCacheService();
@@ -230,12 +241,11 @@ class ApplicationController extends Controller
      * This will check if any ACE in the ACL for the given applications entity
      * grants the VIEW permission.
      *
-     * @param Application $application
+     * @param ApplicationEntity $application
      */
-    public function checkApplicationAccess(Application $application)
+    private function checkApplicationAccess(ApplicationEntity $application)
     {
         $user = $this->getUser();
-        $application     = $application->getEntity();
 
         if ($application->isYamlBased()
             && count($application->getYamlRoles())
@@ -316,15 +326,19 @@ class ApplicationController extends Controller
      */
     public function instanceTunnelAction(Request $request, $slug, $instanceId)
     {
-        // @todo: instance tunnel handling should move into a service component in WmsBundle
         /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
         $instance        = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }
+        // Deny forged cross-requests to an instance that doesn't belong to this application
+        $application = $instance->getLayerset()->getApplication();
+        if ($application->getSlug() !== $slug) {
+            throw new NotFoundHttpException("No such instance");
+        }
         if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
+            $this->denyAccessUnlessGranted('VIEW', $application);
         }
 
         /** @var WmsSource $source */
@@ -332,20 +346,9 @@ class ApplicationController extends Controller
 // TODO source access ?
 //        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
 //        $this->denyAccessUnlessGranted('VIEW', $source);
-        $headers     = array();
-        $postParams  = $request->request->all();
-        $getParams   = $request->query->all();
+
         $user        = $source->getUsername() ? $source->getUsername() : null;
         $password    = $source->getUsername() ? $source->getPassword() : null;
-        $instHandler = SourceInstanceEntityHandler::createHandler($this->container, $instance);
-        $vendorspec  = $instHandler->getSensitiveVendorSpecific();
-        /* overwrite vendorspecific parameters from handler with get/post parameters */
-        if (count($getParams)) {
-            $getParams = array_merge($vendorspec, $getParams);
-        }
-        if (count($postParams)) {
-            $postParams = array_merge($vendorspec, $postParams);
-        }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
 
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
@@ -356,11 +359,12 @@ class ApplicationController extends Controller
         $tunnelService = $this->get('mapbender.source.instancetunnel.service');
         $instanceTunnel = $tunnelService->makeEndpoint($instance);
         $url = $instanceTunnel->getInternalUrl($request);
+
         if (!$url) {
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
 
-        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password, $headers, $getParams, $postParams);
+        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response        = new Response();

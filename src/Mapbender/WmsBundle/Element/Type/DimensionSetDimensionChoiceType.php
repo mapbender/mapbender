@@ -7,7 +7,7 @@ namespace Mapbender\WmsBundle\Element\Type;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DimensionSetDimensionChoiceType extends AbstractType
 {
@@ -16,7 +16,7 @@ class DimensionSetDimensionChoiceType extends AbstractType
         return 'choice';
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         // NOTE: `use ($this)` not allowed in PHP lambda definitions...
         $resolver->setDefaults(array(

@@ -4,7 +4,9 @@ namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\RequestUtil;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,15 +79,36 @@ class Endpoint
     }
 
     /**
-     * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object)
+     * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object).
+     * Get params from hidden vendor specifics and the given request are appended.
+     * Params from the request override params from hidden vendorspecs with the same name.
      *
      * @param Request $request
-     * @return string
+     * @return string|null
      */
     public function getInternalUrl(Request $request)
     {
-        $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
+        $baseUrl = $this->getInternalBaseUrl($request);
+        if ($baseUrl) {
+            $hiddenParams = $this->service->getHiddenParams($this->instance);
+            $requestParams = $request->query->all();
+            if (strtolower(ArrayUtil::getDefaultCaseInsensitive($requestParams, 'request', null)) === 'getlegendgraphic') {
+                unset($requestParams['_glgmode']);
+            }
+            $params = array_replace($hiddenParams, $requestParams);
+            return UrlUtil::validateUrl($baseUrl, $params);
+        } else {
+            return null;
+        }
+    }
 
+    /**
+     * @param Request $request
+     * @return string|null
+     */
+    protected function getInternalBaseUrl(Request $request)
+    {
+        $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
         switch (strtolower($requestType)) {
             case 'getmap':
                 return $this->source->getGetMap()->getHttpGet();

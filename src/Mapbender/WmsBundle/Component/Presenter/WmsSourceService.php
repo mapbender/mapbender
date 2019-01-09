@@ -6,7 +6,6 @@ namespace Mapbender\WmsBundle\Component\Presenter;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\UrlUtil;
-use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
@@ -92,79 +91,44 @@ class WmsSourceService extends SourceService
      */
     public function postProcessUrls(WmsInstance $sourceInstance, $configuration)
     {
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $hide = false;
-        $params = array();
-        foreach ($sourceInstance->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            if ($handler->isVendorSpecificValueValid()) {
-                if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE ||
-                    ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE && !$vendorspec->getHidden())) {
-                    $params = array_merge($params, $handler->getKvpConfiguration($user));
-                } else {
-                    $hide = true;
-                }
-            }
-        }
-        if ($hide || $sourceInstance->getSource()->getUsername()) {
-            $url = $this->makeTunnelEndpoint($sourceInstance)->getPublicBaseUrl();
-            $configuration['options']['url'] = UrlUtil::validateUrl($url, $params, array());
+        $vsHandler = new VendorSpecificHandler();
+        if ($sourceInstance->getSource()->getUsername() || $vsHandler->hasHiddenParams($sourceInstance)) {
+            $url = $this->urlProcessor->getPublicTunnelBaseUrl($sourceInstance);
+            $configuration['options']['url'] = $url;
             // remove ows proxy for a tunnel connection
             $configuration['options']['tunnel'] = true;
-        } elseif ($this->signer) {
-            $configuration['options']['url'] = UrlUtil::validateUrl($configuration['options']['url'], $params, array());
-            $configuration['options']['url'] = $this->signer->signUrl($configuration['options']['url']);
+        } else {
             if ($sourceInstance->getProxy()) {
-                $this->signLayerUrls($configuration['children'][0]);
+                $configuration['options']['url'] = $this->urlProcessor->proxifyUrl($configuration['options']['url']);
+                $configuration['children'][0] = $this->proxifyLayerUrls($configuration['children'][0]);
+            } else {
+                // Don't proxify, but do provide signature to allow OpenLayers to bypass CORB
+                $configuration['options']['url'] = $this->urlProcessor->signUrl($configuration['options']['url']);
             }
         }
         return $configuration;
     }
 
+    /**
+     * Return the source instance's base url extended with (potentially dynamic, user dependent) params
+     * from dimensions and public vendor specifics.
+     *
+     * @param WmsInstance $sourceInstance
+     * @return string
+     */
     public function getUrlOption(WmsInstance $sourceInstance)
     {
         $url = $sourceInstance->getSource()->getGetMap()->getHttpGet();
-        $url = $this->addDimensionParameters($sourceInstance, $url);
-        $url = $this->addVendorSpecifics($sourceInstance, $url);
-        return $url;
-    }
-
-    /**
-     * Extend the given $url with parameters from the Dimension defaults set on the given $sourceInstance
-     *
-     * @param WmsInstance $sourceInstance
-     * @param string $url
-     * @return string
-     */
-    public function addDimensionParameters(WmsInstance $sourceInstance, $url)
-    {
+        $params = array();
         foreach ($sourceInstance->getDimensions() as $dimension) {
             if ($dimension->getActive() && $dimension->getDefault()) {
-                $help = array($dimension->getParameterName() => $dimension->getDefault());
-                $url = UrlUtil::validateUrl($url, $help, array());
+                $params[$dimension->getParameterName()] = $dimension->getDefault();
             }
         }
-        return $url;
-    }
-
-    /**
-     * Extend the given $url with vendor specific parameters set on the given $sourceInstance (only "simple" type)
-     *
-     * @param WmsInstance $sourceInstance
-     * @param string $url
-     * @return string
-     */
-    public function addVendorSpecifics(WmsInstance $sourceInstance, $url)
-    {
-        foreach ($sourceInstance->getVendorspecifics() as $key => $vendorspec) {
-            $handler = new VendorSpecificHandler($vendorspec);
-            /* add to url only simple vendor specific with valid default value */
-            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
-                $help = $handler->getKvpConfiguration(null);
-                $url = UrlUtil::validateUrl($url, $help, array());
-            }
-        }
-        return $url;
+        $userToken = $this->container->get('security.token_storage')->getToken();
+        $vsHandler = new VendorSpecificHandler();
+        $params = array_replace($params, $vsHandler->getPublicParams($sourceInstance, $userToken));
+        return UrlUtil::validateUrl($url, $params);
     }
 
     /**

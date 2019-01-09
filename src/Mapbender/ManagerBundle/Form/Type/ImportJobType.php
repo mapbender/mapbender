@@ -2,10 +2,9 @@
 
 namespace Mapbender\ManagerBundle\Form\Type;
 
-use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * ImportJobType class creates a form for an ImportJob object.
@@ -24,7 +23,7 @@ class ImportJobType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array());
     }
@@ -35,10 +34,8 @@ class ImportJobType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-//            ->add('addApplication', 'checkbox', array('required' => false))
-//            ->add('addSources', 'checkbox', array('required' => false))
-//            ->add('addAcl', 'checkbox', array('required' => false))
-            ->add('importFile', 'file', array('required' => true));
+            ->add('importFile', 'file', array('required' => true))
+        ;
     }
 
 }

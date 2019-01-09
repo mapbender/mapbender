@@ -51,7 +51,11 @@
                 var others = $('.mb-button[data-group="' + this.options.group + '"]')
                     .not($me);
 
-                others.trigger('mbButtonDeactivate');
+                try {
+                    others.trigger('mbButtonDeactivate');
+                } catch (e) {
+                    console.error("Suppressing error from sibling button deactivate handlers", e);
+                }
             }
 
             if (!this.stateful || !this.active) {
@@ -69,8 +73,14 @@
             // This makes elements work that move around in / completely out of the DOM, either
             // by themselves, or because they let certain popups mangle their DOM nodes.
             if (this.targetWidget === null && this.options.target) {
+                var targetConf = Mapbender.configuration.elements[this.options.target];
+                if (!targetConf || !targetConf.init) {
+                    console.error("Button target element not found in element configuration", targetConf, this.options);
+                    this.targetWidget = false;
+                    return null;
+                }
+                var targetInit = targetConf.init;
                 var $target = $('#' + this.options.target);
-                var targetInit = Mapbender.configuration.elements[this.options.target].init;
                 var nameParts = targetInit.split('.');
                 if (nameParts.length === 1) {
                     // This is a BC construct currently without known or conceivable use cases

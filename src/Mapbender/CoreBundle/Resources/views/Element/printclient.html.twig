@@ -1,11 +1,12 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
-    
+    {% block printclient_main %}
     {%  if configuration['type'] is defined and configuration.type == 'element' %}
-        <input type="button" class="button" id="printToggle" active="false" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
+        <input type="button" class="button -fn-toggle-frame" active="false" value="{{ 'mb.core.printclient.btn.activate' | trans }}"/>
         <br>    
     {% endif %}
     
-    <form id="formats" action="{{ submitUrl }}" method="post" target="{{ formTarget }}">
+    <form action="{{ submitUrl }}" method="post" target="{{ formTarget }}">
+        {% block printclient_form_top %}
         {# render required extra fields on top of the form if configured #}
         {% if configuration.optional_fields is not empty and configuration.required_fields_first %}
             {% for key,field in configuration.optional_fields %}
@@ -17,6 +18,7 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
+        {% endblock printclient_form_top %}
 
         <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
         <div class="dropdown">
@@ -73,21 +75,24 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
-        
+
+        {% block printclient_form_bottom %}
         {% if configuration.legend is defined and configuration.legend == 1 %}
-            {% set legend_checked = 'checked' %}
+            {% set legend_checked = 'checked="checked"' %}
             {% if configuration.legend_default_behaviour is defined and configuration.legend_default_behaviour == 0 %}
                 {% set legend_checked = '' %}
             {% endif %}    
             <div class="checkWrapper left iconCheckbox iconCheckboxActive " data-icon="iconCheckbox">
-                <input class="checkbox" type="checkbox" name="printLegend" value="1" {{ legend_checked }}>
+                <input class="checkbox" type="checkbox" name="printLegend" value="1" {{ legend_checked | raw}}>
             </div>
             <label class="labelCheck">{{ 'mb.core.printclient.label.legend' | trans }}</label>
         {% endif %}
+        {% endblock printclient_form_bottom %}
         
-        <div id="layers"></div>
+        <div class="hidden -fn-hidden-fields"></div>
         <input type="submit" style="display: none"/>
         <input type="button" class="button printSubmit hidden" value="{{ 'mb.core.printclient.popup.btn.ok' | trans }}"/>
     
     </form>
+    {% endblock printclient_main %}
 </div>

@@ -2,12 +2,9 @@
 
 namespace Mapbender\WmcBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
-use Mapbender\WmcBundle\Component\WmcHandler;
-use Mapbender\WmcBundle\Entity\Wmc;
 use Symfony\Component\HttpFoundation\Response;
 
-class WmcList extends Element
+class WmcList extends WmcBase
 {
 
     /**
@@ -118,7 +115,7 @@ class WmcList extends Element
     protected function getWmcList()
     {
 
-        $wmchandler = new WmcHandler($this, $this->application, $this->container);
+        $wmchandler = $this->wmcHandlerFactory();
         $wmclist = $wmchandler->getWmcList(true);
         $wmces = array();
         foreach ($wmclist as $wmc) {

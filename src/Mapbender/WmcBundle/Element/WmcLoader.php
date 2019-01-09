@@ -2,8 +2,6 @@
 
 namespace Mapbender\WmcBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
-use Mapbender\WmcBundle\Component\WmcHandler;
 use Mapbender\WmcBundle\Component\WmcParser;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmcBundle\Form\Type\WmcLoadType;
@@ -12,7 +10,7 @@ use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class WmcLoader extends Element
+class WmcLoader extends WmcBase
 {
 
     /**
@@ -161,7 +159,7 @@ class WmcLoader extends Element
         $config = $this->getConfiguration();
         if (in_array("wmcidloader", $config['components']) || in_array("wmclistloader", $config['components'])) {
             $wmcid = $this->container->get('request')->get("_id", null);
-            $wmchandler = new WmcHandler($this, $this->application, $this->container);
+            $wmchandler = $this->wmcHandlerFactory();
             $wmc = $wmchandler->getWmc($wmcid, true);
             if ($wmc) {
 
@@ -210,12 +208,12 @@ class WmcLoader extends Element
         $response = new Response();
         $config = $this->getConfiguration();
         if (in_array("wmcidloader", $config['components']) || in_array("wmclistloader", $config['components'])) {
-            $wmchandler = new WmcHandler($this, $this->application, $this->container);
+            $wmchandler = $this->wmcHandlerFactory();
             $wmclist = $wmchandler->getWmcList(true);
             $responseBody = $this->container->get('templating')
                 ->render('MapbenderWmcBundle:Wmc:wmcloader-list.html.twig',
                          array(
-                'application' => $this->application,
+                'application' => $this->getEntity()->getApplication(),
                 'configuration' => $config,
                 'id' => $this->getId(),
                 'wmclist' => $wmclist)
@@ -242,9 +240,9 @@ class WmcLoader extends Element
                 $state = $wmc->getState();
                 $state->setJson(json_decode($json));
                 if ($state !== null && $state->getJson() !== null) {
-                    $wmchandler = new WmcHandler($this, $this->application, $this->container);
+                    $wmchandler = $this->wmcHandlerFactory();
                     $state->setServerurl($wmchandler->getBaseUrl());
-                    $state->setSlug($this->application->getSlug());
+                    $state->setSlug($this->entity->getApplication()->getSlug());
                     $state->setTitle("Mapbender State");
                     $wmc->setWmcid(round((microtime(true) * 1000)));
                     $wmc->setState($wmchandler->unSignUrls($state));
@@ -322,8 +320,7 @@ class WmcLoader extends Element
                 $parser = WmcParser::getParser($this->container, $doc);
                 $wmc = $parser->parse();
             } catch (\Exception $e) {
-                $this->get("logger")->err($e->getMessage());
-                $this->get('session')->getFlashBag()->set('error', $e->getMessage());
+                // absolutely nothing
             }
             if ($wmc) {
                 return new Response(json_encode(array(

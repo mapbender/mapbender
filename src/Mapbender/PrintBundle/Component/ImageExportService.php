@@ -1,17 +1,16 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
-use Mapbender\PrintBundle\Component\Export\Affine2DTransform;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
+use Mapbender\PrintBundle\Component\Export\ExportCanvas;
+use Mapbender\PrintBundle\Component\Export\FeatureTransform;
+use Mapbender\PrintBundle\Element\ImageExport;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Psr\Log\LoggerInterface;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
-use OwsProxy3\CoreBundle\Component\WmsProxy;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Image export service.
@@ -25,28 +24,13 @@ class ImageExportService
     /** @var string */
     protected $tempDir;
     /** @var string */
-    protected $urlHostPath;
-    /** @var array */
-    protected $data;
-    /** @var string[] plain WMS URLs */
-    protected $mapRequests = array();
-
-    /** @var Affine2DTransform */
-    protected $featureTransform;
+    protected $resourceDir;
 
     public function __construct($container)
     {
         $this->container = $container;
+        $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $this->tempDir = sys_get_temp_dir();
-        # Extract URL base path so we can later decide to let Symfony handle internal requests or make proper
-        # HTTP connections.
-        # NOTE: This is only possible in web, not CLI
-        if (php_sapi_name() != "cli") {
-            $request = $this->container->get('request');
-            $this->urlHostPath = $request->getHttpHost() . $request->getBaseURL();
-        } else {
-            $this->urlHostPath = null;
-        }
     }
 
     /**
@@ -60,147 +44,310 @@ class ImageExportService
     }
 
     /**
+     * Extracts a convenient Box from $jobData; deliberately ignores rotation
+     *
+     * @param $jobData
+     * @return Box
+     */
+    protected function getJobExtent($jobData)
+    {
+        $ext = $jobData['extent'];
+        $cnt = $jobData['center'];
+        return Box::fromCenterAndSize($cnt['x'], $cnt['y'], $ext['width'], $ext['height']);
+    }
+
+    /**
+     * @param array $jobData
+     * @return resource
+     */
+    protected function buildExportImage($jobData)
+    {
+        // NOTE: gd pixel coords are top down
+        $targetBox = new Box(0, $jobData['height'], $jobData['width'], 0);
+        $extentBox = $this->getJobExtent($jobData);
+        if (isset($jobData['rotation']) && intval($jobData['rotation'])) {
+            $rotation = intval($jobData['rotation']);
+            $expandedCanvas = $targetBox->getExpandedForRotation($rotation);
+            $expandedCanvas->roundToIntegerBoundaries();
+            $expandedExtent = $extentBox->getExpandedForRotation($rotation);
+
+            $rotatedJob = array_replace($jobData, array(
+                'rotation' => 0,
+                'width' => abs($expandedCanvas->getWidth()),
+                'height' => abs($expandedCanvas->getHeight()),
+                'extent' => $expandedExtent->getAbsWidthAndHeight(),
+                'center' => $expandedExtent->getCenterXy(),
+            ));
+            // self-delegate
+            $rotatedImage = $this->buildExportImage($rotatedJob);
+            return $this->rotateAndCrop($rotatedImage, $targetBox, $rotation, true);
+        } else {
+            $canvas = $this->canvasFactory($jobData);
+            $this->addLayers($canvas, $jobData['layers'], $extentBox);
+            return $canvas->resource;
+        }
+    }
+
+    /**
+     * Echoes binary image data directly to stdout
+     *
+     * @param resource $image
+     * @param string $format
+     */
+    public function echoImage($image, $format)
+    {
+        switch ($format) {
+            case 'png':
+                imagepng($image);
+                break;
+            case 'jpeg':
+            case 'jpg':
+            default:
+                imagejpeg($image, null, 85);
+                break;
+        }
+    }
+
+    /**
+     * @param resource $image GDish
+     * @param string $format
+     * @return string
+     */
+    public function dumpImage($image, $format)
+    {
+        ob_start();
+        try {
+            $this->echoImage($image, $format);
+        } catch (\Exception $e) {
+            ob_end_clean();
+            throw $e;
+        }
+        return ob_get_clean();
+    }
+
+    /**
+     * @param array $jobData
+     * @return resource GDish
+     */
+    public function runJob(array $jobData)
+    {
+        return $this->buildExportImage($jobData);
+    }
+
+    /**
      * Builds a png image and emits it directly to the browser
      *
      * @param string $content the job description in valid JSON
      * @return void
+     * @deprecated
      *
      * @todo: converting from JSON encoding is controller responsibility
      * @todo: emitting to browser is controller responsibility
      */
     public function export($content)
     {
-        // Clean up internally modified / collected state
-        $this->mapRequests = array();
-        $this->data = json_decode($content, true);
+        $jobData = json_decode($content, true);
+        $image = $this->runJob($jobData);
+        $this->emitImageToBrowser($image, $jobData['format']);
+    }
 
-        $this->featureTransform = $this->initializeFeatureTransform($this->data);
+    /**
+     * @param array $jobData
+     * @return ExportCanvas
+     */
+    protected function canvasFactory($jobData)
+    {
+        $featureTransform = $this->initializeFeatureTransform($jobData);
+        return new ExportCanvas($jobData['width'], $jobData['height'], $featureTransform);
+    }
 
-        foreach ($this->data['requests'] as $i => $layer) {
-            if ($layer['type'] != 'wms') {
-                continue;
-            }
-            $this->mapRequests[$i] = $layer['url'];
-        }
-
-        $imagePath = $this->getImages();
-        $this->emitImageToBrowser($imagePath);
-        unlink($imagePath);
+    /**
+     * Should return the "natural" pixel width for a rendered line.
+     *
+     * @param array $jobData
+     * @return float
+     */
+    protected function getLineScale($jobData)
+    {
+        return 1.0;
     }
 
     /**
      * @param $jobData
-     * @return Affine2DTransform
+     * @return FeatureTransform
+     * @todo: do this without using an instance attribute
      */
     protected function initializeFeatureTransform($jobData)
     {
-        $map_width = $this->data['extentwidth'];
-        $map_height = $this->data['extentheight'];
-        $centerx = $this->data['centerx'];
-        $centery = $this->data['centery'];
-
-        $minX = $centerx - $map_width * 0.5;
-        $minY = $centery - $map_height * 0.5;
-        $maxX = $centerx + $map_width * 0.5;
-        $maxY = $centery + $map_height * 0.5;
-
+        $projectedBox = Box::fromCenterAndSize(
+            $jobData['center']['x'], $jobData['center']['y'],
+            $jobData['extent']['width'], $jobData['extent']['height']);
         $pixelBox = new Box(0, $jobData['height'], $jobData['width'], 0);
-        $projectedBox = new Box($minX, $minY, $maxX, $maxY);
-        return Affine2DTransform::boxToBox($projectedBox, $pixelBox);
+        $lineScale = $this->getLineScale($jobData);
+        return FeatureTransform::boxToBox($projectedBox, $pixelBox, $lineScale);
+    }
+
+    /**
+     * Produce and merge a single image layer onto $targetImage.
+     * Override this to handle more layer types.
+     *
+     * @param GdCanvas $canvas
+     * @param array $layerDef
+     * @param Box $extent projected
+     */
+    protected function addImageLayer($canvas, $layerDef, Box $extent)
+    {
+        if (empty($layerDef['type'])) {
+            $this->getLogger()->warning("Missing 'type' in layer definition", $layerDef);
+            return;
+        }
+
+        switch ($layerDef['type']) {
+            case 'wms':
+                $this->addWmsLayer($canvas, $layerDef, $extent);
+                break;
+            case 'GeoJSON+Style':
+                $this->drawFeatures($canvas, array($layerDef));
+                break;
+            default:
+                $this->getLogger()->warning("Unhandled layer type {$layerDef['type']}");
+                break;
+        }
     }
 
     /**
      * Collect and merge WMS tiles and vector layers into a PNG file.
      *
-     * @return string path to merged PNG file
+     * @param GdCanvas $canvas
+     * @param mixed[] $layers
+     * @param Box $extent projected
      */
-    private function getImages()
+    protected function addLayers($canvas, $layers, Box $extent)
     {
-        $temp_names = array();
-        foreach ($this->mapRequests as $k => $url) {
-            
-            $url = strstr($url, '&WIDTH', true);
-            $width = '&WIDTH=' . $this->data['width'];
-            $height = '&HEIGHT=' . $this->data['height'];
-            $url .= $width . $height;
-            
-            $this->getLogger()->debug("Image Export Request Nr.: " . $k . ' ' . $url);
-
-            $mapRequestResponse = $this->mapRequest($url);
-
-            $imagename = $this->makeTempFile('mb_imgexp');
-            $temp_names[] = $imagename;
-            $rawImage = $this->serviceResponseToGdImage($imagename, $mapRequestResponse);
-
-
-            if ($rawImage !== null) {
-                $this->forceToRgba($imagename, $rawImage, $this->data['requests'][$k]['opacity']);
-                $width = imagesx($rawImage);
-                $height = imagesy($rawImage);
-            }
+        foreach ($layers as $k => $layerDef) {
+            $this->addImageLayer($canvas, $layerDef, $extent);
         }
-        // create final merged image
-        $finalImageName = $this->makeTempFile('mb_imgexp_merged');
-        $mergedImage = imagecreatetruecolor($width, $height);
-        $bg = imagecolorallocate($mergedImage, 255, 255, 255);
-        imagefilledrectangle($mergedImage, 0, 0, $width, $height, $bg);
-        imagepng($mergedImage, $finalImageName);
-        foreach ($temp_names as $temp_name) {
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
-                $dest = imagecreatefrompng($finalImageName);
-                $src = imagecreatefrompng($temp_name);
-                imagecopy($dest, $src, 0, 0, 0, 0, $width, $height);
-                imagepng($dest, $finalImageName);
-            }
-            unlink($temp_name);
-            finfo_close($finfo);
-        }
-
-        if (isset($this->data['vectorLayers'])) {
-            $this->drawFeatures($finalImageName);
-        }
-        return $finalImageName;
     }
 
     /**
-     * Convert a GD image to true-color RGBA and write it back to the file
-     * system.
-     *
-     * @param string $imageName will be overwritten
-     * @param resource $imageResource source image
-     * @param float $opacity in [0;1]
+     * @param $layerDef
+     * @param GdCanvas $canvas
+     * @param Box $extent
+     * @return string
      */
-    protected function forceToRgba($imageName, $imageResource, $opacity)
+    protected function preprocessWmsUrl($layerDef, $canvas, Box $extent)
     {
-        $width = imagesx($imageResource);
-        $height = imagesy($imageResource);
+        $params = array(
+            'WIDTH' => $canvas->width,
+            'HEIGHT' => $canvas->height,
+        );
+        if (!empty($layerDef['changeAxis'])){
+            $params['BBOX'] = $extent->bottom . ',' . $extent->left . ',' . $extent->top . ',' . $extent->right;
+        } else {
+            $params['BBOX'] = $extent->left . ',' . $extent->bottom . ',' . $extent->right . ',' . $extent->top;
+        }
+        return UrlUtil::validateUrl($layerDef['url'], $params);
+    }
 
-        // Make sure input image is truecolor with alpha, regardless of input mode!
-        $image = imagecreatetruecolor($width, $height);
+    /**
+     * @param GdCanvas $canvas
+     * @param array $layerDef
+     * @param Box $extent
+     */
+    protected function addWmsLayer($canvas, $layerDef, $extent)
+    {
+        if (empty($layerDef['url'])) {
+            $this->getLogger()->warning("Missing url in WMS layer", $layerDef);
+            return;
+        }
+        $url = $this->preprocessWmsUrl($layerDef, $canvas, $extent);
+
+        $layerImage = $this->downloadImage($url, $layerDef['opacity']);
+        if ($layerImage) {
+            imagecopyresampled($canvas->resource, $layerImage,
+                0, 0, 0, 0,
+                $canvas->width, $canvas->height,
+                imagesx($layerImage), imagesy($layerImage));
+            imagedestroy($layerImage);
+            unset($layerImage);
+        } else {
+            $this->getLogger()->warning("Failed request to {$url}");
+        }
+    }
+
+    /**
+     * Multiply the alpha channgel of the whole $image with the given $opacity.
+     * May return a different image than given if the input $image is not
+     * in truecolor format.
+     *
+     * @param resource $image GDish
+     * @param float $opacity
+     * @return resource GDish
+     */
+    protected function multiplyAlpha($image, $opacity)
+    {
+        $width = imagesx($image);
+        $height = imagesy($image);
+        if (!imageistruecolor($image)) {
+            // promote to RGBA image first
+            $imageCopy = imagecreatetruecolor($width, $height);
+            imagesavealpha($imageCopy, true);
+            imagealphablending($imageCopy, false);
+            imagecopyresampled($imageCopy, $image, 0, 0, 0, 0, $width, $height, $width, $height);
+            imagedestroy($image);
+            $image = $imageCopy;
+            unset($imageCopy);
+        }
         imagealphablending($image, false);
-        imagesavealpha($image, true);
-        imagecopyresampled($image, $imageResource, 0, 0, 0, 0, $width, $height, $width, $height);
 
-        // Taking the painful way to alpha blending. Stupid PHP-GD
-        if (1.0 !== $opacity) {
-            for ($x = 0; $x < $width; $x++) {
-                for ($y = 0; $y < $height; $y++) {
-                    $colorIn = imagecolorsforindex($image, imagecolorat($image, $x, $y));
-                    $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
-
-                    $colorOut = imagecolorallocatealpha(
-                        $image,
-                        $colorIn['red'],
-                        $colorIn['green'],
-                        $colorIn['blue'],
-                        $alphaOut);
-                    imagesetpixel($image, $x, $y, $colorOut);
-                    imagecolordeallocate($image, $colorOut);
+        // Taking the painful way to alpha blending
+        for ($x = 0; $x < $width; $x++) {
+            for ($y = 0; $y < $height; $y++) {
+                $colorIn = imagecolorat($image, $x, $y);
+                $alphaIn = $colorIn >> 24 & 0xFF;
+                if ($alphaIn === 127) {
+                    // pixel is already fully transparent, no point
+                    // modifying it
+                    continue;
                 }
+                $alphaOut = intval(127 - (127 - $alphaIn) * $opacity);
+
+                $colorOut = imagecolorallocatealpha(
+                    $image,
+                    $colorIn >> 16 & 0xFF,
+                    $colorIn >> 8 & 0xFF,
+                    $colorIn & 0xFF,
+                    $alphaOut);
+                imagesetpixel($image, $x, $y, $colorOut);
+                imagecolordeallocate($image, $colorOut);
             }
         }
-        imagepng($image, $imageName);
+        return $image;
+    }
+
+    /**
+     * @param string $url
+     * @param float $opacity
+     * @return resource|null GDish
+     */
+    protected function downloadImage($url, $opacity=1.0)
+    {
+        try {
+            $response = $this->mapRequest($url);
+            $image = @imagecreatefromstring($response->getContent());
+            if ($image) {
+                imagesavealpha($image, true);
+                if ($opacity < (1.0 - 1 / 127)) {
+                    return $this->multiplyAlpha($image, $opacity);
+                } else {
+                    return $image;
+                }
+            } else {
+                return null;
+            }
+        } catch (\RuntimeException $e) {
+            return null;
+        }
     }
 
     /**
@@ -211,43 +358,11 @@ class ImageExportService
      */
     protected function mapRequest($url)
     {
-        // find urls from this host (tunnel connection for secured services)
-        $parsed   = parse_url($url);
-        $host = isset($parsed['host']) ? $parsed['host'] : $this->container->get('request')->getHttpHost();
-        $hostpath = $host . $parsed['path'];
-        $pos      = strpos($hostpath, $this->urlHostPath);
-        if ($pos === 0 && ($routeStr = substr($hostpath, strlen($this->urlHostPath))) !== false) {
-            $attributes = $this->container->get('router')->match($routeStr);
-            $gets       = array();
-            parse_str($parsed['query'], $gets);
-            $subRequest = new Request($gets, array(), $attributes, array(), array(), array(), '');
-            /** @var HttpKernelInterface $kernel */
-            $kernel = $this->container->get('http_kernel');
-            $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-        } else {
-            $proxyQuery = ProxyQuery::createFromUrl($url);
-            try {
-                $serviceType = strtolower($proxyQuery->getServiceType());
-            } catch (\Exception $e) {
-                // fired when null "content" is loaded as an XML document...
-                $serviceType = null;
-            }
-            $proxyConfig = $this->container->getParameter('owsproxy.proxy');
-            switch ($serviceType) {
-                case "wms":
-                    /** @var EventDispatcherInterface $eventDispatcher */
-                    $eventDispatcher = $this->container->get('event_dispatcher');
-                    $proxy = new WmsProxy($eventDispatcher, $proxyConfig, $proxyQuery, $this->getLogger());
-                    break;
-                default:
-                    $proxy = new CommonProxy($proxyConfig, $proxyQuery, $this->getLogger());
-                    break;
-            }
-            /** @var \Buzz\Message\Response $buzzResponse */
-            $buzzResponse = $proxy->handle();
-            $response = $this->convertBuzzResponse($buzzResponse);
-        }
-        return $response;
+        $proxyQuery = ProxyQuery::createFromUrl($url);
+        $proxyConfig = $this->container->getParameter('owsproxy.proxy');
+        $proxy = new CommonProxy($proxyConfig, $proxyQuery, $this->getLogger());
+        $buzzResponse = $proxy->handle();
+        return $this->convertBuzzResponse($buzzResponse);
     }
 
     /**
@@ -278,200 +393,243 @@ class ImageExportService
     }
 
     /**
-     * Converts a http response to a GD image, respecting the mimetype.
-     *
-     * @param string $storagePath for temp file storage
-     * @param Response $response
-     * @return resource|null GD image or null on failure
+     * @param resource $image GDish
+     * @param string $format
+     * @deprecated service layer should never do http
      */
-    protected function serviceResponseToGdImage($storagePath, $response)
+    protected function emitImageToBrowser($image, $format)
     {
-        file_put_contents($storagePath, $response->getContent());
-        $contentType = trim($response->headers->get('content-type'));
-        switch ($contentType) {
-            case (preg_match("/image\/png/", $contentType) ? $contentType : !$contentType) :
-                return imagecreatefrompng($storagePath);
-                break;
-            case (preg_match("/image\/jpeg/", $contentType) ? $contentType : !$contentType) :
-                return imagecreatefromjpeg($storagePath);
-                break;
-            case (preg_match("/image\/gif/", $contentType) ? $contentType : !$contentType) :
-                return imagecreatefromgif($storagePath);
-                break;
-            default:
-                return null;
-                $this->getLogger()->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
-            //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
-        }
+        $fileName = "export_" . date("YmdHis") . ($format === 'png' ? ".png" : 'jpg');
+        header("Content-Type: " . ImageExport::getMimetype($format));
+        header("Content-Disposition: attachment; filename={$fileName}");
+        echo $this->dumpImage($image, $format);
     }
 
     /**
-     * @param string $imagePath
+     * @param GdCanvas $canvas
+     * @param array[][] $vectorLayers
      */
-    protected function emitImageToBrowser($imagePath)
+    protected function drawFeatures($canvas, $vectorLayers)
     {
-        $finalImage = imagecreatefrompng($imagePath);
-        if ($this->data['format'] == 'png') {
-            header("Content-type: image/png");
-            header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".png");
-            //header('Content-Length: ' . filesize($file));
-            imagepng($finalImage);
-        } else {
-            header("Content-type: image/jpeg");
-            header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . ".jpg");
-            //header('Content-Length: ' . filesize($file));
-            imagejpeg($finalImage, null, 85);
-        }
-    }
+        imagesavealpha($canvas->resource, true);
+        imagealphablending($canvas->resource, true);
 
-    private function drawFeatures($finalImageName)
-    {
-        $image = imagecreatefrompng($finalImageName);
-        imagesavealpha($image, true);
-        imagealphablending($image, true);
-
-        foreach($this->data['vectorLayers'] as $idx => $layer) {
+        foreach ($vectorLayers as $idx => $layer) {
             foreach($layer['geometries'] as $geometry) {
                 $renderMethodName = 'draw' . $geometry['type'];
 
                 if(!method_exists($this, $renderMethodName)) {
                     continue;
-                    //throw new \RuntimeException('Can not draw geometries of type "' . $geometry['type'] . '".');
                 }
 
-                $this->$renderMethodName($geometry, $image);
+                $this->$renderMethodName($canvas, $geometry);
             }
         }
-        imagepng($image, $finalImageName);
     }
 
-    private function getColor($color, $alpha, $image)
+    protected function getColor($color, $alpha, $image)
     {
         list($r, $g, $b) = CSSColorParser::parse($color);
+        $a = (1 - $alpha) * 127.0;
+        return imagecolorallocatealpha($image, $r, $g, $b, $a);
+    }
 
-        if(0 == $alpha) {
-            return imagecolorallocate($image, $r, $g, $b);
-        } else {
-            $a = (1 - $alpha) * 127.0;
-            return imagecolorallocatealpha($image, $r, $g, $b, $a);
+    /**
+     * @param ExportCanvas $canvas
+     * @param mixed[] $geometry
+     */
+    protected function drawPolygon($canvas, $geometry)
+    {
+        // promote to single-item MultiPolygon and delegate
+        $multiPolygon = array_replace($geometry, array(
+            'type' => 'MultiPolygon',
+            'coordinates' => array($geometry['coordinates']),
+        ));
+        $this->drawMultiPolygon($canvas, $multiPolygon);
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param mixed[] $geometry
+     */
+    protected function drawMultiPolygon($canvas, $geometry)
+    {
+        $image = $canvas->resource;
+        $style = $this->getFeatureStyle($geometry);
+        foreach ($geometry['coordinates'] as $polygon) {
+            foreach ($polygon as $ring) {
+                if (count($ring) < 3) {
+                    continue;
+                }
+
+                $points = array();
+                foreach ($ring as $c) {
+                    $points[] = $canvas->featureTransform->transformPair($c);
+                }
+                if ($style['fillOpacity'] > 0){
+                    $color = $this->getColor($style['fillColor'], $style['fillOpacity'], $image);
+                    $canvas->drawPolygonBody($points, $color);
+                }
+                if ($this->applyStrokeStyle($canvas, $style)) {
+                    $canvas->drawPolygonOutline($points, IMG_COLOR_STYLED);
+                }
+            }
         }
     }
 
-    private function drawPolygon($geometry, $image)
+    /**
+     * @param ExportCanvas $canvas
+     * @param mixed[] $geometry
+     */
+    protected function drawLineString($canvas, $geometry)
     {
-        foreach($geometry['coordinates'] as $ring) {
-            if(count($ring) < 3) {
-                continue;
-            }
+        // promote to single-item MultiLineString and delegate
+        $mlString = array_replace($geometry, array(
+            'type' => 'MultiLineString',
+            'coordinates' => array($geometry['coordinates']),
+        ));
+        $this->drawMultiLineString($canvas, $mlString);
+    }
 
-            $points = array();
-            foreach($ring as $c) {
-                $p = $this->featureTransform->transformPair($c);
-                $points[] = floatval($p[0]);
-                $points[] = floatval($p[1]);
+    /**
+     * @param ExportCanvas $canvas
+     * @param mixed[] $geometry
+     */
+    protected function drawMultiLineString($canvas, $geometry)
+    {
+        $style = $this->getFeatureStyle($geometry);
+        if ($this->applyStrokeStyle($canvas, $style)) {
+            foreach ($geometry['coordinates'] as $lineString) {
+                $pixelCoords = array();
+                foreach ($lineString as $coord) {
+                    $pixelCoords[] = $canvas->featureTransform->transformPair($coord);
+                }
+                $canvas->drawLineString($pixelCoords, IMG_COLOR_STYLED);
             }
-            imagesetthickness($image, 0);
-            // Filled area
-            if($geometry['style']['fillOpacity'] > 0){
-                $color = $this->getColor(
-                    $geometry['style']['fillColor'],
-                    $geometry['style']['fillOpacity'],
-                    $image);
-                imagefilledpolygon($image, $points, count($ring), $color);
-            }
-            // Border
-            $color = $this->getColor(
-                $geometry['style']['strokeColor'],
-                $geometry['style']['strokeOpacity'],
-                $image);
-            imagesetthickness($image, $geometry['style']['strokeWidth']);
-            imagepolygon($image, $points, count($ring), $color);
         }
     }
 
-    private function drawMultiPolygon($geometry, $image)
+    /**
+     * @param ExportCanvas $canvas
+     * @param mixed[] $geometry
+     */
+    protected function drawPoint($canvas, $geometry)
     {
-        foreach($geometry['coordinates'][0] as $ring) {
-            if(count($ring) < 3) {
-                continue;
-            }
+        $style = $this->getFeatureStyle($geometry);
+        $image = $canvas->resource;
+        $resizeFactor = $canvas->featureTransform->lineScale;
 
-            $points = array();
-            foreach($ring as $c) {
-                $p = $this->featureTransform->transformPair($c);
-                $points[] = floatval($p[0]);
-                $points[] = floatval($p[1]);
-            }
-            imagesetthickness($image, 0);
-            // Filled area
-            if($geometry['style']['fillOpacity'] > 0){
-                $color = $this->getColor(
-                    $geometry['style']['fillColor'],
-                    $geometry['style']['fillOpacity'],
-                    $image);
-                imagefilledpolygon($image, $points, count($ring), $color);
-            }
-            // Border
-            $color = $this->getColor(
-                $geometry['style']['strokeColor'],
-                $geometry['style']['strokeOpacity'],
-                $image);
-            imagesetthickness($image, $geometry['style']['strokeWidth']);
-            imagepolygon($image, $points, count($ring), $color);
-        }
-    }
+        $p = $canvas->featureTransform->transformPair($geometry['coordinates']);
+        $p[0] = round($p[0]);
+        $p[1] = round($p[1]);
 
-    private function drawLineString($geometry, $image)
-    {
-        $color = $this->getColor(
-            $geometry['style']['strokeColor'],
-            $geometry['style']['strokeOpacity'],
-            $image);
-        imagesetthickness($image, $geometry['style']['strokeWidth']);
-
-        for($i = 1; $i < count($geometry['coordinates']); $i++) {
-
-            $from = $this->featureTransform->transformPair($geometry['coordinates'][$i - 1]);
-            $to = $this->featureTransform->transformPair($geometry['coordinates'][$i]);
-
-            imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
-        }
-    }
-
-    private function drawPoint($geometry, $image)
-    {
-        $p = $this->featureTransform->transformPair($geometry['coordinates']);
-
-        if(isset($geometry['style']['label'])){
-            // draw label with white halo
-            $color = $this->getColor('#ff0000', 1, $image);
-            $bgcolor = $this->getColor('#ffffff', 1, $image);
-            $fontPath = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle/fonts/';
+        if (isset($style['label'])) {
+            // draw label with halo
+            $color = $this->getColor($style['fontColor'], 1, $image);
+            $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $image);
+            $fontPath = $this->resourceDir.'/fonts/';
             $font = $fontPath . 'OpenSans-Bold.ttf';
-            imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0]+1, $p[1], $bgcolor, $font, $geometry['style']['label']);
-            imagettftext($image, 14, 0, $p[0], $p[1], $color, $font, $geometry['style']['label']);
-            return;
+
+            $fontSize = floatval(10 * $resizeFactor);
+            $haloOffsets = array(
+                array(0, +$resizeFactor),
+                array(0, -$resizeFactor),
+                array(-$resizeFactor, 0),
+                array(+$resizeFactor, 0),
+            );
+            // offset text to the right of the point
+            $textXy = array(
+                $p[0] + $resizeFactor * 1.5 * $style['pointRadius'],
+                // center vertically on original y
+                $p[1] + 0.5 * $fontSize,
+            );
+            $text = $style['label'];
+            foreach ($haloOffsets as $xy) {
+                imagettftext($image, $fontSize, 0,
+                    $textXy[0] + $xy[0], $textXy[1] + $xy[1],
+                    $bgcolor, $font, $text);
+            }
+            imagettftext($image, $fontSize, 0,
+                $textXy[0], $textXy[1],
+                $color, $font, $text);
         }
 
-        $radius = $geometry['style']['pointRadius'];
+        $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
         // Filled circle
-        if($geometry['style']['fillOpacity'] > 0){
+        if ($style['fillOpacity'] > 0) {
             $color = $this->getColor(
-                $geometry['style']['fillColor'],
-                $geometry['style']['fillOpacity'],
+                $style['fillColor'],
+                $style['fillOpacity'],
                 $image);
-            imagefilledellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+            imagesetthickness($image, 0);
+            imagefilledellipse($image, $p[0], $p[1], $diameter, $diameter, $color);
         }
         // Circle border
-        $color = $this->getColor(
-            $geometry['style']['strokeColor'],
-            $geometry['style']['strokeOpacity'],
-            $image);
-        imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+        if ($this->applyStrokeStyle($canvas, $style)) {
+            // Imageellipse DOES NOT support IMG_COLOR_STYLED-based line styling
+            // It does not even support line thickness.
+            // To support properly styled and patterned point outlining, we have
+            // to generate ~circle geometry ourselves and use a styling-aware drawing
+            // function.
+            $coords = $this->generatePointOutlineCoords($p[0], $p[1], $diameter / 2);
+            $canvas->drawPolygonOutline($coords, IMG_COLOR_STYLED);
+        }
     }
+
+    /**
+     * @param resource $image GDish
+     * @param int $x0 source offset
+     * @param int $y0 source offset
+     * @param int $width target witdth
+     * @param int $height target height
+     * @return bool|resource a NEW image resource
+     */
+    protected function cropImage($image, $x0, $y0, $width, $height)
+    {
+        if (PHP_VERSION_ID >= 55000) {
+            // imagecrop requires PHP >= 5.5, see http://php.net/manual/de/function.imagecrop.php
+            return imagecrop($image, array(
+                'x' => $x0,
+                'y' => $y0,
+                'width' => $width,
+                'height' => $height,
+            ));
+        } else {
+            $newImage = imagecreatetruecolor($width, $height);
+            imagesavealpha($newImage, true);
+            imagecopy($newImage, $image, 0, 0, $x0, $y0, $width, $height);
+            return $newImage;
+        }
+    }
+
+    /**
+     * @param resource $sourceImage GD image
+     * @param Box $targetBox
+     * @param number $rotation
+     * @param bool $destructive set to true to discard original image resource (saves memory)
+     * @return resource GD image
+     */
+    protected function rotateAndCrop($sourceImage, $targetBox, $rotation, $destructive = false)
+    {
+        $imageWidth = $targetBox->getWidth();
+        $imageHeight = abs($targetBox->getHeight());
+
+        $transColor = imagecolorallocatealpha($sourceImage, 255, 255, 255, 127);
+        $rotatedImage = imagerotate($sourceImage, $rotation, $transColor);
+        if ($destructive) {
+            imagedestroy($sourceImage);
+        }
+        imagealphablending($rotatedImage, false);
+        imagesavealpha($rotatedImage, true);
+
+        $offsetX = (imagesx($rotatedImage) - $targetBox->getWidth()) * 0.5;
+        $offsetY = (imagesy($rotatedImage) - abs($targetBox->getHeight())) * 0.5;
+
+        $cropped = $this->cropImage($rotatedImage, $offsetX, $offsetY, $imageWidth, $imageHeight);
+        imagedestroy($rotatedImage);
+        return $cropped;
+    }
+
 
     /**
      * Creates a ~randomly named temp file with given $prefix and returns its name
@@ -489,4 +647,118 @@ class ImageExportService
         return $filePath;
     }
 
+    /**
+     * @param string $type (a GeoJson type name)
+     * @return array
+     */
+    protected function getDefaultFeatureStyle($type)
+    {
+        return array(
+            'strokeWidth' => 1,
+            'fontColor' => '#ff0000',
+            'labelOutlineColor' => '#ffffff',
+            'strokeDashstyle' => 'solid',
+        );
+    }
+
+    /**
+     * @param mixed[] $geometry
+     * @return array
+     */
+    protected function getFeatureStyle($geometry)
+    {
+        $defaults = $this->getDefaultFeatureStyle($geometry['type']);
+        return array_replace($defaults, $geometry['style']);
+    }
+
+    /**
+     * Return an array appropriate for gd imagesetstyle that will impact lines
+     * drawn with a 'color' value of IMG_COLOR_STYLED.
+     * @see http://php.net/manual/en/function.imagesetstyle.php
+     *
+     * @param int $color from imagecollorallocate
+     * @param int $thickness
+     * @param string $patternName
+     * @param float $patternScale
+     * @return array
+     */
+    protected function getStrokeStyle($color, $thickness, $patternName='solid', $patternScale = 1.0)
+    {
+        // NOTE: GD actually counts one style entry per produced pixel, NOT per pixel-space length unit.
+        // => Length of the style array must scale with the line thickness
+        $dotLength = max(1, intval(round($thickness * $patternScale)));
+        $dashLength = max(1, intval(round($patternScale * 45)));
+        $longDashLength = max(1, intval(round($patternScale * 85)));
+        $spaceLength = max(1, intval(round($patternScale * 45)));
+
+        $dot = array_fill(0, $thickness * $dotLength, $color);
+        $dash = array_fill(0, $thickness * $dashLength, $color);
+        $longdash = array_fill(0, $thickness * $longDashLength, $color);
+        $space = array_fill(0, $thickness * $spaceLength, IMG_COLOR_TRANSPARENT);
+
+        switch ($patternName) {
+            case 'solid' :
+                return array($color);
+            case 'dot' :
+                return array_merge($dot, $space);
+            case 'dash' :
+                return array_merge($dash, $space);
+            case 'dashdot' :
+                return array_merge($dash, $space, $dot, $space);
+            case 'longdash' :
+                return array_merge($longdash, $space);
+            case 'longdashdot' :
+                return array_merge($longdash, $space, $dot, $space);
+            default:
+                throw new \InvalidArgumentException("Unsupported pattern name " . print_r($patternName, true));
+        }
+    }
+
+    /**
+     * Generate and apply extended (OpenLayers 2) stroke style.
+     * Returns false to indicate that stroke style is degenerate (zero width or zero opacity).
+     * Callers should check the return value and skip line rendering completely if false.
+     *
+     * @param ExportCanvas $canvas
+     * @param mixed[] $style
+     * @return bool
+     */
+    protected function applyStrokeStyle($canvas, $style)
+    {
+        // NOTE: gd imagesetstyle patterns are not based on distance from starting point
+        //       on the line, but rather on integral pixel quantities, making it
+        //       a) scale proportionally to stroke width
+        //       b) fundamentally incompatible with non-integral line widths
+        // To generate any functional stroke style, the width must be quantized to an
+        // integer, and that integral with must be provided to the style generation function.
+        $lineScale = $canvas->featureTransform->lineScale;
+        $intThickness = intval(round($style['strokeWidth'] * $lineScale));
+        if ($style['strokeOpacity'] && $intThickness >= 1) {
+            $color = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
+            imagesetthickness($canvas->resource, $intThickness);
+            $strokeStyle = $this->getStrokeStyle($color, $intThickness, $style['strokeDashstyle'], $lineScale);
+            imagesetstyle($canvas->resource, $strokeStyle);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param float $centerX in pixel space
+     * @param float $centerY in pixel space
+     * @param float $radius in pixel space
+     * @return float[][]
+     */
+    protected function generatePointOutlineCoords($centerX, $centerY, $radius)
+    {
+        $step = min(M_PI / 8, M_PI / 4 / $radius);
+        $points = array();
+        for ($a = 0; $a < 2 * M_PI; $a += $step) {
+            $x = round($centerX + sin($a) * $radius);
+            $y = round($centerY + cos($a) * $radius);
+            $points[] = array($x, $y);
+        }
+        return $points;
+    }
 }

@@ -152,7 +152,7 @@
                 var sources = mbMap.model.getSources();
                 for(var i = 0; i < sources.length; i++){
                     var source = sources[i];
-                    var url_source = Mapbender.source.wms.removeSignature(source.configuration.options.url.toLowerCase());
+                    var url_source = Mapbender.Util.removeSignature(source.configuration.options.url.toLowerCase());
                     if(decodeURIComponent(options.gcurl.asString().toLowerCase()).indexOf(decodeURIComponent(url_source)) === 0){
                         // source exists
                         mbMap.model.changeLayerState({id: source.id}, options, options.global.options.treeOptions.selected, options.global.mergeLayers);

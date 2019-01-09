@@ -35,31 +35,6 @@
             self._trigger('ready');
             this._ready();
         },
-        /**
-         * DEPRECATED
-         */
-        "goto": function(options){
-            this.map.center(options);
-        },
-        setExtent: function(extent){
-            this.model.extent = extent;
-        },
-        setMaxExtent: function(extent, projection){
-            if(typeof projection === "string") {
-                this.model.mapMaxExtent = {
-                    projection: this.model.getProj(projection),
-                    extent: extent
-                };
-            } else {
-                this.model.mapMaxExtent = {
-                    projection: projection,
-                    extent: extent
-                };
-            }
-        },
-        /**
-         *
-         */
         getMapState: function(){
             return this.model.getMapState();
         },
@@ -106,9 +81,7 @@
          * options.value.mapquerylayer - for a MapQuery.Layer,
          * options.value.source - for a source from the model.sourceTree,
          * options.value.tochange - for a "tochange" object
-         * (see model.createToChangeObj(id)),
          * options.value.changed -  for a "changed" object
-         * (see model.createChangedObj(id)).
          */
         fireModelEvent: function(options){
 //            window.console && console.log(options.name, options.value);
@@ -121,12 +94,6 @@
             return this.model.sourceTree;
         },
         /**
-         * Reterns the generated source id from model
-         */
-        genereateSourceId: function(){
-            return this.model.generateSourceId();
-        },
-        /**
          * Returns all defined srs
          */
         getAllSrs: function(){
@@ -137,12 +104,6 @@
          */
         getModel: function(){
             return this.model;
-        },
-        getCenterOptions: function(){
-            return {
-                center: this.map.olMap.getCenter(),
-                zoom: this.map.olMap.getZoom()
-            };
         },
         setCenter: function(options){
             if(typeof options.box !== 'undefined' && typeof options.position !== 'undefined' && typeof options.zoom !== 'undefined')
@@ -202,12 +163,6 @@
             if(typeof closest === 'undefined')
                 closest = false;
             this.map.olMap.zoomToScale(scale, closest);
-        },
-        /**
-         *
-         */
-        panMode: function(){
-            this.map.mode('pan');
         },
         /**
          * Adds the popup

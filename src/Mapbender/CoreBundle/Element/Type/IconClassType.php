@@ -3,7 +3,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IconClassType extends AbstractType
 {
@@ -17,7 +17,7 @@ class IconClassType extends AbstractType
         return 'choice';
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $icons = array(
 

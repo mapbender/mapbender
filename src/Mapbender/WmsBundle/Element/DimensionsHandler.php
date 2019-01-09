@@ -176,24 +176,4 @@ class DimensionsHandler extends Element
             }
         }
     }
-
-    /**
-     * Copies Extent and Default from passed DimensionInst to any DimensionInst stored
-     * in given SourceInstance->dimensions, if they match the same Type.
-     *
-     * @param WmsInstance $instance
-     * @param DimensionInst $referenceDimension
-     * @deprecated was only used by DimensionsHandler::postSave, which was removed
-     *             Now a dangling legacy api fulfillment for @see WmsInstanceEntityHandler::mergeDimension
-     */
-    public static function reconfigureDimensions(WmsInstance $instance, DimensionInst $referenceDimension)
-    {
-        foreach ($instance->getDimensions() as $dim) {
-            if ($dim->getType() === $referenceDimension->getType()) {
-                $dim->setExtent($referenceDimension->getExtent());
-                $dim->setDefault($referenceDimension->getDefault());
-            }
-        }
-        $instance->setDimensions($instance->getDimensions());
-    }
 }

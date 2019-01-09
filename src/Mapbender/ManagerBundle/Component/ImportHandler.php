@@ -1,15 +1,25 @@
 <?php
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\PersistentCollection;
+use FOM\UserBundle\Component\AclManager;
+use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Form\Type\ImportJobType;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
+use Symfony\Component\Security\Acl\Model\EntryInterface;
+use Symfony\Component\Security\Acl\Model\MutableAclInterface;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Description of ImportHandler
@@ -18,18 +28,26 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ImportHandler extends ExchangeHandler
 {
-    protected $denormalizer;
-
-    protected $toCopy;
+    /** @var ElementFactory */
+    protected $elementFactory;
+    /** @var MutableAclProviderInterface */
+    protected $aclProvider;
+    /** @var AclManager */
+    protected $aclManager;
 
     /**
      * @inheritdoc
      */
-    public function __construct(ContainerInterface $container, $toCopy = false)
+    public function __construct(EntityManagerInterface $entityManager,
+                                ElementFactory $elementFactory,
+                                MutableAclProviderInterface $aclProvider,
+                                AclManager $aclManager,
+                                FormFactoryInterface $formFactory)
     {
-        parent::__construct($container);
-        $this->job = new ImportJob();
-        $this->toCopy = $toCopy;
+        parent::__construct($entityManager, $formFactory);
+        $this->elementFactory = $elementFactory;
+        $this->aclProvider = $aclProvider;
+        $this->aclManager = $aclManager;
     }
 
     /**
@@ -37,89 +55,97 @@ class ImportHandler extends ExchangeHandler
      */
     public function createForm()
     {
-        if (!$this->securityContext->isUserAllowedToCreate(new Application())) {
-            throw new AccessDeniedException();
-        }
-        return $this->container
-            ->get('form.factory')
-            ->create(new ImportJobType(), $this->job, array());
+        $type = new ImportJobType();
+        $data = new ImportJob();
+        return $this->formFactory->create($type, $data);
     }
 
     /**
-     * @inheritdoc
+     * @param array $data
+     * @param bool $copyHint set to true to enable optimizations for a same-db / same-id-space scenario
+     * @return Application[]
+     * @throws ImportException
      */
-    public function bindForm()
+    public function importApplicationData(array $data, $copyHint=false)
     {
-        return $this
-            ->createForm()
-            ->submit($this->container->get('request'))
-            ->isValid();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function makeJob()
-    {
-        $import             = $this->job->getImportContent();
-        $this->denormalizer = new ExchangeDenormalizer($this->container, $this->mapper, $import);
-        $em = $this->container->get('doctrine')->getManager();
+        $denormalizer = new ExchangeDenormalizer($this->em, $data);
         try {
-            $em->clear();
-            $em->getConnection()->beginTransaction();
-            $this->importSources($import);
-            $apps = $this->importApps($import);
-            $em->flush();
-            foreach ($apps as $app) {
-                $this->addAcls($app);
+            $this->importSources($denormalizer, $data, $copyHint);
+            $apps = $this->importApplicationEntities($denormalizer, $data);
+            $this->em->flush();
+
+            return $apps;
+        } catch (ORMException $e) {
+            throw new ImportException("Database error {$e->getMessage()}", 0, $e);
+        }
+    }
+
+    /**
+     * Extracts array from input. Supports json / yaml serialized string inputs and files.
+     *
+     * @param \SplFileInfo|array|string $data
+     * @return array
+     * @throws ImportException
+     */
+    public static function parseImportData($data)
+    {
+        if (!$data) {
+            throw new \InvalidArgumentException("Invalid empty input data");
+        } elseif (is_array($data)) {
+            return $data;
+        } elseif ($data instanceof \SplFileInfo) {
+            return static::parseImportData(file_get_contents($data->getRealPath()));
+        } elseif (is_string($data)) {
+            try {
+                return Yaml::parse($data);
+            } catch (ParseException $e) {
+                $dec = json_decode($data, true);
+                if ($dec === null && trim($data) !== json_encode(null)) {
+                    throw new ImportException("Input string could not be parsed into an array", 0, $e);
+                }
+                return $dec;
             }
-            $em->getConnection()->commit();
-            $em->clear();
-//            if (isset($import[self::CONTENT_ACL])) {
-//                $this->importAcls($import[self::CONTENT_ACL]);
-//            }
-        } catch (\Exception $e) {
-            $em->getConnection()->rollback();
-            $em->clear();
-            throw new ImportException($this->container->get('translator')
-                ->trans('mb.manager.import.application.failed', array()) . " -> " . $e->getMessage());
+        } else {
+            throw new \InvalidArgumentException("Invalid input type " . (is_object($data) ? get_class($data) : gettype($data)));
         }
     }
 
     /**
      * Imports sources.
+     * @param ExchangeDenormalizer $denormalizer
      * @param array $data data to import
+     * @param bool $copyHint
      * @throws ImportException
+     * @throws ORMException
      */
-    private function importSources($data)
+    private function importSources($denormalizer, $data, $copyHint)
     {
-        $em = $this->container->get('doctrine')->getManager();
         foreach ($data as $class => $content) {
-            if ($this->denormalizer->findSuperClass($class, 'Mapbender\CoreBundle\Entity\Source')) {
+            if (is_a($class, 'Mapbender\CoreBundle\Entity\Source', true)) {
                 foreach ($content as $item) {
-                    $classMeta = $this->denormalizer->getClassMetadata($class);
-                    if (!$this->toCopy) {
-                        $criteria = $this->denormalizer->getIdentCriteria(
-                            $item,
-                            $classMeta,
-                            true,
-                            array('title', 'type', 'name', 'onlineResource')
-                        );
-                        if (isset($criteria['id'])) {
-                            unset($criteria['id']);
-                        }
-                        $sources    = $this->denormalizer->findEntities($class, $criteria);
-                        if (!$this->findSourceToMapper($sources, $item, 0)) {
-                            $source = $this->denormalizer->handleData($item, $class);
-                            $em->persist($source);
-                            $em->flush();
+                    $classMeta = $this->em->getClassMetadata($class);
+                    if (!$copyHint) {
+                        // Avoid inserting "new" sources that are duplicates of already existing ones
+                        // Finding equivalent sources is relatively expensive
+                        $identFields = $denormalizer->collectEntityFieldNames($classMeta, false, true, array(
+                            'title',
+                            'type',
+                            'name',
+                            'onlineResource',
+                        ));
+                        $criteria = $denormalizer->extractFields($item, $identFields);
+                        $sources = $this->em->getRepository($class)->findBy($criteria);
+                        if (!$this->findSourceToMapper($denormalizer, $sources, $item)) {
+                            $source = $denormalizer->handleData($item);
+                            $this->em->persist($source);
+                            $this->em->flush();
                         }
                     } else {
-                        $criteria = $this->denormalizer->getIdentCriteria($item, $classMeta, true, array());
-                        $sources  = $this->denormalizer->findEntities($class, $criteria);
-                        $result = array();
-                        $this->addSourceToMapper($sources[0], $item, $result);
-                        $this->mergeIntoMapper($result);
+                        // Performance hack: when "importing" from the same DB (actually just copying an
+                        // application), detecting source duplicates based purely on id is sufficient
+                        $criteria = $denormalizer->getIdentCriteria($item, $classMeta);
+                        $sources = $this->em->getRepository($class)->findBy($criteria);
+                        $this->addSourceToMapper($denormalizer, $sources[0], $item);
                     }
                 }
             }
@@ -127,25 +153,25 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * Imports applications.
-     *
+     * @param ExchangeDenormalizer $denormalizer
      * @param array $data data to import
-     * @return array
-     * @throws ImportException
+     * @return Application[]
+     * @throws ORMException
      */
-    private function importApps($data)
+    private function importApplicationEntities($denormalizer, $data)
     {
         $apps = array();
-        $em = $this->container->get('doctrine')->getManager();
-        foreach ($data as $class => $content) { # add entities
-            if ($this->denormalizer->findSuperClass($class, 'Mapbender\CoreBundle\Entity\Application')) {
+        foreach ($data as $class => $content) {
+            if (is_a($class, 'Mapbender\CoreBundle\Entity\Application', true)) {
                 foreach ($content as $item) {
-                    $app         = $this->denormalizer->handleData($item, $class);
+                    /** @var Application $app */
+                    $app = $denormalizer->handleData($item);
                     $app->setScreenshot(null)->setSource(Application::SOURCE_DB);
-                    $em->persist($app);
-                    $em->flush();
-                    $this->denormalizer->generateElementConfiguration($app);
+                    $this->em->persist($app);
+                    $this->updateElementConfiguration($denormalizer, $app);
                     $apps[] = $app;
+                    $this->em->persist($app);
+                    $this->em->flush();
                 }
             }
         }
@@ -153,147 +179,151 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * @param $object
-     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
+     * @param ExchangeDenormalizer $denormalizer
+     * @param \Mapbender\CoreBundle\Entity\Application $app
      */
-    private function addAcls($object)
+    protected function updateElementConfiguration($denormalizer, Application $app)
     {
-        $aces = array();
-        // add current user as owner for this object
-        $current_user       = $this->container->get('security.context')->getToken()->getUser();
-        $current_user_identity = UserSecurityIdentity::fromAccount($current_user);
-        $aces[] = array(
-            'sid' => $current_user_identity,
-            'mask' => MaskBuilder::MASK_OWNER
-        );
-        // copy ACEs from orig $object
-        if ($this->toCopy) {
-            $class = $this->denormalizer->getRealClass($object);
-            $classMeta = $this->denormalizer->getClassMetadata($class);
-            $after_criteria = $this->denormalizer->getIdentCriteria($object, $classMeta, false, array());
-            $orig_criteria = $this->denormalizer->getBeforeFromAfter($class, $after_criteria);
-            $orig_object  = $this->denormalizer->findEntities($class, $orig_criteria);
-            $provider = $this->container->get('security.acl.provider');
-            $acl = $provider->findAcl(ObjectIdentity::fromDomainObject($orig_object[0]));
-            foreach ($acl->getObjectAces() as $ace) {
-                $user_sec_ident = $ace->getSecurityIdentity();
-                if (!$current_user_identity->equals($user_sec_ident)) {
-                    $aces[] = array(
-                        'sid' => $user_sec_ident,
-                        'mask' => $ace->getMask()
-                    );
+        foreach ($app->getElements() as $element) {
+            $configuration = $element->getConfiguration();
+            foreach ($configuration as $key => $value) {
+                if ($key === 'target') {
+                    $realClass = $denormalizer->getRealClass($element);
+                    $target = $denormalizer->getAfterFromBefore($realClass, array('id' => $value));
+                    $configuration[$key] = $target['criteria']['id'];
+                } else {
+                    $configuration[$key] = $value;
                 }
             }
+            try {
+                // allow Component\Element to fix relational data references post import (e.g. layerset ids on Map)
+                $elmComp = $this->elementFactory->componentFromEntity($element);
+                $configuration = $elmComp->denormalizeConfiguration($configuration, $denormalizer);
+            } catch (ElementErrorException $e) {
+                // Likely an import from an application with custom element classes that are not defined here
+                // => ignore, we still have the entity imported
+            }
+            $element->setConfiguration($configuration);
+            $this->em->persist($element);
         }
-        $this->container->get('fom.acl.manager')->setObjectACL($object, $aces, 'object');
     }
 
     /**
-     * Imports ACLs.
-     * @param array $data data to import
-     * @throws ImportException
-     * @todo implement this.
+     * @param Application $application
+     * @param mixed $currentUser
      */
-    private function importAcls($data)
+    public function setDefaultAcls(Application $application, $currentUser)
     {
-
+        $aces = array(
+            array(
+                'sid' => UserSecurityIdentity::fromAccount($currentUser),
+                'mask' => MaskBuilder::MASK_OWNER
+            ),
+        );
+        $this->aclManager->setObjectACL($application, $aces, 'object');
     }
 
     /**
-     * @param array $sources
-     * @param array $item
-     * @param int   $idx
-     * @return bool
+     * @param Application $target
+     * @param Application $source
+     * @param $currentUser
+     * @throws InvalidDomainObjectException
+     * @throws \Symfony\Component\Security\Acl\Exception\Exception
      */
-    private function findSourceToMapper(array $sources, array $item, $idx = 0)
+    public function copyAcls(Application $target, Application $source, $currentUser)
     {
-        if (count($sources) === 0) {
-            return false;
-        }
-        try {
-            $result = array();
-            $this->addSourceToMapper($sources[$idx], $item, $result);
-            $this->mergeIntoMapper($result);
-            return true;
-        } catch (\Exception $e) {
-            $idx++;
-            if ($idx < count($sources)) {
-                $this->findSourceToMapper($sources, $item, $idx);
-            } else {
-                return false;
+        $this->setDefaultAcls($target, $currentUser);
+        $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
+        /** @var MutableAclInterface $targetAcl */
+        $targetAcl = $this->aclManager->getACL($target);
+        $currentUserIdentity = UserSecurityIdentity::fromAccount($currentUser);
+
+        // Quirky old behavior: current user has just been given MASK_OWNER, so access for that user
+        // is as complete as it can get. We only copy aces for other user identities. Any other
+        // entries for the current user are ignored and not copied over.
+        // We also only copy the identity + mask portions of the Aces, nothing else.
+        // @todo: Figure out if this really is the desired behaviour going forward.
+        foreach ($sourceAcl->getObjectAces() as $sourceEntry) {
+            /** @var EntryInterface $sourceEntry */
+            $entryIdentity = $sourceEntry->getSecurityIdentity();
+            if (!$currentUserIdentity->equals($entryIdentity)) {
+                $targetAcl->insertObjectAce($entryIdentity, $sourceEntry->getMask());
             }
         }
+        $this->aclProvider->updateAcl($targetAcl);
+    }
+
+    /**
+     * @param ExchangeDenormalizer $denormalizer
+     * @param array $sources
+     * @param array $item
+     * @return bool
+     */
+    private function findSourceToMapper($denormalizer, array $sources, array $item)
+    {
+        foreach ($sources as $source) {
+            try {
+                $this->addSourceToMapper($denormalizer, $source, $item);
+                return true;
+            } catch (\Exception $e) {
+                // continue loop
+            }
+        }
+        return false;
     }
 
     /**
      * Adds entitiy with assoc. items to mapper.
      *
+     * @param ExchangeDenormalizer $denormalizer
      * @param object $object source
      * @param array  $data
-     * @param array  $result
-     * @throws \Exception
+     * @throws ImportException
+     * @throws ORMException
      */
-    private function addSourceToMapper($object, array $data, array &$result)
+    private function addSourceToMapper($denormalizer, $object, array $data)
     {
-        $em = $this->container->get('doctrine')->getManager();
-        $em->refresh($object);
-        if (!$em->contains($object)) {
-             $em->merge($object);
+        $this->em->refresh($object);
+        if (!$this->em->contains($object)) {
+             $this->em->merge($object);
         }
-        $classMeta = $this->denormalizer->getClassMetadata($this->denormalizer->getRealClass($object));
-        $criteriaAfter  = $this->denormalizer->getIdentCriteria($object, $classMeta);
-        $criteriaBefore  = $this->denormalizer->getIdentCriteria($data, $classMeta);
-        $realClass = $this->denormalizer->getRealClass($object);
-        $result[$realClass][] =
-            array('before' => $criteriaBefore, 'after' => array( 'criteria' => $criteriaAfter, 'object' => $object));
+        $classMeta = $this->em->getClassMetadata(get_class($object));
+        $denormalizer->addToMapper($object, $data, $classMeta);
+
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             $fieldName = $assocItem['fieldName'];
-            $getMethod = $this->denormalizer->getReturnMethod($fieldName, $classMeta->getReflectionClass());
+            $getMethod = $denormalizer->getReturnMethod($fieldName, $classMeta->getReflectionClass());
             if ($getMethod) {
                 $subObject = $getMethod->invoke($object);
                 $num = 0;
                 if ($subObject instanceof PersistentCollection) {
-                    if ($this->denormalizer
-                        ->findSuperClass($assocItem['targetEntity'], "Mapbender\CoreBundle\Entity\Keyword")) {
+                    if (is_a($assocItem['targetEntity'], "Mapbender\CoreBundle\Entity\Keyword", true)) {
                         continue;
-                    } elseif (!isset($data[$fieldName]) || count($data[$fieldName]) !== $subObject->count()) {
-                        throw new \Exception('no filed name at normalized data');
+                    } elseif (!isset($data[$fieldName])) {
+                        throw new ImportException("Missing data for field {$fieldName} on target {$assocItem['targetEntity']}");
+                    } elseif (count($data[$fieldName]) !== $subObject->count()) {
+                        throw new ImportException("Collection member count mismatch for field {$fieldName}, " . count($data[$fieldName]) . " vs " . $subObject->count());
                     }
                     foreach ($subObject as $item) {
-                        if ($this->denormalizer->findSuperClass($item, 'Mapbender\CoreBundle\Entity\SourceItem')) {
+                        if (is_a($item, 'Mapbender\CoreBundle\Entity\SourceItem', true)) {
                             $subdata = $data[$fieldName][$num];
-                            if ($classDef = $this->denormalizer->getClassDifinition($subdata)) {
-                                $em->getRepository($classDef[0]);
-                                $meta     = $this->denormalizer->getClassMetadata($classDef[0]);
-                                $criteria = $this->denormalizer->getIdentCriteria($subdata, $meta);
+                            if ($classDef = $denormalizer->getClassDefinition($subdata)) {
+                                $meta = $this->em->getClassMetadata($classDef[0]);
+                                $criteria = $denormalizer->getIdentCriteria($subdata, $meta);
                                 $od = null;
-                                if ($this->denormalizer->isReference($subdata, $criteria)) {
-                                    if ($od = $this->denormalizer->getAfterFromBefore($classDef[0], $criteria)) {
-                                        ;
-                                    } elseif ($od = $this->denormalizer->getEntityData($classDef[0], $criteria)) {
-                                        ;
+                                if ($denormalizer->isReference($subdata, $criteria)) {
+                                    if (!$denormalizer->getAfterFromBefore($classDef[0], $criteria)) {
+                                        $od = $denormalizer->getEntityData($classDef[0], $criteria);
+                                        $this->addSourceToMapper($denormalizer, $item, $od);
                                     }
                                 }
-                                $this->addSourceToMapper($item, $od, $result);
                                 $num++;
                             } else {
-                                throw new \Exception('no class definition at normalized data');
+                                throw new ImportException("Missing source item class definition");
                             }
                         }
                     }
                 }
-            }
-        }
-    }
-
-    /**
-     * @param array $mapper
-     */
-    private function mergeIntoMapper(array $mapper)
-    {
-        foreach ($mapper as $class => $content) {
-            foreach ($content as $item) {
-                $this->denormalizer->addToMapper($item['after']['object'], $item['before'], $item['after']['criteria']);
             }
         }
     }
