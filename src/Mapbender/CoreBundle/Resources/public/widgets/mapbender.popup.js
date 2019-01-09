@@ -63,6 +63,13 @@
             .attr('id', 'mbpopup-' + counter++);
         if (this.options.modal) {
             this.$modalWrap = $('<div class="popupContainer modal"><div class="overlay"></div></div>');
+            if (this.options.closeOnOutsideClick) {
+                this.$modalWrap.on('click', function(evt) {
+                    if (!$(evt.target).closest(self.$element).length) {
+                        self.close();
+                    }
+                });
+            }
         }
         this.$element.toggleClass('noCloseButton', !this.options.closeButton);
         $('.popupHead', this.$element).toggleClass('hidden', !this.options.header);
@@ -371,25 +378,6 @@
             }
 
             this.options.closeOnESC = state;
-        },
-
-        /**
-         * Set or get closeOnOutsideClick
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        closeOnOutsideClick: function(state) {
-            if(undefined === state) {
-                return this.options.closeOnOutsideClick;
-            }
-
-            if(state){
-                $('.overlay', this.$element.get(0)).on('click', $.proxy(this.close, this));
-            }else{
-                $('.overlay', this.$element.get(0)).off('click');
-            }
-
-            this.options.closeOnOutsideClick = state;
         },
 
         /**
