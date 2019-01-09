@@ -34,12 +34,13 @@
             if (this.options.type === 'element') {
                 $(this.element).show();
                 $(this.element).on('click', '.-fn-toggle-frame', function() {
-                    var wasActive = $(this).attr('active') === 'true';
-                    $(this).attr('active', wasActive ? 'false' : 'true');
-                    $(this).toggleClass('active', !wasActive);
+                    var $button = $(this);
+                    var wasActive = !!$button.data('active');
+                    $button.data('active', !wasActive);
+                    $button.toggleClass('active', !wasActive);
                     var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
                                                : 'mb.core.printclient.btn.deactivate';
-                    $(this).val(Mapbender.trans(buttonText));
+                    $button.val(Mapbender.trans(buttonText));
                     self._getTemplateSize();
                     self._updateElements(!wasActive);
                     self._setScale();
