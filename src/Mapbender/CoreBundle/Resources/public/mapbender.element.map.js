@@ -80,32 +80,6 @@
             self._trigger('ready');
             this._ready();
         },
-
-        /**
-         * DEPRECATED
-         */
-        "goto": function(options){
-            this.map.center(options);
-        },
-        setExtent: function(extent){
-            this.model.extent = extent;
-        },
-        setMaxExtent: function(extent, projection){
-            if(typeof projection === "string") {
-                this.model.mapMaxExtent = {
-                    projection: this.model.getProj(projection),
-                    extent: extent
-                };
-            } else {
-                this.model.mapMaxExtent = {
-                    projection: projection,
-                    extent: extent
-                };
-            }
-        },
-        /**
-         *
-         */
         getMapState: function(){
             return this.model.getMapState();
         },
@@ -179,12 +153,6 @@
          */
         getModel: function(){
             return this.model;
-        },
-        getCenterOptions: function(){
-            return {
-                center: this.map.olMap.getCenter(),
-                zoom: this.map.olMap.getZoom()
-            };
         },
         setCenter: function(options){
             if(typeof options.box !== 'undefined' && typeof options.position !== 'undefined' && typeof options.zoom !== 'undefined')
@@ -265,12 +233,6 @@
             if(typeof closest === 'undefined')
                 closest = false;
             this.map.olMap.zoomToScale(scale, closest);
-        },
-        /**
-         *
-         */
-        panMode: function(){
-            this.map.mode('pan');
         },
         /**
          * Adds the popup

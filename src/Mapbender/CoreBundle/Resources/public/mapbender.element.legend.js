@@ -7,7 +7,6 @@
             noLegend:                 "No legend available",
             elementType:              "dialog",
             displayType:              "list",
-            checkGraphic:             false,
             hideEmptyLayers:          true,         // @todo: currently not evaluated (behavior is always hide empty layers)
             generateLegendGraphicUrl: false,
             showSourceTitle:          true,

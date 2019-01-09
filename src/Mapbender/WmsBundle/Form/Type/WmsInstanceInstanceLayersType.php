@@ -6,7 +6,7 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * WmsInstanceInstanceLayersType class
@@ -35,7 +35,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             array(
@@ -102,19 +102,25 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'required' => false))
             ->add('ratio', 'number', array(
                 'required' => false,
-                'precision' => 2))
+                'precision' => 2,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.ratio',
+            ))
             ->add('buffer', 'integer', array(
-                'required' => false))
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.buffer',
+            ))
             ->add('dimensions', 'collection', array(
                 'required' => false,
                 'type' => new DimensionInstType(),
-                'allow_add' => true,
-                'allow_delete' => true,))
+                'allow_add' => false,
+                'allow_delete' => false,
+            ))
             ->add('vendorspecifics', 'collection', array(
                 'required' => false,
                 'type' => new VendorSpecificType(),
                 'allow_add' => true,
-                'allow_delete' => true,))
+                'allow_delete' => true,
+            ))
             ->add('layers', 'collection', array(
                 'type' => new WmsInstanceLayerType(),
                 'options' => array(

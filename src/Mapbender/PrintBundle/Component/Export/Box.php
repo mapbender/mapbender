@@ -97,6 +97,31 @@ class Box
     }
 
     /**
+     * @return float[] array with keys 'x' and 'y'
+     */
+    public function getCenterXy()
+    {
+        return array(
+            'x' => 0.5 * ($this->left + $this->right),
+            'y' => 0.5 * ($this->top + $this->bottom),
+        );
+    }
+
+    /**
+     * Convenience method to get absolute width and height in an
+     * array with keys 'width' and 'height'.
+     *
+     * @return float[]
+     */
+    public function getAbsWidthAndHeight()
+    {
+        return array(
+            'width' => abs($this->getWidth()),
+            'height' => abs($this->getHeight()),
+        );
+    }
+
+    /**
      * Self-modifying; quantize left / right / bottom / top to integers
      */
     public function roundToIntegerBoundaries()

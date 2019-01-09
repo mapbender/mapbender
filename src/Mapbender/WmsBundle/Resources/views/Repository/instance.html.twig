@@ -28,19 +28,17 @@
     <a class="linkButton" href="{{ instance.source.originUrl }}" target="_BLANK" title='{{ instance.source.originUrl }}'>{{ instance.source.originUrl | slice(0, 35) }}...</a>
     <div class="clear"></div>
 
-    <div class="metaData">
-      <div class="left leftContainer textFieldGroup">
-        {{ form_label(form.title) }}{{ form_widget(form.title) }}
-        {{ form_label(form.format) }}{{ form_widget(form.format) }}
-        {{ form_label(form.infoformat) }}{{ form_widget(form.infoformat) }}
-        {{ form_label(form.exceptionformat) }}{{ form_widget(form.exceptionformat) }}
-        {{ form_label(form.opacity) }}{{ form_widget(form.opacity) }}
-        <label class='labelInput' for="{{form.buffer.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.buffer"|trans}}</label>
-        {{ form_widget(form.buffer) }}
-        <label class='labelInput' for="{{form.ratio.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.ratio"|trans}}</label>
-        {{ form_widget(form.ratio) }}
+    <div class="row">
+      <div class="leftContainer col-md-6 col-xs-12">
+        {{ form_row(form.title) }}
+        {{ form_row(form.format) }}
+        {{ form_row(form.infoformat) }}
+        {{ form_row(form.exceptionformat) }}
+        {{ form_row(form.opacity) }}
+        {{ form_row(form.buffer) }}
+        {{ form_row(form.ratio) }}
       </div>
-      <div class="rightContainer"> <!-- class="left rightContainer" -->
+      <div class="col-md-6 col-xs-12">
         <div class="extendedGroup">
             {% if form.dimensions is not null and form.dimensions | length > 0 %}
               <div class="blockgroup">

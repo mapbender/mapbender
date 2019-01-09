@@ -3,7 +3,7 @@ namespace Mapbender\ManagerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 
 class ApplicationType extends AbstractType
@@ -14,7 +14,7 @@ class ApplicationType extends AbstractType
         return 'application';
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'available_templates' => array(),

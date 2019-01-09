@@ -5,7 +5,7 @@ namespace Mapbender\ManagerBundle\Form\Type;
 use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * ExportJobType class creates a form for an ExportJob object.
@@ -24,10 +24,10 @@ class ExportJobType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => array()
+            'application' => null,
         ));
     }
 
@@ -36,14 +36,14 @@ class ExportJobType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('application', 'entity',
-                array(
+        $builder
+            ->add('application', 'entity', array(
                 'class' => 'Mapbender\CoreBundle\Entity\Application',
                 'property' => 'title',
                 'multiple' => false,
-                'choices' => $options['application']
+                'choices' => $options['application'],
+                'required' => true,
             ))
-//            ->add('addAcl', 'checkbox', array('required' => false))
             ->add('format', 'choice',
                 array(
                 'required' => true,

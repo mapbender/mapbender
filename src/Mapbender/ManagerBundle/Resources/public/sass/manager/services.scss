@@ -35,7 +35,6 @@
   $padding: 5px;
   .labelText {
     float: none;
-//    font-size: 13px;
   }
   .metaText {
     line-height: 16px;
@@ -56,13 +55,6 @@
   .labelText{width:$labelWidth; }
   .metaText{margin-left:$labelWidth + $space/2; }
 }
-//.serviceServiceContainer{
-//  $labelWidth:160px;
-//
-//  .labelText{width:$labelWidth;}
-//  .metaText{margin-left:$labelWidth + $space/2; }
-//  .metaFormats{line-height:1em;margin-top:0.6em;}
-//}
 .serviceServiceContainer,
 .serviceLayersContainer{
   $labeText:85px;
@@ -79,9 +71,9 @@
 
     // no margin for labeltext lists ...
     ul.left li{
-      margin-left:0px;
+      margin-left:0;
       // ... and metatext below lists
-      .metaText{margin-left:0px;}
+      .metaText{margin-left:0;}
     }
   }
   .labelText{
@@ -115,43 +107,33 @@
   .labelInput{
     display: inline-block;
   }
-  .dropdown{
-    min-width:200px;
-    margin-bottom:$space/2;
-  }
   .checkWrapper, .labelCheck{
     display: inline-block;
     margin-top:8px;
     height:$inputHeight;
   }
-  .leftContainer{
-    width: 49%;
-    margin-right: 2%;
+  .leftContainer {
+    .inputWrapper, .dropdown {
+      display: block;
+      margin-bottom:$space/2;
+    }
+    .inputWrapper input {
+      width: 100%;
+    }
   }
-  .rightContainer {
-    margin-left: 51%;
-  }
-  .leftContainer .inputWrapper{
-    min-width:200px;
-    margin-bottom:$space/2;
-  }
-  .leftContainer .inputWrapper input{ width: 100%; }
   .extendedGroup {
-    .collectionItem {
-      float: none;
-      clear: none;
-    }
-    .clearContainer {
-      clear: none;
-      float: none;
-    }
     .on-off{
-      background-color:darken($contentColor,20%);
-      border: solid 1px darken($contentColor,40%);
-    }
-    .on-off:hover,.on-off.active{
-      background-color:darken($contentColor,40%);
-      border: solid 1px darken($contentColor,60%);
+      border: solid 1px darken($contentColor,55%);
+      background-color:darken($contentColor,25%);
+      &.active {
+        background-color:darken($contentColor,35%);
+      }
+      &:hover {
+        background-color:darken($contentColor,20%);
+        &.active {
+          background-color:darken($contentColor,30%);
+        }
+      }
     }
     .on-off-content{
       background-color:$contentColor;
@@ -179,7 +161,7 @@
     .vendorspecific-content{
       .dropdown,.inputWrapper{
         width:200px !important;
-        margin:0px;
+        margin:0;
       }
       .checkWrapper {
           width: 20px !important;
@@ -195,15 +177,7 @@
     .mb-slider{margin-top: $space/2;}
   }
 }
-.metaData {
-  position: relative;
-  .rightContainer {
-    > .left {
-      white-space: nowrap;
-    }
-  }
 
-}
 .instanceTable{
   margin-top:$space;
   margin-bottom:$space;

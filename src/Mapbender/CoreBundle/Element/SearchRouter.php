@@ -27,31 +27,39 @@ class SearchRouter extends Element
     const DEFAULT_CONNECTION_NAME = "default";
     const DEFAULT_ROUTE_TITLE     = "mb.core.searchrouter.tag.search";
 
-    /** @var string Element title */
-    protected static $title = "mb.core.searchrouter.class.title";
+    public static function getClassTitle()
+    {
+        return 'mb.core.searchrouter.class.title';
+    }
 
-    /** @var string Element description */
-    protected static $description = "mb.core.searchrouter.class.description";
+    public static function getClassDescription()
+    {
+        return 'mb.core.searchrouter.class.description';
+    }
 
-    /** @var string Element title translation subject */
-    protected static $tags = array(
-        "mb.core.searchrouter.tag.search",
-        "mb.core.searchrouter.tag.router"
-    );
+    public static function getClassTags()
+    {
+        return array(
+            'mb.core.searchrouter.tag.search',
+            'mb.core.searchrouter.tag.router',
+        );
+    }
 
-    /** @var array Element default configuration */
-    protected static $defaultConfiguration = array(
-        'tooltip'       => "mb.core.searchrouter.class.title",
-        'title'         => "mb.core.searchrouter.class.title",
-        "target"        => null,
-        // Alternative "timeout" option is deprecated
-        'timeoutFactor' => 3,
-        "width"         => 700,
-        "height"        => 500,
-        "routes"        => array(),
-        // Alternative "dialog" is deprecated
-        "asDialog"      => false
-    );
+    public static function getDefaultConfiguration()
+    {
+        return array(
+            'tooltip'       => "mb.core.searchrouter.class.title",
+            'title'         => "mb.core.searchrouter.class.title",
+            "target"        => null,
+            // Alternative "timeout" option is deprecated
+            'timeoutFactor' => 3,
+            "width"         => 700,
+            "height"        => 500,
+            "routes"        => array(),
+            // Alternative "dialog" is deprecated
+            "asDialog"      => false,
+        );
+    }
 
     /** @var Form[] Element search forms */
     protected $forms;
@@ -291,7 +299,7 @@ class SearchRouter extends Element
         $configuration = parent::getConfiguration();
         $routes        = &$configuration["routes"];
         foreach ($routes as $k => $route) {
-            $routes[ $k ] = static::mergeArrays(static::$defaultRouteConfiguration, $route, array());
+            $routes[ $k ] = static::mergeArrays(static::$defaultRouteConfiguration, $route);
         }
         return $configuration;
     }

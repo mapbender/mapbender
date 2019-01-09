@@ -6,11 +6,10 @@ use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
 use Mapbender\CoreBundle\Component\Element as Element;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,6 +31,8 @@ class ConfigService
     protected $cacheService;
     /** @var TypeDirectoryService */
     protected $sourceTypeDirectory;
+    /** @var UrlProcessor */
+    protected $urlProcessor;
 
 
 
@@ -41,6 +42,7 @@ class ConfigService
         $this->basePresenter = $container->get('mapbender.presenter.application.service');
         $this->cacheService = $container->get('mapbender.presenter.application.cache');
         $this->sourceTypeDirectory = $container->get('mapbender.source.typedirectory.service');
+        $this->urlProcessor = $container->get('mapbender.source.url_processor.service');
     }
 
     /**
@@ -97,7 +99,7 @@ class ConfigService
             'base'     => $this->container->get('request')->getBaseUrl(),
             'asset'    => $this->container->get('templating.helper.assets')->getUrl(null),
             'element'  => $router->generate('mapbender_core_application_element', $config),
-            'proxy'    => $router->generate('owsproxy3_core_owsproxy_entrypoint'),
+            'proxy'    => $this->urlProcessor->getProxyBaseUrl(),
             'metadata' => $router->generate('mapbender_core_application_metadata', $config),
             'config'   => $router->generate('mapbender_core_application_configuration', $config));
 

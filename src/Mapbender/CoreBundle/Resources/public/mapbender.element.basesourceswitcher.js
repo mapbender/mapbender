@@ -123,7 +123,6 @@
             $(document).on('mbmapcontextaddend', $.proxy(this._onContextAddEnd, this));
             $(document).on('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
             $(document).on('mbmapsourceloadend', $.proxy(this._onSourceLoadEnd, this));
-            $(document).on('mbmapsourceloaderror', $.proxy(this._onSourceLoadError, this));
         },
 
         _onContextAddEnd: function () {
@@ -140,7 +139,6 @@
             $(document).off('mbmapcontextaddend', $.proxy(this._onContextAddEnd, this));
             $(document).off('mbmapsourceloadstart', $.proxy(this._onSourceLoadStart, this));
             $(document).off('mbmapsourceloadend', $.proxy(this._onSourceLoadEnd, this));
-            $(document).off('mbmapsourceloaderror', $.proxy(this._onSourceLoadError, this));
 
             $('.basesourcesetswitch[data-state="active"]:not(.basesourcegroup)', this.element).click();
         }

@@ -13,7 +13,7 @@ class AboutDialog extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.aboutdialog.class.title";
     }
@@ -21,7 +21,7 @@ class AboutDialog extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.aboutdialog.class.description";
     }
@@ -29,12 +29,13 @@ class AboutDialog extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.aboutdialog.tag.help",
             "mb.core.aboutdialog.tag.info",
-            "mb.core.aboutdialog.tag.about");
+            "mb.core.aboutdialog.tag.about",
+        );
     }
 
     /**
@@ -46,8 +47,12 @@ class AboutDialog extends Element
             'js' => array(
                 'mapbender.element.button.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                'mapbender.element.aboutDialog.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/about_dialog.scss' ));
+                'mapbender.element.aboutDialog.js',
+            ),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/about_dialog.scss',
+            ),
+        );
     }
 
     /**
@@ -57,7 +62,8 @@ class AboutDialog extends Element
     {
         return array(
             "tooltip" => "About",
-            'label' => true);
+            'label' => true,
+        );
     }
 
     /**

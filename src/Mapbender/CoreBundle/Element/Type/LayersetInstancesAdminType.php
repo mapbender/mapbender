@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Mapbender\CoreBundle\Form\DataTransformer\ObjectIdTransformer;
 
@@ -58,7 +58,7 @@ class LayersetInstancesAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $type = $this;
         $resolver->setDefaults(array(

@@ -107,13 +107,9 @@
             var overviewLayers = [];
             var layerSet = Mapbender.configuration.layersets[this.options.layerset];
 
-            this.mapOrigExtents_ = {
-                max: {
-                    projection: srs,
-                    extent: maxExtent
-                }
-            };
+            element.addClass(options.anchor);
             this.startproj = srs;
+
             $.each(layerSet, function(idx, item) {
                 $.each(item, function(idx2, layerDef) {
                     if(layerDef.type !== "wms") {
@@ -124,7 +120,6 @@
                     });
 
                     overviewLayers.push(wmsLayer);
-                    widget._addOrigLayerExtent(layerDef);
                 });
             });
 
@@ -138,7 +133,7 @@
                 div: this.$viewport_.get(0),
                 size: new OpenLayers.Size(this.options.width, this.options.height),
                 mapOptions: {
-                    maxExtent: maxExtent,
+                    maxExtent: (maxExtent && maxExtent.clone()) || null,
                     projection: projection,
                     theme: null
                 }
@@ -207,26 +202,10 @@
             }
         },
         /**
-         * Transforms an extent into 'projection' projection.
-         */
-        _transformExtent: function(extentObj, projection){
-            if(extentObj.extent != null){
-                if(extentObj.projection.projCode == projection.projCode){
-                    return extentObj.extent.clone();
-                }else{
-                    var newextent = extentObj.extent.clone();
-                    newextent.transform(extentObj.projection, projection);
-                    return newextent;
-                }
-            }else{
-                return null;
-            }
-        },
-
-        /**
          * Cahnges the overview srs
          */
         _changeSrs: function(event, srs) {
+            console.log("Overview changesrs event", event, srs);
             var properties = this.control_.ovmap_.getProperties();
             properties.view = new ol.View({
               projection: this.mbMap_.model.getCurrentProjectionObject(),
@@ -247,43 +226,25 @@
             ovMap.projection = srs.projection;
             ovMap.displayProjection = srs.projection;
             ovMap.units = srs.projection.proj.units;
-            ovMap.maxExtent = widget._transformExtent(widget.mapOrigExtents_.max, srs.projection);
+            if (ovMap.maxExtent) {
+                ovMap.maxExtent = ovMap.maxExtent.clone();
+                ovMap.maxExtent.transform(oldProj, srs.projection);
+            }
 
             $.each(ovMap.layers, function(idx, layer) {
                 layer.projection = srs.projection;
                 layer.units = srs.projection.proj.units;
-                if(!widget.layersOrigExtents[layer.id]) {
-                    widget._addOrigLayerExtent(layer);
-                }
-                if(layer.maxExtent && layer.maxExtent != widget.control_.ovmap.maxExtent) {
-                    layer.maxExtent = widget._transformExtent(widget.layersOrigExtents[layer.id].max, srs.projection);
+                if (layer.maxExtent) {
+                    layer.maxExtent = layer.maxExtent.clone();
+                    layer.maxExtent.transform(oldProj, srs.projection);
                 }
                 layer.initResolutions();
             });
+            console.log("New overview params", center, ovMap.getZoom());
 
             this.control_.update();
             ovMap.setCenter(center, ovMap.getZoom(), false, true);
             */
-        },
-
-        /**
-         * Adds a layer's original extent into the widget layersOrigExtent.
-         */
-        _addOrigLayerExtent: function(layer) {
-            var widget = this;
-            var extents = widget.layersOrigExtents;
-
-            if(layer.olLayer) {
-                layer = layer.olLayer;
-            }
-            if(!extents[layer.id]) {
-                extents[layer.id] = {
-                    max: {
-                        projection: widget.startproj,
-                        extent:     layer.maxExtent ? layer.maxExtent.clone() : null
-                    }
-                };
-            }
         },
 
         /**

@@ -6,7 +6,7 @@ namespace Mapbender\CoreBundle\Form\Type\Application;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Choice selector for SourceInstances in the scope of one Application.
@@ -28,7 +28,7 @@ class SourceInstanceSelectorType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         // thank you PHP for not allowing "use $this" in a lambda
         $self = $this;

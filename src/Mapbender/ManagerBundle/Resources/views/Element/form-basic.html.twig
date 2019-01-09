@@ -1,9 +1,0 @@
-{{ form_row(form._token) }}
-{{ form_row(form.class) }}
-{{ form_row(form.region) }}
-
-{% if theme is defined and theme != '' %}
-  {% include(theme) %}
-{% else %}
-  {{ form_rest(form) }}
-{% endif %}

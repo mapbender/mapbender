@@ -2,7 +2,6 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\Query;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
@@ -37,9 +36,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function save()
     {
-        /** @var ObjectManager $manager */
-        $manager = $this->container->get('doctrine')->getManager();
-        $this->persistRecursive($manager, $this->entity);
+        $this->persistRecursive($this->getEntityManager(), $this->entity);
     }
 
     /**
@@ -94,21 +91,13 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     }
 
     /**
-     * @inheritdoc
-     */
-    public function remove()
-    {
-        $this->container->get('doctrine')->getManager()->remove($this->entity);
-    }
-
-    /**
      * Update a source from a new source
      *
      * @param WmsSource|Source $sourceNew
      */
     public function update(Source $sourceNew)
     {
-        $em = $this->container->get('doctrine')->getManager();
+        $em = $this->getEntityManager();
         $transaction = $em->getConnection()->isTransactionActive();
         if (!$transaction) {
             $em->getConnection()->beginTransaction();
@@ -131,9 +120,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
 
         $contact = clone $sourceNew->getContact();
-        $this->container->get('doctrine')->getManager()->detach($contact);
+        $em->detach($contact);
         if ($this->entity->getContact()) {
-            $this->container->get('doctrine')->getManager()->remove($this->entity->getContact());
+            $em->remove($this->entity->getContact());
         }
         $this->entity->setContact($contact);
 
@@ -143,7 +132,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         KeywordUpdater::updateKeywords(
             $this->entity,
             $sourceNew,
-            $this->container->get('doctrine')->getManager(),
+            $em,
             'Mapbender\WmsBundle\Entity\WmsSourceKeyword'
         );
 
@@ -153,7 +142,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
 
         if (!$transaction) {
-            $this->container->get('doctrine')->getManager()->getConnection()->commit();
+            $em->getConnection()->commit();
         }
     }
 
@@ -162,8 +151,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function getInstances()
     {
-        /** @var Query $query */
-        $objectManager = $this->container->get('doctrine')->getManager();
+        $objectManager = $this->getEntityManager();
         $query         = $objectManager->createQuery("SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.source=:sid");
         return $query->setParameters(
             array("sid" => $this->entity->getId())

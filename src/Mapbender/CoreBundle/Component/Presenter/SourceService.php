@@ -2,9 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter;
 
-use Mapbender\CoreBundle\Component\Signer;
-use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
-use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -20,13 +18,13 @@ abstract class SourceService
 {
     /** @var ContainerInterface */
     protected $container;
-    /** @var Signer */
-    protected $signer;
+    /** @var UrlProcessor */
+    protected $urlProcessor;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->signer = $container->get('signer');
+        $this->urlProcessor= $container->get('mapbender.source.url_processor.service');
     }
 
     /**
@@ -69,7 +67,7 @@ abstract class SourceService
         return array(
             'type' => strtolower($sourceInstance->getType()),
             'title' => $sourceInstance->getTitle(),
-            'isBaseSource' => $sourceInstance->isBaseSource(),
+            'isBaseSource' => $sourceInstance->isBasesource(),
         );
     }
 
@@ -129,36 +127,28 @@ abstract class SourceService
     }
 
     /**
-     * Extend URLs in already generated configuration with an owsproxy-compatible signature
+     * Extend all URLs in the layer to run over owsproxy
      * @todo: this should and can be part of the initial generation
      *
-     * @param $layerConfig
+     * @param mixed[] $layerConfig
+     * @return mixed[]
      */
-    protected function signLayerUrls($layerConfig)
+    protected function proxifyLayerUrls($layerConfig)
     {
-        if (isset($layerConfig['options']['legend'])) {
-            if (isset($layerConfig['options']['legend']['graphic'])) {
-                $layerConfig['options']['legend']['graphic'] = $this->signer->signUrl($layerConfig['options']['legend']['graphic']);
-            } elseif (isset($layer['options']['legend']['url'])) {
-                $layerConfig['options']['legend']['url'] = $this->signer->signUrl($layerConfig['options']['legend']['url']);
-            }
-        }
         if (isset($layerConfig['children'])) {
-            foreach ($layerConfig['children'] as &$child) {
-                $this->signLayerUrls($child);
+            foreach ($layerConfig['children'] as $ix => $childConfig) {
+                $layerConfig['children'][$ix] = $this->proxifyLayerUrls($childConfig);
             }
         }
-    }
-
-    /**
-     * @param SourceInstance $sourceInstance
-     * @return Endpoint
-     */
-    public function makeTunnelEndpoint(SourceInstance $sourceInstance)
-    {
-        /** @var InstanceTunnelService $tunnelService */
-        $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
-        return $tunnelService->makeEndpoint($sourceInstance);
+        if (isset($layerConfig['options']['legend'])) {
+            // might have keys 'graphic' and 'url', both kind of serve the same purpose
+            $mangler = $this->urlProcessor;
+            $fn = function($url) use ($mangler) {
+                return $mangler->proxifyUrl($url);
+            };
+            $layerConfig['options']['legend'] = array_map($fn, $layerConfig['options']['legend']);
+        }
+        return $layerConfig;
     }
 
     /**

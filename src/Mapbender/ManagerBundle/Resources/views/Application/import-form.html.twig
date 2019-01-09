@@ -1,4 +1,4 @@
-<form action="{{ path('mapbender_manager_application_import') }}" method="post" id="importForm" name="importForm" {{ form_enctype(form)}}  novalidate="novalidate" target="_blank">
+{{ form_start(form, {"attr": {"novalidate": "novalidate", "target": "_blank"}}) }}
   <div class="defaultForm elementForm">
     <div class="clearContainer"></div>
     {{ form_label(form.importFile) }}{{ form_widget(form.importFile) }}
@@ -6,9 +6,9 @@
   </div>
   <div class="right">
     <input type="submit" value="{{ 'mb.manager.admin.application.import.btn.import' | trans }}" class="button"/>
-    <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.import.btn.cancel' | trans}}</a>
+    <a href="{{ path('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.import.btn.cancel' | trans}}</a>
   </div>
   <div class="clearContainer"></div>
   {{ form_row(form._token) }}
   {{ form_rest(form) }}
-</form>
+{{ form_end(form) }}

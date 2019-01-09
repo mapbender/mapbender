@@ -7,13 +7,16 @@
     $.widget('mapbender.mbImageExport', {
         options: {},
         map: null,
-        popupIsOpen: true,
         _geometryToGeoJson: null,
+        $form: null,
 
         _create: function() {
             if(!Mapbender.checkTarget('mbImageExport', this.options.target)) {
                 return;
             }
+            this.$form = $('form', this.element);
+            $(this.element).show();
+
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
         _setup: function() {
@@ -32,7 +35,6 @@
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
-            var me = $(this.element);
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
@@ -62,21 +64,15 @@
                 });
 
                 this.popup.$element.on('close', $.proxy(this.close, this));
-            } else {
-                if(this.popupIsOpen === false){
-                    this.popup.open(self.element);
-                }
             }
-            me.show();
-            this.popupIsOpen = true;
         },
-        close: function() {
-            if(this.popup){
-                this.element.hide().appendTo($('body'));
-                this.popupIsOpen = false;
-                if(this.popup.$element){
-                    this.popup.destroy();
+        close: function(){
+            if (this.popup) {
+                if (this.popup.$element) {
+                    // prevent infinite event handling recursion
+                    this.popup.$element.off('close');
                 }
+                this.popup.close();
                 this.popup = null;
             }
 
@@ -102,42 +98,49 @@
         },
         /**
          *
-         * @param sourceDef
+         * @param {*} sourceDef
+         * @param {number} [scale]
          * @returns {{layers: *, styles: *}}
          * @private
          */
-        _getRasterVisibilityInfo: function(sourceDef) {
+        _getRasterVisibilityInfo: function(sourceDef, scale) {
             var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-            return {
-                layers: layer.params.LAYERS,
-                styles: layer.params.STYLES
-            };
+            if (scale) {
+                var toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: sourceDef.mqlid}};
+                var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale, toChangeOpts);
+                return {
+                    layers: geoSourceResponse.layers,
+                    styles: geoSourceResponse.styles
+                };
+            } else {
+                return {
+                    layers: layer.params.LAYERS,
+                    styles: layer.params.STYLES
+                };
+            }
         },
         /**
          * @returns {Array<Object>} sourceTreeish configuration objects
          * @private
          */
         _getRasterSourceDefs: function() {
-            var sourceTree = this.map.getSourceTree();
-            return sourceTree.filter(function(sourceDef) {
-                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-                if (0 !== layer.CLASS_NAME.indexOf('OpenLayers.Layer.')) {
-                    return false;
-                }
-                if (typeof (Mapbender.source[sourceDef.type] || {}).getPrintConfig !== 'function') {
-                    return false;
-                }
-                return true;
-            }.bind(this));
+            return this.model.getActiveSources();
+        },
+        _getExportScale: function() {
+            return null;
+        },
+        _getExportExtent: function() {
+            return this.model.getMapExtent();
         },
         _collectRasterLayerData: function() {
-            var dataOut = [];
+            var sources = this._getRasterSourceDefs();
             var mapSize = this.model.getMapSize();
-            var mapExtent = this.model.getMapExtent();
+            var mapExtent = this._getExportExtent();
 
-            var activeSources = this.model.getActiveSources();
-            for (var i = 0; i < activeSources.length; i++) {
-                var source = activeSources[i];
+            var dataOut = [];
+
+            for (var i = 0; i < sources.length; i++) {
+                var source = sources[i];
                 if (!source.isVisible()) {
                     continue;
                 }
@@ -149,26 +152,28 @@
             return dataOut;
         },
         _collectJobData: function() {
-            var mapSize = this.model.getMapSize();
-            var mapExtent = this.model.getMapExtent();
             var mapCenter = this.model.getMapCenter();
-
+            var mapExtent = this._getExportExtent();
+            var imageSize = this.model.getMapSize();
+            var rasterLayers = this._collectRasterLayerData();
+            var geometryLayers = this._collectGeometryLayers();
             return {
-                requests: this._collectRasterLayerData(),
-                // @todo: fix unscoped input lookup
-                format: $("input[name='imageformat']:checked").val(),
-                width: mapSize[0],
-                height: mapSize[1],
-                centerx: mapCenter[0],
-                centery: mapCenter[1],
-                extentwidth: this.model.getWidthOfExtent(mapExtent),
-                extentheight: this.model.getHeigthOfExtent(mapExtent),
-                vectorLayers: this._collectGeometryLayers()
+                layers: rasterLayers.concat(geometryLayers),
+                width: imageSize[0],
+                height: imageSize[1],
+                center: {
+                    x: mapCenter[0],
+                    y: mapCenter[1]
+                },
+                extent: {
+                    width: this.model.getWidthOfExtent(mapExtent),
+                    height: this.model.getWidthOfExtent(mapExtent)
+                }
             };
         },
         _exportImage: function() {
             var jobData = this._collectJobData();
-            if (!jobData.requests.length) {
+            if (!jobData.layers.length) {
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
             } else {
                 this._submitJob(jobData);
@@ -176,14 +181,13 @@
             }
         },
         _submitJob: function(jobData) {
-            var $form = $('form', this.element);
-            var $hiddenArea = $('.-fn-hidden-fields', $form);
+            var $hiddenArea = $('.-fn-hidden-fields', this.$form);
             $hiddenArea.empty();
             var submitValue = JSON.stringify(jobData);
             var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
             $input.val(submitValue);
             $input.appendTo($hiddenArea);
-            $('.-fn-submit', $form).click();
+            $('input[type="submit"]', this.$form).click();
         },
         /**
          * Should return true if the given layer needs to be included in export
@@ -310,6 +314,24 @@
                 }
             }
             return vectorLayers;
+        },
+        /**
+         * Check BBOX format inversion
+         *
+         * @param {OpenLayers.Layer.HTTPRequest} layer
+         * @returns {boolean}
+         * @private
+         */
+        _changeAxis: function(layer) {
+            var projCode = (layer.map.displayProjection || layer.map.projection).projCode;
+
+            if (layer.params.VERSION === '1.3.0') {
+                if (OpenLayers.Projection.defaults.hasOwnProperty(projCode) && OpenLayers.Projection.defaults[projCode].yx) {
+                    return true;
+                }
+            }
+
+            return false;
         },
 
         _noDanglingCommaDummy: null
