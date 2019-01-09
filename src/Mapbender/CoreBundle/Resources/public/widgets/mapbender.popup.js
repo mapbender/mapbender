@@ -50,6 +50,13 @@
 
         // Create final options
         this.options = $.extend({}, this.defaults, options);
+        if (this.options.closeOnPopupCloseClick) {
+            console.warn("Merging deprecated option 'closeOnPopupCloseClick' into 'closeButton'");
+            this.options.closeButton = true;
+            delete this.options['closeOnPopupCloseClick'];
+        }
+
+        options.closeButton = !!(options.closeButton || options.closeOnPopupCloseClick);
 
         // Create DOM element
         this.$element = $(this.options.template)
@@ -65,6 +72,11 @@
                 resizableOptions = null;
             }
             this.$element.resizable(resizableOptions);
+        }
+        if (this.options.closeButton) {
+            this.$element.on('click', '.popupClose', $.proxy(this.close, this));
+        } else {
+            $('.popupClose', this.$element).remove();
         }
 
         var staticOptions = [
@@ -132,7 +144,6 @@
             closeOnESC: true,
             detachOnClose: true,
             closeOnOutsideClick: false,
-            closeOnPopupCloseClick: true,
             destroyOnClose: false,
             modal: true,
 
@@ -360,28 +371,6 @@
             }
 
             this.options.closeOnESC = state;
-        },
-
-
-        /**
-         * Set or get closeOnPopupCloseClick
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        closeOnPopupCloseClick: function(state) {
-            if(undefined === state) {
-                return this.options.closeOnPopupCloseClick;
-            }
-
-            if(state){
-                $('.popupClose', this.$element.get(0)).on('click', $.proxy(this.close, this));
-                $('.popupClose', this.$element.get(0)).removeClass('hidden');
-            }else{
-                $('.popupClose', this.$element.get(0)).off('click');
-                $('.popupClose', this.$element.get(0)).addClass('hidden');
-            }
-
-            this.options.closeOnPopupCloseClick = state;
         },
 
         /**
