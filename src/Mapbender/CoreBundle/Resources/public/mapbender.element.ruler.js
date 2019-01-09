@@ -108,7 +108,6 @@
                     modal: false,
                     draggable: true,
                     resizable: true,
-                    closeButton: false,
                     closeOnESC: true,
                     destroyOnClose: true,
                     content: self.container,

@@ -27,7 +27,6 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
                     modal: false,
                     resizable: true,
                     draggable: true,
-                    closeButton: true,
                     closeOnESC: false,
                     cssClass: 'metadataDialog',
                     content: [

@@ -62,7 +62,6 @@
                     draggable: true,
                     resizable: true,
                     modal: false,
-                    closeButton: false,
                     closeOnESC: false,
                     cssClass: 'mb-wmcEditor',
                     content: [$.ajax({

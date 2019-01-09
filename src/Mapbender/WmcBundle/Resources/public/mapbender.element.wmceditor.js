@@ -47,7 +47,6 @@
                     title: self.element.attr('title'),
                     draggable: true,
                     modal: false,
-                    closeButton: false,
                     closeOnESC: false,
                     cssClass: 'mb-wmcEditor',
                     content: [$.ajax({
