@@ -164,7 +164,6 @@ class Application implements IAssetDependent
                 '\' is unknown.');
         }
 
-        $assets            = array();
         $appTemplate = $this->getTemplate();
 
         $assetSources = array(
@@ -204,33 +203,20 @@ class Application implements IAssetDependent
             ),
         );
 
-        if ($type === 'trans') {
-            // mimic old behavior: ONLY for trans assets, avoid processing repeated inputs
-            $transAssetInputs = array();
-            foreach ($assetSources as $assetSource) {
-                if (!empty($assetSource['assets'][$type])) {
-                    foreach (array_unique($assetSource['assets'][$type]) as $transAsset) {
-                        $transAssetInputs[$transAsset] = $transAsset;
+        $assets = array();
+        foreach ($assetSources as $assetSource) {
+            if (!empty($assetSource['assets'][$type])) {
+                if ($type !== 'trans') {
+                    foreach ($assetSource['assets'][$type] as $singleRef) {
+                        $assets[] = $this->getReference($assetSource['object'], $singleRef);
                     }
-                }
-            }
-            $assets = array_merge($assets, array_values($transAssetInputs));
-        } else {
-            $assetRefs = array();
-            foreach ($assetSources as $assetSource) {
-                if (!empty($assetSource['assets'][$type])) {
-                    foreach ($assetSource['assets'][$type] as $asset) {
-                        $assetRef = $this->getReference($assetSource['object'], $asset);
-                        if (!array_key_exists($assetRef, $assetRefs)) {
-                            $assets[] = $assetRef;
-                            $assetRefs[$assetRef] = true;
-                        }
-                    }
+                } else {
+                    $assets = array_merge($assets, $assetSource['assets'][$type]);
                 }
             }
         }
 
-        return $assets;
+        return array_unique($assets);
     }
 
     /**
