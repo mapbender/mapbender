@@ -85,14 +85,13 @@ class ApplicationAssetService
      * @param $type
      * @return string[]
      */
-    protected function collectAssetReferences(Entity\Application $application, $type)
+    public function collectAssetReferences(Entity\Application $application, $type)
     {
-        $appComp = $this->elementFactory->appComponentFromEntity($application);
         $referenceLists = array(
             $this->getBaseAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
             $this->getElementAssetReferences($application, $type),
-            $appComp->getAssetGroup($type),
+            $this->getLayerAssetReferences($application, $type),
             $this->getTemplateLateAssetReferences($application, $type),
         );
         $references = call_user_func_array('\array_merge', $referenceLists);
@@ -188,6 +187,31 @@ class ApplicationAssetService
         foreach ($this->applicationService->getActiveElements($application, false) as $element) {
             $elementRefs = ArrayUtil::getDefault($element->getAssets() ?: array(), $type, array());
             $qualifiedRefs = $this->qualifyAssetReferencesBulk($element, $elementRefs, $type);
+            $combinedRefs = array_merge($combinedRefs, $qualifiedRefs);
+        }
+        return $combinedRefs;
+    }
+
+    /**
+     * @param Entity\Application $application
+     * @param string $type
+     * @return string[]
+     */
+    public function getLayerAssetReferences(Entity\Application $application, $type)
+    {
+        $activeInstances = array();
+        foreach ($application->getLayersets() as $layerset) {
+            foreach ($layerset->getInstances() as $instance) {
+                if ($application->isYamlBased() || $instance->getEnabled()) {
+                    $activeInstances[] = $instance;
+                }
+            }
+        }
+        $combinedRefs = array();
+        foreach ($activeInstances as $sourceInstance) {
+            /** @var Entity\SourceInstance $sourceInstance */
+            $instanceRefs = ArrayUtil::getDefault($sourceInstance->getAssets() ?: array(), $type, array());
+            $qualifiedRefs = $this->qualifyAssetReferencesBulk($sourceInstance, $instanceRefs, $type);
             $combinedRefs = array_merge($combinedRefs, $qualifiedRefs);
         }
         return $combinedRefs;
@@ -294,7 +318,7 @@ class ApplicationAssetService
      * Bulk version of qualifyAssetReference
      *
      * @param object $scopeObject
-     * @param string $references
+     * @param string[] $references
      * @param string $type
      * @return string[]
      */

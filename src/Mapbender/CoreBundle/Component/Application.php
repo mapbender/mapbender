@@ -159,37 +159,7 @@ class Application implements IAssetDependent
      */
     public function getAssetGroup($type)
     {
-        if (!\in_array($type, $this->getValidAssetTypes(), true)) {
-            throw new \RuntimeException('Asset type \'' . $type .
-                '\' is unknown.');
-        }
-
-        $assetSources = array();
-
-        // Collect all layer asset definitions
-        foreach ($this->entity->getLayersets() as $layerset) {
-            foreach ($this->filterActiveSourceInstances($layerset) as $layer) {
-                $assetSources[] = array(
-                    'object' => $layer,
-                    'assets' => $layer->getAssets(),
-                );
-            }
-        }
-
-        $assets = array();
-        foreach ($assetSources as $assetSource) {
-            if (!empty($assetSource['assets'][$type])) {
-                if ($type !== 'trans') {
-                    foreach ($assetSource['assets'][$type] as $singleRef) {
-                        $assets[] = $this->getReference($assetSource['object'], $singleRef);
-                    }
-                } else {
-                    $assets = array_merge($assets, $assetSource['assets'][$type]);
-                }
-            }
-        }
-
-        return array_unique($assets);
+        return $this->getAssetService()->collectAssetReferences($this->entity, $type);
     }
 
     /**
