@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\Asset\StringAsset;
+use Assetic\Filter\FilterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -13,6 +14,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class AssetFactory extends AssetFactoryBase
 {
+    /** @var FilterInterface */
+    protected $sassFilter;
+    /** @var FilterInterface */
+    protected $cssRewriteFilter;
+
     /**
      * AssetFactory constructor.
      *
@@ -20,6 +26,8 @@ class AssetFactory extends AssetFactoryBase
      */
     public function __construct(ContainerInterface $container)
     {
+        $this->sassFilter = $container->get('mapbender.assetic.filter.sass');
+        $this->cssRewriteFilter = $container->get("assetic.filter.cssrewrite");
         parent::__construct($container);
     }
 
@@ -38,19 +46,18 @@ class AssetFactory extends AssetFactoryBase
      * @param (StringAsset|string)[] $inputs
      * @param string $sourcePath for adjusting relative urls in css rewrite filter
      * @param string $targetPath
+     * @param bool $minify
      * @return string
      */
-    public function compileCss($inputs, $sourcePath, $targetPath)
+    public function compileCss($inputs, $sourcePath, $targetPath, $minify=false)
     {
-        $container = $this->container;
-        $isDebug   = $container->get('kernel')->isDebug();
         $content = $this->buildAssetCollection($inputs, $targetPath)->dump();
 
-        $sass = clone $container->get('mapbender.assetic.filter.sass');
-        $sass->setStyle($isDebug ? 'nested' : 'compressed');
+        $sass = clone $this->sassFilter;
+        $sass->setStyle($minify ? 'nested' : 'compressed');
         $filters = array(
             $sass,
-            $container->get("assetic.filter.cssrewrite"),
+            $this->cssRewriteFilter,
         );
         $content = $this->squashImports($content);
 

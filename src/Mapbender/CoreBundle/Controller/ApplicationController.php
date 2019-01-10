@@ -96,7 +96,8 @@ class ApplicationController extends Controller
                 'slug' => $slug,
                 'type' => $type,
             ));
-            $content = $factory->compileCss($refs, $sourcePath, $targetPath);
+            $isDebug   = $this->container->get('kernel')->isDebug();
+            $content = $factory->compileCss($refs, $sourcePath, $targetPath, $isDebug);
         } else {
             $content = $factory->compileRaw($refs);
         }

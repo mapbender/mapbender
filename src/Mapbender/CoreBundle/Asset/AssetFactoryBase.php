@@ -6,17 +6,20 @@ namespace Mapbender\CoreBundle\Asset;
 use Assetic\Asset\FileAsset;
 use Assetic\Asset\AssetCollection;
 use Assetic\Asset\StringAsset;
-use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AssetFactoryBase
 {
-    /** @var ContainerInterface  */
-    protected $container;
+    /** @var string */
+    protected $webDir;
+    /** @var FileLocatorInterface */
+    protected $fileLocator;
 
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
+        $this->webDir = dirname($container->getParameter('kernel.root_dir') . '/web');
+        $this->fileLocator = $container->get('file_locator');
     }
 
     /**
@@ -26,7 +29,6 @@ class AssetFactoryBase
      */
     protected function buildAssetCollection($inputs, $targetPath)
     {
-        $assetRootPath = $this->getWebDir();
         $uniqueAssets = array();
         $stringAssetCounter = 0;
 
@@ -43,7 +45,7 @@ class AssetFactoryBase
             }
         }
 
-        $collection = new AssetCollection($uniqueAssets, array(), $assetRootPath);
+        $collection = new AssetCollection($uniqueAssets, array(), $this->webDir);
         $collection->setTargetPath($targetPath);
 
         return $collection;
@@ -55,14 +57,11 @@ class AssetFactoryBase
      */
     protected function makeFileAsset($input)
     {
-        /** @var FileLocator $locator */
-        $locator = $this->container->get('file_locator');
-
         $sourcePath = $this->getSourcePath($input);
         if ($sourcePath) {
-            $file = $locator->locate($sourcePath);
+            $file = $this->fileLocator->locate($sourcePath);
         } else {
-            $file = $locator->locate($input);
+            $file = $this->fileLocator->locate($input);
         }
         $fileAsset = new FileAsset($file);
 
@@ -85,19 +84,10 @@ class AssetFactoryBase
 
             return $this->getSourcePath($assetDir . $assetPath);
         } else {
-            $webRoot = $this->getWebDir();
-            $inWeb = $webRoot . '/' . ltrim($input, '/');
+            $inWeb = $this->webDir . '/' . ltrim($input, '/');
             if (@is_file($inWeb) && @is_readable($inWeb)) {
                 return $inWeb;
             }
         }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getWebDir()
-    {
-        return dirname($this->container->getParameter('kernel.root_dir')) . '/web';
     }
 }
