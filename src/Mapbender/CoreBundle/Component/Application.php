@@ -164,16 +164,7 @@ class Application implements IAssetDependent
                 '\' is unknown.');
         }
 
-        $appTemplate = $this->getTemplate();
-
-        $assetSources = array(
-            array(
-                'object' => $appTemplate,
-                'assets' => array(
-                    $type => $appTemplate->getAssets($type),
-                ),
-            ),
-        );
+        $assetSources = array();
 
         // Collect asset definitions from elements configured in the application
         // Skip grants checks here to avoid issues with application asset caching.
@@ -195,13 +186,6 @@ class Application implements IAssetDependent
                 );
             }
         }
-
-        $assetSources[] = array(
-            'object' => $appTemplate,
-            'assets' => array(
-                $type => $appTemplate->getLateAssets($type),
-            ),
-        );
 
         $assets = array();
         foreach ($assetSources as $assetSource) {

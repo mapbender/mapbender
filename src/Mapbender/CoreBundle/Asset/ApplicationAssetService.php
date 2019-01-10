@@ -82,9 +82,15 @@ class ApplicationAssetService
      */
     protected function collectAssetReferences(Entity\Application $application, $type)
     {
-        $references = $this->getBaseAssetReferences($application, $type);
         $appComp = $this->elementFactory->appComponentFromEntity($application);
-        $references = array_merge($references, $appComp->getAssetGroup($type));
+        $referenceLists = array(
+            $this->getBaseAssetReferences($application, $type),
+            $this->getTemplateBaseAssetReferences($application, $type),
+            $appComp->getAssetGroup($type),
+            $this->getTemplateLateAssetReferences($application, $type),
+        );
+        $references = call_user_func_array('\array_merge', $referenceLists);
+        $references = array_unique($references);
         // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
         $extraYamlAssetGroups = $application->getExtraAssets() ?: array();
         $extraYamlRefs = ArrayUtil::getDefault($extraYamlAssetGroups, $type, array());
@@ -148,6 +154,30 @@ class ApplicationAssetService
             default:
                 return array();
         }
+    }
+
+    /**
+     * @param Entity\Application $application
+     * @param string $type
+     * @return string[]
+     */
+    public function getTemplateBaseAssetReferences(Entity\Application $application, $type)
+    {
+        $templateComponent = $this->getDummyTemplateComponent($application);
+        $refs = $templateComponent->getAssets($type);
+        return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
+    }
+
+    /**
+     * @param Entity\Application $application
+     * @param string $type
+     * @return string[]
+     */
+    public function getTemplateLateAssetReferences(Entity\Application $application, $type)
+    {
+        $templateComponent = $this->getDummyTemplateComponent($application);
+        $refs = $templateComponent->getLateAssets($type);
+        return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
     }
 
     /**
@@ -232,6 +262,27 @@ class ApplicationAssetService
             return sprintf('@%s/Resources/public/%s', $bundle, $reference);
         } else {
             return $reference;
+        }
+    }
+
+    /**
+     * Bulk version of qualifyAssetReference
+     *
+     * @param object $scopeObject
+     * @param string $references
+     * @param string $type
+     * @return string[]
+     */
+    protected function qualifyAssetReferencesBulk($scopeObject, $references, $type)
+    {
+        if ($type !== 'trans') {
+            $refsOut = array();
+            foreach ($references as $singleRef) {
+                $refsOut[] = $this->qualifyAssetReference($scopeObject, $singleRef);
+            }
+            return $refsOut;
+        } else {
+            return $references;
         }
     }
 }
