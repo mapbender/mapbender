@@ -19,10 +19,15 @@
         overwriteTemplates: false,
         digitizerData: null,
         printBounds: null,
+        jobList: null,
 
         _setup: function(){
             var self = this;
+            var $jobList = $('.job-list', this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            if ($jobList.length) {
+                this._initJobList($jobList);
+            }
 
             $('select[name="scale_select"]', this.$form)
                 .on('change', $.proxy(this._updateGeometry, this));
@@ -450,6 +455,23 @@
                 ++count;
             });
             this.overwriteTemplates = true;
+        },
+
+        _initJobList: function($jobListPanel) {
+            var jobListOptions = {
+                url: this.elementUrl + 'queuelist'
+            };
+            var jobList = this.jobList = $['mapbender']['mbPrintClientJobList'].call($jobListPanel, jobListOptions, $jobListPanel);
+            $('.tab-container', this.element).tabs({
+                active: 0,
+                activate: function (event, ui) {
+                    if (ui.newPanel.hasClass('job-list')) {
+                        jobList.start();
+                    } else {
+                        jobList.stop();
+                    }
+                }.bind(this)
+            });
         },
 
         /**

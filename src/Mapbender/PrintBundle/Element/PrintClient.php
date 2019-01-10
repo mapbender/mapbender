@@ -63,6 +63,7 @@ class PrintClient extends Element
         return array(
             'js' => array(
                 '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
+                '@MapbenderPrintBundle/Resources/public/element/printclient.job-list.js',
                 '@MapbenderPrintBundle/Resources/public/element/printclient.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
@@ -174,7 +175,11 @@ class PrintClient extends Element
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return 'MapbenderPrintBundle:Element:printclient.html.twig';
+        if ($this->isQueueModeEnabled()) {
+            return "MapbenderPrintBundle:Element:printclient-queued.html.twig";
+        } else {
+            return "MapbenderPrintBundle:Element:printclient.html.twig";
+        }
     }
 
     /**

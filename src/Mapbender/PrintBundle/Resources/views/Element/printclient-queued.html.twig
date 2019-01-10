@@ -1,0 +1,27 @@
+{% extends 'MapbenderPrintBundle:Element:printclient.html.twig' %}
+{% block printclient_main %}
+    <div class="tab-container">
+        <ul class="tabs">
+            <li><a href="{{ '#' ~ id ~ '-settings' }}">Einstellungen</a></li>
+            <li><a href="{{ '#' ~ id ~ '-job-list' }}">Druckaufträge</a></li>
+        </ul>
+        <div id="{{id ~ '-settings' }}" class="print-form">
+            {{ parent() }}
+        </div >
+        <div id="{{id ~ '-job-list' }}" class="job-list">
+            <table data-order='[[0, "desc"]]' class="row no-gutters">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Datum</th>
+                    <th>Status</th>
+                    <th class="interface"></th>
+                </tr>
+                </thead>
+                <tfoot></tfoot>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
