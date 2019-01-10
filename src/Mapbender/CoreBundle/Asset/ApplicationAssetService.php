@@ -93,8 +93,9 @@ class ApplicationAssetService
                 $targetPath = $this->getCssAssetTargetPath($application);
                 return $this->compiler->compileCss($refs, $sourcePath, $targetPath, $this->minifyCss);
             case 'js':
-            case 'trans':
                 return $this->compiler->compileRaw($refs);
+            case 'trans':
+                return $this->compiler->compileTranslations($refs);
             default:
                 throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }

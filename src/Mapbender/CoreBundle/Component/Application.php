@@ -155,7 +155,7 @@ class Application implements IAssetDependent
                 '@MapbenderCoreBundle/Resources/public/polyfills.js',
             ),
             'css'   => array(),
-            'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')
+            'trans' => array(),
         );
     }
 
@@ -223,7 +223,6 @@ class Application implements IAssetDependent
         if ($type === 'trans') {
             // mimic old behavior: ONLY for trans assets, avoid processing repeated inputs
             $transAssetInputs = array();
-            $translations = array();
             foreach ($assetSources as $assetSource) {
                 if (!empty($assetSource['assets'][$type])) {
                     foreach (array_unique($assetSource['assets'][$type]) as $transAsset) {
@@ -231,11 +230,7 @@ class Application implements IAssetDependent
                     }
                 }
             }
-            foreach ($transAssetInputs as $transAsset) {
-                $renderedTranslations = json_decode($templating->render($transAsset), true);
-                $translations         = array_merge($translations, $renderedTranslations);
-            }
-            $assets[] = new StringAsset('Mapbender.i18n = ' . json_encode($translations, JSON_FORCE_OBJECT) . ';');
+            $assets = array_merge($assets, array_values($transAssetInputs));
         } else {
             $assetRefs = array();
             foreach ($assetSources as $assetSource) {
