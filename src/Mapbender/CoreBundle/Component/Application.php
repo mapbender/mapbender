@@ -142,20 +142,11 @@ class Application implements IAssetDependent
      */
     public function getAssets()
     {
+        $assetService = $this->getAssetService();
         return array(
-            'js'    => array(
-                '@MapbenderCoreBundle/Resources/public/stubs.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
-                '@MapbenderCoreBundle/Resources/public/init/projection.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
-                '@MapbenderCoreBundle/Resources/public/polyfills.js',
-            ),
-            'css'   => array(),
-            'trans' => array(),
+            'js' => $assetService->getBaseAssetReferences($this->entity, 'js'),
+            'css' => $assetService->getBaseAssetReferences($this->entity, 'css'),
+            'trans' => $assetService->getBaseAssetReferences($this->entity, 'trans'),
         );
     }
 
@@ -173,16 +164,9 @@ class Application implements IAssetDependent
                 '\' is unknown.');
         }
 
-        // Add all assets to an asset manager first to avoid duplication
-        //$assets = new LazyAssetManager($this->container->get('assetic.asset_factory'));
         $assets            = array();
-        $templating        = $this->container->get('templating');
         $appTemplate = $this->getTemplate();
 
-        $ownAssets = $this->getAssets();
-        if (!empty($ownAssets[$type])) {
-            $assets = array_merge($assets, $ownAssets[$type]);
-        }
         $assetSources = array(
             array(
                 'object' => $appTemplate,
@@ -246,30 +230,6 @@ class Application implements IAssetDependent
             }
         }
 
-        // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
-        $extraYamlAssets = $this->getEntity()->getExtraAssets();
-        if (is_array($extraYamlAssets) && array_key_exists($type, $extraYamlAssets)) {
-            foreach ($extraYamlAssets[$type] as $asset) {
-                $assets[] = trim($asset);
-            }
-        }
-
-        // add client initialization last, so everything is already in place
-        if ($type === 'js') {
-            $appLoaderTemplate = '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig';
-            $appLoaderContent = $templating->render($appLoaderTemplate, array(
-                'application' => $this,
-            ));
-            $assets[] = new StringAsset($appLoaderContent);
-        }
-
-        if ($type === 'css') {
-            $customCss = $this->getEntity()->getCustomCss();
-            if ($customCss) {
-                $assets[] = new StringAsset($customCss);
-            }
-        }
-
         return $assets;
     }
 
@@ -303,7 +263,6 @@ class Application implements IAssetDependent
      * Build an Assetic reference path from a given objects bundle name(space)
      * and the filename/path within that bundles Resources/public folder.
      *
-     * @todo: This is duplicated in DumpMapbenderAssetsCommand
      * @todo: the AssetFactory should do the ref collection and Bundle => path resolution
      *
      * @param object $object
@@ -591,6 +550,16 @@ class Application implements IAssetDependent
     {
         /** @var ApplicationService $service */
         $service = $container->get('mapbender.presenter.application.service');
+        return $service;
+    }
+
+    /**
+     * @return \Mapbender\CoreBundle\Asset\ApplicationAssetService
+     */
+    protected function getAssetService()
+    {
+        /** @var \Mapbender\CoreBundle\Asset\ApplicationAssetService $service */
+        $service = $this->container->get('mapbender.application_asset.service');
         return $service;
     }
 }

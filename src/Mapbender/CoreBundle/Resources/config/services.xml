@@ -178,6 +178,7 @@
             <argument type="service" id="mapbender.asset_compiler.service" />
             <argument type="service" id="mapbender.element_factory.service" />
             <argument type="service" id="router" />
+            <argument type="service" id="templating" />
             <argument key="minifyCss">%kernel.debug%</argument>
         </service>
     </services>
