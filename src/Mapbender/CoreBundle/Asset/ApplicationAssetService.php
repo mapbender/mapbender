@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\Asset\StringAsset;
 use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -21,6 +22,8 @@ use Symfony\Component\Templating\EngineInterface;
  */
 class ApplicationAssetService
 {
+    /** @var ApplicationService */
+    protected $applicationService;
     /** @var ElementFactory */
     protected $elementFactory;
     /** @var RouterInterface */
@@ -35,6 +38,7 @@ class ApplicationAssetService
     protected $minifyCss;
 
     public function __construct(AssetFactory $compiler,
+                                ApplicationService $applicationService,
                                 ElementFactory $elementFactory,
                                 RouterInterface $router,
                                 EngineInterface $templateEngine,
@@ -42,6 +46,7 @@ class ApplicationAssetService
     {
         $this->compiler = $compiler;
         $this->elementFactory = $elementFactory;
+        $this->applicationService = $applicationService;
         $this->router = $router;
         $this->templateEngine = $templateEngine;
         $this->minifyCss = $minifyCss;
@@ -86,6 +91,7 @@ class ApplicationAssetService
         $referenceLists = array(
             $this->getBaseAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
+            $this->getElementAssetReferences($application, $type),
             $appComp->getAssetGroup($type),
             $this->getTemplateLateAssetReferences($application, $type),
         );
@@ -166,6 +172,25 @@ class ApplicationAssetService
         $templateComponent = $this->getDummyTemplateComponent($application);
         $refs = $templateComponent->getAssets($type);
         return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
+    }
+
+    /**
+     * @param Entity\Application $application
+     * @param string $type
+     * @return string[]
+     */
+    public function getElementAssetReferences(Entity\Application $application, $type)
+    {
+        $combinedRefs = array();
+        // Skip grants checks here to avoid issues with application asset caching.
+        // Non-granted Elements will skip HTML rendering and config and will not be initialized.
+        // Emitting the base js / css / translation assets OTOH is always safe to do
+        foreach ($this->applicationService->getActiveElements($application, false) as $element) {
+            $elementRefs = ArrayUtil::getDefault($element->getAssets() ?: array(), $type, array());
+            $qualifiedRefs = $this->qualifyAssetReferencesBulk($element, $elementRefs, $type);
+            $combinedRefs = array_merge($combinedRefs, $qualifiedRefs);
+        }
+        return $combinedRefs;
     }
 
     /**

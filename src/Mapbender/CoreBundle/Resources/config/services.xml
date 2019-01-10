@@ -176,6 +176,7 @@
         </service>
         <service id="mapbender.application_asset.service" class="%mapbender.application_asset.service.class%">
             <argument type="service" id="mapbender.asset_compiler.service" />
+            <argument type="service" id="mapbender.presenter.application.service" />
             <argument type="service" id="mapbender.element_factory.service" />
             <argument type="service" id="router" />
             <argument type="service" id="templating" />

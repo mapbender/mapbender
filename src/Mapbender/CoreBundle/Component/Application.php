@@ -166,17 +166,6 @@ class Application implements IAssetDependent
 
         $assetSources = array();
 
-        // Collect asset definitions from elements configured in the application
-        // Skip grants checks here to avoid issues with application asset caching.
-        // Non-granted Elements will skip HTML rendering and config and will not be initialized.
-        // Emitting the base js / css / translation assets OTOH is always safe to do
-        foreach ($this->getService()->getActiveElements($this->entity, false) as $element) {
-            $assetSources[] = array(
-                'object' => $element,
-                'assets' => $element->getAssets(),
-            );
-        }
-
         // Collect all layer asset definitions
         foreach ($this->entity->getLayersets() as $layerset) {
             foreach ($this->filterActiveSourceInstances($layerset) as $layer) {
