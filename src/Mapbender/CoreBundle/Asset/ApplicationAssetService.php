@@ -274,8 +274,8 @@ class ApplicationAssetService
      */
     protected function getCssAssetSourcePath()
     {
-        // Calculate the subfolder under the current host that containes the web directory
-        // from the Router's RequestContext.
+        // Calculate the subfolder under the current host that contains the web directory
+        // (actually, the entry script) from the Router's RequestContext.
         // This is equivalent to calling Request::getBasePath
         $baseUrl = $this->router->getContext()->getBaseUrl();
         $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
@@ -287,8 +287,8 @@ class ApplicationAssetService
      * Amend given bundle-implicit assetic $reference with bundle scope from
      * given $scopeObject. If the $reference is already bundle-qualified, return
      * it unmodified.
-     * If the passed reference is a web-anchored file path, turn it into a relative
-     * file path.
+     * If the passed reference is interpreted as a web-anchored file path (starts with '/')
+     * or an app/Resources-relative path (starts with '.'), also return it unmodified.
      *
      * @param object $scopeObject
      * @param string $reference
@@ -298,19 +298,15 @@ class ApplicationAssetService
     {
         // If it starts with an @ we assume it's already an assetic reference
         $firstChar = $reference[0];
-        if ($firstChar == "/") {
-            return "../../web/" . substr($reference, 1);
-        } elseif ($firstChar == ".") {
+        if ($firstChar === '@' || $firstChar === '/' || $firstChar === '.') {
             return $reference;
-        } elseif ($firstChar !== '@') {
+        } else {
             if (!$scopeObject) {
                 throw new \RuntimeException("Can't resolve asset path $reference with empty object context");
             }
             $namespaces = explode('\\', get_class($scopeObject));
             $bundle     = sprintf('%s%s', $namespaces[0], $namespaces[1]);
             return sprintf('@%s/Resources/public/%s', $bundle, $reference);
-        } else {
-            return $reference;
         }
     }
 
@@ -324,6 +320,8 @@ class ApplicationAssetService
      */
     protected function qualifyAssetReferencesBulk($scopeObject, $references, $type)
     {
+        // NOTE: Translations assets are views (twig templates); they never supported
+        //       automatic bundle namespace inferrence, and they still don't.
         if ($type !== 'trans') {
             $refsOut = array();
             foreach ($references as $singleRef) {

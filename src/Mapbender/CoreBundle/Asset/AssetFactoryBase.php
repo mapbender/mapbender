@@ -60,13 +60,8 @@ class AssetFactoryBase
      */
     protected function makeFileAsset($input)
     {
-        $sourcePath = $this->getSourcePath($input);
-        if ($sourcePath) {
-            $file = $this->fileLocator->locate($sourcePath);
-        } else {
-            $file = $this->fileLocator->locate($input);
-        }
-        $fileAsset = new FileAsset($file);
+        $sourcePath = $this->fileLocator->locate($this->getSourcePath($input));
+        $fileAsset = new FileAsset($sourcePath);
 
         return $fileAsset;
     }
@@ -83,14 +78,17 @@ class AssetFactoryBase
             // Path inside the Resources/public folder
             $assetPath = substr($input,
                 strlen('@' . $bundle . '/Resources/public'));
-            $assetDir = 'bundles/' . preg_replace('/bundle$/', '', strtolower($bundle));
+            $bundleAssetDir = '/bundles/' . preg_replace('/bundle$/', '', strtolower($bundle));
 
-            return $this->getSourcePath($assetDir . $assetPath);
-        } else {
+            return $this->getSourcePath($bundleAssetDir . $assetPath);
+        } elseif ($input[0] == '/') {
             $inWeb = $this->webDir . '/' . ltrim($input, '/');
             if (@is_file($inWeb) && @is_readable($inWeb)) {
                 return $inWeb;
             }
         }
+        // This makes FileLocator look in app/Resources, but in a way that's not tied to bundle structure
+        // and doesn't support asset drop-in replacements.
+        return $input;
     }
 }

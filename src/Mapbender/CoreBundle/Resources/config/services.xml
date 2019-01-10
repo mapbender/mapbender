@@ -169,7 +169,7 @@
         </service>
         <service id="mapbender.asset_compiler.service" class="%mapbender.asset_compiler.service.class%">
             <argument type="service" id="file_locator" />
-            <argument>%kernel.root_dir%/web</argument>
+            <argument>%kernel.root_dir%/../web</argument>
             <argument type="service" id="templating" />
             <argument type="service" id="mapbender.assetic.filter.sass" />
             <argument type="service" id="assetic.filter.cssrewrite" />
