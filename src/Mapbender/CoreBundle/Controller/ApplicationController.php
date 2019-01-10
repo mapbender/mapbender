@@ -89,7 +89,8 @@ class ApplicationController extends Controller
         }
         $application = new Application($this->container, $appEntity);
         $refs = $application->getAssetGroup($type);
-        $factory = new AssetFactory($this->container);
+        /** @var AssetFactory $compiler */
+        $compiler = $this->container->get('mapbender.asset_compiler.service');
         if ($type == "css") {
             $sourcePath = $request->getBasePath() ?: '.';
             $targetPath = $this->generateUrl('mapbender_core_application_assets', array(
@@ -97,9 +98,9 @@ class ApplicationController extends Controller
                 'type' => $type,
             ));
             $isDebug   = $this->container->get('kernel')->isDebug();
-            $content = $factory->compileCss($refs, $sourcePath, $targetPath, $isDebug);
+            $content = $compiler->compileCss($refs, $sourcePath, $targetPath, $isDebug);
         } else {
-            $content = $factory->compileRaw($refs);
+            $content = $compiler->compileRaw($refs);
         }
 
         if ($isProduction) {

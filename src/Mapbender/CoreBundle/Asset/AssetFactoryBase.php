@@ -7,7 +7,6 @@ use Assetic\Asset\FileAsset;
 use Assetic\Asset\AssetCollection;
 use Assetic\Asset\StringAsset;
 use Symfony\Component\Config\FileLocatorInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AssetFactoryBase
 {

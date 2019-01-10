@@ -4,10 +4,10 @@ namespace Mapbender\CoreBundle\Asset;
 use Assetic\Asset\StringAsset;
 use Assetic\Filter\FilterInterface;
 use Symfony\Component\Config\FileLocatorInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class AssetFactory
+ * Compiles and merges JavaScript, (S)CSS and translation assets.
+ * Registered in container at mapbender.asset_compiler.service
  *
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
@@ -21,17 +21,18 @@ class AssetFactory extends AssetFactoryBase
     protected $cssRewriteFilter;
 
     /**
-     * AssetFactory constructor.
-     *
-     * @param ContainerInterface              $container
+     * @param FileLocatorInterface $fileLocator
+     * @param string $webDir
+     * @param FilterInterface $sassFilter
+     * @param FilterInterface $cssRewriteFilter
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(FileLocatorInterface $fileLocator,
+                                $webDir,
+                                FilterInterface $sassFilter,
+                                FilterInterface $cssRewriteFilter)
     {
-        $this->sassFilter = $container->get('mapbender.assetic.filter.sass');
-        $this->cssRewriteFilter = $container->get("assetic.filter.cssrewrite");
-        $webDir = dirname($container->getParameter('kernel.root_dir') . '/web');
-        /** @var FileLocatorInterface $fileLocator */
-        $fileLocator = $container->get('file_locator');
+        $this->sassFilter = $sassFilter;
+        $this->cssRewriteFilter = $cssRewriteFilter;
         parent::__construct($fileLocator, $webDir);
     }
 
