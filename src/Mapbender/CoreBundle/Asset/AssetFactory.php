@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\Asset\StringAsset;
 use Assetic\Filter\FilterInterface;
+use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,7 +29,10 @@ class AssetFactory extends AssetFactoryBase
     {
         $this->sassFilter = $container->get('mapbender.assetic.filter.sass');
         $this->cssRewriteFilter = $container->get("assetic.filter.cssrewrite");
-        parent::__construct($container);
+        $webDir = dirname($container->getParameter('kernel.root_dir') . '/web');
+        /** @var FileLocatorInterface $fileLocator */
+        $fileLocator = $container->get('file_locator');
+        parent::__construct($fileLocator, $webDir);
     }
 
     /**

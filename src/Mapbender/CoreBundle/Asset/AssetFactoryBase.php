@@ -16,10 +16,14 @@ class AssetFactoryBase
     /** @var FileLocatorInterface */
     protected $fileLocator;
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @param FileLocatorInterface $fileLocator
+     * @param string $webDir
+     */
+    public function __construct(FileLocatorInterface $fileLocator, $webDir)
     {
-        $this->webDir = dirname($container->getParameter('kernel.root_dir') . '/web');
-        $this->fileLocator = $container->get('file_locator');
+        $this->fileLocator = $fileLocator;
+        $this->webDir = $webDir;
     }
 
     /**
