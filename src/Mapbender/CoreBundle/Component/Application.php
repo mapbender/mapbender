@@ -189,36 +189,6 @@ class Application implements IAssetDependent
     }
 
     /**
-     * Build an Assetic reference path from a given objects bundle name(space)
-     * and the filename/path within that bundles Resources/public folder.
-     *
-     * @todo: the AssetFactory should do the ref collection and Bundle => path resolution
-     *
-     * @param object $object
-     * @param string $file
-     * @return string
-     */
-    private function getReference($object, $file)
-    {
-        // If it starts with an @ we assume it's already an assetic reference
-        $firstChar = $file[0];
-        if ($firstChar == "/") {
-            return "../../web/" . substr($file, 1);
-        } elseif ($firstChar == ".") {
-            return $file;
-        } elseif ($firstChar !== '@') {
-            if (!$object) {
-                throw new \RuntimeException("Can't resolve asset path $file with empty object context");
-            }
-            $namespaces = explode('\\', get_class($object));
-            $bundle     = sprintf('%s%s', $namespaces[0], $namespaces[1]);
-            return sprintf('@%s/Resources/public/%s', $bundle, $file);
-        } else {
-            return $file;
-        }
-    }
-
-    /**
      * Get template object
      *
      * @return Template
