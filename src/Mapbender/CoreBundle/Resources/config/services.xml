@@ -27,6 +27,7 @@
         <parameter key="mapbender.strict.element_api">%mapbender.strict%</parameter>
         <parameter key="owsproxy.baseroute">owsproxy3_core_owsproxy_entrypoint</parameter>
         <parameter key="mapbender.asset_compiler.service.class">Mapbender\CoreBundle\Asset\AssetFactory</parameter>
+        <parameter key="mapbender.application_asset.service.class">Mapbender\CoreBundle\Asset\ApplicationAssetService</parameter>
     </parameters>
 
     <services>
@@ -171,6 +172,12 @@
             <argument>%kernel.root_dir%/web</argument>
             <argument type="service" id="mapbender.assetic.filter.sass" />
             <argument type="service" id="assetic.filter.cssrewrite" />
+        </service>
+        <service id="mapbender.application_asset.service" class="%mapbender.application_asset.service.class%">
+            <argument type="service" id="mapbender.asset_compiler.service" />
+            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="router" />
+            <argument key="minifyCss">%kernel.debug%</argument>
         </service>
     </services>
 </container>

@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
+use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
@@ -87,21 +88,9 @@ class ApplicationController extends Controller
                 return $response;
             }
         }
-        $application = new Application($this->container, $appEntity);
-        $refs = $application->getAssetGroup($type);
-        /** @var AssetFactory $compiler */
-        $compiler = $this->container->get('mapbender.asset_compiler.service');
-        if ($type == "css") {
-            $sourcePath = $request->getBasePath() ?: '.';
-            $targetPath = $this->generateUrl('mapbender_core_application_assets', array(
-                'slug' => $slug,
-                'type' => $type,
-            ));
-            $isDebug   = $this->container->get('kernel')->isDebug();
-            $content = $compiler->compileCss($refs, $sourcePath, $targetPath, $isDebug);
-        } else {
-            $content = $compiler->compileRaw($refs);
-        }
+        /** @var ApplicationAssetService $assetService */
+        $assetService = $this->container->get('mapbender.application_asset.service');
+        $content = $assetService->getAssetContent($appEntity, $type);
 
         if ($isProduction) {
             file_put_contents($cacheFile, $content);
