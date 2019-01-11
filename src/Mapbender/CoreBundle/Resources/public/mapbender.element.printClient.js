@@ -58,7 +58,7 @@
             var self = this;
             if (this.options.type === 'dialog') {
                 if(!this.popup || !this.popup.$element){
-                    this.popup = new Mapbender.Popup2({
+                    this.popup = new Mapbender.Popup({
                             title: self.element.attr('title'),
                             draggable: true,
                             header: true,
@@ -66,7 +66,7 @@
                             closeOnESC: false,
                             content: self.element,
                             width: 400,
-                            height: 490,
+                            scrollable: true,
                             cssClass: 'customPrintDialog',
                             buttons: {
                                     'cancel': {
