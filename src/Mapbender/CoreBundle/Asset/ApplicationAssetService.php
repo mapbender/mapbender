@@ -91,7 +91,6 @@ class ApplicationAssetService
             $this->getBaseAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
             $this->getElementAssetReferences($application, $type),
-            $this->getLayerAssetReferences($application, $type),
             $this->getTemplateLateAssetReferences($application, $type),
         );
         $references = call_user_func_array('\array_merge', $referenceLists);
@@ -141,24 +140,46 @@ class ApplicationAssetService
      * @param string $type
      * @return string[]
      */
+    public function getMapEngineAssetReferences(Entity\Application $application, $type)
+    {
+        switch ($type) {
+            case 'js':
+                $commonAssets = array(
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
+                    '@MapbenderCoreBundle/Resources/public/init/projection.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                );
+                break;
+            default:
+                $commonAssets = array();
+                break;
+        }
+        return array_merge($commonAssets, $this->getLayerAssetReferences($application, $type));
+    }
+
+    /**
+     * @param Entity\Application $application
+     * @param string $type
+     * @return string[]
+     */
     public function getBaseAssetReferences(Entity\Application $application, $type)
     {
         switch ($type) {
             case 'js':
-                return array(
+                $commonAssets = array(
                     '@MapbenderCoreBundle/Resources/public/stubs.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
-                    '@MapbenderCoreBundle/Resources/public/init/projection.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                     '@MapbenderCoreBundle/Resources/public/polyfills.js',
                 );
+                break;
             default:
-                return array();
+                $commonAssets = array();
+                break;
         }
+        return array_merge($commonAssets, $this->getMapEngineAssetReferences($application, $type));
     }
 
     /**
@@ -197,7 +218,7 @@ class ApplicationAssetService
      * @param string $type
      * @return string[]
      */
-    public function getLayerAssetReferences(Entity\Application $application, $type)
+    protected function getLayerAssetReferences(Entity\Application $application, $type)
     {
         $activeInstances = array();
         foreach ($application->getLayersets() as $layerset) {
