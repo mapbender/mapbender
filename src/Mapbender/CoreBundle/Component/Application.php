@@ -142,20 +142,11 @@ class Application implements IAssetDependent
      */
     public function getAssets()
     {
+        $assetService = $this->getAssetService();
         return array(
-            'js'    => array(
-                '@MapbenderCoreBundle/Resources/public/stubs.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
-                '@MapbenderCoreBundle/Resources/public/init/projection.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
-                '@MapbenderCoreBundle/Resources/public/polyfills.js',
-            ),
-            'css'   => array(),
-            'trans' => array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js')
+            'js' => $assetService->getBaseAssetReferences($this->entity, 'js'),
+            'css' => $assetService->getBaseAssetReferences($this->entity, 'css'),
+            'trans' => $assetService->getBaseAssetReferences($this->entity, 'trans'),
         );
     }
 
@@ -168,114 +159,7 @@ class Application implements IAssetDependent
      */
     public function getAssetGroup($type)
     {
-        if (!\in_array($type, $this->getValidAssetTypes(), true)) {
-            throw new \RuntimeException('Asset type \'' . $type .
-                '\' is unknown.');
-        }
-
-        // Add all assets to an asset manager first to avoid duplication
-        //$assets = new LazyAssetManager($this->container->get('assetic.asset_factory'));
-        $assets            = array();
-        $templating        = $this->container->get('templating');
-        $appTemplate = $this->getTemplate();
-
-        $ownAssets = $this->getAssets();
-        if (!empty($ownAssets[$type])) {
-            $assets = array_merge($assets, $ownAssets[$type]);
-        }
-        $assetSources = array(
-            array(
-                'object' => $appTemplate,
-                'assets' => array(
-                    $type => $appTemplate->getAssets($type),
-                ),
-            ),
-        );
-
-        // Collect asset definitions from elements configured in the application
-        // Skip grants checks here to avoid issues with application asset caching.
-        // Non-granted Elements will skip HTML rendering and config and will not be initialized.
-        // Emitting the base js / css / translation assets OTOH is always safe to do
-        foreach ($this->getService()->getActiveElements($this->entity, false) as $element) {
-            $assetSources[] = array(
-                'object' => $element,
-                'assets' => $element->getAssets(),
-            );
-        }
-
-        // Collect all layer asset definitions
-        foreach ($this->entity->getLayersets() as $layerset) {
-            foreach ($this->filterActiveSourceInstances($layerset) as $layer) {
-                $assetSources[] = array(
-                    'object' => $layer,
-                    'assets' => $layer->getAssets(),
-                );
-            }
-        }
-
-        $assetSources[] = array(
-            'object' => $appTemplate,
-            'assets' => array(
-                $type => $appTemplate->getLateAssets($type),
-            ),
-        );
-
-        if ($type === 'trans') {
-            // mimic old behavior: ONLY for trans assets, avoid processing repeated inputs
-            $transAssetInputs = array();
-            $translations = array();
-            foreach ($assetSources as $assetSource) {
-                if (!empty($assetSource['assets'][$type])) {
-                    foreach (array_unique($assetSource['assets'][$type]) as $transAsset) {
-                        $transAssetInputs[$transAsset] = $transAsset;
-                    }
-                }
-            }
-            foreach ($transAssetInputs as $transAsset) {
-                $renderedTranslations = json_decode($templating->render($transAsset), true);
-                $translations         = array_merge($translations, $renderedTranslations);
-            }
-            $assets[] = new StringAsset('Mapbender.i18n = ' . json_encode($translations, JSON_FORCE_OBJECT) . ';');
-        } else {
-            $assetRefs = array();
-            foreach ($assetSources as $assetSource) {
-                if (!empty($assetSource['assets'][$type])) {
-                    foreach ($assetSource['assets'][$type] as $asset) {
-                        $assetRef = $this->getReference($assetSource['object'], $asset);
-                        if (!array_key_exists($assetRef, $assetRefs)) {
-                            $assets[] = $assetRef;
-                            $assetRefs[$assetRef] = true;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
-        $extraYamlAssets = $this->getEntity()->getExtraAssets();
-        if (is_array($extraYamlAssets) && array_key_exists($type, $extraYamlAssets)) {
-            foreach ($extraYamlAssets[$type] as $asset) {
-                $assets[] = trim($asset);
-            }
-        }
-
-        // add client initialization last, so everything is already in place
-        if ($type === 'js') {
-            $appLoaderTemplate = '@MapbenderCoreBundle/Resources/views/application.config.loader.js.twig';
-            $appLoaderContent = $templating->render($appLoaderTemplate, array(
-                'application' => $this,
-            ));
-            $assets[] = new StringAsset($appLoaderContent);
-        }
-
-        if ($type === 'css') {
-            $customCss = $this->getEntity()->getCustomCss();
-            if ($customCss) {
-                $assets[] = new StringAsset($customCss);
-            }
-        }
-
-        return $assets;
+        return $this->getAssetService()->collectAssetReferences($this->entity, $type);
     }
 
     /**
@@ -302,37 +186,6 @@ class Application implements IAssetDependent
         // Convert to asset
         $asset = new StringAsset(json_encode((object)$configuration));
         return $asset->dump();
-    }
-
-    /**
-     * Build an Assetic reference path from a given objects bundle name(space)
-     * and the filename/path within that bundles Resources/public folder.
-     *
-     * @todo: This is duplicated in DumpMapbenderAssetsCommand
-     * @todo: the AssetFactory should do the ref collection and Bundle => path resolution
-     *
-     * @param object $object
-     * @param string $file
-     * @return string
-     */
-    private function getReference($object, $file)
-    {
-        // If it starts with an @ we assume it's already an assetic reference
-        $firstChar = $file[0];
-        if ($firstChar == "/") {
-            return "../../web/" . substr($file, 1);
-        } elseif ($firstChar == ".") {
-            return $file;
-        } elseif ($firstChar !== '@') {
-            if (!$object) {
-                throw new \RuntimeException("Can't resolve asset path $file with empty object context");
-            }
-            $namespaces = explode('\\', get_class($object));
-            $bundle     = sprintf('%s%s', $namespaces[0], $namespaces[1]);
-            return sprintf('@%s/Resources/public/%s', $bundle, $file);
-        } else {
-            return $file;
-        }
     }
 
     /**
@@ -596,6 +449,16 @@ class Application implements IAssetDependent
     {
         /** @var ApplicationService $service */
         $service = $container->get('mapbender.presenter.application.service');
+        return $service;
+    }
+
+    /**
+     * @return \Mapbender\CoreBundle\Asset\ApplicationAssetService
+     */
+    protected function getAssetService()
+    {
+        /** @var \Mapbender\CoreBundle\Asset\ApplicationAssetService $service */
+        $service = $this->container->get('mapbender.application_asset.service');
         return $service;
     }
 }
