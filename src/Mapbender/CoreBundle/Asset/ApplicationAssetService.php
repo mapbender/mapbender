@@ -36,13 +36,16 @@ class ApplicationAssetService
     protected $templateEngine;
     /** @var bool */
     protected $minifyCss;
+    /** @var bool */
+    protected $strict;
 
     public function __construct(AssetFactory $compiler,
                                 ApplicationService $applicationService,
                                 ElementFactory $elementFactory,
                                 RouterInterface $router,
                                 EngineInterface $templateEngine,
-                                $minifyCss=false)
+                                $minifyCss=false,
+                                $strict=false)
     {
         $this->compiler = $compiler;
         $this->elementFactory = $elementFactory;
@@ -50,6 +53,7 @@ class ApplicationAssetService
         $this->router = $router;
         $this->templateEngine = $templateEngine;
         $this->minifyCss = $minifyCss;
+        $this->strict = $strict;
         $this->dummyContainer = new Container();
         $this->dummyContainer->set('templating', new \stdClass());
     }
@@ -324,6 +328,14 @@ class ApplicationAssetService
         } else {
             if (!$scopeObject) {
                 throw new \RuntimeException("Can't resolve asset path $reference with empty object context");
+            }
+            $message = "Missing explicit bundle path in asset reference "
+                     . print_r($reference, true)
+                     . " from " . get_class($scopeObject);
+            if ($this->strict) {
+                throw new \RuntimeException($message);
+            } else {
+                @trigger_error("Deprecated: {$message}", E_USER_DEPRECATED);
             }
             $namespaces = explode('\\', get_class($scopeObject));
             $bundle     = sprintf('%s%s', $namespaces[0], $namespaces[1]);
