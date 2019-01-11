@@ -99,6 +99,7 @@
             'template', 'autoOpen', 'modal',
             'header', 'closeButton',
             'destroyOnClose', 'detachOnClose',
+            'closeOnOutsideClick',
             'scrollable', 'resizable'
         ];
         // use the options mechanism to set up most of the things
