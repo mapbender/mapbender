@@ -50,11 +50,14 @@ class Redlining extends Element
         return array(
             'js' => array(
                 'mapbender.element.redlining.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'
+                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
-            'css' => array('sass/element/redlining.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:redlining.json.twig')
+            'css' => array(
+                'sass/element/redlining.scss',
+            ),
+            'trans' => array(
+                'MapbenderCoreBundle:Element:redlining.json.twig',
+            ),
         );
     }
 

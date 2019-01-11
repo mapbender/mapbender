@@ -63,7 +63,6 @@ class PrintClient extends Element
             'js' => array(
                 '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
                 'mapbender.element.printClient.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
             'css' => array(

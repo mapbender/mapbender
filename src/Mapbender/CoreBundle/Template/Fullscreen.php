@@ -27,7 +27,6 @@ class Fullscreen extends Template
         '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'
     );
     protected static $js                = array(
-        '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
         '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
         '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
         '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',

@@ -14,7 +14,6 @@ class Regional extends Responsive
     protected static $title   = "Regional";
     protected static $regions = array('top', 'left', 'center', 'right', 'bottom');
     protected static $js      = array(
-        '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
         '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
         '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
         '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',

@@ -112,15 +112,20 @@ class SearchRouter extends Element
     {
         return array(
             'js'    => array(
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 'vendor/json2.js',
                 'vendor/backbone.js',
                 'mapbender.element.searchRouter.Feature.js',
                 'mapbender.element.searchRouter.Search.js',
-                'mapbender.element.searchRouter.js'),
-            'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:search_router.json.twig'));
+                'mapbender.element.searchRouter.js',
+            ),
+            'css'   => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss',
+            ),
+            'trans' => array(
+                'MapbenderCoreBundle:Element:search_router.json.twig',
+            ),
+        );
     }
 
     /**

@@ -15,7 +15,6 @@ class Classic extends Fullscreen
         '@MapbenderCoreBundle/Resources/public/sass/template/classic.scss',
     );
     protected static $js      = array(
-        '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
         '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'
     );
 

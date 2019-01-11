@@ -16,7 +16,6 @@ class Responsive extends Fullscreen
         '@MapbenderCoreBundle/Resources/public/sass/template/responsive.scss'
     );
     protected static $js      = array(
-        '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
         '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
         '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
         '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',

@@ -62,15 +62,17 @@ class Layertree extends Element
         $assets = array(
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/dragdealer.min.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
                 '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
                 'mapbender.element.layertree.tree.js',
-                'mapbender.metadata.js'),
+                'mapbender.metadata.js',
+            ),
             'css' => array(
-                '@MapbenderCoreBundle/Resources/public/sass/element/layertree.scss'),
+                '@MapbenderCoreBundle/Resources/public/sass/element/layertree.scss',
+            ),
             'trans' => array(
-                'MapbenderCoreBundle:Element:layertree.json.twig')
+                'MapbenderCoreBundle:Element:layertree.json.twig',
+            ),
         );
         return $assets;
     }

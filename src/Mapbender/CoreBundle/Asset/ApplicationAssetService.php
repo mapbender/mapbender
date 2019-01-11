@@ -180,6 +180,8 @@ class ApplicationAssetService
                     '/components/underscore/underscore-min.js',
                     '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+                    '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 );
                 break;
             default:

@@ -71,18 +71,18 @@ class SuggestMap extends WmcBase
      */
     public function getAssets()
     {
-        $js = array(
-            'mapbender.element.suggestmap.js',
-            '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-            '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
-        );
         return array(
-            'js' => $js,
+            'js' => array(
+                'mapbender.element.suggestmap.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js',
+            ),
             'css' => array(
-                'sass/element/suggestmap.scss'),
+                'sass/element/suggestmap.scss',
+            ),
             'trans' => array(
                 'MapbenderWmcBundle:Element:suggestmap.json.twig',
-                'MapbenderWmcBundle:Element:wmchandler.json.twig')
+                'MapbenderWmcBundle:Element:wmchandler.json.twig',
+            ),
         );
     }
 
