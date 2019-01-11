@@ -112,12 +112,11 @@
 
             if(!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
-                    title:          this.element.attr('title'),
-                    modal:          false,
-                    draggable:      true,
-                    resizable:      true,
-                    closeButton:    false,
-                    closeOnESC:     true,
+                    title: self.element.attr('title'),
+                    modal: false,
+                    draggable: true,
+                    resizable: true,
+                    closeOnESC: true,
                     destroyOnClose: true,
                     content:        this.container,
                     width:          300,

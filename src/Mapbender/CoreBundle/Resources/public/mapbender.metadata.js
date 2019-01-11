@@ -34,7 +34,6 @@ Mapbender.Metadata.loadAsPopup = function(sourceId, layerName) {
                     modal: false,
                     resizable: true,
                     draggable: true,
-                    closeButton: true,
                     closeOnESC: false,
                     cssClass: 'metadataDialog',
                     content: [

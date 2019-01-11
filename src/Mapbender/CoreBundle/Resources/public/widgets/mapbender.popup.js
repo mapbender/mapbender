@@ -50,22 +50,63 @@
 
         // Create final options
         this.options = $.extend({}, this.defaults, options);
+        if (this.options.closeOnPopupCloseClick) {
+            console.warn("Merging deprecated option 'closeOnPopupCloseClick' into 'closeButton'");
+            this.options.closeButton = true;
+            delete this.options['closeOnPopupCloseClick'];
+        }
+
+        options.closeButton = !!(options.closeButton || options.closeOnPopupCloseClick);
 
         // Create DOM element
         this.$element = $(this.options.template)
             .attr('id', 'mbpopup-' + counter++);
         if (this.options.modal) {
             this.$modalWrap = $('<div class="popupContainer modal"><div class="overlay"></div></div>');
+            if (this.options.closeOnOutsideClick) {
+                this.$modalWrap.on('click', function(evt) {
+                    if (!$(evt.target).closest(self.$element).length) {
+                        self.close();
+                    }
+                });
+            }
+        }
+        this.$element.toggleClass('noCloseButton', !this.options.closeButton);
+        $('.popupHead', this.$element).toggleClass('hidden', !this.options.header);
+        if (this.options.scrollable) {
+            $('.popup-body', this.$element).addClass('popupScroll');
+        } else {
+            if (this.options.height) {
+                console.warn("Ignoring height option on non-scrollable popup");
+            }
+            this.options.height = null;
+        }
+        if (this.options.resizable) {
+            var resizableOptions = this.options.resizable;
+            if (!$.isPlainObject(resizableOptions)) {
+                resizableOptions = null;
+            }
+            this.$element.resizable(resizableOptions);
+        }
+        if (this.options.closeButton) {
+            this.$element.on('click', '.popupClose', $.proxy(this.close, this));
+        } else {
+            $('.popupClose', this.$element).remove();
         }
 
+
+        var staticOptions = [
+            'template', 'autoOpen', 'modal',
+            'header', 'closeButton',
+            'destroyOnClose', 'detachOnClose',
+            'scrollable', 'resizable'
+        ];
         // use the options mechanism to set up most of the things
         $.each(this.options, function(key, value) {
             // Skip options which already have been used or have to be used late
-            if(key == 'template' || key == 'autoOpen' || key === 'modal') {
-                return;
+            if (key !== 'autoOpen' && -1 === staticOptions.indexOf(key)) {
+                self.option(key, value);
             }
-
-            self.option(key, value);
         });
 
         // focused on popup click
@@ -97,7 +138,7 @@
                 '      <span class="popupClose right iconCancel iconBig"></span>',
                 '      <div class="clear"></div>',
                 '    </div>',
-                '   <div class="popup-body popupScroll">',
+                '   <div class="popup-body">',
                 '      <div class="popupContent"></div>',
                 '   </div>',
                 '   <div class="footer row no-gutters">',
@@ -119,10 +160,10 @@
             closeOnESC: true,
             detachOnClose: true,
             closeOnOutsideClick: false,
-            closeOnPopupCloseClick: true,
             destroyOnClose: false,
             modal: true,
 
+            scrollable: true,
             // Width, if not set, use custom CSS for cssClass
             width: null,
             // Height, if not set, use custom CSS for cssClass
@@ -148,50 +189,7 @@
         },
 
         option: function(key, value) {
-            var popup = $('.popup', this.$element.get(0));
-
             switch(key) {
-                case 'header':
-                    if(undefined === value) {
-                        return this.options[key];
-                    }
-                    var header = $('.popupHead', this.$element.get(0));
-
-                    if(value) {
-                        header.removeClass('hidden');
-                    } else {
-                        header.addClass('hidden');
-                    }
-                break;
-
-                case 'closeButton':
-                    if(undefined === value) {
-                        return this.options[key];
-                    }
-                    if(value) {
-                        popup.removeClass('noCloseButton');
-                    } else {
-                        popup.addClass('noCloseButton');
-                    }
-                break;
-
-                // Some simple setter/getter options
-                case 'destroyOnClose':
-                    if(undefined === value) {
-                        return this.options[key];
-                    } else {
-                        this.options[key] = value;
-                    }
-                break;
-
-                case 'detachOnClose':
-                    if(undefined === value) {
-                        return this.options[key];
-                    } else {
-                        this.options[key] = value;
-                    }
-                break;
-
                 default:
                     var fct = this[key];
                     if(typeof fct == 'function') {
@@ -373,28 +371,6 @@
         },
 
         /**
-         * Set or get resizable status
-         * @param {mixed} state, undefined gets, true or false sets state, an object of options for jQuery UI resizable
-         *                can also be passed
-         * @return {boolean}
-         */
-        resizable: function(state) {
-            if(undefined === state) {
-                return this.options.resizable;
-            }
-
-            if(state) {
-                $('.popup', this.$element).resizable($.isPlainObject(state) ? state : null);
-            } else {
-                var popup = $('.popup', this.$element);
-                if(popup.data('uiResizable')) {
-                    popup.resizable('destroy');
-                }
-            }
-        },
-
-
-        /**
          * Set or get closeOnESC
          * @param  {boolean} state, undefined gets
          * @return {boolean}
@@ -412,47 +388,6 @@
             }
 
             this.options.closeOnESC = state;
-        },
-
-
-        /**
-         * Set or get closeOnPopupCloseClick
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        closeOnPopupCloseClick: function(state) {
-            if(undefined === state) {
-                return this.options.closeOnPopupCloseClick;
-            }
-
-            if(state){
-                $('.popupClose', this.$element.get(0)).on('click', $.proxy(this.close, this));
-                $('.popupClose', this.$element.get(0)).removeClass('hidden');
-            }else{
-                $('.popupClose', this.$element.get(0)).off('click');
-                $('.popupClose', this.$element.get(0)).addClass('hidden');
-            }
-
-            this.options.closeOnPopupCloseClick = state;
-        },
-
-        /**
-         * Set or get closeOnOutsideClick
-         * @param  {boolean} state, undefined gets
-         * @return {boolean}
-         */
-        closeOnOutsideClick: function(state) {
-            if(undefined === state) {
-                return this.options.closeOnOutsideClick;
-            }
-
-            if(state){
-                $('.overlay', this.$element.get(0)).on('click', $.proxy(this.close, this));
-            }else{
-                $('.overlay', this.$element.get(0)).off('click');
-            }
-
-            this.options.closeOnOutsideClick = state;
         },
 
         /**

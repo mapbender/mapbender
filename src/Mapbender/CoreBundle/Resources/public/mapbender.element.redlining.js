@@ -157,7 +157,6 @@
                     draggable: true,
                     header: true,
                     modal: false,
-                    closeButton: false,
                     closeOnESC: false,
                     content: self.element,
                     width: 500,
