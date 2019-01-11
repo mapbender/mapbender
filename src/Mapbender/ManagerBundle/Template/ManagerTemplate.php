@@ -16,9 +16,6 @@ class ManagerTemplate extends Template
     );
 
     protected static $js = array(
-        '/components/underscore/underscore-min.js',
-        '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
-        '/components/datatables/media/js/jquery.dataTables.min.js',
         '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
         '/components/vis-ui.js/vis-ui.js-built.js',
         '/bundles/fosjsrouting/js/router.js',

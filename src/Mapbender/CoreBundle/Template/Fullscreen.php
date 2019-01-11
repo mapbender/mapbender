@@ -27,13 +27,10 @@ class Fullscreen extends Template
         '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'
     );
     protected static $js                = array(
-        '/components/underscore/underscore-min.js',
         '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
         '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
         '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
         '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
-        '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js',
-        "/components/datatables/media/js/jquery.dataTables.min.js",
         '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
         "/components/vis-ui.js/vis-ui.js-built.js"
     );
