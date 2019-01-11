@@ -47,7 +47,6 @@ class GpsPosition extends Element
     {
         return array(
             'js'    => array(
-                'mapbender.element.button.js',
                 'mapbender.element.gpsPosition.js',
             ),
             'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/gpsposition.scss'),

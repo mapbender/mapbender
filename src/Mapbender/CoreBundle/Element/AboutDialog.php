@@ -45,7 +45,6 @@ class AboutDialog extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.button.js',
                 'mapbender.element.aboutDialog.js',
             ),
             'css' => array(
