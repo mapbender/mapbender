@@ -6,8 +6,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * NOTE: table name is chosen for compatibility with older implementations
- * NOTE: idSalt property / column is a legacy construct superseded by 'filename'; idSalt is still supported for
- *       compatibility with older implementations
+ * NOTE: 'filename' attribute is mapped to a column named 'salt' for compatibility with older implementations
  *
  * @ORM\Entity(repositoryClass="Mapbender\PrintBundle\Repository\QueuedPrintJobRepository")
  * @ORM\Table(name="mb_print_queue")
