@@ -119,6 +119,15 @@ $.widget("mapbender.mbPrintClientJobList", {
         return $table.dataTable().api();
     },
     _renderInterface: function (row) {
+        if (row.downloadUrl) {
+            var $a = $('<a />')
+                .attr('href', row.downloadUrl)
+                .attr('target', '_blank')
+            ;
+            var $icon = $('<i/>').addClass('fa fa-file-pdf-o');
+            $a.append($icon);
+            return $a.get(0).outerHTML;
+        }
         return '<span><i class="fa fa-cog fa-spin" /></span>';
     },
     _noop: function() {}

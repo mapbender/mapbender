@@ -6,7 +6,6 @@ namespace Mapbender\PrintBundle\Component\Plugin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 use Mapbender\PrintBundle\Repository\QueuedPrintJobRepository;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -15,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -32,18 +32,23 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
     protected $tokenStorage;
     /** @var string */
     protected $storagePath;
+    /** @var UrlGeneratorInterface */
+    protected $router;
 
     /**
      * @param EntityManagerInterface $entityManager
      * @param TokenStorageInterface $tokenStorage
+     * @param UrlGeneratorInterface $router
      * @param string $storagePath
      */
     public function __construct(EntityManagerInterface $entityManager,
                                 TokenStorageInterface $tokenStorage,
+                                UrlGeneratorInterface $router,
                                 $storagePath)
     {
         $this->entityManager = $entityManager;
         $this->tokenStorage = $tokenStorage;
+        $this->router = $router;
         if (!is_dir($storagePath)) {
             @mkdir($storagePath);
         }
@@ -78,7 +83,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
         switch ($request->attributes->get('action')) {
             case 'queuelist':
                 $entities = $this->loadQueueList($request);
-                return new JsonResponse($this->formatQueueList($entities));
+                return new JsonResponse($this->formatQueueList($entities, $elementEntity));
             case 'open':
                 $jobId = $request->query->get('id');
                 if (!$jobId) {
@@ -170,24 +175,37 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
 
     /**
      * @param QueuedPrintJob[] $entities
+     * @param Element $elementEntity
      * @return array[]
      */
-    protected function formatQueueList($entities)
+    protected function formatQueueList($entities, Element $elementEntity)
     {
         $dataOut = array();
+        $elementAction = $this->router->generate('mapbender_core_application_element', array(
+            'id' => $elementEntity->getId(),
+            'slug' => $elementEntity->getApplication()->getSlug(),
+        ));
         foreach ($entities as $entity) {
             // @todo: status string should be translatable
             if ($entity->getCreated()) {
-                $status = "fertig";
+                $calculated = array(
+                    'status' => 'fertig',
+                    'downloadUrl' => rtrim($elementAction, '/') . "/open?id={$entity->getId()}",
+                );
             } elseif ($entity->getStarted()) {
-                $status = "in Bearbeitung";
+                $calculated = array(
+                    'status' => 'in Bearbeitung',
+                    'downloadUrl' => null,
+                );
             } else {
-                $status = "Warteschlange";
+                $calculated = array(
+                    'status' => 'Warteschlange',
+                    'downloadUrl' => null,
+                );
             }
-            $dataOut[] = array(
+            $dataOut[] = $calculated + array(
                 'id' => $entity->getId(),
                 'ctime' => $this->dateTimeToTimestamp($entity->getQueued()),
-                'status' => $status,
             );
         }
         return $dataOut;
