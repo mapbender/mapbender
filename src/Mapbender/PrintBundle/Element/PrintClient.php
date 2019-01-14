@@ -183,11 +183,21 @@ class PrintClient extends Element
             'id' => $this->entity->getId(),
             'action' => $this->getSubmitAction(),
         ));
-        return array(
-            'configuration' => $config,
-            'submitUrl' => $submitUrl,
-            'formTarget' => '_blank',
-        );
+        if ($this->isQueueModeEnabled()) {
+            $submitFrameName = $this->getSubmitFrameName();
+            return array(
+                'configuration' => $config,
+                'submitUrl' => $submitUrl,
+                'formTarget' => $submitFrameName,
+                'submitFrameName' => $submitFrameName,
+            );
+        } else {
+            return array(
+                'configuration' => $config,
+                'submitUrl' => $submitUrl,
+                'formTarget' => '_blank',
+            );
+        }
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
@@ -453,5 +463,15 @@ class PrintClient extends Element
         /** @var UrlProcessor $service */
         $service = $this->container->get('mapbender.source.url_processor.service');
         return $service;
+    }
+
+    /**
+     * Generates an iframe name that can be used for ~"invisible" form submission, Ajax posts etc.
+     * @todo: this would be more convenient to have on the template level, so all Elements could share a single
+     *        frame.
+     */
+    protected function getSubmitFrameName()
+    {
+        return "submit-frame-{$this->entity->getId()}";
     }
 }

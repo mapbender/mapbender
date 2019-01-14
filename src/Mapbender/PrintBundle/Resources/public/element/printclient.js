@@ -383,6 +383,8 @@
             this._submitJob(jobData);
         },
         _onSubmit: function(evt) {
+            // switch to queue display tab on successful submit
+            $('.tab-container', this.element).tabs({active: 1});
         },
         _getTemplateSize: function() {
             var self = this;
