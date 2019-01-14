@@ -186,20 +186,19 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
             'slug' => $elementEntity->getApplication()->getSlug(),
         ));
         foreach ($entities as $entity) {
-            // @todo: status string should be translatable
             if ($entity->getCreated()) {
                 $calculated = array(
-                    'status' => 'fertig',
+                    'status' => 'mb.print.printclient.joblist.status.finished',
                     'downloadUrl' => rtrim($elementAction, '/') . "/open?id={$entity->getId()}",
                 );
             } elseif ($entity->getStarted()) {
                 $calculated = array(
-                    'status' => 'in Bearbeitung',
+                    'status' => 'mb.print.printclient.joblist.status.processing',
                     'downloadUrl' => null,
                 );
             } else {
                 $calculated = array(
-                    'status' => 'Warteschlange',
+                    'status' => 'mb.print.printclient.joblist.status.pending',
                     'downloadUrl' => null,
                 );
             }

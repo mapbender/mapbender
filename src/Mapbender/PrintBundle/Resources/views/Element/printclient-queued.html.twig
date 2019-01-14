@@ -2,8 +2,8 @@
 {% block printclient_main %}
     <div class="tab-container">
         <ul class="tabs">
-            <li><a href="{{ '#' ~ id ~ '-settings' }}">Einstellungen</a></li>
-            <li><a href="{{ '#' ~ id ~ '-job-list' }}">Druckaufträge</a></li>
+            <li><a href="{{ '#' ~ id ~ '-settings' }}">{{ 'mb.print.printclient.tab.settings' | trans }}</a></li>
+            <li><a href="{{ '#' ~ id ~ '-job-list' }}">{{ 'mb.print.printclient.tab.joblist' | trans }}</a></li>
         </ul>
         <div id="{{id ~ '-settings' }}" class="print-form">
             {{ parent() }}
@@ -12,9 +12,9 @@
             <table data-order='[[0, "desc"]]' class="row no-gutters">
                 <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Datum</th>
-                    <th>Status</th>
+                    <th>{{ 'mb.print.printclient.joblist.header.id' | trans }}</th>
+                    <th>{{ 'mb.print.printclient.joblist.header.ctime' | trans }}</th>
+                    <th>{{ 'mb.print.printclient.joblist.header.status' | trans }}</th>
                     <th class="interface"></th>
                 </tr>
                 </thead>

@@ -88,6 +88,14 @@ $.widget("mapbender.mbPrintClientJobList", {
                              return self._renderInterface(row);
                          };
                          break;
+                     case 'status':
+                         column.render = function(val, type, row, meta) {
+                             if (type !== 'display') {
+                                 return null;
+                             }
+                             return Mapbender.trans(row['status']);
+                         };
+                         break;
                      default:
                          column.render = function (val, type, row, meta) {
                              if (type !== 'display') {
@@ -111,8 +119,8 @@ $.widget("mapbender.mbPrintClientJobList", {
                  autoWidth:  false,
                  columnDefs: columns,
                  language: {
-                     "loadingRecords" : "wird geladen ...",
-                     "emptyTable" : "keine Aufträge vorhanden"
+                     "loadingRecords" : Mapbender.trans('mb.print.printclient.joblist.loading'),
+                     "emptyTable" : Mapbender.trans('mb.print.printclient.joblist.nodata')
                  }
              });
         }
@@ -123,6 +131,7 @@ $.widget("mapbender.mbPrintClientJobList", {
             var $a = $('<a />')
                 .attr('href', row.downloadUrl)
                 .attr('target', '_blank')
+                .attr('title', Mapbender.trans('mb.print.printclient.joblist.open'))
             ;
             var $icon = $('<i/>').addClass('fa fa-file-pdf-o');
             $a.append($icon);
