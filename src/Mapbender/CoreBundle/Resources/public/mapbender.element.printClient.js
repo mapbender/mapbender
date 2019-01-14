@@ -377,9 +377,6 @@
             this._submitJob(jobData);
         },
         _onSubmit: function(evt) {
-            if (this.options.autoClose){
-                this.popup.close();
-            }
         },
         _getTemplateSize: function() {
             var self = this;
