@@ -8,6 +8,7 @@ use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 use Mapbender\PrintBundle\Repository\QueuedPrintJobRepository;
+use Mapbender\Utils\MemoryUtil;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,7 +35,8 @@ abstract class AbstractPrintQueueCommand extends ContainerAwareCommand
 
     protected function beforePrint()
     {
-        // perform any required max_execution_time / memory_limit runtime bumps here
+        $memoryLimitParam = $this->getContainer()->getParameter('mapbender.print.queue.memory_limit');
+        MemoryUtil::increaseMemoryLimit($memoryLimitParam);
     }
 
     /**
