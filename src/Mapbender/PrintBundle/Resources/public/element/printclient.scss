@@ -25,11 +25,10 @@
   }
 
   .job-list {
+    max-height: 400px;
+    overflow-y: auto;
     table {
       width: 100%;
-    }
-    tbody {
-      overflow-y: auto;
     }
   }
 

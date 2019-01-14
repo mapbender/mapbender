@@ -72,7 +72,7 @@
                             closeOnESC: false,
                             content: self.element,
                             width: 400,
-                            scrollable: true,
+                            scrollable: false,
                             cssClass: 'customPrintDialog',
                             buttons: {
                                     'cancel': {
