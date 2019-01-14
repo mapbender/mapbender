@@ -1,12 +1,11 @@
 <?php
-namespace Mapbender\CoreBundle\Element\Type;
+namespace Mapbender\PrintBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mapbender\CoreBundle\Form\EventListener\PrintClientSubscriber;
+use Mapbender\PrintBundle\Form\EventListener\PrintClientSubscriber;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
-use Mapbender\CoreBundle\Element\Type\PrintClientTemplateAdminType;
 
 /**
  * 

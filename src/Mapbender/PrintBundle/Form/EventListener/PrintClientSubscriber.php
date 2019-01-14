@@ -1,13 +1,12 @@
 <?php
 
-namespace Mapbender\CoreBundle\Form\EventListener;
+namespace Mapbender\PrintBundle\Form\EventListener;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
-use Mapbender\CoreBundle\Element\Type\PrintClientTemplateAdminType;
-use Mapbender\CoreBundle\Element\Type\PrintClientQualityAdminType;
+use Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType;
 
 /**
  * 
@@ -15,29 +14,15 @@ use Mapbender\CoreBundle\Element\Type\PrintClientQualityAdminType;
 class PrintClientSubscriber implements EventSubscriberInterface
 {
 
-    /**
-     * A FormFactoryInterface 's Factory
-     * 
-     * @var \Symfony\Component\Form\FormFactoryInterface 
-     */
+    /** @var FormFactoryInterface */
     private $factory;
 
     /**
-     * The application
-     * 
-     * @var application
+     * @param FormFactoryInterface $factory
      */
-    private $application;
-
-    /**
-     * Creates a subscriber
-     * 
-     * @param \Symfony\Component\Form\FormFactoryInterface $factory
-     */
-    public function __construct(FormFactoryInterface $factory, $application)
+    public function __construct(FormFactoryInterface $factory)
     {
         $this->factory = $factory;
-        $this->application = $application;
     }
 
     /**
