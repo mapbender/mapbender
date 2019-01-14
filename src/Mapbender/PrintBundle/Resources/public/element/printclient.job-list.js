@@ -1,5 +1,6 @@
 $.widget("mapbender.mbPrintClientJobList", {
     options: {
+        locale: null,
         url: null
     },
     reloadEnabled: false,
@@ -73,7 +74,10 @@ $.widget("mapbender.mbPrintClientJobList", {
                                  return val;
                              }
                              var date = new Date(row['ctime']* 1000);
-                             return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                             return [
+                                 date.toLocaleDateString(self.options.locale),
+                                 date.toLocaleTimeString(self.options.locale)
+                             ].join(' ');
                          };
                          break;
                      case 'interface':

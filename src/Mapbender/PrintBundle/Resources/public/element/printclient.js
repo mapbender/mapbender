@@ -2,6 +2,7 @@
 
     $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
+            locale: null,
             style: {
                 fillColor:     '#ffffff',
                 fillOpacity:   0.5,
@@ -459,7 +460,8 @@
 
         _initJobList: function($jobListPanel) {
             var jobListOptions = {
-                url: this.elementUrl + 'queuelist'
+                url: this.elementUrl + 'queuelist',
+                locale: this.options.locale || window.navigator.language
             };
             var jobList = this.jobList = $['mapbender']['mbPrintClientJobList'].call($jobListPanel, jobListOptions, $jobListPanel);
             $('.tab-container', this.element).tabs({

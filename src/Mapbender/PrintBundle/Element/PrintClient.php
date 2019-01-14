@@ -151,6 +151,8 @@ class PrintClient extends Element
     {
         return $this->entity->getConfiguration() + array(
             'type' => 'dialog',
+            // NOTE: intl extension locale is runtime-controlled by Symfony to reflect framework configuration
+            'locale' => \locale_get_default(),
         );
     }
 
