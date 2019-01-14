@@ -154,6 +154,21 @@ class PrintClient extends Element
         );
     }
 
+    /**
+     * @return string
+     */
+    protected function getSubmitAction()
+    {
+        if ($this->isQueueModeEnabled()) {
+            $queuePlugin = $this->getServiceBridge()->getPluginHost()->getPlugin('print-queue');
+            /** @var PrintQueuePlugin|null $queuePlugin */
+            if ($queuePlugin) {
+                return $queuePlugin->getQueueActionName();
+            }
+        }
+        return 'print';
+    }
+
     public function getFrontendTemplateVars()
     {
         $config = array_filter($this->entity->getConfiguration()) + array(
@@ -164,7 +179,7 @@ class PrintClient extends Element
         $submitUrl = $router->generate('mapbender_core_application_element', array(
             'slug' => $this->entity->getApplication()->getSlug(),
             'id' => $this->entity->getId(),
-            'action' => 'print',
+            'action' => $this->getSubmitAction(),
         ));
         return array(
             'configuration' => $config,
