@@ -40,3 +40,8 @@ mb:
           choice:
             direct: Direkt
             queued: Warteschleife
+        queueAccess:
+          label: Warteschleife
+          choice:
+            global: global
+            private: privat

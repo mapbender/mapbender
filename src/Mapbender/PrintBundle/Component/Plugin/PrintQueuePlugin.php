@@ -6,6 +6,7 @@ namespace Mapbender\PrintBundle\Component\Plugin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 use Mapbender\PrintBundle\Repository\QueuedPrintJobRepository;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -82,7 +83,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
         }
         switch ($request->attributes->get('action')) {
             case 'queuelist':
-                $entities = $this->loadQueueList($request);
+                $entities = $this->loadQueueList($request, $config);
                 return new JsonResponse($this->formatQueueList($entities, $elementEntity));
             case 'open':
                 $jobId = $request->query->get('id');
@@ -153,18 +154,18 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
 
     /**
      * @param Request $request
+     * @param mixed[] $configuration
      * @return QueuedPrintJob[]
      */
-    protected function loadQueueList(Request $request)
+    protected function loadQueueList(Request $request, $configuration)
     {
-        if ($request->query->get('type') == 'own') {
+        $queueAccess = ArrayUtil::getDefault($configuration, 'queueAccess', null) ?: 'private';
+        if ($queueAccess === 'private') {
             $userId = $this->getCurrentUserId();
             $criteria = array(
                 'userId' => $userId,
             );
         } else {
-            // @todo: Prevent arbitrary access to full list of queued jobs
-            //        This should require administrative privileges
             $criteria = array();
         }
         $order = array(

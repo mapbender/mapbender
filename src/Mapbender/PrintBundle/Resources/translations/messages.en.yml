@@ -40,3 +40,8 @@ mb:
           choice:
             direct: direct
             queued: queued
+        queueAccess:
+          label: Job queue
+          choice:
+            global: global
+            private: private

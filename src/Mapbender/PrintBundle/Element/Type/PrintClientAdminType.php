@@ -79,6 +79,15 @@ class PrintClientAdminType extends AbstractType
                 'choices_as_values' => false,   // FOM form theme fails to translate labels with choice_as_values = true
                 'label' => 'mb.print.admin.printclient.renderMode.label',
             ));
+            $builder->add('queueAccess', 'choice', array(
+                'required' => false,            // FOM form theme fails to translate preselected label with required = true
+                'choices' => array(
+                    'private' => 'mb.print.admin.printclient.queueAccess.choice.private',
+                    'global' => 'mb.print.admin.printclient.queueAccess.choice.global',
+                ),
+                'choices_as_values' => false,   // FOM form theme fails to translate labels with choice_as_values = true
+                'label' => 'mb.print.admin.printclient.queueAccess.label',
+            ));
         }
         $builder
             ->add('rotatable', 'checkbox', array(
