@@ -62,11 +62,11 @@ class PrintClient extends Element
         return array(
             'js' => array(
                 '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
-                '@MapbenderPrintBundle/Resources/public/element/printClient.js',
+                '@MapbenderPrintBundle/Resources/public/element/printclient.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
             'css' => array(
-                '@MapbenderPrintBundle/Resources/public/element/printClient.scss',
+                '@MapbenderPrintBundle/Resources/public/element/printclient.scss',
             ),
             'trans' => array(
                 'MapbenderPrintBundle:Element:printclient.json.twig',
