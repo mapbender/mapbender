@@ -10,6 +10,7 @@ $.widget("mapbender.mbPrintClientJobList", {
 
     _create: function() {
         this.$table = $('table', this.element).first();
+        this.$table.on('click', '.-fn-delete', this._deleteHandler.bind(this));
     },
     start: function() {
         this._refresh(this.$table, false);
@@ -81,6 +82,7 @@ $.widget("mapbender.mbPrintClientJobList", {
                          };
                          break;
                      case 'interface':
+                         column.className = 'interface';
                          column.render = function(val, type, row, meta) {
                              if (type !== 'display') {
                                  return null;
@@ -127,17 +129,50 @@ $.widget("mapbender.mbPrintClientJobList", {
         return $table.dataTable().api();
     },
     _renderInterface: function (row) {
+        var parts = [];
+        var $icon;
+
         if (row.downloadUrl) {
             var $a = $('<a />')
                 .attr('href', row.downloadUrl)
                 .attr('target', '_blank')
                 .attr('title', Mapbender.trans('mb.print.printclient.joblist.open'))
             ;
-            var $icon = $('<i/>').addClass('fa fa-file-pdf-o');
+            $icon = $('<i/>').addClass('fa fa-file-pdf-o');
             $a.append($icon);
-            return $a.get(0).outerHTML;
+            parts.push($a.get(0).outerHTML);
         }
-        return '<span><i class="fa fa-cog fa-spin" /></span>';
+        if (row.deleteUrl) {
+            var $deleteSpan = $('<span />')
+                .addClass('-fn-delete')
+                .attr('data-url', row.deleteUrl)
+                .attr('data-id', row.id)
+                .attr('title', Mapbender.trans('mb.print.printclient.joblist.delete'))
+            ;
+            $icon = $('<i/>').addClass('fa fa-remove');
+            $deleteSpan.append($icon);
+            parts.push($deleteSpan.get(0).outerHTML);
+        }
+        if (parts.length) {
+            return parts.join('');
+        } else {
+            return '<span><i class="fa fa-cog fa-spin" /></span>';
+        }
+    },
+    _deleteHandler: function(evt) {
+        var $button = $(evt.currentTarget);
+        var $tr = $button.closest('tr');
+        this.stop();
+        $tr.animate({opacity: 0.0});
+        $.ajax({
+            url: $button.attr('data-url'),
+            data: {
+                id: $button.attr('data-id')
+            },
+            method: 'POST'
+        }).then(function() {
+            $tr.remove();
+        }).always(this.start.bind(this));
     },
     _noop: function() {}
 });

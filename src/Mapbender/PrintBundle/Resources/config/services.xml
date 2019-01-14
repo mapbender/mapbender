@@ -38,6 +38,7 @@
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="router" />
+            <argument type="service" id="filesystem" />
             <argument key="storagePath">%mapbender.print.queue.storage_dir%</argument>
         </service>
         <service id="mapbender.form_type.element.printclient" class="%mapbender.form_type.element.printclient.class%">

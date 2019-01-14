@@ -9,9 +9,11 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
 use Mapbender\PrintBundle\Repository\QueuedPrintJobRepository;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -35,16 +37,20 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
     protected $storagePath;
     /** @var UrlGeneratorInterface */
     protected $router;
+    /** @var Filesystem */
+    protected $filesystem;
 
     /**
      * @param EntityManagerInterface $entityManager
      * @param TokenStorageInterface $tokenStorage
      * @param UrlGeneratorInterface $router
+     * @param Filesystem $filesystem
      * @param string $storagePath
      */
     public function __construct(EntityManagerInterface $entityManager,
                                 TokenStorageInterface $tokenStorage,
                                 UrlGeneratorInterface $router,
+                                Filesystem $filesystem,
                                 $storagePath)
     {
         $this->entityManager = $entityManager;
@@ -56,6 +62,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
         if (!is_dir($storagePath) || !is_writable($storagePath)) {
             throw new \RuntimeException("Storage path " . var_export($storagePath, true) . " is not a writable directory");
         }
+        $this->filesystem = $filesystem;
         $this->storagePath = realpath($storagePath);
     }
 
@@ -82,23 +89,35 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
             return null;
         }
         switch ($request->attributes->get('action')) {
+            default:
+                return null;
             case 'queuelist':
                 $entities = $this->loadQueueList($request, $config);
                 return new JsonResponse($this->formatQueueList($entities, $elementEntity));
             case 'open':
                 $jobId = $request->query->get('id');
-                if (!$jobId) {
-                    throw new BadRequestHttpException("Missing id");
-                }
-                $entity = $this->getRepository()->find($jobId);
-                if (!$entity) {
-                    throw new NotFoundHttpException();
-                }
-                if (!$this->accessAllowed($entity)) {
+                break;
+            case 'delete':
+                $jobId = $request->request->get('id');
+                break;
+        }
+        if (!$jobId) {
+            throw new BadRequestHttpException("Missing id");
+        }
+        $entity = $this->getRepository()->find($jobId);
+        if (!$entity) {
+            throw new NotFoundHttpException();
+        }
+        $fileName = $entity->getFilename();
+        $fullPath = "{$this->storagePath}/{$fileName}";
+
+        switch ($request->attributes->get('action')) {
+            default:
+                return null;
+            case 'open':
+                if (!$this->accessAllowed($entity, $config)) {
                     throw new AccessDeniedHttpException();
                 }
-                $fileName = $entity->getFilename();
-                $fullPath = "{$this->storagePath}/{$fileName}";
                 if (!file_exists($fullPath) || !is_readable($fullPath)) {
                     throw new NotFoundHttpException();
                 }
@@ -108,8 +127,14 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                     'Content-Disposition' => "inline; filename=\"{$fileName}\"",
                 );
                 return new BinaryFileResponse($fullPath, 200, $headers);
-            default:
-                return null;
+            case 'delete':
+                if (!$this->deleteAllowed($entity, $config)) {
+                    throw new AccessDeniedHttpException();
+                }
+                $this->filesystem->remove($fullPath);
+                $this->entityManager->remove($entity);
+                $this->entityManager->flush();
+                return new Response('', 204);
         }
     }
 
@@ -145,11 +170,24 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
 
     /**
      * @param QueuedPrintJob $entity
+     * @param mixed[] $configuration
      * @return bool
      */
-    protected function accessAllowed($entity)
+    protected function accessAllowed($entity, $configuration)
     {
-        return $entity->getUserId() == $this->getCurrentUserId();
+        $queueAccess = ArrayUtil::getDefault($configuration, 'queueAccess', null) ?: 'private';
+        return $queueAccess === 'global' || $entity->getUserId() == $this->getCurrentUserId();
+    }
+
+    /**
+     * @param QueuedPrintJob $entity
+     * @param mixed[] $configuration
+     * @return bool
+     */
+    protected function deleteAllowed($entity, $configuration)
+    {
+        $queueAccess = ArrayUtil::getDefault($configuration, 'queueAccess', null) ?: 'private';
+        return $queueAccess === 'global' || $entity->getUserId() == $this->getCurrentUserId();
     }
 
     /**
@@ -186,12 +224,18 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
             'id' => $elementEntity->getId(),
             'slug' => $elementEntity->getApplication()->getSlug(),
         ));
+        $elementConfig = $elementEntity->getConfiguration();
         foreach ($entities as $entity) {
             if ($entity->getCreated()) {
                 $calculated = array(
                     'status' => 'mb.print.printclient.joblist.status.finished',
                     'downloadUrl' => rtrim($elementAction, '/') . "/open?id={$entity->getId()}",
                 );
+                if (($entity->getId() & 1) && $this->deleteAllowed($entity, $elementConfig)) {
+                    $calculated += array(
+                        'deleteUrl' => rtrim($elementAction, '/') . "/delete",
+                    );
+                }
             } elseif ($entity->getStarted()) {
                 $calculated = array(
                     'status' => 'mb.print.printclient.joblist.status.processing',

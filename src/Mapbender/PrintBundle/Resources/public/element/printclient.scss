@@ -29,6 +29,13 @@
     overflow-y: auto;
     table {
       width: 100%;
+      td.interface {
+        >a, >.-fn-delete {
+          margin-right: 0.25em;
+          color: inherit;
+          font-weight: 600;
+        }
+      }
     }
   }
 
