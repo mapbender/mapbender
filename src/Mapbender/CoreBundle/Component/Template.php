@@ -192,22 +192,6 @@ abstract class Template
     }
 
     /**
-     * @param Application $twigTemplate
-     */
-    public function setTwigTemplate($twigTemplate)
-    {
-        $this->twigTemplate = $twigTemplate;
-    }
-
-    /**
-     * @param $title string Title
-     */
-    public static function setTitle($title)
-    {
-        static::$title = $title;
-    }
-
-    /**
      * @return string TWIG template path
      */
     public function getTwigTemplate()
