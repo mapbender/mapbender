@@ -71,15 +71,15 @@ class WmcList extends WmcBase
      */
     public function getAssets()
     {
-        $js = array(
-            'mapbender.element.wmclist.js',
-            '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'
-        );
         return array(
-            'js' => $js,
+            'js' => array(
+                '@MapbenderWmcBundle/Resources/public/mapbender.element.wmclist.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'
+            ),
             'css' => array(),
             'trans' => array(
-                'MapbenderWmcBundle:Element:wmclist.json.twig')
+                'MapbenderWmcBundle:Element:wmclist.json.twig',
+            ),
         );
     }
 

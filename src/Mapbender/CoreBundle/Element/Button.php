@@ -80,9 +80,13 @@ class Button extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.button.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/button.scss'));
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
+            ),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/button.scss',
+            ),
+        );
     }
 
     public function getConfiguration()

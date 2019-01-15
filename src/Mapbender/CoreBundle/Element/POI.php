@@ -75,7 +75,7 @@ class POI extends Element
     {
         return array(
             'js'    => array(
-                'mapbender.element.poi.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.poi.js',
                 // to call social networks '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
             ),
             'css'   => array(

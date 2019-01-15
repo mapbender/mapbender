@@ -66,14 +66,16 @@ class DimensionsHandler extends Element
     {
         return array(
             'js' => array(
-                'mapbender.wms.dimension.js',
-                'mapbender.element.dimensionshandler.js',
+                '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
+                '@MapbenderWmsBundle/Resources/public/mapbender.element.dimensionshandler.js',
             ),
             'css' => array(
                 '@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss',
-                '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss'
+                '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss',
             ),
-            'trans' => array('MapbenderWmsBundle:Element:dimensionshandler.json.twig')
+            'trans' => array(
+                'MapbenderWmsBundle:Element:dimensionshandler.json.twig',
+            ),
         );
     }
 

@@ -51,9 +51,13 @@ class Sketch extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.sketch.js'),
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.sketch.js',
+            ),
             'css' => array(),
-            'trans' => array('MapbenderCoreBundle:Element:sketch.json.twig')
+            'trans' => array(
+                'MapbenderCoreBundle:Element:sketch.json.twig',
+            ),
         );
     }
 
