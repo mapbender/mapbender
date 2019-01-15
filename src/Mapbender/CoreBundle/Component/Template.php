@@ -149,7 +149,7 @@ abstract class Template
         $applicationEntity = $application->getEntity();
         $templateRender    = $this->container->get('templating');
 
-        return $templateRender->render($this->twigTemplate, array(
+        return $templateRender->render($this->getTwigTemplate(), array(
                 'html'                 => $html,
                 'css'                  => $css,
                 'js'                   => $js,
