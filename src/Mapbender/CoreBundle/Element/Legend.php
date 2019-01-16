@@ -44,10 +44,14 @@ class Legend extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.legend.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js' ),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/legend.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:legend.json.twig')
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.legend.js',
+            ),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/legend.scss',
+            ),
+            'trans' => array(
+                'MapbenderCoreBundle:Element:legend.json.twig',
+            ),
         );
     }
 

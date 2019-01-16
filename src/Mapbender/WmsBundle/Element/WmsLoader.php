@@ -101,8 +101,7 @@ class WmsLoader extends Element
     {
         $assetRefs = array(
             'js' => array(
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                'mapbender.element.wmsloader.js',
+                '@MapbenderWmsBundle/Resources/public/mapbender.element.wmsloader.js',
             ),
             'css' => array(
                 '@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss',

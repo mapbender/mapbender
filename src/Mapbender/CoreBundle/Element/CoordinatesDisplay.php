@@ -56,8 +56,12 @@ class CoordinatesDisplay extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.coordinatesdisplay.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/coordinatesdisplay.scss')
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.coordinatesdisplay.js',
+            ),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/coordinatesdisplay.scss',
+            ),
         );
     }
 

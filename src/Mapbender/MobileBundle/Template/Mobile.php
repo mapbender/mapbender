@@ -26,11 +26,9 @@ class Mobile extends Template
     );
 
     protected static $js  = array(
-        '/components/underscore/underscore-min.js',
         '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
         '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
         '@MapbenderMobileBundle/Resources/public/js/mobile.js',
-        '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js'
     );
 
     /**  @var array Region names */

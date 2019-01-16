@@ -156,7 +156,6 @@
                         title: this.element.attr('title'),
                         draggable: true,
                         modal: false,
-                        closeButton: true,
                         closeOnESC: false,
                         content: this.element,
                         width: this.options.width ? this.options.width : 450,

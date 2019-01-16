@@ -251,8 +251,10 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
   }
 }
 
-.popupContainer label {
+.mapbender-popup, .fom-popup {
+  label {
     margin-bottom: 0;
     font-weight: normal;
     line-height: inherit;
+  }
 }
