@@ -231,7 +231,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                     'status' => 'mb.print.printclient.joblist.status.finished',
                     'downloadUrl' => rtrim($elementAction, '/') . "/open?id={$entity->getId()}",
                 );
-                if (($entity->getId() & 1) && $this->deleteAllowed($entity, $elementConfig)) {
+                if ($this->deleteAllowed($entity, $elementConfig)) {
                     $calculated += array(
                         'deleteUrl' => rtrim($elementAction, '/') . "/delete",
                     );

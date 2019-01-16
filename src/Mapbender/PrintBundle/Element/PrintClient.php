@@ -183,21 +183,27 @@ class PrintClient extends Element
             'id' => $this->entity->getId(),
             'action' => $this->getSubmitAction(),
         ));
+        $vars = array(
+            'configuration' => $config,
+            'submitUrl' => $submitUrl,
+            'settingsTemplate' => $this->getSettingsTemplate(),
+        );
         if ($this->isQueueModeEnabled()) {
             $submitFrameName = $this->getSubmitFrameName();
-            return array(
-                'configuration' => $config,
-                'submitUrl' => $submitUrl,
+            return $vars + array(
                 'formTarget' => $submitFrameName,
                 'submitFrameName' => $submitFrameName,
             );
         } else {
-            return array(
-                'configuration' => $config,
-                'submitUrl' => $submitUrl,
+            return $vars + array(
                 'formTarget' => '_blank',
             );
         }
+    }
+
+    protected function getSettingsTemplate()
+    {
+        return 'MapbenderPrintBundle:Element:printclient-settings.html.twig';
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
