@@ -101,7 +101,7 @@ class FeatureInfo extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.featureInfo.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.featureInfo.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
             ),
             'css' => array(

@@ -58,14 +58,14 @@ class ImageExport extends Element
     public function getAssets()
     {
         return array(
-        'js' => array(
-            'mapbender.element.imageExport.js',
-        ),
-        'css' => array(
-            'sass/element/imageexport.scss',
-        ),
-        'trans' => array(
-            'MapbenderPrintBundle:Element:imageexport.json.twig',
+            'js' => array(
+                '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
+            ),
+            'css' => array(
+                '@MapbenderPrintBundle/Resources/public/sass/element/imageexport.scss',
+            ),
+            'trans' => array(
+                'MapbenderPrintBundle:Element:imageexport.json.twig',
             ),
         );
     }

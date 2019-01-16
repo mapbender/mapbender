@@ -72,16 +72,16 @@ class AssetFactoryBase
      */
     protected function getSourcePath($input)
     {
-        if ($input[0] == '@') {
-            // Bundle name
-            $bundle = substr($input, 1, strpos($input, '/') - 1);
-            // Path inside the Resources/public folder
-            $assetPath = substr($input,
-                strlen('@' . $bundle . '/Resources/public'));
-            $bundleAssetDir = '/bundles/' . preg_replace('/bundle$/', '', strtolower($bundle));
-
-            return $this->getSourcePath($bundleAssetDir . $assetPath);
-        } elseif ($input[0] == '/') {
+        $matches = array();
+        if (preg_match('#^@([\w]+)Bundle/Resources/public/(.+)$#i', $input, $matches)) {
+            // rewrite reference to look into published bundle asset dir below web
+            $input = implode('/', array(
+                '/bundles',
+                strtolower($matches[1]), // lower-case bundle name minus 'bundle'
+                $matches[2],             // remainder of reference after 'public/'
+            ));
+        }
+        if ($input[0] == '/') {
             $inWeb = $this->webDir . '/' . ltrim($input, '/');
             if (@is_file($inWeb) && @is_readable($inWeb)) {
                 return $inWeb;

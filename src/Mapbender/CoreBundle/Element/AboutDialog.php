@@ -45,7 +45,7 @@ class AboutDialog extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.aboutDialog.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.aboutDialog.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/about_dialog.scss',

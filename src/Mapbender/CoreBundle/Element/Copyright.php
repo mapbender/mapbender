@@ -55,7 +55,7 @@ class Copyright extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.copyright.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.copyright.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/copyright.scss',

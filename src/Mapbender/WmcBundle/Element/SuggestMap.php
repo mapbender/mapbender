@@ -73,11 +73,11 @@ class SuggestMap extends WmcBase
     {
         return array(
             'js' => array(
-                'mapbender.element.suggestmap.js',
+                '@MapbenderWmcBundle/Resources/public/mapbender.element.suggestmap.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js',
             ),
             'css' => array(
-                'sass/element/suggestmap.scss',
+                '@MapbenderWmcBundle/Resources/public/sass/element/suggestmap.scss',
             ),
             'trans' => array(
                 'MapbenderWmcBundle:Element:suggestmap.json.twig',

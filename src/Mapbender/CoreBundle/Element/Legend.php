@@ -44,7 +44,7 @@ class Legend extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.legend.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.legend.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/legend.scss',

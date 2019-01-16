@@ -149,7 +149,7 @@ abstract class Template
         $applicationEntity = $application->getEntity();
         $templateRender    = $this->container->get('templating');
 
-        return $templateRender->render($this->twigTemplate, array(
+        return $templateRender->render($this->getTwigTemplate(), array(
                 'html'                 => $html,
                 'css'                  => $css,
                 'js'                   => $js,
@@ -189,22 +189,6 @@ abstract class Template
     public static function getResourcePath()
     {
         return static::$resourcePath;
-    }
-
-    /**
-     * @param Application $twigTemplate
-     */
-    public function setTwigTemplate($twigTemplate)
-    {
-        $this->twigTemplate = $twigTemplate;
-    }
-
-    /**
-     * @param $title string Title
-     */
-    public static function setTitle($title)
-    {
-        static::$title = $title;
     }
 
     /**
