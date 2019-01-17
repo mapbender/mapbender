@@ -4,6 +4,7 @@ $.widget("mapbender.mbPrintClientJobList", {
         url: null
     },
     reloadEnabled: false,
+    resumeState: false,
     currentReloadInterval: null,
     queueRefreshDelay: 3000,
     $table: null,
@@ -13,15 +14,28 @@ $.widget("mapbender.mbPrintClientJobList", {
         this.$table.on('click', '.-fn-delete', this._deleteHandler.bind(this));
     },
     start: function() {
+        this.resumeState = true;
         this._refresh(this.$table, false);
     },
     stop: function() {
+        this.resumeState = false;
+        this._stop();
+    },
+    pause: function() {
+        this.resumeState = this.reloadEnabled;
+        this._stop();
+    },
+    resume: function() {
+        if (this.resumeState) {
+            this.start();
+        }
+    },
+    _stop: function() {
         this.reloadEnabled = false;
         if (this.currentReloadInterval) {
             this.currentReloadInterval = clearTimeout(this.currentReloadInterval);
         }
     },
-
     _refresh: function($table, once) {
         var firstLoad = !this._hasTableApi($table);
         if (typeof once !== 'undefined') {

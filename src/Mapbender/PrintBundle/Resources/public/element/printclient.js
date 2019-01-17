@@ -97,9 +97,16 @@
                     this._setScale();
                 }
             }
+            // restart job list reloading by re-activating the current tab
+            if (this.jobList) {
+                this.jobList.resume();
+            }
         },
 
         close: function() {
+            if (this.jobList) {
+                this.jobList.pause();
+            }
             if (this.popup) {
                 this._updateElements(false);
                 if (this.overwriteTemplates) {
