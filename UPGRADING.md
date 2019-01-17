@@ -1,4 +1,9 @@
 ## Future
+The PrintClient Element, along with its assets, views, admin type and all related code has been moved from
+the CoreBundle into the \Mapbender\PrintBundle namespace. No provisions have been made to detect / pick up
+any project customizations on the old file locations. If you have customized PrintClient views or assets via app/Resources
+drop-ins, you must move them accordingly.
+
 An upcoming TBD Mapbender version will break compatibility with mapbender/data-source < 0.1.9,
 which is
 [a dependency of mapbender/digitizer, mapbender/query-builder and mapbender/data-manager](https://packagist.org/packages/mapbender/data-source/dependents).

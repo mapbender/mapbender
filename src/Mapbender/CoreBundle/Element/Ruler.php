@@ -40,10 +40,14 @@ class Ruler extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js',
+            ),
             'css' => array(),
-            'trans' => array('MapbenderCoreBundle:Element:ruler.json.twig'));
+            'trans' => array(
+                'MapbenderCoreBundle:Element:ruler.json.twig',
+            ),
+        );
     }
 
     /**

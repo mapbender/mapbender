@@ -1,5 +1,5 @@
 <?php
-namespace Mapbender\CoreBundle\Element\Type;
+namespace Mapbender\PrintBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * 
  */
-class PrintClientQualityAdminType extends AbstractType
+class PrintClientTemplateAdminType extends AbstractType
 {
 
     /**
@@ -16,7 +16,7 @@ class PrintClientQualityAdminType extends AbstractType
      */
     public function getName()
     {
-        return 'printclientquality';
+        return 'printclienttemplate';
     }
 
     /**
@@ -34,7 +34,7 @@ class PrintClientQualityAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('dpi', 'text', array('required' => false))
+        $builder->add('template', 'text', array('required' => false))
             ->add('label', 'text', array('required' => false));
     }
 

@@ -146,7 +146,6 @@
                     title: self.element.attr('title'),
                     draggable: true,
                     modal: false,
-                    closeButton: false,
                     closeOnESC: false,
                     content: [content],
                     destroyOnClose: true,

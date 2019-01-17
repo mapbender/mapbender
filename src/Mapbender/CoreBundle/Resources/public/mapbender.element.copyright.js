@@ -31,7 +31,6 @@
                 widget.popup = new Mapbender.Popup2({
                     title:               element.attr('title'),
                     modal:               true,
-                    closeButton:         true,
                     closeOnOutsideClick: true,
                     content:             [ $.ajax({url: widget.elementUrl + 'content'})],
                     width:               width,
