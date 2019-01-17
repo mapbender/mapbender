@@ -55,6 +55,7 @@
    * http://api.jqueryui.com/tabs/#theming
    */
   .ui-tabs {
+    @extend .tabContainerAlt;
     position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
   }
   .ui-tabs .ui-tabs-nav {
@@ -67,7 +68,6 @@
     position: relative;
     top: 0;
     margin: 1px .2em 0 0;
-    border-bottom-width: 0;
     padding: 0;
     white-space: nowrap;
   }
@@ -76,10 +76,7 @@
     padding: .5em 1em;
     text-decoration: none;
   }
-  .ui-tabs .ui-tabs-nav li.ui-tabs-active {
-    margin-bottom: -1px;
-    padding-bottom: 1px;
-  }
+
   .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
   .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
   .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {

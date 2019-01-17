@@ -475,6 +475,10 @@
             var jobList = this.jobList = $['mapbender']['mbPrintClientJobList'].call($jobListPanel, jobListOptions, $jobListPanel);
             $('.tab-container', this.element).tabs({
                 active: 0,
+                classes: {
+                    // inherit colors etc from .tabContainerAlt.tab onto ui-tabs-tab
+                    "ui-tabs-tab": "tab"
+                },
                 activate: function (event, ui) {
                     if (ui.newPanel.hasClass('job-list')) {
                         jobList.start();
