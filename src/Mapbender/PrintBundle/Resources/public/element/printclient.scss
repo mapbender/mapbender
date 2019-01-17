@@ -25,6 +25,7 @@
   }
 
   .job-list {
+    @extend .mapbender-element-result-table;
     max-height: 400px;
     overflow-y: auto;
     table {
@@ -57,6 +58,9 @@
   .ui-tabs {
     @extend .tabContainerAlt;
     position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+  }
+  .ui-tabs-panel {
+    margin-top: $space / 2;
   }
   .ui-tabs .ui-tabs-nav {
     margin: 0;
