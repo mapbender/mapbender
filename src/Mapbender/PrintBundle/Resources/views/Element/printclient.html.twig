@@ -8,8 +8,8 @@
     <form action="{{ submitUrl }}" method="post" target="{{ formTarget }}">
         {% block printclient_form_top %}
         {# render required extra fields on top of the form if configured #}
-        {% if configuration.optional_fields is not empty and configuration.required_fields_first %}
-            {% for key,field in configuration.optional_fields %}
+        {% if configuration.optional_fields is defined and configuration.required_fields_first is defined and configuration.required_fields_first %}
+            {% for key,field in configuration.optional_fields ?: [] %}
                 {% if field.options.required %}
                     <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}
                         <span class="required">*</span>
@@ -61,9 +61,9 @@
         {% endif %}
 
         {# render non-required extra fields here #}
-        {% if configuration.optional_fields is not empty %}
-            {% for key,field in configuration.optional_fields %}
-                {% if not configuration.required_fields_first or not field.options.required %}
+        {% if configuration.optional_fields is defined %}
+            {% for key,field in configuration.optional_fields ?: [] %}
+                {% if configuration.required_fields_first is not defined or not field.options.required %}
                     <label class="labelInput" for="extra[{{ key }}]">{{ field.label }}
                     {% if field.options.required %}
                         <span class="required">*</span></label>
