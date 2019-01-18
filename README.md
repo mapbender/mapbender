@@ -12,5 +12,5 @@ To use Mapbender refer to the [user-documentation](http://doc.mapbender.org) ([G
 
 Place issues at: [https://github.com/mapbender/mapbender/issues](https://github.com/mapbender/mapbender/issues).
 
-You can also join the [mailing-list](https://mapbender.org/?q=de/node/16).
+You can also join the [mailing-list](https://mapbender.org/?q=en/community).
 
