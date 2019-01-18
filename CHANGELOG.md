@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ c94d39525**
+* **dev-release/3.0.7 @ 6186e8ae5**
   - Fix buttons with invalid targets breaking buttons in the same group
   - Fix element-order dependent script initialization error in mobile template
   - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
@@ -9,6 +9,7 @@
   - Print: significantly reduce memory requirements for larger printouts
   - Print: optimize handling performance of WMS layers with manually reduced opacity
   - Print: Suppress redundant group layer legend images and legend images for deactivated layers ([PR#1053](https://github.com/mapbender/mapbender/pull/1053))
+  - Fix Ruler measurement errors when switching between geodesic and non-geodesic CRS at runtime ([PR#1069](https://github.com/mapbender/mapbender/pull/1069))
   - Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
   - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
   - Extend / update Italian locale translations ([PR #1062](https://github.com/mapbender/mapbender/pull/1062))
