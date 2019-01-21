@@ -19,18 +19,23 @@ use OwsProxy3\CoreBundle\Component\ProxyQuery;
  */
 class ImageExportService
 {
-    /** @var ContainerInterface */
-    protected $container;
     /** @var string */
     protected $tempDir;
     /** @var string */
     protected $resourceDir;
+    /** @var LoggerInterface */
+    protected $logger;
 
-    public function __construct($container)
+    /**
+     * @param string $resourceDir absolute path
+     * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
+     * @param LoggerInterface $logger
+     */
+    public function __construct($resourceDir, $tempDir, LoggerInterface $logger)
     {
-        $this->container = $container;
-        $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-        $this->tempDir = sys_get_temp_dir();
+        $this->resourceDir = $resourceDir;
+        $this->tempDir = $tempDir ?: sys_get_temp_dir();
+        $this->logger = $logger;
     }
 
     /**
@@ -38,9 +43,7 @@ class ImageExportService
      */
     protected function getLogger()
     {
-        /** @var LoggerInterface $logger */
-        $logger = $this->container->get("logger");
-        return $logger;
+        return $this->logger;
     }
 
     /**

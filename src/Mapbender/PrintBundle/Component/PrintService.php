@@ -4,6 +4,8 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Mapbender3 Print Service.
@@ -19,12 +21,27 @@ class PrintService extends ImageExportService
     /** @var array */
     protected $data;
 
+    /** @var ContainerInterface */
+    protected $container;
+
     /**
      * @var array Default geometry style
      */
     protected $defaultStyle = array(
         "strokeWidth" => 1
     );
+
+    public function __construct(ContainerInterface $container)
+    {
+        // HACK: replicate services.xml-declared constructor args by pulling bits from the container
+        $resourceDir = $container->getParameter('mapbender.imageexport.resource_dir');
+        $tempDir = $container->getParameter('mapbender.imageexport.temp_dir');
+        /** @var LoggerInterface $logger */
+        $logger = $container->get('logger');
+        // HACK: keep container around for OdgParser instantiation; @todo: OdgParser should be an injected service
+        $this->container = $container;
+        parent::__construct($resourceDir, $tempDir, $logger);
+    }
 
     public function doPrint($jobData)
     {
