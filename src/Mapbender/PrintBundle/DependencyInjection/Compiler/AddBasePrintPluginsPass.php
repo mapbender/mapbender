@@ -13,6 +13,9 @@ class AddBasePrintPluginsPass implements CompilerPassInterface
     {
         $hostDefinition = $container->getDefinition('mapbender.print_plugin_host.service');
         $this->tryAddDigitizerPlugin($container, $hostDefinition);
+        if ($container->getParameter('mapbender.print.queueable')) {
+            $hostDefinition->addMethodCall('registerPlugin', array('mapbender.print.plugin.queue'));
+        }
     }
 
     protected function tryAddDigitizerPlugin(ContainerBuilder $container, Definition $hostDefinition)

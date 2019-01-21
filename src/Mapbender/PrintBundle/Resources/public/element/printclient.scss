@@ -23,4 +23,81 @@
   .printToggle.active {
     background-color: #538e24;
   }
+
+  .job-list {
+    @extend .mapbender-element-result-table;
+    max-height: 400px;
+    overflow-y: auto;
+    table {
+      width: 100%;
+      td.interface {
+        >a, >.-fn-delete {
+          margin-right: 0.25em;
+          color: inherit;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // jquery-ui tab styling
+  // @todo: We really should use the original jquery-ui css (+ potentially customizable theme for colors, sizes etc) globally.
+  //        This isn't immediately feasible because fragments of ui-tabs styling in certain scopes are scattered through
+  //        Mapbender built-in widgets and Elements.
+  // @import '/components/jquery-ui/themes/base/tabs.css';
+  /*!
+   * jQuery UI Tabs 1.12.1
+   * http://jqueryui.com
+   *
+   * Copyright jQuery Foundation and other contributors
+   * Released under the MIT license.
+   * http://jquery.org/license
+   *
+   * http://api.jqueryui.com/tabs/#theming
+   */
+  .ui-tabs {
+    @extend .tabContainerAlt;
+    position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+  }
+  .ui-tabs-panel {
+    margin-top: $space / 2;
+  }
+  .ui-tabs .ui-tabs-nav {
+    margin: 0;
+    padding: .2em .2em 0;
+  }
+  .ui-tabs .ui-tabs-nav li {
+    list-style: none;
+    float: left;
+    position: relative;
+    top: 0;
+    margin: 1px .2em 0 0;
+    padding: 0;
+    white-space: nowrap;
+  }
+  .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    float: left;
+    padding: .5em 1em;
+    text-decoration: none;
+  }
+
+  .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+  .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
+  .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
+    cursor: text;
+  }
+  .ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
+    cursor: pointer;
+  }
+
+  // from jquery-ui themes/base/base.css
+  .ui-helper-clearfix:before,
+  .ui-helper-clearfix:after {
+      content: "";
+      display: table;
+      border-collapse: collapse;
+  }
+  .ui-helper-clearfix:after {
+      clear: both;
+  }
 }

@@ -2,6 +2,7 @@
 
     $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
+            locale: null,
             style: {
                 fillColor:     '#ffffff',
                 fillOpacity:   0.5,
@@ -19,10 +20,15 @@
         overwriteTemplates: false,
         digitizerData: null,
         printBounds: null,
+        jobList: null,
 
         _setup: function(){
             var self = this;
+            var $jobList = $('.job-list', this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            if ($jobList.length) {
+                this._initJobList($jobList);
+            }
 
             $('select[name="scale_select"]', this.$form)
                 .on('change', $.proxy(this._updateGeometry, this));
@@ -66,7 +72,7 @@
                             closeOnESC: false,
                             content: self.element,
                             width: 400,
-                            scrollable: true,
+                            scrollable: false,
                             cssClass: 'customPrintDialog',
                             buttons: {
                                     'cancel': {
@@ -91,9 +97,16 @@
                     this._setScale();
                 }
             }
+            // restart job list reloading by re-activating the current tab
+            if (this.jobList) {
+                this.jobList.resume();
+            }
         },
 
         close: function() {
+            if (this.jobList) {
+                this.jobList.pause();
+            }
             if (this.popup) {
                 this._updateElements(false);
                 if (this.overwriteTemplates) {
@@ -377,6 +390,8 @@
             this._submitJob(jobData);
         },
         _onSubmit: function(evt) {
+            // switch to queue display tab on successful submit
+            $('.tab-container', this.element).tabs({active: 1});
         },
         _getTemplateSize: function() {
             var self = this;
@@ -450,6 +465,28 @@
                 ++count;
             });
             this.overwriteTemplates = true;
+        },
+
+        _initJobList: function($jobListPanel) {
+            var jobListOptions = {
+                url: this.elementUrl + 'queuelist',
+                locale: this.options.locale || window.navigator.language
+            };
+            var jobList = this.jobList = $['mapbender']['mbPrintClientJobList'].call($jobListPanel, jobListOptions, $jobListPanel);
+            $('.tab-container', this.element).tabs({
+                active: 0,
+                classes: {
+                    // inherit colors etc from .tabContainerAlt.tab onto ui-tabs-tab
+                    "ui-tabs-tab": "tab"
+                },
+                activate: function (event, ui) {
+                    if (ui.newPanel.hasClass('job-list')) {
+                        jobList.start();
+                    } else {
+                        jobList.stop();
+                    }
+                }.bind(this)
+            });
         },
 
         /**
