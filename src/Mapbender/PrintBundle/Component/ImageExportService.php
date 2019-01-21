@@ -5,12 +5,9 @@ use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
+use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 use Mapbender\PrintBundle\Element\ImageExport;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Psr\Log\LoggerInterface;
-use OwsProxy3\CoreBundle\Component\CommonProxy;
-use OwsProxy3\CoreBundle\Component\ProxyQuery;
 
 /**
  * Image export service.
@@ -25,14 +22,18 @@ class ImageExportService
     protected $resourceDir;
     /** @var LoggerInterface */
     protected $logger;
+    /** @var ImageTransport */
+    protected $imageTransport;
 
     /**
+     * @param ImageTransport $imageTransport
      * @param string $resourceDir absolute path
      * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      * @param LoggerInterface $logger
      */
-    public function __construct($resourceDir, $tempDir, LoggerInterface $logger)
+    public function __construct(ImageTransport $imageTransport, $resourceDir, $tempDir, LoggerInterface $logger)
     {
+        $this->imageTransport = $imageTransport;
         $this->resourceDir = $resourceDir;
         $this->tempDir = $tempDir ?: sys_get_temp_dir();
         $this->logger = $logger;
@@ -279,120 +280,13 @@ class ImageExportService
     }
 
     /**
-     * Multiply the alpha channgel of the whole $image with the given $opacity.
-     * May return a different image than given if the input $image is not
-     * in truecolor format.
-     *
-     * @param resource $image GDish
-     * @param float $opacity
-     * @return resource GDish
-     */
-    protected function multiplyAlpha($image, $opacity)
-    {
-        $width = imagesx($image);
-        $height = imagesy($image);
-        if (!imageistruecolor($image)) {
-            // promote to RGBA image first
-            $imageCopy = imagecreatetruecolor($width, $height);
-            imagesavealpha($imageCopy, true);
-            imagealphablending($imageCopy, false);
-            imagecopyresampled($imageCopy, $image, 0, 0, 0, 0, $width, $height, $width, $height);
-            imagedestroy($image);
-            $image = $imageCopy;
-            unset($imageCopy);
-        }
-        imagealphablending($image, false);
-
-        // Taking the painful way to alpha blending
-        for ($x = 0; $x < $width; $x++) {
-            for ($y = 0; $y < $height; $y++) {
-                $colorIn = imagecolorat($image, $x, $y);
-                $alphaIn = $colorIn >> 24 & 0xFF;
-                if ($alphaIn === 127) {
-                    // pixel is already fully transparent, no point
-                    // modifying it
-                    continue;
-                }
-                $alphaOut = intval(127 - (127 - $alphaIn) * $opacity);
-
-                $colorOut = imagecolorallocatealpha(
-                    $image,
-                    $colorIn >> 16 & 0xFF,
-                    $colorIn >> 8 & 0xFF,
-                    $colorIn & 0xFF,
-                    $alphaOut);
-                imagesetpixel($image, $x, $y, $colorOut);
-                imagecolordeallocate($image, $colorOut);
-            }
-        }
-        return $image;
-    }
-
-    /**
      * @param string $url
      * @param float $opacity
      * @return resource|null GDish
      */
     protected function downloadImage($url, $opacity=1.0)
     {
-        try {
-            $response = $this->mapRequest($url);
-            $image = @imagecreatefromstring($response->getContent());
-            if ($image) {
-                imagesavealpha($image, true);
-                if ($opacity < (1.0 - 1 / 127)) {
-                    return $this->multiplyAlpha($image, $opacity);
-                } else {
-                    return $image;
-                }
-            } else {
-                return null;
-            }
-        } catch (\RuntimeException $e) {
-            return null;
-        }
-    }
-
-    /**
-     * Query a (presumably) WMS service $url and return the Response object.
-     *
-     * @param string $url
-     * @return Response
-     */
-    protected function mapRequest($url)
-    {
-        $proxyQuery = ProxyQuery::createFromUrl($url);
-        $proxyConfig = $this->container->getParameter('owsproxy.proxy');
-        $proxy = new CommonProxy($proxyConfig, $proxyQuery, $this->getLogger());
-        $buzzResponse = $proxy->handle();
-        return $this->convertBuzzResponse($buzzResponse);
-    }
-
-    /**
-     * Convert a Buzz Response to a Symfony HttpFoundation Response
-     *
-     * @todo: This belongs in owsproxy; it's the only part of Mapbender that uses Buzz
-     *
-     * @param \Buzz\Message\Response $buzzResponse
-     * @return Response
-     */
-    public static function convertBuzzResponse($buzzResponse)
-    {
-        // adapt header formatting: Buzz uses a flat list of lines, HttpFoundation expects a name: value mapping
-        $headers = array();
-        foreach ($buzzResponse->getHeaders() as $headerLine) {
-            $parts = explode(':', $headerLine, 2);
-            if (count($parts) == 2) {
-                $headers[$parts[0]] = $parts[1];
-            }
-        }
-        $response = new Response($buzzResponse->getContent(), $buzzResponse->getStatusCode(), $headers);
-        $response->setProtocolVersion($buzzResponse->getProtocolVersion());
-        $statusText = $buzzResponse->getReasonPhrase();
-        if ($statusText) {
-            $response->setStatusCode($buzzResponse->getStatusCode(), $statusText);
-        }
-        return $response;
+        return $this->imageTransport->downloadImage($url, $opacity);
     }
 
     /**

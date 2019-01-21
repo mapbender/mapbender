@@ -7,6 +7,8 @@
         <parameter key="mapbender.imageexport.resource_dir">%kernel.root_dir%/Resources/MapbenderPrintBundle</parameter>
         <!-- leave temp dir at null to autodetect via sys_get_temp_dir(); use an explicit path if temp dir autodetect fails -->
         <parameter key="mapbender.imageexport.temp_dir">null</parameter>
+        <parameter key="mapbender.imageexport.image_transport.service.class">Mapbender\PrintBundle\Component\Transport\ImageTransport</parameter>
+        <parameter key="mapbender.imageexport.base_transport.service.class">Mapbender\PrintBundle\Component\Transport\OwsProxyAwareTransport</parameter>
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
         <!-- print resource / temp dirs are by default == imageexport dirs, but can be changed independently -->
         <parameter key="mapbender.print.resource_dir">%mapbender.imageexport.resource_dir%</parameter>
@@ -32,11 +34,20 @@
     </parameters>
     <services>
         <service id="mapbender.imageexport.service" class="%mapbender.imageexport.service.class%">
+            <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument>%mapbender.imageexport.resource_dir%</argument>
             <argument>%mapbender.imageexport.temp_dir%</argument>
             <argument type="service" id="logger" />
         </service>
+        <service id="mapbender.imageexport.image_transport.service" class="%mapbender.imageexport.image_transport.service.class%">
+            <argument type="service" id="mapbender.imageexport.base_transport.service" />
+        </service>
+        <service id="mapbender.imageexport.base_transport.service" class="%mapbender.imageexport.base_transport.service.class%">
+            <argument>%owsproxy.proxy%</argument>
+            <argument type="service" id="logger" />
+        </service>
         <service id="mapbender.print.service" class="%mapbender.print.service.class%">
+            <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument type="service" id="mapbender.print.template_parser.service" />
             <argument type="service" id="mapbender.print_plugin_host.service" />
             <argument type="service" id="logger" />

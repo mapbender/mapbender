@@ -43,12 +43,13 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string $resourceDir
      * @param string|null $tempDir
      */
-    public function __construct($templateParser, $pluginHost, $logger,
+    public function __construct($imageTransport,
+                                $templateParser, $pluginHost, $logger,
                                 $resourceDir, $tempDir)
     {
         $this->templateParser = $templateParser;
         $this->pluginHost = $pluginHost;
-        parent::__construct($resourceDir, $tempDir, $logger);
+        parent::__construct($imageTransport, $resourceDir, $tempDir, $logger);
     }
 
     public function doPrint($jobData)
