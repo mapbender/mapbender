@@ -4,15 +4,18 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
+use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Mapbender3 Print Service.
+ * Merges map image exports and various other regions, steered by a template,
+ * into PDFs.
+ *
+ * Registered in container at mapbender.print.service
  *
  * @author Stefan Winkelmann
  */
-class PrintService extends ImageExportService
+class PrintService extends ImageExportService implements PrintServiceInterface
 {
     /** @var PDF_Extensions|\FPDF */
     protected $pdf;
@@ -21,10 +24,10 @@ class PrintService extends ImageExportService
     /** @var array */
     protected $data;
 
-    /** @var ContainerInterface */
-    protected $container;
     /** @var OdgParser */
     protected $templateParser;
+    /** @var PrintPluginHost */
+    protected $pluginHost;
 
     /**
      * @var array Default geometry style
@@ -33,16 +36,19 @@ class PrintService extends ImageExportService
         "strokeWidth" => 1
     );
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @param OdgParser $templateParser
+     * @param PrintPluginHost $pluginHost
+     * @param LoggerInterface $logger
+     * @param string $resourceDir
+     * @param string|null $tempDir
+     */
+    public function __construct($templateParser, $pluginHost, $logger,
+                                $resourceDir, $tempDir)
     {
-        // HACK: replicate services.xml-declared constructor args by pulling bits from the container
-        $resourceDir = $container->getParameter('mapbender.imageexport.resource_dir');
-        $tempDir = $container->getParameter('mapbender.imageexport.temp_dir');
-        /** @var LoggerInterface $logger */
-        $logger = $container->get('logger');
-        $this->container = $container;
+        $this->templateParser = $templateParser;
+        $this->pluginHost = $pluginHost;
         parent::__construct($resourceDir, $tempDir, $logger);
-        $this->templateParser = $container->get('mapbender.print.template_parser.service');
     }
 
     public function doPrint($jobData)
@@ -55,6 +61,18 @@ class PrintService extends ImageExportService
         $pdf = $this->buildPdf($mapImageName, $templateData, $jobData);
 
         return $this->dumpPdf($pdf);
+    }
+
+    public function dumpPrint(array $jobData)
+    {
+        return $this->doPrint($jobData);
+    }
+
+    public function storePrint(array $jobData, $fileName)
+    {
+        if (!file_put_contents($fileName, $this->doPrint($jobData))) {
+            throw new \RuntimeException("Failed to store printout at {$fileName}");
+        }
     }
 
     /**
@@ -694,9 +712,6 @@ class PrintService extends ImageExportService
      */
     protected function getPluginHost()
     {
-        // @todo: in a registered service, this should be injected into the constructor
-        /** @var PrintPluginHost $service */
-        $service = $this->container->get('mapbender.print_plugin_host.service');
-        return $service;
+        return $this->pluginHost;
     }
 }
