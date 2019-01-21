@@ -23,6 +23,8 @@ class PrintService extends ImageExportService
 
     /** @var ContainerInterface */
     protected $container;
+    /** @var OdgParser */
+    protected $templateParser;
 
     /**
      * @var array Default geometry style
@@ -38,9 +40,9 @@ class PrintService extends ImageExportService
         $tempDir = $container->getParameter('mapbender.imageexport.temp_dir');
         /** @var LoggerInterface $logger */
         $logger = $container->get('logger');
-        // HACK: keep container around for OdgParser instantiation; @todo: OdgParser should be an injected service
         $this->container = $container;
         parent::__construct($resourceDir, $tempDir, $logger);
+        $this->templateParser = $container->get('mapbender.print.template_parser.service');
     }
 
     public function doPrint($jobData)
@@ -61,8 +63,7 @@ class PrintService extends ImageExportService
      */
     protected function getTemplateData($jobData)
     {
-        $odgParser = new OdgParser($this->container);
-        return $odgParser->getConf($jobData['template']);
+        return $this->templateParser->getConf($jobData['template']);
     }
 
     /**

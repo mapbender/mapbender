@@ -8,6 +8,10 @@
         <!-- leave temp dir at null to autodetect via sys_get_temp_dir(); use an explicit path if temp dir autodetect fails -->
         <parameter key="mapbender.imageexport.temp_dir">null</parameter>
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
+        <!-- print resource dir by default == imageexport resource dir but can be changed independently -->
+        <parameter key="mapbender.print.resource_dir">%mapbender.imageexport.resource_dir%</parameter>
+        <parameter key="mapbender.print.template_dir">%mapbender.print.resource_dir%/templates</parameter>
+        <parameter key="mapbender.print.template_parser.service.class">Mapbender\PrintBundle\Component\OdgParser</parameter>
         <parameter key="mapbender.print_service_bridge.service.class">Mapbender\PrintBundle\Component\Service\PrintServiceBridge</parameter>
         <parameter key="mapbender.print_plugin_host.service.class">Mapbender\PrintBundle\Component\Service\PrintPluginHost</parameter>
         <parameter key="mapbender.print.plugin.digitizer.class">Mapbender\PrintBundle\Component\Plugin\DigitizerPrintPlugin</parameter>
@@ -30,6 +34,9 @@
             <argument>%mapbender.imageexport.resource_dir%</argument>
             <argument>%mapbender.imageexport.temp_dir%</argument>
             <argument type="service" id="logger" />
+        </service>
+        <service id="mapbender.print.template_parser.service" class="%mapbender.print.template_parser.service.class%">
+            <argument>%mapbender.print.template_dir%</argument>
         </service>
         <service id="mapbender.print_service_bridge.service" class="%mapbender.print_service_bridge.service.class%">
             <argument type="service" id="service_container" />

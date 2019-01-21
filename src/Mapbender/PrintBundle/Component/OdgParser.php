@@ -2,11 +2,11 @@
 namespace Mapbender\PrintBundle\Component;
 
 use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class OdgParser
+ * Extract named region dimensions and font styles from an ODG document.
  *
+ * Registered at mapbender.print.template_parser.service
  */
 class OdgParser
 {
@@ -25,17 +25,15 @@ class OdgParser
     /** Conversion factor for meters to centimeters */
     const CONVERSION_FACTOR = 10;
 
-    /** @var ContainerInterface */
-    protected $container;
+    /** @var string */
+    protected $sourcePath;
 
     /**
-     * OdgParser constructor.
-     *
-     * @param $container
+     * @param string $sourcePath
      */
-    public function __construct($container)
+    public function __construct($sourcePath)
     {
-        $this->container = $container;
+        $this->sourcePath = rtrim($sourcePath, '/');
     }
 
 
@@ -48,8 +46,7 @@ class OdgParser
      */
     private function readOdgFile($template, $file)
     {
-        $resourcePath = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-        $odgFile      = $resourcePath . '/templates/' . $template . '.odg';
+        $odgFile = "{$this->sourcePath}/{$template}.odg";
         $xml          = null;
 
         if(!is_file($odgFile)){

@@ -257,7 +257,8 @@ class PrintClient extends Element
 
             case 'getTemplateSize':
                 $template = $request->get('template');
-                $odgParser = new OdgParser($this->container);
+                /** @var OdgParser $odgParser */
+                $odgParser = $this->container->get('mapbender.print.template_parser.service');
                 $size = $odgParser->getMapSize($template);
 
                 return new Response($size);
