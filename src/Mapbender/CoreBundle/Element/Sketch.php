@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Sketch Element
@@ -11,7 +12,7 @@ use Mapbender\CoreBundle\Component\Element;
 class Sketch extends Element
 {
 
-    /**
+    /**src/Mapbender/CoreBundle/Element/SimpleSearch.php
      * @inheritdoc
      */
     public static function getClassTitle()
@@ -106,7 +107,6 @@ class Sketch extends Element
     public function httpAction($action)
     {
         // TODO access (acl)
-
         switch ($action) {
             case 'getForm':
                 return $this->getForm();
@@ -130,15 +130,8 @@ class Sketch extends Element
 
     protected function saveForm()
     {
-        $request = $this->container->get('request');
         // TODO save form
-        // 
-        // if ok
         return new Response(json_encode(array("success" => MyContent)), 200,
-            array('Content-Type' => 'application/json'));
-        // otherwise
-        return new Response(json_encode(array(
-                "error" => DefineErrorAtTransTwig)), 200,
             array('Content-Type' => 'application/json'));
     }
 
