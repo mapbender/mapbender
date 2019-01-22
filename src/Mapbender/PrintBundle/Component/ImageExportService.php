@@ -4,7 +4,6 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
-use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 use Mapbender\PrintBundle\Element\ImageExport;
 use Psr\Log\LoggerInterface;
 
@@ -15,28 +14,19 @@ use Psr\Log\LoggerInterface;
  */
 class ImageExportService
 {
-    /** @var string */
-    protected $resourceDir;
     /** @var LoggerInterface */
     protected $logger;
-    /** @var ImageTransport */
-    protected $imageTransport;
     /** @var LayerRenderer[] */
     protected $layerRenderers;
 
     /**
      * @param LayerRenderer[] $layerRenderers
-     * @param ImageTransport $imageTransport
-     * @param string $resourceDir absolute path
      * @param LoggerInterface $logger
      */
-    public function __construct($layerRenderers, ImageTransport $imageTransport,
-                                $resourceDir,
+    public function __construct($layerRenderers,
                                 LoggerInterface $logger)
     {
         $this->layerRenderers = $layerRenderers;
-        $this->imageTransport = $imageTransport;
-        $this->resourceDir = $resourceDir;
         $this->logger = $logger;
     }
 
@@ -227,16 +217,6 @@ class ImageExportService
         foreach ($layers as $k => $layerDef) {
             $this->addImageLayer($canvas, $layerDef, $extent);
         }
-    }
-
-    /**
-     * @param string $url
-     * @param float $opacity
-     * @return resource|null GDish
-     */
-    protected function downloadImage($url, $opacity=1.0)
-    {
-        return $this->imageTransport->downloadImage($url, $opacity);
     }
 
     /**

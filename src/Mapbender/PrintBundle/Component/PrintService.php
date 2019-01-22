@@ -5,6 +5,7 @@ use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
+use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -25,11 +26,15 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected $data;
 
     /** @var string */
+    protected $resourceDir;
+    /** @var string */
     protected $tempDir;
     /** @var OdgParser */
     protected $templateParser;
     /** @var PrintPluginHost */
     protected $pluginHost;
+    /** @var ImageTransport */
+    protected $imageTransport;
 
     /**
      * @var array Default geometry style
@@ -45,14 +50,17 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string $resourceDir
      * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      */
-    public function __construct($layerRenderers, $imageTransport,
+    public function __construct($layerRenderers, ImageTransport $imageTransport,
                                 $templateParser, $pluginHost, $logger,
                                 $resourceDir, $tempDir)
     {
         $this->templateParser = $templateParser;
+        $this->imageTransport = $imageTransport;
+
         $this->pluginHost = $pluginHost;
+        $this->resourceDir = $resourceDir;
         $this->tempDir = $tempDir ?: sys_get_temp_dir();
-        parent::__construct($layerRenderers, $imageTransport, $resourceDir, $logger);
+        parent::__construct($layerRenderers, $logger);
     }
 
     public function doPrint($jobData)
@@ -645,7 +653,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     private function getLegendImage($url)
     {
         $imagename = $this->makeTempFile('mb_printlegend');
-        $image = $this->downloadImage($url);
+        $image = $this->imageTransport->downloadImage($url);
         if ($image) {
             imagepng($image, $imagename);
             imagedestroy($image);
