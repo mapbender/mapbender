@@ -55,7 +55,7 @@ class GdCanvas
      */
     public function drawLineString($coordinates, $color)
     {
-        if (PHP_VERSION_ID >= 70200) {
+        if (PHP_VERSION_ID >= 70200 && count($coordinates) > 2) {
             $pointsFlat = call_user_func_array('array_merge', $coordinates);
             imageopenpolygon($this->resource, $pointsFlat, count($coordinates), $color);
         } else {
