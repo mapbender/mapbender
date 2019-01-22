@@ -17,8 +17,6 @@ use Psr\Log\LoggerInterface;
 class ImageExportService
 {
     /** @var string */
-    protected $tempDir;
-    /** @var string */
     protected $resourceDir;
     /** @var LoggerInterface */
     protected $logger;
@@ -28,14 +26,12 @@ class ImageExportService
     /**
      * @param ImageTransport $imageTransport
      * @param string $resourceDir absolute path
-     * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      * @param LoggerInterface $logger
      */
-    public function __construct(ImageTransport $imageTransport, $resourceDir, $tempDir, LoggerInterface $logger)
+    public function __construct(ImageTransport $imageTransport, $resourceDir, LoggerInterface $logger)
     {
         $this->imageTransport = $imageTransport;
         $this->resourceDir = $resourceDir;
-        $this->tempDir = $tempDir ?: sys_get_temp_dir();
         $this->logger = $logger;
     }
 
@@ -527,22 +523,6 @@ class ImageExportService
         return $cropped;
     }
 
-
-    /**
-     * Creates a ~randomly named temp file with given $prefix and returns its name
-     *
-     * @param $prefix
-     * @return string
-     */
-    protected function makeTempFile($prefix)
-    {
-        $filePath = tempnam($this->tempDir, $prefix);
-        // tempnam may return false in undocumented error cases
-        if (!$filePath) {
-            throw new \RuntimeException("Failed to create temp file with prefix '$prefix' in '{$this->tempDir}'");
-        }
-        return $filePath;
-    }
 
     /**
      * @param string $type (a GeoJson type name)

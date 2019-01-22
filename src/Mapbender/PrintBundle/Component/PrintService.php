@@ -24,6 +24,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /** @var array */
     protected $data;
 
+    /** @var string */
+    protected $tempDir;
     /** @var OdgParser */
     protected $templateParser;
     /** @var PrintPluginHost */
@@ -41,7 +43,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param PrintPluginHost $pluginHost
      * @param LoggerInterface $logger
      * @param string $resourceDir
-     * @param string|null $tempDir
+     * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      */
     public function __construct($imageTransport,
                                 $templateParser, $pluginHost, $logger,
@@ -49,7 +51,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     {
         $this->templateParser = $templateParser;
         $this->pluginHost = $pluginHost;
-        parent::__construct($imageTransport, $resourceDir, $tempDir, $logger);
+        $this->tempDir = $tempDir ?: sys_get_temp_dir();
+        parent::__construct($imageTransport, $resourceDir, $logger);
     }
 
     public function doPrint($jobData)
@@ -714,5 +717,21 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected function getPluginHost()
     {
         return $this->pluginHost;
+    }
+
+    /**
+     * Creates a ~randomly named temp file with given $prefix and returns its name
+     *
+     * @param $prefix
+     * @return string
+     */
+    protected function makeTempFile($prefix)
+    {
+        $filePath = tempnam($this->tempDir, $prefix);
+        // tempnam may return false in undocumented error cases
+        if (!$filePath) {
+            throw new \RuntimeException("Failed to create temp file with prefix '$prefix' in '{$this->tempDir}'");
+        }
+        return $filePath;
     }
 }
