@@ -45,14 +45,14 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string $resourceDir
      * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      */
-    public function __construct($imageTransport,
+    public function __construct($layerRenderers, $imageTransport,
                                 $templateParser, $pluginHost, $logger,
                                 $resourceDir, $tempDir)
     {
         $this->templateParser = $templateParser;
         $this->pluginHost = $pluginHost;
         $this->tempDir = $tempDir ?: sys_get_temp_dir();
-        parent::__construct($imageTransport, $resourceDir, $logger);
+        parent::__construct($layerRenderers, $imageTransport, $resourceDir, $logger);
     }
 
     public function doPrint($jobData)

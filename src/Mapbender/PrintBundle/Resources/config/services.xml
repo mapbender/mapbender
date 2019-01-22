@@ -9,6 +9,8 @@
         <parameter key="mapbender.imageexport.temp_dir">null</parameter>
         <parameter key="mapbender.imageexport.image_transport.service.class">Mapbender\PrintBundle\Component\Transport\ImageTransport</parameter>
         <parameter key="mapbender.imageexport.base_transport.service.class">Mapbender\PrintBundle\Component\Transport\OwsProxyAwareTransport</parameter>
+        <parameter key="mapbender.imageexport.renderer.wms.class">Mapbender\PrintBundle\Component\LayerRendererWms</parameter>
+        <parameter key="mapbender.imageexport.renderer.geojson.class">Mapbender\PrintBundle\Component\LayerRendererGeoJson</parameter>
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
         <!-- print resource / temp dirs are by default == imageexport dirs, but can be changed independently -->
         <parameter key="mapbender.print.resource_dir">%mapbender.imageexport.resource_dir%</parameter>
@@ -34,6 +36,10 @@
     </parameters>
     <services>
         <service id="mapbender.imageexport.service" class="%mapbender.imageexport.service.class%">
+            <argument type="collection" key="layerRenderers">
+                <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
+                <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
+            </argument>
             <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument>%mapbender.imageexport.resource_dir%</argument>
             <argument>%mapbender.imageexport.temp_dir%</argument>
@@ -46,7 +52,18 @@
             <argument>%owsproxy.proxy%</argument>
             <argument type="service" id="logger" />
         </service>
+        <service id="mapbender.imageexport.renderer.wms" class="%mapbender.imageexport.renderer.wms.class%">
+            <argument type="service" id="mapbender.imageexport.image_transport.service" />
+            <argument type="service" id="logger" />
+        </service>
+        <service id="mapbender.imageexport.renderer.geojson" class="%mapbender.imageexport.renderer.geojson.class%">
+            <argument>%mapbender.imageexport.resource_dir%/fonts</argument>
+        </service>
         <service id="mapbender.print.service" class="%mapbender.print.service.class%">
+            <argument type="collection" key="layerRenderers">
+                <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
+                <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
+            </argument>
             <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument type="service" id="mapbender.print.template_parser.service" />
             <argument type="service" id="mapbender.print_plugin_host.service" />
