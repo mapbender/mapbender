@@ -25,7 +25,10 @@
         <parameter key="mapbender.source.url_processor.service.class">Mapbender\CoreBundle\Component\Source\UrlProcessor</parameter>
         <parameter key="mapbender.strict">false</parameter>
         <parameter key="mapbender.strict.element_api">%mapbender.strict%</parameter>
+        <parameter key="mapbender.strict.asset.bundle_scopes">%mapbender.strict%</parameter>
         <parameter key="owsproxy.baseroute">owsproxy3_core_owsproxy_entrypoint</parameter>
+        <parameter key="mapbender.asset_compiler.service.class">Mapbender\CoreBundle\Asset\AssetFactory</parameter>
+        <parameter key="mapbender.application_asset.service.class">Mapbender\CoreBundle\Asset\ApplicationAssetService</parameter>
     </parameters>
 
     <services>
@@ -164,6 +167,22 @@
         </service>
         <service id="mapbender.presenter.application.cache.backend" class="%mapbender.presenter.application.cache.backend.class%">
             <argument>%kernel.cache_dir%</argument>
+        </service>
+        <service id="mapbender.asset_compiler.service" class="%mapbender.asset_compiler.service.class%">
+            <argument type="service" id="file_locator" />
+            <argument>%kernel.root_dir%/../web</argument>
+            <argument type="service" id="templating" />
+            <argument type="service" id="mapbender.assetic.filter.sass" />
+            <argument type="service" id="assetic.filter.cssrewrite" />
+        </service>
+        <service id="mapbender.application_asset.service" class="%mapbender.application_asset.service.class%">
+            <argument type="service" id="mapbender.asset_compiler.service" />
+            <argument type="service" id="mapbender.presenter.application.service" />
+            <argument type="service" id="mapbender.element_factory.service" />
+            <argument type="service" id="router" />
+            <argument type="service" id="templating" />
+            <argument key="minifyCss">%kernel.debug%</argument>
+            <argument key="strict">%mapbender.strict.asset.bundle_scopes%</argument>
         </service>
     </services>
 </container>

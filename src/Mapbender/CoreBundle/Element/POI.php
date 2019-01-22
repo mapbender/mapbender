@@ -75,12 +75,15 @@ class POI extends Element
     {
         return array(
             'js'    => array(
-                'mapbender.element.poi.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.poi.js',
                 // to call social networks '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
             ),
-            'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/poi.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:poi.json.twig')
+            'css'   => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/poi.scss',
+            ),
+            'trans' => array(
+                'MapbenderCoreBundle:Element:poi.json.twig',
+            ),
         );
     }
 

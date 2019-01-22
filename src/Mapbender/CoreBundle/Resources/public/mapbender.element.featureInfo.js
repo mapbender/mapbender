@@ -350,7 +350,6 @@
                         title: widget.element.attr('data-title'),
                         draggable: true,
                         modal: false,
-                        closeButton: false,
                         closeOnESC: false,
                         detachOnClose: false,
                         content: widget.element.removeClass('hidden'),

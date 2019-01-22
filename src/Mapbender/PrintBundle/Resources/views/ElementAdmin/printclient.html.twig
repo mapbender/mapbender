@@ -15,6 +15,12 @@
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.file_prefix) }}{{ form_widget(form.configuration.file_prefix) }}
     <div class="clearContainer"></div>
+    {% if form.configuration.renderMode is defined %}
+        {{ form_row(form.configuration.renderMode) }}
+    {% endif %}
+    {% if form.configuration.queueAccess is defined %}
+        {{ form_row(form.configuration.queueAccess) }}
+    {% endif %}
     {# Section label needs to be full width; FOM's form_label does not merge extra CSS class passed in label_attr ... #}
     <div class="section-label">
         {{ form_label(form.configuration.quality_levels) }}

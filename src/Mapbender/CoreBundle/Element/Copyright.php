@@ -55,10 +55,11 @@ class Copyright extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.copyright.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.copyright.js',
             ),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/copyright.scss')
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/copyright.scss',
+            ),
         );
     }
 

@@ -79,12 +79,11 @@ class Map extends Element
         return array(
             'js' => array(
                 '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
-                /* 'mapquery/lib/openlayers/lib/deprecated.js', */
                 '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
                 '/../vendor/mapbender/mapquery/src/jquery.mapquery.core.js',
-                'proj4js/proj4js-compressed.js',
-                'mapbender.element.map.mapaxisorder.js',
-                'mapbender.element.map.js'),
+                '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.map.js'),
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));
     }
 

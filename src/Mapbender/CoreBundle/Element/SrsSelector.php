@@ -54,10 +54,13 @@ class SrsSelector extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.srsselector.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.srsselector.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
-                'proj4js/proj4js-compressed.js'),
-            'css' => array("mapbender.element.srsselector.scss")
+                '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
+            ),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.srsselector.scss',
+            ),
         );
     }
 

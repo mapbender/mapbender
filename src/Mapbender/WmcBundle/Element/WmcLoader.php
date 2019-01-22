@@ -80,17 +80,17 @@ class WmcLoader extends WmcBase
      */
     public function getAssets()
     {
-        $js = array(
-            'jquery.form.js',
-            'mapbender.wmchandler.js',
-            'mapbender.element.wmcloader.js'
-        );
         return array(
-            'js' => $js,
+            'js' => array(
+                '@MapbenderWmcBundle/Resources/public/jquery.form.js',
+                '@MapbenderWmcBundle/Resources/public/mapbender.wmchandler.js',
+                '@MapbenderWmcBundle/Resources/public/mapbender.element.wmcloader.js'
+            ),
             'css' => array(),
             'trans' => array(
                 'MapbenderWmcBundle:Element:wmcloader.json.twig',
-                'MapbenderWmcBundle:Element:wmchandler.json.twig')
+                'MapbenderWmcBundle:Element:wmchandler.json.twig',
+            ),
         );
     }
 

@@ -16,16 +16,11 @@ class ManagerTemplate extends Template
         switch ($type) {
             case 'js':
                 return array(
-                    '/components/underscore/underscore-min.js',
-                    '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
-                    '/components/datatables/media/js/jquery.dataTables.min.js',
                     '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
                     '/components/vis-ui.js/vis-ui.js-built.js',
 
                     '@MapbenderManagerBundle/Resources/public/js/SymfonyAjaxManager.js',
 
-                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
-                    '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                     '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                     '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
                     '@FOMCoreBundle/Resources/public/js/widgets/radiobuttonExtended.js',
