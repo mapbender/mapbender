@@ -118,7 +118,7 @@ class WmcHandler
      */
     public function getBaseUrl()
     {
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $url_base = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
         return $url_base;
     }

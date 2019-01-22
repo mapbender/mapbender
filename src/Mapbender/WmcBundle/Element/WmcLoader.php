@@ -100,10 +100,10 @@ class WmcLoader extends WmcBase
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        if (in_array("wmcidloader", $configuration['components']) && $this->container->get('request')->get('wmcid')) {
-            $configuration["load"] = array('wmcid' => $this->container->get('request')->get('wmcid'));
-        } else if (in_array("wmcurlloader", $configuration['components']) && $this->container->get('request')->get('wmcurl')) {
-            $configuration["load"] = array('wmcurl' => $this->container->get('request')->get('wmcurl'));
+        if (in_array("wmcidloader", $configuration['components']) && $this->container->get('request_stack')->getCurrentRequest()->get('wmcid')) {
+            $configuration["load"] = array('wmcid' => $this->container->get('request_stack')->getCurrentRequest()->get('wmcid'));
+        } else if (in_array("wmcurlloader", $configuration['components']) && $this->container->get('request_stack')->getCurrentRequest()->get('wmcurl')) {
+            $configuration["load"] = array('wmcurl' => $this->container->get('request_stack')->getCurrentRequest()->get('wmcurl'));
         }
         return $configuration;
     }
@@ -158,7 +158,7 @@ class WmcLoader extends WmcBase
     {
         $config = $this->getConfiguration();
         if (in_array("wmcidloader", $config['components']) || in_array("wmclistloader", $config['components'])) {
-            $wmcid = $this->container->get('request')->get("_id", null);
+            $wmcid = $this->container->get('request_stack')->getCurrentRequest()->get("_id", null);
             $wmchandler = $this->wmcHandlerFactory();
             $wmc = $wmchandler->getWmc($wmcid, true);
             if ($wmc) {
@@ -234,7 +234,7 @@ class WmcLoader extends WmcBase
     {
         $config = $this->getConfiguration();
         if (in_array("wmcxmlloader", $config['components'])) {
-            $json = $this->container->get('request')->get("state", null);
+            $json = $this->container->get('request_stack')->getCurrentRequest()->get("state", null);
             if ($json) {
                 $wmc = Wmc::create();
                 $state = $wmc->getState();
@@ -267,7 +267,7 @@ class WmcLoader extends WmcBase
     {
         $config = $this->getConfiguration();
         if (in_array("wmcxmlloader", $config['components'])) {
-            $request = $this->container->get('request');
+            $request = $this->container->get('request_stack')->getCurrentRequest();
             $wmc = Wmc::create();
             $form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
             $form->bind($request);
@@ -304,8 +304,8 @@ class WmcLoader extends WmcBase
     protected function getWmcFromUrl($url)
     {
         $config = $this->getConfiguration();
-        if (in_array("wmcurlloader", $config['components']) && $this->container->get('request')->get("_url", null)) {
-            $wmcurlHelp = $this->container->get('request')->get("_url");
+        if (in_array("wmcurlloader", $config['components']) && $this->container->get('request_stack')->getCurrentRequest()->get("_url", null)) {
+            $wmcurlHelp = $this->container->get('request_stack')->getCurrentRequest()->get("_url");
             $rawUrl = parse_url($wmcurlHelp);
             $proxy_config = $this->container->getParameter("owsproxy.proxy");
             $proxy_query = ProxyQuery::createFromUrl(

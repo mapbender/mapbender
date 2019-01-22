@@ -397,7 +397,7 @@ class Application implements IAssetDependent
      */
     public static function getBaseUrl($container)
     {
-        $request = $container->get('request');
+        $request = $container->get('request_stack')->getCurrentRequest();
         return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
     }
 

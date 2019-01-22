@@ -118,7 +118,7 @@ class ImageExport extends Element
     {
         switch ($action) {
             case 'export':
-                $request = $this->container->get('request');
+                $request = $this->container->get('request_stack')->getCurrentRequest();
                 $data = $this->prepareJobData($request, $this->entity->getConfiguration());
                 $format = $request->request->get('imageformat');
                 $exportservice = $this->getExportService();

@@ -182,7 +182,7 @@ class PrintClient extends Element
     public function httpAction($action)
     {
         /** @var Request $request */
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $bridgeService = $this->getServiceBridge();
         $configuration = $this->entity->getConfiguration();
         switch ($action) {

@@ -73,9 +73,9 @@ class WmsLoader extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        if ($this->container->get('request')->get('wms_url')) {
-            $wms_url = $this->container->get('request')->get('wms_url');
-            $all = $this->container->get('request')->query->all();
+        if ($this->container->get('request_stack')->getCurrentRequest()->get('wms_url')) {
+            $wms_url = $this->container->get('request_stack')->getCurrentRequest()->get('wms_url');
+            $all = $this->container->get('request_stack')->getCurrentRequest()->query->all();
             foreach ($all as $key => $value) {
                 if (strtolower($key) === "version" && stripos($wms_url, "version") === false) {
                     $wms_url .= "&version=" . $value;
@@ -87,8 +87,8 @@ class WmsLoader extends Element
             }
             $configuration['wms_url'] = urldecode($wms_url);
         }
-        if ($this->container->get('request')->get('wms_id')) {
-            $wmsId = $this->container->get('request')->get('wms_id');
+        if ($this->container->get('request_stack')->getCurrentRequest()->get('wms_id')) {
+            $wmsId = $this->container->get('request_stack')->getCurrentRequest()->get('wms_id');
             $configuration['wms_id'] = $wmsId;
         }
         return $configuration;
@@ -160,7 +160,7 @@ class WmsLoader extends Element
 
     protected function loadWms()
     {
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $wmsSource = $this->getWmsSource($request);
 
         $wmsSourceEntityHandler = new WmsSourceEntityHandler($this->container, $wmsSource);
