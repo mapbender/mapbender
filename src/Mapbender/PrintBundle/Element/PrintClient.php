@@ -239,9 +239,7 @@ class PrintClient extends Element
         $configuration = $this->entity->getConfiguration();
         switch ($action) {
             case 'print':
-                // @todo: define what data we support; do not simply process and forward everything
-                $requestData = $request->request->all();
-                $data = $this->preparePrintData($requestData, $configuration);
+                $data = $this->preparePrintData($request, $configuration);
 
                 $pdfBody = $bridgeService->dumpPrint($data);
 
@@ -272,10 +270,7 @@ class PrintClient extends Element
                     $queuePlugin = $bridgeService->getPluginHost()->getPlugin('print-queue');
                     /** @var PrintQueuePlugin|null $queuePlugin */
                     if ($queuePlugin && $action == $queuePlugin->getQueueActionName()) {
-                        // @todo: define what data we support; do not simply process and forward everything
-                        $requestData = $request->request->all();
-
-                        $jobData = $this->preparePrintData($requestData, $configuration);
+                        $jobData = $this->preparePrintData($request, $configuration);
                         $queuePlugin->putJob($jobData, $this->generateFilename());
                         return new Response('', 204);
                     }
@@ -295,14 +290,14 @@ class PrintClient extends Element
     }
 
     /**
-     * Extract internal job data array from a raw form data array.
-     *
-     * @param mixed[] $data
+     * @param Request $request
      * @param mixed[] $configuration
      * @return mixed[]
      */
-    protected function preparePrintData($data, $configuration)
+    protected function preparePrintData(Request $request, $configuration)
     {
+        // @todo: define what data we support; do not simply process and forward everything
+        $data = $request->request->all();
         if (isset($data['data'])) {
             $d0 = $data['data'];
             unset($data['data']);
