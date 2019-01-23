@@ -4,13 +4,19 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
+use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
+use Mapbender\PrintBundle\Component\Transport\ImageTransport;
+use Psr\Log\LoggerInterface;
 
 /**
- * Mapbender3 Print Service.
+ * Merges map image exports and various other regions, steered by a template,
+ * into PDFs.
+ *
+ * Registered in container at mapbender.print.service
  *
  * @author Stefan Winkelmann
  */
-class PrintService extends ImageExportService
+class PrintService extends ImageExportService implements PrintServiceInterface
 {
     /** @var PDF_Extensions|\FPDF */
     protected $pdf;
@@ -19,12 +25,43 @@ class PrintService extends ImageExportService
     /** @var array */
     protected $data;
 
+    /** @var string */
+    protected $resourceDir;
+    /** @var string */
+    protected $tempDir;
+    /** @var OdgParser */
+    protected $templateParser;
+    /** @var PrintPluginHost */
+    protected $pluginHost;
+    /** @var ImageTransport */
+    protected $imageTransport;
+
     /**
      * @var array Default geometry style
      */
     protected $defaultStyle = array(
         "strokeWidth" => 1
     );
+
+    /**
+     * @param OdgParser $templateParser
+     * @param PrintPluginHost $pluginHost
+     * @param LoggerInterface $logger
+     * @param string $resourceDir
+     * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
+     */
+    public function __construct($layerRenderers, ImageTransport $imageTransport,
+                                $templateParser, $pluginHost, $logger,
+                                $resourceDir, $tempDir)
+    {
+        $this->templateParser = $templateParser;
+        $this->imageTransport = $imageTransport;
+
+        $this->pluginHost = $pluginHost;
+        $this->resourceDir = $resourceDir;
+        $this->tempDir = $tempDir ?: sys_get_temp_dir();
+        parent::__construct($layerRenderers, $logger);
+    }
 
     public function doPrint($jobData)
     {
@@ -38,14 +75,25 @@ class PrintService extends ImageExportService
         return $this->dumpPdf($pdf);
     }
 
+    public function dumpPrint(array $jobData)
+    {
+        return $this->doPrint($jobData);
+    }
+
+    public function storePrint(array $jobData, $fileName)
+    {
+        if (!file_put_contents($fileName, $this->doPrint($jobData))) {
+            throw new \RuntimeException("Failed to store printout at {$fileName}");
+        }
+    }
+
     /**
      * @param array $jobData
      * @return array
      */
     protected function getTemplateData($jobData)
     {
-        $odgParser = new OdgParser($this->container);
-        return $odgParser->getConf($jobData['template']);
+        return $this->templateParser->getConf($jobData['template']);
     }
 
     /**
@@ -605,7 +653,7 @@ class PrintService extends ImageExportService
     private function getLegendImage($url)
     {
         $imagename = $this->makeTempFile('mb_printlegend');
-        $image = $this->downloadImage($url);
+        $image = $this->imageTransport->downloadImage($url);
         if ($image) {
             imagepng($image, $imagename);
             imagedestroy($image);
@@ -676,9 +724,22 @@ class PrintService extends ImageExportService
      */
     protected function getPluginHost()
     {
-        // @todo: in a registered service, this should be injected into the constructor
-        /** @var PrintPluginHost $service */
-        $service = $this->container->get('mapbender.print_plugin_host.service');
-        return $service;
+        return $this->pluginHost;
+    }
+
+    /**
+     * Creates a ~randomly named temp file with given $prefix and returns its name
+     *
+     * @param $prefix
+     * @return string
+     */
+    protected function makeTempFile($prefix)
+    {
+        $filePath = tempnam($this->tempDir, $prefix);
+        // tempnam may return false in undocumented error cases
+        if (!$filePath) {
+            throw new \RuntimeException("Failed to create temp file with prefix '$prefix' in '{$this->tempDir}'");
+        }
+        return $filePath;
     }
 }

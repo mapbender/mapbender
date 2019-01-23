@@ -77,7 +77,7 @@ $.widget("mapbender.mbPrintClientJobList", {
              var columns = ['id', 'ctime', 'status', 'interface'].map(function(name, i) {
                  var column = {
                      targets: i,
-                     // className: name,
+                     orderarble: name === 'ctime',
                      data: null,
                      searchable: false,
                      sortable: name === 'ctime'
@@ -131,6 +131,8 @@ $.widget("mapbender.mbPrintClientJobList", {
                  },
                  paging:     false,
                  searching:  false,
+                 ordering: false,
+                 order: [1, 'desc'],
                  info:       false,
                  autoWidth:  false,
                  columnDefs: columns,

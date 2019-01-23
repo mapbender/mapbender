@@ -56,6 +56,9 @@ class GdCanvas
     public function drawLineString($coordinates, $color)
     {
         if (PHP_VERSION_ID >= 70200 && count($coordinates) > 2) {
+            // imageopenpolygon supports continuous evaluation of IMG_COLOR_STYLED instructions
+            // this makes it preferable to drawing a series of individual line, where style
+            // evaluation restarts at each segment
             $pointsFlat = call_user_func_array('array_merge', $coordinates);
             imageopenpolygon($this->resource, $pointsFlat, count($coordinates), $color);
         } else {
