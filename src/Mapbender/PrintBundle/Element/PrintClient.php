@@ -239,7 +239,9 @@ class PrintClient extends Element
         $configuration = $this->entity->getConfiguration();
         switch ($action) {
             case 'print':
-                $data = $this->preparePrintData($request, $configuration);
+                // @todo: define what data we support; do not simply process and forward everything
+                $requestData = $request->request->all();
+                $data = $this->preparePrintData($requestData, $configuration);
 
                 $pdfBody = $bridgeService->dumpPrint($data);
 
@@ -255,7 +257,8 @@ class PrintClient extends Element
 
             case 'getTemplateSize':
                 $template = $request->get('template');
-                $odgParser = new OdgParser($this->container);
+                /** @var OdgParser $odgParser */
+                $odgParser = $this->container->get('mapbender.print.template_parser.service');
                 $size = $odgParser->getMapSize($template);
 
                 return new Response($size);
@@ -269,7 +272,10 @@ class PrintClient extends Element
                     $queuePlugin = $bridgeService->getPluginHost()->getPlugin('print-queue');
                     /** @var PrintQueuePlugin|null $queuePlugin */
                     if ($queuePlugin && $action == $queuePlugin->getQueueActionName()) {
-                        $jobData = $this->preparePrintData($request, $configuration);
+                        // @todo: define what data we support; do not simply process and forward everything
+                        $requestData = $request->request->all();
+
+                        $jobData = $this->preparePrintData($requestData, $configuration);
                         $queuePlugin->putJob($jobData, $this->generateFilename());
                         return new Response('', 204);
                     }
@@ -289,14 +295,14 @@ class PrintClient extends Element
     }
 
     /**
-     * @param Request $request
+     * Extract internal job data array from a raw form data array.
+     *
+     * @param mixed[] $data
      * @param mixed[] $configuration
      * @return mixed[]
      */
-    protected function preparePrintData(Request $request, $configuration)
+    protected function preparePrintData($data, $configuration)
     {
-        // @todo: define what data we support; do not simply process and forward everything
-        $data = $request->request->all();
         if (isset($data['data'])) {
             $d0 = $data['data'];
             unset($data['data']);

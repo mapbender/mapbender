@@ -65,7 +65,7 @@
                 },
                 persist: this.options.persist,
                 immediate: immediate,
-                geodesic: this._isGeodesic()
+                geodesic: true
             });
 
             this.control.events.on({
@@ -98,7 +98,6 @@
             var self = this,
                     olMap = this.map.data('mapQuery').olMap;
             olMap.addControl(this.control);
-            this.control.geodesic = this._isGeodesic();
             this.control.activate();
 
             this._reset();
@@ -148,15 +147,8 @@
             this.popup = null;
             this.callback ? this.callback.call() : this.callback = null;
         },
-        _isGeodesic: function(){
-            var mapProj = this.map.data('mapQuery').olMap.getProjectionObject();
-            return mapProj.proj.units === 'degrees' || mapProj.proj.units === 'dd';
-        },
         _mapSrsChanged: function(event, srs){
-            if (this.control.active) { // change geodesic if a control is active
-                this.control.geodesic = this._isGeodesic();
-                this.control.deactivate();
-                this.control.activate();
+            if (this.control) {
                 this._reset();
             }
         },

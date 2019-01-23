@@ -58,6 +58,9 @@
       background-color:darken($buttonFirstColor, 10%);
       color:$lightFontColor;
     }
+    a {
+      color:inherit;
+    }
   }
   .container{
     border-top:dashed 1px $thirdColor;
