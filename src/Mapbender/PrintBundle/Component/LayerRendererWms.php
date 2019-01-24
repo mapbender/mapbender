@@ -35,13 +35,14 @@ class LayerRendererWms extends LayerRenderer
             $this->logger->warning("Missing url in WMS layer", $layerDef);
             return;
         }
+        $dd = $this->calculateGrid($canvas, $extent);
         $url = $this->preprocessUrl($layerDef, $canvas, $extent);
 
         $layerImage = $this->imageTransport->downloadImage($url, $layerDef['opacity']);
         if ($layerImage) {
             imagecopyresampled($canvas->resource, $layerImage,
                 0, 0, 0, 0,
-                $canvas->width, $canvas->height,
+                $canvas->getWidth(), $canvas->getHeight(),
                 imagesx($layerImage), imagesy($layerImage));
             imagedestroy($layerImage);
             unset($layerImage);
@@ -66,8 +67,8 @@ class LayerRendererWms extends LayerRenderer
     protected function preprocessUrl($layerDef, $canvas, Box $extent)
     {
         $params = array(
-            'WIDTH' => $canvas->width,
-            'HEIGHT' => $canvas->height,
+            'WIDTH' => $canvas->getWidth(),
+            'HEIGHT' => $canvas->getHeight(),
         );
         if (!empty($layerDef['changeAxis'])){
             $params['BBOX'] = $extent->bottom . ',' . $extent->left . ',' . $extent->top . ',' . $extent->right;
