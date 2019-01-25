@@ -50,7 +50,6 @@ class LayerRendererWms extends LayerRenderer
             return;
         }
         $url = $this->preprocessUrl($layerDef, $canvas, $extent);
-        // die(var_export(array('u0' => $layerDef['url'], 'u1' => $url), true) . "\n");
         $flipXy = !empty($layerDef['changeAxis']);
         $layerImage = $this->getLayerImage($url, $extent, $layerDef['opacity'], $flipXy);
 
@@ -115,9 +114,12 @@ class LayerRendererWms extends LayerRenderer
                 $unbufferedHeight = $tile->getHeight(false);
                 $buffer = $tile->getBuffer();
                 $dstX0 = intval($offsetBox->left + $buffer->left);
-                $dstY0 = imagesy($layerImage) - intval($unbufferedHeight + $offsetBox->bottom + $buffer->bottom);
+                $dstY0 = $offsetBox->bottom + $buffer->bottom;
                 $srcX0 = intval($buffer->left);
+                // mirrored Y params for GD's top-down vs everything else bottom-up Y axis orientation
+                $dstY0 = imagesy($layerImage) - ($dstY0 + $unbufferedHeight);
                 $srcY0 = intval($buffer->top);
+
                 imagecopyresampled($layerImage, $tileImage,
                           $dstX0, $dstY0,
                           $srcX0, $srcY0,
@@ -179,6 +181,14 @@ class LayerRendererWms extends LayerRenderer
                 $grid->addTile(new WmsTile($offsetBox, $buffer));
             }
         }
+        $gridHeight = $grid->getHeight();
+        $gridWidth = $grid->getWidth();
+        if ($gridHeight != $height) {
+            throw new \LogicException("Grid height mismatch {$gridHeight} actual vs expected {$height}");
+        }
+        if ($gridWidth != $width) {
+            throw new \LogicException("Grid width mismatch {$gridWidth} actual vs expected {$width}");
+        }
         return $grid;
     }
 
@@ -198,11 +208,12 @@ class LayerRendererWms extends LayerRenderer
             if ($offset === 0) {
                 $allowedSegmentLength += $bufferLength;
             }
-            if ($offset + $allowedSegmentLength >= $total) {
+            if ($offset + $allowedSegmentLength + $bufferLength >= $total) {
                 $allowedSegmentLength += $bufferLength;
             }
-            $unbufferedSegments[] = min($allowedSegmentLength, $total - $offset);
-            $offset += $allowedSegmentLength;
+            $nextLength = min($allowedSegmentLength, $total - $offset);
+            $unbufferedSegments[] = $nextLength;
+            $offset += $nextLength;
         }
         // if the last segment is very short, redistribute some length from the full-length prior-to-last segment to it
         $minIncrement = min($total, max(intval(0.5 * $bufferLength), 8));
@@ -217,22 +228,22 @@ class LayerRendererWms extends LayerRenderer
         // extend all unbuffered segments by stretching them, which also makes them overlap
         $bufferedSegments = array();
         $nextOffset = 0;
-        foreach ($unbufferedSegments as $i => $unbufferedSegmentLength) {
+        foreach ($unbufferedSegments as $i => $currentSegment) {
             $segOffset = $nextOffset;
-            $nextOffset += $unbufferedSegmentLength;
+            $nextOffset += $currentSegment;
             $discard = array(0, 0);
             if ($i > 0) {
-                $unbufferedSegmentLength += $bufferLength;
+                $currentSegment += $bufferLength;
                 $segOffset -= $bufferLength;
                 $discard[0] = $bufferLength;
             }
             if ($i < $lastIndex) {
-                $unbufferedSegmentLength += $bufferLength;
+                $currentSegment += $bufferLength;
                 $discard[1] = $bufferLength;
             }
             $bufferedSegments[] = array(
                 'offset' => $segOffset,
-                'length' => $unbufferedSegmentLength,
+                'length' => $currentSegment,
                 // array of two lengths (~left and right) that represent the buffer
                 'discard' => $discard,
             );
