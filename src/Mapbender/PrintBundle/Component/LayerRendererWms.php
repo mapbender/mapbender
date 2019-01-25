@@ -35,7 +35,6 @@ class LayerRendererWms extends LayerRenderer
             $this->logger->warning("Missing url in WMS layer", $layerDef);
             return;
         }
-        $dd = $this->calculateGrid($canvas, $extent);
         $url = $this->preprocessUrl($layerDef, $canvas, $extent);
 
         $layerImage = $this->imageTransport->downloadImage($url, $layerDef['opacity']);
