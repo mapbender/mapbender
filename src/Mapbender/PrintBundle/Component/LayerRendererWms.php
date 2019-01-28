@@ -3,10 +3,12 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\BufferedSection;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
+use Mapbender\PrintBundle\Component\Export\Resolution;
 use Mapbender\PrintBundle\Component\Export\WmsGrid;
 use Mapbender\PrintBundle\Component\Export\WmsGridOptions;
 use Mapbender\PrintBundle\Component\Export\WmsTile;
@@ -68,11 +70,39 @@ class LayerRendererWms extends LayerRenderer
         }
     }
 
+    /**
+     * @param $layerDef
+     * @param $nextLayerDef
+     * @param Resolution $resolution
+     * @return array|bool|false
+     */
     public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution)
     {
-        // @todo: merge requests with same path and BBOX by appending
-        //        LAYERS params left-to-right
-        return false;
+        $criteriaA = $this->getSquashCompareCrtiteria($layerDef, $resolution);
+        $criteriaB = $this->getSquashCompareCrtiteria($nextLayerDef, $resolution);
+
+        if ($criteriaA === $criteriaB) {
+            // layer definitions are compatible
+            // concatenate LAYERS= and STYLES=
+            // @todo: this should be properly case insensitive
+            $queryA = array();
+            parse_str(parse_url($layerDef['url'], PHP_URL_QUERY), $queryA);
+            $queryB = array();
+            parse_str(parse_url($nextLayerDef['url'], PHP_URL_QUERY), $queryB);
+            $layersA = ArrayUtil::getDefault($queryA, 'LAYERS', '') ?: ArrayUtil::getDefault($queryA, 'layers', '');
+            $layersB = ArrayUtil::getDefault($queryB, 'LAYERS', '') ?: ArrayUtil::getDefault($queryB, 'layers', '');
+            $stylesA = ArrayUtil::getDefault($queryA, 'STYLES', '') ?: ArrayUtil::getDefault($queryA, 'styles', '');
+            $stylesB = ArrayUtil::getDefault($queryB, 'STYLES', '') ?: ArrayUtil::getDefault($queryB, 'styles', '');
+            $newUrl = UrlUtil::validateUrl($layerDef['url'], array(
+                'LAYERS' => "{$layersA},{$layersB}",
+                'STYLES' => "{$stylesA},{$stylesB}",
+            ));
+            return array_replace($layerDef, array(
+                'url' => $newUrl,
+            ));
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -275,5 +305,48 @@ class LayerRendererWms extends LayerRenderer
             $bufferedSegments[] = new BufferedSection($segOffset, $currentSegment, $bufferBefore, $bufferAfter);
         }
         return $bufferedSegments;
+    }
+
+    /**
+     * @param mixed[] $layerDef
+     * @param Resolution $resolution
+     * @return mixed[]
+     */
+    protected function getSquashCompareCrtiteria($layerDef, $resolution)
+    {
+        $ignoredParams = array(
+            'LAYERS',
+            'STYLES',
+            '_OLSALT',
+            'WIDTH',
+            'HEIGHT',
+            '_SIGNATURE',
+        );
+
+        $data = array(
+            'url' => UrlUtil::validateUrl($layerDef['url'], array(), $ignoredParams),
+            // Client may submit sourceId to actually prevent squashing of layers that look and feel compatible
+            // (= effectively the same source in an application mulitple times)
+            'sourceId' => ArrayUtil::getDefault($layerDef, 'sourceId', null),
+            // Adjacent layers from the same source that have the same min / max resolution can always be
+            // squashed safely.
+            'minResolution' => ArrayUtil::getDefault($layerDef, 'minResolution', null),
+            'maxResolution' => ArrayUtil::getDefault($layerDef, 'maxResolution', null),
+        );
+
+        // Add comparison criteria based on min / max resolution of the layers, but
+        // also taking into account the actual required resolution for this job.
+        // This allows squashing more. I.e. two layers that have differen min / max resolutions,
+        // but where both can be queried fine at the job resolution without adjust width / height
+        // can be squashed into a single request
+        $minResRequired = min($resolution->getHorizontal(), $resolution->getVertical());
+        $maxResRequired = max($resolution->getHorizontal(), $resolution->getVertical());
+        if ($data['minResolution'] !== null && $data['minResolution'] <= $minResRequired) {
+            $data['minResolution'] = null;
+        }
+        if ($data['maxResolution'] !== null && $data['maxResolution'] >= $maxResRequired) {
+            $data['maxResolution'] = null;
+        }
+        return $data;
     }
 }
