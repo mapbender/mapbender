@@ -40,7 +40,7 @@ class BufferedSection
      */
     public function getUnbufferedOffset()
     {
-        return $this->offset; // - $this->bufferBefore;
+        return $this->offset;
     }
 
     /**
@@ -56,7 +56,7 @@ class BufferedSection
      */
     public function getUnbufferedLength()
     {
-        return $this->innerLength; // - ($this->bufferBefore + $this->bufferAfter);
+        return $this->innerLength;
     }
 
     /**

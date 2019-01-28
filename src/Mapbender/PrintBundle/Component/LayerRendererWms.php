@@ -21,26 +21,29 @@ class LayerRendererWms extends LayerRenderer
     protected $logger;
     /** @var ImageTransport */
     protected $imageTransport;
-
-    // tiling parameters; @todo: this should be configurable
+    /** @var int */
     protected $maxGetMapSize = 3072;
+    /** @var int */
     protected $tileBuffer = 512;
 
     /**
      * @param ImageTransport $imageTransport
      * @param LoggerInterface $logger
+     * @param int $maxGetMapSize
+     * @param int $tileBuffer
      */
-    public function __construct(ImageTransport $imageTransport, LoggerInterface $logger)
+    public function __construct(ImageTransport $imageTransport, LoggerInterface $logger, $maxGetMapSize, $tileBuffer)
     {
         $this->imageTransport = $imageTransport;
         $this->logger = $logger;
+        $this->maxGetMapSize = $maxGetMapSize;
+        $this->tileBuffer = $tileBuffer;
         if ($this->maxGetMapSize < 16) {
             throw new \InvalidArgumentException("maxGetMapSize {$this->maxGetMapSize} is too small for stable grid splitting maths");
         }
         if ((3 * $this->tileBuffer) >= $this->maxGetMapSize) {
             throw new \InvalidArgumentException("Tile buffer {$this->tileBuffer} is too large for maxGetMapSize {$this->maxGetMapSize}");
         }
-
     }
 
     public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent)
