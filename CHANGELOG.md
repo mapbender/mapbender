@@ -1,11 +1,13 @@
 # Changelog
-* **dev-release/3.0.7 @ 6186e8ae5**
+* **dev-release/3.0.7 @ f4b73784d**
   - Fix buttons with invalid targets breaking buttons in the same group
   - Fix element-order dependent script initialization error in mobile template
   - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
   - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
   - Fixed dynamic (layertree) source reordering errors with many layers
   - Improve compatibility with certain reverse-proxy setups ([PR #1061](https://github.com/mapbender/mapbender/pull/1061))
+  - Print: add WMS GetMap size limits, use tiling to stitch larger images ([PR#1073](https://github.com/mapbender/mapbender/pull/1073))
+  - Print: add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
   - Print: significantly reduce memory requirements for larger printouts
   - Print: optimize handling performance of WMS layers with manually reduced opacity
   - Print: Suppress redundant group layer legend images and legend images for deactivated layers ([PR#1053](https://github.com/mapbender/mapbender/pull/1053))
