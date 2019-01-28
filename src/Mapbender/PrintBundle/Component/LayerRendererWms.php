@@ -8,6 +8,7 @@ use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\BufferedSection;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\WmsGrid;
+use Mapbender\PrintBundle\Component\Export\WmsGridOptions;
 use Mapbender\PrintBundle\Component\Export\WmsTile;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 use Psr\Log\LoggerInterface;
@@ -22,9 +23,9 @@ class LayerRendererWms extends LayerRenderer
     /** @var ImageTransport */
     protected $imageTransport;
     /** @var int */
-    protected $maxGetMapSize = 3072;
+    protected $maxGetMapSize;
     /** @var int */
-    protected $tileBuffer = 512;
+    protected $tileBuffer;
 
     /**
      * @param ImageTransport $imageTransport
@@ -53,8 +54,7 @@ class LayerRendererWms extends LayerRenderer
             return;
         }
         $url = $this->preprocessUrl($layerDef, $canvas, $extent);
-        $flipXy = !empty($layerDef['changeAxis']);
-        $layerImage = $this->getLayerImage($url, $extent, $layerDef['opacity'], $flipXy);
+        $layerImage = $this->getLayerImage($layerDef, $url, $extent);
 
         if ($layerImage) {
             imagecopyresampled($canvas->resource, $layerImage,
@@ -76,29 +76,23 @@ class LayerRendererWms extends LayerRenderer
     }
 
     /**
-     * @param string $url
+     * @param mixed[] $layerDef
+     * @param string $baseUrl
      * @param Box $extent
-     * @param float $opacity
-     * @param bool $flipXy
      * @return resource|null
      */
-    protected function getLayerImage($url, Box $extent, $opacity, $flipXy)
+    protected function getLayerImage($layerDef, $baseUrl, Box $extent)
     {
-        // Reextract WIDTH and HEIGHT from url. Resolution clamping in extended preprocessUrl may have changed
-        // total request dimensions.
-        $urlParams = array();
-        parse_str(parse_url($url, PHP_URL_QUERY), $urlParams);
-        $layerWidth = intval($urlParams['WIDTH']);
-        $layerHeight = intval($urlParams['HEIGHT']);
-        $maxUnbufferedTileSize = $this->maxGetMapSize - 2 * $this->tileBuffer;
+        $gridOptions = $this->getGridOptions($layerDef);
+        // Base grid total dimensions on WITH and HEIGHT in baseUrl. Resolution clamping in extended preprocessUrl may
+        // have changed these sizes, so they may no longer match the target canvas size.
+        $grid = $this->calculateGridFromUrl($baseUrl, $gridOptions);
+        $flipXy = !empty($layerDef['changeAxis']);
 
-        $grid = $this->calculateGrid($layerWidth, $layerHeight,
-                                     $maxUnbufferedTileSize, $this->tileBuffer);
-        // HACK: Force tiling on
-        // Non-tiling mode might be a little faster / use less memory, but tiling should always produce the same image.
-        // If it doesn't, it needs fixing.
-        if (false && count($grid->getTiles()) === 1) {
-            $layerImage = $this->imageTransport->downloadImage($url, $opacity);
+        if (count($grid->getTiles()) === 1) {
+            // Single-tile grid can trivially be resolved with a single request, avoiding the temporary
+            // image used for tile merging.
+            $layerImage = $this->imageTransport->downloadImage($baseUrl, $layerDef['opacity']);
         } else {
             $layerImage = imagecreatetruecolor($grid->getWidth(), $grid->getHeight());
             imagesavealpha($layerImage, true);
@@ -107,9 +101,9 @@ class LayerRendererWms extends LayerRenderer
                 $offsetBox = $tile->getOffsetBox();
                 $tileExtent = $tile->getExtent($extent, $grid->getWidth(), $grid->getHeight());
                 $params = $this->getBboxAndSizeParams($tileExtent, $offsetBox->getWidth(), $offsetBox->getHeight(), $flipXy);
-                $tileUrl = UrlUtil::validateUrl($url, $params);
+                $tileUrl = UrlUtil::validateUrl($baseUrl, $params);
                 // echo "Next tile request to {$tileUrl}\n";
-                $tileImage = $this->imageTransport->downloadImage($tileUrl, $opacity);
+                $tileImage = $this->imageTransport->downloadImage($tileUrl, $layerDef['opacity']);
                 if (!$tileImage) {
                     continue;
                 }
@@ -117,7 +111,7 @@ class LayerRendererWms extends LayerRenderer
                 $unbufferedHeight = $tile->getHeight(false);
                 $buffer = $tile->getBuffer();
                 $dstX0 = intval($offsetBox->left + $buffer->left);
-                $dstY0 = $offsetBox->bottom + $buffer->bottom;
+                $dstY0 = intval($offsetBox->bottom + $buffer->bottom);
                 $srcX0 = intval($buffer->left);
                 // mirrored Y params for GD's top-down vs everything else bottom-up Y axis orientation
                 $dstY0 = imagesy($layerImage) - ($dstY0 + $unbufferedHeight);
@@ -148,6 +142,13 @@ class LayerRendererWms extends LayerRenderer
         return UrlUtil::validateUrl($layerDef['url'], $params);
     }
 
+    /**
+     * @param Box $extent
+     * @param int $width
+     * @param int $height
+     * @param bool $flipXy
+     * @return array
+     */
     protected function getBboxAndSizeParams(Box $extent, $width, $height, $flipXy)
     {
         $params = array(
@@ -163,16 +164,29 @@ class LayerRendererWms extends LayerRenderer
     }
 
     /**
+     * Returns the grid options to be used for the layer described by $layerDef.
+     * Override this if you need variable, layer-dependent grid options.
+     *
+     * @param mixed[] $layerDef
+     * @return WmsGridOptions
+     */
+    protected function getGridOptions($layerDef)
+    {
+        return new WmsGridOptions($this->maxGetMapSize, $this->tileBuffer, $this->tileBuffer);
+    }
+
+    /**
      * @param int $width
      * @param int $height
-     * @param int $tileSize
-     * @param int $tileBuffer
+     * @param WmsGridOptions $gridOptions
      * @return WmsGrid
      */
-    protected function calculateGrid($width, $height, $tileSize, $tileBuffer = 0)
+    protected function calculateGrid($width, $height, $gridOptions)
     {
-        $rows = $this->calculateLinearBufferedSplit($height, $tileSize, $tileBuffer);
-        $columns = $this->calculateLinearBufferedSplit($width, $tileSize, $tileBuffer);
+        $rows = $this->calculateLinearBufferedSplit($height,
+            $gridOptions->getUnbufferedHeight(), $gridOptions->getBufferVertical());
+        $columns = $this->calculateLinearBufferedSplit($width,
+            $gridOptions->getUnbufferedWidth(), $gridOptions->getBufferHorizontal());
         $grid = new WmsGrid();
         foreach ($rows as $iy => $row) {
             foreach ($columns as $ix => $column) {
@@ -188,6 +202,23 @@ class LayerRendererWms extends LayerRenderer
             throw new \LogicException("Grid width mismatch {$gridWidth} actual vs expected {$width}");
         }
         return $grid;
+    }
+
+    /**
+     * Calculates a grid based on WIDTH and HEIGHT params extracted from a prepared WMS GetMap request url.
+     *
+     * @param string $url
+     * @param WmsGridOptions $gridOptions
+     * @return WmsGrid
+     */
+    protected function calculateGridFromUrl($url, $gridOptions)
+    {
+        $urlParams = array();
+        parse_str(parse_url($url, PHP_URL_QUERY), $urlParams);
+        $layerWidth = intval($urlParams['WIDTH']);
+        $layerHeight = intval($urlParams['HEIGHT']);
+
+        return $this->calculateGrid($layerWidth, $layerHeight, $gridOptions);
     }
 
     /**
