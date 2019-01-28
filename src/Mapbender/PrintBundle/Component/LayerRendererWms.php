@@ -68,7 +68,7 @@ class LayerRendererWms extends LayerRenderer
         }
     }
 
-    public function squashLayerDefinitions($layerDef, $nextLayerDef)
+    public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution)
     {
         // @todo: merge requests with same path and BBOX by appending
         //        LAYERS params left-to-right

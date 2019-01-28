@@ -4,7 +4,7 @@
 namespace Mapbender\PrintBundle\Component;
 
 
-class GdCanvas
+class GdCanvas extends BaseCanvas
 {
     /** @var resource Gdish */
     public $resource;
