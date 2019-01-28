@@ -169,6 +169,7 @@ class LayerRendererWms extends LayerRenderer
     protected function preprocessUrl($layerDef, $canvas, Box $extent)
     {
         $params = $this->getBboxAndSizeParams($extent, $canvas->getWidth(), $canvas->getHeight(), !empty($layerDef['changeAxis']));
+        $params = $this->adjustParamsForResolution($params, $layerDef, $canvas, $extent);
         return UrlUtil::validateUrl($layerDef['url'], $params);
     }
 
@@ -191,6 +192,56 @@ class LayerRendererWms extends LayerRenderer
             $params['BBOX'] = $extent->left . ',' . $extent->bottom . ',' . $extent->right . ',' . $extent->top;
         }
         return $params;
+    }
+
+    /**
+     * @param mixed[] $params
+     * @param mixed[] $layerDef
+     * @param BaseCanvas $canvas
+     * @param Box $extent
+     * @return mixed[] params array with potentially updated WIDTH and HEIGHT
+     */
+    protected function adjustParamsForResolution($params, $layerDef, $canvas, $extent)
+    {
+        $resolution = $canvas->getResolution($extent);
+        $minRes = ArrayUtil::getDefault($layerDef, 'minResolution', null);
+        $maxRes = ArrayUtil::getDefault($layerDef, 'maxResolution', null);
+        $targetResH = $this->clipResolutionComponent($resolution->getHorizontal(), $minRes, $maxRes);
+        $targetResV = $this->clipResolutionComponent($resolution->getVertical(), $minRes, $maxRes);
+        if ($targetResH != $resolution->getHorizontal()) {
+            $params['WIDTH'] = intval(max(16, abs($extent->getWidth()) / $targetResH));
+        }
+        if ($targetResV != $resolution->getVertical()) {
+            $params['HEIGHT'] = intval(max(16, abs($extent->getHeight()) / $targetResV));
+        }
+        return $params;
+    }
+
+    /**
+     * @param float $value
+     * @param float|null $minimum
+     * @param float|null $maximum
+     * @return float
+     */
+    protected function clipResolutionComponent($value, $minimum, $maximum)
+    {
+        if ($minimum !== null && $value < $minimum) {
+            // give a few percent extra to avoid rounding precision edge cases
+            $value = $minimum * 1.05;
+        }
+        if ($maximum !== null && $value > $maximum) {
+            // drop a few percent extra to avoid rounding precision edge cases
+            $targetRes = $maximum * 0.95;
+            if ($targetRes < $minimum) {
+                // minimum / maximum are within 5%, so these small extras push the resolution
+                // back out of the valid range.
+                // => use the precise maximum value
+                $value = $maximum;
+            } else {
+                $value = $targetRes;
+            }
+        }
+        return $value;
     }
 
     /**
