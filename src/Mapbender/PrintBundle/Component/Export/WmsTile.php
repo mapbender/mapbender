@@ -22,6 +22,20 @@ class WmsTile
     }
 
     /**
+     * @param BufferedSection $horizontal
+     * @param BufferedSection $vertical
+     * @return static
+     */
+    public static function fromSections($horizontal, $vertical)
+    {
+        $offsetBox = new Box($horizontal->getBufferedOffset(), $vertical->getBufferedOffset(),
+                             $horizontal->getBufferedEnd(), $vertical->getBufferedEnd());
+        $buffer = new WmsTileBuffer($horizontal->getBufferBefore(), $vertical->getBufferBefore(),
+                                    $horizontal->getBufferAfter(), $vertical->getBufferAfter());
+        return new static($offsetBox, $buffer);
+    }
+
+    /**
      * @return Box
      */
     public function getOffsetBox()

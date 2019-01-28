@@ -5,10 +5,10 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
+use Mapbender\PrintBundle\Component\Export\BufferedSection;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\WmsGrid;
 use Mapbender\PrintBundle\Component\Export\WmsTile;
-use Mapbender\PrintBundle\Component\Export\WmsTileBuffer;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 use Psr\Log\LoggerInterface;
 
@@ -171,14 +171,9 @@ class LayerRendererWms extends LayerRenderer
         $rows = $this->calculateLinearBufferedSplit($height, $tileSize, $tileBuffer);
         $columns = $this->calculateLinearBufferedSplit($width, $tileSize, $tileBuffer);
         $grid = new WmsGrid();
-        foreach ($rows as $row) {
-            foreach ($columns as $column) {
-                $offsetX1 = $column['offset'] + $column['length'];
-                $offsetY1 = $row['offset'] + $row['length'];
-                $offsetBox = new Box($column['offset'], $row['offset'], $offsetX1, $offsetY1);
-                $buffer = new WmsTileBuffer($column['discard'][0], $row['discard'][0],
-                                            $column['discard'][1], $row['discard'][1]);
-                $grid->addTile(new WmsTile($offsetBox, $buffer));
+        foreach ($rows as $iy => $row) {
+            foreach ($columns as $ix => $column) {
+                $grid->addTile(WmsTile::fromSections($column, $row));
             }
         }
         $gridHeight = $grid->getHeight();
@@ -196,7 +191,7 @@ class LayerRendererWms extends LayerRenderer
      * @param int $total
      * @param int $unbufferedSegmentLength
      * @param int $bufferLength
-     * @return int[][]
+     * @return BufferedSection[]
      */
     protected function calculateLinearBufferedSplit($total, $unbufferedSegmentLength, $bufferLength = 0)
     {
@@ -206,9 +201,11 @@ class LayerRendererWms extends LayerRenderer
         for ($offset = 0; $offset < $total; ) {
             $allowedSegmentLength = $unbufferedSegmentLength;
             if ($offset === 0) {
+                // add real length to first section (will not need buffer before it)
                 $allowedSegmentLength += $bufferLength;
             }
             if ($offset + $allowedSegmentLength + $bufferLength >= $total) {
+                // add real length to last section (will not need buffer after it)
                 $allowedSegmentLength += $bufferLength;
             }
             $nextLength = min($allowedSegmentLength, $total - $offset);
@@ -231,22 +228,17 @@ class LayerRendererWms extends LayerRenderer
         foreach ($unbufferedSegments as $i => $currentSegment) {
             $segOffset = $nextOffset;
             $nextOffset += $currentSegment;
-            $discard = array(0, 0);
             if ($i > 0) {
-                $currentSegment += $bufferLength;
-                $segOffset -= $bufferLength;
-                $discard[0] = $bufferLength;
+                $bufferBefore = $bufferLength;
+            } else {
+                $bufferBefore = 0;
             }
             if ($i < $lastIndex) {
-                $currentSegment += $bufferLength;
-                $discard[1] = $bufferLength;
+                $bufferAfter = $bufferLength;
+            } else {
+                $bufferAfter = 0;
             }
-            $bufferedSegments[] = array(
-                'offset' => $segOffset,
-                'length' => $currentSegment,
-                // array of two lengths (~left and right) that represent the buffer
-                'discard' => $discard,
-            );
+            $bufferedSegments[] = new BufferedSection($segOffset, $currentSegment, $bufferBefore, $bufferAfter);
         }
         return $bufferedSegments;
     }
