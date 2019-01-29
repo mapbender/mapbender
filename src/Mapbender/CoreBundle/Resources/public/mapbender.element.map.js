@@ -67,14 +67,6 @@
             this.model.removeSources(keepSources);
         },
         /**
-         *
-         */
-        changeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.source && toChangeObj.type) {
-                this.model.changeSource(toChangeObj);
-            }
-        },
-        /**
          * Triggers an event from the model.
          * options.name - name of the event,
          * options.value - parameter in the form of:

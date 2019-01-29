@@ -930,20 +930,7 @@
                         break;
                     case types.group:
                     case types.simple:
-                        model.changeSource({
-                            change: {
-                                layerRemove: {
-                                    sourceIdx: {
-                                        id: layer.sourceid
-                                    },
-                                    layer: {
-                                        options: {
-                                            id: layer.id
-                                        }
-                                    }
-                                }
-                            }
-                        });
+                        model.removeLayer(layer.sourceid, layer.id);
                         break;
                 }
             }

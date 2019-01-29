@@ -914,31 +914,33 @@ Mapbender.Model = {
                 console.error("mapbender.model:changeSource with 'move' is gone", changeOpts);
             }
             if (changeOpts.layerRemove) {
-                var sourceToChange = this.getSource(changeOpts.layerRemove.sourceIdx);
-                var layerToRemove = Mapbender.source[sourceToChange.type].findLayer(sourceToChange,
-                    changeOpts.layerRemove.layer.options);
-                var removedLayer = Mapbender.source[sourceToChange.type].removeLayer(sourceToChange,
-                    layerToRemove.layer);
-                var changed = {
-                    changed: {
-                        childRemoved: removedLayer,
-                        sourceIdx: changeOpts.layerRemove.sourceIdx
-                    }
-                };
-                this._checkAndRedrawSource({
-                    sourceIdx: changeOpts.layerRemove.sourceIdx,
-                    options: {
-                        children: {}
-                    }
-                });
-                this.mbMap.fireModelEvent({
-                    name: 'sourceChanged',
-                    value: changed
-                });
+                console.warn("Use removeLayer instead of changeSource");
+                this.removeLayer(changeOpts.layerRemove.sourceIdx.id, changeOpts.layerRemove.layer.options.id);
             }
         } else {
             window.console && console.error("CHECK options at model.changeSource");
         }
+    },
+    removeLayer: function(sourceId, layerId) {
+        var source = this.getSource({id: sourceId});
+        var gs = this.getGeoSourceHandler(source, true);
+        gs.findLayer(source, {id: layerId});
+        var eventData = {
+            changed: {
+                childRemoved: gs.removeLayer(source, {options: {id: layerId}}),
+                sourceIdx: {id: sourceId}
+            }
+        };
+        this._checkAndRedrawSource({
+            sourceIdx: eventData.changed.sourceIdx,
+            options: {          // ???
+                children: {}    // ???
+            }
+        });
+        this.mbMap.fireModelEvent({
+            name: 'sourceChanged',
+            value: eventData
+        });
     },
     /**
      *
