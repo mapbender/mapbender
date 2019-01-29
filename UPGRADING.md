@@ -1,8 +1,4 @@
 ## Future
-The PrintClient Element, along with its assets, views, admin type and all related code has been moved from
-the CoreBundle into the \Mapbender\PrintBundle namespace. No provisions have been made to detect / pick up
-any project customizations on the old file locations. If you have customized PrintClient views or assets via app/Resources
-drop-ins, you must move them accordingly.
 
 An upcoming TBD Mapbender version will break compatibility with mapbender/data-source < 0.1.9,
 which is
@@ -13,6 +9,20 @@ earliest convenience.
 
 An upcoming TBD Mapbender version will remove the fosjsrouting dependency, which will require updates in other packages:
 - mapbender/coordinates-utility, if used, must be >= 1.0.5
+
+## dev-release/3.0.7
+The PrintClient Element, along with its assets, views, admin type and all related code has been moved from
+the CoreBundle into the \Mapbender\PrintBundle namespace. No provisions have been made to detect / pick up
+any project customizations on the old file locations. If you have customized PrintClient views or assets via app/Resources
+drop-ins, you must move them accordingly.
+
+To facilitate print queue integration, the PrintClient twig has been split up.
+The [settings form](https://github.com/mapbender/mapbender/blob/8dbd2e9eefdbacf1dd4b60f14f8e7b345005743f/src/Mapbender/PrintBundle/Resources/views/Element/printclient-settings.html.twig) has
+been broken out of [the element shell](https://github.com/mapbender/mapbender/blob/8dbd2e9eefdbacf1dd4b60f14f8e7b345005743f/src/Mapbender/PrintBundle/Resources/views/Element/printclient.html.twig).
+The template for the settings form can be customized, by asset drop-in or [method override](https://github.com/mapbender/mapbender/blob/8dbd2e9eefdbacf1dd4b60f14f8e7b345005743f/src/Mapbender/PrintBundle/Element/PrintClient.php#L204),
+separately from the main template.
+
+The outdated underscore.js version in Mapbender/CoreBundle/Resources/public/vendor has been removed. Custom Elements or Templates requiring underscore should use the version installed into web/components/underscore (which is provided by default by all included Templates).
 
 ## v3.0.7.7
 Starting from Mapbender v3.0.7.7, PrintClient JavaScript widget inherits from ImageExport JavaScript widget.
