@@ -501,10 +501,7 @@ Mapbender.Model = {
         $.each(self.sourceTree, function(idx, source) {
             var sourceIdx = {id: source.id};
             var changeOpts = {
-                sourceIdx: sourceIdx,
-                options: {
-                    children: {}
-                }
+                sourceIdx: sourceIdx
             };
             var changed = self._checkSource(changeOpts, true, !isPreEvent);
             for (var child in changed.children) {
@@ -785,9 +782,6 @@ Mapbender.Model = {
         this._checkAndRedrawSource({
             sourceIdx: {
                 id: sourceDef.id
-            },
-            options: {
-                children: {}
             }
         });
         return sourceDef;
@@ -932,10 +926,7 @@ Mapbender.Model = {
             }
         };
         this._checkAndRedrawSource({
-            sourceIdx: eventData.changed.sourceIdx,
-            options: {          // ???
-                children: {}    // ???
-            }
+            sourceIdx: eventData.changed.sourceIdx
         });
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',

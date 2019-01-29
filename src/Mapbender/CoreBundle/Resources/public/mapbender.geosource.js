@@ -417,7 +417,7 @@ Mapbender.Geo.SourceHandler = Class({
         function _changeOptions(layer, scale, parentState, toChangeOpts, result) {
             var layerChanges,
                 elchanged = false;
-            layerChanges = toChangeOpts.options.children[layer.options.id];
+            layerChanges = ((toChangeOpts.options || {}).children || {})[layer.options.id];
             if (layerChanges) {
                 layerChanges.state = _copyState(layer);
                 var treeChanges = layerChanges.options.treeOptions;
