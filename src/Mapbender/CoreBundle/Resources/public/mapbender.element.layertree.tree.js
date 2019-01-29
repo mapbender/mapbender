@@ -603,21 +603,9 @@
             var $li = $sourceVsbl.parents('li:first');
             $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
                 var $item = $(item);
-                var chk_selected = $('input[name="selected"]:first', $item);
-                self.model.changeSource({
-                    change: {
-                    sourceIdx: {
-                        id: $item.attr('data-sourceid')
-                    },
-                    options: {
-                        type: 'selected',
-                        configuration: {
-                            options: {
-                                visibility: $sourceVsbl.prop('checked') === false ? false : chk_selected.prop('checked')
-                            }
-                        }
-                    }
-                }});
+                var $chkSource = $('input[name="selected"]:first', $item);
+                var active = $chkSource.prop('checked') && $sourceVsbl.prop('checked');
+                self.model.setSourceVisibility($item.attr('data-sourceid'), active);
             });
             return false;
         },
@@ -652,26 +640,20 @@
         },
         _toggleSelected: function(e) {
             var $li = $(e.target).parents('li:first');
-            var tochange = {
-                sourceIdx: {
-                    id: $li.attr('data-sourceid')
-                },
-                options: {}
-            };
             if ($li.attr('data-type') === this.consts.root) {
                 if(!this._isThemeChecked($li)) { // thematic layertree handling
                     return false;
                 }
-                tochange.options = {
-                    configuration: {
-                        options: {
-                            visibility: $(e.target).is(':checked')
-                        }
-                    }
-                };
+                this.model.setSourceVisibility($li.attr('data-sourceid'), $(e.target).prop('checked'));
             } else {
-                tochange.options = {
-                    children: {}
+                var tochange = {
+                    sourceIdx: {
+                        id: $li.attr('data-sourceid')
+                    },
+                    options: {
+                        type: 'selected',
+                        children: {}
+                    }
                 };
                 tochange.options.children[$li.attr('data-id')] = {
                     options: {
@@ -680,11 +662,10 @@
                         }
                     }
                 };
+                this.model.changeSource({
+                    change: tochange
+                });
             }
-            tochange.options['type'] = 'selected';
-            this.model.changeSource({
-                change: tochange
-            });
             return false;
         },
         _toggleInfo: function(e) {

@@ -942,6 +942,26 @@ Mapbender.Model = {
             value: eventData
         });
     },
+    setSourceVisibility: function(sourceId, state) {
+        var result = this._checkAndRedrawSource({
+            sourceIdx: {id: sourceId},
+            options: {
+                configuration: {
+                    options: {visibility: state}
+                },
+                type: 'selected'
+            }
+        });
+        this.mbMap.fireModelEvent({
+            name: 'sourceChanged',
+            value: {
+                changed: {
+                    children: result.children,
+                    sourceIdx: {id: sourceId}
+                }
+            }
+        });
+    },
     /**
      *
      * @param {Object} sourceIdObject in form of:
