@@ -297,19 +297,16 @@ Mapbender.Geo.SourceHandler = Class({
         });
         return options;
     },
-    'public function checkInfoLayers': function(source, scale, tochange, result) {
-        if (!result)
-            result = {
-                infolayers: [
-                ],
-                changed: {
-                    sourceIdx: {
-                        id: source.id
-                    },
-                    children: {}
-                }
-            };
-
+    'public function checkInfoLayers': function(source, scale, tochange) {
+        var result = {
+            infolayers: [],
+            changed: {
+                sourceIdx: {
+                    id: source.id
+                },
+                children: {}
+            }
+        };
 
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
             if (typeof layer.options.treeOptions.info === 'undefined') {
@@ -338,14 +335,9 @@ Mapbender.Geo.SourceHandler = Class({
     /**
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };
      */
-    'public function changeOptions': function(source, scale, toChangeOpts, result) {
-        var optLength = 0;
+    'public function changeOptions': function(source, scale, toChangeOpts) {
         var self = this;
-        if (toChangeOpts.options) {
-            for (attr in toChangeOpts.options)
-                optLength++;
-        }
-        if (optLength > 0) {/* change source options -> set */
+        if (toChangeOpts.options && toChangeOpts.options.configuration) {
             if (toChangeOpts.options.configuration) {
                 var configuration = toChangeOpts.options.configuration;
                 if (configuration.options) {
@@ -383,21 +375,18 @@ Mapbender.Geo.SourceHandler = Class({
                 }
             }
         }
-        if (!result)
-            result = {
-                layers: [
-                ],
-                infolayers: [
-                ],
-                styles: [
-                ],
-                changed: {
-                    sourceIdx: {
-                        id: source.id
-                    },
-                    children: {}
-                }
-            };
+
+        var result = {
+            layers: [],
+            infolayers: [],
+            styles: [],
+            changed: {
+                sourceIdx: {
+                    id: source.id
+                },
+                children: {}
+            }
+        };
         var rootLayer = source.configuration.children[0];
         _changeOptions(rootLayer, scale, {
             state: {
@@ -407,7 +396,7 @@ Mapbender.Geo.SourceHandler = Class({
         toChangeOpts,
             result);
         return result;
-        function _changeOptions(layer, scale, parentState, toChangeOpts, result) {
+        function _changeOptions(layer, scale, parentState, toChangeOpts) {
             var initialLayerState = $.extend({}, layer.state);
             var layerChanges,
                 elchanged = false;
@@ -445,7 +434,7 @@ Mapbender.Geo.SourceHandler = Class({
                 layer.state.visibility = !!newVisibilityState;
                 var atLeastOneChildVisible = false;
                 for (var j = 0; j < layer.children.length; j++) {
-                    var child = _changeOptions(layer.children[j], scale, layer, toChangeOpts, result);
+                    var child = _changeOptions(layer.children[j], scale, layer, toChangeOpts);
                     if (child.state.visibility) {
                         atLeastOneChildVisible = true;
                     }

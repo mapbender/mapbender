@@ -882,23 +882,13 @@ Mapbender.Model = {
                     });
                 }
                 if (changeOpts.options.type === 'info') {
-                    var result = {
-                        infolayers: [
-                        ],
-                        changed: {
-                            sourceIdx: {
-                                id: sourceToChange.id
-                            },
-                            children: {}
-                        }
-                    };
-                    result = Mapbender.source[sourceToChange.type].checkInfoLayers(sourceToChange,
-                        this.getScale(), changeOpts, result);
+                    var result = Mapbender.source[sourceToChange.type].checkInfoLayers(sourceToChange,
+                        this.getScale(), changeOpts);
                     this.map.layersList[sourceToChange.mqlid].olLayer.queryLayers = result.infolayers;
                     this.mbMap.fireModelEvent({
                         name: 'sourceChanged',
                         value: result
-                    });//{options: result}});
+                    });
                 }
                 if (changeOpts.options.type === 'toggle') {
 
