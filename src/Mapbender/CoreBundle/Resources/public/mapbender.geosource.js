@@ -407,19 +407,12 @@ Mapbender.Geo.SourceHandler = Class({
         toChangeOpts,
             result);
         return result;
-        function _copyState(layer) {
-            return {
-                outOfScale: layer.state.outOfScale,
-                outOfBounds: layer.state.outOfBounds,
-                visibility: layer.state.visibility
-            };
-        }
         function _changeOptions(layer, scale, parentState, toChangeOpts, result) {
+            var initialLayerState = $.extend({}, layer.state);
             var layerChanges,
                 elchanged = false;
             layerChanges = ((toChangeOpts.options || {}).children || {})[layer.options.id];
             if (layerChanges) {
-                layerChanges.state = _copyState(layer);
                 var treeChanges = layerChanges.options.treeOptions;
                 var treeOptions = layer.options.treeOptions;
                 if (typeof treeChanges !== 'undefined') {
@@ -438,7 +431,7 @@ Mapbender.Geo.SourceHandler = Class({
                     }
                 }
             } else {
-                layerChanges = {state: _copyState(layer)};
+                layerChanges = {};
             }
             layer.state.outOfScale = !Mapbender.Util.isInScale(scale, layer.options.minScale,
                 layer.options.maxScale);
@@ -474,11 +467,9 @@ Mapbender.Geo.SourceHandler = Class({
             var stateNames = ['outOfScale', 'outOfBounds', 'visibility'];
             for (var sni = 0; sni < stateNames.length; ++ sni) {
                 var stateName = stateNames[sni];
-                if (layerChanges.state[stateName] !== layer.state[stateName]) {
-                    layerChanges.state[stateName] = layer.state[stateName];
+                if (layer.state[stateName] !== initialLayerState[stateName]) {
                     elchanged = true;
-                } else {
-                    delete(layerChanges.state[stateName]);
+                    break;
                 }
             }
             if (elchanged) {
