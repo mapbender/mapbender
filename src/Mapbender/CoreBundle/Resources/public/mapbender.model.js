@@ -1,4 +1,22 @@
 Mapbender.Model = {
+    /**
+     * @typedef Model~LayerState
+     * @property {boolean} visibility
+     * @property {boolean} info
+     * @property {boolean} outOfScale
+     * @property {boolean} outOfBounds
+     *
+     * @typedef Model~TreeOptions
+     * @property {boolean} selected
+     * @property {boolean} info
+     * @property {Object} allow
+     *
+     * @typedef Model~LayerChangeInfo
+     * @property {Model~LayerState} state
+     * @property {Object} options
+     * @property {Model~TreeOptions} options.treeOptions
+     */
+
     mbMap: null,
     map: null,
     sourceTree: [],
@@ -1257,5 +1275,70 @@ Mapbender.Model = {
                 }
             });
         }
+    },
+    /**
+     * @param {*} source
+     * @param {int} scale
+     * @param [extent] currently not used; @todo: implement outOfBounds checking
+     * @returns {Object.<string, Model~LayerState>}
+     */
+    calculateLayerStates: function calculateLayerStates(source, scale, extent) {
+        var stateMap = {};
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(node, offset, parents) {
+            var outOfScale = !Mapbender.Util.isInScale(scale, node.options.minScale, node.options.maxScale);
+            // HACK: out of bounds calculation broken since introduction of SRS switcher
+            var outOfBounds = false;
+            var enabled = !!node.options.treeOptions.selected;
+            var featureInfo = !!(node.options.treeOptions.info && node.options.treeOptions.allow.info);
+            parents.map(function(p) {
+                var parentEnabled = p.options.treeOptions.selected;
+                enabled = enabled && parentEnabled;
+                featureInfo = featureInfo && parentEnabled;
+            });
+            // @todo TBD: disable featureInfo if layer visual is disabled?
+            // featureInfo = featureInfo && enabled
+            var visibility = enabled && !(outOfScale || outOfBounds);
+            for (var p = 0; p < parents.length; ++p) {
+                var parentStateEntry = stateMap[parents[p].options.id];
+                parentStateEntry.visibility = parentStateEntry.visibility || visibility;
+            }
+            stateMap[node.options.id] = {
+                outOfScale: outOfScale,
+                outOfBounds: outOfBounds,
+                visibility: visibility,
+                info: featureInfo
+            };
+        });
+        return stateMap;
+    },
+    /**
+     *
+     * @param source
+     * @param {Object.<string, Model~LayerState>} stateMap
+     * @returns {Object.<string, Model~LayerChangeInfo>}
+     */
+    applyLayerStates: function applyLayerStates(source, stateMap) {
+        var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
+        var changeMap = {};
+
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
+            var entry = stateMap[layer.options.id];
+            if (entry) {
+                for (var sni = 0; sni < stateNames.length; ++ sni) {
+                    var stateName = stateNames[sni];
+                    if (layer.state[stateName] !== entry[stateName]) {
+                        layer.state = $.extend(layer.state || {}, entry);
+                        changeMap[layer.options.id] = {
+                            state: layer.state,
+                            options: {
+                                treeOptions: layer.options.treeOptions
+                            }
+                        };
+                        break;
+                    }
+                }
+            }
+        });
+        return changeMap;
     }
 };

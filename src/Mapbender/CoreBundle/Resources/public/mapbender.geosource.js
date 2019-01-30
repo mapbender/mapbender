@@ -236,7 +236,6 @@ Mapbender.Geo.SourceHandler = Class({
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };
      */
     'public function changeOptions': function(source, scale, toChangeOpts) {
-        var self = this;
         if (toChangeOpts.options && toChangeOpts.options.configuration) {
             if (toChangeOpts.options.configuration) {
                 var configuration = toChangeOpts.options.configuration;
@@ -268,75 +267,45 @@ Mapbender.Geo.SourceHandler = Class({
                 children: {}
             }
         };
-        var rootLayer = source.configuration.children[0];
-        _changeOptions(rootLayer, scale, true);
-
-        return $.extend(result, this.getLayerParameters(source));
-        function _changeOptions(layer, scale, parentVisibility) {
-            var initialLayerState = $.extend({}, layer.state);
-            var layerChanges,
-                elchanged = false;
-            layerChanges = ((toChangeOpts.options || {}).children || {})[layer.options.id];
-            if (layerChanges) {
-                var treeChanges = layerChanges.options.treeOptions;
+        var applyNewLayerSettings = function(layer) {
+            var layerId = layer.options.id;
+            var newLayerSettings = ((toChangeOpts.options || {}).children || {})[layerId];
+            var newTreeOptions = ((newLayerSettings || {}).options || {}).treeOptions;
+            var layerUpdated = false;
+            if (newTreeOptions) {
                 var treeOptions = layer.options.treeOptions;
-                if (typeof treeChanges !== 'undefined') {
-                    var optionsTasks = [['selected', true], ['info', true], ['toggle', false]];
-                    for (var oti = 0; oti < optionsTasks.length; ++oti) {
-                        var optionName = optionsTasks[oti][0];
-                        var checkAllow = optionsTasks[oti][1];
-                        if (typeof treeChanges[optionName] !== 'undefined' && (!checkAllow || treeOptions.allow[optionName])) {
-                            if (treeOptions[optionName] !== treeChanges[optionName]) {
-                                treeOptions[optionName] = treeChanges[optionName];
-                                elchanged = true;
-                            }
+                var optionsTasks = [['selected', true], ['info', true], ['toggle', false]];
+                for (var oti = 0; oti < optionsTasks.length; ++oti) {
+                    var optionName = optionsTasks[oti][0];
+                    var checkAllow = optionsTasks[oti][1];
+                    if (typeof newTreeOptions[optionName] !== 'undefined' && (!checkAllow || treeOptions.allow[optionName])) {
+                        if (treeOptions[optionName] !== newTreeOptions[optionName]) {
+                            treeOptions[optionName] = newTreeOptions[optionName];
+                            layerUpdated = true;
                         }
                     }
                 }
             }
-            layer.state.outOfScale = !Mapbender.Util.isInScale(scale, layer.options.minScale,
-                layer.options.maxScale);
-            /* @TODO outOfBounds for layers ?  */
-            var newVisibilityState = parentVisibility
-                    && layer.options.treeOptions.selected
-                    && !layer.state.outOfScale
-                    && !layer.state.outOfBounds;
-            if (layer.children) {
-                // Store preliminary visibility for the recursive check, where current layer state will be "parentState"
-                layer.state.visibility = !!newVisibilityState;
-                var atLeastOneChildVisible = false;
-                for (var j = 0; j < layer.children.length; j++) {
-                    var childLayer = layer.children[j];
-                    _changeOptions(childLayer, scale, layer.state.visibility);
-                    if (childLayer.state.visibility) {
-                        atLeastOneChildVisible = true;
-                    }
-                }
-                // NOTE: Children can only be visible if this layer was already set visible before we called the
-                //       recursive check. Thus if you think this should be a &&, you're not wrong, but the result is
-                //       the same anyway.
-                layer.state.visibility = atLeastOneChildVisible;
-            } else {
-                layer.state.visibility = !!(newVisibilityState && layer.options[self.layerNameIdent].length);
-                layer.state.info = layer.options.treeOptions.info && layer.options.treeOptions.allow.info && layer.state.visibility;
-            }
-            var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
-            for (var sni = 0; sni < stateNames.length; ++ sni) {
-                var stateName = stateNames[sni];
-                if (layer.state[stateName] !== initialLayerState[stateName]) {
-                    elchanged = true;
-                    break;
-                }
-            }
-            if (elchanged) {
-                result.changed.children[layer.options.id] = {
-                    state: layer.state,
+            if (layerUpdated) {
+                result.changed.children[layerId] = {
                     options: {
-                        treeOptions: layer.options.treeOptions
+                        treeOptions: treeOptions
                     }
                 };
             }
-        }
+        };
+        Mapbender.Util.SourceTree.iterateLayers(source, false, applyNewLayerSettings);
+        // recalculate state
+        var newStates = Mapbender.Model.calculateLayerStates(source, scale);
+        // apply states and calculate changeset
+        var changedStates = Mapbender.Model.applyLayerStates(source, newStates);
+        // Copy state changeset extended with treeOptions changeset
+        // (a layer's state may change without a treeOptions change and vice versa)
+        _.each(changedStates, function(layerChange, layerId) {
+            result.changed.children[layerId] = $.extend(true, result.changed.children[layerId] || {}, layerChange);
+        });
+
+        return $.extend(result, this.getLayerParameters(source));
     },
     'public function getLayerParameters': function(source) {
         var result = {
