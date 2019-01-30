@@ -170,7 +170,7 @@ mb:
       admin:
         label:
           autoopen: 'Auto open'
-          splitlayers: 'Split layers'
+          splitlayers: 'Split nnnnnlayers'
           declarative: 'Use declarative'
     repository:
       parser:

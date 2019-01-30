@@ -2,388 +2,389 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: ~
-        unknownoption: ~
-        noresult: ~
+        nolayer: 'Nessuna informazione per le feature nel layer'
+        unknownoption: 'Option sconosciuta %key% per %namespace%.%widgetname%.'
+        noresult: 'nessun risultato'
       popup:
         btn:
-          ok: ~
+          ok: Chiudi
+          print: Stampa
       class:
-        title: FeatureInfo
-        description: FeatureInfo
+        title: Informazioni
+        description: Informazioni
       tag:
-        featureinfo: featureinfo
+        featureinfo: Informazione
         feature: feature
-        info: info
-        dialog: dialog
+        info: informazione
+        dialog: 'finestra di dialogo'
     aboutdialog:
       content:
-        versionprefix: ~
-        learnmore: ~
-        linktitle: ~
-        website: ~
+        versionprefix: v.
+        learnmore: 'Maggiori informazioni riguardo Mapbender'
+        linktitle: 'Visita il nostro sito ufficiale di Mapbender'
+        website: sito web
       class:
-        title: ~
-        description: ~
+        title: 'Finestra di Mapbender'
+        description: 'Mostra la finestra di Mapbender'
       tag:
-        help: ~
-        info: ~
-        about: ~
+        help: aiuto
+        info: info
+        about: finestra di dialogo
     simplesearch:
       input:
-        search: ~
+        search: Cerca
       class:
-        title: ~
-        description: ~
+        title: 'Ricerca semplice'
+        description: 'Ricerca su un singolo campo riguardante JSON standard (ex. Solr)'
       error:
         geometry:
-          missing: ~
+          missing: 'La voce selezionata non contiene una geometria.'
     searchrouter:
       popup:
         btn:
-          ok: ~
-          cancel: ~
-          reset: ~
-      no_results: ~
-      result_counter: ~
+          ok: Cerca
+          cancel: Chiudi
+          reset: Reset
+      no_results: 'Nessun risultato trovato.'
+      result_counter: 'Risultati: %count%'
       class:
-        title: ~
-        description: ~
+        title: 'Cerca router'
+        description: 'Ricerca configurabile su elemento routing'
       tag:
-        search: ~
-        router: ~
+        search: Cerca
+        router: router
     poi:
-      sharepoi: ~
+      sharepoi: 'Condividi POI'
       text:
-        snippet: ~
+        snippet: 'E'' possibile usare il seguente snippet in un''email per condividere un POI'
       popup:
         btn:
-          ok: ~
-          cancel: ~
+          ok: Ok
+          cancel: Cancella
       class:
-        title: ~
-        description: ~
+        title: POI
+        description: 'Crea un POI per la condivisione'
       tag:
-        poi: ~
-        point: ~
-        interest: ~
+        poi: poi
+        point: punto
+        interest: interesse
       label:
         text: Text
     basesourceswitcher:
       error:
-        sourcenotavailable: ~
+        sourcenotavailable: 'Una risorsa con id %id% non è disponibile'
       class:
-        title: ~
-        Description: ~
+        title: 'Switcher per la risorsa di base'
+        Description: 'Cambia la risorsa dello sfondo'
       tag:
-        base: ~
-        source: ~
-        switcher: ~
+        base: base
+        source: risorsa
+        switcher: switcher
       form:
-        mesage: ~
+        mesage: 'Nessun set per la risorsa di base è definito.'
     legend:
-      nolegend: ~
+      nolegend: 'Nessuna legenda disponibile.'
       popup:
         btn:
-          ok: ~
+          ok: Chiudi
       class:
-        title: ~
-        description: ~
+        title: Legenda
+        description: 'Mostra la legenda dei layers della mappa'
       tag:
-        layer: ~
-        legend: ~
+        layer: layer
+        legend: legenda
     ruler:
       popup:
         btn:
-          ok: ~
-      create_error: ~
+          ok: Chiudi
+      create_error: 'Righello: la tipologia deve essere linea o area.'
       class:
-        title: ~
-        description: ~
+        title: 'Righello per linea/area'
+        description: 'Righello per disegnare una linea/area and mostrare la lunghezza/area in una finestra di dialogo'
       tag:
-        line: ~
-        area: ~
-        measure: ~
+        line: linea
+        area: area
+        measure: misurazione
     printclient:
       label:
-        template: ~
-        quality: ~
-        scale: ~
-        rotation: ~
-        legend: ~
+        template: Template
+        quality: Qualità
+        scale: Scala
+        rotation: Rotazione
+        legend: 'Stampa la legenda'
       popup:
         btn:
-          ok: ~
-          cancel: ~
+          ok: Stampa
+          cancel: Cancella
       info:
-        noactivelayer: ~
+        noactivelayer: 'Nessun layer attivo!'
       form:
-        required: ~
+        required: 'Per favore compila il campo'
       class:
-        title: ~
-        description: ~
+        title: 'Stampa'
+        description: 'Mostra la finestra di stampa'
       tag:
-        print: ~
-        pdf: ~
-        png: ~
-        gif: ~
-        jpg: ~
-        jpeg: ~
+        print: Stampa
+        pdf: pdf
+        png: png
+        gif: gif
+        jpg: jpg
+        jpeg: jpeg
       btn:
-        deactivate: ~
-        activate: ~
+        deactivate: 'Disattiva il frame per la stampa'
+        activate: 'Attiva il frame della stampa'
     overview:
-      nolayer: ~
+      nolayer: 'L''elemento di panoramica non ha layers.'
       class:
-        title: ~
-        description: ~
+        title: Panoramica
+        description: 'Mostra una ridotta panoramica della mappa'
       tag:
-        overview: ~
-        map: ~
+        overview: panoramica
+        map: mappa
     sketch:
       circle:
         radius:
-          label: ~
-          error: ~
+          label: Raggio
+          error: 'Raggio è invalido'
         form:
           button:
-            'yes': ~
-            cancel: ~
+            'yes': Si
+            cancel: Cancella
       class:
-        title: ~
-        description: ~
+        title: Sketch
+        description: 'Aggiungi un vettore nella mappa e consenti di disegnare gli oggetti geometrici.'
       tag:
         sketch: sketch
-        circle: circle
+        circle: cerchio
     metadata:
       popup:
         title: Metadata
         btn:
-          ok: Close
+          ok: Chiudi
     gpsposition:
       error:
-        notsupported: ~
-        nosignal: Attualmente non è possibile localizzare la Sua posizione.
+        notsupported: 'Sono spiacente, ma il servizio di geolocazione non è supportato dal tuo browser.'
+        nosignal: 'Attualmente non è possibile localizzare la tua posizione.'
       class:
-        title: ~
-        description: ~
+        title: 'Posizione GPS'
+        description: 'Visualizza un pulsante per mostrare la posizione GPS'
       tag:
-        gpsposition: ~
-        gps: ~
-        position: ~
-        button: ~
+        gpsposition: 'Posizione GPS'
+        gps: GPS
+        position: Posizione
+        button: Pulsante
     layertree:
       confirm:
-        allremove: ~
+        allremove: 'Vuoi veramente cancellare tutte le risorse?'
       popup:
         btn:
-          ok: ~
+          ok: Chiudi
       const:
-        outofscale: ~
-        outofbounds: ~
-        parentinvisible: ~
+        outofscale: 'Layer al di fuori della scala'
+        outofbounds: 'Layer al di fuori del riquadro'
+        parentinvisible: 'Parent layer non visibile'
       tooltip:
-        sublayers_openclose: ~
-        removelayer: ~
+        sublayers_openclose: 'Sublayers aperto/chiuso'
+        removelayer: 'Rimuovi il layer'
         menu:
-          close: ~
+          close: Chiudi
       label:
-        visibility_onoff: ~
-        featureinfo_onoff: ~
-        opacity: Opacity
-        zoomtolayer: ~
-        metadata: ~
-        sources: ~
-        deleteallsources: ~
-        legend: ~
-        kmlexport: ~
-        dimension_onoff: ~
-        dimension: ~
-        sourcevisibility_onoff: ~
-        allvisibility_on: ~
+        visibility_onoff: 'Visibilità on/off'
+        featureinfo_onoff: 'Featureinfo on/off'
+        opacity: Opacità
+        zoomtolayer: 'Fai zoom sul layer'
+        metadata: Metadata
+        sources: Risorse
+        deleteallsources: 'Rimuovere tutti le risorse'
+        legend: Legenda
+        kmlexport: 'esporta KML'
+        dimension_onoff: 'On/Off Dimensione'
+        dimension: Dimensione
+        sourcevisibility_onoff: 'Mostra risorsa'
+        allvisibility_on: 'Mostra tutti i layers'
       class:
-        title: ~
-        description: ~
+        title: 'Layer tree'
+        description: 'Tree dei layers della mappa'
       tag:
-        layertree: ~
-        layer: ~
-        tree: ~
+        layertree: 'layer per tree'
+        layer: layer
+        tree: tree
       contextmenu:
-        nooption: ~
+        nooption: 'Il layer non ha l''opzione di menu'
     zoombar:
-      panup: ~
-      panright: ~
-      pandown: ~
-      panleft: ~
-      goback: ~
-      goforward: ~
-      zoombybox: ~
-      zoombyworld: ~
-      zoomin: ~
-      zoomout: ~
+      panup: 'Muovi verso l''alto'
+      panright: 'Muovi a destra'
+      pandown: 'Muovi verso il basso'
+      panleft: 'Muovi a sinistra'
+      goback: 'Ritorna indietro'
+      goforward: 'Vai avanti'
+      zoombybox: 'Fai zoom sul riquadro'
+      zoombyworld: 'Fai zoom sul mondo'
+      zoomin: Ingrandisci
+      zoomout: Rimpicciolisci
       class:
-        title: ~
-        description: ~
+        title: 'Barra di navigazione'
+        description: 'La barra di navigazione fornisce un controllo sul trascinamento e sullo zoom, simile al controllo di OpenLayers PanZoomBar.'
       tag:
-        zoom: ~
-        pan: ~
-        control: ~
-        navigation: ~
-        panel: ~
+        zoom: zoom
+        pan: trascina
+        control: controllo
+        navigation: navigazione
+        panel: pannello
     activityindicator:
       class:
-        title: ~
-        description: ~
+        title: 'Indicatore di attività'
+        description: 'Mostra attività HTTP'
       tag:
-        activity: ~
-        indicator: ~
+        activity: attività
+        indicator: indicatore
     button:
       class:
-        title: ~
-        description: ~
+        title: Pulsante
+        description: Pulsante
       tag:
-        button: ~
+        button: Pulsante
     coordinatesdisplay:
       class:
-        title: ~
-        description: ~
+        title: 'Mostra le coordinate'
+        description: 'Il display delle coordinate mostra la posizione del mouse espressa come coordinate della mappa'
       tag:
-        coordinates: ~
-        display: ~
-        mouse: ~
-        position: ~
+        coordinates: coordinate
+        display: display
+        mouse: mouse
+        position: Posizione
     copyright:
       class:
-        title: ~
-        description: ~
+        title: Copyright
+        description: 'Mostra le condizione d''uso'
       tag:
-        copyright: ~
-        dialog: ~
+        copyright: Copyright
+        dialog: finestra di dialogo
     map:
       class:
-        title: ~
+        title: Mappa
       tag:
-        map: ~
-        mapquery: ~
-        openlayers: ~
-      srsnotfound: ~
+        map: mappa
+        mapquery: MapQuery
+        openlayers: OpenLayers
+      srsnotfound: 'proprietà SRS per %srslist% non trovate'
     mapabs:
       class:
-        description: ~
+        description: 'Mappa di base MapQuery/OpenLayers'
     scalebar:
       class:
-        title: ~
-        description: ~
+        title: 'Barra di scala'
+        description: 'La barra di scala mostra un piccolo indicatore di scala rappresentante l''attuale scala della mappa.'
       tag:
-        scale: ~
-        bar: ~
+        scale: scale
+        bar: bar
     scaledisplay:
       class:
-        title: ~
-        description: ~
+        title: 'Mostra la scala'
+        description: 'Mostra la scala attuale'
       tag:
-        scale: ~
-        display: ~
+        scale: scala
+        display: mostra
     scaleselector:
       class:
-        title: ~
-        description: ~
+        title: 'Selettore di scala'
+        description: 'Mostra e cambia la scala della mappa'
       tag:
-        scale: ~
-        selector: ~
+        scale: scala
+        selector: selettore
     srsselector:
       class:
-        title: ~
-        description: ~
+        title: 'Selettore SRS'
+        description: 'Il selettore del sistema di riferimento cambia il sistema di riferimento spaziale della mappa'
       tag:
-        srs: ~
-        selector: ~
+        srs: SRS
+        selector: selettore
     admin:
       poi:
         label:
-          usemailto: ~
+          usemailto: 'Usa Mailto'
       legend:
         label:
-          autoopen: ~
-          hideemptylayers: ~
-          generatelegendurl: ~
-          showsourcetitle: ~
-          showlayertitle: ~
-          showgroupedlayertitle: ~
+          autoopen: Apertura automatica
+          hideemptylayers: 'Nascondi i layers vuoti'
+          generatelegendurl: 'Genera la url per la legenda'
+          showsourcetitle: 'Mostra il titolo della risorsa'
+          showlayertitle: 'Mostra il titolo del layer'
+          showgroupedlayertitle: 'Mostra il titolo dei layers raggruppati'
       featureinfo:
         label:
-          autoopen: ~
-          deactivateonclose: ~
-          showoriginal: ~
-          onlyvalid: ~
+          autoopen: 'Apertura automatica'
+          deactivateonclose: 'Disattiva in chiusura'
+          showoriginal: 'Mostra originale'
+          onlyvalid: 'Solo per le feature valide'
       printclient:
         label:
-          autoopen: ~
-          rotatable: ~
-          legend: ~
-          legend_default_behaviour: ~
+          autoopen: 'Apertura automatica'
+          rotatable: Ruotabile
+          legend: 'Stampa la legenda'
+          legend_default_behaviour: 'Checkbox della legenda attivo'
       copyright:
         label:
-          autoopen: ~
+          autoopen: 'Apertura automatica'
       layertree:
         label:
-          showbasesources: ~
-          autoopen: ~
-          showheader: ~
-          showlayerremove: ~
-          usetheme: ~
-          themes: ~
+          showbasesources: 'Mostra la risorsa di base'
+          autoopen: 'Apertura automatica'
+          showheader: 'Mostra header'
+          showlayerremove: 'Mostra i layer rimossi'
+          usetheme: 'Layer tematico'
+          themes: Temi
           theme:
-            opened: ~
-            activate: ~
-            useTheme: ~
-            sourceVisibility: ~
-            allSelected: ~
-            label: ~
-          hidenottoggleable: ~
-          hideselect: ~
-          hideinfo: ~
+            opened: aperto
+            activate: 'Abilita Aggiunta/Rimozione Layer'
+            useTheme: 'Mostra tema'
+            sourceVisibility: 'Tema: visibilità della risorsa'
+            allSelected: 'Tema: visibilità del layer'
+            label: 'nome del tema'
+          hidenottoggleable: 'Funzione nascondi non modificabile'
+          hideselect: 'Nascondi la visibilità per le cartelle'
+          hideinfo: 'Nascondi info'
       redlining:
         label:
-          auto_activate: ~
-          deactivate_on_close: ~
+          auto_activate: Auto-attivazione
+          deactivate_on_close: 'Disattiva alla chiusura'
     htmlelement:
       class:
         title: HTML
-        description: ~
+        description: 'Aggiungi HTML'
       tag:
         html: HTML
     entity:
       app:
         screenshotfile:
-          error: ~
+          error: Errore
     redlining:
       geometrytype:
-        point: ~
-        line: ~
-        polygon: ~
-        rectangle: ~
+        point: Punto
+        line: Linea
+        polygon: Poligono
+        rectangle: Rettangolo
         text:
-          title: ~
-          label: ~
+          title: Testo
+          label: Testo
           error:
-            notext: ~
+            notext: 'Testo necessario'
       geometry:
         action:
-          remove: ~
-          edit: ~
-          zoom: ~
+          remove: 'Rimuovi la geometria'
+          edit: 'Modifica la geometria'
+          zoom: 'Fai zoom sulla geometria'
       dialog:
         btn:
-          cancel: ~
+          cancel: Chiudi
       class:
-        title: ~
-        description: ~
+        title: Redlining
+        description: 'Strumento di Redlining'
       tag:
         redlining: redlining
-        geometry: geometry
+        geometry: geometria
   geosource:
     image_error:
-      datails: 'La mappa non può essere visualizzata.'
+      datails: 'La mappa non può essere mostrata.'
       exception: 'Eccezione: %exception%'
-      statuscode: ~
+      statuscode: 'HTTP status code'

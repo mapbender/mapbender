@@ -7,7 +7,7 @@ mb:
           cancel: Cancella
       info:
         noactivelayer: 'Nessun layer attivo!'
-      chooseformat: 'Scegli il Formato di Esportazione'
+      chooseformat: 'Scegli il formato di esportazione'
       class:
         title: 'Esporta immagine'
         description: 'Esporta Immagine permette di esportare la vista corrente della mappa. Puoi scegliere tra il formato png e jpeg.'
