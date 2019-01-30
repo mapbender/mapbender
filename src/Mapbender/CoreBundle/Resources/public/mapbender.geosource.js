@@ -251,37 +251,21 @@ Mapbender.Geo.SourceHandler = Class({
             if (toChangeOpts.options.configuration) {
                 var configuration = toChangeOpts.options.configuration;
                 if (configuration.options) {
+                    // translate to root layer tree options
                     var rootId = source.configuration.children[0].options.id;
                     if (!toChangeOpts.options.children)
                         toChangeOpts.options['children'] = {};
-                    if (!toChangeOpts.options.children[rootId])
-                        toChangeOpts.options.children[rootId] = {
-                            options: {}
-                        };
-                    if (typeof configuration.options.visibility !== 'undefined')
-                        $.extend(true, toChangeOpts.options.children[rootId], {
-                            options: {
-                                treeOptions: {
-                                    selected: configuration.options.visibility
-                                }
-                            }
-                        });
-                    if (typeof configuration.options.info !== 'undefined')
-                        $.extend(true, toChangeOpts.options.children[rootId], {
-                            options: {
-                                treeOptions: {
-                                    info: configuration.options.info
-                                }
-                            }
-                        });
-                    if (typeof configuration.options.toggle !== 'undefined')
-                        $.extend(true, toChangeOpts.options.children[rootId], {
-                            options: {
-                                treeOptions: {
-                                    toggle: configuration.options.toggle
-                                }
-                            }
-                        });
+                    var rootLayerTreeOptions = $.extend({}, configuration.options);
+                    if (typeof rootLayerTreeOptions.visibility !== 'undefined') {
+                        // the equivalent tree option is named 'selected' instead of 'visibility'
+                        rootLayerTreeOptions.selected = rootLayerTreeOptions.visibility;
+                        delete rootLayerTreeOptions['visibility'];
+                    }
+                    toChangeOpts.options.children[rootId] = $.extend(true, toChangeOpts.options.children[rootId] || {}, {
+                        options: {
+                            treeOptions: rootLayerTreeOptions
+                        }
+                    });
                 }
             }
         }
@@ -298,13 +282,9 @@ Mapbender.Geo.SourceHandler = Class({
             }
         };
         var rootLayer = source.configuration.children[0];
-        _changeOptions(rootLayer, scale, {
-            state: {
-                visibility: true
-            }
-        });
+        _changeOptions(rootLayer, scale, true);
         return result;
-        function _changeOptions(layer, scale, parentState) {
+        function _changeOptions(layer, scale, parentVisibility) {
             var initialLayerState = $.extend({}, layer.state);
             var layerChanges,
                 elchanged = false;
@@ -317,23 +297,19 @@ Mapbender.Geo.SourceHandler = Class({
                     for (var oti = 0; oti < optionsTasks.length; ++oti) {
                         var optionName = optionsTasks[oti][0];
                         var checkAllow = optionsTasks[oti][1];
-                        if (typeof treeChanges[optionName] !== undefined && (!checkAllow || treeOptions.allow[optionName])) {
-                            if (treeOptions[optionName] === treeChanges[optionName]) {
-                                delete(treeChanges[optionName]);
-                            } else {
+                        if (typeof treeChanges[optionName] !== 'undefined' && (!checkAllow || treeOptions.allow[optionName])) {
+                            if (treeOptions[optionName] !== treeChanges[optionName]) {
                                 treeOptions[optionName] = treeChanges[optionName];
                                 elchanged = true;
                             }
                         }
                     }
                 }
-            } else {
-                layerChanges = {};
             }
             layer.state.outOfScale = !Mapbender.Util.isInScale(scale, layer.options.minScale,
                 layer.options.maxScale);
             /* @TODO outOfBounds for layers ?  */
-            var newVisibilityState = parentState.state.visibility
+            var newVisibilityState = parentVisibility
                     && layer.options.treeOptions.selected
                     && !layer.state.outOfScale
                     && !layer.state.outOfBounds;
@@ -342,7 +318,8 @@ Mapbender.Geo.SourceHandler = Class({
                 layer.state.visibility = !!newVisibilityState;
                 var atLeastOneChildVisible = false;
                 for (var j = 0; j < layer.children.length; j++) {
-                    var child = _changeOptions(layer.children[j], scale, layer);
+                    var childLayer = layer.children[j];
+                    _changeOptions(childLayer, scale, layer.state.visibility);
                     if (child.state.visibility) {
                         atLeastOneChildVisible = true;
                     }
@@ -370,8 +347,12 @@ Mapbender.Geo.SourceHandler = Class({
                 }
             }
             if (elchanged) {
-                layerChanges.state = layer.state;
-                result.changed.children[layer.options.id] = layerChanges;
+                result.changed.children[layer.options.id] = {
+                    state: layer.state,
+                    options: {
+                        treeOptions: layer.options.treeOptions
+                    }
+                };
             }
             var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
             if (customLayerOrder && customLayerOrder.length && result.layers && result.layers.length) {
@@ -379,8 +360,6 @@ Mapbender.Geo.SourceHandler = Class({
                     return result.layers.indexOf(layerName) !== -1;
                 });
             }
-
-            return layer;
         }
     },
     /**
