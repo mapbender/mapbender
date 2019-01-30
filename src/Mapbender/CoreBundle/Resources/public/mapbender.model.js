@@ -875,39 +875,37 @@ Mapbender.Model = {
         });
     },
     /**
-     *
+     * @deprecated
      */
     changeSource: function(options) {
         if (options.change) {
             var changeOpts = options.change;
-            if (typeof changeOpts.options !== 'undefined') {
-                var sourceToChange = this.getSource(changeOpts.sourceIdx);
-                this.mbMap.fireModelEvent({
-                    name: 'beforeSourceChanged',
-                    value: {
-                        source: sourceToChange,
-                        changeOptions: changeOpts
-                    }
-                });
-                if (changeOpts.options.type === 'selected') {
-                    console.warn("Use controlLayer instead of changeSource with type selected");
-                    this._changeSourceLayerProps(sourceToChange, changeOpts.options.children);
+            if (changeOpts.options) {
+                switch (changeOpts.options.type) {
+                    case 'selected':
+                    case 'info':
+                        var sourceToChange = this.getSource(changeOpts.sourceIdx);
+                        this.mbMap.fireModelEvent({
+                            name: 'beforeSourceChanged',
+                            value: {
+                                source: sourceToChange,
+                                changeOptions: changeOpts
+                            }
+                        });
+                        console.warn("Use controlLayer instead of changeSource with type " + changeOpts.options.type);
+                        this._changeSourceLayerProps(sourceToChange, changeOpts.options.children);
+                        return;
+                    default:
+                        break;
                 }
-                if (changeOpts.options.type === 'info') {
-                    console.warn("Use controlLayer instead of changeSource with type info");
-                    this._changeSourceLayerProps(sourceToChange, changeOpts.options.children);
-                }
-            }
-            if (changeOpts.move) {
-                console.error("mapbender.model:changeSource with 'move' is gone", changeOpts);
-            }
-            if (changeOpts.layerRemove) {
+            } else if (changeOpts.layerRemove) {
                 console.warn("Use removeLayer instead of changeSource");
                 this.removeLayer(changeOpts.layerRemove.sourceIdx.id, changeOpts.layerRemove.layer.options.id);
+                return;
             }
-        } else {
-            window.console && console.error("CHECK options at model.changeSource");
         }
+        console.error("Unsupported changeSource options", options);
+        throw new Error("Unsupported changeSource options");
     },
     removeLayer: function(sourceId, layerId) {
         var source = this.getSource({id: sourceId});
