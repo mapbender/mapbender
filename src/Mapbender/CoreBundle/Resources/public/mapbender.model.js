@@ -874,10 +874,7 @@ Mapbender.Model = {
                     this.mbMap.fireModelEvent({
                         name: 'sourceChanged',
                         value: {
-                            changed: {
-                                children: result.children,
-                                sourceIdx: result.sourceIdx
-                            }
+                            changed: result
                         }
                     });
                 }
@@ -889,9 +886,6 @@ Mapbender.Model = {
                         name: 'sourceChanged',
                         value: result
                     });
-                }
-                if (changeOpts.options.type === 'toggle') {
-
                 }
             }
             if (changeOpts.move) {
@@ -1093,6 +1087,49 @@ Mapbender.Model = {
                 projection: srs.projection
             }
         });
+    },
+    /**
+     * Activate / deactivate a single layer's selection and / or FeatureInfo state states.
+     *
+     * @param {string|number} sourceId
+     * @param {string|number} layerId
+     * @param {bool|null} [selected]
+     * @param {bool|null} [info]
+     */
+    controlLayer: function controlLayer(sourceId, layerId, selected, info) {
+        var tochange = {
+            sourceIdx: {id: '' + sourceId},
+            options: {
+                children: {}
+            }
+        };
+        // @todo: support flipping both values in a single interaction
+        if (selected !== null && typeof selected !== 'undefined') {
+            tochange.options.type = 'selected';
+            tochange.options.children['' + layerId] = {
+                options: {
+                    treeOptions: {
+                        selected: !!selected
+                    }
+                }
+            };
+            this.changeSource({
+                change: tochange
+            });
+        }
+        if (info !== null && typeof info !== 'undefined') {
+            tochange.options.type = 'info';
+            tochange.options.children['' + layerId] = {
+                options: {
+                    treeOptions: {
+                        info: !!info
+                    }
+                }
+            };
+            this.changeSource({
+                change: tochange
+            });
+        }
     },
     /**
      * @param {OpenLayers.Layer.HTTPRequest|Object} source can be a sourceDef

@@ -640,59 +640,19 @@
         },
         _toggleSelected: function(e) {
             var $li = $(e.target).parents('li:first');
+            var sourceId = $li.attr('data-sourceid');
             if ($li.attr('data-type') === this.consts.root) {
-                if(!this._isThemeChecked($li)) { // thematic layertree handling
-                    return false;
+                if (this._isThemeChecked($li)) { // thematic layertree handling
+                    this.model.setSourceVisibility(sourceId, $(e.target).prop('checked'));
                 }
-                this.model.setSourceVisibility($li.attr('data-sourceid'), $(e.target).prop('checked'));
             } else {
-                var tochange = {
-                    sourceIdx: {
-                        id: $li.attr('data-sourceid')
-                    },
-                    options: {
-                        type: 'selected',
-                        children: {}
-                    }
-                };
-                tochange.options.children[$li.attr('data-id')] = {
-                    options: {
-                        treeOptions: {
-                            selected: $(e.target).is(':checked')
-                        }
-                    }
-                };
-                this.model.changeSource({
-                    change: tochange
-                });
+                this.model.controlLayer(sourceId, $li.attr('data-id'), $(e.target).prop('checked'));
             }
             return false;
         },
         _toggleInfo: function(e) {
-            var li = $(e.target).parents('li:first');
-            var tochange = {
-                sourceIdx: {
-                    id: li.attr(
-                        'data-sourceid')
-                },
-                options: {
-                    children: {},
-                    type: 'info'
-                }
-            };
-            tochange.options.children[li.attr('data-id')] = {
-                options: {
-                    treeOptions: {
-                        info: $(
-                            e.target).
-                            is(
-                                ':checked')
-                    }
-                }
-            };
-            this.model.changeSource({
-                change: tochange
-            });
+            var $li = $(e.target).closest('li.leave');
+            this.model.controlLayer($li.attr('data-sourceid'), $li.attr('data-id'), null, $(e.target).prop('checked'));
         },
         currentMenu: null,
         closeMenu: function(menu) {
