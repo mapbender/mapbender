@@ -65,100 +65,10 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'abstract public function getPrintConfig': function(layer, bounds, isProxy) {
     },
-    'abstract public function createSourceDefinitions': function(xml, options) {
-    }, // to remove
-    'public function on': function(eventName) {
-
-    },
     'public function postCreate': function(olLayer) {
 
     },
-    'public function removeSignature': function(url){
-        return Mapbender.Util.removeSignature(url);
-    },
     'public function changeProjection': function(source, projection) {
-    },
-    'public function onLoadStart': function(source) {
-
-    },
-    'public function onLoadError': function(imgEl, sourceId, projection, callback) {
-        var loadError = {
-            sourceId: sourceId,
-            details: ''
-        };
-        var url = Mapbender.configuration.application.urls.proxy + "?url="
-            + encodeURIComponent(Mapbender.Util.removeProxy(imgEl.attr('src')));
-        $.ajax({
-            type: "GET",
-            async: false,
-            url: url,
-            success: function(message, text, response) {
-                if (typeof (response.responseText) === "string") {
-                    var details = Mapbender.trans("mb.geosource.image_error.datails");
-                    var layerTree;
-                    try {
-                        layerTree = new OpenLayers.Format.WMSCapabilities().read(response.responseText);
-                    } catch (e) {
-                        layerTree = null;
-                        details += ".\n" + Mapbender.trans("mb.geosource.image_error.exception", {
-                            'exception': e.toString()
-                        });
-                    }
-                    if (layerTree && layerTree.error) {
-                        if (layerTree.error.exceptionReport && layerTree.error.exceptionReport.exceptions) {
-                            var excs = layerTree.error.exceptionReport.exceptions;
-                            details += ":";
-                            for (var m = 0; m < excs.length; m++) {
-                                var exc = excs[m].code;
-                                details += "\n" + exc;
-                                if (excs[m].code == "InvalidSRS") {
-                                    details += " (" + projection.projCode + ")";
-                                }
-                            }
-                        }
-                    }
-                }
-                loadError.details = details;
-                callback(loadError);
-            },
-            error: function(err) {
-                var details = Mapbender.trans("mb.geosource.image_error.datails");
-                if (err.status == 200) {
-                    var capabilities;
-                    try {
-                        capabilities = new OpenLayers.Format.WMSCapabilities().read(err.responseText);
-                    } catch (e) {
-                        capabilities = null;
-                        details += ".\n" + Mapbender.trans("mb.geosource.image_error.exception", {
-                            'exception': e.toString()
-                        });
-                    }
-                    if (capabilities && capabilities.error) {
-                        if (capabilities.error.exceptionReport && capabilities.error.exceptionReport.exceptions) {
-                            var excs = capabilities.error.exceptionReport.exceptions;
-                            details += ":";
-                            for (var m = 0; m < excs.length; m++) {
-                                var exc = excs[m].code;
-                                details += "\n" + exc;
-                                if (excs[m].code == "InvalidSRS") {
-                                    details += " (" + projection.projCode + ")";
-                                }
-                                if (exc != excs[m].code) {
-
-                                } else if (excs[m].text) {
-                                    details += "\n" + excs[m].text;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    details += ".\n" + Mapbender.trans(
-                        "mb.geosource.image_error.statuscode") + ": " + err.status + " - " + err.statusText;
-                }
-                loadError.details = details;
-                callback(loadError);
-            }
-        });
     },
     'public function getLayersList': function(source, offsetLayer, includeOffset) {
         var rootLayer,
