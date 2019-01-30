@@ -209,7 +209,6 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'public function checkInfoLayers': function(source, scale, tochange) {
         var result = {
-            infolayers: [],
             changed: {
                 sourceIdx: {
                     id: source.id
@@ -228,19 +227,10 @@ Mapbender.Geo.SourceHandler = Class({
                     layer.options.treeOptions.info = layerChanged.options.treeOptions.info;
                     result.changed.children[layer.options.id] = layerChanged;
                 }
-            }
-            if (layer.options.treeOptions.info && layer.state.visibility) {
-                var layerName = layer.options.name;
-                // layer names can be emptyish, most commonly on root layers
-                // we will avoid appending an empty string to the list of queryable layers
-                if (layerName && layerName.length) {
-                    result.infolayers.push(layerName);
-                }
-                result.infolayers.push(layer.options.name);
+                layer.state.info = layer.options.treeOptions.info && layer.options.treeOptions.allow.info && layer.state.visibility;
             }
         });
-
-        return result;
+        return $.extend(result, this.getLayerParameters(source));
     },
     /**
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };
@@ -271,9 +261,6 @@ Mapbender.Geo.SourceHandler = Class({
         }
 
         var result = {
-            layers: [],
-            infolayers: [],
-            styles: [],
             changed: {
                 sourceIdx: {
                     id: source.id
@@ -283,7 +270,8 @@ Mapbender.Geo.SourceHandler = Class({
         };
         var rootLayer = source.configuration.children[0];
         _changeOptions(rootLayer, scale, true);
-        return result;
+
+        return $.extend(result, this.getLayerParameters(source));
         function _changeOptions(layer, scale, parentVisibility) {
             var initialLayerState = $.extend({}, layer.state);
             var layerChanges,
@@ -320,7 +308,7 @@ Mapbender.Geo.SourceHandler = Class({
                 for (var j = 0; j < layer.children.length; j++) {
                     var childLayer = layer.children[j];
                     _changeOptions(childLayer, scale, layer.state.visibility);
-                    if (child.state.visibility) {
+                    if (childLayer.state.visibility) {
                         atLeastOneChildVisible = true;
                     }
                 }
@@ -330,15 +318,9 @@ Mapbender.Geo.SourceHandler = Class({
                 layer.state.visibility = atLeastOneChildVisible;
             } else {
                 layer.state.visibility = !!(newVisibilityState && layer.options[self.layerNameIdent].length);
-                if (layer.state.visibility) {
-                    result.layers.push(layer.options[self.layerNameIdent]);
-                    result.styles.push(layer.options.style ? layer.options.style : '');
-                    if (layer.options.treeOptions.info === true) {
-                        result.infolayers.push(layer.options[self.layerNameIdent]);
-                    }
-                }
+                layer.state.info = layer.options.treeOptions.info && layer.options.treeOptions.allow.info && layer.state.visibility;
             }
-            var stateNames = ['outOfScale', 'outOfBounds', 'visibility'];
+            var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
             for (var sni = 0; sni < stateNames.length; ++ sni) {
                 var stateName = stateNames[sni];
                 if (layer.state[stateName] !== initialLayerState[stateName]) {
@@ -354,13 +336,35 @@ Mapbender.Geo.SourceHandler = Class({
                     }
                 };
             }
-            var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
-            if (customLayerOrder && customLayerOrder.length && result.layers && result.layers.length) {
-                result.layers = _.filter(customLayerOrder, function(layerName) {
-                    return result.layers.indexOf(layerName) !== -1;
-                });
-            }
         }
+    },
+    'public function getLayerParameters': function(source) {
+        var result = {
+            layers: [],
+            styles: [],
+            infolayers: []
+        };
+        var layerParamName = this.layerNameIdent;
+        var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
+        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
+            // Layer names can be emptyish, most commonly on root layers
+            // Suppress layers with empty names entirely
+            if (layer.options[layerParamName]) {
+                if (layer.state.visibility) {
+                    result.layers.push(layer.options[layerParamName]);
+                    result.styles.push(layer.options.style || '');
+                }
+                if (layer.state.info) {
+                    result.infolayers.push(layer.options[layerParamName]);
+                }
+            }
+        });
+        if (customLayerOrder) {
+            result.layers = _.filter(customLayerOrder, function(layerName) {
+                return result.layers.indexOf(layerName) !== -1;
+            });
+        }
+        return result;
     },
     /**
      * @param {object} source wms source
