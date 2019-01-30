@@ -855,6 +855,36 @@ Mapbender.Model = {
             this.removeSource(toRemoveArr[i]);
         }
     },
+    _changeSourceSelected: function(sourceId, layerMap) {
+        var options = {
+            sourceIdx: {id: '' + sourceId},
+            options: {
+                children: layerMap
+            }
+        };
+        var eventData = {
+            changed: this._checkSource(options, true, true)
+        };
+        this.mbMap.fireModelEvent({
+            name: 'sourceChanged',
+            value: eventData
+        });
+    },
+    _changeSourceInfo: function(sourceId, layerMap) {
+        var source = this.getSource({id: sourceId});
+        var options = {
+            options: {
+                children: layerMap
+            }
+        };
+        var gs = this.getGeoSourceHandler(source, true);
+        var result = gs.checkInfoLayers(source, this.getScale(), options);
+        this.map.layersList[source.mqlid].olLayer.queryLayers = result.infolayers;
+        this.mbMap.fireModelEvent({
+            name: 'sourceChanged',
+            value: result
+        });
+    },
     /**
      *
      */
@@ -871,22 +901,12 @@ Mapbender.Model = {
                     }
                 });
                 if (changeOpts.options.type === 'selected') {
-                    var result = this._checkAndRedrawSource(changeOpts);
-                    this.mbMap.fireModelEvent({
-                        name: 'sourceChanged',
-                        value: {
-                            changed: result
-                        }
-                    });
+                    console.warn("Use controlLayer instead of changeSource with type selected");
+                    this._changeSourceSelected(sourceToChange.id, changeOpts.options.children);
                 }
                 if (changeOpts.options.type === 'info') {
-                    var result = Mapbender.source[sourceToChange.type].checkInfoLayers(sourceToChange,
-                        this.getScale(), changeOpts);
-                    this.map.layersList[sourceToChange.mqlid].olLayer.queryLayers = result.infolayers;
-                    this.mbMap.fireModelEvent({
-                        name: 'sourceChanged',
-                        value: result
-                    });
+                    console.warn("Use controlLayer instead of changeSource with type info");
+                    this._changeSourceInfo(sourceToChange.id, changeOpts.options.children);
                 }
             }
             if (changeOpts.move) {
@@ -1101,38 +1121,27 @@ Mapbender.Model = {
      * @param {bool|null} [info]
      */
     controlLayer: function controlLayer(sourceId, layerId, selected, info) {
-        var tochange = {
-            sourceIdx: {id: '' + sourceId},
-            options: {
-                children: {}
-            }
-        };
+        var layerMap = {};
         // @todo: support flipping both values in a single interaction
         if (selected !== null && typeof selected !== 'undefined') {
-            tochange.options.type = 'selected';
-            tochange.options.children['' + layerId] = {
+            layerMap['' + layerId] = {
                 options: {
                     treeOptions: {
                         selected: !!selected
                     }
                 }
             };
-            this.changeSource({
-                change: tochange
-            });
+            this._changeSourceSelected(sourceId, layerMap);
         }
         if (info !== null && typeof info !== 'undefined') {
-            tochange.options.type = 'info';
-            tochange.options.children['' + layerId] = {
+            layerMap['' + layerId] = {
                 options: {
                     treeOptions: {
                         info: !!info
                     }
                 }
             };
-            this.changeSource({
-                change: tochange
-            });
+            this._changeSourceInfo(sourceId, layerMap);
         }
     },
     /**
