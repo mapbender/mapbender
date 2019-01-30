@@ -490,11 +490,7 @@ Mapbender.Model = {
     /**
      * Checks the source changes and returns the source changes.
      */
-    _checkAndRedrawSource: function(toChangeOpts) {
-        return this._checkSource(toChangeOpts, true, true);
-    },
-    _checkSource: function(toChangeOpts, reset, redraw) {
-        var source = this.getSource(toChangeOpts.sourceIdx);
+    _checkSource: function(source, toChangeOpts, reset, redraw) {
         var gsResult = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
         if (!mqLayer) {
@@ -517,11 +513,7 @@ Mapbender.Model = {
     _checkChanges: function(e, isPreEvent) {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
-            var sourceIdx = {id: source.id};
-            var changeOpts = {
-                sourceIdx: sourceIdx
-            };
-            var changed = self._checkSource(changeOpts, true, !isPreEvent);
+            var changed = self._checkSource(source, {}, true, !isPreEvent);
             for (var child in changed.children) {
                 if (changed.children[child].state
                     && typeof changed.children[child].state.outOfScale !== 'undefined') {
@@ -530,7 +522,7 @@ Mapbender.Model = {
                         value: {
                             changed: {
                                 children: changed.children,
-                                sourceIdx: sourceIdx
+                                sourceIdx: {id: source.id}
                             }
                         }
                     });
@@ -797,12 +789,7 @@ Mapbender.Model = {
                 }
             }
         });
-        var checkOptions = {
-            sourceIdx: {
-                id: sourceDef.id
-            }
-        };
-        this._checkSource(checkOptions, true, true);
+        this._checkSource(sourceDef, {}, true, true);
         return sourceDef;
     },
     /**
@@ -873,15 +860,14 @@ Mapbender.Model = {
             this.removeSource(toRemoveArr[i]);
         }
     },
-    _changeSourceLayerProps: function(sourceId, layerMap) {
+    _changeSourceLayerProps: function(source, layerMap) {
         var options = {
-            sourceIdx: {id: '' + sourceId},
             options: {
                 children: layerMap
             }
         };
         var eventData = {
-            changed: this._checkSource(options, true, true)
+            changed: this._checkSource(source, options, true, true)
         };
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
@@ -905,11 +891,11 @@ Mapbender.Model = {
                 });
                 if (changeOpts.options.type === 'selected') {
                     console.warn("Use controlLayer instead of changeSource with type selected");
-                    this._changeSourceLayerProps(sourceToChange.id, changeOpts.options.children);
+                    this._changeSourceLayerProps(sourceToChange, changeOpts.options.children);
                 }
                 if (changeOpts.options.type === 'info') {
                     console.warn("Use controlLayer instead of changeSource with type info");
-                    this._changeSourceLayerProps(sourceToChange.id, changeOpts.options.children);
+                    this._changeSourceLayerProps(sourceToChange, changeOpts.options.children);
                 }
             }
             if (changeOpts.move) {
@@ -933,10 +919,7 @@ Mapbender.Model = {
                 sourceIdx: {id: sourceId}
             }
         };
-        var checkOptions = {
-            sourceIdx: eventData.changed.sourceIdx
-        };
-        this._checkSource(checkOptions, true, true);
+        this._checkSource(source, {}, true, true);
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
             value: eventData
@@ -944,7 +927,6 @@ Mapbender.Model = {
     },
     setSourceVisibility: function(sourceId, state) {
         var checkOptions = {
-            sourceIdx: {id: sourceId},
             options: {
                 configuration: {
                     options: {visibility: state}
@@ -952,7 +934,7 @@ Mapbender.Model = {
                 type: 'selected'
             }
         };
-        var result = this._checkSource(checkOptions, true, true);
+        var result = this._checkSource(this.getSource({id: sourceId}), checkOptions, true, true);
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
             value: {
@@ -995,8 +977,7 @@ Mapbender.Model = {
      * @param {string[]} newLayerIdOrder
      */
     setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
-        var sourceIdx = {id: sourceId};
-        var sourceObj = this.getSource(sourceIdx);
+        var sourceObj = this.getSource({id: sourceId});
         var geoSource = Mapbender.source[sourceObj.type];
 
         geoSource.setLayerOrder(sourceObj, newLayerIdOrder);
@@ -1007,11 +988,7 @@ Mapbender.Model = {
             // on this event
             value: null
         });
-        var checkOptions = {
-            sourceIdx: sourceIdx,
-            options: {children: {}}
-        };
-        this._checkSource(checkOptions, true, true);
+        this._checkSource(sourceObj, {}, true, true);
     },
     /**
      * Bring the sources identified by the given ids into the given order.
@@ -1140,7 +1117,7 @@ Mapbender.Model = {
             };
         }
         if (Object.keys(layerMap).length) {
-            this._changeSourceLayerProps(sourceId, layerMap);
+            this._changeSourceLayerProps(this.getSource({id: sourceId}), layerMap);
         }
     },
     /**
