@@ -199,8 +199,7 @@ Mapbender.Model = {
         $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
         // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
         // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
-        this.map.olMap.events.register('movestart', this, $.proxy(this._preCheckChanges, this));
-
+        this.map.olMap.events.register('movestart', this, $.proxy(this._checkChanges, this));
         this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
         // Array.protoype.reverse is in-place
         // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
@@ -490,44 +489,28 @@ Mapbender.Model = {
     /**
      * Checks the source changes and returns the source changes.
      */
-    _checkSource: function(source, toChangeOpts, reset, redraw) {
+    _checkSource: function(source, toChangeOpts, redraw) {
         var gsResult = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
-        var mqLayer = this.map.layersList[source.mqlid];
-        if (!mqLayer) {
-            console.error("No mqLayer found", toChangeOpts);
-        }
-        if (mqLayer && reset) {
-            redraw = redraw && this._resetSourceVisibility(mqLayer, gsResult.layers, gsResult.infolayers, gsResult.styles);
-        }
-        if (mqLayer && redraw) {
-            mqLayer.olLayer.removeBackBuffer();
-            mqLayer.olLayer.createBackBuffer();
-            mqLayer.olLayer.redraw(true);
+        if (redraw) {
+            this._resetSourceVisibility(source, gsResult.layers, gsResult.infolayers, gsResult.styles);
         }
         return gsResult.changed;
     },
-    _preCheckChanges: function(e) {
-        this._checkChanges(e, true);
-    },
-    
-    _checkChanges: function(e, isPreEvent) {
+    _checkChanges: function(e) {
+        var isPreEvent = e.type === 'movestart';
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
-            var changed = self._checkSource(source, {}, true, !isPreEvent);
-            for (var child in changed.children) {
-                if (changed.children[child].state
-                    && typeof changed.children[child].state.outOfScale !== 'undefined') {
-                    self.mbMap.fireModelEvent({
-                        name: 'sourceChanged',
-                        value: {
-                            changed: {
-                                children: changed.children,
-                                sourceIdx: {id: source.id}
-                            }
+            var changed = self._checkSource(source, {}, !isPreEvent);
+            if (isPreEvent && changed && Object.keys(changed.children || {}).length) {
+                self.mbMap.fireModelEvent({
+                    name: 'sourceChanged',
+                    value: {
+                        changed: {
+                            children: changed.children,
+                            sourceIdx: {id: source.id}
                         }
-                    });
-                    break;
-                }
+                    }
+                });
             }
         });
     },
@@ -537,17 +520,23 @@ Mapbender.Model = {
      *
      * @TODO: infoLayers should be set outside of the function
      *
-     * @param mqLayer map query layer
-     * @param layers layer name string array
-     * @param infolayers Various layers like: WMS layer; WFS layers; WFS Feature; WMTS Layers...
+     * @param {Object} source
+     * @param {Array<string>} layers
+     * @param {Array<string>} infolayers
+     * @param {Array<string>} styles
      *
      * @returns {boolean}
      * @private
      */
-    _resetSourceVisibility: function(mqLayer, layers, infolayers, styles) {
+    _resetSourceVisibility: function(source, layers, infolayers, styles) {
+        var mqLayer = this.map.layersList[source.mqlid];
+        if (!mqLayer) {
+            console.error("No mqLayer found", source);
+            return false;
+        }
         mqLayer.olLayer.queryLayers = infolayers;
-        if(mqLayer.hasOwnProperty("id")) {
-            if(this._layersHash.hasOwnProperty(mqLayer.id) && this._layersHash[mqLayer.id] == layers.toString()) {
+        if (mqLayer.id) {
+            if (this._layersHash[mqLayer.id] === layers.toString()) {
                 return false;
             }
             this._layersHash[mqLayer.id] = layers.toString();
@@ -567,6 +556,9 @@ Mapbender.Model = {
             mqLayer.olLayer.params.LAYERS = layers;
             mqLayer.olLayer.setVisibility(true);
             mqLayer.visible(true);
+            mqLayer.olLayer.removeBackBuffer();
+            mqLayer.olLayer.createBackBuffer();
+            mqLayer.olLayer.redraw(true);
             return true;
         }
     },
@@ -789,7 +781,7 @@ Mapbender.Model = {
                 }
             }
         });
-        this._checkSource(sourceDef, {}, true, true);
+        this._checkSource(sourceDef, {}, true);
         return sourceDef;
     },
     /**
@@ -867,7 +859,7 @@ Mapbender.Model = {
             }
         };
         var eventData = {
-            changed: this._checkSource(source, options, true, true)
+            changed: this._checkSource(source, options, true)
         };
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
@@ -917,7 +909,7 @@ Mapbender.Model = {
                 sourceIdx: {id: sourceId}
             }
         };
-        this._checkSource(source, {}, true, true);
+        this._checkSource(source, {}, true);
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
             value: eventData
@@ -979,7 +971,7 @@ Mapbender.Model = {
             // on this event
             value: null
         });
-        this._checkSource(sourceObj, {}, true, true);
+        this._checkSource(sourceObj, {}, true);
     },
     /**
      * Bring the sources identified by the given ids into the given order.
