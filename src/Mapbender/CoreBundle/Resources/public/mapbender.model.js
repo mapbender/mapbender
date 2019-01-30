@@ -779,11 +779,12 @@ Mapbender.Model = {
                 }
             }
         });
-        this._checkAndRedrawSource({
+        var checkOptions = {
             sourceIdx: {
                 id: sourceDef.id
             }
-        });
+        };
+        this._checkSource(checkOptions, true, true);
         return sourceDef;
     },
     /**
@@ -909,16 +910,17 @@ Mapbender.Model = {
                 sourceIdx: {id: sourceId}
             }
         };
-        this._checkAndRedrawSource({
+        var checkOptions = {
             sourceIdx: eventData.changed.sourceIdx
-        });
+        };
+        this._checkSource(checkOptions, true, true);
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
             value: eventData
         });
     },
     setSourceVisibility: function(sourceId, state) {
-        var result = this._checkAndRedrawSource({
+        var checkOptions = {
             sourceIdx: {id: sourceId},
             options: {
                 configuration: {
@@ -926,7 +928,8 @@ Mapbender.Model = {
                 },
                 type: 'selected'
             }
-        });
+        };
+        var result = this._checkSource(checkOptions, true, true);
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
             value: {
@@ -981,10 +984,11 @@ Mapbender.Model = {
             // on this event
             value: null
         });
-        this._checkAndRedrawSource({
+        var checkOptions = {
             sourceIdx: sourceIdx,
             options: {children: {}}
-        });
+        };
+        this._checkSource(checkOptions, true, true);
     },
     /**
      * Bring the sources identified by the given ids into the given order.
