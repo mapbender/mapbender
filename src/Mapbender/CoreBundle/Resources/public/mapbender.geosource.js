@@ -222,7 +222,7 @@ Mapbender.Geo.SourceHandler = Class({
             if (typeof layer.options.treeOptions.info === 'undefined') {
                 layer.options.treeOptions.info = false;
             }
-            var layerChanged = tochange.options.children[layer.options.id];
+            var layerChanged = tochange && tochange.options.children[layer.options.id];
             if (layerChanged && layer.options.name) {
                 if (layerChanged.options.treeOptions.info !== layer.options.treeOptions.info) {
                     layer.options.treeOptions.info = layerChanged.options.treeOptions.info;
@@ -302,11 +302,9 @@ Mapbender.Geo.SourceHandler = Class({
             state: {
                 visibility: true
             }
-        },
-        toChangeOpts,
-            result);
+        });
         return result;
-        function _changeOptions(layer, scale, parentState, toChangeOpts) {
+        function _changeOptions(layer, scale, parentState) {
             var initialLayerState = $.extend({}, layer.state);
             var layerChanges,
                 elchanged = false;
@@ -344,7 +342,7 @@ Mapbender.Geo.SourceHandler = Class({
                 layer.state.visibility = !!newVisibilityState;
                 var atLeastOneChildVisible = false;
                 for (var j = 0; j < layer.children.length; j++) {
-                    var child = _changeOptions(layer.children[j], scale, layer, toChangeOpts);
+                    var child = _changeOptions(layer.children[j], scale, layer);
                     if (child.state.visibility) {
                         atLeastOneChildVisible = true;
                     }

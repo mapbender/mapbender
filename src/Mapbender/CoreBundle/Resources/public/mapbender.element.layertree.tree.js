@@ -436,27 +436,30 @@
         _changeChildren: function(changed) {
             if (changed.children) {
                 for (var layerId in changed.children) {
+                    var layerSettings = changed.children[layerId];
                     var $li = $('li[data-id="' + layerId + '"]', this.element);
                     if ($li.length !== 0) {
                         if ($li.attr("data-type") === this.consts.root && !this._isThemeChecked($li)){
                             continue;
                         }
-                        if (changed.children[layerId].state) {
-                            this._redisplayLayerState($li, changed.children[layerId].state);
+                        if (layerSettings.state) {
+                            this._redisplayLayerState($li, layerSettings.state);
                         }
-                        if (changed.children[layerId].options) {
-                            if(changed.children[layerId].options.treeOptions.allow){
-                                if(changed.children[layerId].options.treeOptions.allow.selected === true){
-                                    var chk_selected = $('input[name="selected"]:first', $li);
-                                    chk_selected.prop('disabled', false);
-                                    $li.removeClass('invisible');
-                                    initCheckbox.call(chk_selected);
-                                } else if(changed.children[layerId].options.treeOptions.allow.selected === false){
-                                    var chk_selected = $('input[name="selected"]:first', $li);
-                                    chk_selected.prop('disabled', true);
-                                    $li.addClass('invisible');
-                                    initCheckbox.call(chk_selected);
-                                }
+
+                        if (layerSettings.options && layerSettings.options.treeOptions) {
+                            var newTreeOptions = layerSettings.options.treeOptions;
+                            if (typeof newTreeOptions.selected !== 'undefined') {
+                                var $selectedChk = $('input[name="selected"]:first', $li);
+                                $selectedChk.prop('checked', !!newTreeOptions.selected);
+                                $li.toggleClass('invisible', !!newTreeOptions.selected);
+                                initCheckbox.call($selectedChk);
+                            }
+                            if (typeof newTreeOptions.info !== 'undefined') {
+                                var $infoChk = $('input[name="info"]:first', $li);
+                                $infoChk.prop('checked', !!newTreeOptions.info);
+                                $infoChk.prop('checked', !!newTreeOptions.info);
+                                $li.toggleClass('invisible', !!newTreeOptions.info);
+                                initCheckbox.call($infoChk);
                             }
                         }
                     }
