@@ -215,29 +215,6 @@ Mapbender.Geo.SourceHandler = Class({
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };
      */
     'public function changeOptions': function(source, scale, toChangeOpts) {
-        if (toChangeOpts.options && toChangeOpts.options.configuration) {
-            if (toChangeOpts.options.configuration) {
-                var configuration = toChangeOpts.options.configuration;
-                if (configuration.options) {
-                    // translate to root layer tree options
-                    var rootId = source.configuration.children[0].options.id;
-                    if (!toChangeOpts.options.children)
-                        toChangeOpts.options['children'] = {};
-                    var rootLayerTreeOptions = $.extend({}, configuration.options);
-                    if (typeof rootLayerTreeOptions.visibility !== 'undefined') {
-                        // the equivalent tree option is named 'selected' instead of 'visibility'
-                        rootLayerTreeOptions.selected = rootLayerTreeOptions.visibility;
-                        delete rootLayerTreeOptions['visibility'];
-                    }
-                    toChangeOpts.options.children[rootId] = $.extend(true, toChangeOpts.options.children[rootId] || {}, {
-                        options: {
-                            treeOptions: rootLayerTreeOptions
-                        }
-                    });
-                }
-            }
-        }
-
         var result = {
             changed: {
                 sourceIdx: {

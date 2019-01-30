@@ -926,24 +926,17 @@ Mapbender.Model = {
         });
     },
     setSourceVisibility: function(sourceId, state) {
-        var checkOptions = {
+        var source = this.getSource({id: sourceId});
+        var newProps = {};
+        var rootLayerId = source.configuration.children[0].options.id;
+        newProps[rootLayerId] = {
             options: {
-                configuration: {
-                    options: {visibility: state}
-                },
-                type: 'selected'
-            }
-        };
-        var result = this._checkSource(this.getSource({id: sourceId}), checkOptions, true, true);
-        this.mbMap.fireModelEvent({
-            name: 'sourceChanged',
-            value: {
-                changed: {
-                    children: result.children,
-                    sourceIdx: {id: sourceId}
+                treeOptions: {
+                    selected: state
                 }
             }
-        });
+        };
+        this._changeSourceLayerProps(source, newProps);
     },
     /**
      *
