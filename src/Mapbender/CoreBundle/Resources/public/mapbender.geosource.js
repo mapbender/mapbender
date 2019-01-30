@@ -208,29 +208,8 @@ Mapbender.Geo.SourceHandler = Class({
         return options;
     },
     'public function checkInfoLayers': function(source, scale, tochange) {
-        var result = {
-            changed: {
-                sourceIdx: {
-                    id: source.id
-                },
-                children: {}
-            }
-        };
-
-        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
-            if (typeof layer.options.treeOptions.info === 'undefined') {
-                layer.options.treeOptions.info = false;
-            }
-            var layerChanged = tochange && tochange.options.children[layer.options.id];
-            if (layerChanged && layer.options.name) {
-                if (layerChanged.options.treeOptions.info !== layer.options.treeOptions.info) {
-                    layer.options.treeOptions.info = layerChanged.options.treeOptions.info;
-                    result.changed.children[layer.options.id] = layerChanged;
-                }
-                layer.state.info = layer.options.treeOptions.info && layer.options.treeOptions.allow.info && layer.state.visibility;
-            }
-        });
-        return $.extend(result, this.getLayerParameters(source));
+        console.warn("checkInfoLayers is equivalent to changeOptions");
+        return this.changeOptions(source, scale, tochange);
     },
     /**
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };

@@ -873,7 +873,7 @@ Mapbender.Model = {
             this.removeSource(toRemoveArr[i]);
         }
     },
-    _changeSourceSelected: function(sourceId, layerMap) {
+    _changeSourceLayerProps: function(sourceId, layerMap) {
         var options = {
             sourceIdx: {id: '' + sourceId},
             options: {
@@ -886,21 +886,6 @@ Mapbender.Model = {
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
             value: eventData
-        });
-    },
-    _changeSourceInfo: function(sourceId, layerMap) {
-        var source = this.getSource({id: sourceId});
-        var options = {
-            options: {
-                children: layerMap
-            }
-        };
-        var gs = this.getGeoSourceHandler(source, true);
-        var result = gs.checkInfoLayers(source, this.getScale(), options);
-        this.map.layersList[source.mqlid].olLayer.queryLayers = result.infolayers;
-        this.mbMap.fireModelEvent({
-            name: 'sourceChanged',
-            value: result
         });
     },
     /**
@@ -920,11 +905,11 @@ Mapbender.Model = {
                 });
                 if (changeOpts.options.type === 'selected') {
                     console.warn("Use controlLayer instead of changeSource with type selected");
-                    this._changeSourceSelected(sourceToChange.id, changeOpts.options.children);
+                    this._changeSourceLayerProps(sourceToChange.id, changeOpts.options.children);
                 }
                 if (changeOpts.options.type === 'info') {
                     console.warn("Use controlLayer instead of changeSource with type info");
-                    this._changeSourceInfo(sourceToChange.id, changeOpts.options.children);
+                    this._changeSourceLayerProps(sourceToChange.id, changeOpts.options.children);
                 }
             }
             if (changeOpts.move) {
@@ -1140,26 +1125,22 @@ Mapbender.Model = {
      */
     controlLayer: function controlLayer(sourceId, layerId, selected, info) {
         var layerMap = {};
-        // @todo: support flipping both values in a single interaction
+        var treeOptions = {};
         if (selected !== null && typeof selected !== 'undefined') {
-            layerMap['' + layerId] = {
-                options: {
-                    treeOptions: {
-                        selected: !!selected
-                    }
-                }
-            };
-            this._changeSourceSelected(sourceId, layerMap);
+            treeOptions.selected = !!selected;
         }
         if (info !== null && typeof info !== 'undefined') {
+            treeOptions.info = !!info;
+        }
+        if (Object.keys(treeOptions).length) {
             layerMap['' + layerId] = {
                 options: {
-                    treeOptions: {
-                        info: !!info
-                    }
+                    treeOptions: treeOptions
                 }
             };
-            this._changeSourceInfo(sourceId, layerMap);
+        }
+        if (Object.keys(layerMap).length) {
+            this._changeSourceLayerProps(sourceId, layerMap);
         }
     },
     /**
