@@ -513,7 +513,10 @@ Mapbender.Model = {
 
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
-            value: gsResult.changed
+            value: {
+                changed: gsResult.changed,
+                sourceIdx: {id: source.id}
+            }
         });
         return gsResult;
     },

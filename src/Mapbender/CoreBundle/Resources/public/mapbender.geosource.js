@@ -211,46 +211,40 @@ Mapbender.Geo.SourceHandler = Class({
         console.warn("checkInfoLayers is equivalent to changeOptions");
         return this.changeOptions(source, scale, tochange);
     },
+    'public function applyTreeOptions': function(source, layerOptionsMap) {
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
+            var layerId = layer.options.id;
+            var newTreeOptions = ((layerOptionsMap[layerId] || {}).options || {}).treeOptions;
+            if (newTreeOptions) {
+                var currentTreeOptions = layer.options.treeOptions;
+                var optionsTasks = [['selected', true], ['info', true], ['toggle', false]];
+                for (var oti = 0; oti < optionsTasks.length; ++oti) {
+                    var optionName = optionsTasks[oti][0];
+                    var checkAllow = optionsTasks[oti][1];
+                    if (typeof newTreeOptions[optionName] !== 'undefined' && (!checkAllow || currentTreeOptions.allow[optionName])) {
+                        if (currentTreeOptions[optionName] !== newTreeOptions[optionName]) {
+                            currentTreeOptions[optionName] = newTreeOptions[optionName];
+                        }
+                    }
+                }
+            }
+        });
+    },
     /**
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };
      */
     'public function changeOptions': function(source, scale, toChangeOpts) {
+        var newTreeOptions = ((toChangeOpts || {}).options || {}).children || {};
         var result = {
             changed: {
                 sourceIdx: {
                     id: source.id
                 },
-                children: {}
+                children: newTreeOptions
             }
         };
-        var applyNewLayerSettings = function(layer) {
-            var layerId = layer.options.id;
-            var newLayerSettings = ((toChangeOpts.options || {}).children || {})[layerId];
-            var newTreeOptions = ((newLayerSettings || {}).options || {}).treeOptions;
-            var layerUpdated = false;
-            if (newTreeOptions) {
-                var treeOptions = layer.options.treeOptions;
-                var optionsTasks = [['selected', true], ['info', true], ['toggle', false]];
-                for (var oti = 0; oti < optionsTasks.length; ++oti) {
-                    var optionName = optionsTasks[oti][0];
-                    var checkAllow = optionsTasks[oti][1];
-                    if (typeof newTreeOptions[optionName] !== 'undefined' && (!checkAllow || treeOptions.allow[optionName])) {
-                        if (treeOptions[optionName] !== newTreeOptions[optionName]) {
-                            treeOptions[optionName] = newTreeOptions[optionName];
-                            layerUpdated = true;
-                        }
-                    }
-                }
-            }
-            if (layerUpdated) {
-                result.changed.children[layerId] = {
-                    options: {
-                        treeOptions: treeOptions
-                    }
-                };
-            }
-        };
-        Mapbender.Util.SourceTree.iterateLayers(source, false, applyNewLayerSettings);
+        // apply tree options
+        this.applyTreeOptions(source, newTreeOptions);
         // recalculate state
         var newStates = Mapbender.Model.calculateLayerStates(source, scale);
         // apply states and calculate changeset
