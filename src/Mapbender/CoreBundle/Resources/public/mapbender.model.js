@@ -518,31 +518,35 @@ Mapbender.Model = {
         return gsResult;
     },
     /**
-     * Checks the source changes and returns the source changes.
+     * Calculates and applies layer state changes from accumulated treeOption changes in the source and (optionally)
+     * 1) updates the engine layer parameters and redraws
+     * 2) fires a mbmapsourcechanged event with the updated individual layer states
+     * @param {Object} source
+     * @param {boolean} redraw
+     * @param {boolean} fireSourceChangedEvent
      */
-    _checkSource: function(source, redraw) {
+    _checkSource: function(source, redraw, fireSourceChangedEvent) {
         var gsResult = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), {});
         if (redraw) {
             this._resetSourceVisibility(source, gsResult.layers, gsResult.infolayers, gsResult.styles);
         }
-        return gsResult.changed;
+        if (fireSourceChangedEvent && gsResult.changed && Object.keys(gsResult.changed.children || {}).length) {
+            this.mbMap.fireModelEvent({
+                name: 'sourceChanged',
+                value: {
+                    changed: {
+                        children: changed.children,
+                        sourceIdx: {id: source.id}
+                    }
+                }
+            });
+        }
     },
     _checkChanges: function(e) {
         var isPreEvent = e.type === 'movestart';
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
-            var changed = self._checkSource(source, !isPreEvent);
-            if (isPreEvent && changed && Object.keys(changed.children || {}).length) {
-                self.mbMap.fireModelEvent({
-                    name: 'sourceChanged',
-                    value: {
-                        changed: {
-                            children: changed.children,
-                            sourceIdx: {id: source.id}
-                        }
-                    }
-                });
-            }
+            self._checkSource(source, !isPreEvent, isPreEvent);
         });
     },
 
@@ -812,7 +816,7 @@ Mapbender.Model = {
                 }
             }
         });
-        this._checkSource(sourceDef, true);
+        this._checkSource(sourceDef, true, false);
         return sourceDef;
     },
     /**
@@ -926,7 +930,7 @@ Mapbender.Model = {
                 sourceIdx: {id: sourceId}
             }
         };
-        this._checkSource(source, true);
+        this._checkSource(source, true, false);
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
             value: eventData
@@ -987,7 +991,7 @@ Mapbender.Model = {
             // on this event
             value: null
         });
-        this._checkSource(sourceObj, true);
+        this._checkSource(sourceObj, true, false);
     },
     /**
      * Bring the sources identified by the given ids into the given order.
