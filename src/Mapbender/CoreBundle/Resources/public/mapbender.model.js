@@ -1141,9 +1141,9 @@ Mapbender.Model = {
             // MapQuery layer
             return source.source;
         }
-        if (source.configuration) {
+        if (source.configuration && source.configuration.children) {
             // sourceTreeish
-            return source.configuration;
+            return source;
         }
         console.error("Cannot find configuration in given source", source);
         throw new Error("Cannot find configuration in given source");
@@ -1161,6 +1161,50 @@ Mapbender.Model = {
             throw new Error("No geosource for type " + type);
         }
         return gs || null;
+    },
+    _getLeafInfoExt: function(source, scale, extent) {
+        var stateUpdateMap = this.calculateLeafLayerStates(source, scale, extent);
+        var infoMap = {};
+        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer) {
+            var layerId = layer.options.id;
+            var layerState = stateUpdateMap[layerId] || layer.state;
+            infoMap[layerId] = {
+                state: layerState,
+                layerDef: layer
+            };
+        });
+        return infoMap;
+    },
+    getPrintConfigEx: function(sourceOrLayer, scale, extent) {
+        var olLayer, source;
+        if (sourceOrLayer.mbconfig) {
+            olLayer = sourceOrLayer;
+            source = olLayer.mbConfig;
+        } else {
+            source = this.getMbConfig(sourceOrLayer);
+            olLayer = this.map.layersList[source.mqlid].olLayer;
+        }
+        var extent_ = extent || this.getMapExtent();
+        var leafInfoMap = this._getLeafInfoExt(source, scale, extent_);
+        var units = this.map.olMap.getUnits();
+        var dataOut = [];
+        var resFromScale = function(scale) {
+            return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
+        };
+        var gsHandler = this.getGeoSourceHandler(source);
+        _.forEach(leafInfoMap, function(item) {
+            var visible = item.state.visibility;
+            if (visible) {
+                dataOut.push({
+                    type: source.configuration.type,
+                    url: gsHandler.getSingleLayerUrl(olLayer, extent_, item.layerDef.options.name),
+                    layerDef: item.layerDef,
+                    minResolution: resFromScale(item.layerDef.options.minScale),
+                    maxResolution: resFromScale(item.layerDef.options.maxScale)
+                });
+            }
+        });
+        return dataOut;
     },
     _getActiveLayerInfo: function(olLayer, scale) {
         var mbConfig = this.getMbConfig(olLayer);

@@ -101,6 +101,16 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             url: Mapbender.Util.removeProxy(layer.getURL(bounds))
         };
         return printConfig;
+    },
+    getSingleLayerUrl: function(olLayer, bounds, layerName, styleName) {
+        var baseUrl = this.getPrintConfig(olLayer, bounds).url;
+        var params = OpenLayers.Util.getParameters(baseUrl);
+        params = $.extend(OpenLayers.Util.upperCaseObject(params), {
+            LAYERS: layerName,
+            STYLES: styleName || ''
+        });
+        var rebuiltUrl = [baseUrl.split('?')[0], OpenLayers.Util.getParameterString(params)].join('?');
+        return rebuiltUrl;
     }
 });
 Mapbender.source['wms'] = new Mapbender.Geo.WmsSourceHandler();
