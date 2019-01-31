@@ -495,30 +495,30 @@ Mapbender.Model = {
     },
     /**
      * Updates the options.treeOptions within the source with new values from layerOptionsMap.
-     *
+     * Always reapplies states to engine (i.e. affected layers are re-rendered).
+     * Alawys fires an 'mbmapsourcechanged' event.
      *
      * @param {Object} source
      * @param {Object<string, Model~LayerTreeOptionWrapper>} layerOptionsMap
      * @private
      */
     _updateSourceLayerTreeOptions: function(source, layerOptionsMap) {
-        var gscoOptions = {
-            options: {
-                children: layerOptionsMap
-            }
-        };
-
-        var gsResult = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), gscoOptions);
-        this._resetSourceVisibility(source, gsResult.layers, gsResult.infolayers, gsResult.styles);
+        var gsHandler = this.getGeoSourceHandler(source);
+        gsHandler.applyTreeOptions(source, layerOptionsMap);
+        var newStates = this.calculateLeafLayerStates(source, this.getScale());
+        var changedStates = this.applyLayerStates(source, newStates);
+        var layerParams = gsHandler.getLayerParameters(source, newStates);
+        this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
 
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
             value: {
-                changed: gsResult.changed,
+                changed: {
+                    children: $.extend(true, {}, layerOptionsMap, changedStates)
+                },
                 sourceIdx: {id: source.id}
             }
         });
-        return gsResult;
     },
     /**
      * Calculates and applies layer state changes from accumulated treeOption changes in the source and (optionally)
@@ -529,16 +529,19 @@ Mapbender.Model = {
      * @param {boolean} fireSourceChangedEvent
      */
     _checkSource: function(source, redraw, fireSourceChangedEvent) {
-        var gsResult = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), {});
+        var newStates = this.calculateLeafLayerStates(source, this.getScale());
+        var changedStates = this.applyLayerStates(source, newStates);
         if (redraw) {
-            this._resetSourceVisibility(source, gsResult.layers, gsResult.infolayers, gsResult.styles);
+            var gsHandler = this.getGeoSourceHandler(source, true);
+            var layerParams = gsHandler.getLayerParameters(source, newStates);
+            this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
         }
-        if (fireSourceChangedEvent && gsResult.changed && Object.keys(gsResult.changed.children || {}).length) {
+        if (fireSourceChangedEvent && Object.keys(changedStates).length) {
             this.mbMap.fireModelEvent({
                 name: 'sourceChanged',
                 value: {
                     changed: {
-                        children: changed.children,
+                        children: changedStates,
                         sourceIdx: {id: source.id}
                     }
                 }
@@ -1274,6 +1277,8 @@ Mapbender.Model = {
         return stateMap;
     },
     /**
+     * Punches (assumed) leaf layer states from stateMap into the source structure, and calculates
+     * a (conservative, imprecise) layer changeset that can be supplied in mbmapsourcechanged event data.
      *
      * @param source
      * @param {Object.<string, Model~LayerState>} stateMap
