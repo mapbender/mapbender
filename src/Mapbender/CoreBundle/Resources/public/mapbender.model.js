@@ -1163,14 +1163,32 @@ Mapbender.Model = {
         return gs || null;
     },
     _getLeafInfoExt: function(source, scale, extent) {
-        var stateUpdateMap = this.calculateLeafLayerStates(source, scale, extent);
+        var scale_ = scale || this.getScale();
+
         var infoMap = {};
-        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer) {
+        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
             var layerId = layer.options.id;
-            var layerState = stateUpdateMap[layerId] || layer.state;
+            var outOfScale = !Mapbender.Util.isInScale(scale_, layer.options.minScale, layer.options.maxScale);
+            // HACK: out of bounds calculation broken since introduction of SRS switcher
+            var outOfBounds = false;
+            var enabled = !!layer.options.treeOptions.selected;
+            var featureInfo = !!(layer.options.treeOptions.info && layer.options.treeOptions.allow.info);
+            parents.map(function(p) {
+                var parentEnabled = p.options.treeOptions.selected;
+                enabled = enabled && parentEnabled;
+                featureInfo = featureInfo && parentEnabled;
+            });
+            // @todo TBD: disable featureInfo if layer visual is disabled?
+            // featureInfo = featureInfo && enabled
+            var visibility = enabled && !(outOfScale || outOfBounds);
             infoMap[layerId] = {
-                state: layerState,
-                layerDef: layer
+                layer: layer,
+                state: {
+                    outOfScale: outOfScale,
+                    outOfBounds: outOfBounds,
+                    visibility: visibility,
+                    info: featureInfo
+                }
             };
         });
         return infoMap;
@@ -1193,14 +1211,12 @@ Mapbender.Model = {
         };
         var gsHandler = this.getGeoSourceHandler(source);
         _.forEach(leafInfoMap, function(item) {
-            var visible = item.state.visibility;
-            if (visible) {
+            if (item.state.visibility) {
                 dataOut.push({
                     type: source.configuration.type,
-                    url: gsHandler.getSingleLayerUrl(olLayer, extent_, item.layerDef.options.name),
-                    layerDef: item.layerDef,
-                    minResolution: resFromScale(item.layerDef.options.minScale),
-                    maxResolution: resFromScale(item.layerDef.options.maxScale)
+                    url: gsHandler.getSingleLayerUrl(olLayer, extent_, item.layer.options.name, item.layer.options.style),
+                    minResolution: resFromScale(item.layer.options.minScale),
+                    maxResolution: resFromScale(item.layer.options.maxScale)
                 });
             }
         });
@@ -1294,29 +1310,10 @@ Mapbender.Model = {
      * @returns {Object.<string, Model~LayerState>}
      */
     calculateLeafLayerStates: function calculateLeafLayerStates(source, scale, extent) {
-        var scale_ = scale || this.getScale();
-
+        // reduce leaf info objects to just the 'state' entries
         var stateMap = {};
-        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(node, offset, parents) {
-            var outOfScale = !Mapbender.Util.isInScale(scale_, node.options.minScale, node.options.maxScale);
-            // HACK: out of bounds calculation broken since introduction of SRS switcher
-            var outOfBounds = false;
-            var enabled = !!node.options.treeOptions.selected;
-            var featureInfo = !!(node.options.treeOptions.info && node.options.treeOptions.allow.info);
-            parents.map(function(p) {
-                var parentEnabled = p.options.treeOptions.selected;
-                enabled = enabled && parentEnabled;
-                featureInfo = featureInfo && parentEnabled;
-            });
-            // @todo TBD: disable featureInfo if layer visual is disabled?
-            // featureInfo = featureInfo && enabled
-            var visibility = enabled && !(outOfScale || outOfBounds);
-            stateMap[node.options.id] = {
-                outOfScale: outOfScale,
-                outOfBounds: outOfBounds,
-                visibility: visibility,
-                info: featureInfo
-            };
+        _.forEach(this._getLeafInfoExt(source, scale, extent), function(item, layerId) {
+            stateMap[layerId] = item.state;
         });
         return stateMap;
     },
