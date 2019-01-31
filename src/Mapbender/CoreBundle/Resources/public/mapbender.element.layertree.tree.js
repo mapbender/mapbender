@@ -451,7 +451,7 @@
                             this._redisplayLayerState($li, newLayerState);
                         }
 
-                        if (layerSettings.options && layerSettings.options.treeOptions) {
+                        if (newTreeOptions) {
                             if (typeof newTreeOptions.selected !== 'undefined') {
                                 var $selectedChk = $('input[name="selected"]:first', $li);
                                 $selectedChk.prop('checked', !!newTreeOptions.selected);

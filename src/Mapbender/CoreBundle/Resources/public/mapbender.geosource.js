@@ -248,7 +248,7 @@ Mapbender.Geo.SourceHandler = Class({
                 sourceIdx: {
                     id: source.id
                 },
-                children: $.extend(true, newTreeOptions, changedStates)
+                children: $.extend(true, {}, newTreeOptions, changedStates)
             }
         };
         return $.extend(result, this.getLayerParameters(source, newStates));

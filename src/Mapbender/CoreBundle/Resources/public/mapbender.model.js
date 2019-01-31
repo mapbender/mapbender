@@ -398,12 +398,12 @@ Mapbender.Model = {
                 source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
         }
         if (url) {
+            var olLayer = this.getNativeLayer(source);
             source.configuration.options.url = url;
-            var mqLayer = this.map.layersList[source.mqlid];
-            if (mqLayer.olLayer.getVisibility()) {
-                mqLayer.olLayer.url = url;
+            if (olLayer.getVisibility()) {
+                olLayer.url = url;
                 if (reload) {
-                    mqLayer.olLayer.redraw();
+                    olLayer.redraw();
                 }
             }
         }
@@ -578,36 +578,35 @@ Mapbender.Model = {
      * @private
      */
     _resetSourceVisibility: function(source, layers, infolayers, styles) {
-        var mqLayer = this.map.layersList[source.mqlid];
-        if (!mqLayer) {
-            console.error("No mqLayer found", source);
+        var olLayer = this.getNativeLayer(source);
+        if (!olLayer) {
+            console.error("No layer found", source);
             return false;
         }
-        mqLayer.olLayer.queryLayers = infolayers;
-        if (mqLayer.id) {
-            if (this._layersHash[mqLayer.id] === layers.toString()) {
-                return false;
-            }
-            this._layersHash[mqLayer.id] = layers.toString();
+        olLayer.queryLayers = infolayers;
+        if (this._layersHash[olLayer.id] === layers.toString()) {
+            return false;
         }
-        if (this.map.olMap.tileManager) {
-            this.map.olMap.tileManager.clearTileQueue({
-                object: mqLayer.olLayer
+        this._layersHash[olLayer.id] = layers.toString();
+
+        if (olLayer.map && olLayer.map.tileManager) {
+            olLayer.map.tileManager.clearTileQueue({
+                object: olLayer
             });
         }
-        mqLayer.olLayer.params.STYLES = styles;
+
         if(layers.length === 0) {
-            mqLayer.olLayer.setVisibility(false);
-            mqLayer.visible(false);
-            mqLayer.olLayer.params.LAYERS = layers;
+            olLayer.setVisibility(false);
+            olLayer.params.LAYERS = layers;
+            olLayer.params.STYLES = styles;
             return false;
         } else {
-            mqLayer.olLayer.params.LAYERS = layers;
-            mqLayer.olLayer.setVisibility(true);
-            mqLayer.visible(true);
-            mqLayer.olLayer.removeBackBuffer();
-            mqLayer.olLayer.createBackBuffer();
-            mqLayer.olLayer.redraw(true);
+            olLayer.params.STYLES = styles;
+            olLayer.params.LAYERS = layers;
+            olLayer.setVisibility(true);
+            olLayer.removeBackBuffer();
+            olLayer.createBackBuffer();
+            olLayer.redraw(true);
             return true;
         }
     },
@@ -721,14 +720,15 @@ Mapbender.Model = {
         if (!features && this.highlightLayer) {
             this.highlightLayer.remove();
         } else if (features && this.highlightLayer) {
-            var a = 0;
             this.highlightLayer.olLayer.removeFeatures(features);
         }
     },
     setOpacity: function(source, opacity) {
         if (typeof opacity === 'number' && !isNaN(opacity) && opacity >= 0 && opacity <= 1 && source) {
             source.configuration.options.opacity = opacity;
-            this.map.layersList[source.mqlid].opacity(opacity);
+            this.getNativeLayer(source).setOpacity(opacity);
+        } else {
+            console.error("Invalid opacity", opacity, source);
         }
     },
     /**
@@ -846,34 +846,34 @@ Mapbender.Model = {
                         source: sourceToRemove
                     }
                 });
-                var mqLayer = this.map.layersList[sourceToRemove.mqlid];
-                if (mqLayer) {
-                    if (mqLayer.olLayer instanceof OpenLayers.Layer.Grid) {
-                        mqLayer.olLayer.clearGrid();
+                var olLayer = this.getNativeLayer(sourceToRemove);
+                if (olLayer) {
+                    if (olLayer instanceof OpenLayers.Layer.Grid) {
+                        olLayer.clearGrid();
                     }
-                    if (this.map.olMap.tileManager) {
-                        this.map.olMap.tileManager.clearTileQueue({
-                            object: mqLayer.olLayer
-                        });
-                    }
-                    var removedMq = mqLayer.remove();
-                    if (removedMq) {
-                        for (var i = 0; i < this.sourceTree.length; i++) {
-                            if (this.sourceTree[i].id.toString() === sourceToRemove.id.toString()) {
-                                this.sourceTree.splice(i, 1);
-                                break;
-                            }
+                    if (olLayer.map) {
+                        if (olLayer.map.tileManager) {
+                            olLayer.map.tileManager.clearTileQueue({
+                                object: olLayer
+                            });
                         }
-                        if (this.map.layersList[sourceToRemove.mqlid]) {
-                            delete(this.map.layersList[sourceToRemove.mqlid]);
-                        }
-                        this.mbMap.fireModelEvent({
-                            name: 'sourceRemoved',
-                            value: {
-                                source: sourceToRemove
-                            }
-                        });
+                        olLayer.map.removeLayer(olLayer);
                     }
+                    for (var i = 0; i < this.sourceTree.length; i++) {
+                        if (this.sourceTree[i].id.toString() === sourceToRemove.id.toString()) {
+                            this.sourceTree.splice(i, 1);
+                            break;
+                        }
+                    }
+                    if (sourceToRemove.mqlid && this.map.layersList[sourceToRemove.mqlid]) {
+                        delete(this.map.layersList[sourceToRemove.mqlid]);
+                    }
+                    this.mbMap.fireModelEvent({
+                        name: 'sourceRemoved',
+                        value: {
+                            source: sourceToRemove
+                        }
+                    });
                 }
             }
         } else {
@@ -1027,7 +1027,7 @@ Mapbender.Model = {
         var oldIndexes = [];
         var olLayerIdsToMove = {};
         _.forEach(sourceObjs, function(sourceObj) {
-            var olLayer = self.map.layersList[sourceObj.mqlid].olLayer;
+            var olLayer = self.getNativeLayer(sourceObj);
             layersToMove.push(olLayer);
             oldIndexes.push(olMap.getLayerIndex(olLayer));
             olLayerIdsToMove[olLayer.id] = true;
@@ -1062,8 +1062,8 @@ Mapbender.Model = {
         // Re-sort 'sourceTree' structure (inspected by legend etc for source order) according to actual, applied
         // layer order.
         this.sourceTree.sort(function(a, b) {
-            var indexA = olMap.getLayerIndex(self.map.layersList[a.mqlid].olLayer);
-            var indexB = olMap.getLayerIndex(self.map.layersList[b.mqlid].olLayer);
+            var indexA = olMap.getLayerIndex(self.getNativeLayer(a));
+            var indexB = olMap.getLayerIndex(self.getNativeLayer(b));
             return indexA - indexB;
         });
         this.mbMap.fireModelEvent({
@@ -1157,6 +1157,29 @@ Mapbender.Model = {
         throw new Error("Cannot find configuration in given source");
     },
     /**
+     * @param {*} anything
+     * @return {OpenLayers.Layer|null}
+     */
+    getNativeLayer: function(anything) {
+        if (anything.olLayer) {
+            // MapQuery layer
+            return anything.olLayer;
+        }
+        if (anything.CLASS_NAME && anything.CLASS_NAME.search('OpenLayers.Layer') === 0) {
+            // OpenLayers.Layer (child class) instance
+            return anything;
+        }
+        if (anything.mqlid) {
+            // sourceTreeish
+            return (this.map.layersList[anything.mqlid] || {}).olLayer || null;
+        }
+        if (anything.ollid) {
+            return _.find(this.map.olMap.layers, _.matches({id: anything.ollid})) || null;
+        }
+        console.error("Could not find native layer for given obect", anything);
+        return null;
+    },
+    /**
      * Get the "geosource" object for given source from Mapbender.source
      * @param {OpenLayers.Layer|MapQuery.Layer|Object} source
      * @param {boolean} [strict] to throw on missing geosource object (default true)
@@ -1214,14 +1237,8 @@ Mapbender.Model = {
      * @return {Array<Model~SingleLayerPrintConfig>}
      */
     getPrintConfigEx: function(sourceOrLayer, scale, extent) {
-        var olLayer, source;
-        if (sourceOrLayer.mbConfig) {
-            olLayer = sourceOrLayer;
-            source = olLayer.mbConfig;
-        } else {
-            source = this.getMbConfig(sourceOrLayer);
-            olLayer = this.map.layersList[source.mqlid].olLayer;
-        }
+        var olLayer = this.getNativeLayer(sourceOrLayer);
+        var source = this.getMbConfig(sourceOrLayer);
         var extent_ = extent || this.getMapExtent();
         var leafInfoMap = this._getLeafInfoExt(source, scale, extent_);
         var units = this.map.olMap.getUnits();
