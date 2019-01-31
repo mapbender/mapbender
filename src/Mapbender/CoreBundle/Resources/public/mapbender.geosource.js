@@ -235,14 +235,6 @@ Mapbender.Geo.SourceHandler = Class({
      */
     'public function changeOptions': function(source, scale, toChangeOpts) {
         var newTreeOptions = ((toChangeOpts || {}).options || {}).children || {};
-        var result = {
-            changed: {
-                sourceIdx: {
-                    id: source.id
-                },
-                children: newTreeOptions
-            }
-        };
         // apply tree options
         this.applyTreeOptions(source, newTreeOptions);
         // recalculate state
@@ -251,13 +243,17 @@ Mapbender.Geo.SourceHandler = Class({
         var changedStates = Mapbender.Model.applyLayerStates(source, newStates);
         // Copy state changeset extended with treeOptions changeset
         // (a layer's state may change without a treeOptions change and vice versa)
-        _.each(changedStates, function(layerChange, layerId) {
-            result.changed.children[layerId] = $.extend(true, result.changed.children[layerId] || {}, layerChange);
-        });
-
-        return $.extend(result, this.getLayerParameters(source));
+        var result = {
+            changed: {
+                sourceIdx: {
+                    id: source.id
+                },
+                children: $.extend(true, newTreeOptions, changedStates)
+            }
+        };
+        return $.extend(result, this.getLayerParameters(source, newStates));
     },
-    'public function getLayerParameters': function(source) {
+    'public function getLayerParameters': function(source, stateMap) {
         var result = {
             layers: [],
             styles: [],
@@ -269,11 +265,12 @@ Mapbender.Geo.SourceHandler = Class({
             // Layer names can be emptyish, most commonly on root layers
             // Suppress layers with empty names entirely
             if (layer.options[layerParamName]) {
-                if (layer.state.visibility) {
+                var layerState = stateMap[layer.options.id] || layer.state;
+                if (layerState.visibility) {
                     result.layers.push(layer.options[layerParamName]);
                     result.styles.push(layer.options.style || '');
                 }
-                if (layer.state.info) {
+                if (layerState.info) {
                     result.infolayers.push(layer.options[layerParamName]);
                 }
             }
