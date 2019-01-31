@@ -23,6 +23,14 @@ Mapbender.Model = {
      * @property {Object} options
      * @property {Model~TreeOptions} options.treeOptions
      */
+    /**
+     * @typedef Model~SingleLayerPrintConfig
+     * @property {string} type
+     * @property {string} sourceId
+     * @property {string} url
+     * @property {number|null} minResolution
+     * @property {number|null} maxResolution
+     */
 
     mbMap: null,
     map: null,
@@ -1193,9 +1201,21 @@ Mapbender.Model = {
         });
         return infoMap;
     },
+    /**
+     * Returns individual print / export instructions for each active layer in the source individually.
+     * This allows image export / print to respect min / max scale hints on a per-layer basis and print
+     * layers at varying resolutions.
+     * The multitude of layers will be squashed on the PHP side while considering the actual print
+     * resolution (which is not known here), to minimize the total amount of requests.
+     *
+     * @param sourceOrLayer
+     * @param scale
+     * @param extent
+     * @return {Array<Model~SingleLayerPrintConfig>}
+     */
     getPrintConfigEx: function(sourceOrLayer, scale, extent) {
         var olLayer, source;
-        if (sourceOrLayer.mbconfig) {
+        if (sourceOrLayer.mbConfig) {
             olLayer = sourceOrLayer;
             source = olLayer.mbConfig;
         } else {
@@ -1206,20 +1226,59 @@ Mapbender.Model = {
         var leafInfoMap = this._getLeafInfoExt(source, scale, extent_);
         var units = this.map.olMap.getUnits();
         var dataOut = [];
+        var commonLayerData = {
+            type: source.configuration.type,
+            sourceId: source.id
+            // @todo: provide opacity and changeAxis here?
+        };
         var resFromScale = function(scale) {
             return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
         };
         var gsHandler = this.getGeoSourceHandler(source);
-        _.forEach(leafInfoMap, function(item) {
-            if (item.state.visibility) {
-                dataOut.push({
-                    type: source.configuration.type,
-                    url: gsHandler.getSingleLayerUrl(olLayer, extent_, item.layer.options.name, item.layer.options.style),
-                    minResolution: resFromScale(item.layer.options.minScale),
-                    maxResolution: resFromScale(item.layer.options.maxScale)
-                });
+        if (gsHandler.getSingleLayerUrl) {
+            _.forEach(leafInfoMap, function(item) {
+                if (item.state.visibility) {
+                    dataOut.push($.extend({}, commonLayerData, {
+                        url: gsHandler.getSingleLayerUrl(olLayer, extent_, item.layer.options.name, item.layer.options.style),
+                        minResolution: resFromScale(item.layer.options.minScale),
+                        maxResolution: resFromScale(item.layer.options.maxScale)
+                    }));
+                }
+            });
+        } else {
+            // hopefully building a bridge for forks / feature branches with non-WMS layers or customized geosource code
+            console.warn("Extended print config generation not possible on current source, falling back to the old ways", source.configuration.type, source);
+            var layerParams, url;
+            if (gsHandler.getLayerParameters) {
+                // Get active layer parameters explicitly without side effects
+                layerParams = gsHandler.getLayerParameters(source, _.mapObject(leafInfoMap, function(item) {
+                    return item.state;
+                }));
+            } else {
+                console.warn("Geosource handler for current source doesn't support getLayerParameters method, falling back to the oldest of old ways", source.configuration.type, source);
+                // This should give us a lot more than just the active layers + styles, but also changes
+                // the source's embedded layer states as a side effect, potentially leading to erroneous display
+                // in LayerTree and Legend Elements on the next proper update
+                layerParams = gsHandler.changeOptions(source, scale || this.getScale());
             }
-        });
+            if (layerParams.layers.length) {
+                // alter params for getURL call implicit to getPrintConfig
+                var prevLayers = olLayer.params.LAYERS;
+                var prevStyles = olLayer.params.STYLES;
+                olLayer.params.LAYERS = layerParams.layers;
+                olLayer.params.STYLES = layerParams.styles;
+                url = gsHandler.getPrintConfig(olLayer, extent_).url;
+                // restore params
+                olLayer.params.LAYERS = prevLayers;
+                olLayer.params.STYLES = prevStyles;
+                // Decorate generated url with combined min/max resolution from OpenLayers layer (= multiple Mapbender layers from a single source)
+                dataOut.push($.extend({}, commonLayerData, {
+                    url: url,
+                    minResolution: olLayer.minResolution,
+                    maxResolution: olLayer.maxResolution
+                }));
+            }
+        }
         return dataOut;
     },
     _getActiveLayerInfo: function(olLayer, scale) {
