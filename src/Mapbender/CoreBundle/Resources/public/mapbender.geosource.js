@@ -246,7 +246,7 @@ Mapbender.Geo.SourceHandler = Class({
         // apply tree options
         this.applyTreeOptions(source, newTreeOptions);
         // recalculate state
-        var newStates = Mapbender.Model.calculateLayerStates(source, scale);
+        var newStates = Mapbender.Model.calculateLeafLayerStates(source, scale);
         // apply states and calculate changeset
         var changedStates = Mapbender.Model.applyLayerStates(source, newStates);
         // Copy state changeset extended with treeOptions changeset

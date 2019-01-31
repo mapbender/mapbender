@@ -442,23 +442,24 @@
                         if ($li.attr("data-type") === this.consts.root && !this._isThemeChecked($li)){
                             continue;
                         }
-                        if (layerSettings.state) {
-                            this._redisplayLayerState($li, layerSettings.state);
+                        var newTreeOptions = (layerSettings.options || {}).treeOptions;
+                        var newLayerState = layerSettings.state;
+                        if (!newLayerState && newTreeOptions) {
+                            newLayerState = {visibility: newTreeOptions.selected};
+                        }
+                        if (newLayerState) {
+                            this._redisplayLayerState($li, newLayerState);
                         }
 
                         if (layerSettings.options && layerSettings.options.treeOptions) {
-                            var newTreeOptions = layerSettings.options.treeOptions;
                             if (typeof newTreeOptions.selected !== 'undefined') {
                                 var $selectedChk = $('input[name="selected"]:first', $li);
                                 $selectedChk.prop('checked', !!newTreeOptions.selected);
-                                $li.toggleClass('invisible', !!newTreeOptions.selected);
                                 initCheckbox.call($selectedChk);
                             }
                             if (typeof newTreeOptions.info !== 'undefined') {
                                 var $infoChk = $('input[name="info"]:first', $li);
                                 $infoChk.prop('checked', !!newTreeOptions.info);
-                                $infoChk.prop('checked', !!newTreeOptions.info);
-                                $li.toggleClass('invisible', !!newTreeOptions.info);
                                 initCheckbox.call($infoChk);
                             }
                         }
