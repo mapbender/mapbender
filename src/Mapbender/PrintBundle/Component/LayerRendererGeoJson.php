@@ -58,8 +58,12 @@ class LayerRendererGeoJson extends LayerRenderer
             case 'polygon':
                 $this->drawPolygon($canvas, $feature);
                 break;
+            case 'linestring':
+                $this->drawLineString($canvas, $feature);
+                break;
             default:
                 // @todo: warn? error?
+                var_dump($feature);
                 break;
         }
     }
