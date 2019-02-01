@@ -47,6 +47,12 @@ Mapbender.Event.Dispatcher = Class({
     }
 });
 /**
+ * @typedef Model~ExtendedLayerInfo
+ * @property {Object} layer
+ * @property {Model~LayerState} state
+ * @property {Array<Object>} parents
+ */
+/**
  * Abstract Geo Source Handler
  * @author Paul Schmidt
  */
@@ -238,9 +244,9 @@ Mapbender.Geo.SourceHandler = Class({
         // apply tree options
         this.applyTreeOptions(source, newTreeOptions);
         // recalculate state
-        var newStates = Mapbender.Model.calculateLeafLayerStates(source, scale);
+        var newStates = this.calculateLeafLayerStates(source, scale);
         // apply states and calculate changeset
-        var changedStates = Mapbender.Model.applyLayerStates(source, newStates);
+        var changedStates = this.applyLayerStates(source, newStates);
         // Copy state changeset extended with treeOptions changeset
         // (a layer's state may change without a treeOptions change and vice versa)
         var result = {
@@ -253,7 +259,7 @@ Mapbender.Geo.SourceHandler = Class({
         };
         return $.extend(result, this.getLayerParameters(source, newStates));
     },
-    'public function getLayerParameters': function(source, stateMap) {
+    getLayerParameters: function getLayerParameters(source, stateMap) {
         var result = {
             layers: [],
             styles: [],
@@ -261,7 +267,7 @@ Mapbender.Geo.SourceHandler = Class({
         };
         var layerParamName = this.layerNameIdent;
         var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
-        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
+        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer) {
             // Layer names can be emptyish, most commonly on root layers
             // Suppress layers with empty names entirely
             if (layer.options[layerParamName]) {
@@ -387,6 +393,131 @@ Mapbender.Geo.SourceHandler = Class({
             return source.configuration.options.bbox;
         }
         return null;
+    },
+    /**
+     * Returns a preview mapping of states of displayable (=leaf) layers as if the given scale + extent were applied
+     * (but they are not!), together with references to the layer definition and its parents.
+     *
+     * @param {Object} source
+     * @param {number} [scale] current value fetched from Mapbender.Model if omitted
+     * @param {*} [extent]
+     * @return {Object<string, Model~ExtendedLayerInfo>}
+     */
+    getExtendedLeafInfo: function(source, scale, extent) {
+        var infoMap = {};
+        var self = this;
+        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
+            var layerId = layer.options.id;
+            var outOfScale = !self.isLayerInScale(layer, scale);
+            var outOfBounds = !self.isLayerWithinBounds(layer, extent);
+            var enabled = !!layer.options.treeOptions.selected;
+            var featureInfo = !!(layer.options.treeOptions.info && layer.options.treeOptions.allow.info);
+            parents.map(function(p) {
+                var parentEnabled = p.options.treeOptions.selected;
+                enabled = enabled && parentEnabled;
+                featureInfo = featureInfo && parentEnabled;
+            });
+            // @todo TBD: disable featureInfo if layer visual is disabled?
+            // featureInfo = featureInfo && enabled
+            var visibility = enabled && !(outOfScale || outOfBounds);
+            infoMap[layerId] = {
+                layer: layer,
+                state: {
+                    outOfScale: outOfScale,
+                    outOfBounds: outOfBounds,
+                    visibility: visibility,
+                    info: featureInfo
+                },
+                parents: parents
+            };
+        });
+        return infoMap;
+    },
+    /**
+     * Returns a preview mapping of states of displayable (=leaf) layers as if the given scale + extent were applied
+     * (but they are not!).
+     *
+     * @param {*} source
+     * @param {number} [scale] uses current map scale if not passed in
+     * @param [extent] currently not used; @todo: implement outOfBounds checking
+     * @returns {Object.<string, Model~LayerState>}
+     */
+    calculateLeafLayerStates: function calculateLeafLayerStates(source, scale, extent) {
+        // delegate to getExtendedLeafInfo and reduce objects to just the 'state' entries
+        return _.mapObject(this.getExtendedLeafInfo(source, scale, extent), function(item) {
+            return item.state;
+        });
+    },
+    /**
+     * Punches (assumed) leaf layer states from stateMap into the source structure, and calculates
+     * a (conservative, imprecise) layer changeset that can be supplied in mbmapsourcechanged event data.
+     * This will also update states of parent layers appropriately, and include these in the changeset.
+     *
+     * @param source
+     * @param {Object.<string, Model~LayerState>} stateMap
+     * @return {Object.<string, Model~LayerChangeInfo>}
+     */
+    applyLayerStates: function applyLayerStates(source, stateMap) {
+        var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
+        var changeMap = {};
+
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, offset, parents) {
+            if (layer.children && layer.children.length) {
+                // non-leaf layer visibility is a function of combined leaf layer visibility
+                // start with false (recursion order is root first)
+                layer.state.visibility = false;
+            }
+            var entry = stateMap[layer.options.id];
+            var stateChanged = false;
+            if (entry) {
+                for (var sni = 0; sni < stateNames.length; ++ sni) {
+                    var stateName = stateNames[sni];
+                    if (layer.state[stateName] !== entry[stateName]) {
+                        layer.state = $.extend(layer.state || {}, entry);
+                        changeMap[layer.options.id] = {
+                            state: layer.state,
+                            options: {
+                                treeOptions: layer.options.treeOptions
+                            }
+                        };
+                        stateChanged = true;
+                        break;
+                    }
+                }
+            }
+            for (var p = 0; p < parents.length; ++p) {
+                var parentLayer = parents[p];
+                var parentId = parentLayer.options.id;
+                parentLayer.state.visibility = parentLayer.state.visibility || layer.state.visibility;
+                if (stateChanged) {
+                    changeMap[parentId] = $.extend(changeMap[parentId] || {}, {
+                        state: parentLayer.state
+                    });
+                }
+            }
+        });
+        return changeMap;
+    },
+    /**
+     * @param {Object} layer
+     * @param {number} [scale] current value fetched from Mapbender.Model if omitted
+     * @return {boolean}
+     */
+    isLayerInScale: function(layer, scale) {
+        var scale_ = scale || Mapbender.Model.getScale();
+        return Mapbender.Util.isInScale(scale_, layer.options.minScale, layer.options.maxScale);
+    },
+    /**
+     * @todo: Implement this. Requires detection of applicable SRS, lookup in bbox list by SRS and potentially
+     *        retransformation.
+     *
+     * @param {Object} layer
+     * @param {*} extent
+     * @return {boolean}
+     */
+    isLayerWithinBounds: function(layer, extent) {
+        // HACK: out of bounds calculation broken since introduction of SRS switcher
+        return true;
     },
     'public function setLayerOrder': function(source, layerIdOrder) {
         var newLayerNameOrder = $.map(layerIdOrder, function(layerId) {

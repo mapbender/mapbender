@@ -513,8 +513,8 @@ Mapbender.Model = {
     _updateSourceLayerTreeOptions: function(source, layerOptionsMap) {
         var gsHandler = this.getGeoSourceHandler(source);
         gsHandler.applyTreeOptions(source, layerOptionsMap);
-        var newStates = this.calculateLeafLayerStates(source, this.getScale());
-        var changedStates = this.applyLayerStates(source, newStates);
+        var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
+        var changedStates = gsHandler.applyLayerStates(source, newStates);
         var layerParams = gsHandler.getLayerParameters(source, newStates);
         this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
 
@@ -537,10 +537,10 @@ Mapbender.Model = {
      * @param {boolean} fireSourceChangedEvent
      */
     _checkSource: function(source, redraw, fireSourceChangedEvent) {
-        var newStates = this.calculateLeafLayerStates(source, this.getScale());
-        var changedStates = this.applyLayerStates(source, newStates);
+        var gsHandler = this.getGeoSourceHandler(source, true);
+        var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
+        var changedStates = gsHandler.applyLayerStates(source, newStates);
         if (redraw) {
-            var gsHandler = this.getGeoSourceHandler(source, true);
             var layerParams = gsHandler.getLayerParameters(source, newStates);
             this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
         }
@@ -1193,37 +1193,6 @@ Mapbender.Model = {
         }
         return gs || null;
     },
-    _getLeafInfoExt: function(source, scale, extent) {
-        var scale_ = scale || this.getScale();
-
-        var infoMap = {};
-        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
-            var layerId = layer.options.id;
-            var outOfScale = !Mapbender.Util.isInScale(scale_, layer.options.minScale, layer.options.maxScale);
-            // HACK: out of bounds calculation broken since introduction of SRS switcher
-            var outOfBounds = false;
-            var enabled = !!layer.options.treeOptions.selected;
-            var featureInfo = !!(layer.options.treeOptions.info && layer.options.treeOptions.allow.info);
-            parents.map(function(p) {
-                var parentEnabled = p.options.treeOptions.selected;
-                enabled = enabled && parentEnabled;
-                featureInfo = featureInfo && parentEnabled;
-            });
-            // @todo TBD: disable featureInfo if layer visual is disabled?
-            // featureInfo = featureInfo && enabled
-            var visibility = enabled && !(outOfScale || outOfBounds);
-            infoMap[layerId] = {
-                layer: layer,
-                state: {
-                    outOfScale: outOfScale,
-                    outOfBounds: outOfBounds,
-                    visibility: visibility,
-                    info: featureInfo
-                }
-            };
-        });
-        return infoMap;
-    },
     /**
      * Returns individual print / export instructions for each active layer in the source individually.
      * This allows image export / print to respect min / max scale hints on a per-layer basis and print
@@ -1240,7 +1209,7 @@ Mapbender.Model = {
         var olLayer = this.getNativeLayer(sourceOrLayer);
         var source = this.getMbConfig(sourceOrLayer);
         var extent_ = extent || this.getMapExtent();
-        var leafInfoMap = this._getLeafInfoExt(source, scale, extent_);
+        var gsHandler = this.getGeoSourceHandler(source);
         var units = this.map.olMap.getUnits();
         var dataOut = [];
         var commonLayerData = {
@@ -1251,7 +1220,7 @@ Mapbender.Model = {
         var resFromScale = function(scale) {
             return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
         };
-        var gsHandler = this.getGeoSourceHandler(source);
+        var leafInfoMap = gsHandler.getExtendedLeafInfo(source, scale, extent_);
         if (gsHandler.getSingleLayerUrl) {
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
@@ -1378,68 +1347,5 @@ Mapbender.Model = {
                 }
             });
         }
-    },
-    /**
-     * @param {*} source
-     * @param {float} [scale] uses current map scale if not passed in
-     * @param [extent] currently not used; @todo: implement outOfBounds checking
-     * @returns {Object.<string, Model~LayerState>}
-     */
-    calculateLeafLayerStates: function calculateLeafLayerStates(source, scale, extent) {
-        // reduce leaf info objects to just the 'state' entries
-        var stateMap = {};
-        _.forEach(this._getLeafInfoExt(source, scale, extent), function(item, layerId) {
-            stateMap[layerId] = item.state;
-        });
-        return stateMap;
-    },
-    /**
-     * Punches (assumed) leaf layer states from stateMap into the source structure, and calculates
-     * a (conservative, imprecise) layer changeset that can be supplied in mbmapsourcechanged event data.
-     *
-     * @param source
-     * @param {Object.<string, Model~LayerState>} stateMap
-     * @return {Object.<string, Model~LayerChangeInfo>}
-     */
-    applyLayerStates: function applyLayerStates(source, stateMap) {
-        var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
-        var changeMap = {};
-
-        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, offset, parents) {
-            if (layer.children && layer.children.length) {
-                // non-leaf layer visibility is a function of combined leaf layer visibility
-                // start with false (recursion order is root first)
-                layer.state.visibility = false;
-            }
-            var entry = stateMap[layer.options.id];
-            var stateChanged = false;
-            if (entry) {
-                for (var sni = 0; sni < stateNames.length; ++ sni) {
-                    var stateName = stateNames[sni];
-                    if (layer.state[stateName] !== entry[stateName]) {
-                        layer.state = $.extend(layer.state || {}, entry);
-                        changeMap[layer.options.id] = {
-                            state: layer.state,
-                            options: {
-                                treeOptions: layer.options.treeOptions
-                            }
-                        };
-                        stateChanged = true;
-                        break;
-                    }
-                }
-            }
-            for (var p = 0; p < parents.length; ++p) {
-                var parentLayer = parents[p];
-                var parentId = parentLayer.options.id;
-                parentLayer.state.visibility = parentLayer.state.visibility || layer.state.visibility;
-                if (stateChanged) {
-                    changeMap[parentId] = $.extend(changeMap[parentId] || {}, {
-                        state: parentLayer.state
-                    });
-                }
-            }
-        });
-        return changeMap;
     }
 };
