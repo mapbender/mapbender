@@ -1,5 +1,5 @@
 {% if 'listloader' in configuration.components %}
-<a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'mb.wmc.list.add_wmc'|trans}} {{region}}"></a>
+<a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'mb.wmc.list.add_wmc'|trans}} {{region}}"></a>
 {% endif %}
 {% if 'listloader' in configuration.components %}
 <table class="tableCore">

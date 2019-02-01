@@ -13,7 +13,7 @@
 
 {% block manager_content %}
 {% if create_permission %}
-<a class="iconAdd iconBig right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
+<a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
 {% endif %}
 {% if sources|length > 0 %}
   <label for="inputFilterServices" class="labelInput left">{{"mb.manager.admin.filter.source"|trans}}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
@@ -31,17 +31,17 @@
             {% endif %}
         </div>
         <div class="col2 box">
-          <a href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
+          <a href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
           <div class="description">{{ source.description }}</div>
           <div class="buttonGroup">
-            <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
+            <a class="iconView iconBig" href="{{ path("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
             {% if is_granted('EDIT', oid) or is_granted('EDIT', source) %}
-            <a class="iconReset iconBig" href="{{ url("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
+            <a class="iconReset iconBig" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ source.title }}"></a>
             {% endif %}
             {% if is_granted('DELETE', oid) or is_granted('DELETE', source) %}
                <span class="iconRemove iconBig"
                 title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
-                data-url="{{ url("mapbender_manager_repository_confirmdelete",{"sourceId":source.id}) }}"
+                data-url="{{ path("mapbender_manager_repository_confirmdelete",{"sourceId":source.id}) }}"
                 data-id="{{ source.id }}"></span>
             {% endif %}
           </div>
