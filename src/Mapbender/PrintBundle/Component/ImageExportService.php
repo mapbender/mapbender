@@ -276,7 +276,7 @@ class ImageExportService
         $resolution = $canvas->getResolution($extent);
         $effectiveLayers = $this->squashLayers($layers, $resolution);
 
-        foreach ($layers as $k => $layerDef) {
+        foreach ($effectiveLayers as $k => $layerDef) {
             $this->addImageLayer($canvas, $layerDef, $extent);
         }
     }
