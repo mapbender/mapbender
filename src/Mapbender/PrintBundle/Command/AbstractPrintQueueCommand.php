@@ -12,6 +12,7 @@ use Mapbender\Utils\MemoryUtil;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractPrintQueueCommand extends ContainerAwareCommand
 {
@@ -45,6 +46,8 @@ abstract class AbstractPrintQueueCommand extends ContainerAwareCommand
      */
     protected function runJob(OutputInterface $output, $job)
     {
+        /** @var Filesystem $fs */
+        $fs = $this->getContainer()->get('filesystem');
         $output->writeln("Starting processing of queued job #{$job->getId()}");
         $this->entityManager->persist($job);
         $job->setStarted(new \DateTime());
@@ -54,12 +57,19 @@ abstract class AbstractPrintQueueCommand extends ContainerAwareCommand
         $outputPath = $this->getJobStoragePath($job);
         $this->beforePrint();
         $this->printService->storePrint($job->getPayload(), $outputPath);
+        if (!$this->repository->findOneBy(array('id' => $job->getId()))) {
+            $output->writeln("WARNING: after print execution, entity #{$job->getId()} can no longer be found");
+            if ($fs->exists($outputPath)) {
+                $output->writeln("Assuming job has been canceled. Deleting just created pdf at {$outputPath}");
+                $fs->remove($outputPath);
+            }
+        } else {
+            $this->entityManager->persist($job);
+            $job->setCreated(new \DateTime());
+            $this->entityManager->flush();
 
-        $this->entityManager->persist($job);
-        $job->setCreated(new \DateTime());
-        $this->entityManager->flush();
-
-        $output->writeln("PDF for queued job #{$job->getId()} rendered to {$outputPath}");
+            $output->writeln("PDF for queued job #{$job->getId()} rendered to {$outputPath}");
+        }
     }
 
     /**

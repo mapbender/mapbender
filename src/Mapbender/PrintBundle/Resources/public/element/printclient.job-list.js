@@ -157,23 +157,26 @@ $.widget("mapbender.mbPrintClientJobList", {
             $icon = $('<i/>').addClass('fa fa-file-pdf-o');
             $a.append($icon);
             parts.push($a.get(0).outerHTML);
+        } else {
+            parts.push('<span><i class="fa fa-cog fa-spin"></i></span>');
         }
         if (row.deleteUrl) {
+            var deleteTitle = row.downloadUrl
+                ? 'mb.print.printclient.joblist.delete'
+                : 'mb.print.printclient.joblist.cancel'
+            ;
             var $deleteSpan = $('<span />')
                 .addClass('-fn-delete')
                 .attr('data-url', row.deleteUrl)
                 .attr('data-id', row.id)
-                .attr('title', Mapbender.trans('mb.print.printclient.joblist.delete'))
+                .attr('title', Mapbender.trans(deleteTitle))
             ;
             $icon = $('<i/>').addClass('fa fa-remove');
             $deleteSpan.append($icon);
             parts.push($deleteSpan.get(0).outerHTML);
         }
-        if (parts.length) {
-            return parts.join('');
-        } else {
-            return '<span><i class="fa fa-cog fa-spin" /></span>';
-        }
+        console.log(parts);
+        return parts.join('');
     },
     _deleteHandler: function(evt) {
         var $button = $(evt.currentTarget);
