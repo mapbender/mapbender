@@ -15,12 +15,12 @@ Mapbender.Model = {
 
         // need to monkey patch here in order to get next zoom in movestart event
         // prevents duplicate loads of WMS where a layer is going out of scale
-        var zoomTo = OpenLayers.Map.prototype.zoomTo;
-        OpenLayers.Map.prototype.zoomTo = function(zoom) {
+        var setCenterOriginal = OpenLayers.Map.prototype.setCenter;
+        OpenLayers.Map.prototype.setCenter = function(center, zoom) {
             self.nextZoom = zoom;
-            zoomTo.apply(this, arguments);
+            setCenterOriginal.apply(this, arguments);
         };
-        
+
         this.mbMap = mbMap;
         this.srsDefs = this.mbMap.options.srsDefs;
         Mapbender.Projection.extendSrsDefintions(this.srsDefs || []);
