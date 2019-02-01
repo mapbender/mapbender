@@ -1,9 +1,11 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
+use Mapbender\PrintBundle\Component\Export\Resolution;
 use Mapbender\PrintBundle\Element\ImageExport;
 use Psr\Log\LoggerInterface;
 
@@ -152,8 +154,9 @@ class ImageExportService
      */
     protected function canvasFactory($jobData)
     {
+        $dpi = ArrayUtil::getDefault($jobData, 'quality', null);
         $featureTransform = $this->initializeFeatureTransform($jobData);
-        return new ExportCanvas($jobData['width'], $jobData['height'], $featureTransform);
+        return new ExportCanvas($jobData['width'], $jobData['height'], $featureTransform, $dpi);
     }
 
     /**
@@ -196,24 +199,83 @@ class ImageExportService
             $this->getLogger()->warning("Missing 'type' in layer definition", $layerDef);
             return;
         }
+        $renderer = $this->getLayerRenderer($layerDef);
+        $renderer->addLayer($canvas, $layerDef, $extent);
+    }
+
+    /**
+     * @param mixed[] $layerDef
+     * @return LayerRenderer
+     */
+    protected function getLayerRenderer($layerDef)
+    {
         $layerType = $layerDef['type'];
-        if (!empty($this->layerRenderers[$layerType])) {
-            $renderer = $this->layerRenderers[$layerType];
-            $renderer->addLayer($canvas, $layerDef, $extent);
+        if (empty($this->layerRenderers[$layerType])) {
+            throw new \RuntimeException("Unhandled layer type {$layerType}");
         } else {
-            $this->getLogger()->warning("Unhandled layer type {$layerDef['type']}");
+            return $this->layerRenderers[$layerType];
         }
+    }
+
+    /**
+     * Folds compatible layers of same type into a single layer, which may be more efficient to process
+     * overall.
+     * Compatibility checks and folding logic are done by the layer renderers.
+     *
+     * @param mixed[][] $layers
+     * @param Resolution $resolution
+     * @return mixed[][]
+     */
+    protected function squashLayers($layers, $resolution)
+    {
+        $layersOut = array();
+        $previous = null;
+        foreach ($layers as $layerDef) {
+            if (empty($layerDef['type'])) {
+                $this->getLogger()->warning("Missing 'type' in layer definition", $layerDef);
+                continue;
+            }
+
+            $renderer = $this->getLayerRenderer($layerDef);
+            if ($previous !== null) {
+                // squash only adjacent layers of the same type and opacity
+                $previousOpacity = ArrayUtil::getDefault($previous, 'opacity', 1.0);
+                $nextOpacity = ArrayUtil::getDefault($layerDef, 'opacity', 1.0);
+                if ($previous['type'] === $layerDef['type'] && $previousOpacity == $nextOpacity) {
+                    $squashed = $renderer->squashLayerDefinitions($previous, $layerDef, $resolution);
+                } else {
+                    $squashed = false;
+                }
+            } else {
+                $squashed = false;
+            }
+            if ($squashed) {
+                $previous = $squashed;
+            } else {
+                if ($previous) {
+                    $layersOut[] = $previous;
+                }
+                $previous = $layerDef;
+            }
+        }
+        if ($previous) {
+            $layersOut[] = $previous;
+        }
+        return $layersOut;
     }
 
     /**
      * Collect and merge WMS tiles and vector layers into a PNG file.
      *
      * @param ExportCanvas $canvas
-     * @param mixed[] $layers
+     * @param mixed[][] $layers
      * @param Box $extent projected
      */
     protected function addLayers($canvas, $layers, Box $extent)
     {
+        $resolution = $canvas->getResolution($extent);
+        $effectiveLayers = $this->squashLayers($layers, $resolution);
+
         foreach ($layers as $k => $layerDef) {
             $this->addImageLayer($canvas, $layerDef, $extent);
         }

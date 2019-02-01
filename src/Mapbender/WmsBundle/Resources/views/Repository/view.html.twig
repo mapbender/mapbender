@@ -7,10 +7,6 @@
   {{parent()}}
 {% endblock %}
 
-{% block manager_js %}
-    <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/repository/repository.js') }}"></script>
-{% endblock %}
-
 {% block manager_content %}
 
 <a class="button right" title="{{"mb.wms.wmsloader.repo.view.label.backtoservicelist" | trans}}" href="{{ path('mapbender_manager_repository_index') }}">Back</a>

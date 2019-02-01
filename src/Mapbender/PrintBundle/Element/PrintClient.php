@@ -162,13 +162,10 @@ class PrintClient extends Element
     protected function getSubmitAction()
     {
         if ($this->isQueueModeEnabled()) {
-            $queuePlugin = $this->getServiceBridge()->getPluginHost()->getPlugin('print-queue');
-            /** @var PrintQueuePlugin|null $queuePlugin */
-            if ($queuePlugin) {
-                return $queuePlugin->getQueueActionName();
-            }
+            return PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE;
+        } else {
+            return 'print';
         }
-        return 'print';
     }
 
     public function getFrontendTemplateVars()
@@ -239,9 +236,10 @@ class PrintClient extends Element
         $configuration = $this->entity->getConfiguration();
         switch ($action) {
             case 'print':
-                $data = $this->preparePrintData($request, $configuration);
+                $rawData = $this->extractRequestData($request);
+                $jobData = $this->preparePrintData($rawData, $configuration);
 
-                $pdfBody = $bridgeService->dumpPrint($data);
+                $pdfBody = $bridgeService->dumpPrint($jobData);
 
                 $displayInline = true;
                 $filename = $this->generateFilename();
@@ -266,14 +264,12 @@ class PrintClient extends Element
                 if ($response) {
                     return $response;
                 }
-                if ($this->isQueueModeEnabled()) {
-                    $queuePlugin = $bridgeService->getPluginHost()->getPlugin('print-queue');
-                    /** @var PrintQueuePlugin|null $queuePlugin */
-                    if ($queuePlugin && $action == $queuePlugin->getQueueActionName()) {
-                        $jobData = $this->preparePrintData($request, $configuration);
-                        $queuePlugin->putJob($jobData, $this->generateFilename());
-                        return new Response('', 204);
-                    }
+                $queuePlugin = $this->getActiveQueuePlugin();
+                if ($queuePlugin && $action === PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE) {
+                    $rawData = $this->extractRequestData($request);
+                    $jobData = $this->preparePrintData($rawData, $configuration);
+                    $queuePlugin->putJob($jobData, $this->generateFilename());
+                    return new Response('', 204);
                 }
                 throw new NotFoundHttpException();
         }
@@ -290,11 +286,15 @@ class PrintClient extends Element
     }
 
     /**
+     * Extracts / decodes submitted values from request.
+     * This is separated from preparePrintData for extensibility reasons.
+     * Output should be a bare array without any remaining serialized (json or otherwise) data.
+     * Output will get passed to preparePrintData as is.
+     *
      * @param Request $request
-     * @param mixed[] $configuration
-     * @return mixed[]
+     * @return array
      */
-    protected function preparePrintData(Request $request, $configuration)
+    protected function extractRequestData(Request $request)
     {
         // @todo: define what data we support; do not simply process and forward everything
         $data = $request->request->all();
@@ -303,17 +303,25 @@ class PrintClient extends Element
             unset($data['data']);
             $data = array_replace($data, json_decode($d0, true));
         }
+        return $data;
+    }
+
+    /**
+     * Preprocesses / amends job data so it can be safely executed by print service, but also
+     * safely persisted to db for execution at a later time. I.e. information pertinent to
+     * current user and current element configuration needs to be fully resolved.
+     *
+     * @param array $data
+     * @param mixed[] $configuration
+     * @return mixed[]
+     */
+    protected function preparePrintData($data, $configuration)
+    {
         $urlProcessor = $this->getUrlProcessor();
         foreach ($data['layers'] as $ix => $layerDef) {
             if (!empty($layerDef['url'])) {
                 $updatedUrl = $urlProcessor->getInternalUrl($layerDef['url']);
-                if (!isset($configuration['replace_pattern'])) {
-                    if ($data['quality'] != 72) {
-                        $updatedUrl = UrlUtil::validateUrl($updatedUrl, array(
-                            'map_resolution' => $data['quality'],
-                        ));
-                    }
-                } else {
+                if (!empty($configuration['replace_pattern'])) {
                     $updatedUrl = $this->addReplacePattern($updatedUrl, $configuration['replace_pattern'], $data['quality']);
                 }
                 $data['layers'][$ix]['url'] = $updatedUrl;
@@ -451,15 +459,35 @@ class PrintClient extends Element
     }
 
     /**
+     * Returns the queue plugin service ONLY IF
+     * 1) enabled by global container parameter
+     * and
+     * 2) registerd in the plugin host
+     * and
+     * 3) queued job processing is enabled by current Element configuration
+     *
+     * @return PrintQueuePlugin|null
+     */
+    protected function getActiveQueuePlugin()
+    {
+        if (!$this->container->getParameter('mapbender.print.queueable')) {
+            return null;
+        }
+        $config = $this->entity->getConfiguration();
+        if (empty($config['renderMode']) || $config['renderMode'] != 'queued') {
+            return null;
+        }
+        /** @var PrintQueuePlugin|null $queuePlugin */
+        $queuePlugin = $this->getServiceBridge()->getPluginHost()->getPlugin('print-queue');
+        return $queuePlugin;
+    }
+
+    /**
      * @return bool
      */
     protected function isQueueModeEnabled()
     {
-        if (!$this->container->getParameter('mapbender.print.queueable')) {
-            return false;
-        }
-        $config = $this->entity->getConfiguration();
-        return !(empty($config['renderMode']) || $config['renderMode'] != 'queued');
+        return !!$this->getActiveQueuePlugin();
     }
 
     /**

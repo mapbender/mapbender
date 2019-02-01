@@ -24,10 +24,33 @@ class LayerRendererGeoJson extends LayerRenderer
         $this->fontPath = rtrim($fontPath, '/');
     }
 
-    public function squashLayerDefinitions($layerDef, $nextLayerDef)
+    /**
+     * @param $layerDef
+     * @param $nextLayerDef
+     * @param Export\Resolution $resolution
+     * @return array|bool|false
+     */
+    public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution)
     {
-        // @TODO: merge everything
-        return false;
+        // Fold everything, maintaining feature order
+        $featuresKeys = array(
+            'geometries',   // legacy
+            'features',     // conformant GeoJson
+        );
+        $nextLayerFeatures = false;
+        foreach ($featuresKeys as $featuresKey) {
+            if (array_key_exists($featuresKey, $nextLayerDef)) {
+                $nextLayerFeatures = $nextLayerDef[$featuresKey];
+                break;
+            }
+        }
+        foreach ($featuresKeys as $featuresKey) {
+            if ($nextLayerFeatures && array_key_exists($featuresKey, $layerDef)) {
+                $layerDef[$featuresKey] = array_merge($layerDef[$featuresKey], $nextLayerFeatures);
+                break;
+            }
+        }
+        return $layerDef;
     }
 
     public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent)
@@ -55,11 +78,17 @@ class LayerRendererGeoJson extends LayerRenderer
             case 'point':
                 $this->drawPoint($canvas, $feature);
                 break;
+            case 'linestring':
+                $this->drawLineString($canvas, $feature);
+                break;
             case 'polygon':
                 $this->drawPolygon($canvas, $feature);
                 break;
-            case 'linestring':
-                $this->drawLineString($canvas, $feature);
+            case 'multipolygon':
+                $this->drawMultiPolygon($canvas, $feature);
+                break;
+            case 'multilinestring':
+                $this->drawMultiLineString($canvas, $feature);
                 break;
             default:
                 // @todo: warn? error?

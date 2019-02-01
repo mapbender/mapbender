@@ -41,10 +41,6 @@
         sourceById: function(idObject){
             return this.model.getSource(idObject);
         },
-        mqLayerBySourceId: function(idObject){
-            var source = this.sourceById(idObject);
-            return this.map.layersList[source.mqlid];
-        },
         /**
          *
          */
@@ -65,14 +61,6 @@
          */
         removeSources: function(keepSources){
             this.model.removeSources(keepSources);
-        },
-        /**
-         *
-         */
-        changeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.source && toChangeObj.type) {
-                this.model.changeSource(toChangeObj);
-            }
         },
         /**
          * Triggers an event from the model.
