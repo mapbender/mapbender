@@ -162,13 +162,10 @@ class PrintClient extends Element
     protected function getSubmitAction()
     {
         if ($this->isQueueModeEnabled()) {
-            $queuePlugin = $this->getServiceBridge()->getPluginHost()->getPlugin('print-queue');
-            /** @var PrintQueuePlugin|null $queuePlugin */
-            if ($queuePlugin) {
-                return $queuePlugin->getQueueActionName();
-            }
+            return PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE;
+        } else {
+            return 'print';
         }
-        return 'print';
     }
 
     public function getFrontendTemplateVars()
@@ -267,15 +264,12 @@ class PrintClient extends Element
                 if ($response) {
                     return $response;
                 }
-                if ($this->isQueueModeEnabled()) {
-                    $queuePlugin = $bridgeService->getPluginHost()->getPlugin('print-queue');
-                    /** @var PrintQueuePlugin|null $queuePlugin */
-                    if ($queuePlugin && $action == $queuePlugin->getQueueActionName()) {
-                        $rawData = $this->extractRequestData($request);
-                        $jobData = $this->preparePrintData($rawData, $configuration);
-                        $queuePlugin->putJob($jobData, $this->generateFilename());
-                        return new Response('', 204);
-                    }
+                $queuePlugin = $this->getActiveQueuePlugin();
+                if ($queuePlugin && $action === PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE) {
+                    $rawData = $this->extractRequestData($request);
+                    $jobData = $this->preparePrintData($rawData, $configuration);
+                    $queuePlugin->putJob($jobData, $this->generateFilename());
+                    return new Response('', 204);
                 }
                 throw new NotFoundHttpException();
         }
@@ -465,15 +459,35 @@ class PrintClient extends Element
     }
 
     /**
+     * Returns the queue plugin service ONLY IF
+     * 1) enabled by global container parameter
+     * and
+     * 2) registerd in the plugin host
+     * and
+     * 3) queued job processing is enabled by current Element configuration
+     *
+     * @return PrintQueuePlugin|null
+     */
+    protected function getActiveQueuePlugin()
+    {
+        if (!$this->container->getParameter('mapbender.print.queueable')) {
+            return null;
+        }
+        $config = $this->entity->getConfiguration();
+        if (empty($config['renderMode']) || $config['renderMode'] != 'queued') {
+            return null;
+        }
+        /** @var PrintQueuePlugin|null $queuePlugin */
+        $queuePlugin = $this->getServiceBridge()->getPluginHost()->getPlugin('print-queue');
+        return $queuePlugin;
+    }
+
+    /**
      * @return bool
      */
     protected function isQueueModeEnabled()
     {
-        if (!$this->container->getParameter('mapbender.print.queueable')) {
-            return false;
-        }
-        $config = $this->entity->getConfiguration();
-        return !(empty($config['renderMode']) || $config['renderMode'] != 'queued');
+        return !!$this->getActiveQueuePlugin();
     }
 
     /**
