@@ -239,9 +239,10 @@ class PrintClient extends Element
         $configuration = $this->entity->getConfiguration();
         switch ($action) {
             case 'print':
-                $data = $this->preparePrintData($request, $configuration);
+                $rawData = $this->extractRequestData($request);
+                $jobData = $this->preparePrintData($rawData, $configuration);
 
-                $pdfBody = $bridgeService->dumpPrint($data);
+                $pdfBody = $bridgeService->dumpPrint($jobData);
 
                 $displayInline = true;
                 $filename = $this->generateFilename();
@@ -270,7 +271,8 @@ class PrintClient extends Element
                     $queuePlugin = $bridgeService->getPluginHost()->getPlugin('print-queue');
                     /** @var PrintQueuePlugin|null $queuePlugin */
                     if ($queuePlugin && $action == $queuePlugin->getQueueActionName()) {
-                        $jobData = $this->preparePrintData($request, $configuration);
+                        $rawData = $this->extractRequestData($request);
+                        $jobData = $this->preparePrintData($rawData, $configuration);
                         $queuePlugin->putJob($jobData, $this->generateFilename());
                         return new Response('', 204);
                     }
@@ -290,11 +292,15 @@ class PrintClient extends Element
     }
 
     /**
+     * Extracts / decodes submitted values from request.
+     * This is separated from preparePrintData for extensibility reasons.
+     * Output should be a bare array without any remaining serialized (json or otherwise) data.
+     * Output will get passed to preparePrintData as is.
+     *
      * @param Request $request
-     * @param mixed[] $configuration
-     * @return mixed[]
+     * @return array
      */
-    protected function preparePrintData(Request $request, $configuration)
+    protected function extractRequestData(Request $request)
     {
         // @todo: define what data we support; do not simply process and forward everything
         $data = $request->request->all();
@@ -303,6 +309,20 @@ class PrintClient extends Element
             unset($data['data']);
             $data = array_replace($data, json_decode($d0, true));
         }
+        return $data;
+    }
+
+    /**
+     * Preprocesses / amends job data so it can be safely executed by print service, but also
+     * safely persisted to db for execution at a later time. I.e. information pertinent to
+     * current user and current element configuration needs to be fully resolved.
+     *
+     * @param array $data
+     * @param mixed[] $configuration
+     * @return mixed[]
+     */
+    protected function preparePrintData($data, $configuration)
+    {
         $urlProcessor = $this->getUrlProcessor();
         foreach ($data['layers'] as $ix => $layerDef) {
             if (!empty($layerDef['url'])) {
