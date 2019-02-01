@@ -76,61 +76,51 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'public function changeProjection': function(source, projection) {
     },
-    'public function getLayersList': function(source, offsetLayer, includeOffset) {
-        var rootLayer,
-            _source;
-        _source = $.extend(true, {}, source);//.configuration.children[0];
-        rootLayer = _source.configuration.children[0];
-        var options = {
-            layers: [
-            ],
-            found: false,
-            includeOffset: includeOffset
-        };
-        if (rootLayer.options.id.toString() === offsetLayer.options.id.toString()) {
-            options.found = true;
-        }
-        options = _findLayers(rootLayer, offsetLayer, options);
+    getLayersList: function getLayersList(source, offsetLayer, includeOffset) {
+        var _source = $.extend(true, {}, source);
+        var rootLayer = _source.configuration.children[0];
+        var layerFound = rootLayer.options.id.toString() === offsetLayer.options.id.toString();
+        var layersOut = [];
+        _findLayers(rootLayer);
         return {
             source: _source,
-            layers: options.layers
+            layers: layersOut
         };
 
-        function _findLayers(layer, offsetLayer, options) {
+        function _findLayers(layer) {
             if (layer.children) {
                 var i = 0;
                 for (; i < layer.children.length; i++) {
                     if (layer.children[i].options.id.toString() === offsetLayer.options.id.toString()) {
-                        options.found = true;
+                        layerFound = true;
                     }
-                    if (options.found) {
+                    if (layerFound) {
                         var matchOffset = i;
-                        if (!options.includeOffset) {
+                        if (!includeOffset) {
                             matchOffset += 1;
                         }
                         var matchLength = layer.children.length - matchOffset;
                         // splice modifies the original Array => work with a shallow copy
                         var layersCopy = layer.children.slice();
                         var matchedLayers = layersCopy.splice(matchOffset, matchLength);
-                        options.layers = options.layers.concat(matchedLayers);
+                        layersOut = layersOut.concat(matchedLayers);
 
                         break;
                     }
-                    options = _findLayers(layer.children[i], offsetLayer, options);
+                    _findLayers(layer.children[i]);
                 }
             }
-            return options;
         }
     },
-    'public function addLayer': function(source, layerToAdd, parentLayerToAdd, position) {
+    addLayer: function addLayer(source, layerToAdd, parentLayerToAdd, position) {
         var rootLayer = source.configuration.children[0];
         var options = {
             layer: null
         };
-        options = _addLayer(rootLayer, layerToAdd, parentLayerToAdd, position, options);
+        _addLayer(rootLayer);
         return options.layer;
 
-        function _addLayer(layer, layerToAdd, parentLayerToAdd, position, options) {
+        function _addLayer(layer) {
             if (layer.options.id.toString() === parentLayerToAdd.options.id.toString()) {
                 if (layer.children) {
                     layer.children.splice(position, 0, layerToAdd);
@@ -141,17 +131,14 @@ Mapbender.Geo.SourceHandler = Class({
                     layer.children.push($.extend(true, layerToAdd));
                     options.layer = layer.children[0];
                 }
-                return options;
-            }
-            if (layer.children) {
+            } else if (layer.children) {
                 for (var i = 0; i < layer.children.length; i++) {
-                    options = _addLayer(layer.children[i], layerToAdd, parentLayerToAdd, position, options);
+                    _addLayer(layer.children[i]);
                 }
             }
-            return options;
         }
     },
-    'public function removeLayer': function(source, layerToRemove) {
+    removeLayer: function removeLayer(source, layerToRemove) {
         var rootLayer = source.configuration.children[0];
         if (layerToRemove.options.id.toString() === rootLayer.options.id.toString()) {
             source.configuration.children = [];
@@ -162,16 +149,16 @@ Mapbender.Geo.SourceHandler = Class({
         var options = {
             layer: null,
             layerToRemove: null
-        };//, listToRemove: {}, addToList: false }
-        options = _removeLayer(rootLayer, layerToRemove, options);
+        };
+        _removeLayer(rootLayer, layerToRemove);
         return {
             layer: options.layerToRemove
         };
 
-        function _removeLayer(layer, layerToRemove, options) {
+        function _removeLayer(layer) {
             if (layer.children) {
                 for (var i = 0; i < layer.children.length; i++) {
-                    options = _removeLayer(layer.children[i], layerToRemove, options);
+                    _removeLayer(layer.children[i]);
                     if (options.layer) {
                         if (options.layer.options.id.toString() === layerToRemove.options.id.toString()) {
                             var layerToRemArr = layer.children.splice(i, 1);
@@ -185,14 +172,12 @@ Mapbender.Geo.SourceHandler = Class({
             if (layer.options.id.toString() === layerToRemove.options.id.toString()) {
                 options.layer = layer;
                 options.layerToRemove = layer;
-                return options;
             } else {
                 options.layer = null;
-                return options;
             }
         }
     },
-    'public function findLayer': function(source, optionToFind) {
+    findLayer: function findLayer(source, optionToFind) {
         var options = {
             level: 0,
             idx: 0,
@@ -213,11 +198,11 @@ Mapbender.Geo.SourceHandler = Class({
         });
         return options;
     },
-    'public function checkInfoLayers': function(source, scale, tochange) {
+    checkInfoLayers: function checkInfoLayers(source, scale, tochange) {
         console.warn("checkInfoLayers is equivalent to changeOptions");
         return this.changeOptions(source, scale, tochange);
     },
-    'public function applyTreeOptions': function(source, layerOptionsMap) {
+    applyTreeOptions: function applyTreeOptions(source, layerOptionsMap) {
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
             var layerId = layer.options.id;
             var newTreeOptions = ((layerOptionsMap[layerId] || {}).options || {}).treeOptions;
@@ -239,7 +224,7 @@ Mapbender.Geo.SourceHandler = Class({
     /**
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };
      */
-    'public function changeOptions': function(source, scale, toChangeOpts) {
+    changeOptions: function changeOptions(source, scale, toChangeOpts) {
         var newTreeOptions = ((toChangeOpts || {}).options || {}).children || {};
         // apply tree options
         this.applyTreeOptions(source, newTreeOptions);
@@ -296,7 +281,7 @@ Mapbender.Geo.SourceHandler = Class({
      * @param {boolean} mergeSelected
      * @returns {object} changes
      */
-    'public function createOptionsLayerState': function(source, changeOptions, defaultSelected, mergeSelected) {
+    createOptionsLayerState: function createOptionsLayerState(source, changeOptions, defaultSelected, mergeSelected) {
         var layerChanges = {
         };
         function setSelected(layer) {
@@ -376,7 +361,7 @@ Mapbender.Geo.SourceHandler = Class({
      * @param {string} layerId
      * @returns {Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair
      */
-    'public function getLayerExtents': function(source, layerId) {
+    getLayerExtents: function getLayerExtents(source, layerId) {
         var extents = null;
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layerDef) {
             if (layerDef.options.id === layerId) {
@@ -519,7 +504,7 @@ Mapbender.Geo.SourceHandler = Class({
         // HACK: out of bounds calculation broken since introduction of SRS switcher
         return true;
     },
-    'public function setLayerOrder': function(source, layerIdOrder) {
+    setLayerOrder: function setLayerOrder(source, layerIdOrder) {
         var newLayerNameOrder = $.map(layerIdOrder, function(layerId) {
             var layerObj = this.findLayer(source, {id: layerId});
             return layerObj.layer.options.name;
