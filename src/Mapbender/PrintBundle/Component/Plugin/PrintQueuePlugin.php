@@ -224,11 +224,6 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                     'status' => 'mb.print.printclient.joblist.status.finished',
                     'downloadUrl' => rtrim($elementAction, '/') . "/open?id={$entity->getId()}",
                 );
-                if ($this->deleteAllowed($entity, $elementConfig)) {
-                    $calculated += array(
-                        'deleteUrl' => rtrim($elementAction, '/') . "/delete",
-                    );
-                }
             } elseif ($entity->getStarted()) {
                 $calculated = array(
                     'status' => 'mb.print.printclient.joblist.status.processing',
@@ -238,6 +233,11 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                 $calculated = array(
                     'status' => 'mb.print.printclient.joblist.status.pending',
                     'downloadUrl' => null,
+                );
+            }
+            if ($this->deleteAllowed($entity, $elementConfig)) {
+                $calculated += array(
+                    'deleteUrl' => rtrim($elementAction, '/') . "/delete",
                 );
             }
             $dataOut[] = $calculated + array(
