@@ -175,7 +175,6 @@ $.widget("mapbender.mbPrintClientJobList", {
             $deleteSpan.append($icon);
             parts.push($deleteSpan.get(0).outerHTML);
         }
-        console.log(parts);
         return parts.join('');
     },
     _deleteHandler: function(evt) {
