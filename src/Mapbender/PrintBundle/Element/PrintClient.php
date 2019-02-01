@@ -312,13 +312,7 @@ class PrintClient extends Element
         foreach ($data['layers'] as $ix => $layerDef) {
             if (!empty($layerDef['url'])) {
                 $updatedUrl = $urlProcessor->getInternalUrl($layerDef['url']);
-                if (!isset($configuration['replace_pattern'])) {
-                    if ($data['quality'] != 72) {
-                        $updatedUrl = UrlUtil::validateUrl($updatedUrl, array(
-                            'map_resolution' => $data['quality'],
-                        ));
-                    }
-                } else {
+                if (!empty($configuration['replace_pattern'])) {
                     $updatedUrl = $this->addReplacePattern($updatedUrl, $configuration['replace_pattern'], $data['quality']);
                 }
                 $data['layers'][$ix]['url'] = $updatedUrl;

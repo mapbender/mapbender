@@ -162,7 +162,7 @@ class LayerRendererWms extends LayerRenderer
 
     /**
      * @param $layerDef
-     * @param GdCanvas $canvas
+     * @param ExportCanvas $canvas
      * @param Box $extent
      * @return string
      */
@@ -197,7 +197,7 @@ class LayerRendererWms extends LayerRenderer
     /**
      * @param mixed[] $params
      * @param mixed[] $layerDef
-     * @param BaseCanvas $canvas
+     * @param ExportCanvas $canvas
      * @param Box $extent
      * @return mixed[] params array with potentially updated WIDTH and HEIGHT
      */
@@ -214,6 +214,9 @@ class LayerRendererWms extends LayerRenderer
         if ($targetResV != $resolution->getVertical()) {
             $params['HEIGHT'] = intval(max(16, abs($extent->getHeight()) / $targetResV));
         }
+
+        $symbolResolution = max(36, min(576, intval($params['WIDTH'] / $canvas->getWidth() * $canvas->physicalDpi)));
+        $params['map_resolution'] = $symbolResolution;
         return $params;
     }
 
