@@ -92,7 +92,6 @@ class LayerRendererGeoJson extends LayerRenderer
                 break;
             default:
                 // @todo: warn? error?
-                var_dump($feature);
                 break;
         }
     }
