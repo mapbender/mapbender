@@ -1,10 +1,14 @@
 # Changelog
-* **dev-release/3.0.7 @ f4b73784d**
+* **dev-release/3.0.7 @ db076a577**
   - Fix buttons with invalid targets breaking buttons in the same group
   - Fix element-order dependent script initialization error in mobile template
   - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
   - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
   - Fixed dynamic (layertree) source reordering errors with many layers
+  - Fix erratic LayerTree / Legend states after ZoomBar "zoom to full extent" interaction ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
+  - Fix rendering of Button Element if 'click' is completely undefined (old DB? YAML apps?) ([PR#1076](https://github.com/mapbender/mapbender/pull/1076))
+  - Restore layer enabled / FeautureInfo checkbox state synchronization across multiple LayerTree Elements ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
+  - Fix erratic LayerTree layer "ghosting" on certain map interactions ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Improve compatibility with certain reverse-proxy setups ([PR #1061](https://github.com/mapbender/mapbender/pull/1061))
   - Print: add WMS GetMap size limits, use tiling to stitch larger images ([PR#1073](https://github.com/mapbender/mapbender/pull/1073))
   - Print: add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
@@ -14,6 +18,7 @@
   - Fix Ruler measurement errors when switching between geodesic and non-geodesic CRS at runtime ([PR#1069](https://github.com/mapbender/mapbender/pull/1069))
   - Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
   - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
+  - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Extend / update Italian locale translations ([PR #1062](https://github.com/mapbender/mapbender/pull/1062))
   - Partial forward-compatibility with font-awesome 5 ([PR #1065](https://github.com/mapbender/mapbender/pull/1065))
   - Remove unused fields from VendorSpecifics form, remove JOII dependency ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
