@@ -48,9 +48,6 @@
                 <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
             </argument>
-            <argument type="service" id="mapbender.imageexport.image_transport.service" />
-            <argument>%mapbender.imageexport.resource_dir%</argument>
-            <argument>%mapbender.imageexport.temp_dir%</argument>
             <argument type="service" id="logger" />
         </service>
         <service id="mapbender.imageexport.image_transport.service" class="%mapbender.imageexport.image_transport.service.class%">
