@@ -154,8 +154,9 @@ class ImageExportService
      */
     protected function canvasFactory($jobData)
     {
+        $dpi = ArrayUtil::getDefault($jobData, 'quality', null);
         $featureTransform = $this->initializeFeatureTransform($jobData);
-        return new ExportCanvas($jobData['width'], $jobData['height'], $featureTransform);
+        return new ExportCanvas($jobData['width'], $jobData['height'], $featureTransform, $dpi);
     }
 
     /**
