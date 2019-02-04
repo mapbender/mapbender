@@ -13,7 +13,6 @@
         elementUrl: null,
         model: null,
         map: null,
-        readyState: false,
 
         /**
          * Creates the map widget
@@ -33,7 +32,6 @@
             });
             this.map = me.data('mapQuery');
             self._trigger('ready');
-            this._ready();
         },
         getMapState: function(){
             return this.model.getMapState();
@@ -182,20 +180,6 @@
          */
         zoomToLayer: function(options){
             this.model.zoomToLayer(options);
-        },
-        /**
-         *
-         */
-        ready: function(callback){
-            if(this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function(){
-            this.readyState = true;
         },
         /**
          * Turns on the highlight layer at map

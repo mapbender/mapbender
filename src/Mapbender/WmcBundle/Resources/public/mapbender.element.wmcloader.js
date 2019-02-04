@@ -29,7 +29,6 @@
                 wmcHandlier.loadFromUrl(this.elementUrl + 'wmcfromurl', wmc_url);
             }
             this._trigger('ready');
-            this._ready();
         },
         /**
          * Default action for mapbender element
@@ -242,20 +241,6 @@
             form.appendTo($('body'));
             form.submit();
             form.remove();
-        },
-        /**
-         *
-         */
-        ready: function(callback){
-            if(this.readyState === true){
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function(){
-            this.readyState = true;
         },
         _destroy: $.noop
     });

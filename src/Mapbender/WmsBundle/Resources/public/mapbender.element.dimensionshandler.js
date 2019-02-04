@@ -18,7 +18,6 @@
                 this._setupGroup(dimId);
             }
             this._trigger('ready');
-            this._ready();
         },
         _setupGroup: function (key) {
             var self = this;
@@ -47,14 +46,6 @@
                     });
                 }
             });
-        },
-        ready: function (callback) {
-            if (this.readyState === true) {
-                callback();
-            }
-        },
-        _ready: function() {
-            this.readyState = true;
         },
         _destroy: $.noop
     });
