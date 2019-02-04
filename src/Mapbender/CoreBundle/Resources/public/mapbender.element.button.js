@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    $.widget("mapbender.mbButton", $.mapbender.mbBaseElement, {
+    $.widget("mapbender.mbButton", {
         options: {
             target: undefined,
             click: undefined,
