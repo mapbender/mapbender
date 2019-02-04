@@ -24,13 +24,6 @@
         map: null,
 
         /**
-         * Ready event listeners
-         *
-         * @var {Array<Function>}
-         */
-        readyCallbacks: [],
-
-        /**
          * Constructor
          *
          * @private
@@ -85,7 +78,6 @@
             model.setOnMoveendHandler($.proxy(widget._updateScale, widget), event);
 
             widget._trigger('ready');
-            widget._ready();
         },
 
         /**
@@ -117,42 +109,6 @@
                 .val(scale)
                 .siblings('.dropdownValue')
                 .text(scale);
-        },
-
-        /**
-         * Adds event listener callback function
-         * Called on widget is ready
-         *
-         * @param {Function} callback
-         */
-        ready: function(callback) {
-            var widget = this;
-            if(widget.readyState === true) {
-                callback();
-            } else {
-                widget.readyCallbacks.push(callback);
-            }
-        },
-
-        /**
-         * On ready event handler
-         *
-         * @private
-         */
-        _ready: function() {
-            var widget = this;
-            var callbacks = widget.readyCallbacks;
-
-            _.each(callbacks, function(callback) {
-
-                // Call and change context to widget
-                callback.call(widget);
-
-                // Remove from array
-                callbacks.splice(callbacks.indexOf(callback), 1);
-            });
-
-            widget.readyState = true;
         },
 
         _destroy: $.noop

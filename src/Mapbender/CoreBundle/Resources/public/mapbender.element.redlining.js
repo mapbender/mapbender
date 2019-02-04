@@ -99,7 +99,6 @@
             this.setupMapEventListeners();
 
             this._trigger('ready');
-            this._ready();
         },
         setupMapEventListeners: function() {
             $(document).on('mbmapsourceadded', this._moveLayerToLayerStackTop.bind(this));
@@ -435,26 +434,6 @@
                 this.map.raiseLayer(this.layer, this.map.getNumLayers());
                 this.map.resetLayersZIndex();
             }
-        },
-        /**
-         *
-         */
-        ready: function(callback){
-            if(this.readyState === true) {
-                callback();
-            } else {
-                this.readyCallbacks.push(callback);
-            }
-        },
-        /**
-         *
-         */
-        _ready: function(){
-            for(callback in this.readyCallbacks) {
-                callback();
-                delete(this.readyCallbacks[callback]);
-            }
-            this.readyState = true;
         }
     });
 

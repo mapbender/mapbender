@@ -34,7 +34,7 @@
                 // if we start closed, wait with initialization until opened
                 this._initDisplay();
             }
-            this._ready();
+            this._trigger('ready');
             $element.find('.toggleOverview').bind('click', this._openClose.bind(this));
         },
         _initDisplay: function() {
@@ -245,26 +245,6 @@
             this.control_.update();
             ovMap.setCenter(center, ovMap.getZoom(), false, true);
             */
-        },
-
-        /**
-         * Puts callback on ready
-         * @param {function} callback Function this runs after widget is ready
-         */
-        ready: function(callback){
-            if(this.readyState === true){
-                callback();
-            }
-        },
-
-        /**
-         * Runs if widget is ready
-         */
-        _ready: function() {
-            var widget = this;
-            widget._trigger('ready');
-
-            widget.readyState = true;
         }
 
     });

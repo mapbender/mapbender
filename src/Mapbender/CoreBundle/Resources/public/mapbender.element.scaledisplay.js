@@ -40,7 +40,6 @@
             model.setOnMoveendHandler($.proxy(widget._updateScale, widget), event);
 
             this._trigger('ready');
-            this._ready();
         },
         _updateScale: function() {
             var widget = this;
@@ -71,20 +70,6 @@
          */
         _changeSrs: function(event, srs){
             this.scaledisplay.updateScale();
-        },
-        /**
-         *
-         */
-        ready: function(callback) {
-            if(this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         }
 
     });

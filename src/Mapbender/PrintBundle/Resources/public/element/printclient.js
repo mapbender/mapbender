@@ -471,21 +471,6 @@
                     }
                 }.bind(this)
             });
-        },
-
-        /**
-         *
-         */
-        ready: function(callback) {
-            if(this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         }
     });
 

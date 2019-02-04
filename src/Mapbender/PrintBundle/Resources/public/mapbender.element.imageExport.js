@@ -27,7 +27,6 @@
             };
 
             this._trigger('ready');
-            this._ready();
         },
         defaultAction: function(callback){
             this.open(callback);
@@ -80,20 +79,6 @@
             } else {
                 this.callback = null;
             }
-        },
-        /**
-         *
-         */
-        ready: function(callback) {
-            if(this.readyState === true){
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         },
         /**
          *

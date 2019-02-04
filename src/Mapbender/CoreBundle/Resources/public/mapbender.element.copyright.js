@@ -10,7 +10,6 @@
                 this.open();
             }
             this._trigger('ready');
-            this._ready();
         },
         
         /**
@@ -54,20 +53,6 @@
                 this.popup.close();
             }
             this.callback ? this.callback.call() : this.callback = null;
-        },
-        /**
-         *
-         */
-        ready: function(callback) {
-            if(this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         },
         _destroy: $.noop
     });

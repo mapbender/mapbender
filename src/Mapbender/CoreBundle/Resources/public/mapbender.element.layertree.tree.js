@@ -65,7 +65,6 @@
             }
             this.element.removeClass('hidden');
             this._trigger('ready');
-            this._ready();
         },
         _getConfiguredLayersetConfigs: function() {
             var layerSetIds = this.mbMap.options.layersets.reverse();
@@ -1051,20 +1050,6 @@
                 }
             }
             this.callback ? this.callback.call() : this.callback = null;
-        },
-        /**
-         *
-         */
-        ready: function(callback) {
-            if (this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         },
         _findLayersetWithSource: function(source) {
             var layerset = null;

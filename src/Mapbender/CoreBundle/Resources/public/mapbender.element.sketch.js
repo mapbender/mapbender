@@ -21,7 +21,6 @@
         _setup: function() {
             this.model = Mapbender.elementRegistry.listWidgets().mapbenderMbMap.model;
             this._trigger('ready');
-            this._ready();
         },
 
         /**
@@ -52,16 +51,6 @@
                 this.model.removeInteractions();
                 this.activated = false;
             }
-        },
-
-        ready: function(callback) {
-            if(this.readyState === true){
-                callback();
-            }
-        },
-
-        _ready: function() {
-            this.readyState = true;
         }
     });
 })(jQuery);

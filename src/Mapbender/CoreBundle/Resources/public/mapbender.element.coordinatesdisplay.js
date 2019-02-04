@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    $.widget("mapbender.mbCoordinatesDisplay", $.mapbender.mbBaseElement, {
+    $.widget("mapbender.mbCoordinatesDisplay", {
         options: {
             target: null,
             empty: 'x= -<br>y= -',

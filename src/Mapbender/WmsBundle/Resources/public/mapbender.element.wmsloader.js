@@ -53,7 +53,6 @@
                 this._getInstances(this.options.wms_id, options);
             }
             this._trigger('ready');
-            this._ready();
         },
         defaultAction: function(callback){
             this.open(callback);
@@ -236,14 +235,6 @@
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
             Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
-        },
-        ready: function(callback){
-            if(this.readyState === true){
-                callback();
-            }
-        },
-        _ready: function(){
-            this.readyState = true;
         },
         _destroy: $.noop
     });

@@ -48,7 +48,6 @@
             $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
 
             this._trigger('ready');
-            this._ready();
         },
 
         /**
@@ -79,24 +78,7 @@
             // this.scalebar.geodesic = (units === 'degrees');
             // this.scalebar.update();
             // OL2 control end
-        },
-
-        /**
-         *
-         */
-        ready: function(callback) {
-            if(this.readyState === true) {
-                callback();
-            }
-        },
-
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         }
-
     });
 
 })(jQuery);

@@ -360,29 +360,6 @@
             }
 
             return widget;
-        },
-
-        /**
-         * Determinate ready state of plugin
-         *
-         * @param {mapbender.mbGpsPosition~readyCallback} callback - Callback to run on plugin ready
-         * @returns {self}
-         */
-        ready: function (callback) {
-            if (this.readyState === true) {
-                /** @callback mapbender.mbGpsPosition~readyCallback */
-                callback();
-            } else {
-                this.readyCallbacks.push(callback);
-            }
-            return this;
-        },
-
-        _ready: function () {
-            for (var i = 0,len = this.readyCallbacks.length; i < len; i += 1) {
-                this.readyCallbacks.splice(0, 1)();
-            }
-            this.readyState = true;
         }
     });
 

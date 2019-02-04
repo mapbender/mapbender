@@ -53,7 +53,6 @@
             this.segments = $('<ul/>').appendTo(this.container);
 
             this._trigger('ready');
-
         },
         /**
          * Default action for mapbender element
@@ -200,7 +199,6 @@
         formatLength: function(length) {
             var unit = (this.options.type === 'line') ? ' km' : ' km²';
             return (length / 1000).toFixed(this.options.precision) + unit;
-
         }
 
     });
