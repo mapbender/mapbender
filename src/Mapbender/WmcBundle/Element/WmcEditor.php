@@ -160,8 +160,8 @@ class WmcEditor extends WmcBase
      */
     protected function setPublic()
     {
-        $wmcid = $this->container->get("request")->get("wmcid", null);
-        $enabled = $this->container->get("request")->get("public", null);
+        $wmcid = $this->container->get('request_stack')->getCurrentRequest()->get("wmcid", null);
+        $enabled = $this->container->get('request_stack')->getCurrentRequest()->get("public", null);
         $wmc = $this->container->get('doctrine')
             ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
             ->find($wmcid);
@@ -183,7 +183,7 @@ class WmcEditor extends WmcBase
      */
     protected function getWmc()
     {
-        $wmcid = $this->container->get("request")->get("wmcid", null);
+        $wmcid = $this->container->get('request_stack')->getCurrentRequest()->get("wmcid", null);
         $wmchandler = $this->wmcHandlerFactory();
         if ($wmcid) {
             $wmc = $wmchandler->getWmc($wmcid, false);
@@ -218,7 +218,7 @@ class WmcEditor extends WmcBase
      */
     protected function loadWmc()
     {
-        $wmcid = $this->container->get('request')->get("_id", null);
+        $wmcid = $this->container->get('request_stack')->getCurrentRequest()->get("_id", null);
         if ($wmcid) {
             $wmchandler = $this->wmcHandlerFactory();
             $wmc = $wmchandler->getWmc($wmcid, false);
@@ -259,7 +259,7 @@ class WmcEditor extends WmcBase
     protected function saveWmc()
     {
         $wmchandler = $this->wmcHandlerFactory();
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $wmc = Wmc::create();
         $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
         if ($request->getMethod() === 'POST') {
@@ -330,7 +330,7 @@ class WmcEditor extends WmcBase
      */
     protected function confirmDeleteWmc()
     {
-        $wmcid = $this->container->get('request')->get("_id", null);
+        $wmcid = $this->container->get('request_stack')->getCurrentRequest()->get("_id", null);
         if ($wmcid) {
             $wmchandler = $this->wmcHandlerFactory();
             $wmc = $wmchandler->getWmc($wmcid, false);
@@ -359,8 +359,8 @@ class WmcEditor extends WmcBase
     {
         $wmc = Wmc::create();
         $form = $this->container->get("form.factory")->create(new WmcDeleteType(), $wmc);
-        if ($this->container->get('request')->getMethod() === 'POST') {
-            $form->bind($this->container->get('request'));
+        if ($this->container->get('request_stack')->getCurrentRequest()->getMethod() === 'POST') {
+            $form->bind($this->container->get('request_stack')->getCurrentRequest());
             if ($form->isValid()) {
                 $wmchandler = $this->wmcHandlerFactory();
                 $wmcid = $wmc->getId();
