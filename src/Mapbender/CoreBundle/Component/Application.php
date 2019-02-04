@@ -16,6 +16,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
  * For asset collection and compilation @see \Mapbender\CoreBundle\Asset\ApplicationAssetService
  * For client-facing configuration emission @see \Mapbender\CoreBundle\Component\Presenter\Application\ConfigService
  * For Yaml application permissions setup @see \Mapbender\CoreBundle\Component\YamlApplicationImporter
+ * For creating / cloning / destroying uploads directories @see \Mapbender\CoreBundle\Component\UploadsManager
  *
  * @deprecated
  * @internal
@@ -232,54 +233,6 @@ class Application
     }
 
     /**
-     * If $oldSlug emptyish: Ensures Application-owned subdirectory under uploads exists,
-     * returns true if creation succcessful or it already existed.
-     *
-     * If $oldSlug non-emptyish: Move / rename subdirectory from  $oldSlug to $slug and
-     * returns a boolean indicating success.
-     *
-     * @deprecated for parameter-variadic behavior and swallowing exceptions; use the application_uploads_manager service directly
-     *
-     * @param ContainerInterface $container Container
-     * @param string $slug subdirectory name for presence check / creation
-     * @param string|null $oldSlug source subdirectory that will be renamed to $slug
-     * @return boolean to indicate success or presence
-     */
-    public static function createAppWebDir($container, $slug, $oldSlug = null)
-    {
-        $ulm = static::getServiceStatic($container)->getUploadsManager();
-        try {
-            if ($oldSlug) {
-                $ulm->renameSubdirectory($slug, $oldSlug, true);
-            } else {
-                $ulm->getSubdirectoryPath($slug, true);
-            }
-            return true;
-        } catch (IOException $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Removes application's public directory, if present.
-     *
-     * @param ContainerInterface $container Container
-     * @param string             $slug      application's slug
-     * @return boolean true if the directory was removed or did not exist before the call.
-     * @deprecated use uploads_manager or filesystem service directly
-     */
-    public static function removeAppWebDir($container, $slug)
-    {
-        $ulm = static::getServiceStatic($container)->getUploadsManager();
-        try {
-            $ulm->removeSubdirectory($slug);
-            return true;
-        } catch (IOException $e) {
-            return false;
-        }
-    }
-
-    /**
      * Returns an url to application's public directory.
      *
      * @param ContainerInterface $container Container
@@ -313,25 +266,6 @@ class Application
     {
         $request = $container->get('request_stack')->getCurrentRequest();
         return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-    }
-
-    /**
-     * Copies an application web order.
-     *
-     * @param ContainerInterface $container Container
-     * @param string             $srcSlug  source application slug
-     * @param string             $destSlug  destination application slug
-     * @return boolean true if the application  order has been copied otherwise false.
-     */
-    public static function copyAppWebDir($container, $srcSlug, $destSlug)
-    {
-        $ulm = static::getServiceStatic($container)->getUploadsManager();
-        try {
-            $ulm->copySubdirectory($srcSlug, $destSlug);
-            return true;
-        } catch (IOException $e) {
-            return false;
-        }
     }
 
     /**
