@@ -15,11 +15,15 @@ use Symfony\Component\Filesystem\Exception\IOException;
 /**
  * Collection of servicy behaviors related to application
  *
+ * This class is getting gradually dissolved into a collection of true services that can be replugged and extended
+ * via DI.
+ * For asset collection and compilation @see \Mapbender\CoreBundle\Asset\ApplicationAssetService
+ *
  * @deprecated
  * @internal
  * @author Christian Wygoda
  */
-class Application implements IAssetDependent
+class Application
 {
     /**
      * @var ContainerInterface $container The container
@@ -121,45 +125,6 @@ class Application implements IAssetDependent
     {
         $template = $this->getTemplate();
         return $template->render();
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getValidAssetTypes()
-    {
-        return array(
-            'js',
-            'css',
-            'trans',
-        );
-    }
-
-    /**
-     * Lists assets.
-     *
-     * @return array
-     */
-    public function getAssets()
-    {
-        $assetService = $this->getAssetService();
-        return array(
-            'js' => $assetService->getBaseAssetReferences($this->entity, 'js'),
-            'css' => $assetService->getBaseAssetReferences($this->entity, 'css'),
-            'trans' => $assetService->getBaseAssetReferences($this->entity, 'trans'),
-        );
-    }
-
-    /**
-     * Get the list of asset paths of the given type ('css', 'js', 'trans')
-     * Filters can be applied later on with the ensureFilter method.
-     *
-     * @param string $type use 'css' or 'js' or 'trans'
-     * @return string[]
-     */
-    public function getAssetGroup($type)
-    {
-        return $this->getAssetService()->collectAssetReferences($this->entity, $type);
     }
 
     /**
@@ -449,16 +414,6 @@ class Application implements IAssetDependent
     {
         /** @var ApplicationService $service */
         $service = $container->get('mapbender.presenter.application.service');
-        return $service;
-    }
-
-    /**
-     * @return \Mapbender\CoreBundle\Asset\ApplicationAssetService
-     */
-    protected function getAssetService()
-    {
-        /** @var \Mapbender\CoreBundle\Asset\ApplicationAssetService $service */
-        $service = $this->container->get('mapbender.application_asset.service');
         return $service;
     }
 }
