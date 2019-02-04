@@ -2,6 +2,7 @@
 
     $.widget("mapbender.mbPrintClient",  $.mapbender.mbImageExport, {
         options: {
+            locale: null,
             style: {
                 fillColor:     '#ffffff',
                 fillOpacity:   0.5,
@@ -19,10 +20,15 @@
         overwriteTemplates: false,
         digitizerData: null,
         printBounds: null,
+        jobList: null,
 
         _setup: function(){
             var self = this;
+            var $jobList = $('.job-list', this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            if ($jobList.length) {
+                this._initJobList($jobList);
+            }
 
             $('select[name="scale_select"]', this.$form)
                 .on('change', $.proxy(this._updateGeometry, this));
@@ -58,7 +64,7 @@
             var self = this;
             if (this.options.type === 'dialog') {
                 if(!this.popup || !this.popup.$element){
-                    this.popup = new Mapbender.Popup2({
+                    this.popup = new Mapbender.Popup({
                             title: self.element.attr('title'),
                             draggable: true,
                             header: true,
@@ -66,7 +72,7 @@
                             closeOnESC: false,
                             content: self.element,
                             width: 400,
-                            height: 490,
+                            scrollable: false,
                             cssClass: 'customPrintDialog',
                             buttons: {
                                     'cancel': {
@@ -91,9 +97,16 @@
                     this._setScale();
                 }
             }
+            // restart job list reloading by re-activating the current tab
+            if (this.jobList) {
+                this.jobList.resume();
+            }
         },
 
         close: function() {
+            if (this.jobList) {
+                this.jobList.pause();
+            }
             if (this.popup) {
                 this._updateElements(false);
                 if (this.overwriteTemplates) {
@@ -240,41 +253,25 @@
         _collectLegends: function() {
             var legends = [];
             var scale = this._getPrintScale();
-            function _getLegends(layer) {
-                var legend = {};
-                if (!layer.options.treeOptions.selected) {
-                    return false;
-                }
-                if (layer.children) {
-                    var childrenActive = false;
-                    for (var i = 0; i < layer.children.length; i++) {
-                        var childLegends = _getLegends(layer.children[i]);
-                        if (childLegends !== false) {
-                            _.assign(legend, childLegends);
-                            childrenActive = true;
-                        }
-                    }
-                    if (!childrenActive) {
-                        return false;
-                    }
-                }
-                // Only include the legend for a "group" / non-leaf layer if we haven't collected any
-                // legend images from leaf layers yet, but at least one leaf layer is actually active
-                if (!Object.keys(legend).length) {
-                    if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected) {
-                        legend[layer.options.title] = layer.options.legend.url;
-                    }
-                }
-                return legend;
-            }
             var sources = this._getRasterSourceDefs();
             for (var i = 0; i < sources.length; ++i) {
                 var source = sources[i];
-                if (source.type === 'wms' && this._getRasterVisibilityInfo(source, scale).layers.length) {
-                    var ll = _getLegends(sources[i].configuration.children[0]);
-                    if (ll && Object.keys(ll).length) {
-                        legends = legends.concat(ll);
+                var gsHandler = this.map.model.getGeoSourceHandler(source);
+                var leafInfo = gsHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
+                var sourceLegendMap = {};
+                _.forEach(leafInfo, function(activeLeaf) {
+                    if (activeLeaf.state.visibility) {
+                        for (var p = -1; p < activeLeaf.parents.length; ++p) {
+                            var legendLayer = (p < 0) ? activeLeaf.layer : activeLeaf.parents[p];
+                            if (legendLayer.options.legend && legendLayer.options.legend.url) {
+                                sourceLegendMap[legendLayer.options.title] = legendLayer.options.legend.url;
+                                break;
+                            }
+                        }
                     }
+                });
+                if (Object.keys(sourceLegendMap).length) {
+                    legends.push(sourceLegendMap);
                 }
             }
             return legends;
@@ -377,9 +374,8 @@
             this._submitJob(jobData);
         },
         _onSubmit: function(evt) {
-            if (this.options.autoClose){
-                this.popup.close();
-            }
+            // switch to queue display tab on successful submit
+            $('.tab-container', this.element).tabs({active: 1});
         },
         _getTemplateSize: function() {
             var self = this;
@@ -453,6 +449,28 @@
                 ++count;
             });
             this.overwriteTemplates = true;
+        },
+
+        _initJobList: function($jobListPanel) {
+            var jobListOptions = {
+                url: this.elementUrl + 'queuelist',
+                locale: this.options.locale || window.navigator.language
+            };
+            var jobList = this.jobList = $['mapbender']['mbPrintClientJobList'].call($jobListPanel, jobListOptions, $jobListPanel);
+            $('.tab-container', this.element).tabs({
+                active: 0,
+                classes: {
+                    // inherit colors etc from .tabContainerAlt.tab onto ui-tabs-tab
+                    "ui-tabs-tab": "tab"
+                },
+                activate: function (event, ui) {
+                    if (ui.newPanel.hasClass('job-list')) {
+                        jobList.start();
+                    } else {
+                        jobList.stop();
+                    }
+                }.bind(this)
+            });
         },
 
         /**

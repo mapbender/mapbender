@@ -103,10 +103,9 @@
          * @private
          */
         _getRasterVisibilityInfo: function(sourceDef, scale) {
-            var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+            var layer = this.map.model.getNativeLayer(sourceDef);
             if (scale) {
-                var toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: sourceDef.mqlid}};
-                var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale, toChangeOpts);
+                var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale, {});
                 return {
                     layers: geoSourceResponse.layers,
                     styles: geoSourceResponse.styles

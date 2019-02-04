@@ -47,6 +47,12 @@ Mapbender.Event.Dispatcher = Class({
     }
 });
 /**
+ * @typedef Model~ExtendedLayerInfo
+ * @property {Object} layer
+ * @property {Model~LayerState} state
+ * @property {Array<Object>} parents
+ */
+/**
  * Abstract Geo Source Handler
  * @author Paul Schmidt
  */
@@ -65,156 +71,56 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'abstract public function getPrintConfig': function(layer, bounds, isProxy) {
     },
-    'abstract public function createSourceDefinitions': function(xml, options) {
-    }, // to remove
-    'public function on': function(eventName) {
-
-    },
     'public function postCreate': function(olLayer) {
 
     },
-    'public function removeSignature': function(url){
-        return Mapbender.Util.removeSignature(url);
-    },
     'public function changeProjection': function(source, projection) {
     },
-    'public function onLoadStart': function(source) {
-
-    },
-    'public function onLoadError': function(imgEl, sourceId, projection, callback) {
-        var loadError = {
-            sourceId: sourceId,
-            details: ''
-        };
-        var url = Mapbender.configuration.application.urls.proxy + "?url="
-            + encodeURIComponent(Mapbender.Util.removeProxy(imgEl.attr('src')));
-        $.ajax({
-            type: "GET",
-            async: false,
-            url: url,
-            success: function(message, text, response) {
-                if (typeof (response.responseText) === "string") {
-                    var details = Mapbender.trans("mb.geosource.image_error.datails");
-                    var layerTree;
-                    try {
-                        layerTree = new OpenLayers.Format.WMSCapabilities().read(response.responseText);
-                    } catch (e) {
-                        layerTree = null;
-                        details += ".\n" + Mapbender.trans("mb.geosource.image_error.exception", {
-                            'exception': e.toString()
-                        });
-                    }
-                    if (layerTree && layerTree.error) {
-                        if (layerTree.error.exceptionReport && layerTree.error.exceptionReport.exceptions) {
-                            var excs = layerTree.error.exceptionReport.exceptions;
-                            details += ":";
-                            for (var m = 0; m < excs.length; m++) {
-                                var exc = excs[m].code;
-                                details += "\n" + exc;
-                                if (excs[m].code == "InvalidSRS") {
-                                    details += " (" + projection.projCode + ")";
-                                }
-                            }
-                        }
-                    }
-                }
-                loadError.details = details;
-                callback(loadError);
-            },
-            error: function(err) {
-                var details = Mapbender.trans("mb.geosource.image_error.datails");
-                if (err.status == 200) {
-                    var capabilities;
-                    try {
-                        capabilities = new OpenLayers.Format.WMSCapabilities().read(err.responseText);
-                    } catch (e) {
-                        capabilities = null;
-                        details += ".\n" + Mapbender.trans("mb.geosource.image_error.exception", {
-                            'exception': e.toString()
-                        });
-                    }
-                    if (capabilities && capabilities.error) {
-                        if (capabilities.error.exceptionReport && capabilities.error.exceptionReport.exceptions) {
-                            var excs = capabilities.error.exceptionReport.exceptions;
-                            details += ":";
-                            for (var m = 0; m < excs.length; m++) {
-                                var exc = excs[m].code;
-                                details += "\n" + exc;
-                                if (excs[m].code == "InvalidSRS") {
-                                    details += " (" + projection.projCode + ")";
-                                }
-                                if (exc != excs[m].code) {
-
-                                } else if (excs[m].text) {
-                                    details += "\n" + excs[m].text;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    details += ".\n" + Mapbender.trans(
-                        "mb.geosource.image_error.statuscode") + ": " + err.status + " - " + err.statusText;
-                }
-                loadError.details = details;
-                callback(loadError);
-            }
-        });
-    },
-    'public function getLayersList': function(source, offsetLayer, includeOffset) {
-        var rootLayer,
-            _source;
-        _source = $.extend(true, {}, source);//.configuration.children[0];
-        rootLayer = _source.configuration.children[0];
-        var options = {
-            layers: [
-            ],
-            found: false,
-            includeOffset: includeOffset
-        };
-        if (rootLayer.options.id.toString() === offsetLayer.options.id.toString()) {
-            options.found = true;
-        }
-        options = _findLayers(rootLayer, offsetLayer, options);
+    getLayersList: function getLayersList(source, offsetLayer, includeOffset) {
+        var _source = $.extend(true, {}, source);
+        var rootLayer = _source.configuration.children[0];
+        var layerFound = rootLayer.options.id.toString() === offsetLayer.options.id.toString();
+        var layersOut = [];
+        _findLayers(rootLayer);
         return {
             source: _source,
-            layers: options.layers
+            layers: layersOut
         };
 
-        function _findLayers(layer, offsetLayer, options) {
+        function _findLayers(layer) {
             if (layer.children) {
                 var i = 0;
                 for (; i < layer.children.length; i++) {
                     if (layer.children[i].options.id.toString() === offsetLayer.options.id.toString()) {
-                        options.found = true;
+                        layerFound = true;
                     }
-                    if (options.found) {
+                    if (layerFound) {
                         var matchOffset = i;
-                        if (!options.includeOffset) {
+                        if (!includeOffset) {
                             matchOffset += 1;
                         }
                         var matchLength = layer.children.length - matchOffset;
                         // splice modifies the original Array => work with a shallow copy
                         var layersCopy = layer.children.slice();
                         var matchedLayers = layersCopy.splice(matchOffset, matchLength);
-                        options.layers = options.layers.concat(matchedLayers);
+                        layersOut = layersOut.concat(matchedLayers);
 
                         break;
                     }
-                    options = _findLayers(layer.children[i], offsetLayer, options);
+                    _findLayers(layer.children[i]);
                 }
             }
-            return options;
         }
     },
-    'public function addLayer': function(source, layerToAdd, parentLayerToAdd, position) {
+    addLayer: function addLayer(source, layerToAdd, parentLayerToAdd, position) {
         var rootLayer = source.configuration.children[0];
         var options = {
             layer: null
         };
-        options = _addLayer(rootLayer, layerToAdd, parentLayerToAdd, position, options);
+        _addLayer(rootLayer);
         return options.layer;
 
-        function _addLayer(layer, layerToAdd, parentLayerToAdd, position, options) {
+        function _addLayer(layer) {
             if (layer.options.id.toString() === parentLayerToAdd.options.id.toString()) {
                 if (layer.children) {
                     layer.children.splice(position, 0, layerToAdd);
@@ -225,17 +131,14 @@ Mapbender.Geo.SourceHandler = Class({
                     layer.children.push($.extend(true, layerToAdd));
                     options.layer = layer.children[0];
                 }
-                return options;
-            }
-            if (layer.children) {
+            } else if (layer.children) {
                 for (var i = 0; i < layer.children.length; i++) {
-                    options = _addLayer(layer.children[i], layerToAdd, parentLayerToAdd, position, options);
+                    _addLayer(layer.children[i]);
                 }
             }
-            return options;
         }
     },
-    'public function removeLayer': function(source, layerToRemove) {
+    removeLayer: function removeLayer(source, layerToRemove) {
         var rootLayer = source.configuration.children[0];
         if (layerToRemove.options.id.toString() === rootLayer.options.id.toString()) {
             source.configuration.children = [];
@@ -246,16 +149,16 @@ Mapbender.Geo.SourceHandler = Class({
         var options = {
             layer: null,
             layerToRemove: null
-        };//, listToRemove: {}, addToList: false }
-        options = _removeLayer(rootLayer, layerToRemove, options);
+        };
+        _removeLayer(rootLayer, layerToRemove);
         return {
             layer: options.layerToRemove
         };
 
-        function _removeLayer(layer, layerToRemove, options) {
+        function _removeLayer(layer) {
             if (layer.children) {
                 for (var i = 0; i < layer.children.length; i++) {
-                    options = _removeLayer(layer.children[i], layerToRemove, options);
+                    _removeLayer(layer.children[i]);
                     if (options.layer) {
                         if (options.layer.options.id.toString() === layerToRemove.options.id.toString()) {
                             var layerToRemArr = layer.children.splice(i, 1);
@@ -269,14 +172,12 @@ Mapbender.Geo.SourceHandler = Class({
             if (layer.options.id.toString() === layerToRemove.options.id.toString()) {
                 options.layer = layer;
                 options.layerToRemove = layer;
-                return options;
             } else {
                 options.layer = null;
-                return options;
             }
         }
     },
-    'public function findLayer': function(source, optionToFind) {
+    findLayer: function findLayer(source, optionToFind) {
         var options = {
             level: 0,
             idx: 0,
@@ -297,203 +198,80 @@ Mapbender.Geo.SourceHandler = Class({
         });
         return options;
     },
-    'public function checkInfoLayers': function(source, scale, tochange, result) {
-        if (!result)
-            result = {
-                infolayers: [
-                ],
-                changed: {
-                    sourceIdx: {
-                        id: source.id
-                    },
-                    children: {}
-                }
-            };
-
-
+    checkInfoLayers: function checkInfoLayers(source, scale, tochange) {
+        console.warn("checkInfoLayers is equivalent to changeOptions");
+        return this.changeOptions(source, scale, tochange);
+    },
+    applyTreeOptions: function applyTreeOptions(source, layerOptionsMap) {
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
-            if (typeof layer.options.treeOptions.info === 'undefined') {
-                layer.options.treeOptions.info = false;
-            }
-            var layerChanged = tochange.options.children[layer.options.id];
-            if (layerChanged && layer.options.name) {
-                if (layerChanged.options.treeOptions.info !== layer.options.treeOptions.info) {
-                    layer.options.treeOptions.info = layerChanged.options.treeOptions.info;
-                    result.changed.children[layer.options.id] = layerChanged;
+            var layerId = layer.options.id;
+            var newTreeOptions = ((layerOptionsMap[layerId] || {}).options || {}).treeOptions;
+            if (newTreeOptions) {
+                var currentTreeOptions = layer.options.treeOptions;
+                var optionsTasks = [['selected', true], ['info', true], ['toggle', false]];
+                for (var oti = 0; oti < optionsTasks.length; ++oti) {
+                    var optionName = optionsTasks[oti][0];
+                    var checkAllow = optionsTasks[oti][1];
+                    if (typeof newTreeOptions[optionName] !== 'undefined' && (!checkAllow || currentTreeOptions.allow[optionName])) {
+                        if (currentTreeOptions[optionName] !== newTreeOptions[optionName]) {
+                            currentTreeOptions[optionName] = newTreeOptions[optionName];
+                        }
+                    }
                 }
-            }
-            if (layer.options.treeOptions.info && layer.state.visibility) {
-                var layerName = layer.options.name;
-                // layer names can be emptyish, most commonly on root layers
-                // we will avoid appending an empty string to the list of queryable layers
-                if (layerName && layerName.length) {
-                    result.infolayers.push(layerName);
-                }
-                result.infolayers.push(layer.options.name);
             }
         });
-
-        return result;
     },
     /**
      * Returns object's changes : { layers: [], infolayers: [], changed: changed };
      */
-    'public function changeOptions': function(source, scale, toChangeOpts, result) {
-        var optLength = 0;
-        var self = this;
-        if (toChangeOpts.options) {
-            for (attr in toChangeOpts.options)
-                optLength++;
-        }
-        if (optLength > 0) {/* change source options -> set */
-            if (toChangeOpts.options.configuration) {
-                var configuration = toChangeOpts.options.configuration;
-                if (configuration.options) {
-                    var rootId = source.configuration.children[0].options.id;
-                    if (!toChangeOpts.options.children)
-                        toChangeOpts.options['children'] = {};
-                    if (!toChangeOpts.options.children[rootId])
-                        toChangeOpts.options.children[rootId] = {
-                            options: {}
-                        };
-                    if (typeof configuration.options.visibility !== 'undefined')
-                        $.extend(true, toChangeOpts.options.children[rootId], {
-                            options: {
-                                treeOptions: {
-                                    selected: configuration.options.visibility
-                                }
-                            }
-                        });
-                    if (typeof configuration.options.info !== 'undefined')
-                        $.extend(true, toChangeOpts.options.children[rootId], {
-                            options: {
-                                treeOptions: {
-                                    info: configuration.options.info
-                                }
-                            }
-                        });
-                    if (typeof configuration.options.toggle !== 'undefined')
-                        $.extend(true, toChangeOpts.options.children[rootId], {
-                            options: {
-                                treeOptions: {
-                                    toggle: configuration.options.toggle
-                                }
-                            }
-                        });
+    changeOptions: function changeOptions(source, scale, toChangeOpts) {
+        var newTreeOptions = ((toChangeOpts || {}).options || {}).children || {};
+        // apply tree options
+        this.applyTreeOptions(source, newTreeOptions);
+        // recalculate state
+        var newStates = this.calculateLeafLayerStates(source, scale);
+        // apply states and calculate changeset
+        var changedStates = this.applyLayerStates(source, newStates);
+        // Copy state changeset extended with treeOptions changeset
+        // (a layer's state may change without a treeOptions change and vice versa)
+        var result = {
+            changed: {
+                sourceIdx: {
+                    id: source.id
+                },
+                children: $.extend(true, {}, newTreeOptions, changedStates)
+            }
+        };
+        return $.extend(result, this.getLayerParameters(source, newStates));
+    },
+    getLayerParameters: function getLayerParameters(source, stateMap) {
+        var result = {
+            layers: [],
+            styles: [],
+            infolayers: []
+        };
+        var layerParamName = this.layerNameIdent;
+        var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
+        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer) {
+            // Layer names can be emptyish, most commonly on root layers
+            // Suppress layers with empty names entirely
+            if (layer.options[layerParamName]) {
+                var layerState = stateMap[layer.options.id] || layer.state;
+                if (layerState.visibility) {
+                    result.layers.push(layer.options[layerParamName]);
+                    result.styles.push(layer.options.style || '');
+                }
+                if (layerState.info) {
+                    result.infolayers.push(layer.options[layerParamName]);
                 }
             }
+        });
+        if (customLayerOrder) {
+            result.layers = _.filter(customLayerOrder, function(layerName) {
+                return result.layers.indexOf(layerName) !== -1;
+            });
         }
-        if (!result)
-            result = {
-                layers: [
-                ],
-                infolayers: [
-                ],
-                styles: [
-                ],
-                changed: {
-                    sourceIdx: {
-                        id: source.id
-                    },
-                    children: {}
-                }
-            };
-        var rootLayer = source.configuration.children[0];
-        _changeOptions(rootLayer, scale, {
-            state: {
-                visibility: true
-            }
-        },
-        toChangeOpts,
-            result);
         return result;
-        function _copyState(layer) {
-            return {
-                outOfScale: layer.state.outOfScale,
-                outOfBounds: layer.state.outOfBounds,
-                visibility: layer.state.visibility
-            };
-        }
-        function _changeOptions(layer, scale, parentState, toChangeOpts, result) {
-            var layerChanges,
-                elchanged = false;
-            layerChanges = toChangeOpts.options.children[layer.options.id];
-            if (layerChanges) {
-                layerChanges.state = _copyState(layer);
-                var treeChanges = layerChanges.options.treeOptions;
-                var treeOptions = layer.options.treeOptions;
-                if (typeof treeChanges !== 'undefined') {
-                    var optionsTasks = [['selected', true], ['info', true], ['toggle', false]];
-                    for (var oti = 0; oti < optionsTasks.length; ++oti) {
-                        var optionName = optionsTasks[oti][0];
-                        var checkAllow = optionsTasks[oti][1];
-                        if (typeof treeChanges[optionName] !== undefined && (!checkAllow || treeOptions.allow[optionName])) {
-                            if (treeOptions[optionName] === treeChanges[optionName]) {
-                                delete(treeChanges[optionName]);
-                            } else {
-                                treeOptions[optionName] = treeChanges[optionName];
-                                elchanged = true;
-                            }
-                        }
-                    }
-                }
-            } else {
-                layerChanges = {state: _copyState(layer)};
-            }
-            layer.state.outOfScale = !Mapbender.Util.isInScale(scale, layer.options.minScale,
-                layer.options.maxScale);
-            /* @TODO outOfBounds for layers ?  */
-            var newVisibilityState = parentState.state.visibility
-                    && layer.options.treeOptions.selected
-                    && !layer.state.outOfScale
-                    && !layer.state.outOfBounds;
-            if (layer.children) {
-                // Store preliminary visibility for the recursive check, where current layer state will be "parentState"
-                layer.state.visibility = !!newVisibilityState;
-                var atLeastOneChildVisible = false;
-                for (var j = 0; j < layer.children.length; j++) {
-                    var child = _changeOptions(layer.children[j], scale, layer, toChangeOpts, result);
-                    if (child.state.visibility) {
-                        atLeastOneChildVisible = true;
-                    }
-                }
-                // NOTE: Children can only be visible if this layer was already set visible before we called the
-                //       recursive check. Thus if you think this should be a &&, you're not wrong, but the result is
-                //       the same anyway.
-                layer.state.visibility = atLeastOneChildVisible;
-            } else {
-                layer.state.visibility = !!(newVisibilityState && layer.options[self.layerNameIdent].length);
-                if (layer.state.visibility) {
-                    result.layers.push(layer.options[self.layerNameIdent]);
-                    result.styles.push(layer.options.style ? layer.options.style : '');
-                    if (layer.options.treeOptions.info === true) {
-                        result.infolayers.push(layer.options[self.layerNameIdent]);
-                    }
-                }
-            }
-            var stateNames = ['outOfScale', 'outOfBounds', 'visibility'];
-            for (var sni = 0; sni < stateNames.length; ++ sni) {
-                var stateName = stateNames[sni];
-                if (layerChanges.state[stateName] !== layer.state[stateName]) {
-                    layerChanges.state[stateName] = layer.state[stateName];
-                    elchanged = true;
-                } else {
-                    delete(layerChanges.state[stateName]);
-                }
-            }
-            if (elchanged) {
-                layerChanges.state = layer.state;
-                result.changed.children[layer.options.id] = layerChanges;
-            }
-            var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
-            if (customLayerOrder && customLayerOrder.length && result.layers && result.layers.length) {
-                result.layers = _.filter(customLayerOrder, function(layerName) {
-                    return result.layers.indexOf(layerName) !== -1;
-                });
-            }
-
-            return layer;
-        }
     },
     /**
      * @param {object} source wms source
@@ -503,49 +281,32 @@ Mapbender.Geo.SourceHandler = Class({
      * @param {boolean} mergeSelected
      * @returns {object} changes
      */
-    'public function createOptionsLayerState': function(source, changeOptions, defaultSelected, mergeSelected) {
-        var self = this;
-        function setSelected(layer, parent, toChange) {
+    createOptionsLayerState: function createOptionsLayerState(source, changeOptions, defaultSelected, mergeSelected) {
+        var layerChanges = {
+        };
+        function setSelected(layer) {
+            var layerOpts = changeOptions.layers[layer.options.id];
+            var childSelected = false;
+            var newTreeOptions;
+            var changedTreeOptions;
             if (layer.children) {
-                var childSelected = false;
                 for (var i = 0; i < layer.children.length; i++) {
                     var child = layer.children[i];
-                    setSelected(child, layer, toChange);
-                    if ((!toChange[child.options.id] && child.options.treeOptions.selected)
-                        || (toChange[child.options.id] && toChange[child.options.id].options.treeOptions.selected)) {
+                    setSelected(child);
+                    if ((!layerChanges[child.options.id] && child.options.treeOptions.selected)
+                        || (layerChanges[child.options.id] && layerChanges[child.options.id].options.treeOptions.selected)) {
                         childSelected = true;
                     }
                 }
-                var layerOpts = changeOptions.layers[layer.options[[self.layerNameIdent]]]
-                    || changeOptions.layers[layer.options.id];
-                if (layerOpts && layerOpts.options.treeOptions.selected !== layer.options.treeOptions.selected) {// change it
-                    toChange[layer.options.id] = {
-                        options: {
-                            treeOptions: {
-                                selected: layerOpts.options.treeOptions.selected
-                            }
-                        }
-                    };
-                    if (layer.options.treeOptions.allow.info) {
-                        toChange[layer.options.id].options.treeOptions['info'] =
-                            layerOpts.options.treeOptions.selected;
-                    }
-                }
-                if (childSelected && !layerOpts && !layer.options.treeOptions.selected) {
-                    toChange[layer.options.id] = {
-                        options: {
-                            treeOptions: {
-                                selected: true
-                            }
-                        }
-                    };
-                    if (layer.options.treeOptions.allow.info) {
-                        toChange[layer.options.id].options.treeOptions['info'] = true;
+                if (layerOpts) {
+                    newTreeOptions = $.extend({}, layerOpts);
+                } else {
+                    newTreeOptions = {
+                        selected: childSelected,
+                        info: childSelected
                     }
                 }
             } else {
-                var layerOpts = changeOptions.layers[layer.options[[self.layerNameIdent]]]
-                    || changeOptions.layers[layer.options.id];
                 if(!layerOpts && defaultSelected === null) {
                     return;
                 }
@@ -553,40 +314,42 @@ Mapbender.Geo.SourceHandler = Class({
                 if (mergeSelected) {
                     sel = sel || layer.options.treeOptions.selected;
                 }
-                if (sel !== layer.options.treeOptions.selected) {
-                    toChange[layer.options.id] = {
-                        options: {
-                            treeOptions: {
-                                selected: sel
-                            }
-                        }
-                    };
-                }
-                if (sel && layer.options.treeOptions.allow.info) {
-                    if (toChange[layer.options.id]) {
-                        toChange[layer.options.id].options.treeOptions['info'] = true;
-                    } else {
-                        toChange[layer.options.id] = {
-                            options: {
-                                treeOptions: {
-                                    info: true
-                                }
-                            }
-                        };
-                    }
-                }
+                newTreeOptions = {
+                    selected: sel,
+                    info: sel
+                };
             }
-        };
+
+            newTreeOptions.info = newTreeOptions.info && layer.options.treeOptions.allow.info;
+
+            if (newTreeOptions.selected !== layer.options.treeOptions.selected) {
+                changedTreeOptions = {
+                    selected: newTreeOptions.selected
+                };
+            }
+            if (newTreeOptions.info !== layer.options.treeOptions.info) {
+                changedTreeOptions = $.extend(changedTreeOptions || {}, {
+                    info: newTreeOptions.info
+                });
+            }
+            if (changedTreeOptions) {
+                layerChanges[layer.options.id] = {
+                    options: {
+                        treeOptions: changedTreeOptions
+                    }
+                };
+            }
+        }
         var changed = {
             sourceIdx: {
                 id: source.id
             },
             options: {
-                children: {},
+                children: layerChanges,
                 type: 'selected'
             }
         };
-        setSelected(source.configuration.children[0], null, changed.options.children);
+        setSelected(source.configuration.children[0]);
         return {
             change: changed
         };
@@ -598,7 +361,7 @@ Mapbender.Geo.SourceHandler = Class({
      * @param {string} layerId
      * @returns {Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair
      */
-    'public function getLayerExtents': function(source, layerId) {
+    getLayerExtents: function getLayerExtents(source, layerId) {
         var extents = null;
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layerDef) {
             if (layerDef.options.id === layerId) {
@@ -616,7 +379,132 @@ Mapbender.Geo.SourceHandler = Class({
         }
         return null;
     },
-    'public function setLayerOrder': function(source, layerIdOrder) {
+    /**
+     * Returns a preview mapping of states of displayable (=leaf) layers as if the given scale + extent were applied
+     * (but they are not!), together with references to the layer definition and its parents.
+     *
+     * @param {Object} source
+     * @param {number} [scale] current value fetched from Mapbender.Model if omitted
+     * @param {*} [extent]
+     * @return {Object<string, Model~ExtendedLayerInfo>}
+     */
+    getExtendedLeafInfo: function(source, scale, extent) {
+        var infoMap = {};
+        var self = this;
+        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
+            var layerId = layer.options.id;
+            var outOfScale = !self.isLayerInScale(layer, scale);
+            var outOfBounds = !self.isLayerWithinBounds(layer, extent);
+            var enabled = !!layer.options.treeOptions.selected;
+            var featureInfo = !!(layer.options.treeOptions.info && layer.options.treeOptions.allow.info);
+            parents.map(function(p) {
+                var parentEnabled = p.options.treeOptions.selected;
+                enabled = enabled && parentEnabled;
+                featureInfo = featureInfo && parentEnabled;
+            });
+            // @todo TBD: disable featureInfo if layer visual is disabled?
+            // featureInfo = featureInfo && enabled
+            var visibility = enabled && !(outOfScale || outOfBounds);
+            infoMap[layerId] = {
+                layer: layer,
+                state: {
+                    outOfScale: outOfScale,
+                    outOfBounds: outOfBounds,
+                    visibility: visibility,
+                    info: featureInfo
+                },
+                parents: parents
+            };
+        });
+        return infoMap;
+    },
+    /**
+     * Returns a preview mapping of states of displayable (=leaf) layers as if the given scale + extent were applied
+     * (but they are not!).
+     *
+     * @param {*} source
+     * @param {number} [scale] uses current map scale if not passed in
+     * @param [extent] currently not used; @todo: implement outOfBounds checking
+     * @returns {Object.<string, Model~LayerState>}
+     */
+    calculateLeafLayerStates: function calculateLeafLayerStates(source, scale, extent) {
+        // delegate to getExtendedLeafInfo and reduce objects to just the 'state' entries
+        return _.mapObject(this.getExtendedLeafInfo(source, scale, extent), function(item) {
+            return item.state;
+        });
+    },
+    /**
+     * Punches (assumed) leaf layer states from stateMap into the source structure, and calculates
+     * a (conservative, imprecise) layer changeset that can be supplied in mbmapsourcechanged event data.
+     * This will also update states of parent layers appropriately, and include these in the changeset.
+     *
+     * @param source
+     * @param {Object.<string, Model~LayerState>} stateMap
+     * @return {Object.<string, Model~LayerChangeInfo>}
+     */
+    applyLayerStates: function applyLayerStates(source, stateMap) {
+        var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
+        var changeMap = {};
+
+        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, offset, parents) {
+            if (layer.children && layer.children.length) {
+                // non-leaf layer visibility is a function of combined leaf layer visibility
+                // start with false (recursion order is root first)
+                layer.state.visibility = false;
+            }
+            var entry = stateMap[layer.options.id];
+            var stateChanged = false;
+            if (entry) {
+                for (var sni = 0; sni < stateNames.length; ++ sni) {
+                    var stateName = stateNames[sni];
+                    if (layer.state[stateName] !== entry[stateName]) {
+                        layer.state = $.extend(layer.state || {}, entry);
+                        changeMap[layer.options.id] = {
+                            state: layer.state,
+                            options: {
+                                treeOptions: layer.options.treeOptions
+                            }
+                        };
+                        stateChanged = true;
+                        break;
+                    }
+                }
+            }
+            for (var p = 0; p < parents.length; ++p) {
+                var parentLayer = parents[p];
+                var parentId = parentLayer.options.id;
+                parentLayer.state.visibility = parentLayer.state.visibility || layer.state.visibility;
+                if (stateChanged) {
+                    changeMap[parentId] = $.extend(changeMap[parentId] || {}, {
+                        state: parentLayer.state
+                    });
+                }
+            }
+        });
+        return changeMap;
+    },
+    /**
+     * @param {Object} layer
+     * @param {number} [scale] current value fetched from Mapbender.Model if omitted
+     * @return {boolean}
+     */
+    isLayerInScale: function(layer, scale) {
+        var scale_ = scale || Mapbender.Model.getScale();
+        return Mapbender.Util.isInScale(scale_, layer.options.minScale, layer.options.maxScale);
+    },
+    /**
+     * @todo: Implement this. Requires detection of applicable SRS, lookup in bbox list by SRS and potentially
+     *        retransformation.
+     *
+     * @param {Object} layer
+     * @param {*} extent
+     * @return {boolean}
+     */
+    isLayerWithinBounds: function(layer, extent) {
+        // HACK: out of bounds calculation broken since introduction of SRS switcher
+        return true;
+    },
+    setLayerOrder: function setLayerOrder(source, layerIdOrder) {
         var newLayerNameOrder = $.map(layerIdOrder, function(layerId) {
             var layerObj = this.findLayer(source, {id: layerId});
             return layerObj.layer.options.name;

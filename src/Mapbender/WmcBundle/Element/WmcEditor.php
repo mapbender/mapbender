@@ -78,17 +78,19 @@ class WmcEditor extends WmcBase
      */
     public function getAssets()
     {
-        $js = array(
-            'jquery.form.js',
-            'mapbender.element.wmceditor.js',
-            'mapbender.wmchandler.js');
         return array(
-            'js' => $js,
+            'js' => array(
+                '@MapbenderWmcBundle/Resources/public/jquery.form.js',
+                '@MapbenderWmcBundle/Resources/public/mapbender.element.wmceditor.js',
+                '@MapbenderWmcBundle/Resources/public/mapbender.wmchandler.js',
+            ),
             'css' => array(
-                'sass/element/wmceditor.scss'),
+                '@MapbenderWmcBundle/Resources/public/sass/element/wmceditor.scss',
+            ),
             'trans' => array(
                 'MapbenderWmcBundle:Element:wmceditor.json.twig',
-                'MapbenderWmcBundle:Element:wmchandler.json.twig')
+                'MapbenderWmcBundle:Element:wmchandler.json.twig',
+            ),
         );
     }
 

@@ -34,7 +34,8 @@ class Sketch extends Element
     {
         return array(
             "mb.core.sketch.tag.sketch",
-            "mb.core.sketch.tag.circle");
+            "mb.core.sketch.tag.circle",
+        );
     }
 
     /**
@@ -51,9 +52,13 @@ class Sketch extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.sketch.js'),
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.sketch.js',
+            ),
             'css' => array(),
-            'trans' => array('MapbenderCoreBundle:Element:sketch.json.twig')
+            'trans' => array(
+                'MapbenderCoreBundle:Element:sketch.json.twig',
+            ),
         );
     }
 
@@ -66,7 +71,7 @@ class Sketch extends Element
             "tooltip" => "Sketch",
             "target" => null,
             "defaultType" => null,
-            "types" => null
+            "types" => null,
         );
     }
 
@@ -78,17 +83,9 @@ class Sketch extends Element
         return 'mapbender.mbSketch';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function render()
+    public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:sketch.html.twig',
-                    array(
-                    'id' => $this->getId(),
-                    "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+        return 'MapbenderCoreBundle:Element:sketch.html.twig';
     }
 
     /**
@@ -98,44 +95,4 @@ class Sketch extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:sketch.html.twig';
     }
-
-    public function httpAction($action)
-    {
-        // TODO access (acl)
-
-        switch ($action) {
-            case 'getForm':
-                return $this->getForm();
-                break;
-            default:
-                throw new NotFoundHttpException('No such action');
-        }
-    }
-
-    protected function getForm()
-    {
-        
-        $html = $this->container->get('templating')
-            ->render('MapbenderCoreBundle:Form:sketch-form.html.twig',
-            array(
-            'id' => $this->getId(),
-            "title" => $this->getTitle(),
-            'configuration' => $this->getConfiguration()));
-        return new Response($html, 200, array('Content-Type' => 'text/html'));
-    }
-
-    protected function saveForm()
-    {
-        $request = $this->container->get('request');
-        // TODO save form
-        // 
-        // if ok
-        return new Response(json_encode(array("success" => MyContent)), 200,
-            array('Content-Type' => 'application/json'));
-        // otherwise
-        return new Response(json_encode(array(
-                "error" => DefineErrorAtTransTwig)), 200,
-            array('Content-Type' => 'application/json'));
-    }
-
 }

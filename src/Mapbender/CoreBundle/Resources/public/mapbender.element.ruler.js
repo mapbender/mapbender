@@ -150,12 +150,6 @@
                 this.map.model.removeVectorLayer(this.id, this.layerId);
                 $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
             }
-
-
-        },
-        _isGeodesic: function() {
-            //var mapProj = this.map.data('mapQuery').olMap.getProjectionObject();
-            return false;//mapProj.proj.units === 'degrees' || mapProj.proj.units === 'dd';
         },
 
         _reset:         function() {

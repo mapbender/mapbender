@@ -6,6 +6,7 @@ namespace Mapbender\IntrospectionBundle\Command;
 
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Mapbender;
 use Mapbender\Component\BundleUtil;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -47,7 +48,7 @@ class ElementClassesCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $elementNames = $this->getElementNames();
+        $elementNames = $this->getMapbender()->getElements();
         $headers = array(
             'Name',
             'Comments',
@@ -58,9 +59,13 @@ class ElementClassesCommand extends ContainerAwareCommand
         );
 
         $rows = array();
+        /** @var ElementFactory $factory */
+        $factory = $this->getContainer()->get('mapbender.element_factory.service');
         foreach ($elementNames as $elementName) {
             try {
-                $instance = $this->createElementInstance($elementName);
+                $entity = new \Mapbender\CoreBundle\Entity\Element();
+                $entity->setClass($elementName);
+                $instance = $factory->componentFromEntity($entity);
                 $rows[$elementName] = $this->formatElementInfo($instance);
             } catch (\Exception $e) {
                 $rows[$elementName] = array(
@@ -162,7 +167,7 @@ class ElementClassesCommand extends ContainerAwareCommand
      */
     protected function formatAssetRefStatus($element)
     {
-        $explicitRefPattern = '^(/|(@[\w]+Bundle/)|([\w]+Bundle:))';
+        $explicitRefPattern = '^(/|\.\./|(@[\w]+Bundle/)|([\w]+Bundle:))';
         $assetRefs = $element->getAssets();
         $implicitRefs = array();
         foreach (call_user_func_array('array_merge', $assetRefs) as $ref) {
@@ -180,42 +185,6 @@ class ElementClassesCommand extends ContainerAwareCommand
             );
             return $glue[2] . implode(implode('', $glue), $implicitRefs) . $glue[0];
         }
-    }
-
-    /**
-     * Instantiate an Element from the given class name
-     *
-     * @param string $elementName
-     * @return Element
-     */
-    protected function createElementInstance($elementName)
-    {
-        $application = $this->getDummyApplication();
-        $elementEntity = new \Mapbender\CoreBundle\Entity\Element();
-        return new $elementName($application, $this->getContainer(), $elementEntity);
-    }
-
-    /**
-     * @return Application
-     */
-    protected function getDummyApplication()
-    {
-        if (!static::$dummyApplication) {
-            $applicationEntity = new \Mapbender\CoreBundle\Entity\Application();
-            static::$dummyApplication = new Application($this->getContainer(), $applicationEntity);
-        }
-        return static::$dummyApplication;
-    }
-
-    /**
-     * @return string[]
-     */
-    protected function getElementNames()
-    {
-        # @todo: bad return type annotation in Mapbender::getElements
-        /** @var string[] $elements */
-        $elements = $this->getMapbender()->getElements();
-        return $elements;
     }
 
     /**

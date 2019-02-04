@@ -1,18 +1,27 @@
 <?php
-namespace Mapbender\CoreBundle\Element\Type;
+namespace Mapbender\PrintBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mapbender\CoreBundle\Form\EventListener\PrintClientSubscriber;
+use Mapbender\PrintBundle\Form\EventListener\PrintClientSubscriber;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
-use Mapbender\CoreBundle\Element\Type\PrintClientTemplateAdminType;
 
 /**
  * 
  */
 class PrintClientAdminType extends AbstractType
 {
+    /** @var bool */
+    protected $queueable;
+
+    /**
+     * @param bool $queuable
+     */
+    public function __construct($queuable)
+    {
+        $this->queueable = $queuable;
+    }
 
     /**
      * @inheritdoc
@@ -59,6 +68,28 @@ class PrintClientAdminType extends AbstractType
             ->add('file_prefix', 'text', array(
                 'required' => false,
             ))
+        ;
+        if ($this->queueable) {
+            $builder->add('renderMode', 'choice', array(
+                'required' => false,            // FOM form theme fails to translate preselected label with required = true
+                'choices' => array(
+                    'direct' => 'mb.print.admin.printclient.renderMode.choice.direct',
+                    'queued' => 'mb.print.admin.printclient.renderMode.choice.queued',
+                ),
+                'choices_as_values' => false,   // FOM form theme fails to translate labels with choice_as_values = true
+                'label' => 'mb.print.admin.printclient.renderMode.label',
+            ));
+            $builder->add('queueAccess', 'choice', array(
+                'required' => false,            // FOM form theme fails to translate preselected label with required = true
+                'choices' => array(
+                    'private' => 'mb.print.admin.printclient.queueAccess.choice.private',
+                    'global' => 'mb.print.admin.printclient.queueAccess.choice.global',
+                ),
+                'choices_as_values' => false,   // FOM form theme fails to translate labels with choice_as_values = true
+                'label' => 'mb.print.admin.printclient.queueAccess.label',
+            ));
+        }
+        $builder
             ->add('rotatable', 'checkbox', array(
                 'required' => false,
             ))

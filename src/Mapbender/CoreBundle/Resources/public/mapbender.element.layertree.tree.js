@@ -479,24 +479,29 @@
         _changeChildren: function(changed) {
             if (changed.children) {
                 for (var layerId in changed.children) {
+                    var layerSettings = changed.children[layerId];
                     var $li = $('li[data-id="' + layerId + '"]', this.element);
                     if ($li.length !== 0) {
                         if ($li.attr("data-type") === this.consts.root && !this._isThemeChecked($li)){
                             continue;
                         }
-                        if (changed.children[layerId].state) {
-                            this._redisplayLayerState($li, changed.children[layerId].state);
+                        var newTreeOptions = (layerSettings.options || {}).treeOptions;
+                        var newLayerState = layerSettings.state;
+                        if (!newLayerState && newTreeOptions) {
+                            newLayerState = {visibility: newTreeOptions.selected};
                         }
-                        if (changed.children[layerId].options) {
-                            if(changed.children[layerId].options.treeOptions.allow){
-                                var chk_selected = $('input[name="selected"]:first', $li);
-                                if(changed.children[layerId].options.treeOptions.allow.selected === true){
-                                    chk_selected.prop('disabled', false).mbCheckbox();
-                                    $li.removeClass('invisible');
-                                } else if(changed.children[layerId].options.treeOptions.allow.selected === false){
-                                    chk_selected.prop('disabled', true).mbCheckbox();
-                                    $li.addClass('invisible');
-                                }
+                        if (newLayerState) {
+                            this._redisplayLayerState($li, newLayerState);
+                        }
+
+                        if (newTreeOptions) {
+                            if (typeof newTreeOptions.selected !== 'undefined') {
+                                var $selectedChk = $('input[name="selected"]:first', $li);
+                                $selectedChk.prop('checked', !!newTreeOptions.selected).mbCheckbox();
+                            }
+                            if (typeof newTreeOptions.info !== 'undefined') {
+                                var $infoChk = $('input[name="info"]:first', $li);
+                                $infoChk.prop('checked', !!newTreeOptions.info).mbCheckbox();
                             }
                         }
                     }
@@ -927,20 +932,7 @@
                         break;
                     case types.group:
                     case types.simple:
-                        model.changeSource({
-                            change: {
-                                layerRemove: {
-                                    sourceIdx: {
-                                        id: layer.sourceid
-                                    },
-                                    layer: {
-                                        options: {
-                                            id: layer.id
-                                        }
-                                    }
-                                }
-                            }
-                        });
+                        model.removeLayer(layer.sourceid, layer.id);
                         break;
                 }
             }

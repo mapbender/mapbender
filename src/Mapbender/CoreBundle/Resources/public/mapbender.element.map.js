@@ -132,6 +132,13 @@
          * options.value - will be passed into the event handler callables as the second argument
          *
          * @see https://github.com/jquery/jquery-ui/blob/1.12.1/ui/widget.js#L659
+         * Triggers an event from the model.
+         * options.name - name of the event,
+         * options.value - parameter in the form of:
+         * options.value.mapquerylayer - for a MapQuery.Layer,
+         * options.value.source - for a source from the model.sourceTree,
+         * options.value.tochange - for a "tochange" object
+         * options.value.changed -  for a "changed" object
          */
         fireModelEvent: function(options) {
             this._trigger(options.name, null, options.value);
@@ -201,21 +208,18 @@
          * Zooms the map in
          */
         zoomIn: function(){
-            // TODO: MapQuery?
             this.map.olMap.zoomIn();
         },
         /**
          * Zooms the map out
          */
         zoomOut: function(){
-            // TODO: MapQuery?
             this.map.olMap.zoomOut();
         },
         /**
          * Zooms the map to max extent
          */
         zoomToFullExtent: function(){
-            // TODO: MapQuery?
             this.map.olMap.zoomToMaxExtent();
         },
         /**
@@ -238,14 +242,12 @@
          * Adds the popup
          */
         addPopup: function(popup){
-            //TODO: MapQuery
             this.map.olMap.addPopup(popup);
         },
         /**
          * Removes the popup
          */
         removePopup: function(popup){
-            //TODO: MapQuery
             this.map.olMap.removePopup(popup);
         },
         /**

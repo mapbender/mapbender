@@ -88,9 +88,13 @@ class Overview extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.overview.js'),
-            //TODO: Split up
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/overview.scss'));
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.overview.js',
+            ),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/overview.scss',
+            ),
+        );
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')

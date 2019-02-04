@@ -52,8 +52,12 @@ class ZoomBar extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.zoombar.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/zoombar.scss')
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.zoombar.js',
+            ),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/zoombar.scss',
+            ),
         );
     }
 

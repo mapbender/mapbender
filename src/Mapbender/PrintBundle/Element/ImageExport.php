@@ -57,12 +57,17 @@ class ImageExport extends Element
      */
     public function getAssets()
     {
-        return array('js' => array('mapbender.element.imageExport.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
+        return array(
+            'js' => array(
+                '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
+            ),
             'css' => array(
-                'sass/element/imageexport.scss'),
-            'trans' => array('MapbenderPrintBundle:Element:imageexport.json.twig'));
+                '@MapbenderPrintBundle/Resources/public/sass/element/imageexport.scss',
+            ),
+            'trans' => array(
+                'MapbenderPrintBundle:Element:imageexport.json.twig',
+            ),
+        );
     }
 
     /**
@@ -162,8 +167,9 @@ class ImageExport extends Element
      */
     protected function getExportService()
     {
-        $exportServiceClassName = $this->container->getParameter('mapbender.imageexport.service.class');
-        return new $exportServiceClassName($this->container);
+        /** @var ImageExportService $service */
+        $service = $this->container->get('mapbender.imageexport.service');
+        return $service;
     }
 
     /**
