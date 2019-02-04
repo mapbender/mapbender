@@ -76,7 +76,6 @@
                 });
             });
             widget._trigger('ready');
-            widget._ready();
         },
         _contentRef: function(mqLayer){
             var $context = this._getContext();
@@ -493,21 +492,6 @@
             }
             w.document.write(printContent);
             w.print();
-        },
-        
-        /**
-         *
-         */
-        ready: function(callback) {
-            if (this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         }
     });
 })(jQuery);

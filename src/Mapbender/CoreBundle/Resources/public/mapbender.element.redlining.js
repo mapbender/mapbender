@@ -38,7 +38,6 @@
             this.setupMapEventListeners();
 
             this._trigger('ready');
-            this._ready();
         },
         setupMapEventListeners: function() {
             $(document).on('mbmapsourceadded', this._moveLayerToLayerStackTop.bind(this));
@@ -324,20 +323,6 @@
                 this.map.raiseLayer(this.layer, this.map.getNumLayers());
                 this.map.resetLayersZIndex();
             }
-        },
-        /**
-         *
-         */
-        ready: function(callback){
-            if(this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function(){
-            this.readyState = true;
         }
     });
 

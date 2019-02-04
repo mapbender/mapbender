@@ -124,7 +124,13 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function getFeatureStyle($geometry)
     {
         $defaults = $this->getDefaultFeatureStyle($geometry['type']);
-        return array_replace($defaults, $geometry['style']);
+        // Special snowflake Digitizer can and will supply NULL for required
+        // style attributes, nuking our defaults. Filter those NULLs, if we have
+        // a default value for them.
+        $filteredStyle = array_filter($geometry['style'], function($value) {
+            return $value !== null;
+        });
+        return array_replace($defaults, $filteredStyle) + $geometry['style'];
     }
 
     /**
@@ -256,16 +262,50 @@ class LayerRendererGeoJson extends LayerRenderer
             imagesetthickness($image, 0);
             imagefilledellipse($image, $p[0], $p[1], $diameter, $diameter, $color);
         }
-        // Circle border
-        if ($this->applyStrokeStyle($canvas, $style)) {
-            // Imageellipse DOES NOT support IMG_COLOR_STYLED-based line styling
-            // It does not even support line thickness.
-            // To support properly styled and patterned point outlining, we have
-            // to generate ~circle geometry ourselves and use a styling-aware drawing
-            // function.
-            $coords = $this->generatePointOutlineCoords($p[0], $p[1], $diameter / 2);
-            $canvas->drawPolygonOutline($coords, IMG_COLOR_STYLED);
+        if ($style['strokeOpacity'] > 0 && $style['strokeWidth']) {
+            $strokeWidth = max(0, intval(round($style['strokeWidth'] * $canvas->featureTransform->lineScale)));
+            if ($strokeWidth > 0) {
+                $strokeColor = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
+                $this->drawCircleOutline($canvas, $p[0], $p[1], $diameter / 2, $strokeColor, $strokeWidth);
+                imagecolordeallocate($canvas->resource, $strokeColor);
+            }
         }
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param int $centerX
+     * @param int $centerY
+     * @param int $radius
+     * @param int $color GDish
+     * @param int $width
+     */
+    protected function drawCircleOutline($canvas, $centerX, $centerY, $radius, $color, $width)
+    {
+        // imageellipse does not support thickness or styling
+        // => draw the outline on a temp image by first drawing an outer filled circle,
+        //    then cut out the inside of the ring by rendering another, smaller circle
+        //    on top of it with a fully transparent color with blending disabled
+        $offsetXy = intval($radius + $width + 1);
+        $sizeWh = 2 * $offsetXy;
+        $tempImage = imagecreatetruecolor($sizeWh, $sizeWh);
+        imagesavealpha($tempImage, true);
+        imagealphablending($tempImage, false);
+        $transparent = imagecolorallocatealpha($tempImage, 255, 255, 255, 127);
+        imagefilledrectangle($tempImage, 0, 0, $sizeWh, $sizeWh, $transparent);
+        $innerDiameter = intval(round(2 * ($radius - 0.5 * $width)));
+        $outerDiameter = intval(round(2 * ($radius + 0.5 * $width)));
+        imagefilledellipse($tempImage, $offsetXy, $offsetXy, $outerDiameter, $outerDiameter, $color);
+        if ($innerDiameter > 0) {
+            // stamp out a fully transparent circle
+            imagefilledellipse($tempImage, $offsetXy, $offsetXy, $innerDiameter, $innerDiameter, $transparent);
+        }
+        imagecolordeallocate($tempImage, $transparent);
+        // merge the temp image onto the target canvas
+        imagealphablending($canvas->resource, true);
+        imagecopyresampled($canvas->resource, $tempImage,
+            $centerX - $offsetXy, $centerY - $offsetXy, 0, 0,
+            $sizeWh, $sizeWh, $sizeWh, $sizeWh);
     }
 
     /**

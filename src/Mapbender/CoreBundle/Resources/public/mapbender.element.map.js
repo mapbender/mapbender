@@ -13,7 +13,6 @@
         elementUrl: null,
         model: null,
         map: null,
-        readyState: false,
 
         /**
          * Creates the map widget
@@ -22,8 +21,6 @@
             OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
             var self = this,
                     me = $(this.element);
-            //Todo: Move to a seperate file. ADD ALL THE EPSGCODES!!!!111
-            jQuery.extend(OpenLayers.Projection.defaults, {'EPSG:31466': {yx : true}});
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
@@ -33,7 +30,6 @@
             });
             this.map = me.data('mapQuery');
             self._trigger('ready');
-            this._ready();
         },
         getMapState: function(){
             return this.model.getMapState();
@@ -182,20 +178,6 @@
          */
         zoomToLayer: function(options){
             this.model.zoomToLayer(options);
-        },
-        /**
-         *
-         */
-        ready: function(callback){
-            if(this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function(){
-            this.readyState = true;
         },
         /**
          * Turns on the highlight layer at map
