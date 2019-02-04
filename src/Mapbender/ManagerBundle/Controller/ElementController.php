@@ -102,9 +102,9 @@ class ElementController extends Controller
         }
 
         $region               = $request->get('region');
-        $element = $this->getFactory()->newEntity($class, $region);
+        $element = $this->getFactory()->newEntity($class, $region, $application);
         $formFactory = $this->getFormFactory();
-        $response = $formFactory->getConfigurationForm($application, $element);
+        $response = $formFactory->getConfigurationForm($element);
         $response["form"] = $response['form']->createView();
         $response += array(
             'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
@@ -132,7 +132,7 @@ class ElementController extends Controller
         $data = $request->get('form');
         $element = $this->getFactory()->newEntity($data['class'], $data['region'], $application);
         $formFactory = $this->getFormFactory();
-        $form = $formFactory->getConfigurationForm($application, $element);
+        $form = $formFactory->getConfigurationForm($element);
 
         $form['form']->submit($request);
 
@@ -172,8 +172,6 @@ class ElementController extends Controller
      */
     public function editAction($slug, $id)
     {
-        $application = $this->getMapbender()->getApplicationEntity($slug);
-
         /** @var Element|null $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
@@ -184,7 +182,7 @@ class ElementController extends Controller
                 . $id . '" does not exist.');
         }
         $formFactory = $this->getFormFactory();
-        $form = $formFactory->getConfigurationForm($application, $element);
+        $form = $formFactory->getConfigurationForm($element);
 
         return array(
             'form' => $form['form']->createView(),
@@ -209,7 +207,6 @@ class ElementController extends Controller
      */
     public function updateAction(Request $request, $slug, $id)
     {
-        $application = $this->getMapbender()->getApplicationEntity($slug);
         /** @var Element $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
@@ -220,7 +217,7 @@ class ElementController extends Controller
                 . $id . '" does not exist.');
         }
         $formService = $this->getFormFactory();
-        $form = $formService->getConfigurationForm($application, $element);
+        $form = $formService->getConfigurationForm($element);
         $form['form']->submit($request);
 
         if ($form['form']->isValid()) {

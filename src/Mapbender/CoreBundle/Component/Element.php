@@ -401,28 +401,6 @@ abstract class Element implements ElementInterface, ElementHttpHandlerInterface
     }
 
     /**
-     * Create form for given element
-     *
-     * @param ContainerInterface $container
-     * @param \Mapbender\CoreBundle\Entity\Application $application
-     * @param Entity             $element
-     * @param bool               $onlyAcl
-     * @return array
-     * @deprecated use the service
-     * @internal
-     */
-    public static function getElementForm($container, $application, Entity $element, $onlyAcl = false)
-    {
-        /** @var ElementFormFactory $formFactory */
-        $formFactory = $container->get('mapbender.manager.element_form_factory.service');
-        if ($onlyAcl) {
-            return $formFactory->getSecurityForm($element);
-        } else {
-            return $formFactory->getConfigurationForm($application, $element);
-        }
-    }
-
-    /**
      * Get lowercase element name from full class namespace
      *
      * @param string $class

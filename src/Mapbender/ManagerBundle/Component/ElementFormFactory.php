@@ -5,7 +5,6 @@ namespace Mapbender\ManagerBundle\Component;
 
 
 use Mapbender\CoreBundle\Component\ExtendedCollection;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -45,11 +44,10 @@ class ElementFormFactory
     }
 
     /**
-     * @param Application $application
      * @param Element $element
      * @return array
      */
-    public function getConfigurationForm($application, $element)
+    public function getConfigurationForm($element)
     {
 
         // Create base form shared by all elements
@@ -61,7 +59,7 @@ class ElementFormFactory
         ;
         $configurationType = $this->getConfigurationFormType($element);
 
-        $options = array('application' => $application);
+        $options = array('application' => $element->getApplication());
         if ($configurationType instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
             $options['element'] = $element;
         }
