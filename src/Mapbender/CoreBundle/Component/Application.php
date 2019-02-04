@@ -15,6 +15,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
  * via DI.
  * For asset collection and compilation @see \Mapbender\CoreBundle\Asset\ApplicationAssetService
  * For client-facing configuration emission @see \Mapbender\CoreBundle\Component\Presenter\Application\ConfigService
+ * For Yaml application permissions setup @see \Mapbender\CoreBundle\Component\YamlApplicationImporter
  *
  * @deprecated
  * @internal
@@ -331,17 +332,6 @@ class Application
         } catch (IOException $e) {
             return false;
         }
-    }
-
-    /**
-     * @deprected
-     * @internal
-     */
-    public function addViewPermissions()
-    {
-        /** @var YamlApplicationImporter $service */
-        $service = $this->container->get('mapbender.yaml_application_importer.service');
-        $service->addViewPermissions($this->getEntity());
     }
 
     /**
