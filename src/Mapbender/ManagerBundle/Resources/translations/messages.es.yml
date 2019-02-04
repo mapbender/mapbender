@@ -66,8 +66,6 @@ mb:
         edit: 'Editar elemento'
         no_element_added:
           '': 'No añadido elemento'
-      messagebox:
-        only_region_elements: 'Only for this region available elements are displayed.'
       zoombar:
         draggable: Mobible
       filter:

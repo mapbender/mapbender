@@ -65,8 +65,6 @@ mb:
         edit: 'Öğe düzenle' #'Edit element'
         no_element_added:
           '': 'Öğe eklenmedi' #'No element added'
-      messagebox:
-        only_region_elements: 'Sadece bu bölgedeki mevcut öğeler gösterilir.' #'Only for this region available elements are displayed.'
       zoombar:
         draggable: 'Sürüklenebilir' #Draggable
       filter:

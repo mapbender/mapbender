@@ -64,8 +64,6 @@ mb:
         edit: bearbeiten
         no_element_added:
           '': 'Kein Element vorhanden'
-      messagebox:
-        only_region_elements: 'Nur für Region verfügbare Elemente werden angezeigt.'
       zoombar:
         draggable: Verschiebbar
       filter:

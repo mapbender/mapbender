@@ -48,24 +48,16 @@ class ElementController extends Controller
         $whitelist   = null;
         $classNames  = null;
 
-        //
-        // It's a quick solution for the Responsive template
-        // Each template should have a whitelist
-        //
-        if($template::getTitle() === 'Responsive'){
-            $whitelist = $template::getElementWhitelist();
-            $whitelist = $whitelist[$region];
+        // Dirty hack for deprecated Responsive template
+        if (method_exists($template, 'getElementWhitelist')) {
+            $regionWhitelist = $template::getElementWhitelist();
+            $classNames = $regionWhitelist[$region];
+        } else {
+            $classNames = $this->getMapbender()->getElements();
         }
 
         $trans      = $this->container->get('translator');
         $elements   = array();
-
-        //
-        // Get only the class names from the whitelist elements, otherwise
-        // get them all
-        //
-        $classNames = ($whitelist) ? $whitelist
-                                   : $this->getMapbender()->getElements();
 
         foreach ($classNames as $elementClassName) {
             $title = $trans->trans($elementClassName::getClassTitle());
@@ -77,14 +69,15 @@ class ElementController extends Controller
                 'class' => $elementClassName,
                 'title' => $title,
                 'description' => $trans->trans($elementClassName::getClassDescription()),
-                'tags' => $tags);
+                'tags' => $tags,
+            );
         }
 
         ksort($elements, SORT_LOCALE_STRING);
         return array(
             'elements' => $elements,
             'region' => $region,
-            'whitelist_exists' => ($whitelist !== null)); // whitelist_exists variable can be removed, if every template supports whitelists
+        );
     }
 
     /**
