@@ -124,7 +124,13 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function getFeatureStyle($geometry)
     {
         $defaults = $this->getDefaultFeatureStyle($geometry['type']);
-        return array_replace($defaults, $geometry['style']);
+        // Special snowflake Digitizer can and will supply NULL for required
+        // style attributes, nuking our defaults. Filter those NULLs, if we have
+        // a default value for them.
+        $filteredStyle = array_filter($geometry['style'], function($value) {
+            return $value !== null;
+        });
+        return array_replace($defaults, $filteredStyle) + $geometry['style'];
     }
 
     /**
