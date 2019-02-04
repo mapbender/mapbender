@@ -16,3 +16,33 @@ mb:
         export: Export
         jpeg: jpeg
         png: png
+    printclient:
+      tab:
+        settings: Einstellungen
+        joblist: Druckaufträge
+      joblist:
+        header:
+          id: '#'
+          ctime: Erzeugt
+          status: Status
+        status:
+          pending: in Warteschleife
+          processing: in Bearbeitung
+          finished: fertig
+        open: "Öffnen"
+        delete: "Löschen"
+        cancel: Abbrechen
+        nodata: keine Daten
+        loading: wird geladen
+    admin:
+      printclient:
+        renderMode:
+          label: Modus
+          choice:
+            direct: Direkt
+            queued: Warteschleife
+        queueAccess:
+          label: Warteschleife
+          choice:
+            global: global
+            private: privat

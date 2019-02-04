@@ -6,8 +6,10 @@ use Doctrine\Common\Collections\Collection;
 use FOM\UserBundle\Entity\Group;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,6 +64,7 @@ class PrintClient extends Element
         return array(
             'js' => array(
                 '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
+                '@MapbenderPrintBundle/Resources/public/element/printclient.job-list.js',
                 '@MapbenderPrintBundle/Resources/public/element/printclient.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
@@ -126,7 +129,7 @@ class PrintClient extends Element
      */
     public static function getType()
     {
-        return 'Mapbender\PrintBundle\Element\Type\PrintClientAdminType';
+        return 'mapbender.form_type.element.printclient';
     }
 
     /**
@@ -149,7 +152,21 @@ class PrintClient extends Element
     {
         return $this->entity->getConfiguration() + array(
             'type' => 'dialog',
+            // NOTE: intl extension locale is runtime-controlled by Symfony to reflect framework configuration
+            'locale' => \locale_get_default(),
         );
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSubmitAction()
+    {
+        if ($this->isQueueModeEnabled()) {
+            return PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE;
+        } else {
+            return 'print';
+        }
     }
 
     public function getFrontendTemplateVars()
@@ -162,18 +179,50 @@ class PrintClient extends Element
         $submitUrl = $router->generate('mapbender_core_application_element', array(
             'slug' => $this->entity->getApplication()->getSlug(),
             'id' => $this->entity->getId(),
-            'action' => 'print',
+            'action' => $this->getSubmitAction(),
         ));
-        return array(
+        $vars = array(
             'configuration' => $config,
             'submitUrl' => $submitUrl,
-            'formTarget' => '_blank',
+            'settingsTemplate' => $this->getSettingsTemplate(),
         );
+        if ($this->isQueueModeEnabled()) {
+            $submitFrameName = $this->getSubmitFrameName();
+            return $vars + array(
+                'formTarget' => $submitFrameName,
+                'submitFrameName' => $submitFrameName,
+            );
+        } else {
+            return $vars + array(
+                'formTarget' => '_blank',
+            );
+        }
+    }
+
+    protected function getSettingsTemplate()
+    {
+        return 'MapbenderPrintBundle:Element:printclient-settings.html.twig';
     }
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return 'MapbenderPrintBundle:Element:printclient.html.twig';
+        if ($this->isQueueModeEnabled()) {
+            return "MapbenderPrintBundle:Element:printclient-queued.html.twig";
+        } else {
+            return "MapbenderPrintBundle:Element:printclient.html.twig";
+        }
+    }
+
+    /**
+     * @return string
+     */
+    protected function generateFilename()
+    {
+        $configuration = $this->entity->getConfiguration();
+        $prefix = ArrayUtil::getDefault($configuration, 'file_prefix', null);
+        $prefix = $prefix ?: ArrayUtil::getDefault($this->getDefaultConfiguration(), 'file_prefix', null);
+        $prefix = $prefix ?: 'mapbender_print';
+        return $prefix . '_' . date("YmdHis") . '.pdf';
     }
 
     /**
@@ -187,17 +236,14 @@ class PrintClient extends Element
         $configuration = $this->entity->getConfiguration();
         switch ($action) {
             case 'print':
-                $data = $this->preparePrintData($request, $configuration);
+                $rawData = $this->extractRequestData($request);
+                $jobData = $this->preparePrintData($rawData, $configuration);
 
-                $pdfBody = $bridgeService->dumpPrint($data);
+                $pdfBody = $bridgeService->dumpPrint($jobData);
 
                 $displayInline = true;
+                $filename = $this->generateFilename();
 
-                if(array_key_exists('file_prefix', $configuration)) {
-                    $filename = $configuration['file_prefix'] . '_' . date("YmdHis") . '.pdf';
-                } else {
-                    $filename = 'mapbender_print.pdf';
-                }
                 $response = new Response($pdfBody, 200, array(
                     'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
                     'Content-Disposition' => 'attachment; filename=' . $filename
@@ -207,7 +253,8 @@ class PrintClient extends Element
 
             case 'getTemplateSize':
                 $template = $request->get('template');
-                $odgParser = new OdgParser($this->container);
+                /** @var OdgParser $odgParser */
+                $odgParser = $this->container->get('mapbender.print.template_parser.service');
                 $size = $odgParser->getMapSize($template);
 
                 return new Response($size);
@@ -216,9 +263,15 @@ class PrintClient extends Element
                 $response = $bridgeService->handleHttpRequest($request, $this->entity);
                 if ($response) {
                     return $response;
-                } else {
-                    throw new NotFoundHttpException();
                 }
+                $queuePlugin = $this->getActiveQueuePlugin();
+                if ($queuePlugin && $action === PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE) {
+                    $rawData = $this->extractRequestData($request);
+                    $jobData = $this->preparePrintData($rawData, $configuration);
+                    $queuePlugin->putJob($jobData, $this->generateFilename());
+                    return new Response('', 204);
+                }
+                throw new NotFoundHttpException();
         }
     }
 
@@ -233,11 +286,15 @@ class PrintClient extends Element
     }
 
     /**
+     * Extracts / decodes submitted values from request.
+     * This is separated from preparePrintData for extensibility reasons.
+     * Output should be a bare array without any remaining serialized (json or otherwise) data.
+     * Output will get passed to preparePrintData as is.
+     *
      * @param Request $request
-     * @param mixed[] $configuration
-     * @return mixed[]
+     * @return array
      */
-    protected function preparePrintData(Request $request, $configuration)
+    protected function extractRequestData(Request $request)
     {
         // @todo: define what data we support; do not simply process and forward everything
         $data = $request->request->all();
@@ -246,17 +303,25 @@ class PrintClient extends Element
             unset($data['data']);
             $data = array_replace($data, json_decode($d0, true));
         }
+        return $data;
+    }
+
+    /**
+     * Preprocesses / amends job data so it can be safely executed by print service, but also
+     * safely persisted to db for execution at a later time. I.e. information pertinent to
+     * current user and current element configuration needs to be fully resolved.
+     *
+     * @param array $data
+     * @param mixed[] $configuration
+     * @return mixed[]
+     */
+    protected function preparePrintData($data, $configuration)
+    {
         $urlProcessor = $this->getUrlProcessor();
         foreach ($data['layers'] as $ix => $layerDef) {
             if (!empty($layerDef['url'])) {
                 $updatedUrl = $urlProcessor->getInternalUrl($layerDef['url']);
-                if (!isset($configuration['replace_pattern'])) {
-                    if ($data['quality'] != 72) {
-                        $updatedUrl = UrlUtil::validateUrl($updatedUrl, array(
-                            'map_resolution' => $data['quality'],
-                        ));
-                    }
-                } else {
+                if (!empty($configuration['replace_pattern'])) {
                     $updatedUrl = $this->addReplacePattern($updatedUrl, $configuration['replace_pattern'], $data['quality']);
                 }
                 $data['layers'][$ix]['url'] = $updatedUrl;
@@ -394,6 +459,38 @@ class PrintClient extends Element
     }
 
     /**
+     * Returns the queue plugin service ONLY IF
+     * 1) enabled by global container parameter
+     * and
+     * 2) registerd in the plugin host
+     * and
+     * 3) queued job processing is enabled by current Element configuration
+     *
+     * @return PrintQueuePlugin|null
+     */
+    protected function getActiveQueuePlugin()
+    {
+        if (!$this->container->getParameter('mapbender.print.queueable')) {
+            return null;
+        }
+        $config = $this->entity->getConfiguration();
+        if (empty($config['renderMode']) || $config['renderMode'] != 'queued') {
+            return null;
+        }
+        /** @var PrintQueuePlugin|null $queuePlugin */
+        $queuePlugin = $this->getServiceBridge()->getPluginHost()->getPlugin('print-queue');
+        return $queuePlugin;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isQueueModeEnabled()
+    {
+        return !!$this->getActiveQueuePlugin();
+    }
+
+    /**
      * @return UrlProcessor
      */
     protected function getUrlProcessor()
@@ -401,5 +498,15 @@ class PrintClient extends Element
         /** @var UrlProcessor $service */
         $service = $this->container->get('mapbender.source.url_processor.service');
         return $service;
+    }
+
+    /**
+     * Generates an iframe name that can be used for ~"invisible" form submission, Ajax posts etc.
+     * @todo: this would be more convenient to have on the template level, so all Elements could share a single
+     *        frame.
+     */
+    protected function getSubmitFrameName()
+    {
+        return "submit-frame-{$this->entity->getId()}";
     }
 }

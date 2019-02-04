@@ -41,10 +41,6 @@
         sourceById: function(idObject){
             return this.model.getSource(idObject);
         },
-        mqLayerBySourceId: function(idObject){
-            var source = this.sourceById(idObject);
-            return this.map.layersList[source.mqlid];
-        },
         /**
          *
          */
@@ -65,14 +61,6 @@
          */
         removeSources: function(keepSources){
             this.model.removeSources(keepSources);
-        },
-        /**
-         *
-         */
-        changeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.source && toChangeObj.type) {
-                this.model.changeSource(toChangeObj);
-            }
         },
         /**
          * Triggers an event from the model.
@@ -131,21 +119,18 @@
          * Zooms the map in
          */
         zoomIn: function(){
-            // TODO: MapQuery?
             this.map.olMap.zoomIn();
         },
         /**
          * Zooms the map out
          */
         zoomOut: function(){
-            // TODO: MapQuery?
             this.map.olMap.zoomOut();
         },
         /**
          * Zooms the map to max extent
          */
         zoomToFullExtent: function(){
-            // TODO: MapQuery?
             this.map.olMap.zoomToMaxExtent();
         },
         /**
@@ -168,14 +153,12 @@
          * Adds the popup
          */
         addPopup: function(popup){
-            //TODO: MapQuery
             this.map.olMap.addPopup(popup);
         },
         /**
          * Removes the popup
          */
         removePopup: function(popup){
-            //TODO: MapQuery
             this.map.olMap.removePopup(popup);
         },
         /**

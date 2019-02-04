@@ -3,12 +3,84 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
+        <parameter key="mapbender.imageexport.service.class">Mapbender\PrintBundle\Component\ImageExportService</parameter>
+        <parameter key="mapbender.imageexport.resource_dir">%kernel.root_dir%/Resources/MapbenderPrintBundle</parameter>
+        <!-- leave temp dir at null to autodetect via sys_get_temp_dir(); use an explicit path if temp dir autodetect fails -->
+        <parameter key="mapbender.imageexport.temp_dir">null</parameter>
+        <parameter key="mapbender.imageexport.image_transport.service.class">Mapbender\PrintBundle\Component\Transport\ImageTransport</parameter>
+        <parameter key="mapbender.imageexport.base_transport.service.class">Mapbender\PrintBundle\Component\Transport\OwsProxyAwareTransport</parameter>
+        <parameter key="mapbender.imageexport.renderer.wms.class">Mapbender\PrintBundle\Component\LayerRendererWms</parameter>
+        <!-- Maximum for both WIDTH or HEIGHT params on any GetMap request started by image export + print (pixel units).
+             If the output requires more pixels, WMS will be requested in tiles to stay below this maximum. -->
+        <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size">4096</parameter>
+        <!-- Buffer around individual WMS tiles requested in image export + print (pixel units). Up to this number of
+             pixels will be thrown away on up to four edges. This avoids using portions of the image where label or
+             other symbol placement may be influenced by what the WMS thinks is the total image dimensions
+             (c.f. Mapserver's "partial" label rendering settings) -->
+        <parameter key="mapbender.imaageexport.renderer.wms.tile_buffer">512</parameter>
+        <parameter key="mapbender.imageexport.renderer.geojson.class">Mapbender\PrintBundle\Component\LayerRendererGeoJson</parameter>
+        <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
+        <!-- print resource / temp dirs are by default == imageexport dirs, but can be changed independently -->
+        <parameter key="mapbender.print.resource_dir">%mapbender.imageexport.resource_dir%</parameter>
+        <parameter key="mapbender.print.temp_dir">%mapbender.imageexport.temp_dir%</parameter>
+        <parameter key="mapbender.print.template_dir">%mapbender.print.resource_dir%/templates</parameter>
+        <parameter key="mapbender.print.template_parser.service.class">Mapbender\PrintBundle\Component\OdgParser</parameter>
         <parameter key="mapbender.print_service_bridge.service.class">Mapbender\PrintBundle\Component\Service\PrintServiceBridge</parameter>
         <parameter key="mapbender.print_plugin_host.service.class">Mapbender\PrintBundle\Component\Service\PrintPluginHost</parameter>
         <parameter key="mapbender.print.plugin.digitizer.class">Mapbender\PrintBundle\Component\Plugin\DigitizerPrintPlugin</parameter>
         <parameter key="mapbender.print.plugin.digitizer.paramkey.featuretypes">featuretypes</parameter>
+        <parameter key="mapbender.print.plugin.queue.class">Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin</parameter>
+        <!-- can only be activated safely if there is a cron job executing the queued jobs -->
+        <parameter key="mapbender.print.queueable">false</parameter>
+        <!-- Storage path can be anywhere, should probably be /var/ in proper LSB setups
+             Storage in web is pre-standardization legacy behavior -->
+        <parameter key="mapbender.print.queue.storage_dir">%kernel.root_dir%/../web/prints</parameter>
+        <!-- Memory limit for execution of queued jobs. Supports any format understood by php.ini
+             see http://php.net/manual/en/ini.core.php#ini.memory-limit
+             see http://php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+             NOTE: this will never REDUCE memory limit vs a system configuration (php.ini etc), it only works upwards -->
+        <parameter key="mapbender.print.queue.memory_limit">1G</parameter>
+        <parameter key="mapbender.form_type.element.printclient.class">Mapbender\PrintBundle\Element\Type\PrintClientAdminType</parameter>
     </parameters>
     <services>
+        <service id="mapbender.imageexport.service" class="%mapbender.imageexport.service.class%">
+            <argument type="collection" key="layerRenderers">
+                <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
+                <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
+            </argument>
+            <argument type="service" id="logger" />
+        </service>
+        <service id="mapbender.imageexport.image_transport.service" class="%mapbender.imageexport.image_transport.service.class%">
+            <argument type="service" id="mapbender.imageexport.base_transport.service" />
+        </service>
+        <service id="mapbender.imageexport.base_transport.service" class="%mapbender.imageexport.base_transport.service.class%">
+            <argument>%owsproxy.proxy%</argument>
+            <argument type="service" id="logger" />
+        </service>
+        <service id="mapbender.imageexport.renderer.wms" class="%mapbender.imageexport.renderer.wms.class%">
+            <argument type="service" id="mapbender.imageexport.image_transport.service" />
+            <argument type="service" id="logger" />
+            <argument>%mapbender.imaageexport.renderer.wms.max_getmap_size%</argument>
+            <argument>%mapbender.imaageexport.renderer.wms.tile_buffer%</argument>
+        </service>
+        <service id="mapbender.imageexport.renderer.geojson" class="%mapbender.imageexport.renderer.geojson.class%">
+            <argument>%mapbender.imageexport.resource_dir%/fonts</argument>
+        </service>
+        <service id="mapbender.print.service" class="%mapbender.print.service.class%">
+            <argument type="collection" key="layerRenderers">
+                <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
+                <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
+            </argument>
+            <argument type="service" id="mapbender.imageexport.image_transport.service" />
+            <argument type="service" id="mapbender.print.template_parser.service" />
+            <argument type="service" id="mapbender.print_plugin_host.service" />
+            <argument type="service" id="logger" />
+            <argument>%mapbender.print.resource_dir%</argument>
+            <argument>%mapbender.print.temp_dir%</argument>
+        </service>
+        <service id="mapbender.print.template_parser.service" class="%mapbender.print.template_parser.service.class%">
+            <argument>%mapbender.print.template_dir%</argument>
+        </service>
         <service id="mapbender.print_service_bridge.service" class="%mapbender.print_service_bridge.service.class%">
             <argument type="service" id="service_container" />
             <argument type="service" id="mapbender.print_plugin_host.service" />
@@ -21,6 +93,16 @@
             <!-- NOTE: AddBasePrintPluginsPass needs to inspect this argument and can only identify it by its key
                        'featureTypeParam'. That key must be retained. The value may be changed of course. -->
             <argument key="featureTypeParamName">%mapbender.print.plugin.digitizer.paramkey.featuretypes%</argument>
+        </service>
+        <service id="mapbender.print.plugin.queue" class="%mapbender.print.plugin.queue.class%">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="router" />
+            <argument type="service" id="filesystem" />
+            <argument key="storagePath">%mapbender.print.queue.storage_dir%</argument>
+        </service>
+        <service id="mapbender.form_type.element.printclient" class="%mapbender.form_type.element.printclient.class%">
+            <argument key="queuable">%mapbender.print.queueable%</argument>
         </service>
     </services>
 </container>

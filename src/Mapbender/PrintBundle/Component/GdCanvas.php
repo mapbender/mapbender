@@ -4,14 +4,10 @@
 namespace Mapbender\PrintBundle\Component;
 
 
-class GdCanvas
+class GdCanvas extends BaseCanvas
 {
     /** @var resource Gdish */
     public $resource;
-    /** @var int */
-    public $width;
-    /** @var int */
-    public $height;
 
     public function __construct($width, $height)
     {
@@ -24,8 +20,22 @@ class GdCanvas
         $bg = imagecolorallocate($this->resource, 255, 255, 255);
         imagefilledrectangle($this->resource, 0, 0, $width, $height, $bg);
         imagecolordeallocate($this->resource, $bg);
-        $this->width = $width;
-        $this->height = $height;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWidth()
+    {
+        return imagesx($this->resource);
+    }
+
+    /**
+     * @return int
+     */
+    public function getHeight()
+    {
+        return imagesy($this->resource);
     }
 
     /**
@@ -55,7 +65,10 @@ class GdCanvas
      */
     public function drawLineString($coordinates, $color)
     {
-        if (PHP_VERSION_ID >= 70200) {
+        if (PHP_VERSION_ID >= 70200 && count($coordinates) > 2) {
+            // imageopenpolygon supports continuous evaluation of IMG_COLOR_STYLED instructions
+            // this makes it preferable to drawing a series of individual line, where style
+            // evaluation restarts at each segment
             $pointsFlat = call_user_func_array('array_merge', $coordinates);
             imageopenpolygon($this->resource, $pointsFlat, count($coordinates), $color);
         } else {

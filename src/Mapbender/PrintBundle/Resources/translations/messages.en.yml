@@ -16,3 +16,33 @@ mb:
         export: export
         jpeg: jpeg
         png: png
+    printclient:
+      tab:
+        settings: Job settings
+        joblist: Recent jobs
+      joblist:
+        header:
+          id: '#'
+          ctime: created
+          status: status
+        status:
+          pending: waiting
+          processing: processing
+          finished: finished
+        open: open
+        delete: delete
+        cancel: Cancel
+        nodata: no data
+        loading: loading
+    admin:
+      printclient:
+        renderMode:
+          label: Mode
+          choice:
+            direct: direct
+            queued: queued
+        queueAccess:
+          label: Job queue
+          choice:
+            global: global
+            private: private

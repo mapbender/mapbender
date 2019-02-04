@@ -94,10 +94,9 @@
          * @private
          */
         _getRasterVisibilityInfo: function(sourceDef, scale) {
-            var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+            var layer = this.map.model.getNativeLayer(sourceDef);
             if (scale) {
-                var toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: sourceDef.mqlid}};
-                var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale, toChangeOpts);
+                var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale, {});
                 return {
                     layers: geoSourceResponse.layers,
                     styles: geoSourceResponse.styles
@@ -116,7 +115,7 @@
         _getRasterSourceDefs: function() {
             var sourceTree = this.map.getSourceTree();
             return sourceTree.filter(function(sourceDef) {
-                var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
+                var layer = this.map.model.getNativeLayer(sourceDef);
                 if (0 !== layer.CLASS_NAME.indexOf('OpenLayers.Layer.')) {
                     return false;
                 }
@@ -141,28 +140,14 @@
 
             for (var i = 0; i < sources.length; i++) {
                 var sourceDef = sources[i];
-                var visLayers = this._getRasterVisibilityInfo(sourceDef, scale);
-
-                if (visLayers.layers.length) {
-                    var layer = this.map.map.layersList[sourceDef.mqlid].olLayer;
-                    var prevLayers = layer.params.LAYERS;
-                    var prevStyles = layer.params.STYLES;
-                    if (scale) {
-                        layer.params.LAYERS = visLayers.layers;
-                        layer.params.STYLES = visLayers.styles;
-                    }
-
-                    var layerData = Mapbender.source[sourceDef.type].getPrintConfig(layer, extent);
-                    layerData.opacity = sourceDef.configuration.options.opacity;
-                    // flag to change axis order
-                    layerData.changeAxis = this._changeAxis(layer);
-                    dataOut.push(layerData);
-
-                    if (scale) {
-                        layer.params.LAYERS = prevLayers;
-                        layer.params.STYLES = prevStyles;
-                    }
-                }
+                var olLayer = this.map.model.getNativeLayer(sourceDef);
+                var extra = {
+                    opacity: sourceDef.configuration.options.opacity,
+                    changeAxis: this._changeAxis(olLayer)
+                };
+                _.forEach(this.map.model.getPrintConfigEx(sourceDef, scale, extent), function(printConfig) {
+                    dataOut.push($.extend({}, printConfig, extra));
+                });
             }
             return dataOut;
         },
