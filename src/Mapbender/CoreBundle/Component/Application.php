@@ -1,13 +1,9 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Assetic\Asset\StringAsset;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
-use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -18,6 +14,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
  * This class is getting gradually dissolved into a collection of true services that can be replugged and extended
  * via DI.
  * For asset collection and compilation @see \Mapbender\CoreBundle\Asset\ApplicationAssetService
+ * For client-facing configuration emission @see \Mapbender\CoreBundle\Component\Presenter\Application\ConfigService
  *
  * @deprecated
  * @internal
@@ -39,11 +36,6 @@ class Application
      * @var Element[][] $element lists by region
      */
     protected $elements;
-
-    /**
-     * @var array $layers The layers
-     */
-    protected $layers;
 
     /**
      * @var Entity
@@ -128,32 +120,6 @@ class Application
     }
 
     /**
-     * @return ConfigService
-     */
-    private function getConfigService()
-    {
-        /** @var ConfigService $presenter */
-        $presenter = $this->container->get('mapbender.presenter.application.config.service');
-        return $presenter;
-    }
-
-    /**
-     * Get the configuration (application, elements, layers) as an StringAsset.
-     * Filters can be applied later on with the ensureFilter method.
-     *
-     * @return string Configuration as JSON string
-     */
-    public function getConfiguration()
-    {
-        $configService = $this->getConfigService();
-        $configuration = $configService->getConfiguration($this->entity);
-
-        // Convert to asset
-        $asset = new StringAsset(json_encode((object)$configuration));
-        return $asset->dump();
-    }
-
-    /**
      * Get template object
      *
      * @return Template
@@ -193,24 +159,6 @@ class Application
         } else {
             return $this->elements;
         }
-    }
-
-    /**
-     * Extracts active source instances from given Layerset entity.
-     *
-     * @param Layerset $entity
-     * @return SourceInstance[]
-     */
-    protected static function filterActiveSourceInstances(Layerset $entity)
-    {
-        $isYamlApp = $entity->getApplication()->isYamlBased();
-        $activeInstances = array();
-        foreach ($entity->getInstances() as $instance) {
-            if ($isYamlApp || $instance->getEnabled()) {
-                $activeInstances[] = $instance;
-            }
-        }
-        return $activeInstances;
     }
 
     /**
