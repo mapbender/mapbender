@@ -291,11 +291,10 @@ class LayerRendererGeoJson extends LayerRenderer
         //    on top of it with a fully transparent color with blending disabled
         $offsetXy = intval($radius + $width + 1);
         $sizeWh = 2 * $offsetXy;
-        $tempImage = imagecreatetruecolor($sizeWh, $sizeWh);
-        imagesavealpha($tempImage, true);
-        imagealphablending($tempImage, false);
-        $transparent = imagecolorallocatealpha($tempImage, 255, 255, 255, 127);
-        imagefilledrectangle($tempImage, 0, 0, $sizeWh, $sizeWh, $transparent);
+        $tempCanvas = $canvas->getSubRegion($centerX - $offsetXy, $centerY - $offsetXy, $sizeWh, $sizeWh);
+        $tempImage = $tempCanvas->resource;
+        $transparent = $tempCanvas->getTransparent();
+
         $innerDiameter = intval(round(2 * ($radius - 0.5 * $width)));
         $outerDiameter = intval(round(2 * ($radius + 0.5 * $width)));
         imagefilledellipse($tempImage, $offsetXy, $offsetXy, $outerDiameter, $outerDiameter, $color);
@@ -303,12 +302,7 @@ class LayerRendererGeoJson extends LayerRenderer
             // stamp out a fully transparent circle
             imagefilledellipse($tempImage, $offsetXy, $offsetXy, $innerDiameter, $innerDiameter, $transparent);
         }
-        imagecolordeallocate($tempImage, $transparent);
-        // merge the temp image onto the target canvas
-        imagealphablending($canvas->resource, true);
-        imagecopyresampled($canvas->resource, $tempImage,
-            $centerX - $offsetXy, $centerY - $offsetXy, 0, 0,
-            $sizeWh, $sizeWh, $sizeWh, $sizeWh);
+        $tempCanvas->mergeBack();
     }
 
     /**

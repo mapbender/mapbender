@@ -9,6 +9,9 @@ class GdCanvas extends BaseCanvas
     /** @var resource Gdish */
     public $resource;
 
+    /** @var int */
+    protected $transparent;
+
     public function __construct($width, $height)
     {
         $width = intval(round($width));
@@ -20,6 +23,12 @@ class GdCanvas extends BaseCanvas
         $bg = imagecolorallocate($this->resource, 255, 255, 255);
         imagefilledrectangle($this->resource, 0, 0, $width, $height, $bg);
         imagecolordeallocate($this->resource, $bg);
+        $this->transparent = imagecolorallocatealpha($this->resource, 255, 255, 255, 127);
+    }
+
+    public function __destruct()
+    {
+        imagecolordeallocate($this->resource, $this->transparent);
     }
 
     /**
@@ -36,6 +45,18 @@ class GdCanvas extends BaseCanvas
     public function getHeight()
     {
         return imagesy($this->resource);
+    }
+
+    /**
+     * @param int $offsetX
+     * @param int $offsetY
+     * @param int $width
+     * @param int $height
+     * @return GdSubCanvas
+     */
+    public function getSubRegion($offsetX, $offsetY, $width, $height)
+    {
+        return new GdSubCanvas($this, $offsetX, $offsetY, $width, $height);
     }
 
     /**
