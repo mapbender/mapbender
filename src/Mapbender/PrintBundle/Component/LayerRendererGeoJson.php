@@ -172,9 +172,13 @@ class LayerRendererGeoJson extends LayerRenderer
                 }
             }
         }
-        foreach ($transformedRings as $ringPoints) {
-            if ($this->applyStrokeStyle($canvas, $style)) {
-                $canvas->drawPolygonOutline($ringPoints, IMG_COLOR_STYLED);
+        if ($this->applyStrokeStyle($canvas, $style, $canvas->featureTransform->lineScale)) {
+            $bufferWidth = intval($style['strokeWidth'] * $canvas->featureTransform->lineScale + 5);
+            foreach ($transformedRings as $ringPoints) {
+                $subRegion = $this->getSubRegionFromExtent($canvas, $ringPoints, $bufferWidth);
+                $this->applyStrokeStyle($subRegion, $style, $canvas->featureTransform->lineScale);
+                $subRegion->drawPolygonOutline($ringPoints, IMG_COLOR_STYLED);
+                $subRegion->mergeBack();
             }
         }
     }
@@ -200,7 +204,7 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function drawMultiLineString($canvas, $geometry)
     {
         $style = $this->getFeatureStyle($geometry);
-        if ($this->applyStrokeStyle($canvas, $style)) {
+        if ($this->applyStrokeStyle($canvas, $style, $canvas->featureTransform->lineScale)) {
             foreach ($geometry['coordinates'] as $lineString) {
                 $pixelCoords = array();
                 foreach ($lineString as $coord) {
@@ -328,11 +332,12 @@ class LayerRendererGeoJson extends LayerRenderer
      * Returns false to indicate that stroke style is degenerate (zero width or zero opacity).
      * Callers should check the return value and skip line rendering completely if false.
      *
-     * @param ExportCanvas $canvas
+     * @param GdCanvas $canvas
      * @param mixed[] $style
+     * @param float $lineScale
      * @return bool
      */
-    protected function applyStrokeStyle($canvas, $style)
+    protected function applyStrokeStyle($canvas, $style, $lineScale)
     {
         // NOTE: gd imagesetstyle patterns are not based on distance from starting point
         //       on the line, but rather on integral pixel quantities, making it
@@ -340,7 +345,6 @@ class LayerRendererGeoJson extends LayerRenderer
         //       b) fundamentally incompatible with non-integral line widths
         // To generate any functional stroke style, the width must be quantized to an
         // integer, and that integral with must be provided to the style generation function.
-        $lineScale = $canvas->featureTransform->lineScale;
         $intThickness = intval(round($style['strokeWidth'] * $lineScale));
         if ($style['strokeOpacity'] && $intThickness >= 1) {
             $color = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
@@ -394,5 +398,36 @@ class LayerRendererGeoJson extends LayerRenderer
             default:
                 throw new \InvalidArgumentException("Unsupported pattern name " . print_r($patternName, true));
         }
+    }
+
+    /**
+     * @param GdCanvas $canvas
+     * @param float[][] $transformedPoints in pixel space
+     * @param int $buffer extra pixels to add around all four edges
+     * @return GdSubCanvas
+     */
+    protected function getSubRegionFromExtent(GdCanvas $canvas, $transformedPoints, $buffer)
+    {
+        $min = array(null, null);
+        $max = array(null, null);
+        foreach ($transformedPoints as $point) {
+            // don't know if point is numerically indexed or has 'x' / 'y' keys
+            // => normalize
+            $normPoint = array_values($point);
+            for ($i = 0; $i < 2; ++$i) {
+                if ($min[$i] === null || $normPoint[$i] < $min[$i]) {
+                    $min[$i] = $normPoint[$i];
+                }
+                if ($max[$i] === null || $normPoint[$i] > $max[$i]) {
+                    $max[$i] = $normPoint[$i];
+                }
+            }
+        }
+        $offsetX = intval($min[0] - $buffer);
+        $offsetY = intval($min[1] - $buffer);
+        $width = intval($max[0] - $min[0] + 2 * $buffer + 1);
+        $height = intval($max[1] - $min[1] + 2 * $buffer + 1);
+
+        return $canvas->getSubRegion($offsetX, $offsetY, $width, $height);
     }
 }

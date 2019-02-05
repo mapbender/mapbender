@@ -48,6 +48,16 @@ class GdSubCanvas extends GdCanvas
     }
 
     /**
+     * @param float[][] $coordinates (pixel space)
+     * @param int $color
+     */
+    public function drawPolygonOutline($coordinates, $color)
+    {
+        parent::drawPolygonOutline($this->translatePoints($coordinates), $color);
+    }
+
+
+    /**
      * Translate given (pixel space) coordinate pairs to local subspace by subtracting x/y offsets
      *
      * @param float[][] $points
