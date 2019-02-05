@@ -242,6 +242,17 @@ class PrintClient extends Element
                 }
 
                 return new JsonResponse($templates);
+
+            case 'getDigitizerPrintScale':
+                $featureType = $request->get('schemaName');
+                $featureTypeConfig = $this->container->getParameter('featureTypes');
+
+                $printScale = null;
+                if (isset($featureTypeConfig[$featureType]['print']['printScale'])) {
+                    $printScale = $featureTypeConfig[$featureType]['print']['printScale'];
+                }
+
+                return new JsonResponse($printScale);
         }
     }
 }

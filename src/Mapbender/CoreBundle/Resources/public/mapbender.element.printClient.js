@@ -575,7 +575,11 @@
             $('input[name="digitizer_feature[id]"]', form).val(featureId);
             $('input[name="digitizer_feature[schemaName]"]', form).val(schemaName);
 
+            this.open();
+
             this._getDigitizerTemplates(schemaName);
+
+            this._setDigitizerPrintScale(schemaName);
         },
 
         _getDigitizerTemplates: function(schemaName) {
@@ -588,8 +592,6 @@
                 data: {schemaName: schemaName},
                 success: function(data) {
                     self._overwriteTemplateSelect(data);
-                    // open changed dialog
-                    self.open();
                 }
             });
         },
@@ -619,6 +621,25 @@
                 ++count;
             });
             this.overwriteTemplates = true;
+        },
+
+        _setDigitizerPrintScale: function(schemaName) {
+            var self = this;
+
+            var url =  self.elementUrl + 'getDigitizerPrintScale';
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {schemaName: schemaName},
+                success: function(data) {
+                    if (isNaN(data)) {
+                        return;
+                    }
+                    $('[name=scale_select] option[value="' + data + '"]', self.element).attr('selected', true);
+                    $('[name=scale_select]').parent().find('.dropdownValue').text('1:' + data);
+                    self._updateGeometry();
+                }
+            });
         },
 
         /**
