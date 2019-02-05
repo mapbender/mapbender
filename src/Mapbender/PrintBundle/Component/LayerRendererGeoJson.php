@@ -153,30 +153,40 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function drawMultiPolygon($canvas, $geometry)
     {
-        $image = $canvas->resource;
         $style = $this->getFeatureStyle($geometry);
         $transformedRings = array();
         $bounds = new FeatureBounds();
         foreach ($geometry['coordinates'] as $polygonIndex => $polygon) {
+            $transformedRings[$polygonIndex] = array();
             foreach ($polygon as $ringIx => $ring) {
                 if (count($ring) < 3) {
                     continue;
                 }
-                $transformedRing = array();
 
-                $transformedRings[$polygonIndex][$ringIx] = array();
+                $transformedRing = array();
                 foreach ($ring as $c) {
-                    $transformedRing = $canvas->featureTransform->transformPair($c);
+                    $transformedRing[] = $canvas->featureTransform->transformPair($c);
                 }
                 $bounds->addPoints($transformedRing);
                 $transformedRings[$polygonIndex][$ringIx] = $transformedRing;
-                if ($style['fillOpacity'] > 0) {
-                    $color = $this->getColor($style['fillColor'], $style['fillOpacity'], $image);
-                    $canvas->drawPolygonBody($transformedRing, $color);
-                }
             }
         }
-        if ($this->applyStrokeStyle($canvas, $style, $canvas->featureTransform->lineScale)) {
+        if (!$bounds->isEmpty() && $style['fillOpacity'] > 0) {
+            $subRegion = $this->getSubRegionFromBounds($canvas, $bounds, 10);
+            $styleColor = $this->getColor($style['fillColor'], $style['fillOpacity'], $subRegion->resource);
+            foreach ($transformedRings as $polygonRings) {
+                $currentRingColor = $styleColor;
+                foreach ($polygonRings as $ringPoints) {
+                    $subRegion->drawPolygonBody($ringPoints, $currentRingColor);
+                    // Set color to transparent for next ring
+                    // Rings after the first are interior rings, which we effectively "undraw"
+                    // by using transparent
+                    $currentRingColor = $subRegion->getTransparent();
+                }
+            }
+            $subRegion->mergeBack();
+        }
+        if (!$bounds->isEmpty() && $this->applyStrokeStyle($canvas, $style, $canvas->featureTransform->lineScale)) {
             $bufferWidth = intval($style['strokeWidth'] * $canvas->featureTransform->lineScale + 5);
             $subRegion = $this->getSubRegionFromBounds($canvas, $bounds, $bufferWidth);
             $this->applyStrokeStyle($subRegion, $style, $canvas->featureTransform->lineScale);
