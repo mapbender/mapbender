@@ -37,13 +37,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected $imageTransport;
 
     /**
-     * @var array Default geometry style
-     */
-    protected $defaultStyle = array(
-        "strokeWidth" => 1
-    );
-
-    /**
      * @param LayerRenderer[] $layerRenderers
      * @param ImageTransport $imageTransport
      * @param OdgParser $templateParser

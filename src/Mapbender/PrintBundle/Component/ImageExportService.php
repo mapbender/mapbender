@@ -38,6 +38,9 @@ class ImageExportService
      * See WmsBundle registration into config service for a working example on how to do this:
      * https://bit.ly/2SbvRSn
      *
+     * NOTE that you should register layer renderers to both imageexport and print. These are separate
+     * objects, and they have separate mappings of layer renderers.
+     *
      * @param $layerType
      * @param LayerRenderer $layerRenderer
      */

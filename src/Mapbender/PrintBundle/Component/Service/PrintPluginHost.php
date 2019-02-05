@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\PrintBundle\Component\Plugin\PluginBaseInterface;
 use Mapbender\PrintBundle\Component\Plugin\PrintClientHttpPluginInterface;
 use Mapbender\PrintBundle\Component\Plugin\TextFieldPluginInterface;
+use Mapbender\PrintBundle\DependencyInjection\Compiler\AddBasePrintPluginsPass;
 use Symfony\Component\HttpFoundation\Request;
 
 class PrintPluginHost
@@ -20,6 +21,7 @@ class PrintPluginHost
     /**
      * Register a plugin at runtime.
      * This is intended to be called by container compiler passes.
+     * @see AddBasePrintPluginsPass::process() for a working setup
      *
      * @param object $plugin
      */

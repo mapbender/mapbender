@@ -155,23 +155,26 @@ class LayerRendererGeoJson extends LayerRenderer
     {
         $image = $canvas->resource;
         $style = $this->getFeatureStyle($geometry);
+        $transformedRings = array();
         foreach ($geometry['coordinates'] as $polygon) {
-            foreach ($polygon as $ring) {
+            foreach ($polygon as $ringIx => $ring) {
                 if (count($ring) < 3) {
                     continue;
                 }
 
-                $points = array();
+                $transformedRings[$ringIx] = array();
                 foreach ($ring as $c) {
-                    $points[] = $canvas->featureTransform->transformPair($c);
+                    $transformedRings[$ringIx][] = $canvas->featureTransform->transformPair($c);
                 }
                 if ($style['fillOpacity'] > 0){
                     $color = $this->getColor($style['fillColor'], $style['fillOpacity'], $image);
-                    $canvas->drawPolygonBody($points, $color);
+                    $canvas->drawPolygonBody($transformedRings[$ringIx], $color);
                 }
-                if ($this->applyStrokeStyle($canvas, $style)) {
-                    $canvas->drawPolygonOutline($points, IMG_COLOR_STYLED);
-                }
+            }
+        }
+        foreach ($transformedRings as $ringPoints) {
+            if ($this->applyStrokeStyle($canvas, $style)) {
+                $canvas->drawPolygonOutline($ringPoints, IMG_COLOR_STYLED);
             }
         }
     }
