@@ -44,6 +44,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     );
 
     /**
+     * @param LayerRenderer[] $layerRenderers
+     * @param ImageTransport $imageTransport
      * @param OdgParser $templateParser
      * @param PrintPluginHost $pluginHost
      * @param LoggerInterface $logger
