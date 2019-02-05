@@ -156,30 +156,36 @@ class LayerRendererGeoJson extends LayerRenderer
         $image = $canvas->resource;
         $style = $this->getFeatureStyle($geometry);
         $transformedRings = array();
-        foreach ($geometry['coordinates'] as $polygon) {
+        $bounds = new FeatureBounds();
+        foreach ($geometry['coordinates'] as $polygonIndex => $polygon) {
             foreach ($polygon as $ringIx => $ring) {
                 if (count($ring) < 3) {
                     continue;
                 }
+                $transformedRing = array();
 
-                $transformedRings[$ringIx] = array();
+                $transformedRings[$polygonIndex][$ringIx] = array();
                 foreach ($ring as $c) {
-                    $transformedRings[$ringIx][] = $canvas->featureTransform->transformPair($c);
+                    $transformedRing = $canvas->featureTransform->transformPair($c);
                 }
-                if ($style['fillOpacity'] > 0){
+                $bounds->addPoints($transformedRing);
+                $transformedRings[$polygonIndex][$ringIx] = $transformedRing;
+                if ($style['fillOpacity'] > 0) {
                     $color = $this->getColor($style['fillColor'], $style['fillOpacity'], $image);
-                    $canvas->drawPolygonBody($transformedRings[$ringIx], $color);
+                    $canvas->drawPolygonBody($transformedRing, $color);
                 }
             }
         }
         if ($this->applyStrokeStyle($canvas, $style, $canvas->featureTransform->lineScale)) {
             $bufferWidth = intval($style['strokeWidth'] * $canvas->featureTransform->lineScale + 5);
-            foreach ($transformedRings as $ringPoints) {
-                $subRegion = $this->getSubRegionFromExtent($canvas, $ringPoints, $bufferWidth);
-                $this->applyStrokeStyle($subRegion, $style, $canvas->featureTransform->lineScale);
-                $subRegion->drawPolygonOutline($ringPoints, IMG_COLOR_STYLED);
-                $subRegion->mergeBack();
+            $subRegion = $this->getSubRegionFromBounds($canvas, $bounds, $bufferWidth);
+            $this->applyStrokeStyle($subRegion, $style, $canvas->featureTransform->lineScale);
+            foreach ($transformedRings as $polygonRings) {
+                foreach ($polygonRings as $ringPoints) {
+                    $subRegion->drawPolygonOutline($ringPoints, IMG_COLOR_STYLED);
+                }
             }
+            $subRegion->mergeBack();
         }
     }
 
@@ -402,31 +408,16 @@ class LayerRendererGeoJson extends LayerRenderer
 
     /**
      * @param GdCanvas $canvas
-     * @param float[][] $transformedPoints in pixel space
+     * @param FeatureBounds $bounds
      * @param int $buffer extra pixels to add around all four edges
      * @return GdSubCanvas
      */
-    protected function getSubRegionFromExtent(GdCanvas $canvas, $transformedPoints, $buffer)
+    protected function getSubRegionFromBounds(GdCanvas $canvas, FeatureBounds $bounds, $buffer)
     {
-        $min = array(null, null);
-        $max = array(null, null);
-        foreach ($transformedPoints as $point) {
-            // don't know if point is numerically indexed or has 'x' / 'y' keys
-            // => normalize
-            $normPoint = array_values($point);
-            for ($i = 0; $i < 2; ++$i) {
-                if ($min[$i] === null || $normPoint[$i] < $min[$i]) {
-                    $min[$i] = $normPoint[$i];
-                }
-                if ($max[$i] === null || $normPoint[$i] > $max[$i]) {
-                    $max[$i] = $normPoint[$i];
-                }
-            }
-        }
-        $offsetX = intval($min[0] - $buffer);
-        $offsetY = intval($min[1] - $buffer);
-        $width = intval($max[0] - $min[0] + 2 * $buffer + 1);
-        $height = intval($max[1] - $min[1] + 2 * $buffer + 1);
+        $offsetX = intval($bounds->getMinX() - $buffer);
+        $offsetY = intval($bounds->getMinY() - $buffer);
+        $width = intval($bounds->getWidth() + 2 * $buffer + 1);
+        $height = intval($bounds->getHeight() + 2 * $buffer + 1);
 
         return $canvas->getSubRegion($offsetX, $offsetY, $width, $height);
     }
