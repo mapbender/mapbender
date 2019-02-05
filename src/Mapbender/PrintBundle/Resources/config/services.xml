@@ -86,7 +86,6 @@
             <argument type="service" id="mapbender.print_plugin_host.service" />
         </service>
         <service id="mapbender.print_plugin_host.service" class="%mapbender.print_plugin_host.service.class%">
-            <argument type="service" id="service_container" />
         </service>
         <service id="mapbender.print.plugin.digitizer" class="%mapbender.print.plugin.digitizer.class%">
             <argument type="service" id="service_container" />

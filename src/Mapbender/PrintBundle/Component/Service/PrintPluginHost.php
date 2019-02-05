@@ -8,38 +8,23 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\PrintBundle\Component\Plugin\PluginBaseInterface;
 use Mapbender\PrintBundle\Component\Plugin\PrintClientHttpPluginInterface;
 use Mapbender\PrintBundle\Component\Plugin\TextFieldPluginInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class PrintPluginHost
 {
-    /** @var ContainerInterface */
-    protected $container;
-
     /** @var PrintClientHttpPluginInterface[] */
     protected $httpPlugins = array();
     /** @var TextFieldPluginInterface[] */
     protected $textFieldPlugins = array();
 
     /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
      * Register a plugin at runtime.
      * This is intended to be called by container compiler passes.
      *
-     * @param string|object $plugin container service id or instance
+     * @param object $plugin
      */
     public function registerPlugin($plugin)
     {
-        if (is_string($plugin)) {
-            $plugin = $this->container->get($plugin);
-        }
         $t = is_object($plugin) ? get_class($plugin) : gettype($plugin);
         if ($plugin instanceof PluginBaseInterface) {
             $key = $plugin->getDomainKey();
