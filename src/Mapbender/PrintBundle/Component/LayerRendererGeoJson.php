@@ -391,7 +391,6 @@ class LayerRendererGeoJson extends LayerRenderer
 
         $pixelThickness = $style['strokeWidth'] * $lineScale;
         $intThickness = max(1, intval(round($pixelThickness)));
-        imagesetthickness($subRegion->resource, $intThickness);
         $opacity = $style['strokeOpacity'];
         if ($pixelThickness < 1) {
             $opacity = max(0.0, $opacity * $pixelThickness);
@@ -408,6 +407,7 @@ class LayerRendererGeoJson extends LayerRenderer
                 $this->renderPatternFragments($subRegion, $patternFragments, $lineColor, $intThickness);
             }
         } else {
+            imagesetthickness($subRegion->resource, $intThickness);
             foreach ($coordSets as $lineCoords) {
                 if ($close) {
                     $subRegion->drawPolygonOutline($lineCoords, $lineColor);
@@ -603,7 +603,7 @@ class LayerRendererGeoJson extends LayerRenderer
         if ($closeLoop) {
             $lineCoords[] = $lineCoords[count($lineCoords) - 1];
         }
-        $descriptors = $this->getPatternDescriptors('longdashdot');
+        $descriptors = $this->getPatternDescriptors($patternName);
         $descriptorIndex = 0;
         $descriptorLengthLeft = $descriptors[0]['length'];
 
@@ -684,8 +684,18 @@ class LayerRendererGeoJson extends LayerRenderer
         );
     }
 
+    /**
+     * Render individual dot and line primitives.
+     * @see generatePatternFragments
+     *
+     * @param GdCanvas $canvas
+     * @param array $fragments
+     * @param int $color GDish
+     * @param int $thickness used for both line thickness and dot diameter
+     */
     protected function renderPatternFragments(GdCanvas $canvas, $fragments, $color, $thickness)
     {
+        imagesetthickness($canvas->resource, $thickness);
         foreach ($fragments['dots'] as $dot) {
             $canvas->drawFilledCircle($dot[0], $dot[1], $color, $thickness);
         }
