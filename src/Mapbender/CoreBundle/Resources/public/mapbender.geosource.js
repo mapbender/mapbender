@@ -391,6 +391,7 @@ Mapbender.Geo.SourceHandler = Class({
     getExtendedLeafInfo: function(source, scale, extent) {
         var infoMap = {};
         var self = this;
+        var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
         Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
             var layerId = layer.options.id;
             var outOfScale = !self.isLayerInScale(layer, scale);
@@ -405,6 +406,10 @@ Mapbender.Geo.SourceHandler = Class({
             // @todo TBD: disable featureInfo if layer visual is disabled?
             // featureInfo = featureInfo && enabled
             var visibility = enabled && !(outOfScale || outOfBounds);
+            var order = (customLayerOrder || []).indexOf(layer.options.name);
+            if (order === -1) {
+                order = null;
+            }
             infoMap[layerId] = {
                 layer: layer,
                 state: {
@@ -413,6 +418,7 @@ Mapbender.Geo.SourceHandler = Class({
                     visibility: visibility,
                     info: featureInfo
                 },
+                order: order,
                 parents: parents
             };
         });
