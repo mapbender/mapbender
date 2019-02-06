@@ -47,10 +47,8 @@ class ApplicationController extends WelcomeController
     /**
      * Render a list of applications the current logged in user has access to.
      *
-     * @ManagerRoute("/applications")
-     * @Method("GET")
-     * @Template("MapbenderCoreBundle:Welcome:list.html.twig")
-     * @return Response|array
+     * @ManagerRoute("/applications", methods={"GET"})
+     * @return Response
      */
     public function indexAction()
     {

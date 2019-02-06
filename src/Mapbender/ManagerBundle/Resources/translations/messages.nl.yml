@@ -66,8 +66,6 @@ mb:
         edit: 'Wijzig element'
         no_element_added:
           '': 'Geen element toegevoegd'
-      messagebox:
-        only_region_elements: 'Alleen elementen voor regio/gebied worden getoond'
       zoombar:
         draggable: Versleepbaar
       filter:

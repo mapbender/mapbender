@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    $.widget("mapbender.mbBaseSourceSwitcher", $.mapbender.mbBaseElement, {
+    $.widget("mapbender.mbBaseSourceSwitcher", {
         options: {},
         loadStarted: [],
         contextAddStart: false,
@@ -78,17 +78,7 @@
                     }
 
                     source_list.map(function (source) {
-                        model.changeSource({
-                            change: {
-                                sourceIdx: {id: source.id},
-                                options: {
-                                    configuration: {
-                                        options: {visibility: visibility}
-                                    },
-                                    type: 'selected'
-                                }
-                            }
-                        });
+                        model.setSourceVisibility(source.id, visibility);
                     });
                 });
             });

@@ -64,7 +64,6 @@
             }
             this.element.removeClass('hidden');
             this._trigger('ready');
-            this._ready();
         },
         _createTree: function() {
             var self = this;
@@ -436,27 +435,31 @@
         _changeChildren: function(changed) {
             if (changed.children) {
                 for (var layerId in changed.children) {
+                    var layerSettings = changed.children[layerId];
                     var $li = $('li[data-id="' + layerId + '"]', this.element);
                     if ($li.length !== 0) {
                         if ($li.attr("data-type") === this.consts.root && !this._isThemeChecked($li)){
                             continue;
                         }
-                        if (changed.children[layerId].state) {
-                            this._redisplayLayerState($li, changed.children[layerId].state);
+                        var newTreeOptions = (layerSettings.options || {}).treeOptions;
+                        var newLayerState = layerSettings.state;
+                        if (!newLayerState && newTreeOptions) {
+                            newLayerState = {visibility: newTreeOptions.selected};
                         }
-                        if (changed.children[layerId].options) {
-                            if(changed.children[layerId].options.treeOptions.allow){
-                                if(changed.children[layerId].options.treeOptions.allow.selected === true){
-                                    var chk_selected = $('input[name="selected"]:first', $li);
-                                    chk_selected.prop('disabled', false);
-                                    $li.removeClass('invisible');
-                                    initCheckbox.call(chk_selected);
-                                } else if(changed.children[layerId].options.treeOptions.allow.selected === false){
-                                    var chk_selected = $('input[name="selected"]:first', $li);
-                                    chk_selected.prop('disabled', true);
-                                    $li.addClass('invisible');
-                                    initCheckbox.call(chk_selected);
-                                }
+                        if (newLayerState) {
+                            this._redisplayLayerState($li, newLayerState);
+                        }
+
+                        if (newTreeOptions) {
+                            if (typeof newTreeOptions.selected !== 'undefined') {
+                                var $selectedChk = $('input[name="selected"]:first', $li);
+                                $selectedChk.prop('checked', !!newTreeOptions.selected);
+                                initCheckbox.call($selectedChk);
+                            }
+                            if (typeof newTreeOptions.info !== 'undefined') {
+                                var $infoChk = $('input[name="info"]:first', $li);
+                                $infoChk.prop('checked', !!newTreeOptions.info);
+                                initCheckbox.call($infoChk);
                             }
                         }
                     }
@@ -603,21 +606,9 @@
             var $li = $sourceVsbl.parents('li:first');
             $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
                 var $item = $(item);
-                var chk_selected = $('input[name="selected"]:first', $item);
-                self.model.changeSource({
-                    change: {
-                    sourceIdx: {
-                        id: $item.attr('data-sourceid')
-                    },
-                    options: {
-                        type: 'selected',
-                        configuration: {
-                            options: {
-                                visibility: $sourceVsbl.prop('checked') === false ? false : chk_selected.prop('checked')
-                            }
-                        }
-                    }
-                }});
+                var $chkSource = $('input[name="selected"]:first', $item);
+                var active = $chkSource.prop('checked') && $sourceVsbl.prop('checked');
+                self.model.setSourceVisibility($item.attr('data-sourceid'), active);
             });
             return false;
         },
@@ -652,66 +643,19 @@
         },
         _toggleSelected: function(e) {
             var $li = $(e.target).parents('li:first');
-            var tochange = {
-                sourceIdx: {
-                    id: $li.attr('data-sourceid')
-                },
-                options: {}
-            };
+            var sourceId = $li.attr('data-sourceid');
             if ($li.attr('data-type') === this.consts.root) {
-                if(!this._isThemeChecked($li)) { // thematic layertree handling
-                    return false;
+                if (this._isThemeChecked($li)) { // thematic layertree handling
+                    this.model.setSourceVisibility(sourceId, $(e.target).prop('checked'));
                 }
-                tochange.options = {
-                    configuration: {
-                        options: {
-                            visibility: $(e.target).is(':checked')
-                        }
-                    }
-                };
             } else {
-                tochange.options = {
-                    children: {}
-                };
-                tochange.options.children[$li.attr('data-id')] = {
-                    options: {
-                        treeOptions: {
-                            selected: $(e.target).is(':checked')
-                        }
-                    }
-                };
+                this.model.controlLayer(sourceId, $li.attr('data-id'), $(e.target).prop('checked'));
             }
-            tochange.options['type'] = 'selected';
-            this.model.changeSource({
-                change: tochange
-            });
             return false;
         },
         _toggleInfo: function(e) {
-            var li = $(e.target).parents('li:first');
-            var tochange = {
-                sourceIdx: {
-                    id: li.attr(
-                        'data-sourceid')
-                },
-                options: {
-                    children: {},
-                    type: 'info'
-                }
-            };
-            tochange.options.children[li.attr('data-id')] = {
-                options: {
-                    treeOptions: {
-                        info: $(
-                            e.target).
-                            is(
-                                ':checked')
-                    }
-                }
-            };
-            this.model.changeSource({
-                change: tochange
-            });
+            var $li = $(e.target).closest('li.leave');
+            this.model.controlLayer($li.attr('data-sourceid'), $li.attr('data-id'), null, $(e.target).prop('checked'));
         },
         currentMenu: null,
         closeMenu: function(menu) {
@@ -930,20 +874,7 @@
                         break;
                     case types.group:
                     case types.simple:
-                        model.changeSource({
-                            change: {
-                                layerRemove: {
-                                    sourceIdx: {
-                                        id: layer.sourceid
-                                    },
-                                    layer: {
-                                        options: {
-                                            id: layer.id
-                                        }
-                                    }
-                                }
-                            }
-                        });
+                        model.removeLayer(layer.sourceid, layer.id);
                         break;
                 }
             }
@@ -1069,20 +1000,6 @@
                 }
             }
             this.callback ? this.callback.call() : this.callback = null;
-        },
-        /**
-         *
-         */
-        ready: function(callback) {
-            if (this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         },
         _findLayersetWithSource: function(source) {
             var layerset = null;

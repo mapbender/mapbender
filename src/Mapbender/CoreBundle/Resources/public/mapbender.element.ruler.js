@@ -82,7 +82,6 @@
             $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
             
             this._trigger('ready');
-            this._ready();
         },
         /**
          * Default action for mapbender element
@@ -208,21 +207,6 @@
             }
 
             return measure;
-        },
-
-        /**
-         *
-         */
-        ready: function(callback){
-            if(this.readyState === true){
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function(){
-            this.readyState = true;
         }
     });
 

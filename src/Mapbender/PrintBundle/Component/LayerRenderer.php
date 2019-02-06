@@ -6,6 +6,7 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
+use Mapbender\PrintBundle\Component\Export\Resolution;
 
 abstract class LayerRenderer
 {
@@ -26,7 +27,8 @@ abstract class LayerRenderer
      *
      * @param $layerDef
      * @param $nextLayerDef
+     * @param Resolution $resolution
      * @return array|false
      */
-    abstract public function squashLayerDefinitions($layerDef, $nextLayerDef);
+    abstract public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution);
 }

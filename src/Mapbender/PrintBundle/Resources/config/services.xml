@@ -10,6 +10,14 @@
         <parameter key="mapbender.imageexport.image_transport.service.class">Mapbender\PrintBundle\Component\Transport\ImageTransport</parameter>
         <parameter key="mapbender.imageexport.base_transport.service.class">Mapbender\PrintBundle\Component\Transport\OwsProxyAwareTransport</parameter>
         <parameter key="mapbender.imageexport.renderer.wms.class">Mapbender\PrintBundle\Component\LayerRendererWms</parameter>
+        <!-- Maximum for both WIDTH or HEIGHT params on any GetMap request started by image export + print (pixel units).
+             If the output requires more pixels, WMS will be requested in tiles to stay below this maximum. -->
+        <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size">4096</parameter>
+        <!-- Buffer around individual WMS tiles requested in image export + print (pixel units). Up to this number of
+             pixels will be thrown away on up to four edges. This avoids using portions of the image where label or
+             other symbol placement may be influenced by what the WMS thinks is the total image dimensions
+             (c.f. Mapserver's "partial" label rendering settings) -->
+        <parameter key="mapbender.imaageexport.renderer.wms.tile_buffer">512</parameter>
         <parameter key="mapbender.imageexport.renderer.geojson.class">Mapbender\PrintBundle\Component\LayerRendererGeoJson</parameter>
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
         <!-- print resource / temp dirs are by default == imageexport dirs, but can be changed independently -->
@@ -40,9 +48,6 @@
                 <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
             </argument>
-            <argument type="service" id="mapbender.imageexport.image_transport.service" />
-            <argument>%mapbender.imageexport.resource_dir%</argument>
-            <argument>%mapbender.imageexport.temp_dir%</argument>
             <argument type="service" id="logger" />
         </service>
         <service id="mapbender.imageexport.image_transport.service" class="%mapbender.imageexport.image_transport.service.class%">
@@ -55,6 +60,8 @@
         <service id="mapbender.imageexport.renderer.wms" class="%mapbender.imageexport.renderer.wms.class%">
             <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument type="service" id="logger" />
+            <argument>%mapbender.imaageexport.renderer.wms.max_getmap_size%</argument>
+            <argument>%mapbender.imaageexport.renderer.wms.tile_buffer%</argument>
         </service>
         <service id="mapbender.imageexport.renderer.geojson" class="%mapbender.imageexport.renderer.geojson.class%">
             <argument>%mapbender.imageexport.resource_dir%/fonts</argument>
@@ -79,7 +86,6 @@
             <argument type="service" id="mapbender.print_plugin_host.service" />
         </service>
         <service id="mapbender.print_plugin_host.service" class="%mapbender.print_plugin_host.service.class%">
-            <argument type="service" id="service_container" />
         </service>
         <service id="mapbender.print.plugin.digitizer" class="%mapbender.print.plugin.digitizer.class%">
             <argument type="service" id="service_container" />

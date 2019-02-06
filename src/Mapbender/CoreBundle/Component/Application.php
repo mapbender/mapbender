@@ -1,13 +1,9 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Assetic\Asset\StringAsset;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
-use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -15,11 +11,18 @@ use Symfony\Component\Filesystem\Exception\IOException;
 /**
  * Collection of servicy behaviors related to application
  *
+ * This class is getting gradually dissolved into a collection of true services that can be replugged and extended
+ * via DI.
+ * For asset collection and compilation @see \Mapbender\CoreBundle\Asset\ApplicationAssetService
+ * For client-facing configuration emission @see \Mapbender\CoreBundle\Component\Presenter\Application\ConfigService
+ * For Yaml application permissions setup @see \Mapbender\CoreBundle\Component\YamlApplicationImporter
+ * For creating / cloning / destroying uploads directories @see \Mapbender\CoreBundle\Component\UploadsManager
+ *
  * @deprecated
  * @internal
  * @author Christian Wygoda
  */
-class Application implements IAssetDependent
+class Application
 {
     /**
      * @var ContainerInterface $container The container
@@ -35,11 +38,6 @@ class Application implements IAssetDependent
      * @var Element[][] $element lists by region
      */
     protected $elements;
-
-    /**
-     * @var array $layers The layers
-     */
-    protected $layers;
 
     /**
      * @var Entity
@@ -124,71 +122,6 @@ class Application implements IAssetDependent
     }
 
     /**
-     * @return string[]
-     */
-    public function getValidAssetTypes()
-    {
-        return array(
-            'js',
-            'css',
-            'trans',
-        );
-    }
-
-    /**
-     * Lists assets.
-     *
-     * @return array
-     */
-    public function getAssets()
-    {
-        $assetService = $this->getAssetService();
-        return array(
-            'js' => $assetService->getBaseAssetReferences($this->entity, 'js'),
-            'css' => $assetService->getBaseAssetReferences($this->entity, 'css'),
-            'trans' => $assetService->getBaseAssetReferences($this->entity, 'trans'),
-        );
-    }
-
-    /**
-     * Get the list of asset paths of the given type ('css', 'js', 'trans')
-     * Filters can be applied later on with the ensureFilter method.
-     *
-     * @param string $type use 'css' or 'js' or 'trans'
-     * @return string[]
-     */
-    public function getAssetGroup($type)
-    {
-        return $this->getAssetService()->collectAssetReferences($this->entity, $type);
-    }
-
-    /**
-     * @return ConfigService
-     */
-    private function getConfigService()
-    {
-        /** @var ConfigService $presenter */
-        $presenter = $this->container->get('mapbender.presenter.application.config.service');
-        return $presenter;
-    }
-
-    /**
-     * Get the configuration (application, elements, layers) as an StringAsset.
-     * Filters can be applied later on with the ensureFilter method.
-     *
-     * @return string Configuration as JSON string
-     */
-    public function getConfiguration()
-    {
-        $configService = $this->getConfigService();
-        $configuration = $configService->getConfiguration($this->entity);
-
-        // Convert to asset
-        $asset = new StringAsset(json_encode((object)$configuration));
-        return $asset->dump();
-    }
-
-    /**
      * Get template object
      *
      * @return Template
@@ -228,24 +161,6 @@ class Application implements IAssetDependent
         } else {
             return $this->elements;
         }
-    }
-
-    /**
-     * Extracts active source instances from given Layerset entity.
-     *
-     * @param Layerset $entity
-     * @return SourceInstance[]
-     */
-    protected static function filterActiveSourceInstances(Layerset $entity)
-    {
-        $isYamlApp = $entity->getApplication()->isYamlBased();
-        $activeInstances = array();
-        foreach ($entity->getInstances() as $instance) {
-            if ($isYamlApp || $instance->getEnabled()) {
-                $activeInstances[] = $instance;
-            }
-        }
-        return $activeInstances;
     }
 
     /**
@@ -318,54 +233,6 @@ class Application implements IAssetDependent
     }
 
     /**
-     * If $oldSlug emptyish: Ensures Application-owned subdirectory under uploads exists,
-     * returns true if creation succcessful or it already existed.
-     *
-     * If $oldSlug non-emptyish: Move / rename subdirectory from  $oldSlug to $slug and
-     * returns a boolean indicating success.
-     *
-     * @deprecated for parameter-variadic behavior and swallowing exceptions; use the application_uploads_manager service directly
-     *
-     * @param ContainerInterface $container Container
-     * @param string $slug subdirectory name for presence check / creation
-     * @param string|null $oldSlug source subdirectory that will be renamed to $slug
-     * @return boolean to indicate success or presence
-     */
-    public static function createAppWebDir($container, $slug, $oldSlug = null)
-    {
-        $ulm = static::getServiceStatic($container)->getUploadsManager();
-        try {
-            if ($oldSlug) {
-                $ulm->renameSubdirectory($slug, $oldSlug, true);
-            } else {
-                $ulm->getSubdirectoryPath($slug, true);
-            }
-            return true;
-        } catch (IOException $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Removes application's public directory, if present.
-     *
-     * @param ContainerInterface $container Container
-     * @param string             $slug      application's slug
-     * @return boolean true if the directory was removed or did not exist before the call.
-     * @deprecated use uploads_manager or filesystem service directly
-     */
-    public static function removeAppWebDir($container, $slug)
-    {
-        $ulm = static::getServiceStatic($container)->getUploadsManager();
-        try {
-            $ulm->removeSubdirectory($slug);
-            return true;
-        } catch (IOException $e) {
-            return false;
-        }
-    }
-
-    /**
      * Returns an url to application's public directory.
      *
      * @param ContainerInterface $container Container
@@ -397,38 +264,8 @@ class Application implements IAssetDependent
      */
     public static function getBaseUrl($container)
     {
-        $request = $container->get('request');
+        $request = $container->get('request_stack')->getCurrentRequest();
         return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-    }
-
-    /**
-     * Copies an application web order.
-     *
-     * @param ContainerInterface $container Container
-     * @param string             $srcSlug  source application slug
-     * @param string             $destSlug  destination application slug
-     * @return boolean true if the application  order has been copied otherwise false.
-     */
-    public static function copyAppWebDir($container, $srcSlug, $destSlug)
-    {
-        $ulm = static::getServiceStatic($container)->getUploadsManager();
-        try {
-            $ulm->copySubdirectory($srcSlug, $destSlug);
-            return true;
-        } catch (IOException $e) {
-            return false;
-        }
-    }
-
-    /**
-     * @deprected
-     * @internal
-     */
-    public function addViewPermissions()
-    {
-        /** @var YamlApplicationImporter $service */
-        $service = $this->container->get('mapbender.yaml_application_importer.service');
-        $service->addViewPermissions($this->getEntity());
     }
 
     /**
@@ -449,16 +286,6 @@ class Application implements IAssetDependent
     {
         /** @var ApplicationService $service */
         $service = $container->get('mapbender.presenter.application.service');
-        return $service;
-    }
-
-    /**
-     * @return \Mapbender\CoreBundle\Asset\ApplicationAssetService
-     */
-    protected function getAssetService()
-    {
-        /** @var \Mapbender\CoreBundle\Asset\ApplicationAssetService $service */
-        $service = $this->container->get('mapbender.application_asset.service');
         return $service;
     }
 }

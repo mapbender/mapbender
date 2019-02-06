@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    $.widget("mapbender.mbActivityIndicator", $.mapbender.mbBaseElement, {
+    $.widget("mapbender.mbActivityIndicator", {
         options: {
             activityClass: 'mb-activity',
             ajaxActivityClass: 'mb-activity-ajax',

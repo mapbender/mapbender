@@ -66,8 +66,6 @@ mb:
         edit: 'Edit element'
         no_element_added:
           '': 'No element added'
-      messagebox:
-        only_region_elements: 'Only for this region available elements are displayed.'
       zoombar:
         draggable: Draggable
       filter:

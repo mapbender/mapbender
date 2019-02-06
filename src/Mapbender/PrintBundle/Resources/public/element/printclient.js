@@ -253,41 +253,25 @@
         _collectLegends: function() {
             var legends = [];
             var scale = this._getPrintScale();
-            function _getLegends(layer) {
-                var legend = {};
-                if (!layer.options.treeOptions.selected) {
-                    return false;
-                }
-                if (layer.children) {
-                    var childrenActive = false;
-                    for (var i = 0; i < layer.children.length; i++) {
-                        var childLegends = _getLegends(layer.children[i]);
-                        if (childLegends !== false) {
-                            _.assign(legend, childLegends);
-                            childrenActive = true;
-                        }
-                    }
-                    if (!childrenActive) {
-                        return false;
-                    }
-                }
-                // Only include the legend for a "group" / non-leaf layer if we haven't collected any
-                // legend images from leaf layers yet, but at least one leaf layer is actually active
-                if (!Object.keys(legend).length) {
-                    if (layer.options.legend && layer.options.legend.url && layer.options.treeOptions.selected) {
-                        legend[layer.options.title] = layer.options.legend.url;
-                    }
-                }
-                return legend;
-            }
             var sources = this._getRasterSourceDefs();
             for (var i = 0; i < sources.length; ++i) {
                 var source = sources[i];
-                if (source.type === 'wms' && this._getRasterVisibilityInfo(source, scale).layers.length) {
-                    var ll = _getLegends(sources[i].configuration.children[0]);
-                    if (ll && Object.keys(ll).length) {
-                        legends = legends.concat(ll);
+                var gsHandler = this.map.model.getGeoSourceHandler(source);
+                var leafInfo = gsHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
+                var sourceLegendMap = {};
+                _.forEach(leafInfo, function(activeLeaf) {
+                    if (activeLeaf.state.visibility) {
+                        for (var p = -1; p < activeLeaf.parents.length; ++p) {
+                            var legendLayer = (p < 0) ? activeLeaf.layer : activeLeaf.parents[p];
+                            if (legendLayer.options.legend && legendLayer.options.legend.url) {
+                                sourceLegendMap[legendLayer.options.title] = legendLayer.options.legend.url;
+                                break;
+                            }
+                        }
                     }
+                });
+                if (Object.keys(sourceLegendMap).length) {
+                    legends.push(sourceLegendMap);
                 }
             }
             return legends;
@@ -487,21 +471,6 @@
                     }
                 }.bind(this)
             });
-        },
-
-        /**
-         *
-         */
-        ready: function(callback) {
-            if(this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         }
     });
 

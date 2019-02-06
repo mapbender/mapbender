@@ -29,6 +29,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class PrintQueuePlugin implements PrintClientHttpPluginInterface
 {
+    /**
+     * Name for the Element's http action that should submit a job to the queue
+     * Making this constant reduces interaction complexity.
+     */
+    const ELEMENT_ACTION_NAME_QUEUE = 'queue';
+
     /** @var EntityManagerInterface */
     protected $entityManager;
     /** @var TokenStorageInterface */
@@ -136,19 +142,6 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                 $this->entityManager->flush();
                 return new Response('', 204);
         }
-    }
-
-    /**
-     * PrintClient interaction support. Returns the name of the Element action that
-     * adds a job to the queue. Queue plugin needs to expose this information because
-     * it needs the PrintClient Element to prepare the job data before it can be stored,
-     * which means it also cannot handle the http action by itself.
-     *
-     * @return string
-     */
-    public function getQueueActionName()
-    {
-        return 'queue';
     }
 
     /**
