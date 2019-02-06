@@ -12,6 +12,8 @@
   - Improve compatibility with certain reverse-proxy setups ([PR #1061](https://github.com/mapbender/mapbender/pull/1061))
   - Print: add WMS GetMap size limits, use tiling to stitch larger images ([PR#1073](https://github.com/mapbender/mapbender/pull/1073))
   - Print: add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
+    - Print queue display styling [inherits from .mapbender-element-result-table](https://github.com/mapbender/mapbender/blob/e2fd234ffa5f98d6c74c0359f26d7d60362f50dd/src/Mapbender/PrintBundle/Resources/public/element/printclient.scss#L28), which means
+      any custom css styles you may have already applied to Digitizer result tables should automatically transfer to the print queue visual.
   - Print: significantly reduce memory requirements for larger printouts
   - Print: optimize handling performance of WMS layers with manually reduced opacity
   - Print: Suppress redundant group layer legend images and legend images for deactivated layers ([PR#1053](https://github.com/mapbender/mapbender/pull/1053))
