@@ -3,6 +3,7 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 
@@ -144,7 +145,11 @@ class LayerRendererGeoJson extends LayerRenderer
             'type' => 'MultiPolygon',
             'coordinates' => array($geometry['coordinates']),
         ));
+        // remove label text, if any, from ephemereal MultiPolygon for separate processing
+        $labelText = ArrayUtil::getDefault($geometry['style'], 'label', null);
+        unset($geometry['style']['label']);
         $this->drawMultiPolygon($canvas, $multiPolygon);
+        // @todo: render feature label using $labelText
     }
 
     /**
@@ -197,6 +202,7 @@ class LayerRendererGeoJson extends LayerRenderer
             }
             $subRegion->mergeBack();
         }
+        // @todo: detect and render feature label
     }
 
     /**
@@ -210,7 +216,11 @@ class LayerRendererGeoJson extends LayerRenderer
             'type' => 'MultiLineString',
             'coordinates' => array($geometry['coordinates']),
         ));
+        // remove label text, if any, from ephemereal MultiLineString for separate processing
+        $labelText = ArrayUtil::getDefault($geometry['style'], 'label', null);
+        unset($geometry['style']['label']);
         $this->drawMultiLineString($canvas, $mlString);
+        // @todo: render label using extracted $labelText
     }
 
     /**
@@ -229,6 +239,7 @@ class LayerRendererGeoJson extends LayerRenderer
                 $canvas->drawLineString($pixelCoords, IMG_COLOR_STYLED);
             }
         }
+        // @todo: detect and render feature label
     }
 
     /**
@@ -238,7 +249,6 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function drawPoint($canvas, $geometry)
     {
         $style = $this->getFeatureStyle($geometry);
-        $image = $canvas->resource;
         $resizeFactor = $canvas->featureTransform->lineScale;
 
         $p = $canvas->featureTransform->transformPair($geometry['coordinates']);
@@ -246,33 +256,13 @@ class LayerRendererGeoJson extends LayerRenderer
         $p[1] = round($p[1]);
 
         if (isset($style['label'])) {
-            // draw label with halo
-            $color = $this->getColor($style['fontColor'], 1, $image);
-            $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $image);
-            $font = "{$this->fontPath}/OpenSans-Bold.ttf";
-
-            $fontSize = floatval(10 * $resizeFactor);
-            $haloOffsets = array(
-                array(0, +$resizeFactor),
-                array(0, -$resizeFactor),
-                array(-$resizeFactor, 0),
-                array(+$resizeFactor, 0),
-            );
             // offset text to the right of the point
             $textXy = array(
                 $p[0] + $resizeFactor * 1.5 * $style['pointRadius'],
                 // center vertically on original y
-                $p[1] + 0.5 * $fontSize,
+                $p[1] + 0.5 * $this->getLabelFontSize($canvas, $style),
             );
-            $text = $style['label'];
-            foreach ($haloOffsets as $xy) {
-                imagettftext($image, $fontSize, 0,
-                    $textXy[0] + $xy[0], $textXy[1] + $xy[1],
-                    $bgcolor, $font, $text);
-            }
-            imagettftext($image, $fontSize, 0,
-                $textXy[0], $textXy[1],
-                $color, $font, $text);
+            $this->drawFeatureLabel($canvas, $style, $style['label'], $textXy);
         }
 
         $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
@@ -281,9 +271,9 @@ class LayerRendererGeoJson extends LayerRenderer
             $color = $this->getColor(
                 $style['fillColor'],
                 $style['fillOpacity'],
-                $image);
-            imagesetthickness($image, 0);
-            imagefilledellipse($image, $p[0], $p[1], $diameter, $diameter, $color);
+                $canvas->resource);
+            imagesetthickness($canvas->resource, 0);
+            imagefilledellipse($canvas->resource, $p[0], $p[1], $diameter, $diameter, $color);
         }
         if ($style['strokeOpacity'] > 0 && $style['strokeWidth']) {
             $strokeWidth = max(0, intval(round($style['strokeWidth'] * $canvas->featureTransform->lineScale)));
@@ -323,6 +313,42 @@ class LayerRendererGeoJson extends LayerRenderer
             imagefilledellipse($tempImage, $offsetXy, $offsetXy, $innerDiameter, $innerDiameter, $transparent);
         }
         $tempCanvas->mergeBack();
+    }
+
+    /**
+     * Should render the label for a feature. This is not a freestanding ~'label'-type Feature, but a label
+     * attached to a geometry, which is getting rendered separately.
+     *
+     * @param ExportCanvas $canvas
+     * @param array $style
+     * @param string $text
+     * @param float[] $originXy in pixel space
+     */
+    protected function drawFeatureLabel(ExportCanvas $canvas, $style, $text, $originXy)
+    {
+        // @todo: evaluate text opacity
+        $color = $this->getColor($style['fontColor'], 1, $canvas->resource);
+        // @todo: evaluate style's outline opacity (key?) and 'labelOutlineWidth' from style
+        $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $canvas->resource);
+        $fontName = $this->getLabelFont($style);
+        $fontSize = $this->getLabelFontSize($canvas, $style);
+
+        // @todo: skip halo rendering if label style indicates no outline width, or fully transparent outline
+        $haloFactor = $canvas->featureTransform->lineScale;
+        $haloOffsets = array(
+            array(0, +$haloFactor),
+            array(0, -$haloFactor),
+            array(-$haloFactor, 0),
+            array(+$haloFactor, 0),
+        );
+        foreach ($haloOffsets as $xy) {
+            imagettftext($canvas->resource, $fontSize, 0,
+                $originXy[0] + $xy[0], $originXy[1] + $xy[1],
+                $bgcolor, $fontName, $text);
+        }
+        imagettftext($canvas->resource, $fontSize, 0,
+            $originXy[0], $originXy[1],
+            $color, $fontName, $text);
     }
 
     /**
@@ -409,11 +435,34 @@ class LayerRendererGeoJson extends LayerRenderer
                 return array_merge($dash, $space, $dot, $space);
             case 'longdash' :
                 return array_merge($longdash, $space);
-            case 'longdashdot' :
+            case 'longdashdot':
                 return array_merge($longdash, $space, $dot, $space);
             default:
                 throw new \InvalidArgumentException("Unsupported pattern name " . print_r($patternName, true));
         }
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param array $style
+     * @return float
+     */
+    protected function getLabelFontSize(ExportCanvas $canvas, $style)
+    {
+        // @todo: extract font size from style? (not alyays popuplated; empty for 'Redlining' labeled points)
+        return floatval(10 * $canvas->featureTransform->lineScale);
+    }
+
+    /**
+     * Should return an absolute path to the appropriate .ttf file for rendering a feature label.
+     *
+     * @param array $style
+     * @return string
+     */
+    protected function getLabelFont($style)
+    {
+        // @todo: extract explicit font setting from style, check existance of ttf, fall back to default if no such file
+        return "{$this->fontPath}/OpenSans-Bold.ttf";
     }
 
     /**
