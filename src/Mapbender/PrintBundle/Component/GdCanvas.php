@@ -6,6 +6,8 @@ namespace Mapbender\PrintBundle\Component;
 
 class GdCanvas extends BaseCanvas
 {
+    const MINIMUM_OPACITY = 0.007874; // PHP GD uses 7bit opacity => minimum effective value is ~1.0 / 127
+
     /** @var resource Gdish */
     public $resource;
 

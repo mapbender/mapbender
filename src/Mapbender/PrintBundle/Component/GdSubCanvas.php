@@ -38,6 +38,10 @@ class GdSubCanvas extends GdCanvas
         return $this->transparent;
     }
 
+    /**
+     * Blends image back onto the parent canvas at the appropriate offset.
+     * (see constructor)
+     */
     public function mergeBack()
     {
         imagealphablending($this->parent->resource, true);

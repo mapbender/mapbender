@@ -191,16 +191,9 @@ class LayerRendererGeoJson extends LayerRenderer
             }
             $subRegion->mergeBack();
         }
-        if (!$bounds->isEmpty() && $this->applyStrokeStyle($canvas, $style, $canvas->featureTransform->lineScale)) {
-            $bufferWidth = intval($style['strokeWidth'] * $canvas->featureTransform->lineScale + 5);
-            $subRegion = $this->getSubRegionFromBounds($canvas, $bounds, $bufferWidth);
-            $this->applyStrokeStyle($subRegion, $style, $canvas->featureTransform->lineScale);
-            foreach ($transformedRings as $polygonRings) {
-                foreach ($polygonRings as $ringPoints) {
-                    $subRegion->drawPolygonOutline($ringPoints, IMG_COLOR_STYLED);
-                }
-            }
-            $subRegion->mergeBack();
+        if (!$bounds->isEmpty() && $this->checkLineStyleVisibility($canvas, $style)) {
+            $lineCoordSets = call_user_func_array('\array_merge', $transformedRings);
+            $this->drawLineSetsInternal($canvas, $style, $lineCoordSets, true, $bounds);
         }
         // @todo: detect and render feature label
     }
@@ -230,14 +223,16 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function drawMultiLineString($canvas, $geometry)
     {
         $style = $this->getFeatureStyle($geometry);
-        if ($this->applyStrokeStyle($canvas, $style, $canvas->featureTransform->lineScale)) {
+        if ($this->checkLineStyleVisibility($canvas, $style)) {
+            $transformedCoordSets = array();
             foreach ($geometry['coordinates'] as $lineString) {
-                $pixelCoords = array();
+                $transformedLineCoords = array();
                 foreach ($lineString as $coord) {
-                    $pixelCoords[] = $canvas->featureTransform->transformPair($coord);
+                    $transformedLineCoords[] = $canvas->featureTransform->transformPair($coord);
                 }
-                $canvas->drawLineString($pixelCoords, IMG_COLOR_STYLED);
+                $transformedCoordSets[] = $transformedLineCoords;
             }
+            $this->drawLineSetsInternal($canvas, $style, $transformedCoordSets, false);
         }
         // @todo: detect and render feature label
     }
@@ -370,32 +365,74 @@ class LayerRendererGeoJson extends LayerRenderer
     }
 
     /**
-     * Generate and apply extended (OpenLayers 2) stroke style.
-     * Returns false to indicate that stroke style is degenerate (zero width or zero opacity).
-     * Callers should check the return value and skip line rendering completely if false.
+     * Draws a multitude of line loops (=polygon outlines) or line strings. Coordinate sets passed in are assumed
+     * to be already transformed to the given $canvas's pixel space.
      *
-     * @param GdCanvas $canvas
-     * @param mixed[] $style
-     * @param float $lineScale
+     * @param ExportCanvas $canvas
+     * @param array $style
+     * @param float[][][] $coordSets in pixel space
+     * @param boolean $close; use true for polygons, false for line strings
+     * @param FeatureBounds|null $bounds of all $rings; will be calculated if omitted, but can be passed in as an optimization
+     */
+    protected function drawLineSetsInternal(ExportCanvas $canvas, $style, $coordSets, $close, FeatureBounds $bounds=null)
+    {
+        if (!$bounds) {
+            $bounds = new FeatureBounds();
+            foreach ($coordSets as $lineCoords) {
+                $bounds->addPoints($lineCoords);
+            }
+        }
+        if ($bounds->isEmpty() || !$coordSets) {
+            // nothing to render, avoiding errors down the line
+            return;
+        }
+
+        $lineScale = $canvas->featureTransform->lineScale;
+        $bufferWidth = intval($style['strokeWidth'] *  $lineScale + 5);
+        $subRegion = $this->getSubRegionFromBounds($canvas, $bounds, $bufferWidth);
+
+        $pixelThickness = $style['strokeWidth'] * $lineScale;
+        $intThickness = max(1, intval(round($pixelThickness)));
+        imagesetthickness($subRegion->resource, $intThickness);
+        $opacity = $style['strokeOpacity'];
+        if ($pixelThickness < 1) {
+            $opacity = max(0.0, $opacity * $pixelThickness);
+        }
+        $lineColor = $this->getColor($style['strokeColor'], $opacity, $subRegion->resource);
+        if ($style['strokeDashstyle'] !== 'solid') {
+            $strokeStyleArray = $this->getStrokeStyle($lineColor, $pixelThickness, $style['strokeDashstyle'], $lineScale);
+            imagesetstyle($subRegion->resource, $strokeStyleArray);
+            $gdColor = IMG_COLOR_STYLED;
+        } else {
+            $gdColor = $lineColor;
+        }
+
+        foreach ($coordSets as $lineCoords) {
+            if ($close) {
+                $subRegion->drawPolygonOutline($lineCoords, $gdColor);
+            } else {
+                $subRegion->drawLineString($lineCoords, $gdColor);
+            }
+        }
+        $subRegion->mergeBack();
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param array $style
      * @return bool
      */
-    protected function applyStrokeStyle($canvas, $style, $lineScale)
+    protected function checkLineStyleVisibility($canvas, $style)
     {
-        // NOTE: gd imagesetstyle patterns are not based on distance from starting point
-        //       on the line, but rather on integral pixel quantities, making it
-        //       a) scale proportionally to stroke width
-        //       b) fundamentally incompatible with non-integral line widths
-        // To generate any functional stroke style, the width must be quantized to an
-        // integer, and that integral with must be provided to the style generation function.
-        $intThickness = intval(round($style['strokeWidth'] * $lineScale));
-        if ($style['strokeOpacity'] && $intThickness >= 1) {
-            $color = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
-            imagesetthickness($canvas->resource, $intThickness);
-            $strokeStyle = $this->getStrokeStyle($color, $intThickness, $style['strokeDashstyle'], $lineScale);
-            imagesetstyle($canvas->resource, $strokeStyle);
-            return true;
-        } else {
+        $thickness = $style['strokeWidth'] * $canvas->featureTransform->lineScale;
+        if ($thickness <= 0) {
             return false;
+        } elseif ($thickness <= 1) {
+            // for very thin lines, multiply opacity with thickness
+            return $thickness * $style['strokeOpacity'] >= ExportCanvas::MINIMUM_OPACITY;
+        } else {
+            // Check if line opacity is flat-out zero, or too small to produce a visible result
+            return $style['strokeOpacity'] >= ExportCanvas::MINIMUM_OPACITY;
         }
     }
 
@@ -405,7 +442,7 @@ class LayerRendererGeoJson extends LayerRenderer
      * @see http://php.net/manual/en/function.imagesetstyle.php
      *
      * @param int $color from imagecollorallocate
-     * @param int $thickness
+     * @param float $thickness
      * @param string $patternName
      * @param float $patternScale
      * @return array
@@ -414,15 +451,15 @@ class LayerRendererGeoJson extends LayerRenderer
     {
         // NOTE: GD actually counts one style entry per produced pixel, NOT per pixel-space length unit.
         // => Length of the style array must scale with the line thickness
-        $dotLength = max(1, intval(round($thickness * $patternScale)));
-        $dashLength = max(1, intval(round($patternScale * 45)));
-        $longDashLength = max(1, intval(round($patternScale * 85)));
-        $spaceLength = max(1, intval(round($patternScale * 45)));
+        $dotLength = max(0, $patternScale * 15);
+        $dashLength = max(0, $patternScale * 45);
+        $longDashLength = max(0, $patternScale * 85);
+        $spaceLength = max(0, $patternScale * 45);
 
-        $dot = array_fill(0, $thickness * $dotLength, $color);
-        $dash = array_fill(0, $thickness * $dashLength, $color);
-        $longdash = array_fill(0, $thickness * $longDashLength, $color);
-        $space = array_fill(0, $thickness * $spaceLength, IMG_COLOR_TRANSPARENT);
+        $dot = array_fill(0, intval(round($thickness * $dotLength)), $color);
+        $dash = array_fill(0, intval(round($thickness * $dashLength)), $color);
+        $longdash = array_fill(0, intval(round($thickness * $longDashLength)), $color);
+        $space = array_fill(0, intval(round($thickness * $spaceLength)), IMG_COLOR_TRANSPARENT);
 
         switch ($patternName) {
             case 'solid' :
