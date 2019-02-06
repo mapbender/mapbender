@@ -35,7 +35,6 @@
             mbMap.map.olMap.addControl(this.scaledisplay);
             $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
             this._trigger('ready');
-            this._ready();
         },
         _updateScale: function(){
             var scale = this.scaledisplay.map.getScale();
@@ -60,20 +59,6 @@
          */
         _changeSrs: function(event, srs){
             this.scaledisplay.updateScale();
-        },
-        /**
-         *
-         */
-        ready: function(callback) {
-            if(this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         }
         
     });

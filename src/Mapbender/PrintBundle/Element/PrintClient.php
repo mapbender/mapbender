@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use FOM\UserBundle\Entity\Group;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
@@ -218,11 +219,10 @@ class PrintClient extends Element
     protected function generateFilename()
     {
         $configuration = $this->entity->getConfiguration();
-        if (!empty($configuration['file_prefix'])) {
-            return $configuration['file_prefix'] . '_' . date("YmdHis") . '.pdf';
-        } else {
-            return 'mapbender_print.pdf';
-        }
+        $prefix = ArrayUtil::getDefault($configuration, 'file_prefix', null);
+        $prefix = $prefix ?: ArrayUtil::getDefault($this->getDefaultConfiguration(), 'file_prefix', null);
+        $prefix = $prefix ?: 'mapbender_print';
+        return $prefix . '_' . date("YmdHis") . '.pdf';
     }
 
     /**
@@ -231,7 +231,7 @@ class PrintClient extends Element
     public function httpAction($action)
     {
         /** @var Request $request */
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $bridgeService = $this->getServiceBridge();
         $configuration = $this->entity->getConfiguration();
         switch ($action) {

@@ -82,8 +82,7 @@
             if(!options.maximized){
                 element.addClass("closed");
             }    
-                
-            widget._ready();
+            this._trigger('ready');
         },
 
         /**
@@ -169,26 +168,6 @@
             console.log("New overview params", center, ovMap.getZoom());
 
             ovMap.setCenter(center, ovMap.getZoom(), false, true);
-        },
-
-        /**
-         * Puts callback on ready
-         * @param {function} callback Function this runs after widget is ready
-         */
-        ready: function(callback){
-            if(this.readyState === true){
-                callback();
-            }
-        },
-
-        /**
-         * Runs if widget is ready
-         */
-        _ready: function() {
-            var widget = this;
-            widget._trigger('ready');
-
-            widget.readyState = true;
         }
 
     });

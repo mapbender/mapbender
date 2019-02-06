@@ -31,7 +31,6 @@
             $(document).on('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
             
             this._trigger('ready');
-            this._ready();
         },
         showHidde: function(){
             var self = this;
@@ -229,20 +228,6 @@
                 }
             }
             return result;
-        },
-        /**
-         *
-         */
-        ready: function(callback){
-            if(this.readyState === true){
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function(){
-            this.readyState = true;
         },
         _destroy: $.noop
     });

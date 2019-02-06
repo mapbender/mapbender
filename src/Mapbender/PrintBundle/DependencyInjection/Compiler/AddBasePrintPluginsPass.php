@@ -6,6 +6,7 @@ namespace Mapbender\PrintBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 class AddBasePrintPluginsPass implements CompilerPassInterface
 {
@@ -14,7 +15,9 @@ class AddBasePrintPluginsPass implements CompilerPassInterface
         $hostDefinition = $container->getDefinition('mapbender.print_plugin_host.service');
         $this->tryAddDigitizerPlugin($container, $hostDefinition);
         if ($container->getParameter('mapbender.print.queueable')) {
-            $hostDefinition->addMethodCall('registerPlugin', array('mapbender.print.plugin.queue'));
+            $hostDefinition->addMethodCall('registerPlugin', array(
+                new Reference('mapbender.print.plugin.queue'),
+            ));
         }
     }
 
@@ -27,7 +30,9 @@ class AddBasePrintPluginsPass implements CompilerPassInterface
         $ftParamName0 = $digitizerPluginDefinition->getArgument('featureTypeParamName');
         $ftParamName = $this->resolveParameterReference($container, $ftParamName0);
         if ($container->hasParameter($ftParamName) && $container->getParameter($ftParamName)) {
-            $hostDefinition->addMethodCall('registerPlugin', array($digitizerPluginId));
+            $hostDefinition->addMethodCall('registerPlugin', array(
+                new Reference($digitizerPluginId),
+            ));
         }
     }
 

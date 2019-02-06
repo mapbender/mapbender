@@ -1236,9 +1236,13 @@ Mapbender.Model = {
                     dataOut.push($.extend({}, commonLayerData, {
                         url: gsHandler.getSingleLayerUrl(olLayer, extent_, item.layer.options.name, item.layer.options.style),
                         minResolution: resFromScale(item.layer.options.minScale),
-                        maxResolution: resFromScale(item.layer.options.maxScale)
+                        maxResolution: resFromScale(item.layer.options.maxScale),
+                        order: item.order
                     }));
                 }
+            });
+            dataOut.sort(function(a, b) {
+                return a.order - b.order;
             });
         } else {
             // hopefully building a bridge for forks / feature branches with non-WMS layers or customized geosource code

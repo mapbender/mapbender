@@ -3,6 +3,7 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 
@@ -124,7 +125,13 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function getFeatureStyle($geometry)
     {
         $defaults = $this->getDefaultFeatureStyle($geometry['type']);
-        return array_replace($defaults, $geometry['style']);
+        // Special snowflake Digitizer can and will supply NULL for required
+        // style attributes, nuking our defaults. Filter those NULLs, if we have
+        // a default value for them.
+        $filteredStyle = array_filter($geometry['style'], function($value) {
+            return $value !== null;
+        });
+        return array_replace($defaults, $filteredStyle) + $geometry['style'];
     }
 
     /**
@@ -138,7 +145,11 @@ class LayerRendererGeoJson extends LayerRenderer
             'type' => 'MultiPolygon',
             'coordinates' => array($geometry['coordinates']),
         ));
+        // remove label text, if any, from ephemereal MultiPolygon for separate processing
+        $labelText = ArrayUtil::getDefault($geometry['style'], 'label', null);
+        unset($geometry['style']['label']);
         $this->drawMultiPolygon($canvas, $multiPolygon);
+        // @todo: render feature label using $labelText
     }
 
     /**
@@ -147,27 +158,44 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function drawMultiPolygon($canvas, $geometry)
     {
-        $image = $canvas->resource;
         $style = $this->getFeatureStyle($geometry);
-        foreach ($geometry['coordinates'] as $polygon) {
-            foreach ($polygon as $ring) {
+        $transformedRings = array();
+        $bounds = new FeatureBounds();
+        foreach ($geometry['coordinates'] as $polygonIndex => $polygon) {
+            $transformedRings[$polygonIndex] = array();
+            foreach ($polygon as $ringIx => $ring) {
                 if (count($ring) < 3) {
                     continue;
                 }
 
-                $points = array();
+                $transformedRing = array();
                 foreach ($ring as $c) {
-                    $points[] = $canvas->featureTransform->transformPair($c);
+                    $transformedRing[] = $canvas->featureTransform->transformPair($c);
                 }
-                if ($style['fillOpacity'] > 0){
-                    $color = $this->getColor($style['fillColor'], $style['fillOpacity'], $image);
-                    $canvas->drawPolygonBody($points, $color);
-                }
-                if ($this->applyStrokeStyle($canvas, $style)) {
-                    $canvas->drawPolygonOutline($points, IMG_COLOR_STYLED);
-                }
+                $bounds->addPoints($transformedRing);
+                $transformedRings[$polygonIndex][$ringIx] = $transformedRing;
             }
         }
+        if (!$bounds->isEmpty() && $style['fillOpacity'] > 0) {
+            $subRegion = $this->getSubRegionFromBounds($canvas, $bounds, 10);
+            $styleColor = $this->getColor($style['fillColor'], $style['fillOpacity'], $subRegion->resource);
+            foreach ($transformedRings as $polygonRings) {
+                $currentRingColor = $styleColor;
+                foreach ($polygonRings as $ringPoints) {
+                    $subRegion->drawPolygonBody($ringPoints, $currentRingColor);
+                    // Set color to transparent for next ring
+                    // Rings after the first are interior rings, which we effectively "undraw"
+                    // by using transparent
+                    $currentRingColor = $subRegion->getTransparent();
+                }
+            }
+            $subRegion->mergeBack();
+        }
+        if (!$bounds->isEmpty() && $this->checkLineStyleVisibility($canvas, $style)) {
+            $lineCoordSets = call_user_func_array('\array_merge', $transformedRings);
+            $this->drawLineSetsInternal($canvas, $style, $lineCoordSets, true, $bounds);
+        }
+        // @todo: detect and render feature label
     }
 
     /**
@@ -181,7 +209,11 @@ class LayerRendererGeoJson extends LayerRenderer
             'type' => 'MultiLineString',
             'coordinates' => array($geometry['coordinates']),
         ));
+        // remove label text, if any, from ephemereal MultiLineString for separate processing
+        $labelText = ArrayUtil::getDefault($geometry['style'], 'label', null);
+        unset($geometry['style']['label']);
         $this->drawMultiLineString($canvas, $mlString);
+        // @todo: render label using extracted $labelText
     }
 
     /**
@@ -191,15 +223,18 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function drawMultiLineString($canvas, $geometry)
     {
         $style = $this->getFeatureStyle($geometry);
-        if ($this->applyStrokeStyle($canvas, $style)) {
+        if ($this->checkLineStyleVisibility($canvas, $style)) {
+            $transformedCoordSets = array();
             foreach ($geometry['coordinates'] as $lineString) {
-                $pixelCoords = array();
+                $transformedLineCoords = array();
                 foreach ($lineString as $coord) {
-                    $pixelCoords[] = $canvas->featureTransform->transformPair($coord);
+                    $transformedLineCoords[] = $canvas->featureTransform->transformPair($coord);
                 }
-                $canvas->drawLineString($pixelCoords, IMG_COLOR_STYLED);
+                $transformedCoordSets[] = $transformedLineCoords;
             }
+            $this->drawLineSetsInternal($canvas, $style, $transformedCoordSets, false);
         }
+        // @todo: detect and render feature label
     }
 
     /**
@@ -209,7 +244,6 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function drawPoint($canvas, $geometry)
     {
         $style = $this->getFeatureStyle($geometry);
-        $image = $canvas->resource;
         $resizeFactor = $canvas->featureTransform->lineScale;
 
         $p = $canvas->featureTransform->transformPair($geometry['coordinates']);
@@ -217,33 +251,13 @@ class LayerRendererGeoJson extends LayerRenderer
         $p[1] = round($p[1]);
 
         if (isset($style['label'])) {
-            // draw label with halo
-            $color = $this->getColor($style['fontColor'], 1, $image);
-            $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $image);
-            $font = "{$this->fontPath}/OpenSans-Bold.ttf";
-
-            $fontSize = floatval(10 * $resizeFactor);
-            $haloOffsets = array(
-                array(0, +$resizeFactor),
-                array(0, -$resizeFactor),
-                array(-$resizeFactor, 0),
-                array(+$resizeFactor, 0),
-            );
             // offset text to the right of the point
             $textXy = array(
                 $p[0] + $resizeFactor * 1.5 * $style['pointRadius'],
                 // center vertically on original y
-                $p[1] + 0.5 * $fontSize,
+                $p[1] + 0.5 * $this->getLabelFontSize($canvas, $style),
             );
-            $text = $style['label'];
-            foreach ($haloOffsets as $xy) {
-                imagettftext($image, $fontSize, 0,
-                    $textXy[0] + $xy[0], $textXy[1] + $xy[1],
-                    $bgcolor, $font, $text);
-            }
-            imagettftext($image, $fontSize, 0,
-                $textXy[0], $textXy[1],
-                $color, $font, $text);
+            $this->drawFeatureLabel($canvas, $style, $style['label'], $textXy);
         }
 
         $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
@@ -252,20 +266,82 @@ class LayerRendererGeoJson extends LayerRenderer
             $color = $this->getColor(
                 $style['fillColor'],
                 $style['fillOpacity'],
-                $image);
-            imagesetthickness($image, 0);
-            imagefilledellipse($image, $p[0], $p[1], $diameter, $diameter, $color);
+                $canvas->resource);
+            $canvas->drawFilledCircle($p[0], $p[1], $color, $diameter);
         }
-        // Circle border
-        if ($this->applyStrokeStyle($canvas, $style)) {
-            // Imageellipse DOES NOT support IMG_COLOR_STYLED-based line styling
-            // It does not even support line thickness.
-            // To support properly styled and patterned point outlining, we have
-            // to generate ~circle geometry ourselves and use a styling-aware drawing
-            // function.
-            $coords = $this->generatePointOutlineCoords($p[0], $p[1], $diameter / 2);
-            $canvas->drawPolygonOutline($coords, IMG_COLOR_STYLED);
+        if ($style['strokeOpacity'] > 0 && $style['strokeWidth']) {
+            $strokeWidth = max(0, intval(round($style['strokeWidth'] * $canvas->featureTransform->lineScale)));
+            if ($strokeWidth > 0) {
+                $strokeColor = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
+                $this->drawCircleOutline($canvas, $p[0], $p[1], $diameter / 2, $strokeColor, $strokeWidth);
+                imagecolordeallocate($canvas->resource, $strokeColor);
+            }
         }
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param int $centerX
+     * @param int $centerY
+     * @param int $radius
+     * @param int $color GDish
+     * @param int $width
+     */
+    protected function drawCircleOutline($canvas, $centerX, $centerY, $radius, $color, $width)
+    {
+        // imageellipse does not support thickness or styling
+        // => draw the outline on a temp image by first drawing an outer filled circle,
+        //    then cut out the inside of the ring by rendering another, smaller circle
+        //    on top of it with a fully transparent color with blending disabled
+        $offsetXy = intval($radius + $width + 1);
+        $sizeWh = 2 * $offsetXy;
+        $tempCanvas = $canvas->getSubRegion($centerX - $offsetXy, $centerY - $offsetXy, $sizeWh, $sizeWh);
+        $transparent = $tempCanvas->getTransparent();
+
+        $innerDiameter = intval(round(2 * ($radius - 0.5 * $width)));
+        $outerDiameter = intval(round(2 * ($radius + 0.5 * $width)));
+        $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $color, $outerDiameter);
+        if ($innerDiameter > 0) {
+            // stamp out a fully transparent circle
+            $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $transparent, $innerDiameter);
+        }
+        $tempCanvas->mergeBack();
+    }
+
+    /**
+     * Should render the label for a feature. This is not a freestanding ~'label'-type Feature, but a label
+     * attached to a geometry, which is getting rendered separately.
+     *
+     * @param ExportCanvas $canvas
+     * @param array $style
+     * @param string $text
+     * @param float[] $originXy in pixel space
+     */
+    protected function drawFeatureLabel(ExportCanvas $canvas, $style, $text, $originXy)
+    {
+        // @todo: evaluate text opacity
+        $color = $this->getColor($style['fontColor'], 1, $canvas->resource);
+        // @todo: evaluate style's outline opacity (key?) and 'labelOutlineWidth' from style
+        $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $canvas->resource);
+        $fontName = $this->getLabelFont($style);
+        $fontSize = $this->getLabelFontSize($canvas, $style);
+
+        // @todo: skip halo rendering if label style indicates no outline width, or fully transparent outline
+        $haloFactor = $canvas->featureTransform->lineScale;
+        $haloOffsets = array(
+            array(0, +$haloFactor),
+            array(0, -$haloFactor),
+            array(-$haloFactor, 0),
+            array(+$haloFactor, 0),
+        );
+        foreach ($haloOffsets as $xy) {
+            imagettftext($canvas->resource, $fontSize, 0,
+                $originXy[0] + $xy[0], $originXy[1] + $xy[1],
+                $bgcolor, $fontName, $text);
+        }
+        imagettftext($canvas->resource, $fontSize, 0,
+            $originXy[0], $originXy[1],
+            $color, $fontName, $text);
     }
 
     /**
@@ -287,32 +363,74 @@ class LayerRendererGeoJson extends LayerRenderer
     }
 
     /**
-     * Generate and apply extended (OpenLayers 2) stroke style.
-     * Returns false to indicate that stroke style is degenerate (zero width or zero opacity).
-     * Callers should check the return value and skip line rendering completely if false.
+     * Draws a multitude of line loops (=polygon outlines) or line strings. Coordinate sets passed in are assumed
+     * to be already transformed to the given $canvas's pixel space.
      *
      * @param ExportCanvas $canvas
-     * @param mixed[] $style
+     * @param array $style
+     * @param float[][][] $coordSets in pixel space
+     * @param boolean $close; use true for polygons, false for line strings
+     * @param FeatureBounds|null $bounds of all $rings; will be calculated if omitted, but can be passed in as an optimization
+     */
+    protected function drawLineSetsInternal(ExportCanvas $canvas, $style, $coordSets, $close, FeatureBounds $bounds=null)
+    {
+        if (!$bounds) {
+            $bounds = new FeatureBounds();
+            foreach ($coordSets as $lineCoords) {
+                $bounds->addPoints($lineCoords);
+            }
+        }
+        if ($bounds->isEmpty() || !$coordSets) {
+            // nothing to render, avoiding errors down the line
+            return;
+        }
+
+        $lineScale = $canvas->featureTransform->lineScale;
+        $bufferWidth = intval($style['strokeWidth'] *  $lineScale + 5);
+        $subRegion = $this->getSubRegionFromBounds($canvas, $bounds, $bufferWidth);
+
+        $pixelThickness = $style['strokeWidth'] * $lineScale;
+        $intThickness = max(1, intval(round($pixelThickness)));
+        imagesetthickness($subRegion->resource, $intThickness);
+        $opacity = $style['strokeOpacity'];
+        if ($pixelThickness < 1) {
+            $opacity = max(0.0, $opacity * $pixelThickness);
+        }
+        $lineColor = $this->getColor($style['strokeColor'], $opacity, $subRegion->resource);
+        if ($style['strokeDashstyle'] !== 'solid') {
+            $strokeStyleArray = $this->getStrokeStyle($lineColor, $pixelThickness, $style['strokeDashstyle'], $lineScale);
+            imagesetstyle($subRegion->resource, $strokeStyleArray);
+            $gdColor = IMG_COLOR_STYLED;
+        } else {
+            $gdColor = $lineColor;
+        }
+
+        foreach ($coordSets as $lineCoords) {
+            if ($close) {
+                $subRegion->drawPolygonOutline($lineCoords, $gdColor);
+            } else {
+                $subRegion->drawLineString($lineCoords, $gdColor);
+            }
+        }
+        $subRegion->mergeBack();
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param array $style
      * @return bool
      */
-    protected function applyStrokeStyle($canvas, $style)
+    protected function checkLineStyleVisibility($canvas, $style)
     {
-        // NOTE: gd imagesetstyle patterns are not based on distance from starting point
-        //       on the line, but rather on integral pixel quantities, making it
-        //       a) scale proportionally to stroke width
-        //       b) fundamentally incompatible with non-integral line widths
-        // To generate any functional stroke style, the width must be quantized to an
-        // integer, and that integral with must be provided to the style generation function.
-        $lineScale = $canvas->featureTransform->lineScale;
-        $intThickness = intval(round($style['strokeWidth'] * $lineScale));
-        if ($style['strokeOpacity'] && $intThickness >= 1) {
-            $color = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
-            imagesetthickness($canvas->resource, $intThickness);
-            $strokeStyle = $this->getStrokeStyle($color, $intThickness, $style['strokeDashstyle'], $lineScale);
-            imagesetstyle($canvas->resource, $strokeStyle);
-            return true;
-        } else {
+        $thickness = $style['strokeWidth'] * $canvas->featureTransform->lineScale;
+        if ($thickness <= 0) {
             return false;
+        } elseif ($thickness <= 1) {
+            // for very thin lines, multiply opacity with thickness
+            return $thickness * $style['strokeOpacity'] >= ExportCanvas::MINIMUM_OPACITY;
+        } else {
+            // Check if line opacity is flat-out zero, or too small to produce a visible result
+            return $style['strokeOpacity'] >= ExportCanvas::MINIMUM_OPACITY;
         }
     }
 
@@ -322,7 +440,7 @@ class LayerRendererGeoJson extends LayerRenderer
      * @see http://php.net/manual/en/function.imagesetstyle.php
      *
      * @param int $color from imagecollorallocate
-     * @param int $thickness
+     * @param float $thickness
      * @param string $patternName
      * @param float $patternScale
      * @return array
@@ -331,15 +449,15 @@ class LayerRendererGeoJson extends LayerRenderer
     {
         // NOTE: GD actually counts one style entry per produced pixel, NOT per pixel-space length unit.
         // => Length of the style array must scale with the line thickness
-        $dotLength = max(1, intval(round($thickness * $patternScale)));
-        $dashLength = max(1, intval(round($patternScale * 45)));
-        $longDashLength = max(1, intval(round($patternScale * 85)));
-        $spaceLength = max(1, intval(round($patternScale * 45)));
+        $dotLength = max(0, $patternScale * 15);
+        $dashLength = max(0, $patternScale * 45);
+        $longDashLength = max(0, $patternScale * 85);
+        $spaceLength = max(0, $patternScale * 45);
 
-        $dot = array_fill(0, $thickness * $dotLength, $color);
-        $dash = array_fill(0, $thickness * $dashLength, $color);
-        $longdash = array_fill(0, $thickness * $longDashLength, $color);
-        $space = array_fill(0, $thickness * $spaceLength, IMG_COLOR_TRANSPARENT);
+        $dot = array_fill(0, intval(round($thickness * $dotLength)), $color);
+        $dash = array_fill(0, intval(round($thickness * $dashLength)), $color);
+        $longdash = array_fill(0, intval(round($thickness * $longDashLength)), $color);
+        $space = array_fill(0, intval(round($thickness * $spaceLength)), IMG_COLOR_TRANSPARENT);
 
         switch ($patternName) {
             case 'solid' :
@@ -352,10 +470,62 @@ class LayerRendererGeoJson extends LayerRenderer
                 return array_merge($dash, $space, $dot, $space);
             case 'longdash' :
                 return array_merge($longdash, $space);
-            case 'longdashdot' :
+            case 'longdashdot':
                 return array_merge($longdash, $space, $dot, $space);
             default:
                 throw new \InvalidArgumentException("Unsupported pattern name " . print_r($patternName, true));
         }
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param array $style
+     * @return float
+     */
+    protected function getLabelFontSize(ExportCanvas $canvas, $style)
+    {
+        // @todo: extract font size from style? (not alyays popuplated; empty for 'Redlining' labeled points)
+        return floatval(10 * $canvas->featureTransform->lineScale);
+    }
+
+    /**
+     * Should return an absolute path to the appropriate .ttf file for rendering a feature label.
+     *
+     * @param array $style
+     * @return string
+     */
+    protected function getLabelFont($style)
+    {
+        // @todo: extract explicit font setting from style, check existance of ttf, fall back to default if no such file
+        return "{$this->fontPath}/OpenSans-Bold.ttf";
+    }
+
+    /**
+     * @param GdCanvas $canvas
+     * @param FeatureBounds $bounds
+     * @param int $buffer extra pixels to add around all four edges
+     * @return GdSubCanvas
+     */
+    protected function getSubRegionFromBounds(GdCanvas $canvas, FeatureBounds $bounds, $buffer)
+    {
+        $offsetX = intval($bounds->getMinX() - $buffer);
+        $offsetY = intval($bounds->getMinY() - $buffer);
+        $width = intval($bounds->getWidth() + 2 * $buffer + 1);
+        $height = intval($bounds->getHeight() + 2 * $buffer + 1);
+        // Avoid creating a subregion bigger than the original canvas (e.g. huge polygon stretching way out of visible region)
+        // 1: clip origin corner to 0/0
+        if ($offsetX < 0) {
+            $width -= abs($offsetX);
+            $offsetX = 0;
+        }
+        if ($offsetY < 0) {
+            $height -= abs($offsetY);
+            $offsetY = 0;
+        }
+        // 2: clip outer corner to canvas size, but maintain minimum pixel size of 1x1 to avoid errors
+        $width = intval(max(1, min($width, $canvas->getWidth() - $offsetX)));
+        $height = intval(max(1, min($height, $canvas->getHeight() - $offsetY)));
+
+        return $canvas->getSubRegion($offsetX, $offsetY, $width, $height);
     }
 }

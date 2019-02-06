@@ -5,16 +5,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Mapbender;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,12 +31,10 @@ class ElementController extends Controller
     /**
      * Show element class selection
      *
-     * @ManagerRoute("/application/{slug}/element/select")
-     * @Method({"GET","POST"})
-     * @Template
+     * @ManagerRoute("/application/{slug}/element/select", methods={"GET", "POST"})
      * @param Request $request
      * @param string $slug
-     * @return array
+     * @return Response
      */
     public function selectAction(Request $request, $slug)
     {
@@ -48,24 +44,16 @@ class ElementController extends Controller
         $whitelist   = null;
         $classNames  = null;
 
-        //
-        // It's a quick solution for the Responsive template
-        // Each template should have a whitelist
-        //
-        if($template::getTitle() === 'Responsive'){
-            $whitelist = $template::getElementWhitelist();
-            $whitelist = $whitelist[$region];
+        // Dirty hack for deprecated Responsive template
+        if (method_exists($template, 'getElementWhitelist')) {
+            $regionWhitelist = $template::getElementWhitelist();
+            $classNames = $regionWhitelist[$region];
+        } else {
+            $classNames = $this->getMapbender()->getElements();
         }
 
         $trans      = $this->container->get('translator');
         $elements   = array();
-
-        //
-        // Get only the class names from the whitelist elements, otherwise
-        // get them all
-        //
-        $classNames = ($whitelist) ? $whitelist
-                                   : $this->getMapbender()->getElements();
 
         foreach ($classNames as $elementClassName) {
             $title = $trans->trans($elementClassName::getClassTitle());
@@ -77,25 +65,24 @@ class ElementController extends Controller
                 'class' => $elementClassName,
                 'title' => $title,
                 'description' => $trans->trans($elementClassName::getClassDescription()),
-                'tags' => $tags);
+                'tags' => $tags,
+            );
         }
 
         ksort($elements, SORT_LOCALE_STRING);
-        return array(
+        return $this->render('@MapbenderManager/Element/select.html.twig', array(
             'elements' => $elements,
             'region' => $region,
-            'whitelist_exists' => ($whitelist !== null)); // whitelist_exists variable can be removed, if every template supports whitelists
+        ));
     }
 
     /**
      * Shows form for creating new element
      *
-     * @ManagerRoute("/application/{slug}/element/new")
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Element:edit.html.twig")
+     * @ManagerRoute("/application/{slug}/element/new", methods={"GET"})
      * @param Request $request
      * @param string $slug
-     * @return array Response
+     * @return Response
      */
     public function newAction(Request $request, $slug)
     {
@@ -109,28 +96,25 @@ class ElementController extends Controller
         }
 
         $region               = $request->get('region');
-        $element = $this->getFactory()->newEntity($class, $region);
+        $element = $this->getFactory()->newEntity($class, $region, $application);
         $formFactory = $this->getFormFactory();
-        $response = $formFactory->getConfigurationForm($application, $element);
-        $response["form"] = $response['form']->createView();
-        $response += array(
+        $formInfo = $formFactory->getConfigurationForm($element);
+        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
+            'form' => $formInfo['form']->createView(),
+            'theme' => $formInfo['theme'],
             'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
                 'slug' => $slug,
             )),
-        );
-
-        return $response;
+        ));
     }
 
     /**
      * Create a new element from POSTed data
      *
-     * @ManagerRoute("/application/{slug}/element/new")
-     * @Method("POST")
-     * @Template("MapbenderManagerBundle:Element:edit.html.twig")
+     * @ManagerRoute("/application/{slug}/element/new", methods={"POST"})
      * @param Request $request
      * @param string $slug
-     * @return Response|array
+     * @return Response
      */
     public function createAction(Request $request, $slug)
     {
@@ -139,7 +123,7 @@ class ElementController extends Controller
         $data = $request->get('form');
         $element = $this->getFactory()->newEntity($data['class'], $data['region'], $application);
         $formFactory = $this->getFormFactory();
-        $form = $formFactory->getConfigurationForm($application, $element);
+        $form = $formFactory->getConfigurationForm($element);
 
         $form['form']->submit($request);
 
@@ -162,25 +146,24 @@ class ElementController extends Controller
 
             return new Response('', 201);
         } else {
-            return array(
+            return $this->render('@MapbenderManager/Element/edit.html.twig', array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
                 'formAction' => $this->generateUrl('mapbender_manager_element_create', array(
                     'slug' => $slug,
                 )),
-            );
+            ));
         }
     }
 
     /**
-     * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"})
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Element:edit.html.twig")
+     * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"}, methods={"GET"})
+     * @param string $slug
+     * @param string $id
+     * @return Response
      */
     public function editAction($slug, $id)
     {
-        $application = $this->getMapbender()->getApplicationEntity($slug);
-
         /** @var Element|null $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
@@ -191,32 +174,29 @@ class ElementController extends Controller
                 . $id . '" does not exist.');
         }
         $formFactory = $this->getFormFactory();
-        $form = $formFactory->getConfigurationForm($application, $element);
+        $form = $formFactory->getConfigurationForm($element);
 
-        return array(
+        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
             'form' => $form['form']->createView(),
             'theme' => $form['theme'],
             'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
                 'slug' => $slug,
                 'id' => $id,
             )),
-        );
+        ));
     }
 
     /**
      * Updates element by POSTed data
      *
-     * @ManagerRoute("/application/{slug}/element/{id}", requirements = {"id" = "\d+" })
-     * @Method("POST")
-     * @Template("MapbenderManagerBundle:Element:edit.html.twig")
+     * @ManagerRoute("/application/{slug}/element/{id}", requirements = {"id" = "\d+" }, methods={"POST"})
      * @param Request $request
      * @param string $slug
      * @param string $id
-     * @return Response|array
+     * @return Response
      */
     public function updateAction(Request $request, $slug, $id)
     {
-        $application = $this->getMapbender()->getApplicationEntity($slug);
         /** @var Element $element */
         $element = $this->getDoctrine()
             ->getRepository('MapbenderCoreBundle:Element')
@@ -227,7 +207,7 @@ class ElementController extends Controller
                 . $id . '" does not exist.');
         }
         $formService = $this->getFormFactory();
-        $form = $formService->getConfigurationForm($application, $element);
+        $form = $formService->getConfigurationForm($element);
         $form['form']->submit($request);
 
         if ($form['form']->isValid()) {
@@ -242,26 +222,25 @@ class ElementController extends Controller
 
             return new Response('', 205);
         } else {
-            return array(
+            return $this->render('@MapbenderManager/Element/edit.html.twig', array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
                 'formAction' => $this->generateUrl('mapbender_manager_element_update', array(
                     'slug' => $slug,
                     'id' => $id,
                 )),
-            );
+            ));
         }
     }
 
     /**
      * Display and handle element access rights
      *
-     * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"})
-     * @Template("MapbenderManagerBundle:Element:security.html.twig")
+     * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"}, methods={"GET", "POST"})
      * @param Request $request
      * @param $slug string Application short name
      * @param $id int Element ID
-     * @return array
+     * @return Response
      * @throws \Doctrine\DBAL\ConnectionException
      * @throws \Exception
      */
@@ -280,8 +259,8 @@ class ElementController extends Controller
 
         $entityManager->detach($element); // prevent element from being stored with default config/stored again
 
-        /** @var Form $form */
-        /** @var Form $aclForm */
+        /** @var FormInterface $form */
+        /** @var FormInterface $aclForm */
         /** @var Connection  */
         $application = $this->getMapbender()->getApplicationEntity($slug);
         $connection  = $entityManager->getConnection();
@@ -310,18 +289,18 @@ class ElementController extends Controller
                 }
             }
         }
-
-        $response["form"] = $form->createView();
-        return $response;
+        return $this->render('@MapbenderManager/Element/security.html.twig', array(
+            'form' => $form->createView(),
+        ));
     }
 
     /**
      * Shows delete confirmation page
      *
-     * @ManagerRoute("application/{slug}/element/{id}/delete", requirements = {
-     *     "id" = "\d+" })
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Element:delete.html.twig")
+     * @ManagerRoute("application/{slug}/element/{id}/delete", requirements={"id" = "\d+"}, methods={"GET"})
+     * @param string $slug
+     * @param string $id
+     * @return Response
      */
     public function confirmDeleteAction($slug, $id)
     {
@@ -334,16 +313,19 @@ class ElementController extends Controller
                 . $id . '" does not exist.');
         }
 
-        return array(
+        return $this->render('@MapbenderManager/Element/delete.html.twig', array(
             'element' => $element,
-            'form' => $this->createDeleteForm($id)->createView());
+            'form' => $this->createDeleteForm($id)->createView(),
+        ));
     }
 
     /**
      * Delete element
      *
-     * @ManagerRoute("application/{slug}/element/{id}/delete")
-     * @Method("POST")
+     * @ManagerRoute("application/{slug}/element/{id}/delete", methods={"POST"})
+     * @param string $slug
+     * @param string $id
+     * @return Response
      */
     public function deleteAction($slug, $id)
     {
@@ -388,10 +370,7 @@ class ElementController extends Controller
     }
 
     /**
-     * Delete element
-     *
-     * @ManagerRoute("application/element/{id}/weight")
-     * @Method("POST")
+     * @ManagerRoute("application/element/{id}/weight", methods={"POST"})
      * @param Request $request
      * @param string $id
      * @return Response
@@ -445,7 +424,7 @@ class ElementController extends Controller
         foreach ($affectedRegions as $elementToReAdd) {
             $rebuiltElementCollection->add($elementToReAdd);
         }
-        $application->setElements($unaffectedRegions);
+        $application->setElements($rebuiltElementCollection);
         $application->setUpdated(new \DateTime());
         $em->persist($application);
         $em->flush();
@@ -456,10 +435,7 @@ class ElementController extends Controller
     }
 
     /**
-     * Delete element
-     *
-     * @ManagerRoute("application/element/{id}/enable")
-     * @Method("POST")
+     * @ManagerRoute("application/element/{id}/enable", methods={"POST"})
      * @param Request $request
      * @param string $id
      * @return Response
@@ -500,6 +476,8 @@ class ElementController extends Controller
 
     /**
      * Creates the form for the delete confirmation page
+     * @param string $id
+     * @return FormInterface
      */
     private function createDeleteForm($id)
     {

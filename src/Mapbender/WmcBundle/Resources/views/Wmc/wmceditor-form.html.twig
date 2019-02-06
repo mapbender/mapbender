@@ -1,4 +1,4 @@
-<form id="wmc-save" action="{{ url('mapbender_core_application_element', {'slug': app.request.get('slug'), 'id': id, 'action': 'save'}) }}" method="post" title="{% if form.id.vars.value == '' %}{{ 'mb.wmc.wmceditor.create'|trans}}{% else %}{{ 'mb.wmc.wmceditor.edit'|trans}}{% endif %}">
+<form id="wmc-save" action="{{ path('mapbender_core_application_element', {'slug': app.request.get('slug'), 'id': id, 'action': 'save'}) }}" method="post" title="{% if form.id.vars.value == '' %}{{ 'mb.wmc.wmceditor.create'|trans}}{% else %}{{ 'mb.wmc.wmceditor.edit'|trans}}{% endif %}">
     <div class="elementFormWMC elementForm">
         <div class="left">
             {{ form_widget(form.public) }}<label for="{{form.public.vars.id}}" class="labelCheck">{{"mb.wmc.wmceditor.publish"|trans}}</label>

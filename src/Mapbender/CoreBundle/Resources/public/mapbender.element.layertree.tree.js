@@ -64,7 +64,6 @@
             }
             this.element.removeClass('hidden');
             this._trigger('ready');
-            this._ready();
         },
         _createTree: function() {
             var self = this;
@@ -1001,20 +1000,6 @@
                 }
             }
             this.callback ? this.callback.call() : this.callback = null;
-        },
-        /**
-         *
-         */
-        ready: function(callback) {
-            if (this.readyState === true) {
-                callback();
-            }
-        },
-        /**
-         *
-         */
-        _ready: function() {
-            this.readyState = true;
         },
         _findLayersetWithSource: function(source) {
             var layerset = null;

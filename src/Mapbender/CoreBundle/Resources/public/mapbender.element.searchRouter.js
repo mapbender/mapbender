@@ -122,7 +122,6 @@
             });
 
             widget._trigger('ready');
-            widget._ready();
 
             if(widget.options.autoOpen) {
                 widget.open();
@@ -636,21 +635,6 @@
             widget.currentFeature = feature;
             widget.redraw();
             layer.selectedFeatures.push(feature);
-        },
-
-        ready: function(callback) {
-            var widget = this;
-            if(widget.readyState === true){
-                callback();
-            }
-        },
-
-        /**
-         * Execute callbacks on element ready
-         */
-        _ready: function() {
-            var widget = this;
-            widget.readyState = true;
         },
 
         /**

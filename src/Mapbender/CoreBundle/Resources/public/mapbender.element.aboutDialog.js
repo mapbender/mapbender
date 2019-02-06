@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    $.widget("mapbender.mbAboutDialog", $.mapbender.mbBaseElement, {
+    $.widget("mapbender.mbAboutDialog", {
         options: {},
         elementUrl: null,
         popup: null,
