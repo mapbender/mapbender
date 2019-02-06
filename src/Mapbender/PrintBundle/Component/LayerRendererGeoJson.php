@@ -6,6 +6,7 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
+use Mapbender\PrintBundle\Util\CoordUtil;
 
 /**
  * Renders "GeoJSON+Style" layers in image export and print.
@@ -607,22 +608,12 @@ class LayerRendererGeoJson extends LayerRenderer
         $descriptorIndex = 0;
         $descriptorLengthLeft = $descriptors[0]['length'];
 
-        $interpolateCoord = function($from, $to, $length, $delta) {
-            // @todo: respect angle instead of interpolation both directions linearly
-            return array(
-                $from[0] + ($to[0] - $from[0]) * $delta / $length,
-                $from[1] + ($to[1] - $from[1]) * $delta / $length,
-            );
-        };
-
         foreach (array_slice(array_keys($lineCoords), 1) as $lcIndex) {
             $from = $lineCoords[$lcIndex - 1];
             $to = $lineCoords[$lcIndex];
 
-            $deltaX = $to[0] - $from[0];
-            $deltaY = $to[1] - $from[1];
-            $segmentLength = sqrt($deltaX * $deltaX + $deltaY * $deltaY);
-            $segmentLengthLeft = sqrt($deltaX * $deltaX + $deltaY * $deltaY);
+            $segmentLength = CoordUtil::distance($from, $to);
+            $segmentLengthLeft = $segmentLength;
             $nextFragmentStart = 0;
             while ($segmentLengthLeft > 0) {
                 if ($descriptorLengthLeft !== null) {
@@ -634,12 +625,12 @@ class LayerRendererGeoJson extends LayerRenderer
                 }
                 switch ($descriptors[$descriptorIndex]['type']) {
                     case 'dot':
-                        $dots[] = $interpolateCoord($from, $to, $segmentLength, $nextFragmentStart);
+                        $dots[] = CoordUtil::interpolateLinear($from, $to, $nextFragmentStart / $segmentLength);
                         break;
                     case 'draw':
                         // Produce an end-cappend line segment
-                        $startPoint = $interpolateCoord($from, $to, $segmentLength, $nextFragmentStart);
-                        $endPoint = $interpolateCoord($from, $to, $segmentLength, $nextFragmentStart + $takenSegmentLength);
+                        $startPoint = CoordUtil::interpolateLinear($from, $to, $nextFragmentStart / $segmentLength);
+                        $endPoint = CoordUtil::interpolateLinear($from, $to, ($nextFragmentStart + $takenSegmentLength) / $segmentLength);
                         $lines[] = array(
                             $startPoint,
                             $endPoint,
