@@ -46,19 +46,6 @@ Mapbender.Model = {
     init: function(mbMap) {
         var self = this;
 
-        // need to monkey patch here in order to get next zoom in movestart event
-        // prevents duplicate loads of WMS where a layer is going out of scale
-        var setCenterOriginal = OpenLayers.Map.prototype.setCenter;
-        var zoomToOriginal = OpenLayers.Map.prototype.zoomTo;
-        OpenLayers.Map.prototype.setCenter = function(center, zoom) {
-            self.nextZoom = zoom;
-            setCenterOriginal.apply(this, arguments);
-        };
-        OpenLayers.Map.prototype.zoomTo = function(zoom, xy) {
-            self.nextZoom = zoom;
-            zoomToOriginal.apply(this, arguments);
-        };
-
         this.mbMap = mbMap;
         this.srsDefs = this.mbMap.options.srsDefs;
         Mapbender.Projection.extendSrsDefintions(this.srsDefs || []);
@@ -118,6 +105,24 @@ Mapbender.Model = {
         this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
         this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
         this.map.olMap.tileManager = null; // fix WMS tiled setVisibility(false) for outer scale
+
+        // monkey-patch zoom interactions
+        (function(olMap) {
+            // need to monkey patch here in order to get next zoom in movestart event
+            // prevents duplicate loads of WMS where a layer is going out of scale
+            var setCenterOriginal = olMap.setCenter;
+            var zoomToOriginal = olMap.zoomTo;
+            olMap.setCenter = function(center, zoom) {
+                self.nextZoom = zoom;
+                setCenterOriginal.apply(this, arguments);
+            };
+            olMap.zoomTo = function(zoom, xy) {
+                self.nextZoom = zoom;
+                zoomToOriginal.apply(this, arguments);
+            };
+        })(this.map.olMap);
+
+
         this.setView(true);
         this.parseURL();
         if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
