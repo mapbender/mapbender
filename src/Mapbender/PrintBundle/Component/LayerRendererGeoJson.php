@@ -267,8 +267,7 @@ class LayerRendererGeoJson extends LayerRenderer
                 $style['fillColor'],
                 $style['fillOpacity'],
                 $canvas->resource);
-            imagesetthickness($canvas->resource, 0);
-            imagefilledellipse($canvas->resource, $p[0], $p[1], $diameter, $diameter, $color);
+            $canvas->drawFilledCircle($p[0], $p[1], $color, $diameter);
         }
         if ($style['strokeOpacity'] > 0 && $style['strokeWidth']) {
             $strokeWidth = max(0, intval(round($style['strokeWidth'] * $canvas->featureTransform->lineScale)));
@@ -297,15 +296,14 @@ class LayerRendererGeoJson extends LayerRenderer
         $offsetXy = intval($radius + $width + 1);
         $sizeWh = 2 * $offsetXy;
         $tempCanvas = $canvas->getSubRegion($centerX - $offsetXy, $centerY - $offsetXy, $sizeWh, $sizeWh);
-        $tempImage = $tempCanvas->resource;
         $transparent = $tempCanvas->getTransparent();
 
         $innerDiameter = intval(round(2 * ($radius - 0.5 * $width)));
         $outerDiameter = intval(round(2 * ($radius + 0.5 * $width)));
-        imagefilledellipse($tempImage, $offsetXy, $offsetXy, $outerDiameter, $outerDiameter, $color);
+        $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $color, $outerDiameter);
         if ($innerDiameter > 0) {
             // stamp out a fully transparent circle
-            imagefilledellipse($tempImage, $offsetXy, $offsetXy, $innerDiameter, $innerDiameter, $transparent);
+            $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $transparent, $innerDiameter);
         }
         $tempCanvas->mergeBack();
     }

@@ -102,4 +102,25 @@ class GdCanvas extends BaseCanvas
             }
         }
     }
+
+    /**
+     * @param float $centerX in pixel space
+     * @param float $centerY in pixel space
+     * @param int $color Gdish
+     * @param float $diameterX
+     * @param float $diameterY
+     */
+    public function drawFilledEllipse($centerX, $centerY, $color, $diameterX, $diameterY)
+    {
+        imagefilledellipse($this->resource,
+            intval(round($centerX)), intval(round($centerY)),
+            max(1, intval(round($diameterX))),
+            max(1, intval(round($diameterY))),
+            $color);
+    }
+
+    final public function drawFilledCircle($centerX, $centerY, $color, $diameter)
+    {
+        $this->drawFilledEllipse($centerX, $centerY, $color, $diameter, $diameter);
+    }
 }

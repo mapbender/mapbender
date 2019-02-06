@@ -79,6 +79,19 @@ class GdSubCanvas extends GdCanvas
     }
 
     /**
+     * @param float $centerX in pixel space
+     * @param float $centerY in pixel space
+     * @param int $color Gdish
+     * @param float $diameterX
+     * @param float $diameterY
+     */
+    public function drawFilledEllipse($centerX, $centerY, $color, $diameterX, $diameterY)
+    {
+        $translatedCenter = $this->translatePoints(array(array($centerX, $centerY)));
+        parent::drawFilledEllipse($translatedCenter[0][0], $translatedCenter[0][1], $color, $diameterX, $diameterY);
+    }
+
+    /**
      * Translate given (pixel space) coordinate pairs to local subspace by subtracting x/y offsets
      *
      * @param float[][] $points
