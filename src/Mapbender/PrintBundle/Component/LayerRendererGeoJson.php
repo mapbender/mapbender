@@ -477,6 +477,19 @@ class LayerRendererGeoJson extends LayerRenderer
         $offsetY = intval($bounds->getMinY() - $buffer);
         $width = intval($bounds->getWidth() + 2 * $buffer + 1);
         $height = intval($bounds->getHeight() + 2 * $buffer + 1);
+        // Avoid creating a subregion bigger than the original canvas (e.g. huge polygon stretching way out of visible region)
+        // 1: clip origin corner to 0/0
+        if ($offsetX < 0) {
+            $width -= abs($offsetX);
+            $offsetX = 0;
+        }
+        if ($offsetY < 0) {
+            $height -= abs($offsetY);
+            $offsetY = 0;
+        }
+        // 2: clip outer corner to canvas size, but maintain minimum pixel size of 1x1 to avoid errors
+        $width = intval(max(1, min($width, $canvas->getWidth() - $offsetX)));
+        $height = intval(max(1, min($height, $canvas->getHeight() - $offsetY)));
 
         return $canvas->getSubRegion($offsetX, $offsetY, $width, $height);
     }
