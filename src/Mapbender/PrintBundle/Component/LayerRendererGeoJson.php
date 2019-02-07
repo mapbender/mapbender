@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Util\CoordUtil;
+use Mapbender\Utils\InfiniteCyclicArrayIterator;
 
 /**
  * Renders "GeoJSON+Style" layers in image export and print.
@@ -262,7 +263,6 @@ class LayerRendererGeoJson extends LayerRenderer
         }
 
         $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
-        // Filled circle
         if ($style['fillOpacity'] > 0) {
             $color = $this->getColor(
                 $style['fillColor'],
@@ -301,10 +301,10 @@ class LayerRendererGeoJson extends LayerRenderer
 
         $innerDiameter = intval(round(2 * ($radius - 0.5 * $width)));
         $outerDiameter = intval(round(2 * ($radius + 0.5 * $width)));
-        $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $color, $outerDiameter);
+        $tempCanvas->drawFilledCircle($centerX, $centerY, $color, $outerDiameter);
         if ($innerDiameter > 0) {
             // stamp out a fully transparent circle
-            $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $transparent, $innerDiameter);
+            $tempCanvas->drawFilledCircle($centerX, $centerY, $transparent, $innerDiameter);
         }
         $tempCanvas->mergeBack();
     }
@@ -604,9 +604,11 @@ class LayerRendererGeoJson extends LayerRenderer
         if ($closeLoop) {
             $lineCoords[] = $lineCoords[count($lineCoords) - 1];
         }
+
         $descriptors = $this->getPatternDescriptors($patternName);
-        $descriptorIndex = 0;
-        $descriptorLengthLeft = $descriptors[0]['length'];
+        $descriptorIterator = new InfiniteCyclicArrayIterator($descriptors);
+        $currentDescriptor = $descriptorIterator->current();
+        $descriptorLengthLeft = $currentDescriptor['length'];
 
         foreach (array_slice(array_keys($lineCoords), 1) as $lcIndex) {
             $from = $lineCoords[$lcIndex - 1];
@@ -623,7 +625,7 @@ class LayerRendererGeoJson extends LayerRenderer
                     $takenSegmentLength = $segmentLengthLeft;
                     $takenDescriptorLength = null;
                 }
-                switch ($descriptors[$descriptorIndex]['type']) {
+                switch ($currentDescriptor['type']) {
                     case 'dot':
                         $dots[] = CoordUtil::interpolateLinear($from, $to, $nextFragmentStart / $segmentLength);
                         break;
@@ -651,15 +653,11 @@ class LayerRendererGeoJson extends LayerRenderer
                 if ($takenDescriptorLength !== null && $descriptorLengthLeft !== null) {
                     $descriptorLengthLeft -= $takenDescriptorLength;
                     if ($descriptorLengthLeft <= 0) {
-                        // cycle to next pattern descriptor or loop around
-                        ++$descriptorIndex;
-                        if ($descriptorIndex >= count($descriptors)) {
-                            $descriptorIndex = 0;
-                        }
-                        $nextDescriptorLength = $descriptors[$descriptorIndex]['length'];
+                        $descriptorIterator->next();
+                        $currentDescriptor = $descriptorIterator->current();
+                        $nextDescriptorLength = $currentDescriptor['length'];
                         if ($nextDescriptorLength === null) {
                             $descriptorLengthLeft = null;
-                            break;
                         } else {
                             $descriptorLengthLeft += $nextDescriptorLength;
                         }
