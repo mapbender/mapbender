@@ -263,7 +263,6 @@ class LayerRendererGeoJson extends LayerRenderer
         }
 
         $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
-        // Filled circle
         if ($style['fillOpacity'] > 0) {
             $color = $this->getColor(
                 $style['fillColor'],
@@ -302,10 +301,10 @@ class LayerRendererGeoJson extends LayerRenderer
 
         $innerDiameter = intval(round(2 * ($radius - 0.5 * $width)));
         $outerDiameter = intval(round(2 * ($radius + 0.5 * $width)));
-        $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $color, $outerDiameter);
+        $tempCanvas->drawFilledCircle($centerX, $centerY, $color, $outerDiameter);
         if ($innerDiameter > 0) {
             // stamp out a fully transparent circle
-            $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $transparent, $innerDiameter);
+            $tempCanvas->drawFilledCircle($centerX, $centerY, $transparent, $innerDiameter);
         }
         $tempCanvas->mergeBack();
     }
