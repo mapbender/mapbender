@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ cf1194b93**
+* **dev-release/3.0.7 @ 735626322**
   - Fix buttons with invalid targets breaking buttons in the same group
   - Fix element-order dependent script initialization error in mobile template
   - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
@@ -11,6 +11,7 @@
   - Fix erratic LayerTree layer "ghosting" on certain map interactions ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Improve compatibility with certain reverse-proxy setups ([PR #1061](https://github.com/mapbender/mapbender/pull/1061))
   - Print: add WMS GetMap size limits, use tiling to stitch larger images ([PR#1073](https://github.com/mapbender/mapbender/pull/1073))
+  - Print: generate label and other symbol sizing parameters understood by Mapserver, QGis server and Geoserver (see [735626322](https://github.com/mapbender/mapbender/commit/73562632261819d79b9a9c0c264caeb33f34f4bf#diff-c72724b3690b61d792254dd26a7ca9cbR222))
   - Print: add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
     - Print queue display styling [inherits from .mapbender-element-result-table](https://github.com/mapbender/mapbender/blob/e2fd234ffa5f98d6c74c0359f26d7d60362f50dd/src/Mapbender/PrintBundle/Resources/public/element/printclient.scss#L28), which means
       any custom css styles you may have already applied to Digitizer result tables should automatically transfer to the print queue visual.
