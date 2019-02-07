@@ -7,9 +7,7 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Geometry\LineLoopIterator;
-use Mapbender\PrintBundle\Component\Geometry\LineSegment;
 use Mapbender\PrintBundle\Component\Geometry\LineStringIterator;
-use Mapbender\PrintBundle\Util\CoordUtil;
 use Mapbender\Utils\InfiniteCyclicArrayIterator;
 
 /**
@@ -640,6 +638,7 @@ class LayerRendererGeoJson extends LayerRenderer
                         //       We end-cap the lines with circles to give them a more pleasant appearance.
                         //       This also has the very nice side benefit of putting a circle on every vertex joint,
                         //       rounding out those edges, too.
+                        // @todo: suppress the intermittent point at very obtuse vertex angles to reduce noise
                         $dots[] = $drawSegment->getStart()->toArray();
                         $dots[] = $drawSegment->getEnd()->toArray();
                         break;

@@ -3,7 +3,7 @@
 namespace Mapbender\PrintBundle\Component\Geometry;
 
 
-class Point2D implements \ArrayAccess
+class Point2D extends Tuple
 {
     /** @var float */
     protected $x;
@@ -16,37 +16,10 @@ class Point2D implements \ArrayAccess
      */
     public function __construct($x, $y)
     {
-        $this->x = floatval($x);
-        $this->y = floatval($y);
-    }
-
-    public function offsetExists($offset)
-    {
-        return $offset == 0 || $offset == 'x';
-    }
-
-    public function offsetGet($offset)
-    {
-        switch ($offset) {
-            case '0':
-            case 'x':
-                return $this->x;
-            case 1:
-            case 'y':
-                return $this->y;
-            default:
-                throw new \RuntimeException("No such offset " . print_r($offset, true));
-        }
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        throw new \RuntimeException("Immutable after construction");
-    }
-
-    public function offsetUnset($offset)
-    {
-        throw new \RuntimeException("Immutable after construction");
+        parent::__construct(array(
+            $x,
+            $y,
+        ));
     }
 
     /**
@@ -60,16 +33,5 @@ class Point2D implements \ArrayAccess
         } else {
             return new static($a[0], $a[1]);
         }
-    }
-
-    /**
-     * @return float[]
-     */
-    public function toArray()
-    {
-        return array(
-            $this->x,
-            $this->y,
-        );
     }
 }
