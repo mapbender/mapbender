@@ -170,7 +170,9 @@ class LayerRendererWms extends LayerRenderer
     {
         $params = $this->getBboxAndSizeParams($extent, $canvas->getWidth(), $canvas->getHeight(), !empty($layerDef['changeAxis']));
         $params = $this->adjustParamsForResolution($params, $layerDef, $canvas, $extent);
-        return UrlUtil::validateUrl($layerDef['url'], $params);
+        $url = UrlUtil::validateUrl($layerDef['url'], $params);
+        $symbolParams = $this->getSymbolizationParams($canvas, $url);
+        return UrlUtil::validateUrl($url, $symbolParams);
     }
 
     /**
@@ -214,10 +216,47 @@ class LayerRendererWms extends LayerRenderer
         if ($targetResV != $resolution->getVertical()) {
             $params['HEIGHT'] = intval(max(16, abs($extent->getHeight()) / $targetResV));
         }
-
-        $symbolResolution = max(36, min(576, intval($params['WIDTH'] / $canvas->getWidth() * $canvas->physicalDpi)));
-        $params['map_resolution'] = $symbolResolution;
         return $params;
+    }
+
+    /**
+     * Produces WMS GetMap params for controlling label text and other symbol sizing.
+     *
+     * @param ExportCanvas $canvas
+     * @param string $url
+     * @return string[] array
+     */
+    protected function getSymbolizationParams($canvas, $url)
+    {
+        $existingParams = array();
+        parse_str(parse_url($url, PHP_URL_QUERY), $existingParams);
+
+        $symbolResolution = $this->getSymbolResolution($canvas, $existingParams['WIDTH'], $existingParams['HEIGHT']);
+        return array(
+            // There is no standard param for this, but several vendor specific solutions
+            // 1) Mapserver; not really documented, see https://github.com/mapserver/mapserver/issues/5350
+            'MAP_RESOLUTION' => $symbolResolution,
+            // 2) Geoserver; see https://docs.geoserver.org/latest/en/user/services/wms/vendor.html#format-options
+            'format_options' => "dpi:{$symbolResolution}",
+            // 3) QGis server; see https://docs.qgis.org/2.18/en/docs/user_manual/working_with_ogc/server/services.html#getmap
+            'DPI' => $symbolResolution,
+        );
+    }
+
+    /**
+     * Calculates the dpi value that should be used by the WMS server for calculating text label and other symbol sizes.
+     *
+     * @param ExportCanvas $canvas
+     * @param int $width of the outgoing WMS request that would cover the whole canvas
+     * @param int $height of the outgoing WMS request that would cover the whole canvas
+     * @return int
+     */
+    protected function getSymbolResolution($canvas, $width, $height)
+    {
+        $targetResolution = $width / $canvas->getWidth() * $canvas->physicalDpi;
+        // restrain to semi-sane minimum / maximum values
+        $clamped = max(18, min(576, $targetResolution));
+        return intval($clamped);
     }
 
     /**
