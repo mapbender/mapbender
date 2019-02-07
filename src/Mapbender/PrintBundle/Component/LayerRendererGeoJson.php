@@ -6,6 +6,7 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
+use Mapbender\PrintBundle\Component\Geometry\LineSegment;
 use Mapbender\PrintBundle\Util\CoordUtil;
 use Mapbender\Utils\InfiniteCyclicArrayIterator;
 
@@ -611,10 +612,9 @@ class LayerRendererGeoJson extends LayerRenderer
         $descriptorLengthLeft = $currentDescriptor['length'];
 
         foreach (array_slice(array_keys($lineCoords), 1) as $lcIndex) {
-            $from = $lineCoords[$lcIndex - 1];
-            $to = $lineCoords[$lcIndex];
+            $lineSegment = LineSegment::fromArray(array_slice($lineCoords, $lcIndex - 1, 2));
 
-            $segmentLength = CoordUtil::distance($from, $to);
+            $segmentLength = $lineSegment->getLength();
             $segmentLengthLeft = $segmentLength;
             $nextFragmentStart = 0;
             while ($segmentLengthLeft > 0) {
@@ -627,23 +627,19 @@ class LayerRendererGeoJson extends LayerRenderer
                 }
                 switch ($currentDescriptor['type']) {
                     case 'dot':
-                        $dots[] = CoordUtil::interpolateLinear($from, $to, $nextFragmentStart / $segmentLength);
+                        $dots[] = $lineSegment->getPointAtLenghtOffset($nextFragmentStart)->toArray();
                         break;
                     case 'draw':
                         // Produce an end-cappend line segment
-                        $startPoint = CoordUtil::interpolateLinear($from, $to, $nextFragmentStart / $segmentLength);
-                        $endPoint = CoordUtil::interpolateLinear($from, $to, ($nextFragmentStart + $takenSegmentLength) / $segmentLength);
-                        $lines[] = array(
-                            $startPoint,
-                            $endPoint,
-                        );
+                        $drawSegment = $lineSegment->getSlice($nextFragmentStart, $takenSegmentLength);
+                        $lines[] = $drawSegment->toArray();
                         // NOTE: gd lines with any thickness > 1 will have their edges rendered 'perfectly' vertically
                         //       or horizontally, with no angles.
                         //       We end-cap the lines with circles to give them a more pleasant appearance.
                         //       This also has the very nice side benefit of putting a circle on every vertex joint,
                         //       rounding out those edges, too.
-                        $dots[] = $startPoint;
-                        $dots[] = $endPoint;
+                        $dots[] = $drawSegment->getStart()->toArray();
+                        $dots[] = $drawSegment->getEnd()->toArray();
                         break;
                     default:
                     case 'gap':
