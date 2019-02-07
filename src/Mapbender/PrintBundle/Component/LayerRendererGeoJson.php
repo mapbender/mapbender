@@ -6,7 +6,9 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
+use Mapbender\PrintBundle\Component\Geometry\LineLoopIterator;
 use Mapbender\PrintBundle\Component\Geometry\LineSegment;
+use Mapbender\PrintBundle\Component\Geometry\LineStringIterator;
 use Mapbender\PrintBundle\Util\CoordUtil;
 use Mapbender\Utils\InfiniteCyclicArrayIterator;
 
@@ -603,7 +605,9 @@ class LayerRendererGeoJson extends LayerRenderer
         $lines = array();
         $lineCoords = array_values($lineCoords);
         if ($closeLoop) {
-            $lineCoords[] = $lineCoords[count($lineCoords) - 1];
+            $segmentIterator = new LineLoopIterator($lineCoords);
+        } else {
+            $segmentIterator = new LineStringIterator($lineCoords);
         }
 
         $descriptors = $this->getPatternDescriptors($patternName);
@@ -611,9 +615,7 @@ class LayerRendererGeoJson extends LayerRenderer
         $currentDescriptor = $descriptorIterator->current();
         $descriptorLengthLeft = $currentDescriptor['length'];
 
-        foreach (array_slice(array_keys($lineCoords), 1) as $lcIndex) {
-            $lineSegment = LineSegment::fromArray(array_slice($lineCoords, $lcIndex - 1, 2));
-
+        foreach ($segmentIterator as $lineSegment) {
             $segmentLength = $lineSegment->getLength();
             $segmentLengthLeft = $segmentLength;
             $nextFragmentStart = 0;
