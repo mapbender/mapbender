@@ -101,6 +101,11 @@ Mapbender.Model = {
         }
 
         $(this.mbMap.element).mapQuery(mapOptions);
+        // Stop endless reloads of services that time out.
+        // MapQuery plays with this value in its map constructor.
+        // 0 is the default, see https://github.com/openlayers/ol2/blob/master/lib/OpenLayers/Util.js#L308
+        OpenLayers.IMAGE_RELOAD_ATTEMPTS = 0;
+
         this.map = $(this.mbMap.element).data('mapQuery');
         this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
         this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
