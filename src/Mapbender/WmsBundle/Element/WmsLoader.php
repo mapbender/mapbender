@@ -8,6 +8,7 @@ use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -73,9 +74,12 @@ class WmsLoader extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        if ($this->container->get('request_stack')->getCurrentRequest()->get('wms_url')) {
-            $wms_url = $this->container->get('request_stack')->getCurrentRequest()->get('wms_url');
-            $all = $this->container->get('request_stack')->getCurrentRequest()->query->all();
+
+        /** @var Request $request */
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        if ($request->get('wms_url')) {
+            $wms_url = $request->get('wms_url');
+            $all = $request->query->all();
             foreach ($all as $key => $value) {
                 if (strtolower($key) === "version" && stripos($wms_url, "version") === false) {
                     $wms_url .= "&version=" . $value;
@@ -87,8 +91,8 @@ class WmsLoader extends Element
             }
             $configuration['wms_url'] = urldecode($wms_url);
         }
-        if ($this->container->get('request_stack')->getCurrentRequest()->get('wms_id')) {
-            $wmsId = $this->container->get('request_stack')->getCurrentRequest()->get('wms_id');
+        if ($request->get('wms_id')) {
+            $wmsId = $request->get('wms_id');
             $configuration['wms_id'] = $wmsId;
         }
         return $configuration;
