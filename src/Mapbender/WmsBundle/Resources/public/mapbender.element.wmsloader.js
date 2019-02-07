@@ -199,7 +199,6 @@
                 sourceDef.id = sourceId;
                 sourceDef.origId = sourceId;
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
-                sourceDef.configuration.status = 'ok';
                 sourceDef.wmsloader = true;
                 if (sourceOpts.global.options.treeOptions.selected !== true) {
                     $.each(sourceDef.configuration.children, function(idx, child) {
