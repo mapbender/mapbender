@@ -135,14 +135,15 @@
                     'options': {'treeOptions': {'selected': false}}
                 }
             };
-            if(elm.attr('mb-wms-layers') && elm.attr('mb-wms-layers') === '_all'){
-                options.global.options.treeOptions.selected = true;
-            }else if(elm.attr('mb-wms-layers')){
-                var layers = {};
-                $.each(elm.attr('mb-wms-layers').split(','), function(idx, item){
-                    layers[item] = {options: {treeOptions: {selected: true}}};
-                });
-                options.layers = layers;
+            if (elm.attr('mb-wms-layers')) {
+                var layerNamesToActivate = elm.attr('mb-wms-layers').split(',');
+                if (layerNamesToActivate.indexOf('_all') !== -1) {
+                    options.global.options.treeOptions.selected = true;
+                } else {
+                    _.each(layerNamesToActivate, function(layerName) {
+                        options.layers[layerName] = {options: {treeOptions: {selected: true}}};
+                    });
+                }
             }
             if(options.global.mergeSource){
                 var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
@@ -156,10 +157,8 @@
                         return false;
                     }
                 }
-                this.loadWms(options);
-            }else{
-                this.loadWms(options);
             }
+            this.loadWms(options);
             return false;
         },
         loadWms: function (sourceOpts) {
@@ -194,16 +193,17 @@
             var self = this;
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
             $.each(sourceDefs, function(idx, sourceDef) {
-                var findOpts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
                 var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
+                var findOpts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
                 sourceDef.id = sourceId;
                 sourceDef.origId = sourceId;
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.wmsloader = true;
                 if (sourceOpts.global.options.treeOptions.selected !== true) {
-                    $.each(sourceDef.configuration.children, function(idx, child) {
-                        self._setSelected(child, sourceOpts);
-                    });
+                    // We only need to do this if we DO NOT want all layers selected
+                    // because all layer configs received from the server will start
+                    // out selected by default
+                    self._initializeTreeOptions(sourceDef, sourceOpts);
                 }
                 if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
                     mbMap.addSource(sourceDef, false);
@@ -214,23 +214,26 @@
             // @todo: fix default for newly added source (no fi) to match default layertree visual (fi on)
              $('.mb-element-layertree .featureInfoWrapper input[type="checkbox"]').trigger('change');
         },
-        _setSelected: function(config, sourceOpts) {
-            var self = this;
-            $.each(config.children, function(idx, child) {
-                if (child.options && child.options.treeOptions) {
-                    if (sourceOpts.layers.hasOwnProperty(child.options.name)) {
-                        var layerOpts = sourceOpts.layers[child.options.name];
-                        if (layerOpts.options && layerOpts.options.treeOptions) {
-                            child.options.treeOptions.selected = layerOpts.options.treeOptions.selected;
-                        } else {
-                            child.options.treeOptions.selected = false;
-                        }
-                    } else {
-                        child.options.treeOptions.selected = false;
-                    }
+        _initializeTreeOptions: function(sourceDef, loaderOptions) {
+            // pass one: reset everything except root layer
+            Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layerDef, offset, parents) {
+                if (parents.length) {
+                    layerDef.options.treeOptions.selected = false;
                 }
-                if (child.children) {
-                    self._setSelected(child, sourceOpts);
+            });
+            // pass two: activate desired layers along with their parent chain
+            Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layerDef, offset, parents) {
+                // Skip checking layers that have empty names. This is common on group layers or even root
+                // layers that the WMS server doesn't intend for direct GetMap usage.
+                if (layerDef.options.name && loaderOptions.layers.hasOwnProperty(layerDef.options.name)) {
+                    var newLayerOptions = loaderOptions.layers[layerDef.options.name];
+                    var selected = layerDef.options.treeOptions.selected = newLayerOptions.options.treeOptions.selected;
+                    if (selected) {
+                        // layer active => activate all parents implicitly
+                        parents.map(function(parentLayer) {
+                            parentLayer.options.treeOptions.selected = parentLayer.options.treeOptions.selected || selected;
+                        });
+                    }
                 }
             });
         },
