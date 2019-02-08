@@ -124,19 +124,21 @@
         },
         loadDeclarativeWms: function(elm){
             var self = this;
+            var layerNamesToActivate;
+            var mergeSource = !elm.attr('mb-wms-merge') || elm.attr('mb-wms-merge') === '1';
+
             var options = {
                 'gcurl': new Mapbender.Util.Url(elm.attr('mb-url') ? elm.attr('mb-url') : elm.attr('href')),
                 'type': 'declarative',
                 'layers': {},
                 'global': {
-                    'mergeSource': !elm.attr('mb-wms-merge') ? true : elm.attr('mb-wms-merge') === '1' ? true : false,
+                    'mergeSource': mergeSource,
                     'splitLayers': false,
-                    'mergeLayers': !elm.attr('mb-wms-layer-merge') ? true : elm.attr('mb-wms-layer-merge') === '1' ? true : false,
                     'options': {'treeOptions': {'selected': false}}
                 }
             };
             if (elm.attr('mb-wms-layers')) {
-                var layerNamesToActivate = elm.attr('mb-wms-layers').split(',');
+                layerNamesToActivate = elm.attr('mb-wms-layers').split(',');
                 if (layerNamesToActivate.indexOf('_all') !== -1) {
                     options.global.options.treeOptions.selected = true;
                 } else {
@@ -144,8 +146,11 @@
                         options.layers[layerName] = {options: {treeOptions: {selected: true}}};
                     });
                 }
+            } else {
+                layerNamesToActivate = false;
             }
-            if(options.global.mergeSource){
+            if (options.global.mergeSource) {
+                var mergeLayers = !elm.attr('mb-wms-layer-merge') || elm.attr('mb-wms-layer-merge') === '1';
                 var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
                 var sources = mbMap.model.getSources();
                 for(var i = 0; i < sources.length; i++){
@@ -153,7 +158,23 @@
                     var url_source = Mapbender.Util.removeSignature(source.configuration.options.url.toLowerCase());
                     if(decodeURIComponent(options.gcurl.asString().toLowerCase()).indexOf(decodeURIComponent(url_source)) === 0){
                         // source exists
-                        mbMap.model.changeLayerState({id: source.id}, options, options.global.options.treeOptions.selected, options.global.mergeLayers);
+                        if (layerNamesToActivate !== false) {
+                            if (!mergeLayers && !options.global.options.treeOptions.selected) {
+                                this._resetTreeOptions(source);
+                            }
+                            if (options.global.options.treeOptions.selected) {
+                                // given layer param included '_all' => activate all
+                                // (NOTE: evaluating mergeLayers value wouldn't change the outcome)
+                                mbMap.model.changeLayerState({id: source.id}, {layers: {}}, true, true);
+                            } else {
+                                // (re)activate only requested layers, including their parents
+                                this._activateSourceLayers(source, options.layers, true);
+                                // trigger map state rescan
+                                mbMap.model.changeLayerState({id: source.id}, {layers: {}}, null);
+                            }
+                        }
+                        // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
+                        //       config params matter. We leave the source alone completely.
                         return false;
                     }
                 }
@@ -203,7 +224,8 @@
                     // We only need to do this if we DO NOT want all layers selected
                     // because all layer configs received from the server will start
                     // out selected by default
-                    self._initializeTreeOptions(sourceDef, sourceOpts);
+                    self._resetTreeOptions(sourceDef);
+                    self._activateSourceLayers(sourceDef, sourceOpts.layers || {});
                 }
                 if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
                     mbMap.addSource(sourceDef, false);
@@ -214,21 +236,22 @@
             // @todo: fix default for newly added source (no fi) to match default layertree visual (fi on)
              $('.mb-element-layertree .featureInfoWrapper input[type="checkbox"]').trigger('change');
         },
-        _initializeTreeOptions: function(sourceDef, loaderOptions) {
-            // pass one: reset everything except root layer
+        _resetTreeOptions: function(sourceDef) {
             Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layerDef, offset, parents) {
                 if (parents.length) {
                     layerDef.options.treeOptions.selected = false;
                 }
             });
-            // pass two: activate desired layers along with their parent chain
+        },
+        _activateSourceLayers: function(sourceDef, layerOptionMap, includeParents) {
+            var includeParents_ = typeof includeParents === 'undefined' || !!includeParents;
             Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layerDef, offset, parents) {
                 // Skip checking layers that have empty names. This is common on group layers or even root
                 // layers that the WMS server doesn't intend for direct GetMap usage.
-                if (layerDef.options.name && loaderOptions.layers.hasOwnProperty(layerDef.options.name)) {
-                    var newLayerOptions = loaderOptions.layers[layerDef.options.name];
+                if (layerDef.options.name && layerOptionMap.hasOwnProperty(layerDef.options.name)) {
+                    var newLayerOptions = layerOptionMap[layerDef.options.name];
                     var selected = layerDef.options.treeOptions.selected = newLayerOptions.options.treeOptions.selected;
-                    if (selected) {
+                    if (selected && includeParents_) {
                         // layer active => activate all parents implicitly
                         parents.map(function(parentLayer) {
                             parentLayer.options.treeOptions.selected = parentLayer.options.treeOptions.selected || selected;
