@@ -4,7 +4,6 @@
         options: {
             autoOpen: false,
             title: Mapbender.trans('mb.wms.wmsloader.title'),
-            splitLayers: false,
             wms_url: null
         },
         loadedSourcesCount: 0,
@@ -32,7 +31,6 @@
                     'layers': {},
                     'global': {
                         'mergeSource': false,
-                        'splitLayers': this.options.splitLayers,
                         'options': {'treeOptions': {'selected': true}}
                     }
                 };
@@ -46,7 +44,6 @@
                     'layers': {},
                     'global': {
                         'mergeSource': false,
-                        'splitLayers': this.options.splitLayers,
                         'options': {'treeOptions': {'selected': true}}
                     }
                 };
@@ -97,7 +94,6 @@
                                     'layers': {},
                                     'global': {
                                         'mergeSource': false,
-                                        'splitLayers': self.options.splitLayers,
                                         'options': {'treeOptions': {'selected': true}}
                                     }
                                 };
@@ -132,8 +128,6 @@
                 'type': 'declarative',
                 'layers': {},
                 'global': {
-                    'mergeSource': mergeSource,
-                    'splitLayers': false,
                     'options': {'treeOptions': {'selected': false}}
                 }
             };
@@ -149,7 +143,7 @@
             } else {
                 layerNamesToActivate = false;
             }
-            if (options.global.mergeSource) {
+            if (mergeSource) {
                 var mergeLayers = !elm.attr('mb-wms-layer-merge') || elm.attr('mb-wms-layer-merge') === '1';
                 var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
                 var sources = mbMap.model.getSources();
@@ -179,6 +173,7 @@
                     }
                 }
             }
+            options.mergeSource = mergeSource;
             this.loadWms(options);
             return false;
         },
