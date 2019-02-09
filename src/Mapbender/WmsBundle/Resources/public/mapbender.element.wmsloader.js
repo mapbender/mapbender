@@ -8,12 +8,17 @@
         },
         loadedSourcesCount: 0,
         elementUrl: null,
+        mbMap: null,
         _create: function(){
             var self = this;
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
                 return;
             }
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+                self._trigger('ready');
+            });
         },
         _setup: function(){
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
@@ -49,7 +54,6 @@
                 };
                 this._getInstances(this.options.wms_id, options);
             }
-            this._trigger('ready');
         },
         defaultAction: function(callback){
             this.open(callback);
@@ -148,8 +152,7 @@
                 //       was 'mb-layer-merge'. Just support both equivalently.
                 var mergeLayersAttribValue = elm.attr('mb-wms-layer-merge') || elm.attr('mb-layer-merge');
                 var mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
-                var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
-                var sources = mbMap.model.getSources();
+                var sources = this.mbMap.model.getSources();
                 for(var i = 0; i < sources.length; i++){
                     var source = sources[i];
                     var url_source = Mapbender.Util.removeSignature(source.configuration.options.url.toLowerCase());
@@ -162,12 +165,12 @@
                             if (options.global.options.treeOptions.selected) {
                                 // given layer param included '_all' => activate all
                                 // (NOTE: evaluating mergeLayers value wouldn't change the outcome)
-                                mbMap.model.changeLayerState({id: source.id}, {layers: {}}, true, true);
+                                this.mbMap.model.changeLayerState({id: source.id}, {layers: {}}, true, true);
                             } else {
                                 // (re)activate only requested layers, including their parents
                                 this._activateSourceLayers(source, options.layers, true);
                                 // trigger map state rescan
-                                mbMap.model.changeLayerState({id: source.id}, {layers: {}}, null);
+                                this.mbMap.model.changeLayerState({id: source.id}, {layers: {}}, null);
                             }
                         }
                         // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
@@ -221,7 +224,6 @@
         _addSources: function(sourceDefs, sourceOpts) {
             var srcIdPrefix = 'wmsloader-' + $(this.element).attr('id');
             var self = this;
-            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
             $.each(sourceDefs, function(idx, sourceDef) {
                 var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
                 var findOpts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
@@ -236,8 +238,8 @@
                     self._resetTreeOptions(sourceDef);
                     self._activateSourceLayers(sourceDef, sourceOpts.layers || {});
                 }
-                if (!sourceOpts.global.mergeSource || !mbMap.model.findSource(findOpts).length){
-                    mbMap.addSource(sourceDef, false);
+                if (!sourceOpts.global.mergeSource || !self.mbMap.model.findSource(findOpts).length){
+                    self.mbMap.addSource(sourceDef, false);
                 }
             });
             // Enable feature info
