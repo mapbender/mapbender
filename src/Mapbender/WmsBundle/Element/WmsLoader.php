@@ -201,6 +201,12 @@ class WmsLoader extends Element
         } else {
             $layerConfigurations = [$layerConfiguration];
         }
+        // amend info_format and format options
+        $config = array_replace($this->getDefaultConfiguration(), $this->entity->getConfiguration());
+        foreach ($layerConfigurations as &$layerConfiguration) {
+            $layerConfiguration['configuration']['options']['info_format'] = $config['defaultInfoFormat'];
+            $layerConfiguration['configuration']['options']['format'] = $config['defaultFormat'];
+        }
 
         return new JsonResponse($layerConfigurations);
     }

@@ -182,10 +182,6 @@
         },
         loadWms: function (sourceOpts) {
             var self = this;
-            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
-            sourceOpts['global']['defaultFormat'] = this.options.defaultFormat;
-            sourceOpts['global']['defaultInfoFormat'] = this.options.defaultInfoFormat;
-            sourceOpts['model'] = mbMap.model;
             $.ajax({
                 url: self.elementUrl + 'loadWms',
                 data: {
@@ -193,13 +189,6 @@
                 },
                 dataType: 'json',
                 success: function(data, textStatus, jqXHR){
-                    var i;
-
-                    for (i = 0; i < data.length; i++) {
-                      data[i].configuration.options.info_format = self.options.defaultInfoFormat;
-                      data[i].configuration.options.format = self.options.defaultFormat;
-                    }
-
                     self._addSources(data, sourceOpts);
                 },
                 error: function(jqXHR, textStatus, errorThrown){
@@ -209,10 +198,6 @@
         },
         _getInstances: function(scvIds, sourceOpts) {
             var self = this;
-            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
-            sourceOpts['global']['defaultFormat'] = this.options.defaultFormat;
-            sourceOpts['global']['defaultInfoFormat'] = this.options.defaultInfoFormat;
-            sourceOpts['model'] = mbMap.model;
             $.ajax({
                 url: self.elementUrl + 'getInstances',
                 data: {
