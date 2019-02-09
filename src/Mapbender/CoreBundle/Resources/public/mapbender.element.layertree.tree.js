@@ -637,7 +637,7 @@
                         options.layers[$layerLi.attr('data-id')] = value;
                     }
                 });
-                self.model.changeLayerState(source, options, false, true);
+                self.model.changeLayerState(source, options, null);
             });
             return false;
         },

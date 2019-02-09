@@ -482,7 +482,10 @@ Mapbender.Geo.SourceHandler = Class({
                 parentLayer.state.visibility = parentLayer.state.visibility || layer.state.visibility;
                 if (stateChanged) {
                     changeMap[parentId] = $.extend(changeMap[parentId] || {}, {
-                        state: parentLayer.state
+                        state: parentLayer.state,
+                        options: {
+                            treeOptions: parentLayer.options.treeOptions
+                        }
                     });
                 }
             }
