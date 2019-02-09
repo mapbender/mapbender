@@ -173,7 +173,7 @@
                     }
                 }
             }
-            options.mergeSource = mergeSource;
+            options.global.mergeSource = mergeSource;
             this.loadWms(options);
             return false;
         },
