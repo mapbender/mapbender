@@ -204,6 +204,32 @@
                 }
             });
         },
+        _getInstances: function(scvIds, sourceOpts) {
+            var self = this;
+            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
+            sourceOpts['global']['defaultFormat'] = this.options.defaultFormat;
+            sourceOpts['global']['defaultInfoFormat'] = this.options.defaultInfoFormat;
+            sourceOpts['model'] = mbMap.model;
+            $.ajax({
+                url: self.elementUrl + 'getInstances',
+                data: {
+                    instances: scvIds
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        var sources = response.success;
+                        self._addSources(sources, sourceOpts);
+                    } else if (response.error) {
+                        Mapbender.error(response.error);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
+                }
+            });
+        },
         _addSources: function(sourceDefs, sourceOpts) {
             var srcIdPrefix = 'wmsloader-' + $(this.element).attr('id');
             var self = this;

@@ -156,6 +156,8 @@ class WmsLoader extends Element
     public function httpAction($action)
     {
         switch ($action) {
+            case 'getInstances':
+                return $this->getInstances();
             case 'loadWms':
                 return $this->loadWms();
             default:
