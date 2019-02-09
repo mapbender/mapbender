@@ -144,7 +144,10 @@
                 layerNamesToActivate = false;
             }
             if (mergeSource) {
-                var mergeLayers = !elm.attr('mb-wms-layer-merge') || elm.attr('mb-wms-layer-merge') === '1';
+                // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
+                //       was 'mb-layer-merge'. Just support both equivalently.
+                var mergeLayersAttribValue = elm.attr('mb-wms-layer-merge') || elm.attr('mb-layer-merge');
+                var mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
                 var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
                 var sources = mbMap.model.getSources();
                 for(var i = 0; i < sources.length; i++){
