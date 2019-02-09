@@ -166,6 +166,19 @@ class WmsLoader extends Element
                 return new JsonResponse(array(
                     'success' => $this->getDatabaseInstanceConfigs($instanceIds),
                 ));
+            // Compatibility bridge for team Wmts: forward to potentailly customized
+            // httpAction even if handleHttpRequest was not replaced
+            default:
+                return $this->httpAction($action);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function httpAction($action)
+    {
+        switch ($action) {
             case 'loadWms':
                 return $this->loadWms();
             default:
