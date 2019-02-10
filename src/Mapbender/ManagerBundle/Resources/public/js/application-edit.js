@@ -16,11 +16,11 @@ $(function() {
                         },
                         success: function(data, textStatus, jqXHR) {
                             if (data.error && data.error !== '') {
-                                document.location.href = document.location.href;
+                                document.location.reload();
                             }
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
-                            document.location.href = document.location.href;
+                            document.location.reload();
                         }
                     });
                 }
@@ -41,11 +41,11 @@ $(function() {
             },
             success: function(data, textStatus, jqXHR) {
                 if (data.error && data.error !== '') {
-                    document.location.href = document.location.href;
+                    document.location.reload();
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                document.location.href = document.location.href;
+                document.location.reload();
             }
         });
     });
@@ -89,12 +89,12 @@ $(function() {
                             },
                             success: function(data, textStatus, jqXHR) {
                                 if (data.error && data.error !== '') {
-                                    document.location.href = document.location.href;
+                                    document.location.reload(); // why?
                                 }
                             },
                             error: function(jqXHR, textStatus, errorThrown) {
-                                document.location.href = document.location.href;
-                            },
+                                document.location.reload(); // why?
+                            }
                         });
                     }
                 });
@@ -575,7 +575,7 @@ $(function() {
                 {'screenshotWidth':minWidth, 'screenshotHeight':minHeight ,'uploadWidth': img.width, 'uploadHeighth': img.height }) +'</span>').insertAfter(fileInput);
                 validationMsgBox = applicationForm.find('span.validationMsgBox');
             }
-        }
+        };
     
         
          if (file && file[0]) {
@@ -584,7 +584,7 @@ $(function() {
                    
                     reader.onload = function (e) {
                         img.src = src = e.target.result;
-                    }
+                    };
 
                     reader.readAsDataURL(file[0]);
                     
@@ -602,23 +602,14 @@ $(function() {
     });
    
     var setUploadFilename = function(e){
-        fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
-
-        if(fileName === ""){
-            if (fileNameTmp === ""){
-                fileName = Mapbender.trans('mb.manager.admin.application.upload.label');
-            }else{
-               fileName = fileNameTmp;
-            }
-        }else{
-            fileNameTmp = fileName;
+        var fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
+        var displayFilename = fileName || Mapbender.trans('mb.manager.admin.application.upload.label');
+        if (displayFilename.length > 20) {
+            $('.upload_label').text(displayFilename.substring(0, 20) + '…');
+        } else {
+            $('.upload_label').text(displayFilename);
         }
-
-        if (fileName.length > 20) {
-            fileName = fileName.substring(0, 20) + "...";
-        }
-        $('.upload_label').html(fileName);
-    }
+    };
     
     var deleteScreenShotButtonInit = function() {
            
