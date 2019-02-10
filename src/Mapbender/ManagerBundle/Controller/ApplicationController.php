@@ -566,8 +566,7 @@ class ApplicationController extends WelcomeController
     /**
      * A confirmation page for a layerset
      *
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/confirmdelete")
-     * @Method("GET")
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete", methods={"GET"})
      * @Template("MapbenderManagerBundle:Application:deleteLayerset.html.twig")
      * @param string $slug
      * @param string $layersetId
@@ -590,8 +589,7 @@ class ApplicationController extends WelcomeController
     /**
      * Delete a layerset
      *
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete")
-     * @Method("POST")
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete", methods={"POST"})
      * @param Request $request
      * @param string $slug
      * @param string $layersetId
@@ -604,7 +602,6 @@ class ApplicationController extends WelcomeController
         $layerset    = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
-        $flashBag    = $request->getSession()->getFlashBag();
         if ($layerset !== null) {
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
@@ -614,11 +611,11 @@ class ApplicationController extends WelcomeController
             $em->flush();
             $em->getConnection()->commit();
             $this->get("logger")->debug('The layerset "' . $layerset->getId() . '"has been deleted.');
-            $flashBag->set('success', $this->translate('mb.layerset.remove.success'));
+            $this->addFlash('success', $this->translate('mb.layerset.remove.success'));
         } else {
-            $flashBag->set('error',  $this->translate('mb.layerset.remove.failure'));
+            $this->addFlash('error', $this->translate('mb.layerset.remove.failure'));
         }
-        return $this->redirect($this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)));
+        return new Response();
     }
 
     /**

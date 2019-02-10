@@ -577,33 +577,14 @@ $(function() {
     $(".editLayerset").bind("click", addOrEditLayerset);
     // Delete layerset Action
     $(".removeLayerset").bind("click", function() {
-        var self = $(this);
-        if (popup) {
-            popup = popup.destroy();
-        }
-        popup = new popupCls({
-            title: Mapbender.trans("mb.manager.components.popup.delete_layerset.title"),
-            subTitle: " - " + $(this).siblings("legend").text(),
-            closeOnOutsideClick: true,
-            content: [
-                $.ajax({url: self.attr("href")})
-            ],
-            buttons: {
-                'cancel': {
-                    label: Mapbender.trans("mb.manager.components.popup.delete_layerset.btn.cancel"),
-                    cssClass: 'button buttonCancel critical right',
-                    callback: function() {
-                        this.close();
-                    }
-                },
-                'ok': {
-                    label: Mapbender.trans("mb.manager.components.popup.delete_layerset.btn.ok"),
-                    cssClass: 'button right',
-                    callback: function() {
-                        $("#deleteLaysersetForm").submit();
-                    }
-                }
-            }
+        var strings = {
+            title: 'mb.manager.components.popup.delete_layerset.title',
+            confirm: 'mb.manager.components.popup.delete_layerset.btn.ok',
+            cancel: 'mb.manager.components.popup.delete_layerset.btn.cancel'
+        };
+        var $el = $(this);
+        $.ajax({url: $el.attr('href')}).then(function(content) {
+            _confirmDelete($el, strings, content);
         });
         return false;
     });
