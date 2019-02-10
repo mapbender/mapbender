@@ -129,20 +129,9 @@
             var mergeSource = !elm.attr('mb-wms-merge') || elm.attr('mb-wms-merge') === '1';
             var sourceUrl = elm.attr('mb-url') || elm.attr('href');
 
-            if (mergeSource) {
-                // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
-                //       was 'mb-layer-merge'. Just support both equivalently.
-                var mergeLayersAttribValue = elm.attr('mb-wms-layer-merge') || elm.attr('mb-layer-merge');
-                var mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
-                var mergeCandidate = this._findMergeCandidateByUrl(sourceUrl);
-                if (mergeCandidate) {
-                    if (layerNamesToActivate !== false) {
-                        this.activateLayersByName(mergeCandidate, layerNamesToActivate, mergeLayers, true);
-                    }
-                    // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
-                    //       config params matter. We leave the source alone completely.
-                    return false;
-                }
+            if (mergeSource && this.mergeDeclarative(elm, sourceUrl, layerNamesToActivate)) {
+                // Merged successfully to existing source, we're done
+                return false;
             }
             // No merge allowed or merge allowed but no merge candidate found.
             // => load as an entirely new source
@@ -159,6 +148,28 @@
             };
             this.loadWms(options);
             return false;
+        },
+        /**
+         * @param {jQuery} $link
+         * @param {string} sourceUrl
+         * @param {Array<string>|false} layerNamesToActivate
+         * @return {boolean} to indicate if a merge target was found and processed
+         */
+        mergeDeclarative: function($link, sourceUrl, layerNamesToActivate) {
+            // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
+            //       was 'mb-layer-merge'. Just support both equivalently.
+            var mergeLayersAttribValue = $link.attr('mb-wms-layer-merge') || $link.attr('mb-layer-merge');
+            var mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
+            var mergeCandidate = this._findMergeCandidateByUrl(sourceUrl);
+            if (mergeCandidate) {
+                if (layerNamesToActivate !== false) {
+                    this.activateLayersByName(mergeCandidate, layerNamesToActivate, mergeLayers, true);
+                }
+                // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
+                //       attributes and config params matter. We leave the source alone completely.
+                return true;    // indicate merge target found, merging performed
+            }
+            return false;       // indicate no merge target, no merging performed
         },
         loadWms: function (sourceOpts) {
             var self = this;
