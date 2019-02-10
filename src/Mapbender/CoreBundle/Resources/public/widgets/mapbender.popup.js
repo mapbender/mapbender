@@ -192,9 +192,10 @@
         option: function(key, value) {
             switch(key) {
                 default:
-                    var fct = this[key];
+                    // Handle bad option capitalization for special snowflakes
+                    var fct = this[key] || this[key.toLowerCase()];
                     if(typeof fct == 'function') {
-                        this[key](value);
+                        fct.call(this, value);
                     } else {
                         if(window.console) {
                             console.error('No accessor for "' + key + '"');
@@ -303,7 +304,7 @@
             this.options.buttons = buttons;
         },
 
-        addButtons: function(buttons, offset) {
+        addButtons: function(buttons) {
             var self = this,
                 buttonset = $('');
 
@@ -326,8 +327,6 @@
 
                 buttonset = buttonset.add(button);
             });
-
-            // @todo use offset if given
             $('.popupButtons', this.$element.get(0)).append(buttonset);
         },
 

@@ -490,43 +490,51 @@ $(function() {
         return false;
     });
 
-    // Delete element
-    $('.removeElement').bind("click", function() {
-        var self = $(this);
-        var content = $('<div/>').text(self.attr('title')).html();
-
+    function _confirmDelete($el, strings, content) {
         if (popup) {
             popup = popup.destroy();
         }
-        popup = new popupCls({
-            title: Mapbender.trans("mb.manager.components.popup.delete_element.title"),
-            subTitle: " - " + Mapbender.trans("mb.manager.components.popup.delete_element.subtitle"),
-            closeOnOutsideClick: true,
-            content: [content + "?"],
-            buttons: {
-                'cancel': {
-                    label: Mapbender.trans("mb.manager.components.popup.delete_element.btn.cancel"),
-                    cssClass: 'button buttonCancel critical right',
-                    callback: function() {
-                        this.close();
-                    }
-                },
-                'ok': {
-                    label: Mapbender.trans("mb.manager.components.popup.delete_element.btn.ok"),
-                    cssClass: 'button right',
+        var defaultContent = $('<div/>').text($el.attr('title') + '?').html();
+        var deleteUrl = $el.attr('data-url') || $el.attr('href');
+        var popupOptions = {
+            title: Mapbender.trans(strings.title),
+            subTitle: strings.subTitle && (' - ' + Mapbender.trans(strings.subTitle)),
+            content: content || defaultContent,
+            buttons: [
+                {
+                    label: Mapbender.trans(strings.confirm),
+                    cssClass: 'button',
                     callback: function() {
                         $.ajax({
-                            url: self.attr('data-url'),
+                            url: deleteUrl,
                             type: 'POST',
-                            success: function(data) {
+                            success: function() {
                                 window.location.reload();
                             }
                         });
                     }
+                },
+                {
+                    label: Mapbender.trans(strings.cancel),
+                    cssClass: 'button buttonCancel critical',
+                    callback: function() {
+                        this.close();
+                    }
                 }
-            }
-        });
+            ]
+        };
+        popup = new popupCls(popupOptions);
         return false;
+    }
+
+    // Delete element
+    $('.removeElement').bind("click", function() {
+        return _confirmDelete($(this), {
+            title: 'mb.manager.components.popup.delete_element.title',
+            confirm: 'mb.manager.components.popup.delete_element.btn.ok',
+            cancel: 'mb.manager.components.popup.delete_element.btn.cancel',
+            subTitle: 'mb.manager.components.popup.delete_element.subtitle'
+        });
     });
 
     // Layers --------------------------------------------------------------------------------------
@@ -627,47 +635,11 @@ $(function() {
     });
     // Delete instance
     $('.removeInstance').bind("click", function() {
-        var self = $(this);
-        var content = self.attr('title');
-
-
-        if (popup) {
-            popup = popup.destroy();
-        }
-
-        popup = new popupCls({
-            title: Mapbender.trans("mb.manager.components.popup.delete_instance.title"),
-            subtitle: " - layerset",
-            closeOnOutsideClick: true,
-            content: [content + "?"],
-            buttons: {
-                'cancel': {
-                    label: Mapbender.trans("mb.manager.components.popup.delete_instance.btn.cancel"),
-                    cssClass: 'button buttonCancel critical right',
-                    callback: function() {
-                        this.close();
-                    }
-                },
-                'ok': {
-                    label: Mapbender.trans("mb.manager.components.popup.delete_instance.btn.ok"),
-                    cssClass: 'button right',
-                    callback: function() {
-                        $.ajax({
-                            url: self.attr('data-url'),
-                            data: {
-                                'slug': self.attr('data-slug'),
-                                'id': self.attr('data-id')
-                            },
-                            type: 'POST',
-                            success: function(data) {
-                                window.location.reload();
-                            }
-                        });
-                    }
-                }
-            }
+        return _confirmDelete($(this), {
+            title: 'mb.manager.components.popup.delete_instance.title',
+            confirm: 'mb.manager.components.popup.delete_instance.btn.ok',
+            cancel: 'mb.manager.components.popup.delete_instance.btn.cancel'
         });
-        return false;
     });
 
     var applicationForm = $('form[name=application]');
