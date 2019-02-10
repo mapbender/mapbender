@@ -740,16 +740,8 @@
                     $('.layer-metadata', menu).remove();
                 } else {
                     atLeastOne = true;
-                    var layer = self.model.findLayer({
-                        id: sourceId
-                    },
-                    {
-                        id: layerId
-                    });
-                    if (layer) {
-                        $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata,
-                            self));
-                    }
+                    $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata,
+                        self));
                 }
                 var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
                 if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
@@ -893,25 +885,10 @@
             this.model.zoomToLayer(options);
         },
         _showMetadata: function(e) {
-            Mapbender.Metadata.call(
-                this.options.target,
-                {
-                    id: $(
-                        e.target).
-                        parents(
-                            'div.layer-menu:first').
-                        attr(
-                            "data-menuSourceId")
-                },
-            {
-                id: $(
-                    e.target).
-                    parents(
-                        'div.layer-menu:first').
-                    attr(
-                        "data-menuLayerId")
-            }
-            );
+            var $layer = $(e.target).closest('.leave', this.element);
+            var sourceOpts = {id: $layer.attr('data-sourceid')};
+            var layerOpts = {id: $layer.attr('data-id')};
+            Mapbender.Metadata.call(this.options.target, sourceOpts, layerOpts);
         },
         _setSourcesCount: function() {
             var countObj = {};
