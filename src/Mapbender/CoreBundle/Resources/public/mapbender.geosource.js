@@ -293,10 +293,7 @@ Mapbender.Geo.SourceHandler = Class({
                 for (var i = 0; i < layer.children.length; i++) {
                     var child = layer.children[i];
                     setSelected(child);
-                    if ((!layerChanges[child.options.id] && child.options.treeOptions.selected)
-                        || (layerChanges[child.options.id] && layerChanges[child.options.id].options.treeOptions.selected)) {
-                        childSelected = true;
-                    }
+                    childSelected = childSelected || (layerChanges[child.options.id] || child).options.treeOptions.selected;
                 }
                 if (layerOpts) {
                     newTreeOptions = $.extend({}, layerOpts);

@@ -595,7 +595,6 @@ Mapbender.Model = {
     _resetSourceVisibility: function(source, layers, infolayers, styles) {
         var olLayer = this.getNativeLayer(source);
         if (!olLayer) {
-            console.error("No layer found", source);
             return false;
         }
         olLayer.queryLayers = infolayers;
@@ -993,7 +992,13 @@ Mapbender.Model = {
             mergeSelected = false;
         if (typeof defaultSelected === 'undefined')
             defaultSelected = false;
-        var source = this.getSource(sourceIdObject);
+        var source;
+        if (sourceIdObject.configuration && sourceIdObject.id && sourceIdObject.configuration.children && sourceIdObject.type) {
+            // let's just assume this already is a full-fledged source definition
+            source = sourceIdObject;
+        } else {
+            source = this.getSource(sourceIdObject);
+        }
         if (source !== null) {
             var toChangeOptions = Mapbender.source[source.type].createOptionsLayerState(source, options,
                 defaultSelected, mergeSelected);

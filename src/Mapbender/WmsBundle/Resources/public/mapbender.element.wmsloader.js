@@ -152,31 +152,27 @@
                 //       was 'mb-layer-merge'. Just support both equivalently.
                 var mergeLayersAttribValue = elm.attr('mb-wms-layer-merge') || elm.attr('mb-layer-merge');
                 var mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
-                var sources = this.mbMap.model.getSources();
-                for(var i = 0; i < sources.length; i++){
-                    var source = sources[i];
-                    var url_source = Mapbender.Util.removeSignature(source.configuration.options.url.toLowerCase());
-                    if(decodeURIComponent(options.gcurl.asString().toLowerCase()).indexOf(decodeURIComponent(url_source)) === 0){
-                        // source exists
-                        if (layerNamesToActivate !== false) {
-                            if (!mergeLayers && !options.global.options.treeOptions.selected) {
-                                this._resetTreeOptions(source);
-                            }
-                            if (options.global.options.treeOptions.selected) {
-                                // given layer param included '_all' => activate all
-                                // (NOTE: evaluating mergeLayers value wouldn't change the outcome)
-                                this.mbMap.model.changeLayerState({id: source.id}, {layers: {}}, true, true);
-                            } else {
-                                // (re)activate only requested layers, including their parents
-                                this._activateSourceLayers(source, options.layers, true);
-                                // trigger map state rescan
-                                this.mbMap.model.changeLayerState({id: source.id}, {layers: {}}, null);
-                            }
+                var mergeCandidate = this._findMergeCandidateByUrl(options.gcurl.asString());
+                if (mergeCandidate) {
+                    // source exists
+                    if (layerNamesToActivate !== false) {
+                        if (!mergeLayers && !options.global.options.treeOptions.selected) {
+                            this._resetTreeOptions(mergeCandidate);
                         }
-                        // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
-                        //       config params matter. We leave the source alone completely.
-                        return false;
+                        if (options.global.options.treeOptions.selected) {
+                            // given layer param included '_all' => activate all
+                            // (NOTE: evaluating mergeLayers value wouldn't change the outcome)
+                            this.mbMap.model.changeLayerState({id: mergeCandidate.id}, {layers: {}}, true, true);
+                        } else {
+                            // (re)activate only requested layers, including their parents
+                            this._activateSourceLayers(mergeCandidate, options.layers, true);
+                            // trigger map state rescan
+                            this.mbMap.model.changeLayerState({id: mergeCandidate.id}, {layers: {}}, null);
+                        }
                     }
+                    // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
+                    //       config params matter. We leave the source alone completely.
+                    return false;
                 }
             }
             options.global.mergeSource = mergeSource;
@@ -226,7 +222,6 @@
             var self = this;
             $.each(sourceDefs, function(idx, sourceDef) {
                 var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
-                var findOpts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
                 sourceDef.id = sourceId;
                 sourceDef.origId = sourceId;
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
@@ -238,7 +233,8 @@
                     self._resetTreeOptions(sourceDef);
                     self._activateSourceLayers(sourceDef, sourceOpts.layers || {});
                 }
-                if (!sourceOpts.global.mergeSource || !self.mbMap.model.findSource(findOpts).length){
+                var mergeCandidate = sourceOpts.global.mergeSource && self._findMergeCandidateByUrl(sourceDef.configuration.options.url);
+                if (!mergeCandidate) {
                     self.mbMap.addSource(sourceDef, false);
                 }
             });
@@ -246,6 +242,26 @@
             // @todo: find a way to do this directly on the map, without using the layertree
             // @todo: fix default for newly added source (no fi) to match default layertree visual (fi on)
              $('.mb-element-layertree .featureInfoWrapper input[type="checkbox"]').trigger('change');
+        },
+        /**
+         * Locates an already loaded source with an equivalent base url, returns that source object or null
+         * if no source matched.
+         *
+         * @param {string} url
+         * @returns {Object|null}
+         * @private
+         */
+        _findMergeCandidateByUrl: function(url) {
+            var normalizeUrl = function(url) {
+                var strippedUrl = Mapbender.Util.removeSignature(Mapbender.Util.removeProxy(url)).toLowerCase();
+                // normalize query parameter encoding
+                return new Mapbender.Util.Url(strippedUrl).asString();
+            };
+            var normUrl = normalizeUrl(url);
+            var matches = this.mbMap.model.getSources().filter(function(source) {
+                return normalizeUrl(source.configuration.options.url).indexOf(normUrl) === 0;
+            });
+            return matches[0] || null;
         },
         _resetTreeOptions: function(sourceDef) {
             Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layerDef, offset, parents) {
