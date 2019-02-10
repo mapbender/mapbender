@@ -567,7 +567,6 @@ class ApplicationController extends WelcomeController
      * A confirmation page for a layerset
      *
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete", methods={"GET"})
-     * @Template("MapbenderManagerBundle:Application:deleteLayerset.html.twig")
      * @param string $slug
      * @param string $layersetId
      * @return Response|array
@@ -579,11 +578,9 @@ class ApplicationController extends WelcomeController
         $layerset    = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
-        return array(
-            'application' => $application,
+        return $this->render('@MapbenderManager/Application/deleteLayerset.html.twig', array(
             'layerset' => $layerset,
-            'form' => $this->createDeleteForm($layerset->getId())->createView(),
-        );
+        ));
     }
 
     /**
