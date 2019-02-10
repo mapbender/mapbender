@@ -396,53 +396,16 @@ $(function() {
         return false;
     });
 
-    function _confirmDelete($el, strings, content) {
-        if (popup) {
-            popup = popup.destroy();
-        }
-        var defaultContent = $('<div/>').text($el.attr('title') + '?').html();
-        var deleteUrl = $el.attr('data-url') || $el.attr('href');
-        var popupOptions = {
-            title: Mapbender.trans(strings.title),
-            subTitle: strings.subTitle && (' - ' + Mapbender.trans(strings.subTitle)),
-            modal: true,
-            destroyOnClose: true,
-            content: content || defaultContent,
-            buttons: [
-                {
-                    label: Mapbender.trans(strings.confirm),
-                    cssClass: 'button',
-                    callback: function() {
-                        $.ajax({
-                            url: deleteUrl,
-                            type: 'POST',
-                            success: function() {
-                                window.location.reload();
-                            }
-                        });
-                    }
-                },
-                {
-                    label: Mapbender.trans(strings.cancel),
-                    cssClass: 'button buttonCancel critical',
-                    callback: function() {
-                        this.close();
-                    }
-                }
-            ]
-        };
-        popup = new popupCls(popupOptions);
-        return false;
-    }
-
     // Delete element
     $('.removeElement').bind("click", function() {
-        return _confirmDelete($(this), {
+        var $el = $(this);
+        popup = Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: 'mb.manager.components.popup.delete_element.title',
             confirm: 'mb.manager.components.popup.delete_element.btn.ok',
             cancel: 'mb.manager.components.popup.delete_element.btn.cancel',
             subTitle: 'mb.manager.components.popup.delete_element.subtitle'
         });
+        return false;
     });
 
     // Layers --------------------------------------------------------------------------------------
@@ -491,8 +454,9 @@ $(function() {
             cancel: 'mb.manager.components.popup.delete_layerset.btn.cancel'
         };
         var $el = $(this);
-        $.ajax({url: $el.attr('href')}).then(function(content) {
-            _confirmDelete($el, strings, content);
+        var actionUrl = $el.attr('href');
+        $.ajax({url: actionUrl}).then(function(content) {
+            popup = Mapbender.Manager.confirmDelete($el, actionUrl, strings, content);
         });
         return false;
     });
@@ -524,11 +488,13 @@ $(function() {
     });
     // Delete instance
     $('.removeInstance').bind("click", function() {
-        return _confirmDelete($(this), {
+        var $el = $(this);
+        popup = Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: 'mb.manager.components.popup.delete_instance.title',
             confirm: 'mb.manager.components.popup.delete_instance.btn.ok',
             cancel: 'mb.manager.components.popup.delete_instance.btn.cancel'
         });
+        return false;
     });
 
     var applicationForm = $('form[name=application]');
