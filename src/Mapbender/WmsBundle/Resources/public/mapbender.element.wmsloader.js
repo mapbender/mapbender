@@ -45,16 +45,7 @@
             }
 
             if (this.options.wms_id && this.options.wms_id !== '') {
-                var options = {
-                    'gcurl': '',
-                    'type': 'id',
-                    'layers': {},
-                    'global': {
-                        'mergeSource': false,
-                        'options': {'treeOptions': {'selected': true}}
-                    }
-                };
-                this._getInstances(this.options.wms_id, options);
+                this._getInstances(this.options.wms_id);
             }
         },
         defaultAction: function(callback){
@@ -187,7 +178,7 @@
                 }
             });
         },
-        _getInstances: function(scvIds, sourceOpts) {
+        _getInstances: function(scvIds) {
             var self = this;
             $.ajax({
                 url: self.elementUrl + 'getInstances',
@@ -197,12 +188,11 @@
                 type: 'POST',
                 dataType: 'json',
                 success: function(response) {
-                    if (response.success) {
-                        var sources = response.success;
-                        self._addSources(sources, sourceOpts);
-                    } else if (response.error) {
-                        Mapbender.error(response.error);
-                    }
+                    (response.success || []).map(function(sourceDef) {
+                        if (!self.mbMap.model.getSource({id: sourceDef.id})) {
+                            self.mbMap.addSource(sourceDef, false);
+                        }
+                    });
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
