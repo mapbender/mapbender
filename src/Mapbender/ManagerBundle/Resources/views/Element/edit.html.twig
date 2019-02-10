@@ -19,7 +19,7 @@
             {% endif %}
         {% endblock %}
     {% endblock %}
-  {{ form_end(form) }}
+  {{ form_end(form, {'render_rest': false}) }}
 
   <script src="{{ asset('bundles/mapbendermanager/js/element-edit.js') }}"></script>
 {% endblock %}
