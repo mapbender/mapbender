@@ -286,48 +286,45 @@ Mapbender.Geo.SourceHandler = Class({
         };
         function setSelected(layer) {
             var layerOpts = changeOptions.layers[layer.options.id];
-            var childSelected = false;
-            var newTreeOptions;
+            var newTreeOptions = {
+                selected: null
+            };
             var changedTreeOptions;
-            if (layer.children) {
+            if (layer.children && layer.children.length) {
                 for (var i = 0; i < layer.children.length; i++) {
-                    var child = layer.children[i];
-                    setSelected(child);
-                    childSelected = childSelected || (layerChanges[child.options.id] || child).options.treeOptions.selected;
-                }
-                if (layerOpts) {
-                    newTreeOptions = $.extend({}, layerOpts);
-                } else {
-                    newTreeOptions = {
-                        selected: childSelected,
-                        info: childSelected
+                    if (setSelected(layer.children[i])) {
+                        newTreeOptions.selected = true;
                     }
                 }
+                if (newTreeOptions.selected === null && layerOpts) {
+                    newTreeOptions.selected = layerOpts.options.treeOptions.selected;
+                }
+                if (newTreeOptions.selected === null && defaultSelected !== null) {
+                    newTreeOptions.selected = defaultSelected;
+                }
             } else {
-                if(!layerOpts && defaultSelected === null) {
-                    return;
-                }
-                var sel = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
-                if (mergeSelected) {
-                    sel = sel || layer.options.treeOptions.selected;
-                }
-                newTreeOptions = {
-                    selected: sel,
-                    info: sel
-                };
+                newTreeOptions.selected = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
             }
-
-            newTreeOptions.info = newTreeOptions.info && layer.options.treeOptions.allow.info;
+            if (mergeSelected) {
+                newTreeOptions.selected = newTreeOptions.selected || layer.options.treeOptions.selected;
+            }
+            if (newTreeOptions.selected === null) {
+                return null;
+            }
 
             if (newTreeOptions.selected !== layer.options.treeOptions.selected) {
                 changedTreeOptions = {
                     selected: newTreeOptions.selected
                 };
-            }
-            if (newTreeOptions.info !== layer.options.treeOptions.info) {
-                changedTreeOptions = $.extend(changedTreeOptions || {}, {
-                    info: newTreeOptions.info
-                });
+                if (mergeSelected && !newTreeOptions.selected) {
+                    newTreeOptions.info = layer.options.treeOptions.info;
+                } else {
+                    newTreeOptions.info = newTreeOptions.selected;
+                }
+                newTreeOptions.info = newTreeOptions.info && layer.options.treeOptions.allow.info;
+                if (newTreeOptions.info !== layer.options.treeOptions.info) {
+                    changedTreeOptions.info = newTreeOptions.info;
+                }
             }
             if (changedTreeOptions) {
                 layerChanges[layer.options.id] = {
@@ -336,6 +333,7 @@ Mapbender.Geo.SourceHandler = Class({
                     }
                 };
             }
+            return newTreeOptions.selected;
         }
         var changed = {
             sourceIdx: {
