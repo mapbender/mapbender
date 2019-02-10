@@ -114,8 +114,6 @@ class OdgParser
             'fields' => array()
         );
 
-        $this->xPath = $xPath;
-
         $doc = new \DOMDocument();
         $doc->loadXML($this->readOdgFile($template, 'content.xml'));
 
