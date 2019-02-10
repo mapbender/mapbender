@@ -604,8 +604,8 @@ $(function() {
     var setUploadFilename = function(e){
         var fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
         var displayFilename = fileName || Mapbender.trans('mb.manager.admin.application.upload.label');
-        if (displayFilename.length > 20) {
-            $('.upload_label').text(displayFilename.substring(0, 20) + '…');
+        if (displayFilename.length > 35) {
+            $('.upload_label').text(displayFilename.substring(0, 35) + '…');
         } else {
             $('.upload_label').text(displayFilename);
         }
