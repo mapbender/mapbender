@@ -1,5 +1,6 @@
 # Changelog
-* **dev-release/3.0.7 @ c5fb393ac**
+* **dev-release/3.0.7 @ 5498eec61**
+  - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#184](https://github.com/mapbender/mapbender/pull/1084))
   - Fix buttons with invalid targets breaking buttons in the same group
   - Fix element-order dependent script initialization error in mobile template
   - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
@@ -9,7 +10,9 @@
   - Fix rendering of Button Element if 'click' is completely undefined (old DB? YAML apps?) ([PR#1076](https://github.com/mapbender/mapbender/pull/1076))
   - Restore layer enabled / FeautureInfo checkbox state synchronization across multiple LayerTree Elements ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Fix erratic LayerTree layer "ghosting" on certain map interactions ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
-  - Fix new service added via WmsLoader starting out with a deselected root layer ([PR#1045](https://github.com/mapbender/mapbender/pull/1045))
+  - WmsLoader: Fix newly added service starting out with a deselected root layer ([PR#1045](https://github.com/mapbender/mapbender/pull/1045))
+  - WmsLoader: Make behaviour of 'declarative' links with default `mb-wms-merge` setting repeatable ([PR#1083](https://github.com/mapbender/mapbender/pull/1083))
+  - WmsLoader: Enable activation of specific layers via `mb-wms-layer` on 'declarative' links even if root or group layers have empty names ([PR#1083](https://github.com/mapbender/mapbender/pull/1083))
   - Improve compatibility with certain reverse-proxy setups ([PR#1061](https://github.com/mapbender/mapbender/pull/1061), [PR#1075](https://github.com/mapbender/mapbender/pull/1075))
   - Print: add WMS GetMap size limits, use tiling to stitch larger images ([PR#1073](https://github.com/mapbender/mapbender/pull/1073))
   - Print: generate label and other symbol sizing parameters understood by Mapserver, QGis server and Geoserver (see [735626322](https://github.com/mapbender/mapbender/commit/73562632261819d79b9a9c0c264caeb33f34f4bf#diff-c72724b3690b61d792254dd26a7ca9cbR222))
