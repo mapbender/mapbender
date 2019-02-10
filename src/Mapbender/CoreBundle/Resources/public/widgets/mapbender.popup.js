@@ -39,6 +39,7 @@
 (function($) {
     var counter = 0;
     var currentZindex = 10000;
+    var currentModal_ = null;
     /**
      * Popup constructor.
      *
@@ -212,6 +213,12 @@
          * @param {*} [content]  New content, if any
          */
         open: function(content) {
+            if (this.options.modal) {
+                if (currentModal_ && this !== currentModal_) {
+                    currentModal_.close();
+                }
+                currentModal_ = this;
+            }
             var self = this;
 
             if(content) {
@@ -272,6 +279,9 @@
             }
             if(this.options.destroyOnClose) {
                 this.destroy();
+            }
+            if (this.options.modal && this === currentModal_) {
+                currentModal_ = null;
             }
             this.$element.trigger('closed'); // why?
         },
