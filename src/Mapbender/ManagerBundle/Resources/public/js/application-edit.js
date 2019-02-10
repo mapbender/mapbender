@@ -124,156 +124,100 @@ $(function() {
 
     var popup;
 
-    function loadElementFormular() {
-        var url = $(this).attr("href");
-        if (url) {
-            $.ajax({
-                url: url,
-                type: "GET",
-                complete: function(data) {
-                    if (data != undefined) {
-                        var pop = $(".popup");
-                        var popupContent = $(".popupContent");
-                        var contentWrapper = pop.find(".contentWrapper");
-
-                        if (contentWrapper.get(0) == undefined) {
-                            popupContent.wrap('<div class="contentWrapper"></div>');
-                            contentWrapper = pop.find(".contentWrapper");
+    function startEditElement(formUrl, strings, extraButtons) {
+        $.ajax(formUrl).then(function(response) {
+            popup = new popupCls({
+                title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
+                subTitle: strings.subTitle || '',
+                modal: true,
+                closeOnOutsideClick: true,
+                destroyOnClose: true,
+                cssClass: "elementPopup",
+                content: response,
+                buttons: (extraButtons || []).slice().concat([
+                    {
+                        label: Mapbender.trans(strings.save || 'mb.manager.components.popup.edit_element.btn.ok'),
+                        cssClass: 'button',
+                        callback: function() {
+                            elementFormSubmit();
                         }
-                        popupContent.hide();
-                        var subContent = contentWrapper.find(".popupSubContent");
-
-                        if (subContent.get(0) == undefined) {
-                            contentWrapper.append('<div class="popupSubContent"></div>');
-                            subContent = contentWrapper.find('.popupSubContent');
+                    },
+                    {
+                        label: Mapbender.trans(strings.cancel || 'mb.manager.components.popup.edit_element.btn.cancel'),
+                        cssClass: 'button buttonCancel critical',
+                        callback: function() {
+                            this.close();
                         }
-                        subContent.html(data.responseText);
-                        pop.find('.popupScroll').scrollTop(0);
-                        var subTitle = subContent.find("#form_title").val();
-                        $(".popupSubTitle").text(" - " + subTitle);
-                        $(".popup").find(".buttonYes, .buttonBack").show();
-                        subContent.closest(".popupScroll").scrollTop(0);
+                    }
+                ])
+            });
+            popup.$element.on('change', function(event) {
+                $('#elementForm', popup.$element).data('dirty', true);
+            });
+            popup.$element.on('close', function(event, token) {
+                if (true === $('#elementForm', popup.$element).data('dirty')) {
+                    if (!confirm('Ignore Changes?')) {
+                        token.cancel = true;
                     }
                 }
             });
-        }
+        });
+    }
 
-        return false;
+    function startElementChooser(regionName, listUrl) {
+        var title ='mb.manager.components.popup.add_element.title';
+        $.ajax({
+            url: listUrl
+        }).then(function(response) {
+            popup = new popupCls({
+                title: Mapbender.trans(title),
+                subTitle: ' - ' + regionName,
+                modal: true,
+                closeOnOutsideClick: true,
+                destroyOnClose: true,
+                content: response,
+                cssClass: "elementPopup",
+                buttons: [
+                    {
+                        label: Mapbender.trans("mb.manager.components.popup.add_element.btn.cancel"),
+                        cssClass: 'button buttonCancel critical',
+                        callback: function() {
+                            this.close();
+                        }
+                    }
+                ]
+            });
+            popup.$element.on('click', '.chooseElement', function() {
+                var elTypeSubtitle = $('.subTitle', this).first().text();
+                var editStrings = {
+                    title: title,
+                    subTitle: ' - ' + regionName + ' - ' + elTypeSubtitle,
+                    save: 'mb.manager.components.popup.add_element.btn.ok',
+                    cancel: 'mb.manager.components.popup.add_element.btn.cancel'
+                };
+
+                startEditElement($(this).attr('href'), editStrings, [
+                    {
+                        label: Mapbender.trans("mb.manager.components.popup.add_element.btn.back"),
+                        cssClass: 'button buttonBack',
+                        callback: function() {
+                            startElementChooser(regionName, listUrl);
+                        }
+                    }
+                ]);
+                return false;
+            });
+        });
     }
 
     $(".addElement").bind("click", function(event) {
-        var self = $(this);
-        if (popup) {
-            popup = popup.destroy();
-        }
-        popup = new popupCls({
-            title: Mapbender.trans("mb.manager.components.popup.add_element.title"),
-            subtitle: " - " + Mapbender.trans(self.parent().siblings(".subTitle").text()),
-            closeOnOutsideClick: true,
-            cssClass: "elementPopup",
-            content: [
-                $.ajax({
-                    url: self.attr("href"),
-                    complete: function() {
-                        var curPopup = $(".popup");
-
-                        curPopup.find(".buttonYes, .buttonBack").hide();
-                        curPopup.find(".chooseElement").on("click", loadElementFormular);
-                    }
-                })
-            ],
-            buttons: {
-                'cancel': {
-                    label: Mapbender.trans("mb.manager.components.popup.add_element.btn.cancel"),
-                    cssClass: 'button buttonCancel critical right',
-                    callback: function() {
-                        $("#elementForm").data('dirty', false);
-                        this.close();
-                    }
-                },
-                'ok': {
-                    label: Mapbender.trans("mb.manager.components.popup.add_element.btn.ok"),
-                    cssClass: 'button buttonYes right',
-                    callback: function() {
-                        elementFormSubmit();
-                    }
-                },
-                'back': {
-                    label: Mapbender.trans("mb.manager.components.popup.add_element.btn.back"),
-                    cssClass: 'button left buttonBack',
-                    callback: function() {
-                        $("#elementForm").data('dirty', false);
-                        $(".popupSubContent").remove();
-                        $(".popupSubTitle").text("");
-                        $(".popup").find(".buttonYes, .buttonBack").hide();
-                        $(".popupContent").show();
-                    }
-                }
-            }
-        });
-
-        var onChange = function(event) {
-            $('#elementForm', popup.$element).data('dirty', true);
-            popup.$element.off('change', onChange);
-        };
-        popup.$element.on('change', onChange);
-        popup.$element.on('close', function(event, token) {
-            if (true === $('#elementForm', popup.$element).data('dirty')) {
-                if (!confirm('Ignore Changes?')) {
-                    token.cancel = true;
-                }
-            }
-        });
+        var regionName = $('.subTitle', $(this).closest('.region')).first().text();
+        startElementChooser(regionName, $(this).attr('href'));
         return false;
     });
 
-    // Edit element
     $(".editElement").bind("click", function() {
-        var self = $(this);
-
-        if (popup) {
-            popup = popup.destroy();
-        }
-        popup = new popupCls({
-            title: Mapbender.trans("mb.manager.components.popup.edit_element.title"),
-            closeOnOutsideClick: true,
-            cssClass: "elementPopup",
-            content: [
-                $.ajax({
-                    url: self.attr("data-url")
-                })
-            ],
-            buttons: {
-                'cancel': {
-                    label: Mapbender.trans("mb.manager.components.popup.edit_element.btn.cancel"),
-                    cssClass: 'button buttonCancel critical right',
-                    callback: function() {
-                        $("#elementForm").data('dirty', false);
-                        this.close();
-                    }
-                },
-                'ok': {
-                    label: Mapbender.trans("mb.manager.components.popup.edit_element.btn.ok"),
-                    cssClass: 'button right',
-                    callback: function() {
-                        elementFormSubmit();
-                    }
-                }
-            }
-        });
-
-        var onChange = function(event) {
-            $('#elementForm', popup.$element).data('dirty', true);
-            popup.$element.off('change', onChange);
-        };
-        popup.$element.on('change', onChange);
-        popup.$element.on('close', function(event, token) {
-            if (true === $('#elementForm', popup.$element).data('dirty')) {
-                if (!confirm('Ignore Changes?')) {
-                    token.cancel = true;
-                }
-            }
-        });
+        startEditElement($(this).attr('data-url'), {});
         return false;
     });
 
@@ -461,6 +405,8 @@ $(function() {
         var popupOptions = {
             title: Mapbender.trans(strings.title),
             subTitle: strings.subTitle && (' - ' + Mapbender.trans(strings.subTitle)),
+            modal: true,
+            destroyOnClose: true,
             content: content || defaultContent,
             buttons: [
                 {

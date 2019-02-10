@@ -264,12 +264,11 @@
          */
         close: function() {
             var token = { cancel: false };
-            this.$element.trigger('close', token);  // why?
+            this.$element.trigger('close', token);
             if(token.cancel) {
               return;
             }
 
-            this.$element.removeClass("show");  // why? It's never added and doesn't do anything.
             if (this.$modalWrap) {
                 this.$element.detach();
                 this.$modalWrap.detach();
@@ -283,7 +282,9 @@
             if (this.options.modal && this === currentModal_) {
                 currentModal_ = null;
             }
-            this.$element.trigger('closed'); // why?
+            if (!this.options.destroyOnClose && this.$element) {
+                this.$element.trigger('closed'); // why?
+            }
         },
 
         /**
