@@ -24,6 +24,22 @@ Mapbender.Model = {
      * @property {Model~TreeOptions} options.treeOptions
      */
     /**
+     * @typedef Model~LayerDef
+     * @property {Object} options
+     * @property {Model~TreeOptions} options.treeOptions
+     * @property {Model~LayerState} state
+     * @property {Array<Model~LayerDef>} children
+     */
+    /**
+     * @typedef Model~SourceTreeish
+     * @property {Object} configuration
+     * @property {Array<Model~LayerDef>} configuration.children
+     * @property {string} id
+     * @property {string} origId
+     * @property {string} type
+     * @property {string} ollid
+     */
+    /**
      * @typedef Model~SingleLayerPrintConfig
      * @property {string} type
      * @property {string} sourceId
@@ -377,7 +393,7 @@ Mapbender.Model = {
      * - mapqyery id -> {mqlid: MYSOURCEMAPQUERYID}
      * - openlayers id -> {ollid: MYSOURCEOPENLAYERSID}
      * - origin id -> {ollid: MYSOURCEORIGINID}
-     * @returns source from a sourceTree or null
+     * @returns {Model~SourceTreeish|null}
      */
     getSource: function(idObject) {
         var key;
@@ -423,6 +439,10 @@ Mapbender.Model = {
             }
         }
     },
+    /**
+     * @param options
+     * @return {Array<Model~SourceTreeish>}
+     */
     findSource: function(options) {
         var sources = [];
         var findSource = function(object, options) {
@@ -951,7 +971,6 @@ Mapbender.Model = {
     removeLayer: function(sourceId, layerId) {
         var source = this.getSource({id: sourceId});
         var gs = this.getGeoSourceHandler(source, true);
-        gs.findLayer(source, {id: layerId});
         var eventData = {
             changed: {
                 childRemoved: gs.removeLayer(source, {options: {id: layerId}}),
@@ -978,14 +997,39 @@ Mapbender.Model = {
         this._updateSourceLayerTreeOptions(source, newProps);
     },
     /**
+     * Performs bulk-updates on the targetted source's treeOptions to make
+     * specific, or all, layers visible or invisible.
+     * Individual layers can be targetted by the options.layers mapping, which
+     * should map layer ids to {options: {treeOptions: {selected: <something>}}}
+     * objects.
+     *
+     * All other layers use the defaultSelected value for their new 'selected' value,
+     * which defaults to false (=off).
+     * Explicitly pass null for defaultSelected to avoid this.
+     *
+     * If you pass mergeSelected=true, you will essentially be prevented from turning
+     * any layer off that is currently on.
+     *
+     * NOTE: The resulting source tree change will also implicitly enable parent
+     *       layers of the layers you asked to enable. This behaviour cannot be disabled.
+     *       If you intend to just "tick a checkbox" without implicit side effects
+     *       on parent layers, use controlLayers instead.
+     *
+     * NOTE: This method can operate on sources that are OUTSIDE the current 'sourceTree',
+     *       i.e. plain-data source definition objects that have not yet been promoted
+     *       to active map sources.
+     *
      *
      * @param {Object} sourceIdObject in form of:
      * - source id -> {id: MYSOURCEID}
      * - mapqyery id -> {mqlid: MYSOURCEMAPQUERYID}
      * - openlayers id -> {ollid: MYSOURCEOPENLAYERSID}
      * - origin id -> {ollid: MYSOURCEORIGINID}
-     * @param {Object} options in form of:
-     * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
+     * @param {Object} options
+     * @param {Object<string, Model~LayerTreeOptionWrapper>} options.layers
+     * @param {boolean|null} [defaultSelected] defaults to false
+     * @param {boolean} [mergeSelected] defaults to false
+     *
      */
     changeLayerState: function(sourceIdObject, options, defaultSelected, mergeSelected) {
         if (typeof mergeSelected === 'undefined')
@@ -1290,38 +1334,6 @@ Mapbender.Model = {
             }
         }
         return dataOut;
-    },
-    _getActiveLayerInfo: function(olLayer, scale) {
-        var mbConfig = this.getMbConfig(olLayer);
-        var activeLayers = [];
-        var resFromScale = function(scale) {
-            return scale && (OpenLayers.Util.getResolutionFromScale(scale, olLayer.units)) || null;
-        };
-        var resolution = resFromScale(scale);
-
-        Mapbender.Util.SourceTree.iterateSourceLeaves(mbConfig, false, function(node, offset, parents) {
-            var skip = !node.state.visibility;
-            parents.map(function(p) {
-                skip = skip || !p.state.visibility;
-            });
-            var leafData = {
-                name: node.options.name,
-                maxResolution: resFromScale(node.options.maxScale),
-                minResolution: resFromScale(node.options.minScale),
-                config: node
-            };
-            if (leafData.maxResolution && resolution > leafData.maxResolution) {
-                skip = true;
-            }
-            if (leafData.minResolution && resolution < leafData.minResolution) {
-                skip = true;
-            }
-
-            if (!skip) {
-                activeLayers.push(leafData);
-            }
-        });
-        return activeLayers;
     },
 
     /**
