@@ -124,40 +124,6 @@ $(function() {
 
     var popup;
 
-    // Layout - Elements ---------------------------------------------------------------------------
-    var submitHandler = function(e) {
-        $.ajax({
-            url: $(this).attr('action'),
-            data: $(this).serialize(),
-            type: 'POST',
-            statusCode: {
-                200: function(response) {
-                    $("#popupSubContent").html(response);
-                    var subTitle = $("#popupSubContent").find("#form_title").val();
-                    $("#popupSubTitle").text(" - " + subTitle);
-                    $("#popup").find(".buttonYes, .buttonBack").show();
-                },
-                201: function() {
-                    popup.close();
-                    window.setTimeout(function() {
-                        window.location.reload();
-                    }, 50);
-
-                },
-                205: function() {
-                    popup.close();
-                    window.setTimeout(function() {
-                        var now = new Date();
-                        window.location.search = now.getTime();
-                    }, 50);
-                }
-            }
-
-        });
-        e.preventDefault();
-        return false;
-    };
-
     function loadElementFormular() {
         var url = $(this).attr("href");
         if (url) {
@@ -186,7 +152,6 @@ $(function() {
                         var subTitle = subContent.find("#form_title").val();
                         $(".popupSubTitle").text(" - " + subTitle);
                         $(".popup").find(".buttonYes, .buttonBack").show();
-                        subContent.on('submit', 'form', submitHandler);
                         subContent.closest(".popupScroll").scrollTop(0);
                     }
                 }
@@ -275,10 +240,7 @@ $(function() {
             cssClass: "elementPopup",
             content: [
                 $.ajax({
-                    url: self.attr("data-url"),
-                    complete: function() {
-                        $(".popupContent").find('form').submit(submitHandler);
-                    }
+                    url: self.attr("data-url")
                 })
             ],
             buttons: {
