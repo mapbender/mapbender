@@ -1338,38 +1338,40 @@ Mapbender.Model = {
         return extentOut;
     },
     parseURL: function() {
-        var self = this;
-        var ids = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
-        ids = ids ? decodeURIComponent(ids).split(',') : [];
-        if (ids.length) {
-            $.each(ids, function(idx, id) {
-                var id = id.split('/');
-                if (1 < id.length) {
-                    var layer = self.findLayer({
-                        origId: id[0]
-                    },
-                    {
-                        origId: id[1]
-                    });
-                    if (layer) {
-                        var options = {};
-                        options.layers = {};
-                        options.layers[layer.layer.options.id] = {
-                            options: {
-                                treeOptions: {
-                                    selected: true
-                                }
-                            }
-                        };
-                        self.changeLayerState({
-                            origId: id[0]
-                        },
-                        options,
-                            false,
-                            true);
-                    }
-                }
-            });
+        var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
+        if (visibleLayersParam) {
+            this.processVisibleLayersParam(visibleLayersParam);
         }
+    },
+    /**
+     * Activate specific layers on specific sources by interpreting a (comma-separated list of)
+     * "<sourceId>/<layerId>" parameter pair.
+     * The indicated source and layer must already be part of the running configuration for this
+     * to work.
+     *
+     * @param {string} paramValue
+     */
+    processVisibleLayersParam: function(paramValue) {
+        var self = this;
+        var specs = (paramValue || '').split(',');
+        $.each(specs, function(idx, layerSpec) {
+            var idParts = layerSpec.split('/');
+            var clsOptions = {layers: {}};
+            if (idParts.length >= 2) {
+                var sourceId = idParts[0];
+                var layerId = idParts[1];
+                var source = self.getSource({origId: sourceId});
+                if (source) {
+                    clsOptions.layers[layerId] = {
+                        options: {
+                            treeOptions: {
+                                selected: true
+                            }
+                        }
+                    };
+                    self.changeLayerState(source, clsOptions, false, true);
+                }
+            }
+        });
     }
 };
