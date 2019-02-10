@@ -295,31 +295,6 @@ class ElementController extends Controller
     }
 
     /**
-     * Shows delete confirmation page
-     *
-     * @ManagerRoute("application/{slug}/element/{id}/delete", requirements={"id" = "\d+"}, methods={"GET"})
-     * @param string $slug
-     * @param string $id
-     * @return Response
-     */
-    public function confirmDeleteAction($slug, $id)
-    {
-        $element = $this->getDoctrine()
-            ->getRepository('MapbenderCoreBundle:Element')
-            ->find($id);
-
-        if (!$element) {
-            throw $this->createNotFoundException('The element with the id "'
-                . $id . '" does not exist.');
-        }
-
-        return $this->render('@MapbenderManager/Element/delete.html.twig', array(
-            'element' => $element,
-            'form' => $this->createDeleteForm($id)->createView(),
-        ));
-    }
-
-    /**
      * Delete element
      *
      * @ManagerRoute("application/{slug}/element/{id}/delete", methods={"POST"})
@@ -472,18 +447,6 @@ class ElementController extends Controller
                 ),
             ));
         }
-    }
-
-    /**
-     * Creates the form for the delete confirmation page
-     * @param string $id
-     * @return FormInterface
-     */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder(array('id' => $id))
-                ->add('id', 'hidden')
-                ->getForm();
     }
 
     /**

@@ -517,7 +517,6 @@ $(function() {
                     callback: function() {
                         $.ajax({
                             url: self.attr('data-url'),
-                            data: {'id': self.attr('data-id')},
                             type: 'POST',
                             success: function(data) {
                                 window.location.reload();
