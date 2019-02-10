@@ -9,6 +9,8 @@
         loadedSourcesCount: 0,
         elementUrl: null,
         mbMap: null,
+        _layerOptionsOn: {options: {treeOptions: {selected: true}}},
+        _layerOptionsOff: {options: {treeOptions: {selected: false}}},
         _create: function(){
             var self = this;
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
@@ -101,7 +103,7 @@
                                         'options': {'treeOptions': {'selected': true}}
                                     }
                                 };
-                                self.loadWms.call(self, options);
+                                self.loadWms(options);
                                 self.element.hide().appendTo($('body'));
                                 self.close();
                             }
@@ -123,59 +125,41 @@
             this.callback ? this.callback.call() : this.callback = null;
         },
         loadDeclarativeWms: function(elm){
-            var self = this;
-            var layerNamesToActivate;
+            var layerNamesToActivate = typeof(elm.attr('mb-wms-layers')) !== 'undefined' && elm.attr('mb-wms-layers').split(',');
+            var mergeCandidate;
+            var mergeLayers;
             var mergeSource = !elm.attr('mb-wms-merge') || elm.attr('mb-wms-merge') === '1';
 
             var options = {
                 'gcurl': new Mapbender.Util.Url(elm.attr('mb-url') ? elm.attr('mb-url') : elm.attr('href')),
                 'type': 'declarative',
                 'layers': {},
-                'global': {
-                    'options': {'treeOptions': {'selected': false}}
-                }
+                'global': {}
             };
-            if (elm.attr('mb-wms-layers')) {
-                layerNamesToActivate = elm.attr('mb-wms-layers').split(',');
-                if (layerNamesToActivate.indexOf('_all') !== -1) {
-                    options.global.options.treeOptions.selected = true;
-                } else {
-                    _.each(layerNamesToActivate, function(layerName) {
-                        options.layers[layerName] = {options: {treeOptions: {selected: true}}};
-                    });
-                }
-            } else {
-                layerNamesToActivate = false;
-            }
             if (mergeSource) {
                 // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
                 //       was 'mb-layer-merge'. Just support both equivalently.
                 var mergeLayersAttribValue = elm.attr('mb-wms-layer-merge') || elm.attr('mb-layer-merge');
-                var mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
-                var mergeCandidate = this._findMergeCandidateByUrl(options.gcurl.asString());
-                if (mergeCandidate) {
-                    // source exists
-                    if (layerNamesToActivate !== false) {
-                        if (!mergeLayers && !options.global.options.treeOptions.selected) {
-                            this._resetTreeOptions(mergeCandidate);
-                        }
-                        if (options.global.options.treeOptions.selected) {
-                            // given layer param included '_all' => activate all
-                            // (NOTE: evaluating mergeLayers value wouldn't change the outcome)
-                            this.mbMap.model.changeLayerState({id: mergeCandidate.id}, {layers: {}}, true, true);
-                        } else {
-                            // (re)activate only requested layers, including their parents
-                            this._activateSourceLayers(mergeCandidate, options.layers, true);
-                            // trigger map state rescan
-                            this.mbMap.model.changeLayerState({id: mergeCandidate.id}, {layers: {}}, null);
-                        }
-                    }
-                    // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
-                    //       config params matter. We leave the source alone completely.
-                    return false;
-                }
+                mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
+                mergeCandidate = this._findMergeCandidateByUrl(options.gcurl.asString());
             }
-            options.global.mergeSource = mergeSource;
+
+            if (mergeCandidate) {
+                if (layerNamesToActivate !== false) {
+                    this.activateLayersByName(mergeCandidate, layerNamesToActivate, mergeLayers, true);
+                }
+                // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
+                //       config params matter. We leave the source alone completely.
+                return false;
+            }
+            options.global.mergeSource = false; // we already tried, and failed
+            _.each(layerNamesToActivate || [], function(layerName) {
+                // assigned value is irrelevant, we only need to add the name keys
+                options.layers[layerName] = null;
+            });
+            // Default other layers to off, as per documentation. We still turn on the root layer, so
+            // something will happen on this click.
+            options.global.options = this._layerOptionsOff.options;
             this.loadWms(options);
             return false;
         },
@@ -226,22 +210,15 @@
                 sourceDef.origId = sourceId;
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.wmsloader = true;
-                if (sourceOpts.global.options.treeOptions.selected !== true) {
-                    // We only need to do this if we DO NOT want all layers selected
-                    // because all layer configs received from the server will start
-                    // out selected by default
-                    self._resetTreeOptions(sourceDef);
-                    self._activateSourceLayers(sourceDef, sourceOpts.layers || {});
-                }
                 var mergeCandidate = sourceOpts.global.mergeSource && self._findMergeCandidateByUrl(sourceDef.configuration.options.url);
+                var updateTarget = mergeCandidate || sourceDef;
+                var defaultLayerActive = sourceOpts.global.options.treeOptions.selected;
+                self.activateLayersByName(updateTarget, Object.keys(sourceOpts.layers), defaultLayerActive, true);
+
                 if (!mergeCandidate) {
                     self.mbMap.addSource(sourceDef, false);
                 }
             });
-            // Enable feature info
-            // @todo: find a way to do this directly on the map, without using the layertree
-            // @todo: fix default for newly added source (no fi) to match default layertree visual (fi on)
-             $('.mb-element-layertree .featureInfoWrapper input[type="checkbox"]').trigger('change');
         },
         /**
          * Locates an already loaded source with an equivalent base url, returns that source object or null
@@ -259,33 +236,32 @@
             };
             var normUrl = normalizeUrl(url);
             var matches = this.mbMap.model.getSources().filter(function(source) {
-                return normalizeUrl(source.configuration.options.url).indexOf(normUrl) === 0;
+                var sourceNormUrl = normalizeUrl(source.configuration.options.url);
+                return sourceNormUrl.indexOf(normUrl) === 0 || normUrl.indexOf(sourceNormUrl) === 0;
             });
             return matches[0] || null;
         },
-        _resetTreeOptions: function(sourceDef) {
-            Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layerDef, offset, parents) {
-                if (parents.length) {
-                    layerDef.options.treeOptions.selected = false;
-                }
-            });
-        },
-        _activateSourceLayers: function(sourceDef, layerOptionMap, includeParents) {
-            var includeParents_ = typeof includeParents === 'undefined' || !!includeParents;
-            Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layerDef, offset, parents) {
-                // Skip checking layers that have empty names. This is common on group layers or even root
-                // layers that the WMS server doesn't intend for direct GetMap usage.
-                if (layerDef.options.name && layerOptionMap.hasOwnProperty(layerDef.options.name)) {
-                    var newLayerOptions = layerOptionMap[layerDef.options.name];
-                    var selected = layerDef.options.treeOptions.selected = newLayerOptions.options.treeOptions.selected;
-                    if (selected && includeParents_) {
-                        // layer active => activate all parents implicitly
-                        parents.map(function(parentLayer) {
-                            parentLayer.options.treeOptions.selected = parentLayer.options.treeOptions.selected || selected;
-                        });
+        activateLayersByName: function(source, names, keepCurrentActive, activateRoot) {
+            if (names.indexOf('_all') !== -1) {
+                this.mbMap.model.changeLayerState(source, {layers: {}}, true);
+            } else {
+                // translate layer-name-based mapping to id mapping understood by Model
+                var matchedNames = [];
+                var layerOptionMap = {};
+                var layerOn = this._layerOptionsOn;
+                Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, offset, parents) {
+                    if (names.indexOf(layer.options.name) !== -1) {
+                        matchedNames.push(layer.options.name);
+                        layerOptionMap[layer.options.id] = layerOn;
+                    } else if (activateRoot && !parents.length) {
+                        layerOptionMap[layer.options.id] = layerOn;
                     }
+                });
+                if (matchedNames.length !== names.length) {
+                    console.warn("Declarative merge didn't find all layer names requested for activation", names, matchedNames);
                 }
-            });
+                this.mbMap.model.changeLayerState(source, {layers: layerOptionMap}, false, keepCurrentActive);
+            }
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
             Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
