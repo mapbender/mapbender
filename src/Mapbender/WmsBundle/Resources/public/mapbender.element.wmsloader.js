@@ -126,40 +126,37 @@
         },
         loadDeclarativeWms: function(elm){
             var layerNamesToActivate = typeof(elm.attr('mb-wms-layers')) !== 'undefined' && elm.attr('mb-wms-layers').split(',');
-            var mergeCandidate;
-            var mergeLayers;
             var mergeSource = !elm.attr('mb-wms-merge') || elm.attr('mb-wms-merge') === '1';
+            var sourceUrl = elm.attr('mb-url') || elm.attr('href');
 
-            var options = {
-                'gcurl': new Mapbender.Util.Url(elm.attr('mb-url') ? elm.attr('mb-url') : elm.attr('href')),
-                'type': 'declarative',
-                'layers': {},
-                'global': {}
-            };
             if (mergeSource) {
                 // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
                 //       was 'mb-layer-merge'. Just support both equivalently.
                 var mergeLayersAttribValue = elm.attr('mb-wms-layer-merge') || elm.attr('mb-layer-merge');
-                mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
-                mergeCandidate = this._findMergeCandidateByUrl(options.gcurl.asString());
-            }
-
-            if (mergeCandidate) {
-                if (layerNamesToActivate !== false) {
-                    this.activateLayersByName(mergeCandidate, layerNamesToActivate, mergeLayers, true);
+                var mergeLayers = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
+                var mergeCandidate = this._findMergeCandidateByUrl(sourceUrl);
+                if (mergeCandidate) {
+                    if (layerNamesToActivate !== false) {
+                        this.activateLayersByName(mergeCandidate, layerNamesToActivate, mergeLayers, true);
+                    }
+                    // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
+                    //       config params matter. We leave the source alone completely.
+                    return false;
                 }
-                // NOTE: With no explicit layers to modify via mb-wms-layers, none of the other
-                //       config params matter. We leave the source alone completely.
-                return false;
             }
-            options.global.mergeSource = false; // we already tried, and failed
-            _.each(layerNamesToActivate || [], function(layerName) {
-                // assigned value is irrelevant, we only need to add the name keys
-                options.layers[layerName] = null;
-            });
-            // Default other layers to off, as per documentation. We still turn on the root layer, so
-            // something will happen on this click.
-            options.global.options = this._layerOptionsOff.options;
+            // No merge allowed or merge allowed but no merge candidate found.
+            // => load as an entirely new source
+            var options = {
+                gcurl: new Mapbender.Util.Url(sourceUrl),
+                type: 'declarative',
+                // assigned values are irrelevant, we only need an object with the layer names as keys
+                layers: _.invert(layerNamesToActivate || []),
+                global: {
+                    mergeSource: false,
+                    // Default other layers (=not passed in via mb-wms-layers) to off, as per documentation
+                    options: this._layerOptionsOff.options
+                }
+            };
             this.loadWms(options);
             return false;
         },
