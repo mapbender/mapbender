@@ -93,11 +93,12 @@
         } else {
             $('.popupClose', this.$element).remove();
         }
-
+        this.addButtons(this.options.buttons || []);
 
         var staticOptions = [
             'template', 'autoOpen', 'modal',
             'header', 'closeButton',
+            'buttons',
             'destroyOnClose', 'detachOnClose',
             'closeOnOutsideClick',
             'scrollable', 'resizable'
@@ -284,24 +285,6 @@
                 this.$element.remove();
                 this.$element = null;
             }
-        },
-
-        /**
-         * Set or get buttons
-         * @param  {Object} buttons, null unsets, undefined gets
-         * @return {[type]}
-         */
-        buttons: function(buttons) {
-            if(undefined === buttons) {
-                return this.options.buttons;
-            }
-
-            if(null === buttons) {
-                $('.popupButtons', this.$element.get(0)).empty();
-            } else {
-                this.addButtons(buttons);
-            }
-            this.options.buttons = buttons;
         },
 
         addButtons: function(buttons) {
