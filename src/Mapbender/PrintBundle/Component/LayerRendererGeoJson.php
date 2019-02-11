@@ -6,6 +6,9 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
+use Mapbender\PrintBundle\Component\Geometry\LineLoopIterator;
+use Mapbender\PrintBundle\Component\Geometry\LineStringIterator;
+use Mapbender\Utils\InfiniteCyclicArrayIterator;
 
 /**
  * Renders "GeoJSON+Style" layers in image export and print.
@@ -261,7 +264,6 @@ class LayerRendererGeoJson extends LayerRenderer
         }
 
         $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
-        // Filled circle
         if ($style['fillOpacity'] > 0) {
             $color = $this->getColor(
                 $style['fillColor'],
@@ -300,10 +302,10 @@ class LayerRendererGeoJson extends LayerRenderer
 
         $innerDiameter = intval(round(2 * ($radius - 0.5 * $width)));
         $outerDiameter = intval(round(2 * ($radius + 0.5 * $width)));
-        $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $color, $outerDiameter);
+        $tempCanvas->drawFilledCircle($centerX, $centerY, $color, $outerDiameter);
         if ($innerDiameter > 0) {
             // stamp out a fully transparent circle
-            $tempCanvas->drawFilledCircle($offsetXy, $offsetXy, $transparent, $innerDiameter);
+            $tempCanvas->drawFilledCircle($centerX, $centerY, $transparent, $innerDiameter);
         }
         $tempCanvas->mergeBack();
     }
@@ -391,27 +393,32 @@ class LayerRendererGeoJson extends LayerRenderer
 
         $pixelThickness = $style['strokeWidth'] * $lineScale;
         $intThickness = max(1, intval(round($pixelThickness)));
-        imagesetthickness($subRegion->resource, $intThickness);
         $opacity = $style['strokeOpacity'];
         if ($pixelThickness < 1) {
             $opacity = max(0.0, $opacity * $pixelThickness);
         }
+        $patternName = $style['strokeDashstyle'];
         $lineColor = $this->getColor($style['strokeColor'], $opacity, $subRegion->resource);
-        if ($style['strokeDashstyle'] !== 'solid') {
-            $strokeStyleArray = $this->getStrokeStyle($lineColor, $pixelThickness, $style['strokeDashstyle'], $lineScale);
-            imagesetstyle($subRegion->resource, $strokeStyleArray);
-            $gdColor = IMG_COLOR_STYLED;
+        if ($intThickness > 5 || $patternName !== 'solid') {
+            // Native gd rendering doesn't do patterns well, and starts looking bad for solid lines above
+            // certain thickness.
+            // Generate, under great pain, a bunch of rendering primitives that form the line pattern when
+            // combined.
+            foreach ($coordSets as $lineCoords) {
+                $patternFragments = $this->generatePatternFragments($patternName, $lineCoords, $lineScale, $close);
+                $this->renderPatternFragments($subRegion, $patternFragments, $lineColor, $intThickness);
+            }
         } else {
-            $gdColor = $lineColor;
-        }
-
-        foreach ($coordSets as $lineCoords) {
-            if ($close) {
-                $subRegion->drawPolygonOutline($lineCoords, $gdColor);
-            } else {
-                $subRegion->drawLineString($lineCoords, $gdColor);
+            imagesetthickness($subRegion->resource, $intThickness);
+            foreach ($coordSets as $lineCoords) {
+                if ($close) {
+                    $subRegion->drawPolygonOutline($lineCoords, $lineColor);
+                } else {
+                    $subRegion->drawLineString($lineCoords, $lineColor);
+                }
             }
         }
+
         $subRegion->mergeBack();
     }
 
@@ -527,5 +534,159 @@ class LayerRendererGeoJson extends LayerRenderer
         $height = intval(max(1, min($height, $canvas->getHeight() - $offsetY)));
 
         return $canvas->getSubRegion($offsetX, $offsetY, $width, $height);
+    }
+
+    protected function getPatternDescriptors($patternName)
+    {
+        $dot = array(
+            'type' => 'dot',
+            'length' => 0,
+        );
+        $gap = array(
+            'type' => 'gap',
+            'length' => 45,
+        );
+        $dash = array(
+            'type' => 'draw',
+            'length' => 45,
+        );
+        $longDash = array(
+            'type' => 'draw',
+            'length' => 85,
+        );
+        $infiniteDraw = array(
+            'type' => 'draw',
+            'length' => null,
+        );
+        switch ($patternName) {
+            case 'solid' :
+                return array(
+                    $infiniteDraw,
+                );
+            case 'dot' :
+                return array(
+                    $dot,
+                    $gap,
+                );
+            case 'dash' :
+                return array(
+                    $dash,
+                    $gap,
+                );
+            case 'dashdot' :
+                return array(
+                    $dash,
+                    $gap,
+                    $dot,
+                    $gap,
+                );
+            case 'longdash' :
+                return array(
+                    $longDash,
+                    $gap,
+                );
+            case 'longdashdot':
+                return array(
+                    $longDash,
+                    $gap,
+                    $dot,
+                    $gap,
+                );
+            default:
+                throw new \InvalidArgumentException("Unsupported pattern name " . print_r($patternName, true));
+        }
+    }
+
+    protected function generatePatternFragments($patternName, $lineCoords, $patternScale, $closeLoop)
+    {
+        $dots = array();
+        $lines = array();
+        $lineCoords = array_values($lineCoords);
+        if ($closeLoop) {
+            $segmentIterator = new LineLoopIterator($lineCoords);
+        } else {
+            $segmentIterator = new LineStringIterator($lineCoords);
+        }
+
+        $descriptors = $this->getPatternDescriptors($patternName);
+        $descriptorIterator = new InfiniteCyclicArrayIterator($descriptors);
+        $currentDescriptor = $descriptorIterator->current();
+        $descriptorLengthLeft = $currentDescriptor['length'];
+
+        foreach ($segmentIterator as $lineSegment) {
+            $segmentLength = $lineSegment->getLength();
+            $segmentLengthLeft = $segmentLength;
+            $nextFragmentStart = 0;
+            while ($segmentLengthLeft > 0) {
+                if ($descriptorLengthLeft !== null) {
+                    $takenSegmentLength = min($segmentLengthLeft, $descriptorLengthLeft * $patternScale);
+                    $takenDescriptorLength = $takenSegmentLength / $patternScale;
+                } else {
+                    $takenSegmentLength = $segmentLengthLeft;
+                    $takenDescriptorLength = null;
+                }
+                switch ($currentDescriptor['type']) {
+                    case 'dot':
+                        $dots[] = $lineSegment->getPointAtLenghtOffset($nextFragmentStart)->toArray();
+                        break;
+                    case 'draw':
+                        // Produce an end-cappend line segment
+                        $drawSegment = $lineSegment->getSlice($nextFragmentStart, $takenSegmentLength);
+                        $lines[] = $drawSegment->toArray();
+                        // NOTE: gd lines with any thickness > 1 will have their edges rendered 'perfectly' vertically
+                        //       or horizontally, with no angles.
+                        //       We end-cap the lines with circles to give them a more pleasant appearance.
+                        //       This also has the very nice side benefit of putting a circle on every vertex joint,
+                        //       rounding out those edges, too.
+                        // @todo: suppress the intermittent point at very obtuse vertex angles to reduce noise
+                        $dots[] = $drawSegment->getStart()->toArray();
+                        $dots[] = $drawSegment->getEnd()->toArray();
+                        break;
+                    default:
+                    case 'gap':
+                        // nothing to do
+                        break;
+                }
+                if ($takenDescriptorLength !== null && $descriptorLengthLeft !== null) {
+                    $descriptorLengthLeft -= $takenDescriptorLength;
+                    if ($descriptorLengthLeft <= 0) {
+                        $descriptorIterator->next();
+                        $currentDescriptor = $descriptorIterator->current();
+                        $nextDescriptorLength = $currentDescriptor['length'];
+                        if ($nextDescriptorLength === null) {
+                            $descriptorLengthLeft = null;
+                        } else {
+                            $descriptorLengthLeft += $nextDescriptorLength;
+                        }
+                    }
+                }
+                $segmentLengthLeft -= $takenSegmentLength;
+                $nextFragmentStart += $takenSegmentLength;
+            }
+        }
+        return array(
+            'dots' => $dots,
+            'lines' => $lines,
+        );
+    }
+
+    /**
+     * Render individual dot and line primitives.
+     * @see generatePatternFragments
+     *
+     * @param GdCanvas $canvas
+     * @param array $fragments
+     * @param int $color GDish
+     * @param int $thickness used for both line thickness and dot diameter
+     */
+    protected function renderPatternFragments(GdCanvas $canvas, $fragments, $color, $thickness)
+    {
+        imagesetthickness($canvas->resource, $thickness);
+        foreach ($fragments['dots'] as $dot) {
+            $canvas->drawFilledCircle($dot[0], $dot[1], $color, $thickness);
+        }
+        foreach ($fragments['lines'] as $line) {
+            $canvas->drawLineString($line, $color);
+        }
     }
 }
