@@ -414,35 +414,9 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Delete confirmation page
-     * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Application:delete.html.twig")
-     * @param Request $request
-     * @param string $slug
-     * @return array|Response
-     */
-    public function confirmDeleteAction(Request $request, $slug)
-    {
-        $application = $this->getMapbender()->getApplicationEntity($slug);
-        if ($application === null) {
-            $flashBag = $request->getSession()->getFlashBag();
-            $flashBag->set('error', $this->translate('mb.application.remove.failure.already.removed'));
-            return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
-        }
-        $this->denyAccessUnlessGranted('EDIT', $application);
-
-        $id = $application->getId();
-        return array(
-            'application' => $application,
-            'form'        => $this->createDeleteForm($id)->createView());
-    }
-
-    /**
      * Delete application
      *
-     * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
-     * @Method("POST")
+     * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" }, methods={"POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
@@ -475,9 +449,9 @@ class ApplicationController extends WelcomeController
     /**
      * Create a form for a new layerset
      *
-     * @ManagerRoute("/application/{slug}/layerset/new")
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Application:form-layerset.html.twig")
+     * @ManagerRoute("/application/{slug}/layerset/new", methods={"GET"})
+     * @param string $slug
+     * @return Response
      */
     public function newLayersetAction($slug)
     {
@@ -488,18 +462,20 @@ class ApplicationController extends WelcomeController
 
         $form = $this->createForm(new LayersetType(), $layerset);
 
-        return array(
+        return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
             "isnew" => true,
             "application" => $application,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+        ));
     }
 
     /**
      * Create a new layerset from POSTed data
      *
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit")
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Application:form-layerset.html.twig")
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit", methods={"GET"})
+     * @param string $slug
+     * @param string $layersetId
+     * @return Response
      */
     public function editLayersetAction($slug, $layersetId)
     {
@@ -511,19 +487,18 @@ class ApplicationController extends WelcomeController
 
         $form = $this->createForm(new LayersetType(), $layerset);
 
-        return array(
+        return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
             "isnew" => false,
             "application" => $application,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+        ));
     }
 
     /**
      * Create a new layerset from POSTed data
      *
-     * @ManagerRoute("/application/{slug}/layerset/create")
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/save")
-     * @Method("POST")
-     * @Template("MapbenderManagerBundle:Application:form-layerset.html.twig")
+     * @ManagerRoute("/application/{slug}/layerset/create", methods={"POST"})
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/save", methods={"POST"})
      * @param Request $request
      * @param string $slug
      * @param string|null $layersetId
@@ -548,7 +523,6 @@ class ApplicationController extends WelcomeController
         }
         $form = $this->createForm(new LayersetType(), $layerset);
         $form->submit($request);
-        $flashBag = $request->getSession()->getFlashBag();
         if ($form->isValid()) {
             $objectManager = $doctrine->getManager();
             $application->setUpdated(new \DateTime('now'));
@@ -556,10 +530,10 @@ class ApplicationController extends WelcomeController
             $objectManager->persist($layerset);
             $objectManager->flush();
             $this->get("logger")->debug("Layerset saved");
-            $flashBag->set('success', $this->translate('mb.layerset.create.success'));
-            return $this->redirect($this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)));
+            $this->addFlash('success', $this->translate('mb.layerset.create.success'));
+        } else {
+            $this->addFlash('error', $this->translate('mb.layerset.create.failure.unique.title'));
         }
-        $flashBag->set('error', $this->translate('mb.layerset.create.failure.unique.title'));
         return $this->redirect($this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)));
     }
 
@@ -569,7 +543,7 @@ class ApplicationController extends WelcomeController
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete", methods={"GET"})
      * @param string $slug
      * @param string $layersetId
-     * @return Response|array
+     * @return Response
      */
     public function confirmDeleteLayersetAction($slug, $layersetId)
     {
@@ -775,19 +749,6 @@ class ApplicationController extends WelcomeController
         asort($available_elements);
 
         return $available_elements;
-    }
-
-    /**
-     * Creates the form for the delete confirmation page
-     *
-     * @param $id
-     * @return Form
-     */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder(array('id' => $id))
-                ->add('id', 'hidden')
-                ->getForm();
     }
 
     /**

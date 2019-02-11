@@ -249,11 +249,13 @@
          * @fires "focus"
          */
         focus: function (event) {
-        this.$element.css("z-index",++currentZindex);
-        if(!event) {
-            // Only trigger event this method was called programmatically.
-            this.$element.trigger('focus'); // why?
-          }
+            if (this.$element) {
+                this.$element.css("z-index",++currentZindex);
+                if (!event) {
+                    // Only trigger event this method was called programmatically.
+                    this.$element.trigger('focus'); // why?
+                }
+            }
         },
 
         /**
@@ -263,9 +265,12 @@
          * will be aborted.
          */
         close: function() {
+            if (!this.$element) {
+                return;
+            }
             var token = { cancel: false };
             this.$element.trigger('close', token);
-            if(token.cancel) {
+            if (token.cancel) {
               return;
             }
 

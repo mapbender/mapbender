@@ -409,35 +409,34 @@ $(function() {
     });
 
     // Layers --------------------------------------------------------------------------------------
-    function addOrEditLayerset(edit) {
+    function addOrEditLayerset() {
         var self = $(this);
-
-        if (popup) {
-            popup = popup.destroy();
-        }
-        popup = new popupCls({
-            title: ((self.hasClass("editLayerset")) ? Mapbender.trans("mb.manager.components.popup.add_edit_layerset.title_edit")
-                    : Mapbender.trans("mb.manager.components.popup.add_edit_layerset.title_add")),
-            closeOnOutsideClick: true,
-            content: [
-                $.ajax({url: self.attr("href")})
-            ],
-            buttons: {
-                'cancel': {
-                    label: Mapbender.trans("mb.manager.components.popup.add_edit_layerset.btn.cancel"),
-                    cssClass: 'button buttonCancel critical right',
-                    callback: function() {
-                        this.close();
+        var isEdit = self.hasClass("editLayerset");
+        var popupTitle = isEdit ? "mb.manager.components.popup.add_edit_layerset.title_edit"
+                                : "mb.manager.components.popup.add_edit_layerset.title_add";
+        $.ajax({url: self.attr("href")}).then(function(html) {
+            popup = new popupCls({
+                title: Mapbender.trans(popupTitle),
+                closeOnOutsideClick: true,
+                destroyOnClose: true,
+                content: [html],
+                buttons: [
+                    {
+                        label: Mapbender.trans("mb.manager.components.popup.add_edit_layerset.btn.ok"),
+                        cssClass: 'button right',
+                        callback: function() {
+                            $("#layersetForm").submit();
+                        }
+                    },
+                    {
+                        label: Mapbender.trans("mb.manager.components.popup.add_edit_layerset.btn.cancel"),
+                        cssClass: 'button buttonCancel critical right',
+                        callback: function() {
+                            this.close();
+                        }
                     }
-                },
-                'ok': {
-                    label: Mapbender.trans("mb.manager.components.popup.add_edit_layerset.btn.ok"),
-                    cssClass: 'button right',
-                    callback: function() {
-                        $("#layersetForm").submit();
-                    }
-                }
-            }
+                ]
+            });
         });
         return false;
     }
