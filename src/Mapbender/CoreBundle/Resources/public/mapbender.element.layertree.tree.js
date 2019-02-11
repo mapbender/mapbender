@@ -419,7 +419,6 @@
             }
         },
         _resetSourceAtTree: function(source) {
-            // console.warn("Skipping _resetSourceAtTree call"); return;
             var self = this;
             function resetSourceAtTree(layer, parent) {
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
@@ -443,7 +442,7 @@
                         }
                         var newTreeOptions = (layerSettings.options || {}).treeOptions;
                         var newLayerState = layerSettings.state;
-                        if (!newLayerState && newTreeOptions) {
+                        if (!newLayerState && newTreeOptions && typeof newTreeOptions.selected !== 'undefined') {
                             newLayerState = {visibility: newTreeOptions.selected};
                         }
                         if (newLayerState) {
