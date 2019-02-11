@@ -134,11 +134,15 @@ Mapbender.Model = {
             var setCenterOriginal = olMap.setCenter;
             var zoomToOriginal = olMap.zoomTo;
             olMap.setCenter = function(center, zoom) {
-                self.nextZoom = zoom;
+                if (zoom !== null && typeof zoom !== 'undefined') {
+                    self.nextZoom = zoom;
+                }
                 setCenterOriginal.apply(this, arguments);
             };
             olMap.zoomTo = function(zoom, xy) {
-                self.nextZoom = zoom;
+                if (zoom !== null && typeof zoom !== 'undefined') {
+                    self.nextZoom = zoom;
+                }
                 zoomToOriginal.apply(this, arguments);
             };
         })(this.map.olMap);
@@ -1152,7 +1156,7 @@ Mapbender.Model = {
         for(var i = 0; i < this.sourceTree.length; i++) {
             Mapbender.source[this.sourceTree[i].type].changeProjection(this.sourceTree[i], srs.projection);
         }
-        var center = this.map.olMap.getCenter().transform(oldProj, srs.projection);
+        var center = this.map.olMap.getCenter().clone().transform(oldProj, srs.projection);
         this.map.olMap.projection = srs.projection;
         this.map.olMap.displayProjection = srs.projection;
         this.map.olMap.units = srs.projection.proj.units;

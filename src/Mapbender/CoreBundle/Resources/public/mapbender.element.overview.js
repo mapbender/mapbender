@@ -5,6 +5,7 @@
             layerset: []
         },
         overview: null,
+        mbMap: null,
 
         /**
          * Creates the overview
@@ -23,7 +24,7 @@
         _setup:         function() {
             var widget = this;
             var options = widget.options;
-            var mbMap = $('#' + options.target).data('mapbenderMbMap');
+            var mbMap = this.mbMap = $('#' + options.target).data('mapbenderMbMap');
             var model = mbMap.model;
             var element = $(widget.element);
             var projection = model.map.olMap.projection;
@@ -146,14 +147,15 @@
             if (oldProj.projCode === srs.projection.projCode) {
                 return;
             }
-            var center = ovMap.getCenter().transform(oldProj, srs.projection);
+            var center = ovMap.getCenter().clone().transform(oldProj, srs.projection);
+
+            var mainMapMaxExtent = this.mbMap.model.map.olMap.maxExtent;
 
             ovMap.projection = srs.projection;
             ovMap.displayProjection = srs.projection;
             ovMap.units = srs.projection.proj.units;
-            if (ovMap.maxExtent) {
-                ovMap.maxExtent = ovMap.maxExtent.clone();
-                ovMap.maxExtent.transform(oldProj, srs.projection);
+            if (mainMapMaxExtent) {
+                ovMap.maxExtent = mainMapMaxExtent.clone();
             }
 
             $.each(ovMap.layers, function(idx, layer) {
@@ -165,9 +167,8 @@
                 }
                 layer.initResolutions();
             });
-            console.log("New overview params", center, ovMap.getZoom());
-
-            ovMap.setCenter(center, ovMap.getZoom(), false, true);
+            ovMap.setCenter(center, null, false, true);
+            overview.update();
         }
 
     });
