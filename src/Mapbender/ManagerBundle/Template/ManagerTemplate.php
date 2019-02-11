@@ -18,7 +18,6 @@ class ManagerTemplate extends Template
     protected static $js = array(
         '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
         '/components/vis-ui.js/vis-ui.js-built.js',
-        '/bundles/fosjsrouting/js/router.js',
         '@MapbenderManagerBundle/Resources/public/js/SymfonyAjaxManager.js',
 
         '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',

@@ -19,7 +19,6 @@
         "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "1.x",
 
-        "friendsofsymfony/jsrouting-bundle": "1.5.x",
         "mapbender/vis-ui.js": "~0.0",
         "wheregroup/joii": "3.x",
         "wheregroup/codemirror": "5.x",
