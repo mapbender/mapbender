@@ -334,7 +334,8 @@ Mapbender.Model = {
     },
     _convertLayerDef: function(layerDef, mangleIds) {
         var l = $.extend({}, Mapbender.source[layerDef.type.toLowerCase()].create(layerDef, mangleIds), {
-            mapbenderId: layerDef.id
+            mapbenderId: layerDef.id,
+            visibility: false
         });
         if(typeof this.mbMap.options.wmsTileDelay !== 'undefined') {
             l.removeBackBufferDelay = this.mbMap.options.wmsTileDelay;
@@ -622,29 +623,45 @@ Mapbender.Model = {
             return false;
         }
         olLayer.queryLayers = infolayers;
-        if (this._layersHash[olLayer.id] === layers.toString()) {
+        var targetVisibility = !!layers.length;
+        var visibilityChanged = targetVisibility !== olLayer.getVisibility();
+        var layersChanged =
+            ((olLayer.params.LAYERS || '').toString() !== layers.toString()) ||
+            ((olLayer.params.STYLES || '').toString() !== styles.toString())
+        ;
+
+        if (!visibilityChanged && !layersChanged) {
             return false;
         }
-        this._layersHash[olLayer.id] = layers.toString();
 
-        if (olLayer.map && olLayer.map.tileManager) {
+        if (layersChanged && olLayer.map && olLayer.map.tileManager) {
             olLayer.map.tileManager.clearTileQueue({
                 object: olLayer
             });
         }
-
-        if(layers.length === 0) {
+        if (!targetVisibility) {
             olLayer.setVisibility(false);
-            olLayer.params.LAYERS = layers;
-            olLayer.params.STYLES = styles;
+            olLayer.params.LAYERS = [];
+            olLayer.params.STYLES = [];
             return false;
         } else {
-            olLayer.params.STYLES = styles;
-            olLayer.params.LAYERS = layers;
-            olLayer.setVisibility(true);
+            var newParams = {
+                LAYERS: layers,
+                STYLES: styles
+            };
+            if (visibilityChanged) {
+                // Prevent the browser from reusing the loaded image. This is almost equivalent
+                // to a forced redraw (c.f. olLayer.redraw(true)), but without the undesirable
+                // side effect of loading the layer twice on first activation.
+                // @see https://github.com/openlayers/ol2/blob/master/lib/OpenLayers/Layer/HTTPRequest.js#L157
+                newParams['_OLSALT'] = Math.random();
+            }
+            // Nuking the back buffer prevents the layer from going visible with old layer combination
+            // before loading the new images.
             olLayer.removeBackBuffer();
             olLayer.createBackBuffer();
-            olLayer.redraw(true);
+            olLayer.mergeNewParams(newParams);
+            olLayer.setVisibility(true);
             return true;
         }
     },

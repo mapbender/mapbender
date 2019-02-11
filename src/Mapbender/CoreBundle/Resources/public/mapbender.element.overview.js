@@ -155,6 +155,7 @@
             ovMap.displayProjection = srs.projection;
             ovMap.units = srs.projection.proj.units;
             if (mainMapMaxExtent) {
+                // NOTE: this extent is already transformed
                 ovMap.maxExtent = mainMapMaxExtent.clone();
             }
 
