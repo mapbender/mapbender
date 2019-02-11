@@ -115,6 +115,7 @@ class LayerRendererGeoJson extends LayerRenderer
     {
         return array(
             'strokeWidth' => 1,
+            'strokeOpacity' => 1,
             'fontColor' => '#ff0000',
             'labelOutlineColor' => '#ffffff',
             'strokeDashstyle' => 'solid',
