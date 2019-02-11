@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ 5498eec61**
+* **dev-release/3.0.7 @ 6c04f2d41**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#184](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
@@ -33,7 +33,7 @@
     - Significantly reduce memory requirements for larger printouts
     - Suppress redundant group layer legend images and legend images for deactivated layers ([PR#1053](https://github.com/mapbender/mapbender/pull/1053))
   - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
-  - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
+  - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([Issue #715](https://github.com/mapbender/mapbender/issues/715), [PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - [Vendorspecifics] Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
   - [Vendorspecifics] Unused / ineffective form fields have been removed ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
   - [Backend] Fix Application import from pretty-printed JSON input
