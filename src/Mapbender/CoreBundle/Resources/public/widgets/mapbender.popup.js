@@ -364,7 +364,7 @@
             if(null === subtitle) {
                 subtitleNode.empty();
             } else {
-                subtitleNode.html(subtitle);
+                subtitleNode.text(subtitle);
             }
             this.options.subtitle = subtitle;
         },

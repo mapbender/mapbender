@@ -388,12 +388,13 @@ $(function() {
     // Add Instance Action
     $(".addInstance").bind("click", function(event) {
         var self = $(this);
+        var layersetTitle = self.closest('.filterItem', '.listFilterContainer').find('.subTitle').first().text();
         if (popup) {
             popup = popup.destroy();
         }
         popup = new popupCls({
             title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
-            subTitle: " - " + self.parent().siblings(".subTitle").text(),
+            subTitle: " - " + layersetTitle,
             closeOnOutsideClick: true,
             cssClass: 'new-instance-select',
             content: [
