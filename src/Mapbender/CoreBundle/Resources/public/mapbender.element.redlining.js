@@ -1,6 +1,6 @@
 (function($){
 
-    $.widget("mapbender.mbRedlining", {
+    $.widget("mapbender.mbRedlining", $.mapbender.mbBaseElement, {
         options: {
             target: null,
             display_type: 'dialog',
