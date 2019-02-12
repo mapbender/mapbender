@@ -286,51 +286,45 @@ Mapbender.Geo.SourceHandler = Class({
         };
         function setSelected(layer) {
             var layerOpts = changeOptions.layers[layer.options.id];
-            var childSelected = false;
-            var newTreeOptions;
+            var newTreeOptions = {
+                selected: null
+            };
             var changedTreeOptions;
-            if (layer.children) {
+            if (layer.children && layer.children.length) {
                 for (var i = 0; i < layer.children.length; i++) {
-                    var child = layer.children[i];
-                    setSelected(child);
-                    if ((!layerChanges[child.options.id] && child.options.treeOptions.selected)
-                        || (layerChanges[child.options.id] && layerChanges[child.options.id].options.treeOptions.selected)) {
-                        childSelected = true;
+                    if (setSelected(layer.children[i])) {
+                        newTreeOptions.selected = true;
                     }
                 }
-                if (layerOpts) {
-                    newTreeOptions = $.extend({}, layerOpts);
-                } else {
-                    newTreeOptions = {
-                        selected: childSelected,
-                        info: childSelected
-                    }
+                if (newTreeOptions.selected === null && layerOpts) {
+                    newTreeOptions.selected = layerOpts.options.treeOptions.selected;
+                }
+                if (newTreeOptions.selected === null && defaultSelected !== null) {
+                    newTreeOptions.selected = defaultSelected;
                 }
             } else {
-                if(!layerOpts && defaultSelected === null) {
-                    return;
-                }
-                var sel = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
-                if (mergeSelected) {
-                    sel = sel || layer.options.treeOptions.selected;
-                }
-                newTreeOptions = {
-                    selected: sel,
-                    info: sel
-                };
+                newTreeOptions.selected = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
             }
-
-            newTreeOptions.info = newTreeOptions.info && layer.options.treeOptions.allow.info;
+            if (mergeSelected) {
+                newTreeOptions.selected = newTreeOptions.selected || layer.options.treeOptions.selected;
+            }
+            if (newTreeOptions.selected === null) {
+                return null;
+            }
 
             if (newTreeOptions.selected !== layer.options.treeOptions.selected) {
                 changedTreeOptions = {
                     selected: newTreeOptions.selected
                 };
-            }
-            if (newTreeOptions.info !== layer.options.treeOptions.info) {
-                changedTreeOptions = $.extend(changedTreeOptions || {}, {
-                    info: newTreeOptions.info
-                });
+                if (mergeSelected && !newTreeOptions.selected) {
+                    newTreeOptions.info = layer.options.treeOptions.info;
+                } else {
+                    newTreeOptions.info = newTreeOptions.selected;
+                }
+                newTreeOptions.info = newTreeOptions.info && layer.options.treeOptions.allow.info;
+                if (newTreeOptions.info !== layer.options.treeOptions.info) {
+                    changedTreeOptions.info = newTreeOptions.info;
+                }
             }
             if (changedTreeOptions) {
                 layerChanges[layer.options.id] = {
@@ -339,6 +333,7 @@ Mapbender.Geo.SourceHandler = Class({
                     }
                 };
             }
+            return newTreeOptions.selected;
         }
         var changed = {
             sourceIdx: {
@@ -391,6 +386,7 @@ Mapbender.Geo.SourceHandler = Class({
     getExtendedLeafInfo: function(source, scale, extent) {
         var infoMap = {};
         var self = this;
+        var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
         Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
             var layerId = layer.options.id;
             var outOfScale = !self.isLayerInScale(layer, scale);
@@ -405,6 +401,10 @@ Mapbender.Geo.SourceHandler = Class({
             // @todo TBD: disable featureInfo if layer visual is disabled?
             // featureInfo = featureInfo && enabled
             var visibility = enabled && !(outOfScale || outOfBounds);
+            var order = (customLayerOrder || []).indexOf(layer.options.name);
+            if (order === -1) {
+                order = null;
+            }
             infoMap[layerId] = {
                 layer: layer,
                 state: {
@@ -413,6 +413,7 @@ Mapbender.Geo.SourceHandler = Class({
                     visibility: visibility,
                     info: featureInfo
                 },
+                order: order,
                 parents: parents
             };
         });
@@ -476,7 +477,10 @@ Mapbender.Geo.SourceHandler = Class({
                 parentLayer.state.visibility = parentLayer.state.visibility || layer.state.visibility;
                 if (stateChanged) {
                     changeMap[parentId] = $.extend(changeMap[parentId] || {}, {
-                        state: parentLayer.state
+                        state: parentLayer.state,
+                        options: {
+                            treeOptions: parentLayer.options.treeOptions
+                        }
                     });
                 }
             }

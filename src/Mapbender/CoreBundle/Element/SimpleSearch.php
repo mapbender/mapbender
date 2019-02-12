@@ -72,7 +72,7 @@ class SimpleSearch extends Element
     public function httpAction($action)
     {
         $configuration = $this->getConfiguration();
-        $request       = $this->container->get('request');
+        $request       = $this->container->get('request_stack')->getCurrentRequest();
         $q             = $request->get('term', '');
         $qf            = $configuration['query_format'] ? $configuration['query_format'] : '%s';
         $kernel        = $this->container->get('kernel');

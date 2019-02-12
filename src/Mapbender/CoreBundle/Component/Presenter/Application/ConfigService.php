@@ -34,8 +34,6 @@ class ConfigService
     /** @var UrlProcessor */
     protected $urlProcessor;
 
-
-
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -96,8 +94,8 @@ class ConfigService
         $drupal_mark   = function_exists('mapbender_menu') ? '?q=mapbender' : $searchSubject;
 
         $urls = array(
-            'base'     => $this->container->get('request')->getBaseUrl(),
-            'asset'    => $this->container->get('templating.helper.assets')->getUrl(null),
+            'base'     => $this->container->get('request_stack')->getCurrentRequest()->getBaseUrl(),
+            'asset'    => $this->container->get('assets.packages')->getUrl(null),
             'element'  => $router->generate('mapbender_core_application_element', $config),
             'proxy'    => $this->urlProcessor->getProxyBaseUrl(),
             'metadata' => $router->generate('mapbender_core_application_metadata', $config),

@@ -6,8 +6,13 @@ namespace Mapbender\PrintBundle\Component;
 
 class GdCanvas extends BaseCanvas
 {
+    const MINIMUM_OPACITY = 0.007874; // PHP GD uses 7bit opacity => minimum effective value is ~1.0 / 127
+
     /** @var resource Gdish */
     public $resource;
+
+    /** @var int */
+    protected $transparent;
 
     public function __construct($width, $height)
     {
@@ -20,6 +25,12 @@ class GdCanvas extends BaseCanvas
         $bg = imagecolorallocate($this->resource, 255, 255, 255);
         imagefilledrectangle($this->resource, 0, 0, $width, $height, $bg);
         imagecolordeallocate($this->resource, $bg);
+        $this->transparent = imagecolorallocatealpha($this->resource, 255, 255, 255, 127);
+    }
+
+    public function __destruct()
+    {
+        imagecolordeallocate($this->resource, $this->transparent);
     }
 
     /**
@@ -36,6 +47,18 @@ class GdCanvas extends BaseCanvas
     public function getHeight()
     {
         return imagesy($this->resource);
+    }
+
+    /**
+     * @param int $offsetX
+     * @param int $offsetY
+     * @param int $width
+     * @param int $height
+     * @return GdSubCanvas
+     */
+    public function getSubRegion($offsetX, $offsetY, $width, $height)
+    {
+        return new GdSubCanvas($this, $offsetX, $offsetY, $width, $height);
     }
 
     /**
@@ -78,5 +101,26 @@ class GdCanvas extends BaseCanvas
                 $from = $to;
             }
         }
+    }
+
+    /**
+     * @param float $centerX in pixel space
+     * @param float $centerY in pixel space
+     * @param int $color Gdish
+     * @param float $diameterX
+     * @param float $diameterY
+     */
+    public function drawFilledEllipse($centerX, $centerY, $color, $diameterX, $diameterY)
+    {
+        imagefilledellipse($this->resource,
+            intval(round($centerX)), intval(round($centerY)),
+            max(1, intval(round($diameterX))),
+            max(1, intval(round($diameterY))),
+            $color);
+    }
+
+    final public function drawFilledCircle($centerX, $centerY, $color, $diameter)
+    {
+        $this->drawFilledEllipse($centerX, $centerY, $color, $diameter, $diameter);
     }
 }

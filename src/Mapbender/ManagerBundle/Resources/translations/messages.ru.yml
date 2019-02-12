@@ -64,8 +64,6 @@ mb:
         edit: 'Редактировать элемент'
         no_element_added:
           '': 'Элемент не добавлен'
-      messagebox:
-        only_region_elements: 'Доступные элементы отображаются только для этого региона.'
       zoombar:
         draggable: Перетаскиваемый
       filter:

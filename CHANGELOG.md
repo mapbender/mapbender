@@ -1,31 +1,48 @@
 # Changelog
-* **dev-release/3.0.7 @ cf1194b93**
-  - Fix buttons with invalid targets breaking buttons in the same group
+* **dev-release/3.0.7 @ 48d95938a**
+  - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#184](https://github.com/mapbender/mapbender/pull/1084))
+    - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
+  - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
+  - Fix buttons with invalid targets breaking other buttons with the same `group` setting
+  - Fix rendering of Button Element if 'click' is completely undefined (old DB? YAML apps?) ([PR#1076](https://github.com/mapbender/mapbender/pull/1076))
   - Fix element-order dependent script initialization error in mobile template
   - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
+  - Fix Ruler measurement errors when switching between geodesic and non-geodesic CRS at runtime ([PR#1069](https://github.com/mapbender/mapbender/pull/1069))
   - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
   - Fixed dynamic (layertree) source reordering errors with many layers
   - Fix erratic LayerTree / Legend states after ZoomBar "zoom to full extent" interaction ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
-  - Fix rendering of Button Element if 'click' is completely undefined (old DB? YAML apps?) ([PR#1076](https://github.com/mapbender/mapbender/pull/1076))
-  - Restore layer enabled / FeautureInfo checkbox state synchronization across multiple LayerTree Elements ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
-  - Fix erratic LayerTree layer "ghosting" on certain map interactions ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
-  - Improve compatibility with certain reverse-proxy setups ([PR #1061](https://github.com/mapbender/mapbender/pull/1061))
-  - Print: add WMS GetMap size limits, use tiling to stitch larger images ([PR#1073](https://github.com/mapbender/mapbender/pull/1073))
-  - Print: add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
-  - Print: significantly reduce memory requirements for larger printouts
-  - Print: optimize handling performance of WMS layers with manually reduced opacity
-  - Print: Suppress redundant group layer legend images and legend images for deactivated layers ([PR#1053](https://github.com/mapbender/mapbender/pull/1053))
-  - Print: Completely synchronize layer and legend visibility at any scale with client-side behavior ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
   - Fix erratic LayerTree / Legend state updates on first map interaction after submitting a print job ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
-  - Fix Ruler measurement errors when switching between geodesic and non-geodesic CRS at runtime ([PR#1069](https://github.com/mapbender/mapbender/pull/1069))
-  - Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
-  - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
-  - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
+  - Fix erratic LayerTree layer "ghosting" on certain map interactions ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
+  - Typo fixes in WmsCapabilitiesParser130, thanks jef-n ([PR#1046](https://github.com/mapbender/mapbender/pull/1046))
   - Extend / update Italian locale translations ([PR #1062](https://github.com/mapbender/mapbender/pull/1062))
   - Partial forward-compatibility with font-awesome 5 ([PR #1065](https://github.com/mapbender/mapbender/pull/1065))
-  - Remove unused fields from VendorSpecifics form, remove JOII dependency ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
-  - Typo fixes in WmsCapabilitiesParser130, thanks jef-n ([PR#1046](https://github.com/mapbender/mapbender/pull/1046))
-  - Fix Application import from pretty-printed JSON input
+  - Restore layer enabled / FeautureInfo checkbox state synchronization across multiple LayerTree Elements ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
+  - WmsLoader: Fix newly added service starting out with a deselected root layer ([PR#1045](https://github.com/mapbender/mapbender/pull/1045))
+  - WmsLoader: Make behaviour of 'declarative' links with default `mb-wms-merge` setting repeatable ([PR#1083](https://github.com/mapbender/mapbender/pull/1083))
+  - WmsLoader: Enable activation of specific layers via `mb-wms-layer` on 'declarative' links even if root or group layers have empty names ([PR#1083](https://github.com/mapbender/mapbender/pull/1083))
+  - Improve compatibility with certain reverse-proxy setups ([PR#1061](https://github.com/mapbender/mapbender/pull/1061), [PR#1075](https://github.com/mapbender/mapbender/pull/1075))
+  - Print / ImageExport:
+    - Add WMS GetMap size limits, use tiling to stitch larger images ([PR#1073](https://github.com/mapbender/mapbender/pull/1073))
+    - Generate label and other symbol sizing parameters understood by Mapserver, QGis server and Geoserver ([735626322](https://github.com/mapbender/mapbender/commit/73562632261819d79b9a9c0c264caeb33f34f4bf#diff-c72724b3690b61d792254dd26a7ca9cbR222))
+    - Optimize handling performance of WMS layers with manually reduced opacity
+    - Synchronize layer and legend visibility at any scale with client-side behavior ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
+  - Print:
+    - Add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
+      - NOTE: Print queue display styling [inherits from .mapbender-element-result-table](https://github.com/mapbender/mapbender/blob/e2fd234ffa5f98d6c74c0359f26d7d60362f50dd/src/Mapbender/PrintBundle/Resources/public/element/printclient.scss#L28), which means
+        any custom css styles you may have already applied to Digitizer result tables should automatically transfer to the print queue visual.
+    - Significantly reduce memory requirements for larger printouts
+    - Suppress redundant group layer legend images and legend images for deactivated layers ([Issue #611](https://github.com/mapbender/mapbender/issues/611) [PR#1053](https://github.com/mapbender/mapbender/pull/1053))
+    - Improved reproduction of patterned and / or semi-transparent and / or very thick lines ([PR#1080](https://github.com/mapbender/mapbender/pull/1080))
+    - Fixed reproduction of 'donut'-style polygon cutouts ([PR#1080](https://github.com/mapbender/mapbender/pull/1080))
+  - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
+  - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([Issue #715](https://github.com/mapbender/mapbender/issues/715), [PR#1074](https://github.com/mapbender/mapbender/pull/1074))
+  - [Vendorspecifics] Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
+  - [Vendorspecifics] Unused / ineffective form fields have been removed ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
+  - [Backend] Fix Application import from pretty-printed JSON input
+  - [Backend] Provide better scope information (layerset name, element region) in source instance assignment and element creation popups
+  - [Backend] Use localized strings in Application delete confirmation popup (previously hard-coded to English)
+  - [Backend] Fix excessive height of Application delete confirmation popup, align with other confirmation dialogs
+  - [Backend] Close potential script injection angle on certain popup subtitles
   - Add new `mapbender:config:check` console command
   - Misc deprecation cleanups for Symfony 3+ compatibility
 

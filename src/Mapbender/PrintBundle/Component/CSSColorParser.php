@@ -11,10 +11,12 @@ class CSSColorParser
         $hexMatchCount = preg_match('/#([a-f]|[A-F]|[0-9]){3}(([a-f]|[A-F]|[0-9]){3})?\b/', $nameOrHex, $hexMatches);
         if($hexMatchCount > 0) {
             $width = (4 === strlen($nameOrHex)) ? 1 : 2;
+            $factor = (4 === strlen($nameOrHex)) ? 0x11 : 1;
             return array(
-                hexdec(substr($nameOrHex, 1, $width)),
-                hexdec(substr($nameOrHex, 1 + $width, $width)),
-                hexdec(substr($nameOrHex, 1 + 2 * $width, $width)));
+                $factor * hexdec(substr($nameOrHex, 1, $width)),
+                $factor * hexdec(substr($nameOrHex, 1 + $width, $width)),
+                $factor * hexdec(substr($nameOrHex, 1 + 2 * $width, $width)),
+            );
         }
 
         $colors = array(

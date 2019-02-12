@@ -47,9 +47,8 @@
                         data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}"></span>
                   <span class="iconRemove removeElement iconSmall"
                         title="{% trans with {'%element_title%': element.title} %} mb.manager.be.element.delete {% endtrans %}"
-                        data-id="{{ element.id }}"
                         data-slug="{{ application.slug }}"
-                        data-url="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}"></span>
+                        data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"></span>
                 </td>
               </tr>
         {% else %}

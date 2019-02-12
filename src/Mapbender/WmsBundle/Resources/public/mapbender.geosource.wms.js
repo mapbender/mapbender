@@ -21,10 +21,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
     },
     create: function(sourceDef, mangleIds){
         var rootLayer = sourceDef.configuration.children[0];
-        if(sourceDef.configuration.status !== 'ok'){ //deactivate corrupte or unreachable sources
-            rootLayer.options.treeOptions.selected = false;
-            rootLayer.options.treeOptions.allow.selected = false;
-        }
         var layerNames = [];
 
         Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layer, index, parents) {

@@ -5,7 +5,6 @@ use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Mapbender;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
@@ -26,31 +25,26 @@ class WelcomeController extends Controller
      * Render user application list.
      *
      * @Route("/")
-     * @Template()
      */
     public function listAction()
     {
-        $applications        = $this->getMapbender()->getApplicationEntities();
         $allowedApplications = array();
 
-        foreach ($applications as $application) {
-            if ($application->isExcludedFromList()) {
-                continue;
-            }
-            if ($this->isGranted('VIEW', $application)) {
-                if ($this->isGranted('EDIT', $application) || $application->isPublished()) {
-                    $allowedApplications[] = $application;
-                }
+        foreach ($this->getMapbender()->getApplicationEntities() as $application) {
+            if ($this->isGranted('VIEW', $application)
+                && ($this->isGranted('EDIT', $application) || $application->isPublished())
+                && !$application->isExcludedFromList()) {
+                $allowedApplications[] = $application;
             }
         }
-        $oid = new ObjectIdentity('class', get_class(new Application()));
-        $createPermission = $this->isGranted('CREATE', $oid);
-        return array(
+
+        return $this->render('@MapbenderCore/Welcome/list.html.twig', array(
             'applications'      => $allowedApplications,
             'uploads_web_url'   => AppComponent::getUploadsUrl($this->container),
-            'create_permission' => $createPermission,
-            'time'              => new \DateTime()
-        );
+            'time'              => new \DateTime(),
+            'create_permission' => $this
+                ->isGranted('CREATE', new ObjectIdentity('class', get_class(new Application()))),
+        ));
     }
 
     /**

@@ -6,8 +6,6 @@
         },
         control_: null,
         layersOrigExtents: {},
-        // @todo 3.1.0: remove this attribute and its usages
-        mapOrigExtents_: {},
         startproj: null,
         $viewport_: null,
         mbMap_: null,
@@ -93,7 +91,8 @@
             if (this.options.fixed) {
                 console.warn("Engaging Overview mode 'fixed', no working implementation!", mainMapModel.getMaxExtent(), center);
                 // zoom out to main map extent limit and lock
-                var ctView = this.control_.ovmap_.getView();
+                console.log("Ovmap?", this.control_);
+                var ctView = this.control_.getOverviewMap().getView();
                 var fixedRes = ctView.getResolutionForExtent(mainMapModel.getMaxExtent());
                 console.log("Calculated resolution", fixedRes);
                 // @todo: figure out how to constrain the overview map / its view
@@ -104,6 +103,13 @@
             }
         },
         _initAsOl2Control: function() {
+            var widget = this;
+            var options = widget.options;
+            var mbMap = this.mbMap = $('#' + options.target).data('mapbenderMbMap');
+            var model = mbMap.model;
+            var element = $(widget.element);
+            var projection = model.map.olMap.projection;
+            var maxExtent = model.map.olMap.maxExtent;
             var overviewLayers = [];
             var layerSet = Mapbender.configuration.layersets[this.options.layerset];
 
@@ -214,21 +220,27 @@
               resolution: this.mbMap_.model.map.getView().getResolution()
             });
             this.control_.ovmap_.setProperties(properties);
-            /*
-            console.log("Wow an srschange!", [event, srs]);
             return;
+
+
             var widget = this;
             // @todo 3.1.0: this won't work on OL4, starting here
-            var ovMap = this.control_.ovmap_;
-            var oldProj = ovMap.getView().getProjection();
-            var center = ovMap.getView().getCenter().transform(oldProj, srs.projection);
+            var ovMap = overview.ovmap;
+            var oldProj = ovMap.getProjectionObject();
+            if (oldProj.projCode === srs.projection.projCode) {
+                return;
+            }
+            var center = ovMap.getCenter().clone().transform(oldProj, srs.projection);
+
+            var mainMapMaxExtent = this.mbMap.model.map.olMap.maxExtent;
+
 
             ovMap.projection = srs.projection;
             ovMap.displayProjection = srs.projection;
             ovMap.units = srs.projection.proj.units;
-            if (ovMap.maxExtent) {
-                ovMap.maxExtent = ovMap.maxExtent.clone();
-                ovMap.maxExtent.transform(oldProj, srs.projection);
+            if (mainMapMaxExtent) {
+                // NOTE: this extent is already transformed
+                ovMap.maxExtent = mainMapMaxExtent.clone();
             }
 
             $.each(ovMap.layers, function(idx, layer) {
@@ -244,9 +256,9 @@
 
             this.control_.update();
             ovMap.setCenter(center, ovMap.getZoom(), false, true);
-            */
+            ovMap.setCenter(center, null, false, true);
+            overview.update();
         }
-
     });
 
 })(jQuery);

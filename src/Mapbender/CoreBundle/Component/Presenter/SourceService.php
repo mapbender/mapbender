@@ -121,8 +121,7 @@ abstract class SourceService
             // @todo: Figure out why null. This is never checked. Won't this just cause errors elsewhere?
             return null;
         }
-        $status = $sourceInstance->getSource()->getStatus();
-        $configuration['status'] = $status && $status === Source::STATUS_UNREACHABLE ? 'error' : 'ok';
+        $configuration['status'] = 'ok';    // for initial layertree visual; 'error' can only be produced client-side
         return $configuration;
     }
 

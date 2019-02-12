@@ -39,6 +39,7 @@
 (function($) {
     var counter = 0;
     var currentZindex = 10000;
+    var currentModal_ = null;
     /**
      * Popup constructor.
      *
@@ -93,11 +94,12 @@
         } else {
             $('.popupClose', this.$element).remove();
         }
-
+        this.addButtons(this.options.buttons || []);
 
         var staticOptions = [
             'template', 'autoOpen', 'modal',
             'header', 'closeButton',
+            'buttons',
             'destroyOnClose', 'detachOnClose',
             'closeOnOutsideClick',
             'scrollable', 'resizable'
@@ -192,9 +194,10 @@
         option: function(key, value) {
             switch(key) {
                 default:
-                    var fct = this[key];
+                    // Handle bad option capitalization for special snowflakes
+                    var fct = this[key] || this[key.toLowerCase()];
                     if(typeof fct == 'function') {
-                        this[key](value);
+                        fct.call(this, value);
                     } else {
                         if(window.console) {
                             console.error('No accessor for "' + key + '"');
@@ -210,6 +213,12 @@
          * @param {*} [content]  New content, if any
          */
         open: function(content) {
+            if (this.options.modal) {
+                if (currentModal_ && this !== currentModal_) {
+                    currentModal_.close();
+                }
+                currentModal_ = this;
+            }
             var self = this;
 
             if(content) {
@@ -240,11 +249,13 @@
          * @fires "focus"
          */
         focus: function (event) {
-        this.$element.css("z-index",++currentZindex);
-        if(!event) {
-            // Only trigger event this method was called programmatically.
-            this.$element.trigger('focus'); // why?
-          }
+            if (this.$element) {
+                this.$element.css("z-index",++currentZindex);
+                if (!event) {
+                    // Only trigger event this method was called programmatically.
+                    this.$element.trigger('focus'); // why?
+                }
+            }
         },
 
         /**
@@ -254,13 +265,15 @@
          * will be aborted.
          */
         close: function() {
+            if (!this.$element) {
+                return;
+            }
             var token = { cancel: false };
-            this.$element.trigger('close', token);  // why?
-            if(token.cancel) {
+            this.$element.trigger('close', token);
+            if (token.cancel) {
               return;
             }
 
-            this.$element.removeClass("show");  // why? It's never added and doesn't do anything.
             if (this.$modalWrap) {
                 this.$element.detach();
                 this.$modalWrap.detach();
@@ -271,7 +284,12 @@
             if(this.options.destroyOnClose) {
                 this.destroy();
             }
-            this.$element.trigger('closed'); // why?
+            if (this.options.modal && this === currentModal_) {
+                currentModal_ = null;
+            }
+            if (!this.options.destroyOnClose && this.$element) {
+                this.$element.trigger('closed'); // why?
+            }
         },
 
         /**
@@ -285,25 +303,7 @@
             }
         },
 
-        /**
-         * Set or get buttons
-         * @param  {Object} buttons, null unsets, undefined gets
-         * @return {[type]}
-         */
-        buttons: function(buttons) {
-            if(undefined === buttons) {
-                return this.options.buttons;
-            }
-
-            if(null === buttons) {
-                $('.popupButtons', this.$element.get(0)).empty();
-            } else {
-                this.addButtons(buttons);
-            }
-            this.options.buttons = buttons;
-        },
-
-        addButtons: function(buttons, offset) {
+        addButtons: function(buttons) {
             var self = this,
                 buttonset = $('');
 
@@ -326,8 +326,6 @@
 
                 buttonset = buttonset.add(button);
             });
-
-            // @todo use offset if given
             $('.popupButtons', this.$element.get(0)).append(buttonset);
         },
 
@@ -366,7 +364,7 @@
             if(null === subtitle) {
                 subtitleNode.empty();
             } else {
-                subtitleNode.html(subtitle);
+                subtitleNode.text(subtitle);
             }
             this.options.subtitle = subtitle;
         },

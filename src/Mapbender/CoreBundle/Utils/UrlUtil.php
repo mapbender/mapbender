@@ -77,7 +77,7 @@ class UrlUtil
         }
         // To support installation in non-name-vhost / non-root configs, strip context base url first.
         // Context base commonly looks like ~'/somedir/mapender/local-fun-version/app_dev.php'
-        if (0 === strpos($path, $routerContext->getBaseUrl())) {
+        if ($routerContext->getBaseUrl() && 0 === strpos($path, $routerContext->getBaseUrl())) {
             $path = '/' . ltrim(substr($path, strlen($routerContext->getBaseUrl())), '/');
         }
         try {

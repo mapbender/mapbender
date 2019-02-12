@@ -462,7 +462,6 @@
             }
         },
         _resetSourceAtTree: function(source) {
-            // console.warn("Skipping _resetSourceAtTree call"); return;
             var self = this;
             function resetSourceAtTree(layer, parent) {
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
@@ -486,7 +485,7 @@
                         }
                         var newTreeOptions = (layerSettings.options || {}).treeOptions;
                         var newLayerState = layerSettings.state;
-                        if (!newLayerState && newTreeOptions) {
+                        if (!newLayerState && newTreeOptions && typeof newTreeOptions.selected !== 'undefined') {
                             newLayerState = {visibility: newTreeOptions.selected};
                         }
                         if (newLayerState) {
@@ -638,7 +637,30 @@
         _selectAll: function(e) {
             var $sourceVsbl = $(e.target);
             var $li = $sourceVsbl.parents('li:first');
-            $('.serviceContainer input[name="selected"]', $li).prop('checked', true).trigger('change');
+            // @todo: OL4: fix 'select all' interaction ("thematic" layertree)
+            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, srcLi) {
+                var $srcLi = $(srcLi);
+                var source = {
+                    id: $srcLi.data('sourceid')
+                };
+                var options = {
+                    layers: {}
+                };
+                var value = {
+                    options: {
+                        treeOptions: {
+                            selected: true
+                        }
+                    }
+                };
+                $('li', $srcLi).each(function(idx, layerLi) {
+                    var $layerLi = $(layerLi);
+                    if (!$('input[name="selected"]:first', $layerLi).prop('checked')) {
+                        options.layers[$layerLi.attr('data-id')] = value;
+                    }
+                });
+                self.model.changeLayerState(source, options, null);
+            });
             return false;
         },
         _toggleSelected: function(e) {
@@ -800,6 +822,7 @@
                 } else {
                     $('.layer-zoom', menu).remove();
                 }
+
                 var showMetaData = $.inArray("metadata", self.options.menu) !== -1;
                 showMetaData = showMetaData && menu.find('.layer-metadata').length;
                 showMetaData = showMetaData && (!source.wmsloader);
@@ -814,7 +837,6 @@
                 } else {
                     $mdMenu.remove();
                 }
-
                 var dims = source.configuration.options.dimensions || [];
                 var showDims = $.inArray("dimension", self.options.menu) !== -1;
                 showDims = showDims && dims.length && source.type === 'wms';
@@ -943,25 +965,10 @@
         _exportKml: function(elm) {
         },
         _showMetadata: function(e) {
-            Mapbender.Metadata.call(
-                this.options.target,
-                {
-                    id: $(
-                        e.target).
-                        parents(
-                            'div.layer-menu:first').
-                        attr(
-                            "data-menuSourceId")
-                },
-            {
-                id: $(
-                    e.target).
-                    parents(
-                        'div.layer-menu:first').
-                    attr(
-                        "data-menuLayerId")
-            }
-            );
+            var $layer = $(e.target).closest('.leave', this.element);
+            var sourceOpts = {id: $layer.attr('data-sourceid')};
+            var layerOpts = {id: $layer.attr('data-id')};
+            Mapbender.Metadata.call(this.options.target, sourceOpts, layerOpts);
         },
         _setSourcesCount: function() {
             var countObj = {};

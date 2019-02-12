@@ -62,7 +62,7 @@ class KmlExport extends Element {
     private function map2Kml() {
         $response = new Response();
 
-        $layers = $this->container->get('request')->get('layers');
+        $layers = $this->container->get('request_stack')->getCurrentRequest()->get('layers');
         foreach($layers as $title => &$layer) {
             parse_str($layer, $layer);
 
@@ -81,10 +81,10 @@ class KmlExport extends Element {
 
         // IMPORTANT: THIS DEPENDS ON THE php5-mapscript EXTENSION
         $extent = new \rectObj();
-        $extentIn = explode(',', $this->container->get('request')->get('extent'));
+        $extentIn = explode(',', $this->container->get('request_stack')->getCurrentRequest()->get('extent'));
         $extent->setExtent($extentIn[0], $extentIn[1], $extentIn[2], $extentIn[3]);
 
-        $srs = $this->container->get('request')->get('srs');
+        $srs = $this->container->get('request_stack')->getCurrentRequest()->get('srs');
         $srsFrom = new \projectionObj($srs);
         $srsTo = new \projectionObj('EPSG:4326');
         $extent->project($srsFrom, $srsTo);

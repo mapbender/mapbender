@@ -1,5 +1,8 @@
 {% block manager_content %}
-  <form id="elementForm" action="{{ formAction }}" method="post" {{ form_enctype(form)}} novalidate="novalidate">
+    {{ form_start(form, { 'action': formAction, 'method': 'POST', 'attr': {
+        novalidate: 'novalidate', id: 'elementForm'
+    }}) }}
+
     {% block form_fields %}
         {% block form_fields_common %}
             {# fields shared by all Element forms #}
@@ -8,14 +11,15 @@
             {{ form_row(form.region) }}
         {% endblock %}
         {% block form_fields_dynamic %}
-          {# fields added by the Element's custom form type #}
-          {% if theme is defined and theme != '' %}
-            {% include(theme) %}
-          {% else %}
-            {{ form_rest(form) }}
-          {% endif %}
+            {# fields added by the Element's custom form type #}
+            {% if theme is defined and theme != '' %}
+                {% include(theme) %}
+            {% else %}
+                {{ form_rest(form) }}
+            {% endif %}
         {% endblock %}
     {% endblock %}
-  </form>
+  {{ form_end(form, {'render_rest': false}) }}
+
   <script src="{{ asset('bundles/mapbendermanager/js/element-edit.js') }}"></script>
 {% endblock %}

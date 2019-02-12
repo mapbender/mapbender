@@ -24,6 +24,22 @@ Mapbender.Model = {
      * @property {Model~TreeOptions} options.treeOptions
      */
     /**
+     * @typedef Model~LayerDef
+     * @property {Object} options
+     * @property {Model~TreeOptions} options.treeOptions
+     * @property {Model~LayerState} state
+     * @property {Array<Model~LayerDef>} children
+     */
+    /**
+     * @typedef Model~SourceTreeish
+     * @property {Object} configuration
+     * @property {Array<Model~LayerDef>} configuration.children
+     * @property {string} id
+     * @property {string} origId
+     * @property {string} type
+     * @property {string} ollid
+     */
+    /**
      * @typedef Model~SingleLayerPrintConfig
      * @property {string} type
      * @property {string} sourceId
@@ -45,19 +61,6 @@ Mapbender.Model = {
     _layersHash: {},
     init: function(mbMap) {
         var self = this;
-
-        // need to monkey patch here in order to get next zoom in movestart event
-        // prevents duplicate loads of WMS where a layer is going out of scale
-        var setCenterOriginal = OpenLayers.Map.prototype.setCenter;
-        var zoomToOriginal = OpenLayers.Map.prototype.zoomTo;
-        OpenLayers.Map.prototype.setCenter = function(center, zoom) {
-            self.nextZoom = zoom;
-            setCenterOriginal.apply(this, arguments);
-        };
-        OpenLayers.Map.prototype.zoomTo = function(zoom, xy) {
-            self.nextZoom = zoom;
-            zoomToOriginal.apply(this, arguments);
-        };
 
         this.mbMap = mbMap;
         this.srsDefs = this.mbMap.options.srsDefs;
@@ -114,10 +117,37 @@ Mapbender.Model = {
         }
 
         $(this.mbMap.element).mapQuery(mapOptions);
+        // Stop endless reloads of services that time out.
+        // MapQuery plays with this value in its map constructor.
+        // 0 is the default, see https://github.com/openlayers/ol2/blob/master/lib/OpenLayers/Util.js#L308
+        OpenLayers.IMAGE_RELOAD_ATTEMPTS = 0;
+
         this.map = $(this.mbMap.element).data('mapQuery');
         this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
         this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
         this.map.olMap.tileManager = null; // fix WMS tiled setVisibility(false) for outer scale
+
+        // monkey-patch zoom interactions
+        (function(olMap) {
+            // need to monkey patch here in order to get next zoom in movestart event
+            // prevents duplicate loads of WMS where a layer is going out of scale
+            var setCenterOriginal = olMap.setCenter;
+            var zoomToOriginal = olMap.zoomTo;
+            olMap.setCenter = function(center, zoom) {
+                if (zoom !== null && typeof zoom !== 'undefined') {
+                    self.nextZoom = zoom;
+                }
+                setCenterOriginal.apply(this, arguments);
+            };
+            olMap.zoomTo = function(zoom, xy) {
+                if (zoom !== null && typeof zoom !== 'undefined') {
+                    self.nextZoom = zoom;
+                }
+                zoomToOriginal.apply(this, arguments);
+            };
+        })(this.map.olMap);
+
+
         this.setView(true);
         this.parseURL();
         if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
@@ -304,7 +334,8 @@ Mapbender.Model = {
     },
     _convertLayerDef: function(layerDef, mangleIds) {
         var l = $.extend({}, Mapbender.source[layerDef.type.toLowerCase()].create(layerDef, mangleIds), {
-            mapbenderId: layerDef.id
+            mapbenderId: layerDef.id,
+            visibility: false
         });
         if(typeof this.mbMap.options.wmsTileDelay !== 'undefined') {
             l.removeBackBufferDelay = this.mbMap.options.wmsTileDelay;
@@ -367,7 +398,7 @@ Mapbender.Model = {
      * - mapqyery id -> {mqlid: MYSOURCEMAPQUERYID}
      * - openlayers id -> {ollid: MYSOURCEOPENLAYERSID}
      * - origin id -> {ollid: MYSOURCEORIGINID}
-     * @returns source from a sourceTree or null
+     * @returns {Model~SourceTreeish|null}
      */
     getSource: function(idObject) {
         var key;
@@ -413,6 +444,10 @@ Mapbender.Model = {
             }
         }
     },
+    /**
+     * @param options
+     * @return {Array<Model~SourceTreeish>}
+     */
     findSource: function(options) {
         var sources = [];
         var findSource = function(object, options) {
@@ -585,33 +620,48 @@ Mapbender.Model = {
     _resetSourceVisibility: function(source, layers, infolayers, styles) {
         var olLayer = this.getNativeLayer(source);
         if (!olLayer) {
-            console.error("No layer found", source);
             return false;
         }
         olLayer.queryLayers = infolayers;
-        if (this._layersHash[olLayer.id] === layers.toString()) {
+        var targetVisibility = !!layers.length;
+        var visibilityChanged = targetVisibility !== olLayer.getVisibility();
+        var layersChanged =
+            ((olLayer.params.LAYERS || '').toString() !== layers.toString()) ||
+            ((olLayer.params.STYLES || '').toString() !== styles.toString())
+        ;
+
+        if (!visibilityChanged && !layersChanged) {
             return false;
         }
-        this._layersHash[olLayer.id] = layers.toString();
 
-        if (olLayer.map && olLayer.map.tileManager) {
+        if (layersChanged && olLayer.map && olLayer.map.tileManager) {
             olLayer.map.tileManager.clearTileQueue({
                 object: olLayer
             });
         }
-
-        if(layers.length === 0) {
+        if (!targetVisibility) {
             olLayer.setVisibility(false);
-            olLayer.params.LAYERS = layers;
-            olLayer.params.STYLES = styles;
+            olLayer.params.LAYERS = [];
+            olLayer.params.STYLES = [];
             return false;
         } else {
-            olLayer.params.STYLES = styles;
-            olLayer.params.LAYERS = layers;
-            olLayer.setVisibility(true);
+            var newParams = {
+                LAYERS: layers,
+                STYLES: styles
+            };
+            if (visibilityChanged) {
+                // Prevent the browser from reusing the loaded image. This is almost equivalent
+                // to a forced redraw (c.f. olLayer.redraw(true)), but without the undesirable
+                // side effect of loading the layer twice on first activation.
+                // @see https://github.com/openlayers/ol2/blob/master/lib/OpenLayers/Layer/HTTPRequest.js#L157
+                newParams['_OLSALT'] = Math.random();
+            }
+            // Nuking the back buffer prevents the layer from going visible with old layer combination
+            // before loading the new images.
             olLayer.removeBackBuffer();
             olLayer.createBackBuffer();
-            olLayer.redraw(true);
+            olLayer.mergeNewParams(newParams);
+            olLayer.setVisibility(true);
             return true;
         }
     },
@@ -942,7 +992,6 @@ Mapbender.Model = {
     removeLayer: function(sourceId, layerId) {
         var source = this.getSource({id: sourceId});
         var gs = this.getGeoSourceHandler(source, true);
-        gs.findLayer(source, {id: layerId});
         var eventData = {
             changed: {
                 childRemoved: gs.removeLayer(source, {options: {id: layerId}}),
@@ -969,21 +1018,52 @@ Mapbender.Model = {
         this._updateSourceLayerTreeOptions(source, newProps);
     },
     /**
+     * Performs bulk-updates on the targetted source's treeOptions to make
+     * specific, or all, layers visible or invisible.
+     * Individual layers can be targetted by the options.layers mapping, which
+     * should map layer ids to {options: {treeOptions: {selected: <something>}}}
+     * objects.
+     *
+     * All other layers use the defaultSelected value for their new 'selected' value,
+     * which defaults to false (=off).
+     * Explicitly pass null for defaultSelected to avoid this.
+     *
+     * If you pass mergeSelected=true, you will essentially be prevented from turning
+     * any layer off that is currently on.
+     *
+     * NOTE: The resulting source tree change will also implicitly enable parent
+     *       layers of the layers you asked to enable. This behaviour cannot be disabled.
+     *       If you intend to just "tick a checkbox" without implicit side effects
+     *       on parent layers, use controlLayers instead.
+     *
+     * NOTE: This method can operate on sources that are OUTSIDE the current 'sourceTree',
+     *       i.e. plain-data source definition objects that have not yet been promoted
+     *       to active map sources.
+     *
      *
      * @param {Object} sourceIdObject in form of:
      * - source id -> {id: MYSOURCEID}
      * - mapqyery id -> {mqlid: MYSOURCEMAPQUERYID}
      * - openlayers id -> {ollid: MYSOURCEOPENLAYERSID}
      * - origin id -> {ollid: MYSOURCEORIGINID}
-     * @param {Object} options in form of:
-     * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
+     * @param {Object} options
+     * @param {Object<string, Model~LayerTreeOptionWrapper>} options.layers
+     * @param {boolean|null} [defaultSelected] defaults to false
+     * @param {boolean} [mergeSelected] defaults to false
+     *
      */
     changeLayerState: function(sourceIdObject, options, defaultSelected, mergeSelected) {
         if (typeof mergeSelected === 'undefined')
             mergeSelected = false;
         if (typeof defaultSelected === 'undefined')
             defaultSelected = false;
-        var source = this.getSource(sourceIdObject);
+        var source;
+        if (sourceIdObject.configuration && sourceIdObject.id && sourceIdObject.configuration.children && sourceIdObject.type) {
+            // let's just assume this already is a full-fledged source definition
+            source = sourceIdObject;
+        } else {
+            source = this.getSource(sourceIdObject);
+        }
         if (source !== null) {
             var toChangeOptions = Mapbender.source[source.type].createOptionsLayerState(source, options,
                 defaultSelected, mergeSelected);
@@ -1093,7 +1173,7 @@ Mapbender.Model = {
         for(var i = 0; i < this.sourceTree.length; i++) {
             Mapbender.source[this.sourceTree[i].type].changeProjection(this.sourceTree[i], srs.projection);
         }
-        var center = this.map.olMap.getCenter().transform(oldProj, srs.projection);
+        var center = this.map.olMap.getCenter().clone().transform(oldProj, srs.projection);
         this.map.olMap.projection = srs.projection;
         this.map.olMap.displayProjection = srs.projection;
         this.map.olMap.units = srs.projection.proj.units;
@@ -1226,9 +1306,13 @@ Mapbender.Model = {
                     dataOut.push($.extend({}, commonLayerData, {
                         url: gsHandler.getSingleLayerUrl(olLayer, extent_, item.layer.options.name, item.layer.options.style),
                         minResolution: resFromScale(item.layer.options.minScale),
-                        maxResolution: resFromScale(item.layer.options.maxScale)
+                        maxResolution: resFromScale(item.layer.options.maxScale),
+                        order: item.order
                     }));
                 }
+            });
+            dataOut.sort(function(a, b) {
+                return a.order - b.order;
             });
         } else {
             // hopefully building a bridge for forks / feature branches with non-WMS layers or customized geosource code
@@ -1266,38 +1350,6 @@ Mapbender.Model = {
         }
         return dataOut;
     },
-    _getActiveLayerInfo: function(olLayer, scale) {
-        var mbConfig = this.getMbConfig(olLayer);
-        var activeLayers = [];
-        var resFromScale = function(scale) {
-            return scale && (OpenLayers.Util.getResolutionFromScale(scale, olLayer.units)) || null;
-        };
-        var resolution = resFromScale(scale);
-
-        Mapbender.Util.SourceTree.iterateSourceLeaves(mbConfig, false, function(node, offset, parents) {
-            var skip = !node.state.visibility;
-            parents.map(function(p) {
-                skip = skip || !p.state.visibility;
-            });
-            var leafData = {
-                name: node.options.name,
-                maxResolution: resFromScale(node.options.maxScale),
-                minResolution: resFromScale(node.options.minScale),
-                config: node
-            };
-            if (leafData.maxResolution && resolution > leafData.maxResolution) {
-                skip = true;
-            }
-            if (leafData.minResolution && resolution < leafData.minResolution) {
-                skip = true;
-            }
-
-            if (!skip) {
-                activeLayers.push(leafData);
-            }
-        });
-        return activeLayers;
-    },
 
     /**
      * @param {OpenLayers.Bounds|null} extent
@@ -1313,38 +1365,40 @@ Mapbender.Model = {
         return extentOut;
     },
     parseURL: function() {
-        var self = this;
-        var ids = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
-        ids = ids ? decodeURIComponent(ids).split(',') : [];
-        if (ids.length) {
-            $.each(ids, function(idx, id) {
-                var id = id.split('/');
-                if (1 < id.length) {
-                    var layer = self.findLayer({
-                        origId: id[0]
-                    },
-                    {
-                        origId: id[1]
-                    });
-                    if (layer) {
-                        var options = {};
-                        options.layers = {};
-                        options.layers[layer.layer.options.id] = {
-                            options: {
-                                treeOptions: {
-                                    selected: true
-                                }
-                            }
-                        };
-                        self.changeLayerState({
-                            origId: id[0]
-                        },
-                        options,
-                            false,
-                            true);
-                    }
-                }
-            });
+        var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
+        if (visibleLayersParam) {
+            this.processVisibleLayersParam(visibleLayersParam);
         }
+    },
+    /**
+     * Activate specific layers on specific sources by interpreting a (comma-separated list of)
+     * "<sourceId>/<layerId>" parameter pair.
+     * The indicated source and layer must already be part of the running configuration for this
+     * to work.
+     *
+     * @param {string} paramValue
+     */
+    processVisibleLayersParam: function(paramValue) {
+        var self = this;
+        var specs = (paramValue || '').split(',');
+        $.each(specs, function(idx, layerSpec) {
+            var idParts = layerSpec.split('/');
+            var clsOptions = {layers: {}};
+            if (idParts.length >= 2) {
+                var sourceId = idParts[0];
+                var layerId = idParts[1];
+                var source = self.getSource({origId: sourceId});
+                if (source) {
+                    clsOptions.layers[layerId] = {
+                        options: {
+                            treeOptions: {
+                                selected: true
+                            }
+                        }
+                    };
+                    self.changeLayerState(source, clsOptions, false, true);
+                }
+            }
+        });
     }
 };

@@ -19,7 +19,9 @@ use Mapbender\CoreBundle\Component\Utils;
 abstract class Source
 {
 
+    /** @deprecated only relevant client-side, and it doesn't even use the same string values there */
     const STATUS_OK = 'OK';
+    /** @deprecated only relevant client-side, and it doesn't even use the same string values there */
     const STATUS_UNREACHABLE = 'UNREACHABLE';
 
     const TYPE_WMS = "WMS";
@@ -64,12 +66,6 @@ abstract class Source
      * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
-
-    /**
-     * @var string source status
-     * @ORM\Column(type="string", length=25, nullable=true)
-     */
-    protected $status = self::STATUS_OK;
 
     /**
      * @ORM\Column(type="string",nullable=true)
@@ -236,34 +232,23 @@ abstract class Source
     }
 
     /**
-     * Set status
-     *
-     * @param string $status
-     * @return Source
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * Get status
+     * Source status is a client-side runtime concept helping to visualize live network response errors.
+     * It's meaningless server-side.
      *
      * @return string
+     * @deprecated
      */
-    public function getStatus()
+    final public function getStatus()
     {
-        return $this->status;
+        return self::STATUS_OK;
     }
-    
+
     /**
      * Returns the source identifier
      * @return string source indetifier
      */
     abstract public function getIdentifier();
-    
+
     /**
      * Sets  the source identifier
      * @param string $identifier the source identifier

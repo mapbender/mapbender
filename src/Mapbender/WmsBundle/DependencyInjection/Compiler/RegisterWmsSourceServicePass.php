@@ -6,6 +6,7 @@ namespace Mapbender\WmsBundle\DependencyInjection\Compiler;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class RegisterWmsSourceServicePass implements CompilerPassInterface
 {
@@ -17,7 +18,7 @@ class RegisterWmsSourceServicePass implements CompilerPassInterface
         /** @see TypeDirectoryService::registerSubtypeService */
         $typeDirectoryDefinition->addMethodCall('registerSubtypeService', array(
             'wms',
-            'mapbender.source.wms.service',
+            new Reference('mapbender.source.wms.service'),
         ));
     }
 }

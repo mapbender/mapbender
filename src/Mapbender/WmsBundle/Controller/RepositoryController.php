@@ -488,7 +488,7 @@ class RepositoryController extends Controller
      */
     public function metadataAction(Request $request)
     {
-        $sourceId = $request->get("sourceId", null);
+        $sourceId = $request->attributes->get("sourceId", null);
         if (!strlen($sourceId)) {
             throw new BadRequestHttpException();
         }
@@ -503,7 +503,7 @@ class RepositoryController extends Controller
             && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
-        $layerName = $this->getRequest()->get("layerName", null);
+        $layerName = $request->attributes->get("layerName", null);
         $metadata  = $instance->getMetadata();
         $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
         $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);

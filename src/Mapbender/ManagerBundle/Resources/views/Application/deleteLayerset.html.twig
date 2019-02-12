@@ -1,6 +1,2 @@
-{% block manager_content %}
-{{ form_start(form, {"attr": {"id": "deleteLaysersetForm", "action": path('mapbender_manager_application_deletelayerset', {'slug': application.slug, 'layersetId': layerset.id})}}) }}
-    {{ "mb.manager.admin.layerset.delete.confirm" | trans({'%layerset_title%': layerset.title | e}) | raw }}
-    {{ form_widget(form) }}
-{{ form_end(form) }}
-{% endblock %}
+{# base message contains <i> tags to italicize the title, so escaping is a little more involved here... #}
+{{ "mb.manager.admin.layerset.delete.confirm" | trans({'%layerset_title%': layerset.title | e}) | raw }}
