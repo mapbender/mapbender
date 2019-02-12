@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
+use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -133,19 +134,24 @@ class Application
     }
 
     /**
-     * Get the configuration (application, elements, layers) as an StringAsset.
-     * Filters can be applied later on with the ensureFilter method.
+     * Get the Application configuration (application, elements, layers) as a json-encoded string.
      *
      * @return string Configuration as JSON string
+     * @deprecated This method is only called from (copies of) the mobile.html.twig application template
+     *     In modern Mapbender templates, Application configuration is loaded by a separate Ajax route,
+     *     completely independent of the twig template. Simply removing the script fragment that ends up
+     *     calling this method from your twig template will automatically switch to Ajax config loading,
+     *     doesn't require writing any replacement logic, and removes the warning.
+     * @see ApplicationController::configurationAction()
      */
     public function getConfiguration()
     {
+        @trigger_error("Deprecated: Inlining Application configuration data into your template is unnecessary. "
+                     . "Please remove the 'Mapbender.configuration = {{ application.configuration | raw }};' script "
+                     . "fragment from your Application twig template.", E_USER_DEPRECATED);
         $configService = $this->getConfigService();
         $configuration = $configService->getConfiguration($this->entity);
-
-        // Convert to asset
-        $asset = new StringAsset(json_encode((object)$configuration));
-        return $asset->dump();
+        return json_encode((object)$configuration);
     }
 
     /**
