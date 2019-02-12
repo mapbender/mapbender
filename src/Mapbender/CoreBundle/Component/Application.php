@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\Common\Persistence\ObjectRepository;
+use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -119,6 +120,32 @@ class Application
     {
         $template = $this->getTemplate();
         return $template->render();
+    }
+
+    /**
+     * @return ConfigService
+     */
+    private function getConfigService()
+    {
+        /** @var ConfigService $presenter */
+        $presenter = $this->container->get('mapbender.presenter.application.config.service');
+        return $presenter;
+    }
+
+    /**
+     * Get the configuration (application, elements, layers) as an StringAsset.
+     * Filters can be applied later on with the ensureFilter method.
+     *
+     * @return string Configuration as JSON string
+     */
+    public function getConfiguration()
+    {
+        $configService = $this->getConfigService();
+        $configuration = $configService->getConfiguration($this->entity);
+
+        // Convert to asset
+        $asset = new StringAsset(json_encode((object)$configuration));
+        return $asset->dump();
     }
 
     /**
