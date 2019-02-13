@@ -38,6 +38,11 @@
                 });
             }
 
+            if (this.options.target) {
+                $(document).on('mapbender.setupfinished', function() {
+                    self._initializeHighlightState();
+                });
+            }
             $(this.element)
                 .on('click', $.proxy(self._onClick, self))
                 .on('mbButtonDeactivate', $.proxy(self.deactivate, self));
@@ -165,6 +170,33 @@
                 }
             }
         },
+        _initializeHighlightState: function() {
+            if (this._initializeTarget() && this.targetWidget.options) {
+                var targetOptions = this.targetWidget.options;
+                var state = targetOptions.autoActivate;         // FeatureInfo style
+                state = state || targetOptions.autoStart;       // GpsPosition style
+                // Copyright, Legend, Layertree, WmsLoader all use have this option
+                if (targetOptions.autoOpen) {
+                    var isDialog = true;        // WmsLoader: always a dialog
+                    if (typeof targetOptions.type !== 'undefined') {
+                        // Layertree, FeatureInfo
+                        isDialog = targetOptions.type === 'dialog';
+                    } else if (typeof targetOptions.displayType !== 'undefined') {
+                        // Legend
+                        isDialog = targetOptions.displayType === 'dialog';
+                    }
+                    state = isDialog;
+                }
+                if (targetOptions.auto_activate) {              // Redlining
+                    state = targetOptions.display_type === 'dialog';
+                }
+                this._highlightState = state;
+                this.active = this.active || state;
+            } else {
+                this._highlightState = false;
+            }
+            this.updateHighlight();
+        },
         /**
          * Calls 'activate' method on target if defined, and if in group, sets a visual highlight
          */
@@ -177,9 +209,8 @@
                 (this.actionMethods.activate)();
                 this.active = this.stateful;
             }
-            if (this.options.group) {
-                this.$toolBarItem.addClass("toolBarItemActive");
-            }
+            this._highlightState = this.active || !!this.options.group;
+            this.updateHighlight();
         },
         /**
          * Clears visual highlighting, marks inactive state and
@@ -192,13 +223,19 @@
                 (this.actionMethods.deactivate)();
                 this.active = false;
             }
+            this._highlightState = false;
+            this.updateHighlight();
         },
         /**
          * Clears visual highlighting, marks inactive state
          */
         reset: function () {
-            this.$toolBarItem.removeClass("toolBarItemActive");
             this.active = false;
+            this._highlightState = false;
+            this.updateHighlight();
+        },
+        updateHighlight: function() {
+            this.$toolBarItem.toggleClass("toolBarItemActive", !!this._highlightState);
         }
     });
 
