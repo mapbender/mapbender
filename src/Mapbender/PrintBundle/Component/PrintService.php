@@ -656,7 +656,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 }
             };
         }
-        $lastIndex = count($blocks) - 1;
         foreach ($blocks as $n => $block) {
                 $size  = array($block->getWidth(), $block->getHeight());
                 $tempY = round($size[1] * 25.4 / 96) + 10;
@@ -685,6 +684,23 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                             $doPageBreak = true;
                         }
                     }
+                    if ($legendConf) {
+                        if(($y - $yStartPosition + 10 ) > $height && $width > 100){
+                            $x +=  105;
+                            $y = $yStartPosition + 10;
+                        }
+                        if (($x - $xStartPosition + 20) > $width ) {
+                            $doPageBreak = true;
+                        }
+                    } else {
+                        if($y > $height) {
+                            $x += 105;
+                            $y = $yStartPosition + 10;
+                        }
+                        if ($x - $xStartPosition + 20 > $width) {
+                            $doPageBreak = true;
+                        }
+                    }
 
                     if ($doPageBreak) {
                         $this->pdf->addPage('P');
@@ -700,7 +716,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                     }
                 }
 
-                $postPageBreak = false;
                 if ($legendConf == true) {
                     // add legend in legend region on first page
                     // To Be doneCell(0,0,  utf8_decode($title));
@@ -712,13 +727,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                                 ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
 
                         $y += round($size[1] * 25.4 / 96) + 10;
-                        if(($y - $yStartPosition + 10 ) > $height && $width > 100){
-                            $x +=  105;
-                            $y = $yStartPosition + 10;
-                        }
-                        if (($x - $xStartPosition + 20) > $width ) {
-                            $postPageBreak = true;
-                        }
                   } else {
                       // print legend on second page
                       $this->pdf->SetXY($x,$y);
@@ -727,26 +735,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                         $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
 
                       $y += round($size[1] * 25.4 / 96) + 10;
-                      if($y > $height) {
-                          $x += 105;
-                          $y = $yStartPosition + 10;
-                      }
-                      if ($x - $xStartPosition + 20 > $width) {
-                          $postPageBreak = true;
-                      }
-
-                }
-                if ($postPageBreak && $n < $lastIndex) {
-                    $this->pdf->addPage('P');
-                    $this->pdf->SetFont('Arial', 'B', 11);
-                    $xStartPosition = 0;
-                    $yStartPosition = 0;
-                    $x = 5;
-                    $y = $yStartPosition + 10;
-                    $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                    $height = $this->pdf->getHeight();
-                    $width = $this->pdf->getWidth();
-                    $legendConf = false;
                 }
         }
     }
