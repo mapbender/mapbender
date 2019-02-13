@@ -660,11 +660,15 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             };
         }
         foreach ($blocks as $n => $block) {
-                $size  = array($block->getWidth(), $block->getHeight());
-                $tempY = round($size[1] * 25.4 / 96) + 10;
+            $imageMmWidth = $this->dotsToMm($block->getWidth(), 96);
+            $imageMmHeight = $this->dotsToMm($block->getHeight(), 96);
+            // allot a little extra height for the title text
+            // @todo: this should scale with font size
+            // @todo: support multi-line text
+            $blockHeightMm = round($imageMmHeight + 10);
 
                 if ($n > 0) {
-                    if ($y + $tempY + 10 > $region->getHeight()) {
+                    if ($y + $blockHeightMm > $region->getHeight()) {
                         // spill to next column
                         $x += 105;
                         $y = $margins['y'];
@@ -688,24 +692,20 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 $this->addImageToPdf($this->pdf, $block->resource,
                     $pageX,
                     $pageY + 5,
-                    ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
+                    $imageMmWidth, $imageMmHeight);
 
-                $y += round($size[1] * 25.4 / 96) + 10;
+                $y += $blockHeightMm + $margins['y'];
         }
     }
 
-
-    private function getLegendImage($url)
+    /**
+     * @param float $dots
+     * @param float $dpi
+     * @return float
+     */
+    public static function dotsToMm($dots, $dpi)
     {
-        $imagename = $this->makeTempFile('mb_printlegend');
-        $image = $this->imageTransport->downloadImage($url);
-        if ($image) {
-            imagepng($image, $imagename);
-            imagedestroy($image);
-            return $imagename;
-        } else {
-            return null;
-        }
+        return $dots * 25.4 / $dpi;
     }
 
     /**
