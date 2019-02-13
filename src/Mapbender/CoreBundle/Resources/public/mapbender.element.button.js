@@ -65,6 +65,58 @@
             }
         },
         /**
+         *
+         * @param {*} object
+         * @param {string[]} names
+         * @return {Array<function>}
+         * @private
+         */
+        _extractCallableMethods: function(object, names) {
+            return names.map(function(name) {
+                var method = name && object[name];
+                return typeof method === 'function' ? method: null;
+            }).filter(function(x) {
+                // throw out anything emptyish (including the nulls just produced)
+                return !!x;
+            });
+        },
+        /**
+         *
+         * @param targetWidget
+         * @return {{activate: function|null, deactivate: function|null}}
+         * @private
+         */
+        _extractActionMethods: function(targetWidget) {
+            var methodPair = {
+                activate: null,
+                deactivate: null
+            };
+            var activateCandidateNames = [this.options.action, 'defaultAction', 'activate', 'open'];
+            var deactivateCandidateNames = [this.options.deactivate, 'deactivate', 'close'];
+            var activateCandidates = this._extractCallableMethods(
+                targetWidget, activateCandidateNames);
+            var deactivateCandidates = this._extractCallableMethods(
+                targetWidget, deactivateCandidateNames);
+            if (activateCandidates.length) {
+                methodPair.activate = activateCandidates[0]
+                    .bind(targetWidget, this.reset.bind(this));
+            } else {
+                console.error("Target widget", targetWidget,
+                              "does not seem to have any potential activation method.",
+                              "Tried: ",  activateCandidateNames);
+            }
+            if (deactivateCandidates.length) {
+                methodPair.deactivate = deactivateCandidates[0]
+                    .bind(targetWidget, this.reset.bind(this));
+            } else {
+                console.error("Target widget", targetWidget,
+                              "does not seem to have any potential deactivation method.",
+                              "Tried: ",  deactivateCandidateNames);
+            }
+            return methodPair;
+
+        },
+        /**
          * @returns {null|object} the target widget object (NOT the DOM node; NOT a jQuery selection)
          * @private
          */
@@ -94,31 +146,7 @@
                     this.targetWidget = $target.data(dataKey);
                 }
                 if (this.targetWidget) {
-                    this.actionMethods = {
-                        activate: null,
-                        deactivate: null
-                    };
-                    var activateAction = this.options.action || 'defaultAction';
-                    var deactivateAction = this.options.deactivate;
-                    if (activateAction) {
-                        if (typeof this.targetWidget[activateAction] === 'function') {
-                            this.actionMethods.activate = this.targetWidget[activateAction].bind(this.targetWidget, this.reset.bind(this));
-                        } else {
-                            console.error("Target widget", this.options.target, this.targetWidget,
-                                          "does not have a callable method", activateAction);
-                        }
-                    }
-                    if (deactivateAction) {
-                        if (typeof this.targetWidget[deactivateAction] === 'function') {
-                            this.actionMethods.deactivate = this.targetWidget[deactivateAction].bind(this.targetWidget);
-                        } else{
-                            console.error("Target widget", this.options.target, this.targetWidget,
-                                          "does not have a callable method", deactivateAction);
-                        }
-                    }
-                    // If we do not have a deactivate method we have no way to turn the target off, even if we
-                    // can turn it on. This makes internal active state tracking becomes meaningless. We should treat
-                    // every click as an 'activate' action.
+                    this.actionMethods = this._extractActionMethods(this.targetWidget);
                     this.stateful = !!this.actionMethods.deactivate;
                 } else {
                     console.warn("Could not identify target element", this.options.target, targetInit);
