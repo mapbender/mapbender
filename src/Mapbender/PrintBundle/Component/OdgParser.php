@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\PrintBundle\Component\Region\FontStyle;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
@@ -89,10 +90,10 @@ class OdgParser
     /**
      * Get print configuration
      *
-     * @param $template
-     * @return array
+     * @param string $templateName
+     * @return Template
      */
-    public function getConf($template)
+    public function getConf($templateName)
     {
         /** @var \DOMElement $pageGeometry */
         /** @var \DOMElement $customShape */
@@ -101,7 +102,7 @@ class OdgParser
         /** @var \DOMElement $styleNode */
 
         $doc = new \DOMDocument();
-        $doc->loadXML($this->readOdgFile($template, 'styles.xml'));
+        $doc->loadXML($this->readOdgFile($templateName, 'styles.xml'));
         $xPath        = new \DOMXPath($doc);
         $node         = $xPath->query("//style:page-layout-properties");
         $pageGeometry = $node->item(0);
@@ -111,27 +112,37 @@ class OdgParser
                 'height' => static::parseNumericNodeAttribute($pageGeometry, 'fo:page-height'),
                 'width'  => static::parseNumericNodeAttribute($pageGeometry, 'fo:page-width'),
             ),
-            'fields' => array()
         );
+        $templateObject = new Template($data['pageSize']['width'], $data['pageSize']['height'], $data['orientation']);
 
         $doc = new \DOMDocument();
-        $doc->loadXML($this->readOdgFile($template, 'content.xml'));
+        $doc->loadXML($this->readOdgFile($templateName, 'content.xml'));
 
         $xPath        = new \DOMXPath($doc);
         $customShapes = $xPath->query("//draw:custom-shape");
         foreach ($customShapes as $customShape) {
-            $data[ $customShape->getAttribute('draw:name') ] = static::parseShape($customShape);
+            $shapeData = static::parseShape($customShape);
+            $shapeName = $customShape->getAttribute('draw:name');
+            $templateRegion = new TemplateRegion($shapeData['width'], $shapeData['height'], array(
+                $shapeData['x'],
+                $shapeData['y'],
+            ));
+            $templateObject->addRegion($shapeName, $templateRegion);
+            // @todo: extract font styles for all shapes?
         }
 
         foreach ($xPath->query("draw:page/draw:frame", $doc->getElementsByTagName('drawing')->item(0)) as $node) {
             $name      = $node->getAttribute('draw:name');
-            $fontSize  = null;
-            $fontColor = null;
             $style     = null;
 
             if (empty($name)) {
                 continue;
             }
+            $fieldShapeData = static::parseShape($node);
+            $textField = new TemplateRegion($fieldShapeData['width'], $fieldShapeData['height'], array(
+                $fieldShapeData['x'],
+                $fieldShapeData['y'],
+            ));
 
             // Recognize font name and size
             $textParagraph = $xPath->query("draw:text-box/text:p", $node)->item(0);
@@ -146,15 +157,14 @@ class OdgParser
                 $styleNode = $xPath->query('//style:style[@style:name="' . $style . '"]/style:text-properties')->item(0);
                 $fontSize  = static::parseNodeAttribute($styleNode, 'fo:font-size', static::DEFAULT_FONT_SIZE);
                 $fontColor = static::parseNodeAttribute($styleNode, 'fo:color', static::DEFAULT_FONT_COLOR);
+            } else {
+                $fontSize = static::DEFAULT_FONT_SIZE;
+                $fontColor = static::DEFAULT_FONT_COLOR;
             }
-
-            $data['fields'][ $name ] = array_merge(static::parseShape($node), array(
-                'font'     => self::DEFAULT_FONT_NAME,
-                'fontsize' => !empty($fontSize) ? $fontSize : self::DEFAULT_FONT_SIZE,
-                'color'    => !empty($fontColor) ? $fontColor : self::DEFAULT_FONT_COLOR,
-            ));
+            $textField->setFontStyle(new FontStyle(static::DEFAULT_FONT_NAME, $fontSize, $fontColor));
+            $templateObject->addTextField($name, $textField);
         }
-        return $data;
+        return $templateObject;
     }
 
     /**
