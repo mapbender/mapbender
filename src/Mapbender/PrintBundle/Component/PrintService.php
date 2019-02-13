@@ -637,14 +637,14 @@ class PrintService extends ImageExportService implements PrintServiceInterface
           // print legend on second page
           $this->pdf->addPage('P');
           $this->pdf->SetFont('Arial', 'B', 11);
-          $x = 5;
-          $y = 10;
           $height = $this->pdf->getHeight();
           $width = $this->pdf->getWidth();
           $legendConf = false;
           $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
           $xStartPosition = 0;
           $yStartPosition = 0;
+          $x = $xStartPosition + 5;
+          $y = $yStartPosition + 10;    // ?
         }
 
         $blocks = array();
@@ -665,7 +665,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                     $doPageBreak = false;
                     if ($legendConf == true) {
                         // print legend on first page
-                        if (($y-$yStartPosition) + $tempY + 10 > $height) {
+                        if ($y - $yStartPosition + $tempY + 10 > $height) {
                             if ($width > 100) {
                                 if($x - $xStartPosition + 20 > $width){
                                     $doPageBreak = true;
@@ -677,20 +677,22 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                                 $doPageBreak = true;
                             }
                         }
-                    } else if ($y + $tempY + 10 > ($this->pdf->getHeight())) {
+                    } else if ($y - $yStartPosition + $tempY + 10 > $height) {
                         // full page, column spill
                         $x += 105;
-                        $y = 10;
-                        $this->addLegendPageImage($this->pdf, $this->conf, $this->data);    // ?
-                        if($x + 20 > ($this->pdf->getWidth())){
+                        $y = $yStartPosition + 10;
+                        if ($x - $xStartPosition + 20 > $width) {
                             $doPageBreak = true;
                         }
                     }
 
                     if ($doPageBreak) {
                         $this->pdf->addPage('P');
+                        $this->pdf->SetFont('Arial', 'B', 11);
+                        $xStartPosition = 0;
+                        $yStartPosition = 0;
                         $x = 5;
-                        $y = 10;
+                        $y = $yStartPosition + 10;
                         $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                         $height = $this->pdf->getHeight();
                         $width = $this->pdf->getWidth();
@@ -714,11 +716,9 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                             $x +=  105;
                             $y = $yStartPosition + 10;
                         }
-                        if(($x - $xStartPosition + 10) > $width ){
+                        if (($x - $xStartPosition + 20) > $width ) {
                             $postPageBreak = true;
-                            $this->pdf->SetFont('Arial', 'B', 11);  // ?
                         }
-
                   } else {
                       // print legend on second page
                       $this->pdf->SetXY($x,$y);
@@ -727,19 +727,22 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                         $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
 
                       $y += round($size[1] * 25.4 / 96) + 10;
-                      if($y > ($this->pdf->getHeight())){
+                      if($y > $height) {
                           $x += 105;
-                          $y = 10;
+                          $y = $yStartPosition + 10;
                       }
-                      if($x + 20 > ($this->pdf->getWidth())) {
+                      if ($x - $xStartPosition + 20 > $width) {
                           $postPageBreak = true;
                       }
 
                 }
                 if ($postPageBreak && $n < $lastIndex) {
                     $this->pdf->addPage('P');
+                    $this->pdf->SetFont('Arial', 'B', 11);
+                    $xStartPosition = 0;
+                    $yStartPosition = 0;
                     $x = 5;
-                    $y = 10;
+                    $y = $yStartPosition + 10;
                     $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                     $height = $this->pdf->getHeight();
                     $width = $this->pdf->getWidth();
