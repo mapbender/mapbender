@@ -15,7 +15,7 @@
         $toolBarItem: null,
         /** initialized to true if button can determine target's active state and remember its own active state */
         stateful: null,
-        actionMethods: {},
+        actionMethods: null,
 
         _create: function () {
             if (this.options.click) {
@@ -145,10 +145,7 @@
                     var dataKey = [namespace, innerName.charAt(0).toUpperCase(), innerName.slice(1)].join('');
                     this.targetWidget = $target.data(dataKey);
                 }
-                if (this.targetWidget) {
-                    this.actionMethods = this._extractActionMethods(this.targetWidget);
-                    this.stateful = !!this.actionMethods.deactivate;
-                } else {
+                if (!this.targetWidget) {
                     console.warn("Could not identify target element", this.options.target, targetInit);
                     // Avoid attempting this again
                     // null: target widget not initialized; false: looked for target widget but got nothing
@@ -158,6 +155,16 @@
             }
             return this.targetWidget || null;
         },
+        _initializeActionMethods: function() {
+            if (this.actionMethods === null) {
+                if (this._initializeTarget()) {
+                    this.actionMethods = this._extractActionMethods(this.targetWidget);
+                    this.stateful = !!this.actionMethods.deactivate;
+                } else {
+                    this.actionMethods = {};
+                }
+            }
+        },
         /**
          * Calls 'activate' method on target if defined, and if in group, sets a visual highlight
          */
@@ -165,7 +172,7 @@
             if (this.stateful && this.active) {
                 return;
             }
-            this._initializeTarget();
+            this._initializeActionMethods();
             if (this.actionMethods.activate) {
                 (this.actionMethods.activate)();
                 this.active = this.stateful;
@@ -180,7 +187,7 @@
          */
         deactivate: function () {
             this.reset();
-            this._initializeTarget();
+            this._initializeActionMethods();
             if (this.actionMethods.deactivate) {
                 (this.actionMethods.deactivate)();
                 this.active = false;
