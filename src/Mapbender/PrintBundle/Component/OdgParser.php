@@ -105,15 +105,7 @@ class OdgParser
         $doc->loadXML($this->readOdgFile($templateName, 'styles.xml'));
         $xPath        = new \DOMXPath($doc);
         $node         = $xPath->query("//style:page-layout-properties");
-        $pageGeometry = $node->item(0);
-        $data         = array(
-            'orientation' => static::parseNodeAttribute($pageGeometry, 'style:print-orientation', static::DEFAULT_ORIENTATION),
-            'pageSize'    => array(
-                'height' => static::parseNumericNodeAttribute($pageGeometry, 'fo:page-height'),
-                'width'  => static::parseNumericNodeAttribute($pageGeometry, 'fo:page-width'),
-            ),
-        );
-        $templateObject = new Template($data['pageSize']['width'], $data['pageSize']['height'], $data['orientation']);
+        $templateObject = $this->parsePageGeometryIntoObject($node->item(0));
 
         $doc = new \DOMDocument();
         $doc->loadXML($this->readOdgFile($templateName, 'content.xml'));
@@ -121,12 +113,8 @@ class OdgParser
         $xPath        = new \DOMXPath($doc);
         $customShapes = $xPath->query("//draw:custom-shape");
         foreach ($customShapes as $customShape) {
-            $shapeData = static::parseShape($customShape);
             $shapeName = $customShape->getAttribute('draw:name');
-            $templateRegion = new TemplateRegion($shapeData['width'], $shapeData['height'], array(
-                $shapeData['x'],
-                $shapeData['y'],
-            ));
+            $templateRegion = $this->parseShapeIntoRegion($customShape);
             $templateObject->addRegion($shapeName, $templateRegion);
             // @todo: extract font styles for all shapes?
         }
@@ -138,11 +126,7 @@ class OdgParser
             if (empty($name)) {
                 continue;
             }
-            $fieldShapeData = static::parseShape($node);
-            $textField = new TemplateRegion($fieldShapeData['width'], $fieldShapeData['height'], array(
-                $fieldShapeData['x'],
-                $fieldShapeData['y'],
-            ));
+            $textField = $this->parseShapeIntoRegion($node);
 
             // Recognize font name and size
             $textParagraph = $xPath->query("draw:text-box/text:p", $node)->item(0);
@@ -203,7 +187,7 @@ class OdgParser
     /**
      * Parse shape parameters
      *
-     * @param $customShape
+     * @param \DOMElement $customShape
      * @return array
      */
     public static function parseShape($customShape)
@@ -214,5 +198,41 @@ class OdgParser
             'x'      => static::parseNumericNodeAttribute($customShape, 'svg:x'),
             'y'      => static::parseNumericNodeAttribute($customShape, 'svg:y'),
         );
+    }
+
+    /**
+     * @param \DOMElement $customShape
+     * @return TemplateRegion
+     */
+    public function parseShapeIntoRegion($customShape)
+    {
+        $shd = static::parseShape($customShape);
+        return new TemplateRegion($shd['width'], $shd['height'], array($shd['x'],$shd['y']));
+
+    }
+
+    /**
+     * @param \DOMElement $node
+     * @return array
+     */
+    public function parsePageGeometry($node)
+    {
+        return array(
+            'orientation' => static::parseNodeAttribute($node, 'style:print-orientation', static::DEFAULT_ORIENTATION),
+            'pageSize'    => array(
+                'height' => static::parseNumericNodeAttribute($node, 'fo:page-height'),
+                'width'  => static::parseNumericNodeAttribute($node, 'fo:page-width'),
+            ),
+        );
+    }
+
+    /**
+     * @param \DOMElement $node
+     * @return Template
+     */
+    public function parsePageGeometryIntoObject($node)
+    {
+        $data = $this->parsePageGeometry($node);
+        return new Template($data['pageSize']['width'], $data['pageSize']['height'], $data['orientation']);
     }
 }
