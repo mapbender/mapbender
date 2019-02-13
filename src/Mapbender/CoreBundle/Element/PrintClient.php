@@ -232,16 +232,21 @@ class PrintClient extends Element
 
                 return new Response($size);
 
-            case 'getDigitizerTemplates':
+            case 'getDigitizerPrintConfiguration':
                 $featureType = $request->get('schemaName');
                 $featureTypeConfig = $this->container->getParameter('featureTypes');
-                $templates = $featureTypeConfig[$featureType]['print']['templates'];
+                $digitizerPrintConfig  = $featureTypeConfig[$featureType]['print'];
+                $templates = $digitizerPrintConfig['templates'];
+                $isScaleSet = !empty($digitizerPrintConfig['scale']);
 
                 if (!isset($templates)) {
                     throw new \Exception('Template configuration missing');
                 }
+                $scale = $isScaleSet ? $digitizerPrintConfig['scale'] : false;
 
-                return new JsonResponse($templates);
+                return new JsonResponse(array( 'templates' => $templates, 'scale' => $scale));
+
+
         }
     }
 }

@@ -134,6 +134,7 @@ mb:
       btn:
         deactivate: 'Druckrahmen deaktivieren'
         activate: 'Druckrahmen aktivieren'
+      getDigitizerPrintConfigurationError: 'Digitizer Print Konfiguration konnte nicht geladen werden'
     overview:
       nolayer: 'Die Übersicht enthält keine Ebene.'
       class:

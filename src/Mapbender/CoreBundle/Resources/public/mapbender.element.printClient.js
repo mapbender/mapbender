@@ -575,23 +575,30 @@
             $('input[name="digitizer_feature[id]"]', form).val(featureId);
             $('input[name="digitizer_feature[schemaName]"]', form).val(schemaName);
 
-            this._getDigitizerTemplates(schemaName);
+            this.open();
+
+            this._getDigitizerPrintConfiguration(schemaName)
+                .done(this.processDigitizerConfig.bind(this))
+                .fail(this._getDigitizerPrintConfigurationErrorHandler.bind(this));
+            ;
+
+
         },
 
-        _getDigitizerTemplates: function(schemaName) {
-            var self = this;
+        _getDigitizerPrintConfiguration : function(schemaName){
 
-            var url =  this.elementUrl + 'getDigitizerTemplates';
-            $.ajax({
-                url: url,
-                type: 'GET',
-                data: {schemaName: schemaName},
-                success: function(data) {
-                    self._overwriteTemplateSelect(data);
-                    // open changed dialog
-                    self.open();
-                }
-            });
+            return $.get(this.elementUrl + 'getDigitizerPrintConfiguration',
+                {schemaName : schemaName}
+            );
+        },
+        processDigitizerConfig: function(response){
+            this._overwriteTemplateSelect(response.templates);
+            response.scale ? this._setDigitizerPrintScale(response.scale) : false;
+
+        },
+
+        _getDigitizerPrintConfigurationErrorHandler: function(){
+            Mapbender.error(Mapbender.trans('mb.core.printclient.getDigitizerPrintConfigurationError'), 3000);
         },
 
         _overwriteTemplateSelect: function(templates) {
@@ -619,6 +626,17 @@
                 ++count;
             });
             this.overwriteTemplates = true;
+        },
+
+        _setDigitizerPrintScale: function(scale) {
+            var $select = $('select[name=scale_select]', this.element);
+            $select.siblings('ul').children().filter(function(index,element){
+                if($(element).text() === scale){
+                   return $(element).click().click();
+                }
+            });
+
+            this._updateGeometry();
         },
 
         /**
