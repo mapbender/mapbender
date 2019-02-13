@@ -134,6 +134,7 @@ mb:
       btn:
         deactivate: 'Deactivate Print Frame'
         activate: 'Activate Print Frame'
+      getDigitizerPrintConfigurationError: 'Digitizer print configuration could not be loaded'
     overview:
       nolayer: 'The overview element has no layer.'
       class:
