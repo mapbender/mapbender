@@ -666,12 +666,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                         // print legend on first page
                         if ($y - $yStartPosition + $tempY + 10 > $height) {
                             if ($width > 100) {
-                                if($x - $xStartPosition + 20 > $width){
-                                    $doPageBreak = true;
-                                } else {
-                                    $x += $x + 105; // ?
-                                    $y = $yStartPosition + 5;
-                                }
+                                $x += 105;
+                                $y = $yStartPosition + 5;
                             } else {
                                 $doPageBreak = true;
                             }
@@ -680,26 +676,20 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                         // full page, column spill
                         $x += 105;
                         $y = $yStartPosition + 10;
-                        if ($x - $xStartPosition + 20 > $width) {
-                            $doPageBreak = true;
-                        }
                     }
                     if ($legendConf) {
                         if(($y - $yStartPosition + 10 ) > $height && $width > 100){
                             $x +=  105;
                             $y = $yStartPosition + 10;
                         }
-                        if (($x - $xStartPosition + 20) > $width ) {
-                            $doPageBreak = true;
-                        }
                     } else {
                         if($y > $height) {
                             $x += 105;
                             $y = $yStartPosition + 10;
                         }
-                        if ($x - $xStartPosition + 20 > $width) {
-                            $doPageBreak = true;
-                        }
+                    }
+                    if ($x - $xStartPosition + 20 > $width) {
+                        $doPageBreak = true;
                     }
 
                     if ($doPageBreak) {
