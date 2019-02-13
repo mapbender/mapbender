@@ -647,23 +647,21 @@ class PrintService extends ImageExportService implements PrintServiceInterface
           $yStartPosition = 0;
         }
 
+        $blocks = array();
         foreach ($this->data['legends'] as $idx => $legendArray) {
-            $c         = 1;
-            $arraySize = count($legendArray);
             foreach ($legendArray as $title => $legendUrl) {
-
-                if (preg_match('/request=GetLegendGraphic/i', urldecode($legendUrl)) === 0) {
-                    continue;
+                $image = $this->imageTransport->downloadImage($legendUrl);
+                if ($image) {
+                   $blocks[] = new LegendBlock($image, $title);
                 }
-
-                $image = $this->getLegendImage($legendUrl);
-                if (!$image) {
-                    continue;
-                }
-                $size  = getimagesize($image);
+            };
+        }
+        $lastIndex = count($blocks) - 1;
+        foreach ($blocks as $n => $block) {
+                $size  = array($block->getWidth(), $block->getHeight());
                 $tempY = round($size[1] * 25.4 / 96) + 10;
 
-                if ($c > 1) {
+                if ($n > 0) {
                     // print legend on second page
                     if($y + $tempY + 10 > ($this->pdf->getHeight()) && $legendConf == false){
                         $x += 105;
@@ -701,23 +699,22 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                     }
                 }
 
-
                 if ($legendConf == true) {
                     // add legend in legend region on first page
                     // To Be doneCell(0,0,  utf8_decode($title));
                     $this->pdf->SetXY($x,$y);
-                    $this->pdf->Cell(0,0,  utf8_decode($title));
-                    $this->pdf->Image($image,
+                    $this->pdf->Cell(0,0,  utf8_decode($block->getTitle()));
+                    $this->addImageToPdf($this->pdf, $block->resource,
                                 $x,
                                 $y +5 ,
-                                ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
+                                ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
 
                         $y += round($size[1] * 25.4 / 96) + 10;
                         if(($y - $yStartPosition + 10 ) > $height && $width > 100){
                             $x +=  105;
                             $y = $yStartPosition + 10;
                         }
-                        if(($x - $xStartPosition + 10) > $width && $c < $arraySize ){
+                        if(($x - $xStartPosition + 10) > $width && $n < $lastIndex ){
                             $this->pdf->addPage('P');
                             $x = 5;
                             $y = 10;
@@ -728,29 +725,26 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                             $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                         }
 
-                  }else{
+                  } else {
                       // print legend on second page
                       $this->pdf->SetXY($x,$y);
-                      $this->pdf->Cell(0,0,  utf8_decode($title));
-                      $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
+                      $this->pdf->Cell(0,0,  utf8_decode($block->getTitle()));
+                      $this->addImageToPdf($this->pdf, $block->resource,
+                        $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
 
                       $y += round($size[1] * 25.4 / 96) + 10;
                       if($y > ($this->pdf->getHeight())){
                           $x += 105;
                           $y = 10;
                       }
-                      if($x + 20 > ($this->pdf->getWidth()) && $c < $arraySize){
+                      if($x + 20 > ($this->pdf->getWidth()) && $n < $lastIndex){
                           $this->pdf->addPage('P');
                           $x = 5;
                           $y = 10;
                           $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                       }
 
-                  }
-
-                unlink($image);
-                $c++;
-            }
+                }
         }
     }
 
