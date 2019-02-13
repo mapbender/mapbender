@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ 48d95938a**
+* **dev-release/3.0.7 @ 49f113f9c**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#184](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
@@ -26,6 +26,7 @@
     - Generate label and other symbol sizing parameters understood by Mapserver, QGis server and Geoserver ([735626322](https://github.com/mapbender/mapbender/commit/73562632261819d79b9a9c0c264caeb33f34f4bf#diff-c72724b3690b61d792254dd26a7ca9cbR222))
     - Optimize handling performance of WMS layers with manually reduced opacity
     - Synchronize layer and legend visibility at any scale with client-side behavior ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
+    - Fix wrong (grey instead of white) color of GpsButton area display circle, if one makes it into an export or print
   - Print:
     - Add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
       - NOTE: Print queue display styling [inherits from .mapbender-element-result-table](https://github.com/mapbender/mapbender/blob/e2fd234ffa5f98d6c74c0359f26d7d60362f50dd/src/Mapbender/PrintBundle/Resources/public/element/printclient.scss#L28), which means
@@ -36,6 +37,7 @@
     - Fixed reproduction of 'donut'-style polygon cutouts ([PR#1080](https://github.com/mapbender/mapbender/pull/1080))
   - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
   - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([Issue #715](https://github.com/mapbender/mapbender/issues/715), [PR#1074](https://github.com/mapbender/mapbender/pull/1074))
+  - Fix Redlining in sidepane never deactivating its drawing tools once activated ([Issue #992](https://github.com/mapbender/mapbender/issues/992), [PR#1088](https://github.com/mapbender/mapbender/pull/1088))
   - [Vendorspecifics] Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
   - [Vendorspecifics] Unused / ineffective form fields have been removed ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
   - [Backend] Fix Application import from pretty-printed JSON input
