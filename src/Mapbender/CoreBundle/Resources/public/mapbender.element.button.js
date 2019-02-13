@@ -22,6 +22,9 @@
                 // so we still need to load the JS asset, and we still end up right here
                 return;
             }
+            // Proof of concept: this can work with no 'activate' or 'deactivate' settings from the backend
+            this.options.deactivate = null;
+            this.options.activate = null;
             var self = this,
                 option = {};
 
@@ -94,8 +97,8 @@
                 activate: null,
                 deactivate: null
             };
-            var activateCandidateNames = [this.options.action, 'defaultAction', 'activate', 'open'];
-            var deactivateCandidateNames = [this.options.deactivate, 'deactivate', 'close'];
+            var activateCandidateNames = ['defaultAction', 'activate', 'open'];
+            var deactivateCandidateNames = ['deactivate', 'close'];
             var activateCandidates = this._extractCallableMethods(
                 targetWidget, activateCandidateNames);
             var deactivateCandidates = this._extractCallableMethods(
