@@ -3,6 +3,7 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
+use Mapbender\PrintBundle\Component\Region\A4FullPage;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
@@ -624,28 +625,30 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     private function addLegend()
     {
-        if(isset($this->conf['legend']) && $this->conf['legend']){
-          // print legend on first
-          $height = $this->conf['legend']['height'];
-          $width = $this->conf['legend']['width'];
-          $xStartPosition = $this->conf['legend']['x'];
-          $yStartPosition = $this->conf['legend']['y'];
-          $x = $xStartPosition + 5;
-          $y = $yStartPosition + 5;
-          $legendConf = true;
-        }else{
-          // print legend on second page
-          $this->pdf->addPage('P');
-          $this->pdf->SetFont('Arial', 'B', 11);
-          $height = $this->pdf->getHeight();
-          $width = $this->pdf->getWidth();
-          $legendConf = false;
-          $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-          $xStartPosition = 0;
-          $yStartPosition = 0;
-          $x = $xStartPosition + 5;
-          $y = $yStartPosition + 10;    // ?
+        // @todo: config values please
+        $marginsFirstPage = array(
+            'x' => 5,
+            'y' => 5,
+        );
+        $marginsFullPage = array(
+            'x' => 5,
+            'y' => 10,
+        );
+        if (!empty($this->conf['legend'])) {
+            $regionData = $this->conf['legend'];
+            $offsetXy = array($regionData['x'], $regionData['y']);
+            $margins = $marginsFirstPage;
+            $region = new TemplateRegion($regionData['width'], $regionData['height'], $offsetXy);
+        } else {
+            // print legend on second page
+            $this->pdf->addPage('P');
+            $this->pdf->SetFont('Arial', 'B', 11);
+            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
+            $margins = $marginsFullPage;
+            $region = new A4FullPage();
         }
+        $x = $region->getOffsetX() + $margins['x'];
+        $y = $region->getOffsetY() + $margins['y'];
 
         $blocks = array();
         foreach ($this->data['legends'] as $idx => $legendArray) {
@@ -661,56 +664,31 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 $tempY = round($size[1] * 25.4 / 96) + 10;
 
                 if ($n > 0) {
-                    $doPageBreak = false;
-                    if ($y - $yStartPosition + $tempY + 10 > $height && $width > 100) {
+                    if ($y - $region->getOffsetY() + $tempY + 10 > $region->getHeight()) {
                         // spill to next column
                         $x += 105;
-                        if ($legendConf) {
-                            // still on first page
-                            $y = $yStartPosition + 5;
-                        } else {
-                            // full page
-                            $y = $yStartPosition + 10;
-                        }
+                        $y = $region->getOffsetY() + $margins['y'];
                     }
-                    if ($x - $xStartPosition + 20 > $width) {
-                        $doPageBreak = true;
-                    }
-
-                    if ($doPageBreak) {
+                    if ($x - $region->getOffsetX() + 20 > $region->getWidth()) {
+                        // we need a page break
                         $this->pdf->addPage('P');
                         $this->pdf->SetFont('Arial', 'B', 11);
-                        $xStartPosition = 0;
-                        $yStartPosition = 0;
-                        $x = 5;
-                        $y = $yStartPosition + 10;
+                        $region = new A4FullPage();
+                        $margins = $marginsFullPage;
+                        $x = $region->getOffsetX() + $margins['x'];
+                        $y = $region->getOffsetY() + $margins['y'];
                         $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                        $height = $this->pdf->getHeight();
-                        $width = $this->pdf->getWidth();
-                        $legendConf = false;
                     }
                 }
 
-                if ($legendConf == true) {
-                    // add legend in legend region on first page
-                    // To Be doneCell(0,0,  utf8_decode($title));
-                    $this->pdf->SetXY($x,$y);
-                    $this->pdf->Cell(0,0,  utf8_decode($block->getTitle()));
-                    $this->addImageToPdf($this->pdf, $block->resource,
-                                $x,
-                                $y +5 ,
-                                ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
+                $this->pdf->SetXY($x,$y);
+                $this->pdf->Cell(0,0,  utf8_decode($block->getTitle()));
+                $this->addImageToPdf($this->pdf, $block->resource,
+                            $x ,
+                            $y + 5,
+                            ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
 
-                        $y += round($size[1] * 25.4 / 96) + 10;
-                  } else {
-                      // print legend on second page
-                      $this->pdf->SetXY($x,$y);
-                      $this->pdf->Cell(0,0,  utf8_decode($block->getTitle()));
-                      $this->addImageToPdf($this->pdf, $block->resource,
-                        $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
-
-                      $y += round($size[1] * 25.4 / 96) + 10;
-                }
+                $y += round($size[1] * 25.4 / 96) + 10;
         }
     }
 
