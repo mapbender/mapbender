@@ -8,6 +8,7 @@
 
     $.widget("mapbender.mbGpsPosition", {
         options: {
+            autoStart: false,
             follow: false,
             average: 1,
             zoomToAccuracy: false,

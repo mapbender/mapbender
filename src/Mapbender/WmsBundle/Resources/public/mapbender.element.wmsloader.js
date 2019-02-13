@@ -11,7 +11,11 @@
         mbMap: null,
         _layerOptionsOn: {options: {treeOptions: {selected: true}}},
         _layerOptionsOff: {options: {treeOptions: {selected: false}}},
-        _create: function(){
+        _create: function() {
+            if (this.options.autoOpen) {
+                console.warn("mbWmsLoader option 'autoOpen' not implemented, ignoring");
+                this.options.autoOpen = false;
+            }
             var self = this;
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
                 return;
