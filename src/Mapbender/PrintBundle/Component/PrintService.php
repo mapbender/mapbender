@@ -694,6 +694,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                     }
                 }
 
+                $postPageBreak = false;
                 if ($legendConf == true) {
                     // add legend in legend region on first page
                     // To Be doneCell(0,0,  utf8_decode($title));
@@ -709,15 +710,9 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                             $x +=  105;
                             $y = $yStartPosition + 10;
                         }
-                        if(($x - $xStartPosition + 10) > $width && $n < $lastIndex ){
-                            $this->pdf->addPage('P');
-                            $x = 5;
-                            $y = 10;
-                            $this->pdf->SetFont('Arial', 'B', 11);
-                            $height = $this->pdf->getHeight();
-                            $width = $this->pdf->getWidth();
-                            $legendConf = false;
-                            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
+                        if(($x - $xStartPosition + 10) > $width ){
+                            $postPageBreak = true;
+                            $this->pdf->SetFont('Arial', 'B', 11);  // ?
                         }
 
                   } else {
@@ -732,13 +727,19 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                           $x += 105;
                           $y = 10;
                       }
-                      if($x + 20 > ($this->pdf->getWidth()) && $n < $lastIndex){
-                          $this->pdf->addPage('P');
-                          $x = 5;
-                          $y = 10;
-                          $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
+                      if($x + 20 > ($this->pdf->getWidth())) {
+                          $postPageBreak = true;
                       }
 
+                }
+                if ($postPageBreak && $n < $lastIndex) {
+                    $this->pdf->addPage('P');
+                    $x = 5;
+                    $y = 10;
+                    $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
+                    $height = $this->pdf->getHeight();
+                    $width = $this->pdf->getWidth();
+                    $legendConf = false;
                 }
         }
     }
