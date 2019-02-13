@@ -668,8 +668,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                             if ($width > 100) {
                                 $x += 105;
                                 $y = $yStartPosition + 5;
-                            } else {
-                                $doPageBreak = true;
                             }
                         }
                     } else if ($y - $yStartPosition + $tempY + 10 > $height) {
