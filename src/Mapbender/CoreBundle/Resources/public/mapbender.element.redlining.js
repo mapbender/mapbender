@@ -1,6 +1,6 @@
 (function($){
 
-    $.widget("mapbender.mbRedlining", {
+    $.widget("mapbender.mbRedlining", $.mapbender.mbBaseElement, {
         options: {
             target: null,
             display_type: 'dialog',
@@ -61,6 +61,9 @@
                 this.element.removeClass('hidden');
             }
             $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
+        },
+        hide: function() {
+            this._deactivateControl();
         },
         deactivate: function(){
             if (this.options.display_type === 'dialog'){
