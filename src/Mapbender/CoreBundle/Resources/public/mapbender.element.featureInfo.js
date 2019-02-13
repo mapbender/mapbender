@@ -111,7 +111,6 @@
 
             mapElement.removeClass('mb-feature-info-active');
 
-            $(".toolBarItemActive").removeClass("toolBarItemActive");
             if (widget.popup) {
                 if (widget.popup.$element) {
                     $('body').append(element.addClass('hidden'));
