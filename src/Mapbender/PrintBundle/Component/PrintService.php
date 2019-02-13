@@ -647,8 +647,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             $margins = $marginsFullPage;
             $region = new A4FullPage();
         }
-        $x = $region->getOffsetX() + $margins['x'];
-        $y = $region->getOffsetY() + $margins['y'];
+        $x = $margins['x'];
+        $y = $margins['y'];
 
         $blocks = array();
         foreach ($this->data['legends'] as $idx => $legendArray) {
@@ -664,29 +664,31 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 $tempY = round($size[1] * 25.4 / 96) + 10;
 
                 if ($n > 0) {
-                    if ($y - $region->getOffsetY() + $tempY + 10 > $region->getHeight()) {
+                    if ($y + $tempY + 10 > $region->getHeight()) {
                         // spill to next column
                         $x += 105;
-                        $y = $region->getOffsetY() + $margins['y'];
+                        $y = $margins['y'];
                     }
-                    if ($x - $region->getOffsetX() + 20 > $region->getWidth()) {
+                    if ($x + 20 > $region->getWidth()) {
                         // we need a page break
                         $this->pdf->addPage('P');
                         $this->pdf->SetFont('Arial', 'B', 11);
                         $region = new A4FullPage();
                         $margins = $marginsFullPage;
-                        $x = $region->getOffsetX() + $margins['x'];
-                        $y = $region->getOffsetY() + $margins['y'];
+                        $x = $margins['x'];
+                        $y = $margins['y'];
                         $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                     }
                 }
 
-                $this->pdf->SetXY($x,$y);
+                $pageX = $x + $region->getOffsetX();
+                $pageY = $y + $region->getOffsetY();
+                $this->pdf->SetXY($pageX, $pageY);
                 $this->pdf->Cell(0,0,  utf8_decode($block->getTitle()));
                 $this->addImageToPdf($this->pdf, $block->resource,
-                            $x ,
-                            $y + 5,
-                            ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
+                    $pageX,
+                    $pageY + 5,
+                    ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96));
 
                 $y += round($size[1] * 25.4 / 96) + 10;
         }
