@@ -662,18 +662,16 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
                 if ($n > 0) {
                     $doPageBreak = false;
-                    if ($legendConf == true) {
-                        // print legend on first page
-                        if ($y - $yStartPosition + $tempY + 10 > $height) {
-                            if ($width > 100) {
-                                $x += 105;
-                                $y = $yStartPosition + 5;
-                            }
-                        }
-                    } else if ($y - $yStartPosition + $tempY + 10 > $height) {
-                        // full page, column spill
+                    if ($y - $yStartPosition + $tempY + 10 > $height && $width > 100) {
+                        // spill to next column
                         $x += 105;
-                        $y = $yStartPosition + 10;
+                        if ($legendConf) {
+                            // still on first page
+                            $y = $yStartPosition + 5;
+                        } else {
+                            // full page
+                            $y = $yStartPosition + 10;
+                        }
                     }
                     if (($y - $yStartPosition + 10 ) > $height && $width > 100){
                         $x +=  105;
