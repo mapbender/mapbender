@@ -577,24 +577,32 @@
 
             this.open();
 
-            this._getDigitizerTemplates(schemaName);
+            this._getDigitizerPrintConfiguration(schemaName)
+                .done(this.processDigitizerConfig.bind(this))
+                .fail(this._getDigitizerPrintConfigurationErrorHandler.bind(this));
+            ;
 
-            this._setDigitizerPrintScale(schemaName);
+
         },
 
-        _getDigitizerTemplates: function(schemaName) {
-            var self = this;
+        _getDigitizerPrintConfiguration : function(schemaName){
 
-            var url =  this.elementUrl + 'getDigitizerTemplates';
-            $.ajax({
-                url: url,
-                type: 'GET',
-                data: {schemaName: schemaName},
-                success: function(data) {
-                    self._overwriteTemplateSelect(data);
-                }
-            });
+            return $.get(this.elementUrl + 'getDigitizerPrintConfiguration',
+                {schemaName : schemaName}
+            );
         },
+        processDigitizerConfig: function(response){
+            this._overwriteTemplateSelect(response.templates);
+            response.scale ? this._setDigitizerPrintScale(response.scale) : false;
+
+        },
+
+        _getDigitizerPrintConfigurationErrorHandler: function(){
+           Mapbender.error(Mapbender.trans('mapbender.digitizer.getDigitizerPrintConfigurationError'),3000);
+
+
+        },
+
 
         _overwriteTemplateSelect: function(templates) {
             var templateSelect = $('select[name=template]', this.element);
@@ -623,23 +631,15 @@
             this.overwriteTemplates = true;
         },
 
-        _setDigitizerPrintScale: function(schemaName) {
-            var self = this;
-
-            var url =  self.elementUrl + 'getDigitizerPrintScale';
-            $.ajax({
-                url: url,
-                type: 'GET',
-                data: {schemaName: schemaName},
-                success: function(data) {
-                    if (isNaN(data)) {
-                        return;
-                    }
-                    $('[name=scale_select] option[value="' + data + '"]', self.element).attr('selected', true);
-                    $('[name=scale_select]').parent().find('.dropdownValue').text('1:' + data);
-                    self._updateGeometry();
+        _setDigitizerPrintScale: function(scale) {
+            var $select = $('select[name=scale_select]', this.element);
+            $select.siblings('ul').children().filter(function(index,element){
+                if($(element).text() === scale){
+                   return $(element).click().click();
                 }
             });
+
+            this._updateGeometry();
         },
 
         /**
