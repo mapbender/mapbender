@@ -13,8 +13,6 @@
         active: false,
         targetWidget: null,
         $toolBarItem: null,
-        /** initialized to true if button can determine target's active state and remember its own active state */
-        stateful: null,
         actionMethods: null,
 
         _create: function () {
@@ -63,7 +61,7 @@
                 }
             }
 
-            if (!this.stateful || !this.active) {
+            if (!this.active) {
                 this.activate();
             } else {
                 this.deactivate();
@@ -155,7 +153,6 @@
                     // Avoid attempting this again
                     // null: target widget not initialized; false: looked for target widget but got nothing
                     this.targetWidget = false;
-                    this.stateful = false;
                 }
             }
             return this.targetWidget || null;
@@ -164,7 +161,6 @@
             if (this.actionMethods === null) {
                 if (this._initializeTarget()) {
                     this.actionMethods = this._extractActionMethods(this.targetWidget);
-                    this.stateful = !!this.actionMethods.deactivate;
                 } else {
                     this.actionMethods = {};
                 }
@@ -195,19 +191,20 @@
             } else {
                 this._highlightState = false;
             }
+
             this.updateHighlight();
         },
         /**
          * Calls 'activate' method on target if defined, and if in group, sets a visual highlight
          */
         activate: function () {
-            if (this.stateful && this.active) {
+            if (this.active) {
                 return;
             }
             this._initializeActionMethods();
             if (this.actionMethods.activate) {
                 (this.actionMethods.activate)();
-                this.active = this.stateful;
+                this.active = true;
             }
             this._highlightState = this.active || !!this.options.group;
             this.updateHighlight();
@@ -217,14 +214,11 @@
          * calls 'deactivate' method on target (if defined)
          */
         deactivate: function () {
-            this.reset();
             this._initializeActionMethods();
             if (this.actionMethods.deactivate) {
                 (this.actionMethods.deactivate)();
-                this.active = false;
             }
-            this._highlightState = false;
-            this.updateHighlight();
+            this.reset();
         },
         /**
          * Clears visual highlighting, marks inactive state
