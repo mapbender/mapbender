@@ -598,11 +598,8 @@
         },
 
         _getDigitizerPrintConfigurationErrorHandler: function(){
-           Mapbender.error(Mapbender.trans('mapbender.digitizer.getDigitizerPrintConfigurationError'),3000);
-
-
+            Mapbender.error(Mapbender.trans('mb.core.printclient.getDigitizerPrintConfigurationError'), 3000);
         },
-
 
         _overwriteTemplateSelect: function(templates) {
             var templateSelect = $('select[name=template]', this.element);
