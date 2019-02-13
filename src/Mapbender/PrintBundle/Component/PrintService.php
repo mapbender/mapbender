@@ -662,19 +662,16 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 $tempY = round($size[1] * 25.4 / 96) + 10;
 
                 if ($n > 0) {
+                    $doPageBreak = false;
                     // print legend on second page
                     if($y + $tempY + 10 > ($this->pdf->getHeight()) && $legendConf == false){
                         $x += 105;
                         $y = 10;
-                        $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
+                        $this->addLegendPageImage($this->pdf, $this->conf, $this->data);    // ?
                         if($x + 20 > ($this->pdf->getWidth())){
-                            $this->pdf->addPage('P');
-                            $x = 5;
-                            $y = 10;
-                            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
+                            $doPageBreak = true;
                         }
                     }
-
 
                     // print legend on first page
                     if($legendConf == true){
@@ -682,20 +679,18 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                             $x += $x + 105;
                             $y = $yStartPosition + 5;
                             if($x - $xStartPosition + 20 > $width){
-                                $this->pdf->addPage('P');
-                                $x = 5;
-                                $y = 10;
-                                $legendConf = false;
-                                $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-
+                                $doPageBreak = true;
                             }
                         }else if (($y-$yStartPosition) + $tempY + 10 > $height){
-                                $this->pdf->addPage('P');
-                                $x = 5;
-                                $y = 10;
-                                $legendConf = false;
-                                $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
+                                $doPageBreak = true;
                         }
+                    }
+                    if ($doPageBreak) {
+                        $this->pdf->addPage('P');
+                        $x = 5;
+                        $y = 10;
+                        $legendConf = false;
+                        $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                     }
                 }
 
