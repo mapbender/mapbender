@@ -13,6 +13,7 @@ use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -251,13 +252,19 @@ class PrintClient extends Element
 
                 return $response;
 
-            case 'getTemplateSize':
-                $template = $request->get('template');
-                /** @var OdgParser $odgParser */
-                $odgParser = $this->container->get('mapbender.print.template_parser.service');
-                $size = $odgParser->getMapSize($template);
+            case 'getDigitizerPrintConfiguration':
+                $featureType = $request->get('schemaName');
+                $featureTypeConfig = $this->container->getParameter('featureTypes');
+                $digitizerPrintConfig  = $featureTypeConfig[$featureType]['print'];
+                $templates = $digitizerPrintConfig['templates'];
+                $isScaleSet = !empty($digitizerPrintConfig['scale']);
 
-                return new Response($size);
+                if (!isset($templates)) {
+                    throw new \Exception('Template configuration missing');
+                }
+                $scale = $isScaleSet ? $digitizerPrintConfig['scale'] : false;
+
+                return new JsonResponse(array( 'templates' => $templates, 'scale' => $scale));
 
             default:
                 $response = $bridgeService->handleHttpRequest($request, $this->entity);
