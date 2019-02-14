@@ -20,6 +20,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 {
     /** @var PDF_Extensions|\FPDF */
     protected $pdf;
+    /** @var Template|array */
     protected $conf;
 
     /** @var array */
@@ -58,6 +59,13 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         parent::__construct($layerRenderers, $logger);
     }
 
+    /**
+     * Executes the job (plain array), returns a binary string representation of the resulting PDF.
+     *
+     * @param mixed[] $jobData
+     * @return string
+     * @throws \Exception on invalid template
+     */
     public function doPrint($jobData)
     {
         $templateData = $this->getTemplateData($jobData);
@@ -70,13 +78,29 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return $this->dumpPdf($pdf);
     }
 
+    /**
+     * Executes the job (plain array), returns a binary string representation of the resulting PDF.
+     *
+     * @param array $jobData
+     * @return string
+     * @throws \Exception on invalid template
+     */
     public function dumpPrint(array $jobData)
     {
         return $this->doPrint($jobData);
     }
 
+    /**
+     * Executes the job (plain array), writes the PDF result as directly as possible to $fileName.
+     *
+     * @param array $jobData
+     * @param string $fileName
+     * @throws \Exception on invalid template
+     */
     public function storePrint(array $jobData, $fileName)
     {
+        // NOTE: FPDI's 'direct' file output mode isn't any more efficient than its string output mode
+        //       (uses the same amount of memory). This may be more worthwhile with a different PDF lib...
         if (!file_put_contents($fileName, $this->doPrint($jobData))) {
             throw new \RuntimeException("Failed to store printout at {$fileName}");
         }
@@ -84,7 +108,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * @param array $jobData
-     * @return array
+     * @return Template|array
      */
     protected function getTemplateData($jobData)
     {
@@ -92,7 +116,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
-     * @param array $templateData
+     * @param Template|array $templateData
      * @param array $jobData
      */
     protected function setup($templateData, $jobData)
@@ -130,8 +154,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
-     * @param $templateData
-     * @param $templateName
+     * @param Template|array $templateData
+     * @param string $templateName
      * @return \FPDF|\FPDF_TPL|PDF_Extensions
      * @throws \Exception
      */
@@ -157,7 +181,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * @param string $mapImageName
-     * @param array $templateData
+     * @param Template|array $templateData
      * @param array $jobData
      * @return \FPDF|\FPDF_TPL|PDF_Extensions
      * @throws \Exception
@@ -201,7 +225,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
      * @param string $mapImageName
-     * @param array $templateData
+     * @param Template|array $templateData
      */
     protected function addMapImage($pdf, $mapImageName, $templateData)
     {
@@ -217,7 +241,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * page, may spill over and start adding more pages.
      *
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
-     * @param array $templateData
+     * @param Template|array $templateData
      * @param array $jobData
      */
     protected function afterMainMap($pdf, $templateData, $jobData)
@@ -263,7 +287,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * Fills textual regions on the first page.
      *
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
-     * @param array $templateData
+     * @param Template|array $templateData
      * @param array $jobData
      */
     protected function addTextFields($pdf, $templateData, $jobData)
