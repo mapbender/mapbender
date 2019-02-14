@@ -288,11 +288,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         {
             $this->addCoordinates();
         }
-
-        // add dynamic text
-        if (!empty($template['fields']['dynamic_text']) && !empty($template['dynamic_text'])) {
-            $this->addDynamicText();
-        }
     }
 
     /**
@@ -324,27 +319,36 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * Fills textual regions on the first page.
      *
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
-     * @param Template|array $templateData
+     * @param Template|array $template
      * @param array $jobData
      */
-    protected function addTextFields($pdf, $templateData, $jobData)
+    protected function addTextFields($pdf, $template, $jobData)
     {
-        foreach ($templateData['fields'] as $fieldName => $region) {
+        foreach ($template->getTextFields() as $fieldName => $region) {
             // skip extent fields, see special handling in addCoordinates method
             if (preg_match("/^extent/", $fieldName)) {
                 continue;
             }
             $text = $this->getTextFieldContent($fieldName, $jobData);
             if ($text !== null) {
-                list($r, $g, $b) = CSSColorParser::parse($region['color']);
-                $pdf->SetTextColor($r, $g, $b);
-                $pdf->SetFont('Arial', '', intval($region['fontsize']));
+                $this->applyFontStyle($pdf, $region);
                 $pdf->SetXY($region['x'] - 1, $region['y']);
                 $pdf->MultiCell($region['width'], $region['height'], utf8_decode($text));
             }
         }
         // reset text color to default black
         $pdf->SetTextColor(0, 0, 0);
+    }
+
+    /**
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param TemplateRegion|array $region
+     */
+    protected function applyFontStyle($pdf, $region)
+    {
+        list($r, $g, $b) = CSSColorParser::parse($region['color']);
+        $pdf->SetTextColor($r, $g, $b);
+        $pdf->SetFont($region['font'], '', floatval($region['fontsize']));
     }
 
     /**
@@ -367,6 +371,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 return date('d.m.Y');
             case 'scale' :
                 return '1 : ' . $jobData['scale_select'];
+            case 'dynamic_text':
+                if (isset($jobData['dynamic_text']['text'])) {
+                    return $jobData['dynamic_text']['text'] ?: null;
+                }
+                break;
             default:
                 if (isset($jobData['extra'][$fieldName])) {
                     return $jobData['extra'][$fieldName];
@@ -558,14 +567,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         } else {
             return false;
         }
-    }
-
-    private function addDynamicText()
-    {
-        $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
-        $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
-                $this->conf['fields']['dynamic_text']['height'],
-                utf8_decode($this->data['dynamic_text']['text']));
     }
 
     /**

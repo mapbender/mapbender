@@ -97,7 +97,7 @@ class Template implements \ArrayAccess
     }
 
     /**
-     * @return RegionCollection
+     * @return RegionCollection|TemplateRegion[]
      */
     public function getTextFields()
     {
