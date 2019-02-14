@@ -89,6 +89,14 @@ class Template implements \ArrayAccess
     }
 
     /**
+     * @return RegionCollection|TemplateRegion[]
+     */
+    public function getRegions()
+    {
+        return $this->regions;
+    }
+
+    /**
      * @return RegionCollection
      */
     public function getTextFields()
@@ -123,14 +131,22 @@ class Template implements \ArrayAccess
         return $this->textFields->hasMember($name);
     }
 
-    public function addRegion($name, $region)
+    /**
+     * @param TemplateRegion $region
+     */
+    public function addRegion($region)
     {
-        $this->regions->addMember($name, $region);
+        $region->setParentTemplate($this);
+        $this->regions->addMember($region->getName(), $region);
     }
 
-    public function addTextField($name, $field)
+    /**
+     * @param TemplateRegion $field
+     */
+    public function addTextField($field)
     {
-        $this->textFields->addMember($name, $field);
+        $field->setParentTemplate($this);
+        $this->textFields->addMember($field->getName(), $field);
     }
 
 

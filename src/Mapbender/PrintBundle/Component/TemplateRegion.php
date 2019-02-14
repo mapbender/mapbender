@@ -8,8 +8,7 @@ use Mapbender\PrintBundle\Component\Region\FontStyle;
 /**
  * A rectangular portion of the PDF we want to generate.
  * Has dimensions, margins, and some font styling.
- * If the template parser didn't give us specific font styles,
- * we still carry some defaults.
+ * Can work backwards to the Template object it is a part of (but also works standalone).
  */
 class TemplateRegion implements \ArrayAccess
 {
@@ -21,6 +20,10 @@ class TemplateRegion implements \ArrayAccess
     protected $offsets;
     /** @var FontStyle|null */
     protected $style;
+    /** @var string|null */
+    protected $name;
+    /** @var Template|null */
+    protected $parentTemplate;
 
     /**
      * @param float $width in mm
@@ -36,6 +39,38 @@ class TemplateRegion implements \ArrayAccess
         } else {
             $this->offsets = array(0, 0);
         }
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string|null $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return Template|null
+     */
+    public function getParentTemplate()
+    {
+        return $this->parentTemplate;
+    }
+
+    /**
+     * @param Template|null $parentTemplate
+     */
+    public function setParentTemplate($parentTemplate)
+    {
+        $this->parentTemplate = $parentTemplate;
     }
 
     /**
