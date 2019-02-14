@@ -20,6 +20,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 {
     /** @var PDF_Extensions|\FPDF */
     protected $pdf;
+    /** @var Template|array */
     protected $conf;
 
     /** @var array */
@@ -58,6 +59,13 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         parent::__construct($layerRenderers, $logger);
     }
 
+    /**
+     * Executes the job (plain array), returns a binary string representation of the resulting PDF.
+     *
+     * @param mixed[] $jobData
+     * @return string
+     * @throws \Exception on invalid template
+     */
     public function doPrint($jobData)
     {
         $templateData = $this->getTemplateData($jobData);
@@ -70,13 +78,29 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return $this->dumpPdf($pdf);
     }
 
+    /**
+     * Executes the job (plain array), returns a binary string representation of the resulting PDF.
+     *
+     * @param array $jobData
+     * @return string
+     * @throws \Exception on invalid template
+     */
     public function dumpPrint(array $jobData)
     {
         return $this->doPrint($jobData);
     }
 
+    /**
+     * Executes the job (plain array), writes the PDF result as directly as possible to $fileName.
+     *
+     * @param array $jobData
+     * @param string $fileName
+     * @throws \Exception on invalid template
+     */
     public function storePrint(array $jobData, $fileName)
     {
+        // NOTE: FPDI's 'direct' file output mode isn't any more efficient than its string output mode
+        //       (uses the same amount of memory). This may be more worthwhile with a different PDF lib...
         if (!file_put_contents($fileName, $this->doPrint($jobData))) {
             throw new \RuntimeException("Failed to store printout at {$fileName}");
         }
@@ -84,7 +108,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * @param array $jobData
-     * @return array
+     * @return Template|array
      */
     protected function getTemplateData($jobData)
     {
@@ -92,7 +116,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
-     * @param array $templateData
+     * @param Template|array $templateData
      * @param array $jobData
      */
     protected function setup($templateData, $jobData)
@@ -130,8 +154,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
-     * @param $templateData
-     * @param $templateName
+     * @param Template|array $templateData
+     * @param string $templateName
      * @return \FPDF|\FPDF_TPL|PDF_Extensions
      * @throws \Exception
      */
@@ -157,7 +181,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * @param string $mapImageName
-     * @param array $templateData
+     * @param Template|array $templateData
      * @param array $jobData
      * @return \FPDF|\FPDF_TPL|PDF_Extensions
      * @throws \Exception
@@ -201,14 +225,38 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
      * @param string $mapImageName
-     * @param array $templateData
+     * @param Template|array $templateData
      */
     protected function addMapImage($pdf, $mapImageName, $templateData)
     {
         $region = $templateData['map'];
-        $this->addImageToPdf($pdf, $mapImageName, $region['x'], $region['y'], $region['width'], $region['height']);
+        $this->addImageToPdfRegion($pdf, $mapImageName, $region);
         // add map border (default is black)
         $pdf->Rect($region['x'], $region['y'], $region['width'], $region['height']);
+    }
+
+    /**
+     * Returns a list of template region names that should be excluded from regular template region
+     * processing. If you have multiple main maps, this is the place to extend.
+     * @see afterMainMap
+     * @see handleRegion
+     *
+     * @param array $jobData
+     * @return string[]
+     */
+    protected function getFirstPageSpecialRegionNames($jobData)
+    {
+        return  array(
+            // Map is already rendered (c.f. method name xD)
+            'map',
+            // Legend can perform page breaks, which means it must wait until all other
+            // regions are handled
+            'legend',
+            // 'legendpage_image' appears as a top-level template region, but is only relevant
+            // for spill pages produced during legend rendering (which we also suppress, so...)
+            // NOTE: the only real effect of blacklisting it is suppressing a warning in afterMainMap
+            'legendpage_image',
+        );
     }
 
     /**
@@ -217,45 +265,48 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * page, may spill over and start adding more pages.
      *
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
-     * @param array $templateData
+     * @param Template $template
      * @param array $jobData
      */
-    protected function afterMainMap($pdf, $templateData, $jobData)
+    protected function afterMainMap($pdf, $template, $jobData)
     {
-        // add northarrow
-        if (!empty($templateData['northarrow'])) {
-            $this->addNorthArrow($pdf, $templateData, $jobData);
+        $regionBlacklist = $this->getFirstPageSpecialRegionNames($jobData);
+        foreach ($template->getRegions() as $region) {
+            if (!in_array($region->getName(), $regionBlacklist)) {
+                if (!$this->handleRegion($pdf, $region, $jobData)) {
+                    $this->logger->warning("Unhandled print template region " . print_r($region->getName(), true));
+                }
+            }
         }
 
-        if (!empty($templateData['fields'])) {
-            $this->addTextFields($pdf, $templateData, $jobData);
+        if (!empty($template['fields'])) {
+            $this->addTextFields($pdf, $template, $jobData);
         }
+        $this->addCoordinates($pdf, $template, $jobData);
+    }
 
-        // add overview map
-        if (!empty($jobData['overview']) && !empty($templateData['overview'])) {
-            $this->addOverviewMap($pdf, $templateData, $jobData);
-        }
-
-        // add scalebar
-        if (!empty($templateData['scalebar'])) {
-            $this->addScaleBar($pdf, $templateData, $jobData);
-        }
-
-        // add coordinates
-        if (isset($templateData['fields']['extent_ur_x']) && isset($templateData['fields']['extent_ur_y'])
-                && isset($templateData['fields']['extent_ll_x']) && isset($templateData['fields']['extent_ll_y']))
-        {
-            $this->addCoordinates();
-        }
-
-        // add dynamic logo
-        if (!empty($templateData['dynamic_image']) && !empty($templateData['dynamic_image'])) {
-            $this->addDynamicImage();
-        }
-
-        // add dynamic text
-        if (!empty($templateData['fields']['dynamic_text']) && !empty($templateData['dynamic_text'])) {
-            $this->addDynamicText();
+    /**
+     * Should populate a TemplateRegion on the first page of the PDF being generated.
+     * Nothing happening in this method or called by it should add page breaks to the pdf.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param TemplateRegion $region
+     * @param array $jobData
+     * @return bool
+     */
+    protected function handleRegion($pdf, $region, $jobData)
+    {
+        switch ($region->getName()) {
+            default:
+                return false;
+            case 'northarrow':
+                return $this->addNorthArrow($pdf, $region, $jobData);
+            case 'overview':
+                return $this->addOverviewMap($pdf, $region, $jobData);
+            case 'scalebar':
+                return $this->addScaleBar($pdf, $region, $jobData);
+            case 'dynamic_image':
+                return $this->addDynamicImage($pdf, $region, $jobData);
         }
     }
 
@@ -263,27 +314,36 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * Fills textual regions on the first page.
      *
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
-     * @param array $templateData
+     * @param Template|array $template
      * @param array $jobData
      */
-    protected function addTextFields($pdf, $templateData, $jobData)
+    protected function addTextFields($pdf, $template, $jobData)
     {
-        foreach ($templateData['fields'] as $fieldName => $region) {
+        foreach ($template->getTextFields() as $fieldName => $region) {
             // skip extent fields, see special handling in addCoordinates method
             if (preg_match("/^extent/", $fieldName)) {
                 continue;
             }
             $text = $this->getTextFieldContent($fieldName, $jobData);
             if ($text !== null) {
-                list($r, $g, $b) = CSSColorParser::parse($region['color']);
-                $pdf->SetTextColor($r, $g, $b);
-                $pdf->SetFont('Arial', '', intval($region['fontsize']));
+                $this->applyFontStyle($pdf, $region);
                 $pdf->SetXY($region['x'] - 1, $region['y']);
                 $pdf->MultiCell($region['width'], $region['height'], utf8_decode($text));
             }
         }
         // reset text color to default black
         $pdf->SetTextColor(0, 0, 0);
+    }
+
+    /**
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param TemplateRegion|array $region
+     */
+    protected function applyFontStyle($pdf, $region)
+    {
+        list($r, $g, $b) = CSSColorParser::parse($region['color']);
+        $pdf->SetTextColor($r, $g, $b);
+        $pdf->SetFont($region['font'], '', floatval($region['fontsize']));
     }
 
     /**
@@ -306,6 +366,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 return date('d.m.Y');
             case 'scale' :
                 return '1 : ' . $jobData['scale_select'];
+            case 'dynamic_text':
+                if (isset($jobData['dynamic_text']['text'])) {
+                    return $jobData['dynamic_text']['text'] ?: null;
+                }
+                break;
             default:
                 if (isset($jobData['extra'][$fieldName])) {
                     return $jobData['extra'][$fieldName];
@@ -316,12 +381,17 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         }
     }
 
-    protected function addNorthArrow($pdf, $templateData, $jobData)
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param TemplateRegion $region
+     * @param array $jobData
+     * @return bool to indicate success (always true here)
+     */
+    protected function addNorthArrow($pdf, $region, $jobData)
     {
         $northarrow = $this->resourceDir . '/images/northarrow.png';
         $rotation = intval($jobData['rotation']);
 
-        $region = $templateData['northarrow'];
         if ($rotation != 0) {
             $image = imagecreatefrompng($northarrow);
             $transColor = imagecolorallocatealpha($image, 255, 255, 255, 0);
@@ -332,18 +402,22 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             $y = abs(($srcSize[1] - $destSize[1]) / 2);
             $northarrow = $this->cropImage($rotatedImage, $x, $y, $srcSize[0], $srcSize[1]);
         }
-        $this->addImageToPdf($pdf, $northarrow, $region['x'], $region['y'], $region['width'], $region['height']);
+        $this->addImageToPdfRegion($pdf, $northarrow, $region);
+        return true;
     }
 
     /**
      * @param PDF_Extensions|\FPDF $pdf
-     * @param array $templateData
+     * @param TemplateRegion $region
      * @param array $jobData
+     * @return bool
      */
-    protected function addOverviewMap($pdf, $templateData, $jobData)
+    protected function addOverviewMap($pdf, $region, $jobData)
     {
+        if (empty($jobData['overview'])) {
+            return false;
+        }
         $ovData = $jobData['overview'];
-        $region = $templateData['overview'];
         $quality = $jobData['quality'];
         // calculate needed image size
         $ovImageWidth = round($region['width'] / 25.4 * $quality);
@@ -387,21 +461,22 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         )));
         imagepolygon($image, $flatPoints, 4, $red);
 
-        $this->addImageToPdf($pdf, $image, $region['x'], $region['y'], $region['width'], $region['height']);
+        $this->addImageToPdfRegion($pdf, $image, $region);
         imagecolordeallocate($image, $red);
         imagedestroy($image);
         // draw border rectangle
         $pdf->Rect($region['x'], $region['y'], $region['width'], $region['height']);
+        return true;
     }
 
     /**
      * @param PDF_Extensions|\FPDF $pdf
-     * @param array $templateData
+     * @param TemplateRegion $region
      * @param array $jobData
+     * @return bool to indicate success (always true here)
      */
-    protected function addScaleBar($pdf, $templateData, $jobData)
+    protected function addScaleBar($pdf, $region, $jobData)
     {
-        $region = $templateData['scalebar'];
         $totalWidth = $region['width'];
         $pdf->SetFont('arial', '', 10 );
 
@@ -424,66 +499,101 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             }
             $pdf->Rect($region['x'] + round($i * $sectionWidth), $region['y'], $sectionWidth, 2, 'FD');
         }
+        return true;
     }
 
-    private function addCoordinates()
+    /**
+     * Special-casing for coordinates text fields, which render
+     * to (up to) 4 different template regions, some of which
+     * use up / down font directions.
+     *
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param Template $template
+     * @param array $jobData
+     * @return bool
+     */
+    protected function addCoordinates($pdf, $template, $jobData)
     {
-        $pdf = $this->pdf;
-
-        $corrFactor = 2;
-        $precision = 2;
+        if (empty($jobData['extent_feature']) || empty($jobData['extent'])) {
+            $this->logger->warning("Skipping coordinates rendering, missing data");
+            return false;
+        }
         // correction factor and round precision if WGS84
-        if($this->data['extent']['width'] < 1){
-             $corrFactor = 3;
-             $precision = 6;
+        if ($jobData['extent']['width'] < 1) {
+            $offsetXUrY = 3;
+            $precision = 6;
+        } else {
+            $offsetXUrY = 2;
+            $precision = 2;
         }
 
-        // upper right Y
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ur_y']['fontsize']));
-        $pdf->Text($this->conf['fields']['extent_ur_y']['x'] + $corrFactor,
-                    $this->conf['fields']['extent_ur_y']['y'] + 3,
-                    round($this->data['extent_feature'][2]['y'], $precision));
-
-        // upper right X
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ur_x']['fontsize']));
-        $pdf->TextWithDirection($this->conf['fields']['extent_ur_x']['x'] + 1,
-                    $this->conf['fields']['extent_ur_x']['y'],
-                    round($this->data['extent_feature'][2]['x'], $precision),'D');
-
-        // lower left Y
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ll_y']['fontsize']));
-        $pdf->Text($this->conf['fields']['extent_ll_y']['x'],
-                    $this->conf['fields']['extent_ll_y']['y'] + 3,
-                    round($this->data['extent_feature'][0]['y'], $precision));
-
-        // lower left X
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ll_x']['fontsize']));
-        $pdf->TextWithDirection($this->conf['fields']['extent_ll_x']['x'] + 3,
-                    $this->conf['fields']['extent_ll_x']['y'] + 30,
-                    round($this->data['extent_feature'][0]['x'], $precision),'U');
-    }
-
-    private function addDynamicImage()
-    {
-        $dynImage = $this->resourceDir . '/' . $this->data['dynamic_image']['path'];
-        if(file_exists ($dynImage)){
-            $this->pdf->Image($dynImage,
-                            $this->conf['dynamic_image']['x'],
-                            $this->conf['dynamic_image']['y'],
-                            0,
-                            $this->conf['dynamic_image']['height'],
-                            'png');
-            return;
+        $efData = $jobData['extent_feature'];
+        $fieldDataMapping = array(
+            // @todo: clean up magic number offsets; these should depend on font
+            //        size, text length and direction
+            'extent_ll_x' => array(
+                'value' => $efData[0]['x'],
+                'offsetX' => 3,
+                'offsetY' => 30,
+                'direction' => 'U',
+            ),
+            'extent_ll_y' => array(
+                'value' => $efData[0]['y'],
+                'offsetX' => 0,
+                'offsetY' => 3,
+                'direction' => 'R',
+            ),
+            'extent_ur_x' => array(
+                'value' => $efData[2]['x'],
+                'offsetX' => 1,
+                'offsetY' => 0,
+                'direction' => 'D',
+            ),
+            'extent_ur_y' => array(
+                'value' => $efData[2]['y'],
+                'offsetX' => $offsetXUrY,
+                'offsetY' => 3,
+                'direction' => 'R',
+            ),
+        );
+        foreach ($fieldDataMapping as $fieldName => $fieldConfig) {
+            if (!$template->hasTextField($fieldName)) {
+                continue;
+            }
+            $field = $template->getTextFields()->getMember($fieldName);
+            $formattedValue = round($fieldConfig['value'], $precision);
+            $direction = $fieldConfig['direction'];
+            $x = $field->getOffsetX() + $fieldConfig['offsetX'];
+            $y = $field->getOffsetY() + $fieldConfig['offsetY'];
+            $this->applyFontStyle($pdf, $field);
+            $pdf->TextWithDirection($x, $y, $formattedValue, $direction);
         }
-
+        return true;
     }
 
-    private function addDynamicText()
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param TemplateRegion $region
+     * @param array $jobData
+     * @return bool to indicate success
+     */
+    protected function addDynamicImage($pdf, $region, $jobData)
     {
-        $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
-        $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
-                $this->conf['fields']['dynamic_text']['height'],
-                utf8_decode($this->data['dynamic_text']['text']));
+        if (empty($jobData['dynamic_image']['path'])) {
+            return false;
+        }
+        $dynImage = $this->resourceDir . '/' . $jobData['dynamic_image']['path'];
+        if (file_exists($dynImage)) {
+            $pdf->Image($dynImage,
+                        $region->getOffsetX(),
+                        $region->getOffsetY(),
+                        0,
+                        $region->getHeight(),
+                        'png');
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -712,6 +822,18 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         } else {
             $pdf->Image($gdResOrPath, $xOffset, $yOffset, $width, $height, 'png', '', false, 0);
         }
+    }
+
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param resource|string $gdResOrPath
+     * @param TemplateRegion $region
+     */
+    protected function addImageToPdfRegion($pdf, $gdResOrPath, $region)
+    {
+        $this->addImageToPdf($pdf, $gdResOrPath,
+            $region->getOffsetX(), $region->getOffsetY(),
+            $region->getWidth(), $region->getHeight());
     }
 
     /**
