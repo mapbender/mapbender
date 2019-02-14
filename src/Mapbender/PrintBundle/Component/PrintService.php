@@ -278,16 +278,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 }
             }
         }
+
         if (!empty($template['fields'])) {
             $this->addTextFields($pdf, $template, $jobData);
         }
-
-        // add coordinates
-        if (isset($template['fields']['extent_ur_x']) && isset($template['fields']['extent_ur_y'])
-                && isset($template['fields']['extent_ll_x']) && isset($template['fields']['extent_ll_y']))
-        {
-            $this->addCoordinates();
-        }
+        $this->addCoordinates($pdf, $template, $jobData);
     }
 
     /**
@@ -507,41 +502,73 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return true;
     }
 
-    private function addCoordinates()
+    /**
+     * Special-casing for coordinates text fields, which render
+     * to (up to) 4 different template regions, some of which
+     * use up / down font directions.
+     *
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param Template $template
+     * @param array $jobData
+     * @return bool
+     */
+    protected function addCoordinates($pdf, $template, $jobData)
     {
-        $pdf = $this->pdf;
-
-        $corrFactor = 2;
-        $precision = 2;
+        if (empty($jobData['extent_feature']) || empty($jobData['extent'])) {
+            $this->logger->warning("Skipping coordinates rendering, missing data");
+            return false;
+        }
         // correction factor and round precision if WGS84
-        if($this->data['extent']['width'] < 1){
-             $corrFactor = 3;
-             $precision = 6;
+        if ($jobData['extent']['width'] < 1) {
+            $offsetXUrY = 3;
+            $precision = 6;
+        } else {
+            $offsetXUrY = 2;
+            $precision = 2;
         }
 
-        // upper right Y
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ur_y']['fontsize']));
-        $pdf->Text($this->conf['fields']['extent_ur_y']['x'] + $corrFactor,
-                    $this->conf['fields']['extent_ur_y']['y'] + 3,
-                    round($this->data['extent_feature'][2]['y'], $precision));
-
-        // upper right X
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ur_x']['fontsize']));
-        $pdf->TextWithDirection($this->conf['fields']['extent_ur_x']['x'] + 1,
-                    $this->conf['fields']['extent_ur_x']['y'],
-                    round($this->data['extent_feature'][2]['x'], $precision),'D');
-
-        // lower left Y
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ll_y']['fontsize']));
-        $pdf->Text($this->conf['fields']['extent_ll_y']['x'],
-                    $this->conf['fields']['extent_ll_y']['y'] + 3,
-                    round($this->data['extent_feature'][0]['y'], $precision));
-
-        // lower left X
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ll_x']['fontsize']));
-        $pdf->TextWithDirection($this->conf['fields']['extent_ll_x']['x'] + 3,
-                    $this->conf['fields']['extent_ll_x']['y'] + 30,
-                    round($this->data['extent_feature'][0]['x'], $precision),'U');
+        $efData = $jobData['extent_feature'];
+        $fieldDataMapping = array(
+            // @todo: clean up magic number offsets; these should depend on font
+            //        size, text length and direction
+            'extent_ll_x' => array(
+                'value' => $efData[0]['x'],
+                'offsetX' => 3,
+                'offsetY' => 30,
+                'direction' => 'U',
+            ),
+            'extent_ll_y' => array(
+                'value' => $efData[0]['y'],
+                'offsetX' => 0,
+                'offsetY' => 3,
+                'direction' => 'R',
+            ),
+            'extent_ur_x' => array(
+                'value' => $efData[2]['x'],
+                'offsetX' => 1,
+                'offsetY' => 0,
+                'direction' => 'D',
+            ),
+            'extent_ur_y' => array(
+                'value' => $efData[2]['y'],
+                'offsetX' => $offsetXUrY,
+                'offsetY' => 3,
+                'direction' => 'R',
+            ),
+        );
+        foreach ($fieldDataMapping as $fieldName => $fieldConfig) {
+            if (!$template->hasTextField($fieldName)) {
+                continue;
+            }
+            $field = $template->getTextFields()->getMember($fieldName);
+            $formattedValue = round($fieldConfig['value'], $precision);
+            $direction = $fieldConfig['direction'];
+            $x = $field->getOffsetX() + $fieldConfig['offsetX'];
+            $y = $field->getOffsetY() + $fieldConfig['offsetY'];
+            $this->applyFontStyle($pdf, $field);
+            $pdf->TextWithDirection($x, $y, $formattedValue, $direction);
+        }
+        return true;
     }
 
     /**
