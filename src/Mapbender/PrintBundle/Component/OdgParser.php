@@ -121,31 +121,14 @@ class OdgParser
 
         foreach ($xPath->query("draw:page/draw:frame", $doc->getElementsByTagName('drawing')->item(0)) as $node) {
             $name      = $node->getAttribute('draw:name');
-            $style     = null;
 
             if (empty($name)) {
                 continue;
             }
             $textField = $this->parseShapeIntoRegion($node);
-
-            // Recognize font name and size
-            $textParagraph = $xPath->query("draw:text-box/text:p", $node)->item(0);
-            $textNode      = $xPath->query("draw:text-box/text:p/text:span", $node)->item(0);
-            if ($textNode) {
-                $style = $textNode->getAttribute('text:style-name');
-            } elseif ($textParagraph) {
-                $style = $textParagraph->getAttribute('text:style-name');
-            }
-
-            if ($style) {
-                $styleNode = $xPath->query('//style:style[@style:name="' . $style . '"]/style:text-properties')->item(0);
-                $fontSize  = static::parseNodeAttribute($styleNode, 'fo:font-size', static::DEFAULT_FONT_SIZE);
-                $fontColor = static::parseNodeAttribute($styleNode, 'fo:color', static::DEFAULT_FONT_COLOR);
-            } else {
-                $fontSize = static::DEFAULT_FONT_SIZE;
-                $fontColor = static::DEFAULT_FONT_COLOR;
-            }
-            $textField->setFontStyle(new FontStyle(static::DEFAULT_FONT_NAME, $fontSize, $fontColor));
+            $styleNode = $this->detectStyleNode($xPath, $node);
+            $styleData = $this->parseStyleNode($styleNode);
+            $textField->setFontStyle(new FontStyle($styleData['font'], $styleData['fontsize'], $styleData['fontcolor']));
             $templateObject->addTextField($name, $textField);
         }
         return $templateObject;
@@ -234,5 +217,51 @@ class OdgParser
     {
         $data = $this->parsePageGeometry($node);
         return new Template($data['pageSize']['width'], $data['pageSize']['height'], $data['orientation']);
+    }
+
+    /**
+     * @param \DOMXPath $xPath
+     * @param \DOMElement $parentNode
+     * @return \DOMElement|null
+     */
+    public function detectStyleNode($xPath, $parentNode)
+    {
+        $textParagraph = $xPath->query("draw:text-box/text:p", $parentNode)->item(0);
+        $textNode      = $xPath->query("draw:text-box/text:p/text:span", $parentNode)->item(0);
+        if ($textNode) {
+            $styleAttribute = $textNode->getAttribute('text:style-name');
+        } elseif ($textParagraph) {
+            $styleAttribute = $textParagraph->getAttribute('text:style-name');
+        } else {
+            $styleAttribute = null;
+        }
+        if ($styleAttribute) {
+            $selector = '//style:style[@style:name="' . $styleAttribute . '"]/style:text-properties';
+            return $xPath->query($selector)->item(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Should extract font style properties from given $node, or default styles if node is emptyish.
+     *
+     * @param \DOMElement|null $node
+     * @return array
+     */
+    public function parseStyleNode($node)
+    {
+        if ($node) {
+            $fontSize  = static::parseNodeAttribute($node, 'fo:font-size', static::DEFAULT_FONT_SIZE);
+            $fontColor = static::parseNodeAttribute($node, 'fo:color', static::DEFAULT_FONT_COLOR);
+        } else {
+            $fontSize = static::DEFAULT_FONT_SIZE;
+            $fontColor = static::DEFAULT_FONT_COLOR;
+        }
+        return array(
+            'font' => static::DEFAULT_FONT_NAME,
+            'fontsize' => $fontSize,
+            'fontcolor' => $fontColor,
+        );
     }
 }
