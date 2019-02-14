@@ -34,6 +34,7 @@ mb:
         cancel: Abbrechen
         nodata: keine Daten
         loading: wird geladen
+      getDigitizerPrintConfigurationError: 'Digitizer Print Konfiguration konnte nicht geladen werden'
     admin:
       printclient:
         renderMode:
