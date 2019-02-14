@@ -115,8 +115,9 @@ class OdgParser
         foreach ($customShapes as $customShape) {
             $shapeName = $customShape->getAttribute('draw:name');
             $templateRegion = $this->parseShapeIntoRegion($customShape);
+            // @todo: extract (non-default) font styles for all shapes?
+            $templateRegion->setFontStyle(FontStyle::defaultFactory());
             $templateObject->addRegion($shapeName, $templateRegion);
-            // @todo: extract font styles for all shapes?
         }
 
         foreach ($xPath->query("draw:page/draw:frame", $doc->getElementsByTagName('drawing')->item(0)) as $node) {
