@@ -14,6 +14,8 @@
         poiMarkerLayer: null,
         poi: null,
         gpsElement: null,
+        // invoked on close; informs controlling button to de-highlight
+        closeCallback: null,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPOI", this.options.target)){
@@ -33,8 +35,8 @@
             }
         },
 
-        defaultAction: function() {
-            return this.activate();
+        defaultAction: function(closeCallback) {
+            return this.open(closeCallback);
         },
 
         /**
@@ -42,11 +44,19 @@
          * For the call to be made in the right context, the onClickProxy must
          * be used.
          */
-        activate: function() {
+        activate: function(closeCallback) {
+            this.open(closeCallback);
+        },
+        /**
+         * Same as activate, but proper Button API name expectation
+         * @param closeCallback
+         */
+        open: function(closeCallback) {
             if (!this.popup && this.map.length !== 0) {
                 this._createDialog();
                 this.map.on('click', this.mapClickProxy);
             }
+            this.closeCallback = closeCallback;
         },
 
         /**
@@ -130,10 +140,6 @@
                         label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
                         cssClass: 'button buttonCancel critical right',
                         callback: function () {
-                            self._reset();
-                            if(self.gpsElement) {
-                                self.gpsElement.mbGpsPosition('deactivate');
-                            }
                             self.close();
                         }
                     },
@@ -177,6 +183,11 @@
         },
 
         close: function() {
+            this._reset();
+            if (this.gpsElement) {
+                this.gpsElement.mbGpsPosition('deactivate');
+            }
+
             if (this.poiMarkerLayer) {
                 this.poiMarkerLayer.clearMarkers();
                 this.mbMap.map.olMap.removeLayer(this.poiMarkerLayer);
@@ -188,9 +199,10 @@
                 this.popup.$element.off('close');
                 this.popup.close();
             }
-            if (this.gpsElement) {
-                this.gpsElement.mbGpsPosition('deactivate');
+            if (this.closeCallback && typeof this.closeCallback === 'function') {
+                this.closeCallback.call();
             }
+            this.closeCallback = null;
             this.popup = null;
             this.map.off('click', self.mapClickProxy);
         },
