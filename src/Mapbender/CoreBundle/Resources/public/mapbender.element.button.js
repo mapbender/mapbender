@@ -94,8 +94,8 @@
                 activate: null,
                 deactivate: null
             };
-            var activateCandidateNames = [this.options.action, 'defaultAction', 'activate', 'open'];
-            var deactivateCandidateNames = [this.options.deactivate, 'deactivate', 'close'];
+            var activateCandidateNames = [this.options.action, 'defaultAction', 'open', 'activate'];
+            var deactivateCandidateNames = [this.options.deactivate, 'close', 'deactivate'];
             var activateCandidates = this._extractCallableMethods(
                 targetWidget, activateCandidateNames);
             var deactivateCandidates = this._extractCallableMethods(
