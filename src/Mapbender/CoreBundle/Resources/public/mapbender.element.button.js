@@ -1,18 +1,131 @@
 (function ($) {
     'use strict';
-
-    $.widget("mapbender.mbButton", {
+    /**
+     * Just a button that toggles its own visual highlighting state on / off on every click.
+     * If it has a group option, it will try to find other buttons with the same group and
+     * deactivate them before activating itself.
+     *
+     * Override activate and deactivate to add functionality.
+     */
+    $.widget("mapbender.mbBaseButton", {
         options: {
-            target: undefined,
-            click: undefined,
+            label: undefined,
             icon: undefined,
-            label: true,
+            /**
+             * @var {String|null|undefined}
+             */
+            // Buttons in the same group have mutual exclusion. Only one of them
+            // can be active at a time.
             group: undefined
         },
-
         active: false,
-        targetWidget: null,
         $toolBarItem: null,
+
+        _create: function() {
+            this.$toolBarItem = $(this.element).closest('.toolBarItem');
+            $(this.element)
+                .on('click', $.proxy(this._onClick, this))
+                .on('mbButtonDeactivate', $.proxy(this.deactivate, this));
+            // child widget may have initialized highlight state to a non-default
+            this._setActive(this.isActive());
+        },
+        /**
+         * Toggles the button state active / inactive.
+         * Deactivates same-group siblings, if any, when activated.
+         * Updates own visual highlighting state.
+         * @private
+         */
+        _onClick: function () {
+            if (this.isActive()) {
+                this.deactivate();
+            } else {
+                // If we're part of a group, deactivate all other buttons in the same group
+                // Do this BEFORE updating
+                if (this.options.group) {
+                    var $others = $('.mb-button[data-group="' + this.options.group + '"]')
+                        .not(this);
+                    try {
+                        $others.trigger('mbButtonDeactivate');
+                    } catch (e) {
+                        console.error("Suppressing error from sibling button deactivate handlers", e);
+                    }
+                }
+                this.activate();
+            }
+        },
+        /**
+         * Turns on highlight, remembers active state for next click.
+         * Override this if you need more stuff to happen
+         */
+        activate: function() {
+            this._setActive(true);
+        },
+        /**
+         * Turns off highlight, remembers inactive state for next click.
+         * Override this if you need more stuff to happen
+         */
+        deactivate: function() {
+            this._setActive(false);
+        },
+        /**
+         * Alias of deactivate in base implementation. Commonly used as an on-close callback for popups,
+         * invoked when they close, thus informing the button to clear its highlight, and that the next
+         * click should be another activation.
+         *
+         * For this reason, you should not override this to trigger external cleanup logic. Override
+         * deactivate instead.
+         */
+        reset: function () {
+            this._setActive(false);
+        },
+        /**
+         * Stores a new .active value and updates the highlighting with no further side effects
+         * (no events etc).
+         *
+         * @param isActive
+         * @private
+         */
+        _setActive: function(isActive) {
+            this.active = !!isActive;
+            this.$toolBarItem.toggleClass("toolBarItemActive", this.active);
+        },
+        /**
+         * Trivial base implementation. Override this if you're not really sure ahead of time
+         * what the button state is. Evaluated in click event handler.
+         *
+         * @return {boolean}
+         */
+        isActive: function() {
+            return this.active;
+        }
+    });
+    /**
+     * Just a button that toggles its own highlighting state on / off on every click.
+     * This is how the control button was called. We provide this alias name because
+     * many Element widgets inherit from the mapbender.mbButton, despite having nothing
+     * at all to do with controlling other Element widgets. Extended control logic
+     * in proper control button has made it somewhat incompatible with this
+     * non-controlling button usage.
+     */
+    $.widget("mapbender.mbButton", $.mapbender.mbBaseButton, {
+        options: {
+            // legacy options, not required for operation of base / control buttons
+            label: undefined,
+            icon: undefined
+        }
+    });
+
+    /**
+     * A button that controls other Element widgets. Never, ever inherit from this unless
+     * your intention is to control other Element widgets.
+     */
+    $.widget("mapbender.mbControlButton", $.mapbender.mbBaseButton, {
+        options: {
+            target: undefined,
+            click: undefined
+        },
+
+        targetWidget: null,
         actionMethods: null,
 
         _create: function () {
@@ -22,50 +135,16 @@
                 // so we still need to load the JS asset, and we still end up right here
                 return;
             }
-            var self = this,
-                option = {};
-
-            this.$toolBarItem = $(this.element).closest('.toolBarItem');
-
-            if (this.options.icon) {
-                $.extend(option, {
-                    icons: {
-                        primary: this.options.icon
-                    },
-                    text: this.options.label
-                });
-            }
-
+            var self = this;
             if (this.options.target) {
                 $(document).on('mapbender.setupfinished', function() {
                     self._initializeHighlightState();
                 });
             }
-            $(this.element)
-                .on('click', $.proxy(self._onClick, self))
-                .on('mbButtonDeactivate', $.proxy(self.deactivate, self));
-        },
-
-        _onClick: function () {
-            var $me = $(this.element);
-
-            // If we're part of a group, deactivate all other actions in this group
-            if (this.options.group) {
-                var others = $('.mb-button[data-group="' + this.options.group + '"]')
-                    .not($me);
-
-                try {
-                    others.trigger('mbButtonDeactivate');
-                } catch (e) {
-                    console.error("Suppressing error from sibling button deactivate handlers", e);
-                }
-            }
-
-            if (!this.active) {
-                this.activate();
-            } else {
-                this.deactivate();
-            }
+            this._super();
+            // Amenity for special snowflake mobile.js, which expects to see us under
+            // the 'mapbenderMbButton' data key
+            this.element.data('mapbenderMbButton', this);
         },
         /**
          *
@@ -117,7 +196,6 @@
                               "Tried: ",  deactivateCandidateNames);
             }
             return methodPair;
-
         },
         /**
          * @returns {null|object} the target widget object (NOT the DOM node; NOT a jQuery selection)
@@ -167,6 +245,10 @@
             }
         },
         _initializeHighlightState: function() {
+            // skip logic if already active
+            if (this.active) {
+                return;
+            }
             if (this._initializeTarget() && this.targetWidget.options) {
                 var targetOptions = this.targetWidget.options;
                 var state = targetOptions.autoActivate;         // FeatureInfo style
@@ -186,51 +268,41 @@
                 if (targetOptions.auto_activate) {              // Redlining
                     state = targetOptions.display_type === 'dialog';
                 }
-                this._highlightState = state;
-                this.active = this.active || state;
-            } else {
-                this._highlightState = false;
+                this._setActive(!!state);
             }
-
-            this.updateHighlight();
         },
         /**
          * Calls 'activate' method on target if defined, and if in group, sets a visual highlight
          */
         activate: function () {
+            // defensive activation to prevent redundant state transitions
             if (this.active) {
                 return;
             }
             this._initializeActionMethods();
             if (this.actionMethods.activate) {
                 (this.actionMethods.activate)();
-                this.active = true;
+            } else {
+                console.error("Unknown control method for target widget", this.targetWidget);
             }
-            this._highlightState = this.active || !!this.options.group;
-            this.updateHighlight();
+            this._super();
         },
         /**
          * Clears visual highlighting, marks inactive state and
          * calls 'deactivate' method on target (if defined)
          */
         deactivate: function () {
+            if (!this.active) {
+                // defensive deactivation to prevent unneeded state transitions
+                return;
+            }
             this._initializeActionMethods();
             if (this.actionMethods.deactivate) {
                 (this.actionMethods.deactivate)();
+            } else {
+                console.error("Unknown control method for target widget", this.targetWidget);
             }
-            this.reset();
-        },
-        /**
-         * Clears visual highlighting, marks inactive state
-         */
-        reset: function () {
-            this.active = false;
-            this._highlightState = false;
-            this.updateHighlight();
-        },
-        updateHighlight: function() {
-            this.$toolBarItem.toggleClass("toolBarItemActive", !!this._highlightState);
+            this._super();
         }
     });
-
 })(jQuery);
