@@ -1,20 +1,26 @@
 # Changelog
-* **dev-release/3.0.7 @ 49f113f9c**
-  - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#184](https://github.com/mapbender/mapbender/pull/1084))
+* **dev-release/3.0.7 @ ea18664fc**
+  - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
-  - Fix buttons with invalid targets breaking other buttons with the same `group` setting
-  - Fix rendering of Button Element if 'click' is completely undefined (old DB? YAML apps?) ([PR#1076](https://github.com/mapbender/mapbender/pull/1076))
+  - [Regression fix] restore non-root limited adminstrator's ability to reload a Source ([PR#1093](https://github.com/mapbender/mapbender/pull/1093))
   - Fix element-order dependent script initialization error in mobile template
   - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
   - Fix Ruler measurement errors when switching between geodesic and non-geodesic CRS at runtime ([PR#1069](https://github.com/mapbender/mapbender/pull/1069))
-  - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
   - Fixed dynamic (layertree) source reordering errors with many layers
   - Fix erratic LayerTree / Legend states after ZoomBar "zoom to full extent" interaction ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Fix erratic LayerTree / Legend state updates on first map interaction after submitting a print job ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
   - Fix erratic LayerTree layer "ghosting" on certain map interactions ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Typo fixes in WmsCapabilitiesParser130, thanks jef-n ([PR#1046](https://github.com/mapbender/mapbender/pull/1046))
   - Extend / update Italian locale translations ([PR #1062](https://github.com/mapbender/mapbender/pull/1062))
+  - Various Button fixes:
+    - Buttons with invalid targets can longer break other buttons with the same `group` setting
+    - Fix exception when rendering a Button Element with completely undefined `click` option ([PR#1076](https://github.com/mapbender/mapbender/pull/1076))
+    - `activate` / `deactivate` options are no longer mandatory and can safely be left empty ([Issue#1050](https://github.com/mapbender/mapbender/issues/1050), [PR#1095](https://github.com/mapbender/mapbender/pull/1095))
+    - Automatic Button highlighting restored ([PR#1095](https://github.com/mapbender/mapbender/pull/1095))
+    - Buttons already start highlighted if their target has been configured with an `autoOpen` or similar option ([PR#1095](https://github.com/mapbender/mapbender/pull/1095))
+    - Improved / restored compatibility non-controlling Button element children ([PR#1096](https://github.com/mapbender/mapbender/pull/1096))
+    - Fix broken Button vs POI interaction ([Issue#549](https://github.com/mapbender/mapbender/issues/549))
   - Partial forward-compatibility with font-awesome 5 ([PR #1065](https://github.com/mapbender/mapbender/pull/1065))
   - Restore layer enabled / FeautureInfo checkbox state synchronization across multiple LayerTree Elements ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - WmsLoader: Fix newly added service starting out with a deselected root layer ([PR#1045](https://github.com/mapbender/mapbender/pull/1045))
@@ -38,6 +44,7 @@
   - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
   - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([Issue #715](https://github.com/mapbender/mapbender/issues/715), [PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Fix Redlining in sidepane never deactivating its drawing tools once activated ([Issue #992](https://github.com/mapbender/mapbender/issues/992), [PR#1088](https://github.com/mapbender/mapbender/pull/1088))
+  - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
   - [Vendorspecifics] Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
   - [Vendorspecifics] Unused / ineffective form fields have been removed ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
   - [Backend] Fix Application import from pretty-printed JSON input
