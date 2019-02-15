@@ -1,21 +1,28 @@
 ((function($) {
     function notifyElements(scope, state) {
         $('.mb-element[id]', scope).each(function() {
-            var promise, methodName;
+            var promise;
             if (state) {
                 // Before we call 'reveal' an element, we want it to be done initializing
                 promise = Mapbender.elementRegistry.waitReady(this.id);
-                // See mapbender.element.base.js
-                methodName = 'reveal';
             } else {
                 // We do not wait for an element to become ready before we call 'hide'
                 promise = Mapbender.elementRegistry.waitCreated(this.id);
-                // See mapbender.element.base.js
-                methodName = 'hide';
             }
             promise.then(function(elementWidget) {
-                if (typeof elementWidget[methodName] === 'function') {
-                    elementWidget[methodName].call(elementWidget);
+                var mci = $(elementWidget.element).data('MapbenderContainerInfo');
+                if (mci) {
+                    console.warn("Delegating sidepane element mangling to old-style MapbenderContainerInfo", mci, elementWidget);
+                    var mciMethod = state ? mci.options.onactive : mci.options.oninactive;
+                    if (mciMethod) {
+                        (mciMethod)();
+                        return;
+                    }
+                }
+                // See mapbender.element.base.js for why those method names are what they are
+                var method = state ? elementWidget.reveal : elementWidget.hide;
+                if (typeof method === 'function') {
+                    method.call(elementWidget);
                 }
             });
         });
@@ -42,17 +49,25 @@
 
     function addAccordionElementEvents() {
         var $panels = $('>.container-accordion', this);
+        function panelFromHeader($panels, header) {
+            var panelId = header && header.id
+                && header.id.replace("accordion", "container");
+            return panelId && $panels.filter('#' + panelId + ':first').get(0);
+        }
+
+        // set initial active panel from .active class
+        var initialHeader = $('>.accordion.active:first', this).get(0);
+        if (initialHeader) {
+            var initialPanel = panelFromHeader($panels, initialHeader);
+            if (initialPanel) {
+                notifyElements(initialPanel, true);
+            }
+        }
         $('>.accordion', this).on('selected', function(e, tabData) {
             var activatedHeader = tabData.current && tabData.current.get(0);
             var deactivatedHeader = tabData.previous && tabData.previous.get(0);
-            var activatedId = activatedHeader && activatedHeader.id
-                && activatedHeader.id.replace("accordion", "container");
-            var deactivatedId = deactivatedHeader && deactivatedHeader.id
-                && deactivatedHeader.id.replace("accordion", "container");
-            var activatedPanel = activatedId
-                && $panels.filter('#' + activatedId + ':first').get(0);
-            var deactivatedPanel = deactivatedId
-                && $panels.filter('#' + deactivatedId + ':first').get(0);
+            var activatedPanel = panelFromHeader($panels, activatedHeader);
+            var deactivatedPanel = panelFromHeader($panels, deactivatedHeader);
             if (deactivatedPanel) {
                 notifyElements(deactivatedPanel, false);
             }
