@@ -142,6 +142,9 @@
                 });
             }
             this._super();
+            // Amenity for special snowflake mobile.js, which expects to see us under
+            // the 'mapbenderMbButton' data key
+            this.element.data('mapbenderMbButton', this);
         },
         /**
          *
