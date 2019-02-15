@@ -282,8 +282,6 @@
             this._initializeActionMethods();
             if (this.actionMethods.activate) {
                 (this.actionMethods.activate)();
-            } else {
-                console.error("Unknown control method for target widget", this.targetWidget);
             }
             this._super();
         },
@@ -299,8 +297,6 @@
             this._initializeActionMethods();
             if (this.actionMethods.deactivate) {
                 (this.actionMethods.deactivate)();
-            } else {
-                console.error("Unknown control method for target widget", this.targetWidget);
             }
             this._super();
         }
