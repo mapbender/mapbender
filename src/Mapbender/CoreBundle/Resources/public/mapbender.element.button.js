@@ -13,9 +13,7 @@
         active: false,
         targetWidget: null,
         $toolBarItem: null,
-        /** initialized to true if button can determine target's active state and remember its own active state */
-        stateful: null,
-        actionMethods: {},
+        actionMethods: null,
 
         _create: function () {
             if (this.options.click) {
@@ -38,6 +36,11 @@
                 });
             }
 
+            if (this.options.target) {
+                $(document).on('mapbender.setupfinished', function() {
+                    self._initializeHighlightState();
+                });
+            }
             $(this.element)
                 .on('click', $.proxy(self._onClick, self))
                 .on('mbButtonDeactivate', $.proxy(self.deactivate, self));
@@ -58,11 +61,63 @@
                 }
             }
 
-            if (!this.stateful || !this.active) {
+            if (!this.active) {
                 this.activate();
             } else {
                 this.deactivate();
             }
+        },
+        /**
+         *
+         * @param {*} object
+         * @param {string[]} names
+         * @return {Array<function>}
+         * @private
+         */
+        _extractCallableMethods: function(object, names) {
+            return names.map(function(name) {
+                var method = name && object[name];
+                return typeof method === 'function' ? method: null;
+            }).filter(function(x) {
+                // throw out anything emptyish (including the nulls just produced)
+                return !!x;
+            });
+        },
+        /**
+         *
+         * @param targetWidget
+         * @return {{activate: function|null, deactivate: function|null}}
+         * @private
+         */
+        _extractActionMethods: function(targetWidget) {
+            var methodPair = {
+                activate: null,
+                deactivate: null
+            };
+            var activateCandidateNames = [this.options.action, 'defaultAction', 'activate', 'open'];
+            var deactivateCandidateNames = [this.options.deactivate, 'deactivate', 'close'];
+            var activateCandidates = this._extractCallableMethods(
+                targetWidget, activateCandidateNames);
+            var deactivateCandidates = this._extractCallableMethods(
+                targetWidget, deactivateCandidateNames);
+            if (activateCandidates.length) {
+                methodPair.activate = activateCandidates[0]
+                    .bind(targetWidget, this.reset.bind(this));
+            } else {
+                console.error("Target widget", targetWidget,
+                              "does not seem to have any potential activation method.",
+                              "Tried: ",  activateCandidateNames);
+            }
+            if (deactivateCandidates.length) {
+                methodPair.deactivate = deactivateCandidates[0]
+                    .bind(targetWidget, this.reset.bind(this));
+            } else {
+                console.error("Target widget", targetWidget,
+                              "does not seem to have any potential deactivation method.",
+                              "Tried: ",  deactivateCandidateNames);
+            }
+            return methodPair;
+
         },
         /**
          * @returns {null|object} the target widget object (NOT the DOM node; NOT a jQuery selection)
@@ -93,77 +148,88 @@
                     var dataKey = [namespace, innerName.charAt(0).toUpperCase(), innerName.slice(1)].join('');
                     this.targetWidget = $target.data(dataKey);
                 }
-                if (this.targetWidget) {
-                    this.actionMethods = {
-                        activate: null,
-                        deactivate: null
-                    };
-                    var activateAction = this.options.action || 'defaultAction';
-                    var deactivateAction = this.options.deactivate;
-                    if (activateAction) {
-                        if (typeof this.targetWidget[activateAction] === 'function') {
-                            this.actionMethods.activate = this.targetWidget[activateAction].bind(this.targetWidget, this.reset.bind(this));
-                        } else {
-                            console.error("Target widget", this.options.target, this.targetWidget,
-                                          "does not have a callable method", activateAction);
-                        }
-                    }
-                    if (deactivateAction) {
-                        if (typeof this.targetWidget[deactivateAction] === 'function') {
-                            this.actionMethods.deactivate = this.targetWidget[deactivateAction].bind(this.targetWidget);
-                        } else{
-                            console.error("Target widget", this.options.target, this.targetWidget,
-                                          "does not have a callable method", deactivateAction);
-                        }
-                    }
-                    // If we do not have a deactivate method we have no way to turn the target off, even if we
-                    // can turn it on. This makes internal active state tracking becomes meaningless. We should treat
-                    // every click as an 'activate' action.
-                    this.stateful = !!this.actionMethods.deactivate;
-                } else {
+                if (!this.targetWidget) {
                     console.warn("Could not identify target element", this.options.target, targetInit);
                     // Avoid attempting this again
                     // null: target widget not initialized; false: looked for target widget but got nothing
                     this.targetWidget = false;
-                    this.stateful = false;
                 }
             }
             return this.targetWidget || null;
+        },
+        _initializeActionMethods: function() {
+            if (this.actionMethods === null) {
+                if (this._initializeTarget()) {
+                    this.actionMethods = this._extractActionMethods(this.targetWidget);
+                } else {
+                    this.actionMethods = {};
+                }
+            }
+        },
+        _initializeHighlightState: function() {
+            if (this._initializeTarget() && this.targetWidget.options) {
+                var targetOptions = this.targetWidget.options;
+                var state = targetOptions.autoActivate;         // FeatureInfo style
+                state = state || targetOptions.autoStart;       // GpsPosition style
+                // Copyright, Legend, Layertree, WmsLoader all use have this option
+                if (targetOptions.autoOpen) {
+                    var isDialog = true;        // WmsLoader: always a dialog
+                    if (typeof targetOptions.type !== 'undefined') {
+                        // Layertree, FeatureInfo
+                        isDialog = targetOptions.type === 'dialog';
+                    } else if (typeof targetOptions.displayType !== 'undefined') {
+                        // Legend
+                        isDialog = targetOptions.displayType === 'dialog';
+                    }
+                    state = isDialog;
+                }
+                if (targetOptions.auto_activate) {              // Redlining
+                    state = targetOptions.display_type === 'dialog';
+                }
+                this._highlightState = state;
+                this.active = this.active || state;
+            } else {
+                this._highlightState = false;
+            }
+
+            this.updateHighlight();
         },
         /**
          * Calls 'activate' method on target if defined, and if in group, sets a visual highlight
          */
         activate: function () {
-            if (this.stateful && this.active) {
+            if (this.active) {
                 return;
             }
-            this._initializeTarget();
+            this._initializeActionMethods();
             if (this.actionMethods.activate) {
                 (this.actionMethods.activate)();
-                this.active = this.stateful;
+                this.active = true;
             }
-            if (this.options.group) {
-                this.$toolBarItem.addClass("toolBarItemActive");
-            }
+            this._highlightState = this.active || !!this.options.group;
+            this.updateHighlight();
         },
         /**
          * Clears visual highlighting, marks inactive state and
          * calls 'deactivate' method on target (if defined)
          */
         deactivate: function () {
-            this.reset();
-            this._initializeTarget();
+            this._initializeActionMethods();
             if (this.actionMethods.deactivate) {
                 (this.actionMethods.deactivate)();
-                this.active = false;
             }
+            this.reset();
         },
         /**
          * Clears visual highlighting, marks inactive state
          */
         reset: function () {
-            this.$toolBarItem.removeClass("toolBarItemActive");
             this.active = false;
+            this._highlightState = false;
+            this.updateHighlight();
+        },
+        updateHighlight: function() {
+            this.$toolBarItem.toggleClass("toolBarItemActive", !!this._highlightState);
         }
     });
 
