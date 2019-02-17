@@ -3,6 +3,7 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
+use Mapbender\PrintBundle\Component\Pdf\ImageBridge;
 use Mapbender\PrintBundle\Component\Region\FullPage;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
@@ -29,8 +30,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /** @var string */
     protected $resourceDir;
-    /** @var string */
-    protected $tempDir;
     /** @var OdgParser */
     protected $templateParser;
     /** @var PrintPluginHost */
@@ -39,6 +38,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected $imageTransport;
     /** @var LegendHandler */
     protected $legendHandler;
+    /** @var ImageBridge */
+    protected $imageBridge;
 
     /**
      * @param LayerRenderer[] $layerRenderers
@@ -61,7 +62,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         $this->pluginHost = $pluginHost;
         $this->resourceDir = $resourceDir;
-        $this->tempDir = $tempDir ?: sys_get_temp_dir();
+        $this->imageBridge = new ImageBridge($tempDir, 'mb_print');
         parent::__construct($layerRenderers, $logger);
     }
 
@@ -633,48 +634,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         if ($this->conf->hasRegion('legend')) {
             $region = $this->conf->getRegion('legend');
         } else {
-            $this->legendHandler->addPage($this, $this->pdf, $this->conf, $this->data);
+            $this->legendHandler->addPage($this->pdf, $this->conf, $this->data);
             $region = FullPage::fromCurrentPdfPage($this->pdf);
         }
-        $margins = $this->legendHandler->getMargins($region);
-        $x = $margins['x'];
-        $y = $margins['y'];
-
-        foreach ($this->legendHandler->collectLegends($this->data) as $n => $block) {
-            $imageMmWidth = $this->dotsToMm($block->getWidth(), 96);
-            $imageMmHeight = $this->dotsToMm($block->getHeight(), 96);
-            // allot a little extra height for the title text
-            // @todo: this should scale with font size
-            // @todo: support multi-line text
-            $blockHeightMm = round($imageMmHeight + 10);
-
-                if ($n > 0) {
-                    if ($y + $blockHeightMm > $region->getHeight()) {
-                        // spill to next column
-                        $x += 105;
-                        $y = $margins['y'];
-                    }
-                    if ($x + 20 > $region->getWidth()) {
-                        // we need a page break
-                        $this->legendHandler->addPage($this, $this->pdf, $this->conf, $this->data);
-                        $region = FullPage::fromCurrentPdfPage($this->pdf);
-                        $margins = $this->legendHandler->getMargins($region);
-                        $x = $margins['x'];
-                        $y = $margins['y'];
-                    }
-                }
-
-                $pageX = $x + $region->getOffsetX();
-                $pageY = $y + $region->getOffsetY();
-                $this->pdf->SetXY($pageX, $pageY);
-                $this->pdf->Cell(0,0,  utf8_decode($block->getTitle()));
-                $this->addImageToPdf($this->pdf, $block->resource,
-                    $pageX,
-                    $pageY + 5,
-                    $imageMmWidth, $imageMmHeight);
-
-                $y += $blockHeightMm + $margins['y'];
-        }
+        $blocks = $this->legendHandler->collectLegends($this->data);
+        $this->legendHandler->addLegends($this->pdf, $region, $blocks, true, $this->conf, $this->data);
     }
 
     /**
@@ -704,8 +668,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * Puts an image onto the current page of given $pdf at specified offset (in mm units).
      *
-     * Public for LegendHandler access. @todo: formalize LH cooperative API with an interface
-     *
      * @param PDF_Extensions|\FPDF $pdf
      * @param resource|string $gdResOrPath
      * @param int $xOffset in mm
@@ -715,15 +677,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
     {
-        if (is_resource($gdResOrPath)) {
-            // FPDF library can embed files, but not gd resources
-            $imageName = $this->makeTempFile('mb_print_pdfbuild');
-            imagepng($gdResOrPath, $imageName);
-            $this->addImageToPdf($pdf, $imageName, $xOffset, $yOffset, $width, $height);
-            unlink($imageName);
-        } else {
-            $pdf->Image($gdResOrPath, $xOffset, $yOffset, $width, $height, 'png', '', false, 0);
-        }
+        return $this->imageBridge->addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width, $height);
     }
 
     /**
@@ -733,9 +687,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     public function addImageToPdfRegion($pdf, $gdResOrPath, $region)
     {
-        $this->addImageToPdf($pdf, $gdResOrPath,
-            $region->getOffsetX(), $region->getOffsetY(),
-            $region->getWidth(), $region->getHeight());
+        return $this->imageBridge->addImageToPdfRegion($pdf, $gdResOrPath, $region);
     }
 
     /**
@@ -749,16 +701,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * Creates a ~randomly named temp file with given $prefix and returns its name
      *
-     * @param $prefix
+     * @param string|null $prefix
      * @return string
      */
     protected function makeTempFile($prefix)
     {
-        $filePath = tempnam($this->tempDir, $prefix);
-        // tempnam may return false in undocumented error cases
-        if (!$filePath) {
-            throw new \RuntimeException("Failed to create temp file with prefix '$prefix' in '{$this->tempDir}'");
-        }
-        return $filePath;
+        return $this->imageBridge->makeTempFile($prefix);
     }
 }

@@ -3,6 +3,7 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\PrintBundle\Component\Pdf\ImageBridge;
 use Mapbender\PrintBundle\Component\Region\FullPage;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 
@@ -21,15 +22,19 @@ class LegendHandler
     protected $imageTransport;
     /** @var string */
     protected $resourceDir;
+    /** @var ImageBridge */
+    protected $imageBridge;
 
     /**
      * @param ImageTransport $imageTransport
-     * @param $resourceDir
+     * @param string $resourceDir
+     * @param string $tempDir
      */
-    public function __construct(ImageTransport $imageTransport, $resourceDir)
+    public function __construct(ImageTransport $imageTransport, $resourceDir, $tempDir)
     {
         $this->imageTransport = $imageTransport;
         $this->resourceDir = $resourceDir;
+        $this->imageBridge = new ImageBridge($tempDir, 'mb_print_legend');
     }
 
     /**
@@ -58,30 +63,83 @@ class LegendHandler
     }
 
     /**
+     * @param PDF_Extensions|\FPDF $pdf $pdf
+     * @param TemplateRegion $region
+     * @param LegendBlock[] $blocks
+     * @param bool $allowPageBreaks
+     * @param Template|array $templateData
+     * @param array $jobData
+     */
+    public function addLegends($pdf, $region, $blocks, $allowPageBreaks, $templateData, $jobData)
+    {
+        $margins = $this->getMargins($region);
+        $x = $margins['x'];
+        $y = $margins['y'];
+
+        foreach ($blocks as $n => $block) {
+            $imageMmWidth = PrintService::dotsToMm($block->getWidth(), 96);
+            $imageMmHeight = PrintService::dotsToMm($block->getHeight(), 96);
+            // allot a little extra height for the title text
+            // @todo: this should scale with font size
+            // @todo: support multi-line text
+            $blockHeightMm = round($imageMmHeight + 10);
+
+            if ($n > 0) {
+                if ($y + $blockHeightMm > $region->getHeight()) {
+                    // spill to next column
+                    $x += 105;
+                    $y = $margins['y'];
+                }
+                if ($x + 20 > $region->getWidth()) {
+                    if (!$allowPageBreaks) {
+                        return;
+                    }
+                    // we need a page break
+                    $this->addPage($pdf, $templateData, $jobData);
+                    $region = FullPage::fromCurrentPdfPage($pdf);
+                    $margins = $this->getMargins($region);
+                    $x = $margins['x'];
+                    $y = $margins['y'];
+                }
+            }
+
+            $pageX = $x + $region->getOffsetX();
+            $pageY = $y + $region->getOffsetY();
+            $pdf->SetXY($pageX, $pageY);
+            $pdf->Cell(0,0,  utf8_decode($block->getTitle()));
+            $this->imageBridge->addImageToPdf($pdf, $block->resource,
+                $pageX,
+                $pageY + 5,
+                $imageMmWidth, $imageMmHeight);
+
+            $y += $blockHeightMm + $margins['y'];
+        }
+    }
+
+
+    /**
      * Adds a new page to the PDF to render more legends. Also implicitly adds watermarks, if defined in the
      * template and job.
      *
-     * @param PrintService $printService
      * @param PDF_Extensions|\FPDF $pdf $pdf
      * @param Template|array $templateData
      * @param array $jobData
      */
-    public function addPage($printService, $pdf, $templateData, $jobData)
+    public function addPage($pdf, $templateData, $jobData)
     {
         // @todo: support something other than hardcoded A4 size in portrait orientation
         $pdf->addPage('P', 'a4');
-        $this->addLegendPageImage($printService, $pdf, $templateData, $jobData);
+        $this->addLegendPageImage($pdf, $templateData, $jobData);
         // @todo: make hard-coded spill page legend title font configurable
         $pdf->SetFont('Arial', 'B', 11);
     }
 
     /**
-     * @param PrintService $printService for addIMageToPdf cooperation
      * @param PDF_Extensions|\FPDF $pdf
      * @param Template|array $templateData
      * @param array $jobData
      */
-    protected function addLegendPageImage($printService, $pdf, $templateData, $jobData)
+    protected function addLegendPageImage($pdf, $templateData, $jobData)
     {
         if (empty($templateData['legendpage_image']) || empty($jobData['legendpage_image'])) {
             return;
@@ -89,11 +147,11 @@ class LegendHandler
         $sourcePath = $this->resourceDir . '/' . $jobData['legendpage_image']['path'];
         $region = $templateData['legendpage_image'];
         if (file_exists($sourcePath)) {
-            $printService->addImageToPdf($pdf, $sourcePath, $region['x'], $region['y'], 0, $region['height']);
+            $this->imageBridge->addImageToPdf($pdf, $sourcePath, $region['x'], $region['y'], 0, $region['height']);
         } else {
             $defaultPath = $this->resourceDir . '/images/legendpage_image.png';
             if ($defaultPath !== $sourcePath && file_exists($defaultPath)) {
-                $printService->addImageToPdf($pdf, $defaultPath, $region['x'], $region['y'], 0, $region['height']);
+                $this->imageBridge->addImageToPdf($pdf, $defaultPath, $region['x'], $region['y'], 0, $region['height']);
             }
         }
     }
@@ -119,7 +177,7 @@ class LegendHandler
      * @param TemplateRegion $region
      * @return int[] with keys 'x' and 'y', values in mm
      */
-    public function getMargins($region)
+    protected function getMargins($region)
     {
         // @todo: config values please
         if ($region instanceof FullPage) {
