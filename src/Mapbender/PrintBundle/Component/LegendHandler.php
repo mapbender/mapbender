@@ -76,7 +76,10 @@ class LegendHandler
         $x = $margins['x'];
         $y = $margins['y'];
 
-        foreach ($blocks as $n => $block) {
+        foreach ($blocks as $block) {
+            if ($block->isRendered()) {
+                continue;
+            }
             $imageMmWidth = PrintService::dotsToMm($block->getWidth(), 96);
             $imageMmHeight = PrintService::dotsToMm($block->getHeight(), 96);
             // allot a little extra height for the title text
@@ -84,23 +87,21 @@ class LegendHandler
             // @todo: support multi-line text
             $blockHeightMm = round($imageMmHeight + 10);
 
-            if ($n > 0) {
-                if ($y + $blockHeightMm > $region->getHeight()) {
-                    // spill to next column
-                    $x += 105;
-                    $y = $margins['y'];
+            if ($y != $margins['y'] && $y + $blockHeightMm > $region->getHeight()) {
+                // spill to next column
+                $x += 105;
+                $y = $margins['y'];
+            }
+            if ($x + 20 > $region->getWidth()) {
+                if (!$allowPageBreaks) {
+                    return;
                 }
-                if ($x + 20 > $region->getWidth()) {
-                    if (!$allowPageBreaks) {
-                        return;
-                    }
-                    // we need a page break
-                    $this->addPage($pdf, $templateData, $jobData);
-                    $region = FullPage::fromCurrentPdfPage($pdf);
-                    $margins = $this->getMargins($region);
-                    $x = $margins['x'];
-                    $y = $margins['y'];
-                }
+                // we need a page break
+                $this->addPage($pdf, $templateData, $jobData);
+                $region = FullPage::fromCurrentPdfPage($pdf);
+                $margins = $this->getMargins($region);
+                $x = $margins['x'];
+                $y = $margins['y'];
             }
 
             $pageX = $x + $region->getOffsetX();
@@ -111,6 +112,7 @@ class LegendHandler
                 $pageX,
                 $pageY + 5,
                 $imageMmWidth, $imageMmHeight);
+            $block->setIsRendered(true);
 
             $y += $blockHeightMm + $margins['y'];
         }

@@ -31,4 +31,22 @@ class LegendBlock extends GdCanvas
     {
         return $this->title;
     }
+
+    /**
+     * @param bool $rendered
+     */
+    public function setIsRendered($rendered)
+    {
+        $this->rendered = !!$rendered;
+    }
+
+    /**
+     * Returns true if the block has been marked as already rendered.
+     *
+     * @return bool
+     */
+    public function isRendered()
+    {
+        return $this->rendered;
+    }
 }

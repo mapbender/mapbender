@@ -4,7 +4,7 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Pdf\ImageBridge;
-use Mapbender\PrintBundle\Component\Region\FullPage;
+use Mapbender\PrintBundle\Component\Region\NullRegion;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
@@ -211,10 +211,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         $this->afterMainMap($pdf, $templateData, $jobData);
 
-        // add legend
-        if (!empty($jobData['legends'])) {
-            $this->addLegend();
-        }
         return $pdf;
     }
 
@@ -256,8 +252,10 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return  array(
             // Map is already rendered (c.f. method name xD)
             'map',
-            // Legend can perform page breaks, which means it must wait until all other
-            // regions are handled
+            // Legend can perform page breaks, which means
+            // a) we must separately track which legends have already been rendered on main page, unlike other regions
+            // b) rendering the remaining legends introduces page breaks, and as such must wait until all other
+            //    main page regions are handled
             'legend',
             // 'legendpage_image' appears as a top-level template region, but is only relevant
             // for spill pages produced during legend rendering (which we also suppress, so...)
@@ -290,6 +288,27 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             $this->addTextFields($pdf, $template, $jobData);
         }
         $this->addCoordinates($pdf, $template, $jobData);
+
+        $legends = $this->legendHandler->collectLegends($jobData);
+        $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
+        $this->finishMainPage($pdf, $template, $jobData);
+        $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+    }
+
+    /**
+     * Called after all default regions on the main map page have been populated, including embedded legend regions.
+     * Does absolutely nothing by default.
+     *
+     * Override this to do anything you want to do happen before the legend spill pages start rendering. You MAY
+     * also add more pages to the PDF here.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     */
+    public function finishMainPage($pdf, $template, $jobData)
+    {
+        // default implementation: do nothing
     }
 
     /**
@@ -315,6 +334,47 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             case 'dynamic_image':
                 return $this->addDynamicImage($pdf, $region, $jobData);
         }
+    }
+
+    /**
+     * Should fill any main page regions designated for legend rendering (default: single, optional region named
+     * 'legend'). Should not perform page breaks.
+     * LegendBlock remembers if it has already been rendered or not, so remaining legend blocks can be rendered
+     * onto spill pages later.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     * @param LegendBlock[] $legendBlocks
+     */
+    protected function handleMainPageLegends($pdf, $template, $jobData, $legendBlocks)
+    {
+        // @todo: multiple viable main page legend regions?
+        $regionNames = array(
+            'legend',
+        );
+        foreach ($regionNames as $legendRegionName) {
+            if ($template->hasRegion($legendRegionName)) {
+                $region = $template->getRegion($legendRegionName);
+                $this->legendHandler->addLegends($pdf, $region, $legendBlocks, false, $template, $jobData);
+            }
+        }
+    }
+
+    /**
+     * Renders any legend blocks not yet marked as rendered on extra pages appended to the end of the pdf.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     * @param LegendBlock[] $legendBlocks
+     */
+    protected function handleRemainingLegends($pdf, $template, $jobData, $legendBlocks)
+    {
+        // give the LegendHandler a region with zero space, so it will be forced to page-break
+        // immediately
+        $region = NullRegion::getInstance();
+        $this->legendHandler->addLegends($pdf, $region, $legendBlocks, true, $template, $jobData);
     }
 
     /**
@@ -627,18 +687,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         } else {
             return floatval($jobData['quality']) / $this->getDefaultDpi($jobData);
         }
-    }
-
-    private function addLegend()
-    {
-        if ($this->conf->hasRegion('legend')) {
-            $region = $this->conf->getRegion('legend');
-        } else {
-            $this->legendHandler->addPage($this->pdf, $this->conf, $this->data);
-            $region = FullPage::fromCurrentPdfPage($this->pdf);
-        }
-        $blocks = $this->legendHandler->collectLegends($this->data);
-        $this->legendHandler->addLegends($this->pdf, $region, $blocks, true, $this->conf, $this->data);
     }
 
     /**
