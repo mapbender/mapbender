@@ -24,6 +24,7 @@
         <parameter key="mapbender.print.resource_dir">%mapbender.imageexport.resource_dir%</parameter>
         <parameter key="mapbender.print.temp_dir">%mapbender.imageexport.temp_dir%</parameter>
         <parameter key="mapbender.print.template_dir">%mapbender.print.resource_dir%/templates</parameter>
+        <parameter key="mapbender.print.legend_handler.service.class">Mapbender\PrintBundle\Component\LegendHandler</parameter>
         <parameter key="mapbender.print.template_parser.service.class">Mapbender\PrintBundle\Component\OdgParser</parameter>
         <parameter key="mapbender.print_service_bridge.service.class">Mapbender\PrintBundle\Component\Service\PrintServiceBridge</parameter>
         <parameter key="mapbender.print_plugin_host.service.class">Mapbender\PrintBundle\Component\Service\PrintPluginHost</parameter>
@@ -72,6 +73,7 @@
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
             </argument>
             <argument type="service" id="mapbender.imageexport.image_transport.service" />
+            <argument type="service" id="mapbender.print.legend_handler.service" />
             <argument type="service" id="mapbender.print.template_parser.service" />
             <argument type="service" id="mapbender.print_plugin_host.service" />
             <argument type="service" id="logger" />
@@ -80,6 +82,10 @@
         </service>
         <service id="mapbender.print.template_parser.service" class="%mapbender.print.template_parser.service.class%">
             <argument>%mapbender.print.template_dir%</argument>
+        </service>
+        <service id="mapbender.print.legend_handler.service" class="%mapbender.print.legend_handler.service.class%">
+            <argument type="service" id="mapbender.imageexport.image_transport.service" />
+            <argument>%mapbender.print.resource_dir%</argument>
         </service>
         <service id="mapbender.print_service_bridge.service" class="%mapbender.print_service_bridge.service.class%">
             <argument type="service" id="service_container" />

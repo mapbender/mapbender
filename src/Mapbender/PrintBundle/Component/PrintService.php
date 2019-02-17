@@ -3,7 +3,7 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
-use Mapbender\PrintBundle\Component\Region\A4FullPage;
+use Mapbender\PrintBundle\Component\Region\FullPage;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
@@ -37,10 +37,13 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected $pluginHost;
     /** @var ImageTransport */
     protected $imageTransport;
+    /** @var LegendHandler */
+    protected $legendHandler;
 
     /**
      * @param LayerRenderer[] $layerRenderers
      * @param ImageTransport $imageTransport
+     * @param LegendHandler $legendHandler
      * @param OdgParser $templateParser
      * @param PrintPluginHost $pluginHost
      * @param LoggerInterface $logger
@@ -48,11 +51,13 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      */
     public function __construct($layerRenderers, ImageTransport $imageTransport,
+                                $legendHandler,
                                 $templateParser, $pluginHost, $logger,
                                 $resourceDir, $tempDir)
     {
         $this->templateParser = $templateParser;
         $this->imageTransport = $imageTransport;
+        $this->legendHandler = $legendHandler;
 
         $this->pluginHost = $pluginHost;
         $this->resourceDir = $resourceDir;
@@ -625,41 +630,17 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     private function addLegend()
     {
-        // @todo: config values please
-        $marginsFirstPage = array(
-            'x' => 5,
-            'y' => 5,
-        );
-        $marginsFullPage = array(
-            'x' => 5,
-            'y' => 10,
-        );
-        if (!empty($this->conf['legend'])) {
-            $regionData = $this->conf['legend'];
-            $offsetXy = array($regionData['x'], $regionData['y']);
-            $margins = $marginsFirstPage;
-            $region = new TemplateRegion($regionData['width'], $regionData['height'], $offsetXy);
+        if ($this->conf->hasRegion('legend')) {
+            $region = $this->conf->getRegion('legend');
         } else {
-            // print legend on second page
-            $this->pdf->addPage('P');
-            $this->pdf->SetFont('Arial', 'B', 11);
-            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-            $margins = $marginsFullPage;
-            $region = new A4FullPage();
+            $this->legendHandler->addPage($this, $this->pdf, $this->conf, $this->data);
+            $region = FullPage::fromCurrentPdfPage($this->pdf);
         }
+        $margins = $this->legendHandler->getMargins($region);
         $x = $margins['x'];
         $y = $margins['y'];
 
-        $blocks = array();
-        foreach ($this->data['legends'] as $idx => $legendArray) {
-            foreach ($legendArray as $title => $legendUrl) {
-                $image = $this->imageTransport->downloadImage($legendUrl);
-                if ($image) {
-                   $blocks[] = new LegendBlock($image, $title);
-                }
-            };
-        }
-        foreach ($blocks as $n => $block) {
+        foreach ($this->legendHandler->collectLegends($this->data) as $n => $block) {
             $imageMmWidth = $this->dotsToMm($block->getWidth(), 96);
             $imageMmHeight = $this->dotsToMm($block->getHeight(), 96);
             // allot a little extra height for the title text
@@ -675,13 +656,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                     }
                     if ($x + 20 > $region->getWidth()) {
                         // we need a page break
-                        $this->pdf->addPage('P');
-                        $this->pdf->SetFont('Arial', 'B', 11);
-                        $region = new A4FullPage();
-                        $margins = $marginsFullPage;
+                        $this->legendHandler->addPage($this, $this->pdf, $this->conf, $this->data);
+                        $region = FullPage::fromCurrentPdfPage($this->pdf);
+                        $margins = $this->legendHandler->getMargins($region);
                         $x = $margins['x'];
                         $y = $margins['y'];
-                        $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
                     }
                 }
 
@@ -708,28 +687,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return $dots * 25.4 / $dpi;
     }
 
-    /**
-     * @param PDF_Extensions|\FPDF $pdf
-     * @param array $templateData
-     * @param array $jobData
-     */
-    protected function addLegendPageImage($pdf, $templateData, $jobData)
-    {
-        if (empty($templateData['legendpage_image']) || empty($jobData['legendpage_image'])) {
-            return;
-        }
-        $sourcePath = $this->resourceDir . '/' . $jobData['legendpage_image']['path'];
-        $region = $templateData['legendpage_image'];
-        if (file_exists($sourcePath)) {
-            $this->addImageToPdf($pdf, $sourcePath, $region['x'], $region['y'], 0, $region['height']);
-        } else {
-            $defaultPath = $this->resourceDir . '/images/legendpage_image.png';
-            if ($defaultPath !== $sourcePath && file_exists($defaultPath)) {
-                $this->addImageToPdf($pdf, $defaultPath, $region['x'], $region['y'], 0, $region['height']);
-            }
-        }
-    }
-
     private function checkPdfBackground($pdf) {
         $pdfArray = (array) $pdf;
         $pdfFile = $pdfArray['currentFilename'];
@@ -745,16 +702,21 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
+     * Puts an image onto the current page of given $pdf at specified offset (in mm units).
+     *
+     * Public for LegendHandler access. @todo: formalize LH cooperative API with an interface
+     *
      * @param PDF_Extensions|\FPDF $pdf
      * @param resource|string $gdResOrPath
-     * @param int $xOffset
-     * @param int $yOffset
+     * @param int $xOffset in mm
+     * @param int $yOffset in mm
      * @param int $width optional, to rescale image
      * @param int $height optional, to rescale image
      */
-    protected function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
+    public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
     {
         if (is_resource($gdResOrPath)) {
+            // FPDF library can embed files, but not gd resources
             $imageName = $this->makeTempFile('mb_print_pdfbuild');
             imagepng($gdResOrPath, $imageName);
             $this->addImageToPdf($pdf, $imageName, $xOffset, $yOffset, $width, $height);
@@ -769,7 +731,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param resource|string $gdResOrPath
      * @param TemplateRegion $region
      */
-    protected function addImageToPdfRegion($pdf, $gdResOrPath, $region)
+    public function addImageToPdfRegion($pdf, $gdResOrPath, $region)
     {
         $this->addImageToPdf($pdf, $gdResOrPath,
             $region->getOffsetX(), $region->getOffsetY(),
