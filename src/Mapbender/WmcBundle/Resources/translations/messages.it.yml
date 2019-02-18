@@ -3,9 +3,9 @@ mb:
     suggestmap:
       class:
         title: 'Suggerisci mappa'
-        description: 'Suggerisce una mappa'
+        description: 'Suggerisci una mappa'
       tag:
-        suggest: suggerisce
+        suggest: suggerisci
         map: mappa
     wmceditor:
       class:
@@ -36,7 +36,7 @@ mb:
         list: lista
     wmcloader:
       class:
-        title: 'WMC loader'
+        title: 'Loader WMC'
         description: 'Un documento WMC può essere caricato con l''elemento WMC loader.'
       tag:
         wmc: wmc
@@ -103,6 +103,6 @@ mb:
       wmclist:
         label: Label
       wmcloader:
-        keep_extent: 'Mantieni Estensione'
+        keep_extent: 'Mantieni estensione'
     wmc:
-      delete_confirm: 'Sei sicuro di voler rimuovere il WMC con il titolo <em>%wmc_title%</em> and the id <em>%wmc_id%</em>?'
+      delete_confirm: 'Sei sicuro di voler rimuovere il WMC con il titolo <em>%wmc_title%</em> e id <em>%wmc_id%</em>?'

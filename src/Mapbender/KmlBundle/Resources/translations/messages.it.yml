@@ -1,0 +1,11 @@
+mb:
+  kml:
+    kmlexport:
+      xml:
+        name: 'Esportazione di KML per Mapbender'
+      class:
+        title: 'Esporta KML'
+        description: 'KML-Export esporta i dati della mappa in formato "kml"'
+      tag:
+        kml: kml
+        export: esporta
