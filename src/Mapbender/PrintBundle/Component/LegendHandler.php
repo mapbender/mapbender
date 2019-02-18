@@ -25,6 +25,7 @@ use Mapbender\PrintBundle\Component\Transport\ImageTransport;
  * @todo: limit image width to column width
  * @todo: support line breaks in titles (will impact region fit calculations)
  * @todo: allow out-of-order rendering of legends or legend groups, if it reduces total space
+ * @todo: (optionally) suppress legend repetitions, based on ~equal url; careful with assigned title...
  */
 class LegendHandler
 {
