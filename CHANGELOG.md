@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ 56d91517d**
+* **dev-release/3.0.7 @ c2a933049**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
@@ -12,7 +12,7 @@
   - Fix erratic LayerTree / Legend state updates on first map interaction after submitting a print job ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
   - Fix erratic LayerTree layer "ghosting" on certain map interactions ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Typo fixes in WmsCapabilitiesParser130, thanks jef-n ([PR#1046](https://github.com/mapbender/mapbender/pull/1046))
-  - Extend / update Italian locale translations ([PR #1062](https://github.com/mapbender/mapbender/pull/1062))
+  - Extend / update Italian locale translations ([PR #1062](https://github.com/mapbender/mapbender/pull/1062), [PR#1078](https://github.com/mapbender/mapbender/pull/1078))
   - Various Button fixes:
     - Buttons with invalid targets can longer break other buttons with the same `group` setting
     - Fix exception when rendering a Button Element with completely undefined `click` option ([PR#1076](https://github.com/mapbender/mapbender/pull/1076))
@@ -34,6 +34,7 @@
     - Synchronize layer and legend visibility at any scale with client-side behavior ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
     - Fix wrong (grey instead of white) color of GpsButton area display circle, if one makes it into an export or print
   - Print:
+    - Selection rectangle position and scale are now restored, if still on screen, when closing / reopening the dialog ([PR#1011](https://github.com/mapbender/mapbender/pull/1101))
     - Add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
       - NOTE: Print queue display styling [inherits from .mapbender-element-result-table](https://github.com/mapbender/mapbender/blob/e2fd234ffa5f98d6c74c0359f26d7d60362f50dd/src/Mapbender/PrintBundle/Resources/public/element/printclient.scss#L28), which means
         any custom css styles you may have already applied to Digitizer result tables should automatically transfer to the print queue visual.
@@ -49,6 +50,7 @@
   - [Vendorspecifics] Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
   - [Vendorspecifics] Unused / ineffective form fields have been removed ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
   - [Backend] Fix Application import from pretty-printed JSON input
+  - [Backend] Fix broken display of long layerset titles in Map configuration form ([Issue#1085](https://github.com/mapbender/mapbender/issues/1085), [PR#1098](https://github.com/mapbender/mapbender/pull/1098))
   - [Backend] Provide better scope information (layerset name, element region) in source instance assignment and element creation popups
   - [Backend] Use localized strings in Application delete confirmation popup (previously hard-coded to English)
   - [Backend] Fix excessive height of Application delete confirmation popup, align with other confirmation dialogs
