@@ -6,7 +6,7 @@ namespace Mapbender\PrintBundle\Component;
 use Mapbender\PrintBundle\Component\Legend\LegendBlock;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockGroup;
-use Mapbender\PrintBundle\Component\Pdf\ImageBridge;
+use Mapbender\PrintBundle\Component\Pdf\PdfUtil;
 use Mapbender\PrintBundle\Component\Region\FullPage;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 
@@ -32,8 +32,8 @@ class LegendHandler
     protected $imageTransport;
     /** @var string */
     protected $resourceDir;
-    /** @var ImageBridge */
-    protected $imageBridge;
+    /** @var PdfUtil */
+    protected $pdfUtil;
 
     /**
      * @param ImageTransport $imageTransport
@@ -44,7 +44,7 @@ class LegendHandler
     {
         $this->imageTransport = $imageTransport;
         $this->resourceDir = $resourceDir;
-        $this->imageBridge = new ImageBridge($tempDir, 'mb_print_legend');
+        $this->pdfUtil = new PdfUtil($tempDir, 'mb_print_legend');
     }
 
     /**
@@ -141,7 +141,7 @@ class LegendHandler
                 $pageY = $y + $region->getOffsetY();
                 $pdf->SetXY($pageX, $pageY);
                 $pdf->Cell(0,0,  utf8_decode($block->getTitle()));
-                $this->imageBridge->addImageToPdf($pdf, $block->resource,
+                $this->pdfUtil->addImageToPdf($pdf, $block->resource,
                     $pageX,
                     $pageY + 5,
                     $imageMmWidth, $imageMmHeight);
@@ -183,11 +183,11 @@ class LegendHandler
         $sourcePath = $this->resourceDir . '/' . $jobData['legendpage_image']['path'];
         $region = $templateData['legendpage_image'];
         if (file_exists($sourcePath)) {
-            $this->imageBridge->addImageToPdf($pdf, $sourcePath, $region['x'], $region['y'], 0, $region['height']);
+            $this->pdfUtil->addImageToPdf($pdf, $sourcePath, $region['x'], $region['y'], 0, $region['height']);
         } else {
             $defaultPath = $this->resourceDir . '/images/legendpage_image.png';
             if ($defaultPath !== $sourcePath && file_exists($defaultPath)) {
-                $this->imageBridge->addImageToPdf($pdf, $defaultPath, $region['x'], $region['y'], 0, $region['height']);
+                $this->pdfUtil->addImageToPdf($pdf, $defaultPath, $region['x'], $region['y'], 0, $region['height']);
             }
         }
     }

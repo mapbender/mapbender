@@ -3,9 +3,8 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
-use Mapbender\PrintBundle\Component\Legend\LegendBlock;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
-use Mapbender\PrintBundle\Component\Pdf\ImageBridge;
+use Mapbender\PrintBundle\Component\Pdf\PdfUtil;
 use Mapbender\PrintBundle\Component\Region\NullRegion;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
@@ -40,8 +39,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected $imageTransport;
     /** @var LegendHandler */
     protected $legendHandler;
-    /** @var ImageBridge */
-    protected $imageBridge;
+    /** @var PdfUtil */
+    protected $pdfUtil;
 
     /**
      * @param LayerRenderer[] $layerRenderers
@@ -64,7 +63,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         $this->pluginHost = $pluginHost;
         $this->resourceDir = $resourceDir;
-        $this->imageBridge = new ImageBridge($tempDir, 'mb_print');
+        $this->pdfUtil = new PdfUtil($tempDir, 'mb_print');
         parent::__construct($layerRenderers, $logger);
     }
 
@@ -727,7 +726,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
     {
-        return $this->imageBridge->addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width, $height);
+        return $this->pdfUtil->addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width, $height);
     }
 
     /**
@@ -737,7 +736,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     public function addImageToPdfRegion($pdf, $gdResOrPath, $region)
     {
-        return $this->imageBridge->addImageToPdfRegion($pdf, $gdResOrPath, $region);
+        return $this->pdfUtil->addImageToPdfRegion($pdf, $gdResOrPath, $region);
     }
 
     /**
@@ -756,6 +755,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function makeTempFile($prefix)
     {
-        return $this->imageBridge->makeTempFile($prefix);
+        return $this->pdfUtil->makeTempFile($prefix);
     }
 }

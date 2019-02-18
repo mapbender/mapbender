@@ -17,8 +17,10 @@ use Mapbender\PrintBundle\Component\TemplateRegion;
  *
  * Currently used by both PrintService and LegendHandler (separate instances, effectively same temp dir
  * because they share the smae configuration parameter value).
+ *
+ * @todo: add (MultiCell) text height calculations; see e.g.: https://stackoverflow.com/a/54533457
  */
-class ImageBridge
+class PdfUtil
 {
     const DEFAULT_PREFIX = 'mb_pdf_build';
 
