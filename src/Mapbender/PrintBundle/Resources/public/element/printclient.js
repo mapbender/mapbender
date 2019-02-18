@@ -162,11 +162,6 @@
             this.map.map.olMap.getCenter() :
             this.feature.geometry.getBounds().getCenterLonLat();
 
-            if(this.feature) {
-                this.layer.removeAllFeatures();
-                this.feature = null;
-            }
-
             // adjust for geodesic pixel aspect ratio so
             // a) our print region selection rectangle appears with ~the same visual aspect ratio as
             //    the main map region in the template, for any projection
@@ -191,44 +186,65 @@
             this.printBounds = this.feature.geometry.getBounds().clone();
 
             this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
-            this.layer.addFeatures(this.feature);
-            this.layer.redraw();
+            this._redrawSelectionFeatures([this.feature]);
         },
-
+        _redrawSelectionFeatures: function(features) {
+            var layer = this._getSelectionLayer();
+            layer.removeAllFeatures();
+            layer.addFeatures(features);
+            layer.redraw();
+        },
         _updateElements: function(active) {
-            var self = this;
+            // Bypass automatic creation of Layer + Control when deactivating
+            var layer = active ? this._getSelectionLayer() : this.layer;
+            var control = active ? this._getSelectionDragControl() : this.control;
 
-            if(true === active){
-                if (!this.layer) {
-                    this.layer = new OpenLayers.Layer.Vector("Print", {
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
-                        })
-                    });
-                }
-                if (!this.control) {
-                    this.control = new OpenLayers.Control.DragFeature(this.layer,  {
-                        onComplete: function() {
-                            self._updateGeometry(false);
-                        }
-                    });
-                }
-                this.map.map.olMap.addLayer(this.layer);
-                this.map.map.olMap.addControl(this.control);
-                this.control.activate();
-
+            if (active) {
+                this.map.map.olMap.addLayer(layer);
+                this.map.map.olMap.addControl(control);
+                control.activate();
                 this._updateGeometry(true);
-            }else{
-                if (this.control) {
+            } else {
+                if (control) {
                     this.control.deactivate();
-                    this.map.map.olMap.removeControl(this.control);
-                    this.control = null;
+                    this.map.map.olMap.removeControl(control);
                 }
-                if (this.layer) {
-                    this.map.map.olMap.removeLayer(this.layer);
-                    this.layer = null;
+                if (layer) {
+                    this.map.map.olMap.removeLayer(layer);
                 }
             }
+        },
+        /**
+         * Gets the layer on which the selection feature is drawn. Layer is created on first call, then reused
+         * for the rest of the session.
+         *
+         * @return {OpenLayers.Layer.Vector}
+         */
+        _getSelectionLayer: function() {
+            if (!this.layer) {
+                this.layer = new OpenLayers.Layer.Vector("Print", {
+                    styleMap: new OpenLayers.StyleMap({
+                        'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
+                    })
+                });
+            }
+            return this.layer;
+        },
+        /**
+         * Gets the drag control used to move the selection feature around over the map.
+         * Control is created on first call, then reused.
+         * Implicitly creates the selection layer, too, if not yet done.
+         */
+        _getSelectionDragControl: function() {
+            var self = this;
+            if (!this.control) {
+                this.control = new OpenLayers.Control.DragFeature(this._getSelectionLayer(),  {
+                    onComplete: function() {
+                        self._updateGeometry(false);
+                    }
+                });
+            }
+            return this.control;
         },
 
         _getPrintScale: function() {
