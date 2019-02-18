@@ -23,7 +23,7 @@
   tr{height:30px;}
   .iconColumn{
     float:right;
-    display: block;
+    display: table-cell !important; // defeat .icon^ rule...
     padding-top:5px;
     padding-right:$space/2;
     vertical-align: top;
