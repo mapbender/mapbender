@@ -114,6 +114,9 @@ class OdgParser
         $customShapes = $xPath->query("//draw:custom-shape");
         foreach ($customShapes as $customShape) {
             $shapeName = $customShape->getAttribute('draw:name');
+            if (!$shapeName) {
+                continue;
+            }
             $templateRegion = $this->parseShapeIntoRegion($customShape);
             $templateRegion->setName($shapeName);
             // @todo: extract (non-default) font styles for all shapes?
