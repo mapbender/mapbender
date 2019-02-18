@@ -145,9 +145,6 @@ mb:
           title: 'Titolo URL'
         description: Descrizione
         template: Template
-        edit:
-          title: 'Comune'
-          base_data: 'Dati di base'
       applications: Applicazioni
     managerbundle:
       applications: Applicazioni
