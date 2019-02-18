@@ -21,6 +21,7 @@
         digitizerData: null,
         printBounds: null,
         jobList: null,
+        $selectionFrameToggle: null,
 
         _setup: function(){
             var self = this;
@@ -37,9 +38,10 @@
             $('select[name="template"]', this.$form)
                 .on('change', $.proxy(this._onTemplateChange, this));
 
+            this.$selectionFrameToggle = $('.-fn-toggle-frame', this.element);
             if (this.options.type === 'element') {
                 $(this.element).show();
-                $(this.element).on('click', '.-fn-toggle-frame', function() {
+                this.$selectionFrameToggle.on('click', function() {
                     var $button = $(this);
                     var wasActive = !!$button.data('active');
                     $button.data('active', !wasActive);
@@ -48,7 +50,7 @@
                                                : 'mb.core.printclient.btn.deactivate';
                     $button.val(Mapbender.trans(buttonText));
                     if (!wasActive) {
-                        self._activateSelection();
+                        self.activate();
                     } else {
                         self._deactivateSelection();
                     }
@@ -99,7 +101,7 @@
                 this.activate();
             }
         },
-        _activateSelection: function() {
+        _activateSelection: function(reset) {
             var self = this;
             this._getTemplateSize().then(function() {
                 var layer = self._getSelectionLayer();
@@ -107,8 +109,11 @@
                 self.map.map.olMap.addLayer(layer);
                 self.map.map.olMap.addControl(control);
                 control.activate();
-                // self._updateGeometry(true);  // NOTE: called implicitly by _setScale
-                self._setScale();
+                if (reset) {
+                    self._setScale();       // NOTE: will end in a call to _updateGeometry(true)
+                } else {
+                    self._updateGeometry(false);
+                }
                 $('.printSubmit', self.$form).removeClass('hidden');
             });
         },
@@ -123,9 +128,9 @@
             $('.printSubmit', this.$form).addClass('hidden');
         },
         activate: function() {
-            var $selectionFrameToggle = $('.-fn-toggle-frame', this.element);
-            if (!$selectionFrameToggle.length || $selectionFrameToggle.data('active')) {
-                this._activateSelection();
+            if (!this.$selectionFrameToggle.length || this.$selectionFrameToggle.data('active')) {
+                var resetScale = !this._isSelectionOnScreen();
+                this._activateSelection(resetScale);
             }
             if (this.jobList) {
                 this.jobList.resume();
@@ -147,7 +152,14 @@
             }
             this._super();
         },
-
+        _isSelectionOnScreen: function() {
+            if (this.feature && this.feature.geometry) {
+                var viewGeometry = this.map.map.olMap.getExtent().toGeometry();
+                return viewGeometry.intersects(this.feature.geometry);
+            } else {
+                return false;
+            }
+        },
         _setScale: function() {
             var select = $("select[name='scale_select']", this.$form);
             var styledSelect = select.parent().find(".dropdownValue.iconDown");
