@@ -21,6 +21,11 @@
         digitizerData: null,
         printBounds: null,
         jobList: null,
+        $selectionFrameToggle: null,
+        // buffer for ajax-loaded 'getTemplateSize' requests
+        // we generally don't want to keep reloading size information
+        // for the same template(s) within the same session
+        _templateSizeCache: {},
 
         _setup: function(){
             var self = this;
@@ -35,11 +40,12 @@
             $('input[name="rotation"]', this.$form)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.$form)
-                .on('change', $.proxy(this._getTemplateSize, this));
+                .on('change', $.proxy(this._onTemplateChange, this));
 
+            this.$selectionFrameToggle = $('.-fn-toggle-frame', this.element);
             if (this.options.type === 'element') {
                 $(this.element).show();
-                $(this.element).on('click', '.-fn-toggle-frame', function() {
+                this.$selectionFrameToggle.on('click', function() {
                     var $button = $(this);
                     var wasActive = !!$button.data('active');
                     $button.data('active', !wasActive);
@@ -47,13 +53,16 @@
                     var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
                                                : 'mb.core.printclient.btn.deactivate';
                     $button.val(Mapbender.trans(buttonText));
-                    self._getTemplateSize();
-                    self._updateElements(!wasActive);
-                    self._setScale();
-
-                    $('.printSubmit', self.$form).toggleClass('hidden', wasActive);
+                    if (!wasActive) {
+                        self.activate();
+                    } else {
+                        self._deactivateSelection();
+                    }
                 });
                 $('.printSubmit', this.$form).on('click', $.proxy(this._print, this));
+            } else {
+                // popup comes with its own buttons
+                $('.printSubmit', this.$form).remove();
             }
             this.$form.on('submit', this._onSubmit.bind(this));
             this._super();
@@ -92,23 +101,54 @@
                             }
                         });
                     this.popup.$element.on('close', $.proxy(this.close, this));
-                    this._getTemplateSize();
-                    this._updateElements(true);
-                    this._setScale();
                 }
+                this.activate();
             }
-            // restart job list reloading by re-activating the current tab
+        },
+        _activateSelection: function(reset) {
+            var self = this;
+            this._getTemplateSize().then(function() {
+                var layer = self._getSelectionLayer();
+                var control = self._getSelectionDragControl();
+                self.map.map.olMap.addLayer(layer);
+                self.map.map.olMap.addControl(control);
+                control.activate();
+                if (reset) {
+                    self._setScale();       // NOTE: will end in a call to _updateGeometry(true)
+                } else {
+                    self._updateGeometry(false);
+                }
+                $('.printSubmit', self.$form).removeClass('hidden');
+            });
+        },
+        _deactivateSelection: function() {
+            if (this.control) {
+                this.control.deactivate();
+                this.map.map.olMap.removeControl(this.control);
+            }
+            if (this.layer) {
+                this.map.map.olMap.removeLayer(this.layer);
+            }
+            $('.printSubmit', this.$form).addClass('hidden');
+        },
+        activate: function() {
+            if (!this.$selectionFrameToggle.length || this.$selectionFrameToggle.data('active')) {
+                var resetScale = !this._isSelectionOnScreen();
+                this._activateSelection(resetScale);
+            }
             if (this.jobList) {
                 this.jobList.resume();
             }
         },
-
-        close: function() {
+        deactivate: function() {
             if (this.jobList) {
                 this.jobList.pause();
             }
+            this._deactivateSelection();
+        },
+        close: function() {
+            this.deactivate();
             if (this.popup) {
-                this._updateElements(false);
                 if (this.overwriteTemplates) {
                     this._overwriteTemplateSelect(this.options.templates);
                     this.overwriteTemplates = false;
@@ -116,7 +156,14 @@
             }
             this._super();
         },
-
+        _isSelectionOnScreen: function() {
+            if (this.feature && this.feature.geometry) {
+                var viewGeometry = this.map.map.olMap.getExtent().toGeometry();
+                return viewGeometry.intersects(this.feature.geometry);
+            } else {
+                return false;
+            }
+        },
         _setScale: function() {
             var select = $("select[name='scale_select']", this.$form);
             var styledSelect = select.parent().find(".dropdownValue.iconDown");
@@ -162,11 +209,6 @@
             this.map.map.olMap.getCenter() :
             this.feature.geometry.getBounds().getCenterLonLat();
 
-            if(this.feature) {
-                this.layer.removeAllFeatures();
-                this.feature = null;
-            }
-
             // adjust for geodesic pixel aspect ratio so
             // a) our print region selection rectangle appears with ~the same visual aspect ratio as
             //    the main map region in the template, for any projection
@@ -191,44 +233,45 @@
             this.printBounds = this.feature.geometry.getBounds().clone();
 
             this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
-            this.layer.addFeatures(this.feature);
-            this.layer.redraw();
+            this._redrawSelectionFeatures([this.feature]);
         },
-
-        _updateElements: function(active) {
-            var self = this;
-
-            if(true === active){
-                if (!this.layer) {
-                    this.layer = new OpenLayers.Layer.Vector("Print", {
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
-                        })
-                    });
-                }
-                if (!this.control) {
-                    this.control = new OpenLayers.Control.DragFeature(this.layer,  {
-                        onComplete: function() {
-                            self._updateGeometry(false);
-                        }
-                    });
-                }
-                this.map.map.olMap.addLayer(this.layer);
-                this.map.map.olMap.addControl(this.control);
-                this.control.activate();
-
-                this._updateGeometry(true);
-            }else{
-                if (this.control) {
-                    this.control.deactivate();
-                    this.map.map.olMap.removeControl(this.control);
-                    this.control = null;
-                }
-                if (this.layer) {
-                    this.map.map.olMap.removeLayer(this.layer);
-                    this.layer = null;
-                }
+        _redrawSelectionFeatures: function(features) {
+            var layer = this._getSelectionLayer();
+            layer.removeAllFeatures();
+            layer.addFeatures(features);
+            layer.redraw();
+        },
+        /**
+         * Gets the layer on which the selection feature is drawn. Layer is created on first call, then reused
+         * for the rest of the session.
+         *
+         * @return {OpenLayers.Layer.Vector}
+         */
+        _getSelectionLayer: function() {
+            if (!this.layer) {
+                this.layer = new OpenLayers.Layer.Vector("Print", {
+                    styleMap: new OpenLayers.StyleMap({
+                        'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
+                    })
+                });
             }
+            return this.layer;
+        },
+        /**
+         * Gets the drag control used to move the selection feature around over the map.
+         * Control is created on first call, then reused.
+         * Implicitly creates the selection layer, too, if not yet done.
+         */
+        _getSelectionDragControl: function() {
+            var self = this;
+            if (!this.control) {
+                this.control = new OpenLayers.Control.DragFeature(this._getSelectionLayer(),  {
+                    onComplete: function() {
+                        self._updateGeometry(false);
+                    }
+                });
+            }
+            return this.control;
         },
 
         _getPrintScale: function() {
@@ -377,25 +420,45 @@
             // switch to queue display tab on successful submit
             $('.tab-container', this.element).tabs({active: 1});
         },
+        _onTemplateChange: function() {
+            var self = this;
+            this._getTemplateSize().then(function() {
+                self._updateGeometry();
+            });
+        },
         _getTemplateSize: function() {
             var self = this;
             var template = $('select[name="template"]', this.$form).val();
-
-            var url =  this.elementUrl + 'getTemplateSize';
-            $.ajax({
-                url: url,
-                type: 'GET',
-                data: {template: template},
-                dataType: "json",
-                success: function(data) {
-                    // dimensions delivered in cm, we need m
-                    self.width = data.width / 100.0;
-                    self.height = data.height / 100.0;
-                    self._updateGeometry();
-                }
-            });
+            var cached = this._templateSizeCache[template];
+            var promise;
+            if (!cached) {
+                var url =  this.elementUrl + 'getTemplateSize';
+                promise = $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: {template: template},
+                    dataType: "json",
+                    success: function(data) {
+                        // dimensions delivered in cm, we need m
+                        var widthMeters = data.width / 100.0;
+                        var heightMeters = data.height / 100.0;
+                        self.width = widthMeters;
+                        self.height = heightMeters;
+                        self._templateSizeCache[template] = {
+                            width: widthMeters,
+                            height: heightMeters
+                        };
+                    }
+                });
+            } else {
+                this.width = cached.width;
+                this.height = cached.height;
+                // Maintain the illusion of an asynchronous operation
+                promise = $.Deferred();
+                promise.resolve();
+            }
+            return promise;
         },
-
         printDigitizerFeature: function(schemaName,featureId){
             // Sonderlocke Digitizer
             this.digitizerData = {
