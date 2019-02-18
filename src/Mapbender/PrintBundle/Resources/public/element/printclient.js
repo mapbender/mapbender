@@ -48,17 +48,15 @@
                                                : 'mb.core.printclient.btn.deactivate';
                     $button.val(Mapbender.trans(buttonText));
                     if (!wasActive) {
-                        self._getTemplateSize().then(function() {
-                            self._updateElements(true);
-                            self._setScale();
-                            $('.printSubmit', self.$form).removeClass('hidden');
-                        });
+                        self._activateSelection();
                     } else {
-                        self._updateElements(false);
-                        $('.printSubmit', self.$form).addClass('hidden');
+                        self._deactivateSelection();
                     }
                 });
                 $('.printSubmit', this.$form).on('click', $.proxy(this._print, this));
+            } else {
+                // popup comes with its own buttons
+                $('.printSubmit', this.$form).remove();
             }
             this.$form.on('submit', this._onSubmit.bind(this));
             this._super();
@@ -97,24 +95,51 @@
                             }
                         });
                     this.popup.$element.on('close', $.proxy(this.close, this));
-                    this._getTemplateSize().then(function() {
-                        self._updateElements(true);
-                        self._setScale();
-                    });
                 }
+                this.activate();
             }
-            // restart job list reloading by re-activating the current tab
+        },
+        _activateSelection: function() {
+            var self = this;
+            this._getTemplateSize().then(function() {
+                var layer = self._getSelectionLayer();
+                var control = self._getSelectionDragControl();
+                self.map.map.olMap.addLayer(layer);
+                self.map.map.olMap.addControl(control);
+                control.activate();
+                // self._updateGeometry(true);  // NOTE: called implicitly by _setScale
+                self._setScale();
+                $('.printSubmit', self.$form).removeClass('hidden');
+            });
+        },
+        _deactivateSelection: function() {
+            if (this.control) {
+                this.control.deactivate();
+                this.map.map.olMap.removeControl(this.control);
+            }
+            if (this.layer) {
+                this.map.map.olMap.removeLayer(this.layer);
+            }
+            $('.printSubmit', this.$form).addClass('hidden');
+        },
+        activate: function() {
+            var $selectionFrameToggle = $('.-fn-toggle-frame', this.element);
+            if (!$selectionFrameToggle.length || $selectionFrameToggle.data('active')) {
+                this._activateSelection();
+            }
             if (this.jobList) {
                 this.jobList.resume();
             }
         },
-
-        close: function() {
+        deactivate: function() {
             if (this.jobList) {
                 this.jobList.pause();
             }
+            this._deactivateSelection();
+        },
+        close: function() {
+            this.deactivate();
             if (this.popup) {
-                this._updateElements(false);
                 if (this.overwriteTemplates) {
                     this._overwriteTemplateSelect(this.options.templates);
                     this.overwriteTemplates = false;
@@ -199,26 +224,6 @@
             layer.removeAllFeatures();
             layer.addFeatures(features);
             layer.redraw();
-        },
-        _updateElements: function(active) {
-            // Bypass automatic creation of Layer + Control when deactivating
-            var layer = active ? this._getSelectionLayer() : this.layer;
-            var control = active ? this._getSelectionDragControl() : this.control;
-
-            if (active) {
-                this.map.map.olMap.addLayer(layer);
-                this.map.map.olMap.addControl(control);
-                control.activate();
-                this._updateGeometry(true);
-            } else {
-                if (control) {
-                    this.control.deactivate();
-                    this.map.map.olMap.removeControl(control);
-                }
-                if (layer) {
-                    this.map.map.olMap.removeLayer(layer);
-                }
-            }
         },
         /**
          * Gets the layer on which the selection feature is drawn. Layer is created on first call, then reused
