@@ -1,10 +1,12 @@
 <?php
 
 
-namespace Mapbender\PrintBundle\Component;
+namespace Mapbender\PrintBundle\Component\Legend;
 
 
-class LegendBlock extends GdCanvas
+use Mapbender\PrintBundle\Component\GdCanvas;
+
+class LegendBlock extends GdCanvas implements LegendBlockContainer
 {
     /** @var string */
     protected $title;
@@ -48,5 +50,10 @@ class LegendBlock extends GdCanvas
     public function isRendered()
     {
         return $this->rendered;
+    }
+
+    public function getBlocks()
+    {
+        return array($this);
     }
 }

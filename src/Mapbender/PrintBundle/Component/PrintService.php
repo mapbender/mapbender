@@ -3,6 +3,8 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
+use Mapbender\PrintBundle\Component\Legend\LegendBlock;
+use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
 use Mapbender\PrintBundle\Component\Pdf\ImageBridge;
 use Mapbender\PrintBundle\Component\Region\NullRegion;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
@@ -345,7 +347,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
      * @param Template $template
      * @param array $jobData
-     * @param LegendBlock[] $legendBlocks
+     * @param LegendBlockContainer[] $legendBlocks
      */
     protected function handleMainPageLegends($pdf, $template, $jobData, $legendBlocks)
     {
@@ -367,7 +369,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
      * @param Template $template
      * @param array $jobData
-     * @param LegendBlock[] $legendBlocks
+     * @param LegendBlockContainer[] $legendBlocks
      */
     protected function handleRemainingLegends($pdf, $template, $jobData, $legendBlocks)
     {

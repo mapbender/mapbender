@@ -3,6 +3,9 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\PrintBundle\Component\Legend\LegendBlock;
+use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
+use Mapbender\PrintBundle\Component\Legend\LegendBlockGroup;
 use Mapbender\PrintBundle\Component\Pdf\ImageBridge;
 use Mapbender\PrintBundle\Component\Region\FullPage;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
@@ -43,78 +46,102 @@ class LegendHandler
      * Override this if you need to generate legends dynamically, or using methods other than a presupplied URL.
      *
      * @param array $printJobData
-     * @return LegendBlock[]
+     * @return LegendBlockContainer[]
      */
     public function collectLegends($printJobData)
     {
         if (empty($printJobData['legends'])) {
             return array();
         }
-        $blocks = array();
-        foreach ($printJobData['legends'] as $groupIndex => $groupData) {
-            foreach ($groupData as $title => $url) {
-                $block = $this->prepareUrlBlock($title, $url);
-                if ($block) {
-                    $blocks[] = $block;
-                }
-            };
+        $groups = array();
+        foreach ($printJobData['legends'] as $groupData) {
+            $group = $this->collectLegendGroup($groupData, $printJobData);
+
+            if (count($group->getBlocks())) {
+                $groups[] = $group;
+            }
         }
-        return $blocks;
+        return $groups;
+    }
+
+    /**
+     * Should prepare a LegendBlockContainer for a group of legends. In the default implementation,
+     * this is a collection of all legends (title + image) for all active layers from a single
+     * source service.
+     *
+     * NOTE: it's legal to return a single LegendBlock here (the interfaces are compatible).
+     *
+     * @param array $groupData
+     * @param array $printJobData if you need to look into the whole thing again...
+     * @return LegendBlockContainer
+     */
+    public function collectLegendGroup($groupData, $printJobData)
+    {
+        $group = new LegendBlockGroup();
+        foreach ($groupData as $title => $url) {
+            $block = $this->prepareUrlBlock($title, $url);
+            if ($block) {
+                $group->addBlock($block);
+            }
+        };
+        return $group;
     }
 
     /**
      * @param PDF_Extensions|\FPDF $pdf $pdf
      * @param TemplateRegion $region
-     * @param LegendBlock[] $blocks
+     * @param LegendBlockContainer[] $blockGroups
      * @param bool $allowPageBreaks
      * @param Template|array $templateData
      * @param array $jobData
      */
-    public function addLegends($pdf, $region, $blocks, $allowPageBreaks, $templateData, $jobData)
+    public function addLegends($pdf, $region, $blockGroups, $allowPageBreaks, $templateData, $jobData)
     {
         $margins = $this->getMargins($region);
         $x = $margins['x'];
         $y = $margins['y'];
 
-        foreach ($blocks as $block) {
-            if ($block->isRendered()) {
-                continue;
-            }
-            $imageMmWidth = PrintService::dotsToMm($block->getWidth(), 96);
-            $imageMmHeight = PrintService::dotsToMm($block->getHeight(), 96);
-            // allot a little extra height for the title text
-            // @todo: this should scale with font size
-            // @todo: support multi-line text
-            $blockHeightMm = round($imageMmHeight + 10);
-
-            if ($y != $margins['y'] && $y + $blockHeightMm > $region->getHeight()) {
-                // spill to next column
-                $x += 105;
-                $y = $margins['y'];
-            }
-            if ($x + 20 > $region->getWidth()) {
-                if (!$allowPageBreaks) {
-                    return;
+        foreach ($blockGroups as $group) {
+            foreach ($group->getBlocks() as $block) {
+                if ($block->isRendered()) {
+                    continue;
                 }
-                // we need a page break
-                $this->addPage($pdf, $templateData, $jobData);
-                $region = FullPage::fromCurrentPdfPage($pdf);
-                $margins = $this->getMargins($region);
-                $x = $margins['x'];
-                $y = $margins['y'];
+                $imageMmWidth = PrintService::dotsToMm($block->getWidth(), 96);
+                $imageMmHeight = PrintService::dotsToMm($block->getHeight(), 96);
+                // allot a little extra height for the title text
+                // @todo: this should scale with font size
+                // @todo: support multi-line text
+                $blockHeightMm = round($imageMmHeight + 10);
+
+                if ($y != $margins['y'] && $y + $blockHeightMm > $region->getHeight()) {
+                    // spill to next column
+                    $x += 105;
+                    $y = $margins['y'];
+                }
+                if ($x + 20 > $region->getWidth()) {
+                    if (!$allowPageBreaks) {
+                        return;
+                    }
+                    // we need a page break
+                    $this->addPage($pdf, $templateData, $jobData);
+                    $region = FullPage::fromCurrentPdfPage($pdf);
+                    $margins = $this->getMargins($region);
+                    $x = $margins['x'];
+                    $y = $margins['y'];
+                }
+
+                $pageX = $x + $region->getOffsetX();
+                $pageY = $y + $region->getOffsetY();
+                $pdf->SetXY($pageX, $pageY);
+                $pdf->Cell(0,0,  utf8_decode($block->getTitle()));
+                $this->imageBridge->addImageToPdf($pdf, $block->resource,
+                    $pageX,
+                    $pageY + 5,
+                    $imageMmWidth, $imageMmHeight);
+                $block->setIsRendered(true);
+
+                $y += $blockHeightMm + $margins['y'];
             }
-
-            $pageX = $x + $region->getOffsetX();
-            $pageY = $y + $region->getOffsetY();
-            $pdf->SetXY($pageX, $pageY);
-            $pdf->Cell(0,0,  utf8_decode($block->getTitle()));
-            $this->imageBridge->addImageToPdf($pdf, $block->resource,
-                $pageX,
-                $pageY + 5,
-                $imageMmWidth, $imageMmHeight);
-            $block->setIsRendered(true);
-
-            $y += $blockHeightMm + $margins['y'];
         }
     }
 
