@@ -35,7 +35,7 @@
             $('input[name="rotation"]', this.$form)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.$form)
-                .on('change', $.proxy(this._getTemplateSize, this));
+                .on('change', $.proxy(this._onTemplateChange, this));
 
             if (this.options.type === 'element') {
                 $(this.element).show();
@@ -47,11 +47,16 @@
                     var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
                                                : 'mb.core.printclient.btn.deactivate';
                     $button.val(Mapbender.trans(buttonText));
-                    self._getTemplateSize();
-                    self._updateElements(!wasActive);
-                    self._setScale();
-
-                    $('.printSubmit', self.$form).toggleClass('hidden', wasActive);
+                    if (!wasActive) {
+                        self._getTemplateSize().then(function() {
+                            self._updateElements(true);
+                            self._setScale();
+                            $('.printSubmit', self.$form).removeClass('hidden');
+                        });
+                    } else {
+                        self._updateElements(false);
+                        $('.printSubmit', self.$form).addClass('hidden');
+                    }
                 });
                 $('.printSubmit', this.$form).on('click', $.proxy(this._print, this));
             }
@@ -92,9 +97,10 @@
                             }
                         });
                     this.popup.$element.on('close', $.proxy(this.close, this));
-                    this._getTemplateSize();
-                    this._updateElements(true);
-                    this._setScale();
+                    this._getTemplateSize().then(function() {
+                        self._updateElements(true);
+                        self._setScale();
+                    });
                 }
             }
             // restart job list reloading by re-activating the current tab
@@ -393,12 +399,18 @@
             // switch to queue display tab on successful submit
             $('.tab-container', this.element).tabs({active: 1});
         },
+        _onTemplateChange: function() {
+            var self = this;
+            this._getTemplateSize().then(function() {
+                self._updateGeometry();
+            });
+        },
         _getTemplateSize: function() {
             var self = this;
             var template = $('select[name="template"]', this.$form).val();
 
             var url =  this.elementUrl + 'getTemplateSize';
-            $.ajax({
+            return $.ajax({
                 url: url,
                 type: 'GET',
                 data: {template: template},
@@ -407,7 +419,6 @@
                     // dimensions delivered in cm, we need m
                     self.width = data.width / 100.0;
                     self.height = data.height / 100.0;
-                    self._updateGeometry();
                 }
             });
         },
