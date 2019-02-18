@@ -3,7 +3,9 @@
 
 namespace Mapbender\PrintBundle\Component\Legend;
 
-
+/**
+ * @todo: add fit-to-region calculation method to this interface
+ */
 interface LegendBlockContainer
 {
     /**

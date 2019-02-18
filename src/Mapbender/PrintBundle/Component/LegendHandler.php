@@ -18,6 +18,13 @@ use Mapbender\PrintBundle\Component\Transport\ImageTransport;
  * API.
  *
  * Rewire 'mapbender.print.legend_handler.service' to displace this implementation with your own.
+ *
+ * @todo: calculate fit to region for individual blocks and whole groups
+ * @todo: add option to keep groups together if they fit
+ * @todo: add configuration knob for column width (now: hardcoded to 100mm)
+ * @todo: limit image width to column width
+ * @todo: support line breaks in titles (will impact region fit calculations)
+ * @todo: allow out-of-order rendering of legends or legend groups, if it reduces total space
  */
 class LegendHandler
 {
