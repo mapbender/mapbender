@@ -478,16 +478,24 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected function addScaleBar($pdf, $region, $jobData)
     {
         $totalWidth = $region['width'];
+        // Quantize bar length to whole scale units
+        $sectionWidth = 10;
+        $nSections = floor($totalWidth / 10);
+        $barWidth = $nSections * $sectionWidth;
+        // As per definition of scale, 10mm on the printout measures $scale centimeters in map space
+        $totalMeters = 0.01 * $jobData['scale_select'] * $nSections;
+
+        // if the region width isn't evenly divided by 10mm, offset the bar to center it
+        $barX0 = $region->getOffsetX() + 0.5 * ($totalWidth - $nSections * $sectionWidth);
+
         $pdf->SetFont('arial', '', 10 );
 
-        $length = 0.01 * $jobData['scale_select'] * 5;
-        $suffix = 'm';
-
-        $pdf->Text($region['x'] , $region['y'] - 1 , '0' );
-        $pdf->Text($region['x'] + $totalWidth - 7, $region['y'] - 1 , $length . '' . $suffix);
-
-        $nSections = 5;
-        $sectionWidth = $totalWidth / $nSections;
+        $pdf->Text($barX0, $region['y'] - 1 , '0');
+        $scaleText = "{$totalMeters}m";
+        $scaleTextLength = strlen($scaleText);
+        // heuristics time: the 'm' takes ~2.75 units, 0 and most other digits ~2 units
+        $endTextOffset = $barWidth - 2.75 - 1.975 * ($scaleTextLength - 1);
+        $pdf->Text($barX0 + $endTextOffset , $region['y'] - 1 , $scaleText);
 
         $pdf->SetLineWidth(0.1);
         $pdf->SetDrawColor(0, 0, 0);
@@ -497,7 +505,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             } else {
                 $pdf->SetFillColor(0, 0, 0);
             }
-            $pdf->Rect($region['x'] + round($i * $sectionWidth), $region['y'], $sectionWidth, 2, 'FD');
+            $pdf->Rect($barX0 + $i * $sectionWidth, $region['y'], $sectionWidth, 2, 'FD');
         }
         return true;
     }
