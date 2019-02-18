@@ -22,6 +22,10 @@
         printBounds: null,
         jobList: null,
         $selectionFrameToggle: null,
+        // buffer for ajax-loaded 'getTemplateSize' requests
+        // we generally don't want to keep reloading size information
+        // for the same template(s) within the same session
+        _templateSizeCache: {},
 
         _setup: function(){
             var self = this;
@@ -425,21 +429,36 @@
         _getTemplateSize: function() {
             var self = this;
             var template = $('select[name="template"]', this.$form).val();
-
-            var url =  this.elementUrl + 'getTemplateSize';
-            return $.ajax({
-                url: url,
-                type: 'GET',
-                data: {template: template},
-                dataType: "json",
-                success: function(data) {
-                    // dimensions delivered in cm, we need m
-                    self.width = data.width / 100.0;
-                    self.height = data.height / 100.0;
-                }
-            });
+            var cached = this._templateSizeCache[template];
+            var promise;
+            if (!cached) {
+                var url =  this.elementUrl + 'getTemplateSize';
+                promise = $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: {template: template},
+                    dataType: "json",
+                    success: function(data) {
+                        // dimensions delivered in cm, we need m
+                        var widthMeters = data.width / 100.0;
+                        var heightMeters = data.height / 100.0;
+                        self.width = widthMeters;
+                        self.height = heightMeters;
+                        self._templateSizeCache[template] = {
+                            width: widthMeters,
+                            height: heightMeters
+                        };
+                    }
+                });
+            } else {
+                this.width = cached.width;
+                this.height = cached.height;
+                // Maintain the illusion of an asynchronous operation
+                promise = $.Deferred();
+                promise.resolve();
+            }
+            return promise;
         },
-
         printDigitizerFeature: function(schemaName,featureId){
             // Sonderlocke Digitizer
             this.digitizerData = {
