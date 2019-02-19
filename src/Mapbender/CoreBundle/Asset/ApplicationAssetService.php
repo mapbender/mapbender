@@ -35,7 +35,7 @@ class ApplicationAssetService
     /** @var EngineInterface */
     protected $templateEngine;
     /** @var bool */
-    protected $minifyCss;
+    protected $debug;
     /** @var bool */
     protected $strict;
 
@@ -44,7 +44,7 @@ class ApplicationAssetService
                                 ElementFactory $elementFactory,
                                 RouterInterface $router,
                                 EngineInterface $templateEngine,
-                                $minifyCss=false,
+                                $debug=false,
                                 $strict=false)
     {
         $this->compiler = $compiler;
@@ -52,7 +52,7 @@ class ApplicationAssetService
         $this->applicationService = $applicationService;
         $this->router = $router;
         $this->templateEngine = $templateEngine;
-        $this->minifyCss = $minifyCss;
+        $this->debug = $debug;
         $this->strict = $strict;
         $this->dummyContainer = new Container();
         $this->dummyContainer->set('templating', new \stdClass());
@@ -129,10 +129,11 @@ class ApplicationAssetService
             case 'css':
                 $sourcePath = $this->getCssAssetSourcePath();
                 $targetPath = $this->getCssAssetTargetPath($application);
-                return $this->compiler->compileCss($refs, $sourcePath, $targetPath, $this->minifyCss);
+                return $this->compiler->compileCss($refs, $sourcePath, $targetPath, $this->debug);
             case 'js':
-                return $this->compiler->compileRaw($refs);
+                return $this->compiler->compileRaw($refs, $this->debug);
             case 'trans':
+                // JSON does not support embedded comments, so ignore $debug here
                 return $this->compiler->compileTranslations($refs);
             default:
                 throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
