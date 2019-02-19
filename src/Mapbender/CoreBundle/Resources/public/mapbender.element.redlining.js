@@ -71,8 +71,8 @@
             }
             if (this.options.display_type === 'dialog' && this.options.deactivate_on_close){
                 this._removeAllFeatures();
-                this.callback ? this.callback.call() : this.callback = null;
             }
+            this.callback ? this.callback.call() : this.callback = null;
             $('.redlining-tool', this.element).off('click');
         },
         /**
