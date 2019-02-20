@@ -355,6 +355,9 @@ class ApplicationController extends Controller
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
 
+        if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
+            return new Response($url);
+        }
         $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password);
         $proxy           = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
