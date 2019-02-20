@@ -8,7 +8,6 @@
         <!-- leave temp dir at null to autodetect via sys_get_temp_dir(); use an explicit path if temp dir autodetect fails -->
         <parameter key="mapbender.imageexport.temp_dir">null</parameter>
         <parameter key="mapbender.imageexport.image_transport.service.class">Mapbender\PrintBundle\Component\Transport\ImageTransport</parameter>
-        <parameter key="mapbender.imageexport.base_transport.service.class">Mapbender\PrintBundle\Component\Transport\OwsProxyAwareTransport</parameter>
         <parameter key="mapbender.imageexport.renderer.wms.class">Mapbender\PrintBundle\Component\LayerRendererWms</parameter>
         <!-- Maximum for both WIDTH or HEIGHT params on any GetMap request started by image export + print (pixel units).
              If the output requires more pixels, WMS will be requested in tiles to stay below this maximum. -->
@@ -51,11 +50,7 @@
             <argument type="service" id="logger" />
         </service>
         <service id="mapbender.imageexport.image_transport.service" class="%mapbender.imageexport.image_transport.service.class%">
-            <argument type="service" id="mapbender.imageexport.base_transport.service" />
-        </service>
-        <service id="mapbender.imageexport.base_transport.service" class="%mapbender.imageexport.base_transport.service.class%">
-            <argument>%owsproxy.proxy%</argument>
-            <argument type="service" id="logger" />
+            <argument type="service" id="mapbender.http_transport.service" />
         </service>
         <service id="mapbender.imageexport.renderer.wms" class="%mapbender.imageexport.renderer.wms.class%">
             <argument type="service" id="mapbender.imageexport.image_transport.service" />

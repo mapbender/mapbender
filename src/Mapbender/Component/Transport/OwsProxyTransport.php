@@ -1,13 +1,13 @@
 <?php
 
-namespace Mapbender\PrintBundle\Component\Transport;
+namespace Mapbender\Component\Transport;
 
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class OwsProxyAwareTransport implements HttpTransportInterface
+class OwsProxyTransport implements HttpTransportInterface
 {
     /** @var mixed[] */
     protected $proxyConfig;

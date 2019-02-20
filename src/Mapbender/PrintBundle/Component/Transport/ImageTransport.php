@@ -4,6 +4,8 @@
 namespace Mapbender\PrintBundle\Component\Transport;
 
 
+use Mapbender\Component\Transport\HttpTransportInterface;
+
 /**
  * Bridge between http transport and GD image resource.
  */
