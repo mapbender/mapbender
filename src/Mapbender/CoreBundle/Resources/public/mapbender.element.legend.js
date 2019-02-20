@@ -47,7 +47,6 @@
             this.onMapLayerChanges();
 
             if (this.options.elementType === 'dialog') {
-                this.element.hide(0);
                 if (this.options.autoOpen) {
                     this.open();
                 }
@@ -68,7 +67,7 @@
             this.htmlContainer.html(html);
 
             if (this.popupWindow) {
-                this.popupWindow.open(html);
+                this.popupWindow.open(this.element);
             }
         },
 
@@ -82,7 +81,7 @@
             var allLayers = [];
             var sources = Mapbender.Model.getSources();
             for (var i = (sources.length - 1); i > -1; i--) {
-                allLayers.push(widget._getSource(sources[i], sources[i].configuration.children[0], 1));
+                allLayers.push(widget._getSource(sources[i]));
             }
             return allLayers;
         },
@@ -90,47 +89,29 @@
         /**
          *
          * @param source
-         * @param layer
-         * @param level
          * @return {{sourceId, id, visible, title, level: *, children: *, childrenLegend: boolean}}
          * @private
          */
-        _getSource: function(source, layer, level) {
-            var widget = this;
-            var children_ = widget._getSubLayers(source, layer, level + 1, []);
-            var childrenLeg = false;
-            for (var i = 0; i < children_.length; i++) {
-                if(children_[i].childrenLegend || (children_[i].legend)) {
-                    childrenLeg = true;
+        _getSource: function(source) {
+            var i;
+            var rootLayer = source.configuration.children[0];
+            var sourceData = {
+                sourceId:       source.id,
+                id:             rootLayer.options.id,
+                visible:        rootLayer.state.visibility,
+                title:          rootLayer.options.title,
+                level:          1,
+                childrenLegend: false
+            };
+            var childLegends = [];
+            childLegends = childLegends.concat(this._getSubLayer(source, rootLayer, 2));
+            for (i = 0; i < childLegends.length; i++) {
+                if (childLegends[i].childrenLegend || (childLegends[i].legend)) {
+                    sourceData.childrenLegend = true;
                 }
             }
-            return {
-                sourceId:       source.id,
-                id:             layer.options.id,
-                visible:        layer.state.visibility,
-                title:          layer.options.title,
-                level:          level,
-                children:       children_,
-                childrenLegend: childrenLeg
-            };
-        },
-
-        /**
-         * Get sub layers
-         * @param source
-         * @param layer
-         * @param level
-         * @param children
-         *
-         * @return {*} Children
-         * @private
-         */
-        _getSubLayers: function(source, layer, level, children) {
-            var childLayers = layer.children || [];
-            for (var i = 0; i < childLayers.length; ++i) {
-                children = children.concat(this._getSubLayer(source, childLayers[i], "wms", level, []));
-            }
-            return children;
+            sourceData.children = childLegends;
+            return sourceData;
         },
 
         /**
@@ -154,45 +135,43 @@
          *
          * @param source
          * @param sublayer
-         * @param type
          * @param level
-         * @param children
          * @return {*}
          * @private
          */
-        _getSubLayer: function(source, sublayer, type, level, children) {
+        _getSubLayer: function(source, sublayer, level) {
             var widget = this;
+            var childLegends = [];
             var sublayerLeg = {
                 sourceId: source.id,
                 id:       sublayer.options.id,
                 visible:  sublayer.state.visibility,
                 title:    sublayer.options.title,
                 level:    level,
-                isNode:   sublayer.children && sublayer.children.length
+                isNode:   sublayer.children && sublayer.children.length,
+                childrenLegend: false,
+                legend: this.getLegendUrl(sublayer)
             };
-
-            sublayerLeg["legend"] = this.getLegendUrl(sublayer);
 
             if (sublayer.children && sublayer.children.length) {
                 if (widget.options.showGroupedTitle) {
-                    children.push(sublayerLeg);
+                    childLegends.push(sublayerLeg);
                 }
 
-                var childrenLegend = false;
                 for (var i = 0; i < sublayer.children.length; ++i) {
                     var childLayer = sublayer.children[i];
-                    if (this.getLegendUrl(childLayer)) {
-                        childrenLegend = true;
-                    }
-                    children = children.concat(widget._getSubLayer(source, childLayer, type, level, []));
+                    this._getSubLayer(source, childLayer, level + 1).map(function(childLegendData) {
+                        if (childLegendData.url || childLegendData.childrenLegend) {
+                            sublayerLeg.childrenLegend = true;
+                        }
+                        childLegends.push(childLegendData);
+                    });
                 }
-
-                sublayerLeg['childrenLegend'] = childrenLegend;
             } else {
-                children.push(sublayerLeg);
+                childLegends.push(sublayerLeg);
             }
 
-            return children;
+            return childLegends;
         },
 
         /**
@@ -216,9 +195,8 @@
             return $("<li/>")
                 .text(layer.title)
                 .addClass('ebene' + layer.level)
-                .addClass(layer.visible)
                 .addClass('subTitle')
-                .data({id: layer.id});
+            ;
         },
 
         /**
@@ -229,9 +207,8 @@
         createTitle: function(layer) {
             return $("<div/>")
                 .text(layer.title)
-                // .addClass(layer.visible)
                 .addClass('subTitle')
-                .data({id: layer.id});
+            ;
         },
         /**
          * Create Image
@@ -241,8 +218,6 @@
          */
         createImage: function(layer) {
             return $('<img/>')
-                .css({'display': 'block'})
-                .data({id: layer.id})
                 .attr('src', layer.legend);
         },
 
@@ -329,10 +304,10 @@
 
             if (this.options.elementType === 'dialog') {
                 if (!this.popupWindow) {
-                    this.popupWindow = new Mapbender.Popup(this.getPopupOptions());
+                    this.popupWindow = new Mapbender.Popup2(this.getPopupOptions());
                     this.popupWindow.$element.on('close', $.proxy(this.close, this));
                 } else {
-                    this.popupWindow.open(this.htmlContainer.html());
+                    this.popupWindow.open();
                 }
             }
         },
@@ -358,9 +333,9 @@
                 resizable: true,
                 modal: false,
                 closeOnESC: false,
-                destroyOnClose: true,
-                content: this.htmlContainer.html(),
-                //width: 350,
+                detachOnClose: true,
+                content: [this.element],
+                width: 350,
                 height: 500,
                 buttons: [
                     {
