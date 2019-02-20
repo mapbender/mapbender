@@ -63,8 +63,11 @@
 }
 
 .popup {
-  &.fom-popup {
+  &.ui-resizable {
     min-width: 300px;
+    min-height: 250px;
+  }
+  &.fom-popup {
     min-height: 250px;
     width: $popupModalWidth;
     padding-bottom:$space;

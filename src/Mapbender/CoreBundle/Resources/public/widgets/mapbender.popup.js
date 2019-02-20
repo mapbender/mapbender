@@ -271,14 +271,17 @@
             var token = { cancel: false };
             this.$element.trigger('close', token);
             if (token.cancel) {
-              return;
+                return;
             }
 
+            // NOTE: event may have called destroy or removed the $element some other way
             if (this.$modalWrap) {
-                this.$element.detach();
+                if (this.$element) {
+                    this.$element.detach();
+                }
                 this.$modalWrap.detach();
             }
-            if(this.options.detachOnClose || this.options.destroyOnClose) {
+            if (this.$element && (this.options.detachOnClose || this.options.destroyOnClose)) {
                 this.$element.detach();
             }
             if(this.options.destroyOnClose) {
