@@ -4,16 +4,13 @@
         options: {
             autoOpen:                 true,
             target:                   null,
-            noLegend:                 "No legend available",
             elementType:              "dialog",
             displayType:              "list",
             hideEmptyLayers:          true,
             generateLegendGraphicUrl: false,
             showSourceTitle:          true,
             showLayerTitle:           true,
-            showGroupedTitle:         true,
-            maxImgWidth:              0,
-            maxImgHeight:             0
+            showGroupedTitle:         true
         },
 
         callback:       null,
@@ -24,12 +21,11 @@
          * @private
          */
         _create: function() {
-            var widget = this;
-            var options = widget.options;
-            if(!Mapbender.checkTarget("mbLegend", options.target)) {
+            if(!Mapbender.checkTarget("mbLegend", this.options.target)) {
                 return;
             }
-            Mapbender.elementRegistry.onElementReady(options.target, $.proxy(widget._setup, widget));
+            this.htmlContainer = $('> .legends', this.element);
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
 
         /**
@@ -38,26 +34,8 @@
          * @private
          */
         _setup: function() {
-            var widget = this;
-            var options = widget.options;
-
-
-            options.noLegend = Mapbender.trans("mb.core.legend.nolegend");
-
-            // Deprecated check if options exists
-            if(options.hasOwnProperty("showGrouppedTitle")) {
-                options.showGroupedTitle = options["showGrouppedTitle"];
-            }
-
-            widget.isPopUpDialog = options.elementType === "dialog";
-            widget.htmlContainer = widget.element.find('> .legends');
-
-            widget.showLoadingProgress();
-
-            $(document)
-                .bind('mbmapsourceloadend', $.proxy(widget.onMapLoaded, widget))
-            ;
-            widget._trigger('ready');
+            $(document).one('mbmapsourceloadend', $.proxy(this.onMapLoaded, this));
+            this._trigger('ready');
         },
 
         /**
@@ -66,29 +44,17 @@
          * @param e
          */
         onMapLoaded: function(e) {
-            var widget = this;
-            var options = widget.options;
+            this.onMapLayerChanges();
 
-            if(widget.isPopUpDialog) {
-                widget.element.hide(0);
-                if(options.autoOpen) {
-                    widget.open();
+            if (this.options.elementType === 'dialog') {
+                this.element.hide(0);
+                if (this.options.autoOpen) {
+                    this.open();
                 }
             }
 
-            widget.onMapLayerChanges();
-
             $(document)
-                .bind('mbmapsourceadded mbmapsourcechanged mbmapsourcemoved mbmapsourcesreordered', $.proxy(widget.onMapLayerChanges, widget))
-                .unbind('mbmapsourceloadend', widget.onMapLoaded);
-        },
-
-        /**
-         * Show loading progress
-         */
-        showLoadingProgress: function() {
-            var widget = this;
-            widget.htmlContainer.html($('<i class="fa fa-cog fa-spin fa-fw"></i>'));
+                .bind('mbmapsourceadded mbmapsourcechanged mbmapsourcemoved mbmapsourcesreordered', $.proxy(this.onMapLayerChanges, this))
         },
 
         /**
@@ -97,54 +63,13 @@
          * @param e
          */
         onMapLayerChanges: function(e) {
-            var widget = this;
-            widget.showLoadingProgress();
+            var html = this.render();
 
-            var html = widget.render();
+            this.htmlContainer.html(html);
 
-            widget.htmlContainer.html(html);
-
-            if(widget.isPopUpDialog && widget.popupWindow && widget.popupWindow.$element) {
-                widget.popupWindow.open(html);
+            if (this.popupWindow) {
+                this.popupWindow.open(html);
             }
-        },
-
-        /**
-         * Popup HTML window
-         *
-         * @param html
-         * @return {mapbender.mbLegend.popup}
-         */
-        popup: function(html) {
-            var widget = this;
-            var element = widget.element;
-
-            if(!widget.popupWindow || !widget.popupWindow.$element) {
-                widget.popupWindow = new Mapbender.Popup2({
-                    title:                  element.attr('title'),
-                    draggable:              true,
-                    resizable:              true,
-                    modal:                  false,
-                    closeOnESC:             false,
-                    destroyOnClose:         true,
-                    content:                (html),
-                    width:                  350,
-                    height:                 500,
-                    buttons:                {
-                        'ok': {
-                            label:    Mapbender.trans('mb.core.legend.popup.btn.ok'),
-                            cssClass: 'button right',
-                            callback: function() {
-                                widget.close();
-                            }
-                        }
-                    }
-                });
-            } else {
-                widget.popupWindow.open((html));
-            }
-
-            return widget.popupWindow;
         },
 
         /**
@@ -175,7 +100,7 @@
             var children_ = widget._getSubLayers(source, layer, level + 1, []);
             var childrenLeg = false;
             for (var i = 0; i < children_.length; i++) {
-                if(children_[i].childrenLegend || (children_[i].legend && children_[i].legend.url)) {
+                if(children_[i].childrenLegend || (children_[i].legend)) {
                     childrenLeg = true;
                 }
             }
@@ -201,10 +126,10 @@
          * @private
          */
         _getSubLayers: function(source, layer, level, children) {
-            var widget = this;
-            (layer.children || []).map(function(childLayer) {
-                children = children.concat(widget._getSubLayer(source, childLayer, "wms", level, []));
-            });
+            var childLayers = layer.children || [];
+            for (var i = 0; i < childLayers.length; ++i) {
+                children = children.concat(this._getSubLayer(source, childLayers[i], "wms", level, []));
+            }
             return children;
         },
 
@@ -212,18 +137,17 @@
          * Get legend
          *
          * @param layer
-         * @param generate
          * @return {*}
          */
-        getLegend: function(layer, generate) {
-            var legend = null;
-            if(layer.options.legend) {
-                legend = layer.options.legend;
-                if(!legend.url && generate && legend.graphic) {
-                    legend['url'] = legend.graphic;
+        getLegendUrl: function(layer) {
+            if (layer.options.legend) {
+                var legend = layer.options.legend;
+                if (this.options.generateLegendGraphicUrl && legend.graphic && !legend.url) {
+                    return legend.graphic;
                 }
+                return legend.url || null;
             }
-            return legend;
+            return null;
         },
 
         /**
@@ -247,30 +171,25 @@
                 isNode:   sublayer.children && sublayer.children.length
             };
 
-            sublayerLeg["legend"] = widget.getLegend(sublayer, widget.options.generateLegendGraphicUrl);
+            sublayerLeg["legend"] = this.getLegendUrl(sublayer);
 
-            if(!sublayerLeg.isNode) {
-                children.push(sublayerLeg);
-            }
-
-            if(sublayer.children) {
-                if(widget.options.showGroupedTitle) {
+            if (sublayer.children && sublayer.children.length) {
+                if (widget.options.showGroupedTitle) {
                     children.push(sublayerLeg);
                 }
 
                 var childrenLegend = false;
-                _.chain(sublayer.children).each(function(subLayerChild) {
-                    var legendLayer = widget.getLegend(subLayerChild, widget.options.generateLegendGraphicUrl);
-                    var hasLegendUrl = legendLayer && legendLayer.url;
-
-                    if(hasLegendUrl) {
+                for (var i = 0; i < sublayer.children.length; ++i) {
+                    var childLayer = sublayer.children[i];
+                    if (this.getLegendUrl(childLayer)) {
                         childrenLegend = true;
                     }
-
-                    children = children.concat(widget._getSubLayer(source, subLayerChild, type, level, []));//children
-                });
+                    children = children.concat(widget._getSubLayer(source, childLayer, type, level, []));
+                }
 
                 sublayerLeg['childrenLegend'] = childrenLegend;
+            } else {
+                children.push(sublayerLeg);
             }
 
             return children;
@@ -324,7 +243,7 @@
             return $('<img/>')
                 .css({'display': 'block'})
                 .data({id: layer.id})
-                .attr('src', layer.legend.url);
+                .attr('src', layer.legend);
         },
 
         /**
@@ -345,7 +264,7 @@
             var options = widget.options;
             var html = null;
 
-            if(layer.children) {
+            if (layer.children) {
                 var visibleChildLayers = _.chain(layer.children).where({visible: true});
                 var ul = widget.createLegendContainer(layer);
 
@@ -363,11 +282,11 @@
 
                 html = ul;
             } else {
-                if(layer.isNode) {
+                if (layer.isNode) {
                     if(layer.childrenLegend && options.showGroupedTitle) {
                         html = widget.createNodeTitle(layer);
                     }
-                } else if(layer.visible && layer.legend && layer.legend.url) {
+                } else if (layer.visible && layer.legend) {
                     html = $('<li/>').addClass('ebene' + layer.level);
 
                     if(options.showLayerTitle) {
@@ -406,12 +325,15 @@
          * On open handler
          */
         open: function(callback) {
-            var widget = this;
+            this.callback = callback;
 
-            widget.callback = callback;
-
-            if(widget.isPopUpDialog) {
-                widget.popup(widget.htmlContainer.html());
+            if (this.options.elementType === 'dialog') {
+                if (!this.popupWindow) {
+                    this.popupWindow = new Mapbender.Popup(this.getPopupOptions());
+                    this.popupWindow.$element.on('close', $.proxy(this.close, this));
+                } else {
+                    this.popupWindow.open(this.htmlContainer.html());
+                }
             }
         },
 
@@ -419,20 +341,37 @@
          * On close
          */
         close: function() {
-            var widget = this;
-
-            if (widget.isPopUpDialog) {
-
-                    if (widget.popupWindow && widget.popupWindow.$element) {
-                        widget.popupWindow.destroy();
-                        widget.popupWindow = null;
+            if (this.popupWindow) {
+                this.popupWindow.destroy();
+                this.popupWindow = null;
+            }
+            if (this.callback) {
+                this.callback.call();
+                this.callback = null;
+            }
+        },
+        getPopupOptions: function() {
+            var self = this;
+            return {
+                title: this.element.attr('title'),
+                draggable: true,
+                resizable: true,
+                modal: false,
+                closeOnESC: false,
+                destroyOnClose: true,
+                content: this.htmlContainer.html(),
+                //width: 350,
+                height: 500,
+                buttons: [
+                    {
+                        label:    Mapbender.trans('mb.core.legend.popup.btn.ok'),
+                        cssClass: 'button right',
+                        callback: function() {
+                            self.close();
+                        }
                     }
-
-            }
-            if (widget.callback) {
-                widget.callback.call();
-                widget.callback = null;
-            }
+                ]
+            };
         }
     });
 
