@@ -69,7 +69,7 @@ class OwsProxyTransport implements HttpTransportInterface
         $headers = array();
         foreach ($buzzResponse->getHeaders() as $headerLine) {
             $parts = explode(':', $headerLine, 2);
-            if (count($parts) == 2) {
+            if (count($parts) == 2 && false === stripos($parts[0], 'Transfer-Encoding')) {
                 $headers[$parts[0]] = $parts[1];
             }
         }
