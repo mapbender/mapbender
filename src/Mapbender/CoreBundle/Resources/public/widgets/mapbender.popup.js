@@ -100,6 +100,7 @@
             'template', 'autoOpen', 'modal',
             'header', 'closeButton',
             'buttons',
+            'content',
             'destroyOnClose', 'detachOnClose',
             'closeOnOutsideClick',
             'scrollable', 'resizable'
@@ -111,6 +112,10 @@
                 self.option(key, value);
             }
         });
+        if (this.options.content) {
+            this.setContent(this.options.content);
+            delete(this.options.content);
+        }
 
         // focused on popup click
         self.$element.on("click", $.proxy(self.focus, self));
@@ -221,8 +226,8 @@
             }
             var self = this;
 
-            if(content) {
-                this.content(content);
+            if (content) {
+                this.setContent(content);
             }
 
             // why?
@@ -418,8 +423,6 @@
         },
 
         /**
-         * Set or get contents
-         *
          * Contents may be:
          *   - simple string
          *   - DOM Nodes
@@ -427,15 +430,15 @@
          *   - Ajax promise
          *   - Array of all the above
          *
-         * @param  {mixed} content
+         * @param  {*} content
          */
-        content: function(content) {
-            if(undefined === content) {
-                return this.contents;
+        setContent: function(content) {
+            if (!content) {
+                return;
             }
 
             if($.isArray(content)) {
-                for(var i=0; i < content.length; i++) {
+                for (var i=0; i < content.length; i++) {
                     this.addContent(content[i], 0 === i);
                 }
             } else {
@@ -452,11 +455,8 @@
             var contentContainer = $('.popupContent', this.$element.get(0));
 
             if(emptyFirst) {
-                this.contents = [];
                 contentContainer.empty();
             }
-
-            this.contents.push(content);
 
             var contentItem = $('<div class="contentItem"/>');
 
