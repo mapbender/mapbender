@@ -3,6 +3,9 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
+use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
+use Mapbender\PrintBundle\Component\Pdf\PdfUtil;
+use Mapbender\PrintBundle\Component\Region\NullRegion;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
@@ -28,18 +31,21 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /** @var string */
     protected $resourceDir;
-    /** @var string */
-    protected $tempDir;
     /** @var OdgParser */
     protected $templateParser;
     /** @var PrintPluginHost */
     protected $pluginHost;
     /** @var ImageTransport */
     protected $imageTransport;
+    /** @var LegendHandler */
+    protected $legendHandler;
+    /** @var PdfUtil */
+    protected $pdfUtil;
 
     /**
      * @param LayerRenderer[] $layerRenderers
      * @param ImageTransport $imageTransport
+     * @param LegendHandler $legendHandler
      * @param OdgParser $templateParser
      * @param PrintPluginHost $pluginHost
      * @param LoggerInterface $logger
@@ -47,15 +53,17 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      */
     public function __construct($layerRenderers, ImageTransport $imageTransport,
+                                $legendHandler,
                                 $templateParser, $pluginHost, $logger,
                                 $resourceDir, $tempDir)
     {
         $this->templateParser = $templateParser;
         $this->imageTransport = $imageTransport;
+        $this->legendHandler = $legendHandler;
 
         $this->pluginHost = $pluginHost;
         $this->resourceDir = $resourceDir;
-        $this->tempDir = $tempDir ?: sys_get_temp_dir();
+        $this->pdfUtil = new PdfUtil($tempDir, 'mb_print');
         parent::__construct($layerRenderers, $logger);
     }
 
@@ -204,10 +212,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         $this->afterMainMap($pdf, $templateData, $jobData);
 
-        // add legend
-        if (!empty($jobData['legends'])) {
-            $this->addLegend();
-        }
         return $pdf;
     }
 
@@ -249,8 +253,10 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return  array(
             // Map is already rendered (c.f. method name xD)
             'map',
-            // Legend can perform page breaks, which means it must wait until all other
-            // regions are handled
+            // Legend can perform page breaks, which means
+            // a) we must separately track which legends have already been rendered on main page, unlike other regions
+            // b) rendering the remaining legends introduces page breaks, and as such must wait until all other
+            //    main page regions are handled
             'legend',
             // 'legendpage_image' appears as a top-level template region, but is only relevant
             // for spill pages produced during legend rendering (which we also suppress, so...)
@@ -283,6 +289,27 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             $this->addTextFields($pdf, $template, $jobData);
         }
         $this->addCoordinates($pdf, $template, $jobData);
+
+        $legends = $this->legendHandler->collectLegends($jobData);
+        $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
+        $this->finishMainPage($pdf, $template, $jobData);
+        $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+    }
+
+    /**
+     * Called after all default regions on the main map page have been populated, including embedded legend regions.
+     * Does absolutely nothing by default.
+     *
+     * Override this to do anything you want to do happen before the legend spill pages start rendering. You MAY
+     * also add more pages to the PDF here.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     */
+    public function finishMainPage($pdf, $template, $jobData)
+    {
+        // default implementation: do nothing
     }
 
     /**
@@ -308,6 +335,47 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             case 'dynamic_image':
                 return $this->addDynamicImage($pdf, $region, $jobData);
         }
+    }
+
+    /**
+     * Should fill any main page regions designated for legend rendering (default: single, optional region named
+     * 'legend'). Should not perform page breaks.
+     * LegendBlock remembers if it has already been rendered or not, so remaining legend blocks can be rendered
+     * onto spill pages later.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     * @param LegendBlockContainer[] $legendBlocks
+     */
+    protected function handleMainPageLegends($pdf, $template, $jobData, $legendBlocks)
+    {
+        // @todo: multiple viable main page legend regions?
+        $regionNames = array(
+            'legend',
+        );
+        foreach ($regionNames as $legendRegionName) {
+            if ($template->hasRegion($legendRegionName)) {
+                $region = $template->getRegion($legendRegionName);
+                $this->legendHandler->addLegends($pdf, $region, $legendBlocks, false, $template, $jobData);
+            }
+        }
+    }
+
+    /**
+     * Renders any legend blocks not yet marked as rendered on extra pages appended to the end of the pdf.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     * @param LegendBlockContainer[] $legendBlocks
+     */
+    protected function handleRemainingLegends($pdf, $template, $jobData, $legendBlocks)
+    {
+        // give the LegendHandler a region with zero space, so it will be forced to page-break
+        // immediately
+        $region = NullRegion::getInstance();
+        $this->legendHandler->addLegends($pdf, $region, $legendBlocks, true, $template, $jobData);
     }
 
     /**
@@ -630,172 +698,14 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         }
     }
 
-    private function addLegend()
-    {
-        if(isset($this->conf['legend']) && $this->conf['legend']){
-          // print legend on first
-          $height = $this->conf['legend']['height'];
-          $width = $this->conf['legend']['width'];
-          $xStartPosition = $this->conf['legend']['x'];
-          $yStartPosition = $this->conf['legend']['y'];
-          $x = $xStartPosition + 5;
-          $y = $yStartPosition + 5;
-          $legendConf = true;
-        }else{
-          // print legend on second page
-          $this->pdf->addPage('P');
-          $this->pdf->SetFont('Arial', 'B', 11);
-          $x = 5;
-          $y = 10;
-          $height = $this->pdf->getHeight();
-          $width = $this->pdf->getWidth();
-          $legendConf = false;
-          $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-          $xStartPosition = 0;
-          $yStartPosition = 0;
-        }
-
-        foreach ($this->data['legends'] as $idx => $legendArray) {
-            $c         = 1;
-            $arraySize = count($legendArray);
-            foreach ($legendArray as $title => $legendUrl) {
-
-                if (preg_match('/request=GetLegendGraphic/i', urldecode($legendUrl)) === 0) {
-                    continue;
-                }
-
-                $image = $this->getLegendImage($legendUrl);
-                if (!$image) {
-                    continue;
-                }
-                $size  = getimagesize($image);
-                $tempY = round($size[1] * 25.4 / 96) + 10;
-
-                if ($c > 1) {
-                    // print legend on second page
-                    if($y + $tempY + 10 > ($this->pdf->getHeight()) && $legendConf == false){
-                        $x += 105;
-                        $y = 10;
-                        $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                        if($x + 20 > ($this->pdf->getWidth())){
-                            $this->pdf->addPage('P');
-                            $x = 5;
-                            $y = 10;
-                            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                        }
-                    }
-
-
-                    // print legend on first page
-                    if($legendConf == true){
-                        if(($y-$yStartPosition) + $tempY + 10 > $height && $width > 100){
-                            $x += $x + 105;
-                            $y = $yStartPosition + 5;
-                            if($x - $xStartPosition + 20 > $width){
-                                $this->pdf->addPage('P');
-                                $x = 5;
-                                $y = 10;
-                                $legendConf = false;
-                                $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-
-                            }
-                        }else if (($y-$yStartPosition) + $tempY + 10 > $height){
-                                $this->pdf->addPage('P');
-                                $x = 5;
-                                $y = 10;
-                                $legendConf = false;
-                                $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                        }
-                    }
-                }
-
-
-                if ($legendConf == true) {
-                    // add legend in legend region on first page
-                    // To Be doneCell(0,0,  utf8_decode($title));
-                    $this->pdf->SetXY($x,$y);
-                    $this->pdf->Cell(0,0,  utf8_decode($title));
-                    $this->pdf->Image($image,
-                                $x,
-                                $y +5 ,
-                                ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
-
-                        $y += round($size[1] * 25.4 / 96) + 10;
-                        if(($y - $yStartPosition + 10 ) > $height && $width > 100){
-                            $x +=  105;
-                            $y = $yStartPosition + 10;
-                        }
-                        if(($x - $xStartPosition + 10) > $width && $c < $arraySize ){
-                            $this->pdf->addPage('P');
-                            $x = 5;
-                            $y = 10;
-                            $this->pdf->SetFont('Arial', 'B', 11);
-                            $height = $this->pdf->getHeight();
-                            $width = $this->pdf->getWidth();
-                            $legendConf = false;
-                            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                        }
-
-                  }else{
-                      // print legend on second page
-                      $this->pdf->SetXY($x,$y);
-                      $this->pdf->Cell(0,0,  utf8_decode($title));
-                      $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
-
-                      $y += round($size[1] * 25.4 / 96) + 10;
-                      if($y > ($this->pdf->getHeight())){
-                          $x += 105;
-                          $y = 10;
-                      }
-                      if($x + 20 > ($this->pdf->getWidth()) && $c < $arraySize){
-                          $this->pdf->addPage('P');
-                          $x = 5;
-                          $y = 10;
-                          $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                      }
-
-                  }
-
-                unlink($image);
-                $c++;
-            }
-        }
-    }
-
-
-    private function getLegendImage($url)
-    {
-        $imagename = $this->makeTempFile('mb_printlegend');
-        $image = $this->imageTransport->downloadImage($url);
-        if ($image) {
-            imagepng($image, $imagename);
-            imagedestroy($image);
-            return $imagename;
-        } else {
-            return null;
-        }
-    }
-
     /**
-     * @param PDF_Extensions|\FPDF $pdf
-     * @param array $templateData
-     * @param array $jobData
+     * @param float $dots
+     * @param float $dpi
+     * @return float
      */
-    protected function addLegendPageImage($pdf, $templateData, $jobData)
+    public static function dotsToMm($dots, $dpi)
     {
-        if (empty($templateData['legendpage_image']) || empty($jobData['legendpage_image'])) {
-            return;
-        }
-        $sourcePath = $this->resourceDir . '/' . $jobData['legendpage_image']['path'];
-        $region = $templateData['legendpage_image'];
-        if (file_exists($sourcePath)) {
-            $this->addImageToPdf($pdf, $sourcePath, $region['x'], $region['y'], 0, $region['height']);
-        } else {
-            $defaultPath = $this->resourceDir . '/images/legendpage_image.png';
-            if ($defaultPath !== $sourcePath && file_exists($defaultPath)) {
-                $this->addImageToPdf($pdf, $defaultPath, $region['x'], $region['y'], 0, $region['height']);
-            }
-        }
+        return $dots * 25.4 / $dpi;
     }
 
     private function checkPdfBackground($pdf) {
@@ -813,23 +723,18 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
+     * Puts an image onto the current page of given $pdf at specified offset (in mm units).
+     *
      * @param PDF_Extensions|\FPDF $pdf
      * @param resource|string $gdResOrPath
-     * @param int $xOffset
-     * @param int $yOffset
+     * @param int $xOffset in mm
+     * @param int $yOffset in mm
      * @param int $width optional, to rescale image
      * @param int $height optional, to rescale image
      */
-    protected function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
+    public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
     {
-        if (is_resource($gdResOrPath)) {
-            $imageName = $this->makeTempFile('mb_print_pdfbuild');
-            imagepng($gdResOrPath, $imageName);
-            $this->addImageToPdf($pdf, $imageName, $xOffset, $yOffset, $width, $height);
-            unlink($imageName);
-        } else {
-            $pdf->Image($gdResOrPath, $xOffset, $yOffset, $width, $height, 'png', '', false, 0);
-        }
+        return $this->pdfUtil->addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width, $height);
     }
 
     /**
@@ -837,11 +742,9 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param resource|string $gdResOrPath
      * @param TemplateRegion $region
      */
-    protected function addImageToPdfRegion($pdf, $gdResOrPath, $region)
+    public function addImageToPdfRegion($pdf, $gdResOrPath, $region)
     {
-        $this->addImageToPdf($pdf, $gdResOrPath,
-            $region->getOffsetX(), $region->getOffsetY(),
-            $region->getWidth(), $region->getHeight());
+        return $this->pdfUtil->addImageToPdfRegion($pdf, $gdResOrPath, $region);
     }
 
     /**
@@ -855,16 +758,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * Creates a ~randomly named temp file with given $prefix and returns its name
      *
-     * @param $prefix
+     * @param string|null $prefix
      * @return string
      */
     protected function makeTempFile($prefix)
     {
-        $filePath = tempnam($this->tempDir, $prefix);
-        // tempnam may return false in undocumented error cases
-        if (!$filePath) {
-            throw new \RuntimeException("Failed to create temp file with prefix '$prefix' in '{$this->tempDir}'");
-        }
-        return $filePath;
+        return $this->pdfUtil->makeTempFile($prefix);
     }
 }

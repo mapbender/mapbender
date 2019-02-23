@@ -25,12 +25,6 @@ class GdCanvas extends BaseCanvas
         $bg = imagecolorallocate($this->resource, 255, 255, 255);
         imagefilledrectangle($this->resource, 0, 0, $width, $height, $bg);
         imagecolordeallocate($this->resource, $bg);
-        $this->transparent = imagecolorallocatealpha($this->resource, 255, 255, 255, 127);
-    }
-
-    public function __destruct()
-    {
-        imagecolordeallocate($this->resource, $this->transparent);
     }
 
     /**
