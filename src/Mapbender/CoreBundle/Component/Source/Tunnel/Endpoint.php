@@ -43,6 +43,14 @@ class Endpoint
     }
 
     /**
+     * @return InstanceTunnelService
+     */
+    public function getService()
+    {
+        return $this->service;
+    }
+
+    /**
      * Returns the URL base the Browser / JS client should use to access the tunnel.
      *
      * @return string
@@ -64,7 +72,6 @@ class Endpoint
     {
         return $this->service->generatePublicUrl($this, $url);
     }
-
 
     /**
      * @return Application
@@ -96,9 +103,6 @@ class Endpoint
         if ($baseUrl) {
             $hiddenParams = $this->service->getHiddenParams($this->instance);
             $requestParams = $request->query->all();
-            if (strtolower(ArrayUtil::getDefaultCaseInsensitive($requestParams, 'request', null)) === 'getlegendgraphic') {
-                unset($requestParams['_glgmode']);
-            }
             $params = array_replace($hiddenParams, $requestParams);
             return UrlUtil::validateUrl($baseUrl, $params);
         } else {
