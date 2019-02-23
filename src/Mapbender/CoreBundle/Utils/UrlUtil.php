@@ -22,27 +22,10 @@ class UrlUtil
      */
     public static function validateUrl($url, $paramsToAdd = array(), $paramsToRemove = array())
     {
-        $rawUrl      = parse_url($url);
-        $schemelower = strtolower($rawUrl["scheme"]);
-        if ($schemelower === 'http' || $schemelower === 'https' || $schemelower === 'ftp') {
-            $newurl = $rawUrl["scheme"] . "://" . $rawUrl['host'];
-        } elseif ($schemelower === 'file') {
-            $newurl = $rawUrl["scheme"] . ":///";
-        } else {
-            $newurl = $rawUrl["scheme"] . ":";
-        }
-        if (isset($rawUrl['user'])) {
-            $newurl .= $rawUrl['user'] . ':' . (isset($rawUrl['pass']) ? $rawUrl['pass'] . "@" : "@");
-        }
-        if (isset($rawUrl['port']) && intval($rawUrl['port']) !== 80) {
-            $newurl .= ':' . $rawUrl['port'];
-        }
-        if (isset($rawUrl['path']) && strlen($rawUrl['path']) > 0) {
-            $newurl .= $rawUrl['path'];
-        }
+        $parts = parse_url($url);
         $queries   = array();
-        if (isset($rawUrl["query"])) {
-            parse_str($rawUrl["query"], $queries);
+        if (isset($parts["query"])) {
+            parse_str($parts["query"], $queries);
         }
         $paramsToRemove = array_map('strtolower', array_merge($paramsToRemove, array_keys($paramsToAdd)));
         foreach ($queries as $key => $value) {
@@ -51,10 +34,60 @@ class UrlUtil
             }
         }
         $queries = array_replace($queries, $paramsToAdd);
-        if ($queries) {
-            $newurl .= '?' . http_build_query($queries);
+        if (!empty($parts['port']) && !empty($parts['scheme'])) {
+            // omit port if its the scheme's default
+            $schemelower = strtolower($parts["scheme"]);
+            if ($schemelower === 'http' && $parts['port'] == 80) {
+                unset($parts['port']);
+            } elseif ($schemelower === 'https' && $parts['port'] == 443) {
+                unset($parts['port']);
+            }
         }
-        return $newurl;
+        if ($queries) {
+            $parts['query'] = http_build_query($queries);
+        } else {
+            unset($parts['query']);
+        }
+        return self::reconstructFromParts($parts);
+    }
+
+    /**
+     * Inverse of parse_url.
+     * This is a drop-in for a single-argument http_build_url as provided by the (rarely installed) "http" PECL
+     * extension.
+     *
+     * @param string[] $parts
+     * @return string
+     */
+    public static function reconstructFromParts($parts)
+    {
+        $urlOut = "";
+        if (!empty($parts['scheme'])) {
+            $urlOut .= "{$parts['scheme']}://";
+        }
+        if (!empty($parts['user'])) {
+            $urlOut .= $parts['user'];
+            if (!empty($parts['pass'])) {
+                $urlOut .= ":{$parts['pass']}";
+            }
+            $urlOut .= "@";
+        }
+        if (!empty($parts['host'])) {
+            $urlOut .= $parts['host'];
+        }
+        if (!empty($parts['port'])) {
+            $urlOut .= ":{$parts['port']}";
+        }
+        if (!empty($parts['path'])) {
+            $urlOut .= $parts['path'];
+        }
+        if (!empty($parts['query'])) {
+            $urlOut .= "?{$parts['query']}";
+        }
+        if (!empty($parts['fragment'])) {
+            $urlOut .= "#{$parts['fragment']}";
+        }
+        return $urlOut;
     }
 
     /**

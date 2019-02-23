@@ -2,6 +2,7 @@
 
 namespace Mapbender\Component\Transport;
 
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Psr\Log\LoggerInterface;
@@ -28,7 +29,27 @@ class OwsProxyTransport implements HttpTransportInterface
      */
     public function getUrl($url)
     {
-        $proxyQuery = ProxyQuery::createFromUrl($url);
+        // ProxyQuery::getGetUrl shreds user and password encoding if credentials are in url.
+        // work around this for the time being...
+        $parts = parse_url($url);
+        if (!empty($parts['user'])) {
+            $user = urldecode($parts['user']);
+        } else {
+            $user = null;
+        }
+        if (!empty($parts['pass'])) {
+            $pass = urldecode($parts['pass']);
+        } else {
+            $pass = null;
+        }
+        if ($user || $pass) {
+            unset($parts['user']);
+            unset($parts['pass']);
+            $safeUrl = UrlUtil::reconstructFromParts($parts);
+        } else {
+            $safeUrl = $url;
+        }
+        $proxyQuery = ProxyQuery::createFromUrl($safeUrl, $user, $pass);
         $proxy = new CommonProxy($this->proxyConfig, $proxyQuery, $this->logger);
         $buzzResponse = $proxy->handle();
         return $this->convertBuzzResponse($buzzResponse);
