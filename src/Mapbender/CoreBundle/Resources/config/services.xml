@@ -109,6 +109,7 @@
         </service>
 
         <service id="mapbender.source.instancetunnel.service" class="%mapbender.source.instancetunnel.service.class%">
+            <argument type="service" id="mapbender.http_transport.service" />
             <argument type="service" id="router" />
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />

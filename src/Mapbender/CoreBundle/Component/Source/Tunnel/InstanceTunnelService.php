@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -26,6 +27,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class InstanceTunnelService
 {
+    /** @var HttpTransportInterface */
+    protected $httpTransport;
     /** @var RouterInterface */
     protected $router;
     /** @var TokenStorageInterface */
@@ -38,15 +41,17 @@ class InstanceTunnelService
     protected $tunnelRouteName;
 
     /**
-     * InstanceTunnel constructor.
+     * @param HttpTransportInterface $httpTransprot
      * @param RouterInterface $router
      * @param TokenStorageInterface $tokenStorage
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(RouterInterface $router,
+    public function __construct(HttpTransportInterface $httpTransprot,
+                                RouterInterface $router,
                                 TokenStorageInterface $tokenStorage,
                                 EntityManagerInterface $entityManager)
     {
+        $this->httpTransport = $httpTransprot;
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
         $this->entityManager = $entityManager;
@@ -178,5 +183,13 @@ class InstanceTunnelService
     {
         $vsHandler = new VendorSpecificHandler();
         return $vsHandler->getHiddenParams($instance, $this->tokenStorage->getToken());
+    }
+
+    /**
+     * @return HttpTransportInterface
+     */
+    public function getHttpTransport()
+    {
+        return $this->httpTransport;
     }
 }

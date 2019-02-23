@@ -149,4 +149,19 @@ class Endpoint
                 return WmsInstanceLayerEntityHandler::getLegendGraphicUrl($layerSource);
         }
     }
+
+    /**
+     * @param $url
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function getUrl($url)
+    {
+        $source = $this->instance->getSource();
+        $urlWithCredentials = UrlUtil::addCredentials($url, $source->getUsername(), $source->getPassword());
+        $response = $this->service->getHttpTransport()->getUrl($urlWithCredentials);
+        foreach (array_keys($response->headers->getCookies()) as $cookieKey) {
+            $response->headers->removeCookie($cookieKey);
+        }
+        return $response;
+    }
 }

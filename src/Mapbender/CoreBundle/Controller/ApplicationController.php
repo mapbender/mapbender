@@ -332,16 +332,6 @@ class ApplicationController extends Controller
             $this->denyAccessUnlessGranted('VIEW', $application);
         }
 
-        /** @var WmsSource $source */
-        $source = $instance->getSource();
-// TODO source access ?
-//        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
-//        $this->denyAccessUnlessGranted('VIEW', $source);
-
-        $user        = $source->getUsername() ? $source->getUsername() : null;
-        $password    = $source->getUsername() ? $source->getPassword() : null;
-        $proxy_config = $this->container->getParameter("owsproxy.proxy");
-
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
         if (!$requestType) {
             throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
@@ -358,18 +348,7 @@ class ApplicationController extends Controller
         if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
             return new Response($url);
         }
-        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password);
-        $proxy           = new CommonProxy($proxy_config, $proxy_query);
-        $browserResponse = $proxy->handle();
-        $response        = new Response();
-
-        Utils::setHeadersFromBrowserResponse($response, $browserResponse);
-        foreach ($request->cookies as $key => $value) {
-            $response->headers->removeCookie($key);
-            $response->headers->setCookie(new Cookie($key, $value));
-        }
-        $response->setContent($browserResponse->getContent());
-        return $response;
+        return $instanceTunnel->getUrl($url);
     }
 
     /**

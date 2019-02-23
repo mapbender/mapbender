@@ -120,4 +120,26 @@ class UrlUtil
             return null;
         }
     }
+
+    /**
+     * @param string $url
+     * @param string|null $username
+     * @param string|null $pass
+     * @param bool $replace
+     * @return string
+     */
+    public static function addCredentials($url, $username, $pass, $replace=true)
+    {
+        $parts = parse_url($url);
+        $credentialsParts = array(
+            'user' => urlencode($username),
+            'pass' => urlencode($pass),
+        );
+        if ($replace) {
+            $parts = array_replace($parts, $credentialsParts);
+        } else {
+            $parts = $parts + $credentialsParts;
+        }
+        return self::reconstructFromParts($parts);
+    }
 }
