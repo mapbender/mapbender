@@ -75,44 +75,17 @@
          * @private
          */
         _getSources: function() {
-            var allLayers = [];
+            var sourceDataList = [];
             var sources = Mapbender.Model.getSources();
-            for (var i = (sources.length - 1); i > -1; i--) {
+            for (var i = 0; i < sources.length; ++i) {
                 var rootLayer = sources[i].configuration.children[0];
                 if (rootLayer.state.visibility) {
-                    allLayers.push(this._getSource(sources[i]));
+                    // display in reverse map order
+                    sourceDataList.unshift(this._getLayerData(sources[i], rootLayer, 1));
                 }
             }
-            return allLayers;
+            return sourceDataList;
         },
-
-        /**
-         *
-         * @param source
-         * @return {{sourceId, id, visible, title, level: *, children: *, childrenLegend: boolean}}
-         * @private
-         */
-        _getSource: function(source) {
-            var i;
-            var rootLayer = source.configuration.children[0];
-            var sourceData = {
-                sourceId:       source.id,
-                id:             rootLayer.options.id,
-                title:          rootLayer.options.title,
-                level:          1,
-                childrenLegend: false
-            };
-            var childLegends = [];
-            childLegends = childLegends.concat(this._getSubLayer(source, rootLayer, 2));
-            for (i = 0; i < childLegends.length; i++) {
-                if (childLegends[i].childrenLegend || (childLegends[i].legend)) {
-                    sourceData.childrenLegend = true;
-                }
-            }
-            sourceData.children = childLegends;
-            return sourceData;
-        },
-
         /**
          * Get legend
          *
@@ -129,46 +102,34 @@
         /**
          *
          * @param source
-         * @param sublayer
+         * @param layer
          * @param level
          * @return {*}
          * @private
          */
-        _getSubLayer: function(source, sublayer, level) {
-            var widget = this;
-            var childLegends = [];
-            var sublayerLeg = {
-                sourceId: source.id,
-                id:       sublayer.options.id,
-                title:    sublayer.options.title,
+        _getLayerData: function(source, layer, level) {
+            var layerData = {
+                id:       layer.options.id,
+                title:    layer.options.title,
                 level:    level,
-                isNode:   sublayer.children && sublayer.children.length,
-                childrenLegend: false,
-                legend: this.getLegendUrl(sublayer)
+                legend: this.getLegendUrl(layer),
+                children: []
             };
 
-            if (sublayer.children && sublayer.children.length) {
-                if (widget.options.showGroupedTitle) {
-                    childLegends.push(sublayerLeg);
-                }
-
-                for (var i = 0; i < sublayer.children.length; ++i) {
-                    var childLayer = sublayer.children[i];
+            if (layer.children && layer.children.length) {
+                for (var i = 0; i < layer.children.length; ++i) {
+                    var childLayer = layer.children[i];
                     if (!childLayer.state.visibility) {
                         continue;
                     }
-                    this._getSubLayer(source, childLayer, level + 1).map(function(childLegendData) {
-                        if (childLegendData.legend || childLegendData.childrenLegend) {
-                            sublayerLeg.childrenLegend = true;
-                            childLegends.push(childLegendData);
-                        }
-                    });
+                    var childLayerData = this._getLayerData(source, childLayer, level + 1);
+                    if (childLayerData.legend || childLayerData.children.length) {
+                        // display in reverse map order
+                        layerData.children.unshift(childLayerData);
+                    }
                 }
-            } else {
-                childLegends.push(sublayerLeg);
             }
-
-            return childLegends;
+            return layerData;
         },
 
         /**
@@ -181,19 +142,6 @@
                 .text(layer.title)
                 .addClass('ebene' + layer.level)
                 .addClass('title');
-        },
-
-        /**
-         *
-         * @param layer
-         * @private
-         */
-        createNodeTitle: function(layer) {
-            return $("<li/>")
-                .text(layer.title)
-                .addClass('ebene' + layer.level)
-                .addClass('subTitle')
-            ;
         },
 
         /**
@@ -224,51 +172,50 @@
          */
         createLegendContainer: function(layer) {
             return $('<ul/>')
-                .addClass('ebene' + layer.level)
-                .data({
-                    sourceid: layer.sourceId,
-                    id:       layer.id
-                });
+                .addClass('ebene1')
+            ;
         },
+        _createSourceHtml: function(sourceData) {
+            var visibleChildLayers = sourceData.children;
+            var ul = this.createLegendContainer(sourceData);
 
+            if (!visibleChildLayers.length) {
+                return null;
+            }
+
+            if (this.options.showSourceTitle) {
+                ul.append(this.createSourceTitle(sourceData));
+            }
+            for (var i = 0; i < visibleChildLayers.length; ++i) {
+                var childLayer = visibleChildLayers[i];
+                ul.append(this._createLayerHtml(childLayer));
+            }
+
+            return ul;
+        },
         _createLayerHtml: function(layer) {
             var widget = this;
             var options = widget.options;
-            var html = null;
+            var $li = $('<li/>').addClass('ebene' + layer.level);
 
-            if (layer.children) {
-                var visibleChildLayers = layer.children;
-                var ul = widget.createLegendContainer(layer);
-
-                if (!visibleChildLayers.length) {
-                    return null;
+            if (layer.children.length) {
+                if (this.options.showGroupedTitle) {
+                    $li.append(this.createTitle(layer));
                 }
-
-                if(options.showSourceTitle) {
-                    ul.append(widget.createSourceTitle(layer));
+                var $ul = $('<ul/>').addClass('ebene' + layer.level);
+                for (var i = 0; i < layer.children.length; ++i) {
+                    $ul.append(this._createLayerHtml(layer.children[i]));
                 }
+                $li.append($ul);
+                return $li;
+            } else if (layer.legend) {
 
-                visibleChildLayers.slice().reverse().map(function(childLayer) {
-                    ul.append(widget._createLayerHtml(childLayer));
-                });
-
-                html = ul;
-            } else {
-                if (layer.isNode) {
-                    if(layer.childrenLegend && options.showGroupedTitle) {
-                        html = widget.createNodeTitle(layer);
-                    }
-                } else if (layer.legend) {
-                    html = $('<li/>').addClass('ebene' + layer.level);
-
-                    if(options.showLayerTitle) {
-                        html.append(widget.createTitle(layer));
-                    }
-                    html.append(widget.createImage(layer));
+                if (options.showLayerTitle) {
+                    $li.append(widget.createTitle(layer));
                 }
+                $li.append(widget.createImage(layer));
             }
-
-            return html;
+            return $li;
         },
 
         /**
@@ -286,11 +233,12 @@
         render: function() {
             var widget = this;
             var sources = widget._getSources();
-            var html = $("<ul/>");
+            var html = $('<ul/>');
             _.each(sources, function(source) {
-                html.append(widget._createLayerHtml(source));
+                html.append(widget._createSourceHtml(source));
             });
-            return html;
+            // strip top-level dummy <ul>
+            return $(' > *', html);
         },
 
         /**
