@@ -8,8 +8,10 @@ use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -135,6 +137,21 @@ class InstanceTunnelService
             }
         }
         throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
+    }
+
+    /**
+     * @param WmsInstanceLayer|SourceInstanceItem $instanceLayer
+     * @return string
+     */
+    public function generatePublicLegendUrl(SourceInstanceItem $instanceLayer)
+    {
+        $sourceInstance = $instanceLayer->getSourceInstance();
+        $application = $sourceInstance->getLayerset()->getApplication();
+        return $this->router->generate($this->legendTunnelRouteName, array(
+            'slug' => $application->getSlug(),
+            'instanceId' => $sourceInstance->getId(),
+            'layerId' => $instanceLayer->getId(),
+        ));
     }
 
     /**

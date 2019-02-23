@@ -178,29 +178,18 @@ class Endpoint
      * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object)
      *
      * @param Request $request
-     * @return string
+     * @return string|null
      */
     public function getInternalGetLegendGraphicUrl(Request $request)
     {
-        $glgMode = $request->query->get('_glgmode', null);
         $layerName = RequestUtil::getGetParamCaseInsensitive($request, 'layer', null);
-        if (!$layerName) {
-            $glgMode = null;
-            $layerSource = null;
-        } else {
+        if ($layerName) {
             $layerSource = WmsSourceEntityHandler::getLayerSourceByName($this->source, $layerName);
-            if (!$layerSource) {
-                $glgMode = null;
+            if ($layerSource) {
+                return WmsInstanceLayerEntityHandler::getLegendGraphicUrl($layerSource);
             }
         }
-        switch ($glgMode) {
-            default:
-                return $this->source->getGetLegendGraphic()->getHttpGet();
-            case 'styles':
-                return WmsInstanceLayerEntityHandler::getLegendUrlFromStyles($layerSource);
-            case 'GetLegendGraphic':
-                return WmsInstanceLayerEntityHandler::getLegendGraphicUrl($layerSource);
-        }
+        return null;
     }
 
     /**

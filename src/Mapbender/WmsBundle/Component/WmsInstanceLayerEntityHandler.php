@@ -303,15 +303,13 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $tunnelService = $this->container->get('mapbender.source.instancetunnel.service');
             $tunnel = $tunnelService->makeEndpoint($entity->getSourceInstance());
         } else {
+            $tunnelService = null;
             $tunnel = null;
         }
-        $layerName = $entity->getSourceItem()->getName();
         if ($styleLegendUrl) {
             if ($tunnel) {
-                // request via tunnel, see ApplicationController::instanceTunnelAction
-                // instruct the tunnel action that the legend url should be plucked from styles
-                $tunnelInputUrl = '?request=GetLegendGraphic&_glgmode=styles&layer=' . $layerName;
-                $publicLegendUrl = $tunnel->generatePublicUrl($tunnelInputUrl);
+                // request via tunnel, see ApplicationController::instanceTunnelLegendAction
+                $publicLegendUrl = $tunnelService->generatePublicLegendUrl($entity);
             } else {
                 $publicLegendUrl = $styleLegendUrl;
             }
@@ -324,7 +322,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 if ($tunnel) {
                     // request via tunnel, see ApplicationController::instanceTunnelAction
                     // instruct the tunnel action that the legend url should be plucked from GetLegendGraphic
-                    $tunnelInputUrl = '?request=GetLegendGraphic&_glgmode=GetLegendGraphic';
+                    $tunnelInputUrl = '?request=GetLegendGraphic';
                     $publicLegendUrl = $tunnel->generatePublicUrl($tunnelInputUrl);
                 } else {
                     $publicLegendUrl = $glgLegendUrl;

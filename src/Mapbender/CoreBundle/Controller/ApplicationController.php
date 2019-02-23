@@ -322,11 +322,10 @@ class ApplicationController extends Controller
         if (!$requestType) {
             throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
         }
+        $url = $instanceTunnel->getService()->getInternalUrl($request, false);
         if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
-            $internalUrlNoCreds = $instanceTunnel->getService()->getInternalUrl($request, false);
-            return new Response($internalUrlNoCreds);
+            return new Response($url);
         }
-        $url = $instanceTunnel->getService()->getInternalUrl($request, true);
 
         if (!$url) {
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
@@ -349,14 +348,13 @@ class ApplicationController extends Controller
     public function instanceTunnelLegendAction(Request $request, $slug, $instanceId, $layerId)
     {
         $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId, $slug);
-        $url = $instanceTunnel->getService()->getInternalUrl($request, true);
+        $url = $instanceTunnel->getService()->getInternalUrl($request, false);
         if (!$url) {
             throw $this->createNotFoundException();
         }
         if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
             return new Response($url);
         } else {
-            $url = $instanceTunnel->getService()->getInternalUrl($request, true);
             return $instanceTunnel->getUrl($url);
         }
     }
