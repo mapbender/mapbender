@@ -140,6 +140,13 @@
                 $(document).on('mapbender.setupfinished', function() {
                     self._initializeHighlightState();
                 });
+                $(document).on('mapbender.elementactivated mapbender.elementdeactivated', function(e, data) {
+                    if (data.sender !== self && data.widget === self._initializeTarget()) {
+                        // Our target element has been activated or deactivated, but not by us
+                        // Remember new target state and update our own highlighting
+                        self._setActive(data.active);
+                    }
+                });
             }
             this._super();
             // Amenity for special snowflake mobile.js, which expects to see us under
@@ -282,6 +289,13 @@
             this._initializeActionMethods();
             if (this.actionMethods.activate) {
                 (this.actionMethods.activate)();
+                // Inform other control buttons (and whoever else is listening) that the
+                // target Element has just been activated
+                $(document).trigger('mapbender.elementactivated', {
+                    widget: this.targetWidget,
+                    sender: this,
+                    active: true
+                });
             }
             this._super();
         },
@@ -297,6 +311,13 @@
             this._initializeActionMethods();
             if (this.actionMethods.deactivate) {
                 (this.actionMethods.deactivate)();
+                // Inform other control buttons (and whoever else is listening) that the
+                // target Element has just been deactivated
+                $(document).trigger('mapbender.elementdeactivated', {
+                    widget: this.targetWidget,
+                    sender: this,
+                    active: false
+                });
             }
             this._super();
         }
