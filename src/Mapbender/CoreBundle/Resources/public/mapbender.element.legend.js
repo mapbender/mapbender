@@ -6,8 +6,6 @@
             target:                   null,
             elementType:              "dialog",
             displayType:              "list",
-            hideEmptyLayers:          true,
-            generateLegendGraphicUrl: false,
             showSourceTitle:          true,
             showLayerTitle:           true,
             showGroupedTitle:         true
@@ -77,11 +75,13 @@
          * @private
          */
         _getSources: function() {
-            var widget = this;
             var allLayers = [];
             var sources = Mapbender.Model.getSources();
             for (var i = (sources.length - 1); i > -1; i--) {
-                allLayers.push(widget._getSource(sources[i]));
+                var rootLayer = sources[i].configuration.children[0];
+                if (rootLayer.state.visibility) {
+                    allLayers.push(this._getSource(sources[i]));
+                }
             }
             return allLayers;
         },
@@ -98,7 +98,6 @@
             var sourceData = {
                 sourceId:       source.id,
                 id:             rootLayer.options.id,
-                visible:        rootLayer.state.visibility,
                 title:          rootLayer.options.title,
                 level:          1,
                 childrenLegend: false
@@ -122,11 +121,7 @@
          */
         getLegendUrl: function(layer) {
             if (layer.options.legend) {
-                var legend = layer.options.legend;
-                if (this.options.generateLegendGraphicUrl && legend.graphic && !legend.url) {
-                    return legend.graphic;
-                }
-                return legend.url || null;
+                return layer.options.legend.url || null;
             }
             return null;
         },
@@ -145,7 +140,6 @@
             var sublayerLeg = {
                 sourceId: source.id,
                 id:       sublayer.options.id,
-                visible:  sublayer.state.visibility,
                 title:    sublayer.options.title,
                 level:    level,
                 isNode:   sublayer.children && sublayer.children.length,
@@ -160,11 +154,14 @@
 
                 for (var i = 0; i < sublayer.children.length; ++i) {
                     var childLayer = sublayer.children[i];
+                    if (!childLayer.state.visibility) {
+                        continue;
+                    }
                     this._getSubLayer(source, childLayer, level + 1).map(function(childLegendData) {
-                        if (childLegendData.url || childLegendData.childrenLegend) {
+                        if (childLegendData.legend || childLegendData.childrenLegend) {
                             sublayerLeg.childrenLegend = true;
+                            childLegends.push(childLegendData);
                         }
-                        childLegends.push(childLegendData);
                     });
                 }
             } else {
@@ -240,10 +237,10 @@
             var html = null;
 
             if (layer.children) {
-                var visibleChildLayers = _.chain(layer.children).where({visible: true});
+                var visibleChildLayers = layer.children;
                 var ul = widget.createLegendContainer(layer);
 
-                if(options.hideEmptyLayers && visibleChildLayers.size() < 1) {
+                if (!visibleChildLayers.length) {
                     return null;
                 }
 
@@ -251,7 +248,7 @@
                     ul.append(widget.createSourceTitle(layer));
                 }
 
-                visibleChildLayers.reverse().each(function(childLayer) {
+                visibleChildLayers.slice().reverse().map(function(childLayer) {
                     ul.append(widget._createLayerHtml(childLayer));
                 });
 
@@ -261,7 +258,7 @@
                     if(layer.childrenLegend && options.showGroupedTitle) {
                         html = widget.createNodeTitle(layer);
                     }
-                } else if (layer.visible && layer.legend) {
+                } else if (layer.legend) {
                     html = $('<li/>').addClass('ebene' + layer.level);
 
                     if(options.showLayerTitle) {
