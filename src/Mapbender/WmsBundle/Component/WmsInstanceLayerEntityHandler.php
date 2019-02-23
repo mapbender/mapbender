@@ -245,15 +245,16 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      * Get a legend url from the layer's styles
      *
      * @param WmsLayerSource $layerSource
+     * @param bool $inherit to also look up parent styles
      * @return string|null
      */
-    public static function getLegendUrlFromStyles(WmsLayerSource $layerSource)
+    public static function getLegendUrlFromStyles(WmsLayerSource $layerSource, $inherit=true)
     {
         // scan styles for legend url entries backwards
         // some WMS services may not populate every style with a legend, so just checking the last
         // style for a legend is not enough
         // @todo: style node selection should follow configured style
-        foreach (array_reverse($layerSource->getStyles()) as $style) {
+        foreach (array_reverse($layerSource->getStyles($inherit)) as $style) {
             /** @var Style $style */
             $legendUrl = $style->getLegendUrl();
             if ($legendUrl) {
