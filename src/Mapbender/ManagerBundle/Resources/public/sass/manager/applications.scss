@@ -27,28 +27,16 @@
 // ------------------------------------------------------- APPLICATIONS
 .screenshot_upload {
   min-width: 300px;
-
-  .label {
-    margin: 0px;
-    padding: 2px;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
-  .input {
-    border: 0px;
-    padding: 5px;
+  .upload {
+    position: relative;
   }
 
   .inputWrapper {
     position: absolute;
     left: 0;
+    top: 0;
 
     input[type=file] {
-      display: block;
-      float: left;
-      width: 100px;
-      font-size: 20px;
       -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
       filter: alpha(opacity=0);
       -moz-opacity: 0;
@@ -56,46 +44,23 @@
       opacity: 0;
       cursor: pointer;
     }
-    &:after {
-      clear: both;
-    }
   }
   .upload_label{
     overflow: hidden;
-    height: 24px;
-    line-height: 24px;
-    vertical-align: middle;
-    padding: 0px 0px 0px 5px;
-    font-size: 11px;
-    font-weight: normal;
   }
   .upload_button {
     $buttonFirstColor: #6fb536;
-    $buttonSecondColor: #5fa229;
-    line-height: 24px;
-    vertical-align: top;
-    height: 24px;
-    margin: 0px;
-    font-size: 11px;
-    padding: 0px 10px;
+    padding: 0 10px;
     font-weight: normal;
     cursor: pointer;
 
-    border: 1px solid darken($buttonSecondColor, 5%);
-    color: $lightFontColor;
-    background-color: $buttonFirstColor;
     &.hover,
     &:hover {
       background-color: darken($buttonFirstColor, 5%);
-
     }
   }
-
-  .upload {
-    font-size: 30px;
-  }
-  &:after {
-    clear: both;
+  .upload_button, .upload_label, .inputWrapper input[type=file] {
+    line-height: 24px;
   }
 }
 
@@ -126,8 +91,6 @@
       img{
          max-height: 100%;
          max-width: 100%;
-         width: inherit;
-/*       width: auto;*/
          display: block;
          margin: 0 auto;
       }
@@ -184,9 +147,10 @@
   .screenshot_img{
     width:200px;
     height:200px;
-    margin: 23px; // HACK: same as line-height of first label in application base data...
-    position: relative;   // for absolute .delete button
+    margin: 29px 29px; // HACK: same as line-height of first label in application base data...
+    position: relative;  // for absolute .delete button
 
+    box-sizing: content-box;
     border: 1px solid #c0c0c0;
     background-color: #f9f9f9;
     display: table;
@@ -246,19 +210,6 @@
   border: 1px solid #c0c0c0;
   background-color: #f9f9f9;
   padding: 20px;
-  .labelInput{
-    width:80px;
-    float:left;
-    display: block;
-    margin-bottom: $space/2;
-  }
-  label{margin-right: 10px;}
-  select{min-width: 300px;}
-  .dropdown{min-width: 300px;}
-  .messageBox{
-    width:270px;
-    @include absolute($space $space '' '');
-  }
 }
 
 .popup{

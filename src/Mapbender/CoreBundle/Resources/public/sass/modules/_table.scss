@@ -39,6 +39,11 @@
     right:solid 1px $thirdColor;
     bottom:solid 1px $thirdColor;
   }
+  // bootstrap introduces a border-bottom on .table>thead>tr>th. We don't do that (border is on thead itself),
+  // so revert it
+  >thead>tr>th {
+    border-bottom: none;
+  }
 }
 
 table {

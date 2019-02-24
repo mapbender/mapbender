@@ -177,16 +177,8 @@ $pageWidth: $contentPaneWidth + $navWidth;
   background-color:$contentColor;
   border-left:solid 1px $thirdColor;
   border-bottom:solid 1px $thirdColor;
-  @include absolute($bannerHeight 0 '' 0);
-
-  & > .activeItem{
-  }
 }
 .navLevel2, .navLevel3{margin-left:$space/2;}
-.navLevel2{
-  & > .activeItem{
-  }
-}
 .navItem{
   a {
     &:before{margin-right:5px;}
@@ -280,13 +272,15 @@ ul.dropdownList{
   }
   padding-top: $top + $space;
 
-  & > .content {
+  > .content {
     min-height: 600px;
     position: relative;
     padding: $space;
-    margin: 0px;
     background: $contentColor url($contentPatternUrl);
     border-radius: $containerBorderRadius;
+    .tabContainer, .containerExchange {
+      margin-bottom: $space;
+    }
 
     form {
 
@@ -297,17 +291,14 @@ ul.dropdownList{
         clear: both;
       }
 
-      label.labelInput{
-        margin-bottom: -6px;
+      label.labelInput {
+        margin: 0;
       }
       .dropdown{
         width: 100%;
-        .dropdownList{
-          width: 100%;
-        }
       }
       .inputWrapper{
-        width: 100%;
+        display: block;
         textarea,
         input[type="password"],
         input[type="email"],
@@ -315,12 +306,7 @@ ul.dropdownList{
           width: 100%;
           background: #fff;
         }
-
       }
-      .screenshot_upload.left{
-        width: 100%;
-      }
-
       select[multiple="multiple"]{
         width: 100%;
         margin-bottom: 10px;
@@ -412,6 +398,7 @@ label[for^="inputFilter"] {
 
 .listFilterInput{
   width: 200px;
+  max-width: calc(100% - 120px);  // for crowded table rows with filter embedded into a th
   // HACK: The proper way to do this is to wrap label + input into a .form-group, or any other div really,
   //       and put the margin onto the container. This would require changing FOM-generated markup though...
   margin-bottom: 1.5 * $space;
