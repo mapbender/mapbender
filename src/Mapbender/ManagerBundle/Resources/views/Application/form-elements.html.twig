@@ -1,21 +1,22 @@
-<span class="description right">{{ 'mb.manager.admin.template' | trans }}: {{template_name|default('Unknown')}}</span> 
+<div class="description">
+  <span class="right">{{ 'mb.manager.admin.template' | trans }}: {{template_name|default('Unknown')}}</span>
+  <div class="clear"></div>
+</div>
 
 {% for region in regions %}
-  <div class="clearContainer"></div>
   <div class="{{region}} region">
-    <h3 class="left subTitle">{{ region | capitalize }}</h3>
-    {% if form[region] is defined %}
-    <div class="right regionProperties">
-      {#% for form[region] in form.regionProperties %}
-        {% if form_regionProperties.vars.value.name == region %#}
-          {{ form_widget(form[region]) }}
-        {#% endif %}
-      {% endfor %#}
-    </div>
-    {% endif %}
-    <div class="clearContainer"></div>
-      <table class="elementsTable tableCore" data-region="{{ region }}">
+      <table class="application-component-table elementsTable" data-region="{{ region }}">
         <thead>
+          <tr>
+            <th colspan="2">
+              <h3 class="subTitle">{{ region | capitalize }}</h3>
+            </th>
+            <th class="iconColumn regionProperties">
+              {% if true and form[region] is defined %}
+                  {{ form_widget(form[region]) }}
+              {% endif %}
+            </th>
+          </tr>
           <tr>
             <th>{{ 'mb.manager.admin.element.title' | trans }}</th>
             <th class="type">{{ 'mb.manager.admin.element.type' | trans }}</th>
@@ -30,7 +31,7 @@
                 <td class="titleColumn description">{{ element.title | trans }}</td>
                 <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
                 <td class="iconColumn">
-                  <div class="checkWrapper left iconCheckbox iconSmall {% if element.enabled %}iconCheckboxActive{% endif %}" title="{{"mb.manager.admin.element.show_hide"|trans}} {{element.title}}">
+                  <div class="checkWrapper iconCheckbox iconSmall {% if element.enabled %}iconCheckboxActive{% endif %}" title="{{"mb.manager.admin.element.show_hide"|trans}} {{element.title}}">
                     <input class="checkbox"
                            data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
                            data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>

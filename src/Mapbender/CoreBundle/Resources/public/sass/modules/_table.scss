@@ -40,6 +40,18 @@
     bottom:solid 1px $thirdColor;
   }
 }
+
+table {
+  td, th {
+    &.iconColumn {
+      // Poor .iconColumn catches some undesirable rules from the [class^="icon"] rule
+      // in libs/_icons.scss. Defeat those
+      display: table-cell !important;
+      vertical-align: inherit;
+    }
+  }
+}
+
 .permissionsTable{
   $height:26px;
 
@@ -105,7 +117,5 @@
     bottom:solid 1px $thirdColor;
   }
   @include border-bottom-radius($radius);
-  width:100% !important;
-  .hide{display:none;}
   [class^="icon"],[class*=" icon"]{margin-left:10px;}
 }

@@ -191,11 +191,6 @@
 // ----------------------------------------------- NEW/EDIT APPLICATION
 .applicationTabContainer{
   margin-bottom:$space;
-
-  table{
-    .iconCheckbox{@extend .iconPublish}
-    .iconCheckboxActive{@extend .iconPublishActive}
-  }
 }
 .containerBaseData{
   $height: 200px;
@@ -267,10 +262,6 @@
     @include absolute($space $space '' '');
   }
 }
-.containerLayers{
-  .iconCheckbox{@extend .iconPublish}
-  .iconCheckboxActive{@extend .iconPublishActive}
-}
 
 .containerExchange {
   border: 1px solid #c0c0c0;
@@ -297,16 +288,74 @@
     .labelInput, .input{float:left;}
   }
 }
-.elementsTable{
-  tbody tr{cursor:move;}
-  .typeColumn{width:30%;} // very ugly, but fixing the scale behaviour by dragging at the moment
-  .titleColumn{width:50%;}
-  .ui-sortable-helper{background-color:darken($contentColor, 3%)}
+
+/**
+  Used for both elements and layersets. NOT a .tableCore. .tableCore remains weird and unfixable
+  because some of its weirdness is relied upon in FOM-generated markup for users, groupsetc
+ */
+.application-component-table {
+  width: 100%;
+  margin:$space 0;
+  thead {
+    border-bottom: solid 5px darken($contentColor, 15%);
+  }
+  th {
+    font-weight:normal;
+  }
+  tr.ui-sortable-handle {
+    cursor: move;
+    &:hover{
+      background-color:darken($contentColor, 3%);
+    }
+    &.ui-sortable-helper {
+      background-color:darken($contentColor, 4.8%);
+    }
+  }
+
+  tbody {
+    tr {
+      .iconCheckbox{@extend .iconPublish}
+      .iconCheckboxActive{@extend .iconPublishActive}
+      border-top: solid 1px darken($contentColor, 10%);
+      vertical-align: top;
+
+      >td:first-child {
+        // indent body row a bit vs first thead > th
+        padding-left: $space/2;
+      }
+      td {
+        // enforce a bit of space between cells, INCLUDING the very last
+        // cell (to mirror the "indent inwards" style of the first cell)
+        padding-right: $space/2;
+      }
+    }
+  }
+  tr {
+    height:30px;
+  }
+  .iconColumn {
+    // indent .iconColumn inwards even in thead, to line up with tbody > tr > td.iconColumn
+    padding-right: $space / 2;
+    text-align: right;
+  }
+  .iconColumn, .idColumn {
+    white-space: nowrap;
+  }
+}
+
+// To prevent horizontal collapsse in drag-and-drop transit, .layersetTable and .elementsTable both need certain
+// cells to have forced expansion
+.elementsTable {
+  .typeColumn, .titleColumn {width: 49%;}
+
   .placeholderRow{height:$space;}
 }
 
-
-
+.layersetTable{
+  .titleColumn {
+    width: 99%;
+  }
+}
 
 
 // ------------------------------------------------------------- LAYOUT
@@ -332,7 +381,6 @@
   }
 }
 .regionProperties{
-  margin-right: $space/2;
   .radioWrapper{margin-left: $space/2;}
   .labelInput{display:none;}
   .iconRadio{@include opacity(.3);@extend .iconCheckbox}
@@ -341,12 +389,11 @@
   .iconRadiotabsActive{@include opacity(1);@extend .iconTabActive}
   .iconRadioaccordion{@include opacity(.3);@extend .iconBars}
   .iconRadioaccordionActive{@include opacity(1);@extend .iconBars}
-}
-.region{
-  padding-top:$space;
-  border-top:dashed 1px darken(#fff, 30%);
-  width: 100%;
-  clear: both;
+  // FOM's idea of a radio group is a group of inline-display divs with float: left;
+  // Let's fix that
+  div {
+    float: none;
+  }
 }
 
 
@@ -356,13 +403,6 @@
 // ------------------------------------------------------------- LAYERS
 .layersetForm{
   .labelInput{width:40px;float:left;}
-}
-
-.layersetTable{
-  tbody tr{cursor:move;}
-  .idColumn{width:3%;}
-  .typeColumn{width:7%;} // very ugly, but fixing the scale behaviour
-  .titleColumn{width: 70%;}
 }
 
 .containerCustomCss {
