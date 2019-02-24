@@ -1,6 +1,6 @@
-    <label for="inputFilterElements" class="labelInput left">{{"mb.manager.admin.filter.element"|trans}}</label><input id="inputFilterElements" type="text" class="input listFilterInput">
+    <label for="inputFilterElements" class="labelInput">{{"mb.manager.admin.filter.element"|trans}}</label><input id="inputFilterElements" type="text" class="input listFilterInput">
 
-    <ul id="listFilterElements" class="listFilterContainer clear">
+    <ul id="listFilterElements" class="listFilterContainer">
     {% for class, meta in elements %}
         <li class="filterItem">
             <a class="checkContainer chooseElement" data-tags="{{ meta.tags | join(',') | lower }}" title="Choose {{meta.title}} Element" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}">

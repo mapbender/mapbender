@@ -1,6 +1,6 @@
-<label for="inputFilterSources" class="labelInput left">{{"mb.manager.admin.filter.source"|trans}}</label><input id="inputFilterSources" type="text" class="input listFilterInput">
+<label for="inputFilterSources" class="labelInput">{{"mb.manager.admin.filter.source"|trans}}</label><input id="inputFilterSources" type="text" class="input listFilterInput">
 
-<ul id="listFilterSources" class="listFilterContainer clear">
+<ul id="listFilterSources" class="listFilterContainer">
 {% for source in sources %}
   <li class="filterItem">
     <a id="repository-list" class="checkContainer chooseElement" title="Choose {{source.title}}" href="{{ path("mapbender_manager_application_addinstance",{'slug': application.slug, "layersetId": layerset.id, "sourceId": source.id}) }}">
