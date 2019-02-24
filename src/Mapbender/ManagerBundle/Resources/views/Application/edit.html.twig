@@ -32,9 +32,10 @@
         <li id="tabCustomCss" class="tab">{{"mb.manager.admin.application.custom_css" | trans }}</li>
         <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
       </ul>
-      <div id="containerBaseData" class="container active containerBaseData">
-        <div class="left">{% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}</div>
-        <div class="right">
+      <div id="containerBaseData" class="container active containerBaseData row no-gutters">
+
+        <div class="col-xs-8">{% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}</div>
+        <div class="col-xs-4">
             {% if screenshot is empty %}
                 <div class="screenshot_img default iconAppDefault">
                     <div class="cell_edit">

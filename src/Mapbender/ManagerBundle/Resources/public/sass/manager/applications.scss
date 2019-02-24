@@ -26,8 +26,6 @@
 
 // ------------------------------------------------------- APPLICATIONS
 .screenshot_upload {
-  padding: 0px;
-  position: relative;
   min-width: 300px;
 
   .label {
@@ -35,16 +33,6 @@
     padding: 2px;
     font-size: 12px;
     white-space: nowrap;
-    position: relative;
-
-    .left {
-      min-width: 100px;
-      width: 100px;
-    }
-    .right {
-      min-width: 200px;
-      width: 200px;
-    }
   }
 
   .input {
@@ -196,7 +184,8 @@
   .screenshot_img{
     width:200px;
     height:200px;
-    margin-right: 50px;
+    margin: 23px; // HACK: same as line-height of first label in application base data...
+    position: relative;   // for absolute .delete button
 
     border: 1px solid #c0c0c0;
     background-color: #f9f9f9;
@@ -220,13 +209,14 @@
       color:lighten($darkFontColor, 10%);
     }
 
-    .delete{
-      position: absolute;
-      right: 20px;
-      margin-right: 50px;
-    }
 
     div.cell_edit{
+      position: relative;
+      .delete{
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
         display: table-cell;
         vertical-align:middle;
         text-align: center;
@@ -245,17 +235,10 @@
       }
   }
 
-  .labelInput{
-    width:80px;
-    float:left;
-    display: block;
-    margin-bottom: $space/2;
-  }
   textarea, input, .dropdown{min-width: 300px;}
   textarea{height:100px;}
-  .messageBox{
-    width:300px;
-    @include absolute($space $space '' '');
+  .messageBox {
+    margin: 23px 0 0 1em;
   }
 }
 

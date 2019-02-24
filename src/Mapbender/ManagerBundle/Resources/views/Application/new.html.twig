@@ -17,21 +17,17 @@
         <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
         <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security.title" | trans }}</li>
       </ul>
-      <div id="containerBaseData" class="container active containerBaseData">
-          <div class="left">
-            <label class="left labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.template" | trans}}:<span class="required">*</span></label>
+      <div id="containerBaseData" class="container active containerBaseData row no-gutters">
+          <div class="col-xs-8">
+            <label class="labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.template" | trans}}:<span class="required">*</span></label>
             {{ form_widget(form.template) }}
-                <div class="clearContainer"></div>
             {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
            </div>
-           <div class="right">
+           <div class="col-xs-4">
                 <div class="messageBox hint">
                     {{"mb.manager.admin.application.create_use" | trans }}
                 </div>
            </div>
-            <div class="clearContainer"></div>
-
-
       </div>
 
       <div id="containerSecurity" class="container">

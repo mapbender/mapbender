@@ -27,18 +27,28 @@ class ApplicationType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title', 'text', array(
+        $builder
+            ->add('title', 'text', array(
+                'label' => 'mb.manager.admin.application.title',
                 'attr' => array(
                     'title' => 'The application title, as shown in the browser '
-                    . 'title bar and in lists.')))
+                    . 'title bar and in lists.',
+                ),
+            ))
             ->add('slug', 'text', array(
+                'label' => 'mb.manager.admin.application.url.title',
                 'attr' => array(
                     'title' => 'The URL title (slug) is based on the title and used in the '
-                    . 'application URL.')))
+                    . 'application URL.',
+                ),
+            ))
             ->add('description', 'textarea', array(
                 'required' => false,
+                'label' => 'mb.manager.admin.application.description',
                 'attr' => array(
-                    'title' => 'The description is used in overview lists.')))
+                    'title' => 'The description is used in overview lists.',
+                ),
+            ))
             ->add('template', 'choice', array(
                 'choices' => $options['available_templates'],
                 'attr' => array(
