@@ -328,10 +328,11 @@
                 if(conf.callback) {
                     button.on('click', function(event) {
                         event.preventDefault();
+                        event.stopPropagation();
                         conf.callback.call(self, event);
+                        return false;
                     });
                 }
-
                 buttonset = buttonset.add(button);
             });
             $('.popupButtons', this.$element.get(0)).append(buttonset);

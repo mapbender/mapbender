@@ -1,5 +1,5 @@
 {{ form_start(form, {"attr": {"novalidate": "novalidate", "target": "_blank"}}) }}
-  <div class="defaultForm elementForm">
+  <div>
     {{ form_label(form.format) }}{{ form_widget(form.format) }}
     <div class="clearContainer"></div>
     <label class="left labelInput" for="{{ form.application.vars.id }}">{{"form.manager.admin.application.export.application" | trans}}:<span class="required">*</span></label>
@@ -12,5 +12,4 @@
     <a href="{{ path('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.export.btn.cancel' | trans}}</a>
   </div>
   <div class="clearContainer"></div>
-  {{ form_row(form._token) }}
-{{ form_end(form, {"render_rest": false}) }}
+{{ form_end(form) }}

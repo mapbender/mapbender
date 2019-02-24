@@ -80,11 +80,9 @@ class ApplicationController extends WelcomeController
     /**
      * Returns serialized application.
      *
-     * @ManagerRoute("/application/export")
-     * @Method({"GET", "POST"})
-     * @Template("MapbenderManagerBundle:Application:export.html.twig")
+     * @ManagerRoute("/application/export", methods={"GET", "POST"})
      * @param Request $request
-     * @return Response|array
+     * @return Response
      */
     public function exportAction(Request $request)
     {
@@ -112,20 +110,18 @@ class ApplicationController extends WelcomeController
             }
 
         } else {
-            return array(
+            return $this->render('@MapbenderManager/Application/export.html.twig', array(
                 'form' => $form->createView(),
-            );
+            ));
         }
     }
 
     /**
      * Imports serialized application.
      *
-     * @ManagerRoute("/application/import")
-     * @Template("MapbenderManagerBundle:Application:import.html.twig")
-     * @Method({"GET", "POST"})
+     * @ManagerRoute("/application/import", methods={"GET", "POST"})
      * @param Request $request
-     * @return Response|array
+     * @return Response
      * @throws DBALException
      */
     public function importAction(Request $request)
@@ -160,9 +156,9 @@ class ApplicationController extends WelcomeController
                 // fall through to re-rendering form
             }
         }
-        return array(
+        return $this->render('@MapbenderManager/Application/import.html.twig', array(
             'form' => $form->createView(),
-        );
+        ));
     }
 
     /**

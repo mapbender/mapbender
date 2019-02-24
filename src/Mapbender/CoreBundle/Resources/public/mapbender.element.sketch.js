@@ -139,7 +139,7 @@
         _open: function(e){
             var self = this;
             var content = '<label for="inputCircleRadius" class="labelInput left">'+Mapbender.trans('mb.core.sketch.circle.radius.label')+':</label>';
-            content += '<input id="inputCircleRadius" type="text" class="input listFilterInput" />'
+            content += '<input id="inputCircleRadius" type="text" class="input" />';
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
