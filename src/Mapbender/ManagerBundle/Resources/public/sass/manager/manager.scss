@@ -317,6 +317,11 @@ ul.dropdownList{
       }
     }
 
+    .button-group {
+      text-align: right;
+      margin: $space 0;
+    }
+
     border: {
       top: solid 1px $secondColor;
       left: solid 1px $thirdColor;

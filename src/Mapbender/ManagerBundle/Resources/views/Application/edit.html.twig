@@ -51,7 +51,6 @@
                 </div>
             {% endif %}
         </div>
-        <div class="clearContainer"></div>
       </div>
       <div id="containerLayout" class="container">
         {% include 'MapbenderManagerBundle:Application:form-elements.html.twig' %}
@@ -69,11 +68,10 @@
       </div>
     </div>
     <div class="clearContainer"></div>
-    <div class="right">
+    <div class="button-broup">
         <input type="submit" value="{{ 'mb.manager.admin.application.save' | trans }}" class="button"/>
         <a href="{{ path('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.cancel' | trans}}</a>
     </div>
-    <div class="clearContainer"></div>
     {{ form_row(form._token) }}
     {{ form_end(form, {"render_rest": false}) }}
 {% endblock %}
