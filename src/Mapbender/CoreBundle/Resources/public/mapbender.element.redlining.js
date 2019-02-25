@@ -217,7 +217,7 @@
         },
         _endEdit: function(nextControl) {
             var editFeature = (this.editControl || {}).feature;
-            if (nextControl !== this.editControl) {
+            if (this.editControl && nextControl !== this.editControl) {
                 this.editControl.deactivate();
             }
             if (editFeature && editFeature.style && editFeature.style.label) {
