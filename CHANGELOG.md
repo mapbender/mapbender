@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ d8e37a819**
+* **dev-release/3.0.7 @ 5c6e0a349**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
@@ -53,6 +53,8 @@
   - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([Issue #715](https://github.com/mapbender/mapbender/issues/715), [PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Fix Redlining in sidepane never deactivating its drawing tools once activated ([Issue #992](https://github.com/mapbender/mapbender/issues/992), [PR#1088](https://github.com/mapbender/mapbender/pull/1088))
   - Add support for Redlining `deactivate_on_close` also when in placed sidepane
+  - Fix dangling Redlining edit-mode vertices when deleting currently edited feature ([Issue #1040](https://github.com/mapbender/mapbender/issues/1040), [PR#1106](https://github.com/mapbender/mapbender/pull/1106))
+  - Redlining now reacts appropriately to runtime SRS switching ([PR#1107](https://github.com/mapbender/mapbender/pull/1107))
   - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
   - Fixed behaviour of Digitizer and similar Elements in `Buttons`-style sidepane ([PR#1097](https://github.com/mapbender/mapbender/pull/1097))
   - [Vendorspecifics] Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
