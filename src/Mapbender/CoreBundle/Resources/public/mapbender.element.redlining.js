@@ -68,6 +68,7 @@
         },
         deactivate: function(){
             this._deactivateControl();
+            this._endEdit(null);
             // end popup, if any
             this._close();
             if (this.options.deactivate_on_close) {
