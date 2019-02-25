@@ -363,14 +363,18 @@ class PrintClient extends Element
     protected function addReplacePattern($url, $rplConfig, $dpi)
     {
         foreach ($rplConfig as $pattern) {
-            if (isset($pattern['default'][$dpi])) {
-                return $url . $pattern['default'][$dpi];
-            } elseif (strpos($url, $pattern['pattern']) !== false) {
-                if (isset($pattern['replacement'][$dpi])){
-                    return str_replace($pattern['pattern'], $pattern['replacement'][$dpi], $url);
-                }
+            switch (key($pattern)) {
+                case 'default':
+                    $url = $this->addUrlPattern($url, $pattern, $dpi);
+                    break;
+                case 'pattern':
+                    $url = $this->replaceUrlPattern($url, $pattern, $dpi);
+                    break;
+                default:
+                    break;
             }
         }
+
         // no match, no change
         return $url;
     }
@@ -508,5 +512,34 @@ class PrintClient extends Element
     protected function getSubmitFrameName()
     {
         return "submit-frame-{$this->entity->getId()}";
+    }
+
+    /**
+     * @param $url
+     * @param $pattern
+     * @param $dpi
+     * @return mixed
+     */
+    private function replaceUrlPattern($url, $pattern, $dpi)
+    {
+        if (!isset($pattern['replacement'][$dpi])){
+            return $url;
+        }
+
+        return str_replace($pattern['pattern'], $pattern['replacement'][$dpi], $url);
+    }
+
+    /**
+     * @param $url
+     * @param $pattern
+     * @param $dpi
+     * @return string
+     */
+    private function addUrlPattern($url, $pattern, $dpi)
+    {
+        if(!isset($pattern['default'][$dpi]))
+            return $url;
+
+        return $url . $pattern['default'][$dpi];
     }
 }
