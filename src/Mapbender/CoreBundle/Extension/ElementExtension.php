@@ -2,7 +2,7 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
-use Mapbender\CoreBundle\Component\ElementCompatibilityChecker;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
 
 /**
@@ -11,15 +11,15 @@ use Mapbender\CoreBundle\Entity\Element;
 class ElementExtension extends \Twig_Extension
 {
 
-    /** @var ElementCompatibilityChecker */
-    protected $compatibilityChecker;
+    /** @var ElementInventoryService */
+    protected $inventoryService;
 
     /**
-     * @param ElementCompatibilityChecker $compatiblityChecker
+     * @param ElementInventoryService $inventoryService
      */
-    public function __construct(ElementCompatibilityChecker $compatiblityChecker)
+    public function __construct(ElementInventoryService $inventoryService)
     {
-        $this->compatibilityChecker = $compatiblityChecker;
+        $this->inventoryService = $inventoryService;
     }
 
     /**
@@ -47,8 +47,8 @@ class ElementExtension extends \Twig_Extension
      */
     public function element_class_title($element)
     {
-        $class = $element->getClass();
-        $adjustedClass = $this->compatibilityChecker->getAdjustedElementClassName($class);
+        $initialClass = $element->getClass();
+        $adjustedClass = $this->inventoryService->getAdjustedElementClassName($initialClass);
         if (class_exists($adjustedClass)) {
             return $adjustedClass::getClassTitle();
         }

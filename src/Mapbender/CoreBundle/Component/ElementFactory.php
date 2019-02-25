@@ -105,9 +105,9 @@ class ElementFactory
      */
     protected function instantiateComponent($className, Entity\Element $entity, Application $appComponent)
     {
-        /** @var ElementCompatibilityChecker $compatService */
-        $compatService = $this->container->get('mapbender.element_compatibility_checker.service');
-        $finalClassName = $compatService->getAdjustedElementClassName($className);
+        /** @var ElementInventoryService $inventoryService */
+        $inventoryService = $this->container->get('mapbender.element_inventory.service');
+        $finalClassName = $inventoryService->getAdjustedElementClassName($className);
         // The class_exists call itself may throw, depending on Composer version and promotion of warnings to
         // Exceptions via Symfony.
         try {

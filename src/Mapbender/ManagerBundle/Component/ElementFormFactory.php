@@ -4,7 +4,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 
-use Mapbender\CoreBundle\Component\ElementCompatibilityChecker;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
@@ -22,8 +22,8 @@ class ElementFormFactory
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
-    /** @var ElementCompatibilityChecker */
-    protected $compatibilityChecker;
+    /** @var ElementInventoryService */
+    protected $inventoryService;
     /** @var ContainerInterface */
     protected $container;
     /** @var bool */
@@ -31,16 +31,16 @@ class ElementFormFactory
 
     /**
      * @param FormFactoryInterface $formFactory
-     * @param ElementCompatibilityChecker $compatiblityChecker
+     * @param ElementInventoryService $inventoryService
      * @param ContainerInterface $container
      * @param bool $strict
      */
     public function __construct(FormFactoryInterface $formFactory,
-                                ElementCompatibilityChecker $compatiblityChecker,
+                                ElementInventoryService $inventoryService,
                                 ContainerInterface $container, $strict = false)
     {
         $this->formFactory = $formFactory;
-        $this->compatibilityChecker = $compatiblityChecker;
+        $this->inventoryService = $inventoryService;
         $this->container = $container;
         $this->setStrict($strict);
     }
@@ -101,7 +101,7 @@ class ElementFormFactory
      */
     protected function getComponentClass(Element $element)
     {
-        return $this->compatibilityChecker->getAdjustedElementClassName($element->getClass());
+        return $this->inventoryService->getAdjustedElementClassName($element->getClass());
     }
 
     /**

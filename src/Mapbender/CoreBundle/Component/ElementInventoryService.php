@@ -4,7 +4,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 
-class ElementCompatibilityChecker
+class ElementInventoryService
 {
     /** @var string[] */
     protected $movedElementClasses = array(

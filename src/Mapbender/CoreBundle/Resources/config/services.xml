@@ -27,7 +27,7 @@
         <parameter key="owsproxy.baseroute">owsproxy3_core_owsproxy_entrypoint</parameter>
         <parameter key="mapbender.asset_compiler.service.class">Mapbender\CoreBundle\Asset\AssetFactory</parameter>
         <parameter key="mapbender.application_asset.service.class">Mapbender\CoreBundle\Asset\ApplicationAssetService</parameter>
-        <parameter key="mapbender.element_compatibility_checker.service.class">Mapbender\CoreBundle\Component\ElementCompatibilityChecker</parameter>
+        <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
     </parameters>
 
     <services>
@@ -37,7 +37,7 @@
 
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
-            <argument type="service" id="mapbender.element_compatibility_checker.service" />
+            <argument type="service" id="mapbender.element_inventory.service" />
         </service>
 
         <service id="target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
@@ -186,7 +186,7 @@
             <argument key="debug">%kernel.debug%</argument>
             <argument key="strict">%mapbender.strict.asset.bundle_scopes%</argument>
         </service>
-        <service id="mapbender.element_compatibility_checker.service" class="%mapbender.element_compatibility_checker.service.class%">
+        <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
             <!-- no arguments; element class changes are added via compiler passes; this is not configurable -->
         </service>
     </services>
