@@ -45,6 +45,7 @@
         },
         setupMapEventListeners: function() {
             $(document).on('mbmapsourceadded', this._moveLayerToLayerStackTop.bind(this));
+            $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
         },
         defaultAction: function(callback){
             this.activate(callback);
@@ -330,6 +331,18 @@
             if (this.layer) {
                 this.map.raiseLayer(this.layer, this.map.getNumLayers());
                 this.map.resetLayersZIndex();
+            }
+        },
+        _onSrsChange: function(event, data) {
+            this._endEdit(null);
+            this._deactivateControl();
+            if (this.layer) {
+                (this.layer.features || []).map(function(feature) {
+                    if (feature.geometry && feature.geometry.transform) {
+                        feature.geometry.transform(data.from, data.to);
+                    }
+                });
+                this.layer.redraw();
             }
         }
     });
