@@ -37,6 +37,7 @@
 
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
+            <argument type="service" id="mapbender.element_compatibility_checker.service" />
         </service>
 
         <service id="target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">

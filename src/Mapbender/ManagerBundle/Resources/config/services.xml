@@ -12,6 +12,7 @@
     <services>
         <service id="mapbender.manager.element_form_factory.service" class="%mapbender.manager.element_form_factory.service.class%">
             <argument type="service" id="form.factory" />
+            <argument type="service" id="mapbender.element_compatibility_checker.service" />
             <argument type="service" id="service_container" />
             <argument key="strict">%mapbender.strict.element_api.form_type%</argument>
         </service>

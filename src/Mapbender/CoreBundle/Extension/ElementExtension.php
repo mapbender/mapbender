@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
+use Mapbender\CoreBundle\Component\ElementCompatibilityChecker;
 use Mapbender\CoreBundle\Entity\Element;
 
 /**
@@ -9,7 +10,18 @@ use Mapbender\CoreBundle\Entity\Element;
  */
 class ElementExtension extends \Twig_Extension
 {
-    
+
+    /** @var ElementCompatibilityChecker */
+    protected $compatibilityChecker;
+
+    /**
+     * @param ElementCompatibilityChecker $compatiblityChecker
+     */
+    public function __construct(ElementCompatibilityChecker $compatiblityChecker)
+    {
+        $this->compatibilityChecker = $compatiblityChecker;
+    }
+
     /**
      * @inheritdoc
      */
@@ -36,8 +48,9 @@ class ElementExtension extends \Twig_Extension
     public function element_class_title($element)
     {
         $class = $element->getClass();
-        if(class_exists($class)) {
-            return $class::getClassTitle();
+        $adjustedClass = $this->compatibilityChecker->getAdjustedElementClassName($class);
+        if (class_exists($adjustedClass)) {
+            return $adjustedClass::getClassTitle();
         }
     }
 }
