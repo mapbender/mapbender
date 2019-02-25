@@ -326,6 +326,7 @@
          * @private
          */
         _moveLayerToLayerStackTop: function(event, params) {
+            this._endEdit(null);
             if (this.layer) {
                 this.map.raiseLayer(this.layer, this.map.getNumLayers());
                 this.map.resetLayersZIndex();
