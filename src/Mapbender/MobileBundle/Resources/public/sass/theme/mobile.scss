@@ -376,6 +376,8 @@ fieldset{
 .mobileContent{
   overflow:auto;
   @include absolute($space*4 $space $space $space);
+  -webkit-overflow-scrolling: touch;
+  overflow-y: scroll;
 }
 .mobileClose{
   font-style: normal;
