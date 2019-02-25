@@ -257,6 +257,9 @@
         _removeFromGeomList: function(e){
             var $tr = $(e.target).parents("tr:first");
             var eventFeature = this.layer.getFeatureById($tr.attr('data-id'));
+            if (this.editControl && this.editControl.active && this.editControl.feature === eventFeature) {
+                this._endEdit(null);
+            }
             this._removeFeature(eventFeature);
             $tr.remove();
         },
