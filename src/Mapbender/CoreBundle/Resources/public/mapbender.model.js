@@ -1190,7 +1190,9 @@ Mapbender.Model = {
         this.mbMap.fireModelEvent({
             name: 'srschanged',
             value: {
-                projection: srs.projection
+                projection: srs.projection,
+                from: oldProj,
+                to: srs.projection
             }
         });
     },
