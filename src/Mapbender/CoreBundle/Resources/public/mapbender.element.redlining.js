@@ -27,13 +27,17 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
+            var $geomTable = $('.geometry-table', this.element);
             this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
-            this.rowTemplate = this.element.find('.geometry-table tr').remove();
+            this.rowTemplate = $('tr', $geomTable).remove();
             var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
             this.map.removeControl(selectControl[0]);
             if(this.options.auto_activate || this.options.display_type === 'element'){
                 this.activate();
             }
+            $geomTable.on('click', '.geometry-remove', $.proxy(this._removeFromGeomList, this));
+            $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
+            $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
 
             this.setupMapEventListeners();
 
@@ -242,19 +246,12 @@
             }
         },
         _addToGeomList: function(feature, typeLabel){
-            var self = this;
             var activeTool = $('.redlining-tool.active', this.element).attr('name');
             var row = this.rowTemplate.clone();
             row.attr("data-id", feature.id);
             $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel, activeTool));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
-            $('.geometry-remove', $geomtable).off('click');
-            $('.geometry-remove', $geomtable).on('click', $.proxy(self._removeFromGeomList, self));
-            $('.geometry-edit', $geomtable).off('click');
-            $('.geometry-edit', $geomtable).on('click', $.proxy(self._modifyFeature, self));
-            $('.geometry-zoom', $geomtable).off('click');
-            $('.geometry-zoom', $geomtable).on('click', $.proxy(self._zoomToFeature, self));
         },
         _removeFromGeomList: function(e){
             var $tr = $(e.target).parents("tr:first");
