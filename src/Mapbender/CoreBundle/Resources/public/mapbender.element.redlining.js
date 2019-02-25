@@ -27,13 +27,17 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
+            var $geomTable = $('.geometry-table', this.element);
             this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
-            this.rowTemplate = this.element.find('.geometry-table tr').remove();
+            this.rowTemplate = $('tr', $geomTable).remove();
             var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
             this.map.removeControl(selectControl[0]);
             if(this.options.auto_activate || this.options.display_type === 'element'){
                 this.activate();
             }
+            $geomTable.on('click', '.geometry-remove', $.proxy(this._removeFromGeomList, this));
+            $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
+            $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
 
             this.setupMapEventListeners();
 
@@ -64,6 +68,7 @@
         },
         deactivate: function(){
             this._deactivateControl();
+            this._endEdit(null);
             // end popup, if any
             this._close();
             if (this.options.deactivate_on_close) {
@@ -242,23 +247,19 @@
             }
         },
         _addToGeomList: function(feature, typeLabel){
-            var self = this;
             var activeTool = $('.redlining-tool.active', this.element).attr('name');
             var row = this.rowTemplate.clone();
             row.attr("data-id", feature.id);
             $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel, activeTool));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
-            $('.geometry-remove', $geomtable).off('click');
-            $('.geometry-remove', $geomtable).on('click', $.proxy(self._removeFromGeomList, self));
-            $('.geometry-edit', $geomtable).off('click');
-            $('.geometry-edit', $geomtable).on('click', $.proxy(self._modifyFeature, self));
-            $('.geometry-zoom', $geomtable).off('click');
-            $('.geometry-zoom', $geomtable).on('click', $.proxy(self._zoomToFeature, self));
         },
         _removeFromGeomList: function(e){
             var $tr = $(e.target).parents("tr:first");
             var eventFeature = this.layer.getFeatureById($tr.attr('data-id'));
+            if (this.editControl && this.editControl.active && this.editControl.feature === eventFeature) {
+                this._endEdit(null);
+            }
             this._removeFeature(eventFeature);
             $tr.remove();
         },
@@ -325,6 +326,7 @@
          * @private
          */
         _moveLayerToLayerStackTop: function(event, params) {
+            this._endEdit(null);
             if (this.layer) {
                 this.map.raiseLayer(this.layer, this.map.getNumLayers());
                 this.map.resetLayersZIndex();
