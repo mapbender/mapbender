@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
-use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
@@ -13,14 +12,9 @@ use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
 use Mapbender\CoreBundle\Utils\RequestUtil;
-use Mapbender\WmsBundle\Entity\WmsSource;
-use OwsProxy3\CoreBundle\Component\CommonProxy;
-use OwsProxy3\CoreBundle\Component\ProxyQuery;
-use OwsProxy3\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -317,56 +311,72 @@ class ApplicationController extends Controller
      */
     public function instanceTunnelAction(Request $request, $slug, $instanceId)
     {
-        /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
-        $instance        = $this->container->get("doctrine")
-                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
-        if (!$instance) {
-            throw new NotFoundHttpException("No such instance");
-        }
-        // Deny forged cross-requests to an instance that doesn't belong to this application
-        $application = $instance->getLayerset()->getApplication();
-        if ($application->getSlug() !== $slug) {
-            throw new NotFoundHttpException("No such instance");
-        }
-        if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
-            $this->denyAccessUnlessGranted('VIEW', $application);
-        }
-
-        /** @var WmsSource $source */
-        $source = $instance->getSource();
-// TODO source access ?
-//        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
-//        $this->denyAccessUnlessGranted('VIEW', $source);
-
-        $user        = $source->getUsername() ? $source->getUsername() : null;
-        $password    = $source->getUsername() ? $source->getPassword() : null;
-        $proxy_config = $this->container->getParameter("owsproxy.proxy");
-
+        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId, $slug);
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
         if (!$requestType) {
             throw new BadRequestHttpException('Missing mandatory parameter `request` in tunnelAction');
         }
-        /** @var InstanceTunnelService $tunnelService */
-        $tunnelService = $this->get('mapbender.source.instancetunnel.service');
-        $instanceTunnel = $tunnelService->makeEndpoint($instance);
-        $url = $instanceTunnel->getInternalUrl($request);
+        $url = $instanceTunnel->getService()->getInternalUrl($request, false);
+        if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
+            return new Response($url);
+        }
 
         if (!$url) {
             throw new NotFoundHttpException('Operation "' . $requestType . '" is not supported by "tunnelAction".');
         }
 
-        $proxy_query     = ProxyQuery::createFromUrl($url, $user, $password);
-        $proxy           = new CommonProxy($proxy_config, $proxy_query);
-        $browserResponse = $proxy->handle();
-        $response        = new Response();
+        return $instanceTunnel->getUrl($url);
+    }
 
-        Utils::setHeadersFromBrowserResponse($response, $browserResponse);
-        foreach ($request->cookies as $key => $value) {
-            $response->headers->removeCookie($key);
-            $response->headers->setCookie(new Cookie($key, $value));
+    /**
+     * Get a layer's legend image via tunnel
+     * @see InstanceTunnelService
+     *
+     * @Route("/application/{slug}/instance/{instanceId}/tunnel/legend/{layerId}")
+     * @param Request $request
+     * @param string $slug
+     * @param string $instanceId
+     * @param string $layerId
+     * @return Response
+     */
+    public function instanceTunnelLegendAction(Request $request, $slug, $instanceId, $layerId)
+    {
+        $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId, $slug);
+        $url = $instanceTunnel->getService()->getInternalUrl($request, false);
+        if (!$url) {
+            throw $this->createNotFoundException();
         }
-        $response->setContent($browserResponse->getContent());
-        return $response;
+        if ($this->container->getParameter('kernel.debug') && $request->query->has('reveal-internal')) {
+            return new Response($url);
+        } else {
+            return $instanceTunnel->getUrl($url);
+        }
+    }
+
+    /**
+     * @param string $instanceId
+     * @param string $applicationSlug
+     * @return \Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint
+     */
+    protected function getGrantedTunnelEndpoint($instanceId, $applicationSlug)
+    {
+        /** @var \Mapbender\CoreBundle\Entity\SourceInstance $instance */
+        $instance = $this->getDoctrine()
+            ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
+        if (!$instance) {
+            throw new NotFoundHttpException("No such instance");
+        }
+        // Deny forged cross-requests to an instance that doesn't belong to this application
+        $application = $instance->getLayerset()->getApplication();
+        if ($application->getSlug() !== $applicationSlug) {
+            throw new NotFoundHttpException("No such instance");
+        }
+        if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
+            $this->denyAccessUnlessGranted('VIEW', $application);
+        }
+        /** @var InstanceTunnelService $tunnelService */
+        $tunnelService = $this->get('mapbender.source.instancetunnel.service');
+        return $tunnelService->makeEndpoint($instance);
     }
 
     /**

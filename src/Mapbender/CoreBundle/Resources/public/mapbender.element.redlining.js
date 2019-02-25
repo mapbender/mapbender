@@ -62,18 +62,22 @@
             }
             $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
         },
-        hide: function() {
-            this._deactivateControl();
-        },
         deactivate: function(){
-            if (this.options.display_type === 'dialog'){
-                this._close();
-            }
-            if (this.options.display_type === 'dialog' && this.options.deactivate_on_close){
+            this._deactivateControl();
+            // end popup, if any
+            this._close();
+            if (this.options.deactivate_on_close) {
                 this._removeAllFeatures();
-                this.callback ? this.callback.call() : this.callback = null;
             }
+            this.callback ? this.callback.call() : this.callback = null;
             $('.redlining-tool', this.element).off('click');
+        },
+        // sidepane interaction, safe to use activate / deactivate unchanged
+        reveal: function() {
+            this.activate();
+        },
+        hide: function() {
+            this.deactivate();
         },
         /**
          * deprecated
@@ -117,9 +121,8 @@
             this.element.removeClass('hidden');
         },
         _close: function(){
-            if(this.popup) {
+            if (this.popup) {
                 this.element.addClass('hidden').appendTo($('body'));
-                this._deactivateControl();
                 if(this.popup.$element) {
                     this.popup.destroy();
                 }

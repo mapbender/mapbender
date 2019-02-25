@@ -114,30 +114,11 @@ class UrlProcessor
                 $fullUrl = Request::create($url)->query->get('url');
                 return $this->stripProxySignature($fullUrl);
             } else {
-                $tunnelEndpoint = $this->tunnelService->matchRouteParams($routerMatch);
-                if ($tunnelEndpoint) {
-                    return $tunnelEndpoint->getInternalUrl(Request::create($url));
+                $tunnelInternalUrl = $this->tunnelService->getInternalUrl(Request::create($url), true);
+                if ($tunnelInternalUrl) {
+                    return $tunnelInternalUrl;
                 }
             }
-        }
-        // no match, pass back unchanged
-        return $url;
-    }
-
-    /**
-     * Unpacks and returns the 'url' GET parameter from a proxified url. If input $url is
-     * not matching the Owsproxy controller action, it gets returned unmodified.
-     *
-     * @param string $url
-     * @param bool $localOnly
-     * @return string
-     */
-    public function deproxifyUrl($url, $localOnly = false)
-    {
-        $routerMatch = UrlUtil::routeParamsFromUrl($this->router, $url, !$localOnly);
-        if ($routerMatch && $routerMatch['_route'] === $this->proxyRouteName) {
-            $fullUrl = Request::create($url)->query->get('url');
-            return $this->stripProxySignature($fullUrl);
         }
         // no match, pass back unchanged
         return $url;
@@ -150,25 +131,6 @@ class UrlProcessor
     public function stripProxySignature($url)
     {
         return preg_replace('#(?<=[\?\&])_signature(=)?[^&\#]*#', '', $url);
-    }
-
-    /**
-     * Resolves a url targetting the instance tunnel action into the internal URL, including
-     * hidden vendor specifics etc.
-     * If input $url is not matching the tunnel controller action, it gets returned unmodified.
-     *
-     * @param string $url
-     * @param bool $localOnly
-     * @return string
-     */
-    public function detunnelifyUrl($url, $localOnly = false)
-    {
-        $tunnelEndpoint = $this->tunnelService->matchUrl($url, $localOnly);
-        if ($tunnelEndpoint) {
-            return $tunnelEndpoint->getInternalUrl(Request::create($url));
-        }
-        // no match, pass back unchanged
-        return $url;
     }
 
     /**

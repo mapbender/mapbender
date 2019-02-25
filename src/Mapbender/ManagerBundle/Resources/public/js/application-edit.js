@@ -539,7 +539,7 @@ $(function() {
 //    });
 
     $(document).ready(function() {
-        $('#listFilterLayersets .checkWrapper input.checkbox, #containerLayout .checkWrapper input.checkbox').each(function() {
+        $('.application-component-table tbody .iconColumn input.checkbox[data-url]').each(function() {
             var self = this;
             initCheckbox.call(this);
             $(self).on("change", function(e) {

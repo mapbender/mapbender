@@ -28,9 +28,10 @@ class AssetFactoryBase
     /**
      * @param (StringAsset|string)[] $inputs
      * @param string|null $targetPath
+     * @param bool $debug to emit file markers
      * @return AssetCollection
      */
-    protected function buildAssetCollection($inputs, $targetPath)
+    protected function buildAssetCollection($inputs, $targetPath, $debug=false)
     {
         $uniqueAssets = array();
         $stringAssetCounter = 0;
@@ -40,10 +41,15 @@ class AssetFactoryBase
                 $uniqueKey = 'stringasset_' . $stringAssetCounter++;
                 $uniqueAssets[$uniqueKey] = $input;
             } else {
-                $fileAsset = $this->makeFileAsset($input);
+                $realAssetPath = $this->locateAssetFile($input);
+                $fileAsset = new FileAsset($realAssetPath);
                 $fileAsset->setTargetPath($targetPath);
                 $uniqueKey = str_replace(array('@', 'Resources/public/'), '', $input);
                 $uniqueKey = str_replace(array('/', '.', '-'), '__', $uniqueKey);
+                if ($debug) {
+                    $debugInfo = "\n/** BEGIN NEW ASSET INPUT -- {$realAssetPath} (original reference: {$input}) */\n";
+                    $uniqueAssets["{$uniqueKey}+dbgInfo"] = new StringAsset($debugInfo);
+                }
                 $uniqueAssets[$uniqueKey] = $fileAsset;
             }
         }
@@ -56,14 +62,11 @@ class AssetFactoryBase
 
     /**
      * @param string $input reference to an asset file
-     * @return FileAsset
+     * @return string resolved absolute path to file
      */
-    protected function makeFileAsset($input)
+    protected function locateAssetFile($input)
     {
-        $sourcePath = $this->fileLocator->locate($this->getSourcePath($input));
-        $fileAsset = new FileAsset($sourcePath);
-
-        return $fileAsset;
+        return $this->fileLocator->locate($this->getSourcePath($input));
     }
 
     /**

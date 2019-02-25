@@ -5,16 +5,26 @@
  * @param widget
  * @param options {onactive: function(), oninactive(): function()
  * @author Andriy Oblivantsev <eslider@gmail.com>
+ * @deprecated for lack of separation of concerns
+ * @deprecated because its primary function, activating / deactivating elements,
+ *    only works in 'accordion'-style containers, but not in 'button'-style containers
+ *
+ * We can do element widget activation / deactivation in a safer, more uniform way now,
+ * for that see element-sidepane.js.
  */
 function MapbenderContainerInfo(widget, options) {
     'use strict';
+    this.options = options;
+    if (widget.element) {
+        widget.element.data('MapbenderContainerInfo', this);
+    }
 
     var element = $(widget.element),
         toolBar = element.closest(".toolBar"),
         contentPane = element.closest(".contentPane"),
         sidePane = element.closest(".sidePane"),
-        container = null,
-        lastState = null;
+        container = null
+    ;
 
     if (contentPane.size()) {
         container = contentPane;
@@ -59,42 +69,4 @@ function MapbenderContainerInfo(widget, options) {
     this.getContainer = function () {
         return container;
     };
-
-    function handleByTab(tab) {
-        var tabContent = tab.parent().find("> div")[tab.index() + 1],
-            hasWidget = $(tabContent).find(element).length > 0,
-            state = hasWidget ? 'active' : 'inactive';
-
-        if (lastState === state) {
-            return;
-        }
-
-        if (state === "active") {
-            if (options.onactive) {
-                options.onactive();
-            }
-        } else {
-            if (options.oninactive) {
-                options.oninactive();
-            }
-        }
-
-        lastState = state;
-    }
-
-    if (this.isSidePane()) {
-        var accordion = $(".accordionContainer", sidePane),
-            hasAccordion = accordion.length > 0;
-
-        if (hasAccordion) {
-            var tabs = accordion.find('> div.accordion'),
-                currentTab = accordion.find('> div.accordion.active');
-
-            tabs.on('click', function (e) {
-                var tab = $(e.currentTarget);
-                handleByTab(tab);
-            });
-            handleByTab(currentTab);
-        }
-    }
 }

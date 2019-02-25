@@ -10,9 +10,10 @@
 
 {% block manager_content %}
 
+  {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
   {% if applications | length > 0 %}
-    <label for="inputFilterApplications" class="labelInput left">{{"mb.manager.admin.filter.application"|trans}}:</label><input id="inputFilterApplications" type="text" class="input listFilterInput">
-    {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
+
+  <label for="inputFilterApplications" class="labelInput">{{"mb.manager.admin.filter.application"|trans}}</label><input id="inputFilterApplications" type="text" class="input listFilterInput">
 
     <ul id="listFilterApplications" class="listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
       {% for application in applications %}

@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Form\EventListener;
 
+use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -19,10 +20,7 @@ class MapFieldSubscriber implements EventSubscriberInterface
      */
     private $factory;
 
-    /**
-     * The application
-     * @var application
-     */
+    /** @var Application */
     private $application;
 
     /**

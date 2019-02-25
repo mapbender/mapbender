@@ -53,9 +53,6 @@ class LegendAdminType extends AbstractType
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
-            ->add('hideEmptyLayers', 'checkbox', array('required' => false))
-            ->add('generateLegendGraphicUrl', 'checkbox',
-                array('required' => false))
             ->add('showSourceTitle', 'checkbox', array('required' => false))
             ->add('showLayerTitle', 'checkbox', array('required' => false))
             ->add('showGrouppedTitle', 'checkbox', array('required' => false));

@@ -593,13 +593,14 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * Get styles incl. from parent WmsLayerSource (OGC WMS
      * Implemantation Specification)
+     * @param bool $inherit to also return style objects from parent layer(s)
      *
      * @return Style[]
      */
-    public function getStyles($inherit = true)
+    public function getStyles($inherit = false)
     {
-        if ($inherit && $this->getParent() !== null) { // add styles from parent
-            return array_merge($this->getParent()->getStyles(), $this->styles);
+        if ($inherit && $this->getParent() !== null) {
+            return array_merge($this->getParent()->getStyles(true), $this->styles);
         } else {
             return $this->styles;
         }

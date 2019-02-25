@@ -143,9 +143,6 @@ mb:
           title: 'URL заголовок'
         description: Описание
         template: Template
-        edit:
-          title: 'Common'
-          base_data: 'Base data'
       applications: Приложения
     managerbundle:
       applications: Приложения

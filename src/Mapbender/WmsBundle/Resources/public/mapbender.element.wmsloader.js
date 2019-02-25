@@ -12,10 +12,6 @@
         _layerOptionsOn: {options: {treeOptions: {selected: true}}},
         _layerOptionsOff: {options: {treeOptions: {selected: false}}},
         _create: function() {
-            if (this.options.autoOpen) {
-                console.warn("mbWmsLoader option 'autoOpen' not implemented, ignoring");
-                this.options.autoOpen = false;
-            }
             var self = this;
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
                 return;
@@ -50,6 +46,9 @@
 
             if (this.options.wms_id && this.options.wms_id !== '') {
                 this._getInstances(this.options.wms_id);
+            }
+            if (this.options.autoOpen) {
+                this.open();
             }
         },
         defaultAction: function(callback){

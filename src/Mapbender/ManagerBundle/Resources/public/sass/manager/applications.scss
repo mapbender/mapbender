@@ -26,41 +26,17 @@
 
 // ------------------------------------------------------- APPLICATIONS
 .screenshot_upload {
-  padding: 0px;
-  position: relative;
   min-width: 300px;
-
-  .label {
-    margin: 0px;
-    padding: 2px;
-    font-size: 12px;
-    white-space: nowrap;
+  .upload {
     position: relative;
-
-    .left {
-      min-width: 100px;
-      width: 100px;
-    }
-    .right {
-      min-width: 200px;
-      width: 200px;
-    }
-  }
-
-  .input {
-    border: 0px;
-    padding: 5px;
   }
 
   .inputWrapper {
     position: absolute;
     left: 0;
+    top: 0;
 
     input[type=file] {
-      display: block;
-      float: left;
-      width: 100px;
-      font-size: 20px;
       -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
       filter: alpha(opacity=0);
       -moz-opacity: 0;
@@ -68,53 +44,26 @@
       opacity: 0;
       cursor: pointer;
     }
-    &:after {
-      clear: both;
-    }
   }
   .upload_label{
     overflow: hidden;
-    height: 24px;
-    line-height: 24px;
-    vertical-align: middle;
-    padding: 0px 0px 0px 5px;
-    font-size: 11px;
-    font-weight: normal;
   }
   .upload_button {
     $buttonFirstColor: #6fb536;
-    $buttonSecondColor: #5fa229;
-    line-height: 24px;
-    vertical-align: top;
-    height: 24px;
-    margin: 0px;
-    font-size: 11px;
-    padding: 0px 10px;
+    padding: 0 10px;
     font-weight: normal;
     cursor: pointer;
 
-    border: 1px solid darken($buttonSecondColor, 5%);
-    color: $lightFontColor;
-    background-color: $buttonFirstColor;
     &.hover,
     &:hover {
       background-color: darken($buttonFirstColor, 5%);
-
     }
   }
-
-  .upload {
-    font-size: 30px;
-  }
-  &:after {
-    clear: both;
+  .upload_button, .upload_label, .inputWrapper input[type=file] {
+    line-height: 24px;
   }
 }
 
-.listFilterInput{
-  margin-bottom:$space;
-  width:250px;
-}
 .listFilterApplicationBoxes{
   $col1Width: 120px;
   $height:120px;
@@ -142,8 +91,6 @@
       img{
          max-height: 100%;
          max-width: 100%;
-         width: inherit;
-/*       width: auto;*/
          display: block;
          margin: 0 auto;
       }
@@ -191,11 +138,6 @@
 // ----------------------------------------------- NEW/EDIT APPLICATION
 .applicationTabContainer{
   margin-bottom:$space;
-
-  table{
-    .iconCheckbox{@extend .iconPublish}
-    .iconCheckboxActive{@extend .iconPublishActive}
-  }
 }
 .containerBaseData{
   $height: 200px;
@@ -205,8 +147,10 @@
   .screenshot_img{
     width:200px;
     height:200px;
-    margin-right: 50px;
+    margin: 29px 29px; // HACK: same as line-height of first label in application base data...
+    position: relative;  // for absolute .delete button
 
+    box-sizing: content-box;
     border: 1px solid #c0c0c0;
     background-color: #f9f9f9;
     display: table;
@@ -229,13 +173,14 @@
       color:lighten($darkFontColor, 10%);
     }
 
-    .delete{
-      position: absolute;
-      right: 20px;
-      margin-right: 50px;
-    }
 
     div.cell_edit{
+      position: relative;
+      .delete{
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
         display: table-cell;
         vertical-align:middle;
         text-align: center;
@@ -254,41 +199,17 @@
       }
   }
 
-  .labelInput{
-    width:80px;
-    float:left;
-    display: block;
-    margin-bottom: $space/2;
-  }
   textarea, input, .dropdown{min-width: 300px;}
   textarea{height:100px;}
-  .messageBox{
-    width:300px;
-    @include absolute($space $space '' '');
+  .messageBox {
+    margin: 23px 0 0 1em;
   }
-}
-.containerLayers{
-  .iconCheckbox{@extend .iconPublish}
-  .iconCheckboxActive{@extend .iconPublishActive}
 }
 
 .containerExchange {
   border: 1px solid #c0c0c0;
   background-color: #f9f9f9;
   padding: 20px;
-  .labelInput{
-    width:80px;
-    float:left;
-    display: block;
-    margin-bottom: $space/2;
-  }
-  label{margin-right: 10px;}
-  select{min-width: 300px;}
-  .dropdown{min-width: 300px;}
-  .messageBox{
-    width:270px;
-    @include absolute($space $space '' '');
-  }
 }
 
 .popup{
@@ -297,16 +218,74 @@
     .labelInput, .input{float:left;}
   }
 }
-.elementsTable{
-  tbody tr{cursor:move;}
-  .typeColumn{width:30%;} // very ugly, but fixing the scale behaviour by dragging at the moment
-  .titleColumn{width:50%;}
-  .ui-sortable-helper{background-color:darken($contentColor, 3%)}
+
+/**
+  Used for both elements and layersets. NOT a .tableCore. .tableCore remains weird and unfixable
+  because some of its weirdness is relied upon in FOM-generated markup for users, groupsetc
+ */
+.application-component-table {
+  width: 100%;
+  margin:$space 0;
+  thead {
+    border-bottom: solid 5px darken($contentColor, 15%);
+  }
+  th {
+    font-weight:normal;
+  }
+  tr.ui-sortable-handle {
+    cursor: move;
+    &:hover{
+      background-color:darken($contentColor, 3%);
+    }
+    &.ui-sortable-helper {
+      background-color:darken($contentColor, 4.8%);
+    }
+  }
+
+  tbody {
+    tr {
+      .iconCheckbox{@extend .iconPublish}
+      .iconCheckboxActive{@extend .iconPublishActive}
+      border-top: solid 1px darken($contentColor, 10%);
+      vertical-align: top;
+
+      >td:first-child {
+        // indent body row a bit vs first thead > th
+        padding-left: $space/2;
+      }
+      td {
+        // enforce a bit of space between cells, INCLUDING the very last
+        // cell (to mirror the "indent inwards" style of the first cell)
+        padding-right: $space/2;
+      }
+    }
+  }
+  tr {
+    height:30px;
+  }
+  .iconColumn {
+    // indent .iconColumn inwards even in thead, to line up with tbody > tr > td.iconColumn
+    padding-right: $space / 2;
+    text-align: right;
+  }
+  .iconColumn, .idColumn {
+    white-space: nowrap;
+  }
+}
+
+// To prevent horizontal collapsse in drag-and-drop transit, .layersetTable and .elementsTable both need certain
+// cells to have forced expansion
+.elementsTable {
+  .typeColumn, .titleColumn {width: 49%;}
+
   .placeholderRow{height:$space;}
 }
 
-
-
+.layersetTable{
+  .titleColumn {
+    width: 99%;
+  }
+}
 
 
 // ------------------------------------------------------------- LAYOUT
@@ -332,7 +311,6 @@
   }
 }
 .regionProperties{
-  margin-right: $space/2;
   .radioWrapper{margin-left: $space/2;}
   .labelInput{display:none;}
   .iconRadio{@include opacity(.3);@extend .iconCheckbox}
@@ -341,12 +319,11 @@
   .iconRadiotabsActive{@include opacity(1);@extend .iconTabActive}
   .iconRadioaccordion{@include opacity(.3);@extend .iconBars}
   .iconRadioaccordionActive{@include opacity(1);@extend .iconBars}
-}
-.region{
-  padding-top:$space;
-  border-top:dashed 1px darken(#fff, 30%);
-  width: 100%;
-  clear: both;
+  // FOM's idea of a radio group is a group of inline-display divs with float: left;
+  // Let's fix that
+  div {
+    float: none;
+  }
 }
 
 
@@ -356,13 +333,6 @@
 // ------------------------------------------------------------- LAYERS
 .layersetForm{
   .labelInput{width:40px;float:left;}
-}
-
-.layersetTable{
-  tbody tr{cursor:move;}
-  .idColumn{width:3%;}
-  .typeColumn{width:7%;} // very ugly, but fixing the scale behaviour
-  .titleColumn{width: 70%;}
 }
 
 .containerCustomCss {

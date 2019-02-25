@@ -5,7 +5,7 @@ mb:
         label:
           example: Esempio
           wmsurl: 'URL del Servizio'
-          wmsuser: User
+          wmsuser: Utente
           wmspass: Password
         btn:
           cancel: Cancella
@@ -35,7 +35,7 @@ mb:
             originurl: 'Origine URL'
             abstract: Abstract
             onlineresource: 'Risorsa Online'
-            exceptionformats: 'Formati Eccezione'
+            exceptionformats: 'Eccezione nel formato'
             fees: Fees
             accessconstraints: 'Limiti all''accesso'
             person: Persona
@@ -51,7 +51,7 @@ mb:
             postcode: 'Codice postale'
             country: Nazione
           message:
-            cautionscalehint: 'Attenzione: I calcoli per la Scala sono soggetti a una limitata risoluzione ScaleHint in WMS 1.1.1!'
+            cautionscalehint: 'Attenzione: i calcoli per la scala sono soggetti a una limitata risoluzione in WMS 1.1.1!'
         instance:
           title:
             wmsinstance: 'istanza WMS'
@@ -77,20 +77,23 @@ mb:
             'on': attivo
             save2: Salva
             cancel2: Cancella
-            ratio: 'BBOX factor'
+            ratio: 'fattore BBOX'
             buffer: 'Tile buffer'
+            layerOrder: Ordine dei Layers
+            layerOrder.standard: standard
+            layerOrder.reverse: QGIS
           vendorspecific:
-            label: 'Vendor specific'
+            label: 'specifiche per Vendor'
         preview:
           title:
-            servicerepository: 'Repository di Servizio'
+            servicerepository: 'Repository'
           label:
             load: Carica
         layer:
           label:
             name: Nome
             title: Titolo
-            abstract: Abstract
+            abstract: Astratto
             queryable: Interrogabile
             cascaded: 'In Cascata'
             opaque: Opaco
@@ -107,12 +110,12 @@ mb:
             scale: Scala
             min: Min
             max: Max
-            scalehint: Scalehint
-            attribution: Attribuzione
+            scalehint: scala
+            attribution: Attributi
             onlineresource: 'Risorsa Online'
             logourl: 'URL del Logo'
             identifier: Identificatore
-            authority: Authority
+            authority: Autorità
             url: URL
             value: Valore
             metadataurl: 'URL del Metadato'
@@ -123,8 +126,8 @@ mb:
         instancelayerform:
           label:
             layerstitle: 'Titolo del Layer'
-            minscale: Minscale
-            maxsclase: Maxscale
+            minscale: Scala minima
+            maxsclase: Scala massima
             active: attivo
             allowselecttoc: 'Permetti la Selezione nel TOC'
             selectedtoc: 'Selezionato nel TOC'
@@ -136,7 +139,7 @@ mb:
             moreinfo: 'Più Informazioni'
             id:
               title: ID
-              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+              description: 'Istanza Layer Id da: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nome del Layer'
             style: Stile
         new:
@@ -146,84 +149,84 @@ mb:
           title:
             servicerepository: 'Repository del Servizio'
           label:
-            wmsinstancelayers: 'WMS Instance Layers'
+            wmsinstancelayers: 'Instanze per layers WMS'
           btn:
             save: Salva
         form:
           label:
             ogcwms: 'OGC WMS'
-            onlyvalid: 'only valid'
+            onlyvalid: 'solo valido'
             serviceurl: 'URL del Servizio'
-            username: Username
+            username: Nome utente
             password: Password
             load: Carica
             cancel: Cancella
       class:
-        title: 'WMS loader'
+        title: 'loader WMS'
         description: 'Carica un WMS attraverso la getCapabilities-Request'
       tag:
         wms: wms
         loader: loader
       admin:
         label:
-          autoopen: 'Auto open'
+          autoopen: 'Apertura automatica'
           splitlayers: 'Dividi layers'
           declarative: 'Uso dichiarativo'
     repository:
       parser:
-        couldnotparse: 'Could not parse CapabilitiesDocument'
-        not_supported_document: 'Not supported CapabilitiesDocument'
-        not_supported_version: 'The WMS version is not supported'
-        not_valid_dtd: 'A WMS document is not valid (DTD).'
-        not_valid_xsd: 'A WMS document is not valid (XSD).'
+        couldnotparse: 'Non possibile il parse di CapabilitiesDocument'
+        not_supported_document: 'CapabilitiesDocument non supportato'
+        not_supported_version: 'La versione WMS non supportata'
+        not_valid_dtd: 'Un documento WMS non è valido (DTD).'
+        not_valid_xsd: 'Un documento WMS non è valido (XSD).'
     metadata:
       section:
         common:
-          _title: Common
-          title: Title
-          name: Name
-          version: Version
-          originUrl: OriginUrl
-          description: Description
-          onlineResource: OnlineResource
-          exceptionFormats: ExceptionFormats
+          _title: Comune
+          title: Titolo
+          name: Nome
+          version: Versione
+          originUrl: 'Origine Url'
+          description: Descrizione
+          onlineResource: Resource online
+          exceptionFormats: Eccezione dovuta ai formati
         useconditions:
-          _title: Useconditions
-          fees: Fees
-          accessconstraints: Accessconstraints
+          _title: 'Condizioni d''uso'
+          fees: Costi
+          accessconstraints: 'Vincoli di accesso'
         contact:
-          _title: Contact
-          person: Person
-          position: position
-          organization: organization
-          voiceTelephone: voiceTelephone
-          facsimileTelephone: facsimileTelephone
-          electronicMailAddress: electronicMailAddress
-          address: address
-          addressType: addressType
-          addressCity: addressCity
-          addressStateOrProvince: addressStateOrProvince
-          addressPostCode: addressPostCode
-          addressCountry: addressCountry
+          _title: Contatti
+          person: Persona
+          position: Posizione
+          organization: Organizzazione
+          voiceTelephone: Telefono
+          facsimileTelephone: Facsimile
+          electronicMailAddress: Indirizzo di posta elettronica
+          address: Indirizzo
+          addressType: 'Tipo di indirizzo' 
+          addressCity: Città
+          addressStateOrProvince: 'Stato o Provincia'
+          addressPostCode: 'Codice postale'
+          addressCountry: Nazione
         items:
           _title: Layer
-          title: Title
-          name: Name
+          title: Titolo
+          name: Nome
           srs: SRS
           bbox: BoundingBox
     repo:
       instance:
         label:
-          dimensions: Dimensions
+          dimensions: Dimensioni
     dimhandler:
       class:
-        title: 'Dimensions handler'
-        description: 'DimensionsHandler groups and calls the dimension supported instances at the map'
+        title: 'Dimensioni del handler'
+        description: 'DimensionsHandler raggruppa e chiama le istanze supportate dalla dimensione sulla mappa'
       tag:
-        dimension: dimension
+        dimension: dimensione
         handler: handler
     dimensionsets:
-      no_dimension: 'no dimension'
+      no_dimension: 'nessuna dimensione'
   wmc:
     wmsloader:
       class:
@@ -232,3 +235,4 @@ mb:
       tag:
         wms: wms
         loader: loader
+

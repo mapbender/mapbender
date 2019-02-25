@@ -1,16 +1,8 @@
 {{ form_start(form, {"attr": {"novalidate": "novalidate", "target": "_blank"}}) }}
-  <div class="defaultForm elementForm">
-    {{ form_label(form.format) }}{{ form_widget(form.format) }}
-    <div class="clearContainer"></div>
-    <label class="left labelInput" for="{{ form.application.vars.id }}">{{"form.manager.admin.application.export.application" | trans}}:<span class="required">*</span></label>
-    {{ form_widget(form.application, { 'attr': { 'size': '10' }}) }}
-    <div class="clearContainer"></div>
-  </div>
-  <div class="clearContainer"></div>
-  <div class="right">
+  {{ form_row(form.format) }}
+  {{ form_row(form.application, {'attr': {'size': 10}}) }}
+  <div class="button-group">
     <input type="submit" value="{{ 'mb.manager.admin.application.export.btn.export' | trans }}" class="button"/>
     <a href="{{ path('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.export.btn.cancel' | trans}}</a>
   </div>
-  <div class="clearContainer"></div>
-  {{ form_row(form._token) }}
-{{ form_end(form, {"render_rest": false}) }}
+{{ form_end(form) }}

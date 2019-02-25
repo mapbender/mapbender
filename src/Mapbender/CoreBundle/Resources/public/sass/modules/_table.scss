@@ -23,7 +23,7 @@
   tr{height:30px;}
   .iconColumn{
     float:right;
-    display: block;
+    display: table-cell !important; // defeat .icon^ rule...
     padding-top:5px;
     padding-right:$space/2;
     vertical-align: top;
@@ -39,7 +39,24 @@
     right:solid 1px $thirdColor;
     bottom:solid 1px $thirdColor;
   }
+  // bootstrap introduces a border-bottom on .table>thead>tr>th. We don't do that (border is on thead itself),
+  // so revert it
+  >thead>tr>th {
+    border-bottom: none;
+  }
 }
+
+table {
+  td, th {
+    &.iconColumn {
+      // Poor .iconColumn catches some undesirable rules from the [class^="icon"] rule
+      // in libs/_icons.scss. Defeat those
+      display: table-cell !important;
+      vertical-align: inherit;
+    }
+  }
+}
+
 .permissionsTable{
   $height:26px;
 
@@ -51,7 +68,6 @@
       .labelInput, .iconGroup, .iconUser{color:green;}
       background-color: #f0ffed;
     }
-    .input{width:180px;}
   }
   th{cursor: pointer;padding:5px 0px;}
   td{
@@ -66,8 +82,7 @@
     }
   }
   .listFilterInput{
-    margin-top:0;
-    margin-bottom:0;
+    margin-bottom: 0;
   }
 
   .checkWrapper, .headTagWrapper{
@@ -105,7 +120,5 @@
     bottom:solid 1px $thirdColor;
   }
   @include border-bottom-radius($radius);
-  width:100% !important;
-  .hide{display:none;}
   [class^="icon"],[class*=" icon"]{margin-left:10px;}
 }

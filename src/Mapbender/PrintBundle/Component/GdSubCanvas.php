@@ -25,7 +25,7 @@ class GdSubCanvas extends GdCanvas
         parent::__construct($width, $height);
         imagesavealpha($this->resource, true);
         imagealphablending($this->resource, false);
-        imagefilledrectangle($this->resource, 0, 0, $width, $height, $this->transparent);
+        imagefilledrectangle($this->resource, 0, 0, $width, $height, IMG_COLOR_TRANSPARENT);
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
     }
@@ -35,7 +35,7 @@ class GdSubCanvas extends GdCanvas
      */
     public function getTransparent()
     {
-        return $this->transparent;
+        return IMG_COLOR_TRANSPARENT;
     }
 
     /**

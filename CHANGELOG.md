@@ -1,26 +1,35 @@
 # Changelog
-* **dev-release/3.0.7 @ 49f113f9c**
-  - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#184](https://github.com/mapbender/mapbender/pull/1084))
+* **dev-release/3.0.7 @ d8e37a819**
+  - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
-  - Fix buttons with invalid targets breaking other buttons with the same `group` setting
-  - Fix rendering of Button Element if 'click' is completely undefined (old DB? YAML apps?) ([PR#1076](https://github.com/mapbender/mapbender/pull/1076))
+  - [Regression fix] restore non-root limited adminstrator's ability to reload a Source ([PR#1093](https://github.com/mapbender/mapbender/pull/1093))
   - Fix element-order dependent script initialization error in mobile template
   - Fix incomplete cached application assets for applications with protected elements ([PR#1052](https://github.com/mapbender/mapbender/pull/1052))
   - Fix Ruler measurement errors when switching between geodesic and non-geodesic CRS at runtime ([PR#1069](https://github.com/mapbender/mapbender/pull/1069))
-  - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
   - Fixed dynamic (layertree) source reordering errors with many layers
   - Fix erratic LayerTree / Legend states after ZoomBar "zoom to full extent" interaction ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Fix erratic LayerTree / Legend state updates on first map interaction after submitting a print job ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
   - Fix erratic LayerTree layer "ghosting" on certain map interactions ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Typo fixes in WmsCapabilitiesParser130, thanks jef-n ([PR#1046](https://github.com/mapbender/mapbender/pull/1046))
-  - Extend / update Italian locale translations ([PR #1062](https://github.com/mapbender/mapbender/pull/1062))
+  - Extend / update Italian locale translations ([PR #1062](https://github.com/mapbender/mapbender/pull/1062), [PR#1078](https://github.com/mapbender/mapbender/pull/1078))
+  - Various Button fixes:
+    - Buttons with invalid targets can longer break other buttons with the same `group` setting
+    - Fix exception when rendering a Button Element with completely undefined `click` option ([PR#1076](https://github.com/mapbender/mapbender/pull/1076))
+    - `activate` / `deactivate` options are no longer mandatory and can safely be left empty ([Issue#1050](https://github.com/mapbender/mapbender/issues/1050), [PR#1095](https://github.com/mapbender/mapbender/pull/1095))
+    - Automatic Button highlighting restored ([PR#1095](https://github.com/mapbender/mapbender/pull/1095))
+    - Buttons already start highlighted if their target has been configured with an `autoOpen` or similar option ([PR#1095](https://github.com/mapbender/mapbender/pull/1095))
+    - Improved / restored compatibility non-controlling Button element children ([PR#1096](https://github.com/mapbender/mapbender/pull/1096))
+    - Fix broken Button vs POI interaction ([Issue#549](https://github.com/mapbender/mapbender/issues/549))
+    - Improved support for multiple Buttons controlling the same target Element
   - Partial forward-compatibility with font-awesome 5 ([PR #1065](https://github.com/mapbender/mapbender/pull/1065))
   - Restore layer enabled / FeautureInfo checkbox state synchronization across multiple LayerTree Elements ([PR#1074](https://github.com/mapbender/mapbender/pull/1074))
+  - WmsLoader: make `autoOpen` option work
   - WmsLoader: Fix newly added service starting out with a deselected root layer ([PR#1045](https://github.com/mapbender/mapbender/pull/1045))
   - WmsLoader: Make behaviour of 'declarative' links with default `mb-wms-merge` setting repeatable ([PR#1083](https://github.com/mapbender/mapbender/pull/1083))
   - WmsLoader: Enable activation of specific layers via `mb-wms-layer` on 'declarative' links even if root or group layers have empty names ([PR#1083](https://github.com/mapbender/mapbender/pull/1083))
   - Improve compatibility with certain reverse-proxy setups ([PR#1061](https://github.com/mapbender/mapbender/pull/1061), [PR#1075](https://github.com/mapbender/mapbender/pull/1075))
+  - Enable scrolling of FeatureInfo response in Mobile Template ([PR#1057](https://github.com/mapbender/mapbender/pull/1057))
   - Print / ImageExport:
     - Add WMS GetMap size limits, use tiling to stitch larger images ([PR#1073](https://github.com/mapbender/mapbender/pull/1073))
     - Generate label and other symbol sizing parameters understood by Mapserver, QGis server and Geoserver ([735626322](https://github.com/mapbender/mapbender/commit/73562632261819d79b9a9c0c264caeb33f34f4bf#diff-c72724b3690b61d792254dd26a7ca9cbR222))
@@ -28,6 +37,7 @@
     - Synchronize layer and legend visibility at any scale with client-side behavior ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
     - Fix wrong (grey instead of white) color of GpsButton area display circle, if one makes it into an export or print
   - Print:
+    - Selection rectangle position and scale are now restored, if still on screen, when closing / reopening the dialog ([PR#1011](https://github.com/mapbender/mapbender/pull/1101))
     - Add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
       - NOTE: Print queue display styling [inherits from .mapbender-element-result-table](https://github.com/mapbender/mapbender/blob/e2fd234ffa5f98d6c74c0359f26d7d60362f50dd/src/Mapbender/PrintBundle/Resources/public/element/printclient.scss#L28), which means
         any custom css styles you may have already applied to Digitizer result tables should automatically transfer to the print queue visual.
@@ -36,15 +46,26 @@
     - Improved reproduction of patterned and / or semi-transparent and / or very thick lines ([PR#1080](https://github.com/mapbender/mapbender/pull/1080))
     - Fixed reproduction of 'donut'-style polygon cutouts ([PR#1080](https://github.com/mapbender/mapbender/pull/1080))
   - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
+  - Fix Legend Element display ordering certain layer nestings
+  - Fix Legend Element `autoOpen` option
+  - Fix broken Legend Element handling of WMS sources with only a root layer
+  - Limit Legend Element image sizes to available width
   - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([Issue #715](https://github.com/mapbender/mapbender/issues/715), [PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Fix Redlining in sidepane never deactivating its drawing tools once activated ([Issue #992](https://github.com/mapbender/mapbender/issues/992), [PR#1088](https://github.com/mapbender/mapbender/pull/1088))
+  - Add support for Redlining `deactivate_on_close` also when in placed sidepane
+  - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
+  - Fixed behaviour of Digitizer and similar Elements in `Buttons`-style sidepane ([PR#1097](https://github.com/mapbender/mapbender/pull/1097))
   - [Vendorspecifics] Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
   - [Vendorspecifics] Unused / ineffective form fields have been removed ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
   - [Backend] Fix Application import from pretty-printed JSON input
+  - [Backend] Fix broken display of long layerset titles in Map configuration form ([Issue#1085](https://github.com/mapbender/mapbender/issues/1085), [PR#1098](https://github.com/mapbender/mapbender/pull/1098))
   - [Backend] Provide better scope information (layerset name, element region) in source instance assignment and element creation popups
   - [Backend] Use localized strings in Application delete confirmation popup (previously hard-coded to English)
   - [Backend] Fix excessive height of Application delete confirmation popup, align with other confirmation dialogs
   - [Backend] Close potential script injection angle on certain popup subtitles
+  - [Backend] More consistent styling between 'Layouts' and 'Layerset' Application sections
+  - [Backend] Fix 'Layerset' Application section overflows when displaying very high source / instance ids
+  - [Debug] Application routes assets/js and assets/css will now produce information markers at the beginning of each merged input file in `app_dev` mode
   - Add new `mapbender:config:check` console command
   - Misc deprecation cleanups for Symfony 3+ compatibility
 

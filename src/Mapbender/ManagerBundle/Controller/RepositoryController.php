@@ -120,13 +120,23 @@ class RepositoryController extends Controller
     public function confirmdeleteAction($sourceId)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $this->denyAccessUnlessGranted('VIEW', $oid);
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         if (!$source) {
+            // If delete action is forbidden, hide the fact that the source doesn't
+            // exist behind an access denied.
+            $this->denyAccessUnlessGranted('VIEW', $oid);
+            $this->denyAccessUnlessGranted('DELETE', $oid);
             throw $this->createNotFoundException();
         }
-        $this->denyAccessUnlessGranted('DELETE', $source);
+        // Must have VIEW + DELETE on either any Source globally, or on this particular
+        // Source
+        if (!($this->isGranted('VIEW', $oid))) {
+            $this->denyAccessUnlessGranted('VIEW', $source);
+        }
+        if (!($this->isGranted('DELETE', $oid))) {
+            $this->denyAccessUnlessGranted('DELETE', $source);
+        }
         return array(
             'source' => $source,
         );
@@ -143,13 +153,23 @@ class RepositoryController extends Controller
     {
         /** @todo: fold identical preface code shared with confirmdeleteAction */
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $this->denyAccessUnlessGranted('VIEW', $oid);
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         if (!$source) {
+            // If delete action is forbidden, hide the fact that the source doesn't
+            // exist behind an access denied.
+            $this->denyAccessUnlessGranted('VIEW', $oid);
+            $this->denyAccessUnlessGranted('DELETE', $oid);
             throw $this->createNotFoundException();
         }
-        $this->denyAccessUnlessGranted('DELETE', $source);
+        // Must have VIEW + DELETE on either any Source globally, or on this particular
+        // Source
+        if (!($this->isGranted('VIEW', $oid))) {
+            $this->denyAccessUnlessGranted('VIEW', $source);
+        }
+        if (!($this->isGranted('DELETE', $oid))) {
+            $this->denyAccessUnlessGranted('DELETE', $source);
+        }
         // -- common preface code end --
 
         $managers = $this->getRepositoryManagers();
@@ -171,12 +191,22 @@ class RepositoryController extends Controller
     public function updateformAction($sourceId)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $this->denyAccessUnlessGranted('VIEW', $oid);
         $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         if (!$source) {
+            // If edit action is forbidden, hide the fact that the source doesn't
+            // exist behind an access denied.
+            $this->denyAccessUnlessGranted('VIEW', $oid);
+            $this->denyAccessUnlessGranted('EDIT', $oid);
             throw $this->createNotFoundException();
         }
-        $this->denyAccessUnlessGranted('EDIT', $source);
+        // Must have VIEW + EDIT on either any Source globally, or on this particular
+        // Source
+        if (!$this->isGranted('VIEW', $oid)) {
+            $this->denyAccessUnlessGranted('VIEW', $source);
+        }
+        if (!$this->isGranted('EDIT', $oid)) {
+            $this->denyAccessUnlessGranted('EDIT', $source);
+        }
 
         $managers = $this->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
@@ -199,12 +229,20 @@ class RepositoryController extends Controller
     {
         /** @todo: fold identical preface code shared with updateformAction */
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $this->denyAccessUnlessGranted('VIEW', $oid);
         $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         if (!$source) {
+            // If edit action is forbidden, hide the fact that the source doesn't
+            // exist behind an access denied.
+            $this->denyAccessUnlessGranted('VIEW', $oid);
+            $this->denyAccessUnlessGranted('EDIT', $oid);
             throw $this->createNotFoundException();
         }
-        $this->denyAccessUnlessGranted('EDIT', $source);
+        if (!$this->isGranted('VIEW', $oid)) {
+            $this->denyAccessUnlessGranted('VIEW', $source);
+        }
+        if (!$this->isGranted('EDIT', $oid)) {
+            $this->denyAccessUnlessGranted('EDIT', $source);
+        }
 
         $managers = $this->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];

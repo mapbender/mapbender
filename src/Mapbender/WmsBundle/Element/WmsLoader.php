@@ -166,6 +166,8 @@ class WmsLoader extends Element
                 return new JsonResponse(array(
                     'success' => $this->getDatabaseInstanceConfigs($instanceIds),
                 ));
+            case 'loadWms':
+                return $this->loadWms($request);
             // Compatibility bridge for team Wmts: forward to potentailly customized
             // httpAction even if handleHttpRequest was not replaced
             default:
@@ -179,30 +181,26 @@ class WmsLoader extends Element
     public function httpAction($action)
     {
         switch ($action) {
-            case 'loadWms':
-                return $this->loadWms();
             default:
                 throw new NotFoundHttpException('No such action');
         }
     }
 
-    protected function loadWms()
+    protected function loadWms(Request $request)
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
         $wmsSource = $this->getWmsSource($request);
 
         $wmsSourceEntityHandler = new WmsSourceEntityHandler($this->container, $wmsSource);
         $wmsInstance = $wmsSourceEntityHandler->createInstance();
         $sourceService = $this->getSourceService($wmsInstance);
         $layerConfiguration = $sourceService->getConfiguration($wmsInstance);
-        $elementConfig = $this->getConfiguration();
-        if ($elementConfig['splitLayers']) {
+        $config = array_replace($this->getDefaultConfiguration(), $this->entity->getConfiguration());
+        if ($config['splitLayers']) {
             $layerConfigurations = $this->splitLayers($layerConfiguration);
         } else {
             $layerConfigurations = [$layerConfiguration];
         }
         // amend info_format and format options
-        $config = array_replace($this->getDefaultConfiguration(), $this->entity->getConfiguration());
         foreach ($layerConfigurations as &$layerConfiguration) {
             $layerConfiguration['configuration']['options']['info_format'] = $config['defaultInfoFormat'];
             $layerConfiguration['configuration']['options']['format'] = $config['defaultFormat'];
@@ -211,6 +209,11 @@ class WmsLoader extends Element
         return new JsonResponse($layerConfigurations);
     }
 
+    /**
+     * @param Request $request
+     * @return \Mapbender\WmsBundle\Entity\WmsSource
+     * @throws \Mapbender\CoreBundle\Component\Exception\XmlParseException
+     */
     protected function getWmsSource($request)
     {
         $requestUrl = $request->get("url");

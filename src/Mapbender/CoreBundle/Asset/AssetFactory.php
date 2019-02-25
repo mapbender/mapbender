@@ -46,26 +46,27 @@ class AssetFactory extends AssetFactoryBase
      * Perform simple concatenation of all input assets. Some uniquification will take place.
      *
      * @param (FileAsset|StringAsset)[] $inputs
+     * @param bool $debug to enable file input markers
      * @return string
      */
-    public function compileRaw($inputs)
+    public function compileRaw($inputs, $debug)
     {
-        return $this->buildAssetCollection($inputs, null)->dump();
+        return $this->buildAssetCollection($inputs, null, $debug)->dump();
     }
 
     /**
      * @param (StringAsset|string)[] $inputs
      * @param string $sourcePath for adjusting relative urls in css rewrite filter
      * @param string $targetPath
-     * @param bool $minify
+     * @param bool $debug to enable file input markers
      * @return string
      */
-    public function compileCss($inputs, $sourcePath, $targetPath, $minify=false)
+    public function compileCss($inputs, $sourcePath, $targetPath, $debug=false)
     {
-        $content = $this->buildAssetCollection($inputs, $targetPath)->dump();
+        $content = $this->buildAssetCollection($inputs, $targetPath, $debug)->dump();
 
         $sass = clone $this->sassFilter;
-        $sass->setStyle($minify ? 'nested' : 'compressed');
+        $sass->setStyle($debug ? 'nested' : 'compressed');
         $filters = array(
             $sass,
             $this->cssRewriteFilter,

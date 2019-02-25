@@ -3,6 +3,9 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
+use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
+use Mapbender\PrintBundle\Component\Pdf\PdfUtil;
+use Mapbender\PrintBundle\Component\Region\NullRegion;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
@@ -20,6 +23,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 {
     /** @var PDF_Extensions|\FPDF */
     protected $pdf;
+    /** @var Template|array */
     protected $conf;
 
     /** @var array */
@@ -27,18 +31,21 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /** @var string */
     protected $resourceDir;
-    /** @var string */
-    protected $tempDir;
     /** @var OdgParser */
     protected $templateParser;
     /** @var PrintPluginHost */
     protected $pluginHost;
     /** @var ImageTransport */
     protected $imageTransport;
+    /** @var LegendHandler */
+    protected $legendHandler;
+    /** @var PdfUtil */
+    protected $pdfUtil;
 
     /**
      * @param LayerRenderer[] $layerRenderers
      * @param ImageTransport $imageTransport
+     * @param LegendHandler $legendHandler
      * @param OdgParser $templateParser
      * @param PrintPluginHost $pluginHost
      * @param LoggerInterface $logger
@@ -46,18 +53,27 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      */
     public function __construct($layerRenderers, ImageTransport $imageTransport,
+                                $legendHandler,
                                 $templateParser, $pluginHost, $logger,
                                 $resourceDir, $tempDir)
     {
         $this->templateParser = $templateParser;
         $this->imageTransport = $imageTransport;
+        $this->legendHandler = $legendHandler;
 
         $this->pluginHost = $pluginHost;
         $this->resourceDir = $resourceDir;
-        $this->tempDir = $tempDir ?: sys_get_temp_dir();
+        $this->pdfUtil = new PdfUtil($tempDir, 'mb_print');
         parent::__construct($layerRenderers, $logger);
     }
 
+    /**
+     * Executes the job (plain array), returns a binary string representation of the resulting PDF.
+     *
+     * @param mixed[] $jobData
+     * @return string
+     * @throws \Exception on invalid template
+     */
     public function doPrint($jobData)
     {
         $templateData = $this->getTemplateData($jobData);
@@ -70,13 +86,29 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return $this->dumpPdf($pdf);
     }
 
+    /**
+     * Executes the job (plain array), returns a binary string representation of the resulting PDF.
+     *
+     * @param array $jobData
+     * @return string
+     * @throws \Exception on invalid template
+     */
     public function dumpPrint(array $jobData)
     {
         return $this->doPrint($jobData);
     }
 
+    /**
+     * Executes the job (plain array), writes the PDF result as directly as possible to $fileName.
+     *
+     * @param array $jobData
+     * @param string $fileName
+     * @throws \Exception on invalid template
+     */
     public function storePrint(array $jobData, $fileName)
     {
+        // NOTE: FPDI's 'direct' file output mode isn't any more efficient than its string output mode
+        //       (uses the same amount of memory). This may be more worthwhile with a different PDF lib...
         if (!file_put_contents($fileName, $this->doPrint($jobData))) {
             throw new \RuntimeException("Failed to store printout at {$fileName}");
         }
@@ -84,7 +116,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * @param array $jobData
-     * @return array
+     * @return Template|array
      */
     protected function getTemplateData($jobData)
     {
@@ -92,7 +124,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
-     * @param array $templateData
+     * @param Template|array $templateData
      * @param array $jobData
      */
     protected function setup($templateData, $jobData)
@@ -130,8 +162,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
-     * @param $templateData
-     * @param $templateName
+     * @param Template|array $templateData
+     * @param string $templateName
      * @return \FPDF|\FPDF_TPL|PDF_Extensions
      * @throws \Exception
      */
@@ -157,7 +189,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * @param string $mapImageName
-     * @param array $templateData
+     * @param Template|array $templateData
      * @param array $jobData
      * @return \FPDF|\FPDF_TPL|PDF_Extensions
      * @throws \Exception
@@ -180,10 +212,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         $this->afterMainMap($pdf, $templateData, $jobData);
 
-        // add legend
-        if (!empty($jobData['legends'])) {
-            $this->addLegend();
-        }
         return $pdf;
     }
 
@@ -201,14 +229,40 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
      * @param string $mapImageName
-     * @param array $templateData
+     * @param Template|array $templateData
      */
     protected function addMapImage($pdf, $mapImageName, $templateData)
     {
         $region = $templateData['map'];
-        $this->addImageToPdf($pdf, $mapImageName, $region['x'], $region['y'], $region['width'], $region['height']);
+        $this->addImageToPdfRegion($pdf, $mapImageName, $region);
         // add map border (default is black)
         $pdf->Rect($region['x'], $region['y'], $region['width'], $region['height']);
+    }
+
+    /**
+     * Returns a list of template region names that should be excluded from regular template region
+     * processing. If you have multiple main maps, this is the place to extend.
+     * @see afterMainMap
+     * @see handleRegion
+     *
+     * @param array $jobData
+     * @return string[]
+     */
+    protected function getFirstPageSpecialRegionNames($jobData)
+    {
+        return  array(
+            // Map is already rendered (c.f. method name xD)
+            'map',
+            // Legend can perform page breaks, which means
+            // a) we must separately track which legends have already been rendered on main page, unlike other regions
+            // b) rendering the remaining legends introduces page breaks, and as such must wait until all other
+            //    main page regions are handled
+            'legend',
+            // 'legendpage_image' appears as a top-level template region, but is only relevant
+            // for spill pages produced during legend rendering (which we also suppress, so...)
+            // NOTE: the only real effect of blacklisting it is suppressing a warning in afterMainMap
+            'legendpage_image',
+        );
     }
 
     /**
@@ -217,73 +271,147 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * page, may spill over and start adding more pages.
      *
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
-     * @param array $templateData
+     * @param Template $template
      * @param array $jobData
      */
-    protected function afterMainMap($pdf, $templateData, $jobData)
+    protected function afterMainMap($pdf, $template, $jobData)
     {
-        // add northarrow
-        if (!empty($templateData['northarrow'])) {
-            $this->addNorthArrow($pdf, $templateData, $jobData);
+        $regionBlacklist = $this->getFirstPageSpecialRegionNames($jobData);
+        foreach ($template->getRegions() as $region) {
+            if (!in_array($region->getName(), $regionBlacklist)) {
+                if (!$this->handleRegion($pdf, $region, $jobData)) {
+                    $this->logger->warning("Unhandled print template region " . print_r($region->getName(), true));
+                }
+            }
         }
 
-        if (!empty($templateData['fields'])) {
-            $this->addTextFields($pdf, $templateData, $jobData);
+        if (!empty($template['fields'])) {
+            $this->addTextFields($pdf, $template, $jobData);
         }
+        $this->addCoordinates($pdf, $template, $jobData);
 
-        // add overview map
-        if (!empty($jobData['overview']) && !empty($templateData['overview'])) {
-            $this->addOverviewMap($pdf, $templateData, $jobData);
-        }
+        $legends = $this->legendHandler->collectLegends($jobData);
+        $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
+        $this->finishMainPage($pdf, $template, $jobData);
+        $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+    }
 
-        // add scalebar
-        if (!empty($templateData['scalebar'])) {
-            $this->addScaleBar($pdf, $templateData, $jobData);
-        }
+    /**
+     * Called after all default regions on the main map page have been populated, including embedded legend regions.
+     * Does absolutely nothing by default.
+     *
+     * Override this to do anything you want to do happen before the legend spill pages start rendering. You MAY
+     * also add more pages to the PDF here.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     */
+    public function finishMainPage($pdf, $template, $jobData)
+    {
+        // default implementation: do nothing
+    }
 
-        // add coordinates
-        if (isset($templateData['fields']['extent_ur_x']) && isset($templateData['fields']['extent_ur_y'])
-                && isset($templateData['fields']['extent_ll_x']) && isset($templateData['fields']['extent_ll_y']))
-        {
-            $this->addCoordinates();
+    /**
+     * Should populate a TemplateRegion on the first page of the PDF being generated.
+     * Nothing happening in this method or called by it should add page breaks to the pdf.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param TemplateRegion $region
+     * @param array $jobData
+     * @return bool
+     */
+    protected function handleRegion($pdf, $region, $jobData)
+    {
+        switch ($region->getName()) {
+            default:
+                return false;
+            case 'northarrow':
+                return $this->addNorthArrow($pdf, $region, $jobData);
+            case 'overview':
+                return $this->addOverviewMap($pdf, $region, $jobData);
+            case 'scalebar':
+                return $this->addScaleBar($pdf, $region, $jobData);
+            case 'dynamic_image':
+                return $this->addDynamicImage($pdf, $region, $jobData);
         }
+    }
 
-        // add dynamic logo
-        if (!empty($templateData['dynamic_image']) && !empty($templateData['dynamic_image'])) {
-            $this->addDynamicImage();
+    /**
+     * Should fill any main page regions designated for legend rendering (default: single, optional region named
+     * 'legend'). Should not perform page breaks.
+     * LegendBlock remembers if it has already been rendered or not, so remaining legend blocks can be rendered
+     * onto spill pages later.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     * @param LegendBlockContainer[] $legendBlocks
+     */
+    protected function handleMainPageLegends($pdf, $template, $jobData, $legendBlocks)
+    {
+        // @todo: multiple viable main page legend regions?
+        $regionNames = array(
+            'legend',
+        );
+        foreach ($regionNames as $legendRegionName) {
+            if ($template->hasRegion($legendRegionName)) {
+                $region = $template->getRegion($legendRegionName);
+                $this->legendHandler->addLegends($pdf, $region, $legendBlocks, false, $template, $jobData);
+            }
         }
+    }
 
-        // add dynamic text
-        if (!empty($templateData['fields']['dynamic_text']) && !empty($templateData['dynamic_text'])) {
-            $this->addDynamicText();
-        }
+    /**
+     * Renders any legend blocks not yet marked as rendered on extra pages appended to the end of the pdf.
+     *
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     * @param LegendBlockContainer[] $legendBlocks
+     */
+    protected function handleRemainingLegends($pdf, $template, $jobData, $legendBlocks)
+    {
+        // give the LegendHandler a region with zero space, so it will be forced to page-break
+        // immediately
+        $region = NullRegion::getInstance();
+        $this->legendHandler->addLegends($pdf, $region, $legendBlocks, true, $template, $jobData);
     }
 
     /**
      * Fills textual regions on the first page.
      *
      * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
-     * @param array $templateData
+     * @param Template|array $template
      * @param array $jobData
      */
-    protected function addTextFields($pdf, $templateData, $jobData)
+    protected function addTextFields($pdf, $template, $jobData)
     {
-        foreach ($templateData['fields'] as $fieldName => $region) {
+        foreach ($template->getTextFields() as $fieldName => $region) {
             // skip extent fields, see special handling in addCoordinates method
             if (preg_match("/^extent/", $fieldName)) {
                 continue;
             }
             $text = $this->getTextFieldContent($fieldName, $jobData);
             if ($text !== null) {
-                list($r, $g, $b) = CSSColorParser::parse($region['color']);
-                $pdf->SetTextColor($r, $g, $b);
-                $pdf->SetFont('Arial', '', intval($region['fontsize']));
+                $this->applyFontStyle($pdf, $region);
                 $pdf->SetXY($region['x'] - 1, $region['y']);
                 $pdf->MultiCell($region['width'], $region['height'], utf8_decode($text));
             }
         }
         // reset text color to default black
         $pdf->SetTextColor(0, 0, 0);
+    }
+
+    /**
+     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param TemplateRegion|array $region
+     */
+    protected function applyFontStyle($pdf, $region)
+    {
+        list($r, $g, $b) = CSSColorParser::parse($region['color']);
+        $pdf->SetTextColor($r, $g, $b);
+        $pdf->SetFont($region['font'], '', floatval($region['fontsize']));
     }
 
     /**
@@ -306,6 +434,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 return date('d.m.Y');
             case 'scale' :
                 return '1 : ' . $jobData['scale_select'];
+            case 'dynamic_text':
+                if (isset($jobData['dynamic_text']['text'])) {
+                    return $jobData['dynamic_text']['text'] ?: null;
+                }
+                break;
             default:
                 if (isset($jobData['extra'][$fieldName])) {
                     return $jobData['extra'][$fieldName];
@@ -316,12 +449,17 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         }
     }
 
-    protected function addNorthArrow($pdf, $templateData, $jobData)
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param TemplateRegion $region
+     * @param array $jobData
+     * @return bool to indicate success (always true here)
+     */
+    protected function addNorthArrow($pdf, $region, $jobData)
     {
         $northarrow = $this->resourceDir . '/images/northarrow.png';
         $rotation = intval($jobData['rotation']);
 
-        $region = $templateData['northarrow'];
         if ($rotation != 0) {
             $image = imagecreatefrompng($northarrow);
             $transColor = imagecolorallocatealpha($image, 255, 255, 255, 0);
@@ -332,18 +470,22 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             $y = abs(($srcSize[1] - $destSize[1]) / 2);
             $northarrow = $this->cropImage($rotatedImage, $x, $y, $srcSize[0], $srcSize[1]);
         }
-        $this->addImageToPdf($pdf, $northarrow, $region['x'], $region['y'], $region['width'], $region['height']);
+        $this->addImageToPdfRegion($pdf, $northarrow, $region);
+        return true;
     }
 
     /**
      * @param PDF_Extensions|\FPDF $pdf
-     * @param array $templateData
+     * @param TemplateRegion $region
      * @param array $jobData
+     * @return bool
      */
-    protected function addOverviewMap($pdf, $templateData, $jobData)
+    protected function addOverviewMap($pdf, $region, $jobData)
     {
+        if (empty($jobData['overview'])) {
+            return false;
+        }
         $ovData = $jobData['overview'];
-        $region = $templateData['overview'];
         $quality = $jobData['quality'];
         // calculate needed image size
         $ovImageWidth = round($region['width'] / 25.4 * $quality);
@@ -387,32 +529,41 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         )));
         imagepolygon($image, $flatPoints, 4, $red);
 
-        $this->addImageToPdf($pdf, $image, $region['x'], $region['y'], $region['width'], $region['height']);
+        $this->addImageToPdfRegion($pdf, $image, $region);
         imagecolordeallocate($image, $red);
         imagedestroy($image);
         // draw border rectangle
         $pdf->Rect($region['x'], $region['y'], $region['width'], $region['height']);
+        return true;
     }
 
     /**
      * @param PDF_Extensions|\FPDF $pdf
-     * @param array $templateData
+     * @param TemplateRegion $region
      * @param array $jobData
+     * @return bool to indicate success (always true here)
      */
-    protected function addScaleBar($pdf, $templateData, $jobData)
+    protected function addScaleBar($pdf, $region, $jobData)
     {
-        $region = $templateData['scalebar'];
         $totalWidth = $region['width'];
+        // Quantize bar length to whole scale units
+        $sectionWidth = 10;
+        $nSections = floor($totalWidth / 10);
+        $barWidth = $nSections * $sectionWidth;
+        // As per definition of scale, 10mm on the printout measures $scale centimeters in map space
+        $totalMeters = 0.01 * $jobData['scale_select'] * $nSections;
+
+        // if the region width isn't evenly divided by 10mm, offset the bar to center it
+        $barX0 = $region->getOffsetX() + 0.5 * ($totalWidth - $nSections * $sectionWidth);
+
         $pdf->SetFont('arial', '', 10 );
 
-        $length = 0.01 * $jobData['scale_select'] * 5;
-        $suffix = 'm';
-
-        $pdf->Text($region['x'] , $region['y'] - 1 , '0' );
-        $pdf->Text($region['x'] + $totalWidth - 7, $region['y'] - 1 , $length . '' . $suffix);
-
-        $nSections = 5;
-        $sectionWidth = $totalWidth / $nSections;
+        $pdf->Text($barX0, $region['y'] - 1 , '0');
+        $scaleText = "{$totalMeters}m";
+        $scaleTextLength = strlen($scaleText);
+        // heuristics time: the 'm' takes ~2.75 units, 0 and most other digits ~2 units
+        $endTextOffset = $barWidth - 2.75 - 1.975 * ($scaleTextLength - 1);
+        $pdf->Text($barX0 + $endTextOffset , $region['y'] - 1 , $scaleText);
 
         $pdf->SetLineWidth(0.1);
         $pdf->SetDrawColor(0, 0, 0);
@@ -422,68 +573,103 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             } else {
                 $pdf->SetFillColor(0, 0, 0);
             }
-            $pdf->Rect($region['x'] + round($i * $sectionWidth), $region['y'], $sectionWidth, 2, 'FD');
+            $pdf->Rect($barX0 + $i * $sectionWidth, $region['y'], $sectionWidth, 2, 'FD');
         }
+        return true;
     }
 
-    private function addCoordinates()
+    /**
+     * Special-casing for coordinates text fields, which render
+     * to (up to) 4 different template regions, some of which
+     * use up / down font directions.
+     *
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param Template $template
+     * @param array $jobData
+     * @return bool
+     */
+    protected function addCoordinates($pdf, $template, $jobData)
     {
-        $pdf = $this->pdf;
-
-        $corrFactor = 2;
-        $precision = 2;
+        if (empty($jobData['extent_feature']) || empty($jobData['extent'])) {
+            $this->logger->warning("Skipping coordinates rendering, missing data");
+            return false;
+        }
         // correction factor and round precision if WGS84
-        if($this->data['extent']['width'] < 1){
-             $corrFactor = 3;
-             $precision = 6;
+        if ($jobData['extent']['width'] < 1) {
+            $offsetXUrY = 3;
+            $precision = 6;
+        } else {
+            $offsetXUrY = 2;
+            $precision = 2;
         }
 
-        // upper right Y
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ur_y']['fontsize']));
-        $pdf->Text($this->conf['fields']['extent_ur_y']['x'] + $corrFactor,
-                    $this->conf['fields']['extent_ur_y']['y'] + 3,
-                    round($this->data['extent_feature'][2]['y'], $precision));
-
-        // upper right X
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ur_x']['fontsize']));
-        $pdf->TextWithDirection($this->conf['fields']['extent_ur_x']['x'] + 1,
-                    $this->conf['fields']['extent_ur_x']['y'],
-                    round($this->data['extent_feature'][2]['x'], $precision),'D');
-
-        // lower left Y
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ll_y']['fontsize']));
-        $pdf->Text($this->conf['fields']['extent_ll_y']['x'],
-                    $this->conf['fields']['extent_ll_y']['y'] + 3,
-                    round($this->data['extent_feature'][0]['y'], $precision));
-
-        // lower left X
-        $pdf->SetFont('Arial', '', intval($this->conf['fields']['extent_ll_x']['fontsize']));
-        $pdf->TextWithDirection($this->conf['fields']['extent_ll_x']['x'] + 3,
-                    $this->conf['fields']['extent_ll_x']['y'] + 30,
-                    round($this->data['extent_feature'][0]['x'], $precision),'U');
-    }
-
-    private function addDynamicImage()
-    {
-        $dynImage = $this->resourceDir . '/' . $this->data['dynamic_image']['path'];
-        if(file_exists ($dynImage)){
-            $this->pdf->Image($dynImage,
-                            $this->conf['dynamic_image']['x'],
-                            $this->conf['dynamic_image']['y'],
-                            0,
-                            $this->conf['dynamic_image']['height'],
-                            'png');
-            return;
+        $efData = $jobData['extent_feature'];
+        $fieldDataMapping = array(
+            // @todo: clean up magic number offsets; these should depend on font
+            //        size, text length and direction
+            'extent_ll_x' => array(
+                'value' => $efData[0]['x'],
+                'offsetX' => 3,
+                'offsetY' => 30,
+                'direction' => 'U',
+            ),
+            'extent_ll_y' => array(
+                'value' => $efData[0]['y'],
+                'offsetX' => 0,
+                'offsetY' => 3,
+                'direction' => 'R',
+            ),
+            'extent_ur_x' => array(
+                'value' => $efData[2]['x'],
+                'offsetX' => 1,
+                'offsetY' => 0,
+                'direction' => 'D',
+            ),
+            'extent_ur_y' => array(
+                'value' => $efData[2]['y'],
+                'offsetX' => $offsetXUrY,
+                'offsetY' => 3,
+                'direction' => 'R',
+            ),
+        );
+        foreach ($fieldDataMapping as $fieldName => $fieldConfig) {
+            if (!$template->hasTextField($fieldName)) {
+                continue;
+            }
+            $field = $template->getTextFields()->getMember($fieldName);
+            $formattedValue = round($fieldConfig['value'], $precision);
+            $direction = $fieldConfig['direction'];
+            $x = $field->getOffsetX() + $fieldConfig['offsetX'];
+            $y = $field->getOffsetY() + $fieldConfig['offsetY'];
+            $this->applyFontStyle($pdf, $field);
+            $pdf->TextWithDirection($x, $y, $formattedValue, $direction);
         }
-
+        return true;
     }
 
-    private function addDynamicText()
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param TemplateRegion $region
+     * @param array $jobData
+     * @return bool to indicate success
+     */
+    protected function addDynamicImage($pdf, $region, $jobData)
     {
-        $this->pdf->SetFont('Arial', '', $this->conf['fields']['dynamic_text']['fontsize']);
-        $this->pdf->MultiCell($this->conf['fields']['dynamic_text']['width'],
-                $this->conf['fields']['dynamic_text']['height'],
-                utf8_decode($this->data['dynamic_text']['text']));
+        if (empty($jobData['dynamic_image']['path'])) {
+            return false;
+        }
+        $dynImage = $this->resourceDir . '/' . $jobData['dynamic_image']['path'];
+        if (file_exists($dynImage)) {
+            $pdf->Image($dynImage,
+                        $region->getOffsetX(),
+                        $region->getOffsetY(),
+                        0,
+                        $region->getHeight(),
+                        'png');
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -512,172 +698,14 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         }
     }
 
-    private function addLegend()
-    {
-        if(isset($this->conf['legend']) && $this->conf['legend']){
-          // print legend on first
-          $height = $this->conf['legend']['height'];
-          $width = $this->conf['legend']['width'];
-          $xStartPosition = $this->conf['legend']['x'];
-          $yStartPosition = $this->conf['legend']['y'];
-          $x = $xStartPosition + 5;
-          $y = $yStartPosition + 5;
-          $legendConf = true;
-        }else{
-          // print legend on second page
-          $this->pdf->addPage('P');
-          $this->pdf->SetFont('Arial', 'B', 11);
-          $x = 5;
-          $y = 10;
-          $height = $this->pdf->getHeight();
-          $width = $this->pdf->getWidth();
-          $legendConf = false;
-          $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-          $xStartPosition = 0;
-          $yStartPosition = 0;
-        }
-
-        foreach ($this->data['legends'] as $idx => $legendArray) {
-            $c         = 1;
-            $arraySize = count($legendArray);
-            foreach ($legendArray as $title => $legendUrl) {
-
-                if (preg_match('/request=GetLegendGraphic/i', urldecode($legendUrl)) === 0) {
-                    continue;
-                }
-
-                $image = $this->getLegendImage($legendUrl);
-                if (!$image) {
-                    continue;
-                }
-                $size  = getimagesize($image);
-                $tempY = round($size[1] * 25.4 / 96) + 10;
-
-                if ($c > 1) {
-                    // print legend on second page
-                    if($y + $tempY + 10 > ($this->pdf->getHeight()) && $legendConf == false){
-                        $x += 105;
-                        $y = 10;
-                        $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                        if($x + 20 > ($this->pdf->getWidth())){
-                            $this->pdf->addPage('P');
-                            $x = 5;
-                            $y = 10;
-                            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                        }
-                    }
-
-
-                    // print legend on first page
-                    if($legendConf == true){
-                        if(($y-$yStartPosition) + $tempY + 10 > $height && $width > 100){
-                            $x += $x + 105;
-                            $y = $yStartPosition + 5;
-                            if($x - $xStartPosition + 20 > $width){
-                                $this->pdf->addPage('P');
-                                $x = 5;
-                                $y = 10;
-                                $legendConf = false;
-                                $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-
-                            }
-                        }else if (($y-$yStartPosition) + $tempY + 10 > $height){
-                                $this->pdf->addPage('P');
-                                $x = 5;
-                                $y = 10;
-                                $legendConf = false;
-                                $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                        }
-                    }
-                }
-
-
-                if ($legendConf == true) {
-                    // add legend in legend region on first page
-                    // To Be doneCell(0,0,  utf8_decode($title));
-                    $this->pdf->SetXY($x,$y);
-                    $this->pdf->Cell(0,0,  utf8_decode($title));
-                    $this->pdf->Image($image,
-                                $x,
-                                $y +5 ,
-                                ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
-
-                        $y += round($size[1] * 25.4 / 96) + 10;
-                        if(($y - $yStartPosition + 10 ) > $height && $width > 100){
-                            $x +=  105;
-                            $y = $yStartPosition + 10;
-                        }
-                        if(($x - $xStartPosition + 10) > $width && $c < $arraySize ){
-                            $this->pdf->addPage('P');
-                            $x = 5;
-                            $y = 10;
-                            $this->pdf->SetFont('Arial', 'B', 11);
-                            $height = $this->pdf->getHeight();
-                            $width = $this->pdf->getWidth();
-                            $legendConf = false;
-                            $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                        }
-
-                  }else{
-                      // print legend on second page
-                      $this->pdf->SetXY($x,$y);
-                      $this->pdf->Cell(0,0,  utf8_decode($title));
-                      $this->pdf->Image($image, $x, $y + 5, ($size[0] * 25.4 / 96), ($size[1] * 25.4 / 96), 'png', '', false, 0);
-
-                      $y += round($size[1] * 25.4 / 96) + 10;
-                      if($y > ($this->pdf->getHeight())){
-                          $x += 105;
-                          $y = 10;
-                      }
-                      if($x + 20 > ($this->pdf->getWidth()) && $c < $arraySize){
-                          $this->pdf->addPage('P');
-                          $x = 5;
-                          $y = 10;
-                          $this->addLegendPageImage($this->pdf, $this->conf, $this->data);
-                      }
-
-                  }
-
-                unlink($image);
-                $c++;
-            }
-        }
-    }
-
-
-    private function getLegendImage($url)
-    {
-        $imagename = $this->makeTempFile('mb_printlegend');
-        $image = $this->imageTransport->downloadImage($url);
-        if ($image) {
-            imagepng($image, $imagename);
-            imagedestroy($image);
-            return $imagename;
-        } else {
-            return null;
-        }
-    }
-
     /**
-     * @param PDF_Extensions|\FPDF $pdf
-     * @param array $templateData
-     * @param array $jobData
+     * @param float $dots
+     * @param float $dpi
+     * @return float
      */
-    protected function addLegendPageImage($pdf, $templateData, $jobData)
+    public static function dotsToMm($dots, $dpi)
     {
-        if (empty($templateData['legendpage_image']) || empty($jobData['legendpage_image'])) {
-            return;
-        }
-        $sourcePath = $this->resourceDir . '/' . $jobData['legendpage_image']['path'];
-        $region = $templateData['legendpage_image'];
-        if (file_exists($sourcePath)) {
-            $this->addImageToPdf($pdf, $sourcePath, $region['x'], $region['y'], 0, $region['height']);
-        } else {
-            $defaultPath = $this->resourceDir . '/images/legendpage_image.png';
-            if ($defaultPath !== $sourcePath && file_exists($defaultPath)) {
-                $this->addImageToPdf($pdf, $defaultPath, $region['x'], $region['y'], 0, $region['height']);
-            }
-        }
+        return $dots * 25.4 / $dpi;
     }
 
     private function checkPdfBackground($pdf) {
@@ -695,23 +723,28 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
+     * Puts an image onto the current page of given $pdf at specified offset (in mm units).
+     *
      * @param PDF_Extensions|\FPDF $pdf
      * @param resource|string $gdResOrPath
-     * @param int $xOffset
-     * @param int $yOffset
+     * @param int $xOffset in mm
+     * @param int $yOffset in mm
      * @param int $width optional, to rescale image
      * @param int $height optional, to rescale image
      */
-    protected function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
+    public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
     {
-        if (is_resource($gdResOrPath)) {
-            $imageName = $this->makeTempFile('mb_print_pdfbuild');
-            imagepng($gdResOrPath, $imageName);
-            $this->addImageToPdf($pdf, $imageName, $xOffset, $yOffset, $width, $height);
-            unlink($imageName);
-        } else {
-            $pdf->Image($gdResOrPath, $xOffset, $yOffset, $width, $height, 'png', '', false, 0);
-        }
+        return $this->pdfUtil->addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width, $height);
+    }
+
+    /**
+     * @param PDF_Extensions|\FPDF $pdf
+     * @param resource|string $gdResOrPath
+     * @param TemplateRegion $region
+     */
+    public function addImageToPdfRegion($pdf, $gdResOrPath, $region)
+    {
+        return $this->pdfUtil->addImageToPdfRegion($pdf, $gdResOrPath, $region);
     }
 
     /**
@@ -725,16 +758,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * Creates a ~randomly named temp file with given $prefix and returns its name
      *
-     * @param $prefix
+     * @param string|null $prefix
      * @return string
      */
     protected function makeTempFile($prefix)
     {
-        $filePath = tempnam($this->tempDir, $prefix);
-        // tempnam may return false in undocumented error cases
-        if (!$filePath) {
-            throw new \RuntimeException("Failed to create temp file with prefix '$prefix' in '{$this->tempDir}'");
-        }
-        return $filePath;
+        return $this->pdfUtil->makeTempFile($prefix);
     }
 }

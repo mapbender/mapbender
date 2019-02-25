@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Mapbender\PrintBundle\Component\Transport;
+namespace Mapbender\Component\Transport;
 
 
 use Symfony\Component\HttpFoundation\Response;
