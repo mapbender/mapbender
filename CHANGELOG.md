@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ 6a8db5b76**
+* **dev-release/3.0.7 @ d8e37a819**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
@@ -29,6 +29,7 @@
   - WmsLoader: Make behaviour of 'declarative' links with default `mb-wms-merge` setting repeatable ([PR#1083](https://github.com/mapbender/mapbender/pull/1083))
   - WmsLoader: Enable activation of specific layers via `mb-wms-layer` on 'declarative' links even if root or group layers have empty names ([PR#1083](https://github.com/mapbender/mapbender/pull/1083))
   - Improve compatibility with certain reverse-proxy setups ([PR#1061](https://github.com/mapbender/mapbender/pull/1061), [PR#1075](https://github.com/mapbender/mapbender/pull/1075))
+  - Enable scrolling of FeatureInfo response in Mobile Template ([PR#1057](https://github.com/mapbender/mapbender/pull/1057))
   - Print / ImageExport:
     - Add WMS GetMap size limits, use tiling to stitch larger images ([PR#1073](https://github.com/mapbender/mapbender/pull/1073))
     - Generate label and other symbol sizing parameters understood by Mapserver, QGis server and Geoserver ([735626322](https://github.com/mapbender/mapbender/commit/73562632261819d79b9a9c0c264caeb33f34f4bf#diff-c72724b3690b61d792254dd26a7ca9cbR222))
@@ -64,6 +65,7 @@
   - [Backend] Close potential script injection angle on certain popup subtitles
   - [Backend] More consistent styling between 'Layouts' and 'Layerset' Application sections
   - [Backend] Fix 'Layerset' Application section overflows when displaying very high source / instance ids
+  - [Debug] Application routes assets/js and assets/css will now produce information markers at the beginning of each merged input file in `app_dev` mode
   - Add new `mapbender:config:check` console command
   - Misc deprecation cleanups for Symfony 3+ compatibility
 
