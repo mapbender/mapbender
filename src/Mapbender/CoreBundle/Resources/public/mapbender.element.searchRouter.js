@@ -36,6 +36,7 @@
             var widget = this;
             widget.searchModel.reset();
             widget._getLayer().removeAllFeatures();
+            this.currentFeature = null;
         },
 
         _setup:         function(){
@@ -117,25 +118,10 @@
                 });
             }
 
-            map.events.register("zoomend", this, function() {
-                widget.redraw();
-            });
-
             widget._trigger('ready');
 
             if(widget.options.autoOpen) {
                 widget.open();
-            }
-        },
-
-        /**
-         * Redraw current result layer selected feature
-         */
-        redraw: function() {
-            var widget = this;
-            var feature = widget.currentFeature ? widget.currentFeature : null;
-            if( widget.currentFeature) {
-                feature.layer.drawFeature(feature, 'select');
             }
         },
 
@@ -451,6 +437,12 @@
         },
 
         _highlightFeature: function (feature, style) {
+            if (style === 'select') {
+                if (this.currentFeature && this.currentFeature.layer) {
+                    this.currentFeature.layer.drawFeature(this.currentFeature, 'default');
+                }
+                this.currentFeature = feature;
+            }
             feature.layer.drawFeature(feature, style);
         },
 
@@ -576,14 +568,13 @@
          */
         _resultCallback: function(event){
             var widget = this;
-            var options = widget.options;
             var row = $(event.currentTarget),
-                feature = $.extend({}, row.data('feature').getFeature()),
+                feature = row.data('feature').getFeature(),
                 map = feature.layer.map,
                 callbackConf = widget.getCurrentRoute().results.callback,
                 srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
             var mapProj = Mapbender.Model.getCurrentProj();
-            if(srs.projCode !== mapProj.projCode) {
+            if (srs.projCode !== mapProj.projCode) {
                 feature.geometry = feature.geometry.transform(srs, mapProj);
             }
             var featureExtent = $.extend({},feature.geometry.getBounds());
@@ -622,19 +613,8 @@
                     }
                 }
             }
-
             // finally, zoom
             map.setCenter(featureExtent.getCenterLonLat(), zoom);
-
-            // And highlight new feature
-            var layer = feature.layer;
-            $.each(layer.selectedFeatures, function(idx, feature) {
-                layer.drawFeature(feature, 'default');
-            });
-
-            widget.currentFeature = feature;
-            widget.redraw();
-            layer.selectedFeatures.push(feature);
         },
 
         /**
