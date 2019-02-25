@@ -14,6 +14,10 @@ class ElementInventoryService
     /** @var string[] */
     protected $movedElementClasses = array(
         'Mapbender\CoreBundle\Element\PrintClient' => 'Mapbender\PrintBundle\Element\PrintClient',
+        // see https://github.com/mapbender/data-source/tree/0.1.8/Element
+        'Mapbender\DataSourceBundle\Element\DataManagerElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
+        'Mapbender\DataSourceBundle\Element\DataStoreElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
+        'Mapbender\DataSourceBundle\Element\QueryBuilderElement' => 'Mapbender\QueryBuilderBundle\Element\QueryBuilderElement',
     );
 
     /** @var string[] */
