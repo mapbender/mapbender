@@ -56,4 +56,20 @@ class GdUtil
         return $image;
     }
 
+    /**
+     * @param string $fontName
+     * @param float $fontSize
+     * @param string $text
+     * @return float[] width and height (numerically indexed)
+     */
+    public static function getTtfTextSize($fontName, $fontSize, $text)
+    {
+        $labelBbox = imagettfbbox($fontSize, 0, $fontName, $text);
+        $width = $labelBbox[2] - $labelBbox[0];
+        $height = abs($labelBbox[5] - $labelBbox[3]);
+        return array(
+            $width,
+            $height,
+        );
+    }
 }

@@ -8,6 +8,7 @@ use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Geometry\LineLoopIterator;
 use Mapbender\PrintBundle\Component\Geometry\LineStringIterator;
+use Mapbender\PrintBundle\Util\GdUtil;
 use Mapbender\Utils\InfiniteCyclicArrayIterator;
 
 /**
@@ -139,7 +140,13 @@ class LayerRendererGeoJson extends LayerRenderer
         $filteredStyle = array_filter($geometry['style'], function($value) {
             return $value !== null;
         });
-        return array_replace($defaults, $filteredStyle) + $geometry['style'];
+        $mergedStyle = array_replace($defaults, $filteredStyle) + $geometry['style'];
+        // forward fontOpacity => labelOutlineOpacity default
+        // see http://dev.openlayers.org/releases/OpenLayers-2.13.1/docs/files/OpenLayers/Feature/Vector-js.html#OpenLayers.Feature.Vector.Constants
+        if (!isset($mergedStyle['labelOutlineOpacity'])) {
+            $mergedStyle['labelOutlineOpacity'] = $mergedStyle['fontOpacity'];
+        }
+        return $mergedStyle;
     }
 
     /**
@@ -350,15 +357,19 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function drawFeatureLabel(ExportCanvas $canvas, $style, $text, $centroid)
     {
-        // @todo: evaluate text opacity
-        $color = $this->getColor($style['fontColor'], 1, $canvas->resource);
-        // @todo: evaluate style's outline opacity (key?) and 'labelOutlineWidth' from style
-        $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $canvas->resource);
+        $color = $this->getColor($style['fontColor'], $style['fontOpacity'], $canvas->resource);
+        $bgcolor = $this->getColor($style['labelOutlineColor'], $style['labelOutlineOpacity'], $canvas->resource);
         $fontName = $this->getLabelFont($style);
         $fontSize = $this->getLabelFontSize($canvas, $style);
-        $anchor = $this->getFeatureLabelAnchor($canvas, $style, $text, $centroid, $fontName, $fontSize);
+        $textSize = GdUtil::getTtfTextSize($fontName, $fontSize, $text);
+        $anchor = $this->getFeatureLabelAnchor($canvas, $style, $centroid, $textSize[0], $textSize[1]);
 
+        // @todo: evaluate 'labelOutlineWidth' from style
         // @todo: skip halo rendering if label style indicates no outline width, or fully transparent outline
+        $haloSubCanvas = $canvas->getSubRegion(
+            intval($anchor[0] - 8), intval($anchor[1] - $textSize[1] - 8),
+            intval($textSize[0] + 16), intval($textSize[1] + 16));
+
         $haloFactor = $canvas->featureTransform->lineScale;
         $haloOffsets = array(
             array(0, +$haloFactor),
@@ -367,10 +378,12 @@ class LayerRendererGeoJson extends LayerRenderer
             array(+$haloFactor, 0),
         );
         foreach ($haloOffsets as $xy) {
-            imagettftext($canvas->resource, $fontSize, 0,
-                $anchor[0] + $xy[0], $anchor[1] + $xy[1],
+            imagettftext($haloSubCanvas->resource, $fontSize, 0,
+                $anchor[0] + $xy[0] - $haloSubCanvas->getOffsetX(),
+                $anchor[1] + $xy[1] - $haloSubCanvas->getOffsetY(),
                 $bgcolor, $fontName, $text);
         }
+        $haloSubCanvas->mergeBack();
         imagettftext($canvas->resource, $fontSize, 0,
             $anchor[0], $anchor[1],
             $color, $fontName, $text);
@@ -382,31 +395,24 @@ class LayerRendererGeoJson extends LayerRenderer
      *
      * @param ExportCanvas $canvas
      * @param array $style
-     * @param string $text
      * @param float[] $centroid x/y in pixel space, expected to be numerically indexed
-     * @param string|null $fontName determined from $style if omitted
-     * @param float|null $fontSize determined from $style if omitted
+     * @param float $textWidth in pixels
+     * @param float $textHeight in pixels
      * @return float[]
      */
-    protected function getFeatureLabelAnchor(ExportCanvas $canvas, $style, $text, $centroid, $fontName = null, $fontSize = null)
+    protected function getFeatureLabelAnchor(ExportCanvas $canvas, $style, $centroid, $textWidth, $textHeight)
     {
-        $fontName = $fontName ?: $this->getLabelFont($style);
-        $fontSize = $fontSize ?: $this->getLabelFontSize($canvas, $style);
-        // let GD calculate the pixel size of the label so we can center it properly
-        $labelBbox = imagettfbbox($fontSize, 0, $fontName, $text);
-        $labelWidth = $labelBbox[2] - $labelBbox[0];
-        $labelHeight = abs($labelBbox[5] - $labelBbox[3]);
         $offsetScale = $canvas->featureTransform->lineScale;
 
         // Push label off centroid according to 'labelAlign', 'labelXOffset' and 'labelYOffset'. Default is 'cm', 0, 0.
         // see http://dev.openlayers.org/releases/OpenLayers-2.13.1/docs/files/OpenLayers/Feature/Vector-js.html#OpenLayers.Feature.Vector.Constants
         switch (substr($style['labelAlign'], 0, 1)) {
             case 'r':
-                $x = $centroid[0] - $labelWidth + $offsetScale * $style['labelXOffset'];
+                $x = $centroid[0] - $textWidth + $offsetScale * $style['labelXOffset'];
                 break;
             default:
             case 'c':
-                $x = $centroid[0] - 0.5 * $labelWidth + $offsetScale * $style['labelXOffset'];
+                $x = $centroid[0] - 0.5 * $textWidth + $offsetScale * $style['labelXOffset'];
                 break;
             case 'l':
                 $x = $centroid[0] + $offsetScale * $style['labelXOffset'];
@@ -418,10 +424,10 @@ class LayerRendererGeoJson extends LayerRenderer
                 break;
             default:
             case 'm':
-                $y = $centroid[1] + 0.5 * $labelHeight + $offsetScale * $style['labelYOffset'];
+                $y = $centroid[1] + 0.5 * $textHeight + $offsetScale * $style['labelYOffset'];
                 break;
             case 't':
-                $y = $centroid[1] + 1 * $labelHeight + $offsetScale * $style['labelYOffset'];
+                $y = $centroid[1] + 1 * $textHeight + $offsetScale * $style['labelYOffset'];
                 break;
         }
         return array($x, $y);

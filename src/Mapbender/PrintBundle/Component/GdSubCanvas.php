@@ -31,14 +31,6 @@ class GdSubCanvas extends GdCanvas
     }
 
     /**
-     * @return int GDish representation for fully white but also fully transparent color
-     */
-    public function getTransparent()
-    {
-        return IMG_COLOR_TRANSPARENT;
-    }
-
-    /**
      * Blends image back onto the parent canvas at the appropriate offset.
      * (see constructor)
      */
@@ -49,6 +41,22 @@ class GdSubCanvas extends GdCanvas
             $this->offsetX, $this->offsetY, 0,0,
             $this->getWidth(), $this->getHeight(),
             $this->getWidth(), $this->getHeight());
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffsetX()
+    {
+        return $this->offsetX;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffsetY()
+    {
+        return $this->offsetY;
     }
 
     /**
