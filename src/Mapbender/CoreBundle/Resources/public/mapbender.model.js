@@ -165,26 +165,37 @@ Mapbender.Model = {
      */
     setView: function(addLayers) {
         var startExtent = this.getInitialExtent();
+        var mapOptions = this.mbMap.options;
+        var pois = mapOptions.extra && mapOptions.extra.pois;
+        var lonlat;
 
-        if (this.mbMap.options['center']) {
-            var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
-            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-                this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
+        if (mapOptions.center) {
+            var targetProj = mapOptions.targetsrs && this.getProj(mapOptions.targetsrs);
+            lonlat = new OpenLayers.LonLat(mapOptions.center);
+
+            if (targetProj) {
+                this.map.olMap.setCenter(lonlat.transform(targetProj, this.getCurrentProj()));
             } else {
                 this.map.olMap.setCenter(lonlat);
             }
+        } else if (pois && pois.length === 1) {
+            var singlePoi = pois[0];
+            lonlat = new OpenLayers.LonLat(singlePoi.x, singlePoi.y);
+            lonlat = lonlat.transform(this.getProj(singlePoi.srs), this.getCurrentProj());
+            this.map.olMap.setCenter(lonlat);
         } else {
             this.map.olMap.zoomToExtent(startExtent, true);
         }
         if (addLayers) {
             this.initializeSourceLayers();
         }
-        this.initializePois((this.mbMap.options && this.mbMap.options.extra && this.mbMap.options.extra['pois']) || []);
+        this.initializePois(pois || []);
     },
     getInitialExtent: function() {
         var startExtent = this.mapStartExtent.extent;
-        if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
-            startExtent = OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']);
+        var mapExtra = this.mbMap.options.extra;
+        if (mapExtra && mapExtra.bbox) {
+            startExtent = OpenLayers.Bounds.fromArray(mapExtra.bbox);
         }
         if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
             startExtent = startExtent.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj());

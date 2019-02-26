@@ -186,9 +186,6 @@ class Map extends Element
                     if (!$this->hasSrs($srsConfigs, $poi['srs'])) {
                         continue;
                     }
-                    if (!empty($configuration['targetsrs']) && strtoupper($poi['srs']) !== strtoupper($configuration['targetsrs'])) {
-                        continue;
-                    }
                     $poiConfig['srs'] = strtoupper($poi['srs']);
                     if (empty($configuration['targetsrs'])) {
                         $configuration['targetsrs'] = $poi['srs'];
@@ -205,10 +202,6 @@ class Map extends Element
             // bake position and zoom level of single poi into map initialization
             // setting center and target scale makes the map initialize in the right place client-side
             if (count($extra['pois']) === 1) {
-                $configuration["center"] = array(
-                    $extra['pois'][0]['x'],
-                    $extra['pois'][0]['y'],
-                );
                 if (isset($extra['pois'][0]['scale'])) {
                     $configuration['targetscale'] = $extra['pois'][0]['scale'];
                 } else {
