@@ -233,11 +233,7 @@ class LayerRendererGeoJson extends LayerRenderer
             'type' => 'MultiLineString',
             'coordinates' => array($geometry['coordinates']),
         ));
-        // remove label text, if any, from ephemereal MultiLineString for separate processing
-        $labelText = ArrayUtil::getDefault($geometry['style'], 'label', null);
-        unset($geometry['style']['label']);
         $this->drawMultiLineString($canvas, $mlString);
-        // @todo: render label using extracted $labelText
     }
 
     /**
@@ -246,19 +242,38 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function drawMultiLineString($canvas, $geometry)
     {
+        $nCentroidPoints = 0;
+        $centroidSums = array(
+            'x' => 0.0,
+            'y' => 0.0,
+        );
         $style = $this->getFeatureStyle($geometry);
         if ($this->checkLineStyleVisibility($canvas, $style)) {
             $transformedCoordSets = array();
             foreach ($geometry['coordinates'] as $lineString) {
                 $transformedLineCoords = array();
-                foreach ($lineString as $coord) {
+                foreach ($lineString as $j => $coord) {
+                    $transformedCoord = $canvas->featureTransform->transformPair($coord);
+                    // OpenLayers quirk: line label is anchored to first point of line.
+                    // Proper MultiLine visual TBD...
+                    if (!$j) {
+                        $centroidSums['x'] += $transformedCoord[0];
+                        $centroidSums['y'] += $transformedCoord[1];
+                        ++$nCentroidPoints;
+                    }
                     $transformedLineCoords[] = $canvas->featureTransform->transformPair($coord);
                 }
                 $transformedCoordSets[] = $transformedLineCoords;
             }
             $this->drawLineSetsInternal($canvas, $style, $transformedCoordSets, false);
         }
-        // @todo: detect and render feature label
+        if ($nCentroidPoints && !empty($style['label'])) {
+            $centroid = array(
+                $centroidSums['x'] / $nCentroidPoints,
+                $centroidSums['y'] / $nCentroidPoints,
+            );
+            $this->drawFeatureLabel($canvas, $style, $style['label'], $centroid);
+        }
     }
 
     /**
