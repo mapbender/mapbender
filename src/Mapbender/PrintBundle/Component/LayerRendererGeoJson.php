@@ -289,10 +289,6 @@ class LayerRendererGeoJson extends LayerRenderer
         $p[0] = round($p[0]);
         $p[1] = round($p[1]);
 
-        if (isset($style['label'])) {
-            $this->drawFeatureLabel($canvas, $style, $style['label'], $p);
-        }
-
         $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
         if ($style['fillOpacity'] > 0) {
             $color = $this->getColor(
@@ -308,6 +304,9 @@ class LayerRendererGeoJson extends LayerRenderer
                 $this->drawCircleOutline($canvas, $p[0], $p[1], $diameter / 2, $strokeColor, $strokeWidth);
                 imagecolordeallocate($canvas->resource, $strokeColor);
             }
+        }
+        if (!empty($style['label'])) {
+            $this->drawFeatureLabel($canvas, $style, $style['label'], $p);
         }
     }
 
