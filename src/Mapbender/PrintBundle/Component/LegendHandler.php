@@ -21,8 +21,7 @@ use Mapbender\PrintBundle\Component\Transport\ImageTransport;
  *
  * @todo: calculate fit to region for individual blocks and whole groups
  * @todo: add option to keep groups together if they fit
- * @todo: add configuration knob for column width (now: hardcoded to 100mm)
- * @todo: limit image width to column width
+ * @todo: add configuration knob for column width (now: hardcoded to 100mm, because of also hard-coded A4 spill page size)
  * @todo: support line breaks in titles (will impact region fit calculations)
  * @todo: allow out-of-order rendering of legends or legend groups, if it reduces total space
  * @todo: (optionally) suppress legend repetitions, based on ~equal url; careful with assigned title...
@@ -35,6 +34,10 @@ class LegendHandler
     protected $resourceDir;
     /** @var PdfUtil */
     protected $pdfUtil;
+    /** @var float */
+    protected $maxColumnWidthMm = 100.;
+    /** @var float */
+    protected $maxImageDpi = 96.;
 
     /**
      * @param ImageTransport $imageTransport
@@ -114,16 +117,25 @@ class LegendHandler
                 if ($block->isRendered()) {
                     continue;
                 }
-                $imageMmWidth = PrintService::dotsToMm($block->getWidth(), 96);
-                $imageMmHeight = PrintService::dotsToMm($block->getHeight(), 96);
+                $imageMmWidth = PrintService::dotsToMm($block->getWidth(), $this->maxImageDpi);
+                $imageMmHeight = PrintService::dotsToMm($block->getHeight(), $this->maxImageDpi);
+                // limit to column width, keep aspect ratio when shrinking
+                if ($imageMmWidth > $this->maxColumnWidthMm) {
+                    $scaleFactor = $this->maxColumnWidthMm / $imageMmWidth;
+                } else {
+                    $scaleFactor = 1;
+                }
+                $scaledImageWidth = $imageMmWidth * $scaleFactor;
+                $scaledImageHeight = $imageMmHeight * $scaleFactor;
+
                 // allot a little extra height for the title text
                 // @todo: this should scale with font size
                 // @todo: support multi-line text
-                $blockHeightMm = round($imageMmHeight + 10);
+                $blockHeightMm = round($scaledImageHeight + 10);
 
                 if ($y != $margins['y'] && $y + $blockHeightMm > $region->getHeight()) {
                     // spill to next column
-                    $x += 105;
+                    $x += $this->maxColumnWidthMm + $margins['x'];
                     $y = $margins['y'];
                 }
                 if ($x + 20 > $region->getWidth()) {
@@ -145,7 +157,7 @@ class LegendHandler
                 $this->pdfUtil->addImageToPdf($pdf, $block->resource,
                     $pageX,
                     $pageY + 5,
-                    $imageMmWidth, $imageMmHeight);
+                    $scaledImageWidth, $scaledImageHeight);
                 $block->setIsRendered(true);
 
                 $y += $blockHeightMm + $margins['y'];
