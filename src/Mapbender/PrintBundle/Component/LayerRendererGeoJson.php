@@ -356,39 +356,7 @@ class LayerRendererGeoJson extends LayerRenderer
         $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $canvas->resource);
         $fontName = $this->getLabelFont($style);
         $fontSize = $this->getLabelFontSize($canvas, $style);
-
-        // let GD calculate the pixel size of the label so we can center it properly
-        $labelBbox = imagettfbbox($fontSize, 0, $fontName, $text);
-        $labelWidth = $labelBbox[2] - $labelBbox[0];
-        $labelHeight = abs($labelBbox[5] - $labelBbox[3]);
-        $offsetScale = $canvas->featureTransform->lineScale;
-
-        // Push label off centroid according to 'labelAlign', 'labelXOffset' and 'labelYOffset'. Default is 'cm', 0, 0.
-        // see http://dev.openlayers.org/releases/OpenLayers-2.13.1/docs/files/OpenLayers/Feature/Vector-js.html#OpenLayers.Feature.Vector.Constants
-        switch (substr($style['labelAlign'], 0, 1)) {
-            case 'r':
-                $textX = $centroid[0] - $labelWidth + $offsetScale * $style['labelXOffset'];
-                break;
-            default:
-            case 'c':
-                $textX = $centroid[0] - 0.5 * $labelWidth + $offsetScale * $style['labelXOffset'];
-                break;
-            case 'l':
-                $textX = $centroid[0] + $offsetScale * $style['labelXOffset'];
-                break;
-        }
-        switch (substr($style['labelAlign'], 1, 1)) {
-            case 'b':
-                $textY = $centroid[1]  + $offsetScale * $style['labelYOffset'];
-                break;
-            default:
-            case 'm':
-                $textY = $centroid[1] + 0.5 * $labelHeight + $offsetScale * $style['labelYOffset'];
-                break;
-            case 't':
-                $textY = $centroid[1] + 1 * $labelHeight + $offsetScale * $style['labelYOffset'];
-                break;
-        }
+        $anchor = $this->getFeatureLabelAnchor($canvas, $style, $text, $centroid, $fontName, $fontSize);
 
         // @todo: skip halo rendering if label style indicates no outline width, or fully transparent outline
         $haloFactor = $canvas->featureTransform->lineScale;
@@ -400,12 +368,63 @@ class LayerRendererGeoJson extends LayerRenderer
         );
         foreach ($haloOffsets as $xy) {
             imagettftext($canvas->resource, $fontSize, 0,
-                $textX + $xy[0], $textY + $xy[1],
+                $anchor[0] + $xy[0], $anchor[1] + $xy[1],
                 $bgcolor, $fontName, $text);
         }
         imagettftext($canvas->resource, $fontSize, 0,
-            $textX, $textY,
+            $anchor[0], $anchor[1],
             $color, $fontName, $text);
+    }
+
+    /**
+     * Calculates the appropriate starting position (for GD imagettftext) for a feature label, given the feature's
+     * centroid and style.
+     *
+     * @param ExportCanvas $canvas
+     * @param array $style
+     * @param string $text
+     * @param float[] $centroid x/y in pixel space, expected to be numerically indexed
+     * @param string|null $fontName determined from $style if omitted
+     * @param float|null $fontSize determined from $style if omitted
+     * @return float[]
+     */
+    protected function getFeatureLabelAnchor(ExportCanvas $canvas, $style, $text, $centroid, $fontName = null, $fontSize = null)
+    {
+        $fontName = $fontName ?: $this->getLabelFont($style);
+        $fontSize = $fontSize ?: $this->getLabelFontSize($canvas, $style);
+        // let GD calculate the pixel size of the label so we can center it properly
+        $labelBbox = imagettfbbox($fontSize, 0, $fontName, $text);
+        $labelWidth = $labelBbox[2] - $labelBbox[0];
+        $labelHeight = abs($labelBbox[5] - $labelBbox[3]);
+        $offsetScale = $canvas->featureTransform->lineScale;
+
+        // Push label off centroid according to 'labelAlign', 'labelXOffset' and 'labelYOffset'. Default is 'cm', 0, 0.
+        // see http://dev.openlayers.org/releases/OpenLayers-2.13.1/docs/files/OpenLayers/Feature/Vector-js.html#OpenLayers.Feature.Vector.Constants
+        switch (substr($style['labelAlign'], 0, 1)) {
+            case 'r':
+                $x = $centroid[0] - $labelWidth + $offsetScale * $style['labelXOffset'];
+                break;
+            default:
+            case 'c':
+                $x = $centroid[0] - 0.5 * $labelWidth + $offsetScale * $style['labelXOffset'];
+                break;
+            case 'l':
+                $x = $centroid[0] + $offsetScale * $style['labelXOffset'];
+                break;
+        }
+        switch (substr($style['labelAlign'], 1, 1)) {
+            case 'b':
+                $y = $centroid[1]  + $offsetScale * $style['labelYOffset'];
+                break;
+            default:
+            case 'm':
+                $y = $centroid[1] + 0.5 * $labelHeight + $offsetScale * $style['labelYOffset'];
+                break;
+            case 't':
+                $y = $centroid[1] + 1 * $labelHeight + $offsetScale * $style['labelYOffset'];
+                break;
+        }
+        return array($x, $y);
     }
 
     /**
