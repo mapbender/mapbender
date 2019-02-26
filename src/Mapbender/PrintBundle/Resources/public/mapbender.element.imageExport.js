@@ -1,7 +1,8 @@
 (function($){
 
     /**
-     * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~print
+     * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~export
+     * @typedef {{type:string, opacity:number, markers: Array<Object>}} MarkerLayerData~export
      */
     $.widget("mapbender.mbImageExport", {
         options: {},
@@ -140,7 +141,7 @@
             var mapExtent = this._getExportExtent();
             var imageSize = this.map.map.olMap.getCurrentSize();
             var rasterLayers = this._collectRasterLayerData();
-            var geometryLayers = this._collectGeometryLayers();
+            var geometryLayers = this._collectGeometryAndMarkerLayers();
             return {
                 layers: rasterLayers.concat(geometryLayers),
                 width: imageSize.w,
@@ -188,6 +189,22 @@
                 return false;
             }
             return true;
+        },
+        /**
+         * Should return true if the given layer needs to be included in export
+         *
+         * @param {OpenLayers.Layer.Markers|OpenLayers.Layer} layer
+         * @returns {boolean}
+         * @private
+         */
+        _filterMarkerLayer: function(layer) {
+            if ('OpenLayers.Layer.Markers' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
+                return false;
+            }
+            if (!(layer.markers && layer.markers.length)) {
+                return false;
+            }
+            return layer.opacity > 0;
         },
         /**
          * Should return true if the given feature should be included in export.
@@ -258,12 +275,56 @@
                 geometries: geometries
             };
         },
-        _collectGeometryLayers: function() {
+        /**
+         * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
+         * to have passsed through the _filterGeometryLayer check positively.
+         *
+         * @param {OpenLayers.Layer.Markers|OpenLayers.Layer} layer
+         * @returns MarkerLayerData~export
+         * @private
+         */
+        _extractMarkerLayerData: function(layer) {
+            var markerData = [];
+            for (var i = 0; i < layer.markers.length; ++i) {
+                var marker = layer.markers[i];
+                var url = marker.icon && marker.icon.url;
+                if (!url || url.indexOf('/bundles/') !== 0) {
+                    console.warn("Unhandled marker: icon.url missing or not in /bundles/", marker);
+                    continue;
+                }
+                markerData.push({
+                    coordinates: {
+                        x: marker.lonlat.lon,
+                        y: marker.lonlat.lat
+                    },
+                    width: marker.icon.size.w,
+                    height: marker.icon.size.h,
+                    offset: {
+                        x: marker.icon.offset.x,
+                        y: marker.icon.offset.y
+                    },
+                    path: marker.icon.url
+                });
+            }
+            return {
+                type: 'markers',
+                opacity: layer.opacity,
+                markers: markerData
+            };
+        },
+        _collectGeometryAndMarkerLayers: function() {
             // Iterating over all vector layers, not only the ones known to MapQuery
-            return this.map.map.olMap.layers
-                .filter(this._filterGeometryLayer.bind(this))
-                .map(this._extractGeometryLayerData.bind(this))
-            ;
+            var allOlLayers = this.map.map.olMap.layers;
+            var layerDataOut = [];
+            for (var i = 0; i < allOlLayers.length; ++i) {
+                var olLayer = allOlLayers[i];
+                if (this._filterGeometryLayer(olLayer)) {
+                    layerDataOut.push(this._extractGeometryLayerData(olLayer));
+                } else if (this._filterMarkerLayer(olLayer)) {
+                    layerDataOut.push(this._extractMarkerLayerData(olLayer));
+                }
+            }
+            return layerDataOut;
         },
         /**
          * Check BBOX format inversion
