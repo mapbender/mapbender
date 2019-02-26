@@ -119,6 +119,10 @@ class LayerRendererGeoJson extends LayerRenderer
             'fontColor' => '#ff0000',
             'labelOutlineColor' => '#ffffff',
             'strokeDashstyle' => 'solid',
+            'labelAlign' => 'cm',
+            'labelXOffset' => 0,
+            'labelYOffset' => 0,
+            'fontOpacity' => 1,
         );
     }
 
@@ -149,11 +153,7 @@ class LayerRendererGeoJson extends LayerRenderer
             'type' => 'MultiPolygon',
             'coordinates' => array($geometry['coordinates']),
         ));
-        // remove label text, if any, from ephemereal MultiPolygon for separate processing
-        $labelText = ArrayUtil::getDefault($geometry['style'], 'label', null);
-        unset($geometry['style']['label']);
         $this->drawMultiPolygon($canvas, $multiPolygon);
-        // @todo: render feature label using $labelText
     }
 
     /**
@@ -162,6 +162,12 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function drawMultiPolygon($canvas, $geometry)
     {
+        $nPoints = 0;
+        $centroidSums = array(
+            'x' => 0.0,
+            'y' => 0.0,
+        );
+
         $style = $this->getFeatureStyle($geometry);
         $transformedRings = array();
         $bounds = new FeatureBounds();
@@ -173,8 +179,16 @@ class LayerRendererGeoJson extends LayerRenderer
                 }
 
                 $transformedRing = array();
-                foreach ($ring as $c) {
-                    $transformedRing[] = $canvas->featureTransform->transformPair($c);
+                foreach ($ring as $j => $c) {
+                    $transformedPoint = $canvas->featureTransform->transformPair($c);
+                    // NOTE: GeoJSON always repeats the first point at the end. To get a proper centroid,
+                    //       we throw away the first occurence.
+                    if ($j) {
+                        $centroidSums['x'] += $transformedPoint[0];
+                        $centroidSums['y'] += $transformedPoint[1];
+                        ++$nPoints;
+                    }
+                    $transformedRing[] = $transformedPoint;
                 }
                 $bounds->addPoints($transformedRing);
                 $transformedRings[$polygonIndex][$ringIx] = $transformedRing;
@@ -199,7 +213,13 @@ class LayerRendererGeoJson extends LayerRenderer
             $lineCoordSets = call_user_func_array('\array_merge', $transformedRings);
             $this->drawLineSetsInternal($canvas, $style, $lineCoordSets, true, $bounds);
         }
-        // @todo: detect and render feature label
+        if (!$bounds->isEmpty() && !empty($style['label'])) {
+            $centroid = array(
+                $centroidSums['x'] / $nPoints,
+                $centroidSums['y'] / $nPoints,
+            );
+            $this->drawFeatureLabel($canvas, $style, $style['label'], $centroid);
+        }
     }
 
     /**
@@ -318,9 +338,9 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param ExportCanvas $canvas
      * @param array $style
      * @param string $text
-     * @param float[] $originXy in pixel space
+     * @param float[] $centroid in pixel space
      */
-    protected function drawFeatureLabel(ExportCanvas $canvas, $style, $text, $originXy)
+    protected function drawFeatureLabel(ExportCanvas $canvas, $style, $text, $centroid)
     {
         // @todo: evaluate text opacity
         $color = $this->getColor($style['fontColor'], 1, $canvas->resource);
@@ -328,6 +348,39 @@ class LayerRendererGeoJson extends LayerRenderer
         $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $canvas->resource);
         $fontName = $this->getLabelFont($style);
         $fontSize = $this->getLabelFontSize($canvas, $style);
+
+        // let GD calculate the pixel size of the label so we can center it properly
+        $labelBbox = imagettfbbox($fontSize, 0, $fontName, $text);
+        $labelWidth = $labelBbox[2] - $labelBbox[0];
+        $labelHeight = abs($labelBbox[5] - $labelBbox[3]);
+        $offsetScale = $canvas->featureTransform->lineScale;
+
+        // Push label off centroid according to 'labelAlign', 'labelXOffset' and 'labelYOffset'. Default is 'cm', 0, 0.
+        // see http://dev.openlayers.org/releases/OpenLayers-2.13.1/docs/files/OpenLayers/Feature/Vector-js.html#OpenLayers.Feature.Vector.Constants
+        switch (substr($style['labelAlign'], 0, 1)) {
+            case 'r':
+                $textX = $centroid[0] - $labelWidth + $offsetScale * $style['labelXOffset'];
+                break;
+            default:
+            case 'c':
+                $textX = $centroid[0] - 0.5 * $labelWidth + $offsetScale * $style['labelXOffset'];
+                break;
+            case 'l':
+                $textX = $centroid[0] + $offsetScale * $style['labelXOffset'];
+                break;
+        }
+        switch (substr($style['labelAlign'], 1, 1)) {
+            case 'b':
+                $textY = $centroid[1]  + $offsetScale * $style['labelYOffset'];
+                break;
+            default:
+            case 'm':
+                $textY = $centroid[1] + 0.5 * $labelHeight + $offsetScale * $style['labelYOffset'];
+                break;
+            case 't':
+                $textY = $centroid[1] + 1 * $labelHeight + $offsetScale * $style['labelYOffset'];
+                break;
+        }
 
         // @todo: skip halo rendering if label style indicates no outline width, or fully transparent outline
         $haloFactor = $canvas->featureTransform->lineScale;
@@ -339,11 +392,11 @@ class LayerRendererGeoJson extends LayerRenderer
         );
         foreach ($haloOffsets as $xy) {
             imagettftext($canvas->resource, $fontSize, 0,
-                $originXy[0] + $xy[0], $originXy[1] + $xy[1],
+                $textX + $xy[0], $textY + $xy[1],
                 $bgcolor, $fontName, $text);
         }
         imagettftext($canvas->resource, $fontSize, 0,
-            $originXy[0], $originXy[1],
+            $textX, $textY,
             $color, $fontName, $text);
     }
 
