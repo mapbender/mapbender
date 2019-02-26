@@ -275,13 +275,7 @@ class LayerRendererGeoJson extends LayerRenderer
         $p[1] = round($p[1]);
 
         if (isset($style['label'])) {
-            // offset text to the right of the point
-            $textXy = array(
-                $p[0] + $resizeFactor * 1.5 * $style['pointRadius'],
-                // center vertically on original y
-                $p[1] + 0.5 * $this->getLabelFontSize($canvas, $style),
-            );
-            $this->drawFeatureLabel($canvas, $style, $style['label'], $textXy);
+            $this->drawFeatureLabel($canvas, $style, $style['label'], $p);
         }
 
         $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
