@@ -14,6 +14,8 @@
         searchModel: null,
         autocompleteModel: null,
         popup: null,
+        mbMap: null,
+        map: null,
 
         /**
          * Widget creator
@@ -43,10 +45,14 @@
             var widget = this;
             var element = widget.element;
             var options = widget.options;
-            var searchModel = widget.searchModel = new Mapbender.SearchModel(null, null, widget);
+            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
+            this.map = this.mbMap.map.olMap;
+            var searchModelAttributes = {
+                srs: this.mbMap.getModel().getCurrentProj().projCode
+            };
+            this.searchModel = new Mapbender.SearchModel(searchModelAttributes, null, this);
             var routeSelect = $('select#search_routes_route', element);
             var routeCount = 0;
-            var map = widget.map = $('#' + options.target).data('mapbenderMbMap').map.olMap;
 
             // bind form reset to reset search model
             element.delegate('.search-forms form', 'reset', function(){
@@ -59,10 +65,10 @@
             });
 
             // bind result to result list and map view
-            searchModel.on('change:results', widget._searchResults, widget);
-            searchModel.on('request', widget._setActive, widget);
-            searchModel.on('error sync', widget._setInactive, widget);
-            searchModel.on('error sync', widget._showResultState, widget);
+            this.searchModel.on('change:results', widget._searchResults, widget);
+            this.searchModel.on('request', widget._setActive, widget);
+            this.searchModel.on('error sync', widget._setInactive, widget);
+            this.searchModel.on('error sync', widget._showResultState, widget);
 
             widget.resultCallbackProxy = $.proxy(widget._resultCallback, widget);
 
@@ -118,6 +124,7 @@
                 });
             }
 
+            $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
             widget._trigger('ready');
 
             if(widget.options.autoOpen) {
@@ -315,7 +322,6 @@
                 diff = (new Date()) - this.lastSearch;
 
             autoCompleteMenu.addClass("search-router");
-            console.log(autoCompleteMenu.attr("class"));
 
             if(diff <= delay * this.options.timeoutFactor){
                 event.preventDefault();
@@ -571,12 +577,8 @@
             var row = $(event.currentTarget),
                 feature = row.data('feature').getFeature(),
                 map = feature.layer.map,
-                callbackConf = widget.getCurrentRoute().results.callback,
-                srs = Mapbender.Model.getProj(widget.searchModel.get("srs"));
-            var mapProj = Mapbender.Model.getCurrentProj();
-            if (srs.projCode !== mapProj.projCode) {
-                feature.geometry = feature.geometry.transform(srs, mapProj);
-            }
+                callbackConf = widget.getCurrentRoute().results.callback
+            ;
             var featureExtent = $.extend({},feature.geometry.getBounds());
 
             // buffer, if needed
@@ -615,6 +617,21 @@
             }
             // finally, zoom
             map.setCenter(featureExtent.getCenterLonLat(), zoom);
+        },
+        _onSrsChange: function(event, data) {
+            if (this.highlightLayer) {
+                (this.highlightLayer.features || []).map(function(feature) {
+                    if (feature.geometry && feature.geometry.transform) {
+                        feature.geometry.transform(data.from, data.to);
+                    }
+                });
+                this.highlightLayer.redraw();
+            }
+            if (this.searchModel && this.mbMap) {
+                this.searchModel.set({
+                    srs: data.to.projCode
+                });
+            }
         },
 
         /**
