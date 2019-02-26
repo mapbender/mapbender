@@ -46,6 +46,7 @@ class LayerRendererMarkers extends LayerRenderer
             imagecopyresampled($canvas->resource, $image, $offsetX, $offsetY, 0, 0,
                 $markerDef['width'] * $transform->lineScale, $markerDef['height'] * $transform->lineScale,
                 imagesx($image), imagesy($image));
+            imagedestroy($image);
         }
     }
 
