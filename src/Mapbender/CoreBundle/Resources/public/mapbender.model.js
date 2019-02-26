@@ -197,10 +197,11 @@ Mapbender.Model = {
         if (!poiOptionsList.length) {
             return;
         }
+        var mapProj = this.getProj(this.mbMap.options.targetsrs || this.mbMap.options.srs);
         var pois = poiOptionsList.map(function(poi) {
             var coord = new OpenLayers.LonLat(poi.x, poi.y);
-            if(poi.srs) {
-                coord = coord.transform(self.getProj(poi.srs), self.getCurrentProj());
+            if (poi.srs) {
+                coord = coord.transform(self.getProj(poi.srs), mapProj);
             }
             return {
                 position: coord,
