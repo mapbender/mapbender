@@ -9,8 +9,6 @@
         selected: null,
         highlightLayer: null,
         lastSearch: new Date(),
-        resultCallbackEvent: null,
-        resultCallbackProxy: null,
         searchModel: null,
         autocompleteModel: null,
         popup: null,
@@ -70,8 +68,6 @@
             this.searchModel.on('error sync', widget._setInactive, widget);
             this.searchModel.on('error sync', widget._showResultState, widget);
 
-            widget.resultCallbackProxy = $.proxy(widget._resultCallback, widget);
-
             // Prepare autocompletes
             $('form input[data-autocomplete="on"]', element).each(
                 $.proxy(widget._setupAutocomplete, widget));
@@ -125,6 +121,7 @@
             }
 
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
+            this._setupResultCallback();
             widget._trigger('ready');
 
             if(widget.options.autoOpen) {
@@ -349,11 +346,12 @@
          * Prepare search result table
          */
         _prepareResultTable: function(container){
-            if(typeof this.options.routes[this.selected].results.headers === 'undefined'){
+            var currentRoute = this.getCurrentRoute();
+            if (!currentRoute || typeof currentRoute.results.headers === 'undefined'){
                 return;
             }
 
-            var headers = this.options.routes[this.selected].results.headers;
+            var headers = currentRoute.results.headers;
 
             var table = $('<table></table>'),
                 thead = $('<thead><tr></tr></thead>').appendTo(table);
@@ -365,15 +363,14 @@
             table.append($('<tbody></tbody>'));
 
             container.append(table);
-
-            this._setupResultCallback();
         },
 
         /**
          * Update result list when search model's results property was changed
          */
         _searchResults: function(model, results, options){
-            if('table' === this.options.routes[this.selected].results.view) {
+            var currentRoute = this.getCurrentRoute();
+            if (currentRoute && 'table' === currentRoute.results.view) {
                 var container = $('.search-results', this.element);
                 if($('table', container).length === 0) {
                     this._prepareResultTable(container);
@@ -390,7 +387,8 @@
          * @param {Object} options Backbone options (not used?)
          */
         _searchResultsTable: function(model, results, options){
-            var headers = this.options.routes[this.selected].results.headers,
+            var currentRoute = this.getCurrentRoute();
+            var headers = currentRoute.results.headers,
                 table = $('.search-results table', this.element),
                 tbody = $('<tbody></tbody>'),
                 layer = this._getLayer(true),
@@ -512,9 +510,7 @@
          * @returns object route configuration
          */
         getCurrentRoute: function() {
-            var widget = this;
-            var options = widget.options;
-            return options.routes[widget.selected];
+            return this.selected && this.options.routes[this.selected] || null;
         },
 
         /**
@@ -552,18 +548,19 @@
          * Set up result callback (zoom on click for example)
          */
         _setupResultCallback: function(){
-            var widget = this;
-            var anchor = $('.search-results', widget.element);
-            if(widget.resultCallbackEvent !== null){
-                anchor.undelegate('tbody tr', widget.resultCallbackEvent,
-                    widget.resultCallbackProxy);
-                widget.resultCallbackEvent = null;
+            var routeNames = Object.keys(this.options.routes);
+            var uniqueEventNames = [];
+            for (var i = 0; i < routeNames.length; ++i) {
+                var routeConfig = this.options.routes[routeNames[i]];
+                var callbackConf = routeConfig.results && routeConfig.results.callback;
+                var routeEventName = callbackConf && callbackConf.event;
+                if (routeEventName && uniqueEventNames.indexOf(routeEventName) === -1) {
+                    uniqueEventNames.push(routeEventName);
+                }
             }
-
-            var event = widget.options.routes[widget.selected].results.callback.event;
-            if(typeof event === 'string'){
-                anchor.delegate('tbody tr', event, widget.resultCallbackProxy);
-                widget.resultCallbackEvent = event;
+            if (uniqueEventNames.length) {
+                var $anchor = $('.search-results', this.element);
+                $anchor.on(uniqueEventNames.join(' '), 'tbody tr', $.proxy(this._resultCallback, this));
             }
         },
 
@@ -572,12 +569,15 @@
          *
          * @param  jQuery.Event event Mouse event
          */
-        _resultCallback: function(event){
-            var widget = this;
+        _resultCallback: function(event) {
+            var currentRoute = this.getCurrentRoute();
+            var callbackConf = currentRoute && currentRoute.results && currentRoute.results.callback;
+            if (!callbackConf || event.type !== callbackConf.event) {
+                return;
+            }
             var row = $(event.currentTarget),
                 feature = row.data('feature').getFeature(),
-                map = feature.layer.map,
-                callbackConf = widget.getCurrentRoute().results.callback
+                map = feature.layer.map
             ;
             var featureExtent = $.extend({},feature.geometry.getBounds());
 
