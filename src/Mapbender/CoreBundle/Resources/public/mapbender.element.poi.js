@@ -56,7 +56,8 @@
          */
         open: function(closeCallback) {
             if (!this.popup && this.map.length !== 0) {
-                this._createDialog();
+                this.popup = new Mapbender.Popup(this._getPopupOptions());
+                this.popup.$element.on('close', this.close.bind(this));
                 this.map.on('click', this.mapClickProxy);
             }
             this.closeCallback = closeCallback;
@@ -114,52 +115,49 @@
 
             this.poiMarkerLayer.addMarker(poiMarker);
 
-            if (proj.proj.units === 'degrees' || proj.proj.units === 'dd') {
+            if (!proj.units || proj.proj.units === 'degrees' || proj.proj.units === 'dd') {
                 deci = 5;
             }
-
-            this.popup.subtitle(
-                '<b>' + coordinates.world.x.toFixed(deci) + ',' + coordinates.world.y.toFixed(deci) + ' @ 1:' + mbMap.model.getScale() + '</b>'
-            );
 
             this.poi = {
                 point: coordinates.world.x.toFixed(deci) + ',' + coordinates.world.y.toFixed(deci),
                 scale: mbMap.model.getScale(),
                 srs: proj.projCode
             };
+            this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
         },
-
-        _createDialog: function(){
+        _getPopupOptions: function() {
             var self = this;
-            this.popup = new Mapbender.Popup2({
+            var options = {
                 draggable: true,
                 cssClass: 'mb-poi-popup',
                 destroyOnClose: true,
                 modal: false,
+                scrollable: false,
+                width: 500,
                 title: this.element.attr('title'),
                 content: $('.input', this.element).html(),
-                buttons: {
-                    'cancel': {
-                        label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
-                        cssClass: 'button buttonCancel critical right',
-                        callback: function () {
-                            self.close();
-                        }
-                    },
-                    'ok': {
+                buttons: [
+                    {
                         label: Mapbender.trans('mb.core.poi.popup.btn.ok'),
-                        cssClass: 'button right',
+                        cssClass: 'button',
                         callback: function () {
                             self._sendPoi(this.$element);
                         }
+                    },
+                    {
+                        label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
+                        cssClass: 'button buttonCancel critical',
+                        callback: function () {
+                            self.close();
+                        }
                     }
-                }
-            });
-
-            if(self.gpsElement) {
-                this.popup.addButtons({'position':{
+                ]
+            };
+            if (this.gpsElement) {
+                options.buttons.unshift({
                     label: Mapbender.trans('mb.core.poi.popup.btn.position'),
-                    cssClass: 'button right',
+                    cssClass: 'button',
                     callback: function() {
                         self.gpsElement.mbGpsPosition('getGPSPosition', function(){
                             var loc = self.mbMap.map.olMap.getCenter();
@@ -179,10 +177,9 @@
                             self._setPoiMarkerLayer(self.mbMap, coordinates, loc);
                         });
                     }
-                }});
+                });
             }
-            // For close button top right on Popup...
-            this.popup.$element.on('close', this.close.bind(this));
+            return options;
         },
 
         close: function() {
@@ -238,13 +235,13 @@
                 });
                 ta.addClass("poi-link");
                 $('textarea', ta).val(body);
-                new Mapbender.Popup2({
+                new Mapbender.Popup({
                     destroyOnClose: true,
                     modal: true,
                     title: this.element.attr('title'),
-                    height: 350,
+                    width: 500,
                     content: ta,
-                    buttons: {}
+                    buttons: []
                 });
             }
 
