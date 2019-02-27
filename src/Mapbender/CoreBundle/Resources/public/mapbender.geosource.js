@@ -282,45 +282,20 @@ Mapbender.Geo.SourceHandler = Class({
      * @returns {object} changes
      */
     createOptionsLayerState: function createOptionsLayerState(source, changeOptions, defaultSelected, mergeSelected) {
+        var self = this;
         var layerChanges = {
         };
         function setSelected(layer) {
             var layerOpts = changeOptions.layers[layer.options.id];
-            var childSelected = false;
             var newTreeOptions;
             var changedTreeOptions;
             if (layer.children) {
                 for (var i = 0; i < layer.children.length; i++) {
                     var child = layer.children[i];
                     setSelected(child);
-                    if ((!layerChanges[child.options.id] && child.options.treeOptions.selected)
-                        || (layerChanges[child.options.id] && layerChanges[child.options.id].options.treeOptions.selected)) {
-                        childSelected = true;
-                    }
                 }
-                if (layerOpts) {
-                    newTreeOptions = $.extend({}, layerOpts);
-                } else {
-                    newTreeOptions = {
-                        selected: childSelected,
-                        info: childSelected
-                    }
-                }
-            } else {
-                if(!layerOpts && defaultSelected === null) {
-                    return;
-                }
-                var sel = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
-                if (mergeSelected) {
-                    sel = sel || layer.options.treeOptions.selected;
-                }
-                newTreeOptions = {
-                    selected: sel,
-                    info: sel
-                };
             }
-
-            newTreeOptions.info = newTreeOptions.info && layer.options.treeOptions.allow.info;
+            newTreeOptions = self.createOptionsMergeLayerSelectionAndInfo(layer, layerOpts, defaultSelected, mergeSelected);
 
             if (newTreeOptions.selected !== layer.options.treeOptions.selected) {
                 changedTreeOptions = {
@@ -352,6 +327,23 @@ Mapbender.Geo.SourceHandler = Class({
         setSelected(source.configuration.children[0]);
         return {
             change: changed
+        };
+    },
+    createOptionsMergeLayerSelectionAndInfo: function(layer, layerOpts, defaultSelected, mergeSelected){
+        if(!layer){
+            return;
+        }
+
+        var sel = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
+        if (mergeSelected) {
+            sel = sel || layer.options.treeOptions.selected;
+        }
+
+        var info = sel && layer.options.treeOptions.allow.info;
+
+        return {
+            selected: sel,
+            info: info
         };
     },
     /**
