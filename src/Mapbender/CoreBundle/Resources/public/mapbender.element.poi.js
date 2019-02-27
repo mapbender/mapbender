@@ -73,25 +73,21 @@
                 x = event.pageX - this.map.offset().left;
                 y = event.pageY - this.map.offset().top;
 
-                var mbMap = this.map.data('mapbenderMbMap'),
-                olMap = mbMap.map.olMap,
-                ll = olMap.getLonLatFromPixel(new OpenLayers.Pixel(x, y)),
-                coordinates = {
+                var olMap = this.mbMap.map.olMap;
+                var lonLat = olMap.getLonLatFromPixel(new OpenLayers.Pixel(x, y));
+                var coordinates = {
                     pixel: {
                         x: x,
                         y: y
                     },
-                    world: {
-                        x: ll.lon,
-                        y: ll.lat
-                    }
+                    world: lonLat
                 };
 
-                this._setPoiMarkerLayer(mbMap, coordinates, ll);
+                this._setPoiMarkerLayer(coordinates);
             }
         },
 
-        _setPoiMarkerLayer: function(mbMap, coordinates, latLon) {
+        _setPoiMarkerLayer: function(coordinates) {
             var proj = this.mbMap.map.olMap.getProjectionObject();
             var deci = 0;
 
@@ -102,7 +98,7 @@
 
             this.poiMarkerLayer.clearMarkers();
 
-            var poiMarker = new OpenLayers.Marker(latLon, new OpenLayers.Icon(
+            var poiMarker = new OpenLayers.Marker(coordinates.world, new OpenLayers.Icon(
                 Mapbender.configuration.application.urls.asset +
                 this.mbMap.options.poiIcon.image, {
                     w: this.mbMap.options.poiIcon.width,
@@ -120,8 +116,8 @@
             }
 
             this.poi = {
-                point: coordinates.world.x.toFixed(deci) + ',' + coordinates.world.y.toFixed(deci),
-                scale: mbMap.model.getScale(),
+                point: coordinates.world.lon.toFixed(deci) + ',' + coordinates.world.lat.toFixed(deci),
+                scale: this.mbMap.model.getScale(),
                 srs: proj.projCode
             };
             this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
@@ -159,22 +155,18 @@
                     label: Mapbender.trans('mb.core.poi.popup.btn.position'),
                     cssClass: 'button',
                     callback: function() {
-                        self.gpsElement.mbGpsPosition('getGPSPosition', function(){
-                            var loc = self.mbMap.map.olMap.getCenter();
-                            var plox = self.mbMap.map.olMap.getPixelFromLonLat(loc);
+                        self.gpsElement.mbGpsPosition('getGPSPosition', function(lonLat) {
+                            var plox = self.mbMap.map.olMap.getPixelFromLonLat(lonLat);
 
                             var coordinates = {
                                 pixel: {
                                     x: plox.x,
                                     y: plox.y
                                 },
-                                world: {
-                                    x: loc.lon,
-                                    y: loc.lat
-                                }
+                                world: lonLat
                             };
 
-                            self._setPoiMarkerLayer(self.mbMap, coordinates, loc);
+                            self._setPoiMarkerLayer(coordinates);
                         });
                     }
                 });

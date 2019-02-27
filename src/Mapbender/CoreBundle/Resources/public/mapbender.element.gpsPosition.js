@@ -43,86 +43,73 @@
             }
         },
 
-        _createMarker: function (position, accuracy) {
-            var olmap = this.map.map.olMap,
-                currentProj,
-                originInMeters,
-                accuracyPoint,
-                radius,
-                circle
-            ;
+        _showLocation: function (position, accuracy) {
+            var olmap = this.map.map.olMap;
+            var features = this._getMarkerFeatures(position, accuracy);
             this.layer.removeAllFeatures();
-            var center = new OpenLayers.Geometry.Point(position.lon, position.lat);
+            this.layer.addFeatures([features.point]);
+            if (features.circle) {
+                this.layer.addFeatures([features.circle]);
+            }
+            var allowPan = true;
+
+            if (features.circle) {
+                if (true || this.options.zoomToAccuracy || this.firstPosition && this.options.zoomToAccuracyOnFirstPosition) {
+                    olmap.zoomToExtent(features.circle.geometry.getBounds());
+                    allowPan = false;
+                }
+            }
+            if (allowPan && !olmap.getExtent().containsLonLat(position)) {
+                if (this.options.follow) {
+                    olmap.panTo(position);
+                } else if (this.firstPosition && this.options.centerOnFirstPosition) {
+                    olmap.panTo(position);
+                }
+            }
+            this.firstPosition = false;
+            this.layer.redraw();
+        },
+        /**
+         *
+         * @param {OpenLayers.LonLat} position
+         * @param {number} accuracy in meters
+         * @return {Object<String, OpenLayers.Feature.Vector>}
+         * @private
+         */
+        _getMarkerFeatures: function(position, accuracy) {
+            var centerPoint = new OpenLayers.Geometry.Point(position.lon, position.lat);
+            var features = {
+                point: new OpenLayers.Feature.Vector(centerPoint, null, {
+                    strokeColor:   "#ff0000",
+                    strokeWidth:   3,
+                    strokeOpacity: 1,
+                    fillOpacity:   0,
+                    pointRadius:   10
+                })
+            };
             if (accuracy) {
-                currentProj = olmap.getProjectionObject();
-
-                originInMeters = new OpenLayers.LonLat(position.lon, position.lat);
-                originInMeters.transform(currentProj, this.metricProjection);
-
-                accuracyPoint = new OpenLayers.LonLat(originInMeters.lon + (accuracy / 2), originInMeters.lat + (accuracy / 2));
-                accuracyPoint.transform(this.metricProjection, currentProj);
-
-                radius = accuracyPoint.lon - position.lon;
+                var currentProj = this.map.map.olMap.getProjectionObject();
+                var metricOrigin = centerPoint.clone().transform(currentProj, this.metricProjection);
                 var circleGeom = OpenLayers.Geometry.Polygon.createRegularPolygon(
-                    center,
-                    radius,
+                    metricOrigin,
+                    accuracy / 2,
                     40,
                     0
                 );
+                circleGeom = circleGeom.transform(this.metricProjection, currentProj);
 
-                circle = new OpenLayers.Feature.Vector(circleGeom, null, {
+                features.circle = new OpenLayers.Feature.Vector(circleGeom, null, {
                     fillColor: '#FFF',
                     fillOpacity: 0.5,
                     strokeWidth: 1,
                     strokeColor: '#FFF'
                 });
-                this.layer.addFeatures([circle]);
             }
-
-            var point = new OpenLayers.Feature.Vector(center, null, {
-                strokeColor:   "#ff0000",
-                strokeWidth:   3,
-                strokeOpacity: 1,
-                fillOpacity:   0,
-                pointRadius:   10
-            });
-            this.layer.addFeatures([point]);
-            olmap.addLayer(this.layer);
-        },
-
-        _centerMap: function (point) {
-            var olmap = this.map.map.olMap,
-                extent = olmap.getExtent();
-            if (extent.containsLonLat(point) === false) // point is in extent?
-            {
-                if (this.options.follow) {
-                    olmap.panTo(point);
-                } else if (this.firstPosition && this.options.centerOnFirstPosition) {
-                    olmap.panTo(point);
-                } 
-            }
-        },
-
-        _zoomMap: function (point, accuracy) {
-            if (!accuracy) {
-                return; // no accurancy
-            }
-
-            if (!this.options.zoomToAccuracy && !(this.options.zoomToAccuracyOnFirstPosition && this.firstPosition)) {
-                return;
-            }
-
-            var olmap = this.map.map.olMap,
-                currentProj = olmap.getProjectionObject(),
-                pointInMeters = point.transform(currentProj, this.metricProjection),
-                min = new OpenLayers.LonLat(pointInMeters.lon - (accuracy / 2), pointInMeters.lat - (accuracy / 2)).transform(this.metricProjection, currentProj),
-                max = new OpenLayers.LonLat(pointInMeters.lon + (accuracy / 2), pointInMeters.lat + (accuracy / 2)).transform(this.metricProjection, currentProj);
-
-            olmap.zoomToExtent(new OpenLayers.Bounds(min.lon, min.lat, max.lon, max.lat));
+            return features;
         },
 
         defaultAction: function() {
-            return this.activate();
+            this.activate();
         },
 
         /**
@@ -148,12 +135,13 @@
             var olmap = widget.map.map.olMap;
             olmap.addLayer(this.layer);
 
-            if (navigator.geolocation) {
-                widget.observer = navigator.geolocation.watchPosition(function success(position) {
+            if (navigator.geolocation && !this.observer) {
+                this.firstPosition = true;
+                this.observer = navigator.geolocation.watchPosition(function success(position) {
                     var newProj = olmap.getProjectionObject(),
                         p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
 
-                    p.transform(this.internalProjection, newProj);
+                    p.transform(widget.internalProjection, newProj);
 
                     // Averaging: Building a queue...
                     widget.stack.push(p);
@@ -168,13 +156,7 @@
                         return memo;
                     }, new OpenLayers.LonLat(0, 0));
 
-                    widget._createMarker(p, position.coords.accuracy);
-                    widget._centerMap(p);
-                    widget._zoomMap(p, position.coords.accuracy);
-
-                    if (widget.firstPosition) {
-                        widget.firstPosition = false;
-                    }
+                    widget._showLocation(p, position.coords.accuracy);
 
                 }, function error(msg) {
                     Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.nosignal"));
@@ -182,7 +164,6 @@
                 }, { enableHighAccuracy: true, maximumAge: 0 });
 
                 $(widget.element).parent().addClass("toolBarItemActive");
-
             } else {
                 Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
             }
@@ -199,7 +180,6 @@
                 this.observer = null;
             }
             $(this.element).parent().removeClass("toolBarItemActive");
-            this.firstPosition = true;
 
             var olmap = this.map.map.olMap;
             if (this.layer) {
@@ -213,42 +193,31 @@
 
         getGPSPosition: function(callback) {
             var widget = this;
-            var openLayerMap = widget.map.map.olMap;
+            var olmap = widget.map.map.olMap;
 
             if (navigator.geolocation) {
+                if (this.observer) {
+                    navigator.geolocation.clearWatch(this.observer);
+                    this.observer = null;
+                }
+                olmap.addLayer(this.layer);
+                this.firstPosition = true;
                 navigator.geolocation.getCurrentPosition(function success(position) {
-                    var newProj = openLayerMap.getProjectionObject(),
+                    var newProj = olmap.getProjectionObject(),
                         p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
 
-                    p.transform(this.internalProjection, newProj);
+                    p.transform(widget.internalProjection, newProj);
 
-                    /*
-                    widget.stack.push(p);
-                    if (widget.stack.length > widget.options.average) {
-                        widget.stack.splice(0, 1);
-                    }
-                    // ...and reducing it.
-                    p = _.reduce(widget.stack, function (memo, p) {
-                        memo.lon += p.lon / widget.stack.length;
-                        memo.lat += p.lat / widget.stack.length;
-                        return memo;
-                    }, new OpenLayers.LonLat(0, 0));
-                    */
-
-                    widget._createMarker(p, position.coords.accuracy);
-                    widget._centerMap(p);
-                    widget._zoomMap(p, position.coords.accuracy);
+                    widget._showLocation(p, position.coords.accuracy);
 
                     if (typeof callback === 'function') {
-                        callback();
+                        callback(p);
                     }
 
                 }, function error(msg) {
                     Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.nosignal"));
                     widget.deactivate();
                 }, { enableHighAccuracy: true, maximumAge: 0 });
-
-                $(widget.element).parent().addClass("toolBarItemActive");
             } else {
                 Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
             }
