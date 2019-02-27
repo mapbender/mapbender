@@ -13,123 +13,80 @@
             average: 1,
             zoomToAccuracy: false,
             centerOnFirstPosition: true,
-            zoomToAccuracyOnFirstPosition: true,
-            accurancyStyle: {
-                fillColor: '#FFF',
-                fillOpacity: 0.5,
-                strokeWidth: 1,
-                strokeColor: '#FFF'
-            }
+            zoomToAccuracyOnFirstPosition: true
         },
         map: null,
         observer: null,
         firstPosition: true,
         stack: [],
+        layer: null,
 
         _create: function () {
-            var widget = this;
-            var element = $(widget.element);
-            var options = widget.options;
-            var target = options.target;
-
-            if (!Mapbender.checkTarget("mbGpsPosition", target)) {
+            if (!Mapbender.checkTarget("mbGpsPosition", this.options.target)) {
                 return;
             }
 
-            Mapbender.elementRegistry.onElementReady(target, $.proxy(widget._setup, widget));
-
-            if (!options.average) {
-                options.average = 1;
-            }
-
-            element.click(function () {
-                if(widget.isActive()) {
-                    widget.deactivate();
-                } else {
-                    widget.activate();
-                }
-                return false;
-            });
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            this.options.average = Math.max(1, parseInt(this.options.average) || 1);
+            this.element.on('click', $.proxy(this.toggleTracking, this));
         },
 
         _setup: function () {
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
+            this.layer = new OpenLayers.Layer.Vector();
             if (this.options.autoStart === true) {
-                this.toggleTracking();
+                this.activate();
             }
         },
 
         _createMarker: function (position, accuracy) {
             var self = this,
                 olmap = this.map.map.olMap,
-                markers,
-                icon,
-                candidates = olmap.getLayersByName('Markers'),
-                vector,
                 metersProj,
                 currentProj,
                 originInMeters,
                 accuracyPoint,
-                differance,
+                radius,
                 circle
             ;
+            this.layer.removeAllFeatures();
+            var center = new OpenLayers.Geometry.Point(position.lon, position.lat);
+            if (accuracy) {
+                metersProj = new OpenLayers.Projection('EPSG:900913');
+                currentProj = olmap.getProjectionObject();
 
-            if (candidates.length > 0) {
-                markers = candidates[0];
-                olmap.removeLayer(markers);
-                markers.destroy();
+                originInMeters = new OpenLayers.LonLat(position.lon, position.lat);
+                originInMeters.transform(currentProj, metersProj);
+
+                accuracyPoint = new OpenLayers.LonLat(originInMeters.lon + (accuracy / 2), originInMeters.lat + (accuracy / 2));
+                accuracyPoint.transform(metersProj, currentProj);
+
+                radius = accuracyPoint.lon - position.lon;
+                var circleGeom = OpenLayers.Geometry.Polygon.createRegularPolygon(
+                    center,
+                    radius,
+                    40,
+                    0
+                );
+
+                circle = new OpenLayers.Feature.Vector(circleGeom, null, {
+                    fillColor: '#FFF',
+                    fillOpacity: 0.5,
+                    strokeWidth: 1,
+                    strokeColor: '#FFF'
+                });
+                this.layer.addFeatures([circle]);
             }
 
-            markers = new OpenLayers.Layer.Vector('Markers');
-            var point = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(position.lon, position.lat), null, {
+            var point = new OpenLayers.Feature.Vector(center, null, {
                 strokeColor:   "#ff0000",
                 strokeWidth:   3,
                 strokeOpacity: 1,
-                strokeLinecap: "butt",
                 fillOpacity:   0,
                 pointRadius:   10
             });
-            markers.addFeatures([point]);
-            olmap.addLayer(markers);
-
-            // Accurancy
-            if (!accuracy) {
-                return;
-            }
-
-            candidates = olmap.getLayersByName('Accuracy');
-
-            if (candidates.length > 0) {
-                olmap.removeLayer(candidates[0]);
-                candidates[0].destroy();
-            }
-
-            vector = new OpenLayers.Layer.Vector('Accuracy');
-            olmap.addLayer(vector);
-
-            metersProj = new OpenLayers.Projection('EPSG:900913');
-            currentProj = olmap.getProjectionObject();
-
-            originInMeters = new OpenLayers.LonLat(position.lon, position.lat);
-            originInMeters.transform(currentProj, metersProj);
-
-            accuracyPoint = new OpenLayers.LonLat(originInMeters.lon + (accuracy / 2), originInMeters.lat + (accuracy / 2));
-            accuracyPoint.transform(metersProj, currentProj);
-
-            differance = accuracyPoint.lon - position.lon;
-
-            circle = new OpenLayers.Feature.Vector(
-                OpenLayers.Geometry.Polygon.createRegularPolygon(
-
-                    new OpenLayers.Geometry.Point(position.lon, position.lat),
-                    differance,
-                    40,
-                    0
-                ),
-                {},
-                self.options.accurancyStyle
-            );
-            vector.addFeatures([circle]);
+            this.layer.addFeatures([point]);
+            olmap.addLayer(this.layer);
         },
 
         _centerMap: function (point) {
@@ -182,11 +139,11 @@
          * @returns {self}
          */
         toggleTracking: function () {
-            var widget = this;
-            if (widget.isActive()) {
-                return widget.deactivate();
+            if (this.isActive()) {
+                this.deactivate();
+            } else {
+                this.activate();
             }
-            return widget.activate();
         },
 
         /**
@@ -197,6 +154,7 @@
         activate: function () {
             var widget = this;
             var olmap = widget.map.map.olMap;
+            olmap.addLayer(this.layer);
 
             if (navigator.geolocation) {
                 widget.observer = navigator.geolocation.watchPosition(function success(position) {
@@ -245,34 +203,17 @@
          * @returns {object}
          */
         deactivate: function() {
-            var widget = this;
-
-            if(widget.isActive()) {
-                navigator.geolocation.clearWatch(widget.observer);
-                $(widget.element).parent().removeClass("toolBarItemActive");
-                widget.firstPosition = true;
-                widget.observer = null;
+            if (this.observer) {
+                navigator.geolocation.clearWatch(this.observer);
+                this.observer = null;
             }
+            $(this.element).parent().removeClass("toolBarItemActive");
+            this.firstPosition = true;
 
-            // Delete Markers
-            var olmap = this.map.map.olMap,
-                markers,
-                candidates = olmap.getLayersByName('Markers');
-
-            if (candidates.length > 0) {
-                markers = candidates[0];
-                olmap.removeLayer(markers);
-                markers.destroy();
+            var olmap = this.map.map.olMap;
+            if (this.layer) {
+                olmap.removeLayer(this.layer);
             }
-
-            candidates = olmap.getLayersByName('Accuracy');
-
-            if (candidates.length > 0) {
-                olmap.removeLayer(candidates[0]);
-                candidates[0].destroy();
-            }
-
-            return this;
         },
 
         getGPSPosition: function(callback) {
