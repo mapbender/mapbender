@@ -7,95 +7,69 @@
             empty: 'x= -<br>y= -',
             prefix: 'x= ',
             separator: '<br/>y= ',
-            suffix: ''
+            suffix: '',
+            // Undocumented / unassignable legacy option combination doing ~freeform HTML output with template replacement
+            formatoutput: null,     // some flag
+            displaystring: null     // HTML with placeholders '$lon$' and '$lat$'
         },
-        RADIX: 10,
+        control: null,
+        mbMap: null,
 
         _create: function () {
             if (!Mapbender.checkTarget("mbCoordinatesDisplay", this.options.target)) {
                 return;
             }
+            this.options.numDigits = Math.max(0, parseInt(this.options.numDigits) || 0);
+            this.options.empty = this.options.empty || '';
+            this.options.prefix = this.options.prefix || '';
+            this.options.separator = this.options.separator || ' ';
+            this.options.suffix = this.options.suffix || '';
 
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
 
         _setup: function () {
-            var self = this,
-                mbMap = $('#' + this.options.target).data('mapbenderMbMap'),
-                layers = mbMap.map.layers();
-
-            this.options.empty = this.options.empty || '';
-            this.options.prefix = this.options.prefix || '';
-            this.options.separator = this.options.separator || ' ';
-
-            layers.map(function (layer) {
-                if (layer.options.isBaseLayer) {
-                    layer.olLayer.events.register('loadend', layer.olLayer, function () {
-                        self.reset();
-                    });
-                }
-            });
-
+            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
             $(document).on('mbmapsrschanged', $.proxy(this._reset, this));
-
-            this.options.numDigits = isNaN(parseInt(this.options.numDigits, this.RADIX))
-                ? 0
-                : parseInt(this.options.numDigits, this.RADIX);
-            this.options.numDigits = this.options.numDigits < 0 ? 0 : this.options.numDigits;
-
             this._reset();
         },
 
-        _reset: function (event, srs) {
-            var self = this,
-                mbMap = $('#' + this.options.target).data('mapbenderMbMap'),
-                isdeg = mbMap.map.olMap.units === 'degrees';
+        _reset: function(event, data) {
+            var projection = (data && data.to) || this.mbMap.getModel().getCurrentProj();
 
-            srs = { projection: mbMap.map.olMap.getProjectionObject()};
-
-            if (this.crs !== null && (this.crs === srs.projection.projCode)) {
-                return;
+            var numDigits = this.options.numDigits || 0;
+            if (!projection.proj.units || projection.proj.units === 'degrees' || projection.proj.units === 'dd') {
+                numDigits += 5;
             }
-
-            if (typeof (this.options.formatoutput) !== 'undefined') {
-                mbMap.map.olMap.addControl(
-                    new OpenLayers.Control.MousePosition({
-                        id: $(this.element).attr('id'),
-                        element: $(this.element)[0],
-                        emptyString: this.options.empty,
-                        numDigits: isdeg ? 5 + this.options.numDigits : this.options.numDigits,
-                        formatOutput: function (pos) {
-                            var out = self.options.displaystring.replace("$lon$", pos.lon.toFixed(isdeg ? 5 : 0));
-                            return out.replace("$lat$", pos.lat.toFixed(isdeg ? 5 : 0));
-                        }
-                    })
-                );
-
-                this.crs = srs.projection.projCode;
+            var controlOptions = {
+                emptyString: this.options.empty,
+                numDigits: numDigits,
+                prefix: this.options.prefix,
+                separator: this.options.separator,
+                suffix: this.options.suffix
+            };
+            if (this.options.formatoutput && this.options.displaystring) {
+                // Undocumented / unassignable legacy option combination doing ~template replacement
+                var template = this.options.displaystring;
+                controlOptions.element = this.element.get(0);
+                // Monkey-patch formatOutput
+                // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Control/MousePosition.js#L208
+                controlOptions.formatOutput = function (pos) {
+                    return template
+                        .replace("$lon$", pos.lon.toFixed(numDigits))
+                        .replace("$lat$", pos.lat.toFixed(numDigits))
+                    ;
+                };
             } else {
-                var mouseContr = mbMap.map.olMap.getControl($(this.element).attr('id'));
-
-                if (mouseContr !== null) {
-                    mbMap.map.olMap.removeControl(mouseContr);
-                }
-
-                mbMap.map.olMap.addControl(
-                    new OpenLayers.Control.MousePosition({
-                        id: $(this.element).attr('id'),
-                        div: $($(this.element)[0]).find('#coordinatesdisplay')[0],
-                        emptyString: this.options.empty || '',
-                        prefix: this.options.prefix || '',
-                        separator: this.options.separator || ' ',
-                        suffix: this.options.suffix,
-                        numDigits: isdeg ? 5 + this.options.numDigits : this.options.numDigits,
-                        displayProjection: srs.projection
-                    })
-                );
-
-                this.crs = srs.projection.projCode;
+                controlOptions.element = $('#coordinatesdisplay', this.element).get(0);
             }
+            if (this.control) {
+                this.mbMap.map.olMap.removeControl(this.control);
+                this.control = null;
+            }
+            this.control = new OpenLayers.Control.MousePosition(controlOptions);
+            this.mbMap.map.olMap.addControl(this.control);
         }
     });
 
 })(jQuery);
-
