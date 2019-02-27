@@ -321,7 +321,7 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function drawFeatureLabel(ExportCanvas $canvas, $style, $text, $originXy)
     {
         // @todo: evaluate text opacity
-        $color = $this->getColor($style['fontColor'], 1, $canvas->resource);
+        $color = $this->getColor($style['fontColor'], $style['fontOpacity'], $canvas->resource);
         // @todo: evaluate style's outline opacity (key?) and 'labelOutlineWidth' from style
         $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $canvas->resource);
         $fontName = $this->getLabelFont($style);
