@@ -30,8 +30,11 @@
             this.mbMap = this.map.data('mapbenderMbMap');
             this.mapClickProxy = $.proxy(this._mapClickHandler, this);
 
-            if(this.options.gps) {
+            if (this.options.gps) {
                 this.gpsElement = $('#' + this.options.gps);
+                if (!this.gpsElement.length) {
+                    this.gpsElement = null;
+                }
             }
         },
 
