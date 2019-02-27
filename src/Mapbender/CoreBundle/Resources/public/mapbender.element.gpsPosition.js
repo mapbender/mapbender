@@ -20,6 +20,8 @@
         firstPosition: true,
         stack: [],
         layer: null,
+        internalProjection: null,
+        metricProjection: null,
 
         _create: function () {
             if (!Mapbender.checkTarget("mbGpsPosition", this.options.target)) {
@@ -34,15 +36,15 @@
         _setup: function () {
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
             this.layer = new OpenLayers.Layer.Vector();
+            this.metricProjection = new OpenLayers.Projection('EPSG:900913');
+            this.internalProjection = new OpenLayers.Projection("EPSG:4326");
             if (this.options.autoStart === true) {
                 this.activate();
             }
         },
 
         _createMarker: function (position, accuracy) {
-            var self = this,
-                olmap = this.map.map.olMap,
-                metersProj,
+            var olmap = this.map.map.olMap,
                 currentProj,
                 originInMeters,
                 accuracyPoint,
@@ -52,14 +54,13 @@
             this.layer.removeAllFeatures();
             var center = new OpenLayers.Geometry.Point(position.lon, position.lat);
             if (accuracy) {
-                metersProj = new OpenLayers.Projection('EPSG:900913');
                 currentProj = olmap.getProjectionObject();
 
                 originInMeters = new OpenLayers.LonLat(position.lon, position.lat);
-                originInMeters.transform(currentProj, metersProj);
+                originInMeters.transform(currentProj, this.metricProjection);
 
                 accuracyPoint = new OpenLayers.LonLat(originInMeters.lon + (accuracy / 2), originInMeters.lat + (accuracy / 2));
-                accuracyPoint.transform(metersProj, currentProj);
+                accuracyPoint.transform(this.metricProjection, currentProj);
 
                 radius = accuracyPoint.lon - position.lon;
                 var circleGeom = OpenLayers.Geometry.Polygon.createRegularPolygon(
@@ -112,11 +113,10 @@
             }
 
             var olmap = this.map.map.olMap,
-                metersProj = new OpenLayers.Projection("EPSG:900913"),
                 currentProj = olmap.getProjectionObject(),
-                pointInMeters = point.transform(currentProj, metersProj),
-                min = new OpenLayers.LonLat(pointInMeters.lon - (accuracy / 2), pointInMeters.lat - (accuracy / 2)).transform(metersProj, currentProj),
-                max = new OpenLayers.LonLat(pointInMeters.lon + (accuracy / 2), pointInMeters.lat + (accuracy / 2)).transform(metersProj, currentProj);
+                pointInMeters = point.transform(currentProj, this.metricProjection),
+                min = new OpenLayers.LonLat(pointInMeters.lon - (accuracy / 2), pointInMeters.lat - (accuracy / 2)).transform(this.metricProjection, currentProj),
+                max = new OpenLayers.LonLat(pointInMeters.lon + (accuracy / 2), pointInMeters.lat + (accuracy / 2)).transform(this.metricProjection, currentProj);
 
             olmap.zoomToExtent(new OpenLayers.Bounds(min.lon, min.lat, max.lon, max.lat));
         },
@@ -126,20 +126,12 @@
         },
 
         /**
-         * Is button active?
-         */
-        isActive: function() {
-            var widget = this;
-            return widget.observer !== null;
-        },
-
-        /**
          * Toggle GPS positioning
          *
          * @returns {self}
          */
         toggleTracking: function () {
-            if (this.isActive()) {
+            if (this.observer) {
                 this.deactivate();
             } else {
                 this.activate();
@@ -158,11 +150,10 @@
 
             if (navigator.geolocation) {
                 widget.observer = navigator.geolocation.watchPosition(function success(position) {
-                    var proj = new OpenLayers.Projection("EPSG:4326"),
-                        newProj = olmap.getProjectionObject(),
+                    var newProj = olmap.getProjectionObject(),
                         p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
 
-                    p.transform(proj, newProj);
+                    p.transform(this.internalProjection, newProj);
 
                     // Averaging: Building a queue...
                     widget.stack.push(p);
@@ -212,7 +203,11 @@
 
             var olmap = this.map.map.olMap;
             if (this.layer) {
-                olmap.removeLayer(this.layer);
+                try {
+                    olmap.removeLayer(this.layer);
+                } catch (e) {
+                    // unholy POI connection may cause multiple removal of layer
+                }
             }
         },
 
@@ -221,12 +216,11 @@
             var openLayerMap = widget.map.map.olMap;
 
             if (navigator.geolocation) {
-                widget.observer = navigator.geolocation.getCurrentPosition(function success(position) {
-                    var epsgProjectionCode = new OpenLayers.Projection("EPSG:4326"),
-                        newProj = openLayerMap.getProjectionObject(),
+                navigator.geolocation.getCurrentPosition(function success(position) {
+                    var newProj = openLayerMap.getProjectionObject(),
                         p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
 
-                    p.transform(epsgProjectionCode, newProj);
+                    p.transform(this.internalProjection, newProj);
 
                     /*
                     widget.stack.push(p);
