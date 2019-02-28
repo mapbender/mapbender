@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ df6d7a91a**
+* **dev-release/3.0.7 @ 223bae185**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
@@ -47,6 +47,8 @@
     - Suppress redundant group layer legend images and legend images for deactivated layers ([Issue #611](https://github.com/mapbender/mapbender/issues/611) [PR#1053](https://github.com/mapbender/mapbender/pull/1053))
     - Improved reproduction of patterned and / or semi-transparent and / or very thick lines ([PR#1080](https://github.com/mapbender/mapbender/pull/1080))
     - Fixed reproduction of 'donut'-style polygon cutouts ([PR#1080](https://github.com/mapbender/mapbender/pull/1080))
+    - Very large legend images will now be scaled to fit ([PR#1112](https://github.com/mapbender/mapbender/pull/1112))
+    - Very long legend titles now render as multiline text ([PR#1112](https://github.com/mapbender/mapbender/pull/1112))
   - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
   - Fix Legend Element display ordering certain layer nestings
   - Fix Legend Element `autoOpen` option
