@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ eb8a2a79d**
+* **dev-release/3.0.7 @ df6d7a91a**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
@@ -37,6 +37,7 @@
     - Synchronize layer and legend visibility at any scale with client-side behavior ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
     - Support exporting / printing icons on "marker layers" ([PR#1108](https://github.com/mapbender/mapbender/pull/1108))
     - Fix wrong (grey instead of white) color of GpsButton area display circle, if one makes it into an export or print
+    - Extend label reproduction to all types of features, improve reproduction accuracy ([PR#1111](https://github.com/mapbender/mapbender/pull/1111))
   - Print:
     - Selection rectangle position and scale are now restored, if still on screen, when closing / reopening the dialog ([PR#1011](https://github.com/mapbender/mapbender/pull/1101))
     - Add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
@@ -59,6 +60,7 @@
   - Fixed SearchRouter feature highlighting after zoom ([Issue #1072](https://github.com/mapbender/mapbender/issues/1072), [PR#1103](https://github.com/mapbender/mapbender/pull/1103))
   - Fixed POI initialization with non-default SRS ([Issue #458](https://github.com/mapbender/mapbender/issues/458), [PR#1109](https://github.com/mapbender/mapbender/pull/1109))
   - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
+  - Dimension submenu in LayerTree now remember its last state when closing / reopening
   - Fixed behaviour of Digitizer and similar Elements in `Buttons`-style sidepane ([PR#1097](https://github.com/mapbender/mapbender/pull/1097))
   - [Vendorspecifics] Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
   - [Vendorspecifics] Unused / ineffective form fields have been removed ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))
