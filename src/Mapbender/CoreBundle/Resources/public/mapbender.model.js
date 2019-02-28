@@ -716,6 +716,13 @@ Mapbender.Model = {
     _sourceLoadError: function(e) {
         if (e.tile.layer && e.tile.layer.getVisibility()) {
             var source = this.getSource({origId: e.tile.layer.mapbenderId});
+            if (!source) {
+                source = this.getSource({id: e.tile.layer.mapbenderId});
+            }
+            if (!source) {
+                console.error("Source load error, but source unknown", e);
+                return;
+            }
             this.mbMap.fireModelEvent({
                 name: 'sourceloaderror',
                 value: {
