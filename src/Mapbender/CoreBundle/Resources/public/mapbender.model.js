@@ -1189,7 +1189,7 @@ Mapbender.Model = {
         this.map.olMap.projection = srs.projection;
         this.map.olMap.displayProjection = srs.projection;
         this.map.olMap.units = srs.projection.proj.units;
-        this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, oldProj, srs.projection);
+        this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, srs.projection);
         $.each(self.map.olMap.layers, function(idx, layer) {
             layer.projection = srs.projection;
             layer.units = srs.projection.proj.units;
