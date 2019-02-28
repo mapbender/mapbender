@@ -5,21 +5,22 @@
             target: null
         },
         $select: null,
+        mbMap: null,
         _create: function(){
             if(!Mapbender.checkTarget("mbSrsSelector", this.options.target)){
                 return;
             }
+            this.$select = $('select', this.element);
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
         _setup: function(){
             var self = this;
-            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            var allSrs = mbMap.getAllSrs();
-            this.$select = $('select', this.element);
+            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
+            var allSrs = this.mbMap.getAllSrs();
             for(var i = 0; i < allSrs.length; i++){
                 this._addSrsOption(this.$select, allSrs[i]);
             }
-            this.$select.val(mbMap.map.olMap.getProjection());
+            this.$select.val(this.mbMap.map.olMap.getProjection());
 
             initDropdown.call(this.$select.parent());
             this.$select.on('change', $.proxy(this._switchSrs, this));
@@ -28,16 +29,17 @@
             
             this._trigger('ready');
         },
-        _switchSrs: function(evt){
-            var dest = new OpenLayers.Projection(this.getSelectedSrs());
-            if(!dest.proj.units){
-                dest.proj.units = 'degrees';
+        _switchSrs: function(evt) {
+            var newSrsCode = this.getSelectedSrs();
+            if (newSrsCode) {
+                this.mbMap.changeProjection(newSrsCode);
             }
-            this._trigger('srsSwitched', null, {projection: dest});
-            return true;
         },
         _onSrsChanged: function(event, data) {
-            $('select', this.element).val(data.to.projCode);
+            this.$select.val(data.to.projCode);
+            if (initDropdown) {
+                initDropdown.call(this.$select.parent());
+            }
         },
         _onSrsAdded: function(event, srsObj) {
             this._addSrsOption(this.$select, srsObj);

@@ -100,16 +100,18 @@
         /*
          * Changes the map's projection.
          */
-        changeProjection: function(srs){
-            if(typeof srs === "string")
-                this.model.changeProjection({
-                    projection: this.model.getProj(
-                            srs)
-                });
-            else
-                this.model.changeProjection({
-                    projection: srs
-                });
+        changeProjection: function(srs) {
+            if (typeof srs === "string") {
+                this.model.changeProjection(srs);
+            } else {
+                // legacy stuff
+                var projCode = srs.projCode || (srs.proj && srs.proj.srsCode);
+                if (!projCode) {
+                    console.error("Invalid srs argument", srs);
+                    throw new Error("Invalid srs argument");
+                }
+                this.model.changeProjection(projCode);
+            }
         },
         /**
          * Zooms the map in

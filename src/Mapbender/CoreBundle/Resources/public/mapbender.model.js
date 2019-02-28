@@ -258,9 +258,6 @@ Mapbender.Model = {
     initializeSourceLayers: function() {
         var self = this;
         // @todo 3.1.0: event binding is historically tied to initializing layers ... resolve / separate?
-        $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
-        // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
-        // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
         this.map.olMap.events.register('movestart', this, $.proxy(this._checkChanges, this));
         this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
         // Array.protoype.reverse is in-place
@@ -1177,31 +1174,34 @@ Mapbender.Model = {
     /*
      * Changes the map's projection.
      */
-    _changeProjection: function(event, srs) {
-        this.changeProjection(srs);
-    },
-    /*
-     * Changes the map's projection.
-     */
-    changeProjection: function(srs) {
+    changeProjection: function(srsCode) {
         var self = this;
+        var newProj;
+        if (srsCode.projection) {
+            console.warn("Legacy object-style argument passed to changeProjection");
+            newProj = new OpenLayers.Projection(srsCode.projection.projCode);
+        } else {
+            newProj = new OpenLayers.Projection(srsCode);
+        }
         var oldProj = this.map.olMap.getProjectionObject();
-        if (oldProj.projCode === srs.projection.projCode) {
+        if (oldProj.projCode === newProj.projCode) {
             return;
         }
         for(var i = 0; i < this.sourceTree.length; i++) {
-            Mapbender.source[this.sourceTree[i].type].changeProjection(this.sourceTree[i], srs.projection);
+            var source = this.sourceTree[i];
+            var gsHandler = this.getGeoSourceHandler(source);
+            gsHandler.changeProjection(source, newProj);
         }
-        var center = this.map.olMap.getCenter().clone().transform(oldProj, srs.projection);
-        this.map.olMap.projection = srs.projection;
-        this.map.olMap.displayProjection = srs.projection;
-        this.map.olMap.units = srs.projection.proj.units;
-        this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, srs.projection);
-        $.each(self.map.olMap.layers, function(idx, layer) {
-            layer.projection = srs.projection;
-            layer.units = srs.projection.proj.units;
+        var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
+        this.map.olMap.projection = newProj;
+        this.map.olMap.displayProjection = newProj;
+        this.map.olMap.units = newProj.proj.units;
+        this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
+        $.each(this.map.olMap.layers, function(idx, layer) {
+            layer.projection = newProj;
+            layer.units = newProj.proj.units;
             if (layer.maxExtent) {
-                layer.maxExtent = self._transformExtent(layer.maxExtent, oldProj, srs.projection);
+                layer.maxExtent = self._transformExtent(layer.maxExtent, oldProj, newProj);
             }
             layer.initResolutions();
         });
@@ -1209,9 +1209,9 @@ Mapbender.Model = {
         this.mbMap.fireModelEvent({
             name: 'srschanged',
             value: {
-                projection: srs.projection,
+                projection: newProj,
                 from: oldProj,
-                to: srs.projection
+                to: newProj
             }
         });
     },
