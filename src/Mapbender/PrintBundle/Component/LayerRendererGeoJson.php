@@ -252,7 +252,7 @@ class LayerRendererGeoJson extends LayerRenderer
         $p[0] = round($p[0]);
         $p[1] = round($p[1]);
 
-        if (isset($style['label'])) {
+        if (isset($style['label']) && $style['fontOpacity'] > 0) {
             // offset text to the right of the point
             $textXy = array(
                 $p[0] + $resizeFactor * 1.5 * $style['pointRadius'],
@@ -321,7 +321,7 @@ class LayerRendererGeoJson extends LayerRenderer
     protected function drawFeatureLabel(ExportCanvas $canvas, $style, $text, $originXy)
     {
         // @todo: evaluate text opacity
-        $color = $this->getColor($style['fontColor'], $style['fontOpacity'], $canvas->resource);
+        $color = $this->getColor($style['fontColor'], 1, $canvas->resource);
         // @todo: evaluate style's outline opacity (key?) and 'labelOutlineWidth' from style
         $bgcolor = $this->getColor($style['labelOutlineColor'], 1, $canvas->resource);
         $fontName = $this->getLabelFont($style);
