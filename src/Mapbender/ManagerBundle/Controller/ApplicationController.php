@@ -729,25 +729,6 @@ class ApplicationController extends WelcomeController
     }
 
     /**
-     * Collect available elements
-     */
-    private function getElementList()
-    {
-        $available_elements = array();
-        /** @var Mapbender $mapbender */
-        $mapbender = $this->getMapbender();
-        foreach ($mapbender->getElements() as $elementClassName) {
-            $available_elements[$elementClassName] = array(
-                'title' => $elementClassName::getClassTitle(),
-                'description' => $elementClassName::getClassDescription(),
-                'tags' => $elementClassName::getClassTags());
-        }
-        asort($available_elements);
-
-        return $available_elements;
-    }
-
-    /**
      * Merge application, form and template default properties
      *
      * @param Application $application
@@ -853,7 +834,6 @@ class ApplicationController extends WelcomeController
             'aclManager'          => $this->get("fom.acl.manager"),
             'regions'             => $templateClass::getRegions(),
             'slug'                => $slug,
-            'available_elements'  => $this->getElementList(),
             'sources'             => $sources,
             'form'                => $form->createView(),
             'form_name'           => $form->getName(),

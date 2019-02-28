@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Extension;
 
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
 
 /**
@@ -9,7 +10,18 @@ use Mapbender\CoreBundle\Entity\Element;
  */
 class ElementExtension extends \Twig_Extension
 {
-    
+
+    /** @var ElementInventoryService */
+    protected $inventoryService;
+
+    /**
+     * @param ElementInventoryService $inventoryService
+     */
+    public function __construct(ElementInventoryService $inventoryService)
+    {
+        $this->inventoryService = $inventoryService;
+    }
+
     /**
      * @inheritdoc
      */
@@ -35,9 +47,10 @@ class ElementExtension extends \Twig_Extension
      */
     public function element_class_title($element)
     {
-        $class = $element->getClass();
-        if(class_exists($class)) {
-            return $class::getClassTitle();
+        $initialClass = $element->getClass();
+        $adjustedClass = $this->inventoryService->getAdjustedElementClassName($initialClass);
+        if (class_exists($adjustedClass)) {
+            return $adjustedClass::getClassTitle();
         }
     }
 }
