@@ -433,8 +433,8 @@ Mapbender.Util.Url = function(urlString){
     /**
      * Gets a GET parameter value from a giving parameter name.
      * @param {String} name parameter name
-     * @param {Boolean} ignoreCase
-     * @returns parameter value or null
+     * @param {Boolean} [ignoreCase]
+     * @returns {String|null}
      */
     this.getParameter = function(name, ignoreCase){
         for(var key in self.parameters) {
