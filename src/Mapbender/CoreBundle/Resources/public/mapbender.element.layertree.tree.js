@@ -658,9 +658,9 @@
         },
         currentMenu: null,
         closeMenu: function(menu) {
-            //menu.find('.layer-zoom').off('click');
-            //menu.find('.layer-metadata').off('click');
-            menu.off('click').remove();
+            var $menu = menu || this.currentMenu;
+            $menu.off('click').remove();
+            this.currentMenu = null;
             return false;
         },
         _toggleMenu: function(e) {
@@ -673,17 +673,10 @@
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
                     sourceId));
                 var exitButton = menu.find('.exit-button');
-                var previousMenu = self.currentMenu;
-
-                if (self.currentMenu === menu) {
-                    return;
+                if (self.currentMenu) {
+                    self.closeMenu(self.currentMenu);
                 }
-
                 self.currentMenu = menu;
-
-                if (previousMenu) {
-                    self.closeMenu(previousMenu);
-                }
 
                 exitButton.on('click', function(e) {
                     self.closeMenu(menu);
@@ -745,62 +738,8 @@
                 var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
                 if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
                     && source.configuration.children[0].options.id === layerId && dims.length > 0) {
+                    self._initDimensionsMenu($element, menu, dims, source);
                     atLeastOne = true;
-                    var lastItem = $('.layer-dimension-checkbox', menu).prev();
-                    var dimCheckbox = $('.layer-dimension-checkbox', menu).remove();
-                    var dimTitle = $('.layer-dimension-title', menu).remove();
-                    var dimBar = $('.layer-dimension-bar', menu).remove();
-                    var dimTextfield = $('.layer-dimension-textfield', menu).remove();
-                    $.each(dims, function(idx, item) {
-                        var chkbox = dimCheckbox.clone();
-                        var title = dimTitle.clone();
-                        lastItem.after(chkbox);
-                        var inpchkbox = chkbox.find('.checkbox');
-                        inpchkbox.data('dimension', item);
-                        inpchkbox.on('change', function(e) {
-                            self._callDimension(source, $(e.target));
-                        });
-                        initCheckbox.call(inpchkbox);
-                        title.attr('title', title.attr('title') + ' ' + item.name);
-                        title.attr('id', title.attr('id') + item.name);
-                        chkbox.after(title);
-                        if (item.type === 'single') {
-                            var textf = dimTextfield.clone();
-                            title.after(textf);
-                            textf.val(item.extent);
-                            inpchkbox.attr('data-value', item.extent);
-                            lastItem = textf;
-                        } else if (item.type === 'multiple' || item.type === 'interval') {
-                            var bar = dimBar.clone();
-                            title.after(bar);
-                            bar.removeClass('layer-dimension-bar');
-                            bar.attr('id', bar.attr('id') + item.name);
-                            bar.find('.layer-dimension-handle').removeClass('layer-dimension-handle').
-                                addClass('layer-dimension-' + item.name + '-handle').attr('unselectable', 'on');
-                            lastItem = bar;
-                            var dimHandler = Mapbender.Dimension(item);
-                            var label = $('#layer-dimension-value-' + item.name, menu);
-                            new Dragdealer('layer-dimension-' + item.name, {
-                                x: dimHandler.partFromValue(dimHandler.getDefault()),
-                                horizontal: true,
-                                vertical: false,
-                                speed: 1,
-                                steps: dimHandler.getStepsNum(),
-                                handleClass: 'layer-dimension-' + item.name + '-handle',
-                                callback: function(x, y) {
-                                    self._callDimension(source, inpchkbox);
-                                },
-                                animationCallback: function(x, y) {
-                                    var value = dimHandler.valueFromPart(x);
-                                    label.text(value);
-                                    inpchkbox.attr('data-value', value);
-                                }
-                            });
-                        } else {
-                            Mapbender.error("Source dimension " + item.type + " is not supported.");
-                            return;
-                        }
-                    });
                 } else {
                     $('.layer-dimension-checkbox', menu).remove();
                     $('.layer-dimension-title', menu).remove();
@@ -818,7 +757,6 @@
             var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
             if ($('#layer-menu').length !== 0) {
                 var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
-                //removeMenu($('#layer-menu'));
                 if (layerIdMenu !== currentLayerId) {
                     createMenu($btnMenu, currentSourceId, currentLayerId);
                 }
@@ -826,6 +764,79 @@
                 createMenu($btnMenu, currentSourceId, currentLayerId);
             }
             return false;
+        },
+        _initDimensionsMenu: function($element, menu, dims, source) {
+            var self = this;
+            var lastItem = $('.layer-dimension-checkbox', menu).prev();
+            var dimCheckbox = $('.layer-dimension-checkbox', menu).remove();
+            var dimTitle = $('.layer-dimension-title', menu).remove();
+            var dimBar = $('.layer-dimension-bar', menu).remove();
+            var dimTextfield = $('.layer-dimension-textfield', menu).remove();
+            $.each(dims, function(idx, item) {
+                var dimData = $element.data('dimensions') || {};
+                var dimDataKey = source.id + '~' + idx;
+                dimData[dimDataKey] = dimData[dimDataKey] || {
+                    checked: false
+                };
+                var updateData = function(props) {
+                    $.extend(dimData[dimDataKey], props);
+                    var ourData = {};
+                    ourData[dimDataKey] = dimData[dimDataKey];
+                    var mergedData = $.extend($element.data('dimensions') || {}, ourData);
+                    $element.data('dimensions', mergedData);
+                };
+                var chkbox = dimCheckbox.clone();
+                var title = dimTitle.clone();
+                lastItem.after(chkbox);
+                var inpchkbox = chkbox.find('.checkbox');
+                inpchkbox.data('dimension', item);
+                inpchkbox.prop('checked', dimData[dimDataKey].checked);
+                inpchkbox.on('change', function(e) {
+                    updateData({checked: $(this).prop('checked')});
+                    self._callDimension(source, $(e.target));
+                });
+                initCheckbox.call(inpchkbox);
+                title.attr('title', title.attr('title') + ' ' + item.name);
+                title.attr('id', title.attr('id') + item.name);
+                chkbox.after(title);
+                if (item.type === 'single') {
+                    var textf = dimTextfield.clone();
+                    title.after(textf);
+                    textf.val(item.extent);
+                    inpchkbox.attr('data-value', dimData.value || item.extent);
+                    updateData({value: dimData.value || item.extent});
+                    lastItem = textf;
+                } else if (item.type === 'multiple' || item.type === 'interval') {
+                    var bar = dimBar.clone();
+                    title.after(bar);
+                    bar.removeClass('layer-dimension-bar');
+                    bar.attr('id', bar.attr('id') + item.name);
+                    bar.find('.layer-dimension-handle').removeClass('layer-dimension-handle').
+                        addClass('layer-dimension-' + item.name + '-handle').attr('unselectable', 'on');
+                    lastItem = bar;
+                    var dimHandler = Mapbender.Dimension(item);
+                    var label = $('#layer-dimension-value-' + item.name, menu);
+                    new Dragdealer('layer-dimension-' + item.name, {
+                        x: dimHandler.partFromValue(dimData[dimDataKey].value || dimHandler.getDefault()),
+                        horizontal: true,
+                        vertical: false,
+                        speed: 1,
+                        steps: dimHandler.getStepsNum(),
+                        handleClass: 'layer-dimension-' + item.name + '-handle',
+                        callback: function(x, y) {
+                            self._callDimension(source, inpchkbox);
+                        },
+                        animationCallback: function(x, y) {
+                            var value = dimHandler.valueFromPart(x);
+                            label.text(value);
+                            updateData({value: value});
+                            inpchkbox.attr('data-value', value);
+                        }
+                    });
+                } else {
+                    Mapbender.error("Source dimension " + item.type + " is not supported.");
+                }
+            });
         },
         _callDimension: function(source, chkbox) {
             var dimension = chkbox.data('dimension');
