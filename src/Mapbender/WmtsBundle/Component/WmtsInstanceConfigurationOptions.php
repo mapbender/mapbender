@@ -109,7 +109,7 @@ class WmtsInstanceConfigurationOptions extends InstanceConfigurationOptions
     /**
      * @inheritdoc
      */
-    public static function fromArray($options)
+    public static function fromArray($options, $strict = true)
     {
         $ico = null;
         if ($options && is_array($options)) {

@@ -190,7 +190,7 @@ class WmtsInstanceConfiguration extends InstanceConfiguration
     /**
      * @inheritdoc
      */
-    public static function fromArray($options)
+    public static function fromArray($options, $stict = true)
     {
         throw new \Exception('not implemented yet.');
         $ic = null;

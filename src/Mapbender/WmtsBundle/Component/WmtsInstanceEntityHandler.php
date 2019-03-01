@@ -21,6 +21,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Description of WmtsSourceHandler
+ * @property WmtsInstance $entity
  *
  * @author Paul Schmidt
  */
@@ -42,9 +43,7 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function configure(array $configuration = array())
     {
-        /** @var WmtsInstance $sourceInstance */
-        $sourceInstance = $this->getEntity();
-        return $sourceInstance;
+        return $this->entity;
     }
 
     /**
@@ -66,7 +65,7 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
         foreach ($source->getLayers() as $layer) {
             $instLayer = new WmtsInstanceLayer();
             self::createHandler($this->container, $instLayer)->create($this->entity, $layer);
-            if (count($instLayer->getInfoformat()) > 0) {
+            if ($instLayer->getInfoformat()) {
                 $allowInfo = true;
             }
         }
@@ -75,10 +74,10 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
 
         $num = 0;
         foreach ($this->entity->getLayerset()->getInstances() as $instance) {
+            $instance->setWeight($num);
             $instHandler = self::createHandler($this->container, $instance);
-            $instHandler->getEntity()->setWeight($num);
             $instHandler->generateConfiguration();
-            $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
+            $this->container->get('doctrine')->getManager()->persist($instance);
             $this->container->get('doctrine')->getManager()->flush();
             $num++;
         }

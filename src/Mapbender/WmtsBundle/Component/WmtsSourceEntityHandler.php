@@ -64,19 +64,19 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
         $instance->setLayerset($layerset);
         $instanceHandler = self::createHandler($this->container, $instance);
         $instanceHandler->create();
-        if ($instanceHandler->getEntity()->getLayerset()) {
+        if ($instance->getLayerset()) {
             $num = 0;
-            foreach ($instanceHandler->getEntity()->getLayerset()->getInstances() as $instanceAtLayerset) {
+            foreach ($instance->getLayerset()->getInstances() as $instanceAtLayerset) {
                 $instHandler = self::createHandler($this->container, $instanceAtLayerset);
-                $instHandler->getEntity()->setWeight($num);
+                $instanceAtLayerset->setWeight($num);
                 $instHandler->generateConfiguration();
                 if ($persist) {
-                    $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
+                    $this->container->get('doctrine')->getManager()->persist($instanceAtLayerset);
                 }
                 $num++;
             }
         }
-        return $instanceHandler->getEntity();
+        return $instance;
     }
 
     /**
