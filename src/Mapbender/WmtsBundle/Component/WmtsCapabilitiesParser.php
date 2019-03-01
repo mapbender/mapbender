@@ -71,6 +71,7 @@ abstract class WmtsCapabilitiesParser
 
     /**
      * Parses the capabilities document
+     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
      */
     abstract public function parse();
 
@@ -83,6 +84,7 @@ abstract class WmtsCapabilitiesParser
      * @throws XmlParseException if a GetCapabilities xml is not valid
      * @throws WmtsException if an service exception
      * @throws NotSupportedVersionException if a service version is not supported
+     * @throws NoWmtsDocument
      */
     public static function createDocument($data, $validate = false)
     {
@@ -163,7 +165,7 @@ abstract class WmtsCapabilitiesParser
      * Gets a capabilities parser
      *
      * @param \DOMDocument $doc the GetCapabilities document
-     * @return WmtsCapabilitiesParser_1_0_0 a capabilities parser
+     * @return static
      * @throws NotSupportedVersionException if a service version is not supported
      */
     public static function getParser(\DOMDocument $doc)

@@ -114,7 +114,7 @@ class TmsCapabilitiesParser100
      * Gets a capabilities parser
      *
      * @param \DOMDocument $doc the GetCapabilities document
-     * @return WmtsCapabilitiesParser_1_0_0 a capabilities parser
+     * @return static
      * @throws NotSupportedVersionException if a service version is not supported
      */
     public static function getParser($proxy_config, \DOMDocument $doc)
