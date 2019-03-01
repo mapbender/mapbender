@@ -101,7 +101,7 @@ class RepositoryController extends Controller
 
         $form      = $this->get("form.factory")->create(new WmtsSourceSimpleType(), $wmtssource_req);
         $form->bind($request);
-        $onlyvalid = $form->get('onlyvalid')->getData();
+        $onlyvalid = false;
         if ($form->isValid()) {
             $purl = parse_url($wmtssource_req->getOriginUrl());
             if (!isset($purl['scheme']) || !isset($purl['host'])) {

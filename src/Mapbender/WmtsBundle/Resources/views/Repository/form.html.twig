@@ -1,6 +1,4 @@
 <form action="{{path('mapbender_manager_repository_create', {'managertype': constant('Mapbender\\CoreBundle\\Entity\\Source::TYPE_WMTS')|lower})}}" method="post" novalidate="novalidate">
-  {{ form_widget(form.onlyvalid) }}<label for="{{form.onlyvalid.vars['id']}}" class="labelCheck">{{"mb.wmts.wmtsloader.repo.form.label.onlyvalid"|trans}}</label>
-  <div class="clearContainer"></div>
   <label class="left labelInput" for="{{ form.originUrl.vars['id'] }}">{{"mb.wmts.wmtsloader.repo.form.label.serviceurl" | trans}}</label>
   {{ form_widget(form.originUrl) }}
   <div class="clearContainer"></div>
