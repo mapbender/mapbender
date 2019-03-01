@@ -1,6 +1,6 @@
 <?php
 
-namespace Mapbender\WmtsBundle\Entity;
+namespace Mapbender\WmtsBundle\Component;
 
 /**
  * TileMatrix class describes a particular tile matrix.
@@ -105,7 +105,7 @@ class TileMatrix
     /**
      * Set resoulution
      * @param string $href
-     * @return \Mapbender\WmtsBundle\Entity\TileMatrix
+     * @return \Mapbender\WmtsBundle\Component\TileMatrix
      */
     public function setHref($href)
     {

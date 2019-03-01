@@ -7,7 +7,6 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\WmtsBundle\Component\Exception\WmtsException;
-use Mapbender\WmtsBundle\Entity\TileMatrix;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
@@ -259,7 +258,7 @@ class TmsCapabilitiesParser100
         $layer->addFormat($format);
 
 
-        $resourceUrl = new \Mapbender\WmtsBundle\Entity\UrlTemplateType();
+        $resourceUrl = new UrlTemplateType();
         $layer->addResourceUrl(
             $resourceUrl
                 ->setFormat($format)
@@ -267,7 +266,7 @@ class TmsCapabilitiesParser100
                 ->setTemplate($url)
         );
 
-        $tmsl = new \Mapbender\WmtsBundle\Entity\TileMatrixSetLink();
+        $tmsl = new TileMatrixSetLink();
         $tmsl->setTileMatrixSet($layerIdent);
         $layer->addTilematrixSetlinks($tmsl);
 

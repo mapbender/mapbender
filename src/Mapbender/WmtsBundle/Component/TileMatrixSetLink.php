@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-namespace Mapbender\WmtsBundle\Entity;
+namespace Mapbender\WmtsBundle\Component;
 
 /**
  * Description of TileMatrixSetLink
@@ -48,7 +48,7 @@ class TileMatrixSetLink
     /**
      * Sets tileMatrixSet
      * @param string $tileMatrixSet
-     * @return \Mapbender\WmtsBundle\Entity\TileMatrixSetLink
+     * @return \Mapbender\WmtsBundle\Component\TileMatrixSetLink
      */
     public function setTileMatrixSet($tileMatrixSet)
     {
@@ -59,7 +59,7 @@ class TileMatrixSetLink
     /**
      * Sets tileMatrixSetLimits.
      * @param integer $tileMatrixSetLimits
-     * @return \Mapbender\WmtsBundle\Entity\TileMatrixSetLink
+     * @return \Mapbender\WmtsBundle\Component\TileMatrixSetLink
      */
     public function setTileMatrixSetLimits($tileMatrixSetLimits)
     {

@@ -12,7 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceItem;
-use Mapbender\WmtsBundle\Entity\Style;
+use Mapbender\WmtsBundle\Component\Style;
+use Mapbender\WmtsBundle\Component\TileMatrixSetLink;
+use Mapbender\WmtsBundle\Component\UrlTemplateType;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
@@ -381,7 +383,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     /**
      *Gets tilematrixSetlinks.
-     * @return \Mapbender\WmtsBundle\Entity\TileMatrixSetLink[]
+     * @return \Mapbender\WmtsBundle\Component\TileMatrixSetLink[]
      */
     public function getTilematrixSetlinks()
     {
@@ -390,7 +392,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     /**
      * Sets tilematrixSetlinks
-     * @param \Mapbender\WmtsBundle\Entity\TileMatrixSetLink $tilematrixSetlinks
+     * @param \Mapbender\WmtsBundle\Component\TileMatrixSetLink $tilematrixSetlinks
      * @return \Mapbender\WmtsBundle\Entity\WmtsLayerSource
      */
     public function setTilematrixSetlinks(array $tilematrixSetlinks = array())
@@ -401,7 +403,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     /**
      * Adds TileMatrixSetLink.
-     * @param \Mapbender\WmtsBundle\Entity\TileMatrixSetLink $tilematrixSetlinks
+     * @param \Mapbender\WmtsBundle\Component\TileMatrixSetLink $tilematrixSetlinks
      * @return \Mapbender\WmtsBundle\Entity\WmtsLayerSource
      */
     public function addTilematrixSetlinks(TileMatrixSetLink $tilematrixSetlinks)

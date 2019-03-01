@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-namespace Mapbender\WmtsBundle\Entity;
+namespace Mapbender\WmtsBundle\Component;
 
 /**
  * The UrlTemplateType describes:
@@ -66,7 +66,7 @@ class UrlTemplateType
     /**
      * Sets format
      * @param string $format
-     * @return \Mapbender\WmtsBundle\Entity\UrlTemplateType
+     * @return \Mapbender\WmtsBundle\Component\UrlTemplateType
      */
     public function setFormat($format)
     {
@@ -77,7 +77,7 @@ class UrlTemplateType
     /**
      * Sets resourceType
      * @param type $resourceType
-     * @return \Mapbender\WmtsBundle\Entity\UrlTemplateType
+     * @return \Mapbender\WmtsBundle\Component\UrlTemplateType
      */
     public function setResourceType($resourceType)
     {
@@ -88,7 +88,7 @@ class UrlTemplateType
     /**
      * Sets template
      * @param type $template
-     * @return \Mapbender\WmtsBundle\Entity\UrlTemplateType
+     * @return \Mapbender\WmtsBundle\Component\UrlTemplateType
      */
     public function setTemplate($template)
     {

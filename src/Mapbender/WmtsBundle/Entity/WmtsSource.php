@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\WmtsBundle\Component\RequestInformation;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**

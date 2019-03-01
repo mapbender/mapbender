@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-namespace Mapbender\WmtsBundle\Entity;
+namespace Mapbender\WmtsBundle\Component;
 
 /**
  * Description of Style
@@ -75,7 +75,7 @@ class Style
     /**
      * Set title
      * @param string $title
-     * @return \Mapbender\WmtsBundle\Entity\Style
+     * @return \Mapbender\WmtsBundle\Component\Style
      */
     public function setTitle($title)
     {
@@ -95,7 +95,7 @@ class Style
     /**
      * Set abstrack
      * @param string $abstract
-     * @return \Mapbender\WmtsBundle\Entity\Style
+     * @return \Mapbender\WmtsBundle\Component\Style
      */
     public function setAbstract($abstract)
     {
@@ -115,7 +115,7 @@ class Style
     /**
      * Set identifier
      * @param string $identifier
-     * @return \Mapbender\WmtsBundle\Entity\Style
+     * @return \Mapbender\WmtsBundle\Component\Style
      */
     public function setIdentifier($identifier)
     {

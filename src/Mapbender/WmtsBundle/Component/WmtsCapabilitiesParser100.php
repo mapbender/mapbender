@@ -6,14 +6,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\WmtsBundle\Entity\LegendUrl;
-use Mapbender\WmtsBundle\Entity\Style;
 use Mapbender\WmtsBundle\Entity\Theme;
-use Mapbender\WmtsBundle\Entity\TileMatrix;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
-use Mapbender\WmtsBundle\Entity\RequestInformation;
 
 /**
  * Class that Parses WMTS 1.1.0 GetCapabilies Document
@@ -305,7 +302,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
 
         $tmslsEls = $this->xpath->query("./wmts:TileMatrixSetLink", $contextElm);
         foreach ($tmslsEls as $tmslEl) {
-            $tmsl = new \Mapbender\WmtsBundle\Entity\TileMatrixSetLink();
+            $tmsl = new TileMatrixSetLink();
             $tmsl->setTileMatrixSet($this->getValue("./wmts:TileMatrixSet/text()", $tmslEl))
                 ->setTileMatrixSetLimits($this->getValue("./wmts:TileMatrixSetLimits/text()", $tmslEl));
             $wmtslayer->addTilematrixSetlinks($tmsl);
@@ -313,7 +310,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
 
         $resourceUrlElms = $this->xpath->query("./wmts:ResourceURL", $contextElm);
         foreach ($resourceUrlElms as $resourceUrlElm) {
-            $resourceUrl = new \Mapbender\WmtsBundle\Entity\UrlTemplateType();
+            $resourceUrl = new UrlTemplateType();
             $wmtslayer->addResourceUrl(
                 $resourceUrl
                     ->setFormat($this->getValue("./@format", $resourceUrlElm))

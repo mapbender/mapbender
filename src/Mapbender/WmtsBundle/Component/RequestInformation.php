@@ -1,6 +1,6 @@
 <?php
 
-namespace Mapbender\WmtsBundle\Entity;
+namespace Mapbender\WmtsBundle\Component;
 
 /**
  * RequestInformation class.
