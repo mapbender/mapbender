@@ -1,20 +1,7 @@
 Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler },{
-    'private object defaultOptions': {
-        
-    },
     'private string layerNameIdent': 'identifier',
-    'public function getDefaultOptions': function() {
-        return this.defaultOptions();
-    },
-    'public function setDefaultOptions': function() {
-        return this.defaultOptions();
-    },
     'public function create': function(sourceOpts) {
         var rootLayer = sourceOpts.configuration.children[0];
-//        if(sourceDef.configuration.status !== 'ok'){ //deactivate corrupte or unreachable sources
-//            rootLayer.options.treeOptions.selected = false;
-//            rootLayer.options.treeOptions.allow.selected = false;
-//        }
         function _setProperties(layer, parent, id, num, proxy){
             /* set unic id for a layer */
             layer.options.origId = layer.options.id;
@@ -46,12 +33,10 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
                     break;
                 }
             }
-            // TODO disable layer 
         }
         rootLayer['children'] = [layer];
-        console.log("What is that thing now", layer, sourceOpts, proj);
         var layerOptions = this.createLayerOptions(layer, sourceOpts.configuration.tilematrixsets, proj,
-            sourceOpts.configuration.options.proxy, null);
+            sourceOpts.configuration.options.proxy);
         var mqLayerDef = {
             type: 'wmts',
             isBaseLayer: false,
@@ -59,7 +44,7 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             visible: sourceOpts.configuration.options.visible,
             attribution: sourceOpts.configuration.options.attribution
         };
-        $.extend(layerOptions, mqLayerDef, this.defaultOptions);
+        $.extend(layerOptions, mqLayerDef);
         return layerOptions;
     },
     'public function postCreate': function(source, mqLayer) {
@@ -151,81 +136,6 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
         var epsgCode = urnArray[urnArray.length-1];
         return "EPSG:" + epsgCode;
     },
-    'public function onLoadStart': function(source) {
-        this.enable(source, 'loadError');
-    },
-    'public function onLoadError': function(imgEl, sourceId, projection, callback) {
-        this['super']('onLoadError', imgEl, sourceId, projection, callback);
-//        mql.olLayer.applyBackBuffer();
-//        var source = Mapbender.Model.getSource({id: sourceId});
-//        this.disable(source, 'loadError');
-    },
-    'private function enable': function(source, tagname) {
-        var sourceIdx = {
-            id: source.id
-        };
-        var options = {
-            layers: {}
-        };
-        if (source.configuration.children[0][tagname]) {
-            options.layers[source.configuration.children[0].options.id] = {
-                options: {
-                    treeOptions: {
-                        selected: source.configuration.children[0][tagname].selected,
-                        allow: {
-                            selected: source.configuration.children[0][tagname].allow.selected
-                        }
-                    }
-                }
-            };
-            delete(source.configuration.children[0][tagname]);
-            var toChangeOptions = {
-                change: {
-                    options: {
-                        children: options.layers,
-                        type: "selected"
-                    },
-                    sourceIdx: {
-                        id: source.id
-                    }
-                }
-            };
-            Mapbender.Model.changeSource(toChangeOptions);
-        }
-    },
-    'private function disable': function(source, tagname) {
-        source.configuration.children[0][tagname] = {
-            selected: source.configuration.children[0].options.treeOptions.selected,
-            allow: {
-                selected: source.configuration.children[0].options.treeOptions.allow.selected
-            }
-        };
-        var options = {
-            layers: {}
-        };
-        options.layers[source.configuration.children[0].options.id] = {
-            options: {
-                treeOptions: {
-                    selected: false,
-                    allow: {
-                        selected: false
-                    }
-                }
-            }
-        };
-        var toChangeOptions = {
-            change: {
-                options: {
-                    children: options.layers,
-                    type: "selected"
-                },
-                sourceIdx: {
-                    id: source.id
-                }
-            }
-        };
-        Mapbender.Model.changeSource(toChangeOptions);
-    },
     'public function featureInfoUrl': function(mqLayer, x, y) {
         if(!mqLayer.visible() || mqLayer.olLayer.queryLayers.length === 0) {
             return false;
@@ -257,9 +167,6 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
         requestUrl += (/\?/.test(mqLayer.options.url) ? '&' : '?') + params;
         return requestUrl;
     },
-    'public function createSourceDefinitions': function(xml, options) {
-        // TODO 
-    },
     'public function getPrintConfig': function(layer, bounds, scale, isProxy) {
         var source = Mapbender.Model.findSource({ollid: layer.id});
         var wmtslayer = this.findLayer(source[0], {identifier:layer.layer});
@@ -282,9 +189,6 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             source.configuration.options.proxy, olLayer);
             $.extend(olLayer, layerOptions);
             olLayer.updateMatrixProperties();
-            this.enable(source, 'nosrs');
-        } else {// deactivate layer
-            this.disable(source, 'nosrs');
         }
     }
 });

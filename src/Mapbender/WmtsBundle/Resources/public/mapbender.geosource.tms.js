@@ -5,15 +5,9 @@
 Mapbender.Geo.TmsSourceHandler = Class({
     'extends': Mapbender.Geo.SourceHandler
 }, {
-    'private object defaultOptions': {
-    },
     'private string layerNameIdent': 'identifier',
     'public function create': function(sourceOpts) {
         var rootLayer = sourceOpts.configuration.children[0];
-//        if (sourceOpts.configuration.status !== 'ok') { //deactivate corrupte or unreachable sources
-//            rootLayer.options.treeOptions.selected = false;
-//            rootLayer.options.treeOptions.allow.selected = false;
-//        }
         function _setProperties(layer, parent, id, num, proxy) {
             /* set unic id for a layer */
             layer.options.origId = layer.options.id;
@@ -55,7 +49,7 @@ Mapbender.Geo.TmsSourceHandler = Class({
             visible: sourceOpts.configuration.options.visible,
             attribution: sourceOpts.configuration.options.attribution
         };
-        $.extend(layerOptions, mqLayerDef, this.defaultOptions);
+        $.extend(layerOptions, mqLayerDef);
         return layerOptions;
     },
     'public function postCreate': function(source, mqLayer) {
@@ -88,80 +82,8 @@ Mapbender.Geo.TmsSourceHandler = Class({
         }
         return null;
     },
-    'public function onLoadStart': function(source) {
-        this.enable(source, 'loadError');
-    },
-    'public function onLoadError': function(imgEl, sourceId, projection, callback) {
-        this['super']('onLoadError', imgEl, sourceId, projection, callback);
-    },
-    'private function enable': function(source, tagname) {
-        var options = {
-            layers: {}
-        };
-        if (source.configuration.children[0][tagname]) {
-            options.layers[source.configuration.children[0].options.id] = {
-                options: {
-                    treeOptions: {
-                        selected: source.configuration.children[0][tagname].selected,
-                        allow: {
-                            selected: source.configuration.children[0][tagname].allow.selected
-                        }
-                    }
-                }
-            };
-            delete(source.configuration.children[0][tagname]);
-            var toChangeOptions = {
-                change: {
-                    options: {
-                        children: options.layers,
-                        type: "selected"
-                    },
-                    sourceIdx: {
-                        id: source.id
-                    }
-                }
-            };
-            Mapbender.Model.changeSource(toChangeOptions);
-        }
-    },
-    'private function disable': function(source, tagname) {
-        source.configuration.children[0][tagname] = {
-            selected: source.configuration.children[0].options.treeOptions.selected,
-            allow: {
-                selected: source.configuration.children[0].options.treeOptions.allow.selected
-            }
-        };
-        var options = {
-            layers: {}
-        };
-        options.layers[source.configuration.children[0].options.id] = {
-            options: {
-                treeOptions: {
-                    selected: false,
-                    allow: {
-                        selected: false
-                    }
-                }
-            }
-        };
-        var toChangeOptions = {
-            change: {
-                options: {
-                    children: options.layers,
-                    type: "selected"
-                },
-                sourceIdx: {
-                    id: source.id
-                }
-            }
-        };
-        Mapbender.Model.changeSource(toChangeOptions);
-    },
     'public function featureInfoUrl': function(mqLayer, x, y) {
 
-    },
-    'public function createSourceDefinitions': function(xml, options) {
-        // TODO ???
     },
     'public function getPrintConfig': function(layer, bounds, scale, isProxy) {
         var source = Mapbender.Model.findSource({ollid: layer.id});
@@ -181,9 +103,6 @@ Mapbender.Geo.TmsSourceHandler = Class({
             var olLayer = Mapbender.Model.getNativeLayer(source);
             var layerOptions = this.createLayerOptions(layer, source.configuration.options.proxy, olLayer);
             $.extend(olLayer, layerOptions);
-            this.enable(source, 'nosrs');
-        } else {// deactivate layer
-            this.disable(source, 'nosrs');
         }
     }
 });
