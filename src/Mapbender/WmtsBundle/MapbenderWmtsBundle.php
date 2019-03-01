@@ -3,12 +3,20 @@
 namespace Mapbender\WmtsBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Mapbender\WmtsBundle\DependencyInjection\Compiler\RegisterWmtsSourceServicePass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * MapbenderWmtsBundle
  */
 class MapbenderWmtsBundle extends MapbenderBundle
 {
+
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+        $container->addCompilerPass(new RegisterWmtsSourceServicePass());
+    }
 
     /**
      * @inheritdoc
