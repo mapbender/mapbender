@@ -124,12 +124,12 @@ class WmtsInstance extends SourceInstance
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    protected $toggle = true;
+    protected $toggle;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    protected $allowtoggle = true;
+    protected $allowtoggle;
 //
 //    /**
 //     * @ORM\Column(type="integer", options={"default" = 0})
