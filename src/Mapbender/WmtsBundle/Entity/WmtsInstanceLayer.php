@@ -2,13 +2,10 @@
 
 namespace Mapbender\WmtsBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmtsBundle\Entity\WmtsInstance;
-use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 
 /**
  * WmtsInstanceLayer class
@@ -128,7 +125,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
     /**
      * Set id
      * @param integer $id
-     * @return WmtsInstanceLayer
+     * @return $this
      */
     public function setId($id)
     {
@@ -150,7 +147,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set title
      *
      * @param string $title
-     * @return WmtsInstanceLayer
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -172,7 +169,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set format
      *
      * @param string $format
-     * @return WmtsInstance
+     * @return $this
      */
     public function setFormat($format)
     {
@@ -194,7 +191,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set infoformat
      *
      * @param string $infoformat
-     * @return WmtsInstance
+     * @return $this
      */
     public function setInfoformat($infoformat)
     {
@@ -216,7 +213,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
 //     * Set exceptionformat
 //     *
 //     * @param string $exceptionformat
-//     * @return WmtsInstance
+//     * @return $this
 //     */
 //    public function setExceptionformat($exceptionformat)
 //    {
@@ -238,7 +235,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set active
      *
      * @param boolean $active
-     * @return WmtsInstanceLayer
+     * @return $this
      */
     public function setActive($active)
     {
@@ -260,7 +257,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set allowselected
      *
      * @param boolean $allowselected
-     * @return WmtsInstanceLayer
+     * @return $this
      */
     public function setAllowselected($allowselected)
     {
@@ -282,7 +279,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set selected
      *
      * @param boolean $selected
-     * @return WmtsInstanceLayer
+     * @return $this
      */
     public function setSelected($selected)
     {
@@ -304,7 +301,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set info
      *
      * @param boolean $info
-     * @return WmtsInstanceLayer
+     * @return $this
      */
     public function setInfo($info)
     {
@@ -336,6 +333,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set toggle
      *
      * @param string $toggle
+     * @return $this
      */
     public function setToggle($toggle)
     {
@@ -347,7 +345,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set allowinfo
      *
      * @param boolean $allowinfo
-     * @return WmtsInstanceLayer
+     * @return $this
      */
     public function setAllowinfo($allowinfo)
     {
@@ -379,6 +377,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * Set allowtoggle
      *
      * @param boolean $allowtoggle
+     * @return $this
      */
     public function setAllowtoggle($allowtoggle)
     {
@@ -407,49 +406,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
 //        return $this;
 //    }
 //
-//    /**
-//     * Set minScale
-//     *
-//     * @param float $minScale
-//     * @return WmtsInstanceLayer
-//     */
-//    public function setMinScale($minScale)
-//    {
-//        $this->minScale = $minScale;
-//        return $this;
-//    }
-//
-//    /**
-//     * Get minScale
-//     *
-//     * @return float
-//     */
-//    public function getMinScale()
-//    {
-//        return $this->minScale;
-//    }
-//
-//    /**
-//     * Set maxScale
-//     *
-//     * @param float $maxScale
-//     * @return WmtsInstanceLayer
-//     */
-//    public function setMaxScale($maxScale)
-//    {
-//        $this->maxScale = $maxScale;
-//        return $this;
-//    }
-//
-//    /**
-//     * Get maxScale
-//     *
-//     * @return float
-//     */
-//    public function getMaxScale()
-//    {
-//        return $this->maxScale;
-//    }
 
     /**
      * Set style
@@ -476,7 +432,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
     /**
      * Sets a tileMatrixSetLink
      * @param string $tileMatrixSet
-     * @return \Mapbender\WmtsBundle\Entity\WmtsInstanceLayer
+     * @return $this
      */
     public function setTileMatrixSet($tileMatrixSet)
     {
@@ -493,7 +449,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
         return $this->tileMatrixSet;
     }
 
-        /**
+    /**
      * @inheritdoc
      */
     public function setSourceInstance(SourceInstance $sourceInstance = NULL)

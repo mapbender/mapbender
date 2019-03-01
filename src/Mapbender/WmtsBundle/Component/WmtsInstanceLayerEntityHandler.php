@@ -113,13 +113,15 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * Generates a configuration for layers
      *
+     * @param WmtsInstanceLayer|null $entity
      * @return array
      */
-    public function generateConfiguration()
+    public function generateConfiguration(WmtsInstanceLayer $entity = null)
     {
-        if ($this->entity->getActive() === true) {
+        $entity = $entity ?: $this->entity;
+        if ($entity->getActive() === true) {
             return array(
-                "options" => $this->getConfiguration(),
+                "options" => $this->getConfiguration($entity),
                 "state" => array(
                     "visibility" => null,
                     "info" => null,
@@ -130,70 +132,44 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     }
 
     /**
+     * @param WmtsInstanceLayer|null $entity
      * @inheritdoc
      */
-    public function getConfiguration()
+    public function getConfiguration(WmtsInstanceLayer $entity = null)
     {
-        $sourceItem      = $this->entity->getSourceItem();
+        $entity = $entity ?: $this->entity;
+        $sourceItem      = $entity->getSourceItem();
         $resourceUrl     = $sourceItem->getResourceUrl();
         $urlTemplateType = count($resourceUrl) > 0 ? $resourceUrl[0] : null;
         $configuration   = array(
-            "id" => $this->entity->getId() ? strval($this->entity->getId())
-                : strval($this->entity->getSourceInstance()->getId()),
+            "id" => $entity->getId() ? strval($entity->getId())
+                : strval($entity->getSourceInstance()->getId()),
             'url' => $urlTemplateType ? $urlTemplateType->getTemplate() : null,
             'format' => $urlTemplateType ? $urlTemplateType->getFormat() : null,
-            "title" => $this->entity->getTitle(),
-            "style" => $this->entity->getStyle(),
-            "identifier" => $this->entity->getSourceItem()->getIdentifier(),
-            "tilematrixset" => $this->entity->getTileMatrixSet(),
+            "title" => $entity->getTitle(),
+            "style" => $entity->getStyle(),
+            "identifier" => $entity->getSourceItem()->getIdentifier(),
+            "tilematrixset" => $entity->getTileMatrixSet(),
         );
 
-        $srses  = array();
-        $llbbox = $this->entity->getSourceItem()->getLatlonBounds();
-        if ($llbbox !== null) {
-            $srses[$llbbox->getSrs()] = array(
-                floatval($llbbox->getMinx()),
-                floatval($llbbox->getMiny()),
-                floatval($llbbox->getMaxx()),
-                floatval($llbbox->getMaxy())
-            );
-        }
-        if ($this->entity->getSourceItem()->getBoundingBoxes()) {
-            foreach ($this->entity->getSourceItem()->getBoundingBoxes() as $bbox) {
-                $srses = array_merge(
-                    $srses,
-                    array($bbox->getSrs() => array(
-                        floatval($bbox->getMinx()),
-                        floatval($bbox->getMiny()),
-                        floatval($bbox->getMaxx()),
-                        floatval($bbox->getMaxy())
-                        )
-                    )
-                );
-            }
+        $srses = array();
+        foreach ($sourceItem->getMergedBoundingBoxes() as $bbox) {
+            $srses[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
         $configuration['bbox']        = $srses;
-        if (count($this->entity->getSourceItem()->getStyles()) > 0) {
-            foreach ($this->entity->getSourceItem()->getStyles() as $style) {
-                if (!$this->entity->getStyle()
-                    || ($this->entity->getStyle() && $this->entity->getStyle() === $style->getIdentifier())) {
-                    if ($style->getLegendUrl()) {
-                        $configuration["legend"] = array(
-                            "url" => $style->getLegendUrl()->getHref(),
-                            "format" => $style->getLegendUrl()->getFormat());
-                    }
-                    break;
-                }
-            }
+        $legendConfig = $this->getLegendConfig($entity);
+        if ($legendConfig) {
+            $configuration["legend"] = $legendConfig;
         }
+
         $configuration["treeOptions"] = array(
-            "info" => $this->entity->getInfo(),
-            "selected" => $this->entity->getSelected(),
-            "toggle" => $this->entity->getToggle(),
+            "info" => $entity->getInfo(),
+            "selected" => $entity->getSelected(),
+            "toggle" => $entity->getToggle(),
             "allow" => array(
-                "info" => $this->entity->getAllowinfo(),
-                "selected" => $this->entity->getAllowselected(),
-                "toggle" => $this->entity->getAllowtoggle(),
+                "info" => $entity->getAllowinfo(),
+                "selected" => $entity->getAllowselected(),
+                "toggle" => $entity->getAllowtoggle(),
                 "reorder" => null,
             )
         );
@@ -218,5 +194,26 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             }
         }
         return null;
+    }
+
+    /**
+     * Return the client-facing configuration for a layer's legend
+     *
+     * @param WmtsInstanceLayer $entity
+     * @return array
+     */
+    public function getLegendConfig(WmtsInstanceLayer $entity)
+    {
+        // @todo: tunnel support
+        foreach ($entity->getSourceItem()->getStyles() as $style) {
+            if (!$entity->getStyle() || $entity->getStyle() === $style->getIdentifier()) {
+                if ($style->getLegendurl()) {
+                    return array(
+                        'url' => $style->getLegendurl()->getHref(),
+                    );
+                }
+            }
+        }
+        return array();
     }
 }

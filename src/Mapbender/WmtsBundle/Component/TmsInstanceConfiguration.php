@@ -117,10 +117,10 @@ class TmsInstanceConfiguration extends InstanceConfiguration
             );
         }
         $layersConf = array();
+        $instanceLayerHandler = new WmtsInstanceLayerEntityHandler($container, null);
         foreach ($entity->getLayers() as $layer) {
             if ($layer->getActive()) {
-                $layerHandler = new WmtsInstanceLayerEntityHandler($container, $layer);
-                $options = $layerHandler->generateConfiguration();
+                $options = $instanceLayerHandler->generateConfiguration($layer);
                 $format = $layer->getFormat();
                 $options['options']['format'] = $format;
                 $options['options']['tilematrixset'] = $tilematrixsets[$options['options']['identifier']];

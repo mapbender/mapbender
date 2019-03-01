@@ -38,10 +38,10 @@ class WmtsInstanceConfiguration extends TmsInstanceConfiguration
     public function addLayers($container, WmtsInstance $entity, $rootnode)
     {
         $layersConf = array();
+        $instanceLayerHandler = new WmtsInstanceLayerEntityHandler($container, null);
         foreach ($entity->getLayers() as $layer) {
             if ($layer->getActive()) {
-                $layerHandler = new WmtsInstanceLayerEntityHandler($container, $layer);
-                $options = $layerHandler->generateConfiguration();
+                $options = $instanceLayerHandler->generateConfiguration($layer);
                 // TODO check if layers support info
                 $layersConf[] = $options;
             }
