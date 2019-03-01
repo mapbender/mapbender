@@ -250,7 +250,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      * Add boundingBox
      *
      * @param BoundingBox $boundingBoxes
-     * @return WmsLayerSource
+     * @return $this
      */
     public function addBoundingBox(BoundingBox $boundingBoxes)
     {
@@ -262,7 +262,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      * Set boundingBoxes
      *
      * @param array $boundingBoxes
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setBoundingBoxes($boundingBoxes)
     {
@@ -273,7 +273,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     /**
      * Get boundingBoxes
      *
-     * @return array
+     * @return BoundingBox[]
      */
     public function getBoundingBoxes()
     {
@@ -446,7 +446,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     /**
      * Set resourceUrl
-     * @param array $resourceUrls
+     * @param UrlTemplateType[] $resourceUrls
      * @return \Mapbender\WmtsBundle\Entity\WmtsLayerSource
      */
     public function setResourceUrl(array $resourceUrls = array())
@@ -457,7 +457,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     /**
      * Add resourceUrl
-     * @param string $resourceUrl
+     * @param UrlTemplateType $resourceUrl
      * @return $this resourceUrl
      */
     public function addResourceUrl(UrlTemplateType $resourceUrl)
@@ -469,7 +469,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     /**
      * Get resourceUrl
      *
-     * @return array resourceUrl
+     * @return UrlTemplateType[] resourceUrl
      */
     public function getResourceUrl()
     {

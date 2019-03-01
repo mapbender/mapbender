@@ -7,6 +7,8 @@
 
 namespace Mapbender\WmtsBundle\Component;
 
+use Mapbender\WmtsBundle\Entity\LegendUrl;
+
 /**
  * Description of Style
  *
@@ -40,12 +42,11 @@ class Style
 
     /**
      *
-     * @var type
+     * @var LegendUrl|null
      */
     public $legendurl;
 
     /**
-     * Get isDefault.
      * @return boolean
      */
     public function getIsDefault()
@@ -54,8 +55,8 @@ class Style
     }
 
     /**
-     * Set isDefault.
-     * @return boolean
+     * @param boolean $isDefault
+     * @return $this
      */
     public function setIsDefault($isDefault)
     {
@@ -75,7 +76,7 @@ class Style
     /**
      * Set title
      * @param string $title
-     * @return \Mapbender\WmtsBundle\Component\Style
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -84,8 +85,7 @@ class Style
     }
 
     /**
-     * Get abstrack
-     * @return text
+     * @return string
      */
     public function getAbstract()
     {
@@ -93,9 +93,8 @@ class Style
     }
 
     /**
-     * Set abstrack
      * @param string $abstract
-     * @return \Mapbender\WmtsBundle\Component\Style
+     * @return $this
      */
     public function setAbstract($abstract)
     {
@@ -115,7 +114,7 @@ class Style
     /**
      * Set identifier
      * @param string $identifier
-     * @return \Mapbender\WmtsBundle\Component\Style
+     * @return $this
      */
     public function setIdentifier($identifier)
     {
@@ -124,6 +123,9 @@ class Style
     }
 
 
+    /**
+     * @return LegendUrl|null
+     */
     public function getLegendurl()
     {
         return $this->legendurl;

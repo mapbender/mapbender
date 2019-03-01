@@ -12,16 +12,14 @@ use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
  * Description of WmtsInstanceLayerEntityHandler
  *
- * @property WmsInstanceLayer $entity
+ * @property WmtsInstanceLayer $entity
  *
  * @author Paul Schmidt
  */
