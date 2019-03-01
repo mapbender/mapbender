@@ -35,7 +35,7 @@ class WmtsInstanceConfiguration extends TmsInstanceConfiguration
         return $this;
     }
 
-    public function addLayers($container, WmtsInstance $entity, $rootnode)
+    public function addLayers($container, WmtsInstance $entity)
     {
         $layersConf = array();
         $instanceLayerHandler = new WmtsInstanceLayerEntityHandler($container, null);
@@ -47,7 +47,6 @@ class WmtsInstanceConfiguration extends TmsInstanceConfiguration
             }
         }
         $this->setLayers($layersConf);
-        $this->addChild($rootnode);
         foreach ($entity->getSource()->getTilematrixsets() as $tilematrixset) {
             $tilematrices = $tilematrixset->getTilematrices();
             $origin = $tilematrices[0]->getTopleftcorner();
@@ -73,6 +72,7 @@ class WmtsInstanceConfiguration extends TmsInstanceConfiguration
                     'matrixSize' =>  array($tilematrix->getMatrixwidth(), $tilematrix->getMatrixheight())
                 );
             }
+
             // clean matrix attributes if matrices have a selfsame value
             if (!$multiTopLeft || !$multiTileSize) {
                 foreach ($tilematricesArr as &$tmatrix) {

@@ -1,9 +1,4 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 namespace Mapbender\WmtsBundle\Component;
 
@@ -31,7 +26,7 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      * @param WmtsLayerSource $wmtslayersource
      * @inheritdoc
      */
-    public function create(SourceInstance $instance, SourceItem $wmtslayersource, $num = 0, $persist = true)
+    public function create(SourceInstance $instance, SourceItem $wmtslayersource, $num = 0)
     {
         $instanceLayer = $this->entity;
 
@@ -45,11 +40,6 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $styles = $wmtslayersource->getStyles();
         $instanceLayer->setStyle($styles[0]->identifier);
         $instance->addLayer($instanceLayer);
-
-        if ($persist) {
-            $this->container->get('doctrine')->getManager()->persist($instanceLayer);
-            $this->container->get('doctrine')->getManager()->flush();
-        }
     }
 
     /**
@@ -79,8 +69,7 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 //            } else {
 //                self::createHandler($this->container, new WmsInstanceLayer())->create(
 //                    $instance,
-//                    $wmslayersourceSub,
-//                    $wmslayersourceSub->getPriority()
+//                    $wmslayersourceSub
 //                );
 //            }
 //        }
@@ -174,26 +163,6 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             )
         );
         return $configuration;
-    }
-
-    /**
-     * Finds an instance layer, that is linked with a given wms source layer.
-     *
-     * @param WmtsLayerSource $wmtssourcelayer wms layer source
-     * @param WmtsInstanceLayer[] $instancelayerList
-     * @return WmtsInstanceLayer | null the instance layer, otherwise null
-     */
-    public function findLayer(WmtsLayerSource $wmtssourcelayer, $instancelayerList)
-    {
-        foreach ($instancelayerList as $instancelayer) {
-            // @todo: push getId method down into SourceInstanceItem class
-            /** @var WmtsLayerSource $layerSource */
-            $layerSource = $instancelayer->getSourceItem();
-            if ($wmtssourcelayer->getId() === $layerSource->getId()) {
-                return $instancelayer;
-            }
-        }
-        return null;
     }
 
     /**

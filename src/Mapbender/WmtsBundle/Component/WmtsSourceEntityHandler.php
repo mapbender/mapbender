@@ -11,8 +11,6 @@ use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Utils\EntityUtil;
-use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
@@ -30,9 +28,8 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
     /**
      * @inheritdoc
      */
-    public function create($persist = true)
+    public function create()
     {
-        
     }
 
     /**
@@ -64,14 +61,14 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
      */
     public function createInstance(Layerset $layerset = NULL, $persist = true)
     {
-        $instance        = new WmtsInstance();
+        $instance = new WmtsInstance();
         $instance->setSource($this->entity);
-        $instance->setLayerset($layerset);
-        $instanceHandler = self::createHandler($this->container, $instance);
+        $instanceHandler = new WmtsInstanceEntityHandler($this->container, $instance);
         $instanceHandler->create();
-        if ($instance->getLayerset()) {
+        if ($layerset) {
+            $instance->setLayerset($layerset);
             $num = 0;
-            foreach ($instance->getLayerset()->getInstances() as $instanceAtLayerset) {
+            foreach ($layerset->getInstances() as $instanceAtLayerset) {
                 /** @var WmsInstance|WmtsInstance $instanceAtLayerset */
                 $instanceAtLayerset->setWeight($num);
                 if ($persist) {

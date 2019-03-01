@@ -72,15 +72,11 @@ class TmsInstanceConfiguration extends InstanceConfiguration
     public function toArray()
     {
         return array(
-            "type" => $this->type,
-            "title" => $this->title,
-            "isBaseSource" => $this->isBaseSource,
-            "children" => $this->children,
             "layers" => $this->layers,
         );
     }
 
-    public function addLayers($container, WmtsInstance $entity, $rootnode)
+    public function addLayers($container, WmtsInstance $entity)
     {
         /** @var WmtsSource $source */
         $source = $entity->getSource();
@@ -129,38 +125,6 @@ class TmsInstanceConfiguration extends InstanceConfiguration
             }
         }
         $this->setLayers($layersConf);
-        $this->addChild($rootnode);
-//        foreach ($entity->getSource()->getTilematrixsets() as $tilematrixset) {
-//            $tilematrices = $tilematrixset->getTilematrices();
-//            $origin = $tilematrices[0]->getTopleftcorner();
-//            $tilewidth = $tilematrices[0]->getTilewidth();
-//            $tileheight = $tilematrices[0]->getTileheight();
-//            $tilematricesArr = array();
-//            $multiTopLeft = false;
-//            $multiTileSize = false;
-//            foreach ($tilematrices as $tilematrix) {
-//                $latlon = $tilematrix->getTopleftcorner();
-//                if ($origin[0] !== $latlon[0] || $origin[1] !== $latlon[1]) {
-//                    $multiTopLeft = true;
-//                }
-//                if ($tilewidth !== $tilematrix->getTilewidth() || $tileheight !== $tilematrix->getTileheight()) {
-//                    $multiTileSize = true;
-//                }
-//                $tilematricesArr[] = array(
-//                    'href' => $tilematrix->getHref(),
-//                    'order' => $tilematrix->getIdentifier(),
-//                    'units-per-pixel' => $tilematrix->getScaledenominator(),
-//                );
-//            }
-//            $this->addTilematrixset(array(
-//                'id' => $tilematrixset->getId(),
-//                'tileSize' => array($tilewidth, $tileheight),
-//                'identifier' => $tilematrixset->getIdentifier(),
-//                'supportedCrs' => $tilematrixset->getSupportedCrs(),
-//                'origin' => $origin,
-//                'tilesets' => $tilematricesArr,
-//            ));
-//        }
     }
 
     /**

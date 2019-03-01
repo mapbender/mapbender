@@ -10,14 +10,10 @@ namespace Mapbender\WmtsBundle\Component;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmtsBundle\Component\Dimension;
 use Mapbender\WmtsBundle\Component\DimensionInst;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
-use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Description of WmtsSourceHandler
@@ -38,33 +34,20 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * @param array $configuration
-     * @return WmtsInstance
-     */
-    public function configure(array $configuration = array())
-    {
-        return $this->entity;
-    }
-
-    /**
      * @inheritdoc
      */
-    public function create($persist = true)
+    public function create()
     {
         $this->entity->setTitle($this->entity->getSource()->getTitle());
         $this->entity->setRoottitle($this->entity->getSource()->getTitle());
         $source = $this->entity->getSource();
-        // TODO create dimansions
 
         $this->entity->setWeight(-1);
-        if ($persist) {
-            $this->container->get('doctrine')->getManager()->persist($this->entity);
-            $this->container->get('doctrine')->getManager()->flush();
-        }
         $allowInfo = null;
         foreach ($source->getLayers() as $layer) {
             $instLayer = new WmtsInstanceLayer();
-            self::createHandler($this->container, $instLayer)->create($this->entity, $layer);
+            $instLayerHandler = new WmtsInstanceLayerEntityHandler($this->container, $instLayer);
+            $instLayerHandler->create($this->entity, $layer);
             if ($instLayer->getInfoformat()) {
                 $allowInfo = true;
             }
@@ -75,7 +58,6 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
         $num = 0;
         foreach ($this->entity->getLayerset()->getInstances() as $instance) {
             $instance->setWeight($num);
-            /** @var WmtsInstance $instance */
             $this->container->get('doctrine')->getManager()->persist($instance);
             $this->container->get('doctrine')->getManager()->flush();
             $num++;
@@ -152,63 +134,9 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
     {
         $wmtsconf = $this->entity->getType() === Source::TYPE_WMTS ?
             new WmtsInstanceConfiguration() : new TmsInstanceConfiguration();
-        $wmtsconf->setType(strtolower($this->entity->getType()));
-        $wmtsconf->setTitle($this->entity->getTitle());
-        $wmtsconf->setIsBaseSource($this->entity->isBasesource());
 
-        $rootLayer = $this->createRootNode();
-        $rootlayerHandler = new WmtsInstanceLayerEntityHandler($this->container, $rootLayer);
-        $rootConfig = $rootlayerHandler->generateConfiguration();
-
-        $wmtsconf->addLayers($this->container, $this->entity, $rootConfig);
-        $configuration = $wmtsconf->toArray() + array(
-            'options' => array(
-                "proxy" => $this->entity->getProxy(),
-                "visible" => $this->entity->getVisible(),
-                "opacity" => $this->entity->getOpacity() / 100,
-            ),
-        );
-
-        if ($this->entity->getSource()->getUsername()) {
-            $url                             = $this->container->get('router')->generate(
-                'mapbender_core_application_instancebasicauth',
-                array(
-                    'slug' => $this->entity->getLayerset()->getApplication()->getSlug(),
-                    'instanceId' => $this->entity->getId()
-                ),
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
-            $configuration['options']['url'] = $url;
-        } // not yet supported - RESTful
-//        elseif ($signer) {
-//            foreach ($configuration['layers'] as &$layer) {
-//                $layer['options']['url'] = $signer->signUrl($layer['options']['url']);
-//            }
-//        }
-        $status = $this->entity->getSource()->getStatus();
-        $configuration['status'] = $status ? strtolower($status) : strtolower(Source::STATUS_OK);
-        return $configuration;
-    }
-
-    /**
-     * Signes urls.
-     * @param Signer $signer signer
-     * @param type $layer
-     */
-    private function signeUrls(Signer $signer, &$layer)
-    {
-        if (isset($layer['options']['legend'])) {
-            if (isset($layer['options']['legend']['graphic'])) {
-                $layer['options']['legend']['graphic'] = $signer->signUrl($layer['options']['legend']['graphic']);
-            } elseif (isset($layer['options']['legend']['url'])) {
-                $layer['options']['legend']['url'] = $signer->signUrl($layer['options']['legend']['url']);
-            }
-        }
-        if (isset($layer['children'])) {
-            foreach ($layer['children'] as &$child) {
-                $this->signeUrls($signer, $child);
-            }
-        }
+        $wmtsconf->addLayers($this->container, $this->entity);
+        return $wmtsconf->toArray();
     }
 
     public function mergeDimension($dimension, $persist = false)
@@ -227,66 +155,9 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
     }
 
-    private function getDimensionInst()
-    {
-        $dimensions = array();
-        foreach ($this->entity->getSource()->getLayers() as $layer) {
-            foreach ($layer->getDimension() as $dimension) {
-                $dim = $this->createDimensionInst($dimension);
-                if (!in_array($dim, $dimensions)) {
-                    $dimensions[] = $dim;
-                }
-            }
-        }
-        return $dimensions;
-    }
-
-    private function findDimension(DimensionInst $dimension, $dimensionList)
-    {
-        foreach ($dimensionList as $help) {
-            /* check if dimensions equals (check only origextent) */
-            if ($help->getOrigextent() === $dimension->getOrigextent() &&
-                $help->getName() === $dimension->getName() &&
-                $help->getUnits() === $dimension->getUnits()) {
-                return $help;
-            }
-        }
-        return null;
-    }
-
-    private function updateDimension(array $dimensionsOld, array $dimensionsNew)
-    {
-        $dimensions = array();
-        foreach ($dimensionsNew as $dimNew) {
-            $dimension    = $this->findDimension($dimNew, $dimensionsOld);
-            $dimension    = $dimension ? clone $dimension : clone $dimNew;
-            /* replace attribute values */
-            $dimension->setUnitSymbol($dimNew->getUnitSymbol());
-            $dimension->setNearestValue($dimNew->getNearestValue());
-            $dimension->setCurrent($dimNew->getCurrent());
-            $dimension->setMultipleValues($dimNew->getMultipleValues());
-            $dimensions[] = $dimension;
-        }
-        return $dimensions;
-    }
-
-    private function createRootNode()
-    {
-        $root = new WmtsLayerSource();
-        $rootInst = new WmtsInstanceLayer();
-        $rootInst->setTitle($this->entity->getRoottitle());
-        $rootInst->setSourceItem($root);
-        $rootInst->setSourceInstance($this->entity);
-        $rootInst->setActive($this->entity->getActive())
-            ->setAllowinfo($this->entity->getAllowinfo())
-            ->setInfo($this->entity->getInfo())
-            ->setAllowtoggle($this->entity->getAllowtoggle())
-            ->setToggle($this->entity->getToggle());
-        return $rootInst;
-    }
-
     /**
-     * @inheritdoc
+     * @deprecated
+     * @internal
      */
     public function getSensitiveVendorSpecific()
     {
