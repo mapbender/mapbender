@@ -53,7 +53,7 @@
         <tr>
           <th></th>
           <th>{{"mb.wmts.wmtsloader.repo.instance.label.title"|trans}}</th>
-          <th>{{"mb.wmts.wmtsloader.repo.instance.label.tilemartixset"|trans}}</th>
+          <th class="matrixSet">{{"mb.wmts.wmtsloader.repo.instance.label.tilemartixset"|trans}}</th>
           <th>{{"mb.wmts.wmtsloader.repo.instance.label.format"|trans}}</th>
           <th>{{"mb.wmts.wmtsloader.repo.instance.label.style"|trans}}</th>
           <th class="checkboxColumn">{{"mb.wmts.wmtsloader.repo.instance.label.active"|trans}}</th>
@@ -88,9 +88,9 @@
         <tr class="item level0">
             <td class="level0 itemType iconFolderActive iconSmall"></td>
             <td class="titleColumn" title="{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.layer_title"|trans }}">{{ form_widget(form.roottitle) }}</td>
-            <td class="titleColumn" ></td>
-            <td class="titleColumn" ></td>
-            <td class="titleColumn" ></td>
+            <td></td>
+            <td></td>
+            <td></td>
             <td class="checkboxColumn" data-check-identifier="checkActive" title="{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.active"|trans }}">{{ form_widget(form.active) }}</td>
             <td class="checkboxColumn odd" data-check-identifier="checkSelectAllow" title="{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.allowselecttoc"|trans }}">{{ form_widget(form.allowselected) }}</td>
             <td class="checkboxColumn odd" data-check-identifier="checkSelectOn" title="{{ "mb.wmts.wmtsloader.repo.instancelayerform.label.selectedtoc"|trans }}">{{ form_widget(form.selected) }}</td>

@@ -143,8 +143,7 @@ class FieldSubscriber implements EventSubscriberInterface
             foreach ($data->getSourceInstance()->getSource()->getTilematrixsets() as $tilematrixset) {
                 if ($tilematrixset->getIdentifier() === $tileMatrixLink->getTileMatrixSet()) {
                     $tileMatrixLinkOpt[$tilematrixset->getIdentifier()] =
-                        ($tilematrixset->getTitle() ? $tilematrixset->getTitle() : $tileMatrixLink->getTileMatrixSet())
-                        . "(" . $tilematrixset->getSupportedCrs() . ")";
+                        $tilematrixset->getTitle() ?: $tilematrixset->getIdentifier();
                 }
             }
         }
