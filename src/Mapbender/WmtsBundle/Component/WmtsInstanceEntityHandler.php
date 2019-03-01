@@ -156,21 +156,18 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
         $wmtsconf->setTitle($this->entity->getTitle());
         $wmtsconf->setIsBaseSource($this->entity->isBasesource());
 
-        $options    = $this->entity->getType() === Source::TYPE_WMTS ?
-            new WmtsInstanceConfigurationOptions() : new TmsInstanceConfigurationOptions();
-        $options
-            ->setProxy($this->entity->getProxy())
-            ->setVisible($this->entity->getVisible())
-            ->setOpacity($this->entity->getOpacity() / 100)
-//            ->setDimensions($dimensions)
-            ;
-        $wmtsconf->setOptions($options);
         $rootLayer = $this->createRootNode();
         $rootlayerHandler = new WmtsInstanceLayerEntityHandler($this->container, $rootLayer);
         $rootConfig = $rootlayerHandler->generateConfiguration();
 
         $wmtsconf->addLayers($this->container, $this->entity, $rootConfig);
-        $configuration = $wmtsconf->toArray();
+        $configuration = $wmtsconf->toArray() + array(
+            'options' => array(
+                "proxy" => $this->entity->getProxy(),
+                "visible" => $this->entity->getVisible(),
+                "opacity" => $this->entity->getOpacity() / 100,
+            ),
+        );
 
         if ($this->entity->getSource()->getUsername()) {
             $url                             = $this->container->get('router')->generate(

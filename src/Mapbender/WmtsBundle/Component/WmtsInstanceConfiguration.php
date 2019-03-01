@@ -1,49 +1,26 @@
 <?php
 namespace Mapbender\WmtsBundle\Component;
 
-Use Mapbender\CoreBundle\Component\EntityHandler;
-use Mapbender\CoreBundle\Component\InstanceConfiguration;
-use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- * Description of WmtsInstanceConfiguration
  *
  * @author Paul Schmidt
  */
-class WmtsInstanceConfiguration extends InstanceConfiguration
+class WmtsInstanceConfiguration extends TmsInstanceConfiguration
 {
-
-    /**
-     * ORM\Column(type="array", nullable=true)
-     */
-
-    public $layers;
-
-    /**
-     * ORM\Column(type="array", nullable=true)
-     */
     public $tilematrixsets;
 
-    public function getLayers()
+    public function toArray()
     {
-        return $this->layers;
+        return parent::toArray() + array(
+            "tilematrixsets" => $this->tilematrixsets,
+        );
     }
 
     public function getTilematrixsets()
     {
         return $this->tilematrixsets;
-    }
-
-    public function setLayers($layers)
-    {
-        $this->layers = $layers;
-        return $this;
     }
 
     public function setTilematrixsets($tilematrixsets)
@@ -52,78 +29,10 @@ class WmtsInstanceConfiguration extends InstanceConfiguration
         return $this;
     }
 
-
-
     public function addTilematrixset(array $tilematrixset)
     {
         $this->tilematrixsets[] = $tilematrixset;
         return $this;
-    }
-
-    /**
-     * Sets options
-     * @param ServiceConfigurationOptions $options ServiceConfigurationOptions
-     * @return InstanceConfiguration
-     */
-    public function setOptions(InstanceConfigurationOptions $options)
-    {
-        $this->options = $options;
-        return $this;
-    }
-
-    /**
-     * Returns options
-     * @return ServiceConfigurationOptions
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * Sets a children
-     * @param array $children children
-     * @return InstanceConfiguration
-     */
-    public function setChildren($children)
-    {
-        $this->children = $children;
-        return $this;
-    }
-
-    /**
-     * Returns a title
-     * @return integer children
-     */
-    public function getChildren()
-    {
-        return $this->children;
-    }
-
-    /**
-     * Returns a title
-     * @return integer children
-     */
-    public function addChild($child)
-    {
-        $this->children[] = $child;
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function toArray()
-    {
-        return array(
-            "type" => $this->type,
-            "title" => $this->title,
-            "isBaseSource" => $this->isBaseSource,
-            "options" => $this->options->toArray(),
-            "children" => $this->children,
-            "layers" => $this->layers,
-            "tilematrixsets" => $this->tilematrixsets
-        );
     }
 
     public function addLayers($container, WmtsInstance $entity, $rootnode)
@@ -185,31 +94,5 @@ class WmtsInstanceConfiguration extends InstanceConfiguration
                 'tilematrices' => $tilematricesArr
             ));
         }
-        $a = 0;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function fromArray($options, $stict = true)
-    {
-        throw new \Exception('not implemented yet.');
-        $ic = null;
-        if ($options && is_array($options)) {
-            $ic = new WmtsInstanceConfiguration();
-            if (isset($options['type'])) {
-                $ic->type = $options['type'];
-            }
-            if (isset($options['title'])) {
-                $ic->title = $options['title'];
-            }
-            if (isset($options['isBaseSource'])) {
-                $ic->isBaseSource = $options['isBaseSource'];
-            }
-            if (isset($options['options'])) {
-                $ic->options = WmtsInstanceConfigurationOptions::fromArray($options['options']);
-            }
-        }
-        return $ic;
     }
 }

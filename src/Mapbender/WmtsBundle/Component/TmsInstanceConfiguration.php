@@ -4,80 +4,37 @@ namespace Mapbender\WmtsBundle\Component;
 use Mapbender\CoreBundle\Component\InstanceConfiguration;
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
- * Description of WmtsInstanceConfiguration
  *
  * @author Paul Schmidt
  */
 class TmsInstanceConfiguration extends InstanceConfiguration
 {
-
-    /**
-     * ORM\Column(type="array", nullable=true)
-     */
-
     public $layers;
-
-//    /**
-//     * ORM\Column(type="array", nullable=true)
-//     */
-//    public $tilematrixsets;
 
     public function getLayers()
     {
         return $this->layers;
     }
-//
-//    public function getTilematrixsets()
-//    {
-//        return $this->tilematrixsets;
-//    }
 
     public function setLayers($layers)
     {
         $this->layers = $layers;
         return $this;
     }
-//
-//    public function setTilematrixsets($tilematrixsets)
-//    {
-//        $this->tilematrixsets = $tilematrixsets;
-//        return $this;
-//    }
-//
-//
-//
-//    public function addTilematrixset($tilematrixset)
-//    {
-//        $this->tilematrixsets[] = $tilematrixset;
-//        return $this;
-//    }
 
-    /**
-     * Sets options
-     * @param ServiceConfigurationOptions $options ServiceConfigurationOptions
-     * @return InstanceConfiguration
-     */
     public function setOptions(InstanceConfigurationOptions $options)
     {
-        $this->options = $options;
-        return $this;
+        throw new \LogicException("Nope");
     }
 
-    /**
-     * Returns options
-     * @return ServiceConfigurationOptions
-     */
     public function getOptions()
     {
-        return $this->options;
+        throw new \LogicException("Nope");
     }
+
 
     /**
      * Sets a children
@@ -92,7 +49,7 @@ class TmsInstanceConfiguration extends InstanceConfiguration
 
     /**
      * Returns a title
-     * @return integer children
+     * @return array[] children
      */
     public function getChildren()
     {
@@ -100,6 +57,7 @@ class TmsInstanceConfiguration extends InstanceConfiguration
     }
 
     /**
+     * @param array $child
      * @return $this
      */
     public function addChild($child)
@@ -117,17 +75,17 @@ class TmsInstanceConfiguration extends InstanceConfiguration
             "type" => $this->type,
             "title" => $this->title,
             "isBaseSource" => $this->isBaseSource,
-            "options" => $this->options->toArray(),
             "children" => $this->children,
             "layers" => $this->layers,
-//            "tilematrixsets" => $this->tilematrixsets
         );
     }
 
     public function addLayers($container, WmtsInstance $entity, $rootnode)
     {
+        /** @var WmtsSource $source */
+        $source = $entity->getSource();
         $tilematrixsets = array();
-        foreach ($entity->getSource()->getTilematrixsets() as $tilematrixset) {
+        foreach ($source->getTilematrixsets() as $tilematrixset) {
             $tilematrices = $tilematrixset->getTilematrices();
             $origin = $tilematrices[0]->getTopleftcorner();
             $tilewidth = $tilematrices[0]->getTilewidth();
@@ -165,8 +123,6 @@ class TmsInstanceConfiguration extends InstanceConfiguration
                 $options = $layerHandler->generateConfiguration();
                 $format = $layer->getFormat();
                 $options['options']['format'] = $format;
-                $options['options']['format_ext'] =
-                    strpos($format, '/') ? substr($format, strpos($format, '/') + 1) : null;
                 $options['options']['tilematrixset'] = $tilematrixsets[$options['options']['identifier']];
                 // TODO check if layers support info
                 $layersConf[] = $options;
@@ -213,22 +169,5 @@ class TmsInstanceConfiguration extends InstanceConfiguration
     public static function fromArray($options, $strict = true)
     {
         throw new \Exception('not implemented yet.');
-        $ic = null;
-        if ($options && is_array($options)) {
-            $ic = new WmtsInstanceConfiguration();
-            if (isset($options['type'])) {
-                $ic->type = $options['type'];
-            }
-            if (isset($options['title'])) {
-                $ic->title = $options['title'];
-            }
-            if (isset($options['isBaseSource'])) {
-                $ic->isBaseSource = $options['isBaseSource'];
-            }
-            if (isset($options['options'])) {
-                $ic->options = WmtsInstanceConfigurationOptions::fromArray($options['options']);
-            }
-        }
-        return $ic;
     }
 }

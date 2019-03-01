@@ -66,7 +66,7 @@ class WmtsSource extends Source
     protected $contact;
 
     /**
-     * @var ArrayCollections A list of WMS keywords
+     * @var ArrayCollection A list of WMS keywords
      * @ORM\OneToMany(targetEntity="WmtsSourceKeyword",mappedBy="reference", cascade={"remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
@@ -97,14 +97,14 @@ class WmtsSource extends Source
     protected $serviceMetadataURL = "";
 
     /**
-     * @var ArrayCollections A list of WMTS Theme
+     * @var ArrayCollection A list of WMTS Theme
      * @ORM\OneToMany(targetEntity="Theme",mappedBy="source", cascade={"remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $themes;
 
     /**
-     * @var ArrayCollections A list of WMTS layers
+     * @var ArrayCollection A list of WMTS layers
      * @ORM\OneToMany(targetEntity="TileMatrixSet",mappedBy="source", cascade={"remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
@@ -121,20 +121,21 @@ class WmtsSource extends Source
     protected $password = null;
 
     /**
-     * @var ArrayCollections A list of WMTS layers
+     * @var ArrayCollection A list of WMTS layers
      * @ORM\OneToMany(targetEntity="WmtsLayerSource",mappedBy="source", cascade={"remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $layers;
 
     /**
-     * @var ArrayCollections A list of WMTS instances
+     * @var ArrayCollection A list of WMTS instances
      * @ORM\OneToMany(targetEntity="WmtsInstance",mappedBy="source", cascade={"remove"})
      */
     protected $instances;
 
     /**
      * Create an instance of WMTSService
+     * @param string $type
      */
     public function __construct($type)
     {
@@ -158,7 +159,7 @@ class WmtsSource extends Source
     /**
      * Set originUrl
      * @param string $originUrl
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setOriginUrl($originUrl)
     {
@@ -177,8 +178,8 @@ class WmtsSource extends Source
 
     /**
      * Set version
-     * @param type $version
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @param string $version
+     * @return $this
      */
     public function setVersion($version)
     {
@@ -198,7 +199,7 @@ class WmtsSource extends Source
     /**
      * Set alias
      * @param string $alias
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setAlias($alias)
     {
@@ -238,7 +239,7 @@ class WmtsSource extends Source
     /**
      * Get accessConstraints
      * @param string $accessConstraints
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setAccessConstraints($accessConstraints)
     {
@@ -258,7 +259,7 @@ class WmtsSource extends Source
     /**
      * Set serviceType
      * @param string $serviceType
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setServiceType($serviceType)
     {
@@ -279,7 +280,7 @@ class WmtsSource extends Source
     /**
      * Set layers
      * @param ArrayCollection $layers
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setLayers(ArrayCollection $layers)
     {
@@ -311,7 +312,7 @@ class WmtsSource extends Source
     /**
      * Set serviceProviderSite
      * @param string $serviceProviderSite
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setServiceProviderSite($serviceProviderSite)
     {
@@ -331,7 +332,7 @@ class WmtsSource extends Source
     /**
      * Set serviceProviderName
      * @param string $serviceProviderName
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setServiceProviderName($serviceProviderName)
     {
@@ -351,7 +352,7 @@ class WmtsSource extends Source
         /**
      * Set Contact
      * @param Contact $contact
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setContact(Contact $contact)
     {
@@ -371,7 +372,7 @@ class WmtsSource extends Source
     /**
      * Set keywords
      * @param ArrayCollection $keywords
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setKeywords(ArrayCollection $keywords)
     {
@@ -390,7 +391,7 @@ class WmtsSource extends Source
 
     /**
      * Add keyword
-     * @param WmsSourceKeyword $keyword
+     * @param Keyword $keyword
      * @return Source
      */
     public function addKeyword(Keyword $keyword)
@@ -401,8 +402,8 @@ class WmtsSource extends Source
 
     /**
      * Set getCapabilities
-     * @param RequestInformation $getCapabilites
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @param RequestInformation $getCapabilities
+     * @return $this
      */
     public function setGetCapabilities(RequestInformation $getCapabilities)
     {
@@ -442,7 +443,7 @@ class WmtsSource extends Source
     /**
      * Set getFeatureInfo
      * @param RequestInformation $getFeatureInfo
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setGetFeatureInfo(RequestInformation $getFeatureInfo)
     {
@@ -462,7 +463,7 @@ class WmtsSource extends Source
     /**
      * Set serviceMetadataURL
      * @param string $serviceMetadataURL
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setServiceMetadataURL($serviceMetadataURL)
     {
@@ -492,7 +493,7 @@ class WmtsSource extends Source
     /**
      * Set themes
      * @param ArrayCollection $themes
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setThemes(ArrayCollection $themes)
     {
@@ -503,7 +504,7 @@ class WmtsSource extends Source
     /**
      * Add theme
      * @param Theme $theme
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function addTheme(Theme $theme)
     {
@@ -514,7 +515,7 @@ class WmtsSource extends Source
     /**
      * Set tilematrixsets
      * @param ArrayCollection $tilematrixsets
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setTilematrixsets(ArrayCollection $tilematrixsets)
     {
@@ -524,7 +525,7 @@ class WmtsSource extends Source
 
     /**
      * Get tilematrixset
-     * @return ArrayCollection
+     * @return TileMatrixSet[]|ArrayCollection
      */
     public function getTilematrixsets()
     {
@@ -534,7 +535,7 @@ class WmtsSource extends Source
     /**
      * Add a tilematrixset.
      * @param TileMatrixSet $tilematrixset
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function addTilematrixset(TileMatrixSet $tilematrixset)
     {
@@ -554,7 +555,7 @@ class WmtsSource extends Source
     /**
      * Set username.
      * @param string $username
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setUsername($username)
     {
@@ -574,6 +575,7 @@ class WmtsSource extends Source
     /**
      * Set password.
      * @param string $password
+     * @return $this
      */
     public function setPassword($password)
     {
@@ -591,7 +593,7 @@ class WmtsSource extends Source
 
     /**
      * @inheritdoc
-     * @return \Mapbender\WmtsBundle\Entity\WmtsSource
+     * @return $this
      */
     public function setIdentifier($identifier)
     {
