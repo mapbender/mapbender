@@ -3,13 +3,13 @@
 
   {% if layer.identifier|length > 0 %}
     <li>
-      <span class="labelText">Identifier:</span>
+      <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.identifier" | trans }}</span>
       <span class="metaText">{{ layer.identifier }}</span>
     </li>
   {% endif %}
 
   <li>
-      <span class="labelText">Formats:</span>
+      <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.formats" | trans }}</span>
       <span class="metaText">
           {% for format in layer.formats %}
               {{ format }}{% if not loop.last %},{% endif %}
