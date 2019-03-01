@@ -12,9 +12,20 @@ use Mapbender\WmtsBundle\Component\WmtsInstanceLayerEntityHandler;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class WmtsSourceService extends SourceService
 {
+
+    /** @var WmtsInstanceLayerEntityHandler */
+    protected $instanceLayerHandler;
+
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+        $this->instanceLayerHandler = new WmtsInstanceLayerEntityHandler($container, null);
+    }
+
     /**
      * @param WmtsInstance $sourceInstance
      * @return array|mixed[]|null
@@ -26,6 +37,7 @@ class WmtsSourceService extends SourceService
         $ownConfig = parent::getInnerConfiguration($sourceInstance) + array(
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array($this->getRootLayerConfig($sourceInstance)),
+            'layers' => $this->getLayerConfigs($sourceInstance),
         );
         return array_replace($ehConfig, $ownConfig);
     }
@@ -60,7 +72,94 @@ class WmtsSourceService extends SourceService
             ->setAllowtoggle($sourceInstance->getAllowtoggle())
             ->setToggle($sourceInstance->getToggle())
         ;
-        $rootlayerHandler = new WmtsInstanceLayerEntityHandler($this->container, null);
-        return $rootlayerHandler->generateConfiguration($rootInst);
+        return $this->getSingleLayerConfig($rootInst);
+    }
+
+    /**
+     * @param WmtsInstance $sourceInstance
+     * @return array[][]
+     */
+    protected function getLayerConfigs($sourceInstance)
+    {
+        $layerConfigs = array();
+        foreach ($sourceInstance->getLayers() as $layer) {
+            if ($layer->getActive()) {
+                $layerConfigs[] = $this->getSingleLayerConfig($layer);
+            }
+        }
+        return $layerConfigs;
+    }
+
+    /**
+     * @param WmtsInstanceLayer $instanceLayer
+     * @return array
+     */
+    public function getSingleLayerConfig($instanceLayer)
+    {
+        $config = array(
+            "options" => $this->getSingleLayerOptionsConfig($instanceLayer),
+            "state" => array(
+                "visibility" => null,
+                "info" => null,
+                "outOfScale" => null,
+                "outOfBounds" => null,
+            ),
+        );
+        return $config;
+    }
+
+    /**
+     * @param WmtsInstanceLayer $instanceLayer
+     * @return array
+     */
+    public function getSingleLayerOptionsConfig($instanceLayer)
+    {
+        $sourceItem      = $instanceLayer->getSourceItem();
+        $resourceUrl     = $sourceItem->getResourceUrl();
+        $urlTemplateType = count($resourceUrl) > 0 ? $resourceUrl[0] : null;
+        $configuration   = array(
+            "id" => $instanceLayer->getId() ? strval($instanceLayer->getId())
+                : strval($instanceLayer->getSourceInstance()->getId()),
+            'url' => $urlTemplateType ? $urlTemplateType->getTemplate() : null,
+            'format' => $urlTemplateType ? $urlTemplateType->getFormat() : null,
+            "title" => $instanceLayer->getTitle(),
+            "style" => $instanceLayer->getStyle(),
+            "identifier" => $instanceLayer->getSourceItem()->getIdentifier(),
+            "tilematrixset" => $instanceLayer->getTileMatrixSet(),
+        );
+
+        $legendConfig = $this->instanceLayerHandler->getLegendConfig($instanceLayer);
+        if ($legendConfig) {
+            $configuration['legend'] = $legendConfig;
+        }
+        $configuration['treeOptions'] = $this->getSingleLayerTreeOptionsConfig($instanceLayer);
+        $srses = array();
+        foreach ($sourceItem->getMergedBoundingBoxes() as $bbox) {
+            $srses[$bbox->getSrs()] = $bbox->toCoordsArray();
+        }
+        $configuration['bbox']        = $srses;
+
+        return $configuration;
+    }
+
+    /**
+     * @param WmtsInstanceLayer $instanceLayer
+     * @return array
+     * @todo this seems to be universal and should go down into SourceService
+     */
+    protected function getSingleLayerTreeOptionsConfig($instanceLayer)
+    {
+        // TODO check if layers support info
+        return array(
+            "info" => $instanceLayer->getInfo(),
+            "selected" => $instanceLayer->getSelected(),
+            "toggle" => $instanceLayer->getToggle(),
+            "allow" => array(
+                "info" => $instanceLayer->getAllowinfo(),
+                "selected" => $instanceLayer->getAllowselected(),
+                "toggle" => $instanceLayer->getAllowtoggle(),
+                "reorder" => null,
+            ),
+        );
     }
 }

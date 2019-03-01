@@ -12,19 +12,6 @@ use Mapbender\WmtsBundle\Entity\WmtsSource;
  */
 class TmsInstanceConfiguration extends InstanceConfiguration
 {
-    public $layers;
-
-    public function getLayers()
-    {
-        return $this->layers;
-    }
-
-    public function setLayers($layers)
-    {
-        $this->layers = $layers;
-        return $this;
-    }
-
     public function setOptions(InstanceConfigurationOptions $options)
     {
         throw new \LogicException("Nope");
@@ -71,9 +58,7 @@ class TmsInstanceConfiguration extends InstanceConfiguration
      */
     public function toArray()
     {
-        return array(
-            "layers" => $this->layers,
-        );
+        return array();
     }
 
     public function addLayers($container, WmtsInstance $entity)
@@ -112,19 +97,6 @@ class TmsInstanceConfiguration extends InstanceConfiguration
                 'tilesets' => $tilematricesArr,
             );
         }
-        $layersConf = array();
-        $instanceLayerHandler = new WmtsInstanceLayerEntityHandler($container, null);
-        foreach ($entity->getLayers() as $layer) {
-            if ($layer->getActive()) {
-                $options = $instanceLayerHandler->generateConfiguration($layer);
-                $format = $layer->getFormat();
-                $options['options']['format'] = $format;
-                $options['options']['tilematrixset'] = $tilematrixsets[$options['options']['identifier']];
-                // TODO check if layers support info
-                $layersConf[] = $options;
-            }
-        }
-        $this->setLayers($layersConf);
     }
 
     /**

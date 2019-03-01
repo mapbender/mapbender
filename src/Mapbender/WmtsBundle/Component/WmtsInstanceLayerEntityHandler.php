@@ -7,6 +7,7 @@ use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\WmtsBundle\Component\Presenter\WmtsSourceService;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
@@ -100,24 +101,14 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     }
 
     /**
-     * Generates a configuration for layers
-     *
      * @param WmtsInstanceLayer|null $entity
+     * @deprecated
      * @return array
+     * @todo: remove remaining usages from WmcBundle
      */
     public function generateConfiguration(WmtsInstanceLayer $entity = null)
     {
-        $entity = $entity ?: $this->entity;
-        if ($entity->getActive() === true) {
-            return array(
-                "options" => $this->getConfiguration($entity),
-                "state" => array(
-                    "visibility" => null,
-                    "info" => null,
-                    "outOfScale" => null,
-                    "outOfBounds" => null),);
-        }
-        return array();
+        return $this->getService()->getSingleLayerConfig($entity ?: $this->entity);
     }
 
     /**
@@ -126,43 +117,18 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function getConfiguration(WmtsInstanceLayer $entity = null)
     {
-        $entity = $entity ?: $this->entity;
-        $sourceItem      = $entity->getSourceItem();
-        $resourceUrl     = $sourceItem->getResourceUrl();
-        $urlTemplateType = count($resourceUrl) > 0 ? $resourceUrl[0] : null;
-        $configuration   = array(
-            "id" => $entity->getId() ? strval($entity->getId())
-                : strval($entity->getSourceInstance()->getId()),
-            'url' => $urlTemplateType ? $urlTemplateType->getTemplate() : null,
-            'format' => $urlTemplateType ? $urlTemplateType->getFormat() : null,
-            "title" => $entity->getTitle(),
-            "style" => $entity->getStyle(),
-            "identifier" => $entity->getSourceItem()->getIdentifier(),
-            "tilematrixset" => $entity->getTileMatrixSet(),
-        );
+        $layerConfig = $this->getService()->getSingleLayerOptionsConfig($entity ?: $this->entity);
+        return $layerConfig['options'];
+    }
 
-        $srses = array();
-        foreach ($sourceItem->getMergedBoundingBoxes() as $bbox) {
-            $srses[$bbox->getSrs()] = $bbox->toCoordsArray();
-        }
-        $configuration['bbox']        = $srses;
-        $legendConfig = $this->getLegendConfig($entity);
-        if ($legendConfig) {
-            $configuration["legend"] = $legendConfig;
-        }
-
-        $configuration["treeOptions"] = array(
-            "info" => $entity->getInfo(),
-            "selected" => $entity->getSelected(),
-            "toggle" => $entity->getToggle(),
-            "allow" => array(
-                "info" => $entity->getAllowinfo(),
-                "selected" => $entity->getAllowselected(),
-                "toggle" => $entity->getAllowtoggle(),
-                "reorder" => null,
-            )
-        );
-        return $configuration;
+    /**
+     * @return WmtsSourceService
+     */
+    protected function getService()
+    {
+        /** @var WmtsSourceService $service */
+        $service = $this->container->get('mapbender.source.wmts.service');
+        return $service;
     }
 
     /**

@@ -37,16 +37,6 @@ class WmtsInstanceConfiguration extends TmsInstanceConfiguration
 
     public function addLayers($container, WmtsInstance $entity)
     {
-        $layersConf = array();
-        $instanceLayerHandler = new WmtsInstanceLayerEntityHandler($container, null);
-        foreach ($entity->getLayers() as $layer) {
-            if ($layer->getActive()) {
-                $options = $instanceLayerHandler->generateConfiguration($layer);
-                // TODO check if layers support info
-                $layersConf[] = $options;
-            }
-        }
-        $this->setLayers($layersConf);
         foreach ($entity->getSource()->getTilematrixsets() as $tilematrixset) {
             $tilematrices = $tilematrixset->getTilematrices();
             $origin = $tilematrices[0]->getTopleftcorner();
