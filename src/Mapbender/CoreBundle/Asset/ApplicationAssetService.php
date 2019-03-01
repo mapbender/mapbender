@@ -151,8 +151,13 @@ class ApplicationAssetService
             case 'js':
                 $commonAssets = array(
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
+                    '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
+                    '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                    '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
+                    '/../vendor/mapbender/mapquery/src/jquery.mapquery.core.js',
                 );
                 break;
             default:
