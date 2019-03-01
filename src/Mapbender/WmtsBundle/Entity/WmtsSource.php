@@ -289,7 +289,7 @@ class WmtsSource extends Source
 
     /**
      * Get layers
-     * @return ArrayCollection
+     * @return WmtsLayerSource[]|ArrayCollection
      */
     public function getLayers()
     {

@@ -75,8 +75,7 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
         $num = 0;
         foreach ($this->entity->getLayerset()->getInstances() as $instance) {
             $instance->setWeight($num);
-            $instHandler = self::createHandler($this->container, $instance);
-            $instHandler->generateConfiguration();
+            /** @var WmtsInstance $instance */
             $this->container->get('doctrine')->getManager()->persist($instance);
             $this->container->get('doctrine')->getManager()->flush();
             $num++;
@@ -120,7 +119,6 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
 //        self::createHandler($this->container, $this->entity->getRootlayer())
 //            ->update($this->entity, $this->entity->getSource()->getRootlayer());
 //
-//        $this->generateConfiguration();
 //        $this->container->get('doctrine')->getManager()->persist($this->entity);
 //        $this->container->get('doctrine')->getManager()->flush();
     }
@@ -152,14 +150,28 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
      */
     public function getConfiguration(Signer $signer = NULL)
     {
-        if ($this->entity->getSource() === null) { // from yaml
-            $this->generateYmlConfiguration();
-        } else {
-            if ($this->entity->getConfiguration() === null) {
-                $this->generateConfiguration();
-            }
-        }
-        $configuration = $this->entity->getConfiguration();
+        $wmtsconf = $this->entity->getType() === Source::TYPE_WMTS ?
+            new WmtsInstanceConfiguration() : new TmsInstanceConfiguration();
+        $wmtsconf->setType(strtolower($this->entity->getType()));
+        $wmtsconf->setTitle($this->entity->getTitle());
+        $wmtsconf->setIsBaseSource($this->entity->isBasesource());
+
+        $options    = $this->entity->getType() === Source::TYPE_WMTS ?
+            new WmtsInstanceConfigurationOptions() : new TmsInstanceConfigurationOptions();
+        $options
+            ->setProxy($this->entity->getProxy())
+            ->setVisible($this->entity->getVisible())
+            ->setOpacity($this->entity->getOpacity() / 100)
+//            ->setDimensions($dimensions)
+            ;
+        $wmtsconf->setOptions($options);
+        $rootLayer = $this->createRootNode();
+        $rootlayerHandler = new WmtsInstanceLayerEntityHandler($this->container, $rootLayer);
+        $rootConfig = $rootlayerHandler->generateConfiguration();
+
+        $wmtsconf->addLayers($this->container, $this->entity, $rootConfig);
+        $configuration = $wmtsconf->toArray();
+
         if ($this->entity->getSource()->getUsername()) {
             $url                             = $this->container->get('router')->generate(
                 'mapbender_core_application_instancebasicauth',
@@ -179,133 +191,6 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
         $status = $this->entity->getSource()->getStatus();
         $configuration['status'] = $status ? strtolower($status) : strtolower(Source::STATUS_OK);
         return $configuration;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function generateConfiguration()
-    {
-        $wmtsconf = $this->entity->getType() === Source::TYPE_WMTS ?
-            new WmtsInstanceConfiguration() : new TmsInstanceConfiguration();
-        $wmtsconf->setType(strtolower($this->entity->getType()));
-        $wmtsconf->setTitle($this->entity->getTitle());
-        $wmtsconf->setIsBaseSource($this->entity->isBasesource());
-
-        $options    = $this->entity->getType() === Source::TYPE_WMTS ?
-            new WmtsInstanceConfigurationOptions() : new TmsInstanceConfigurationOptions();
-//        $dimensions = array();
-//        foreach ($this->entity->getDimensions() as $dimension) {
-//            if ($dimension->getActive()) {
-//                $name         = $dimension->getName();
-//                $dimensions[] = array(
-//                    'current' => $dimension->getCurrent(),
-//                    'default' => $dimension->getDefault(),
-//                    'multipleValues' => $dimension->getMultipleValues(),
-//                    'name' => $dimension->getName(),
-//                    '__name' => $name === 'time' || $name === 'elevation' ? $name : "dim_" . $name,
-//                    'nearestValue' => $dimension->getNearestValue(),
-//                    'unitSymbol' => $dimension->getUnitSymbol(),
-//                    'units' => $dimension->getUnits(),
-//                    'extent' => $dimension->getData($dimension->getExtent()),
-//                    'type' => $dimension->getType(),
-//                );
-//            }
-//        }
-        $options
-            ->setProxy($this->entity->getProxy())
-            ->setVisible($this->entity->getVisible())
-            ->setOpacity($this->entity->getOpacity() / 100)
-//            ->setDimensions($dimensions)
-            ;
-        $wmtsconf->setOptions($options);
-        $rootnode = $this->createRootNode();
-        $wmtsconf->addLayers($this->container, $this->entity, $rootnode);
-        $this->entity->setConfiguration($wmtsconf->toArray());
-    }
-
-    /**
-     * Generates a configuration from an yml file
-     */
-    public function generateYmlConfiguration()
-    {
-//        $this->entity->setSource(new WmtsSource());
-//        $wmtsconf = new WmtsInstanceConfiguration();
-//        $wmtsconf->setType(strtolower($this->entity->getType()));
-//        $wmtsconf->setTitle($this->entity->getTitle());
-//        $wmtsconf->setIsBaseSource($this->entity->isBasesource());
-//
-//        $options       = new WmtsInstanceConfigurationOptions();
-//        $configuration = $this->entity->getConfiguration();
-//        $options->setUrl($configuration["url"])
-//            ->setProxy($this->entity->getProxy())
-//            ->setVisible($this->entity->getVisible())
-//            ->setFormat($this->entity->getFormat())
-//            ->setInfoformat($this->entity->getInfoformat())
-//            ->setTransparency($this->entity->getTransparency())
-//            ->setOpacity($this->entity->getOpacity() / 100)
-//            ->setTiled($this->entity->getTiled());
-//
-//        if (isset($configuration["vendor"])) {
-//            $options->setVendor($configuration["vendor"]);
-//        }
-//
-//        $wmtsconf->setOptions($options);
-//
-//        if (!key_exists("children", $configuration)) {
-//            $num       = 0;
-//            $rootlayer = new WmtsInstanceLayer();
-//            $rootlayer->setTitle($this->entity->getTitle())
-//                ->setId($this->entity->getId() . "_" . $num)
-//                ->setMinScale(!isset($configuration["minScale"]) ? null : $configuration["minScale"])
-//                ->setMaxScale(!isset($configuration["maxScale"]) ? null : $configuration["maxScale"])
-//                ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
-////                ->setPriority($num)
-//                ->setSourceItem(new WmtsLayerSource())
-//                ->setSourceInstance($this->entity);
-//            $rootlayer->setToggle(false);
-//            $rootlayer->setAllowtoggle(true);
-//            $this->entity->addLayer($rootlayer);
-//            foreach ($configuration["layers"] as $layerDef) {
-//                $num++;
-//                $layer       = new WmtsInstanceLayer();
-//                $layersource = new WmtsLayerSource();
-//                $layersource->setName($layerDef["name"]);
-//                if (isset($layerDef["legendurl"])) {
-//                    $style          = new Style();
-//                    $style->setName(null);
-//                    $style->setTitle(null);
-//                    $style->setAbstract(null);
-//                    $legendUrl      = new LegendUrl();
-//                    $legendUrl->setWidth(null);
-//                    $legendUrl->setHeight(null);
-//                    $onlineResource = new OnlineResource();
-//                    $onlineResource->setFormat(null);
-//                    $onlineResource->setHref($layerDef["legendurl"]);
-//                    $legendUrl->setOnlineResource($onlineResource);
-//                    $style->setLegendUrl($legendUrl);
-//                    $layersource->addStyle($style);
-//                }
-//                $layer->setTitle($layerDef["title"])
-//                    ->setId($this->entity->getId() . '-' . $num)
-//                    ->setMinScale(!isset($layerDef["minScale"]) ? null : $layerDef["minScale"])
-//                    ->setMaxScale(!isset($layerDef["maxScale"]) ? null : $layerDef["maxScale"])
-//                    ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
-//                    ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
-//                    ->setParent($rootlayer)
-//                    ->setSourceItem($layersource)
-//                    ->setSourceInstance($this->entity);
-//                $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo() ? true : false);
-//                $rootlayer->addSublayer($layer);
-//                $this->entity->addLayer($layer);
-//            }
-//            $instLayHandler = self::createHandler($this->container, $rootlayer);
-//            $children       = array($instLayHandler->generateConfiguration());
-//            $wmtsconf->setChildren($children);
-//        } else {
-//            $wmtsconf->setChildren($configuration["children"]);
-//        }
-//        $this->entity->setConfiguration($wmtsconf->toArray());
     }
 
     /**
@@ -400,8 +285,7 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setInfo($this->entity->getInfo())
             ->setAllowtoggle($this->entity->getAllowtoggle())
             ->setToggle($this->entity->getToggle());
-        $rootlayerHandler = self::createHandler($this->container, $rootInst);
-        return $rootlayerHandler->generateConfiguration();
+        return $rootInst;
     }
 
     /**

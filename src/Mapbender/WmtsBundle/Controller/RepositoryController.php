@@ -286,7 +286,6 @@ class RepositoryController extends Controller
                     ->getRepository("MapbenderWmtsBundle:WmtsInstance")
                     ->find($wmtsinstance->getId());
                 $wmtsinsthandler = new WmtsInstanceEntityHandler($this->container, $wmtsinstance);
-                $wmtsinsthandler->generateConfiguration();
                 $wmtsinsthandler->save();
                 $em->flush();
                 $em->getConnection()->commit();
@@ -374,7 +373,6 @@ class RepositoryController extends Controller
             ->getRepository("MapbenderCoreBundle:SourceInstance")
             ->find($instanceId);
         $wmtsinsthandler = new WmtsInstanceEntityHandler($this->container, $wmtsinstance);
-        $wmtsinsthandler->generateConfiguration();
         $wmtsinsthandler->save();
         $em->flush();
         $em->getConnection()->commit();

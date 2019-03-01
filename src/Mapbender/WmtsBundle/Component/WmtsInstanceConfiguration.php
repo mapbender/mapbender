@@ -131,7 +131,8 @@ class WmtsInstanceConfiguration extends InstanceConfiguration
         $layersConf = array();
         foreach ($entity->getLayers() as $layer) {
             if ($layer->getActive()) {
-                $options = EntityHandler::createHandler($container, $layer)->generateConfiguration();
+                $layerHandler = new WmtsInstanceLayerEntityHandler($container, $layer);
+                $options = $layerHandler->generateConfiguration();
                 // TODO check if layers support info
                 $layersConf[] = $options;
             }

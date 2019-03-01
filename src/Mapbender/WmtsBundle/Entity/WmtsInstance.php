@@ -4,11 +4,8 @@ namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmtsBundle\Component\WmtsMetadata;
-use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
  * WmtsInstance class
@@ -227,7 +224,7 @@ class WmtsInstance extends SourceInstance
     /**
      * Get layers
      *
-     * @return array
+     * @return WmtsInstanceLayer[]|ArrayCollection
      */
     public function getLayers()
     {

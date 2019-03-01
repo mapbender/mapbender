@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
@@ -20,17 +21,20 @@ use Mapbender\WmtsBundle\Entity\WmtsSource;
 /**
  * Description of WmtsInstanceLayerEntityHandler
  *
+ * @property WmsInstanceLayer $entity
+ *
  * @author Paul Schmidt
  */
 class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 {
 
     /**
+     * @param WmtsInstance $instance
+     * @param WmtsLayerSource $wmtslayersource
      * @inheritdoc
      */
     public function create(SourceInstance $instance, SourceItem $wmtslayersource, $num = 0, $persist = true)
     {
-        /** @var WmtsInstance $instance */
         $instanceLayer = $this->entity;
 
         $instanceLayer->setSourceInstance($instance);
@@ -111,7 +115,6 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * Generates a configuration for layers
      *
-     * @param array $configuration
      * @return array
      */
     public function generateConfiguration()
@@ -203,13 +206,16 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      * Finds an instance layer, that is linked with a given wms source layer.
      *
      * @param WmtsLayerSource $wmtssourcelayer wms layer source
-     * @param array $instancelayerList list of instance layers
+     * @param WmtsInstanceLayer[] $instancelayerList
      * @return WmtsInstanceLayer | null the instance layer, otherwise null
      */
     public function findLayer(WmtsLayerSource $wmtssourcelayer, $instancelayerList)
     {
         foreach ($instancelayerList as $instancelayer) {
-            if ($wmtssourcelayer->getId() === $instancelayer->getSourceItem()->getId()) {
+            // @todo: push getId method down into SourceInstanceItem class
+            /** @var WmtsLayerSource $layerSource */
+            $layerSource = $instancelayer->getSourceItem();
+            if ($wmtssourcelayer->getId() === $layerSource->getId()) {
                 return $instancelayer;
             }
         }

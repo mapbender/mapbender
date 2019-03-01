@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\WmtsBundle\Component;
 
-use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\InstanceConfiguration;
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
@@ -101,8 +100,7 @@ class TmsInstanceConfiguration extends InstanceConfiguration
     }
 
     /**
-     * Returns a title
-     * @return integer children
+     * @return $this
      */
     public function addChild($child)
     {
@@ -163,7 +161,8 @@ class TmsInstanceConfiguration extends InstanceConfiguration
         $layersConf = array();
         foreach ($entity->getLayers() as $layer) {
             if ($layer->getActive()) {
-                $options = EntityHandler::createHandler($container, $layer)->generateConfiguration();
+                $layerHandler = new WmtsInstanceLayerEntityHandler($container, $layer);
+                $options = $layerHandler->generateConfiguration();
                 $format = $layer->getFormat();
                 $options['options']['format'] = $format;
                 $options['options']['format_ext'] =

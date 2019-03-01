@@ -12,10 +12,15 @@ use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
+use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
+use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 /**
  * Description of WmtsSourceEntityHandler
+ *
+ * @property WmtsSource $entity
  *
  * @author Paul Schmidt
  */
@@ -67,9 +72,8 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
         if ($instance->getLayerset()) {
             $num = 0;
             foreach ($instance->getLayerset()->getInstances() as $instanceAtLayerset) {
-                $instHandler = self::createHandler($this->container, $instanceAtLayerset);
+                /** @var WmsInstance|WmtsInstance $instanceAtLayerset */
                 $instanceAtLayerset->setWeight($num);
-                $instHandler->generateConfiguration();
                 if ($persist) {
                     $this->container->get('doctrine')->getManager()->persist($instanceAtLayerset);
                 }
