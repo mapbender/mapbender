@@ -21,39 +21,11 @@ class TmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 //     */
 //    protected $vendor;
 
-//
-//    /**
-//     * ORM\Column(type="string", nullable=true)
-//     */
-//
-//    public $tiled;
-//
 //    /**
 //     * ORM\Column(type="array", nullable=true)
 //     */
 //
 //    public $bbox;
-//    /**
-//     * Sets a tiled
-//     *
-//     * @param boolean $tiled source tiled
-//     * @return WmtsInstanceConfiguration
-//     */
-//    public function setTiled($tiled)
-//    {
-//        $this->tiled = $tiled;
-//        return $this;
-//    }
-//
-//    /**
-//     * Returns a tiled
-//     *
-//     * @return boolean tiled
-//     */
-//    public function getTiled()
-//    {
-//        return $this->tiled;
-//    }
 //
 //    /**
 //     * Sets a bbox
@@ -100,7 +72,6 @@ class TmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 //            "info_format" => $this->infoformat,
 //            "transparent" => $this->transparency,
             "opacity" => $this->opacity,
-//            "tiled" => $this->tiled,
 //            "bbox" => $this->bbox,
 //            "vendor" => $this->vendor
         );
@@ -135,9 +106,6 @@ class TmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             if (isset($options["opacity"])) {
                 $ico->opacity = $options["opacity"];
             }
-//            if (isset($options["tiled"])) {
-//                $ico->tiled = $options["tiled"];
-//            }
 //            if (isset($options["bbox"])) {
 //                $ico->bbox = $options["bbox"];
 //            }

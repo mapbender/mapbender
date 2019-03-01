@@ -76,11 +76,6 @@ class WmtsInstance extends SourceInstance
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $proxy = false;
-//
-//    /**
-//     * @ORM\Column(type="boolean", nullable=true)
-//     */
-//    protected $tiled = false;
 
     /**
      * @ORM\Column(type="array", nullable=true)
@@ -444,27 +439,6 @@ class WmtsInstance extends SourceInstance
         return $this->proxy;
     }
 
-    /**
-     * Set tiled
-     *
-     * @param boolean $tiled
-     * @return WmtsInstance
-     */
-    public function setTiled($tiled)
-    {
-        $this->tiled = $tiled;
-        return $this;
-    }
-
-    /**
-     * Get tiled
-     *
-     * @return boolean
-     */
-    public function getTiled()
-    {
-        return $this->tiled;
-    }
 //
 //    /**
 //     * Set ratio
