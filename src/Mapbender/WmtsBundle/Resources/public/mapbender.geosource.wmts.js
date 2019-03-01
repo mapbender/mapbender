@@ -49,6 +49,7 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             // TODO disable layer 
         }
         rootLayer['children'] = [layer];
+        console.log("What is that thing now", layer, sourceOpts, proj);
         var layerOptions = this.createLayerOptions(layer, sourceOpts.configuration.tilematrixsets, proj,
             sourceOpts.configuration.options.proxy, null);
         var mqLayerDef = {
@@ -276,16 +277,15 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
         var layer = this.findLayerEpsg(source.configuration.layers,
             source.configuration.tilematrixsets, projection.projCode, true);
         if(layer){
-            var mqLayer = Mapbender.Model.getMqLayer(source);
+            var olLayer = Mapbender.Model.getNativeLayer(source);
             var layerOptions = this.createLayerOptions(layer, source.configuration.tilematrixsets, projection,
-            source.configuration.options.proxy, mqLayer.olLayer);
-            $.extend(mqLayer.olLayer, layerOptions);
-            mqLayer.olLayer.updateMatrixProperties();
+            source.configuration.options.proxy, olLayer);
+            $.extend(olLayer, layerOptions);
+            olLayer.updateMatrixProperties();
             this.enable(source, 'nosrs');
         } else {// deactivate layer
             this.disable(source, 'nosrs');
         }
-        
     }
 });
 Mapbender.source['wmts'] = new Mapbender.Geo.WmtsSourceHandler();

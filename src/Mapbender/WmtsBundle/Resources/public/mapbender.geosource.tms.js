@@ -178,9 +178,9 @@ Mapbender.Geo.TmsSourceHandler = Class({
     'public function changeProjection': function(source, projection) {
         var layer = this.findLayerEpsg(source.configuration.layers, projection.projCode, true);
         if (layer) {
-            var mqLayer = Mapbender.Model.getMqLayer(source);
-            var layerOptions = this.createLayerOptions(layer, source.configuration.options.proxy, mqLayer.olLayer);
-            $.extend(mqLayer.olLayer, layerOptions);
+            var olLayer = Mapbender.Model.getNativeLayer(source);
+            var layerOptions = this.createLayerOptions(layer, source.configuration.options.proxy, olLayer);
+            $.extend(olLayer, layerOptions);
             this.enable(source, 'nosrs');
         } else {// deactivate layer
             this.disable(source, 'nosrs');
