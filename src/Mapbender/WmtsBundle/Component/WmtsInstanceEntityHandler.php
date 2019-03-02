@@ -106,53 +106,13 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * Creates DimensionInst object
-     * @param \Mapbender\WmtsBundle\Component\Dimension $dim
-     * @return \Mapbender\WmtsBundle\Component\DimensionInst
-     */
-    public function createDimensionInst(Dimension $dim)
-    {
-//        $diminst = new DimensionInst();
-//        $diminst->setCurrent($dim->getCurrent());
-//        $diminst->setDefault($dim->getDefault());
-//        $diminst->setMultipleValues($dim->getMultipleValues());
-//        $diminst->setName($dim->getName());
-//        $diminst->setNearestValue($dim->getNearestValue());
-//        $diminst->setUnitSymbol($dim->getUnitSymbol());
-//        $diminst->setUnits($dim->getUnits());
-//        $diminst->setActive(false);
-//        $diminst->setOrigextent($dim->getExtent());
-//        $diminst->setExtent($dim->getExtent());
-//        $diminst->setType($diminst->findType($dim->getExtent()));
-//        return $diminst;
-    }
-
-    /**
      * @inheritdoc
+     * @deprecated use the service
+     * @internal
      */
     public function getConfiguration(Signer $signer = NULL)
     {
-        $wmtsconf = $this->entity->getType() === Source::TYPE_WMTS ?
-            new WmtsInstanceConfiguration() : new TmsInstanceConfiguration();
-
-        $wmtsconf->addLayers($this->container, $this->entity);
-        return $wmtsconf->toArray();
-    }
-
-    public function mergeDimension($dimension, $persist = false)
-    {
-        $dimensions = $this->entity->getDimensions();
-        foreach ($dimensions as $dim) {
-            if ($dim->getType() === $dimension->getType()) {
-                $dim->setExtent($dimension->getExtent());
-                $dim->setDefault($dimension->getDefault());
-            }
-        }
-        $this->entity->setDimensions($dimensions);
-        if ($persist) {
-            $this->container->get('doctrine')->getManager()->persist($this->entity);
-            $this->container->get('doctrine')->getManager()->flush();
-        }
+        return $this->getService()->getConfiguration($this->entity);
     }
 
     /**

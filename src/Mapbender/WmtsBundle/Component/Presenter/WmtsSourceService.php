@@ -7,7 +7,6 @@ namespace Mapbender\WmtsBundle\Component\Presenter;
 
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmtsBundle\Component\WmtsInstanceEntityHandler;
 use Mapbender\WmtsBundle\Component\WmtsInstanceLayerEntityHandler;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
@@ -32,14 +31,12 @@ class WmtsSourceService extends SourceService
      */
     public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
-        $eh = new WmtsInstanceEntityHandler($this->container, $sourceInstance);
-        $ehConfig = $eh->getConfiguration();
-        $ownConfig = parent::getInnerConfiguration($sourceInstance) + array(
+        return array_replace(parent::getInnerConfiguration($sourceInstance), array(
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array($this->getRootLayerConfig($sourceInstance)),
             'layers' => $this->getLayerConfigs($sourceInstance),
-        );
-        return array_replace($ehConfig, $ownConfig);
+            'tilematrixsets' => $this->getTileMatrixSetsConfiguration($sourceInstance),
+        ));
     }
 
     /**
@@ -137,7 +134,7 @@ class WmtsSourceService extends SourceService
         foreach ($sourceItem->getMergedBoundingBoxes() as $bbox) {
             $srses[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
-        $configuration['bbox']        = $srses;
+        $configuration['bbox'] = $srses;
 
         return $configuration;
     }
@@ -161,5 +158,62 @@ class WmtsSourceService extends SourceService
                 "reorder" => null,
             ),
         );
+    }
+
+    /**
+     * @param WmtsInstance $sourceInstance
+     * @return array[]
+     */
+    protected function getTileMatrixSetsConfiguration($sourceInstance)
+    {
+        $configs = array();
+        foreach ($sourceInstance->getSource()->getTilematrixsets() as $tilematrixset) {
+            $tilematrices = $tilematrixset->getTilematrices();
+            $origin = $tilematrices[0]->getTopleftcorner();
+            $tilewidth = $tilematrices[0]->getTilewidth();
+            $tileheight = $tilematrices[0]->getTileheight();
+            $tilematricesArr = array();
+            $multiTopLeft = false;
+            $multiTileSize = false;
+            foreach ($tilematrices as $tilematrix) {
+                $latlon = $tilematrix->getTopleftcorner();
+                if ($origin[0] !== $latlon[0] || $origin[1] !== $latlon[1]) {
+                    $multiTopLeft = true;
+                }
+                if ($tilewidth !== $tilematrix->getTilewidth() || $tileheight !== $tilematrix->getTileheight()) {
+                    $multiTileSize = true;
+                }
+                $tilematricesArr[] = array(
+                    'identifier' => $tilematrix->getIdentifier(),
+                    'scaleDenominator' => $tilematrix->getScaledenominator(),
+                    'tileWidth' => $tilematrix->getTilewidth(),
+                    'tileHeight' => $tilematrix->getTileheight(),
+                    'topLeftCorner' => $latlon,
+                    'matrixSize' =>  array($tilematrix->getMatrixwidth(), $tilematrix->getMatrixheight())
+                );
+            }
+
+            // clean matrix attributes if matrices have a selfsame value
+            if (!$multiTopLeft || !$multiTileSize) {
+                foreach ($tilematricesArr as &$tmatrix) {
+                    if (!$multiTopLeft) {
+                        unset($tmatrix['topLeftCorner']);
+                    }
+                    if (!$multiTileSize) {
+                        unset($tmatrix['tileWidth']);
+                        unset($tmatrix['tileHeight']);
+                    }
+                }
+            }
+            $configs[] = array(
+                'id' => $tilematrixset->getId(),
+                'tileSize' => array($tilewidth, $tileheight),
+                'identifier' => $tilematrixset->getIdentifier(),
+                'supportedCrs' => $tilematrixset->getSupportedCrs(),
+                'origin' => $origin,
+                'tilematrices' => $tilematricesArr
+            );
+        }
+        return $configs;
     }
 }
