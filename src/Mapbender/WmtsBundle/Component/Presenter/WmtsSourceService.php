@@ -62,6 +62,7 @@ class WmtsSourceService extends SourceService
         $rootInst = new WmtsInstanceLayer();
         $rootInst->setTitle($sourceInstance->getRoottitle());
         $rootInst->setSourceItem(new WmtsLayerSource());
+        $rootInst->setId($sourceInstance->getId() . "-fake-root");
         $rootInst->setSourceInstance($sourceInstance);
         $rootInst->setActive($sourceInstance->getActive())
             ->setAllowinfo($sourceInstance->getAllowinfo())
@@ -114,9 +115,13 @@ class WmtsSourceService extends SourceService
         $sourceItem      = $instanceLayer->getSourceItem();
         $resourceUrl     = $sourceItem->getResourceUrl();
         $urlTemplateType = count($resourceUrl) > 0 ? $resourceUrl[0] : null;
+        $layerId = strval($instanceLayer->getId());
+        if (!$layerId) {
+            throw new \LogicException("Cannot safely generate config for " . get_class($instanceLayer) . " without an id");
+        }
         $configuration   = array(
-            "id" => $instanceLayer->getId() ? strval($instanceLayer->getId())
-                : strval($instanceLayer->getSourceInstance()->getId()),
+            "id" => $layerId,
+            "origId" => $layerId,
             'url' => $urlTemplateType ? $urlTemplateType->getTemplate() : null,
             'format' => $urlTemplateType ? $urlTemplateType->getFormat() : null,
             "title" => $instanceLayer->getTitle(),

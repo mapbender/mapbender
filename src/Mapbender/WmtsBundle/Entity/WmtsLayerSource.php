@@ -7,7 +7,6 @@
 
 namespace Mapbender\WmtsBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Source;
@@ -15,7 +14,7 @@ use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\WmtsBundle\Component\Style;
 use Mapbender\WmtsBundle\Component\TileMatrixSetLink;
 use Mapbender\WmtsBundle\Component\UrlTemplateType;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
+
 
 /**
  * Description of WmtsLayerSource
@@ -32,11 +31,6 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    protected $wmts_tms;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -101,17 +95,13 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      */
     protected $resourceUrl;
 
-    /**
-     * TODO: describe initial method
-     */
-    public function __construct($wmts_tms = WmtsSource::TYPE_WMTS)
+    public function __construct()
     {
-        $this->wmts_tms = $wmts_tms;
 //        $this->keywords = new ArrayCollection();
         $this->infoformats = array();
         $this->formats = array();
         $this->styles = array();
-        $this->dimension = array();
+        $this->dimensions = array();
         $this->resourceUrl = array();
         $this->tilematrixSetlinks = array();
         $this->boundingBoxes = array();
@@ -134,17 +124,6 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    public function getWmtsTms()
-    {
-        return $this->wmts_tms;
-    }
-
-    public function setWmtsTms($wmts_tms)
-    {
-        $this->wmts_tms = $wmts_tms;
-        return $this;
     }
 
     /**
@@ -228,7 +207,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      * Set latlonBounds
      *
      * @param BoundingBox $latlonBounds
-     * @return WmsLayerSource
+     * @return $this
      */
     public function setLatlonBounds(BoundingBox $latlonBounds = NULL)
     {
@@ -283,7 +262,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     /**
      * Set styles
      * @param array $styles
-     * @return WmtsSource
+     * @return $this
      */
     public function setStyles($styles)
     {
@@ -294,7 +273,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     /**
      * Add style
      * @param Style $style
-     * @return WmtsSource
+     * @return $this
      */
     public function addStyle($style)
     {
@@ -317,7 +296,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      * Set formats
      *
      * @param array $formats
-     * @return WmtsSource
+     * @return $this
      */
     public function setFormats($formats)
     {
@@ -329,7 +308,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      * Add format
      *
      * @param array $format
-     * @return WmtsSource
+     * @return $this
      */
     public function addFormat($format)
     {
@@ -351,7 +330,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      * Set infoformats
      *
      * @param array $infoformats
-     * @return WmtsSource
+     * @return $this
      */
     public function setInfoformats($infoformats)
     {
@@ -363,7 +342,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
      * Add infoformat
      *
      * @param string $infoformat
-     * @return WmtsSource
+     * @return $this
      */
     public function addInfoformat($infoformat)
     {
@@ -383,7 +362,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     /**
      *Gets tilematrixSetlinks.
-     * @return \Mapbender\WmtsBundle\Component\TileMatrixSetLink[]
+     * @return TileMatrixSetLink[]
      */
     public function getTilematrixSetlinks()
     {
@@ -392,8 +371,8 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     /**
      * Sets tilematrixSetlinks
-     * @param \Mapbender\WmtsBundle\Component\TileMatrixSetLink $tilematrixSetlinks
-     * @return \Mapbender\WmtsBundle\Entity\WmtsLayerSource
+     * @param TileMatrixSetLink[] $tilematrixSetlinks
+     * @return $this
      */
     public function setTilematrixSetlinks(array $tilematrixSetlinks = array())
     {
@@ -403,12 +382,12 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     /**
      * Adds TileMatrixSetLink.
-     * @param \Mapbender\WmtsBundle\Component\TileMatrixSetLink $tilematrixSetlinks
-     * @return \Mapbender\WmtsBundle\Entity\WmtsLayerSource
+     * @param TileMatrixSetLink $tilematrixSetlink
+     * @return $this
      */
-    public function addTilematrixSetlinks(TileMatrixSetLink $tilematrixSetlinks)
+    public function addTilematrixSetlinks(TileMatrixSetLink $tilematrixSetlink)
     {
-        $this->tilematrixSetlinks[] = $tilematrixSetlinks;
+        $this->tilematrixSetlinks[] = $tilematrixSetlink;
         return $this;
     }
 
@@ -424,8 +403,8 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
 
     /**
      * Sets dimensions.
-     * @param array $dimensions
-     * @return \Mapbender\WmtsBundle\Entity\WmtsLayerSource
+     * @param Dimension[] $dimensions
+     * @return $this
      */
     public function setDimensions(array $dimensions = array())
     {
@@ -436,7 +415,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     /**
      * Adds dimension.
      * @param Dimension $dimension
-     * @return \Mapbender\WmtsBundle\Entity\WmtsLayerSource
+     * @return $this
      */
     public function addDimension($dimension)
     {
@@ -447,7 +426,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     /**
      * Set resourceUrl
      * @param UrlTemplateType[] $resourceUrls
-     * @return \Mapbender\WmtsBundle\Entity\WmtsLayerSource
+     * @return $this
      */
     public function setResourceUrl(array $resourceUrls = array())
     {
@@ -458,7 +437,7 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     /**
      * Add resourceUrl
      * @param UrlTemplateType $resourceUrl
-     * @return $this resourceUrl
+     * @return $this
      */
     public function addResourceUrl(UrlTemplateType $resourceUrl)
     {

@@ -3,9 +3,6 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
     'public function create': function(sourceOpts) {
         var rootLayer = sourceOpts.configuration.children[0];
         function _setProperties(layer, parent, id, num, proxy){
-            /* set unic id for a layer */
-            layer.options.origId = layer.options.id;
-            layer.options.id = parent ? parent.options.id + "_" + num : id + "_" + num;
             if(proxy && layer.options.legend) {
                 if(layer.options.legend.graphic) {
                     layer.options.legend.graphic = Mapbender.Util.addProxy(layer.options.legend.graphic);
@@ -35,7 +32,7 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             }
         }
         rootLayer['children'] = [layer];
-        var layerOptions = this.createLayerOptions(layer, sourceOpts.configuration.tilematrixsets, proj,
+        var layerOptions = this._createLayerOptions(layer, sourceOpts.configuration.tilematrixsets, proj,
             sourceOpts.configuration.options.proxy);
         var mqLayerDef = {
             type: 'wmts',
@@ -50,68 +47,63 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
     'public function postCreate': function(source, mqLayer) {
         this.changeProjection(source, Mapbender.Model.getCurrentProj());
     },
-    'private function createLayerOptions': function(layer, matrixsets, projection, proxy, olLayer){
+    _getMatrixOptions: function(layer, matrixsets) {
         var matrixset = this.findMatrixSetIdent(matrixsets, layer.options.tilematrixset, null, true);
         var tileFullExtent = null;
-        var supportedCrs = matrixset.supportedCrs;
-        if(this.checkUrnIdentifier(matrixset.supportedCrs)) {
-            supportedCrs = this.getEpgsFromUrn(supportedCrs);
-        }
+        var supportedCrs = this.urnToEpsg(matrixset.supportedCrs);
         if(layer.options.bbox[supportedCrs]){
             tileFullExtent =
                 OpenLayers.Bounds.fromArray(layer.options.bbox[supportedCrs]);
         } else {
-            for(srs in layer.options.bbox){
-                tileFullExtent = OpenLayers.Bounds.fromArray(layer.options.bbox[srs]).transform(
-                    Mapbender.Model.getProj(srs),
+            var bboxSrses = Object.keys(layer.options.bbox);
+            for (var i = 0 ; i < bboxSrses.length; ++i) {
+                var bboxSrs = bboxSrses[i];
+                var bboxArray = layer.options.bbox[bboxSrs];
+                tileFullExtent = OpenLayers.Bounds.fromArray(bboxArray).transform(
+                    Mapbender.Model.getProj(bboxSrs),
                     Mapbender.Model.getProj(supportedCrs)
                 );
                 break;
             }
         }
-        var layerOptions = {
-            label: layer.options.title,
-            layer: layer.options.identifier,
-            format: layer.options.format,
-            style: layer.options.style,
+        return {
             matrixSet: matrixset.identifier,
             matrixIds: matrixset.tilematrices,
             tileOrigin: OpenLayers.LonLat.fromArray(matrixset.origin),
             tileSize: new OpenLayers.Size(matrixset.tileSize[0], matrixset.tileSize[1]),
-            tileFullExtent: tileFullExtent,
-            url: proxy ? Mapbender.Util.addProxy(layer.options.url) : layer.options.url
+            tileFullExtent: tileFullExtent
         };
-        if(olLayer){
-            layerOptions['format'] = olLayer.format === layer.options.format ? olLayer.format : layer.options.format;
-            layerOptions['formatSuffix'] = olLayer.format === layer.options.format ? olLayer.formatSuffix
-                    : layer.options.format.substring(layer.options.format.indexOf('/') + 1);
-            layerOptions['params'] = {LAYERS: [layer.options.identifier]};
-        }
+    },
+    _createLayerOptions: function(layer, matrixsets, projection, proxy) {
+        var layerOptions = $.extend(this._getMatrixOptions(layer, matrixsets), {
+            label: layer.options.title,
+            layer: layer.options.identifier,
+            format: layer.options.format,
+            style: layer.options.style,
+            url: proxy ? Mapbender.Util.addProxy(layer.options.url) : layer.options.url
+        });
         return layerOptions;
     },
-    'private function findLayerEpsg': function(layers, matrixSets, epsg, clone){
-        var matrixSets = this.findMatrixSetEpsg(matrixSets, epsg, clone);
+    findLayerEpsg: function(layers, matrixSets, epsg, clone){
+        var matrixSetMap = this.findMatrixSetEpsg(matrixSets, epsg, clone);
         for (var i = 0; i < layers.length; i++) {
-            if(matrixSets[layers[i].options.tilematrixset]){
+            if(matrixSetMap[layers[i].options.tilematrixset]){
                 return clone ? $.extend(true, {}, layers[i]) : layers[i];
             }
         }
         return null;
     },
-    'private function findMatrixSetEpsg': function(matrixSets, epsg, clone){
+    findMatrixSetEpsg: function(matrixSets, epsg, clone){
         var matrixsets = {};
         for(var i = 0; i < matrixSets.length; i++){
-            var supportedCrs = matrixSets[i].supportedCrs;
-            if(this.checkUrnIdentifier(matrixSets[i].supportedCrs)) {
-                supportedCrs = this.getEpgsFromUrn(supportedCrs);
-            }
+            var supportedCrs = this.urnToEpsg(matrixSets[i].supportedCrs);
             if(epsg === supportedCrs){
                 matrixsets[matrixSets[i].identifier] = clone ? $.extend(true, {}, matrixSets[i]) : matrixSets[i];
             }
         }
         return matrixsets;
     },
-    'private function findMatrixSetIdent': function(matrixSets, identifier, clone){
+    findMatrixSetIdent: function(matrixSets, identifier, clone){
         for(var i = 0; i < matrixSets.length; i++){
             if(identifier === matrixSets[i].identifier){
                 return clone ? $.extend(true, {}, matrixSets[i]) : matrixSets[i];
@@ -119,22 +111,9 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
         }
         return null;
     },
-    'private function findMatrix': function(matrices, identifier, clone){
-        for (var i = 0; i < matrices.length; i++) {
-            if(identifier === matrices[i].identifier){
-                return clone ? $.extend(true, {}, matrices[i]) : matrices[i];
-            }
-        }
-        return null;
-    },
-    'private function checkUrnIdentifier': function(crs){
-        var pattern = new RegExp("urn:ogc:def:crs");
-        if(pattern.test(crs)) return true;
-    },
-    'private function getEpgsFromUrn': function(urnIdentifier){
-        var urnArray = urnIdentifier.split(":");
-        var epsgCode = urnArray[urnArray.length-1];
-        return "EPSG:" + epsgCode;
+    urnToEpsg: function(urnOrEpsgIdentifier) {
+        // @todo: drop URNs server-side, they offer no benefit here
+        return urnOrEpsgIdentifier.replace(/^urn:.*?(\d+)$/, 'EPSG:$1');
     },
     'public function featureInfoUrl': function(mqLayer, x, y) {
         if(!mqLayer.visible() || mqLayer.olLayer.queryLayers.length === 0) {
@@ -185,8 +164,8 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             source.configuration.tilematrixsets, projection.projCode, true);
         if(layer){
             var olLayer = Mapbender.Model.getNativeLayer(source);
-            var layerOptions = this.createLayerOptions(layer, source.configuration.tilematrixsets, projection,
-            source.configuration.options.proxy, olLayer);
+            var layerOptions = this._createLayerOptions(layer, source.configuration.tilematrixsets, projection,
+            source.configuration.options.proxy);
             $.extend(olLayer, layerOptions);
             olLayer.updateMatrixProperties();
         }

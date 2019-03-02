@@ -242,7 +242,7 @@ class TmsCapabilitiesParser100
 //        $profile = $this->getValue("./@profile", $titleMapElt);
 //        $url     = $this->getValue("./@href", $titleMapElt);
         #http://geo.sv.rostock.de/geodienste/luftbild/tms/1.0.0/luftbild/EPSG25833/5/10/10.png
-        $layer = new WmtsLayerSource(WmtsSource::TYPE_TMS);
+        $layer = new WmtsLayerSource();
         $wmts->addLayer($layer);
         $layer->setSource($wmts);
         $layer->setTitle($this->getValue("./Title/text()", $cntx));
