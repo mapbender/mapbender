@@ -459,7 +459,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * @inheritdoc
+     * @return WmtsInstance
      */
     public function getSourceInstance()
     {

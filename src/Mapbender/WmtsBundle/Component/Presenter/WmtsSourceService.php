@@ -59,9 +59,11 @@ class WmtsSourceService extends SourceService
     protected function getRootLayerConfig($sourceInstance)
     {
         // create a fake root layer entity
+        $rootSource = new WmtsLayerSource();
+        $rootSource->setSource($sourceInstance->getSource());
         $rootInst = new WmtsInstanceLayer();
         $rootInst->setTitle($sourceInstance->getRoottitle());
-        $rootInst->setSourceItem(new WmtsLayerSource());
+        $rootInst->setSourceItem($rootSource);
         $rootInst->setId($sourceInstance->getId() . "-fake-root");
         $rootInst->setSourceInstance($sourceInstance);
         $rootInst->setActive($sourceInstance->getActive())
@@ -110,7 +112,7 @@ class WmtsSourceService extends SourceService
      * @param WmtsInstanceLayer $instanceLayer
      * @return array
      */
-    public function getSingleLayerOptionsConfig($instanceLayer)
+    protected function getSingleLayerOptionsConfig($instanceLayer)
     {
         $sourceItem      = $instanceLayer->getSourceItem();
         $resourceUrl     = $sourceItem->getResourceUrl();
@@ -119,18 +121,23 @@ class WmtsSourceService extends SourceService
         if (!$layerId) {
             throw new \LogicException("Cannot safely generate config for " . get_class($instanceLayer) . " without an id");
         }
+        $useProxy = !!$instanceLayer->getSourceInstance()->getProxy();
+        $urlTemplate = $urlTemplateType ? $urlTemplateType->getTemplate() : null;
+        if ($urlTemplate && $useProxy) {
+            $urlTemplate = $this->proxifyTileUrlTemplate($urlTemplate);
+        }
+
         $configuration   = array(
             "id" => $layerId,
             "origId" => $layerId,
-            'url' => $urlTemplateType ? $urlTemplateType->getTemplate() : null,
+            'url' => $urlTemplate,
             'format' => $urlTemplateType ? $urlTemplateType->getFormat() : null,
             "title" => $instanceLayer->getTitle(),
             "style" => $instanceLayer->getStyle(),
             "identifier" => $instanceLayer->getSourceItem()->getIdentifier(),
             "tilematrixset" => $instanceLayer->getTileMatrixSet(),
         );
-
-        $legendConfig = $this->instanceLayerHandler->getLegendConfig($instanceLayer);
+        $legendConfig = $this->getLayerLegendConfig($instanceLayer);
         if ($legendConfig) {
             $configuration['legend'] = $legendConfig;
         }
@@ -220,5 +227,55 @@ class WmtsSourceService extends SourceService
             );
         }
         return $configs;
+    }
+
+    /**
+     * Return the client-facing configuration for a layer's legend
+     *
+     * @param WmtsInstanceLayer $instanceLayer
+     * @return array
+     */
+    protected function getLayerLegendConfig($instanceLayer)
+    {
+        // @todo: tunnel support
+        foreach ($instanceLayer->getSourceItem()->getStyles() as $style) {
+            $sourceStyle = $instanceLayer->getStyle();
+            if (!$sourceStyle || $sourceStyle === $style->getIdentifier()) {
+                if ($style->getLegendurl()) {
+                    $legendHref = $style->getLegendurl()->getHref();
+                    /** @var WmtsInstance $sourceInstance */
+                    $sourceInstance = $instanceLayer->getSourceInstance();
+                    if ($sourceInstance->getProxy()) {
+                        $legendHref = $this->urlProcessor->proxifyUrl($legendHref);
+                    }
+                    return array(
+                        'url' => $legendHref,
+                    );
+                }
+            }
+        }
+        return array();
+    }
+
+    /**
+     * @param string $urlTemplate
+     * @return string
+     */
+    protected function proxifyTileUrlTemplate($urlTemplate)
+    {
+        // add dummy 'service' query param for owsproxy...
+        // @todo: remove service type 'intelligence' from owsproxy
+        $dummyServiceParam = 'service=WMS';
+        if (false !== strpos($urlTemplate, '?')) {
+            $urlWithService = "{$urlTemplate}&{$dummyServiceParam}";
+        } else {
+            $urlWithService = "{$urlTemplate}?{$dummyServiceParam}";
+        }
+        $proxyUrlInitial = $this->urlProcessor->proxifyUrl($urlWithService);
+        // Restore unencoded template placeholders
+        return strtr($proxyUrlInitial, array(
+            '%7B' => '{',
+            '%7D' => '}',
+        ));
     }
 }

@@ -8,22 +8,6 @@ Mapbender.Geo.TmsSourceHandler = Class({
     'private string layerNameIdent': 'identifier',
     'public function create': function(sourceOpts) {
         var rootLayer = sourceOpts.configuration.children[0];
-        function _setProperties(layer, parent, id, num, proxy) {
-            if (proxy && layer.options.legend) {
-                if (layer.options.legend.graphic) {
-                    layer.options.legend.graphic = Mapbender.Util.addProxy(layer.options.legend.graphic);
-                } else if (layer.options.legend.url) {
-                    layer.options.legend.url = Mapbender.Util.addProxy(layer.options.legend.url);
-                }
-            }
-            if (layer.children) {
-                for (var i = 0; i < layer.children.length; i++) {
-                    _setProperties(layer.children[i], layer, id, i, proxy);
-                }
-            }
-        }
-        _setProperties(rootLayer, null, sourceOpts.id, 0, sourceOpts.configuration.options.proxy);
-
         var proj = Mapbender.Model.getCurrentProj();
         var layer = this.findLayerEpsg(sourceOpts.configuration.layers, proj.projCode, true);
         if (!layer) { // find first layer with epsg from srs list to initialize.
@@ -37,7 +21,7 @@ Mapbender.Geo.TmsSourceHandler = Class({
         }
         rootLayer['children'] = [layer];
 
-        var layerOptions = this._createLayerOptions(layer, sourceOpts.configuration.options.proxy, null);
+        var layerOptions = this._createLayerOptions(layer, null);
         // hide layer without start srs -> remove name
         var mqLayerDef = {
             type: 'tms',
@@ -52,14 +36,14 @@ Mapbender.Geo.TmsSourceHandler = Class({
     'public function postCreate': function(source, mqLayer) {
         this.changeProjection(source, Mapbender.Model.getCurrentProj());
     },
-    _createLayerOptions: function(layer, proxy, olLayer) {
+    _createLayerOptions: function(layer, olLayer) {
         var layerOptions = {
             label: layer.options.title,
             layer: layer.options.identifier,
             tileOrigin: OpenLayers.LonLat.fromArray(layer.options.tilematrixset.origin),
             tileSize:
                 new OpenLayers.Size(layer.options.tilematrixset.tileSize[0], layer.options.tilematrixset.tileSize[1]),
-            url: proxy ? Mapbender.Util.addProxy(layer.options.url) : layer.options.url
+            url: layer.options.url
         };
         if (olLayer) {
             layerOptions['format'] = olLayer.format === layer.options.format ? olLayer.format : layer.options.format;
@@ -98,7 +82,7 @@ Mapbender.Geo.TmsSourceHandler = Class({
         var layer = this.findLayerEpsg(source.configuration.layers, projection.projCode, true);
         if (layer) {
             var olLayer = Mapbender.Model.getNativeLayer(source);
-            var layerOptions = this._createLayerOptions(layer, source.configuration.options.proxy, olLayer);
+            var layerOptions = this._createLayerOptions(layer, olLayer);
             $.extend(olLayer, layerOptions);
         }
     }

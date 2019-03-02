@@ -2,22 +2,6 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
     'private string layerNameIdent': 'identifier',
     'public function create': function(sourceOpts) {
         var rootLayer = sourceOpts.configuration.children[0];
-        function _setProperties(layer, parent, id, num, proxy){
-            if(proxy && layer.options.legend) {
-                if(layer.options.legend.graphic) {
-                    layer.options.legend.graphic = Mapbender.Util.addProxy(layer.options.legend.graphic);
-                } else if(layer.options.legend.url) {
-                    layer.options.legend.url = Mapbender.Util.addProxy(layer.options.legend.url);
-                }
-            }
-            if(layer.children) {
-                for(var i = 0; i < layer.children.length; i++) {
-                    _setProperties(layer.children[i], layer, id, i, proxy);
-                }
-            }
-        }
-        _setProperties(rootLayer, null, sourceOpts.id, 0, sourceOpts.configuration.options.proxy);
-
         var proj = Mapbender.Model.getCurrentProj();
         var layer = this.findLayerEpsg(sourceOpts.configuration.layers,
             sourceOpts.configuration.tilematrixsets, proj.projCode, true);
@@ -32,8 +16,7 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             }
         }
         rootLayer['children'] = [layer];
-        var layerOptions = this._createLayerOptions(layer, sourceOpts.configuration.tilematrixsets, proj,
-            sourceOpts.configuration.options.proxy);
+        var layerOptions = this._createLayerOptions(layer, sourceOpts.configuration.tilematrixsets);
         var mqLayerDef = {
             type: 'wmts',
             isBaseLayer: false,
@@ -74,13 +57,13 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             tileFullExtent: tileFullExtent
         };
     },
-    _createLayerOptions: function(layer, matrixsets, projection, proxy) {
+    _createLayerOptions: function(layer, matrixsets) {
         var layerOptions = $.extend(this._getMatrixOptions(layer, matrixsets), {
             label: layer.options.title,
             layer: layer.options.identifier,
             format: layer.options.format,
             style: layer.options.style,
-            url: proxy ? Mapbender.Util.addProxy(layer.options.url) : layer.options.url
+            url: layer.options.url
         });
         return layerOptions;
     },
@@ -164,8 +147,7 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             source.configuration.tilematrixsets, projection.projCode, true);
         if(layer){
             var olLayer = Mapbender.Model.getNativeLayer(source);
-            var layerOptions = this._createLayerOptions(layer, source.configuration.tilematrixsets, projection,
-            source.configuration.options.proxy);
+            var layerOptions = this._createLayerOptions(layer, source.configuration.tilematrixsets);
             $.extend(olLayer, layerOptions);
             olLayer.updateMatrixProperties();
         }

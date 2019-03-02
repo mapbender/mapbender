@@ -113,11 +113,13 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 
     /**
      * @param WmtsInstanceLayer|null $entity
-     * @inheritdoc
+     * @deprecated
+     * @return array
+     * @todo: remove remaining usages from WmcBundle
      */
     public function getConfiguration(WmtsInstanceLayer $entity = null)
     {
-        $layerConfig = $this->getService()->getSingleLayerOptionsConfig($entity ?: $this->entity);
+        $layerConfig = $this->getService()->getSingleLayerConfig($entity ?: $this->entity);
         return $layerConfig['options'];
     }
 
@@ -129,26 +131,5 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         /** @var WmtsSourceService $service */
         $service = $this->container->get('mapbender.source.wmts.service');
         return $service;
-    }
-
-    /**
-     * Return the client-facing configuration for a layer's legend
-     *
-     * @param WmtsInstanceLayer $entity
-     * @return array
-     */
-    public function getLegendConfig(WmtsInstanceLayer $entity)
-    {
-        // @todo: tunnel support
-        foreach ($entity->getSourceItem()->getStyles() as $style) {
-            if (!$entity->getStyle() || $entity->getStyle() === $style->getIdentifier()) {
-                if ($style->getLegendurl()) {
-                    return array(
-                        'url' => $style->getLegendurl()->getHref(),
-                    );
-                }
-            }
-        }
-        return array();
     }
 }
