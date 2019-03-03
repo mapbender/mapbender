@@ -39,7 +39,9 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $instanceLayer->setInfo(Utils::getBool(count($wmtslayersource->getInfoformats())));
         $instanceLayer->setAllowinfo(Utils::getBool(count($wmtslayersource->getInfoformats())));
         $styles = $wmtslayersource->getStyles();
-        $instanceLayer->setStyle($styles[0]->identifier);
+        if ($styles && count($styles)) {
+            $instanceLayer->setStyle($styles[0]->identifier);
+        }
         $instance->addLayer($instanceLayer);
     }
 

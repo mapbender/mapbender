@@ -54,14 +54,6 @@ class WmtsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
         $this->entity->setAllowinfo($allowInfo)
             ->setInfo($allowInfo);
-
-        $num = 0;
-        foreach ($this->entity->getLayerset()->getInstances() as $instance) {
-            $instance->setWeight($num);
-            $this->container->get('doctrine')->getManager()->persist($instance);
-            $this->container->get('doctrine')->getManager()->flush();
-            $num++;
-        }
     }
 
     /**

@@ -37,7 +37,8 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
      */
     public function save()
     {
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($this->entity);
         $cont = $this->entity->getContact();
         if ($cont == null) {
             $cont = new Contact();
@@ -51,9 +52,9 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
             self::createHandler($this->container, $theme)->save();
         }
         foreach ($this->entity->getTilematrixsets() as $tms) {
-            $this->container->get('doctrine')->getManager()->persist($tms);
+            $entityManager->persist($tms);
         }
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        $entityManager->persist($this->entity);
     }
 
     /**
@@ -65,6 +66,7 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
         $instance->setSource($this->entity);
         $instanceHandler = new WmtsInstanceEntityHandler($this->container, $instance);
         $instanceHandler->create();
+        $entityManager = $this->getEntityManager();
         if ($layerset) {
             $instance->setLayerset($layerset);
             $num = 0;
@@ -75,6 +77,11 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
                     $this->container->get('doctrine')->getManager()->persist($instanceAtLayerset);
                 }
                 $num++;
+            }
+        }
+        if ($persist) {
+            foreach ($instance->getLayers() as $instanceLayer) {
+                $entityManager->persist($instanceLayer);
             }
         }
         return $instance;
@@ -91,7 +98,7 @@ class WmtsSourceEntityHandler extends SourceEntityHandler
         foreach ($this->entity->getThemes() as $theme) {
             self::createHandler($this->container, $theme)->remove();
         }
-        $this->container->get('doctrine')->getManager()->remove($this->entity);
+        $this->getEntityManager()->remove($this->entity);
     }
 
     /**

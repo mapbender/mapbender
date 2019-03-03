@@ -185,37 +185,15 @@ class WmtsSourceService extends SourceService
             $tilewidth = $tilematrices[0]->getTilewidth();
             $tileheight = $tilematrices[0]->getTileheight();
             $tilematricesArr = array();
-            $multiTopLeft = false;
-            $multiTileSize = false;
             foreach ($tilematrices as $tilematrix) {
-                $latlon = $tilematrix->getTopleftcorner();
-                if ($origin[0] !== $latlon[0] || $origin[1] !== $latlon[1]) {
-                    $multiTopLeft = true;
-                }
-                if ($tilewidth !== $tilematrix->getTilewidth() || $tileheight !== $tilematrix->getTileheight()) {
-                    $multiTileSize = true;
-                }
                 $tilematricesArr[] = array(
                     'identifier' => $tilematrix->getIdentifier(),
                     'scaleDenominator' => $tilematrix->getScaledenominator(),
                     'tileWidth' => $tilematrix->getTilewidth(),
                     'tileHeight' => $tilematrix->getTileheight(),
-                    'topLeftCorner' => $latlon,
+                    'topLeftCorner' => $tilematrix->getTopleftcorner(),
                     'matrixSize' =>  array($tilematrix->getMatrixwidth(), $tilematrix->getMatrixheight())
                 );
-            }
-
-            // clean matrix attributes if matrices have a selfsame value
-            if (!$multiTopLeft || !$multiTileSize) {
-                foreach ($tilematricesArr as &$tmatrix) {
-                    if (!$multiTopLeft) {
-                        unset($tmatrix['topLeftCorner']);
-                    }
-                    if (!$multiTileSize) {
-                        unset($tmatrix['tileWidth']);
-                        unset($tmatrix['tileHeight']);
-                    }
-                }
             }
             $configs[] = array(
                 'id' => $tilematrixset->getId(),
