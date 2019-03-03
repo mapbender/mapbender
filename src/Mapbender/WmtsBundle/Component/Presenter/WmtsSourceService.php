@@ -195,11 +195,16 @@ class WmtsSourceService extends SourceService
                     'matrixSize' =>  array($tilematrix->getMatrixwidth(), $tilematrix->getMatrixheight())
                 );
             }
+            $supportedCrs = $tilematrixset->getSupportedCrs();
+            $supportedCrs = preg_replace('#^urn:.*?:([\A-Z]+):.*?(\d+)$#', '$1:$2', $supportedCrs);
+            $supportedCrs = strtr($supportedCrs, array(
+                'OSGEO:41001' => 'EPSG:900913',
+            ));
             $configs[] = array(
                 'id' => $tilematrixset->getId(),
                 'tileSize' => array($tilewidth, $tileheight),
                 'identifier' => $tilematrixset->getIdentifier(),
-                'supportedCrs' => $tilematrixset->getSupportedCrs(),
+                'supportedCrs' => $supportedCrs,
                 'origin' => $origin,
                 'tilematrices' => $tilematricesArr
             );

@@ -1,3 +1,45 @@
+/**
+ * @typedef {Object} WmtsTileMatrix
+ * @property {string} identifier
+ * @property {Number} scaleDenominator
+ * @property {int} tileWidth
+ * @property {int} tileHeight
+ * @property {Array<float>} topLeftCorner
+ * @property {Array<int>} matrixSize
+ */
+
+/**
+ * @typedef {Object} WmtsTileMatrixSet
+ * @property {string} id
+ * @property {Array<Number>} tileSize
+ * @property {string} identifier
+ * @property {string} supportedCrs
+ * @property {Array<Number>} origin
+ * @property {WmtsTileMatrix[]} tilematrices
+ */
+
+/**
+ * @typedef {Object} WmtsLayerConfig
+ * @property {Object} options
+ * @property {string} options.tilematrixset
+ */
+
+/**
+ * @typedef {Object} WmtsSourceConfig
+ * @property {string} type
+ * @property {string} title
+ * @property {Object} configuration
+ * @property {string} configuration.type
+ * @property {string} configuration.title
+ * @property {boolean} configuration.isBaseSource
+ * @property {Object} configuration.options
+ * @property {boolean} configuration.options.proxy
+ * @property {boolean} configuration.options.visible
+ * @property {Number} configuration.options.opacity
+ * @property {Array.<WmtsLayerConfig>} configuration.layers
+ * @property {Array.<WmtsTileMatrixSet>} configuration.tilematrixsets
+ */
+
 Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler },{
     'private string layerNameIdent': 'identifier',
     'public function create': function(sourceOpts) {
