@@ -629,8 +629,9 @@ class WmtsInstance extends SourceInstance
         return  array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
+                '@MapbenderWmtsBundle/Resources/public/geosource-base.js',
                 '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.wmts.js',
-                '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.tms.js'
+                '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.tms.js',
             ),
             'trans' => array(
                 'MapbenderCoreBundle::geosource.json.twig',

@@ -1,73 +1,30 @@
-/**
- * @typedef {Object} WmtsTileMatrix
- * @property {string} identifier
- * @property {Number} scaleDenominator
- * @property {int} tileWidth
- * @property {int} tileHeight
- * @property {Array<float>} topLeftCorner
- * @property {Array<int>} matrixSize
- */
-
-/**
- * @typedef {Object} WmtsTileMatrixSet
- * @property {string} id
- * @property {Array<Number>} tileSize
- * @property {string} identifier
- * @property {string} supportedCrs
- * @property {Array<Number>} origin
- * @property {WmtsTileMatrix[]} tilematrices
- */
-
-/**
- * @typedef {Object} WmtsLayerConfig
- * @property {Object} options
- * @property {string} options.tilematrixset
- */
-
-/**
- * @typedef {Object} WmtsSourceConfig
- * @property {string} type
- * @property {string} title
- * @property {Object} configuration
- * @property {string} configuration.type
- * @property {string} configuration.title
- * @property {boolean} configuration.isBaseSource
- * @property {Object} configuration.options
- * @property {boolean} configuration.options.proxy
- * @property {boolean} configuration.options.visible
- * @property {Number} configuration.options.opacity
- * @property {Array.<WmtsLayerConfig>} configuration.layers
- * @property {Array.<WmtsTileMatrixSet>} configuration.tilematrixsets
- */
-
-Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler },{
-    'private string layerNameIdent': 'identifier',
-    'public function create': function(sourceOpts) {
-        var rootLayer = sourceOpts.configuration.children[0];
-        var proj = Mapbender.Model.getCurrentProj();
-        var layer = this.findLayerEpsg(sourceOpts, proj.projCode);
-        if (!layer) { // find first layer with epsg from srs list to initialize.
-            var allsrs = Mapbender.Model.getAllSrs();
-            for (var i = 0; i < allsrs.length; i++) {
-                layer = this.findLayerEpsg(sourceOpts, allsrs[i].name);
-                if (layer) {
-                    break;
-                }
+Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsCommon },{
+    /**
+     * @param {WmtsLayerConfig} layerDef
+     * @param {WmtsTileMatrixSet} matrixSet
+     * @param {OpenLayers.Projection} projection
+     * @return {{matrixSet: string, matrixIds: any[]}}
+     * @private
+     */
+    _getMatrixOptions: function(layerDef, matrixSet, projection) {
+        var matrixIds = matrixSet.tilematrices.map(function(matrix) {
+            if (matrix.topLeftCorner) {
+                return $.extend({}, matrix, {
+                    topLeftCorner: OpenLayers.LonLat.fromArray(matrix.topLeftCorner)
+                });
+            } else {
+                return $.extend({}, matrix);
             }
-        }
-        rootLayer['children'] = [layer];
-        var layerOptions = this._createLayerOptions(sourceOpts, layer, proj);
-        var mqLayerDef = {
-            type: 'wmts',
-            isBaseLayer: false,
-            opacity: sourceOpts.configuration.options.opacity,
-            visible: sourceOpts.configuration.options.visible,
-            attribution: sourceOpts.configuration.options.attribution
+        });
+        var self = this;
+        return {
+            matrixSet: matrixSet.identifier,
+            matrixIds: matrixIds,
+            serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
+                return self._getMatrixResolution(tileMatrix, projection);
+            }),
+            maxExtent: this._getMaxExtent(layerDef, projection)
         };
-        $.extend(layerOptions, mqLayerDef);
-        return layerOptions;
-    },
-    'public function postCreate': function(source, mqLayer) {
     },
     /**
      * @param {WmtsTileMatrix} tileMatrix
@@ -91,44 +48,14 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
     /**
      * @param {WmtsSourceConfig} sourceDef
      * @param {WmtsLayerConfig} layer
-     * @param {OpenLayers.Projection} projection
-     * @return {{matrixSet: string, matrixIds: any[]}}
-     * @private
-     */
-    _getMatrixOptions: function(sourceDef, layer, projection) {
-        var matrixSet = this._getLayerMatrixSet(sourceDef, layer);
-        var matrixIds = matrixSet.tilematrices.map(function(matrix) {
-            if (matrix.topLeftCorner) {
-                return $.extend({}, matrix, {
-                    topLeftCorner: OpenLayers.LonLat.fromArray(matrix.topLeftCorner)
-                });
-            } else {
-                return $.extend({}, matrix);
-            }
-        });
-        var self = this;
-        return {
-            matrixSet: matrixSet.identifier,
-            matrixIds: matrixIds,
-            serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
-                return self._getMatrixResolution(tileMatrix, projection);
-            })
-        };
-    },
-    /**
-     * @param {WmtsSourceConfig} sourceDef
-     * @param {WmtsLayerConfig} layer
+     * @param {WmtsTileMatrixSet} matrixSet
      * @param {OpenLayers.Projection} projection
      * @return {*}
      */
-    _createLayerOptions: function(sourceDef, layer, projection) {
-        var layerOptions = $.extend(this._getMatrixOptions(sourceDef, layer, projection), {
-            label: layer.options.title,
+    _createLayerOptions: function(sourceDef, layer, matrixSet, projection) {
+        return $.extend(this.super('_createLayerOptions', sourceDef, layer, matrixSet, projection), {
             layer: layer.options.identifier,
-            format: layer.options.format,
-            style: layer.options.style,
-            url: layer.options.url,
-            maxExtent: this._getMaxExtent(layer, projection)
+            style: layer.options.style
         });
         return layerOptions;
     },
@@ -154,62 +81,6 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             }
         }
         return null;
-    },
-    findLayerEpsg: function(sourceDef, epsg) {
-        var layers = sourceDef.configuration.layers;
-        for (var i = 0; i < layers.length; i++) {
-            var tileMatrixSet = this._getLayerMatrixSet(sourceDef, layers[i]);
-            if (epsg === this.urnToEpsg(tileMatrixSet.supportedCrs)) {
-                return layers[i];
-            }
-        }
-        return null;
-    },
-    /**
-     * @param {WmtsSourceConfig} sourceDef
-     * @param {WmtsLayerConfig} layerDef
-     * @return {WmtsTileMatrixSet|null}
-     */
-    _getLayerMatrixSet: function(sourceDef, layerDef) {
-        var matrixSets = sourceDef.configuration.tilematrixsets;
-        for(var i = 0; i < matrixSets.length; i++){
-            if (layerDef.options.tilematrixset === matrixSets[i].identifier){
-                return matrixSets[i];
-            }
-        }
-        return null;
-    },
-    /**
-     * @param {string} urnOrEpsgIdentifier
-     * @return {string}
-     */
-    urnToEpsg: function(urnOrEpsgIdentifier) {
-        // @todo: drop URNs server-side, they offer no benefit here
-        return urnOrEpsgIdentifier.replace(/^urn:.*?(\d+)$/, 'EPSG:$1');
-    },
-    /**
-     * @param {WmtsSourceConfig} sourceDef
-     * @param {WmtsLayerConfig} layer
-     * @param {number} scale
-     * @param {OpenLayers.Projection} projection
-     * @return {WmtsTileMatrix}
-     */
-    _getMatrix: function(sourceDef, layer, scale, projection) {
-        var resolution = OpenLayers.Util.getResolutionFromScale(scale, projection.proj.units);
-        var matrixSet = this._getLayerMatrixSet(sourceDef, layer);
-        var scaleDelta = Number.POSITIVE_INFINITY;
-        var closestMatrix = null;
-        for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
-            var matrix = matrixSet.tilematrices[i];
-            var matrixRes = this._getMatrixResolution(matrix, projection);
-            var resRatio = matrixRes / resolution;
-            var matrixScaleDelta = Math.abs(resRatio - 1);
-            if (matrixScaleDelta < scaleDelta) {
-                scaleDelta = matrixScaleDelta;
-                closestMatrix = matrix;
-            }
-        }
-        return closestMatrix;
     },
     'public function featureInfoUrl': function(mqLayer, x, y) {
         if(!mqLayer.visible() || mqLayer.olLayer.queryLayers.length === 0) {
@@ -241,50 +112,15 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
         requestUrl += (/\?/.test(mqLayer.options.url) ? '&' : '?') + params;
         return requestUrl;
     },
-    getPrintConfigEx: function(source, bounds, scale, projection) {
-        var layerDef = this.findLayerEpsg(source, projection.projCode);
-        if (!layerDef.state.visibility) {
-            return [];
-        }
-        var matrix = this._getMatrix(source, layerDef, scale, projection);
-        return [
-            {
-                url: Mapbender.Util.removeProxy(layerDef.options.url),
-                matrix: $.extend({}, matrix),
-                resolution: this._getMatrixResolution(matrix, projection)
-            }
-        ];
+    _getPrintBaseUrl: function(sourceDef, layerDef) {
+        return layerDef.options.url;
     },
-    'public function getPrintConfig': function(layer, bounds) {
-        var source = layer.mbConfig || (Mapbender.Model.findSource({ollid: layer.id}))[0];
-        var layerDef = this.findLayer(source, {identifier:layer.layer}).layer;
-        var url = layerDef.options.url;
-        var matrixSet = this._getLayerMatrixSet(source, layerDef);
-        var projection = Mapbender.Model.getCurrentProj();
-        var self = this;
-        var printConfig = {
-            type: 'wmts',
-            url: Mapbender.Util.removeProxy(url),
-            matrixset: $.extend({}, matrixSet),
-            matrixResolutions: matrixSet.tilematrices.map(function(matrix) {
-                return {
-                    identifier: matrix.identifier,
-                    resolution: self._getMatrixResolution(matrix, projection)
-                }
-            })
-        };
-        return printConfig;
-    },
-    'public function changeProjection': function(source, projection) {
-        var layer = this.findLayerEpsg(source, projection.projCode);
-        if (layer) {
-            var olLayer = Mapbender.Model.getNativeLayer(source);
-            var matrixOptions = this._getMatrixOptions(source, layer, projection);
-            var newLayerOptions = $.extend(matrixOptions, {
-                maxExtent: this._getMaxExtent(layer, projection)
-            });
-            $.extend(olLayer, newLayerOptions);
-            olLayer.updateMatrixProperties();
+    changeProjection: function(source, projection) {
+        if (this.super('changeProjection', source, projection)) {
+            Mapbender.Model.getNativeLayer(source).updateMatrixProperties();
+            return true;
+        } else {
+            return false;
         }
     }
 });
