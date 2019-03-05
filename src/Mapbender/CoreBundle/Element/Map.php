@@ -56,7 +56,6 @@ class Map extends Element
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'units' => 'degrees',
-            'wmsTileDelay' => 2500,
             'tileSize' => 512,
             'minTileSize' => 128,
             'extents' => array(

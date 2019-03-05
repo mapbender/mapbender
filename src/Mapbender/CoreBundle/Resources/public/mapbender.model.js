@@ -342,13 +342,11 @@ Mapbender.Model = {
             centroid.y + 0.5 * h + buffer_bounds.h);
     },
     _convertLayerDef: function(layerDef, mangleIds) {
-        var l = $.extend({}, Mapbender.source[layerDef.type.toLowerCase()].create(layerDef, mangleIds), {
+        var gsHandler = this.getGeoSourceHandler(layerDef);
+        var l = $.extend({}, gsHandler.create(layerDef, mangleIds), {
             mapbenderId: layerDef.id,
             visibility: false
         });
-        if(typeof this.mbMap.options.wmsTileDelay !== 'undefined') {
-            l.removeBackBufferDelay = this.mbMap.options.wmsTileDelay;
-        }
         return l;
     },
     generateSourceId: function() {

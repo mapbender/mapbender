@@ -45,9 +45,6 @@ class MapAdminType extends AbstractType
             ->add('tileSize', 'number', array(
                 'required' => false,
                 'label' => 'Tile size'))
-            ->add('wmsTileDelay', 'number', array(
-                'required' => false,
-                'label' => 'Delay before tiles are loaded'))
             ->add('srs', 'text', array(
                 'label' => 'SRS'))
             ->add('units', 'choice', array(
