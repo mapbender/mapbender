@@ -32,6 +32,7 @@ class WmtsSourceService extends SourceService
     public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
         return array_replace(parent::getInnerConfiguration($sourceInstance), array(
+            'version' => $sourceInstance->getSource()->getVersion(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array($this->getRootLayerConfig($sourceInstance)),
             'layers' => $this->getLayerConfigs($sourceInstance),

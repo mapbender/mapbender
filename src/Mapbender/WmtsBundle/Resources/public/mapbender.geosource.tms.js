@@ -47,7 +47,6 @@ Mapbender.Geo.TmsSourceHandler = Class({
             params: {
                 LAYERS: [layer.options.identifier]
             },
-            tileOriginCorner: 'bl',
             serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
                 return tileMatrix.scaleDenominator;
             })
@@ -62,6 +61,7 @@ Mapbender.Geo.TmsSourceHandler = Class({
         var layerOptions = $.extend(this._getMatrixOptions(layer, matrixSet), {
             label: layer.options.title,
             layername: layer.options.identifier,
+            serviceVersion: sourceDef.configuration.version,
             tileSize: new OpenLayers.Size(matrixSet.tileSize[0], matrixSet.tileSize[1]),
             url: layer.options.url,
             format: layer.options.format
@@ -144,7 +144,7 @@ Mapbender.Geo.TmsSourceHandler = Class({
             return [];
         }
         var matrix = this._getMatrix(source, layerDef, scale, projection);
-        var baseUrl = layerDef.options.url + '1.0.0/' + layerDef.options.identifier;
+        var baseUrl = [layerDef.options.url, source.configuration.version, '/', layerDef.options.identifier].join('');
         return [
             {
                 url: Mapbender.Util.removeProxy(baseUrl),
@@ -156,7 +156,7 @@ Mapbender.Geo.TmsSourceHandler = Class({
     'public function getPrintConfig': function(olLayer, bounds) {
         var source = olLayer.mbConfig || (Mapbender.Model.findSource({ollid: olLayer.id}))[0];
         var layerDef = this.findLayer(source, {identifier: olLayer.layername}).layer;
-        var url = layerDef.options.url + '1.0.0/' + layerDef.options.identifier;
+        var url = [layerDef.options.url, source.configuration.version, '/', layerDef.options.identifier].join('');
         var matrixSet = this._getLayerMatrixSet(source, layerDef);
         var printConfig = {
             type: 'tms',
@@ -190,8 +190,8 @@ if ($.MapQuery.Layer.types['tms']) {
             tileOrigin: o.tileOrigin,
             tileSize: o.tileSize,
             isBaseLayer: o.isBaseLayer,
-            serverResolutions: o.serverResolutions,
-            tileOriginCorner: o.tileOriginCorner
+            serviceVersion: o.serviceVersion,
+            serverResolutions: o.serverResolutions
         };
         return {
             layer: new OpenLayers.Layer.TMS(label, url, params),

@@ -128,7 +128,6 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             format: layer.options.format,
             style: layer.options.style,
             url: layer.options.url,
-            tileOriginCorner: 'tl',
             maxExtent: this._getMaxExtent(layer, projection)
         });
         return layerOptions;
