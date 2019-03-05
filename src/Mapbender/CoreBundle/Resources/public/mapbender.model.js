@@ -1324,8 +1324,8 @@ Mapbender.Model = {
         var resFromScale = function(scale) {
             return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
         };
-        var leafInfoMap = gsHandler.getExtendedLeafInfo(source, scale, extent_);
         if (gsHandler.getSingleLayerUrl) {
+            var leafInfoMap = gsHandler.getExtendedLeafInfo(source, scale, extent_);
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
                     dataOut.push($.extend({}, commonLayerData, {
@@ -1340,8 +1340,15 @@ Mapbender.Model = {
                 return a.order - b.order;
             });
         } else {
-            var printConfig = $.extend({}, commonLayerData, gsHandler.getPrintConfig(olLayer, extent_));
-            dataOut.push(printConfig);
+            if (typeof gsHandler.getPrintConfigEx === 'function') {
+                var mlPrintConfigs = gsHandler.getPrintConfigEx(source, extent_, scale, this.getCurrentProj());
+                mlPrintConfigs.map(function(pc) {
+                    dataOut.push($.extend({}, commonLayerData, pc));
+                });
+            } else {
+                dataOut.push($.extend({}, commonLayerData, gsHandler.getPrintConfig(olLayer, extent_)));
+            }
+
         }
         return dataOut;
     },

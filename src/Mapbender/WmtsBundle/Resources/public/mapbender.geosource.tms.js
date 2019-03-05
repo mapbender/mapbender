@@ -100,12 +100,62 @@ Mapbender.Geo.TmsSourceHandler = Class({
         // @todo: drop URNs server-side, they offer no benefit here
         return urnOrEpsgIdentifier.replace(/^urn:.*?(\d+)$/, 'EPSG:$1');
     },
+    /**
+     * @param {WmtsTileMatrix} tileMatrix
+     * @param {OpenLayers.Projection} projection
+     * @return {Number}
+     * @private
+     */
+    _getMatrixResolution: function(tileMatrix, projection) {
+        // Yes, seriously, it's called scaleDenominator but it's the resolution
+        // @todo: resolve backend config wording weirdness
+        return tileMatrix.scaleDenominator;
+    },
+    /**
+     * @param {WmtsSourceConfig} sourceDef
+     * @param {WmtsLayerConfig} layer
+     * @param {number} scale
+     * @param {OpenLayers.Projection} projection
+     * @return {WmtsTileMatrix}
+     */
+    _getMatrix: function(sourceDef, layer, scale, projection) {
+        var resolution = OpenLayers.Util.getResolutionFromScale(scale, projection.proj.units);
+        var matrixSet = this._getLayerMatrixSet(sourceDef, layer);
+        var scaleDelta = Number.POSITIVE_INFINITY;
+        var closestMatrix = null;
+        for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
+            var matrix = matrixSet.tilematrices[i];
+            var matrixRes = this._getMatrixResolution(matrix, projection);
+            var resRatio = matrixRes / resolution;
+            var matrixScaleDelta = Math.abs(resRatio - 1);
+            if (matrixScaleDelta < scaleDelta) {
+                scaleDelta = matrixScaleDelta;
+                closestMatrix = matrix;
+            }
+        }
+        return closestMatrix;
+    },
     'public function featureInfoUrl': function(mqLayer, x, y) {
 
     },
+    getPrintConfigEx: function(source, bounds, scale, projection) {
+        var layerDef = this.findLayerEpsg(source, projection.projCode);
+        if (!layerDef.state.visibility) {
+            return [];
+        }
+        var matrix = this._getMatrix(source, layerDef, scale, projection);
+        var baseUrl = layerDef.options.url + '1.0.0/' + layerDef.options.identifier;
+        return [
+            {
+                url: Mapbender.Util.removeProxy(baseUrl),
+                matrix: $.extend({}, matrix),
+                resolution: this._getMatrixResolution(matrix, projection)
+            }
+        ];
+    },
     'public function getPrintConfig': function(olLayer, bounds) {
         var source = olLayer.mbConfig || (Mapbender.Model.findSource({ollid: olLayer.id}))[0];
-        var layerDef = this.findLayer(source, {identifier:olLayer.layername}).layer;
+        var layerDef = this.findLayer(source, {identifier: olLayer.layername}).layer;
         var url = layerDef.options.url + '1.0.0/' + layerDef.options.identifier;
         var matrixSet = this._getLayerMatrixSet(source, layerDef);
         var printConfig = {

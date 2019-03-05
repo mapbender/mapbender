@@ -72,7 +72,7 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
     /**
      * @param {WmtsTileMatrix} tileMatrix
      * @param {OpenLayers.Projection} projection
-     * @return {float}
+     * @return {Number}
      * @private
      */
     _getMatrixResolution: function(tileMatrix, projection) {
@@ -91,6 +91,7 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
     /**
      * @param {WmtsSourceConfig} sourceDef
      * @param {WmtsLayerConfig} layer
+     * @param {OpenLayers.Projection} projection
      * @return {{matrixSet: string, matrixIds: any[]}}
      * @private
      */
@@ -187,6 +188,30 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
         // @todo: drop URNs server-side, they offer no benefit here
         return urnOrEpsgIdentifier.replace(/^urn:.*?(\d+)$/, 'EPSG:$1');
     },
+    /**
+     * @param {WmtsSourceConfig} sourceDef
+     * @param {WmtsLayerConfig} layer
+     * @param {number} scale
+     * @param {OpenLayers.Projection} projection
+     * @return {WmtsTileMatrix}
+     */
+    _getMatrix: function(sourceDef, layer, scale, projection) {
+        var resolution = OpenLayers.Util.getResolutionFromScale(scale, projection.proj.units);
+        var matrixSet = this._getLayerMatrixSet(sourceDef, layer);
+        var scaleDelta = Number.POSITIVE_INFINITY;
+        var closestMatrix = null;
+        for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
+            var matrix = matrixSet.tilematrices[i];
+            var matrixRes = this._getMatrixResolution(matrix, projection);
+            var resRatio = matrixRes / resolution;
+            var matrixScaleDelta = Math.abs(resRatio - 1);
+            if (matrixScaleDelta < scaleDelta) {
+                scaleDelta = matrixScaleDelta;
+                closestMatrix = matrix;
+            }
+        }
+        return closestMatrix;
+    },
     'public function featureInfoUrl': function(mqLayer, x, y) {
         if(!mqLayer.visible() || mqLayer.olLayer.queryLayers.length === 0) {
             return false;
@@ -216,6 +241,20 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
         var requestUrl = Mapbender.Util.removeProxy(mqLayer.olLayer.url);
         requestUrl += (/\?/.test(mqLayer.options.url) ? '&' : '?') + params;
         return requestUrl;
+    },
+    getPrintConfigEx: function(source, bounds, scale, projection) {
+        var layerDef = this.findLayerEpsg(source, projection.projCode);
+        if (!layerDef.state.visibility) {
+            return [];
+        }
+        var matrix = this._getMatrix(source, layerDef, scale, projection);
+        return [
+            {
+                url: Mapbender.Util.removeProxy(layerDef.options.url),
+                matrix: $.extend({}, matrix),
+                resolution: this._getMatrixResolution(matrix, projection)
+            }
+        ];
     },
     'public function getPrintConfig': function(layer, bounds) {
         var source = layer.mbConfig || (Mapbender.Model.findSource({ollid: layer.id}))[0];
