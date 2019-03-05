@@ -78,8 +78,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setPriority($num)
             ->setSourceItem($layersourceroot)
             ->setSourceInstance($this->entity)
-            ->setToggle(false)
-            ->setAllowtoggle(true);
+            ->setToggle(!isset($configuration["toggle"]) ? false : $configuration["toggle"])
+            ->setAllowtoggle(!isset($configuration["allowtoggle"]) ? true : $configuration["allowtoggle"]);
         $this->entity->addLayer($rootInstLayer);
         foreach ($configuration["layers"] as $layerDef) {
             $num++;
@@ -116,7 +116,9 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 ->setParent($rootInstLayer)
                 ->setSourceItem($layersource)
                 ->setSourceInstance($this->entity)
-                ->setAllowinfo($layerInst->getInfo() !== null && $layerInst->getInfo() ? true : false);
+                ->setAllowinfo($layerInst->getInfo() !== null && $layerInst->getInfo() ? true : false)
+                ->setToggle(!isset($layerDef["toggle"]) ? null : $layerDef["toggle"])
+                ->setAllowtoggle(!isset($layerDef["allowtoggle"]) ? null : $layerDef["allowtoggle"]);
             $rootInstLayer->addSublayer($layerInst);
             $this->entity->addLayer($layerInst);
         }
