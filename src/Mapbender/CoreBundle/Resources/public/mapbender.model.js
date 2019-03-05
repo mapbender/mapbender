@@ -1340,38 +1340,8 @@ Mapbender.Model = {
                 return a.order - b.order;
             });
         } else {
-            // hopefully building a bridge for forks / feature branches with non-WMS layers or customized geosource code
-            console.warn("Extended print config generation not possible on current source, falling back to the old ways", source.configuration.type, source);
-            var layerParams, url;
-            if (gsHandler.getLayerParameters) {
-                // Get active layer parameters explicitly without side effects
-                layerParams = gsHandler.getLayerParameters(source, _.mapObject(leafInfoMap, function(item) {
-                    return item.state;
-                }));
-            } else {
-                console.warn("Geosource handler for current source doesn't support getLayerParameters method, falling back to the oldest of old ways", source.configuration.type, source);
-                // This should give us a lot more than just the active layers + styles, but also changes
-                // the source's embedded layer states as a side effect, potentially leading to erroneous display
-                // in LayerTree and Legend Elements on the next proper update
-                layerParams = gsHandler.changeOptions(source, scale || this.getScale());
-            }
-            if (layerParams.layers.length) {
-                // alter params for getURL call implicit to getPrintConfig
-                var prevLayers = olLayer.params.LAYERS;
-                var prevStyles = olLayer.params.STYLES;
-                olLayer.params.LAYERS = layerParams.layers;
-                olLayer.params.STYLES = layerParams.styles;
-                url = gsHandler.getPrintConfig(olLayer, extent_).url;
-                // restore params
-                olLayer.params.LAYERS = prevLayers;
-                olLayer.params.STYLES = prevStyles;
-                // Decorate generated url with combined min/max resolution from OpenLayers layer (= multiple Mapbender layers from a single source)
-                dataOut.push($.extend({}, commonLayerData, {
-                    url: url,
-                    minResolution: olLayer.minResolution,
-                    maxResolution: olLayer.maxResolution
-                }));
-            }
+            var printConfig = $.extend({}, commonLayerData, gsHandler.getPrintConfig(olLayer, extent_));
+            dataOut.push(printConfig);
         }
         return dataOut;
     },

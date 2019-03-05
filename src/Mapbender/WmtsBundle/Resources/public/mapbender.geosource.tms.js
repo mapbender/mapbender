@@ -103,15 +103,15 @@ Mapbender.Geo.TmsSourceHandler = Class({
     'public function featureInfoUrl': function(mqLayer, x, y) {
 
     },
-    'public function getPrintConfig': function(layer, bounds, scale, isProxy) {
-        var source = Mapbender.Model.findSource({ollid: layer.id});
-        var tmslayer = this.findLayer(source[0], {identifier:layer.layername});
-        var url = layer.url + '1.0.0/' + layer.layername;
+    'public function getPrintConfig': function(olLayer, bounds) {
+        var source = olLayer.mbConfig || (Mapbender.Model.findSource({ollid: olLayer.id}))[0];
+        var layerDef = this.findLayer(source, {identifier:olLayer.layername}).layer;
+        var url = layerDef.options.url + '1.0.0/' + layerDef.options.identifier;
+        var matrixSet = this._getLayerMatrixSet(source, layerDef);
         var printConfig = {
             type: 'tms',
-            url: isProxy ? Mapbender.Util.removeProxy(url) : url,
-            options: tmslayer.layer.options,
-            zoom: Mapbender.Model.getZoomFromScale(scale)
+            url: Mapbender.Util.removeProxy(url),
+            matrixset: $.extend({}, matrixSet)
         };
         return printConfig;
     },

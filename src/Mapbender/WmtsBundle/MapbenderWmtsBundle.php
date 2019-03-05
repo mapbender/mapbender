@@ -3,6 +3,7 @@
 namespace Mapbender\WmtsBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Mapbender\WmtsBundle\DependencyInjection\Compiler\RegisterWmtsExportLayerRendererPass;
 use Mapbender\WmtsBundle\DependencyInjection\Compiler\RegisterWmtsSourceServicePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -16,6 +17,7 @@ class MapbenderWmtsBundle extends MapbenderBundle
     {
         parent::build($container);
         $container->addCompilerPass(new RegisterWmtsSourceServicePass());
+        $container->addCompilerPass(new RegisterWmtsExportLayerRendererPass());
     }
 
     /**

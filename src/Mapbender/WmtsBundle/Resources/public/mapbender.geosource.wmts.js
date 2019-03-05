@@ -70,6 +70,25 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
     'public function postCreate': function(source, mqLayer) {
     },
     /**
+     * @param {WmtsTileMatrix} tileMatrix
+     * @param {OpenLayers.Projection} projection
+     * @return {float}
+     * @private
+     */
+    _getMatrixResolution: function(tileMatrix, projection) {
+        var projectionUnits = projection.proj.units;
+        // OGC TileMatrix scaleDenom is calculated using meters, irrespective of projection units
+        // OGC TileMatrix scaleDenom is also calculated assuming 0.28mm per pixel
+        // Undo both these unproductive assumptions and calculate a proper resolutiion for the
+        // current projection
+        var metersPerUnit = OpenLayers.INCHES_PER_UNIT['mUnits'] * OpenLayers.METERS_PER_INCH;
+        if (projectionUnits === 'm' || projectionUnits === 'Meter') {
+            metersPerUnit = 1.0;
+        }
+        var unitsPerPixel = 0.00028 / metersPerUnit;
+        return tileMatrix.scaleDenominator * unitsPerPixel;
+    },
+    /**
      * @param {WmtsSourceConfig} sourceDef
      * @param {WmtsLayerConfig} layer
      * @return {{matrixSet: string, matrixIds: any[]}}
@@ -86,21 +105,12 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
                 return $.extend({}, matrix);
             }
         });
+        var self = this;
         return {
             matrixSet: matrixSet.identifier,
             matrixIds: matrixIds,
             serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
-                var projectionUnits = projection.proj.units;
-                // OGC TileMatrix scaleDenom is calculated using meters, irrespective of projection units
-                // OGC TileMatrix scaleDenom is also calculated assuming 0.28mm per pixel
-                // Undo both these unproductive assumptions and calculate a proper resolutiion for the
-                // current projection
-                var metersPerUnit = OpenLayers.INCHES_PER_UNIT['mUnits'] * OpenLayers.METERS_PER_INCH;
-                if (projectionUnits === 'm' || projectionUnits === 'Meter') {
-                    metersPerUnit = 1.0;
-                }
-                var unitsPerPixel = 0.00028 / metersPerUnit;
-                return tileMatrix.scaleDenominator * unitsPerPixel;
+                return self._getMatrixResolution(tileMatrix, projection);
             })
         };
     },
@@ -203,21 +213,27 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler 
             I: i
         };
         var params = $.param(param_tmp);
-        // this clever shit was taken from $.ajax
         var requestUrl = Mapbender.Util.removeProxy(mqLayer.olLayer.url);
         requestUrl += (/\?/.test(mqLayer.options.url) ? '&' : '?') + params;
         return requestUrl;
     },
-    'public function getPrintConfig': function(layer, bounds, scale, isProxy) {
-        var source = Mapbender.Model.findSource({ollid: layer.id});
-        var wmtslayer = this.findLayer(source[0], {identifier:layer.layer});
-        var url = wmtslayer.layer.options.url;
+    'public function getPrintConfig': function(layer, bounds) {
+        var source = layer.mbConfig || (Mapbender.Model.findSource({ollid: layer.id}))[0];
+        var layerDef = this.findLayer(source, {identifier:layer.layer}).layer;
+        var url = layerDef.options.url;
+        var matrixSet = this._getLayerMatrixSet(source, layerDef);
+        var projection = Mapbender.Model.getCurrentProj();
+        var self = this;
         var printConfig = {
             type: 'wmts',
-            url: isProxy ? Mapbender.Util.removeProxy(url) : url,
-            options: wmtslayer.layer.options,
-            matrixset: $.extend({}, this._getLayerMatrixSet(source[0], wmtslayer.layer)),
-            zoom: Mapbender.Model.getZoomFromScale(scale)
+            url: Mapbender.Util.removeProxy(url),
+            matrixset: $.extend({}, matrixSet),
+            matrixResolutions: matrixSet.tilematrices.map(function(matrix) {
+                return {
+                    identifier: matrix.identifier,
+                    resolution: self._getMatrixResolution(matrix, projection)
+                }
+            })
         };
         return printConfig;
     },
