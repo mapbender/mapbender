@@ -82,8 +82,14 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsC
         }
         return null;
     },
+    /**
+     * @param {Object} sourceDef
+     * @param {WmtsLayerConfig} layerDef
+     * @return {string}
+     * @private
+     */
     _getPrintBaseUrl: function(sourceDef, layerDef) {
-        return layerDef.options.url;
+        return layerDef.options.tileUrls[0];
     },
     changeProjection: function(source, projection) {
         if (this.super('changeProjection', source, projection)) {
@@ -94,4 +100,11 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsC
         }
     }
 });
+$.MapQuery.Layer.types.wmts = function(options) {
+    options.requestEncoding = 'REST';
+    return {
+        layer: new OpenLayers.Layer.WMTS(options),
+        options: options
+    };
+};
 Mapbender.source['wmts'] = new Mapbender.Geo.WmtsSourceHandler();

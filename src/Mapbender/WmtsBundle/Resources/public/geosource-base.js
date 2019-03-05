@@ -22,6 +22,7 @@
  * @typedef {Object} WmtsLayerConfig
  * @property {Object} options
  * @property {string} options.tilematrixset
+ * @property {Array<String>} options.tileUrls
  */
 
 /**
@@ -78,7 +79,7 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         var matrixOptions = this._getMatrixOptions(layerDef, matrixSet, projection);
         return $.extend(matrixOptions, {
             label: layerDef.options.title,
-            url: layerDef.options.url,
+            url: layerDef.options.tileUrls,
             format: layerDef.options.format
         });
     },

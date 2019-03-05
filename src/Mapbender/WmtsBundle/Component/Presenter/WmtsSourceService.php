@@ -117,27 +117,41 @@ class WmtsSourceService extends SourceService
     {
         $sourceItem      = $instanceLayer->getSourceItem();
         $resourceUrl     = $sourceItem->getResourceUrl();
-        $urlTemplateType = count($resourceUrl) > 0 ? $resourceUrl[0] : null;
         $layerId = strval($instanceLayer->getId());
         if (!$layerId) {
             throw new \LogicException("Cannot safely generate config for " . get_class($instanceLayer) . " without an id");
         }
         $useProxy = !!$instanceLayer->getSourceInstance()->getProxy();
-        $urlTemplate = $urlTemplateType ? $urlTemplateType->getTemplate() : null;
-        if ($urlTemplate && $useProxy) {
-            $urlTemplate = $this->proxifyTileUrlTemplate($urlTemplate);
-        }
-
         $configuration   = array(
             "id" => $layerId,
             "origId" => $layerId,
-            'url' => $urlTemplate,
-            'format' => $urlTemplateType ? $urlTemplateType->getFormat() : null,
+            'tileUrls' => array(),
+            'format' => null,
             "title" => $instanceLayer->getTitle(),
             "style" => $instanceLayer->getStyle(),
             "identifier" => $instanceLayer->getSourceItem()->getIdentifier(),
             "tilematrixset" => $instanceLayer->getTileMatrixSet(),
         );
+
+        foreach ($sourceItem->getResourceUrl() as $ru) {
+            $resourceType = $ru->getResourceType() ?: 'tile';   // NOTE: TMS seems to have nulls here
+            if ($resourceType == 'tile') {
+                $urlTemplate = $ru->getTemplate();
+                if ($useProxy) {
+                    $urlTemplate = $this->proxifyTileUrlTemplate($urlTemplate);
+                }
+                $configuration['tileUrls'][] = $urlTemplate;
+                if (!$configuration['format'] && $ru->getFormat()) {
+                    $configuration['format'] = $ru->getFormat();
+                }
+            }
+
+            $configuration['cheese'][] = array(
+                'format' => $ru->getFormat(),
+                'rt' => $ru->getResourceType(),
+                'template' => $ru->getTemplate(),
+            );
+        }
         $legendConfig = $this->getLayerLegendConfig($instanceLayer);
         if ($legendConfig) {
             $configuration['legend'] = $legendConfig;

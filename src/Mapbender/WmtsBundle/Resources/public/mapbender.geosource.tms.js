@@ -55,31 +55,32 @@ Mapbender.Geo.TmsSourceHandler = Class({
     },
     'public function featureInfoUrl': function(mqLayer, x, y) {
     },
+    /**
+     * @param {Object} sourceDef
+     * @param {WmtsLayerConfig} layerDef
+     * @return {string}
+     * @private
+     */
     _getPrintBaseUrl: function(sourceDef, layerDef) {
-        return [layerDef.options.url, sourceDef.configuration.version, '/', layerDef.options.identifier].join('');
+        return [layerDef.options.tileUrls[0], sourceDef.configuration.version, '/', layerDef.options.identifier].join('');
     }
 });
 Mapbender.source['tms'] = new Mapbender.Geo.TmsSourceHandler();
 
-if ($.MapQuery.Layer.types['tms']) {
-    $.MapQuery.Layer.types['tms'] = function(options) {
-        var o = $.extend(true, {}, $.fn.mapQuery.defaults.layer.all,
-            $.fn.mapQuery.defaults.layer.tms,
-            options);
-        var label = options.label || undefined;
-        var url = options.url || undefined;
-        var params = {
-            layername: o.layername,
-            type: o.format.split('/').pop(),
-            tileOrigin: o.tileOrigin,
-            tileSize: o.tileSize,
-            isBaseLayer: o.isBaseLayer,
-            serviceVersion: o.serviceVersion,
-            serverResolutions: o.serverResolutions
-        };
-        return {
-            layer: new OpenLayers.Layer.TMS(label, url, params),
-            options: o
-        };
-    }
-}
+$.MapQuery.Layer.types['tms'] = function(options) {
+    var label = options.label;
+    var url = options.url;
+    var params = {
+        layername: options.layername,
+        type: options.format.split('/').pop(),
+        tileOrigin: options.tileOrigin,
+        tileSize: options.tileSize,
+        isBaseLayer: options.isBaseLayer,
+        serviceVersion: options.serviceVersion,
+        serverResolutions: options.serverResolutions
+    };
+    return {
+        layer: new OpenLayers.Layer.TMS(label, url, params),
+        options: options
+    };
+};
