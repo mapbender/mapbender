@@ -82,36 +82,6 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsC
         }
         return null;
     },
-    'public function featureInfoUrl': function(mqLayer, x, y) {
-        if(!mqLayer.visible() || mqLayer.olLayer.queryLayers.length === 0) {
-            return false;
-        }
-        var j = 0; // find Row index of a pixel in the tile -> from x
-        var i = 0; // Column index of a pixel in the tile -> y
-        var tilerow = 0; // find Row index of tile matrix
-        var tilecol = 0; // find Column index of tile matrix
-        Mapbender.error('GetFeatureInfo for WMTS is not yet implemented');
-        return;
-        var param_tmp = {
-            SERVICE: 'WMTS',
-            REQUEST: 'GetFeatureInfo',
-            VERSION: '1.0.0',//
-            LAYER: mqLayer.olLayer.layer, //
-            STYLE: mqLayer.olLayer.style, // 
-            FORMAT: mqLayer.olLayer.format,
-            INFO_FORMAT: mqLayer.source.configuration.options.info_format || "application/gml+xml; version=3.1",
-            TILEMATRIXSET: mqLayer.olLayer.matrixSet,
-            TILEMATRIX: mqLayer.olLayer.getMatrix()['identigier'],
-            TILEROW: tilerow,
-            TILECOL: tilecol,
-            J: j,
-            I: i
-        };
-        var params = $.param(param_tmp);
-        var requestUrl = Mapbender.Util.removeProxy(mqLayer.olLayer.url);
-        requestUrl += (/\?/.test(mqLayer.options.url) ? '&' : '?') + params;
-        return requestUrl;
-    },
     _getPrintBaseUrl: function(sourceDef, layerDef) {
         return layerDef.options.url;
     },

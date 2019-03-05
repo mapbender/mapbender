@@ -167,6 +167,9 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             }
         }
         return closestMatrix;
+    },
+    featureInfoUrl: function() {
+        return null;
     }
 });
 
