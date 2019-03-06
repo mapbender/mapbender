@@ -125,7 +125,8 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
     },
     getPrintConfigEx: function(source, bounds, scale, projection) {
         var layerDef = this.findLayerEpsg(source, projection.projCode);
-        if (!layerDef.state.visibility) {
+        var fakeRootLayer = source.configuration.children[0];
+        if (!fakeRootLayer.state.visibility) {
             return [];
         }
         var matrix = this._getMatrix(source, layerDef, scale, projection);
