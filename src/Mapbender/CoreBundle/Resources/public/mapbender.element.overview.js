@@ -137,8 +137,7 @@
          */
         _changeSrs: function(event, srs) {
             console.log("Overview changesrs event", event, srs);
-            var widget = this;
-            var overview = widget.overview;
+            var overview = this.overview;
             /**
              * @type {null|OpenLayers.Map}
              */
@@ -151,25 +150,29 @@
 
             var mainMapMaxExtent = this.mbMap.model.map.olMap.maxExtent;
 
-            ovMap.projection = srs.projection;
-            ovMap.displayProjection = srs.projection;
-            ovMap.units = srs.projection.proj.units;
-            if (mainMapMaxExtent) {
-                // NOTE: this extent is already transformed
-                ovMap.maxExtent = mainMapMaxExtent.clone();
-            }
-
-            $.each(ovMap.layers, function(idx, layer) {
-                layer.projection = srs.projection;
-                layer.units = srs.projection.proj.units;
-                if (layer.maxExtent) {
-                    layer.maxExtent = layer.maxExtent.clone();
-                    layer.maxExtent.transform(oldProj, srs.projection);
+            try {
+                ovMap.projection = srs.projection;
+                ovMap.displayProjection = srs.projection;
+                ovMap.units = srs.projection.proj.units;
+                if (mainMapMaxExtent) {
+                    // NOTE: this extent is already transformed
+                    ovMap.maxExtent = mainMapMaxExtent.clone();
                 }
-                layer.initResolutions();
-            });
-            ovMap.setCenter(center, null, false, true);
-            overview.update();
+
+                $.each(ovMap.layers, function(idx, layer) {
+                    layer.projection = srs.projection;
+                    layer.units = srs.projection.proj.units;
+                    if (layer.maxExtent) {
+                        layer.maxExtent = layer.maxExtent.clone();
+                        layer.maxExtent.transform(oldProj, srs.projection);
+                    }
+                    layer.initResolutions();
+                });
+                ovMap.setCenter(center, null, false, true);
+                overview.update();
+            } catch (e) {
+                console.error("Overview srs change failed", e);
+            }
         }
 
     });
