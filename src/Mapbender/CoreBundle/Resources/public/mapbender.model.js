@@ -563,7 +563,7 @@ Mapbender.Model = {
         var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
         var changedStates = gsHandler.applyLayerStates(source, newStates);
         var layerParams = gsHandler.getLayerParameters(source, newStates);
-        this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
+        this._resetSourceVisibility(source, layerParams);
 
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
@@ -589,7 +589,7 @@ Mapbender.Model = {
         var changedStates = gsHandler.applyLayerStates(source, newStates);
         if (redraw) {
             var layerParams = gsHandler.getLayerParameters(source, newStates);
-            this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
+            this._resetSourceVisibility(source, layerParams);
         }
         if (fireSourceChangedEvent && Object.keys(changedStates).length) {
             this.mbMap.fireModelEvent({
@@ -617,25 +617,34 @@ Mapbender.Model = {
      * @TODO: infoLayers should be set outside of the function
      *
      * @param {Object} source
-     * @param {Array<string>} layers
-     * @param {Array<string>} infolayers
-     * @param {Array<string>} styles
+     * @param {Object} layerParams
+     * @param {Array<string>} layerParams.layers
+     * @param {Array<string>} layerParams.infolayers
+     * @param {Array<string>} layerParams.styles
      *
      * @returns {boolean}
      * @private
      */
-    _resetSourceVisibility: function(source, layers, infolayers, styles) {
+    _resetSourceVisibility: function(source, layerParams) {
         var olLayer = this.getNativeLayer(source);
         if (!olLayer) {
             return false;
         }
-        olLayer.queryLayers = infolayers;
-        var targetVisibility = !!layers.length;
+        // @todo: this is almost entirely WMS specific
+        // Clean up this mess. Move application of layer params into type-specific source classes
+        olLayer.queryLayers = layerParams.infolayers;
+        var targetVisibility = !!layerParams.layers.length && source.configuration.children[0].options.treeOptions.selected;
         var visibilityChanged = targetVisibility !== olLayer.getVisibility();
-        var layersChanged =
-            ((olLayer.params.LAYERS || '').toString() !== layers.toString()) ||
-            ((olLayer.params.STYLES || '').toString() !== styles.toString())
-        ;
+        var gsHandler = this.getGeoSourceHandler(source);
+        var layersChanged;
+        if (typeof gsHandler.checkLayerParameterChanges === 'function') {
+            layersChanged = gsHandler.checkLayerParameterChanges(source, layerParams);
+        } else {
+            layersChanged =
+                ((olLayer.params.LAYERS || '').toString() !== layerParams.layers.toString()) ||
+                ((olLayer.params.STYLES || '').toString() !== layerParams.styles.toString())
+            ;
+        }
 
         if (!visibilityChanged && !layersChanged) {
             return false;
@@ -653,8 +662,8 @@ Mapbender.Model = {
             return false;
         } else {
             var newParams = {
-                LAYERS: layers,
-                STYLES: styles
+                LAYERS: layerParams.layers,
+                STYLES: layerParams.styles
             };
             if (visibilityChanged) {
                 // Prevent the browser from reusing the loaded image. This is almost equivalent

@@ -73,6 +73,7 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             attribution: sourceOpts.configuration.options.attribution
         };
         $.extend(layerOptions, mqLayerDef);
+        sourceOpts.currentActiveLayer = layer;
         return layerOptions;
     },
     _createLayerOptions: function(sourceDef, layerDef, matrixSet, projection) {
@@ -103,15 +104,39 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         var olLayer = layer && Mapbender.Model.getNativeLayer(source);
         if (layer && olLayer && matrixSet) {
             var matrixOptions = this._getMatrixOptions(layer, matrixSet, projection);
+            source.currentActiveLayer = layer;
             $.extend(olLayer, matrixOptions);
             return true;
         } else {
-            console.warn("Wtf", layer, olLayer, matrixSet, projection, source);
+            source.currentActiveLayer = null;
             return false;
         }
     },
     'public function getPrintConfig': function(olLayer, bounds) {
         throw new Error("Unsafe printConfig with no scale information");
+    },
+    getLayerParameters: function(source, stateMap) {
+        if (source.currentActiveLayer) {
+            return {
+                layers: [source.currentActiveLayer.options.identifier],
+                infolayers: [],
+                styles: []
+            };
+        } else {
+            return {
+                layers: [],
+                infolayers: [],
+                styles: []
+            };
+        }
+    },
+    checkLayerParameterChanges: function(source, layerParams) {
+        if (source.currentActiveLayer) {
+            var activeIdentifier = source.currentActiveLayer.options.identifier;
+            return !(layerParams.layers && layerParams.layers.length && layerParams.layers[0] === activeIdentifier);
+        } else {
+            return !!(layerParams.layers && layerParams.layers.length);
+        }
     },
     findLayerEpsg: function(sourceDef, epsg) {
         var layers = sourceDef.configuration.layers;
