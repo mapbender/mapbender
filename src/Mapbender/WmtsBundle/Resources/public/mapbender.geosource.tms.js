@@ -15,9 +15,6 @@ Mapbender.Geo.TmsSourceHandler = Class({
         var options = {
             layername: layer.options.identifier,
             tileSize: new OpenLayers.Size(matrixSet.tileSize[0], matrixSet.tileSize[1]),
-            params: {
-                LAYERS: [layer.options.identifier]
-            },
             serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
                 return self._getMatrixResolution(tileMatrix, projection);
             })

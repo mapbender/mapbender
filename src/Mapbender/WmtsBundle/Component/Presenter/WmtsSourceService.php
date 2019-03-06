@@ -145,12 +145,6 @@ class WmtsSourceService extends SourceService
                     $configuration['format'] = $ru->getFormat();
                 }
             }
-
-            $configuration['cheese'][] = array(
-                'format' => $ru->getFormat(),
-                'rt' => $ru->getResourceType(),
-                'template' => $ru->getTemplate(),
-            );
         }
         $legendConfig = $this->getLayerLegendConfig($instanceLayer);
         if ($legendConfig) {
@@ -159,7 +153,8 @@ class WmtsSourceService extends SourceService
         $configuration['treeOptions'] = $this->getSingleLayerTreeOptionsConfig($instanceLayer);
         $srses = array();
         foreach ($sourceItem->getMergedBoundingBoxes() as $bbox) {
-            $srses[$bbox->getSrs()] = $bbox->toCoordsArray();
+            $saneSrs = $this->sanitizeSrs($bbox->getSrs());
+            $srses[$saneSrs] = $bbox->toCoordsArray();
         }
         $configuration['bbox'] = $srses;
 
@@ -225,6 +220,14 @@ class WmtsSourceService extends SourceService
             );
         }
         return $configs;
+    }
+
+    protected function sanitizeSrs($urnOrCode)
+    {
+        $srsCode = preg_replace('#^urn:.*?:([\A-Z]+):.*?(\d+)$#', '$1:$2', $urnOrCode);
+        return strtr($srsCode, array(
+            'OSGEO:41001' => 'EPSG:900913',
+        ));
     }
 
     /**

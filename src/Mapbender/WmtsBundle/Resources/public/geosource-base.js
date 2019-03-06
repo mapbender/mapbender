@@ -29,6 +29,7 @@
  * @typedef {Object} WmtsSourceConfig
  * @property {string} type
  * @property {string} title
+ * @property {WmtsLayerConfig|null} currentActiveLayer
  * @property {Object} configuration
  * @property {string} configuration.type
  * @property {string} configuration.title
@@ -76,12 +77,50 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         sourceOpts.currentActiveLayer = layer;
         return layerOptions;
     },
+    /**
+     * @param {WmtsSourceConfig} sourceDef
+     * @param {WmtsLayerConfig} layer
+     * @param {OpenLayers.Projection} projection
+     * @return {OpenLayers.Bounds|null}
+     * @private
+     */
+    getMaxExtent: function(sourceDef, projection, layer) {
+        var layer_ = layer || sourceDef.currentActiveLayer;
+        var projCode = projection.projCode;
+        if (!layer_) {
+            console.warn("Didn't find layer to calulate max extent", sourceDef, projection);
+            return null;
+        }
+        if (layer_.options.bbox[projCode]) {
+            return OpenLayers.Bounds.fromArray(layer_.options.bbox[projCode]);
+        } else {
+            var bboxSrses = Object.keys(layer_.options.bbox);
+            for (var i = 0; i < bboxSrses.length; ++i) {
+                var bboxSrs = bboxSrses[i];
+                var bboxArray = layer_.options.bbox[bboxSrs];
+                var bboxSrsSane = this.urnToEpsg(bboxSrs);
+                var bboxProj = Mapbender.Model.getProj(bboxSrsSane);
+                if (bboxProj) {
+                    var newExtent = OpenLayers.Bounds.fromArray(bboxArray).transform(
+                        bboxProj,
+                        projection
+                    );
+                    if (newExtent.right > newExtent.left && newExtent.top > newExtent.bottom) {
+                        return newExtent;
+                    }
+                }
+            }
+        }
+        return null;
+    },
     _createLayerOptions: function(sourceDef, layerDef, matrixSet, projection) {
         var matrixOptions = this._getMatrixOptions(layerDef, matrixSet, projection);
         return $.extend(matrixOptions, {
             label: layerDef.options.title,
             url: layerDef.options.tileUrls,
             format: layerDef.options.format
+//            ,
+//            maxExtent: this.getMaxExtent(sourceDef, projection, layerDef)
         });
     },
     getPrintConfigEx: function(source, bounds, scale, projection) {
@@ -103,12 +142,17 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         var matrixSet = layer && this._getLayerMatrixSet(source, layer);
         var olLayer = layer && Mapbender.Model.getNativeLayer(source);
         if (layer && olLayer && matrixSet) {
-            var matrixOptions = this._getMatrixOptions(layer, matrixSet, projection);
+            var options = this._getMatrixOptions(layer, matrixSet, projection);
+            options.projection = projection;
+            var newMaxExtent = this.getMaxExtent(source, projection, layer);
+            if (newMaxExtent) {
+                options.maxExtent = newMaxExtent;
+            }
+
             source.currentActiveLayer = layer;
-            $.extend(olLayer, matrixOptions);
+            olLayer.addOptions(options, false);
             return true;
         } else {
-            source.currentActiveLayer = null;
             return false;
         }
     },

@@ -1183,6 +1183,7 @@ Mapbender.Model = {
      */
     changeProjection: function(srsCode) {
         var self = this;
+        var i;
         var newProj;
         if (srsCode.projection) {
             console.warn("Legacy object-style argument passed to changeProjection");
@@ -1194,21 +1195,27 @@ Mapbender.Model = {
         if (oldProj.projCode === newProj.projCode) {
             return;
         }
-        for(var i = 0; i < this.sourceTree.length; i++) {
+        for (i = 0; i < this.sourceTree.length; i++) {
             var source = this.sourceTree[i];
             var gsHandler = this.getGeoSourceHandler(source);
-            gsHandler.changeProjection(source, newProj);
+            if (gsHandler.changeProjection(source, newProj) === false) {
+                console.warn("Source failed to change srs", newProj, source);
+            }
         }
-        var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
+        var oldCenter = this.map.olMap.getCenter();
+        var center = oldCenter.clone().transform(oldProj, newProj);
+
         this.map.olMap.projection = newProj;
         this.map.olMap.displayProjection = newProj;
         this.map.olMap.units = newProj.proj.units;
         this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
         $.each(this.map.olMap.layers, function(idx, layer) {
-            layer.projection = newProj;
-            layer.units = newProj.proj.units;
-            if (layer.maxExtent) {
-                layer.maxExtent = self._transformExtent(layer.maxExtent, oldProj, newProj);
+            if (!layer.mbConfig) {
+                layer.projection = newProj;
+                layer.units = newProj.proj.units;
+                if (layer.maxExtent && !layer.mbConfig) {
+                    layer.maxExtent = self._transformExtent(layer.maxExtent, oldProj, newProj);
+                }
             }
             layer.initResolutions();
         });
@@ -1227,8 +1234,8 @@ Mapbender.Model = {
      *
      * @param {string|number} sourceId
      * @param {string|number} layerId
-     * @param {bool|null} [selected]
-     * @param {bool|null} [info]
+     * @param {boolean|null} [selected]
+     * @param {boolean|null} [info]
      */
     controlLayer: function controlLayer(sourceId, layerId, selected, info) {
         var layerMap = {};
@@ -1370,8 +1377,8 @@ Mapbender.Model = {
      */
     _transformExtent: function(extent, fromProj, toProj) {
         var extentOut = (extent && extent.clone()) || null;
-        if (extent && fromProj.projCode !== toProj. projCode) {
-            extentOut.transform(fromProj, toProj);
+        if (extent && fromProj.projCode !== toProj.projCode) {
+            return extentOut.transform(fromProj, toProj);
         }
         return extentOut;
     },

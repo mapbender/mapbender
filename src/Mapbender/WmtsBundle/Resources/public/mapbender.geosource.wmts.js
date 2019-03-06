@@ -22,8 +22,8 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsC
             matrixIds: matrixIds,
             serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
                 return self._getMatrixResolution(tileMatrix, projection);
-            }),
-            maxExtent: this._getMaxExtent(layerDef, projection)
+            })//,
+            //maxExtent: this._getMaxExtent(layerDef, projection)
         };
     },
     /**
@@ -58,29 +58,6 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsC
             style: layer.options.style
         });
         return layerOptions;
-    },
-    /**
-     * @param {WmtsLayerConfig} layer
-     * @param {OpenLayers.Projection} projection
-     * @return {OpenLayers.Bounds|null}
-     * @private
-     */
-    _getMaxExtent: function(layer, projection) {
-        var projCode = projection.projCode;
-        if (layer.options.bbox[projCode]) {
-            return OpenLayers.Bounds.fromArray(layer.options.bbox[projCode]);
-        } else {
-            var bboxSrses = Object.keys(layer.options.bbox);
-            for (var i = 0 ; i < bboxSrses.length; ++i) {
-                var bboxSrs = bboxSrses[i];
-                var bboxArray = layer.options.bbox[bboxSrs];
-                return OpenLayers.Bounds.fromArray(bboxArray).transform(
-                    Mapbender.Model.getProj(bboxSrs),
-                    projection
-                );
-            }
-        }
-        return null;
     },
     /**
      * @param {Object} sourceDef
