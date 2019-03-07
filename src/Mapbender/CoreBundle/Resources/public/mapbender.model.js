@@ -1204,13 +1204,15 @@ window.Mapbender.Model = {
      * @param {OpenLayers.Projection} newProj
      * @private
      */
-    _changeLayerProjection: function(olLayer, oldProj, newProj) {
+    _changeLayerProjection: function(olLayer, oldProj, newProj, newMaxExtent) {
         var layerOptions = {
             // passing projection as string is preferable to passing the object,
             // because it also auto-initializes units and projection-inherent maxExtent
             projection: newProj.projCode
         };
-        if (olLayer.maxExtent) {
+        if (newMaxExtent) {
+            layerOptions.maxExtent = newMaxExtent;
+        } else if (olLayer.maxExtent) {
             layerOptions.maxExtent = this._transformExtent(olLayer.maxExtent, oldProj, newProj);
         }
         olLayer.addOptions(layerOptions);
@@ -1247,6 +1249,7 @@ window.Mapbender.Model = {
                 gsHandler.beforeSrsChange(mbSource, olLayer, newProj.projCode);
             }
         }
+        var newMaxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
         var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
         // transform base layer last
         // base layer determines overall map properties (max extent, units, resolutions etc)
@@ -1265,12 +1268,12 @@ window.Mapbender.Model = {
             }
         }
         if (baseLayer) {
-            this._changeLayerProjection(baseLayer, oldProj, newProj);
+            this._changeLayerProjection(baseLayer, oldProj, newProj, newMaxExtent);
         }
         this.map.olMap.projection = newProj;
         this.map.olMap.displayProjection = newProj;
         this.map.olMap.units = newProj.proj.units;
-        this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
+        this.map.olMap.maxExtent = newMaxExtent;
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
         this.mbMap.fireModelEvent({
             name: 'srschanged',

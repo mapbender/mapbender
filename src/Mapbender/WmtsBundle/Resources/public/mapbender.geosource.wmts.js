@@ -22,8 +22,7 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsC
             matrixIds: matrixIds,
             serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
                 return self._getMatrixResolution(tileMatrix, projection);
-            })//,
-            //maxExtent: this._getMaxExtent(layerDef, projection)
+            })
         };
     },
     /**
@@ -70,7 +69,8 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsC
     },
     changeProjection: function(source, projection) {
         if (this.super('changeProjection', source, projection)) {
-            Mapbender.Model.getNativeLayer(source).updateMatrixProperties();
+            var olLayer = Mapbender.Model.getNativeLayer(source);
+            olLayer.updateMatrixProperties();
             return true;
         } else {
             return false;

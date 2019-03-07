@@ -118,8 +118,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             label: layerDef.options.title,
             url: layerDef.options.tileUrls,
             format: layerDef.options.format
-//            ,
-//            maxExtent: this.getMaxExtent(sourceDef, projection, layerDef)
         });
     },
     getPrintConfigEx: function(source, bounds, scale, projection) {
@@ -141,9 +139,12 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         olLayer.removeBackBuffer();
         var layer = this.findLayerEpsg(source, newSrsCode);
         var matrixSet = layer && this._getMatrixSet(source, layer.options.tilematrixset);
+        var fakeRootLayer = source.configuration.children[0];
         if (matrixSet) {
             source.currentActiveLayer = layer;
         } else {
+            // disable layer before things can break
+            Mapbender.Model.controlLayer(source.id, fakeRootLayer.options.id, false, false);
             source.currentActiveLayer = null;
         }
     },
@@ -154,7 +155,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         if (layer && olLayer && matrixSet) {
             var options = this._getMatrixOptions(layer, matrixSet, projection);
             options.projection = projection.projCode;
-            options.maxExtent = this.getMaxExtent(source, projection, layer);
             olLayer.addOptions(options, false);
             return true;
         } else {

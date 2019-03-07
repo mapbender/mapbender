@@ -76,10 +76,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         var options = {
             projection: projection
         };
-        if (olLayer.maxExtent) {
-            var oldProj = Mapbender.Model.getCurrentProj();
-            options.maxExtent = Mapbender.Model._transformExtent(olLayer.maxExtent, oldProj, projection);
-        }
         olLayer.addOptions(options, false);
         return true;
     },
