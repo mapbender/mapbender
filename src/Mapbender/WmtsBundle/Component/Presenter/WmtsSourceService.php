@@ -116,7 +116,6 @@ class WmtsSourceService extends SourceService
     protected function getSingleLayerOptionsConfig($instanceLayer)
     {
         $sourceItem      = $instanceLayer->getSourceItem();
-        $resourceUrl     = $sourceItem->getResourceUrl();
         $layerId = strval($instanceLayer->getId());
         if (!$layerId) {
             throw new \LogicException("Cannot safely generate config for " . get_class($instanceLayer) . " without an id");
@@ -151,12 +150,13 @@ class WmtsSourceService extends SourceService
             $configuration['legend'] = $legendConfig;
         }
         $configuration['treeOptions'] = $this->getSingleLayerTreeOptionsConfig($instanceLayer);
-        $srses = array();
+        $bboxConfigs = array();
         foreach ($sourceItem->getMergedBoundingBoxes() as $bbox) {
-            $saneSrs = $this->sanitizeSrs($bbox->getSrs());
-            $srses[$saneSrs] = $bbox->toCoordsArray();
+            foreach ($this->getSrsAliases($bbox->getSrs()) as $bboxSrs) {
+                $bboxConfigs[$bboxSrs] = $bbox->toCoordsArray();
+            }
         }
-        $configuration['bbox'] = $srses;
+        $configuration['bbox'] = $bboxConfigs;
 
         return $configuration;
     }
@@ -205,16 +205,11 @@ class WmtsSourceService extends SourceService
                     'matrixSize' =>  array($tilematrix->getMatrixwidth(), $tilematrix->getMatrixheight())
                 );
             }
-            $supportedCrs = $tilematrixset->getSupportedCrs();
-            $supportedCrs = preg_replace('#^urn:.*?:([\A-Z]+):.*?(\d+)$#', '$1:$2', $supportedCrs);
-            $supportedCrs = strtr($supportedCrs, array(
-                'OSGEO:41001' => 'EPSG:900913',
-            ));
+            $srsCodes = $this->getSrsAliases($tilematrixset->getSupportedCrs());
             $configs[] = array(
-                'id' => $tilematrixset->getId(),
                 'tileSize' => array($tilewidth, $tileheight),
                 'identifier' => $tilematrixset->getIdentifier(),
-                'supportedCrs' => $supportedCrs,
+                'supportedCrs' => $srsCodes,
                 'origin' => $origin,
                 'tilematrices' => $tilematricesArr
             );
@@ -222,12 +217,35 @@ class WmtsSourceService extends SourceService
         return $configs;
     }
 
-    protected function sanitizeSrs($urnOrCode)
+    /**
+     * @param string $urnOrCode
+     * @return string[]
+     */
+    protected function getSrsAliases($urnOrCode)
     {
-        $srsCode = preg_replace('#^urn:.*?:([\A-Z]+):.*?(\d+)$#', '$1:$2', $urnOrCode);
-        return strtr($srsCode, array(
-            'OSGEO:41001' => 'EPSG:900913',
-        ));
+        $code = $this->urnToSrsCode($urnOrCode);
+        $equivalenceGroups = array(
+            array(
+                'EPSG:3857',
+                'EPSG:900913',
+                'OSGEO:41001',
+            ),
+        );
+        foreach ($equivalenceGroups as $group) {
+            if (in_array($code, $group)) {
+                return $group;
+            }
+        }
+        return array($code);
+    }
+
+    /**
+     * @param string $urnOrCode
+     * @return string
+     */
+    protected function urnToSrsCode($urnOrCode)
+    {
+        return preg_replace('#^urn:.*?:([\A-Z]+):.*?(\d+)$#', '$1:$2', $urnOrCode);
     }
 
     /**

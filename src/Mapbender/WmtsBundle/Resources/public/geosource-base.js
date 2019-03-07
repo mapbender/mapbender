@@ -13,7 +13,7 @@
  * @property {string} id
  * @property {Array<Number>} tileSize
  * @property {string} identifier
- * @property {string} supportedCrs
+ * @property {Array<string>} supportedCrs
  * @property {Array<Number>} origin
  * @property {WmtsTileMatrix[]} tilematrices
  */
@@ -64,7 +64,7 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             }
         }
         rootLayer['children'] = [layer];
-        var matrixSet = this._getLayerMatrixSet(sourceOpts, layer);
+        var matrixSet = this._getMatrixSet(sourceOpts, layer.options.tilematrixset);
         var layerOptions = this._createLayerOptions(sourceOpts, layer, matrixSet, proj);
         var mqLayerDef = {
             type: sourceOpts.configuration.type,
@@ -98,8 +98,7 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             for (var i = 0; i < bboxSrses.length; ++i) {
                 var bboxSrs = bboxSrses[i];
                 var bboxArray = layer_.options.bbox[bboxSrs];
-                var bboxSrsSane = this.urnToEpsg(bboxSrs);
-                var bboxProj = Mapbender.Model.getProj(bboxSrsSane);
+                var bboxProj = Mapbender.Model.getProj(bboxSrs);
                 if (bboxProj) {
                     var newExtent = OpenLayers.Bounds.fromArray(bboxArray).transform(
                         bboxProj,
@@ -140,13 +139,17 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
     },
     changeProjection: function(source, projection) {
         var layer = this.findLayerEpsg(source, projection.projCode);
-        var matrixSet = layer && this._getLayerMatrixSet(source, layer);
+        var matrixSet = layer && this._getMatrixSet(source, layer.options.tilematrixset);
         var olLayer = layer && Mapbender.Model.getNativeLayer(source);
+        if (olLayer) {
+            olLayer.removeBackBuffer();
+        }
         if (layer && olLayer && matrixSet) {
             var options = this._getMatrixOptions(layer, matrixSet, projection);
             options.projection = projection;
+            options.units = projection.proj.units || null;
             var newMaxExtent = this.getMaxExtent(source, projection, layer);
-            if (newMaxExtent) {
+            if (false && newMaxExtent) {
                 options.maxExtent = newMaxExtent;
             }
 
@@ -186,8 +189,9 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
     findLayerEpsg: function(sourceDef, epsg) {
         var layers = sourceDef.configuration.layers;
         for (var i = 0; i < layers.length; i++) {
-            var tileMatrixSet = this._getLayerMatrixSet(sourceDef, layers[i]);
-            if (epsg === this.urnToEpsg(tileMatrixSet.supportedCrs)) {
+            var tileMatrixSetIdentifier = layers[i].options.tilematrixset;
+            var tileMatrixSet = this._getMatrixSet(sourceDef, tileMatrixSetIdentifier);
+            if (tileMatrixSet.supportedCrs.indexOf(epsg) !== -1) {
                 return layers[i];
             }
         }
@@ -195,25 +199,17 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
     },
     /**
      * @param {WmtsSourceConfig} sourceDef
-     * @param {WmtsLayerConfig} layerDef
+     * @param {string} identifier
      * @return {WmtsTileMatrixSet|null}
      */
-    _getLayerMatrixSet: function(sourceDef, layerDef) {
+    _getMatrixSet: function(sourceDef, identifier) {
         var matrixSets = sourceDef.configuration.tilematrixsets;
         for(var i = 0; i < matrixSets.length; i++){
-            if (layerDef.options.tilematrixset === matrixSets[i].identifier){
+            if (matrixSets[i].identifier === identifier) {
                 return matrixSets[i];
             }
         }
         return null;
-    },
-    /**
-     * @param {string} urnOrEpsgIdentifier
-     * @return {string}
-     */
-    urnToEpsg: function(urnOrEpsgIdentifier) {
-        // @todo: drop URNs server-side, they offer no benefit here
-        return urnOrEpsgIdentifier.replace(/^urn:.*?(\d+)$/, 'EPSG:$1');
     },
     /**
      * @param {WmtsSourceConfig} sourceDef
@@ -224,7 +220,7 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
      */
     _getMatrix: function(sourceDef, layer, scale, projection) {
         var resolution = OpenLayers.Util.getResolutionFromScale(scale, projection.proj.units);
-        var matrixSet = this._getLayerMatrixSet(sourceDef, layer);
+        var matrixSet = this._getMatrixSet(sourceDef, layer.options.tilematrixset);
         var scaleDelta = Number.POSITIVE_INFINITY;
         var closestMatrix = null;
         for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
