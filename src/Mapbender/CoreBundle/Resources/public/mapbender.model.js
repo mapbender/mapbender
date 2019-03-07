@@ -1,4 +1,18 @@
-Mapbender.Model = {
+((function($) {
+    // NotMapQueryMap, unlike MapQuery.Map, doesn't try to know better how to initialize
+    // an OpenLayers Map, doesn't pre-assume any map properties, doesn't mess with default
+    // map controls, doesn't prevent us from passing in layers etc.
+    // The OpenLayers Map is simply passed in.
+    function NotMapQueryMap($element, olMap) {
+        this.idCounter = 0;
+        this.layersList = {};
+        this.element = $element;
+        this.vectorLayers = [];
+        $element.data('mapQuery', this);
+        this.olMap = olMap;
+    }
+
+window.Mapbender.Model = {
     /**
      * @typedef Model~LayerState
      * @property {boolean} visibility
@@ -51,23 +65,19 @@ Mapbender.Model = {
     mbMap: null,
     map: null,
     sourceTree: [],
-    resolution: null,
     srsDefs: null,
     mapMaxExtent: null,
     mapStartExtent: null,
     highlightLayer: null,
     baseId: 0,
-    // Hash map query layers settings
-    _layersHash: {},
     init: function(mbMap) {
         var self = this;
-
         this.mbMap = mbMap;
         this.srsDefs = this.mbMap.options.srsDefs;
         Mapbender.Projection.extendSrsDefintions(this.srsDefs || []);
 
         if (typeof (this.mbMap.options.dpi) !== 'undefined') {
-            this.resolution = OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
+            OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
         }
 
         var tileSize = this.mbMap.options.tileSize;
@@ -75,7 +85,8 @@ Mapbender.Model = {
         OpenLayers.Map.TILE_HEIGHT = tileSize;
 
         OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + 'components/mapquery/lib/openlayers/img/';
-
+        // Allow drag pan motion to continue outside of map div. Great for multi-monitor setups.
+        OpenLayers.Control.Navigation.prototype.documentDrag = true;
         var proj = this.getProj(this.mbMap.options.srs);
 
         this.mapMaxExtent = {
@@ -89,43 +100,48 @@ Mapbender.Model = {
             projection: proj,
             extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start || this.mbMap.options.extents.max)
         };
+        var baseLayer = new OpenLayers.Layer('fake', {
+            visibility: false,
+            isBaseLayer: true,
+            maxExtent: this.mapMaxExtent.extent.toArray(),
+            projection: this.mapMaxExtent.projection
+        });
         var mapOptions = {
             maxExtent: this.mapMaxExtent.extent.toArray(),
-            zoomToMaxExtent: false,
             maxResolution: this.mbMap.options.maxResolution,
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
             projection: proj,
             displayProjection: proj,
             units: proj.proj.units,
             allOverlays: true,
-            theme: null,
-            transitionEffect: null,
-            layers: [{
-                    type: "wms",
-                    name: "FAKE",
-                    isBaseLayer: true,
-                    url: "http://localhost",
-                    visibility: false
-                }],
-            fallThrough: true
+            fallThrough: true,
+            layers: [baseLayer],
+            // tile manager breaks tile WMS layers going out of scale as intended
+            tileManager: null
         };
-
         if (this.mbMap.options.scales) {
             $.extend(mapOptions, {
                 scales: this.mbMap.options.scales
             });
         }
-
-        $(this.mbMap.element).mapQuery(mapOptions);
-        // Stop endless reloads of services that time out.
-        // MapQuery plays with this value in its map constructor.
-        // 0 is the default, see https://github.com/openlayers/ol2/blob/master/lib/OpenLayers/Util.js#L308
-        OpenLayers.IMAGE_RELOAD_ATTEMPTS = 0;
-
-        this.map = $(this.mbMap.element).data('mapQuery');
-        this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
-        this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
-        this.map.olMap.tileManager = null; // fix WMS tiled setVisibility(false) for outer scale
+        var olMap = new OpenLayers.Map(this.mbMap.element.get(0), mapOptions);
+        // Amend NotMapQueryMap prototype. We can only do this now because the MapQuery asset
+        // may be (commonly) loaded only after the Model asset.
+        // @todo: fix asset loading order, set a complete prototype on script load
+        // @todo: eliminate MapQuery method / property access completely
+        // * .layers() invocations here to construct ~WMS layers
+        // * .layers() invocation in coordinates utility to make a vector layer
+        // * accesses to 'layersList'
+        // * layer lookup via 'mqlid' on source definitions
+        NotMapQueryMap.prototype = $.extend({}, $.MapQuery.Map.prototype, {
+            _updateSelectFeatureControl: function() {},
+            events: {
+                trigger: function() {}
+            },
+            one: function() {},
+            bind: function() {}
+        });
+        this.map = new NotMapQueryMap(this.mbMap.element, olMap);
 
         // monkey-patch zoom interactions
         (function(olMap) {
@@ -277,6 +293,10 @@ Mapbender.Model = {
     getCurrentProj: function() {
         return this.map.olMap.getProjectionObject();
     },
+    /**
+     * @param {string} srscode
+     * @return {OpenLayers.Projection}
+     */
     getProj: function(srscode) {
         if (Proj4js.defs[srscode]) {
             var proj = new OpenLayers.Projection(srscode);
@@ -1178,6 +1198,23 @@ Mapbender.Model = {
             name: 'sourcesreordered'
         });
     },
+    /**
+     * @param {OpenLayers.Layer} olLayer
+     * @param {OpenLayers.Projection} oldProj
+     * @param {OpenLayers.Projection} newProj
+     * @private
+     */
+    _changeLayerProjection: function(olLayer, oldProj, newProj) {
+        var layerOptions = {
+            // passing projection as string is preferable to passing the object,
+            // because it also auto-initializes units and projection-inherent maxExtent
+            projection: newProj.projCode
+        };
+        if (olLayer.maxExtent) {
+            layerOptions.maxExtent = this._transformExtent(olLayer.maxExtent, oldProj, newProj);
+        }
+        olLayer.addOptions(layerOptions);
+    },
     /*
      * Changes the map's projection.
      */
@@ -1187,45 +1224,61 @@ Mapbender.Model = {
         var newProj;
         if (srsCode.projection) {
             console.warn("Legacy object-style argument passed to changeProjection");
-            newProj = new OpenLayers.Projection(srsCode.projection.projCode);
+            newProj = this.getProj(srsCode.projection.projCode);
         } else {
-            newProj = new OpenLayers.Projection(srsCode);
+            newProj = this.getProj(srsCode);
         }
         var oldProj = this.map.olMap.getProjectionObject();
         if (oldProj.projCode === newProj.projCode) {
             return;
         }
-        for (i = 0; i < this.sourceTree.length; i++) {
-            var source = this.sourceTree[i];
-            var gsHandler = this.getGeoSourceHandler(source);
-            if (gsHandler.changeProjection(source, newProj) === false) {
-                console.warn("Source failed to change srs", newProj, source);
+        $(this.mbMap.element).trigger('mbmapbeforesrschange', {
+            from: oldProj,
+            to: newProj,
+            mbMap: this.mbMap
+        });
+        var nLayers = this.map.olMap.layers.length;
+        var i, olLayer, mbSource, gsHandler;
+        for (i = 0; i < nLayers; ++i) {
+            olLayer = this.map.olMap.layers[i];
+            mbSource = olLayer.mbConfig;
+            gsHandler = mbSource && this.getGeoSourceHandler(mbSource);
+            if (gsHandler) {
+                gsHandler.beforeSrsChange(mbSource, olLayer, newProj.projCode);
             }
         }
-        var oldCenter = this.map.olMap.getCenter();
-        var center = oldCenter.clone().transform(oldProj, newProj);
-
+        var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
+        // transform base layer last
+        // base layer determines overall map properties (max extent, units, resolutions etc)
+        var baseLayer = this.map.olMap.baseLayer || this.map.olMap.layers[0];
+        for (i = 0; i < nLayers; ++i) {
+            olLayer = this.map.olMap.layers[i];
+            mbSource = olLayer.mbConfig;
+            gsHandler = mbSource && this.getGeoSourceHandler(mbSource);
+            var gsResult;
+            if (gsHandler) {
+                gsResult = gsHandler.changeProjection(mbSource, newProj);
+            }
+            var gsHandled = (gsResult === true) || (gsResult === false);
+            if (olLayer !== baseLayer && !gsHandled) {
+                self._changeLayerProjection(olLayer, oldProj, newProj);
+            }
+        }
+        if (baseLayer) {
+            this._changeLayerProjection(baseLayer, oldProj, newProj);
+        }
         this.map.olMap.projection = newProj;
         this.map.olMap.displayProjection = newProj;
         this.map.olMap.units = newProj.proj.units;
         this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
-        $.each(this.map.olMap.layers, function(idx, layer) {
-            if (!layer.mbConfig) {
-                layer.projection = newProj;
-                layer.units = newProj.proj.units;
-                if (layer.maxExtent && !layer.mbConfig) {
-                    layer.maxExtent = self._transformExtent(layer.maxExtent, oldProj, newProj);
-                }
-            }
-            layer.initResolutions();
-        });
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
         this.mbMap.fireModelEvent({
             name: 'srschanged',
             value: {
                 projection: newProj,
                 from: oldProj,
-                to: newProj
+                to: newProj,
+                mbMap: this.mbMap
             }
         });
     },
@@ -1420,3 +1473,4 @@ Mapbender.Model = {
         });
     }
 };
+})(jQuery));

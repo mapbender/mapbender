@@ -137,23 +137,24 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             }
         ];
     },
+    beforeSrsChange: function(source, olLayer, newSrsCode) {
+        olLayer.removeBackBuffer();
+        var layer = this.findLayerEpsg(source, newSrsCode);
+        var matrixSet = layer && this._getMatrixSet(source, layer.options.tilematrixset);
+        if (matrixSet) {
+            source.currentActiveLayer = layer;
+        } else {
+            source.currentActiveLayer = null;
+        }
+    },
     changeProjection: function(source, projection) {
         var layer = this.findLayerEpsg(source, projection.projCode);
         var matrixSet = layer && this._getMatrixSet(source, layer.options.tilematrixset);
         var olLayer = layer && Mapbender.Model.getNativeLayer(source);
-        if (olLayer) {
-            olLayer.removeBackBuffer();
-        }
         if (layer && olLayer && matrixSet) {
             var options = this._getMatrixOptions(layer, matrixSet, projection);
-            options.projection = projection;
-            options.units = projection.proj.units || null;
-            var newMaxExtent = this.getMaxExtent(source, projection, layer);
-            if (false && newMaxExtent) {
-                options.maxExtent = newMaxExtent;
-            }
-
-            source.currentActiveLayer = layer;
+            options.projection = projection.projCode;
+            options.maxExtent = this.getMaxExtent(source, projection, layer);
             olLayer.addOptions(options, false);
             return true;
         } else {
