@@ -1,4 +1,18 @@
-Mapbender.Model = {
+((function($) {
+    // NotMapQueryMap, unlike MapQuery.Map, doesn't try to know better how to initialize
+    // an OpenLayers Map, doesn't pre-assume any map properties, doesn't mess with default
+    // map controls, doesn't prevent us from passing in layers etc.
+    // The OpenLayers Map is simply passed in.
+    function NotMapQueryMap($element, olMap) {
+        this.idCounter = 0;
+        this.layersList = {};
+        this.element = $element;
+        this.vectorLayers = [];
+        $element.data('mapQuery', this);
+        this.olMap = olMap;
+    }
+
+window.Mapbender.Model = {
     /**
      * @typedef Model~LayerState
      * @property {boolean} visibility
@@ -51,23 +65,19 @@ Mapbender.Model = {
     mbMap: null,
     map: null,
     sourceTree: [],
-    resolution: null,
     srsDefs: null,
     mapMaxExtent: null,
     mapStartExtent: null,
     highlightLayer: null,
     baseId: 0,
-    // Hash map query layers settings
-    _layersHash: {},
     init: function(mbMap) {
         var self = this;
-
         this.mbMap = mbMap;
         this.srsDefs = this.mbMap.options.srsDefs;
         Mapbender.Projection.extendSrsDefintions(this.srsDefs || []);
 
         if (typeof (this.mbMap.options.dpi) !== 'undefined') {
-            this.resolution = OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
+            OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
         }
 
         var tileSize = this.mbMap.options.tileSize;
@@ -75,7 +85,8 @@ Mapbender.Model = {
         OpenLayers.Map.TILE_HEIGHT = tileSize;
 
         OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + 'components/mapquery/lib/openlayers/img/';
-
+        // Allow drag pan motion to continue outside of map div. Great for multi-monitor setups.
+        OpenLayers.Control.Navigation.prototype.documentDrag = true;
         var proj = this.getProj(this.mbMap.options.srs);
 
         this.mapMaxExtent = {
@@ -89,35 +100,48 @@ Mapbender.Model = {
             projection: proj,
             extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start || this.mbMap.options.extents.max)
         };
+        var baseLayer = new OpenLayers.Layer('fake', {
+            visibility: false,
+            isBaseLayer: true,
+            maxExtent: this.mapMaxExtent.extent.toArray(),
+            projection: this.mapMaxExtent.projection
+        });
         var mapOptions = {
             maxExtent: this.mapMaxExtent.extent.toArray(),
-            zoomToMaxExtent: false,
             maxResolution: this.mbMap.options.maxResolution,
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
             projection: proj,
             displayProjection: proj,
             units: proj.proj.units,
             allOverlays: true,
-            fallThrough: true
+            fallThrough: true,
+            layers: [baseLayer],
+            // tile manager breaks tile WMS layers going out of scale as intended
+            tileManager: null
         };
-
         if (this.mbMap.options.scales) {
             $.extend(mapOptions, {
                 scales: this.mbMap.options.scales
             });
         }
-
-        $(this.mbMap.element).mapQuery(mapOptions);
-        // Stop endless reloads of services that time out.
-        // MapQuery plays with this value in its map constructor.
-        // 0 is the default, see https://github.com/openlayers/ol2/blob/master/lib/OpenLayers/Util.js#L308
-        OpenLayers.IMAGE_RELOAD_ATTEMPTS = 0;
-
-        this.map = $(this.mbMap.element).data('mapQuery');
-        this.map.olMap.tileManager = null; // fix WMS tiled setVisibility(false) for outer scale
-        // replace mq's fake base layer with our own (untracked by MapQuery / sourceTree)
-        this.map.olMap.removeLayer(this.map.olMap.layers[0]);
-        this.map.olMap.addLayer(new OpenLayers.Layer('fake', {visibility: false, isBaseLayer: true}));
+        var olMap = new OpenLayers.Map(this.mbMap.element.get(0), mapOptions);
+        // Amend NotMapQueryMap prototype. We can only do this now because the MapQuery asset
+        // may be (commonly) loaded only after the Model asset.
+        // @todo: fix asset loading order, set a complete prototype on script load
+        // @todo: eliminate MapQuery method / property access completely
+        // * .layers() invocations here to construct ~WMS layers
+        // * .layers() invocation in coordinates utility to make a vector layer
+        // * accesses to 'layersList'
+        // * layer lookup via 'mqlid' on source definitions
+        NotMapQueryMap.prototype = $.extend({}, $.MapQuery.Map.prototype, {
+            _updateSelectFeatureControl: function() {},
+            events: {
+                trigger: function() {}
+            },
+            one: function() {},
+            bind: function() {}
+        });
+        this.map = new NotMapQueryMap(this.mbMap.element, olMap);
 
         // monkey-patch zoom interactions
         (function(olMap) {
@@ -1425,3 +1449,4 @@ Mapbender.Model = {
         });
     }
 };
+})(jQuery));
