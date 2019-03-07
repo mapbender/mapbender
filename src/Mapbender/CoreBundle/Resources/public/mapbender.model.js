@@ -98,15 +98,6 @@ Mapbender.Model = {
             displayProjection: proj,
             units: proj.proj.units,
             allOverlays: true,
-            theme: null,
-            transitionEffect: null,
-            layers: [{
-                    type: "wms",
-                    name: "FAKE",
-                    isBaseLayer: true,
-                    url: "http://localhost",
-                    visibility: false
-                }],
             fallThrough: true
         };
 
@@ -123,9 +114,10 @@ Mapbender.Model = {
         OpenLayers.IMAGE_RELOAD_ATTEMPTS = 0;
 
         this.map = $(this.mbMap.element).data('mapQuery');
-        this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
-        this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
         this.map.olMap.tileManager = null; // fix WMS tiled setVisibility(false) for outer scale
+        // replace mq's fake base layer with our own (untracked by MapQuery / sourceTree)
+        this.map.olMap.removeLayer(this.map.olMap.layers[0]);
+        this.map.olMap.addLayer(new OpenLayers.Layer('fake', {visibility: false, isBaseLayer: true}));
 
         // monkey-patch zoom interactions
         (function(olMap) {
