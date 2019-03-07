@@ -1,4 +1,9 @@
 # Changelog
+* **dev-release/3.0.7 @ 77e3f9ea1**
+  - Fix Dimensions values not getting applied while layer is invisible ([PR#1114](https://github.com/mapbender/mapbender/pull/1114))
+  - Fix map max extent breaking down on repeated SRS switches
+  - [Beta regression] Fix button group misalginment in Application "Layersets" tab
+
 * **v3.0.8-beta1**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
