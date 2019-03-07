@@ -133,7 +133,7 @@ class DimensionSubscriber implements EventSubscriberInterface
                     ))
                     ->add('default', 'text', array(
                         'auto_initialize' => false,
-                        'read_only' => $isVordefined,
+                        'read_only' => false,
                         'required' => false,
                     ))
                 ;
