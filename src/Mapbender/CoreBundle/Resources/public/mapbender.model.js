@@ -1050,7 +1050,11 @@ window.Mapbender.Model = {
     setSourceVisibility: function(sourceId, state) {
         var source = this.getSource({id: sourceId});
         var newProps = {};
-        var rootLayerId = source.configuration.children[0].options.id;
+        var rootLayer = source.configuration.children[0];
+        if (state && !rootLayer.options.treeOptions.allow.selected) {
+            state = false;
+        }
+        var rootLayerId = rootLayer.options.id;
         newProps[rootLayerId] = {
             options: {
                 treeOptions: {

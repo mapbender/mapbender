@@ -126,6 +126,9 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             format: layerDef.options.format
         });
     },
+    _getFakeRootLayerId: function(source) {
+        return source.configuration.children[0].options.id;
+    },
     getPrintConfigEx: function(source, bounds, scale, projection) {
         var layerDef = this.findLayerEpsg(source, projection.projCode);
         var fakeRootLayer = source.configuration.children[0];
@@ -150,7 +153,11 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             source.currentActiveLayer = layer;
         } else {
             // disable layer before things can break
-            Mapbender.Model.controlLayer(source.id, fakeRootLayer.options.id, false, false);
+            fakeRootLayer.options.treeOptions.allow.selected = false;
+            if (fakeRootLayer.options.treeOptions.selected) {
+                source.autoDisabled = true;
+            }
+            Mapbender.Model.setSourceVisibility(source.id, false);
             source.currentActiveLayer = null;
         }
     },
@@ -162,10 +169,33 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             var options = this._getMatrixOptions(layer, matrixSet, projection);
             options.projection = projection.projCode;
             olLayer.addOptions(options, false);
+            if (source.autoDisabled) {
+                var fakeRootLayer = source.configuration.children[0];
+                fakeRootLayer.options.treeOptions.allow.selected = true;
+                source.autoDisabled = false;
+                Mapbender.Model.setSourceVisibility(source.id, true);
+            }
             return true;
         } else {
             return false;
         }
+    },
+    applyTreeOptions: function(source, layerOptionsMap) {
+        var layerKeys = Object.keys(layerOptionsMap);
+        for (var i = 0; i < layerKeys.length; ++i) {
+            var layerId = layerKeys[i];
+            if (source.configuration.children[0].options.id === layerId) {
+                var layerOptions = layerOptionsMap[layerId];
+                var treeOptions = ((layerOptions.options || {}).treeOptions || {});
+                if (treeOptions.selected === false) {
+                    source.autoDisabled = false;
+                } else if (treeOptions.selected === true && source.autoDisabled) {
+                    delete treeOptions.selected;
+                }
+                break;
+            }
+        }
+        this.super('applyTreeOptions', source, layerOptionsMap);
     },
     'public function getPrintConfig': function(olLayer, bounds) {
         throw new Error("Unsafe printConfig with no scale information");
