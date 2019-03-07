@@ -864,8 +864,8 @@ window.Mapbender.Model = {
             id: options.sourceId
         });
         if (sources.length === 1) {
-            var extent = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
-            return extent ? extent : null;
+            var gsHandler = this.getGeoSourceHandler(sources[0]);
+            return gsHandler.getLayerExtents(sources[0], options.layerId) || null;
         }
         return null;
     },

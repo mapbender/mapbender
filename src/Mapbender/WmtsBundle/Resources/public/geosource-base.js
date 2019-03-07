@@ -112,6 +112,12 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         }
         return null;
     },
+    getLayerExtents: function(source, layerId) {
+        if (source.currentActiveLayer) {
+            return source.currentActiveLayer.options.bbox || null;
+        }
+        return null;
+    },
     _createLayerOptions: function(sourceDef, layerDef, matrixSet, projection) {
         var matrixOptions = this._getMatrixOptions(layerDef, matrixSet, projection);
         return $.extend(matrixOptions, {
