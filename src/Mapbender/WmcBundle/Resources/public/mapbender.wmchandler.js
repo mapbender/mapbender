@@ -57,39 +57,36 @@ Mapbender.WmcHandler = function(mapWidget, options){
     };
     this.addToMap = function(wmcid, state){
         var model = this.mapWidget.getModel();
-        var wmcProj = model.getProj(state.extent.srs),
-                mapProj = model.map.olMap.getProjectionObject(),
-                toKeepSources = {};
-        if(this.options.keepSources === 'basesources'){
-            for(var i = 0; i < model.sourceTree.length; i++){
-                var source = model.sourceTree[i];
+        var mapProj = model.map.olMap.getProjectionObject(),
+            toKeepSources = {};
+        var source, i;
+        if (this.options.keepSources === 'basesources'){
+            for (i = 0; i < model.sourceTree.length; i++){
+                source = model.sourceTree[i];
                 if(source.configuration.isBaseSource)
                     toKeepSources[source.id] = {sourceId: source.id};
             }
-        } else if(this.options.keepSources === 'allsources'){
-            for(var i = 0; i < model.sourceTree.length; i++){
-                var source = model.sourceTree[i];
+        } else if (this.options.keepSources === 'allsources'){
+            for (i = 0; i < model.sourceTree.length; i++){
+                source = model.sourceTree[i];
                 toKeepSources[source.id] = {sourceId: source.id};
             }
         }
-        if(wmcProj === null){
-            Mapbender.error(Mapbender.trans(Mapbender.trans("mb.wmc.element.wmchandler.error_srs", {"srs": state.extent.srs})));
-        }else if(wmcProj.projCode === mapProj.projCode){
-            this.mapWidget.removeSources(toKeepSources);
-            if(!this.options.keepExtent){
-                var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
-                this.mapWidget.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr), true);
+        this.mapWidget.removeSources(toKeepSources);
+        if (state.extent.srs !== mapProj.projCode) {
+            try {
+                this.mapWidget.changeProjection(state.extent.srs);
+            } catch (e) {
+                Mapbender.error(Mapbender.trans(Mapbender.trans("mb.wmc.element.wmchandler.error_srs", {"srs": state.extent.srs})));
+                console.error("Projection change failed", e);
+                return;
             }
-            this._addWmcToMap(state.sources);
-        }else{
-            this.mapWidget.removeSources(toKeepSources);
-            model.changeProjection({projection: wmcProj});
-            if(!this.options.keepExtent){
-                var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
-                this.mapWidget.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr), true);
-            }
-            this._addWmcToMap(state.sources);
         }
+        if(!this.options.keepExtent){
+            var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
+            this.mapWidget.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr), true);
+        }
+        this._addWmcToMap(state.sources);
     };
     
     this.removeFromMap = function(){

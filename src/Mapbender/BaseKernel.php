@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender;
 
+use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
@@ -138,5 +139,12 @@ abstract class BaseKernel extends Kernel
         // intersect instances with deduped keys => instances of same class gone, order preserved
         $keptBundleInstances = array_intersect_key($bundles, $keptBundleClasses);
         return $keptBundleInstances;
+    }
+
+    protected function buildContainer()
+    {
+        $container = parent::buildContainer();
+        $container->addCompilerPass(new RebuildElementInventoryPass($this));
+        return $container;
     }
 }

@@ -38,4 +38,24 @@ class PDF_Extensions extends \FPDI
             $s='q '.$this->TextColor.' '.$s.' Q';
         $this->_out($s);
     }
+
+    /**
+     * Returns number of lines required for rendering given $text in a MultiCell
+     * with given $width.
+     *
+     * @param string $text
+     * @param float $width
+     * @return int
+     */
+    public function getMultiCellTextHeight($text, $width)
+    {
+        /** @var static|\FPDF $tempPdf */
+        $tempPdf = new static();
+        $tempPdf->AddPage();
+        $tempPdf->SetXY(0, 0);
+        // clone font attributes
+        $tempPdf->SetFont($this->FontFamily, $this->FontStyle, $this->FontSizePt);
+        $tempPdf->MultiCell($width, 1, $text);
+        return $tempPdf->GetY();
+    }
 }

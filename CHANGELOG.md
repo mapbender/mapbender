@@ -1,5 +1,10 @@
 # Changelog
-* **dev-release/3.0.7 @ d8e37a819**
+* **dev-release/3.0.7 @ 77e3f9ea1**
+  - Fix Dimensions values not getting applied while layer is invisible ([PR#1114](https://github.com/mapbender/mapbender/pull/1114))
+  - Fix map max extent breaking down on repeated SRS switches
+  - [Beta regression] Fix button group misalginment in Application "Layersets" tab
+
+* **v3.0.8-beta1**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
@@ -35,7 +40,9 @@
     - Generate label and other symbol sizing parameters understood by Mapserver, QGis server and Geoserver ([735626322](https://github.com/mapbender/mapbender/commit/73562632261819d79b9a9c0c264caeb33f34f4bf#diff-c72724b3690b61d792254dd26a7ca9cbR222))
     - Optimize handling performance of WMS layers with manually reduced opacity
     - Synchronize layer and legend visibility at any scale with client-side behavior ([PR#1077](https://github.com/mapbender/mapbender/pull/1077))
+    - Support exporting / printing icons on "marker layers" ([PR#1108](https://github.com/mapbender/mapbender/pull/1108))
     - Fix wrong (grey instead of white) color of GpsButton area display circle, if one makes it into an export or print
+    - Extend label reproduction to all types of features, improve reproduction accuracy ([PR#1111](https://github.com/mapbender/mapbender/pull/1111))
   - Print:
     - Selection rectangle position and scale are now restored, if still on screen, when closing / reopening the dialog ([PR#1011](https://github.com/mapbender/mapbender/pull/1101))
     - Add optional queue mode, decoupling job execution from web server request ([PR#1070](https://github.com/mapbender/mapbender/pull/1070))
@@ -45,6 +52,8 @@
     - Suppress redundant group layer legend images and legend images for deactivated layers ([Issue #611](https://github.com/mapbender/mapbender/issues/611) [PR#1053](https://github.com/mapbender/mapbender/pull/1053))
     - Improved reproduction of patterned and / or semi-transparent and / or very thick lines ([PR#1080](https://github.com/mapbender/mapbender/pull/1080))
     - Fixed reproduction of 'donut'-style polygon cutouts ([PR#1080](https://github.com/mapbender/mapbender/pull/1080))
+    - Very large legend images will now be scaled to fit ([PR#1112](https://github.com/mapbender/mapbender/pull/1112))
+    - Very long legend titles now render as multiline text ([PR#1112](https://github.com/mapbender/mapbender/pull/1112))
   - Fix inconsistent legend image behaviors between `proxy` source instance setting on and off
   - Fix Legend Element display ordering certain layer nestings
   - Fix Legend Element `autoOpen` option
@@ -53,7 +62,12 @@
   - Fix redundant double WMS request on first LayerTree off / on cycle on a source ([Issue #715](https://github.com/mapbender/mapbender/issues/715), [PR#1074](https://github.com/mapbender/mapbender/pull/1074))
   - Fix Redlining in sidepane never deactivating its drawing tools once activated ([Issue #992](https://github.com/mapbender/mapbender/issues/992), [PR#1088](https://github.com/mapbender/mapbender/pull/1088))
   - Add support for Redlining `deactivate_on_close` also when in placed sidepane
+  - Fix dangling Redlining edit-mode vertices when deleting currently edited feature ([Issue #1040](https://github.com/mapbender/mapbender/issues/1040), [PR#1106](https://github.com/mapbender/mapbender/pull/1106))
+  - Redlining now reacts appropriately to runtime SRS switching ([PR#1107](https://github.com/mapbender/mapbender/pull/1107))
+  - Fixed SearchRouter feature highlighting after zoom ([Issue #1072](https://github.com/mapbender/mapbender/issues/1072), [PR#1103](https://github.com/mapbender/mapbender/pull/1103))
+  - Fixed POI initialization with non-default SRS ([Issue #458](https://github.com/mapbender/mapbender/issues/458), [PR#1109](https://github.com/mapbender/mapbender/pull/1109))
   - Fixed handling of DimensionsHandler backend form ([PR#1049](https://github.com/mapbender/mapbender/pull/1049))
+  - Dimension submenu in LayerTree now remember its last state when closing / reopening
   - Fixed behaviour of Digitizer and similar Elements in `Buttons`-style sidepane ([PR#1097](https://github.com/mapbender/mapbender/pull/1097))
   - [Vendorspecifics] Fix inconsistent generated params for `user` and `group` type vendorspecifics hidden vs non-hidden
   - [Vendorspecifics] Unused / ineffective form fields have been removed ([PR#1047](https://github.com/mapbender/mapbender/pull/1047))

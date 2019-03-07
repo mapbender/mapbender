@@ -21,13 +21,12 @@
          */
         _setup: function() {
             var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            var projection = mbMap.map.olMap.getProjectionObject();
 
             $(this.element).addClass(this.options.anchor);
             var scalebarOptions = {
                 div: $(this.element).get(0),
                 maxWidth: this.options.maxWidth,
-                geodesic: projection.units = 'degrees' ? true : false,
+                geodesic: true,
                 topOutUnits: "km",
                 topInUnits: "m",
                 bottomOutUnits: "mi",
@@ -45,13 +44,10 @@
             $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
             this._trigger('ready');
         },
-
-
         /**
          * Cahnges the scale bar srs
          */
-        _changeSrs: function(event, srs){
-            this.scalebar.geodesic = srs.projection.units = 'degrees' ? true : false;
+        _changeSrs: function(event, srs) {
             this.scalebar.update();
         }
     });

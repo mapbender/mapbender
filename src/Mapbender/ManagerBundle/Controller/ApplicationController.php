@@ -15,7 +15,6 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
-use Mapbender\CoreBundle\Mapbender;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ExportJob;
@@ -58,9 +57,8 @@ class ApplicationController extends WelcomeController
     /**
      * Shows form for creating new applications
      *
-     * @ManagerRoute("/application/new")
-     * @Method("GET")
-     * @Template
+     * @ManagerRoute("/application/new", methods={"GET"})
+     * @return Response
      */
     public function newAction()
     {
@@ -70,11 +68,12 @@ class ApplicationController extends WelcomeController
 
         $form = $this->createApplicationForm($application);
 
-        return array(
+        return $this->render('@MapbenderManager/Application/new.html.twig', array(
             'application'         => $application,
             'form'                => $form->createView(),
             'form_name'           => $form->getName(),
-            'screenshot_filename' => null);
+            'screenshot_filename' => null,
+        ));
     }
 
     /**
@@ -164,10 +163,8 @@ class ApplicationController extends WelcomeController
     /**
      * Copies an application
      *
-     * @ManagerRoute("/application/{slug}/copydirectly", requirements = { "slug" = "[\w-]+" })
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Application:form-basic.html.twig")
-     * @param $slug
+     * @ManagerRoute("/application/{slug}/copydirectly", requirements = { "slug" = "[\w-]+" }, methods={"GET"})
+     * @param string $slug
      * @return Response
      * @throws DBALException
      */
@@ -198,9 +195,7 @@ class ApplicationController extends WelcomeController
     /**
      * Create a new application from POSTed data
      *
-     * @ManagerRoute("/application")
-     * @Method("POST")
-     * @Template("MapbenderManagerBundle:Application:new.html.twig")
+     * @ManagerRoute("/application", methods={"POST"})
      * @param Request $request
      * @return Response|array
      */
@@ -217,12 +212,12 @@ class ApplicationController extends WelcomeController
         $parameters    = $request->request->get('application');
 
         if (!$form->isSubmitted() || !$form->isValid()) {
-            return array(
+            return $this->render('@MapbenderManager/Application/new.html.twig', array(
                 'application'         => $application,
                 'form'                => $form->createView(),
                 'form_name'           => $form->getName(),
                 'screenshot_filename' => null,
-            );
+            ));
         }
 
         try {
@@ -276,11 +271,9 @@ class ApplicationController extends WelcomeController
     /**
      * Edit application
      *
-     * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" })
-     * @Method("GET")
-     * @Template
+     * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET"})
      * @param string $slug Application name
-     * @return array
+     * @return Response
      * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
      */
     public function editAction($slug)
@@ -292,18 +285,19 @@ class ApplicationController extends WelcomeController
         $this->checkRegionProperties($application);
         $form = $this->createApplicationForm($application);
 
-        return $this->prepareApplicationUpdate($form, $application);
+        return $this->render('@MapbenderManager/Application/edit.html.twig',
+            $this->prepareApplicationUpdate($form, $application));
     }
 
     /**
      * Updates application
      *
-     * @ManagerRoute("/application/{slug}/update", requirements = { "slug" = "[\w-]+" })
-     * @Method("POST")
-     * @Template("MapbenderManagerBundle:Application:edit.html.twig")
+     * @ManagerRoute("/application/{slug}/update", requirements = { "slug" = "[\w-]+" }, methods={"POST"})
      * @param Request $request
      * @param string $slug
-     * @return Response|array
+     * @return Response
+     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function updateAction(Request $request, $slug)
     {
@@ -319,7 +313,8 @@ class ApplicationController extends WelcomeController
         if (!$form->submit($request)->isValid()) {
             $application->setTemplate($templateClassOld);
             $application->setSlug($slug);
-            return $this->prepareApplicationUpdate($form, $application);
+            return $this->render('@MapbenderManager/Application/edit.html.twig',
+                $this->prepareApplicationUpdate($form, $application));
         }
 
         $em         = $this->getDoctrine()->getManager();
@@ -377,8 +372,7 @@ class ApplicationController extends WelcomeController
     /**
      * Toggle application state.
      *
-     * @ManagerRoute("/application/{slug}/state", options={"expose"=true})
-     * @Method("POST")
+     * @ManagerRoute("/application/{slug}/state", options={"expose"=true}, methods={"POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
@@ -587,16 +581,13 @@ class ApplicationController extends WelcomeController
 
     /**
      * Add a new SourceInstance to the Layerset
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/list")
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Application:list-source.html.twig")
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/list", methods={"GET"})
      *
      * @param string  $slug Application slug
      * @param int     $layersetId Layer set ID
-     * @param Request $request
-     * @return array
+     * @return Response
      */
-    public function listSourcesAction($slug, $layersetId, Request $request)
+    public function listSourcesAction($slug, $layersetId)
     {
         $application = $this->getMapbender()->getApplicationEntity($slug);
 
@@ -619,16 +610,16 @@ class ApplicationController extends WelcomeController
             }
         }
 
-        return array(
+        return $this->render('@MapbenderManager/Application/list-source.html.twig', array(
             'application' => $application,
             'layerset' => $layerset,
-            'sources' => $allowed_sources);
+            'sources' => $allowed_sources,
+        ));
     }
 
     /**
      * Add a new SourceInstance to the Layerset
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add")
-     * @Method("GET")
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add", methods={"GET"})
      *
      * @param Request $request
      * @param string  $slug Application slug
@@ -668,8 +659,7 @@ class ApplicationController extends WelcomeController
 
     /**
      * Delete a source instance from a layerset
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete")
-     * @Method("POST")
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete", methods={"POST"})
      *
      * @param string $slug
      * @param int   $layersetId
@@ -726,25 +716,6 @@ class ApplicationController extends WelcomeController
                 'screenshotHeight'     => 200,
             )
         );
-    }
-
-    /**
-     * Collect available elements
-     */
-    private function getElementList()
-    {
-        $available_elements = array();
-        /** @var Mapbender $mapbender */
-        $mapbender = $this->getMapbender();
-        foreach ($mapbender->getElements() as $elementClassName) {
-            $available_elements[$elementClassName] = array(
-                'title' => $elementClassName::getClassTitle(),
-                'description' => $elementClassName::getClassDescription(),
-                'tags' => $elementClassName::getClassTags());
-        }
-        asort($available_elements);
-
-        return $available_elements;
     }
 
     /**
@@ -838,9 +809,6 @@ class ApplicationController extends WelcomeController
         /** @var EntityManager $em */
         $slug          = $application->getSlug();
         $templateClass = $application->getTemplate();
-        $em            = $this->getDoctrine()->getManager();
-        $query         = $em->createQuery("SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
-        $sources       = $query->getResult();
         $baseUrl       = AppComponent::getAppWebUrl($this->container, $application->getSlug());
         $screenShotUrl = AppComponent::getUploadsUrl($this->container) . "/" . $application->getSlug() . "/" . $application->getScreenshot();
 
@@ -853,8 +821,6 @@ class ApplicationController extends WelcomeController
             'aclManager'          => $this->get("fom.acl.manager"),
             'regions'             => $templateClass::getRegions(),
             'slug'                => $slug,
-            'available_elements'  => $this->getElementList(),
-            'sources'             => $sources,
             'form'                => $form->createView(),
             'form_name'           => $form->getName(),
             'template_name'       => $templateClass::getTitle(),

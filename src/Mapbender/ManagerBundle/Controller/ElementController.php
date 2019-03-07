@@ -3,6 +3,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Component\ElementFactory;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Form\FormInterface;
@@ -41,15 +42,15 @@ class ElementController extends Controller
         $application = $this->getMapbender()->getApplicationEntity($slug);
         $template    = $application->getTemplate();
         $region      = $request->get('region');
-        $whitelist   = null;
-        $classNames  = null;
+
+        /** @var ElementInventoryService $inventoryService */
+        $inventoryService = $this->container->get('mapbender.element_inventory.service');
+        $classNames = $inventoryService->getActiveInventory();
 
         // Dirty hack for deprecated Responsive template
         if (method_exists($template, 'getElementWhitelist')) {
             $regionWhitelist = $template::getElementWhitelist();
-            $classNames = $regionWhitelist[$region];
-        } else {
-            $classNames = $this->getMapbender()->getElements();
+            $classNames = array_intersect(array_values($regionWhitelist[$region]), $classNames);
         }
 
         $trans      = $this->container->get('translator');

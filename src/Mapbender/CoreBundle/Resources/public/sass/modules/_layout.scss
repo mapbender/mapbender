@@ -3,6 +3,6 @@
 .left{float:left;}
 .clear{clear:both;}
 .clearContainer{
-  height:0px;
+  height:0;
   @extend .clear;
 }

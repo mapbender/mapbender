@@ -105,12 +105,11 @@ Mapbender.SearchModel = Backbone.Model.extend({
             }
         });
 
-        var map = $('#' + this.router.options.target).data('mapbenderMbMap').map.olMap;
+        var map = this.router.mbMap.map.olMap;
 
         this.set({
             properties: properties,
             autocomplete_keys: autocomplete_keys,
-            srs: map.getProjection(),
             extent: map.getExtent().toArray()
         });
 

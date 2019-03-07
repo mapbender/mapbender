@@ -18,6 +18,7 @@
              (c.f. Mapserver's "partial" label rendering settings) -->
         <parameter key="mapbender.imaageexport.renderer.wms.tile_buffer">512</parameter>
         <parameter key="mapbender.imageexport.renderer.geojson.class">Mapbender\PrintBundle\Component\LayerRendererGeoJson</parameter>
+        <parameter key="mapbender.imageexport.renderer.markers.class">Mapbender\PrintBundle\Component\LayerRendererMarkers</parameter>
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
         <!-- print resource / temp dirs are by default == imageexport dirs, but can be changed independently -->
         <parameter key="mapbender.print.resource_dir">%mapbender.imageexport.resource_dir%</parameter>
@@ -47,6 +48,7 @@
             <argument type="collection" key="layerRenderers">
                 <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
+                <argument key="markers" type="service" id="mapbender.imageexport.renderer.markers" />
             </argument>
             <argument type="service" id="logger" />
         </service>
@@ -59,6 +61,9 @@
             <argument>%mapbender.imaageexport.renderer.wms.max_getmap_size%</argument>
             <argument>%mapbender.imaageexport.renderer.wms.tile_buffer%</argument>
         </service>
+        <service id="mapbender.imageexport.renderer.markers" class="%mapbender.imageexport.renderer.markers.class%">
+            <argument>%kernel.root_dir%/../web</argument>
+        </service>
         <service id="mapbender.imageexport.renderer.geojson" class="%mapbender.imageexport.renderer.geojson.class%">
             <argument>%mapbender.imageexport.resource_dir%/fonts</argument>
         </service>
@@ -66,6 +71,7 @@
             <argument type="collection" key="layerRenderers">
                 <argument key="wms" type="service" id="mapbender.imageexport.renderer.wms" />
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
+                <argument key="markers" type="service" id="mapbender.imageexport.renderer.markers" />
             </argument>
             <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument type="service" id="mapbender.print.legend_handler.service" />

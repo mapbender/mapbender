@@ -7,6 +7,7 @@ use Mapbender\PrintBundle\Component\Legend\LegendBlock;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockGroup;
 use Mapbender\PrintBundle\Component\Pdf\PdfUtil;
+use Mapbender\PrintBundle\Component\Region\FontStyle;
 use Mapbender\PrintBundle\Component\Region\FullPage;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 
@@ -21,8 +22,7 @@ use Mapbender\PrintBundle\Component\Transport\ImageTransport;
  *
  * @todo: calculate fit to region for individual blocks and whole groups
  * @todo: add option to keep groups together if they fit
- * @todo: add configuration knob for column width (now: hardcoded to 100mm)
- * @todo: limit image width to column width
+ * @todo: add configuration knob for column width (now: hardcoded to 100mm, because of also hard-coded A4 spill page size)
  * @todo: support line breaks in titles (will impact region fit calculations)
  * @todo: allow out-of-order rendering of legends or legend groups, if it reduces total space
  * @todo: (optionally) suppress legend repetitions, based on ~equal url; careful with assigned title...
@@ -35,6 +35,14 @@ class LegendHandler
     protected $resourceDir;
     /** @var PdfUtil */
     protected $pdfUtil;
+    /** @var float */
+    protected $maxColumnWidthMm = 100.;
+    /** @var float */
+    protected $maxImageDpi = 96.;
+    /** @var string */
+    protected $legendPageFontName = 'Arial';
+    /** @var float */
+    protected $legendPageFontSize = 11;
 
     /**
      * @param ImageTransport $imageTransport
@@ -108,22 +116,35 @@ class LegendHandler
         $margins = $this->getMargins($region);
         $x = $margins['x'];
         $y = $margins['y'];
+        $fontStyle = $region->getFontStyle() ?: FontStyle::defaultFactory();
+        $titleFontSize = $fontStyle->getSize();
+        // @todo: extract method for title calculation
+        // @todo: re-calculate title height when switching from embedded ~'legend' region to spill page
 
         foreach ($blockGroups as $group) {
             foreach ($group->getBlocks() as $block) {
                 if ($block->isRendered()) {
                     continue;
                 }
-                $imageMmWidth = PrintService::dotsToMm($block->getWidth(), 96);
-                $imageMmHeight = PrintService::dotsToMm($block->getHeight(), 96);
+                $imageMmWidth = PrintService::dotsToMm($block->getWidth(), $this->maxImageDpi);
+                $imageMmHeight = PrintService::dotsToMm($block->getHeight(), $this->maxImageDpi);
+                // limit to column width, keep aspect ratio when shrinking
+                if ($imageMmWidth > $this->maxColumnWidthMm) {
+                    $scaleFactor = $this->maxColumnWidthMm / $imageMmWidth;
+                } else {
+                    $scaleFactor = 1;
+                }
+                $scaledImageWidth = $imageMmWidth * $scaleFactor;
+                $scaledImageHeight = $imageMmHeight * $scaleFactor;
+
                 // allot a little extra height for the title text
                 // @todo: this should scale with font size
                 // @todo: support multi-line text
-                $blockHeightMm = round($imageMmHeight + 10);
+                $blockHeightMm = round($scaledImageHeight + 10);
 
                 if ($y != $margins['y'] && $y + $blockHeightMm > $region->getHeight()) {
                     // spill to next column
-                    $x += 105;
+                    $x += $this->maxColumnWidthMm + $margins['x'];
                     $y = $margins['y'];
                 }
                 if ($x + 20 > $region->getWidth()) {
@@ -136,16 +157,22 @@ class LegendHandler
                     $margins = $this->getMargins($region);
                     $x = $margins['x'];
                     $y = $margins['y'];
+                    $titleFontSize = $this->legendPageFontSize;
                 }
 
                 $pageX = $x + $region->getOffsetX();
                 $pageY = $y + $region->getOffsetY();
                 $pdf->SetXY($pageX, $pageY);
-                $pdf->Cell(0,0,  utf8_decode($block->getTitle()));
+                $nLines = $pdf->getMultiCellTextHeight(utf8_decode($block->getTitle()), $this->maxColumnWidthMm);
+                // Font size is in 'pt'. Convert pt to mm for line height.
+                // see https://en.wikipedia.org/wiki/Point_(typography)
+                $lineHeightMm = $titleFontSize * .353;
+                $blockTitleHeightMm = $lineHeightMm * $nLines;
+                $pdf->MultiCell($this->maxColumnWidthMm, $lineHeightMm, utf8_decode($block->getTitle()), 0, 'L');
                 $this->pdfUtil->addImageToPdf($pdf, $block->resource,
                     $pageX,
-                    $pageY + 5,
-                    $imageMmWidth, $imageMmHeight);
+                    $pageY + $blockTitleHeightMm,
+                    $scaledImageWidth, $scaledImageHeight);
                 $block->setIsRendered(true);
 
                 $y += $blockHeightMm + $margins['y'];
@@ -168,7 +195,7 @@ class LegendHandler
         $pdf->addPage('P', 'a4');
         $this->addLegendPageImage($pdf, $templateData, $jobData);
         // @todo: make hard-coded spill page legend title font configurable
-        $pdf->SetFont('Arial', 'B', 11);
+        $pdf->SetFont($this->legendPageFontName, 'B', $this->legendPageFontSize);
     }
 
     /**

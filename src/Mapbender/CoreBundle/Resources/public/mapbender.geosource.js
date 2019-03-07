@@ -76,6 +76,8 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'public function changeProjection': function(source, projection) {
     },
+    beforeSrsChange: function(source, olLayer, newSrsCode) {
+    },
     getLayersList: function getLayersList(source, offsetLayer, includeOffset) {
         var _source = $.extend(true, {}, source);
         var rootLayer = _source.configuration.children[0];
