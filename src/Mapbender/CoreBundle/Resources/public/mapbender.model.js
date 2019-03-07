@@ -377,8 +377,8 @@ Mapbender.Model = {
         if (url) {
             source.configuration.options.url = url;
             var mqLayer = this.map.layersList[source.mqlid];
+            mqLayer.olLayer.url = url;
             if (mqLayer.olLayer.getVisibility()) {
-                mqLayer.olLayer.url = url;
                 if (reload) {
                     mqLayer.olLayer.redraw();
                 }
