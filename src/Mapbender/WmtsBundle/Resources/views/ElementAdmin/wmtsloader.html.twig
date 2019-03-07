@@ -1,0 +1,22 @@
+{#<div class="elementFormWmtsLoader elementForm defaultForm">
+    <div class="left">
+        {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"mb.wmts.wmtsloader.admin.label.autoopen"|trans}}</label>
+    </div>
+    <div class="left">
+        {{ form_widget(form.configuration.splitLayers) }}<label for="{{form.configuration.splitLayers.vars.id}}" class="labelCheck">{{"mb.wmts.wmtsloader.admin.label.splitlayers"|trans}}</label>
+    </div>
+    <div class="left">
+        {{ form_widget(form.configuration.useDeclarative) }}<label for="{{form.configuration.useDeclarative.vars.id}}" class="labelCheck">{{"mb.wmts.wmtsloader.admin.label.declarative"|trans}}</label>
+    </div>
+    <div class="clearContainer"></div>
+    {{ form_label(form.title) }}{{ form_widget(form.title) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.defaultFormat) }}{{ form_widget(form.configuration.defaultFormat) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.defaultInfoFormat) }}{{ form_widget(form.configuration.defaultInfoFormat) }}
+    <div class="clearContainer"></div>
+</div>#}

@@ -583,7 +583,7 @@ window.Mapbender.Model = {
         var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
         var changedStates = gsHandler.applyLayerStates(source, newStates);
         var layerParams = gsHandler.getLayerParameters(source, newStates);
-        this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
+        this._resetSourceVisibility(source, layerParams);
 
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
@@ -609,7 +609,7 @@ window.Mapbender.Model = {
         var changedStates = gsHandler.applyLayerStates(source, newStates);
         if (redraw) {
             var layerParams = gsHandler.getLayerParameters(source, newStates);
-            this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
+            this._resetSourceVisibility(source, layerParams);
         }
         if (fireSourceChangedEvent && Object.keys(changedStates).length) {
             this.mbMap.fireModelEvent({
@@ -637,25 +637,34 @@ window.Mapbender.Model = {
      * @TODO: infoLayers should be set outside of the function
      *
      * @param {Object} source
-     * @param {Array<string>} layers
-     * @param {Array<string>} infolayers
-     * @param {Array<string>} styles
+     * @param {Object} layerParams
+     * @param {Array<string>} layerParams.layers
+     * @param {Array<string>} layerParams.infolayers
+     * @param {Array<string>} layerParams.styles
      *
      * @returns {boolean}
      * @private
      */
-    _resetSourceVisibility: function(source, layers, infolayers, styles) {
+    _resetSourceVisibility: function(source, layerParams) {
         var olLayer = this.getNativeLayer(source);
         if (!olLayer) {
             return false;
         }
-        olLayer.queryLayers = infolayers;
-        var targetVisibility = !!layers.length;
+        // @todo: this is almost entirely WMS specific
+        // Clean up this mess. Move application of layer params into type-specific source classes
+        olLayer.queryLayers = layerParams.infolayers;
+        var targetVisibility = !!layerParams.layers.length && source.configuration.children[0].options.treeOptions.selected;
         var visibilityChanged = targetVisibility !== olLayer.getVisibility();
-        var layersChanged =
-            ((olLayer.params.LAYERS || '').toString() !== layers.toString()) ||
-            ((olLayer.params.STYLES || '').toString() !== styles.toString())
-        ;
+        var gsHandler = this.getGeoSourceHandler(source);
+        var layersChanged;
+        if (typeof gsHandler.checkLayerParameterChanges === 'function') {
+            layersChanged = gsHandler.checkLayerParameterChanges(source, layerParams);
+        } else {
+            layersChanged =
+                ((olLayer.params.LAYERS || '').toString() !== layerParams.layers.toString()) ||
+                ((olLayer.params.STYLES || '').toString() !== layerParams.styles.toString())
+            ;
+        }
 
         if (!visibilityChanged && !layersChanged) {
             return false;
@@ -673,8 +682,8 @@ window.Mapbender.Model = {
             return false;
         } else {
             var newParams = {
-                LAYERS: layers,
-                STYLES: styles
+                LAYERS: layerParams.layers,
+                STYLES: layerParams.styles
             };
             if (visibilityChanged) {
                 // Prevent the browser from reusing the loaded image. This is almost equivalent
@@ -855,8 +864,8 @@ window.Mapbender.Model = {
             id: options.sourceId
         });
         if (sources.length === 1) {
-            var extent = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
-            return extent ? extent : null;
+            var gsHandler = this.getGeoSourceHandler(sources[0]);
+            return gsHandler.getLayerExtents(sources[0], options.layerId) || null;
         }
         return null;
     },
@@ -1041,7 +1050,11 @@ window.Mapbender.Model = {
     setSourceVisibility: function(sourceId, state) {
         var source = this.getSource({id: sourceId});
         var newProps = {};
-        var rootLayerId = source.configuration.children[0].options.id;
+        var rootLayer = source.configuration.children[0];
+        if (state && !rootLayer.options.treeOptions.allow.selected) {
+            state = false;
+        }
+        var rootLayerId = rootLayer.options.id;
         newProps[rootLayerId] = {
             options: {
                 treeOptions: {
@@ -1195,13 +1208,15 @@ window.Mapbender.Model = {
      * @param {OpenLayers.Projection} newProj
      * @private
      */
-    _changeLayerProjection: function(olLayer, oldProj, newProj) {
+    _changeLayerProjection: function(olLayer, oldProj, newProj, newMaxExtent) {
         var layerOptions = {
             // passing projection as string is preferable to passing the object,
             // because it also auto-initializes units and projection-inherent maxExtent
             projection: newProj.projCode
         };
-        if (olLayer.maxExtent) {
+        if (newMaxExtent) {
+            layerOptions.maxExtent = newMaxExtent;
+        } else if (olLayer.maxExtent) {
             layerOptions.maxExtent = this._transformExtent(olLayer.maxExtent, oldProj, newProj);
         }
         olLayer.addOptions(layerOptions);
@@ -1211,6 +1226,7 @@ window.Mapbender.Model = {
      */
     changeProjection: function(srsCode) {
         var self = this;
+        var i;
         var newProj;
         if (srsCode.projection) {
             console.warn("Legacy object-style argument passed to changeProjection");
@@ -1237,6 +1253,7 @@ window.Mapbender.Model = {
                 gsHandler.beforeSrsChange(mbSource, olLayer, newProj.projCode);
             }
         }
+        var newMaxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
         var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
         // transform base layer last
         // base layer determines overall map properties (max extent, units, resolutions etc)
@@ -1245,20 +1262,22 @@ window.Mapbender.Model = {
             olLayer = this.map.olMap.layers[i];
             mbSource = olLayer.mbConfig;
             gsHandler = mbSource && this.getGeoSourceHandler(mbSource);
+            var gsResult;
             if (gsHandler) {
-                gsHandler.changeProjection(mbSource, newProj);
+                gsResult = gsHandler.changeProjection(mbSource, newProj);
             }
-            if (olLayer !== baseLayer) {
+            var gsHandled = (gsResult === true) || (gsResult === false);
+            if (olLayer !== baseLayer && !gsHandled) {
                 self._changeLayerProjection(olLayer, oldProj, newProj);
             }
         }
         if (baseLayer) {
-            this._changeLayerProjection(baseLayer, oldProj, newProj);
+            this._changeLayerProjection(baseLayer, oldProj, newProj, newMaxExtent);
         }
         this.map.olMap.projection = newProj;
         this.map.olMap.displayProjection = newProj;
         this.map.olMap.units = newProj.proj.units;
-        this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
+        this.map.olMap.maxExtent = newMaxExtent;
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
         this.mbMap.fireModelEvent({
             name: 'srschanged',
@@ -1275,8 +1294,8 @@ window.Mapbender.Model = {
      *
      * @param {string|number} sourceId
      * @param {string|number} layerId
-     * @param {bool|null} [selected]
-     * @param {bool|null} [info]
+     * @param {boolean|null} [selected]
+     * @param {boolean|null} [info]
      */
     controlLayer: function controlLayer(sourceId, layerId, selected, info) {
         var layerMap = {};
@@ -1381,8 +1400,8 @@ window.Mapbender.Model = {
         var resFromScale = function(scale) {
             return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
         };
-        var leafInfoMap = gsHandler.getExtendedLeafInfo(source, scale, extent_);
         if (gsHandler.getSingleLayerUrl) {
+            var leafInfoMap = gsHandler.getExtendedLeafInfo(source, scale, extent_);
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
                     dataOut.push($.extend({}, commonLayerData, {
@@ -1397,38 +1416,15 @@ window.Mapbender.Model = {
                 return a.order - b.order;
             });
         } else {
-            // hopefully building a bridge for forks / feature branches with non-WMS layers or customized geosource code
-            console.warn("Extended print config generation not possible on current source, falling back to the old ways", source.configuration.type, source);
-            var layerParams, url;
-            if (gsHandler.getLayerParameters) {
-                // Get active layer parameters explicitly without side effects
-                layerParams = gsHandler.getLayerParameters(source, _.mapObject(leafInfoMap, function(item) {
-                    return item.state;
-                }));
+            if (typeof gsHandler.getPrintConfigEx === 'function') {
+                var mlPrintConfigs = gsHandler.getPrintConfigEx(source, extent_, scale, this.getCurrentProj());
+                mlPrintConfigs.map(function(pc) {
+                    dataOut.push($.extend({}, commonLayerData, pc));
+                });
             } else {
-                console.warn("Geosource handler for current source doesn't support getLayerParameters method, falling back to the oldest of old ways", source.configuration.type, source);
-                // This should give us a lot more than just the active layers + styles, but also changes
-                // the source's embedded layer states as a side effect, potentially leading to erroneous display
-                // in LayerTree and Legend Elements on the next proper update
-                layerParams = gsHandler.changeOptions(source, scale || this.getScale());
+                dataOut.push($.extend({}, commonLayerData, gsHandler.getPrintConfig(olLayer, extent_)));
             }
-            if (layerParams.layers.length) {
-                // alter params for getURL call implicit to getPrintConfig
-                var prevLayers = olLayer.params.LAYERS;
-                var prevStyles = olLayer.params.STYLES;
-                olLayer.params.LAYERS = layerParams.layers;
-                olLayer.params.STYLES = layerParams.styles;
-                url = gsHandler.getPrintConfig(olLayer, extent_).url;
-                // restore params
-                olLayer.params.LAYERS = prevLayers;
-                olLayer.params.STYLES = prevStyles;
-                // Decorate generated url with combined min/max resolution from OpenLayers layer (= multiple Mapbender layers from a single source)
-                dataOut.push($.extend({}, commonLayerData, {
-                    url: url,
-                    minResolution: olLayer.minResolution,
-                    maxResolution: olLayer.maxResolution
-                }));
-            }
+
         }
         return dataOut;
     },
@@ -1441,8 +1437,8 @@ window.Mapbender.Model = {
      */
     _transformExtent: function(extent, fromProj, toProj) {
         var extentOut = (extent && extent.clone()) || null;
-        if (extent && fromProj.projCode !== toProj. projCode) {
-            extentOut.transform(fromProj, toProj);
+        if (extent && fromProj.projCode !== toProj.projCode) {
+            return extentOut.transform(fromProj, toProj);
         }
         return extentOut;
     },

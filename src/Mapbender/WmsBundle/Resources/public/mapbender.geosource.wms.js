@@ -50,22 +50,61 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             url: finalUrl,
             transparent: sourceDef.configuration.options.transparent,
             format: sourceDef.configuration.options.format,
-            isBaseLayer: sourceDef.configuration.options.baselayer,
+            isBaseLayer: false,
             opacity: sourceDef.configuration.options.opacity,
             visibility: sourceDef.configuration.options.visible,
             singleTile: !sourceDef.configuration.options.tiled,
-            attribution: sourceDef.configuration.options.attribution, // attribution add !!!
             minScale: rootLayer.minScale,
             maxScale: rootLayer.maxScale,
-            transitionEffect: 'resize',
-            buffer: sourceDef.configuration.options.buffer ? parseInt(sourceDef.configuration.options.buffer) : 0, // int only for gridded mode
-            ratio: sourceDef.configuration.options.ratio ? parseFloat(sourceDef.configuration.options.ratio) : 1.0 // float only for single-tile mode
+            transitionEffect: 'resize'
         };
+        if (sourceDef.configuration.options.tiled) {
+            mqLayerDef.buffer = Math.min(2, Math.max(0, parseInt(sourceDef.configuration.options.buffer) || 0));
+
+        } else {
+            mqLayerDef.ratio = Math.min(2.0, Math.max(1.0, parseFloat(sourceDef.configuration.options.ratio) || 1.0));
+        }
+
         if (sourceDef.configuration.options.exception_format) {
             mqLayerDef.wms_parameters.exceptions = sourceDef.configuration.options.exception_format;
         }
         $.extend(mqLayerDef, this.defaultOptions);
         return mqLayerDef;
+    },
+    changeProjection: function(source, projection) {
+        var olLayer = Mapbender.Model.getNativeLayer(source);
+        var options = {
+            projection: projection
+        };
+        olLayer.addOptions(options, false);
+        return true;
+    },
+    getMaxExtent: function(source, projection, layer) {
+        var confSource;
+        if (layer) {
+            confSource = layer.options.bbox;
+        } else {
+            confSource = source.configuration.options.bbox;
+        }
+        var projCode = projection.projCode;
+        if (confSource[projCode]) {
+            return OpenLayers.Bounds.fromArray(confSource[projCode]);
+        } else {
+            var projKeys = Object.keys(confSource);
+            for (var i = 0; i < projKeys.length; ++i) {
+                var nextProj = Mapbender.Model.getProj(projKeys[i]);
+                if (nextProj) {
+                    var newExtent = OpenLayers.Bounds.fromArray(confSource[nextProj]);
+                    newExtent = Mapbender.Model._transformExtent(newExtent, nextProj, projection);
+                    // Reprojection wide EPSG:4326 range to local systems can produce completely
+                    // invalid extents. Check for that and avoid returning them.
+                    if (newExtent.right > newExtent.left && newExtent.top > newExtent.bottom) {
+                        return newExtent;
+                    }
+                }
+            }
+        }
+        return null;
     },
     featureInfoUrl: function(mqLayer, x, y){
         if(!mqLayer.visible() || mqLayer.olLayer.queryLayers.length === 0) {
