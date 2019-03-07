@@ -293,6 +293,10 @@ window.Mapbender.Model = {
     getCurrentProj: function() {
         return this.map.olMap.getProjectionObject();
     },
+    /**
+     * @param {string} srscode
+     * @return {OpenLayers.Projection}
+     */
     getProj: function(srscode) {
         if (Proj4js.defs[srscode]) {
             var proj = new OpenLayers.Projection(srscode);
@@ -1185,6 +1189,23 @@ window.Mapbender.Model = {
             name: 'sourcesreordered'
         });
     },
+    /**
+     * @param {OpenLayers.Layer} olLayer
+     * @param {OpenLayers.Projection} oldProj
+     * @param {OpenLayers.Projection} newProj
+     * @private
+     */
+    _changeLayerProjection: function(olLayer, oldProj, newProj) {
+        var layerOptions = {
+            // passing projection as string is preferable to passing the object,
+            // because it also auto-initializes units and projection-inherent maxExtent
+            projection: newProj.projCode
+        };
+        if (olLayer.maxExtent) {
+            layerOptions.maxExtent = this._transformExtent(olLayer.maxExtent, oldProj, newProj);
+        }
+        olLayer.addOptions(layerOptions);
+    },
     /*
      * Changes the map's projection.
      */
@@ -1206,24 +1227,38 @@ window.Mapbender.Model = {
             to: newProj,
             mbMap: this.mbMap
         });
-        for(var i = 0; i < this.sourceTree.length; i++) {
-            var source = this.sourceTree[i];
-            var gsHandler = this.getGeoSourceHandler(source);
-            gsHandler.changeProjection(source, newProj);
+        var nLayers = this.map.olMap.layers.length;
+        var i, olLayer, mbSource, gsHandler;
+        for (i = 0; i < nLayers; ++i) {
+            olLayer = this.map.olMap.layers[i];
+            mbSource = olLayer.mbConfig;
+            gsHandler = mbSource && this.getGeoSourceHandler(mbSource);
+            if (gsHandler) {
+                gsHandler.beforeSrsChange(mbSource, olLayer, newProj.projCode);
+            }
         }
         var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
+        // transform base layer last
+        // base layer determines overall map properties (max extent, units, resolutions etc)
+        var baseLayer = this.map.olMap.baseLayer || this.map.olMap.layers[0];
+        for (i = 0; i < nLayers; ++i) {
+            olLayer = this.map.olMap.layers[i];
+            mbSource = olLayer.mbConfig;
+            gsHandler = mbSource && this.getGeoSourceHandler(mbSource);
+            if (gsHandler) {
+                gsHandler.changeProjection(mbSource, newProj);
+            }
+            if (olLayer !== baseLayer) {
+                self._changeLayerProjection(olLayer, oldProj, newProj);
+            }
+        }
+        if (baseLayer) {
+            this._changeLayerProjection(baseLayer, oldProj, newProj);
+        }
         this.map.olMap.projection = newProj;
         this.map.olMap.displayProjection = newProj;
         this.map.olMap.units = newProj.proj.units;
         this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
-        $.each(this.map.olMap.layers, function(idx, layer) {
-            layer.projection = newProj;
-            layer.units = newProj.proj.units;
-            if (layer.maxExtent) {
-                layer.maxExtent = self._transformExtent(layer.maxExtent, oldProj, newProj);
-            }
-            layer.initResolutions();
-        });
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
         this.mbMap.fireModelEvent({
             name: 'srschanged',
