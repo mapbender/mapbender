@@ -463,8 +463,8 @@ window.Mapbender.Model = {
         if (url) {
             var olLayer = this.getNativeLayer(source);
             source.configuration.options.url = url;
+            olLayer.url = url;
             if (olLayer.getVisibility()) {
-                olLayer.url = url;
                 if (reload) {
                     olLayer.redraw();
                 }
