@@ -1177,14 +1177,19 @@ Mapbender.Model = {
         var newProj;
         if (srsCode.projection) {
             console.warn("Legacy object-style argument passed to changeProjection");
-            newProj = new OpenLayers.Projection(srsCode.projection.projCode);
+            newProj = this.getProj(srsCode.projection.projCode);
         } else {
-            newProj = new OpenLayers.Projection(srsCode);
+            newProj = this.getProj(srsCode);
         }
         var oldProj = this.map.olMap.getProjectionObject();
         if (oldProj.projCode === newProj.projCode) {
             return;
         }
+        $(this.mbMap.element).trigger('mbmapbeforesrschange', {
+            from: oldProj,
+            to: newProj,
+            mbMap: this.mbMap
+        });
         for(var i = 0; i < this.sourceTree.length; i++) {
             var source = this.sourceTree[i];
             var gsHandler = this.getGeoSourceHandler(source);
@@ -1209,7 +1214,8 @@ Mapbender.Model = {
             value: {
                 projection: newProj,
                 from: oldProj,
-                to: newProj
+                to: newProj,
+                mbMap: this.mbMap
             }
         });
     },

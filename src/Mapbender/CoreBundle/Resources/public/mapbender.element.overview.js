@@ -144,6 +144,9 @@
          * Cahnges the overview srs
          */
         _onMbMapSrsChanged: function(event, data) {
+            if (data.mbMap !== this.mbMap) {
+                return;
+            }
             var oldProj = this.overview.ovmap.getProjectionObject();
             if (oldProj.projCode === data.to.projCode) {
                 return;
