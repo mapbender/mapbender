@@ -194,7 +194,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             "priority" => $entity->getPriority(),
             "name" => $sourceItem->getName() !== null ?
                 $sourceItem->getName() : "",
-            "title" => $entity->getTitle(),
+            "title" => $entity->getTitle() ?: $entity->getSourceItem()->getTitle(),
             "queryable" => $entity->getInfo(),
             "style" => $entity->getStyle(),
             "minScale" => $entity->getMinScale(true),

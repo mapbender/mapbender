@@ -55,6 +55,13 @@ class FieldSubscriber implements EventSubscriberInterface
         if (null === $data) {
             return;
         }
+        $form->remove('title');
+        $form->add('title', 'text', array(
+            'required' => false,
+            'attr' => array(
+                'placeholder' => $data->getSourceItem()->getTitle(),
+            ),
+        ));
 
         if ($data->getSublayer()->count() > 0) {
             $form->remove('toggle');
