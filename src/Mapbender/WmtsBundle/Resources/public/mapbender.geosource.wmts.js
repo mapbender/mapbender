@@ -65,7 +65,13 @@ Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsC
      * @private
      */
     _getPrintBaseUrl: function(sourceDef, layerDef) {
-        return layerDef.options.tileUrls[0];
+        var template = layerDef.options.tileUrls[0];
+        return template
+            .replace('{Style}', layerDef.options.style)
+            // NOTE: casing of '{Style}' placeholder unspecified, emulate OpenLayers dual-casing support quirk
+            .replace('{style}', layerDef.options.style)
+            .replace('{TileMatrixSet}', layerDef.options.tilematrixset)
+        ;
     },
     changeProjection: function(source, projection) {
         if (this.super('changeProjection', source, projection)) {
