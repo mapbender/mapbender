@@ -1,8 +1,10 @@
 # Changelog
-* **dev-release/3.0.7 @ 77e3f9ea1**
+* **dev-release/3.0.7 @ d469c4578**
+  - [Beta regression] Fix button group misalginment in Application "Layersets" tab
+  - [Beta regression] Fix layout breakage in "Vendorspecifics" area of WMS instance backend
   - Fix Dimensions values not getting applied while layer is invisible ([PR#1114](https://github.com/mapbender/mapbender/pull/1114))
   - Fix map max extent breaking down on repeated SRS switches
-  - [Beta regression] Fix button group misalginment in Application "Layersets" tab
+  - Wms instance layer titles can now automatically follow source layer title changes on source reloads ([PR#1115](https://github.com/mapbender/mapbender/pull/1115))
 
 * **v3.0.8-beta1**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
