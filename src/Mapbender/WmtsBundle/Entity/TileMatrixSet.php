@@ -63,20 +63,8 @@ class TileMatrixSet
      */
     protected $tilematrices;
 
-//    /**
-//     * @ORM\Column(type="string",nullable=true)
-//     */
-//    protected $wellknowscaleset;
-//
-//    /**  @var string keyword ??? */
-//    protected $keyword;
-//
-//    /**  @var array $tilematrices */
-//    protected $boundingbox = array();
-
     /**
      * Create an instance of TileMatrixSet
-     * @param type $tilematrixset
      */
     public function __construct()
     {
@@ -205,24 +193,6 @@ class TileMatrixSet
     }
     
     /**
-     * Get wellknowscaleset
-     * @return string
-     */
-    public function getWellknowscaleset()
-    {
-        return $this->wellknowscaleset;
-    }
-
-    /**
-     * Set wellknowscaleset
-     * @param string $value
-     */
-    public function setWellknowscaleset($value)
-    {
-        $this->wellknowscaleset = $value;
-    }
-
-    /**
      * Get tilematrices
      * @return TileMatrix[]
      */
@@ -242,7 +212,7 @@ class TileMatrixSet
 
     /**
      * Add a tilematrix
-     * @param TielMatrix $tilematrix
+     * @param TileMatrix $tilematrix
      */
     public function addTilematrix(TileMatrix $tilematrix)
     {
