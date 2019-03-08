@@ -1,6 +1,10 @@
 $(function() {
     $('.extendedGroup').on("click", '.on-off', function(e) {
-        var $this = $(e.target);
+        var $target = $(e.target);
+        if ($target.hasClass('checkWrapper') || $target.is('input[type="checkbox"]')) {
+            return;
+        }
+        var $this = $(this);
         if ($this.hasClass('active')) {
             $this.removeClass('active');
             $this.parent().find('#' + $this.attr('id') + '-content').addClass('hidden');
