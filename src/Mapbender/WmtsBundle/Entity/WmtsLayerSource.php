@@ -430,4 +430,19 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
         }
         return array_merge($bboxes, $this->getBoundingBoxes());
     }
+
+    /**
+     * @return string[]
+     */
+    public function getUniqueTileFormats()
+    {
+        $formats = array();
+        foreach ($this->getResourceUrl() as $resourceUrl) {
+            $resourceType = $resourceUrl->getResourceType() ?: 'tile';
+            if ($resourceType === 'tile') {
+                $formats[] = $resourceUrl->getFormat();
+            }
+        }
+        return array_unique($formats);
+    }
 }

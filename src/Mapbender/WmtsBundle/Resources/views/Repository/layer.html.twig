@@ -11,9 +11,7 @@
   <li>
       <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.formats" | trans }}</span>
       <span class="metaText">
-          {% for format in layer.formats %}
-              {{ format }}{% if not loop.last %},{% endif %}
-          {% endfor %}
+        {{  layer.getUniqueTileFormats() | join(', ') }}
       </span>
   </li>
 
