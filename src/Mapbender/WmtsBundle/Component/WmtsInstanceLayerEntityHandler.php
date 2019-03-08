@@ -34,7 +34,6 @@ class WmtsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $instanceLayer->setSourceInstance($instance);
         $instanceLayer->setSourceItem($wmtslayersource);
         $instanceLayer->setTitle($wmtslayersource->getTitle());
-        $instanceLayer->setFormat(ArrayUtil::getValueFromArray($wmtslayersource->getFormats(), null, 0));
         $instanceLayer->setInfoformat(ArrayUtil::getValueFromArray($wmtslayersource->getInfoformats(), null, 0));
         $instanceLayer->setInfo(Utils::getBool(count($wmtslayersource->getInfoformats())));
         $instanceLayer->setAllowinfo(Utils::getBool(count($wmtslayersource->getInfoformats())));

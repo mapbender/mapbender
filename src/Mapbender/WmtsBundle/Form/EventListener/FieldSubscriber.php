@@ -41,7 +41,6 @@ class FieldSubscriber implements EventSubscriberInterface
     /**
      * Presets a form data
      * @param FormEvent $event
-     * @return type
      */
     public function preSetData(FormEvent $event)
     {
@@ -172,23 +171,6 @@ class FieldSubscriber implements EventSubscriberInterface
             array(
                 'choices' => $infoFormatOpt,
                 "required" => false,
-                'auto_initialize' => false
-            )
-        ));
-
-        $formats = $data->getSourceItem()->getFormats();
-        $form->remove('format');
-        $formatOpt = array();
-        foreach ($formats as $format) {
-            $formatOpt[$format] = $format;
-        }
-        $form->add($this->factory->createNamed(
-            'format',
-            'choice',
-            null,
-            array(
-                'choices' => $formatOpt,
-                "required" => true,
                 'auto_initialize' => false
             )
         ));

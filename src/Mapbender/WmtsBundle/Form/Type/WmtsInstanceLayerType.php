@@ -4,6 +4,7 @@ namespace Mapbender\WmtsBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Mapbender\WmtsBundle\Form\EventListener\FieldSubscriber;
 
@@ -22,13 +23,11 @@ class WmtsInstanceLayerType extends AbstractType
         return 'wmtsinstancelayer';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'num_layers' => 0));
+            'num_layers' => 0,
+        ));
     }
 
     /**
@@ -63,15 +62,11 @@ class WmtsInstanceLayerType extends AbstractType
                 'label' => 'style',
                 'choices' => array(),
                 'required' => false))
-            ->add('format', 'choice', array(
-                'label' => 'style',
-                'choices' => array(),
-                'required' => false))
             ->add('infoformat', 'choice', array(
                 'label' => 'style',
                 'choices' => array(),
-                'required' => false))
-            ->add('tileMatrixSet', 'choice', array(
-                'choices' => array(), 'required' => true));
+                'required' => false,
+            ))
+        ;
     }
 }

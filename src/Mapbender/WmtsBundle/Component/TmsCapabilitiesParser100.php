@@ -255,9 +255,6 @@ class TmsCapabilitiesParser100
         $tilewidth = $this->getValue("./TileFormat/@width", $cntx);
         $tileheight = $this->getValue("./TileFormat/@height", $cntx);
 
-        $layer->addFormat($format);
-
-
         $resourceUrl = new UrlTemplateType();
         $layer->addResourceUrl(
             $resourceUrl

@@ -73,11 +73,6 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    public $formats;
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
     public $infoformats;
 
     /**
@@ -99,7 +94,6 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
     {
 //        $this->keywords = new ArrayCollection();
         $this->infoformats = array();
-        $this->formats = array();
         $this->styles = array();
         $this->dimensions = array();
         $this->resourceUrl = array();
@@ -291,40 +285,6 @@ class WmtsLayerSource extends SourceItem # implements ContainingKeyword
         return $this->styles;
     }
 
-
-    /**
-     * Set formats
-     *
-     * @param array $formats
-     * @return $this
-     */
-    public function setFormats($formats)
-    {
-        $this->formats = $formats;
-        return $this;
-    }
-
-    /**
-     * Add format
-     *
-     * @param array $format
-     * @return $this
-     */
-    public function addFormat($format)
-    {
-        $this->formats[] = $format;
-        return $this;
-    }
-
-    /**
-     * Get formats
-     *
-     * @return array
-     */
-    public function getFormats()
-    {
-        return $this->formats;
-    }
 
     /**
      * Set infoformats
