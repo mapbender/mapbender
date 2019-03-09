@@ -696,10 +696,27 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     /**
-     *
+     * @typedef {Object} Model~CenterOptionsMapQueryish
+     * @property {Array<Number>} position
+     * @property {Number} [zoom]
      */
-    center: function(options) {
-        this.map.center(options);
+    /**
+     * @param {Array<Number>|OpenLayers.LonLat|Model~CenterOptionsMapQueryish} lonLat
+     * @param zoom
+     */
+    center: function(lonLat, zoom) {
+        // Compatibility hack for legacy elements (e.g. old SimpleSearch) expecting MapQuery API
+        var _lonLat = lonLat, _zoom = zoom;
+        if (lonLat) {
+            if (typeof lonLat.position !== 'undefined') {
+                console.warn("Calling center with MapQuery-style options is deprecated", arguments);
+                _lonLat = new OpenLayers.LonLat(lonLat.position[0], lonLat.position[1]);
+                _zoom = lonLat.zoom || zoom;
+            }
+        } else {
+            _lonLat = null;
+        }
+        this.map.olMap.setCenter(_lonLat, _zoom);
     },
     /**
      * @param {Object} e

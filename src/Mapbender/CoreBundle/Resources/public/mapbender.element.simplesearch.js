@@ -58,7 +58,6 @@ $.widget('mapbender.mbSimpleSearch', {
             if(self.options.result && (self.options.result.maxscale || self.options.result.minscale)){
                 var res = olMap.getResolutionForZoom(zoom);
                 var units = olMap.baseLayer.units;
-                var scale = OpenLayers.Util.getScaleFromResolution(res, units);
 
                 if(self.options.result.maxscale) {
                     var maxRes = OpenLayers.Util.getResolutionFromScale(
@@ -101,7 +100,7 @@ $.widget('mapbender.mbSimpleSearch', {
                         self.layer = new OpenLayers.Layer.Markers();
                         olMap.addLayer(self.layer);
                         self.layer.addMarker(self.marker);
-                    }
+                    };
 
                     var image = new Image();
                     image.src = self.options.result.icon_url;
@@ -114,10 +113,7 @@ $.widget('mapbender.mbSimpleSearch', {
             }
 
             // finally, zoom
-            Mapbender.Model.center({
-                position: [bounds.getCenterLonLat().lon, bounds.getCenterLonLat().lat],
-                zoom: zoom
-            });
+            Mapbender.Model.center(bounds.getCenterLonLat, zoom);
         });
     },
 
