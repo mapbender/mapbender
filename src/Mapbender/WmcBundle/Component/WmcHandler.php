@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\WmcBundle\Component;
 
+use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\CoreBundle\Entity\State;
@@ -14,6 +15,8 @@ class WmcHandler
     protected $container;
     /** @var Application */
     protected $application;
+    /** @var EntityManager */
+    protected $entityManager;
 
     /**
      * Creates a wmc handler
@@ -23,6 +26,7 @@ class WmcHandler
      */
     public function __construct($application, $container)
     {
+        $this->entityManager = $container->get('doctrine')->getManager();
         $this->application = $application;
         $this->container = $container;
     }
@@ -59,9 +63,8 @@ class WmcHandler
             $state->setTitle("SuggestMap");
             $state->setJson($jsonState);
             $state = $this->unSignUrls($state);
-            $em = $this->container->get('doctrine')->getManager();
-            $em->persist($state);
-            $em->flush();
+            $this->entityManager->persist($state);
+            $this->entityManager->flush();
         }
         return $state;
     }
@@ -74,7 +77,7 @@ class WmcHandler
      */
     public function getWmc($wmcid, $onlyPublic = TRUE)
     {
-        $query = $this->container->get('doctrine')->getManager()
+        $query = $this->entityManager
             ->createQuery("SELECT wmc FROM MapbenderWmcBundle:Wmc wmc"
                 . " JOIN wmc.state s Where"
 //		. " s.slug IN (:slug) AND"
@@ -97,11 +100,12 @@ class WmcHandler
     /**
      * Returns a wmc list
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param bool $onlyPublic
+     * @return Wmc[]
      */
     public function getWmcList($onlyPublic = true)
     {
-        $query = $this->container->get('doctrine')->getManager()
+        $query = $this->entityManager
             ->createQuery("SELECT wmc FROM MapbenderWmcBundle:Wmc wmc"
                 . " JOIN wmc.state s Where s.slug IN (:slug)"
                 . ($onlyPublic === TRUE ? " AND wmc.public=:public" : "")
@@ -131,7 +135,7 @@ class WmcHandler
      */
     public function getWmcUrl($filename = null)
     {
-        $url_base = Application::getAppWebUrl($this->container, $this->application->getSlug());
+        $url_base = \Mapbender\CoreBundle\Component\Application::getAppWebUrl($this->container, $this->application->getSlug());
         $url_wmc = $url_base . '/' . WmcHandler::$WMC_DIR;
         if ($filename !== null) {
             return $url_wmc . '/' . $filename;
@@ -147,7 +151,7 @@ class WmcHandler
      */
     public function getWmcDir()
     {
-        $uploads_dir = Application::getAppWebDir($this->container, $this->application->getSlug());
+        $uploads_dir = \Mapbender\CoreBundle\Component\Application::getAppWebDir($this->container, $this->application->getSlug());
         $wmc_dir = $uploads_dir . '/' . WmcHandler::$WMC_DIR;
         if (!is_dir($wmc_dir)) {
             if (mkdir($wmc_dir)) {
