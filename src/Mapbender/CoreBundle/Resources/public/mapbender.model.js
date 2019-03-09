@@ -365,7 +365,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     _convertLayerDef: function(layerDef, mangleIds) {
         var gsHandler = this.getGeoSourceHandler(layerDef);
         var l = $.extend({}, gsHandler.create(layerDef, mangleIds), {
-            mapbenderId: layerDef.id,
             visibility: false
         });
         return l;
@@ -723,7 +722,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @param {OpenLayers.Layer} e.object
      */
     _sourceLoadStart: function(e) {
-        var source = this.getSource({origId: e.object.mapbenderId});
+        var source = this.getMbConfig(e.object);
         this.mbMap.fireModelEvent({
             name: 'sourceloadstart',
             value: {
@@ -736,7 +735,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @param {OpenLayers.Layer} e.object
      */
     _sourceLoadeEnd: function(e) {
-        var source = this.getSource({origId: e.object.mapbenderId});
+        var source = this.getMbConfig(e.object);
         this.mbMap.fireModelEvent({
             name: 'sourceloadend',
             value: {
@@ -750,10 +749,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      */
     _sourceLoadError: function(e) {
         if (e.tile.layer && e.tile.layer.getVisibility()) {
-            var source = this.getSource({origId: e.tile.layer.mapbenderId});
-            if (!source) {
-                source = this.getSource({id: e.tile.layer.mapbenderId});
-            }
+            var source = this.getMbConfig(e.tile.layer);
             if (!source) {
                 console.error("Source load error, but source unknown", e);
                 return;
