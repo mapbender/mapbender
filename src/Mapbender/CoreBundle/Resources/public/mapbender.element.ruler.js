@@ -13,27 +13,27 @@
             precision: 2
         },
         control: null,
-        map: null,
         segments: null,
         total: null,
         container: null,
         popup: null,
+        mapModel: null,
         _create: function(){
             var self = this;
             if(this.options.type !== 'line' && this.options.type !== 'area'){
                 throw Mapbender.trans("mb.core.ruler.create_error");
             }
-            if(!Mapbender.checkTarget("mbRuler", this.options.target)){
-                return;
-            }
-
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self._setup(mbMap);
+            }, function() {
+                Mapbender.checkTarget("mbRuler", self.options.target);
+            });
         },
         /**
          * Initializes the overview
          */
-        _setup: function(){
-            this.map = $('#' + this.options.target);
+        _setup: function(mbMap) {
+            this.mapModel = mbMap.getModel();
             var sm = $.extend(true, {}, OpenLayers.Feature.Vector.style, {
                 'default': this.options.style
             });
@@ -95,7 +95,7 @@
         activate: function(callback){
             this.callback = callback ? callback : null;
             var self = this,
-                    olMap = this.map.data('mapQuery').olMap;
+                    olMap = this.mapModel.map.olMap;
             olMap.addControl(this.control);
             this.control.activate();
 
@@ -136,7 +136,7 @@
          */
         deactivate: function(){
             this.container.detach();
-            var olMap = this.map.data('mapQuery').olMap;
+            var olMap = this.mapModel.map.olMap;
             this.control.deactivate();
             olMap.removeControl(this.control);
             $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
@@ -162,15 +162,10 @@
                 return;
             }
 
-            var widget = this;
-            var measure = widget._getMeasureFromEvent(event);
+            var measure = this._getMeasureFromEvent(event);
 
-            if(widget.control.immediate){
-                widget.segments.children('li').first().html(measure);
-            }
-
-            if($('body').data('mapbenderMbPopup')){
-                $("body").mbPopup('setContent', measure);
+            if(this.control.immediate){
+                this.segments.children('li').first().html(measure);
             }
         },
         _handlePartial: function(event){
@@ -194,7 +189,6 @@
                 this.segments.empty();
             }
             this.total.html('<b>'+measure+'</b>');
-
         },
         _getMeasureFromEvent: function(event){
             var measure = event.measure,
