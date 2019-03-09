@@ -2,26 +2,27 @@
     $.widget("mapbender.mbSuggestMap", {
         options: {},
         elementUrl: null,
+        mbMap: null,
         _create: function(){
-            this.a = this.alert;
             this.element.hide().appendTo($('body'));
-            if(!Mapbender.checkTarget("mbSuggestMap", this.options.target)){
-                return;
-            }
             var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self._setup(mbMap);
+            }, function() {
+                Mapbender.checkTarget("mbSuggestMap", self.options.target);
+            });
         },
         /**
          * Initializes the wmc handler
          */
-        _setup: function(){
-            var self = this;
+        _setup: function(mbMap) {
+            this.mbMap = mbMap;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if(typeof this.options.load !== 'undefined'
                     && typeof this.options.load.stateid !== 'undefined'){
                 this._getState(this.options.load.stateid, "state");
             }
-            this.element.find('ul li').bind("click", $.proxy(self._suggestMap, self));
+            this.element.find('ul li').bind("click", $.proxy(this._suggestMap, this));
         },
         _getState: function(id){
             $.ajax({
@@ -39,15 +40,12 @@
             return false;
         },
         _getStateSuccess: function(response, textStatus, jqXHR){
-            if(response.data){
-                for(stateid in response.data){
-                    var state;
-                    if(response.data[stateid])
-                        state = response.data[stateid]
-                    else
-                        state = $.parseJSON(response.data[stateid]);
-                    if(!state.window)
+            if (response.data){
+                for (var stateid in response.data){
+                    var state = response.data[stateid];
+                    if (!state.window) {
                         state = $.parseJSON(state);
+                    }
                     this._addToMap(stateid, state);
                 }
             }else if(response.error){
@@ -58,20 +56,11 @@
             Mapbender.error(response);
         },
         _addToMap: function(wmcid, state){
-            var target = $('#' + this.options.target);
-            var mbMap, model;
-            var widget = Mapbender.configuration.elements[this.options.target].init.split('.');
-            if (widget.length === 1){
-                model = target[widget[0]]("getModel");
-            } else {
-                model = target[widget[1]]("getModel");
-            }
-            mbMap = model.mbMap;
-            var mapProj = model.map.olMap.getProjectionObject();
-            mbMap.removeSources({});
+            var mapProj = this.mbMap.map.olMap.getProjectionObject();
+            this.mbMap.removeSources({});
             if (state.extent.srs !== mapProj.projCode) {
                 try {
-                    mbMap.changeProjection(state.extent.srs);
+                    this.mbMap.changeProjection(state.extent.srs);
                 } catch (e) {
                     Mapbender.error(Mapbender.trans(Mapbender.trans("mb.wmc.element.wmchandler.error_srs", {"srs": state.extent.srs})));
                     console.error("Projection change failed", e);
@@ -79,23 +68,14 @@
                 }
             }
             var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
-            mbMap.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr));
+            this.mbMap.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr));
             this._addStateToMap(wmcid, state);
         },
-        _addStateToMap: function(wmcid, sources){
-            var target = $('#' + this.options.target);
-            var widget = Mapbender.configuration.elements[this.options.target].init.split('.');
-            if(widget.length == 1){
-                widget = widget[0];
-            }else{
-                widget = widget[1];
-            }
-            this.sources_wmc = {};
-            this.sources_wmc[wmcid] = sources;
-            for(var i = 0; i < this.sources_wmc[wmcid].sources.length; i++){
-                var source = this.sources_wmc[wmcid].sources[i];
+        _addStateToMap: function(wmcid, state){
+            for(var i = 0; i < state.sources.length; i++){
+                var source = state.sources[i];
                 if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && !this.options.keepBaseSources)){
-                    target[widget]("addSource", source);
+                    this.mbMap.addSource(source);
                 }
             }
         },
@@ -149,8 +129,7 @@
         },
         _suggestState: function(callback){
             var self = this;
-            var map = $('#' + this.options.target).data('mapbenderMbMap');
-            var state = map.getMapState();
+            var state = this.mbMap.getMapState();
             var stateSer = JSON.stringify(state);
             $.ajax({
                 url: self.elementUrl + 'state',
