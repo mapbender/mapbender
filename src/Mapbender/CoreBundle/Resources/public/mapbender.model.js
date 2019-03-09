@@ -116,6 +116,7 @@ window.Mapbender.Model = {
             allOverlays: true,
             fallThrough: true,
             layers: [baseLayer],
+            theme: null,
             // tile manager breaks tile WMS layers going out of scale as intended
             tileManager: null
         };
