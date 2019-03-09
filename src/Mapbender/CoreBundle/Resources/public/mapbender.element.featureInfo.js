@@ -143,10 +143,9 @@
             this.queries = {};
             $('#js-error-featureinfo').addClass('hidden');
             $.each(this.target.getModel().getSources(), function(idx, src) {
-                var mqLayer = self.target.getModel().map.layersList[src.mqlid];
                 var layerTitle = self._getTabTitle(src);
                 if (Mapbender.source[src.type]) {
-                    var url = Mapbender.source[src.type].featureInfoUrl(mqLayer, x, y);
+                    var url = Mapbender.source[src.type].featureInfoUrl(src, x, y);
                     if (url) {
                         self.queries[src.mqlid] = url;
                         if (!self.options.onlyValid) {
