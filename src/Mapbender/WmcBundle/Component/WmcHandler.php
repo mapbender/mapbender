@@ -164,8 +164,7 @@ class WmcHandler
         $json = json_decode($state->getJson(), true);
         if ($json && isset($json['sources']) && is_array($json['sources'])) {
             foreach ($json['sources'] as &$source) {
-                $url = UrlUtil::validateUrl($source['configuration']['options']['url'],
-                        array(strtolower('_signature')));
+                $url = UrlUtil::validateUrl($source['configuration']['options']['url'], array(), array('_signature'));
                 $source['configuration']['options']['url'] = $url;
             }
         }
@@ -179,7 +178,8 @@ class WmcHandler
         if($json && isset($json['sources']) && is_array($json['sources'])){
             $signer = $this->container->get('signer');
             foreach($json['sources'] as &$source){
-                $url = UrlUtil::validateUrl($source['configuration']['options']['url'], array(strtolower('_signature')));
+                // strip _signature, but also '0' created by previously broken unSignUrls code
+                $url = UrlUtil::validateUrl($source['configuration']['options']['url'], array(), array('_signature', '0'));
                 $source['configuration']['options']['url'] = $signer->signUrl($url);
             }
         }
