@@ -410,8 +410,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             // HACK amenity for completely unused XML representation
             // see src/Mapbender/WmcBundle/Resources/views/Wmc/wmc110_simple.xml.twig
             sourceState.layers = [];
-            var root = source.configuration.children[0];
-            var list = Mapbender.source[source.type].getLayersList(source, root, true);
+            var list = Mapbender.source[source.type].getLayersList(source);
             $.each(list.layers, function(idx, layer) {
                 sourceState.layers.push(layer.options.name);
             });
