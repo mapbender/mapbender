@@ -4,6 +4,7 @@ namespace Mapbender\WmcBundle\Component;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Size;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\StateHandler;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\State;
@@ -11,10 +12,9 @@ use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
+use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\Component\Style;
-use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
-use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -173,8 +173,15 @@ class WmcParser110 extends WmcParser
      */
     private function parseLayer(\DOMElement $layerElm, $srs, $infoFormat)
     {
+        // @todo: building entities and generating a config array should be separate methods
         $wmsinst = new WmsInstance();
         $wms = new WmsSource();
+        $wmsinst->setSource($wms);
+        /** @var TypeDirectoryService $sourceDirectory */
+        $sourceDirectory = $this->container->get('mapbender.source.typedirectory.service');
+        /** @var WmsSourceService $wmsService */
+        $wmsService = $sourceDirectory->getSourceService($wmsinst);
+
         $id = round(microtime(true) * 1000);
         $queryable = $this->getValue("./@queryable", $layerElm);
         $wmsinst->setVisible(!(bool) $this->getValue("./@hidden", $layerElm));
@@ -236,14 +243,10 @@ class WmcParser110 extends WmcParser
             $max = $this->getValue("./sld:MaxScaleDenominator/text()", $layerElm);
             $scale->setMax($max !== null ? floatval($max) : null);
         }
+        $wmsinst->setSource($wms);
         $wmsinst->setId(intval($id))
             ->setTitle($wms->getTitle())
             ->setSource($wms);
-        $options = new WmsInstanceConfigurationOptions();
-        $options->setUrl($wms->getGetMap()->getHttpGet())
-            ->setVisible($wmsinst->getVisible())
-            ->setFormat($wmsinst->getFormat())
-            ->setVersion($wms->getVersion());
 
         $extensionEl = $this->getValue("./cntxt:Extension", $layerElm);
         $layerList = null;
@@ -259,11 +262,6 @@ class WmcParser110 extends WmcParser
                 ->setTiled((bool) $this->findFirstValue(array("./mb3:tiled"), $extensionEl, false));
             $layerList = $this->findFirstList(array("./mb3:layers/mb3:layer",
                 "./*[contains(local-name(),'layers')]/*[contains(local-name(),'layer')]"), $extensionEl);
-
-            $options->setTransparency($wmsinst->getTransparency())
-                ->setOpacity($wmsinst->getOpacity())
-                ->setTiled($wmsinst->getTiled())
-                ->setInfoformat($wmsinst->getInfoformat());
         }
 
         $num = 0;
@@ -275,6 +273,8 @@ class WmcParser110 extends WmcParser
             ->setSourceInstance($wmsinst);
         $rootInst->setToggle(false);
         $rootInst->setAllowtoggle(true);
+        $wmsinst->addLayer($rootInst);
+
         $newLayerInstances = array();
         if ($layerList === null) {
             $layerListStr = explode(",", $this->getValue("./cntxt:Name/text()", $layerElm));
@@ -315,6 +315,7 @@ class WmcParser110 extends WmcParser
             }
         }
         if ($newLayerInstances) {
+            $wmsinst->addLayer($rootInst);
             foreach ($newLayerInstances as $layerIndex => $newLayerInstance) {
                 $newLayerInstance
                     ->setParent($rootInst)
@@ -324,14 +325,14 @@ class WmcParser110 extends WmcParser
                 $rootInst->addSublayer($newLayerInstance);
                 $wmsinst->addLayer($newLayerInstance);
             }
-            $rootLayHandler = new WmsInstanceLayerEntityHandler($this->container, $rootInst);
-            $children = array($rootLayHandler->generateConfiguration());
+            $children = array($wmsService->getRootLayerConfig($wmsinst));
+
             $instanceConfig = array(
                 'type' => $wmsinst->getType(),
                 'title' => $wmsinst->getTitle(),
                 'isBaseSource' => false,
                 'children' => $children,
-                'options' => $options->toArray(),
+                'options' => $wmsService->getOptionsConfiguration($wmsinst),
             );
             return array(
                 'type' => strtolower($wmsinst->getType()),
