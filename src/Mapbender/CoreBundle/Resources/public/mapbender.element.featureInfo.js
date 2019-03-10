@@ -40,8 +40,6 @@
                 {'click': widget._triggerFeatureInfo},
                 {map: this.target.map.olMap});
 
-            widgetElement.addClass('display-as-' + options.displayType);
-
             if (options.autoActivate || options.autoOpen){ // autoOpen old configuration
                 widget.activate();
             }
@@ -472,7 +470,7 @@
                         $(item).removeClass('active');
                     });
                     $header.addClass('active');
-                    $('.container', $tabcont).each(function(idx, item){
+                    $('.container-accordion', $tabcont).each(function(idx, item){
                         $(item).removeClass('active');
                     });
                     $('#container' + $header.attr('id').replace('accordion', ''), $tabcont).addClass('active');
