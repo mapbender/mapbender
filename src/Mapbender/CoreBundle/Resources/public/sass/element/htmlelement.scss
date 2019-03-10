@@ -1,5 +1,9 @@
 .mb-element-htmlelement {
     &.html-element-inline {
         display: inline-block;
+        // for special snowflake mobile template which doesn't include bootstrap.css
+        &.hidden {
+            display: none;
+        }
     }
 }
