@@ -102,7 +102,7 @@
             var ls = "";
             var layerConfiguration = layerDefinition.configuration;
             var layerOptions = layerConfiguration.options;
-            var layers = Mapbender.source[layerDefinition.type].getLayersList(layerDefinition, layerConfiguration.children[0], true);
+            var layers = Mapbender.source[layerDefinition.type].getLayersList(layerDefinition);
             var url = layerOptions.url;
 
             for (var i = 0; i < layers.layers.length; i++) {

@@ -11,8 +11,8 @@
         $element.data('mapQuery', this);
         this.olMap = olMap;
     }
-
-window.Mapbender.Model = {
+window.Mapbender = Mapbender || {};
+window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     /**
      * @typedef Model~LayerState
      * @property {boolean} visibility
@@ -116,6 +116,7 @@ window.Mapbender.Model = {
             allOverlays: true,
             fallThrough: true,
             layers: [baseLayer],
+            theme: null,
             // tile manager breaks tile WMS layers going out of scale as intended
             tileManager: null
         };
@@ -364,7 +365,6 @@ window.Mapbender.Model = {
     _convertLayerDef: function(layerDef, mangleIds) {
         var gsHandler = this.getGeoSourceHandler(layerDef);
         var l = $.extend({}, gsHandler.create(layerDef, mangleIds), {
-            mapbenderId: layerDef.id,
             visibility: false
         });
         return l;
@@ -404,14 +404,16 @@ window.Mapbender.Model = {
         };
         var sources = this.getSources();
         for (var i = 0; i < sources.length; i++) {
-            var source = $.extend(true, {}, sources[i]);
-            source.layers = [];
-            var root = source.configuration.children[0];
-            var list = Mapbender.source[source.type].getLayersList(source, root, true);
+            var source = sources[i];
+            var sourceState = JSON.parse(JSON.stringify(source));
+            // HACK amenity for completely unused XML representation
+            // see src/Mapbender/WmcBundle/Resources/views/Wmc/wmc110_simple.xml.twig
+            sourceState.layers = [];
+            var list = Mapbender.source[source.type].getLayersList(source);
             $.each(list.layers, function(idx, layer) {
-                source.layers.push(layer.options.name);
+                sourceState.layers.push(layer.options.name);
             });
-            state.sources.push(source);
+            state.sources.push(sourceState);
         }
         return state;
     },
@@ -463,8 +465,8 @@ window.Mapbender.Model = {
         if (url) {
             var olLayer = this.getNativeLayer(source);
             source.configuration.options.url = url;
+            olLayer.url = url;
             if (olLayer.getVisibility()) {
-                olLayer.url = url;
                 if (reload) {
                     olLayer.redraw();
                 }
@@ -702,17 +704,34 @@ window.Mapbender.Model = {
         }
     },
     /**
-     *
+     * @typedef {Object} Model~CenterOptionsMapQueryish
+     * @property {Array<Number>} position
+     * @property {Number} [zoom]
      */
-    center: function(options) {
-        this.map.center(options);
+    /**
+     * @param {Array<Number>|OpenLayers.LonLat|Model~CenterOptionsMapQueryish} lonLat
+     * @param zoom
+     */
+    center: function(lonLat, zoom) {
+        // Compatibility hack for legacy elements (e.g. old SimpleSearch) expecting MapQuery API
+        var _lonLat = lonLat, _zoom = zoom;
+        if (lonLat) {
+            if (typeof lonLat.position !== 'undefined') {
+                console.warn("Calling center with MapQuery-style options is deprecated", arguments);
+                _lonLat = new OpenLayers.LonLat(lonLat.position[0], lonLat.position[1]);
+                _zoom = lonLat.zoom || zoom;
+            }
+        } else {
+            _lonLat = null;
+        }
+        this.map.olMap.setCenter(_lonLat, _zoom);
     },
     /**
      * @param {Object} e
      * @param {OpenLayers.Layer} e.object
      */
     _sourceLoadStart: function(e) {
-        var source = this.getSource({origId: e.object.mapbenderId});
+        var source = this.getMbConfig(e.object);
         this.mbMap.fireModelEvent({
             name: 'sourceloadstart',
             value: {
@@ -725,7 +744,7 @@ window.Mapbender.Model = {
      * @param {OpenLayers.Layer} e.object
      */
     _sourceLoadeEnd: function(e) {
-        var source = this.getSource({origId: e.object.mapbenderId});
+        var source = this.getMbConfig(e.object);
         this.mbMap.fireModelEvent({
             name: 'sourceloadend',
             value: {
@@ -739,10 +758,7 @@ window.Mapbender.Model = {
      */
     _sourceLoadError: function(e) {
         if (e.tile.layer && e.tile.layer.getVisibility()) {
-            var source = this.getSource({origId: e.tile.layer.mapbenderId});
-            if (!source) {
-                source = this.getSource({id: e.tile.layer.mapbenderId});
-            }
+            var source = this.getMbConfig(e.tile.layer);
             if (!source) {
                 console.error("Source load error, but source unknown", e);
                 return;
@@ -886,11 +902,17 @@ window.Mapbender.Model = {
         }
     },
     /**
-     * @param {object} sourceDef
+     * @param {Mapbender.Source|Object} sourceOrSourceDef
      * @param {boolean} [mangleIds] to rewrite sourceDef.id and all layer ids EVEN IF ALREADY POPULATED
      * @returns {object} sourceDef same ref, potentially modified
      */
-    addSourceFromConfig: function(sourceDef, mangleIds) {
+    addSourceFromConfig: function(sourceOrSourceDef, mangleIds) {
+        var sourceDef;
+        if (sourceOrSourceDef instanceof Mapbender.Source) {
+            sourceDef = sourceOrSourceDef;
+        } else {
+            sourceDef = Mapbender.Source.factory(sourceOrSourceDef);
+        }
         if (!sourceDef.origId) {
             sourceDef.origId = '' + sourceDef.id;
         }
@@ -907,6 +929,7 @@ window.Mapbender.Model = {
         var mapQueryLayer = this.map.layers(this._convertLayerDef(sourceDef, mangleIds));
         sourceDef.mqlid = mapQueryLayer.id;
         sourceDef.ollid = mapQueryLayer.olLayer.id;
+        // source attribute required by older special snowflake versions of FeatureInfo
         mapQueryLayer.source = sourceDef;
         Mapbender.source[sourceDef.type.toLowerCase()].postCreate(sourceDef, mapQueryLayer);
         mapQueryLayer.olLayer.mbConfig = sourceDef;
@@ -1479,5 +1502,5 @@ window.Mapbender.Model = {
             }
         });
     }
-};
+});
 })(jQuery));

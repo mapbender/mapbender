@@ -1,8 +1,6 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Entity\State;
-
 /**
  * Description of State
  *
@@ -10,114 +8,20 @@ use Mapbender\CoreBundle\Entity\State;
  */
 class StateHandler
 {
-    
-    private $id;
-    
-    private $name;
-    
-    private $serverurl;
-    
-    private $slug;
-    
+    /** @var Size */
     private $window;
-    
+    /** @var BoundingBox */
     private $extent;
-    
+    /** @var BoundingBox */
     private $maxextent;
-    
+    /** @var array[] */
     private $sources = array();
-    
-    /**
-     * Sets id
-     * 
-     * @param type $value
-     * @return StateHandler
-     */
-    public function setId($value){
-        $this->id = $value;
-        return $this;
-    }
-    
-    /**
-     * Returns id
-     * 
-     * @return integer
-     */
-    public function getId(){
-        return $this->id;
-    }
-    
-    /**
-     * Sets name
-     * 
-     * @param string $value
-     * @return StateHandler
-     */
-    public function setName($value){
-        $this->name = $value;
-        return $this;
-    }
-    
-    /**
-     * Returns name
-     * 
-     * @return string
-     */
-    public function getName(){
-        return $this->name;
-    }
-    
-    
-    
-    /**
-     * Sets serverurl
-     * 
-     * @param string $value
-     * @return StateHandler
-     */
-    public function setServerurl($value){
-        $this->serverurl = $value;
-        return $this;
-    }
-    
-    /**
-     * Returns serverurl
-     * 
-     * @return string
-     */
-    public function getServerurl(){
-        return $this->serverurl;
-    }
-    
-    
-    
-    /**
-     * Sets slug
-     * 
-     * @param string $value
-     * @return StateHandler
-     */
-    public function setSlug($value){
-        $this->slug = $value;
-        return $this;
-    }
-    
-    /**
-     * Returns slug
-     * 
-     * @return string
-     */
-    public function getSlug(){
-        return $this->slug;
-    }
-    
-    
     
     /**
      * Sets window
      * 
      * @param Size $value
-     * @return StateHandler
+     * @return $this
      */
     public function setWindow(Size $value){
         $this->window = $value;
@@ -139,7 +43,7 @@ class StateHandler
      * Sets extent
      * 
      * @param BoundingBox $value
-     * @return StateHandler
+     * @return $this
      */
     public function setExtent(BoundingBox $value){
         $this->extent = $value;
@@ -161,7 +65,7 @@ class StateHandler
      * Sets maxextent
      * 
      * @param BoundingBox $value
-     * @return StateHandler
+     * @return $this
      */
     public function setMaxextent(BoundingBox $value){
         $this->maxextent = $value;
@@ -180,8 +84,8 @@ class StateHandler
     /**
      * Sets sources
      * 
-     * @param array $value
-     * @return StateHandler
+     * @param array[] $value
+     * @return $this
      */
     public function setSources($value){
         $this->sources = $value;
@@ -199,75 +103,30 @@ class StateHandler
     
     /**
      * Adds source
-     * 
-     * @return StateHandler
+     *
+     * @param array $value
+     * @return $this
      */
-    public function addSource($value){
+    public function addSource($value)
+    {
         $this->sources[] = $value;
         return $this;
     }
-    
+
     /**
-     * Creates a StateHandler from parameters
-     * 
-     * @param array $json
-     * @return StateHandler 
+     * @return array
      */
-    public static function create($json, $id = null, $name = null, $serverurl = null, $slug = null){
-        $sh = new StateHandler();
-        $sh->setId($id);
-        $sh->setName($name);
-        $sh->setServerurl($serverurl);
-        $sh->setSlug($slug);
-        $sh->setWindow(Size::create($json["window"]));
-        $sh->setExtent(BoundingBox::create($json["extent"]));
-        $sh->setMaxextent(BoundingBox::create($json["maxextent"]));
-        $sh->setSources($json["sources"]);
-        return $sh;
-    }
-    
-    public function generateState(){
-        $state = new State();
-        $state->setTitle($this->name)
-                ->setServerurl($this->serverurl)
-                ->setSlug($this->slug)
-                ->setJson($this->toArray());
-        return $state;
-    }
-    
     public function toArray()
     {
-	$windowArr = $this->window->toArray();
-	$extentArr = $this->extent->toArray();
-    $maxExtentArr = $this->maxextent === null ? $this->extent->toArray() : $this->maxextent->toArray();
-    $sourcesArr = $this->sources;
-    return array(
-        "window" => $windowArr,
-        "extent" => $extentArr,
-        "maxextent" => $maxExtentArr,
-        "sources" => $sourcesArr);
+        $windowArr = $this->window->toArray();
+        $extentArr = $this->extent->toArray();
+        $maxExtentArr = $this->maxextent === null ? $this->extent->toArray() : $this->maxextent->toArray();
+        $sourcesArr = $this->sources;
+        return array(
+            "window" => $windowArr,
+            "extent" => $extentArr,
+            "maxextent" => $maxExtentArr,
+            "sources" => $sourcesArr,
+        );
     }
-    
-//    
-//    /**
-//     * Sets
-//     * 
-//     * @param type $value
-//     * @return StateHandler
-//     */
-//    public function set($value){
-//        $this-> = $value;
-//        return $this;
-//    }
-//    
-//    /**
-//     * Returns 
-//     * 
-//     * @return integer
-//     */
-//    public function get(){
-//        return $this->;
-//    }
-    
 }
-

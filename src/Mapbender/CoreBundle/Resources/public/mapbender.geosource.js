@@ -67,7 +67,7 @@ Mapbender.Geo.SourceHandler = Class({
     'private object defaultOptions': {},
     'abstract public function create': function(options) {
     },
-    'abstract public function featureInfoUrl': function(layer, x, y) {
+    'abstract public function featureInfoUrl': function(source, x, y) {
     },
     'abstract public function getPrintConfig': function(layer, bounds, isProxy) {
     },
@@ -78,41 +78,14 @@ Mapbender.Geo.SourceHandler = Class({
     },
     beforeSrsChange: function(source, olLayer, newSrsCode) {
     },
-    getLayersList: function getLayersList(source, offsetLayer, includeOffset) {
-        var _source = $.extend(true, {}, source);
-        var rootLayer = _source.configuration.children[0];
-        var layerFound = rootLayer.options.id.toString() === offsetLayer.options.id.toString();
-        var layersOut = [];
-        _findLayers(rootLayer);
-        return {
-            source: _source,
-            layers: layersOut
-        };
-
-        function _findLayers(layer) {
-            if (layer.children) {
-                var i = 0;
-                for (; i < layer.children.length; i++) {
-                    if (layer.children[i].options.id.toString() === offsetLayer.options.id.toString()) {
-                        layerFound = true;
-                    }
-                    if (layerFound) {
-                        var matchOffset = i;
-                        if (!includeOffset) {
-                            matchOffset += 1;
-                        }
-                        var matchLength = layer.children.length - matchOffset;
-                        // splice modifies the original Array => work with a shallow copy
-                        var layersCopy = layer.children.slice();
-                        var matchedLayers = layersCopy.splice(matchOffset, matchLength);
-                        layersOut = layersOut.concat(matchedLayers);
-
-                        break;
-                    }
-                    _findLayers(layer.children[i]);
-                }
-            }
+    getLayersList: function getLayersList(source) {
+        if (arguments.length !== 1) {
+            console.warn("Called getLayersList with extra arguments, ignoring");
         }
+        var rootLayer = source.configuration.children[0];
+        return {
+            layers: (rootLayer.children || [])
+        };
     },
     addLayer: function addLayer(source, layerToAdd, parentLayerToAdd, position) {
         var rootLayer = source.configuration.children[0];

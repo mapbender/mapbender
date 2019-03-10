@@ -127,6 +127,9 @@ class Wmc
         return $this;
     }
 
+    /**
+     * @return State|null
+     */
     public function getState()
     {
         return $this->state;
@@ -364,18 +367,16 @@ class Wmc
      * @param State|null                    $state
      * @param OnlineResource|LegendUrl|null $logoUrl
      * @param OnlineResource|null           $descriptionUrl
-     * @return $this
+     * @return static
      */
     public static function create($state = null, $logoUrl = null, $descriptionUrl = null)
     {
         $state = $state === null ? new State() : $state;
         $wmc   = new Wmc();
         $wmc->setState($state);
-        $logoUrl = $logoUrl === null ? null : $logoUrl;
         if ($logoUrl !== null) {
             $wmc->setLogourl($logoUrl);
         }
-        $descriptionUrl = $descriptionUrl === null ? null : $descriptionUrl;
         if ($descriptionUrl !== null) {
             $wmc->setDescriptionurl($descriptionUrl);
         }

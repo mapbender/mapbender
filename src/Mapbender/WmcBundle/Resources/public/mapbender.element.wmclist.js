@@ -24,7 +24,7 @@
                     if(data.success){
                         self.element.find('select').html('');
                         self.element.find('select').append('<option value="">' + Mapbender.trans("mb.wmc.element.wmclist.select.def_option") + ' ...</option>');
-                        for(wmc_id in data.success){
+                        for (var wmc_id in data.success) {
                             var node = $('<option value="' + wmc_id + '"></option>');
                             self.element.find('select').append(node);
                             node.text(data.success[wmc_id]);

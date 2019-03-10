@@ -21,7 +21,6 @@ class StateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add("id", "hidden", array("required" => false))
-                ->add("serverurl", "hidden", array("required" => true))
                 ->add("slug", "hidden", array("required" => true))
                 ->add("json", "hidden", array("required" => true))
                 ->add("title", "text", array("required" => true));

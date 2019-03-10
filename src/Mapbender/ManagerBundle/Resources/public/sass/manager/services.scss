@@ -100,17 +100,8 @@
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
   .linkButton{display:inline-block;}
-  .labelInput{
-    display: inline-block;
-  }
-  .checkWrapper, .labelCheck{
-    display: inline-block;
-    margin-top:8px;
-    height:$inputHeight;
-  }
   .leftContainer {
     .inputWrapper, .dropdown {
-      display: block;
       margin-bottom:$space/2;
     }
     .inputWrapper input {
@@ -131,40 +122,40 @@
         }
       }
     }
+    .blockgroup {
+      .labelInput{width:80px;}
+      .inputWrapper, div.dropdown {
+        width:200px;
+        margin:0.25em 0;
+        display: inline-block;
+      }
+    }
     .on-off-content{
       background-color:$contentColor;
     }
     .vendorspecific-content,.on-off-content .on-off-content{
-      padding: 0 $space/2 $space/2 $space/2;
+      padding: $space/2 $space/2 $space/2 $space/2;
     }
     .labelCheck{
-      display: inline-block;
-      margin: 0  $space  0  $space/2;
+      margin: 0 0 0 0.25em;
       height: auto;
     }
     .on-off-title {
       padding: 0 $space/2 0 $space/2;
-      .checkWrapper {margin-left: $space;}
     }
     .blockgroup {
       margin-bottom: 1em;
     }
     .checkWrapper{
-      display: inline-block;
       margin: 0px;
       height: auto;
     }
     .vendorspecific-content{
-      .dropdown,.inputWrapper{
-        width:200px !important;
-        margin:0;
-      }
       .checkWrapper {
           width: 20px !important;
           margin-top: 4px;
       }
       input {width:100%;}
-      .labelInput{width:80px;}
       .collectionItem > label{display:none;}
       a.collectionRemove {
         float: right;

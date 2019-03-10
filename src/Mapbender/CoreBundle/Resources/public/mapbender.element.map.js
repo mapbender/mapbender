@@ -19,8 +19,7 @@
          */
         _create: function(){
             OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
-            var self = this,
-                    me = $(this.element);
+            var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
@@ -28,7 +27,7 @@
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
             });
-            this.map = me.data('mapQuery');
+            this.map = this.model.map;
             self._trigger('ready');
         },
         getMapState: function(){
@@ -197,9 +196,8 @@
          * Loads the srs definitions from server
          */
         loadSrs: function(srslist){
-            var self = this;
             $.ajax({
-                url: self.elementUrl + 'loadsrs',
+                url: this.elementUrl + 'loadsrs',
                 type: 'POST',
                 data: {
                     srs: srslist

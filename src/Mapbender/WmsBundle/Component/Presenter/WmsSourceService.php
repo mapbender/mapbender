@@ -22,7 +22,6 @@ class WmsSourceService extends SourceService
     {
         /** @var WmsInstance $sourceInstance */
         return parent::getInnerConfiguration($sourceInstance) + array(
-            /** @todo: replace WmsInstanceConfigurationOptions stuff with a local implementation */
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array($this->getRootLayerConfig($sourceInstance)),
         );
@@ -30,7 +29,6 @@ class WmsSourceService extends SourceService
 
     public function getOptionsConfiguration(WmsInstance $sourceInstance)
     {
-        // return WmsInstanceConfigurationOptions::fromEntity($sourceInstance)->toArray();
         $buffer = max(0, intval($sourceInstance->getBuffer()));
         $ratio = $sourceInstance->getRatio();
         if ($ratio !== null) {

@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\WmcBundle\Component;
 
+use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\CoreBundle\Entity\State;
@@ -14,6 +15,8 @@ class WmcHandler
     protected $container;
     /** @var Application */
     protected $application;
+    /** @var EntityManager */
+    protected $entityManager;
 
     /**
      * Creates a wmc handler
@@ -23,6 +26,7 @@ class WmcHandler
      */
     public function __construct($application, $container)
     {
+        $this->entityManager = $container->get('doctrine')->getManager();
         $this->application = $application;
         $this->container = $container;
     }
@@ -46,22 +50,20 @@ class WmcHandler
     /**
      * Saves and returns a saved state
      *
-     * @param array $jsonState a mapbender state
-     * @return \Mapbender\CoreBundle\Entity\State or null
+     * @param string $jsonState
+     * @return State|null
      */
     public function saveState($jsonState)
     {
         $state = null;
         if ($jsonState !== null) {
             $state = new State();
-            $state->setServerurl($this->getBaseUrl());
             $state->setSlug($this->application->getSlug());
             $state->setTitle("SuggestMap");
             $state->setJson($jsonState);
             $state = $this->unSignUrls($state);
-            $em = $this->container->get('doctrine')->getManager();
-            $em->persist($state);
-            $em->flush();
+            $this->entityManager->persist($state);
+            $this->entityManager->flush();
         }
         return $state;
     }
@@ -74,7 +76,7 @@ class WmcHandler
      */
     public function getWmc($wmcid, $onlyPublic = TRUE)
     {
-        $query = $this->container->get('doctrine')->getManager()
+        $query = $this->entityManager
             ->createQuery("SELECT wmc FROM MapbenderWmcBundle:Wmc wmc"
                 . " JOIN wmc.state s Where"
 //		. " s.slug IN (:slug) AND"
@@ -97,11 +99,12 @@ class WmcHandler
     /**
      * Returns a wmc list
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param bool $onlyPublic
+     * @return Wmc[]
      */
     public function getWmcList($onlyPublic = true)
     {
-        $query = $this->container->get('doctrine')->getManager()
+        $query = $this->entityManager
             ->createQuery("SELECT wmc FROM MapbenderWmcBundle:Wmc wmc"
                 . " JOIN wmc.state s Where s.slug IN (:slug)"
                 . ($onlyPublic === TRUE ? " AND wmc.public=:public" : "")
@@ -112,18 +115,6 @@ class WmcHandler
     }
 
     /**
-     * Gets a base url
-     *
-     * @return string a base url
-     */
-    public function getBaseUrl()
-    {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $url_base = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-        return $url_base;
-    }
-
-    /**
      * Gets a url to wmc directory or to file with "$filename
      *
      * @param string $filename
@@ -131,7 +122,7 @@ class WmcHandler
      */
     public function getWmcUrl($filename = null)
     {
-        $url_base = Application::getAppWebUrl($this->container, $this->application->getSlug());
+        $url_base = \Mapbender\CoreBundle\Component\Application::getAppWebUrl($this->container, $this->application->getSlug());
         $url_wmc = $url_base . '/' . WmcHandler::$WMC_DIR;
         if ($filename !== null) {
             return $url_wmc . '/' . $filename;
@@ -147,7 +138,7 @@ class WmcHandler
      */
     public function getWmcDir()
     {
-        $uploads_dir = Application::getAppWebDir($this->container, $this->application->getSlug());
+        $uploads_dir = \Mapbender\CoreBundle\Component\Application::getAppWebDir($this->container, $this->application->getSlug());
         $wmc_dir = $uploads_dir . '/' . WmcHandler::$WMC_DIR;
         if (!is_dir($wmc_dir)) {
             if (mkdir($wmc_dir)) {
@@ -164,8 +155,7 @@ class WmcHandler
         $json = json_decode($state->getJson(), true);
         if ($json && isset($json['sources']) && is_array($json['sources'])) {
             foreach ($json['sources'] as &$source) {
-                $url = UrlUtil::validateUrl($source['configuration']['options']['url'],
-                        array(strtolower('_signature')));
+                $url = UrlUtil::validateUrl($source['configuration']['options']['url'], array(), array('_signature'));
                 $source['configuration']['options']['url'] = $url;
             }
         }
@@ -179,7 +169,8 @@ class WmcHandler
         if($json && isset($json['sources']) && is_array($json['sources'])){
             $signer = $this->container->get('signer');
             foreach($json['sources'] as &$source){
-                $url = UrlUtil::validateUrl($source['configuration']['options']['url'], array(strtolower('_signature')));
+                // strip _signature, but also '0' created by previously broken unSignUrls code
+                $url = UrlUtil::validateUrl($source['configuration']['options']['url'], array(), array('_signature', '0'));
                 $source['configuration']['options']['url'] = $signer->signUrl($url);
             }
         }

@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmcBundle\Element;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class WmcList extends WmcBase
 {
@@ -110,7 +110,7 @@ class WmcList extends WmcBase
     /**
      * Returns a html encoded list of all wmc documents
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return JsonResponse
      */
     protected function getWmcList()
     {
@@ -121,7 +121,9 @@ class WmcList extends WmcBase
         foreach ($wmclist as $wmc) {
             $wmces[$wmc->getId()] = $wmc->getState()->getTitle();
         }
-        return new Response(json_encode(array("success" => $wmces)), 200, array('Content-Type' => 'application/json'));
+        return new JsonResponse(array(
+            "success" => $wmces,
+        ));
     }
 
 }
