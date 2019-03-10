@@ -246,7 +246,6 @@ class WmcLoader extends WmcBase
                 $state->setJson(json_decode($json));
                 if ($state !== null && $state->getJson() !== null) {
                     $wmchandler = $this->wmcHandlerFactory();
-                    $state->setServerurl($wmchandler->getBaseUrl());
                     $state->setSlug($this->entity->getApplication()->getSlug());
                     $state->setTitle("Mapbender State");
                     $wmc->setWmcid(round((microtime(true) * 1000)));

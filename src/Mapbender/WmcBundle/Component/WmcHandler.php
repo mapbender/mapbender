@@ -50,15 +50,14 @@ class WmcHandler
     /**
      * Saves and returns a saved state
      *
-     * @param array $jsonState a mapbender state
-     * @return \Mapbender\CoreBundle\Entity\State or null
+     * @param string $jsonState
+     * @return State|null
      */
     public function saveState($jsonState)
     {
         $state = null;
         if ($jsonState !== null) {
             $state = new State();
-            $state->setServerurl($this->getBaseUrl());
             $state->setSlug($this->application->getSlug());
             $state->setTitle("SuggestMap");
             $state->setJson($jsonState);
@@ -113,18 +112,6 @@ class WmcHandler
             ->setParameter('slug', array($this->application->getSlug()));
         if($onlyPublic) $query->setParameter('public', true);
         return $query->getResult();
-    }
-
-    /**
-     * Gets a base url
-     *
-     * @return string a base url
-     */
-    public function getBaseUrl()
-    {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $url_base = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-        return $url_base;
     }
 
     /**

@@ -10,6 +10,7 @@ use Mapbender\WmcBundle\Form\Type\WmcType;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -198,7 +199,6 @@ class WmcEditor extends WmcBase
             $wmc = $wmchandler->getWmc($wmcid, false);
         } else {
             $state = new State();
-            $state->setServerurl($wmchandler->getBaseUrl());
             $state->setSlug($this->entity->getApplication()->getSlug());
             $wmc = Wmc::create($state);
         }
@@ -294,14 +294,16 @@ class WmcEditor extends WmcBase
                 $em->persist($wmc);
                 $em->flush();
                 if ($wmc->getScreenshotPath() === null) {
-                    if ($wmc->getScreenshot() !== null) {
+                    /** @var UploadedFile $screenshot */
+                    $screenshot = $wmc->getScreenshot();
+                    if ($screenshot !== null) {
                         $upload_directory = $wmchandler->getWmcDir();
                         if ($upload_directory !== null) {
                             $filename = sprintf('screenshot-%d.%s', $wmc->getId(),
-                                $wmc->getScreenshot()->guessExtension());
-                            $wmc->getScreenshot()->move($upload_directory, $filename);
+                                $screenshot->guessExtension());
+                            $screenshot->move($upload_directory, $filename);
                             $wmc->setScreenshotPath($filename);
-                            $format = $wmc->getScreenshot()->getClientMimeType();
+                            $format = $screenshot->getClientMimeType();
                             $screenshotHref = $wmchandler->getWmcUrl($filename);
                             if ($screenshotHref) {
                                 $legendOnlineResource = new OnlineResource($format, $screenshotHref);
@@ -311,7 +313,6 @@ class WmcEditor extends WmcBase
                                 $wmc->setLogourl(null);
                             }
                             $state = $wmc->getState();
-                            $state->setServerurl($wmchandler->getBaseUrl());
                             $state->setSlug($this->getEntity()->getApplication()->getSlug());
                         }
                     } else {

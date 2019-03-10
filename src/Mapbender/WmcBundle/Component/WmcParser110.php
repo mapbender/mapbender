@@ -3,10 +3,10 @@
 namespace Mapbender\WmcBundle\Component;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\Size;
 use Mapbender\CoreBundle\Component\StateHandler;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\CoreBundle\Entity\State;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\MinMax;
@@ -68,7 +68,7 @@ class WmcParser110 extends WmcParser
             unset($ext);
         }
 
-        $stateHandler->setName($this->getValue("./cntxt:Title/text()", $genEl));
+        $title = $this->getValue("./cntxt:Title/text()", $genEl);
         $keywordList = $this->xpath->query("./cntxt:KeywordList/cntxt:Keyword", $genEl);
         if ($keywordList !== null && $keywordList->length > 0) {
             $keywords = array();
@@ -155,7 +155,10 @@ class WmcParser110 extends WmcParser
                 $stateHandler->addSource($sourcetmp);
             }
         }
-        $wmc->setState($stateHandler->generateState());
+        $state = new State();
+        $state->setTitle($title);
+        $state->setJson(json_encode($stateHandler->toArray()));
+        $wmc->setState($state);
         return $wmc;
     }
 
@@ -166,6 +169,7 @@ class WmcParser110 extends WmcParser
      * (xpath: '/ViewContext/LayerList/Layer')
      * @param string $srs wmc srs (srs from WMC document xpath:
      * '/ViewContext/General/BoundingBox/@SRS')
+     * @param string $infoFormat
      * @return array layer configuration as array
      */
     private function parseLayer(\DOMElement $layerElm, $srs, $infoFormat)
@@ -341,9 +345,9 @@ class WmcParser110 extends WmcParser
     /**
      * Returns the BoundingBox
      *
-     * @param type $xpathStrArr
-     * @param type $contextElm
-     * @param type $defSrs
+     * @param string[] $xpathStrArr
+     * @param \DOMNode $contextElm
+     * @param string $defSrs
      * @return \Mapbender\CoreBundle\Component\BoundingBox|null
      */
     private function getBoundingBox($xpathStrArr, $contextElm, $defSrs)
@@ -374,9 +378,9 @@ class WmcParser110 extends WmcParser
     /**
      * Returns the first found value with xpath from $xpathStrArr.
      *
-     * @param type $xpathStrArr array with xpathes
-     * @param type $contextElm context element
-     * @param type $defaultValue default value
+     * @param string[] $xpathStrArr array with xpathes
+     * @param \DOMNode $contextElm context element
+     * @param mixed $defaultValue default value
      * @return string|\DOMElement|$defaultValue
      */
     private function findFirstValue($xpathStrArr, $contextElm, $defaultValue = null)
@@ -399,8 +403,8 @@ class WmcParser110 extends WmcParser
     /**
      * Returns the first found DOMNodeList with xpath from $xpathStrArr.
      *
-     * @param type $xpathStrArr array with xpathes
-     * @param type $contextElm context element
+     * @param string[] $xpathStrArr array with xpathes
+     * @param \DOMNode $contextElm context element
      * @return \DOMNodeList
      */
     private function findFirstList($xpathStrArr, $contextElm)

@@ -30,12 +30,6 @@ class State
     protected $title;
 
     /**
-     * @var string $title The server url
-     * @ORM\Column(type="string", length=1024, nullable=true)
-     */
-    protected $serverurl;
-
-    /**
      * @var string $title The appllication slug
      * @ORM\Column(type="string", length=128, nullable=true)
      */
@@ -99,29 +93,6 @@ class State
     public function getTitle()
     {
         return $this->title;
-    }
-
-    /**
-     * Set serverurl
-     *
-     * @param  string $serverurl
-     * @return State
-     */
-    public function setServerurl($serverurl)
-    {
-        $this->serverurl = $serverurl;
-
-        return $this;
-    }
-
-    /**
-     * Get serverurl
-     *
-     * @return string serverurl
-     */
-    public function getServerurl()
-    {
-        return $this->serverurl;
     }
 
     /**

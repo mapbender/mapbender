@@ -49,7 +49,7 @@ abstract class WmcParser
      * @param string $xpath xpath expression
      * @param \DOMNode $contextElm the node to use as context for evaluating the
      * XPath expression.
-     * @return string the value of item or the selected item or null
+     * @return string|\DOMNode|null the value of item or the selected item or null
      */
     protected function getValue($xpath, $contextElm = null)
     {
