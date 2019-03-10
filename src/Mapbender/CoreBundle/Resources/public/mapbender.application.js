@@ -248,6 +248,21 @@ Mapbender.elementRegistry = new Mapbender.ElementRegistry();
 
 $.extend(Mapbender, (function($) {
     'use strict';
+    function _initLayersets(config) {
+        var lsKeys = Object.keys(config);
+        for (var i = 0; i < lsKeys.length; ++i) {
+            var layerSet = config[lsKeys[i]];
+            for (var j = 0; j < layerSet.length; ++j) {
+                var instanceWrapper = layerSet[j];
+                var instanceKeys = Object.keys(instanceWrapper);
+                for (var k = 0; k < instanceKeys.length; ++k) {
+                    var instanceKey = instanceKeys[k];
+                    var instanceDef = instanceWrapper[instanceKey];
+                    instanceWrapper[instanceKey] = new Mapbender.Source(instanceDef);
+                }
+            }
+        }
+    }
 
     function _getElementInitInfo(initName) {
         var initParts = initName.split('.');
@@ -324,6 +339,8 @@ $.extend(Mapbender, (function($) {
 
 
     function setup() {
+        _initLayersets(Mapbender.configuration.layersets || {});
+
         // Mark all elements for elementRegistry tracking before calling the constructors.
         // This is necessary to correctly record ready events of elements that become
         // ready immediately in their widget constructor / _create method, most notably

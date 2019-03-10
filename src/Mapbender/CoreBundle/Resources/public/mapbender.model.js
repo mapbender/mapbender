@@ -893,11 +893,17 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     /**
-     * @param {object} sourceDef
+     * @param {Mapbender.Source|Object} sourceOrSourceDef
      * @param {boolean} [mangleIds] to rewrite sourceDef.id and all layer ids EVEN IF ALREADY POPULATED
      * @returns {object} sourceDef same ref, potentially modified
      */
-    addSourceFromConfig: function(sourceDef, mangleIds) {
+    addSourceFromConfig: function(sourceOrSourceDef, mangleIds) {
+        var sourceDef;
+        if (sourceOrSourceDef instanceof Mapbender.Source) {
+            sourceDef = sourceOrSourceDef;
+        } else {
+            sourceDef = Mapbender.Source.factory(sourceOrSourceDef);
+        }
         if (!sourceDef.origId) {
             sourceDef.origId = '' + sourceDef.id;
         }
@@ -914,6 +920,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var mapQueryLayer = this.map.layers(this._convertLayerDef(sourceDef, mangleIds));
         sourceDef.mqlid = mapQueryLayer.id;
         sourceDef.ollid = mapQueryLayer.olLayer.id;
+        // source attribute required by older special snowflake versions of FeatureInfo
         mapQueryLayer.source = sourceDef;
         Mapbender.source[sourceDef.type.toLowerCase()].postCreate(sourceDef, mapQueryLayer);
         mapQueryLayer.olLayer.mbConfig = sourceDef;
