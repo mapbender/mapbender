@@ -265,17 +265,16 @@ Mapbender.initElement = function(id, data) {
     var widgetInfo = data.init.split('.');
     var widgetName = widgetInfo[1];
     var nameSpace = widgetInfo[0];
-    var readyEvent = widgetName.toLowerCase() + 'ready';
 
     var mapbenderWidgets = $[nameSpace];
     if (!mapbenderWidgets) {
-        if (!mapbenderWidget) {
-            throw new Error("No such widget namespace" + nameSpace);
-        }
+        Mapbender.elementRegistry.markFailed(id);
+        throw new Error("No such widget namespace" + nameSpace);
     }
 
     var mapbenderWidget = mapbenderWidgets[widgetName];
     if (!mapbenderWidget) {
+        Mapbender.elementRegistry.markFailed(id);
         throw new Error("No such widget " + data.init);
     }
     return mapbenderWidget(data.configuration, widgetId);
