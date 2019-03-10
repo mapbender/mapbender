@@ -72,12 +72,8 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         return mqLayerDef;
     },
     changeProjection: function(source, projection) {
-        var olLayer = Mapbender.Model.getNativeLayer(source);
-        var options = {
-            projection: projection
-        };
-        olLayer.addOptions(options, false);
-        return true;
+        // do not handle
+        return undefined;
     },
     getMaxExtent: function(source, projection, layer) {
         var confSource;
