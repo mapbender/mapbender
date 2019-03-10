@@ -13,7 +13,6 @@ use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\Component\Style;
-use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
 use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
 use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
@@ -240,10 +239,6 @@ class WmcParser110 extends WmcParser
         $wmsinst->setId(intval($id))
             ->setTitle($wms->getTitle())
             ->setSource($wms);
-        $wmsconf = new WmsInstanceConfiguration();
-        $wmsconf->setType(strtolower($wmsinst->getType()));
-        $wmsconf->setTitle($wmsinst->getTitle());
-        $wmsconf->setIsBaseSource(false);
         $options = new WmsInstanceConfigurationOptions();
         $options->setUrl($wms->getGetMap()->getHttpGet())
             ->setVisible($wmsinst->getVisible())
@@ -270,7 +265,6 @@ class WmcParser110 extends WmcParser
                 ->setTiled($wmsinst->getTiled())
                 ->setInfoformat($wmsinst->getInfoformat());
         }
-        $wmsconf->setOptions($options);
 
         $num = 0;
         $rootInst = new WmsInstanceLayer();
@@ -332,12 +326,19 @@ class WmcParser110 extends WmcParser
             }
             $rootLayHandler = new WmsInstanceLayerEntityHandler($this->container, $rootInst);
             $children = array($rootLayHandler->generateConfiguration());
-            $wmsconf->setChildren($children);
+            $instanceConfig = array(
+                'type' => $wmsinst->getType(),
+                'title' => $wmsinst->getTitle(),
+                'isBaseSource' => false,
+                'children' => $children,
+                'options' => $options->toArray(),
+            );
             return array(
                 'type' => strtolower($wmsinst->getType()),
                 'title' => $wmsinst->getTitle(),
                 'id' => $wmsinst->getId(),
-                'configuration' => $wmsconf->toArray());
+                'configuration' => $instanceConfig,
+            );
         }
         return null;
     }

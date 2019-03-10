@@ -16,7 +16,6 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
  *     The only remaining use is in WmcParser110.
  *
  * @see WmcParser110::parseLayer()
- * @see WmsInstanceConfiguration::fromEntity()
  * @internal
  */
 class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
