@@ -8,19 +8,20 @@
     min-height: $fontSize*7;
   }
 }
-// ---------------------------------------------------------- ADD SERVICE
-.serviceAddBox{
-  $labelWidth:120px;
-  $inputWidth:300px;
 
-  margin-right:$space;
-
-  .labelInput{width:$labelWidth;}
-  .input{
-    margin-bottom:$space/2;
-    width: $inputWidth;
+/**
+ * .box adds a border. If a fieldset has .box, that border appears at "strikethrough" height for the fieldset legend,
+ * which looks pretty bad. For this combination, remove the standard bottom border and minimize legend width to allow the
+ * border to at least fill the sides of the legend text.
+ */
+fieldset.box {
+  legend {
+    display: inline-block;
+    width: auto;
+    border-bottom: none;
   }
 }
+
 // --------------------------------------------------------- VIEW SERVICE
 .serviceContainer{
   .labelText{float:left;}
