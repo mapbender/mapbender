@@ -246,86 +246,108 @@ Mapbender.ElementRegistry = (function($){
 
 Mapbender.elementRegistry = new Mapbender.ElementRegistry();
 
-/**
- * Initialize mapbender element
- *
- * @param id
- * @param data elemenent configurations data object
- */
-Mapbender.initElement = function(id, data) {
-    var widgetId = '#' + id;
-    var widgetElement = $(widgetId);
-    var hasElement = widgetElement.size() > 0;
+$.extend(Mapbender, (function($) {
+    'use strict';
 
-    if(!hasElement) {
-        console.log("Element '" + widgetId + "' isn't available.");
-        return;
+    function _getElementInitInfo(initName) {
+        var initParts = initName.split('.');
+        var methodNamespace, innerName;
+
+        if (initParts.length > 0) {
+            methodNamespace = $[initParts[0]] || null;
+            innerName = initParts[1];
+        } else {
+            methodNamespace = $;
+            innerName = initParts[0];
+        }
+        return {
+            initMethod: (methodNamespace || {})[innerName] || null,
+            eventPrefix: innerName.toLowerCase()
+        }
     }
 
-    var widgetInfo = data.init.split('.');
-    var widgetName = widgetInfo[1];
-    var nameSpace = widgetInfo[0];
+    /**
+     * @param {String} id
+     * @param {Object} data
+     * @return {*}
+     */
+    function initElement(id, data) {
+        var selector = '#' + id;
+        if (!$(selector).length) {
+            throw new Error("No DOM match for element selector " + selector);
+        }
+        var initInfo = _getElementInitInfo(data.init);
+        if (!initInfo.initMethod) {
+            Mapbender.elementRegistry.markFailed(id);
+            throw new Error("No such widget " + data.init);
+        }
 
-    var mapbenderWidgets = $[nameSpace];
-    if (!mapbenderWidgets) {
-        Mapbender.elementRegistry.markFailed(id);
-        throw new Error("No such widget namespace" + nameSpace);
+        return (initInfo.initMethod)(data.configuration, selector);
+    }
+    function _trackElements(config) {
+        // @todo: fold copy&paste between this method and initElement
+        var elementIds = Object.keys(config);
+        for (var i = 0; i < elementIds.length; ++i) {
+            var id = elementIds[i];
+            var data = config[id];
+            var $node = $('#' + id);
+            if ($node.length) {
+                var initInfo = _getElementInitInfo(data.init);
+                var readyEventName = initInfo.eventPrefix && [initInfo.eventPrefix, 'ready'].join('');
+                Mapbender.elementRegistry.trackElementNode($node, readyEventName);
+            } else {
+                console.error("No matching dom node for configured element", id, data);
+            }
+        }
+    }
+    function _initElements(config, debug) {
+        var elementIds = Object.keys(config);
+        for (var i = 0; i < elementIds.length; ++i) {
+            var elementId = elementIds[i];
+            var elementData = config[elementId];
+            try {
+                var instance = initElement(elementId, elementData);
+                Mapbender.elementRegistry.markCreated(elementId, instance);
+            } catch(e) {
+                Mapbender.elementRegistry.markFailed(elementId);
+                // NOTE: console.error produces a NEW stack trace that ends right here, and as such
+                //       won't point to the origin of the Error at all.
+                console.error("Element " + elementId + " failed to initialize:", e.message, elementData);
+                if (debug) {
+                    // Log original stack trace (clickable in Chrome, unfortunately not in Firefox) separately
+                    console.log(e.stack);
+                }
+                $.notify('Your element with id ' + elementId + ' (widget ' + elementData.init + ') failed to initialize properly.', 'error');
+            }
+        }
     }
 
-    var mapbenderWidget = mapbenderWidgets[widgetName];
-    if (!mapbenderWidget) {
-        Mapbender.elementRegistry.markFailed(id);
-        throw new Error("No such widget " + data.init);
-    }
-    return mapbenderWidget(data.configuration, widgetId);
-};
 
-Mapbender.source = Mapbender.source || {};
-Mapbender.setup = function(){
-    $.each(Mapbender.configuration.elements, function(id, data) {
+    function setup() {
         // Mark all elements for elementRegistry tracking before calling the constructors.
         // This is necessary to correctly record ready events of elements that become
         // ready immediately in their widget constructor / _create method, most notably
         // mapbenderMbMap.
-        // @todo: fold copy&paste between this method and initElement
-        var widgetId = '#' + id;
-        var $node = $(widgetId);
-        var widgetInfo = data.init.split('.');
-        var widgetName = widgetInfo[1];
-        var readyEventName = widgetName.toLowerCase() + 'ready';
-        if ($node.length) {
-            Mapbender.elementRegistry.trackElementNode($node, readyEventName);
-        } else {
-            console.error("No matching dom node for configured element", id, data);
-        }
-    });
+        _trackElements(Mapbender.configuration.elements);
 
-    // Initialize all elements by calling their init function with their options
-    $.each(Mapbender.configuration.elements, function(id, data){
         var defaultStackTraceLimit = Error.stackTraceLimit;
         // NOTE: do not set undefined; undefined captures NO STACK TRACE AT ALL in some browsers
         Error.stackTraceLimit = 100;
-        try {
-            var instance = Mapbender.initElement(id, data);
-            Mapbender.elementRegistry.markCreated(id, instance);
-        } catch(e) {
-            Mapbender.elementRegistry.markFailed(id);
-            // NOTE: console.error produces a NEW stack trace that ends right here, and as such
-            //       won't point to the origin of the Error at all.
-            console.error("Element " + id + " failed to initialize:", e.message, data);
-            if (Mapbender.configuration.application.debug) {
-                // Log original stack trace (clickable in Chrome, unfortunately not in Firefox) separately
-                console.log(e.stack);
-            }
-            $.notify('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.', 'error');
-        }
-        Error.stackTraceLimit = defaultStackTraceLimit;
-    });
+        _initElements(Mapbender.configuration.elements, Mapbender.configuration.application.debug || false);
 
-    // Tell the world that all widgets have been set up. Some elements will
-    // need this to make calls to other element's widgets
-    $(document).trigger('mapbender.setupfinished');
-};
+        Error.stackTraceLimit = defaultStackTraceLimit;
+
+        // Tell the world that all widgets have been set up. Some elements will
+        // need this to make calls to other element's widgets
+        $(document).trigger('mapbender.setupfinished');
+    }
+
+    return {
+        source: {},
+        initElement: initElement,
+        setup: setup
+    }
+}(jQuery)));
 
 Mapbender.error = function(errorObject,delayTimeout){
     var errorMessage = errorObject;
