@@ -3,17 +3,16 @@
 namespace Mapbender\PrintBundle\Element;
 
 use Doctrine\Common\Collections\Collection;
-use FOM\UserBundle\Entity\Group;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Component\Service\PrintServiceBridge;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -411,55 +410,70 @@ class PrintClient extends Element
                 'path' => 'images/legendpage_image.png',
             ),
         );
+        $fomGroups = array();
         /** @var TokenStorageInterface $tokenStorage */
         $tokenStorage = $this->container->get('security.token_storage');
         $token = $tokenStorage->getToken();
         if ($token && !$token instanceof AnonymousToken) {
             $user = $token->getUser();
-            // getUser's return value can be ...
-            if ($user instanceof UserInterface) {
-                // a) a UserInterface
+            // getUser's return value can be a lot of different things
+            if (is_object($user) && ($user instanceof \FOM\UserBundle\Entity\User)) {
                 $values = array_replace($values, array(
                     'userId' => $user->getId(),
+                    'userName' => $user->getUsername(),
+                ));
+                $fomGroups = $user->getGroups() ?: array();
+                if ($fomGroups instanceof Collection) {
+                    $fomGroups = $fomGroups->getValues();
+                }
+            } elseif (is_object($user) && ($user instanceof UserInterface)) {
+                $values = array_replace($values, array(
                     'userName' => $user->getUsername(),
                 ));
             } elseif ($user) {
                 // b) an object with a __toString method or just a string
                 $values['userName'] = "{$user}";
             }
-
-            try {
-                // This only works for FOM user entity; getGroups is not part of
-                // the framework's base UserInterface.
-                if ($user instanceof \FOM\UserBundle\Entity\User) {
-                    /** @var Collection|Group[] $groups */
-                    $groups = $user->getGroups();
-                } else {
-                    $groups = null;
-                }
-                if ($groups && count($groups)) {
-                    /** @var Collection|Group[] $groups */
-                    $values = array_replace($values, array(
-                        'legendpage_image' => array(
-                            'type' => 'resource',
-                            'path' => 'images/' . $groups[0]->getTitle() . '.png',
-                        ),
-                        'dynamic_image' => array(
-                            'type' => 'resource',
-                            'path' => 'images/' . $groups[0]->getTitle() . '.png',
-                        ),
-                        'dynamic_text' => array(
-                            'type' => 'text',
-                            'text' => $groups[0]->getDescription(),
-                        ),
-                    ));
-                }
-
-            } catch (\Exception $e) {
-                // wrong user entity type, nothing we can do (fall through to default)
+            if ($fomGroups) {
+                $firstGroup = $fomGroups[0];
+                $values = array_replace($values, $this->getGroupSpecifics($firstGroup, $user));
             }
         }
         return $values;
+    }
+
+    /**
+     * Extracts group-specific values. This implementation only works for FOM Group entities.
+     * Other types are accepted, but you will always get an empty array for them.
+     *
+     * Unused param $user is provided for override methods, if you want to look into your
+     * LDAP or something. This can have a multitude of types.
+     * @see AbstractToken::setUser()
+     *
+     * @param \FOM\UserBundle\Entity\Group|mixed $group
+     * @param UserInterface|object|string $user
+     * @return array
+     */
+    protected function getGroupSpecifics($group, $user)
+    {
+        if (is_object($group) && ($group instanceof \FOM\UserBundle\Entity\Group)) {
+            return array(
+                'legendpage_image' => array(
+                    'type' => 'resource',
+                    'path' => 'images/' . $group->getTitle() . '.png',
+                ),
+                'dynamic_image' => array(
+                    'type' => 'resource',
+                    'path' => 'images/' . $group->getTitle() . '.png',
+                ),
+                'dynamic_text' => array(
+                    'type' => 'text',
+                    'text' => $group->getDescription(),
+                ),
+            );
+        } else {
+            return array();
+        }
     }
 
     /**
