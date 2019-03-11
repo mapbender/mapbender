@@ -394,9 +394,10 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             }
             $text = $this->getTextFieldContent($fieldName, $jobData);
             if ($text !== null) {
+                $lineHeight = $region->getFontStyle()->getLineHeightMm();
                 $this->applyFontStyle($pdf, $region);
-                $pdf->SetXY($region['x'] - 1, $region['y']);
-                $pdf->MultiCell($region['width'], $region['height'], utf8_decode($text));
+                $pdf->SetXY($region['x'] - 1, $region['y'] + 0.25 * $lineHeight);
+                $pdf->MultiCell($region['width'], $lineHeight, utf8_decode($text), 0, 'L');
             }
         }
         // reset text color to default black
