@@ -56,13 +56,11 @@ Mapbender.Event.Dispatcher = Class({
  * Abstract Geo Source Handler
  * @author Paul Schmidt
  */
-Mapbender.Geo = {
-    'layerOrderMap': {}
-};
+Mapbender.Geo = {};
+
 Mapbender.Geo.SourceHandler = Class({
     'extends': Mapbender.Event.Dispatcher
 }, {
-    _layerOrderMap: {},
     'private string layerNameIdent': 'name',
     'private object defaultOptions': {},
     'abstract public function create': function(options) {
@@ -226,7 +224,6 @@ Mapbender.Geo.SourceHandler = Class({
             infolayers: []
         };
         var layerParamName = this.layerNameIdent;
-        var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
         Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer) {
             // Layer names can be emptyish, most commonly on root layers
             // Suppress layers with empty names entirely
@@ -241,11 +238,6 @@ Mapbender.Geo.SourceHandler = Class({
                 }
             }
         });
-        if (customLayerOrder) {
-            result.layers = _.filter(customLayerOrder, function(layerName) {
-                return result.layers.indexOf(layerName) !== -1;
-            });
-        }
         return result;
     },
     /**
@@ -361,7 +353,8 @@ Mapbender.Geo.SourceHandler = Class({
     getExtendedLeafInfo: function(source, scale, extent) {
         var infoMap = {};
         var self = this;
-        var customLayerOrder = Mapbender.Geo.layerOrderMap["" + source.id];
+
+        var order = 0;
         Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
             var layerId = layer.options.id;
             var outOfScale = !self.isLayerInScale(layer, scale);
@@ -376,10 +369,6 @@ Mapbender.Geo.SourceHandler = Class({
             // @todo TBD: disable featureInfo if layer visual is disabled?
             // featureInfo = featureInfo && enabled
             var visibility = enabled && !(outOfScale || outOfBounds);
-            var order = (customLayerOrder || []).indexOf(layer.options.name);
-            if (order === -1) {
-                order = null;
-            }
             infoMap[layerId] = {
                 layer: layer,
                 state: {
@@ -391,6 +380,7 @@ Mapbender.Geo.SourceHandler = Class({
                 order: order,
                 parents: parents
             };
+            ++order;
         });
         return infoMap;
     },
@@ -484,11 +474,39 @@ Mapbender.Geo.SourceHandler = Class({
         return true;
     },
     setLayerOrder: function setLayerOrder(source, layerIdOrder) {
-        var newLayerNameOrder = $.map(layerIdOrder, function(layerId) {
-            var layerObj = this.findLayer(source, {id: layerId});
-            return layerObj.layer.options.name;
-        }.bind(this));
-        Mapbender.Geo.layerOrderMap["" + source.id] = newLayerNameOrder;
+        var listsSorted = [];
+        var _pickChildId = function(ids, layer) {
+            if (!ids.length) {
+                return null;
+            } else {
+                var ix = ids.indexOf(layer.options.id);
+                if (ix !== -1) {
+                    return ids[ix];
+                }
+            }
+            if (layer.children && layer.children.length) {
+                for (var ci = 0; ci < layer.children.length; ++ci) {
+                    var ch = _pickChildId(ids, layer.children[ci]);
+                    if (ch !== null) {
+                        return ch;
+                    }
+                }
+            }
+            return null;
+        };
+        var _siblingSort = function(a, b) {
+            var ixA = layerIdOrder.indexOf(_pickChildId(layerIdOrder, a));
+            var ixB = layerIdOrder.indexOf(_pickChildId(layerIdOrder, b));
+            return ixA - ixB;
+        };
+        for (var idIx = 0; idIx < layerIdOrder.length; ++idIx) {
+            var layerId = layerIdOrder[idIx];
+            var layerObj = this.findLayer(source, {id: layerId}).layer;
+            if (listsSorted.indexOf(layerObj.siblings) === -1) {
+                layerObj.siblings.sort(_siblingSort);
+                listsSorted.push(layerObj.siblings);
+            }
+        }
     }
 });
 

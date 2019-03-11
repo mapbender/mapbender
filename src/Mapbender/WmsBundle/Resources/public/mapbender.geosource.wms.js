@@ -38,7 +38,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             }
         });
 
-        Mapbender.Geo.layerOrderMap["" + sourceDef.id] = layerNames;
         var finalUrl = sourceDef.configuration.options.url;
         
         var mqLayerDef = {
