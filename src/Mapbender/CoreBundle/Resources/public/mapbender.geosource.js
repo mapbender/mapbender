@@ -14,8 +14,6 @@ Mapbender.Geo = {};
 Mapbender.Geo.SourceHandler = Class({
     'private string layerNameIdent': 'name',
     'private object defaultOptions': {},
-    'abstract public function create': function(options) {
-    },
     'abstract public function featureInfoUrl': function(source, x, y) {
     },
     'abstract public function getPrintConfig': function(layer, bounds, isProxy) {

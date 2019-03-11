@@ -1,3 +1,66 @@
+window.Mapbender = $.extend(Mapbender || {}, (function() {
+    function WmsSource() {
+        Mapbender.Source.apply(this, arguments);
+    }
+    WmsSource.prototype = Object.create(Mapbender.Source.prototype);
+    WmsSource.prototype.constructor = WmsSource;
+    function WmsSourceLayer() {
+        Mapbender.SourceLayer.apply(this, arguments);
+    }
+    WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
+    WmsSourceLayer.prototype.constructor = WmsSourceLayer;
+    Mapbender.Source.typeMap['wms'] = WmsSource;
+    Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
+    $.extend(WmsSource.prototype, {
+        initializeLayers: function() {
+            var options = this.getNativeLayerOptions();
+            var params = this.getNativeLayerParams();
+            var url = this.configuration.options.url;
+            var name = this.title;
+            var olLayer = new OpenLayers.Layer.WMS(name, url, params, options);
+            this.nativeLayers = [olLayer];
+            this.ollid = olLayer.id;
+            return this.nativeLayers;
+        },
+        getNativeLayerOptions: function() {
+            var rootLayer = this.configuration.children[0];
+            var bufferConfig = this.configuration.options.buffer;
+            var ratioConfig = this.configuration.options.ratio;
+            var opts = {
+                isBaseLayer: false,
+                opacity: this.configuration.options.opacity,
+                visibility: this.configuration.options.visible,
+                singleTile: !this.configuration.options.tiled,
+                noMagic: true,
+                minScale: rootLayer.minScale,
+                maxScale: rootLayer.maxScale
+            };
+            if (opts.singleTile) {
+                opts.ratio = parseFloat(ratioConfig) || 1.0;
+            } else {
+                opts.buffer = parseInt(bufferConfig) || 0;
+            }
+            return opts;
+        },
+        getNativeLayerParams: function() {
+            var params = {
+                transparent: this.configuration.options.transparent,
+                format: this.configuration.options.format,
+                version: this.configuration.options.version
+            };
+            var exceptionFormatConfig = this.configuration.options.exception_format;
+            if (exceptionFormatConfig) {
+                params.exceptions = exceptionFormatConfig;
+            }
+            return params;
+        }
+    });
+    return {
+        WmsSource: WmsSource,
+        WmsSourceLayer: WmsSourceLayer
+    };
+}()));
+
 if(window.OpenLayers) {
     /**
      * This suppresses broken requests from MapQuery layers that get stuck with a
@@ -18,37 +81,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         type: 'wms',
         noMagic: true,
         transitionEffect: 'resize'
-    },
-    create: function(sourceDef) {
-        var rootLayer = sourceDef.configuration.children[0];
-
-        var finalUrl = sourceDef.configuration.options.url;
-        
-        var mqLayerDef = {
-            type: 'wms',
-            wms_parameters: {
-                version: sourceDef.configuration.options.version
-            },
-            label: sourceDef.title,
-            url: finalUrl,
-            transparent: sourceDef.configuration.options.transparent,
-            format: sourceDef.configuration.options.format,
-            isBaseLayer: sourceDef.configuration.options.baselayer,
-            opacity: sourceDef.configuration.options.opacity,
-            visibility: sourceDef.configuration.options.visible,
-            singleTile: !sourceDef.configuration.options.tiled,
-            attribution: sourceDef.configuration.options.attribution, // attribution add !!!
-            minScale: rootLayer.minScale,
-            maxScale: rootLayer.maxScale,
-            transitionEffect: 'resize',
-            buffer: sourceDef.configuration.options.buffer ? parseInt(sourceDef.configuration.options.buffer) : 0, // int only for gridded mode
-            ratio: sourceDef.configuration.options.ratio ? parseFloat(sourceDef.configuration.options.ratio) : 1.0 // float only for single-tile mode
-        };
-        if (sourceDef.configuration.options.exception_format) {
-            mqLayerDef.wms_parameters.exceptions = sourceDef.configuration.options.exception_format;
-        }
-        $.extend(mqLayerDef, this.defaultOptions);
-        return mqLayerDef;
     },
     featureInfoUrl: function(source, x, y) {
         var source_, olLayer_;

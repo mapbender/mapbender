@@ -6,8 +6,6 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         if (definition.origId || definition.origId === 0) {
             this.origId = '' + definition.origId;
         }
-        this.mqlid = definition.mqlid;
-        this.ollid = definition.ollid;
         this.title = definition.title;
         this.type = definition.type;
         this.configuration = definition.configuration;
@@ -25,6 +23,10 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
     };
     Source.prototype = {
         constructor: Source,
+        initializeLayers: function() {
+            console.error("Layer creation not implemented", this);
+            throw new Error("Layer creation not implemented");
+        },
         id: null,
         origId: null,
         ollid: null,
@@ -32,12 +34,25 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         title: null,
         type: null,
         configuration: {},
+        nativeLayers: [],
         rewriteLayerIds: function() {
             if (!this.id) {
                 throw new Error("Can't rewrite layer ids with empty source id");
             }
             var rootLayer = this.configuration.children[0];
             rootLayer.rewriteChildIds(this.id);
+        },
+        // Custom toJSON for mbMap.getMapState()
+        // Drops runtime-specific ollid and mqlid
+        // Drops nativeLayers to avoid circular references
+        toJSON: function() {
+            return {
+                id: this.id,
+                origId: this.origId,
+                title: this.title,
+                type: this.type,
+                configuration: this.configuration
+            };
         }
     };
 

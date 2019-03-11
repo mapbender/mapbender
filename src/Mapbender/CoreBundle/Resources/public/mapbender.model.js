@@ -388,13 +388,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             centroid.x + 0.5 * w + buffer_bounds.w,
             centroid.y + 0.5 * h + buffer_bounds.h);
     },
-    _convertLayerDef: function(layerDef) {
-        var gsHandler = this.getGeoSourceHandler(layerDef);
-        var l = $.extend({}, gsHandler.create(layerDef), {
-            visibility: false
-        });
-        return l;
-    },
     generateSourceId: function() {
         var id = 'auto-src-' + (this.baseId + 1);
         ++this.baseId;
@@ -937,18 +930,23 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         if (!this.getSourcePos(sourceDef)) {
             this.sourceTree.push(sourceDef);
         }
-        var mqLayerDef = this._convertLayerDef(sourceDef);
-        var mapQueryLayer = this.map.mqLayerFactory(mqLayerDef);
-        this.map.trackMqLayer(mapQueryLayer);
-        this.map.olMap.addLayer(mapQueryLayer.olLayer);
-        sourceDef.mqlid = mapQueryLayer.id;
-        sourceDef.ollid = mapQueryLayer.olLayer.id;
-        // source attribute required by older special snowflake versions of FeatureInfo
-        mapQueryLayer.source = sourceDef;
-        mapQueryLayer.olLayer.mbConfig = sourceDef;
-        mapQueryLayer.olLayer.events.register("loadstart", this, this._sourceLoadStart);
-        mapQueryLayer.olLayer.events.register("tileerror", this, this._sourceLoadError);
-        mapQueryLayer.olLayer.events.register("loadend", this, this._sourceLoadeEnd);
+
+        var olLayers = sourceDef.initializeLayers();
+        for (var i = 0; i < olLayers.length; ++i) {
+            var olLayer = olLayers[i];
+            olLayer.setVisibility(false);
+            var fakeId = this.map._createId();
+            var fakeMqlayer = this.map._fakeMqLayerFactory(fakeId, olLayer);
+            this.map.trackMqLayer(fakeMqlayer);
+            this.map.olMap.addLayer(olLayer);
+            sourceDef.mqlid = fakeMqlayer.id;
+            // source attribute required by older special snowflake versions of FeatureInfo
+            fakeMqlayer.source = sourceDef;
+            olLayer.mbConfig = sourceDef;
+            olLayer.events.register("loadstart", this, this._sourceLoadStart);
+            olLayer.events.register("tileerror", this, this._sourceLoadError);
+            olLayer.events.register("loadend", this, this._sourceLoadeEnd);
+        }
 
         this.mbMap.fireModelEvent({
             name: 'sourceAdded',
