@@ -36,8 +36,7 @@
             console.warn("Engaging legacy emulation for MapQuery.Map.layers(), only allowed for 'vector' type. Please stop using this.", arguments);
             var fakeId = this._createId();
             var layerName = layerOptions.label || fakeId;
-            delete layerOptions.label;
-            var olLayer = new OpenLayers.Layer.Vector(layerName, layerOptions);
+            var olLayer = new OpenLayers.Layer.Vector(layerName);
             var fakeMqLayer = this._fakeMqLayerFactory(fakeId, olLayer);
             this.trackMqLayer(fakeMqLayer);
             this.olMap.addLayer(olLayer);
@@ -105,7 +104,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     srsDefs: null,
     mapMaxExtent: null,
     mapStartExtent: null,
-    highlightLayer: null,
+    _highlightLayer: null,
     baseId: 0,
     init: function(mbMap) {
         var self = this;
@@ -795,65 +794,60 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     /**
-     *
+     * @param {Array<OpenLayers.Feature>} features
+     * @param {Object} options
+     * @property {boolean} [options.clearFirst]
+     * @property {boolean} [options.goto]
      */
     highlightOn: function(features, options) {
-        var self = this;
-        if (!this.highlightLayer) {
-            this.highlightLayer = this.map.layers({
-                type: 'vector',
-                label: 'Highlight'
-            });
-            var selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
+        if (!this._highlightLayer) {
+            this._highlightLayer = new OpenLayers.Layer.Vector('Highlight');
+            var self = this;
+            var selectControl = new OpenLayers.Control.SelectFeature(this._highlightLayer, {
                 hover: true,
                 onSelect: function(feature) {
-                    self.mbMap._trigger('highlighthoverin', null, {
-                        feature: feature
-                    });
+                    // wrong event name, legacy
+                    self.mbMap._trigger('highlighthoverin', null, {feature: feature});
+                    // correct event name
+                    self.mbMap._trigger('highlightselected', null, {feature: feature});
                 },
                 onUnselect: function(feature) {
-                    self.mbMap._trigger('highlighthoverout', null, {
-                        feature: feature
-                    });
+                    // wrong event name, legacy
+                    self.mbMap._trigger('highlighthoverout', null, {feature: feature});
+                    // correct event name
+                    self.mbMap._trigger('highlightunselected', null, {feature: feature});
                 }
             });
             selectControl.handlers.feature.stopDown = false;
             this.map.olMap.addControl(selectControl);
             selectControl.activate();
         }
-        var o = $.extend({}, {
-            clearFirst: true,
-            "goto": true
-        },
-        options);
+        if (!this._highlightLayer.map) {
+            this.map.olMap.addLayer(this._highlightLayer);
+        }
+
         // Remove existing features if requested
-        if (o.clearFirst) {
-            this.highlightLayer.olLayer.removeAllFeatures();
+        if (!options || typeof options.clearFirst === 'undefined' || options.clearFirst) {
+            this._highlightLayer.removeAllFeatures();
         }
         // Add new highlight features
-        this.highlightLayer.olLayer.addFeatures(features);
+        this._highlightLayer.addFeatures(features);
         // Goto features if requested
-        if (o['goto']) {
-            var bounds = this.highlightLayer.olLayer.getDataExtent();
-            this.map.center({
-                box: bounds.toArray()
-            });
+        if (!options || typeof options.goto === 'undefined' || options.goto) {
+            var bounds = this._highlightLayer.getDataExtent();
+            if (bounds !== null) {
+                this.map.olMap.zoomToExtent(bounds);
+            }
         }
-        this.highlightLayer.bind('featureselected', function() {
-            self.mbMap._trigger('highlightselected', arguments);
-        });
-        this.highlightLayer.bind('featureunselected', function() {
-            self.mbMap._trigger('highlightunselected', arguments);
-        });
     },
     /**
      *
      */
     highlightOff: function(features) {
-        if (!features && this.highlightLayer) {
-            this.highlightLayer.remove();
+        if (!features && this._highlightLayer && this._highlightLayer.map) {
+            this._highlightLayer.map.removeLayer(this._highlightLayer);
         } else if (features && this.highlightLayer) {
-            this.highlightLayer.olLayer.removeFeatures(features);
+            this._highlightLayer.removeFeatures(features);
         }
     },
     setOpacity: function(source, opacity) {
