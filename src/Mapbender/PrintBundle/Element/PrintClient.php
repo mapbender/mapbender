@@ -423,7 +423,7 @@ class PrintClient extends Element
                     'userName' => $user->getUsername(),
                 ));
                 $fomGroups = $user->getGroups() ?: array();
-                if ($fomGroups instanceof Collection) {
+                if (is_object($fomGroups) && ($fomGroups instanceof Collection)) {
                     $fomGroups = $fomGroups->getValues();
                 }
             } elseif (is_object($user) && ($user instanceof UserInterface)) {
