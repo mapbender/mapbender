@@ -19,24 +19,8 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         noMagic: true,
         transitionEffect: 'resize'
     },
-    create: function(sourceDef, mangleIds){
+    create: function(sourceDef) {
         var rootLayer = sourceDef.configuration.children[0];
-        var layerNames = [];
-
-        Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layer, index, parents) {
-            /* set unic id for a layer */
-            if (mangleIds) {
-                layer.options.origId = layer.options.id;
-                layer.options.id = (parents[0] && parents[0].options || sourceDef).id + "_" + index;
-            } else {
-                if (!layer.options.origId && layer.options.id) {
-                    layer.options.origId = layer.options.id;
-                }
-            }
-            if (!layer.children) {
-                layerNames.push(layer.options.name);
-            }
-        });
 
         var finalUrl = sourceDef.configuration.options.url;
         

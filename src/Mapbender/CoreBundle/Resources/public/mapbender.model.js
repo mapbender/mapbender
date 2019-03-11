@@ -389,16 +389,17 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             centroid.x + 0.5 * w + buffer_bounds.w,
             centroid.y + 0.5 * h + buffer_bounds.h);
     },
-    _convertLayerDef: function(layerDef, mangleIds) {
+    _convertLayerDef: function(layerDef) {
         var gsHandler = this.getGeoSourceHandler(layerDef);
-        var l = $.extend({}, gsHandler.create(layerDef, mangleIds), {
+        var l = $.extend({}, gsHandler.create(layerDef), {
             visibility: false
         });
         return l;
     },
     generateSourceId: function() {
-        this.baseId++;
-        return this.baseId.toString();
+        var id = 'auto-src-' + (this.baseId + 1);
+        ++this.baseId;
+        return id;
     },
     getMapExtent: function() {
         return this.map.olMap.getExtent();
@@ -931,20 +932,18 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         } else {
             sourceDef = Mapbender.Source.factory(sourceOrSourceDef);
         }
-        if (!sourceDef.origId) {
-            sourceDef.origId = '' + sourceDef.id;
-        }
         if (mangleIds) {
             sourceDef.id = this.generateSourceId();
-            if (typeof sourceDef.origId === 'undefined') {
+            if (typeof sourceDef.origId === 'undefined' || sourceDef.origId === null) {
                 sourceDef.origId = sourceDef.id;
             }
+            sourceDef.rewriteLayerIds();
         }
 
         if (!this.getSourcePos(sourceDef)) {
             this.sourceTree.push(sourceDef);
         }
-        var mqLayerDef = this._convertLayerDef(sourceDef, mangleIds);
+        var mqLayerDef = this._convertLayerDef(sourceDef);
         var mapQueryLayer = this.map.mqLayerFactory(mqLayerDef);
         this.map.trackMqLayer(mapQueryLayer);
         this.map.olMap.addLayer(mapQueryLayer.olLayer);
