@@ -1,16 +1,53 @@
 ((function($) {
     // NotMapQueryMap, unlike MapQuery.Map, doesn't try to know better how to initialize
     // an OpenLayers Map, doesn't pre-assume any map properties, doesn't mess with default
-    // map controls, doesn't prevent us from passing in layers etc.
+    // map controls, doesn't prevent us from passing in layers, doesn't inherently combine layer
+    // creation and adding layers to the map into the same operation etc.
     // The OpenLayers Map is simply passed in.
     function NotMapQueryMap($element, olMap) {
         this.idCounter = 0;
         this.layersList = {};
         this.element = $element;
-        this.vectorLayers = [];
         $element.data('mapQuery', this);
         this.olMap = olMap;
     }
+    NotMapQueryMap.prototype = {
+        mqLayerFactory: function(mqLayerOptions) {
+            var id = this._createId();
+            return new $.MapQuery.Layer(this, id, mqLayerOptions);
+        },
+        _fakeMqLayerFactory: function(id, olLayer) {
+            return {
+                id: id,
+                olLayer: olLayer,
+                // for older special snowflake versions of FeatureInfo
+                label: olLayer.name || id,
+                map: this
+            };
+        },
+        trackMqLayer: function(mqLayer) {
+            this.layersList[mqLayer.id] = mqLayer;
+        },
+        layers: function(layerOptions) {
+            if (arguments.length !== 1 || Array.isArray(layerOptions) || layerOptions.type !== 'vector') {
+                console.error("Unsupported MapQueryish layers call", arguments);
+                throw new Error("Unsupported MapQueryish layers call");
+            }
+            console.warn("Engaging legacy emulation for MapQuery.Map.layers(), only allowed for 'vector' type. Please stop using this.", arguments);
+            var fakeId = this._createId();
+            var layerName = layerOptions.label || fakeId;
+            delete layerOptions.label;
+            var olLayer = new OpenLayers.Layer.Vector(layerName, layerOptions);
+            var fakeMqLayer = this._fakeMqLayerFactory(fakeId, olLayer);
+            this.trackMqLayer(fakeMqLayer);
+            this.olMap.addLayer(olLayer);
+            return fakeMqLayer;
+        },
+        _createId: function() {
+            return 'certainly-not-mapquery-' + this.idCounter++;
+        }
+    };
+
 window.Mapbender = Mapbender || {};
 window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     /**
@@ -126,22 +163,12 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             });
         }
         var olMap = new OpenLayers.Map(this.mbMap.element.get(0), mapOptions);
-        // Amend NotMapQueryMap prototype. We can only do this now because the MapQuery asset
-        // may be (commonly) loaded only after the Model asset.
-        // @todo: fix asset loading order, set a complete prototype on script load
+        // Use a faked, somewhat compatible-ish surrogate for MapQuery Map
         // @todo: eliminate MapQuery method / property access completely
         // * .layers() invocations here to construct ~WMS layers
-        // * .layers() invocation in coordinates utility to make a vector layer
         // * accesses to 'layersList'
         // * layer lookup via 'mqlid' on source definitions
-        NotMapQueryMap.prototype = $.extend({}, $.MapQuery.Map.prototype, {
-            _updateSelectFeatureControl: function() {},
-            events: {
-                trigger: function() {}
-            },
-            one: function() {},
-            bind: function() {}
-        });
+
         this.map = new NotMapQueryMap(this.mbMap.element, olMap);
 
         // monkey-patch zoom interactions
@@ -917,7 +944,10 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         if (!this.getSourcePos(sourceDef)) {
             this.sourceTree.push(sourceDef);
         }
-        var mapQueryLayer = this.map.layers(this._convertLayerDef(sourceDef, mangleIds));
+        var mqLayerDef = this._convertLayerDef(sourceDef, mangleIds);
+        var mapQueryLayer = this.map.mqLayerFactory(mqLayerDef);
+        this.map.trackMqLayer(mapQueryLayer);
+        this.map.olMap.addLayer(mapQueryLayer.olLayer);
         sourceDef.mqlid = mapQueryLayer.id;
         sourceDef.ollid = mapQueryLayer.olLayer.id;
         // source attribute required by older special snowflake versions of FeatureInfo
