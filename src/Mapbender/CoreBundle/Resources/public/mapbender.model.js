@@ -951,7 +951,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         sourceDef.ollid = mapQueryLayer.olLayer.id;
         // source attribute required by older special snowflake versions of FeatureInfo
         mapQueryLayer.source = sourceDef;
-        Mapbender.source[sourceDef.type.toLowerCase()].postCreate(sourceDef, mapQueryLayer);
         mapQueryLayer.olLayer.mbConfig = sourceDef;
         mapQueryLayer.olLayer.events.register("loadstart", this, this._sourceLoadStart);
         mapQueryLayer.olLayer.events.register("tileerror", this, this._sourceLoadError);

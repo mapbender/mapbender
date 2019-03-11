@@ -1,52 +1,5 @@
 var Mapbender = Mapbender || {};
 /**
- * Simple event dispatcher
- *
- * @author Andriy Oblivantsev <eslider@gmail.com>
- * @copyright 11.08.2014 by WhereGroup GmbH & Co. KG
- */
-Mapbender.Event = {};
-Mapbender.Event.Dispatcher = Class({
-}, {
-    'private object listeners': {},
-    on: function(name, callback) {
-        if (!this.listeners[name]) {
-            this.listeners[name] = [];
-        }
-        this.listeners[name].push(callback);
-        return this;
-    },
-    off: function(name, callback) {
-        if (!this.listeners[name]) {
-            return;
-        }
-        if (callback) {
-            var listeners = this.listeners[name];
-            for (var i in listeners) {
-                if (callback == listeners[i]) {
-                    listeners.splice(i, 1);
-                    return;
-                }
-            }
-        } else {
-            delete this.listeners[name];
-        }
-
-        return this;
-    },
-    dispatch: function(name, data) {
-        if (!this.listeners[name]) {
-            return;
-        }
-
-        var listeners = this.listeners[name];
-        for (var i in listeners) {
-            listeners[i](data);
-        }
-        return this;
-    }
-});
-/**
  * @typedef Model~ExtendedLayerInfo
  * @property {Object} layer
  * @property {Model~LayerState} state
@@ -59,8 +12,6 @@ Mapbender.Event.Dispatcher = Class({
 Mapbender.Geo = {};
 
 Mapbender.Geo.SourceHandler = Class({
-    'extends': Mapbender.Event.Dispatcher
-}, {
     'private string layerNameIdent': 'name',
     'private object defaultOptions': {},
     'abstract public function create': function(options) {
@@ -68,9 +19,6 @@ Mapbender.Geo.SourceHandler = Class({
     'abstract public function featureInfoUrl': function(source, x, y) {
     },
     'abstract public function getPrintConfig': function(layer, bounds, isProxy) {
-    },
-    'public function postCreate': function(olLayer) {
-
     },
     'public function changeProjection': function(source, projection) {
     },
