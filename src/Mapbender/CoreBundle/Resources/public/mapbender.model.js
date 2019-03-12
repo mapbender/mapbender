@@ -12,10 +12,6 @@
         this.olMap = olMap;
     }
     NotMapQueryMap.prototype = {
-        mqLayerFactory: function(mqLayerOptions) {
-            var id = this._createId();
-            return new $.MapQuery.Layer(this, id, mqLayerOptions);
-        },
         _fakeMqLayerFactory: function(id, olLayer) {
             return {
                 id: id,
@@ -27,6 +23,12 @@
         },
         trackMqLayer: function(mqLayer) {
             this.layersList[mqLayer.id] = mqLayer;
+        },
+        trackNativeLayer: function(olLayer) {
+            var id = this._createId();
+            var fakeLayer = this._fakeMqLayerFactory(id, olLayer);
+            this.trackMqLayer(fakeLayer);
+            return fakeLayer;
         },
         layers: function(layerOptions) {
             if (arguments.length !== 1 || Array.isArray(layerOptions) || layerOptions.type !== 'vector') {
@@ -913,9 +915,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         for (var i = 0; i < olLayers.length; ++i) {
             var olLayer = olLayers[i];
             olLayer.setVisibility(false);
-            var fakeId = this.map._createId();
-            var fakeMqlayer = this.map._fakeMqLayerFactory(fakeId, olLayer);
-            this.map.trackMqLayer(fakeMqlayer);
+            var fakeMqlayer = this.map.trackNativeLayer(olLayer);
             this.map.olMap.addLayer(olLayer);
             sourceDef.mqlid = fakeMqlayer.id;
             // source attribute required by older special snowflake versions of FeatureInfo
