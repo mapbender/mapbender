@@ -42,6 +42,17 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
             var rootLayer = this.configuration.children[0];
             rootLayer.rewriteChildIds(this.id);
         },
+        destroyLayers: function() {
+            if (this.nativeLayers && this.nativeLayers.length) {
+                this.nativeLayers.map(function(olLayer) {
+                    olLayer.clearGrid();
+                    olLayer.removeBackBuffer();
+                    olLayer.destroy(false);
+                });
+            }
+            this.nativeLayers = [];
+            this.ollid = null;
+        },
         // Custom toJSON for mbMap.getMapState()
         // Drops runtime-specific ollid and mqlid
         // Drops nativeLayers to avoid circular references
