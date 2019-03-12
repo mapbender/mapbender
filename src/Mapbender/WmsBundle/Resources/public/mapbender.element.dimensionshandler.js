@@ -41,7 +41,7 @@
                         if (sources.length > 0) {
                             var params = {};
                             params[dimension.getOptions().__name] = dimension.valueFromPart(ui.value / 100);
-                            self.model.resetSourceUrl(sources[0], {'add': params}, true);
+                            self.model.resetSourceUrl(sources[0], {'add': params});
                         }
                     });
                 }

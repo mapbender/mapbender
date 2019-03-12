@@ -464,33 +464,11 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
         return null;
     },
-    resetSourceUrl: function(source, options, reload) {
-        var params = OpenLayers.Util.getParameters(source.configuration.options.url);
-        var url;
+    resetSourceUrl: function(source, options) {
         if (options.add) {
-            for (var name in options.add) {
-                params[name] = options.add[name];
-            }
-            url = OpenLayers.Util.urlAppend(
-                source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
+            source.addParams(options.add);
         } else if (options.remove) {
-            for (var name in options.remove) {
-                if (params[name]) {
-                    delete(params[name]);
-                }
-            }
-            url = OpenLayers.Util.urlAppend(
-                source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
-        }
-        if (url) {
-            var olLayer = this.getNativeLayer(source);
-            source.configuration.options.url = url;
-            olLayer.url = url;
-            if (olLayer.getVisibility()) {
-                if (reload) {
-                    olLayer.redraw();
-                }
-            }
+            source.removeParams(Object.keys(options.remove));
         }
     },
     /**

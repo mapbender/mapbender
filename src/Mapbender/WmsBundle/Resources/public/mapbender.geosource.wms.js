@@ -1,6 +1,10 @@
 window.Mapbender = $.extend(Mapbender || {}, (function() {
-    function WmsSource() {
+    function WmsSource(definition) {
         Mapbender.Source.apply(this, arguments);
+        this.customParams = {};
+        if (definition.customParams) {
+            $.extend(this.customParams, definition.customParams);
+        }
     }
     WmsSource.prototype = Object.create(Mapbender.Source.prototype);
     WmsSource.prototype.constructor = WmsSource;
@@ -12,6 +16,10 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
     Mapbender.Source.typeMap['wms'] = WmsSource;
     Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
     $.extend(WmsSource.prototype, {
+        // We must remember custom params for serialization in getMapState()...
+        customParams: {},
+        // ... but we will not remember the following ~standard WMS params the same way
+        _runtimeParams: ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'],
         initializeLayers: function() {
             var options = this.getNativeLayerOptions();
             var params = this.getNativeLayerParams();
@@ -43,16 +51,39 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
             return opts;
         },
         getNativeLayerParams: function() {
-            var params = {
+            var params = $.extend({}, this.customParams, {
                 transparent: this.configuration.options.transparent,
                 format: this.configuration.options.format,
                 version: this.configuration.options.version
-            };
+            });
             var exceptionFormatConfig = this.configuration.options.exception_format;
             if (exceptionFormatConfig) {
                 params.exceptions = exceptionFormatConfig;
             }
             return params;
+        },
+        addParams: function(params) {
+            for (var i = 0; i < this.nativeLayers.length; ++i) {
+                this.nativeLayers[i].mergeNewParams(params);
+            }
+            var rtp = this._runtimeParams;
+            $.extend(this.customParams, _.omit(params, function(value, key) {
+                return -1 !== rtp.indexOf(('' + key).toUpperCase());
+            }));
+        },
+        removeParams: function(names) {
+            // setting a param to null effectively removes it from the generated URL
+            // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Util.js#L514
+            // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Layer/HTTPRequest.js#L197
+            var nullParams = _.object(names, names.map(function() {
+                return null;
+            }));
+            this.addParams(nullParams);
+        },
+        toJSON: function() {
+            var s = Mapbender.Source.prototype.toJSON.apply(this, arguments);
+            s.customParams = this.customParams;
+            return s;
         }
     });
     return {
