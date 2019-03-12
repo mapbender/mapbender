@@ -107,6 +107,10 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     mapMaxExtent: null,
     mapStartExtent: null,
     _highlightLayer: null,
+    /** Backend-configured initial projection, used for start / max extents */
+    _configProj: null,
+    /** Actual initial projection, determined by a combination of several URL parameters */
+    _startProj: null,
     baseId: 0,
     init: function(mbMap) {
         var self = this;
@@ -125,32 +129,38 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + 'components/mapquery/lib/openlayers/img/';
         // Allow drag pan motion to continue outside of map div. Great for multi-monitor setups.
         OpenLayers.Control.Navigation.prototype.documentDrag = true;
-        var proj = this.getProj(this.mbMap.options.srs);
+        this._initMap();
+    },
+    _initMap: function _initMap() {
+        var self = this;
+        this._configProj = this.getProj(this.mbMap.options.srs);
+        this._startProj = this.getProj(this.mbMap.options.targetsrs || this.mbMap.options.srs);
+
 
         this.mapMaxExtent = {
-            projection: proj,
+            projection: this._configProj,
             // using null or open bounds here causes failures in map, overview and other places
             // @todo: make applications work with open / undefined max extent
             extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max)
         };
 
         this.mapStartExtent = {
-            projection: proj,
+            projection: this._configProj,
             extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start || this.mbMap.options.extents.max)
         };
         var baseLayer = new OpenLayers.Layer('fake', {
             visibility: false,
             isBaseLayer: true,
-            maxExtent: this.mapMaxExtent.extent.toArray(),
-            projection: this.mapMaxExtent.projection
+            maxExtent: this._transformExtent(this.mapMaxExtent.extent, this._configProj, this._startProj).toArray(),
+            projection: this._startProj
         });
         var mapOptions = {
-            maxExtent: this.mapMaxExtent.extent.toArray(),
+            maxExtent: this._transformExtent(this.mapMaxExtent.extent, this._configProj, this._startProj).toArray(),
             maxResolution: this.mbMap.options.maxResolution,
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
-            projection: proj,
-            displayProjection: proj,
-            units: proj.proj.units,
+            projection: this._startProj,
+            displayProjection: this._startProj,
+            units: this._startProj.proj.units,
             allOverlays: true,
             fallThrough: true,
             layers: [baseLayer],
@@ -166,7 +176,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var olMap = new OpenLayers.Map(this.mbMap.element.get(0), mapOptions);
         // Use a faked, somewhat compatible-ish surrogate for MapQuery Map
         // @todo: eliminate MapQuery method / property access completely
-        // * .layers() invocations here to construct ~WMS layers
         // * accesses to 'layersList'
         // * layer lookup via 'mqlid' on source definitions
 
@@ -192,14 +201,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             };
         })(this.map.olMap);
 
-
         this.setView(true);
         this.parseURL();
-        if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-            this.changeProjection({
-                projection: this.getProj(this.mbMap.options.targetsrs)
-            });
-        }
         if (this.mbMap.options.targetscale) {
             this.map.olMap.zoomToScale(this.mbMap.options.targetscale, true);
         }
@@ -209,44 +212,32 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @deprecated, call individual methods
      */
     setView: function(addLayers) {
-        var startExtent = this.getInitialExtent();
         var mapOptions = this.mbMap.options;
         var pois = mapOptions.extra && mapOptions.extra.pois;
         var lonlat;
 
         if (mapOptions.center) {
-            var targetProj = mapOptions.targetsrs && this.getProj(mapOptions.targetsrs);
             lonlat = new OpenLayers.LonLat(mapOptions.center);
-
-            if (targetProj) {
-                this.map.olMap.setCenter(lonlat.transform(targetProj, this.getCurrentProj()));
-            } else {
-                this.map.olMap.setCenter(lonlat);
-            }
+            this.map.olMap.setCenter(lonlat);
         } else if (pois && pois.length === 1) {
             var singlePoi = pois[0];
             lonlat = new OpenLayers.LonLat(singlePoi.x, singlePoi.y);
-            lonlat = lonlat.transform(this.getProj(singlePoi.srs), this.getCurrentProj());
+            lonlat = lonlat.transform(this.getProj(singlePoi.srs), this._startProj);
             this.map.olMap.setCenter(lonlat);
         } else {
+            var mapExtra = this.mbMap.options.extra;
+            var startExtent;
+            if (mapExtra && mapExtra.bbox) {
+                startExtent = OpenLayers.Bounds.fromArray(mapExtra.bbox);
+            } else {
+                startExtent = this._transformExtent(this.mapStartExtent.extent, this._configProj, this._startProj);
+            }
             this.map.olMap.zoomToExtent(startExtent, true);
         }
         if (addLayers) {
             this.initializeSourceLayers();
         }
         this.initializePois(pois || []);
-    },
-    getInitialExtent: function() {
-        var startExtent = this.mapStartExtent.extent;
-        var mapExtra = this.mbMap.options.extra;
-        if (mapExtra && mapExtra.bbox) {
-            startExtent = OpenLayers.Bounds.fromArray(mapExtra.bbox);
-        }
-        if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-            startExtent = startExtent.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj());
-        }
-
-        return startExtent || null;
     },
     initializePois: function(poiOptionsList) {
         var self = this;
