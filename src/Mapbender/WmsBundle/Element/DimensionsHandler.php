@@ -134,10 +134,6 @@ class DimensionsHandler extends Element
         $instances = array();
         foreach ($configuration['dimensionsets'] as $key => $value) {
             foreach (ArrayUtil::getDefault($value, 'group', array()) as $group) {
-                if (is_object($group)) {
-//                    die(var_export($configuration, true));
-//                    die(var_export(array($value, $group->getConfiguration()), true));
-                }
                 $item = explode("-", $group);
                 $instances[$item[0]] = $value['dimension'];
             }
