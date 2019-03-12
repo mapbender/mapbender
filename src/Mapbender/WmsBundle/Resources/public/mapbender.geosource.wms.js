@@ -1,3 +1,97 @@
+window.Mapbender = $.extend(Mapbender || {}, (function() {
+    function WmsSource(definition) {
+        Mapbender.Source.apply(this, arguments);
+        this.customParams = {};
+        if (definition.customParams) {
+            $.extend(this.customParams, definition.customParams);
+        }
+    }
+    WmsSource.prototype = Object.create(Mapbender.Source.prototype);
+    WmsSource.prototype.constructor = WmsSource;
+    function WmsSourceLayer() {
+        Mapbender.SourceLayer.apply(this, arguments);
+    }
+    WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
+    WmsSourceLayer.prototype.constructor = WmsSourceLayer;
+    Mapbender.Source.typeMap['wms'] = WmsSource;
+    Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
+    $.extend(WmsSource.prototype, {
+        // We must remember custom params for serialization in getMapState()...
+        customParams: {},
+        // ... but we will not remember the following ~standard WMS params the same way
+        _runtimeParams: ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'],
+        initializeLayers: function() {
+            var options = this.getNativeLayerOptions();
+            var params = this.getNativeLayerParams();
+            var url = this.configuration.options.url;
+            var name = this.title;
+            var olLayer = new OpenLayers.Layer.WMS(name, url, params, options);
+            this.nativeLayers = [olLayer];
+            this.ollid = olLayer.id;
+            return this.nativeLayers;
+        },
+        getNativeLayerOptions: function() {
+            var rootLayer = this.configuration.children[0];
+            var bufferConfig = this.configuration.options.buffer;
+            var ratioConfig = this.configuration.options.ratio;
+            var opts = {
+                isBaseLayer: false,
+                opacity: this.configuration.options.opacity,
+                visibility: this.configuration.options.visible,
+                singleTile: !this.configuration.options.tiled,
+                noMagic: true,
+                minScale: rootLayer.minScale,
+                maxScale: rootLayer.maxScale
+            };
+            if (opts.singleTile) {
+                opts.ratio = parseFloat(ratioConfig) || 1.0;
+            } else {
+                opts.buffer = parseInt(bufferConfig) || 0;
+            }
+            return opts;
+        },
+        getNativeLayerParams: function() {
+            var params = $.extend({}, this.customParams, {
+                transparent: this.configuration.options.transparent,
+                format: this.configuration.options.format,
+                version: this.configuration.options.version
+            });
+            var exceptionFormatConfig = this.configuration.options.exception_format;
+            if (exceptionFormatConfig) {
+                params.exceptions = exceptionFormatConfig;
+            }
+            return params;
+        },
+        addParams: function(params) {
+            for (var i = 0; i < this.nativeLayers.length; ++i) {
+                this.nativeLayers[i].mergeNewParams(params);
+            }
+            var rtp = this._runtimeParams;
+            $.extend(this.customParams, _.omit(params, function(value, key) {
+                return -1 !== rtp.indexOf(('' + key).toUpperCase());
+            }));
+        },
+        removeParams: function(names) {
+            // setting a param to null effectively removes it from the generated URL
+            // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Util.js#L514
+            // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Layer/HTTPRequest.js#L197
+            var nullParams = _.object(names, names.map(function() {
+                return null;
+            }));
+            this.addParams(nullParams);
+        },
+        toJSON: function() {
+            var s = Mapbender.Source.prototype.toJSON.apply(this, arguments);
+            s.customParams = this.customParams;
+            return s;
+        }
+    });
+    return {
+        WmsSource: WmsSource,
+        WmsSourceLayer: WmsSourceLayer
+    };
+}()));
+
 if(window.OpenLayers) {
     /**
      * This suppresses broken requests from MapQuery layers that get stuck with a
@@ -18,58 +112,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         type: 'wms',
         noMagic: true,
         transitionEffect: 'resize'
-    },
-    create: function(sourceDef, mangleIds){
-        var rootLayer = sourceDef.configuration.children[0];
-        var layerNames = [];
-
-        Mapbender.Util.SourceTree.iterateLayers(sourceDef, false, function(layer, index, parents) {
-            /* set unic id for a layer */
-            if (mangleIds) {
-                layer.options.origId = layer.options.id;
-                layer.options.id = (parents[0] && parents[0].options || sourceDef).id + "_" + index;
-            } else {
-                if (!layer.options.origId && layer.options.id) {
-                    layer.options.origId = layer.options.id;
-                }
-            }
-            if (!layer.children) {
-                layerNames.push(layer.options.name);
-            }
-        });
-
-        Mapbender.Geo.layerOrderMap["" + sourceDef.id] = layerNames;
-        var finalUrl = sourceDef.configuration.options.url;
-        
-        var mqLayerDef = {
-            type: 'wms',
-            wms_parameters: {
-                version: sourceDef.configuration.options.version
-            },
-            label: sourceDef.title,
-            url: finalUrl,
-            transparent: sourceDef.configuration.options.transparent,
-            format: sourceDef.configuration.options.format,
-            isBaseLayer: false,
-            opacity: sourceDef.configuration.options.opacity,
-            visibility: sourceDef.configuration.options.visible,
-            singleTile: !sourceDef.configuration.options.tiled,
-            minScale: rootLayer.minScale,
-            maxScale: rootLayer.maxScale,
-            transitionEffect: 'resize'
-        };
-        if (sourceDef.configuration.options.tiled) {
-            mqLayerDef.buffer = Math.min(2, Math.max(0, parseInt(sourceDef.configuration.options.buffer) || 0));
-
-        } else {
-            mqLayerDef.ratio = Math.min(2.0, Math.max(1.0, parseFloat(sourceDef.configuration.options.ratio) || 1.0));
-        }
-
-        if (sourceDef.configuration.options.exception_format) {
-            mqLayerDef.wms_parameters.exceptions = sourceDef.configuration.options.exception_format;
-        }
-        $.extend(mqLayerDef, this.defaultOptions);
-        return mqLayerDef;
     },
     changeProjection: function(source, projection) {
         // do not handle

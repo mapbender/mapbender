@@ -258,7 +258,7 @@ $.extend(Mapbender, (function($) {
                 for (var k = 0; k < instanceKeys.length; ++k) {
                     var instanceKey = instanceKeys[k];
                     var instanceDef = instanceWrapper[instanceKey];
-                    instanceWrapper[instanceKey] = new Mapbender.Source(instanceDef);
+                    instanceWrapper[instanceKey] = Mapbender.Source.factory(instanceDef);
                 }
             }
         }

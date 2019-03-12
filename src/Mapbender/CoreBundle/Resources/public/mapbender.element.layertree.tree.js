@@ -845,13 +845,11 @@
             if (chkbox.is(':checked')) {
                 this.model.resetSourceUrl(source, {
                     'add': params
-                },
-                true);
+                });
             } else if (params[dimension['__name']]) {
                 this.model.resetSourceUrl(source, {
                     'remove': params
-                },
-                true);
+                });
             }
             return true;
         },

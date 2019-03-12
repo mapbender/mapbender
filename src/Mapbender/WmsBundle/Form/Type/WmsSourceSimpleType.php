@@ -26,30 +26,35 @@ class WmsSourceSimpleType extends AbstractType
     {
         $builder
             // Base data
-            ->add('onlyvalid', 'checkbox',
-                array(
+            ->add('onlyvalid', 'checkbox', array(
                 'mapped' => false,
                 'data' => false,
-                'attr' => array(
-                    'title' => 'The application title, as shown in the browser '
-                    . 'title bar and in lists.')))
-            ->add('originUrl', 'text',
-                array(
+                'label' => 'mb.wms.wmsloader.repo.form.label.onlyvalid',
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                )
+            ))
+            ->add('originUrl', 'text', array(
                 'required' => true,
+                'label' => 'mb.wms.wmsloader.repo.form.label.serviceurl',
                 'attr' => array(
-                    'title' => 'The wms GetCapabilities url.')))
-            ->add('username', 'text',
-                array(
+                    'title' => 'The wms GetCapabilities url.',
+                ),
+            ))
+            ->add('username', 'text', array(
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.form.label.username',
+                'attr' => array(
+                    'autocomplete' => 'off',
+                ),
+            ))
+            ->add('password', 'password', array(
                 'required' => false,
                 'attr' => array(
-                    'title' => 'The username.',
-                    'autocomplete' => 'off')))
-            ->add('password', 'password',
-                array(
-                'required' => false,
-                'attr' => array(
-                    'title' => 'The password.',
-                    'autocomplete' => 'off')));
+                    'autocomplete' => 'off',
+                ),
+            ))
+        ;
     }
 
 }

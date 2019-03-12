@@ -1,9 +1,11 @@
 window.Mapbender = $.extend(Mapbender || {}, (function() {
     function Source(definition) {
-        this.id = definition.id;
-        this.mqlid = definition.mqlid;
-        this.ollid = definition.ollid;
-        this.origId = definition.origId;
+        if (definition.id || definition.id === 0) {
+            this.id = '' + definition.id;
+        }
+        if (definition.origId || definition.origId === 0) {
+            this.origId = '' + definition.origId;
+        }
         this.title = definition.title;
         this.type = definition.type;
         this.configuration = definition.configuration;
@@ -19,11 +21,49 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         }
         return new typeClass(definition);
     };
+    Source.prototype = {
+        constructor: Source,
+        initializeLayers: function() {
+            console.error("Layer creation not implemented", this);
+            throw new Error("Layer creation not implemented");
+        },
+        id: null,
+        origId: null,
+        ollid: null,
+        mqlid: null,
+        title: null,
+        type: null,
+        configuration: {},
+        nativeLayers: [],
+        rewriteLayerIds: function() {
+            if (!this.id) {
+                throw new Error("Can't rewrite layer ids with empty source id");
+            }
+            var rootLayer = this.configuration.children[0];
+            rootLayer.rewriteChildIds(this.id);
+        },
+        // Custom toJSON for mbMap.getMapState()
+        // Drops runtime-specific ollid and mqlid
+        // Drops nativeLayers to avoid circular references
+        toJSON: function() {
+            return {
+                id: this.id,
+                origId: this.origId,
+                title: this.title,
+                type: this.type,
+                configuration: this.configuration
+            };
+        }
+    };
+
     function SourceLayer(definition, source, parent) {
         this.options = definition.options || {};
         this.state = definition.state || {};
         this.parent = parent;
         this.source = source;
+        if (!this.options.origId && this.options.id) {
+            this.options.origId = this.options.id;
+        }
 
         if (definition.children && definition.children.length) {
             var self = this, i;
@@ -41,6 +81,7 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         this.siblings = [this];
     }
     SourceLayer.prototype = {
+        constructor: SourceLayer,
         // need custom toJSON for getMapState call
         toJSON: function() {
             // Skip the circular-ref inducing properties 'siblings', 'parent' and 'source'
@@ -52,6 +93,19 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
                 r.children = this.children;
             }
             return r;
+        },
+        rewriteChildIds: function(parentId) {
+            if (!this.options.origId) {
+                this.options.origId = this.options.id;
+            }
+            this.options.id = [parentId, '_', this.siblings.indexOf(this)].join('');
+            var nChildren = this.children && this.children.length || 0;
+            for (var chIx = 0; chIx < nChildren; ++chIx) {
+                this.children[chIx].rewriteChildIds(this.options.id);
+            }
+            if (!this.options.origId) {
+                this.options.origId = this.options.id;
+            }
         }
     };
     SourceLayer.typeMap = {};

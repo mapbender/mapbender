@@ -1,19 +1,19 @@
-<fieldset class="serviceAddBox left box">
-  <legend>{{"mb.wms.wmsloader.repo.form.label.ogcwms"|trans}}</legend>
-  <form action="{{path('mapbender_manager_repository_update', {'sourceId': form.vars.data.id})}}" method="post" novalidate="novalidate">
-      <label class="left labelInput" for="{{ form.originUrl.vars['id'] }}">{{"mb.wms.wmsloader.repo.form.label.serviceurl" | trans}}</label>
-      {{ form_widget(form.originUrl) }}
-      <div class="clearContainer"></div>
-      <label class="left labelInput" for="{{ form.username.vars['id'] }}">{{"mb.wms.wmsloader.repo.form.label.username" | trans}}</label>
-      {{ form_widget(form.username) }}
-      <div class="clearContainer"></div>
-      <label class="left labelInput" for="{{ form.password.vars['id'] }}">{{"mb.wms.wmsloader.repo.form.label.password" | trans}}</label>
-      {{ form_widget(form.password) }}
-      <div class="clearContainer"></div>
-      <div class="right">
-        <input class="button" type="submit" name="load" value="{{"mb.wms.wmsloader.repo.form.label.load"|trans}}" />
-        <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">{{"mb.wms.wmsloader.repo.form.label.cancel"|trans}}</a>
-      </div>
-      {{ form_row(form._token) }}
-  </form>
-</fieldset>
+{{ form_start(form, {
+    'action': path('mapbender_manager_repository_update', {'sourceId': form.vars.data.id}),
+    'method': 'POST',
+    'attr': {
+        novalidate: 'novalidate'
+    }
+}) }}
+    <fieldset class="box">
+      <legend>{{"mb.wms.wmsloader.repo.form.label.ogcwms"|trans}}</legend>
+        {{ form_row(form.originUrl) }}
+        {{ form_row(form.username) }}
+        {{ form_row(form.password) }}
+          <div class="button-group">
+            <input class="button" type="submit" name="load" value="{{"mb.wms.wmsloader.repo.form.label.load"|trans}}" />
+            <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">{{"mb.wms.wmsloader.repo.form.label.cancel"|trans}}</a>
+          </div>
+      </fieldset>
+    {{ form_row(form._token) }}
+{{ form_end(form, {'render_rest': false}) }}

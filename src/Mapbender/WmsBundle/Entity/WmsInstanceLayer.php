@@ -38,7 +38,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     protected $sourceInstance;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmsLayerSource", cascade={"refresh"}, inversedBy="instanceLayers")
      * @ORM\JoinColumn(name="wmslayersource", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $sourceItem;
