@@ -15,13 +15,13 @@
              */
             function findItem(type, name, children) {
                 var r = [];
-                children = children ? children : (hasItems ? options.children : []);
+                items = items ? items : (hasItems ? options.items : []);
 
-                if(children && !$.isArray(children)) {
-                    children = [children];
+                if(items && !$.isArray(items)) {
+                    items = [items];
                 }
 
-                $.each(children, function(i, item) {
+                $.each(items, function(i, item) {
                     if(!item.hasOwnProperty('type')) {
                         return;
                     }
@@ -30,8 +30,8 @@
                         r.push(item);
                     }
 
-                    if(item.hasOwnProperty('children')) {
-                        $.merge(r, findItem(type, name, item['children']));
+                    if(item.hasOwnProperty('items')) {
+                        $.merge(r, findItem(type, name, item['items']));
                     }
                 });
                 return r;
@@ -42,11 +42,11 @@
              */
             function render() {
                 if(hasItems) {
-                    var children = $.isArray(options.children) ? options.children : [options.children];
-                    if(children[0].type == "popup") {
+                    var items = $.isArray(options.items) ? options.items : [options.items];
+                    if(items[0].type == "popup") {
                         element = $("<div/>");
                     }
-                    element.generateElements({children: children});
+                    element.generateElements({items: items});
                 }
             }
 
