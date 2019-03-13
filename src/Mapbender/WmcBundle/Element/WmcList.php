@@ -83,19 +83,22 @@ class WmcList extends WmcBase
         );
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderWmcBundle:Element:wmclist.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         $config = $this->getConfiguration();
-        $html = $this->container->get('templating')
-            ->render('MapbenderWmcBundle:Element:wmclist.html.twig',
-            array(
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
             'id' => $this->getId(),
             'configuration' => $config,
-            'title' => $this->getTitle()));
-        return $html;
+            'title' => $this->getTitle(),
+        ));
     }
 
     public function httpAction($action)

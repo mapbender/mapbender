@@ -87,16 +87,21 @@ class Legend extends Element
         return 'mapbender.mbLegend';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:legend.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
-        return $this->container->get('templating')->render(
-                'MapbenderCoreBundle:Element:legend.html.twig',
-                array('id' => $this->getId(),
-                "title" => $this->getTitle(),
-                'configuration' => $this->getConfiguration()));
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
+            'id' => $this->getId(),
+            "title" => $this->getTitle(),
+            'configuration' => $this->getConfiguration(),
+        ));
     }
 
     /**

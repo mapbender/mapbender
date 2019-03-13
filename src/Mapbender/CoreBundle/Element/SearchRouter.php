@@ -120,6 +120,11 @@ class SearchRouter extends Element
         )
     );
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:search_router.html.twig';
+    }
+
     /**
      * @inheritdoc
      */

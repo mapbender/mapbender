@@ -60,6 +60,11 @@ class SimpleSearch extends Element
         );
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:simple_search.html.twig';
+    }
+
     /**
      * @inheritdoc
      */

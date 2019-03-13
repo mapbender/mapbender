@@ -90,14 +90,18 @@ class CoordinatesDisplay extends Element
         return 'mapbender.mbCoordinatesDisplay';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:coordinatesdisplay.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
-        $a = $this->getConfiguration();
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:coordinatesdisplay.html.twig',
+                ->render($this->getFrontendTemplatePath(),
                     array(
                     'id' => $this->getId(),
                     'title' => $this->getTitle(),

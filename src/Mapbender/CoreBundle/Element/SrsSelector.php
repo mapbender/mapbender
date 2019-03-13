@@ -83,17 +83,22 @@ class SrsSelector extends Element
         return 'mapbender.mbSrsSelector';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:srsselector.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:srsselector.html.twig',
-                    array(
+                ->render($this->getFrontendTemplatePath(), array(
                     'id' => $this->getId(),
                     "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+                    'configuration' => $this->getConfiguration(),
+        ));
     }
 
     /**

@@ -114,19 +114,22 @@ class WmcEditor extends WmcBase
         return $configuration;
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return'MapbenderWmcBundle:Element:wmceditor.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         $config = $this->getConfiguration();
-        $html = $this->container->get('templating')
-            ->render('MapbenderWmcBundle:Element:wmceditor.html.twig',
-            array(
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
             'id' => $this->getId(),
             'configuration' => $config,
-            'title' => $this->getTitle()));
-        return $html;
+            'title' => $this->getTitle(),
+        ));
     }
 
     public function httpAction($action)

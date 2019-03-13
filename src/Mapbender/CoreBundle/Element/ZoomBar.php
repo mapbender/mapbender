@@ -84,6 +84,11 @@ class ZoomBar extends Element
         return 'mapbender.mbZoomBar';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:zoombar.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
@@ -94,14 +99,11 @@ class ZoomBar extends Element
             && !in_array("zoom_in_out", $configuration['components'])) {
             $configuration['components'][] = "zoom_in_out";
         }
-        return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:zoombar.html.twig',
-            array(
-                'id' => $this->getId(),
-                "title" => $this->getTitle(),
-                'configuration' => $configuration
-            )
-        );
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(),  array(
+            'id' => $this->getId(),
+            "title" => $this->getTitle(),
+            'configuration' => $configuration,
+        ));
     }
 
     /**

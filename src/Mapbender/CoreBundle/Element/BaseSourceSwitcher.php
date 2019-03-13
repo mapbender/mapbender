@@ -138,19 +138,21 @@ class BaseSourceSwitcher extends Element
         return $configuration;
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:basesourceswitcher.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
-        return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:basesourceswitcher.html.twig',
-            array(
-                'id' => $this->getId(),
-                "title" => $this->getTitle(),
-                'configuration' => $this->getConfiguration()
-            )
-        );
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
+            'id' => $this->getId(),
+            "title" => $this->getTitle(),
+            'configuration' => $this->getConfiguration()
+        ));
     }
 
     /**

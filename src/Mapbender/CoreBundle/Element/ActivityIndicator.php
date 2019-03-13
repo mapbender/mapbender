@@ -80,13 +80,18 @@ class ActivityIndicator extends Element
         );
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:activityindicator.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:activityindicator.html.twig',
+                ->render($this->getFrontendTemplatePath(),
                     array('id' => $this->getId(),
                     'title' => $this->getTitle(),
                     'configuration' => $this->getConfiguration()));
