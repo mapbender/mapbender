@@ -186,13 +186,6 @@ class HTMLElement extends Element
                 $assets['js'][] = $configuration['jsSrc'];
             }
         }
-        if (isset($configuration['css'])) {
-            if (is_array($configuration['css'])) {
-                $assets['css'] = array_merge($assets['css'], $configuration['css']);
-            } else {
-                $assets['css'][] = $configuration['css'];
-            }
-        }
         return $assets;
     }
 
