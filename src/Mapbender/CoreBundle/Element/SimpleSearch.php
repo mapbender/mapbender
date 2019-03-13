@@ -28,6 +28,21 @@ class SimpleSearch extends Element
         );
     }
 
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\SimpleSearchAdminType';
+    }
+
+    public static function getFormTemplate()
+    {
+        return 'MapbenderCoreBundle:ElementAdmin:simple_search.html.twig';
+    }
+
+    public function getWidgetName()
+    {
+        return 'mapbender.mbSimpleSearch';
+    }
+
     public static function getDefaultConfiguration()
     {
         return array(
