@@ -40,7 +40,7 @@
             /**
              * @deprecated, to be removed in 3.0.8.0
              */
-            function render() {
+            function render(){
                 if(hasItems) {
                     var items = $.isArray(options.items) ? options.items : [options.items];
                     if(items[0].type == "popup") {
@@ -59,7 +59,7 @@
                         render();
                     }
                 });
-            } else {
+            }else{
                 render();
             }
         }
