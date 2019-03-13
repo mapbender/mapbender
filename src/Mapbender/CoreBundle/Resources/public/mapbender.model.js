@@ -1279,10 +1279,11 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             to: newProj,
             mbMap: this.mbMap
         });
-        var i, j, olLayers;
+        var i, j, olLayers, dynamicSources = [];
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
             if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
+                dynamicSources.push(source);
                 source.destroyLayers();
             } else {
                 olLayers = source.getNativeLayers();
@@ -1301,8 +1302,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         this.map.olMap.units = newProj.proj.units;
         this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
-        for (i = 0; i < this.sourceTree.length; ++i) {
-            source = this.sourceTree[i];
+        for (i = 0; i < dynamicSources.length; ++i) {
+            source = dynamicSources[i];
             if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
                 olLayers = source.initializeLayers();
                 for (j = 0; j < olLayers.length; ++j) {
@@ -1322,6 +1323,24 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 mbMap: this.mbMap
             }
         });
+        for (i = 0; i < dynamicSources.length; ++i) {
+            // WMTS / TMS special: send another change event for each root layer, which
+            // may potentially just have been disabled / reenabled. This will update the
+            // Layertree visual
+            source = dynamicSources[i];
+            var rootLayer = source.configuration.children[0];
+            var optionMap = {};
+            optionMap[rootLayer.options.id] = rootLayer;
+            this.mbMap.fireModelEvent({
+                name: 'sourceChanged',
+                value: {
+                    changed: {
+                        children: optionMap
+                    },
+                    sourceIdx: {id: source.id}
+                }
+            });
+        }
     },
     /**
      * Injects native layers into the map at the "natural" position for the source.
