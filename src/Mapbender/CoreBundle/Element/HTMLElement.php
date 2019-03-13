@@ -83,11 +83,11 @@ class HTMLElement extends Element
     /**
      * @inheritdoc
      */
-    public static function listAssets()
+    static public function listAssets()
     {
         return array(
             'js'  => array('/bundles/mapbendercore/mapbender.element.htmlelement.js'),
-            'css' => array('/bundles/mapbendercore/sass/element/htmlelement.scss')
+            'css' => array(),
         );
     }
 }
