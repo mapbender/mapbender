@@ -15,6 +15,7 @@
   - FeatureInfo: fix visual dialog overflow for wide response HTML formats with `showOriginal` option off
   - FeatureInfo: fix erratic double scrollbars appearing / disappearing when resizing dialog with `showOriginal` option on
   - LayerTree "zoom to layer" now supports WMS 1.3.0 `<BoundingBox>` axis order specification quirks
+  - Add experimental, partial WMTS / TMS source support. Disabled by default. See [PR#116](https://github.com/mapbender/mapbender/pull/1116) for instructions and known limitations
 
 * **v3.0.8-beta1**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
