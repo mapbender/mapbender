@@ -839,23 +839,36 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @property {String} options.layerId
      */
     zoomToLayer: function(options) {
-        var extents = this.getLayerExtents(options);
+        var source = this.getSourceById(options.sourceId);
+        var extents = source && this._getSourceLayerExtents(source, options.layerId);
         if (extents) {
-            var proj = this.map.olMap.getProjectionObject();
             var bounds;
-            if (extents && extents[proj.projCode]) {
-                bounds = OpenLayers.Bounds.fromArray(extents[proj.projCode]);
-            } else {
-                for (var srs in extents) {
-                    var extProj = this.getProj(srs);
-                    if (extProj !== null) {
-                        var bounds0 = OpenLayers.Bounds.fromArray(extents[srs]);
-                        // reproject to current system
-                        bounds = this._transformExtent(bounds0, extProj, proj);
-                        break;
-                    }
+            var extentArray, extProj;
+            var currentProj = this.map.olMap.getProjectionObject();
+            var srsOrder = [currentProj.projCode].concat(Object.keys(extents));
+            for (var i = 0; i < srsOrder.length; ++i) {
+                var srsName = srsOrder[i];
+                var extent = extents[srsName];
+                extProj = extent && this.getProj(srsName);
+                if (extProj) {
+                    extentArray = extents[srsName];
+                    break;
                 }
             }
+            if (extentArray) {
+                if (source.type === 'wms' && source.configuration.options.version === '1.3.0') {
+                    var projDefaults = OpenLayers.Projection.defaults[extProj.projCode];
+                    var yx = projDefaults && projDefaults.yx;
+                    if (yx) {
+                        // Seriously.
+                        // See http://portal.opengeospatial.org/files/?artifact_id=14416 page 18
+                        extentArray = [extentArray[1], extentArray[0], extentArray[3], extentArray[2]];
+                    }
+                }
+                bounds = OpenLayers.Bounds.fromArray(extentArray);
+                bounds = this._transformExtent(bounds, extProj, currentProj);
+            }
+
             if (bounds) {
                 this.mbMap.zoomToExtent(bounds, true);
             }
@@ -869,14 +882,13 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @return {Object<String, Array<Number>>}
      */
     getLayerExtents: function(options) {
-        var extents;
-        var sources = this.findSource({
-            id: options.sourceId
-        });
-        if (sources.length === 1) {
-             extents = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
+        var source = this.getSourceById(options.sourceId);
+        if (source) {
+            return this._getSourceLayerExtents(source, options.layerId);
+        } else {
+            console.warn("Source not found", options);
+            return null;
         }
-        return extents || null;
     },
     /**
      * Old-style API to add a source. Source is a POD object that needs to be nested into an outer structure like:
