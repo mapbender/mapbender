@@ -56,7 +56,6 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         initializeLayers: function() {
             var proj = Mapbender.Model.getCurrentProj();
             this.nativeLayers = this._initializeLayersInternal(proj);
-            this.ollid = (this.nativeLayers[0] || {}).id || null;
             return this.nativeLayers;
         },
         destroyLayers: function() {

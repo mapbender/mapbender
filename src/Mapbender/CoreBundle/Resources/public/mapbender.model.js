@@ -11,22 +11,49 @@
         $element.data('mapQuery', this);
         this.olMap = olMap;
     }
+    NotMapQueryMap.FakeVectorLayer = (function() {
+        function FakeVectorLayer(id, olLayer, fakeMqMap) {
+            this.id = id;
+            this.label = olLayer.name;
+            this.map = fakeMqMap;
+            this.olLayer = olLayer;
+            this.source = null;
+        }
+        return FakeVectorLayer;
+    }());
+    NotMapQueryMap.FakeSourceLayer = (function() {
+        function FakeSourceLayer(id, source, fakeMqMap) {
+            this.id = id;
+            this.map = fakeMqMap;
+            this.source = source;
+        }
+        // for older special snowflake versions of FeatureInfo
+        Object.defineProperty(FakeSourceLayer.prototype, 'label', {
+            configurable: false,
+            enumerable: true,
+            get: function() {
+                return (this.source.getNativeLayer(0) || {}).name || this.id;
+            }
+        });
+        Object.defineProperty(FakeSourceLayer.prototype, 'olLayer', {
+            configurable: false,
+            enumerable: true,
+            get: function() {
+                console.warn("Access to legacy olLayer property on NotMapQueryMap.FakeSourceLayer. Please switch to Mapbender.Model.getNativeLayer");
+                return this.source.getNativeLayer();
+            }
+        });
+
+        return FakeSourceLayer;
+    }());
     NotMapQueryMap.prototype = {
-        _fakeMqLayerFactory: function(id, olLayer) {
-            return {
-                id: id,
-                olLayer: olLayer,
-                // for older special snowflake versions of FeatureInfo
-                label: olLayer.name || id,
-                map: this
-            };
-        },
+        constructor: NotMapQueryMap,
         trackMqLayer: function(mqLayer) {
             this.layersList[mqLayer.id] = mqLayer;
         },
-        trackNativeLayer: function(olLayer) {
+        trackSource: function(source) {
             var id = this._createId();
-            var fakeLayer = this._fakeMqLayerFactory(id, olLayer);
+            var fakeLayer = new NotMapQueryMap.FakeSourceLayer(id, source, this);
             this.trackMqLayer(fakeLayer);
             return fakeLayer;
         },
@@ -39,7 +66,7 @@
             var fakeId = this._createId();
             var layerName = layerOptions.label || fakeId;
             var olLayer = new OpenLayers.Layer.Vector(layerName);
-            var fakeMqLayer = this._fakeMqLayerFactory(fakeId, olLayer);
+            var fakeMqLayer = new NotMapQueryMap.FakeVectorLayer(fakeId, olLayer, this);
             this.trackMqLayer(fakeMqLayer);
             this.olMap.addLayer(olLayer);
             return fakeMqLayer;
@@ -911,17 +938,11 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             this.sourceTree.push(sourceDef);
         }
 
+        sourceDef.mqlid = this.map.trackSource(sourceDef).id;
         var olLayers = sourceDef.initializeLayers();
         for (var i = 0; i < olLayers.length; ++i) {
             var olLayer = olLayers[i];
             olLayer.setVisibility(false);
-            if (i === 0) {
-                var fakeMqlayer = this.map.trackNativeLayer(olLayer);
-                delete fakeMqlayer.olLayer;
-                sourceDef.mqlid = fakeMqlayer.id;
-                // source attribute required by older special snowflake versions of FeatureInfo
-                fakeMqlayer.source = sourceDef;
-            }
         }
         this._spliceLayers(sourceDef, olLayers);
 
@@ -1254,12 +1275,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var i;
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
-            var mqlid = source.mqlid;
-            if (mqlid) {
-                this.map.layersList[mqlid].olLayer = null;
-            } else {
-                console.warn("Source is sailing without an mqlid", source);
-            }
             source.destroyLayers();
         }
         var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
@@ -1278,10 +1293,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             for (var j = 0; j < olLayers.length; ++j) {
                 var olLayer = olLayers[j];
                 olLayer.setVisibility(false);
-                if (source.mqlid && j === 0) {
-                    this.map.layersList[source.mqlid].ollid = olLayer.id;
-                    this.map.layersList[source.mqlid].olLayer = olLayer;
-                }
             }
             this._spliceLayers(source, olLayers);
         }

@@ -27,7 +27,6 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
             var name = this.title;
             var olLayer = new OpenLayers.Layer.WMS(name, url, params, options);
             this.nativeLayers = [olLayer];
-            this.ollid = olLayer.id;
             return this.nativeLayers;
         },
         getNativeLayerOptions: function() {
