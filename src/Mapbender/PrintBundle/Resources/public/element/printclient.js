@@ -155,6 +155,9 @@
                 }
             }
             this._super();
+            if (this.digitizerData) {
+                this.digitizerData.printedFeatureWrapper.set(null);
+            }
         },
         _isSelectionOnScreen: function() {
             if (this.feature && this.feature.geometry) {
@@ -459,13 +462,15 @@
             }
             return promise;
         },
-        printDigitizerFeature: function(schemaName,featureId){
+        printDigitizerFeature: function(schemaName,featureId, printedFeatureWrapper){
             // Sonderlocke Digitizer
             this.digitizerData = {
                 digitizer_feature: {
                     id: featureId,
                     schemaName: schemaName
-                }
+                },
+                printedFeatureWrapper : printedFeatureWrapper
+
             };
 
             this._getDigitizerTemplates(schemaName);
