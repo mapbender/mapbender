@@ -465,6 +465,13 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     /**
+     * @param {Number|String} id
+     * @return {Mapbender.Source|null}
+     */
+    getSourceById: function(id) {
+        return _.findWhere(this.sourceTree, {id: '' + id}) || null;
+    },
+    /**
      * @param options
      * @return {Array<Model~SourceTreeish>}
      */
@@ -822,6 +829,9 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             console.error("Invalid opacity", opacity, source);
         }
     },
+    _getSourceLayerExtents: function(source, layerId) {
+        return Mapbender.source[source.type].getLayerExtents(source, layerId) || null;
+    },
     /**
      * Zooms to layer
      * @param {Object} options
@@ -1153,8 +1163,9 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     reorderSources: function(newIdOrder) {
         var self = this;
         var olMap = self.map.olMap;
-        var sourceObjs = $.map(newIdOrder, function(sourceId) {
-            return self.findSource({id: sourceId});
+
+        var sourceObjs = (newIdOrder || []).map(function(id) {
+            return self.getSourceById(id);
         });
         // Collect current positions used by the layers to be reordered
         // position := array index in olMap.layers
