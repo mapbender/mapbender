@@ -98,6 +98,8 @@ mb:
             load: Load
         layer:
           label:
+            identifier: Identifier
+            formats: Formats
             title: Title
             abstract: Abstract
             latlonbounds: LatLonBounds
