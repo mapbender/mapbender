@@ -33,16 +33,6 @@ class HTMLElement extends Element
         );
     }
 
-    public function getAssets()
-    {
-        $configuration = $this->getConfiguration();
-        $assets = parent::getAssets();
-        if(isset($configuration['js'])){
-            $assets['js'][] = $configuration['js'];
-        }
-        return $assets;
-    }
-
     /**
      * @inheritdoc
      */
