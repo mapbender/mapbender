@@ -76,6 +76,15 @@
             });
             widget._trigger('ready');
         },
+        _contentElementId: function(source) {
+            // @todo: stop using mapqueryish stuff
+            var id0 = source.mqlid;
+            var id = this._getContentManager().contentId(id0);
+            // verify element is in DOM
+            if ($('#' + id, this._getContext()).length) {
+                return id;
+            }
+        },
         _contentRef: function(layerId) {
             var $context = this._getContext();
             var manager = this._getContentManager();
@@ -196,9 +205,9 @@
             request.done(function(data, textStatus, jqXHR) {
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 if (self.options.showOriginal) {
-                    self._showOriginal(source.mqlid, layerTitle, data, mimetype);
+                    self._showOriginal(source, layerTitle, data, mimetype);
                 } else {
-                    self._showEmbedded(source.mqlid, layerTitle, data, mimetype);
+                    self._showEmbedded(source, layerTitle, data, mimetype);
                 }
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
@@ -216,20 +225,31 @@
                     return true;
             }
         },
-        _showOriginal: function(layerId, layerTitle, data, mimetype) {
+        _triggerHaveResult: function(source) {
+            var eventData = {
+                action: "haveresult",
+                title: this.element.attr('title'),
+                content: this._contentElementId(source),
+                source: source,
+                id: this.element.attr('id')
+            };
+            Object.defineProperty(eventData, 'mqlid', {
+                enumerable: true,
+                get: function() {
+                    console.warn("You are accessing the legacy .mqlid property on feature info event data. Please access the also provided source object instead")
+                    return this.source.mqlid;
+                }
+            });
+            this._trigger('featureinfo', null, eventData);
+        },
+        _showOriginal: function(source, layerTitle, data, mimetype) {
             var self = this;
+            var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
             if (this.options.onlyValid && !this._isDataValid(data, mimetype)) {
                 this._removeContent(layerId);
                 Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                 return;
             }
-            var eventData = {
-                action: "haveresult",
-                title: self.element.attr('title'),
-                content: self._contentRef(layerId).attr('id'),
-                mqlid: layerId,
-                id: self.element.attr('id')
-            };
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
@@ -246,7 +266,7 @@
                         iframe.data('loaded', true);
                         $('#' + self._getContentManager().headerId(layerId), self.element).click();
                         iframe.contents().find("body").css("background","transparent");
-                        self._trigger('featureinfo', null, eventData);
+                        self._triggerHaveResult(source);
                     });
                     doc.open();
                     doc.write(data);
@@ -255,25 +275,20 @@
                 case 'text/plain':
                 default:
                     this._addContent(layerId, layerTitle, '<pre>' + data + '</pre>');
-                    this._trigger('featureinfo', null, eventData);
+                    this._triggerHaveResult(source);
                     this._open();
                     break;
             }
         },
-        _showEmbedded: function(layerId, layerTitle, data, mimetype) {
+        _showEmbedded: function(source, layerTitle, data, mimetype) {
+            var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     var self = this;
                     data = this._cleanHtml(data);
                     if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
                         this._addContent(layerId, layerTitle, data);
-                        this._trigger('featureinfo', null, {
-                            action: "haveresult",
-                            title: this.element.attr('title'),
-                            content: this._contentRef(layerId).attr('id'),
-                            mqlid: layerId,
-                            id: this.element.attr('id')
-                        });
+                        this._triggerHaveResult(source);
                         this._open();
                         $('#' + self._getContentManager().headerId(layerId), self.element).click();
                     } else {
@@ -285,13 +300,7 @@
                 default:
                     if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
                         this._addContent(layerId, layerTitle, '<pre>' + data + '</pre>');
-                        this._trigger('featureinfo', null, {
-                            action: "haveresult",
-                            title: this.element.attr('title'),
-                            content: this._contentRef(layerId).attr('id'),
-                            mqlid: layerId,
-                            id: this.element.attr('id')
-                        });
+                        this._triggerHaveResult(source);
                     } else {
                         this._setContentEmpty(layerId);
                         Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));

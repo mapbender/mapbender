@@ -860,14 +860,13 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     },
     /**
      * Zooms to layer
-     * @param {object} options of form { sourceId: XXX, layerId: XXX, inherit: BOOL }
+     * @param {Object} options
+     * @property {String} options.sourceId
+     * @property {String} options.layerId
      */
     zoomToLayer: function(options) {
-        var sources = this.findSource({
-            id: options.sourceId
-        });
-        if (sources.length === 1) {
-            var extents = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
+        var extents = this.getLayerExtents(options);
+        if (extents) {
             var proj = this.map.olMap.getProjectionObject();
             var bounds;
             if (extents && extents[proj.projCode]) {
@@ -888,15 +887,23 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             }
         }
     },
+    /**
+     * Gets a mapping of all defined extents for a layer, keyed on SRS
+     * @param {Object} options
+     * @property {String} options.sourceId
+     * @property {String} options.layerId
+     * @return {Object<String, Array<Number>>}
+     */
     getLayerExtents: function(options) {
+        var extents;
         var sources = this.findSource({
             id: options.sourceId
         });
         if (sources.length === 1) {
             var gsHandler = this.getGeoSourceHandler(sources[0]);
-            return gsHandler.getLayerExtents(sources[0], options.layerId) || null;
+            extents = gsHandler.getLayerExtents(sources[0], options.layerId);
         }
-        return null;
+        return extents || null;
     },
     /**
      * Old-style API to add a source. Source is a POD object that needs to be nested into an outer structure like:

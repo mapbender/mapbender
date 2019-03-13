@@ -63,6 +63,7 @@
                 this.open();
             }
             this.element.removeClass('hidden');
+            this._createEvents();
             this._trigger('ready');
         },
         _createTree: function() {
@@ -74,7 +75,7 @@
                 if (!sources[i].configuration.isBaseSource
                     || (sources[i].configuration.isBaseSource && this.options.showBaseSource)) {
                     if (this.options.displaytype === "tree") {
-                        var li_s = this._createSourceTree(sources[i], this.model.getScale());
+                        var li_s = this._createSourceTree(sources[i]);
                         this._addNode(li_s, sources[i]);
                     } else {
                         return;
@@ -87,13 +88,6 @@
             }
 
             this._reset();
-
-            $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
-            $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
-            $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
-            $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
-            $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
-            $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
             this.created = true;
         },
         _addNode: function($toAdd, source) {
@@ -115,7 +109,6 @@
             $targetList.append($toAdd);
         },
         _reset: function() {
-            this._resetEvents();
             this._resetSortable();
             this._resetCheckboxes();
             this._setSourcesCount();
@@ -129,30 +122,14 @@
             this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
             this.element.on('click', '.selectAll', $.proxy(self._selectAll, self));
-        },
-        _removeEvents: function() {
-            var self = this;
-            this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
-            this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
-            this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            this.element.off('click', '.iconFolder', $.proxy(self._toggleContent, self));
-            this.element.off('click', '#delete-all', $.proxy(self._removeAllSources, self));
-            this.element.off('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
-            this.element.off('click', '.selectAll', $.proxy(self._selectAll, self));
-
-        },
-        _resetEvents: function() {
-            this._removeEvents();
-            this._createEvents();
+            $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
+            $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
+            $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
+            $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
+            $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
+            $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
         },
         _resetCheckboxes: function() {
-            var self = this;
-            this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
-            this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
-            this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
-            this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
-            this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             if (initCheckbox) {
                 $('.checkbox', self.element).each(function() {
                     initCheckbox.call(this);
@@ -270,8 +247,9 @@
             $('.layer-menu-btn', $li).remove();
             return $li;
         },
-        _createNode: function(source, sourceEl, config, isroot) {
+        _createNode: function(source, sourceEl, isroot) {
             var $li = this.template.clone();
+            var config = this._getNodeProporties(sourceEl);
             $li.removeClass('hide-elm');
             $li.attr('data-id', sourceEl.options.id);
             $li.attr('data-sourceid', source.id);
@@ -297,12 +275,7 @@
             }
             $li.addClass(config.reorder);
             $li.find('.layer-state').attr('title', config.visibility.tooltip);
-            $li.find('input.layer-selected').prop('checked', config.selected ? true : false);
-            if (!config.selectable)
-                $li.find('input.layer-selected').prop('disabled', true);
-            $li.find('input.layer-info').prop('checked', config.info ? true : false);
-            if (!config.infoable || config.infoable === '0')
-                $li.find('input.layer-info').prop('disabled', true);
+            this._updateLayerDisplay($li, sourceEl);
             var infoHidden = false;
             if (this.options.hideInfo) {
                 infoHidden = true;
@@ -338,20 +311,21 @@
 
             return $li;
         },
-        _createSourceTree: function(source, scale) {
-            var li = this._createLayerNode(source, source.configuration.children[0], scale, source.type, true);
+        _createSourceTree: function(source) {
+            var li = this._createLayerNode(source, source.configuration.children[0]);
             if (source.configuration.status !== 'ok') {
                 li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
                     source.configuration.status);
             }
             return li;
         },
-        _createLayerNode: function(source, sourceEl, scale, isroot) {
-            var config = this._getNodeProporties(sourceEl);
-            var li = this._createNode(source, sourceEl, config, isroot);
-            if (sourceEl.children) {
-                for (var j = sourceEl.children.length; j > 0; j--) {
-                    li.find('ul:first').append(this._createLayerNode(source, sourceEl.children[j - 1], scale, false));
+        _createLayerNode: function(source, sourceEl) {
+            var isRoot = sourceEl === source.configuration.children[0];
+            var li = this._createNode(source, sourceEl, isRoot);
+            if (sourceEl.children && sourceEl.children.length) {
+                var $subList = $('ul:first', li);
+                for (var j = sourceEl.children.length - 1; j >= 0; j--) {
+                    $subList.append(this._createLayerNode(source, sourceEl.children[j]));
                 }
             }
             return li;
@@ -364,7 +338,7 @@
                 return;
             }
             if (this.options.displaytype === "tree") {
-                var li_s = this._createSourceTree(added.source, this.model.getScale());
+                var li_s = this._createSourceTree(added.source);
                 var first_li = $(this.element).find('ul.layers:first li:first');
                 if (first_li && first_li.length !== 0) {
                     first_li.before(li_s);
@@ -445,24 +419,42 @@
                         if (!newLayerState && newTreeOptions && typeof newTreeOptions.selected !== 'undefined') {
                             newLayerState = {visibility: newTreeOptions.selected};
                         }
-                        if (newLayerState) {
-                            this._redisplayLayerState($li, newLayerState);
-                        }
-
-                        if (newTreeOptions) {
-                            if (typeof newTreeOptions.selected !== 'undefined') {
-                                var $selectedChk = $('input[name="selected"]:first', $li);
-                                $selectedChk.prop('checked', !!newTreeOptions.selected);
-                                initCheckbox.call($selectedChk);
-                            }
-                            if (typeof newTreeOptions.info !== 'undefined') {
-                                var $infoChk = $('input[name="info"]:first', $li);
-                                $infoChk.prop('checked', !!newTreeOptions.info);
-                                initCheckbox.call($infoChk);
-                            }
+                        this._updateLayerDisplay($li, {
+                            state: newLayerState,
+                            options: layerSettings.options
+                        });
+                        if (initCheckbox) {
+                            $('.leaveContainer:first input[type=checkbox].checkbox', $li).each(function() {
+                                initCheckbox.call(this);
+                            });
                         }
                     }
                 }
+            }
+        },
+        _updateLayerDisplay: function($li, layer) {
+            if (layer && layer.state && Object.keys(layer.state).length) {
+                this._redisplayLayerState($li, layer.state);
+            }
+            if (layer && Object.keys((layer.options || {}).treeOptions).length) {
+                this._updateLayerCheckboxes($li, layer.options.treeOptions);
+            }
+        },
+        _updateLayerCheckboxes: function($li, treeOptions) {
+            var allow = treeOptions.allow || {};
+            var $selectedChk = $('input[name="selected"]:first', $li);
+            var $infoChk = $('input[name="info"]:first', $li);
+            if (typeof treeOptions.selected !== 'undefined') {
+                $selectedChk.prop('checked', !!treeOptions.selected);
+            }
+            if (typeof allow.selected !== 'undefined') {
+                $selectedChk.prop('disabled', !allow.selected);
+            }
+            if (typeof treeOptions.info !== 'undefined') {
+                $infoChk.prop('checked', !!treeOptions.info);
+            }
+            if (typeof allow.info !== 'undefined') {
+                $infoChk.prop('disabled', !allow.info);
             }
         },
         _removeChild: function(changed) {
@@ -543,7 +535,6 @@
                 selected: nodeConfig.options.treeOptions.selected,
                 selectable: nodeConfig.options.treeOptions.allow.selected,
                 info: nodeConfig.options.treeOptions.info,
-                infoable: nodeConfig.options.treeOptions.allow.info,
                 reorderable: nodeConfig.options.treeOptions.allow.reorder
             };
 
