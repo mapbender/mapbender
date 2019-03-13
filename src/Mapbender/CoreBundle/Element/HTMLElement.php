@@ -52,6 +52,25 @@ class HTMLElement extends Element
         );
     }
 
+    public function getFrontendTemplateVars()
+    {
+        $config = $this->entity->getConfiguration();
+        if (!empty($config['classes'])) {
+            $cssClassNames = array_map('trim', explode(' ', $config['classes']));
+        } else {
+            $cssClassNames = array();
+        }
+        if (in_array('html-element-inline', $cssClassNames)) {
+            $tagName = 'span';
+        } else {
+            $tagName = 'div';
+        }
+        return array(
+            'configuration' => $config,
+            'tagName' => $tagName,
+        );
+    }
+
     /**
      * Render markup.
      * Because the entire template is user-configurable, we add some error handling here.
