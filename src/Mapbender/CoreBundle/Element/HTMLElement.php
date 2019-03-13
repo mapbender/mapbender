@@ -35,12 +35,51 @@ class HTMLElement extends Element
         );
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getType()
+    {
+        return 'mapbender.form_type.element.htmlelement';
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function getDefaultConfiguration()
     {
         return array(
             'classes' => 'html-element-inline',
             'content' => ''
         );
+    }
+
+    /**
+     * Render markup.
+     * Because the entire template is user-configurable, we add some error handling here.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->container->get('logger');
+
+        try {
+            return parent::render();
+        } catch (\Twig_Error $e) {
+            $message = "Invalid content in " . get_class($this) . " caused " . get_class($e);
+            $logger->warning($message . ", suppressing content", $this->getConfiguration());
+            return "<div id=\"{$this->getEntity()->getId()}\"><!-- $message --></div>";
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderCoreBundle:ElementAdmin:htmlelement.html.twig';
     }
 
     /**
@@ -81,7 +120,7 @@ class HTMLElement extends Element
             $items = $this->prepareItem($items);
         } else {
             foreach ($items as $key => $item) {
-                $items[ $key ] = $this->prepareItem($item);
+                $items[$key] = $this->prepareItem($item);
             }
         }
         return $items;
@@ -117,7 +156,7 @@ class HTMLElement extends Element
                     /** @var Connection $dbal */
                     $dbal = $this->container->get("doctrine.dbal.{$connectionName}_connection");
                     foreach ($dbal->fetchAll($sql) as $option) {
-                        $options[ current($option) ] = end($option);
+                        $options[current($option)] = end($option);
                     }
                     $item["options"] = $options;
                 }
@@ -137,8 +176,8 @@ class HTMLElement extends Element
                     $dataStoreInfo = $item['dataStore'];
                     $dataStore     = $this->container->get('data.source')->get($dataStoreInfo["id"]);
                     $options       = array();
-                    foreach ($dataStore->search() as $dataItem) {
-                        $options[ $dataItem->getId() ] = $dataItem->getAttribute($dataStoreInfo["text"]);
+                    foreach($dataStore->search() as $dataItem){
+                        $options[$dataItem->getId()] = $dataItem->getAttribute($dataStoreInfo["text"]);
                     }
                     $item['options'] = $options;
                 }
@@ -187,25 +226,5 @@ class HTMLElement extends Element
             }
         }
         return $assets;
-    }
-
-    /**
-     * Render markup.
-     * Because the entire template is user-configurable, we add some error handling here.
-     *
-     * @return string
-     */
-    public function render()
-    {
-        /** @var LoggerInterface $logger */
-        $logger = $this->container->get('logger');
-
-        try {
-            return parent::render();
-        } catch (\Twig_Error $e) {
-            $message = "Invalid content in " . get_class($this) . " caused " . get_class($e);
-            $logger->warning($message . ", suppressing content", $this->getConfiguration());
-            return "<div id=\"{$this->getEntity()->getId()}\"><!-- $message --></div>";
-        }
     }
 }
