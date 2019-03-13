@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ 8141d970d**
+* **dev-release/3.0.7 @ 6fc10c90f**
   - [Beta regression] Fix button group misalginment in Application "Layersets" tab
   - [Beta regression] Fix layout breakage in "Vendorspecifics" area of WMS instance backend
   - [Beta regression] Fix layout breakage in "Reload source" and "Add new source" sections
@@ -12,6 +12,9 @@
   - Sources in YAML-defined Applications can now be configured to start expanded and / or not be expandable, analogous to `toggle` and `allowToggle` root layer options for DB applications ([PR#1113](https://github.com/mapbender/mapbender/pull/1113))
   - Print: fix rendering of multi-line dynamicially populated text regions
   - Print: fix errors extracting user specific job values for custom LDAP user objects without a `getId()` method
+  - FeatureInfo: fix visual dialog overflow for wide response HTML formats with `showOriginal` option off
+  - FeatureInfo: fix erratic double scrollbars appearing / disappearing when resizing dialog with `showOriginal` option on
+  - LayerTree "zoom to layer" now supports WMS 1.3.0 `<BoundingBox>` axis order specification quirks
 
 * **v3.0.8-beta1**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
