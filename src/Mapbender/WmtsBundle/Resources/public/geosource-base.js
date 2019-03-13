@@ -231,17 +231,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             }
         ];
     },
-    /**
-     * @param {Mapbender.WmtsTmsBaseSource} source
-     * @param olLayer
-     * @param newSrsCode
-     */
-    beforeSrsChange: function(source, olLayer, newSrsCode) {
-        source.beforeSrsChange(newSrsCode);
-    },
-    changeProjection: function(source, projection) {
-        return false;
-    },
     applyTreeOptions: function(source, layerOptionsMap) {
         var layerKeys = Object.keys(layerOptionsMap);
         for (var i = 0; i < layerKeys.length; ++i) {

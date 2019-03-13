@@ -112,10 +112,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         noMagic: true,
         transitionEffect: 'resize'
     },
-    changeProjection: function(source, projection) {
-        // do not handle
-        return undefined;
-    },
     getMaxExtent: function(source, projection, layer) {
         var confSource;
         if (layer) {
