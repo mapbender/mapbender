@@ -147,6 +147,21 @@
             this.map.olMap.zoomToScale(scale, closest);
         },
         /**
+         * Super legacy, some variants of wmcstorage want to use this to replace the map's initial max extent AND
+         * initial SRS, which only really works when called immediately before an SRS switch. Very unsafe to use.
+         * @deprecated
+         */
+        setMaxExtent: function(newMaxExtent, newMaxExtentSrs) {
+            this.getModel().replaceInitialMaxExtent(newMaxExtent, newMaxExtentSrs);
+        },
+        /**
+         * Super legacy, never really did anything, only stored the argument in a (long gone) property of the Model
+         * @deprecated
+         */
+        setExtent: function() {
+            console.error("mbMap.setExtent called, doesn't do anything, you probably want to call zoomToExtent instead", arguments);
+        },
+        /**
          * Adds the popup
          */
         addPopup: function(popup){

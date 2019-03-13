@@ -1465,6 +1465,35 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     /**
+     * Super legacy, some variants of wmcstorage want to use this to replace the map's initial max extent AND
+     * initial SRS, which only really works when called immediately before an SRS switch. Very unsafe to use.
+     * @deprecated
+     */
+    replaceInitialMaxExtent: function(newMaxExtent, newMaxExtentSrs) {
+        var proj, mx;
+        if (typeof newMaxExtentSrs === 'string') {
+            proj = this.getProj(newMaxExtentSrs);
+        } else if (newMaxExtentSrs && newMaxExtentSrs.projCode) {
+            proj = this.getProj(newMaxExtentSrs.projCode);
+        }
+        if (!proj) {
+            throw new Error("Invalid newMaxTentSrs omission");
+        }
+        if ($.isArray(newMaxExtent)) {
+            mx = OpenLayers.Bounds.fromArray(newMaxExtent);
+        } else {
+            mx = newMaxExtent;
+        }
+        if (!mx || !(mx instanceof OpenLayers.Bounds)) {
+            throw new Error("Invalid newMaxExtent (empty or bad type)");
+        }
+        this._configProj = proj;
+        this.mapMaxExtent = $.extend(this.mapMaxExtent || {}, {
+            projection: proj,
+            extent: mx
+        });
+    },
+    /**
      * Activate specific layers on specific sources by interpreting a (comma-separated list of)
      * "<sourceId>/<layerId>" parameter pair.
      * The indicated source and layer must already be part of the running configuration for this
