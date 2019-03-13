@@ -18,10 +18,6 @@ Mapbender.Geo.SourceHandler = Class({
     },
     'abstract public function getPrintConfig': function(layer, bounds, isProxy) {
     },
-    'public function changeProjection': function(source, projection) {
-    },
-    beforeSrsChange: function(source, olLayer, newSrsCode) {
-    },
     getLayersList: function getLayersList(source) {
         if (arguments.length !== 1) {
             console.warn("Called getLayersList with extra arguments, ignoring");

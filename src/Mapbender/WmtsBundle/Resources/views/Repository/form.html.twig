@@ -1,0 +1,16 @@
+<form action="{{path('mapbender_manager_repository_create', {'managertype': constant('Mapbender\\CoreBundle\\Entity\\Source::TYPE_WMTS')|lower})}}" method="post" novalidate="novalidate">
+  <label class="left labelInput" for="{{ form.originUrl.vars['id'] }}">{{"mb.wmts.wmtsloader.repo.form.label.serviceurl" | trans}}</label>
+  {{ form_widget(form.originUrl) }}
+  <div class="clearContainer"></div>
+  <label class="left labelInput" for="{{ form.username.vars['id'] }}">{{"mb.wmts.wmtsloader.repo.form.label.username" | trans}}</label>
+  {{ form_widget(form.username) }}
+  <div class="clearContainer"></div>
+  <label class="left labelInput" for="{{ form.password.vars['id'] }}">{{"mb.wmts.wmtsloader.repo.form.label.password" | trans}}</label>
+  {{ form_widget(form.password) }}
+  <div class="clearContainer"></div>
+  <div class="right">
+    <input class="button" type="submit" name="load" value="{{"mb.wmts.wmtsloader.repo.form.label.load"|trans}}" />
+    <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">{{"mb.wmts.wmtsloader.repo.form.label.cancel"|trans}}</a>
+  </div>
+  {{ form_row(form._token) }}
+</form>

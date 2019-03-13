@@ -11,22 +11,49 @@
         $element.data('mapQuery', this);
         this.olMap = olMap;
     }
+    NotMapQueryMap.FakeVectorLayer = (function() {
+        function FakeVectorLayer(id, olLayer, fakeMqMap) {
+            this.id = id;
+            this.label = olLayer.name;
+            this.map = fakeMqMap;
+            this.olLayer = olLayer;
+            this.source = null;
+        }
+        return FakeVectorLayer;
+    }());
+    NotMapQueryMap.FakeSourceLayer = (function() {
+        function FakeSourceLayer(id, source, fakeMqMap) {
+            this.id = id;
+            this.map = fakeMqMap;
+            this.source = source;
+        }
+        // for older special snowflake versions of FeatureInfo
+        Object.defineProperty(FakeSourceLayer.prototype, 'label', {
+            configurable: false,
+            enumerable: true,
+            get: function() {
+                return (this.source.getNativeLayer(0) || {}).name || this.id;
+            }
+        });
+        Object.defineProperty(FakeSourceLayer.prototype, 'olLayer', {
+            configurable: false,
+            enumerable: true,
+            get: function() {
+                console.warn("Access to legacy olLayer property on NotMapQueryMap.FakeSourceLayer. Please switch to Mapbender.Model.getNativeLayer");
+                return this.source.getNativeLayer();
+            }
+        });
+
+        return FakeSourceLayer;
+    }());
     NotMapQueryMap.prototype = {
-        _fakeMqLayerFactory: function(id, olLayer) {
-            return {
-                id: id,
-                olLayer: olLayer,
-                // for older special snowflake versions of FeatureInfo
-                label: olLayer.name || id,
-                map: this
-            };
-        },
+        constructor: NotMapQueryMap,
         trackMqLayer: function(mqLayer) {
             this.layersList[mqLayer.id] = mqLayer;
         },
-        trackNativeLayer: function(olLayer) {
+        trackSource: function(source) {
             var id = this._createId();
-            var fakeLayer = this._fakeMqLayerFactory(id, olLayer);
+            var fakeLayer = new NotMapQueryMap.FakeSourceLayer(id, source, this);
             this.trackMqLayer(fakeLayer);
             return fakeLayer;
         },
@@ -39,7 +66,7 @@
             var fakeId = this._createId();
             var layerName = layerOptions.label || fakeId;
             var olLayer = new OpenLayers.Layer.Vector(layerName);
-            var fakeMqLayer = this._fakeMqLayerFactory(fakeId, olLayer);
+            var fakeMqLayer = new NotMapQueryMap.FakeVectorLayer(fakeId, olLayer, this);
             this.trackMqLayer(fakeMqLayer);
             this.olMap.addLayer(olLayer);
             return fakeMqLayer;
@@ -583,7 +610,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
         var changedStates = gsHandler.applyLayerStates(source, newStates);
         var layerParams = gsHandler.getLayerParameters(source, newStates);
-        this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
+        this._resetSourceVisibility(source, layerParams);
 
         this.mbMap.fireModelEvent({
             name: 'sourceChanged',
@@ -609,7 +636,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var changedStates = gsHandler.applyLayerStates(source, newStates);
         if (redraw) {
             var layerParams = gsHandler.getLayerParameters(source, newStates);
-            this._resetSourceVisibility(source, layerParams.layers, layerParams.infolayers, layerParams.styles);
+            this._resetSourceVisibility(source, layerParams);
         }
         if (fireSourceChangedEvent && Object.keys(changedStates).length) {
             this.mbMap.fireModelEvent({
@@ -637,25 +664,34 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @TODO: infoLayers should be set outside of the function
      *
      * @param {Object} source
-     * @param {Array<string>} layers
-     * @param {Array<string>} infolayers
-     * @param {Array<string>} styles
+     * @param {Object} layerParams
+     * @param {Array<string>} layerParams.layers
+     * @param {Array<string>} layerParams.infolayers
+     * @param {Array<string>} layerParams.styles
      *
      * @returns {boolean}
      * @private
      */
-    _resetSourceVisibility: function(source, layers, infolayers, styles) {
+    _resetSourceVisibility: function(source, layerParams) {
         var olLayer = this.getNativeLayer(source);
-        if (!olLayer) {
+        if (!olLayer || !olLayer.map) {
             return false;
         }
-        olLayer.queryLayers = infolayers;
-        var targetVisibility = !!layers.length;
+        // @todo: this is almost entirely WMS specific
+        // Clean up this mess. Move application of layer params into type-specific source classes
+        olLayer.queryLayers = layerParams.infolayers;
+        var targetVisibility = !!layerParams.layers.length && source.configuration.children[0].options.treeOptions.selected;
         var visibilityChanged = targetVisibility !== olLayer.getVisibility();
-        var layersChanged =
-            ((olLayer.params.LAYERS || '').toString() !== layers.toString()) ||
-            ((olLayer.params.STYLES || '').toString() !== styles.toString())
-        ;
+        var gsHandler = this.getGeoSourceHandler(source);
+        var layersChanged;
+        if (typeof gsHandler.checkLayerParameterChanges === 'function') {
+            layersChanged = gsHandler.checkLayerParameterChanges(source, layerParams);
+        } else {
+            layersChanged =
+                ((olLayer.params.LAYERS || '').toString() !== layerParams.layers.toString()) ||
+                ((olLayer.params.STYLES || '').toString() !== layerParams.styles.toString())
+            ;
+        }
 
         if (!visibilityChanged && !layersChanged) {
             return false;
@@ -673,8 +709,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             return false;
         } else {
             var newParams = {
-                LAYERS: layers,
-                STYLES: styles
+                LAYERS: layerParams.layers,
+                STYLES: layerParams.styles
             };
             if (visibilityChanged) {
                 // Prevent the browser from reusing the loaded image. This is almost equivalent
@@ -930,20 +966,13 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             this.sourceTree.push(sourceDef);
         }
 
+        sourceDef.mqlid = this.map.trackSource(sourceDef).id;
         var olLayers = sourceDef.initializeLayers();
         for (var i = 0; i < olLayers.length; ++i) {
             var olLayer = olLayers[i];
             olLayer.setVisibility(false);
-            var fakeMqlayer = this.map.trackNativeLayer(olLayer);
-            this.map.olMap.addLayer(olLayer);
-            sourceDef.mqlid = fakeMqlayer.id;
-            // source attribute required by older special snowflake versions of FeatureInfo
-            fakeMqlayer.source = sourceDef;
-            olLayer.mbConfig = sourceDef;
-            olLayer.events.register("loadstart", this, this._sourceLoadStart);
-            olLayer.events.register("tileerror", this, this._sourceLoadError);
-            olLayer.events.register("loadend", this, this._sourceLoadeEnd);
         }
+        this._spliceLayers(sourceDef, olLayers);
 
         this.mbMap.fireModelEvent({
             name: 'sourceAdded',
@@ -1081,7 +1110,11 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     setSourceVisibility: function(sourceId, state) {
         var source = this.getSource({id: sourceId});
         var newProps = {};
-        var rootLayerId = source.configuration.children[0].options.id;
+        var rootLayer = source.configuration.children[0];
+        if (state && !rootLayer.options.treeOptions.allow.selected) {
+            state = false;
+        }
+        var rootLayerId = rootLayer.options.id;
         newProps[rootLayerId] = {
             options: {
                 treeOptions: {
@@ -1251,7 +1284,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * Changes the map's projection.
      */
     changeProjection: function(srsCode) {
-        var self = this;
+        var source;
         var newProj;
         if (srsCode.projection) {
             console.warn("Legacy object-style argument passed to changeProjection");
@@ -1268,31 +1301,21 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             to: newProj,
             mbMap: this.mbMap
         });
-        var nLayers = this.map.olMap.layers.length;
-        var i, olLayer, mbSource, gsHandler;
-        for (i = 0; i < nLayers; ++i) {
-            olLayer = this.map.olMap.layers[i];
-            mbSource = olLayer.mbConfig;
-            gsHandler = mbSource && this.getGeoSourceHandler(mbSource);
-            if (gsHandler) {
-                gsHandler.beforeSrsChange(mbSource, olLayer, newProj.projCode);
+        var i, j, olLayers, dynamicSources = [];
+        for (i = 0; i < this.sourceTree.length; ++i) {
+            source = this.sourceTree[i];
+            if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
+                dynamicSources.push(source);
+                source.destroyLayers();
+            } else {
+                olLayers = source.getNativeLayers();
+                for (j = 0; j < olLayers.length; ++ j) {
+                    this._changeLayerProjection(olLayers[j], oldProj, newProj);
+                }
             }
         }
         var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
-        // transform base layer last
-        // base layer determines overall map properties (max extent, units, resolutions etc)
         var baseLayer = this.map.olMap.baseLayer || this.map.olMap.layers[0];
-        for (i = 0; i < nLayers; ++i) {
-            olLayer = this.map.olMap.layers[i];
-            mbSource = olLayer.mbConfig;
-            gsHandler = mbSource && this.getGeoSourceHandler(mbSource);
-            if (gsHandler) {
-                gsHandler.changeProjection(mbSource, newProj);
-            }
-            if (olLayer !== baseLayer) {
-                self._changeLayerProjection(olLayer, oldProj, newProj);
-            }
-        }
         if (baseLayer) {
             this._changeLayerProjection(baseLayer, oldProj, newProj);
         }
@@ -1301,6 +1324,18 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         this.map.olMap.units = newProj.proj.units;
         this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
+        for (i = 0; i < dynamicSources.length; ++i) {
+            source = dynamicSources[i];
+            if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
+                olLayers = source.initializeLayers();
+                for (j = 0; j < olLayers.length; ++j) {
+                    var olLayer = olLayers[j];
+                    olLayer.setVisibility(false);
+                }
+                this._spliceLayers(source, olLayers);
+            }
+        }
+        this._checkChanges({type: 'not-really-an-event'});
         this.mbMap.fireModelEvent({
             name: 'srschanged',
             value: {
@@ -1310,14 +1345,67 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 mbMap: this.mbMap
             }
         });
+        for (i = 0; i < dynamicSources.length; ++i) {
+            // WMTS / TMS special: send another change event for each root layer, which
+            // may potentially just have been disabled / reenabled. This will update the
+            // Layertree visual
+            source = dynamicSources[i];
+            var rootLayer = source.configuration.children[0];
+            var optionMap = {};
+            optionMap[rootLayer.options.id] = rootLayer;
+            this.mbMap.fireModelEvent({
+                name: 'sourceChanged',
+                value: {
+                    changed: {
+                        children: optionMap
+                    },
+                    sourceIdx: {id: source.id}
+                }
+            });
+        }
+    },
+    /**
+     * Injects native layers into the map at the "natural" position for the source.
+     * This supports multiple layers for the same source.
+     *
+     * @param {Mapbender.Source} source
+     * @param {OpenLayers.Layer} olLayers
+     * @private
+     */
+    _spliceLayers: function(source, olLayers) {
+        var sourceIndex = this.sourceTree.indexOf(source);
+        if (sourceIndex === -1) {
+            console.error("Can't splice layers for source with unknown position", source, olLayers);
+            throw new Error("Can't splice layers for source with unknown position");
+        }
+        var olMap = this.map.olMap;
+        var afterLayer = olMap.baseLayer || olMap.layers[0];
+        for (var s = sourceIndex - 1; s >= 0; --s) {
+            var previousSource = this.sourceTree[s];
+            var previousLayer = (previousSource.nativeLayers.slice(-1))[0];
+            if (previousLayer && previousLayer.map === olMap) {
+                afterLayer = previousLayer;
+                break;
+            }
+        }
+        var baseIndex = olMap.getLayerIndex(afterLayer) + 1;
+        for (var i = 0; i < olLayers.length; ++i) {
+            var olLayer = olLayers[i];
+            olMap.addLayer(olLayer);
+            olMap.setLayerIndex(olLayer, baseIndex + i);
+            olLayer.mbConfig = source;
+            olLayer.events.register("loadstart", this, this._sourceLoadStart);
+            olLayer.events.register("tileerror", this, this._sourceLoadError);
+            olLayer.events.register("loadend", this, this._sourceLoadeEnd);
+        }
     },
     /**
      * Activate / deactivate a single layer's selection and / or FeatureInfo state states.
      *
      * @param {string|number} sourceId
      * @param {string|number} layerId
-     * @param {bool|null} [selected]
-     * @param {bool|null} [info]
+     * @param {boolean|null} [selected]
+     * @param {boolean|null} [info]
      */
     controlLayer: function controlLayer(sourceId, layerId, selected, info) {
         var layerMap = {};
@@ -1363,6 +1451,9 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @return {OpenLayers.Layer|null}
      */
     getNativeLayer: function(anything) {
+        if (anything.nativeLayers) {
+            return anything.nativeLayers[0] || null;
+        }
         if (anything.olLayer) {
             // MapQuery layer
             return anything.olLayer;
@@ -1422,8 +1513,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var resFromScale = function(scale) {
             return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
         };
-        var leafInfoMap = gsHandler.getExtendedLeafInfo(source, scale, extent_);
         if (gsHandler.getSingleLayerUrl) {
+            var leafInfoMap = gsHandler.getExtendedLeafInfo(source, scale, extent_);
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
                     dataOut.push($.extend({}, commonLayerData, {
@@ -1438,38 +1529,15 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 return a.order - b.order;
             });
         } else {
-            // hopefully building a bridge for forks / feature branches with non-WMS layers or customized geosource code
-            console.warn("Extended print config generation not possible on current source, falling back to the old ways", source.configuration.type, source);
-            var layerParams, url;
-            if (gsHandler.getLayerParameters) {
-                // Get active layer parameters explicitly without side effects
-                layerParams = gsHandler.getLayerParameters(source, _.mapObject(leafInfoMap, function(item) {
-                    return item.state;
-                }));
+            if (typeof gsHandler.getPrintConfigEx === 'function') {
+                var mlPrintConfigs = gsHandler.getPrintConfigEx(source, extent_, scale, this.getCurrentProj());
+                mlPrintConfigs.map(function(pc) {
+                    dataOut.push($.extend({}, commonLayerData, pc));
+                });
             } else {
-                console.warn("Geosource handler for current source doesn't support getLayerParameters method, falling back to the oldest of old ways", source.configuration.type, source);
-                // This should give us a lot more than just the active layers + styles, but also changes
-                // the source's embedded layer states as a side effect, potentially leading to erroneous display
-                // in LayerTree and Legend Elements on the next proper update
-                layerParams = gsHandler.changeOptions(source, scale || this.getScale());
+                dataOut.push($.extend({}, commonLayerData, gsHandler.getPrintConfig(olLayer, extent_)));
             }
-            if (layerParams.layers.length) {
-                // alter params for getURL call implicit to getPrintConfig
-                var prevLayers = olLayer.params.LAYERS;
-                var prevStyles = olLayer.params.STYLES;
-                olLayer.params.LAYERS = layerParams.layers;
-                olLayer.params.STYLES = layerParams.styles;
-                url = gsHandler.getPrintConfig(olLayer, extent_).url;
-                // restore params
-                olLayer.params.LAYERS = prevLayers;
-                olLayer.params.STYLES = prevStyles;
-                // Decorate generated url with combined min/max resolution from OpenLayers layer (= multiple Mapbender layers from a single source)
-                dataOut.push($.extend({}, commonLayerData, {
-                    url: url,
-                    minResolution: olLayer.minResolution,
-                    maxResolution: olLayer.maxResolution
-                }));
-            }
+
         }
         return dataOut;
     },
@@ -1482,8 +1550,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      */
     _transformExtent: function(extent, fromProj, toProj) {
         var extentOut = (extent && extent.clone()) || null;
-        if (extent && fromProj.projCode !== toProj. projCode) {
-            extentOut.transform(fromProj, toProj);
+        if (extent && fromProj.projCode !== toProj.projCode) {
+            return extentOut.transform(fromProj, toProj);
         }
         return extentOut;
     },

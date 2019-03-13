@@ -1,0 +1,20 @@
+{% macro addNode(title, item, key) %}
+    {% if attribute(item, key) is defined and attribute(item, key) is not empty %}
+        <li>
+            <span class="labelText">{{ title }}:</span>
+            <span class="metaText">{{ attribute(item, key) }}</span>
+        </li>
+    {% endif %}
+{% endmacro %}
+
+{% macro requestinformation(request, title) %}
+    {% import _self as view %}
+    <li><span class="labelText left">{{ title }}:</span></li>
+    <li>
+        <ul class="itemLevel2 list">
+            {{ view.addNode('GET Restful',request, 'httpGetRestful') }}
+            {{ view.addNode('GET KVP',request, 'httpGetKvp') }}
+            {{ view.addNode('POST',request,'httpPost') }}
+        </ul>
+    </li>
+{% endmacro %}

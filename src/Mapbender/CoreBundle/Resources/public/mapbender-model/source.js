@@ -29,18 +29,42 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         },
         id: null,
         origId: null,
-        ollid: null,
         mqlid: null,
         title: null,
         type: null,
         configuration: {},
         nativeLayers: [],
+        recreateOnSrsSwitch: false,
         rewriteLayerIds: function() {
             if (!this.id) {
                 throw new Error("Can't rewrite layer ids with empty source id");
             }
             var rootLayer = this.configuration.children[0];
             rootLayer.rewriteChildIds(this.id);
+        },
+        destroyLayers: function() {
+            if (this.nativeLayers && this.nativeLayers.length) {
+                this.nativeLayers.map(function(olLayer) {
+                    olLayer.clearGrid();
+                    olLayer.removeBackBuffer();
+                    olLayer.destroy(false);
+                });
+            }
+            this.nativeLayers = [];
+        },
+        getNativeLayers: function() {
+            return this.nativeLayers.slice();
+        },
+        checkRecreateOnSrsSwitch: function(oldProj, newProj) {
+            return this.recreateOnSrsSwitch;
+        },
+        getNativeLayer: function(index) {
+            var layer =  this.nativeLayers[index || 0] || null;
+            var c = this.nativeLayers.length;
+            if (typeof index === 'undefined' && c !== 1) {
+                console.warn("Mapbender.Source.getNativeLayer called on a source with flexible layer count; currently "  + c + " native layers");
+            }
+            return layer;
         },
         // Custom toJSON for mbMap.getMapState()
         // Drops runtime-specific ollid and mqlid
@@ -55,6 +79,13 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
             };
         }
     };
+    Object.defineProperty(Source.prototype, 'ollid', {
+        enumerable: true,
+        get: function() {
+            console.warn("Calling shimmed .ollid property accessor on source object", this);
+            return (this.nativeLayers[0] || {}).id || null;
+        }
+    });
 
     function SourceLayer(definition, source, parent) {
         this.options = definition.options || {};

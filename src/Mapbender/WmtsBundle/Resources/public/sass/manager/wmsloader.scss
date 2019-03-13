@@ -1,0 +1,9 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.elementFormWmtsLoader{
+  $label:110px;
+  .labelInput{width:$label;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .labelCheck{margin-right:$space;}
+}

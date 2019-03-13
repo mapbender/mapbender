@@ -1,0 +1,110 @@
+<ul class="itemLevel1 list">
+  <li class="openCloseTitle iconSmall {% if itemLevel > 1 %} iconExpandClosed {% else %} iconExpand {% endif %}">{{ layer.title }}</li>
+
+  {% if layer.identifier|length > 0 %}
+    <li>
+      <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.identifier" | trans }}</span>
+      <span class="metaText">{{ layer.identifier }}</span>
+    </li>
+  {% endif %}
+
+  <li>
+      <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.formats" | trans }}</span>
+      <span class="metaText">
+        {{  layer.getUniqueTileFormats() | join(', ') }}
+      </span>
+  </li>
+
+  {% if layer.title|length > 0 %}
+  <li>
+    <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.title" | trans }}:</span>
+    <span class="metaText">{{ layer.title }}</span>
+  </li>
+  {% endif %}
+
+  {% if layer.abstract|length > 0 %}
+  <li>
+    <span class="labelText">{{"mb.wmts.wmtsloader.repo.layer.label.abstract" | trans }}:</span>
+    <span class="metaText">{{ layer.abstract }}</span>
+  </li>
+  {% endif %}
+  
+  {% if layer.latlonBounds != null %}
+    <li>
+      <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.layer.label.latlonbounds" | trans }}:</span>
+      <span class="metaText">{{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}</span>
+    </li>
+  {% endif %}
+  {% if layer.tilematrixSetlinks != null %}
+    <li>
+      <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.layer.label.tilematrixsetlinks" | trans }}:</span>
+      <ul class="left">
+      {% for tmsLink in layer.tilematrixSetlinks %}
+        <li>
+          <span class="metaText">{{ tmsLink.tileMatrixSet }} - {{ tmsLink.tileMatrixSetLimits }}</span>
+        </li>
+      {% endfor %}
+      </ul></li>
+  {% endif %}
+  {#% if layer.boundingBoxes|length > 0 %}
+    <li>
+      <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.layer.label.boundingbox" | trans }}:</span>
+      <ul class="left">
+        {% for bbox in layer.boundingBoxes %}
+          <li>
+            <span class="metaText">{{ bbox.srs }} {{ bbox.minx }},{{ bbox.miny }},{{ bbox.maxx }},{{ bbox.maxy }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% endif %#}
+  {#% if layer.styles|length > 0 %}
+    <li>
+      <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.layer.label.styles" | trans }}:</span>
+        {% for style in layer.styles %}
+          {% if not loop.first %}<br/>{% endif %}
+          <span class="metaText">{{ "mb.wmts.wmtsloader.repo.layer.label.name" | trans }}: {{ style.name }}</span>
+          <span class="metaText">{{ "mb.wmts.wmtsloader.repo.layer.label.title" | trans }}</dt>: {{ style.title }}</span>
+          <span class="metaText">{{ "mb.wmts.wmtsloader.repo.layer.label.abstract" | trans }}: {{ style.abstract }}</span>
+          <span class="metaText">
+            {{ "mb.wmts.wmtsloader.repo.layer.label.legendurl" | trans }}: 
+            {% if style.legendUrl is not null %}
+            {{ style.legendUrl.width }}X{{ style.legendUrl.height }}
+            {{ style.legendUrl.onlineResource.format }} {{ style.legendUrl.onlineResource.href }}
+            {% endif %}
+          </span>
+          <span class="metaText">
+            {{ "mb.wmts.wmtsloader.repo.layer.label.stylesheeturl" | trans }}:
+
+            {% if layer.styleSheetUrl is defined %}
+              {{ style.styleSheetUrl.format }} {{ style.styleSheetUrl.href }}
+            {% endif %}<br/>
+          </span>
+
+          <span class="metaText">
+            {{ "mb.wmts.wmtsloader.repo.layer.label.styleurl" | trans }}:
+            {% if layer.styleUrl is defined %}
+              {{ style.styleUrl.format }} {{ style.styleUrl.href }}
+            {% endif %}
+          </span>
+        {% endfor %}
+    </li>
+  {% endif %#}
+  
+  {#% if layer.dimension is defined and layer.dimension|length > 0 %}
+  <li>
+    <span class="labelText">{{ "mb.wmts.wmtsloader.repo.layer.label.dimension" | trans }}:</span>
+    <ul>
+    {% for dimension in layer.dimension %}
+      <li>
+        <span class="metaText">
+          {{ dimension.name }} {{ dimension.units }} {{ dimension.unitSymbol }}
+          {{ dimension.default }} {{ dimension.multipleValues }} {{ dimension.nearestValue }}
+          {{ dimension.current }} {{ dimension.extentValue }}
+        <span>
+      </li>
+    {% endfor %}
+    </ul>
+  </li>
+  {% endif %#}
+</ul>
