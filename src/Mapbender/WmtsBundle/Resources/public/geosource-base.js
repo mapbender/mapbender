@@ -85,6 +85,12 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
             this.autoDisabled = false;
             fakeRootLayer.children = [compatibleLayer];
             this.currentActiveLayer = compatibleLayer;
+            // Make the uncontrollable layer active
+            // @todo: we should either pre-initialize these values on the server, or evaluate server values
+            //        when picking a compatible layer. The can already be edited and saved, but all they
+            //        currently do is break print, unless we rewrite them again.
+            compatibleLayer.options.treeOptions.selected = true;
+            compatibleLayer.options.treeOptions.allow.selected = true;
             fakeRootLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
             compatibleLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
             var olLayer = this._initializeSingleCompatibleLayer(compatibleLayer, proj);
@@ -219,7 +225,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         return null;
     },
     getPrintConfigEx: function(source, bounds, scale, projection) {
-        console.log("What is going on", source, bounds, scale, projection);
         var layerDef = source.findLayerEpsg(projection.projCode);
         var fakeRootLayer = source.configuration.children[0];
         if (!fakeRootLayer.state.visibility) {
