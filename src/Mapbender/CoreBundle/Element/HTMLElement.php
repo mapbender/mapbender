@@ -95,7 +95,6 @@ class HTMLElement extends Element
 
     /**
      * Is associative array given?
-     *
      * @param $arr
      * @return bool
      * @deprecated will be removed in 3.0.8.0
@@ -137,12 +136,12 @@ class HTMLElement extends Element
      */
     protected function prepareItem($item)
     {
-        if (!isset($item["type"])) {
+        if(!isset($item["type"])){
             return $item;
         }
 
-        if (isset($item["children"])) {
-            $item["children"] = $this->prepareItems($item["children"]);
+        if (isset($item["items"])) {
+            $item["items"] = $this->prepareItems($item["items"]);
         }
 
         switch ($item['type']) {
@@ -160,6 +159,7 @@ class HTMLElement extends Element
                     foreach ($dbal->fetchAll($sql) as $option) {
                         $options[current($option)] = end($option);
                     }
+
                     $item["options"] = $options;
                 }
                 break;
@@ -184,8 +184,9 @@ class HTMLElement extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        if (isset($configuration['children'])) {
-            $configuration['children'] = $this->prepareItems($configuration['children']);
+
+        if (isset($configuration['items'])) {
+            $configuration['items'] = $this->prepareItems($configuration['items']);
         }
         return $configuration;
     }
