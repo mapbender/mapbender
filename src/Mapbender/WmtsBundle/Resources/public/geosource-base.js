@@ -78,13 +78,15 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
                 if (fakeRootLayer.options.treeOptions.selected) {
                     this.autoDisabled = true;
                 }
+                fakeRootLayer.state.visibility = false;
                 return [];
             }
             fakeRootLayer.options.treeOptions.allow.selected = true;
             this.autoDisabled = false;
-
-            this.configuration.children[0].children = [compatibleLayer];
+            fakeRootLayer.children = [compatibleLayer];
             this.currentActiveLayer = compatibleLayer;
+            fakeRootLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
+            compatibleLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
             var olLayer = this._initializeSingleCompatibleLayer(compatibleLayer, proj);
             return [olLayer];
         },
@@ -217,7 +219,8 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         return null;
     },
     getPrintConfigEx: function(source, bounds, scale, projection) {
-        var layerDef = this.findLayerEpsg(source, projection.projCode);
+        console.log("What is going on", source, bounds, scale, projection);
+        var layerDef = source.findLayerEpsg(projection.projCode);
         var fakeRootLayer = source.configuration.children[0];
         if (!fakeRootLayer.state.visibility) {
             return [];
@@ -227,7 +230,7 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             {
                 url: Mapbender.Util.removeProxy(this._getPrintBaseUrl(source, layerDef)),
                 matrix: $.extend({}, matrix),
-                resolution: this._getMatrixResolution(matrix, projection)
+                resolution: source._getMatrixResolution(matrix, projection)
             }
         ];
     },
