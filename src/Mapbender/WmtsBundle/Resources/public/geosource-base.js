@@ -53,6 +53,7 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         constructor: WmtsTmsBaseSource,
         currentActiveLayer: null,
         autoDisabled: null,
+        recreateOnSrsSwitch: true,
         initializeLayers: function() {
             var proj = Mapbender.Model.getCurrentProj();
             this.nativeLayers = this._initializeLayersInternal(proj);
@@ -61,6 +62,9 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         destroyLayers: function() {
             Mapbender.Source.prototype.destroyLayers.call(this);
             this.currentActiveLayer = null;
+        },
+        checkRecreateOnSrsSwitch: function(oldProj, newProj) {
+            return true;
         },
         _initializeLayersInternal: function(proj) {
             var compatibleLayer = this._selectCompatibleLayer(proj);

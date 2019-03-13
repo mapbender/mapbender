@@ -34,6 +34,7 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         type: null,
         configuration: {},
         nativeLayers: [],
+        recreateOnSrsSwitch: false,
         rewriteLayerIds: function() {
             if (!this.id) {
                 throw new Error("Can't rewrite layer ids with empty source id");
@@ -53,6 +54,9 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         },
         getNativeLayers: function() {
             return this.nativeLayers.slice();
+        },
+        checkRecreateOnSrsSwitch: function(oldProj, newProj) {
+            return this.recreateOnSrsSwitch;
         },
         getNativeLayer: function(index) {
             var layer =  this.nativeLayers[index || 0] || null;

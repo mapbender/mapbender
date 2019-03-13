@@ -1272,10 +1272,17 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             to: newProj,
             mbMap: this.mbMap
         });
-        var i;
+        var i, j, olLayers;
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
-            source.destroyLayers();
+            if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
+                source.destroyLayers();
+            } else {
+                olLayers = source.getNativeLayers();
+                for (j = 0; j < olLayers.length; ++ j) {
+                    this._changeLayerProjection(olLayers[j], oldProj, newProj);
+                }
+            }
         }
         var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
         var baseLayer = this.map.olMap.baseLayer || this.map.olMap.layers[0];
@@ -1289,12 +1296,14 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
-            var olLayers = source.initializeLayers();
-            for (var j = 0; j < olLayers.length; ++j) {
-                var olLayer = olLayers[j];
-                olLayer.setVisibility(false);
+            if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
+                olLayers = source.initializeLayers();
+                for (j = 0; j < olLayers.length; ++j) {
+                    var olLayer = olLayers[j];
+                    olLayer.setVisibility(false);
+                }
+                this._spliceLayers(source, olLayers);
             }
-            this._spliceLayers(source, olLayers);
         }
         this._checkChanges({type: 'not-really-an-event'});
         this.mbMap.fireModelEvent({
