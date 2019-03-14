@@ -259,23 +259,8 @@ Mapbender.Geo.SourceHandler = {
      * @param {string} layerId
      * @returns {Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair
      */
-    getLayerExtents: function getLayerExtents(source, layerId) {
-        var extents = null;
-        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layerDef) {
-            if (layerDef.options.id === layerId) {
-                extents = layerDef.options.bbox || null;
-                // abort iteration
-                return false;
-            }
-        });
-
-        if (extents && Object.keys(extents).length) {
-            return extents;
-        }
-        if (source.configuration.options.bbox && Object.keys(source.configuration.options.bbox).length) {
-            return source.configuration.options.bbox;
-        }
-        return null;
+    getLayerExtents: function (source, layerId) {
+        return source.getLayerExtentConfigMap(layerId, true);
     },
     /**
      * Returns a preview mapping of states of displayable (=leaf) layers as if the given scale + extent were applied

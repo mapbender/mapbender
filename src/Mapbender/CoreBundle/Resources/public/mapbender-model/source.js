@@ -82,6 +82,44 @@ window.Mapbender.Source = (function() {
                 url: 'http://invalid.invalid.invalid/'
             };
         },
+        /**
+         * @param {string} id
+         * @return {SourceLayer}
+         */
+        getLayerById: function(id) {
+            var foundLayer = null;
+            Mapbender.Util.SourceTree.iterateLayers(this, false, function(sourceLayer) {
+                if (sourceLayer.options.id === id) {
+                    foundLayer = sourceLayer;
+                    // abort iteration
+                    return false;
+                }
+            });
+            return foundLayer;
+        },
+        /**
+         * @param {string} layerId
+         * @param {boolean} fallBackToSource
+         * @returns {null|Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair; null if completely unrestricted
+         */
+        getLayerExtentConfigMap: function(layerId, fallBackToSource) {
+            var sourceLayer = this.getLayerById(layerId);
+            var boundsMap = null;
+            while (sourceLayer && !boundsMap) {
+                boundsMap = sourceLayer.options.bbox;
+                if (boundsMap && !Object.keys(boundsMap).length) {
+                    boundsMap = null;
+                }
+                sourceLayer = sourceLayer.parent
+            }
+            if (!boundsMap && fallBackToSource) {
+                boundsMap = this.configuration.options.bbox;
+                if (boundsMap && !Object.keys(boundsMap).length) {
+                    boundsMap = null;
+                }
+            }
+            return boundsMap;
+        },
         // Custom toJSON for mbMap.getMapState()
         // Drops runtime-specific ollid and mqlid
         // Drops nativeLayers to avoid circular references

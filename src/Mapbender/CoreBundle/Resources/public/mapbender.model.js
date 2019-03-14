@@ -854,9 +854,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             console.error("Invalid opacity", opacity, source);
         }
     },
-    _getSourceLayerExtents: function(source, layerId) {
-        return Mapbender.source[source.type].getLayerExtents(source, layerId) || null;
-    },
     /**
      * Zooms to layer
      * @param {Object} options
@@ -865,7 +862,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      */
     zoomToLayer: function(options) {
         var source = this.getSourceById(options.sourceId);
-        var extents = source && this._getSourceLayerExtents(source, options.layerId);
+        var extents = source && source.getLayerExtentConfigMap(options.layerId, true);
         if (extents) {
             var bounds;
             var extentArray, extProj;
@@ -909,7 +906,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     getLayerExtents: function(options) {
         var source = this.getSourceById(options.sourceId);
         if (source) {
-            return this._getSourceLayerExtents(source, options.layerId);
+            return source.getLayerExtentConfigMap(options.layerId, true);
         } else {
             console.warn("Source not found", options);
             return null;

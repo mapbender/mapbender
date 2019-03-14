@@ -48,6 +48,10 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         Mapbender.Source.apply(this, arguments);
         this.currentActiveLayer = null;
         this.autoDisabled = false;
+        var sourceArg = this;
+        this.configuration.layers = (this.configuration.layers || []).map(function(layerDef) {
+            return Mapbender.SourceLayer.factory(layerDef, sourceArg, null);
+        });
     }
     WmtsTmsBaseSource.prototype = Object.create(Mapbender.Source.prototype);
     $.extend(WmtsTmsBaseSource.prototype, {
@@ -188,6 +192,29 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 }
             ];
         },
+        getLayerById: function(id) {
+            var foundLayer = Mapbender.Source.prototype.getLayerById.call(this, id);
+            if (!foundLayer) {
+                for (var i = 0; i < this.configuration.layers.length; ++i) {
+                    var candidate = this.configuration.layers[i];
+                    if (candidate.options.id === id) {
+                        foundLayer = candidate;
+                        break;
+                    }
+                }
+            }
+            return foundLayer;
+        },
+        getLayerExtentConfigMap: function(layerId, fallBackToSource) {
+            if (this.currentActiveLayer) {
+                var bboxMap = this.currentActiveLayer.options.bbox;
+                if (bboxMap && Object.keys(bboxMap).length) {
+                    return bboxMap;
+                }
+            }
+            var fakeRootLayerId = this.configuration.children[0].id;
+            return Mapbender.Source.prototype.getLayerExtentConfigMap.call(this, fakeRootLayerId, fallBackToSource);
+        },
         /**
          * @param {WmtsLayerConfig} layer
          * @param {number} scale
@@ -253,12 +280,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = $.extend({}, Mapbender.Geo.SourceHandler, {
                     }
                 }
             }
-        }
-        return null;
-    },
-    getLayerExtents: function(source, layerId) {
-        if (source.currentActiveLayer) {
-            return source.currentActiveLayer.options.bbox || null;
         }
         return null;
     },
