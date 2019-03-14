@@ -56,7 +56,7 @@ window.Mapbender.TmsSource = (function() {
          * @return {string}
          */
         getPrintBaseUrl: function(layerDef) {
-            return [layerDef.options.tileUrls[0], sourceDef.configuration.version, '/', layerDef.options.identifier].join('');
+            return [layerDef.options.tileUrls[0], this.configuration.version, '/', layerDef.options.identifier].join('');
         }
 
     });

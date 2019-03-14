@@ -146,6 +146,29 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             }
             return null;
         },
+        getLayerParameters: function(stateMap) {
+            if (this.currentActiveLayer) {
+                return {
+                    layers: [this.currentActiveLayer.options.identifier],
+                    infolayers: [],
+                    styles: []
+                };
+            } else {
+                return {
+                    layers: [],
+                    infolayers: [],
+                    styles: []
+                };
+            }
+        },
+        checkLayerParameterChanges: function(layerParams) {
+            if (this.currentActiveLayer) {
+                var activeIdentifier = this.currentActiveLayer.options.identifier;
+                return !(layerParams.layers && layerParams.layers.length && layerParams.layers[0] === activeIdentifier);
+            } else {
+                return !!(layerParams.layers && layerParams.layers.length);
+            }
+        },
         /**
          * @param {WmtsLayerConfig} layer
          * @param {number} scale
@@ -181,7 +204,6 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
 Mapbender.Geo.SourceTmsWmtsCommon = Class({
     'extends': Mapbender.Geo.SourceHandler
 }, {
-    'private string layerNameIdent': 'identifier',
     /**
      * @param {WmtsSourceConfig} sourceDef
      * @param {WmtsLayerConfig} layer
@@ -255,29 +277,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
     },
     'public function getPrintConfig': function(olLayer, bounds) {
         throw new Error("Unsafe printConfig with no scale information");
-    },
-    getLayerParameters: function(source, stateMap) {
-        if (source.currentActiveLayer) {
-            return {
-                layers: [source.currentActiveLayer.options.identifier],
-                infolayers: [],
-                styles: []
-            };
-        } else {
-            return {
-                layers: [],
-                infolayers: [],
-                styles: []
-            };
-        }
-    },
-    checkLayerParameterChanges: function(source, layerParams) {
-        if (source.currentActiveLayer) {
-            var activeIdentifier = source.currentActiveLayer.options.identifier;
-            return !(layerParams.layers && layerParams.layers.length && layerParams.layers[0] === activeIdentifier);
-        } else {
-            return !!(layerParams.layers && layerParams.layers.length);
-        }
     },
     featureInfoUrl: function() {
         return null;

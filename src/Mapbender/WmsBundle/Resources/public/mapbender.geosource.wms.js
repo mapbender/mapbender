@@ -87,6 +87,34 @@ window.Mapbender.WmsSource = (function() {
             var s = Mapbender.Source.prototype.toJSON.apply(this, arguments);
             s.customParams = this.customParams;
             return s;
+        },
+        getLayerParameters: function(stateMap) {
+            var result = {
+                layers: [],
+                styles: [],
+                infolayers: []
+            };
+            Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function(layer) {
+                // Layer names can be emptyish, most commonly on root layers
+                // Suppress layers with empty names entirely
+                if (layer.options.name) {
+                    var layerState = stateMap[layer.options.id] || layer.state;
+                    if (layerState.visibility) {
+                        result.layers.push(layer.options.name);
+                        result.styles.push(layer.options.style || '');
+                    }
+                    if (layerState.info) {
+                        result.infolayers.push(layer.options.name);
+                    }
+                }
+            });
+            return result;
+        },
+        checkLayerParameterChanges: function(layerParams) {
+            var olLayer = this.getNativeLayer(0);
+            var newLayers = (olLayer.params.LAYERS || '').toString() !== layerParams.layers.toString();
+            var newStyles = (olLayer.params.STYLES || '').toString() !== layerParams.styles.toString();
+            return newLayers || newStyles;
         }
     });
     return WmsSource;
@@ -154,7 +182,7 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         if (!(olLayer_ && olLayer_.getVisibility() && source_)) {
             return false;
         }
-        var queryLayers = this.getLayerParameters(source_, {}).infolayers;
+        var queryLayers = source.getLayerParameters({}).infolayers;
         if (!queryLayers.length) {
             return false;
         }

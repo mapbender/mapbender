@@ -609,7 +609,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         gsHandler.applyTreeOptions(source, layerOptionsMap);
         var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
         var changedStates = gsHandler.applyLayerStates(source, newStates);
-        var layerParams = gsHandler.getLayerParameters(source, newStates);
+        var layerParams = source.getLayerParameters(newStates);
         this._resetSourceVisibility(source, layerParams);
 
         this.mbMap.fireModelEvent({
@@ -635,7 +635,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
         var changedStates = gsHandler.applyLayerStates(source, newStates);
         if (redraw) {
-            var layerParams = gsHandler.getLayerParameters(source, newStates);
+            var layerParams = source.getLayerParameters(newStates);
             this._resetSourceVisibility(source, layerParams);
         }
         if (fireSourceChangedEvent && Object.keys(changedStates).length) {
@@ -680,16 +680,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         // Clean up this mess. Move application of layer params into type-specific source classes
         var targetVisibility = !!layerParams.layers.length && source.configuration.children[0].options.treeOptions.selected;
         var visibilityChanged = targetVisibility !== olLayer.getVisibility();
-        var gsHandler = this.getGeoSourceHandler(source);
-        var layersChanged;
-        if (typeof gsHandler.checkLayerParameterChanges === 'function') {
-            layersChanged = gsHandler.checkLayerParameterChanges(source, layerParams);
-        } else {
-            layersChanged =
-                ((olLayer.params.LAYERS || '').toString() !== layerParams.layers.toString()) ||
-                ((olLayer.params.STYLES || '').toString() !== layerParams.styles.toString())
-            ;
-        }
+        var layersChanged = source.checkLayerParameterChanges(layerParams);
 
         if (!visibilityChanged && !layersChanged) {
             return false;

@@ -12,7 +12,6 @@ var Mapbender = Mapbender || {};
 Mapbender.Geo = {};
 
 Mapbender.Geo.SourceHandler = Class({
-    'private string layerNameIdent': 'name',
     'private object defaultOptions': {},
     'abstract public function featureInfoUrl': function(source, x, y) {
     },
@@ -157,30 +156,7 @@ Mapbender.Geo.SourceHandler = Class({
                 children: $.extend(true, {}, newTreeOptions, changedStates)
             }
         };
-        return $.extend(result, this.getLayerParameters(source, newStates));
-    },
-    getLayerParameters: function getLayerParameters(source, stateMap) {
-        var result = {
-            layers: [],
-            styles: [],
-            infolayers: []
-        };
-        var layerParamName = this.layerNameIdent;
-        Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer) {
-            // Layer names can be emptyish, most commonly on root layers
-            // Suppress layers with empty names entirely
-            if (layer.options[layerParamName]) {
-                var layerState = stateMap[layer.options.id] || layer.state;
-                if (layerState.visibility) {
-                    result.layers.push(layer.options[layerParamName]);
-                    result.styles.push(layer.options.style || '');
-                }
-                if (layerState.info) {
-                    result.infolayers.push(layer.options[layerParamName]);
-                }
-            }
-        });
-        return result;
+        return $.extend(result, source.getLayerParameters(newStates));
     },
     /**
      * @param {object} source wms source
