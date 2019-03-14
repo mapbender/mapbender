@@ -50,9 +50,9 @@ abstract class LayerRendererTiled extends LayerRenderer
         $layerImageHeight = intval(round(abs($extent->getHeight()) / $tileMatrix->getResolution()));
         $image = imagecreatetruecolor($layerImageWidth, $layerImageHeight);
         imagesavealpha($image, true);
+        imagealphablending($image, false);
         imagefill($image, 0, 0, IMG_COLOR_TRANSPARENT);
         $imageTiles = $tileMatrix->getTileRequests($extent);
-        //die(var_export($gridData, true));
         $this->addTiles($image, $tileMatrix, $imageTiles, floatval($layerDef['opacity']));
         return $image;
     }

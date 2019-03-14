@@ -53,7 +53,7 @@ class GdUtil
                 imagecolordeallocate($workImage, $colorOut);
             }
         }
-        return $image;
+        return $workImage;
     }
 
     /**
