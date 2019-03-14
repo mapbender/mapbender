@@ -1417,23 +1417,36 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     /**
-     * @param {OpenLayers.Layer.HTTPRequest|Object} source can be a sourceDef
+     * @param {OpenLayers.Layer.HTTPRequest|Object} source
+     * @param {boolean} [initializePod] to auto-instantiate a Mapbender.Source object from plain-old-data (default true)
+     * @param {boolean} [initializeLayers] to also auto-instantiate layers after instantiating Mapbender.Source (default false)
+     * @return {Mapbender.Source}
      */
-    getMbConfig: function(source) {
+    getMbConfig: function(source, initializePod, initializeLayers) {
+        var _s;
         if (source.mbConfig) {
             // monkey-patched OpenLayers.Layer
-            return source.mbConfig;
-        }
-        if (source.source) {
+            _s =  source.mbConfig;
+        } else if (source.source) {
             // MapQuery layer
-            return source.source;
+            _s = source.source;
+        } else if (source.configuration && source.configuration.children) {
+            _s = source;
         }
-        if (source.configuration && source.configuration.children) {
-            // sourceTreeish
-            return source;
+        if (_s) {
+            if (initializePod || typeof initializePod === 'undefined') {
+                if (!(_s instanceof Mapbender.Source)) {
+                    var sourceObj = Mapbender.Source.factory(_s);
+                    if (initializeLayers) {
+                        sourceObj.initializeLayers();
+                    }
+                    return sourceObj;
+                }
+            }
+            return _s;
         }
-        console.error("Cannot find configuration in given source", source);
-        throw new Error("Cannot find configuration in given source");
+        console.error("Cannot infer source configuration from given input", source);
+        throw new Error("Cannot infer source configuration from given input");
     },
     /**
      * @param {*} anything
@@ -1488,7 +1501,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @return {Array<Model~SingleLayerPrintConfig>}
      */
     getPrintConfigEx: function(sourceOrLayer, scale, extent) {
-        var source = this.getMbConfig(sourceOrLayer);
+        var source = this.getMbConfig(sourceOrLayer, true, true);
         var extent_ = extent || this.getMapExtent();
         var dataOut = [];
         var commonLayerData = {

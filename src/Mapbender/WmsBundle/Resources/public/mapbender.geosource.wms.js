@@ -150,7 +150,7 @@ window.Mapbender.WmsSource = (function() {
             var baseParams = OpenLayers.Util.getParameters(baseUrl);
             var dataOut = [];
             var leafInfoMap = Mapbender.source.wms.getExtendedLeafInfo(this, scale, bounds);
-            var units = this.getNativeLayer(0).map.getUnits();
+            var units = projection.proj.units || 'degrees';
             var resFromScale = function(scale) {
                 return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
             };
