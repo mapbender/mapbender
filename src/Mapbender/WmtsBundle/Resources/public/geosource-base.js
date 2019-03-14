@@ -42,7 +42,8 @@
  * @property {Array.<WmtsTileMatrixSet>} configuration.tilematrixsets
  */
 
-window.Mapbender = $.extend(Mapbender || {}, (function() {
+window.Mapbender = Mapbender || {};
+window.Mapbender.WmtsTmsBaseSource = (function() {
     function WmtsTmsBaseSource(definition) {
         Mapbender.Source.apply(this, arguments);
         this.currentActiveLayer = null;
@@ -169,10 +170,8 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
             return closestMatrix;
         }
     });
-    return {
-        WmtsTmsBaseSource: WmtsTmsBaseSource
-    };
-}()));
+    return WmtsTmsBaseSource;
+}());
 
 
 

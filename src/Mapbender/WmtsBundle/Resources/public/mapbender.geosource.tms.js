@@ -1,4 +1,5 @@
-window.Mapbender = $.extend(Mapbender || {}, (function() {
+window.Mapbender = Mapbender || {};
+window.Mapbender.TmsSource = (function() {
     function TmsSource(definition) {
         Mapbender.WmtsTmsBaseSource.apply(this, arguments);
     }
@@ -52,7 +53,8 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         }
     });
     Mapbender.Source.typeMap['tms'] = TmsSource;
-}()));
+    return TmsSource;
+}());
 
 /**
  * Tms Source Handler

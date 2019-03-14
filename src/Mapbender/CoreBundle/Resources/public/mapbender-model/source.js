@@ -1,4 +1,5 @@
-window.Mapbender = $.extend(Mapbender || {}, (function() {
+window.Mapbender = Mapbender || {};
+window.Mapbender.Source = (function() {
     function Source(definition) {
         if (definition.id || definition.id === 0) {
             this.id = '' + definition.id;
@@ -86,7 +87,10 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
             return (this.nativeLayers[0] || {}).id || null;
         }
     });
+    return Source;
+}());
 
+window.Mapbender.SourceLayer = (function() {
     function SourceLayer(definition, source, parent) {
         this.options = definition.options || {};
         this.state = definition.state || {};
@@ -147,8 +151,5 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         }
         return new typeClass(definition, source, parent);
     };
-    return {
-        Source: Source,
-        SourceLayer: SourceLayer
-    };
-}()));
+    return SourceLayer;
+}());

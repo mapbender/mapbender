@@ -1,4 +1,5 @@
-window.Mapbender = $.extend(Mapbender || {}, (function() {
+window.Mapbender = Mapbender || {};
+window.Mapbender.WmtsSource = (function() {
     function WmtsSource(definition) {
         Mapbender.WmtsTmsBaseSource.apply(this, arguments);
     }
@@ -65,7 +66,8 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
         }
     });
     Mapbender.Source.typeMap['wmts'] = WmtsSource;
-}()));
+    return WmtsSource;
+}());
 
 Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsCommon },{
     /**

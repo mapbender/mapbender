@@ -1,4 +1,14 @@
-window.Mapbender = $.extend(Mapbender || {}, (function() {
+window.Mapbender = Mapbender || {};
+window.Mapbender.WmsSourceLayer = (function() {
+    function WmsSourceLayer() {
+        Mapbender.SourceLayer.apply(this, arguments);
+    }
+    WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
+    WmsSourceLayer.prototype.constructor = WmsSourceLayer;
+    Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
+    return WmsSourceLayer;
+}());
+window.Mapbender.WmsSource = (function() {
     function WmsSource(definition) {
         Mapbender.Source.apply(this, arguments);
         this.customParams = {};
@@ -8,13 +18,7 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
     }
     WmsSource.prototype = Object.create(Mapbender.Source.prototype);
     WmsSource.prototype.constructor = WmsSource;
-    function WmsSourceLayer() {
-        Mapbender.SourceLayer.apply(this, arguments);
-    }
-    WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
-    WmsSourceLayer.prototype.constructor = WmsSourceLayer;
     Mapbender.Source.typeMap['wms'] = WmsSource;
-    Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
     $.extend(WmsSource.prototype, {
         // We must remember custom params for serialization in getMapState()...
         customParams: {},
@@ -85,11 +89,8 @@ window.Mapbender = $.extend(Mapbender || {}, (function() {
             return s;
         }
     });
-    return {
-        WmsSource: WmsSource,
-        WmsSourceLayer: WmsSourceLayer
-    };
-}()));
+    return WmsSource;
+}());
 
 if(window.OpenLayers) {
     /**
