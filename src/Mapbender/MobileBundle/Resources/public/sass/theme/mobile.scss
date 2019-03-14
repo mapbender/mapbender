@@ -586,16 +586,16 @@ fieldset{
       }
     }
   }
-  .checkWrapper{
-    display: block;
-    width: 100%;
-    @include absolute(0 0 0 0);
+  .leaveContainer {
+    flex-direction: row-reverse;
+  }
+  .checkWrapper {
+    height: initial;
   }
   .iconCheckbox{
     @extend .iconOk;
     font-size: 20px;
     color:lighten($ciColor3, 60%);
-    &:before{@include absolute('' 0 '' '');}
   }
   .layer-title{
     font-size: 14px;
@@ -605,7 +605,6 @@ fieldset{
   .checkboxDisabled:before{display:none;}
   .iconRemove, .iconFolder, .featureInfoWrapper, .showLeaves{display:none !important;}
   .serviceContainer, .groupContainer{
-    & > .leaveContainer{position: relative;}
     .layers{display:none;}
   }
   [data-state="loading"]{
@@ -618,8 +617,6 @@ fieldset{
     }
   }
   [data-state="error"]{
-    @extend .iconWarning;
-    .layer-title{color:$errorColor !important;}// if error, overwrite the title color
     &:before{
       color:$errorColor;
       @include absolute('' $space*2 '' '');

@@ -68,12 +68,8 @@ $(function(){
             _widget = targets[widgetName];
             isWidget = typeof _widget === 'object' && _widget.options;
 
-            if(!isWidget) {
+            if (!_widget.element) {
                 continue;
-            }
-
-            if(typeof  _widget.open == "function") {
-                _widget.open("mobile");
             }
 
             _element = _widget.element;

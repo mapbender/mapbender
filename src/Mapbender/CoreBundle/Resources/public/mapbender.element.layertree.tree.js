@@ -36,6 +36,7 @@
             outOfBounds: '',
             parentInvisible: ''
         },
+        _mobilePane: null,
         _create: function() {
             this.loadStarted = {};
             this.sourceAtTree = {};
@@ -43,6 +44,7 @@
                 return;
             }
             var self = this;
+            this._mobilePane = $(this.element).closest('#mobilePane').get(0) || null;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function() {
@@ -572,6 +574,9 @@
                 var active = $chkSource.prop('checked') && $sourceVsbl.prop('checked');
                 self.model.setSourceVisibility($item.attr('data-sourceid'), active);
             });
+            if (this._mobilePane) {
+                $('#mobilePaneClose', this._mobilePane).click();
+            }
             return false;
         },
         _selectAll: function(e) {
@@ -613,6 +618,9 @@
             } else {
                 this.model.controlLayer(sourceId, $li.attr('data-id'), $(e.target).prop('checked'));
             }
+            if (this._mobilePane) {
+                $('#mobilePaneClose', this._mobilePane).click();
+            }
             return false;
         },
         _toggleInfo: function(e) {
@@ -622,7 +630,7 @@
         currentMenu: null,
         closeMenu: function(menu) {
             var $menu = menu || this.currentMenu;
-            $menu.off('click').remove();
+            $menu.remove();
             this.currentMenu = null;
             return false;
         },
