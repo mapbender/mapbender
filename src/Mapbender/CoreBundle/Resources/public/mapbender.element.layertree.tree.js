@@ -6,7 +6,6 @@
             autoOpen: false,
             useTheme: false,
             target: null,
-            titlemaxlength: 40,
             layerInfo: true, //!!!
             showBaseSource: true,
             showHeader: false,
@@ -50,7 +49,6 @@
             this.transConst.outOfScale = Mapbender.trans("mb.core.layertree.const.outofscale");
             this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
             this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
-            this.options.titlemaxlength = parseInt(this.options.titlemaxlength);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li', this.element).remove();
             this.template.removeClass('hidden');
@@ -290,8 +288,9 @@
                 }
                 $folder.removeClass('iconFolder');
             }
-            $li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(
-                sourceEl.options.title));
+            $li.find('.layer-title:first')
+                .attr('title', sourceEl.options.title)
+                .text(sourceEl.options.title);
             if (this.options.menu.length === 0) {
                 $li.find('.layer-menu-btn').remove();
             }
@@ -492,25 +491,6 @@
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
                 source_li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
                     option.error.details);
-            }
-        },
-        _subStringText: function(text) {
-            if(text === null) {
-                return '';
-            }
-            if (text.length <= this.options.titlemaxlength) {
-                return text;
-            } else {
-                for (var i = this.options.titlemaxlength; i > 0; i--) {
-                    if (text[i] === " ") {
-                        text = text.substring(0, i) + "...";
-                        break;
-                    }
-                }
-                if (text.length < 2 || text.length > this.options.titlemaxlength + 3)
-                    return text.substring(0, this.options.titlemaxlength) + "...";
-                else
-                    return text;
             }
         },
         _getNodeType: function(node, isroot) {

@@ -96,7 +96,6 @@ class Layertree extends Element
             "target" => null,
             "type" => null,
             "displaytype" => null,
-            "titlemaxlength" => intval(40),
             "autoOpen" => false,
             "showBaseSource" => true,
             "showHeader" => false,

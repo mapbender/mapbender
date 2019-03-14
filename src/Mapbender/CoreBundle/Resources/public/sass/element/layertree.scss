@@ -16,6 +16,9 @@
   }
   .layer-title {
     flex: 1 1 auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
   }
   // needed for the feature info icon
   .featureInfoWrapper{
