@@ -63,27 +63,21 @@ window.Mapbender.WmtsSource = (function() {
             }
             var unitsPerPixel = 0.00028 / metersPerUnit;
             return tileMatrix.scaleDenominator * unitsPerPixel;
+        },
+        /**
+         * @param {WmtsLayerConfig} layerDef
+         * @return {string}
+         */
+        getPrintBaseUrl: function(layerDef) {
+            var template = layerDef.options.tileUrls[0];
+            return template
+                .replace('{Style}', layerDef.options.style)
+                // NOTE: casing of '{Style}' placeholder unspecified, emulate OpenLayers dual-casing support quirk
+                .replace('{style}', layerDef.options.style)
+                .replace('{TileMatrixSet}', layerDef.options.tilematrixset)
+            ;
         }
     });
     Mapbender.Source.typeMap['wmts'] = WmtsSource;
     return WmtsSource;
 }());
-
-Mapbender.Geo.WmtsSourceHandler = Class({'extends': Mapbender.Geo.SourceTmsWmtsCommon },{
-    /**
-     * @param {Object} sourceDef
-     * @param {WmtsLayerConfig} layerDef
-     * @return {string}
-     * @private
-     */
-    _getPrintBaseUrl: function(sourceDef, layerDef) {
-        var template = layerDef.options.tileUrls[0];
-        return template
-            .replace('{Style}', layerDef.options.style)
-            // NOTE: casing of '{Style}' placeholder unspecified, emulate OpenLayers dual-casing support quirk
-            .replace('{style}', layerDef.options.style)
-            .replace('{TileMatrixSet}', layerDef.options.tilematrixset)
-        ;
-    }
-});
-Mapbender.source['wmts'] = new Mapbender.Geo.WmtsSourceHandler();

@@ -50,29 +50,16 @@ window.Mapbender.TmsSource = (function() {
             // Yes, seriously, it's called scaleDenominator but it's the resolution
             // @todo: resolve backend config wording weirdness
             return tileMatrix.scaleDenominator;
+        },
+        /**
+         * @param {WmtsLayerConfig} layerDef
+         * @return {string}
+         */
+        getPrintBaseUrl: function(layerDef) {
+            return [layerDef.options.tileUrls[0], sourceDef.configuration.version, '/', layerDef.options.identifier].join('');
         }
+
     });
     Mapbender.Source.typeMap['tms'] = TmsSource;
     return TmsSource;
 }());
-
-/**
- * Tms Source Handler
- * @author Paul Schmidt
- */
-Mapbender.Geo.TmsSourceHandler = Class({
-    'extends': Mapbender.Geo.SourceTmsWmtsCommon
-}, {
-    'public function featureInfoUrl': function(mqLayer, x, y) {
-    },
-    /**
-     * @param {Object} sourceDef
-     * @param {WmtsLayerConfig} layerDef
-     * @return {string}
-     * @private
-     */
-    _getPrintBaseUrl: function(sourceDef, layerDef) {
-        return [layerDef.options.tileUrls[0], sourceDef.configuration.version, '/', layerDef.options.identifier].join('');
-    }
-});
-Mapbender.source['tms'] = new Mapbender.Geo.TmsSourceHandler();

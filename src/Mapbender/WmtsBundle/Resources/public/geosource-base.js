@@ -232,7 +232,7 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         var matrix = source._getMatrix(layerDef, scale, projection);
         return [
             {
-                url: Mapbender.Util.removeProxy(this._getPrintBaseUrl(source, layerDef)),
+                url: Mapbender.Util.removeProxy(source.getPrintBaseUrl(layerDef)),
                 matrix: $.extend({}, matrix),
                 resolution: source._getMatrixResolution(matrix, projection)
             }
@@ -283,5 +283,10 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         return null;
     }
 });
+(function() {
+    var handlerInstance = new Mapbender.Geo.SourceTmsWmtsCommon();
+    Mapbender.source['wmts'] = handlerInstance;
+    Mapbender.source['tms'] = handlerInstance;
+}());
 
 
