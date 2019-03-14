@@ -102,6 +102,9 @@
             var sourceTree = this.map.getSourceTree();
             return sourceTree.filter(function(sourceDef) {
                 var layer = this.map.model.getNativeLayer(sourceDef);
+                if (!layer) {
+                    return false;
+                }
                 if (0 !== layer.CLASS_NAME.indexOf('OpenLayers.Layer.')) {
                     return false;
                 }
