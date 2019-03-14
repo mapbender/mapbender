@@ -205,15 +205,28 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             }
             return foundLayer;
         },
-        getLayerExtentConfigMap: function(layerId, fallBackToSource) {
-            if (this.currentActiveLayer) {
-                var bboxMap = this.currentActiveLayer.options.bbox;
-                if (bboxMap && Object.keys(bboxMap).length) {
+        getLayerExtentConfigMap: function(layerId, inheritFromParent, inheritFromSource) {
+            var bboxMap;
+            var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
+            var inheritSource_ = inheritFromSource || (typeof inheritFromSource === 'undefined');
+            if (this.currentActiveLayer && (inheritParent_ || inheritSource_)) {
+                bboxMap = this._reduceBboxMap(this.currentActiveLayer.options.bbox);
+                if (bboxMap) {
                     return bboxMap;
                 }
             }
-            var fakeRootLayerId = this.configuration.children[0].id;
-            return Mapbender.Source.prototype.getLayerExtentConfigMap.call(this, fakeRootLayerId, fallBackToSource);
+            var fakeRootLayerId = this.configuration.children[0].options.id;
+            if ((!layerId || layerId === fakeRootLayerId) && (inheritParent_ || inheritSource_)) {
+                // root layer doesn't have bbox config
+                // just find something..
+                for (var i = 0; i < this.configuration.layers.length; ++i) {
+                    bboxMap = this._reduceBboxMap(this.configuration.layers[i].options.bbox);
+                    if (bboxMap) {
+                        return bboxMap;
+                    }
+                }
+            }
+            return Mapbender.Source.prototype.getLayerExtentConfigMap.apply(this, arguments);
         },
         /**
          * @param {WmtsLayerConfig} layer

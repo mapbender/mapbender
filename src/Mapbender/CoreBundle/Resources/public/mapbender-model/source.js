@@ -97,28 +97,68 @@ window.Mapbender.Source = (function() {
             });
             return foundLayer;
         },
+        _reduceBboxMap: function(bboxMap, projCode) {
+            if (bboxMap && Object.keys(bboxMap).length) {
+                if (projCode) {
+                    if (bboxMap[projCode]) {
+                        var reduced = {};
+                        reduced[projCode] = bboxMap[projCode];
+                        return reduced;
+                    }
+                    return null;
+                }
+                return bboxMap;
+            }
+            return null;
+        },
         /**
          * @param {string} layerId
-         * @param {boolean} fallBackToSource
+         * @param {boolean} [inheritFromParent] from parent layers; default true
+         * @param {boolean} [inheritFromSource] from source; default true
          * @returns {null|Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair; null if completely unrestricted
          */
-        getLayerExtentConfigMap: function(layerId, fallBackToSource) {
+        getLayerExtentConfigMap: function(layerId, inheritFromParent, inheritFromSource) {
+            var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
+            var inheritSource_ = inheritFromSource || (typeof inheritFromSource === 'undefined');
             var sourceLayer = this.getLayerById(layerId);
             var boundsMap = null;
             while (sourceLayer && !boundsMap) {
-                boundsMap = sourceLayer.options.bbox;
-                if (boundsMap && !Object.keys(boundsMap).length) {
-                    boundsMap = null;
+                boundsMap = this._reduceBboxMap(sourceLayer.options.bbox);
+                if (inheritParent_) {
+                    sourceLayer = sourceLayer.parent
+                } else {
+                    break;
                 }
-                sourceLayer = sourceLayer.parent
             }
-            if (!boundsMap && fallBackToSource) {
-                boundsMap = this.configuration.options.bbox;
-                if (boundsMap && !Object.keys(boundsMap).length) {
-                    boundsMap = null;
-                }
+            if (!boundsMap && inheritSource_) {
+                boundsMap = this._reduceBboxMap(configuration.options.bbox);
             }
             return boundsMap;
+        },
+        getLayerBounds: function(layerId, projCode, inheritFromParent, inheritFromSource) {
+            var bboxMap = this.getLayerExtentConfigMap(layerId, inheritFromParent, inheritFromSource);
+
+            if (bboxMap) {
+                var bboxArray, bboxProj;
+                var srsOrder = [projCode].concat(Object.keys(bboxMap));
+                for (var i = 0; i < srsOrder.length; ++i) {
+                    var srsName = srsOrder[i];
+                    bboxArray = bboxMap[srsName];
+                    bboxProj = bboxArray && Mapbender.Model.getProj(srsName);
+                    if (bboxProj) {
+                        break;
+                    } else {
+                        bboxArray = null;
+                    }
+                }
+                if (bboxArray) {
+                    var bounds = this._bboxArrayToBounds(bboxArray, bboxProj.projCode);
+                    return Mapbender.Model._transformExtent(bounds, bboxProj, Mapbender.Model.getProj(projCode));
+                }
+            }
+        },
+        _bboxArrayToBounds: function(bboxArray, projCode) {
+            return OpenLayers.Bounds.fromArray(bboxArray);
         },
         // Custom toJSON for mbMap.getMapState()
         // Drops runtime-specific ollid and mqlid

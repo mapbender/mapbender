@@ -110,6 +110,18 @@ window.Mapbender.WmsSource = (function() {
             });
             return result;
         },
+        _bboxArrayToBounds: function(bboxArray, projCode) {
+            if (this.configuration.options.version === '1.3.0') {
+                var projDefaults = OpenLayers.Projection.defaults[projCode];
+                var yx = projDefaults && projDefaults.yx;
+                if (yx) {
+                    // Seriously.
+                    // See http://portal.opengeospatial.org/files/?artifact_id=14416 page 18
+                    bboxArray = [bboxArray[1], bboxArray[0], bboxArray[3], bboxArray[2]];
+                }
+            }
+            return Mapbender.Source.prototype._bboxArrayToBounds.call(this, bboxArray, projCode);
+        },
         checkLayerParameterChanges: function(layerParams) {
             var olLayer = this.getNativeLayer(0);
             var newLayers = (olLayer.params.LAYERS || '').toString() !== layerParams.layers.toString();

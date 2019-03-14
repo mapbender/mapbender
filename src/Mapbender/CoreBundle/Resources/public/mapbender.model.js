@@ -862,38 +862,9 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      */
     zoomToLayer: function(options) {
         var source = this.getSourceById(options.sourceId);
-        var extents = source && source.getLayerExtentConfigMap(options.layerId, true);
-        if (extents) {
-            var bounds;
-            var extentArray, extProj;
-            var currentProj = this.map.olMap.getProjectionObject();
-            var srsOrder = [currentProj.projCode].concat(Object.keys(extents));
-            for (var i = 0; i < srsOrder.length; ++i) {
-                var srsName = srsOrder[i];
-                var extent = extents[srsName];
-                extProj = extent && this.getProj(srsName);
-                if (extProj) {
-                    extentArray = extents[srsName];
-                    break;
-                }
-            }
-            if (extentArray) {
-                if (source.type === 'wms' && source.configuration.options.version === '1.3.0') {
-                    var projDefaults = OpenLayers.Projection.defaults[extProj.projCode];
-                    var yx = projDefaults && projDefaults.yx;
-                    if (yx) {
-                        // Seriously.
-                        // See http://portal.opengeospatial.org/files/?artifact_id=14416 page 18
-                        extentArray = [extentArray[1], extentArray[0], extentArray[3], extentArray[2]];
-                    }
-                }
-                bounds = OpenLayers.Bounds.fromArray(extentArray);
-                bounds = this._transformExtent(bounds, extProj, currentProj);
-            }
-
-            if (bounds) {
-                this.mbMap.zoomToExtent(bounds, true);
-            }
+        var bounds = source && source.getLayerBounds(options.layerId, this.map.olMap.getProjection(), true, true);
+        if (bounds) {
+            this.mbMap.zoomToExtent(bounds, true);
         }
     },
     /**
@@ -906,7 +877,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     getLayerExtents: function(options) {
         var source = this.getSourceById(options.sourceId);
         if (source) {
-            return source.getLayerExtentConfigMap(options.layerId, true);
+            return source.getLayerExtentConfigMap(options.layerId, true, true);
         } else {
             console.warn("Source not found", options);
             return null;

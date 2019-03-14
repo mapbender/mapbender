@@ -260,7 +260,7 @@ Mapbender.Geo.SourceHandler = {
      * @returns {Object.<string,Array.<float>>} mapping of EPSG code to BBOX coordinate pair
      */
     getLayerExtents: function (source, layerId) {
-        return source.getLayerExtentConfigMap(layerId, true);
+        return source.getLayerExtentConfigMap(layerId, true, true);
     },
     /**
      * Returns a preview mapping of states of displayable (=leaf) layers as if the given scale + extent were applied
