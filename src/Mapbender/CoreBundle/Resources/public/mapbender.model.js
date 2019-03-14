@@ -847,11 +847,13 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     setOpacity: function(source, opacity) {
-        if (typeof opacity === 'number' && !isNaN(opacity) && opacity >= 0 && opacity <= 1 && source) {
-            source.configuration.options.opacity = opacity;
-            this.getNativeLayer(source).setOpacity(opacity);
-        } else {
-            console.error("Invalid opacity", opacity, source);
+        // unchecked findSource in layertree may pass undefined for source
+        if (source) {
+            var opacity_ = Math.max(0.0, Math.min(1.0, parseFloat(opacity) || 1.0));
+            if (opacity_ !== opacity) {
+                console.warn("Invalid-ish opacity, clipped to " + opacity_.toString(), opacity);
+            }
+            source.setOpacity(opacity_);
         }
     },
     /**

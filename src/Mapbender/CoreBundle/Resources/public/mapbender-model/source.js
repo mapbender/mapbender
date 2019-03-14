@@ -157,6 +157,12 @@ window.Mapbender.Source = (function() {
                 }
             }
         },
+        setOpacity: function(value) {
+            this.configuration.options.opacity = value;
+            this.nativeLayers.map(function(layer) {
+                layer.setOpacity(value);
+            });
+        },
         _bboxArrayToBounds: function(bboxArray, projCode) {
             return OpenLayers.Bounds.fromArray(bboxArray);
         },
