@@ -1440,8 +1440,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @return {OpenLayers.Layer|null}
      */
     getNativeLayer: function(anything) {
-        if (anything.nativeLayers) {
-            return anything.nativeLayers[0] || null;
+        if (anything.getNativeLayer) {
+            return anything.getNativeLayer(0);
         }
         if (anything.olLayer) {
             // MapQuery layer
@@ -1488,45 +1488,21 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @return {Array<Model~SingleLayerPrintConfig>}
      */
     getPrintConfigEx: function(sourceOrLayer, scale, extent) {
-        var olLayer = this.getNativeLayer(sourceOrLayer);
         var source = this.getMbConfig(sourceOrLayer);
         var extent_ = extent || this.getMapExtent();
-        var gsHandler = this.getGeoSourceHandler(source);
-        var units = this.map.olMap.getUnits();
         var dataOut = [];
         var commonLayerData = {
             type: source.configuration.type,
             sourceId: source.id
             // @todo: provide opacity and changeAxis here?
         };
-        var resFromScale = function(scale) {
-            return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
-        };
-        if (gsHandler.getSingleLayerUrl) {
-            var leafInfoMap = gsHandler.getExtendedLeafInfo(source, scale, extent_);
-            _.forEach(leafInfoMap, function(item) {
-                if (item.state.visibility) {
-                    dataOut.push($.extend({}, commonLayerData, {
-                        url: gsHandler.getSingleLayerUrl(olLayer, extent_, item.layer.options.name, item.layer.options.style),
-                        minResolution: resFromScale(item.layer.options.minScale),
-                        maxResolution: resFromScale(item.layer.options.maxScale),
-                        order: item.order
-                    }));
-                }
-            });
-            dataOut.sort(function(a, b) {
-                return a.order - b.order;
+        if (typeof source.getMultiLayerPrintConfig === 'function') {
+            var mlPrintConfigs = source.getMultiLayerPrintConfig(extent_, scale, this.getCurrentProj());
+            mlPrintConfigs.map(function(pc) {
+                dataOut.push($.extend({}, commonLayerData, pc));
             });
         } else {
-            if (typeof gsHandler.getPrintConfigEx === 'function') {
-                var mlPrintConfigs = gsHandler.getPrintConfigEx(source, extent_, scale, this.getCurrentProj());
-                mlPrintConfigs.map(function(pc) {
-                    dataOut.push($.extend({}, commonLayerData, pc));
-                });
-            } else {
-                dataOut.push($.extend({}, commonLayerData, source.getPrintConfigLegacy(extent_)));
-            }
-
+            dataOut.push($.extend({}, commonLayerData, source.getPrintConfigLegacy(extent_)));
         }
         return dataOut;
     },

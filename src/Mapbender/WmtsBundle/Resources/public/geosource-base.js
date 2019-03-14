@@ -173,6 +173,21 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             // not implemented
             return null;
         },
+        getMultiLayerPrintConfig: function(bounds, scale, projection) {
+            var layerDef = this.findLayerEpsg(projection.projCode);
+            var fakeRootLayer = this.configuration.children[0];
+            if (!fakeRootLayer.state.visibility) {
+                return [];
+            }
+            var matrix = this._getMatrix(layerDef, scale, projection);
+            return [
+                {
+                    url: Mapbender.Util.removeProxy(this.getPrintBaseUrl(layerDef)),
+                    matrix: $.extend({}, matrix),
+                    resolution: this._getMatrixResolution(matrix, projection)
+                }
+            ];
+        },
         /**
          * @param {WmtsLayerConfig} layer
          * @param {number} scale
@@ -246,21 +261,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = $.extend({}, Mapbender.Geo.SourceHandler, {
             return source.currentActiveLayer.options.bbox || null;
         }
         return null;
-    },
-    getPrintConfigEx: function(source, bounds, scale, projection) {
-        var layerDef = source.findLayerEpsg(projection.projCode);
-        var fakeRootLayer = source.configuration.children[0];
-        if (!fakeRootLayer.state.visibility) {
-            return [];
-        }
-        var matrix = source._getMatrix(layerDef, scale, projection);
-        return [
-            {
-                url: Mapbender.Util.removeProxy(source.getPrintBaseUrl(layerDef)),
-                matrix: $.extend({}, matrix),
-                resolution: source._getMatrixResolution(matrix, projection)
-            }
-        ];
     },
     applyTreeOptions: function(source, layerOptionsMap) {
         var layerKeys = Object.keys(layerOptionsMap);

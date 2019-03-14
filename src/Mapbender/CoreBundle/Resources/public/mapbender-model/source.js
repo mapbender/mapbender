@@ -1,3 +1,11 @@
+/**
+ * @typedef {Object} RasterPrintDataRecord
+ * @property {string} type
+ * @property {Number|null} minResolution
+ * @property {Number|null} maxResolution
+ * @property {string} url
+ */
+
 window.Mapbender = Mapbender || {};
 window.Mapbender.Source = (function() {
     function Source(definition) {

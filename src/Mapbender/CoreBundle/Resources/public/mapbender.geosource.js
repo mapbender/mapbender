@@ -24,18 +24,16 @@ Mapbender.Geo.SourceHandler = {
         return source_.getPointFeatureInfoUrl(x, y);
     },
     /**
-     * Returns legacy print object. Single object with 'type' and 'url'. Assumes all sources work with
-     * a single layer. Does not check layer visibility. Does not provide opacity. Cannot reliably
-     * indicate that nothing should be printed. Cannot respect print target scale. Expects
-     * OpenLayers 2 objects as parameters.
+     * Returns modernish print data.
      *
-     * @param {OpenLayers.Layer} layer
-     * @param {Mapbender.Source} layer.mbConfig
+     * @param {*} source
      * @param {OpenLayers.Bounds} bounds
-     * @return {{type, url}|void}
+     * @param {Number} scale
+     * @param {OpenLayers.Projection} projection
+     * @return {Array<RasterPrintDataRecord>}
      */
-    getPrintConfig: function(layer, bounds) {
-        return layer.mbConfig.getPrintConfigLegacy(bounds);
+    getPrintConfigEx: function(source, bounds, scale, projection) {
+        return source.getMultiLayerPrintConfig(bounds, scale, projection);
     },
     getLayersList: function getLayersList(source) {
         if (arguments.length !== 1) {

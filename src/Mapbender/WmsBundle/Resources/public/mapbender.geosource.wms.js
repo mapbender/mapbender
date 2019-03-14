@@ -145,6 +145,34 @@ window.Mapbender.WmsSource = (function() {
             var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
             return reqUrl;
         },
+        getMultiLayerPrintConfig: function(bounds, scale, projection) {
+            var baseUrl = this.getPrintConfigLegacy(bounds).url;
+            var baseParams = OpenLayers.Util.getParameters(baseUrl);
+            var dataOut = [];
+            var leafInfoMap = Mapbender.source.wms.getExtendedLeafInfo(this, scale, bounds);
+            var units = this.getNativeLayer(0).map.getUnits();
+            var resFromScale = function(scale) {
+                return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
+            };
+            _.forEach(leafInfoMap, function(item) {
+                if (item.state.visibility) {
+                    var layerParams = $.extend(OpenLayers.Util.upperCaseObject(baseParams), {
+                        LAYERS: item.layer.options.name,
+                        STYLES: item.layer.options.style || ''
+                    });
+                    var layerUrl = [baseUrl.split('?')[0], OpenLayers.Util.getParameterString(layerParams)].join('?');
+                    dataOut.push({
+                        url: layerUrl,
+                        minResolution: resFromScale(item.layer.options.minScale),
+                        maxResolution: resFromScale(item.layer.options.maxScale),
+                        order: item.order
+                    });
+                }
+            });
+            return dataOut.sort(function(a, b) {
+                return a.order - b.order;
+            });
+        },
         getPrintConfigLegacy: function(bounds) {
             var olLayer = this.getNativeLayer(0);
             return {
@@ -172,6 +200,22 @@ if(window.OpenLayers) {
 }
 
 Mapbender.source['wms'] = $.extend({}, Mapbender.Geo.SourceHandler, {
+    /**
+     * Returns legacy print object. Single object with 'type' and 'url'. Assumes all sources work with
+     * a single layer. Does not check layer visibility. Does not provide opacity. Cannot reliably
+     * indicate that nothing should be printed. Cannot respect print target scale. Expects
+     * OpenLayers 2 objects as parameters. Source must be inferred from monkey-patched attribute
+     * on OpenLayers layer.
+     *
+     * @param {OpenLayers.Layer} layer
+     * @param {Mapbender.Source} layer.mbConfig
+     * @param {OpenLayers.Bounds} bounds
+     * @return {{type, url}|void}
+     */
+    getPrintConfig: function(layer, bounds) {
+        console.warn("Calling legacy getPrintConfig. Please use Mapbender.Model.getPrintConfigEx instead, and pass in a Source");
+        return layer.mbConfig.getPrintConfigLegacy(bounds);
+    },
     getMaxExtent: function(source, projection, layer) {
         var confSource;
         if (layer) {
@@ -198,15 +242,5 @@ Mapbender.source['wms'] = $.extend({}, Mapbender.Geo.SourceHandler, {
             }
         }
         return null;
-    },
-    getSingleLayerUrl: function(olLayer, bounds, layerName, styleName) {
-        var baseUrl = this.getPrintConfig(olLayer, bounds).url;
-        var params = OpenLayers.Util.getParameters(baseUrl);
-        params = $.extend(OpenLayers.Util.upperCaseObject(params), {
-            LAYERS: layerName,
-            STYLES: styleName || ''
-        });
-        var rebuiltUrl = [baseUrl.split('?')[0], OpenLayers.Util.getParameterString(params)].join('?');
-        return rebuiltUrl;
     }
 });
