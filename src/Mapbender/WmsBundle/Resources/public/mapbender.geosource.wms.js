@@ -171,7 +171,7 @@ if(window.OpenLayers) {
     }
 }
 
-Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler },{
+Mapbender.source['wms'] = $.extend({}, Mapbender.Geo.SourceHandler, {
     getMaxExtent: function(source, projection, layer) {
         var confSource;
         if (layer) {
@@ -210,4 +210,3 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
         return rebuiltUrl;
     }
 });
-Mapbender.source['wms'] = new Mapbender.Geo.WmsSourceHandler();

@@ -205,9 +205,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
 /**
  * Base class for TMS and WMTS geosources
  */
-Mapbender.Geo.SourceTmsWmtsCommon = Class({
-    'extends': Mapbender.Geo.SourceHandler
-}, {
+Mapbender.Geo.SourceTmsWmtsCommon = $.extend({}, Mapbender.Geo.SourceHandler, {
     /**
      * @param {WmtsSourceConfig} sourceDef
      * @param {WmtsLayerConfig} layer
@@ -277,13 +275,12 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
                 break;
             }
         }
-        this.super('applyTreeOptions', source, layerOptionsMap);
+        Mapbender.Geo.SourceHandler.applyTreeOptions.call(this, source, layerOptionsMap);
     }
 });
 (function() {
-    var handlerInstance = new Mapbender.Geo.SourceTmsWmtsCommon();
-    Mapbender.source['wmts'] = handlerInstance;
-    Mapbender.source['tms'] = handlerInstance;
+    Mapbender.source['wmts'] = Mapbender.Geo.SourceTmsWmtsCommon;
+    Mapbender.source['tms'] = Mapbender.Geo.SourceTmsWmtsCommon;
 }());
 
 

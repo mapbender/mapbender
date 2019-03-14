@@ -11,7 +11,7 @@ var Mapbender = Mapbender || {};
  */
 Mapbender.Geo = {};
 
-Mapbender.Geo.SourceHandler = Class({
+Mapbender.Geo.SourceHandler = {
     featureInfoUrl: function(source, x, y) {
         var source_;
         if (source.source) {
@@ -446,7 +446,7 @@ Mapbender.Geo.SourceHandler = Class({
             }
         }
     }
-});
+};
 
 // old declaration
 Mapbender['source'] = {};
