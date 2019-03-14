@@ -130,11 +130,7 @@
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
         },
         _resetCheckboxes: function() {
-            if (initCheckbox) {
-                $('.checkbox', self.element).each(function() {
-                    initCheckbox.call(this);
-                });
-            }
+            $('input[type="checkbox"]', this.element).mbCheckbox();
         },
         _resetSortable: function() {
             this._unSortable();
@@ -423,11 +419,7 @@
                             state: newLayerState,
                             options: layerSettings.options
                         });
-                        if (initCheckbox) {
-                            $('.leaveContainer:first input[type=checkbox].checkbox', $li).each(function() {
-                                initCheckbox.call(this);
-                            });
-                        }
+                        $('input[type="checkbox"]', $li).mbCheckbox();
                     }
                 }
             }
@@ -444,16 +436,16 @@
             var allow = treeOptions.allow || {};
             var $selectedChk = $('input[name="selected"]:first', $li);
             var $infoChk = $('input[name="info"]:first', $li);
-            if (typeof treeOptions.selected !== 'undefined') {
+            if (treeOptions.selected !== null && typeof treeOptions.selected !== 'undefined') {
                 $selectedChk.prop('checked', !!treeOptions.selected);
             }
-            if (typeof allow.selected !== 'undefined') {
+            if (allow.selected !== null && typeof allow.selected !== 'undefined') {
                 $selectedChk.prop('disabled', !allow.selected);
             }
-            if (typeof treeOptions.info !== 'undefined') {
+            if (treeOptions.info !== null && typeof treeOptions.info !== 'undefined') {
                 $infoChk.prop('checked', !!treeOptions.info);
             }
-            if (typeof allow.info !== 'undefined') {
+            if (allow.info !== null && typeof allow.info !== 'undefined') {
                 $infoChk.prop('disabled', !allow.info);
             }
         },
@@ -786,7 +778,7 @@
                     updateData({checked: $(this).prop('checked')});
                     self._callDimension(source, $(e.target));
                 });
-                initCheckbox.call(inpchkbox);
+                inpchkbox.mbCheckbox();
                 title.attr('title', title.attr('title') + ' ' + item.name);
                 title.attr('id', title.attr('id') + item.name);
                 chkbox.after(title);
