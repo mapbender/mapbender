@@ -666,7 +666,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @param {Object} source
      * @param {Object} layerParams
      * @param {Array<string>} layerParams.layers
-     * @param {Array<string>} layerParams.infolayers
      * @param {Array<string>} layerParams.styles
      *
      * @returns {boolean}
@@ -679,7 +678,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
         // @todo: this is almost entirely WMS specific
         // Clean up this mess. Move application of layer params into type-specific source classes
-        olLayer.queryLayers = layerParams.infolayers;
         var targetVisibility = !!layerParams.layers.length && source.configuration.children[0].options.treeOptions.selected;
         var visibilityChanged = targetVisibility !== olLayer.getVisibility();
         var gsHandler = this.getGeoSourceHandler(source);
