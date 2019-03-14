@@ -169,6 +169,10 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 return !!(layerParams.layers && layerParams.layers.length);
             }
         },
+        getPointFeatureInfoUrl: function(x, y) {
+            // not implemented
+            return null;
+        },
         /**
          * @param {WmtsLayerConfig} layer
          * @param {number} scale
@@ -277,9 +281,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
     },
     'public function getPrintConfig': function(olLayer, bounds) {
         throw new Error("Unsafe printConfig with no scale information");
-    },
-    featureInfoUrl: function() {
-        return null;
     }
 });
 (function() {

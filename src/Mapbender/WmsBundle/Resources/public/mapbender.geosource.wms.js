@@ -115,6 +115,35 @@ window.Mapbender.WmsSource = (function() {
             var newLayers = (olLayer.params.LAYERS || '').toString() !== layerParams.layers.toString();
             var newStyles = (olLayer.params.STYLES || '').toString() !== layerParams.styles.toString();
             return newLayers || newStyles;
+        },
+        getPointFeatureInfoUrl: function(x, y) {
+            var olLayer = this.getNativeLayer(0);
+            if (!(olLayer && olLayer.getVisibility())) {
+                return false;
+            }
+            var queryLayers = this.getLayerParameters({}).infolayers;
+            if (!queryLayers.length) {
+                return false;
+            }
+            var wmsgfi = new OpenLayers.Control.WMSGetFeatureInfo({
+                url: Mapbender.Util.removeProxy(olLayer.url),
+                layers: [olLayer],
+                queryVisible: true,
+                maxFeatures: 1000
+            });
+            wmsgfi.map = olLayer.map;
+            var reqObj = wmsgfi.buildWMSOptions(
+                Mapbender.Util.removeProxy(olLayer.url),
+                [olLayer],
+                {x: x, y: y},
+                olLayer.params.FORMAT
+            );
+            reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = queryLayers;
+            reqObj.params['STYLES'] = [];
+            reqObj.params['EXCEPTIONS'] = this.configuration.options.exception_format;
+            reqObj.params['INFO_FORMAT'] = this.configuration.options.info_format || 'text/html';
+            var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
+            return reqUrl;
         }
     });
     return WmsSource;
@@ -167,44 +196,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             }
         }
         return null;
-    },
-    featureInfoUrl: function(source, x, y) {
-        var source_, olLayer_;
-        if (source.source) {
-            // An actual MapQuery layer
-            console.warn("Deprecated call to featureInfoUrl with a MapQuery layer, pass in the source object instead");
-            source_ = source.source;
-            olLayer_ = source.olLayer;
-        } else {
-            olLayer_ = Mapbender.Model.getNativeLayer(source);
-            source_ = source;
-        }
-        if (!(olLayer_ && olLayer_.getVisibility() && source_)) {
-            return false;
-        }
-        var queryLayers = source.getLayerParameters({}).infolayers;
-        if (!queryLayers.length) {
-            return false;
-        }
-        var wmsgfi = new OpenLayers.Control.WMSGetFeatureInfo({
-            url: Mapbender.Util.removeProxy(olLayer_.url),
-            layers: [olLayer_],
-            queryVisible: true,
-            maxFeatures: 1000
-        });
-        wmsgfi.map = olLayer_.map;
-        var reqObj = wmsgfi.buildWMSOptions(
-            Mapbender.Util.removeProxy(olLayer_.url),
-            [olLayer_],
-            {x: x, y: y},
-            olLayer_.params.FORMAT
-        );
-        reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = queryLayers;
-        reqObj.params['STYLES'] = [];
-        reqObj.params['EXCEPTIONS'] = source_.configuration.options.exception_format;
-        reqObj.params['INFO_FORMAT'] = source_.configuration.options.info_format || 'text/html';
-        var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
-        return reqUrl;
     },
     getPrintConfig: function(layer, bounds) {
         var printConfig = {
