@@ -11,6 +11,12 @@
       visibility: hidden;
     }
   }
+  .leaveContainer {
+    display: flex;
+  }
+  .layer-title {
+    flex: 1 1 auto;
+  }
   // needed for the feature info icon
   .featureInfoWrapper{
     width:$space;
