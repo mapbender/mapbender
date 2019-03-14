@@ -278,9 +278,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             }
         }
         this.super('applyTreeOptions', source, layerOptionsMap);
-    },
-    'public function getPrintConfig': function(olLayer, bounds) {
-        throw new Error("Unsafe printConfig with no scale information");
     }
 });
 (function() {

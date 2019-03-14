@@ -12,7 +12,6 @@ var Mapbender = Mapbender || {};
 Mapbender.Geo = {};
 
 Mapbender.Geo.SourceHandler = Class({
-    'private object defaultOptions': {},
     featureInfoUrl: function(source, x, y) {
         var source_;
         if (source.source) {
@@ -24,7 +23,19 @@ Mapbender.Geo.SourceHandler = Class({
         }
         return source_.getPointFeatureInfoUrl(x, y);
     },
-    'abstract public function getPrintConfig': function(layer, bounds, isProxy) {
+    /**
+     * Returns legacy print object. Single object with 'type' and 'url'. Assumes all sources work with
+     * a single layer. Does not check layer visibility. Does not provide opacity. Cannot reliably
+     * indicate that nothing should be printed. Cannot respect print target scale. Expects
+     * OpenLayers 2 objects as parameters.
+     *
+     * @param {OpenLayers.Layer} layer
+     * @param {Mapbender.Source} layer.mbConfig
+     * @param {OpenLayers.Bounds} bounds
+     * @return {{type, url}|void}
+     */
+    getPrintConfig: function(layer, bounds) {
+        return layer.mbConfig.getPrintConfigLegacy(bounds);
     },
     getLayersList: function getLayersList(source) {
         if (arguments.length !== 1) {

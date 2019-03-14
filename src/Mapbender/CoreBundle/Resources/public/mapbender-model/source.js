@@ -67,6 +67,13 @@ window.Mapbender.Source = (function() {
             }
             return layer;
         },
+        getPrintConfigLegacy: function(bounds) {
+            console.error("Legacy print config not implemented");
+            return {
+                type: this.type,
+                url: 'http://invalid.invalid.invalid/'
+            };
+        },
         // Custom toJSON for mbMap.getMapState()
         // Drops runtime-specific ollid and mqlid
         // Drops nativeLayers to avoid circular references

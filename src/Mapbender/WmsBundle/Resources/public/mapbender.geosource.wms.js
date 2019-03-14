@@ -144,6 +144,13 @@ window.Mapbender.WmsSource = (function() {
             reqObj.params['INFO_FORMAT'] = this.configuration.options.info_format || 'text/html';
             var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
             return reqUrl;
+        },
+        getPrintConfigLegacy: function(bounds) {
+            var olLayer = this.getNativeLayer(0);
+            return {
+                type: 'wms',
+                url: Mapbender.Util.removeProxy(olLayer.getURL(bounds))
+            };
         }
     });
     return WmsSource;
@@ -165,11 +172,6 @@ if(window.OpenLayers) {
 }
 
 Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler },{
-    'private object defaultOptions': {
-        type: 'wms',
-        noMagic: true,
-        transitionEffect: 'resize'
-    },
     getMaxExtent: function(source, projection, layer) {
         var confSource;
         if (layer) {
@@ -196,13 +198,6 @@ Mapbender.Geo.WmsSourceHandler = Class({'extends': Mapbender.Geo.SourceHandler }
             }
         }
         return null;
-    },
-    getPrintConfig: function(layer, bounds) {
-        var printConfig = {
-            type: 'wms',
-            url: Mapbender.Util.removeProxy(layer.getURL(bounds))
-        };
-        return printConfig;
     },
     getSingleLayerUrl: function(olLayer, bounds, layerName, styleName) {
         var baseUrl = this.getPrintConfig(olLayer, bounds).url;

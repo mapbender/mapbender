@@ -1524,7 +1524,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                     dataOut.push($.extend({}, commonLayerData, pc));
                 });
             } else {
-                dataOut.push($.extend({}, commonLayerData, gsHandler.getPrintConfig(olLayer, extent_)));
+                dataOut.push($.extend({}, commonLayerData, source.getPrintConfigLegacy(extent_)));
             }
 
         }
