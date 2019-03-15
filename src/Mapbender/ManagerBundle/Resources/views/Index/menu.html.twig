@@ -3,24 +3,24 @@
   see https://github.com/mapbender/fom/blob/v3.0.6.3/src/FOM/ManagerBundle/Resources/views/Manager/menu.html.twig
 #}
 <ul class="navLevel1 navigation">
-  {% for k, itemLvlOne in menu %}
+  {% for k, item in menu %}
 
-    <li id="manager-{{ k }}" class="navItem {% if itemLvlOne.active is defined %} activeItem {% endif %}">
-      <a class="iconLinkButton" href="{{ path(itemLvlOne.route) }}">{{ itemLvlOne.title|trans }}</a>
+    <li id="manager-{{ k }}" class="navItem {% if item.active is defined %} activeItem {% endif %}">
+      <a class="iconLinkButton" href="{{ path(item.route) }}">{{ item.title|trans }}</a>
 
-    {% if itemLvlOne.subroutes is defined %}
+    {% if item.subroutes is defined and item.subroutes %}
       <ul class="navLevel2">
 
-        {% for itemLvlTwo in itemLvlOne.subroutes %}
-          <li class="{% if itemLvlTwo.active is defined %} activeItem {% endif %} navItem">
-            <a{% if itemLvlTwo.idx is defined %} id="{{ itemLvlTwo.idx }}"{% endif %} class="iconLinkButton" href="{{ path(itemLvlTwo.route) }}">{{ itemLvlTwo.title|trans }}</a>
+        {% for item in item.subroutes %}
+          <li class="{% if item.active is defined and item.active %} activeItem {% endif %} navItem">
+            <a{% if item.idx is defined %} id="{{ item.idx }}"{% endif %} class="iconLinkButton" href="{{ path(item.route) }}">{{ item.title|trans }}</a>
 
-            {% if itemLvlTwo.subroutes is defined %}
+            {% if item.subroutes is defined and item.subroutes %}
               <ul class="navLevel3">
 
-                {% for itemLvlThree in itemLvlTwo.subroutes %}
-                  <li class="navItem {% if itemLvlThree.active is defined %} activeItem {% endif %}">
-                    <a class="iconLinkButton" href="{{ path(itemLvlThree.route) }}">{{ itemLvlThree.title|trans }}</a>
+                {% for item in item.subroutes %}
+                  <li class="navItem {% if item.active is defined and item.active %} activeItem {% endif %}">
+                    <a class="iconLinkButton" href="{{ path(item.route) }}">{{ item.title|trans }}</a>
                   </li>
                 {% endfor %}
 
