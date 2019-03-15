@@ -24,6 +24,18 @@ class AssetFactory extends AssetFactoryBase
     protected $templateEngine;
 
     /**
+     * Mark assets as moved, so refs can be rewritten
+     * This is a ~curated list, currently not intended for configurability.
+     * @var string[]
+     */
+    protected $migratedRefs = array(
+        '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
+        '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js' => '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+        '@FOMCoreBundle/Resources/public/js/widgets/popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js',
+        '@FOMCoreBundle/Resources/public/js/widgets/radiobuttonExtended.js' => '@MapbenderCoreBundle/Resources/public/widgets/radiobuttonExtended.js',
+    );
+
+    /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
      * @param EngineInterface $templateEngine
