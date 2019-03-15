@@ -2,11 +2,12 @@
 
 namespace Mapbender\ManagerBundle\Controller;
 
+use FOM\ManagerBundle\Component\ManagerBundle;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use FOM\ManagerBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Manager index controller.
@@ -24,8 +25,8 @@ class IndexController extends Controller
     /**
      * Simply redirect to the applications list.
      *
-     * @Route("/")
-     * @Method("GET")
+     * @ManagerRoute("/", methods={"GET"})
+     * @return Response
      */
     public function indexAction()
     {
@@ -36,9 +37,8 @@ class IndexController extends Controller
     /**
      * Renders the navigation menu
      *
-     * @Template
      * @param Request $request
-     * @return array
+     * @return Response
      */
     public function menuAction(Request $request)
     {
@@ -47,7 +47,9 @@ class IndexController extends Controller
 
         $this->setActive($menu, $current_route);
 
-        return array('menu' => $menu);
+        return $this->render('@MapbenderManager/Index/menu.html.twig', array(
+            'menu' => $menu,
+        ));
     }
 
     /**
@@ -95,28 +97,42 @@ class IndexController extends Controller
     }
 
     /**
+     * @return ManagerBundle[]
+     */
+    protected function getManagerBundles()
+    {
+        $bundles = array();
+        foreach($this->get('kernel')->getBundles() as $bundle) {
+            if(is_subclass_of($bundle, 'FOM\ManagerBundle\Component\ManagerBundle')) {
+                $bundles[] = $bundle;
+            }
+        }
+        return $bundles;
+    }
+
+    /**
      * @return array
      */
     protected function getManagerControllersDefinition()
     {
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
+        $authorizationChecker = $this->get('security.authorization_checker');
         $manager_controllers = array();
-        foreach($this->get('kernel')->getBundles() as $bundle) {
-            if(is_subclass_of($bundle, 'FOM\ManagerBundle\Component\ManagerBundle')) {
-                $controllers = $bundle->getManagerControllers();
-                if($controllers) {
-                    foreach($controllers as $idx => &$controller) {
-                        // Remove disabled main routes
-                        if(array_key_exists('enabled', $controller)) {
-                            $closure = $controller['enabled'];
-                            if(!$closure($this->get('security.authorization_checker'))) {
-                                unset($controllers[$idx]);
-                                continue;
-                            }
+        foreach ($this->getManagerBundles() as $bundle) {
+            $controllers = $bundle->getManagerControllers();
+            if ($controllers) {
+                foreach ($controllers as $idx => &$controller) {
+                    // Remove disabled main routes
+                    if (array_key_exists('enabled', $controller)) {
+                        $closure = $controller['enabled'];
+                        if(!$closure($authorizationChecker)) {
+                            unset($controllers[$idx]);
+                            continue;
                         }
-                        $this->pruneSubroutes($controllers[$idx]);
                     }
-                    $manager_controllers = array_merge($manager_controllers, $controllers);
+                    $this->pruneSubroutes($controllers[$idx]);
                 }
+                $manager_controllers = array_merge($manager_controllers, $controllers);
             }
         }
 
