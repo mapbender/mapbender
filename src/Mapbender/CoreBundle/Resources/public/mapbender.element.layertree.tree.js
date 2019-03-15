@@ -128,6 +128,11 @@
             $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
+            if (this._mobilePane) {
+                $(this.element).on('click', '.leaveContainer', function() {
+                    $('input[name="selected"]', this).click();
+                });
+            }
         },
         _resetCheckboxes: function() {
             $('input[type="checkbox"]', this.element).mbCheckbox();
@@ -851,10 +856,6 @@
             }
 
             this._setSourcesCount();
-        },
-        _showLegend: function(elm) {
-        },
-        _exportKml: function(elm) {
         },
         _zoomToLayer: function(e) {
             var options = {
