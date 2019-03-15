@@ -4,6 +4,7 @@
 namespace Mapbender\WmsBundle\Component\Presenter;
 
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
@@ -192,5 +193,22 @@ class WmsSourceService extends SourceService
          *       layer order explicitly
          * @see WmsInstance::getLayerOrder()
          */
+    }
+
+    public function getAssets(Application $application, $type)
+    {
+        switch ($type) {
+            case 'js':
+                return array(
+                    '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
+                    '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js',
+                );
+            case 'trans':
+                return array(
+                    'MapbenderCoreBundle::geosource.json.twig',
+                );
+            default:
+                throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Component\Source;
 
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
@@ -150,5 +151,24 @@ class TypeDirectoryService
         /** @var LoggerInterface $logger */
         $logger = $this->container->get('logger');
         return $logger;
+    }
+
+    /**
+     * Returns list of assets of given type required for source instances to work on the client.
+     *
+     * @param Application $application
+     * @param string $type must be 'js' or 'trans'
+     * @return string[]
+     */
+    public function getAssets(Application $application, $type)
+    {
+        $refs = array();
+        foreach ($this->subtypeServices as $subTypeService) {
+            $typeRefs = $subTypeService->getAssets($application, $type);
+            if ($typeRefs) {
+                $refs = array_merge($refs, $typeRefs);
+            }
+        }
+        return $refs;
     }
 }

@@ -15,9 +15,8 @@ use Mapbender\CoreBundle\Component\SourceMetadata;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_sourceinstance" = "SourceInstance"})
  */
-abstract class SourceInstance implements IAssetDependent
+abstract class SourceInstance
 {
-
     /**
      * @var integer $id
      * @ORM\Id

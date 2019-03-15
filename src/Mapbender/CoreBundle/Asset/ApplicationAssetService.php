@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Asset;
 use Assetic\Asset\StringAsset;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -24,6 +25,8 @@ class ApplicationAssetService
 {
     /** @var ApplicationService */
     protected $applicationService;
+    /** @var TypeDirectoryService */
+    protected $sourceTypeDirectory;
     /** @var ElementFactory */
     protected $elementFactory;
     /** @var RouterInterface */
@@ -41,6 +44,7 @@ class ApplicationAssetService
 
     public function __construct(AssetFactory $compiler,
                                 ApplicationService $applicationService,
+                                TypeDirectoryService $sourceTypeDirectory,
                                 ElementFactory $elementFactory,
                                 RouterInterface $router,
                                 EngineInterface $templateEngine,
@@ -48,8 +52,9 @@ class ApplicationAssetService
                                 $strict=false)
     {
         $this->compiler = $compiler;
-        $this->elementFactory = $elementFactory;
         $this->applicationService = $applicationService;
+        $this->sourceTypeDirectory = $sourceTypeDirectory;
+        $this->elementFactory = $elementFactory;
         $this->router = $router;
         $this->templateEngine = $templateEngine;
         $this->debug = $debug;
@@ -237,22 +242,15 @@ class ApplicationAssetService
      */
     protected function getLayerAssetReferences(Entity\Application $application, $type)
     {
-        $activeInstances = array();
-        foreach ($application->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
-                if ($application->isYamlBased() || $instance->getEnabled()) {
-                    $activeInstances[] = $instance;
-                }
-            }
+        switch ($type) {
+            case 'js':
+            case 'trans':
+                return $this->sourceTypeDirectory->getAssets($application, $type);
+            case 'css':
+                return array();
+            default:
+                throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));
         }
-        $combinedRefs = array();
-        foreach ($activeInstances as $sourceInstance) {
-            /** @var Entity\SourceInstance $sourceInstance */
-            $instanceRefs = ArrayUtil::getDefault($sourceInstance->getAssets() ?: array(), $type, array());
-            $qualifiedRefs = $this->qualifyAssetReferencesBulk($sourceInstance, $instanceRefs, $type);
-            $combinedRefs = array_merge($combinedRefs, $qualifiedRefs);
-        }
-        return $combinedRefs;
     }
 
     /**
