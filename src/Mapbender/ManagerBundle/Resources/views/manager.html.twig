@@ -23,7 +23,7 @@
           <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" /></a>
         </div>
         {% if app.user != "" %}
-          {% render controller("FOMManagerBundle:Manager:menu", { "request": app.request }) %}
+          {% render(controller("MapbenderManagerBundle:Index:menu", { "request": app.request })) %}
         {% endif %}
       </div>
 
