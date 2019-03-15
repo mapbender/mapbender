@@ -573,8 +573,6 @@ fieldset{
   .layers{
     padding-left: 0px;
     .serviceContainer {
-      padding: $space/2;
-      display: block;
       color: $darkFontColor;
       border: none !important;
 
@@ -588,6 +586,7 @@ fieldset{
   }
   .leaveContainer {
     flex-direction: row-reverse;
+    padding: $space/2;
   }
   .checkWrapper {
     height: initial;
