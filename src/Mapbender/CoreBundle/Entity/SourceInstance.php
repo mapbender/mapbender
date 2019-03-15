@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\IAssetDependent;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 
 /**
