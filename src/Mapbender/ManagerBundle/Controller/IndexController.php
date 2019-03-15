@@ -78,25 +78,6 @@ class IndexController extends Controller
     }
 
     /**
-     * @param $container
-     */
-    protected function pruneSubroutes(&$container)
-    {
-        if(is_array($container) && array_key_exists('subroutes', $container)) {
-            foreach($container['subroutes'] as $idx2 => &$route) {
-                if(array_key_exists('enabled', $route)) {
-                    $closure = $route['enabled'];
-                    if(!$closure($this->get('security.authorization_checker'))) {
-                        unset($container['subroutes'][$idx2]);
-                        continue;
-                    }
-                }
-                $this->pruneSubroutes($route);
-            }
-        }
-    }
-
-    /**
      * @return ManagerBundle[]
      */
     protected function getManagerBundles()
@@ -111,32 +92,48 @@ class IndexController extends Controller
     }
 
     /**
+     * @param array[] $defs
+     * @return array[]
+     */
+    protected function filterManagerControllerDefinitions($defs)
+    {
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
+        $authorizationChecker = $this->get('security.authorization_checker');
+        $defsOut = array();
+        foreach ($defs ?: array() as $k => $def) {
+            if (!empty($def['enabled'])) {
+                if ($def['enabled'] instanceof \Closure) {
+                    $fn = $def['enabled'];
+                    $enabled = $fn($authorizationChecker);
+                } else {
+                    throw new \RuntimeException("Unexpected type for 'enabled': " . (is_object($def['enabled']) ? get_class($def['enabled']) : gettype($def['enabled'])));
+                }
+                unset($def['enabled']);
+            } else {
+                $enabled = true;
+            }
+            if ($enabled) {
+                if (!empty($def['subroutes'])) {
+                    $def['subroutes'] = $this->filterManagerControllerDefinitions($def['subroutes']);
+                }
+                $defsOut[] = $def;
+            }
+        }
+        return $defsOut;
+    }
+
+    /**
      * @return array
      */
     protected function getManagerControllersDefinition()
     {
-        /** @var AuthorizationCheckerInterface $authorizationChecker */
-        $authorizationChecker = $this->get('security.authorization_checker');
-        $manager_controllers = array();
+        $routeDefinitions = array();
         foreach ($this->getManagerBundles() as $bundle) {
-            $controllers = $bundle->getManagerControllers();
-            if ($controllers) {
-                foreach ($controllers as $idx => &$controller) {
-                    // Remove disabled main routes
-                    if (array_key_exists('enabled', $controller)) {
-                        $closure = $controller['enabled'];
-                        if(!$closure($authorizationChecker)) {
-                            unset($controllers[$idx]);
-                            continue;
-                        }
-                    }
-                    $this->pruneSubroutes($controllers[$idx]);
-                }
-                $manager_controllers = array_merge($manager_controllers, $controllers);
-            }
+            $bundleDefinitions = $bundle->getManagerControllers();
+            $bundleDefinitions = $this->filterManagerControllerDefinitions($bundleDefinitions);
+            $routeDefinitions = array_merge($routeDefinitions, $bundleDefinitions);
         }
-
-        usort($manager_controllers, function($a, $b) {
+        usort($routeDefinitions, function($a, $b) {
             if($a['weight'] == $b['weight']) {
                 return 0;
             }
@@ -144,11 +141,11 @@ class IndexController extends Controller
             return ($a['weight'] < $b['weight']) ? -1 : 1;
         });
 
-        if(count($manager_controllers) === 0) {
+        if (!$routeDefinitions) {
             throw new \RuntimeException('No manager controllers registered');
         }
 
-        return $manager_controllers;
+        return $routeDefinitions;
     }
 }
 
