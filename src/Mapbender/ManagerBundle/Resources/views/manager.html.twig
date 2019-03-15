@@ -1,0 +1,62 @@
+{% extends "MapbenderCoreBundle::index.html.twig" %}
+
+{% set title %}{% block title %}{{ title|default('') }}{% endblock %}{% endset %}
+
+{% block favicon %}{{ asset('favicon.png') }}{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'css'}) }}"/>
+{% endblock %}
+
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'js'}) }}"></script>
+  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': 'manager','type': 'trans'}) }}"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="head"><hr class="dekoSeperator"></div>
+    <div id="wrapper" class="page">
+
+      <div class="leftPane">
+        <div class="logoContainer">
+          <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" /></a>
+        </div>
+        {% if app.user != "" %}
+          {% render controller("FOMManagerBundle:Manager:menu", { "request": app.request }) %}
+        {% endif %}
+      </div>
+
+      <div class="rightPane">
+
+        {# flash me baby #}
+        {% for key, flash in app.session.bag('flashes') %}
+          <div class="flashBox {{ key }}">
+            {{ flash | first }}
+          </div>
+        {% endfor %}
+
+        <div class="accountBar shadowBox">
+          {% if app.user != "" %}
+            <ul id="accountMenu" class="accountMenu">
+                <li id="accountOpen" class="iconDown smallText">{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}<span class="openedIcon"></span></li>
+                {% if app.user.password != "" %} <li><a class="linkButton iconSettings" href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">{{ "fom.core.manager.you_account"|trans }}</a></li>{% endif %}
+                <li><a class="linkButton iconSignOut" href="{{ path('fom_user_login_logout') }}">{{ "fom.core.manager.btn.logout"|trans }}</a></li>
+            </ul>
+          {% else %}
+            <a class="linkButton iconSignIn" href="{{ path('fom_user_login_login') }}">{{ "fom.core.manager.btn.login"|trans}}</a>
+          {% endif %}
+        </div>
+        <div class="contentPane">
+          <div id="version" class="mapbenderVersion smallText">v. {{ fom.server_version }}</div>
+          <div class="content shadowBox">
+            <h1 class="contentTitle">{{ title|trans }}</h1>
+
+            {% block manager_content %}{% endblock %}
+          </div>
+           
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
