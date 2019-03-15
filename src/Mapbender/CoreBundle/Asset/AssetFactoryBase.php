@@ -15,6 +15,8 @@ class AssetFactoryBase
     /** @var FileLocatorInterface */
     protected $fileLocator;
 
+    protected $migratedRefs = array();
+
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
@@ -23,6 +25,16 @@ class AssetFactoryBase
     {
         $this->fileLocator = $fileLocator;
         $this->webDir = $webDir;
+    }
+
+    protected function getDebugHeader($finalPath, $originalRef)
+    {
+        return "\n"
+            . "/** \n"
+            . "  * BEGIN NEW ASSET INPUT -- {$finalPath}\n"
+            . "  * (original reference: {$originalRef})\n"
+            . "  */\n"
+        ;
     }
 
     /**
@@ -47,7 +59,7 @@ class AssetFactoryBase
                 $uniqueKey = str_replace(array('@', 'Resources/public/'), '', $input);
                 $uniqueKey = str_replace(array('/', '.', '-'), '__', $uniqueKey);
                 if ($debug) {
-                    $debugInfo = "\n/** BEGIN NEW ASSET INPUT -- {$realAssetPath} (original reference: {$input}) */\n";
+                    $debugInfo = $this->getDebugHeader($realAssetPath, $input);
                     $uniqueAssets["{$uniqueKey}+dbgInfo"] = new StringAsset($debugInfo);
                 }
                 $uniqueAssets[$uniqueKey] = $fileAsset;
@@ -66,6 +78,9 @@ class AssetFactoryBase
      */
     protected function locateAssetFile($input)
     {
+        while (!empty($this->migratedRefs[$input])) {
+            $input = $this->migratedRefs[$input];
+        }
         return $this->fileLocator->locate($this->getSourcePath($input));
     }
 
