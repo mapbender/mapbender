@@ -8,7 +8,8 @@
                 fillOpacity:   0.5,
                 strokeColor:   '#000000',
                 strokeOpacity: 1.0,
-                strokeWidth:    2
+                strokeWidth:    2,
+                cursor: 'all-scroll'
             }
         },
         layer: null,
