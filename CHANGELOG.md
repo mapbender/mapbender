@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ 6fc10c90f**
+* **dev-release/3.0.7 @ 1c8b63103**
   - [Beta regression] Fix button group misalginment in Application "Layersets" tab
   - [Beta regression] Fix layout breakage in "Vendorspecifics" area of WMS instance backend
   - [Beta regression] Fix layout breakage in "Reload source" and "Add new source" sections
@@ -14,8 +14,11 @@
   - Print: fix errors extracting user specific job values for custom LDAP user objects without a `getId()` method
   - FeatureInfo: fix visual dialog overflow for wide response HTML formats with `showOriginal` option off
   - FeatureInfo: fix erratic double scrollbars appearing / disappearing when resizing dialog with `showOriginal` option on
-  - LayerTree "zoom to layer" now supports WMS 1.3.0 `<BoundingBox>` axis order specification quirks
-  - Add experimental, partial WMTS / TMS source support. Disabled by default. See [PR#116](https://github.com/mapbender/mapbender/pull/1116) for instructions and known limitations
+  - LayerTree: "zoom to layer" now supports WMS 1.3.0 `<BoundingBox>` axis order specification quirks
+  - LayerTree: Support horizontal growth and auto-ellipse long title texts purely with CSS; this obsoletes the `titlemaxlength` option, which has been removed
+  - Add experimental, partial WMTS / TMS source support. Disabled by default. See [PR#1116](https://github.com/mapbender/mapbender/pull/1116) for instructions and known limitations
+  - Annex responsibility for general backend layout and certain JavaScript widgets from FOM. See [PR#1120](https://github.com/mapbender/mapbender/pull/1120) for potential BC impact on highly customized installations.
+  - Increase reverse-proxy setup compatibility also for owsproxy urls generated for source instances with `proxy` option checked
 
 * **v3.0.8-beta1**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
