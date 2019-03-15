@@ -30,7 +30,7 @@ class IndexController extends Controller
      */
     public function indexAction()
     {
-        $controllers = $this->getManagerControllersDefinition();
+        $controllers = $this->getManagerControllersDefinition(null);
         return $this->redirect($this->generateUrl($controllers[0]['route']));
     }
 
@@ -43,38 +43,12 @@ class IndexController extends Controller
     public function menuAction(Request $request)
     {
         $current_route = $request->attributes->get('_route');
-        $menu          = $this->getManagerControllersDefinition();
+        $menu          = $this->getManagerControllersDefinition($current_route);
 
-        $this->setActive($menu, $current_route);
 
         return $this->render('@MapbenderManager/Index/menu.html.twig', array(
             'menu' => $menu,
         ));
-    }
-
-    /**
-     * @param $routes
-     * @param $currentRoute
-     * @return bool
-     */
-    private function setActive(&$routes, $currentRoute) {
-        if(empty($routes)) return false;
-
-        $return = false;
-
-        foreach ($routes as &$route) {
-            if($currentRoute === $route['route']) {
-                $route['active'] = true;
-                $return = true;
-            }
-
-            if(isset($route['subroutes']) && $this->setActive($route['subroutes'], $currentRoute)) {
-                $route['active'] = true;
-                $return = true;
-            }
-        }
-
-        return $return;
     }
 
     /**
@@ -93,9 +67,10 @@ class IndexController extends Controller
 
     /**
      * @param array[] $defs
+     * @param string|null $currentRoute
      * @return array[]
      */
-    protected function filterManagerControllerDefinitions($defs)
+    protected function filterManagerControllerDefinitions($defs, $currentRoute)
     {
         /** @var AuthorizationCheckerInterface $authorizationChecker */
         $authorizationChecker = $this->get('security.authorization_checker');
@@ -113,8 +88,21 @@ class IndexController extends Controller
                 $enabled = true;
             }
             if ($enabled) {
+                $def['active'] = ($def['route'] === $currentRoute);
                 if (!empty($def['subroutes'])) {
-                    $def['subroutes'] = $this->filterManagerControllerDefinitions($def['subroutes']);
+                    $def['subroutes'] = $this->filterManagerControllerDefinitions($def['subroutes'], $currentRoute);
+                    if (!$def['active']) {
+                        foreach ($def['subroutes'] as $sub) {
+                            if (!empty($sub['active'])) {
+                                $def['active'] = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                // legacy menu.html.twig quirk: the template checks if 'active' is defined, not its boolean value
+                if (!$def['active']) {
+                    unset($def['active']);
                 }
                 $defsOut[] = $def;
             }
@@ -123,14 +111,15 @@ class IndexController extends Controller
     }
 
     /**
+     * @param string|null $currentRoute
      * @return array
      */
-    protected function getManagerControllersDefinition()
+    protected function getManagerControllersDefinition($currentRoute)
     {
         $routeDefinitions = array();
         foreach ($this->getManagerBundles() as $bundle) {
             $bundleDefinitions = $bundle->getManagerControllers();
-            $bundleDefinitions = $this->filterManagerControllerDefinitions($bundleDefinitions);
+            $bundleDefinitions = $this->filterManagerControllerDefinitions($bundleDefinitions, $currentRoute);
             $routeDefinitions = array_merge($routeDefinitions, $bundleDefinitions);
         }
         usort($routeDefinitions, function($a, $b) {
