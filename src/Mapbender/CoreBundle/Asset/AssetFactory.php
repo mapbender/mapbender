@@ -33,6 +33,8 @@ class AssetFactory extends AssetFactoryBase
         '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js' => '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
         '@FOMCoreBundle/Resources/public/js/widgets/popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js',
         '@FOMCoreBundle/Resources/public/js/widgets/radiobuttonExtended.js' => '@MapbenderCoreBundle/Resources/public/widgets/radiobuttonExtended.js',
+        '@FOMCoreBundle/Resources/public/js/widgets/collection.js' => '@MapbenderManagerBundle/Resources/public/form/collection.js',
+        '@FOMCoreBundle/Resources/public/js/components.js' => '@MapbenderManagerBundle/Resources/public/components.js',
     );
 
     /**
