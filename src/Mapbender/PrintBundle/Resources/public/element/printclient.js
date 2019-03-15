@@ -274,23 +274,59 @@
             if (!this.layer) {
                 this.layer = new OpenLayers.Layer.Vector("Print", {
                     styleMap: new OpenLayers.StyleMap({
-                        'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
+                        'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style),
+                        'transform': new OpenLayers.Style({
+                            display: '${getDisplay}',
+                            cursor: 'all-scroll',
+                            pointRadius: 0,
+                            fillColor: 'none',
+                            fillOpacity: 0,
+                            strokeColor: '#000'
+                        }, {
+                            context: {
+                                getDisplay: function(feature) {
+                                    // hide the resize handle at the se corner
+                                    return feature.attributes.role === 'se-resize' ? 'none' : '';
+                                }
+                            }
+                        }),
+                        'rotate': new OpenLayers.Style({
+                            display: '${getDisplay}',
+                            cursor: 'pointer',
+                            pointRadius: 10,
+                            fillColor: '#ddd',
+                            fillOpacity: 1,
+                            strokeColor: '#000'
+                        }, {
+                            context: {
+                                getDisplay: function(feature) {
+                                    // only display rotate handle at the se corner
+                                    return feature.attributes.role === 'se-rotate' ? '' : 'none';
+                                }
+                            }
+                        })
                     })
                 });
             }
             return this.layer;
         },
         /**
-         * Gets the drag control used to move the selection feature around over the map.
+         * Gets the drag control used to rotate and
+         * move the selection feature around over the map.
          * Control is created on first call, then reused.
          * Implicitly creates the selection layer, too, if not yet done.
          */
         _getSelectionDragControl: function() {
             var self = this;
             if (!this.control) {
-                this.control = new OpenLayers.Control.DragFeature(this._getSelectionLayer(),  {
-                    onComplete: function() {
-                        self._updateGeometry(false);
+                this.control = new OpenLayers.Control.TransformFeature(this._getSelectionLayer(), {
+                    renderIntent: 'transform',
+                    rotationHandleSymbolizer: 'rotate'
+                });
+                this.control.events.on({
+                    'transformcomplete': function() {
+                        console.log('transformcomplete');
+                        self._updateGeometry();
                     }
                 });
             }
