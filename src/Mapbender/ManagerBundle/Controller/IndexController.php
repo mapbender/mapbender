@@ -2,7 +2,7 @@
 
 namespace Mapbender\ManagerBundle\Controller;
 
-use FOM\ManagerBundle\Component\ManagerBundle;
+use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +58,7 @@ class IndexController extends Controller
     {
         $bundles = array();
         foreach($this->get('kernel')->getBundles() as $bundle) {
-            if(is_subclass_of($bundle, 'FOM\ManagerBundle\Component\ManagerBundle')) {
+            if ($bundle instanceof ManagerBundle) {
                 $bundles[] = $bundle;
             }
         }
