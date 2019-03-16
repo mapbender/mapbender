@@ -5,8 +5,8 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\Component\BundleUtil;
 use Mapbender\Component\ClassUtil;
 use Mapbender\Component\StringUtil;
+use Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface;
 use Mapbender\CoreBundle\Entity\Element as Entity;
-use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -26,7 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @author Christian Wygoda
  */
-abstract class Element implements ElementInterface, ElementHttpHandlerInterface
+abstract class Element implements ElementInterface, ElementHttpHandlerInterface, BoundSelfRenderingInterface
 {
     /**
      * Extended API. The ext_api defines, if an element can be used as a target
