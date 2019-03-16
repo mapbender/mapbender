@@ -7,22 +7,40 @@ An updated version of mapbender/data-source is already anchored in the current M
 Please merge up your starter or update the mapbender/data-source package manually at the
 earliest convenience. 
 
-An upcoming TBD Mapbender version will remove the fosjsrouting dependency, which will require updates in other packages:
-- mapbender/coordinates-utility, if used, must be >= 1.0.5
-
 ## dev-release/3.0.7
+#### BaseKernel inheritance now mandatory
+[Mapbender\BaseKernel](https://github.com/mapbender/mapbender/blob/8df72bc31a4d09623c8447fa42197111bb4b277e/src/Mapbender/BaseKernel.php) was introduced a good while ago with Mapbender 3.0.7,
+to [simplify dependency coupling with Mapbender Starter](https://github.com/mapbender/mapbender/issues/773). After a grace period of roughly
+a year, it is now mandatory that your AppKernel (in starter repository scope) [inherits from this BaseKernel](https://github.com/mapbender/mapbender-starter/blob/v3.0.7.3/application/app/AppKernel.php#L9).
+
+#### PrintClient migration from CoreBundle into PrintBundle
 The PrintClient Element, along with its assets, views, admin type and all related code has been moved from
 the CoreBundle into the \Mapbender\PrintBundle namespace. No provisions have been made to detect / pick up
 any project customizations on the old file locations. If you have customized PrintClient views or assets via app/Resources
 drop-ins, you must move them accordingly.
 
-To facilitate print queue integration, the PrintClient twig has been split up.
-The [settings form](https://github.com/mapbender/mapbender/blob/8dbd2e9eefdbacf1dd4b60f14f8e7b345005743f/src/Mapbender/PrintBundle/Resources/views/Element/printclient-settings.html.twig) has
-been broken out of [the element shell](https://github.com/mapbender/mapbender/blob/8dbd2e9eefdbacf1dd4b60f14f8e7b345005743f/src/Mapbender/PrintBundle/Resources/views/Element/printclient.html.twig).
+If you have customized PrintClient twigs, you should also review your twigs vs changes to the shipping versions.
+
+To facilitate [print queue integration](https://github.com/mapbender/mapbender/pull/1070), the PrintClient twig has been split up into [the settings form](https://github.com/mapbender/mapbender/blob/8dbd2e9eefdbacf1dd4b60f14f8e7b345005743f/src/Mapbender/PrintBundle/Resources/views/Element/printclient-settings.html.twig)
+and a [basic element shell](https://github.com/mapbender/mapbender/blob/8dbd2e9eefdbacf1dd4b60f14f8e7b345005743f/src/Mapbender/PrintBundle/Resources/views/Element/printclient.html.twig).
 The template for the settings form can be customized individually, by asset drop-in or [method override](https://github.com/mapbender/mapbender/blob/8dbd2e9eefdbacf1dd4b60f14f8e7b345005743f/src/Mapbender/PrintBundle/Element/PrintClient.php#L204),
-separately from the main template (which may or may not wrap the settings form into a tab container, depending on queue mode configuration).
+separately from the main template. This allows to reuse the exact same settings form template for queued mode, where its markup is wrapped into a
+tab container with the queue status in a second tab, and the familiar non-queued mode.
 
 The outdated underscore.js version in Mapbender/CoreBundle/Resources/public/vendor has been removed. Custom Elements or Templates requiring underscore should use the version installed into web/components/underscore (which is provided by default by all included Templates).
+
+#### Client: Removal of MapQuery
+The mapquery component is still installed, but only used as a vehicle to deliver OpenLayers 2 assets. The actual MapQuery script is not
+loaded into any applications anymore. There is only [limited emulation shimming](https://github.com/mapbender/mapbender/blob/8df72bc31a4d09623c8447fa42197111bb4b277e/src/Mapbender/CoreBundle/Resources/public/mapbender.model.js#L7) to retain the look and feel of certain MapQuery data structures,
+such as Mapbender.Model.map, and Mapbender.Model.map.layersList.  
+[Mapbender.Model.map.layers()](https://github.com/mapbender/mapbender/blob/8df72bc31a4d09623c8447fa42197111bb4b277e/src/Mapbender/CoreBundle/Resources/public/mapbender.model.js#L60) may now only be called to create a single vector layer, where it will generate a client-side warning. All other
+invocations will throw an Error.
+
+#### Backend: Removal of FOS JS Routing
+The Element configuration backend no longer emits the [FOS JS Routing](https://packagist.org/packages/friendsofsymfony/jsrouting-bundle) assets.
+Element forms with custom JavaScript making calls to `Routing.generate` et al will fail. We strongly advise against re-adding FOS JS Routing explicitly
+to your Element form. Instead we recommend that you generate any required URLs on the twig level, using the `path()` method.
+See [Coordinates Utility Pull #11](https://github.com/mapbender/coordinates-utility/pull/11/files) for a concrete example on how to implement this change.
 
 #### PrintService restructuring
 It has generally been very difficult to customize PrintService via standard inheritance / DI methods due
