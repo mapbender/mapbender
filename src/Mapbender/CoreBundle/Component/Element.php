@@ -453,18 +453,6 @@ abstract class Element implements ElementInterface, ElementHttpHandlerInterface,
     }
 
     /**
-     * Hook function for embedded elements to influence the effective application config on initial load.
-     * We (can) use this for BaseSourceSwitchter (deactivates layers), SuggestMap element reloading state etc.
-     *
-     * @param array
-     * @return array
-     */
-    public function updateAppConfig($configIn)
-    {
-        return $configIn;
-    }
-
-    /**
      * @param string $action
      * @param mixed $referenceType optional; one of the UrlGenerator constants
      * @return string

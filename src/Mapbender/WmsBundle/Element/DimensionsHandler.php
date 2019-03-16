@@ -3,15 +3,15 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
-use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * Dimensions handler
  * @author Paul Schmidt
  */
-class DimensionsHandler extends Element
+class DimensionsHandler extends Element implements BoundConfigMutator
 {
 
     /**

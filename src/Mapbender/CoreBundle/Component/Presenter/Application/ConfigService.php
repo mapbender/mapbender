@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
 use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
 use Mapbender\CoreBundle\Component\Element as Element;
+use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
@@ -61,7 +62,10 @@ class ConfigService
         // visible state of the frontend.
         $configBeforeElement = $configAfterElements = $configuration;
         foreach ($activeElements as $elementComponent) {
-            $configAfterElements = $configBeforeElement = $elementComponent->updateAppConfig($configBeforeElement);
+            if ($elementComponent instanceof BoundConfigMutator) {
+                $configAfterElements = $elementComponent->updateAppConfig($configBeforeElement);
+                $configBeforeElement = $configAfterElements;
+            }
         }
         return $configAfterElements;
     }

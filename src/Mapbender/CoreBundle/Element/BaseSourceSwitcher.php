@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
@@ -10,7 +11,7 @@ use Mapbender\ManagerBundle\Component\Mapper;
  *
  * @author Paul Schmidt
  */
-class BaseSourceSwitcher extends Element
+class BaseSourceSwitcher extends Element implements BoundConfigMutator
 {
 
     /**
