@@ -50,9 +50,6 @@ abstract class Element extends MinimalBound
     /** @var ContainerInterface Symfony container */
     protected $container;
 
-    /** @var array Class name parts */
-    protected $classNameParts;
-
     /** @var array Element fefault configuration */
     protected static $defaultConfiguration = array();
 
@@ -75,7 +72,6 @@ abstract class Element extends MinimalBound
      */
     public function __construct(Application $application, ContainerInterface $container, Entity $entity)
     {
-        $this->classNameParts = explode('\\', get_called_class());
         $this->application    = $application;
         $this->container      = $container;
         parent::__construct($entity);
@@ -220,20 +216,6 @@ abstract class Element extends MinimalBound
     public function getConfiguration()
     {
         return $this->entity->getConfiguration();
-    }
-
-    /**
-     * Should return the (namespaced) JavaScript widget constructor name. E.g. 'mapbender.mbAboutDialog'.
-     *
-     * Default implementation returns the concrete class name prefixed with 'mapbender.mb'.
-     * Automatic calculation is deprecated. The default implementation will be removed in a future release,
-     * making this method abstract. Return your widget constructor names explicitly.
-     *
-     * @return string
-     */
-    public function getWidgetName()
-    {
-        return 'mapbender.mb' . end($this->classNameParts);
     }
 
     /**

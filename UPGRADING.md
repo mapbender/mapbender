@@ -1,13 +1,10 @@
-## Future
-
-An upcoming TBD Mapbender version will break compatibility with mapbender/data-source < 0.1.9,
-which is
-[a dependency of mapbender/digitizer, mapbender/query-builder and mapbender/data-manager](https://packagist.org/packages/mapbender/data-source/dependents).
-An updated version of mapbender/data-source is already anchored in the current Mapbender Starter's composer.lock.
-Please merge up your starter or update the mapbender/data-source package manually at the
-earliest convenience. 
-
 ## dev-release/3.0.7
+#### Package conflicts
+If installed, mapbender/data-source must be at least 0.1.11. A conflict rule prevents installation of older versions via Composer. This is a
+[a dependency of mapbender/digitizer, mapbender/query-builder and mapbender/data-manager](https://packagist.org/packages/mapbender/data-source/dependents).
+
+If installed, mapbender/coordinates-utility must be at least 1.0.5 to work at all. We recomment the latest 1.0.7.1 for best results.
+
 #### BaseKernel inheritance now mandatory
 [Mapbender\BaseKernel](https://github.com/mapbender/mapbender/blob/8df72bc31a4d09623c8447fa42197111bb4b277e/src/Mapbender/BaseKernel.php) was introduced a good while ago with Mapbender 3.0.7,
 to [simplify dependency coupling with Mapbender Starter](https://github.com/mapbender/mapbender/issues/773). After a grace period of roughly
