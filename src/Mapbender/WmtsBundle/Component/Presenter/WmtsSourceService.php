@@ -312,7 +312,6 @@ class WmtsSourceService extends SourceService
             case 'trans':
                 return array(
                     'MapbenderCoreBundle::geosource.json.twig',
-                    'MapbenderWmtsBundle::wmtsbundle.json.twig',
                 );
             default:
                 throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));
