@@ -131,7 +131,7 @@ window.Mapbender.Source = (function() {
                 }
             }
             if (!boundsMap && inheritSource_) {
-                boundsMap = this._reduceBboxMap(configuration.options.bbox);
+                boundsMap = this._reduceBboxMap(this.configuration.options.bbox);
             }
             return boundsMap;
         },
