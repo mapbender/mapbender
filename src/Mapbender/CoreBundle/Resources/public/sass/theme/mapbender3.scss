@@ -20,6 +20,9 @@
   position: absolute;
   @include opacity(0);
 }
+.olControlZoom {
+  display: none;
+}
 
 /* ---------------------------------------------------------- TOOLBAR */
 .logoContainer{background-image:url($headPatternUrl);}
