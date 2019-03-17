@@ -429,7 +429,7 @@ $(function() {
     var screenShotImg = screenShotCell.find('img');
     var uploadButton = applicationForm.find('.upload_button');
     var fileInput = applicationForm.find('#application_screenshotFile');
-    var validationMsgBox = applicationForm.find('span.validationMsgBox');
+    var validationMsgBox = applicationForm.find('.validationMsgBox');
     var maxFileSize = applicationForm.find('#application_maxFileSize').val();
     var minWidth = applicationForm.find('#application_screenshotWidth').val();
     var minHeight = applicationForm.find('#application_screenshotHeight').val();
