@@ -1,5 +1,19 @@
 {% if configuration.click is defined and configuration.click  %}
-  <a id="{{ id }}" target="_blank" class="mb-button" href="{{ configuration.click }}" title="{{ configuration.tooltip|default(title)|trans }}"><span class="{% if configuration.icon is defined %} iconBig {{ configuration.icon }}{% endif %}">{% if configuration.label %}{{ title|trans }}{% endif %}</span></a>
+  <a id="{{ id }}" target="_blank" class="mb-button"
+     href="{{ configuration.click }}" title="{{ configuration.tooltip|default(title)|trans }}">
+    {% if configuration.icon is defined %}
+      <span class="iconBig {{ configuration.icon }}"></span>
+    {% endif %}
+    {% if configuration.label %}{{ title|trans }}{% endif %}
+  </a>
 {% else  %}
-  <span id="{{ id }}" data-group="{{ configuration.group }}" title="{{ configuration.tooltip|default(title)|trans }}" class="mb-button {% if configuration.icon is defined %} iconBig {{ configuration.icon }}{% endif %}">{% if configuration.label %}{{ title|trans }}{% endif %}</span>
+  <span id="{{ id }}"
+        data-group="{{ configuration.group }}"
+        title="{{ configuration.tooltip|default(title)|trans }}"
+        class="mb-button">
+    {% if configuration.icon is defined %}
+    <span class="iconBig {{ configuration.icon }}"></span>
+    {% endif %}
+    {% if configuration.label %}{{ title|trans }}{% endif %}
+  </span>
 {% endif %}
