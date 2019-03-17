@@ -17,8 +17,9 @@ interface ElementInterface extends IAssetDependent, EditableInterface
 {
     /**
      * Should return the (namespaced) JavaScript widget constructor name. E.g. 'mapbender.mbAboutDialog'.
+     * May also return boolean false to indicate no javascript logic needs initializing at all.
      *
-     * @return string
+     * @return string|false
      */
     public function getWidgetName();
 

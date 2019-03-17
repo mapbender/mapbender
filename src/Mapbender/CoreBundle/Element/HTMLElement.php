@@ -22,6 +22,12 @@ class HTMLElement extends Element
         return 'mb.core.htmlelement.class.description';
     }
 
+    public function getWidgetName()
+    {
+        // no script constructor
+        return false;
+    }
+
     public static function getClassTags()
     {
         return array(

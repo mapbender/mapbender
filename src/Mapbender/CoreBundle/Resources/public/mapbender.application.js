@@ -93,7 +93,7 @@ Mapbender.ElementRegistry = (function($){
      * constructor.
      *
      * @param {HTMLElement|jQuery} node
-     * @param {string} readyEventName
+     * @param {string} [readyEventName]
      */
     ElementRegistry.prototype.trackElementNode = function(node, readyEventName) {
         var nodeId = $(node).attr('id');
@@ -105,7 +105,9 @@ Mapbender.ElementRegistry = (function($){
         this.addTrackingByClass_(bundle, node);
         // register one-time listener for ready event, which will trigger promise
         // resolution
-        $(node).one(readyEventName, this.markReady.bind(this, nodeId));
+        if (readyEventName) {
+            $(node).one(readyEventName, this.markReady.bind(this, nodeId));
+        }
     };
     /**
      * @param {string|int} id
@@ -291,13 +293,24 @@ $.extend(Mapbender, (function($) {
         if (!$(selector).length) {
             throw new Error("No DOM match for element selector " + selector);
         }
-        var initInfo = _getElementInitInfo(data.init);
-        if (!initInfo.initMethod) {
-            Mapbender.elementRegistry.markFailed(id);
-            throw new Error("No such widget " + data.init);
+        var instance;
+        if (data.init) {
+            var initInfo = _getElementInitInfo(data.init);
+            if (!initInfo.initMethod) {
+                Mapbender.elementRegistry.markFailed(id);
+                throw new Error("No such widget " + data.init);
+            }
+            instance = (initInfo.initMethod)(data.configuration, selector);
+            Mapbender.elementRegistry.markCreated(id, instance);
+        } else {
+            // no widget constructor, do a little thing that at least has the element property in the
+            // same place as a jquery ui widget
+            instance = {
+                element: $(selector)
+            };
+            Mapbender.elementRegistry.markCreated(id, instance);
+            Mapbender.elementRegistry.markReady(id);
         }
-
-        return (initInfo.initMethod)(data.configuration, selector);
     }
     function _trackElements(config) {
         // @todo: fold copy&paste between this method and initElement
@@ -307,8 +320,8 @@ $.extend(Mapbender, (function($) {
             var data = config[id];
             var $node = $('#' + id);
             if ($node.length) {
-                var initInfo = _getElementInitInfo(data.init);
-                var readyEventName = initInfo.eventPrefix && [initInfo.eventPrefix, 'ready'].join('');
+                var initInfo = data.init && _getElementInitInfo(data.init);
+                var readyEventName = initInfo && initInfo.eventPrefix && [initInfo.eventPrefix, 'ready'].join('') || null;
                 Mapbender.elementRegistry.trackElementNode($node, readyEventName);
             } else {
                 console.error("No matching dom node for configured element", id, data);
@@ -321,8 +334,7 @@ $.extend(Mapbender, (function($) {
             var elementId = elementIds[i];
             var elementData = config[elementId];
             try {
-                var instance = initElement(elementId, elementData);
-                Mapbender.elementRegistry.markCreated(elementId, instance);
+                initElement(elementId, elementData);
             } catch(e) {
                 Mapbender.elementRegistry.markFailed(elementId);
                 // NOTE: console.error produces a NEW stack trace that ends right here, and as such
