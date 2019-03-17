@@ -2,12 +2,25 @@
   &.iconMove:before{
     @include absolute(-$space 0 '' '');
   }
-  .pan > span,
-  .toolPane > li:not(.zoomSlider),
-  .zoomSlider > span, .zoomSlider > ul > li {
+  .pan > span {
     opacity: 0.7;
     &:hover {
       opacity: 1;
+    }
+  }
+  .toolPane > li  {
+    opacity: 0.7;
+    &:hover {
+      opacity: 1;
+    }
+    &.zoomSlider, &.history {
+      opacity: 1;
+      div, span, li {
+        opacity: 0.7;
+        &:hover {
+          opacity: 1;
+        }
+      }
     }
   }
 
@@ -35,12 +48,20 @@
     @include border-radius($radius);
     @include frontendContainerStyle();
 
-    & > li{margin:3px 0;}
-
-    .iconBig {
-      padding-left: 31px;
+    & > li,
+    .zoomSlider > span,
+    .zoomSlider > ul {
+      margin:3px 0;
     }
-    
+  }
+  .iconBig {
+    padding: 0;
+    margin: 0;
+    &:before {
+      padding: 0;
+      margin: 0;
+      position: unset;
+    }
   }
   .historyPrev, .historyNext{margin-left:5px;}
   .toolPane {
@@ -52,42 +73,21 @@
     }
   }
 
-  .zoomSliderLevels {
-    margin: 0;
-  }
-
   .iconZoomLevel {
     font-size: 10px;
-    position: relative;
-    display: block;
-    margin-top: 0px;
-    margin-left: 15px;
     width: 10px;
     line-height: 10px;
-    height: 10px;
-    position: relative;
-    margin-bottom: 9px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     &:not(:last-child):after {
-      position: absolute;
       content: "\f142";
       font-family: FontAwesome;
-      line-height: 10px;
       display: block;
-      //margin-bottom: -3px;
-      width: 3px;
-      text-align: left;
-      margin-left: 4px;
-
+      margin-bottom: -1px;
     }
   }
   
-  .iconZoomOut{
-      position: relative;
-      display:block;
-      height: 17px;
-      padding-left: 35px !important;
-      margin-top: 3px;
-  }
 }
 
 /**

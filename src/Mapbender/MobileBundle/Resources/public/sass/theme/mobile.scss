@@ -524,50 +524,44 @@ fieldset{
   &.left-top{@include absolute($space '' '' $space);}
   &.left-bottom{@include absolute('' '' $space*4 $space/2);}
   &.right-bottom{@include absolute('' $space/2 $space*4 '');}
+  div.iconBig {
+    display: block;
+  }
 }
 .contentPane{
     > .mb-element.mb-element-zoombar{
         > ul.toolPane{
           border: 2px solid $ciColor2;
-          margin:$space/2 5px 0px 5px;
           padding:$space/2;
           color:$ciColor3;
           background-color: $ciColor4;
-
-          & > li{
-            .iconBig{
-                height: 25px;
-                padding-left: 22px !important;
-                color: $ciColor;
-            }
-            margin:3px 0;
+          .iconBig{
+              color: $ciColor;
+          }
+          li .iconBig {
+            margin: 0;
+          }
+          li.zoomSlider .iconBig {
+            margin: $space / 2 auto;
           }
         }
     }
 }
-.iconOk:before,.mb-element-zoombar .toolPane .iconBig
+.iconOk:before,
 .iconCheckbox:before,
-.iconCancel:before,
-[class^="icon"]:before, [class*=" icon"]:before{
-   font-family: FontAwesome !important;
+.iconCancel:before {
+   font-family: FontAwesome;
 }
 
 .iconBig {
-  line-height: 20px;
-  display: block !important;
-  vertical-align: top;
-  padding-left: 23px;
+  font-size: 30px;
+  height: 30px;
+  line-height: 30px;
+  &:before {
+    font-size: inherit;
+  }
 }
 
-.iconZoomMin, .iconZoomIn{
-    margin-bottom:$space/2;
-    padding-left: 21px !important;
-}
-.iconZoomMin, .iconZoomOut, .iconZoomIn{
-  text-align:center;
-  display:block;
-  &:before{font-size:30px;}
-}
 /* ---------------------------------------------------------------- LAYERTREE */
 .mb-element-layertree{
   .layers{
