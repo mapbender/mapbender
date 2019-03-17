@@ -298,60 +298,42 @@ fieldset{
 }
 /* ------------------------------------------------------------------ TOOLBAR */
 .toolBar{
+  z-index: 4;
   padding:$space/2 $space/2 $space/4 $space/2;
   background-color: $ciColor4;
   border-top: 3px solid $ciColor2;
   color: $darkFontColor;
+  line-height: normal;
 
   label{
     font-weight: normal;
   }
-
-  [class^="icon"]:before,[class*=" icon"]:before{
-    color: darken($ciColor2, 20%);
-    font-size: 24px !important;
-    line-height: 24px;
-  }
   &.itemsCenter{
     text-align:center;
-    .toolBarItem{padding-right:$space/2;}
   }
   &.bottom{
-    z-index:4;
+    @include absolute('' 0 0 0);
 
     > .toolBarItem{
-        > input[type="checkbox"] {
-          display: none;
-        }
-
-        span, label{
-
-          opacity: 1;
-
-          &:before{
-            font-family: "mapbender-icons", "FontAwesome" !important;
-            color: $ciColor;
-          }
-
-          &:hover{
-            opacity: 0.7;
-          }
-        }
+      &:hover {
+          opacity: 0.7;
+      }
     }
-
-    @include absolute('' 0 0 0);
+  }
+  .iconBig {
+    font-size: 30px;
+    color: $ciColor;
+    padding: 0;
+    margin: 0;
+    &:before{
+      position: unset;
+      margin: 0;
+    }
   }
 }
-.toolBarItemActive{
-  background-color: $contentColor;
-  color:$firstColor;
-}
 .toolBarItem{
-  span:before, label:before{margin-right:$space/4;}
-
-  height:30px;
-  line-height:30px;
-  display:inline-block;
+  display: inline-block;
+  margin: 0 $space/4;
 }
 /* --------------------------------------------------------------- MOBILEPANE */
 .mobilePane{
@@ -555,8 +537,8 @@ fieldset{
 
 .iconBig {
   font-size: 30px;
-  height: 30px;
-  line-height: 30px;
+  height: auto;
+  line-height: 100%;
   &:before {
     font-size: inherit;
   }
