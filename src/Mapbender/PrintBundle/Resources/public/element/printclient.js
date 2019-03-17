@@ -325,7 +325,6 @@
                 });
                 this.control.events.on({
                     'transformcomplete': function() {
-                        console.log('transformcomplete');
                         self._updateGeometry();
                     }
                 });
