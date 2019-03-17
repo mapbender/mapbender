@@ -18,7 +18,9 @@
       {% if configuration.menu is defined and configuration.menu != null and configuration.menu | length > 0 %}
       <span class="iconMenu layer-menu-btn">
         <div id="layer-menu" class="layer-menu hidden">
-          <span class="iconCancel exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"></span>
+          <div>
+            <span class="iconCancel exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"></span>
+          </div>
           {% if 'opacity' in configuration.menu %}
           <div id="layer-opacity" class="layer-opacity-bar layer-slider-bar" title="{{ "mb.core.layertree.label.opacity"|trans }}">
             <div class="layer-opacity-handle layer-slider-handle">100</div>
@@ -34,15 +36,17 @@
           </div>
           <input type="text" class="layer-dimension-textfield inputText" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
           {% endif %}
-          {% if 'zoomtolayer' in configuration.menu %}
-          <div class="layer-zoom iconSearch iconSmall" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></div>
-          {% endif %}
-          {% if 'metadata' in configuration.menu %}
-          <div class="layer-metadata iconFileText iconSmall" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></div>
-          {% endif %}
-          {% if 'layerremove' in configuration.menu %}
-          <div class="layer-remove-btn iconRemove iconSmall" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></div>
-          {% endif %}
+          <div>
+            {% if 'zoomtolayer' in configuration.menu %}
+            <span class="layer-zoom iconSearch iconSmall" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
+            {% endif %}
+            {% if 'metadata' in configuration.menu %}
+            <span class="layer-metadata iconFileText iconSmall" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
+            {% endif %}
+            {% if 'layerremove' in configuration.menu %}
+            <span class="layer-remove-btn iconRemove iconSmall" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
+            {% endif %}
+          </div>
         </div>
       </span>
       {% endif %}

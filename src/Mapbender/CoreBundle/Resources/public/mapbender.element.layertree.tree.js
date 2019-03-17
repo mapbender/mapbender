@@ -731,13 +731,13 @@
             var $btnMenu = $(e.target);
             var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
             var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
+            var layerIdMenu = null;
             if ($('#layer-menu').length !== 0) {
-                var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
-                if (layerIdMenu !== currentLayerId) {
-                    createMenu($btnMenu, currentSourceId, currentLayerId);
-                }
-            } else {
+                layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
+            }
+            if (layerIdMenu !== currentLayerId) {
                 createMenu($btnMenu, currentSourceId, currentLayerId);
+
             }
             return false;
         },

@@ -125,17 +125,16 @@
 }
 
 $layer-slider-bar-height: 5px;
-.layer-menu, .layer-menu.positionSource {
+.layer-menu {
   position: absolute;
-  right: 0px;
+  right: 0;
+  top: 1.5em;
   background-color: white;
-  padding: $space/2;
-  padding-top: 20px;
-  margin-top: 0px;
-  margin-left: -5px;
+  padding: $space / 4;
+
   z-index: 20;
-  min-width: 120px;
-  max-width: 200px;
+  // NEED constant width, otherwise the DragDealer will get confused when resizing Popup
+  width: 140px;
   border: solid 1px $thirdColor;
   text-align: right;
   cursor: default;
@@ -148,12 +147,6 @@ $layer-slider-bar-height: 5px;
     position: relative;
     margin-top: -20px;
     white-space: nowrap;
-  }
-  .exit-button{
-    position: absolute;
-    right: 4px;
-    top: 0px;
-    display: block;
   }
   // arrow icon
   &:before {
@@ -176,7 +169,6 @@ $layer-slider-bar-height: 5px;
     color: $lightFontColor;
     height: $layer-slider-bar-height;
     background-color: $thirdColor;
-    width: 100px;
     margin-top: $space/3;
     margin-bottom: $space/2;
     cursor: pointer;
@@ -194,26 +186,6 @@ $layer-slider-bar-height: 5px;
       text-align: center;
       @include border-radius(4px);
     }
-  }
-}
-
-.layer-menu.positionNorth {
-  position: absolute;
-  bottom: 22px;
-  &:before {
-    display: none;
-  }
-  &:after {
-    content: '';
-    display: block;
-    width: 0;
-    height: 0;
-    border-top: 5px solid $firstColor;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    position: absolute;
-    right: 0;
-    bottom: -5px;
   }
 }
 
