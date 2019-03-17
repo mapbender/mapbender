@@ -10,6 +10,17 @@ If installed, mapbender/coordinates-utility must be at least 1.0.5 to work at al
 to [simplify dependency coupling with Mapbender Starter](https://github.com/mapbender/mapbender/issues/773). After a grace period of roughly
 a year, it is now mandatory that your AppKernel (in starter repository scope) [inherits from this BaseKernel](https://github.com/mapbender/mapbender-starter/blob/v3.0.7.3/application/app/AppKernel.php#L9).
 
+#### Inherited Element asset references
+After a weird phase, the Element's `getAsset` method is now again the leading method, in favour of `listAssets`. The static `listAsset` method
+cannot account for dynamic circumstances because it has no access to the Element's configuration, the application, the template, the region etc.
+Mapbender is re-standardizing on `getAssets`, and no included Element class implements `listAssets` anymore.
+
+The [base Element's getAssets method still deflects to listAssets](https://github.com/mapbender/mapbender/blob/v3.0.8-beta1/src/Mapbender/CoreBundle/Component/Element.php#L236),
+so a custom Element implementing only listAssets will still function. However, a custom Element inheriting from a shipping Mapbender
+Element can no longer expect to receive those parent Element's asset references via `parent::listAssets()`. The result will be empty.
+Inheriting Elements should change their `listAssets` implementation to `getAssets` (which is a simple matter of changing the method name
+and removing the `static` keyword), and then replace `parent::listAssets()` invocations with `parent::getAssets()`.
+
 #### PrintClient migration from CoreBundle into PrintBundle
 The PrintClient Element, along with its assets, views, admin type and all related code has been moved from
 the CoreBundle into the \Mapbender\PrintBundle namespace. No provisions have been made to detect / pick up
