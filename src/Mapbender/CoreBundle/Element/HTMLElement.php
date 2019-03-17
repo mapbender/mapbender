@@ -98,15 +98,4 @@ class HTMLElement extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:htmlelement.html.twig';
     }
-
-    /**
-     * @inheritdoc
-     */
-    static public function listAssets()
-    {
-        return array(
-            'js'  => array('/bundles/mapbendercore/mapbender.element.htmlelement.js'),
-            'css' => array(),
-        );
-    }
 }
