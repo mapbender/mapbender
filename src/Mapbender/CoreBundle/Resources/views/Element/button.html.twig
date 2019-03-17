@@ -1,19 +1,25 @@
+{% set _haveIcon = (configuration.icon is defined and configuration.icon) %}
 {% if configuration.click is defined and configuration.click  %}
-  <a id="{{ id }}" target="_blank" class="mb-button"
+  <a id="{{ id }}" target="_blank"
+     class="mb-button"
      href="{{ configuration.click }}" title="{{ configuration.tooltip|default(title)|trans }}">
-    {% if configuration.icon is defined and configuration.icon %}
+    {% if _haveIcon %}
       <span class="iconBig {{ configuration.icon }}"></span>
     {% endif %}
-    {% if configuration.label %}{{ title|trans }}{% endif %}
+    {% if configuration.label %}
+    <span{% if _haveIcon %} class="hidden-sm hidden-xs hidden-md-down"{% endif %}>{{ title|trans }}</span>
+    {% endif %}
   </a>
 {% else  %}
   <span id="{{ id }}"
         data-group="{{ configuration.group }}"
         title="{{ configuration.tooltip|default(title)|trans }}"
         class="mb-button">
-    {% if configuration.icon is defined and configuration.icon %}
+    {% if _haveIcon %}
     <span class="iconBig {{ configuration.icon }}"></span>
     {% endif %}
-    {% if configuration.label %}{{ title|trans }}{% endif %}
+    {% if configuration.label %}
+    <span{% if _haveIcon %} class="hidden-sm hidden-xs hidden-md-down"{% endif %}>{{ title|trans }}</span>
+    {% endif %}
   </span>
 {% endif %}

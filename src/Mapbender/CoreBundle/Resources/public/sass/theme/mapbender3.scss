@@ -232,20 +232,6 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 }
 
 .templateWrapper {
-  @media screen and (max-width: 991px) {
-    > .toolBar {
-      &.top {
-        > .toolBarItem {
-          > label, > span {
-            font-size: 0;
-          }
-          > input[type='checkbox'] {
-            display: none;
-          }
-        }
-      }
-    }
-  }
   .toolBar a.mb-button {
     color: inherit;
   }
