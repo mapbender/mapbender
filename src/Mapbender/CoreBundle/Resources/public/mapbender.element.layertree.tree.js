@@ -668,7 +668,8 @@
                 }
 
                 menu.removeClass('hidden');
-                $element.after(menu);
+
+                $element.closest('.leaveContainer').after(menu);
                 $(menu).on('mousedown mousemove', function(e) {
                     e.stopPropagation();
                 });

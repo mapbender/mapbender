@@ -131,8 +131,9 @@ $layer-slider-bar-height: 5px;
   top: 1.5em;
   background-color: white;
   padding: $space / 4;
+  opacity: 1;
 
-  z-index: 20;
+  z-index: 45;
   // NEED constant width, otherwise the DragDealer will get confused when resizing Popup
   width: 140px;
   border: solid 1px $thirdColor;
