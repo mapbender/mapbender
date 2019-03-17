@@ -3,7 +3,7 @@
 If installed, mapbender/data-source must be at least 0.1.11. A conflict rule prevents installation of older versions via Composer. This is a
 [a dependency of mapbender/digitizer, mapbender/query-builder and mapbender/data-manager](https://packagist.org/packages/mapbender/data-source/dependents).
 
-If installed, mapbender/coordinates-utility must be at least 1.0.5 to work at all. We recomment the latest 1.0.7.1 for best results.
+If installed, mapbender/coordinates-utility must be at least 1.0.5 to work at all. We recommend 1.0.7.1 for best results.
 
 #### BaseKernel inheritance now mandatory
 [Mapbender\BaseKernel](https://github.com/mapbender/mapbender/blob/8df72bc31a4d09623c8447fa42197111bb4b277e/src/Mapbender/BaseKernel.php) was introduced a good while ago with Mapbender 3.0.7,
@@ -35,8 +35,6 @@ The template for the settings form can be customized individually, by asset drop
 separately from the main template. This allows to reuse the exact same settings form template for queued mode, where its markup is wrapped into a
 tab container with the queue status in a second tab, and the familiar non-queued mode.
 
-The outdated underscore.js version in Mapbender/CoreBundle/Resources/public/vendor has been removed. Custom Elements or Templates requiring underscore should use the version installed into web/components/underscore (which is provided by default by all included Templates).
-
 #### Client: Removal of MapQuery
 The mapquery component is still installed, but only used as a vehicle to deliver OpenLayers 2 assets. The actual MapQuery script is not
 loaded into any applications anymore. There is only [limited emulation shimming](https://github.com/mapbender/mapbender/blob/8df72bc31a4d09623c8447fa42197111bb4b277e/src/Mapbender/CoreBundle/Resources/public/mapbender.model.js#L7) to retain the look and feel of certain MapQuery data structures,
@@ -49,6 +47,9 @@ The Element configuration backend no longer emits the [FOS JS Routing](https://p
 Element forms with custom JavaScript making calls to `Routing.generate` et al will fail. We strongly advise against re-adding FOS JS Routing explicitly
 to your Element form. Instead we recommend that you generate any required URLs on the twig level, using the `path()` method.
 See [Coordinates Utility Pull #11](https://github.com/mapbender/coordinates-utility/pull/11/files) for a concrete example on how to implement this change.
+
+#### Other asset removals
+The outdated underscore.js version in Mapbender/CoreBundle/Resources/public/vendor has been removed. Custom Elements or Templates requiring underscore should use the version installed into web/components/underscore (which is provided by default by all included Templates).
 
 #### PrintService restructuring
 It has generally been very difficult to customize PrintService via standard inheritance / DI methods due
@@ -84,6 +85,10 @@ Also gone are the options `jsSrc` and `css`. There are already three viable ways
 3) Leverage the Twig capabilities of HTMLElement to generate asset urls from within the `content` option body, e.g.:  
    `<script src="{{ asset('something-in-your-web-folder.js') }}">`
 
+#### Partial FOM absorption
+Mapbender has [taken in certain portions of FOM](https://github.com/mapbender/mapbender/pull/1120). The general BC impact of this
+move will be very low, but there is a definite impact for installations with drop-in customized `manager.html.twig` and / or `menu.html.twig`
+templates. Concise instructions what to do are [in the pull](https://github.com/mapbender/mapbender/pull/1120).
 
 ## v3.0.7.7
 Starting from Mapbender v3.0.7.7, PrintClient JavaScript widget inherits from ImageExport JavaScript widget.
