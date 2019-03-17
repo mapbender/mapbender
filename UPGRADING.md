@@ -51,6 +51,13 @@ See [Coordinates Utility Pull #11](https://github.com/mapbender/coordinates-util
 #### Other asset removals
 The outdated underscore.js version in Mapbender/CoreBundle/Resources/public/vendor has been removed. Custom Elements or Templates requiring underscore should use the version installed into web/components/underscore (which is provided by default by all included Templates).
 
+Redundant copies of StringHelper SymfonyAjaxManager and EventDispatcher scripts have been removed. You will still find versions of these in mapbender/data-source and mapbender/vis-ui.js packages.
+
+An assortment of obsolete jQuery plugin sources unused by Mapbender been removed. See [the v3.0.7.7 tree](https://github.com/mapbender/mapbender/tree/v3.0.7.7/src/Mapbender/CoreBundle/Resources/public/regional/vendor/jquery) for affected files. If
+you need any of these in a custom project template, you should re-add these, or suitable modern versions, into the appropriate project bundle.
+
+[Vintage Internet Explorer shims](https://github.com/mapbender/mapbender/tree/v3.0.7.7/src/Mapbender/CoreBundle/Resources/public/regional/vendor/ie-hacks) have likewise been removed.
+
 #### PrintService restructuring
 It has generally been very difficult to customize PrintService via standard inheritance / DI methods due
 to its almost entirely closed nature.  

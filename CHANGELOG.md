@@ -21,6 +21,7 @@
   - Increase reverse-proxy setup compatibility also for owsproxy urls generated for source instances with `proxy` option checked
   - Revert HTMLElement to pure markup rendering functionality ([PR#1122](https://github.com/mapbender/mapbender/pull/1122))
   - [Framework] `false` is now a viable return type from Element::getWidgetName, and indicates a "static" element with no client-side script
+  - Misc obsolete asset removals (see UPGRADING.md)
 
 * **v3.0.8-beta1**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
