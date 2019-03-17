@@ -197,10 +197,11 @@
         height: 200px;
         width: 200px;
 
-        img{
+        img {
          max-height: 100%;
          max-width: 100%;
-         width: inherit;
+         width: auto;
+         height: auto;
          margin: 0 auto;
         }
       }
