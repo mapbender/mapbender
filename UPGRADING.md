@@ -62,6 +62,18 @@ changes. Of note:
 - [Redacted] Disused Component\Application's `getConfiguration` has now been removed; its duties had already been fully taken over by [ConfigService](https://github.com/mapbender/mapbender/blob/e2fd234ffa5f98d6c74c0359f26d7d60362f50dd/src/Mapbender/CoreBundle/Component/Presenter/Application/ConfigService.php) in previous versions  
   This change has been reverted to support potentially remaining invocations from customized twig templates.
 
+#### HTMLElement inheritance
+HTMLElement [has been reverted to a pure markup renderer](https://github.com/mapbender/mapbender/pull/1122). Any child classes of HTMLElement
+that rely on the preprocessing of "`children`" configuration options through methods such as `processItems` or similar will probably want to inherit
+from [DataSource's BaseElement](https://github.com/mapbender/data-source/blob/0.1.11/Element/BaseElement.php) instead.
+
+Also gone are the options `jsSrc` and `css`. There are already three viable ways to inject scripts and stylesheets into your HTMLElement child:
+1) Return asset references from your getAssets method
+2) Insert complete inline `<script>` or `<style>` tags into the `content` option body
+3) Leverage the Twig capabilities of HTMLElement to generate asset urls from within the `content` option body, e.g.:  
+   `<script src="{{ asset('something-in-your-web-folder.js') }}">`
+
+
 ## v3.0.7.7
 Starting from Mapbender v3.0.7.7, PrintClient JavaScript widget inherits from ImageExport JavaScript widget.
 Any custom PrintClient-derived Element that inherits from the base PrintClient widget client-side

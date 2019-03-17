@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ 1c8b63103**
+* **dev-release/3.0.7 @ 0fcdbc80a**
   - [Beta regression] Fix button group misalginment in Application "Layersets" tab
   - [Beta regression] Fix layout breakage in "Vendorspecifics" area of WMS instance backend
   - [Beta regression] Fix layout breakage in "Reload source" and "Add new source" sections
@@ -19,6 +19,8 @@
   - Add experimental, partial WMTS / TMS source support. Disabled by default. See [PR#1116](https://github.com/mapbender/mapbender/pull/1116) for instructions and known limitations
   - Annex responsibility for general backend layout and certain JavaScript widgets from FOM. See [PR#1120](https://github.com/mapbender/mapbender/pull/1120) for potential BC impact on highly customized installations.
   - Increase reverse-proxy setup compatibility also for owsproxy urls generated for source instances with `proxy` option checked
+  - Revert HTMLElement to pure markup rendering functionality ([PR#1122](https://github.com/mapbender/mapbender/pull/1122))
+  - [Framework] `false` is now a viable return type from Element::getWidgetName, and indicates a "static" element with no client-side script
 
 * **v3.0.8-beta1**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
@@ -40,7 +42,7 @@
     - `activate` / `deactivate` options are no longer mandatory and can safely be left empty ([Issue#1050](https://github.com/mapbender/mapbender/issues/1050), [PR#1095](https://github.com/mapbender/mapbender/pull/1095))
     - Automatic Button highlighting restored ([PR#1095](https://github.com/mapbender/mapbender/pull/1095))
     - Buttons already start highlighted if their target has been configured with an `autoOpen` or similar option ([PR#1095](https://github.com/mapbender/mapbender/pull/1095))
-    - Improved / restored compatibility non-controlling Button element children ([PR#1096](https://github.com/mapbender/mapbender/pull/1096))
+    - Improved / restored compatibility for non-controlling Button element children ([PR#1096](https://github.com/mapbender/mapbender/pull/1096))
     - Fix broken Button vs POI interaction ([Issue#549](https://github.com/mapbender/mapbender/issues/549))
     - Improved support for multiple Buttons controlling the same target Element
   - Partial forward-compatibility with font-awesome 5 ([PR #1065](https://github.com/mapbender/mapbender/pull/1065))
