@@ -15,13 +15,6 @@
 @import "modules/result_table";
 @import "modules/digitizing_tool_set";
 
-@mixin opacityAlpha($alpha) {
-  /* Modern!
-  /* Firefox 0.9+, Safari 2?, Chrome any?
-  /* Opera 9+, IE 9+ */
-  opacity: $alpha;
-}
-
 /* ------------------------------------------------------------- MISC */
 .mb-hiddenCheckbox{
   position: absolute;

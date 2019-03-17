@@ -24,23 +24,6 @@ $contentPaneWidth: 800px;
 $navWidth: 200px;
 $pageWidth: $contentPaneWidth + $navWidth;
 
-@mixin opacityAlpha($alpha) {
-
-  /* Theoretically for IE 8 & 9 (more valid) */
-  /* ...but not required as filter works too */
-  /* should come BEFORE filter */
-  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=$alpha*100);
-
-  /* This works in IE 8 & 9 too */
-  /* ... but also 5, 6, 7 */
-  filter: alpha(opacity=$alpha*100);
-
-  /* Modern!
-  /* Firefox 0.9+, Safari 2?, Chrome any?
-  /* Opera 9+, IE 9+ */
-  opacity: $alpha;
-}
-
 // ------------------------------------------------------------------------ PAGE
 .page{
   top:-$bannerHeight;
@@ -262,11 +245,11 @@ ul.dropdownList{
   $top: $space*5;
   .iconBig {
     &:before {
-      @include opacityAlpha(0.7);
+      @include opacity(0.7);
     }
     &:hover {
       &:before {
-        @include opacityAlpha(1);
+        @include opacity(1);
       }
     }
   }
