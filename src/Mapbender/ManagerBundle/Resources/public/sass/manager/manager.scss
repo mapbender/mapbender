@@ -32,6 +32,10 @@ $pageWidth: $contentPaneWidth + $navWidth;
 }
 .popupContainer,
 .page{
+  // Other .inputWrapper rule later doesn't catch popups and list filters
+  input.input {
+    background: #fff;
+  }
   position:relative;
   a {
     text-decoration: none;
@@ -127,7 +131,8 @@ $pageWidth: $contentPaneWidth + $navWidth;
   @include absolute(0 '' '' 0);
 
   > .navigation {
-    background-color: $contentColor;
+    background-color: darken($contentColor, 1%);
+    box-shadow: -1em 0 2em inset darken($contentColor, 10%);
     border-bottom-left-radius: $containerBorderRadius;
     padding: 10px;
     .navItem {
@@ -259,7 +264,7 @@ ul.dropdownList{
     min-height: 600px;
     position: relative;
     padding: $space;
-    background: $contentColor url($contentPatternUrl);
+    background: lighten($contentColor, 2%) url($managerContentPatternUrl);
     border-radius: $containerBorderRadius;
     .tabContainer, .containerExchange {
       margin-bottom: $space;
