@@ -175,7 +175,6 @@ class ElementClassesCommand extends ContainerAwareCommand
         }
 
         $adminType = $element->getType();
-        $autoAdminType = $element->getAutomaticAdminType();
         $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
         try {
             $adminTypeBNS = BundleUtil::extractBundleNamespace($adminType);
@@ -387,6 +386,7 @@ class ElementClassesCommand extends ContainerAwareCommand
             'getFrontendTemplatePath' => array('comment', null),
             'getWidgetName' => array('comment', null),
         );
+
         foreach ($detectOverrides as $methodName => $treatment) {
             $isOverridden = $this->detectMethodOverride($rc, $methodName);
             $messageStyle = $treatment[intval($isOverridden)];
@@ -399,9 +399,10 @@ class ElementClassesCommand extends ContainerAwareCommand
                 $issues[] = $message;
             }
         }
-        $parentClass = get_parent_class($element);
-        if ($parentClass != 'Mapbender\CoreBundle\Component\Element') {
-            $parentNote = "<note>parent: $parentClass</note>";
+        $parentClass = $rc->getParentClass();
+        if (0 !== strpos($parentClass->getNamespaceName(), 'Mapbender\CoreBundle\Component')) {
+            $parentName = $parentClass->getName();
+            $parentNote = "<note>parent: $parentName</note>";
         } else {
             $parentNote = "";
         }
