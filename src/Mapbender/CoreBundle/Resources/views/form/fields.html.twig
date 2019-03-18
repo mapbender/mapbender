@@ -200,7 +200,15 @@
 
 {% block checkbox_widget %}
   {% spaceless %}
-    <div class="checkWrapper left iconCheckbox{% if checked %} iconCheckboxActive{% endif %} {% if disabled %} checkboxDisabled{% endif %}" data-icon="iconCheckbox">
+    {# @todo: remove .left (float) if rendered via form_row, keep it if rendered otherwise...? #}
+    {% set _wrapperClass = 'checkWrapper iconCheckbox left' %}
+    {% if checked %}
+      {% set _wrapperClass = _wrapperClass~' iconCheckboxActive' %}
+    {% endif %}
+    {% if disabled %}
+      {% set _wrapperClass = _wrapperClass~' checkboxDisabled' %}
+    {% endif %}
+    <div class="{{ _wrapperClass }}" data-icon="iconCheckbox">
       <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
     </div>
   {% endspaceless %}
@@ -337,7 +345,17 @@
     {% if label is empty %}
       {% set label = name|humanize %}
     {% endif %}
-    <label class="labelInput" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}{% if required %}<span class="required">*</span>{% endif %}</label>
+    {#
+       @todo: .labelCheck is the right thing because of line-height, but we lose some margins in many forms; need to update CSS
+       @todo: Emitting the correct .labelCheck class also causes the 'region properties' radio group to render labels -.-
+       @todo: merge label_attr.class into ... class!
+    #}
+    {% if false and 'checkbox' in form.vars.block_prefixes %}
+      {% set _labelClass = 'labelCheck' %}
+    {% else %}
+      {% set _labelClass = 'labelInput' %}
+    {% endif %}
+    <label class="{{ _labelClass }}" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}{% if required %}<span class="required">*</span>{% endif %}</label>
   {% endspaceless %}
 {% endblock form_label %}
 
@@ -359,9 +377,13 @@
 {% block form_row %}
   {% spaceless %}
     <div {% if 'collection' in form.parent.vars['block_prefixes'] %}class="collectionItem"{% endif %}>
-      {{ form_label(form) }}
-      {{ form_widget(form) }}
-
+      {% if 'checkbox' in form.vars.block_prefixes %}
+        {{ form_widget(form) }}
+        {{ form_label(form) }}
+      {% else %}
+        {{ form_label(form) }}
+        {{ form_widget(form) }}
+      {% endif %}
     </div>
   {% endspaceless %}
 {% endblock form_row %}
