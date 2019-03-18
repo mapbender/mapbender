@@ -54,7 +54,7 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li', this.element).remove();
             this.template.removeClass('hidden');
-            this.menuTemplate = $('#layer-menu', this.template).remove();
+            this.menuTemplate = $('.layer-menu', this.template).remove();
 
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
             if (this.options.type === 'element') {
@@ -728,10 +728,14 @@
             var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
             var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
             var layerIdMenu = null;
-            if ($('#layer-menu').length !== 0) {
-                layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
+            var $menu = this.currentMenu || $('.layer-menu', this.element);
+            if ($menu.length) {
+                layerIdMenu = $menu.attr("data-menuLayerId");
             }
             if (layerIdMenu !== currentLayerId) {
+                if ($menu.length) {
+                    this.closeMenu($menu);
+                }
                 createMenu($btnMenu, currentSourceId, currentLayerId);
 
             }
