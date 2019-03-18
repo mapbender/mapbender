@@ -95,7 +95,6 @@ class Layertree extends Element
         return array(
             "target" => null,
             "type" => null,
-            "displaytype" => null,
             "autoOpen" => false,
             "showBaseSource" => true,
             "showHeader" => false,

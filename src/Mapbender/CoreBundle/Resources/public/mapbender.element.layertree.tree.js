@@ -72,14 +72,9 @@
             if (this.created)
                 this._unSortable();
             for (var i = (sources.length - 1); i > -1; i--) {
-                if (!sources[i].configuration.isBaseSource
-                    || (sources[i].configuration.isBaseSource && this.options.showBaseSource)) {
-                    if (this.options.displaytype === "tree") {
-                        var li_s = this._createSourceTree(sources[i]);
-                        this._addNode(li_s, sources[i]);
-                    } else {
-                        return;
-                    }
+                if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
+                    var li_s = this._createSourceTree(sources[i]);
+                    this._addNode(li_s, sources[i]);
                     this.sourceAtTree[sources[i].id ] = {
                         id: sources[i].id
                     };
