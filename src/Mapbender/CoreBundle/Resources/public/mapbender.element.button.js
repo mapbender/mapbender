@@ -44,11 +44,13 @@
                 if (this.options.group) {
                     var $others = $('.mb-button[data-group="' + this.options.group + '"]')
                         .not(this);
-                    try {
-                        $others.trigger('mbButtonDeactivate');
-                    } catch (e) {
-                        console.error("Suppressing error from sibling button deactivate handlers", e);
-                    }
+                    $others.each(function() {
+                        try {
+                            $(this).trigger('mbButtonDeactivate');
+                        } catch (e) {
+                            console.error("Suppressing error from sibling button deactivate handler", e);
+                        }
+                    });
                 }
                 this.activate();
             }
