@@ -94,17 +94,22 @@ class ScaleBar extends Element
         );
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:scalebar.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:scalebar.html.twig',
-                    array(
+                ->render($this->getFrontendTemplatePath(), array(
                     'id' => $this->getId(),
                     "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+                    'configuration' => $this->getConfiguration(),
+        ));
     }
 
 }

@@ -3,19 +3,18 @@
 namespace Mapbender\WmcBundle\Component;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\Size;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\StateHandler;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\CoreBundle\Entity\State;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
+use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\Component\Style;
-use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
-use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
-use Mapbender\WmsBundle\Component\WmsInstanceLayerEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -68,7 +67,7 @@ class WmcParser110 extends WmcParser
             unset($ext);
         }
 
-        $stateHandler->setName($this->getValue("./cntxt:Title/text()", $genEl));
+        $title = $this->getValue("./cntxt:Title/text()", $genEl);
         $keywordList = $this->xpath->query("./cntxt:KeywordList/cntxt:Keyword", $genEl);
         if ($keywordList !== null && $keywordList->length > 0) {
             $keywords = array();
@@ -155,7 +154,10 @@ class WmcParser110 extends WmcParser
                 $stateHandler->addSource($sourcetmp);
             }
         }
-        $wmc->setState($stateHandler->generateState());
+        $state = new State();
+        $state->setTitle($title);
+        $state->setJson(json_encode($stateHandler->toArray()));
+        $wmc->setState($state);
         return $wmc;
     }
 
@@ -166,12 +168,20 @@ class WmcParser110 extends WmcParser
      * (xpath: '/ViewContext/LayerList/Layer')
      * @param string $srs wmc srs (srs from WMC document xpath:
      * '/ViewContext/General/BoundingBox/@SRS')
+     * @param string $infoFormat
      * @return array layer configuration as array
      */
     private function parseLayer(\DOMElement $layerElm, $srs, $infoFormat)
     {
+        // @todo: building entities and generating a config array should be separate methods
         $wmsinst = new WmsInstance();
         $wms = new WmsSource();
+        $wmsinst->setSource($wms);
+        /** @var TypeDirectoryService $sourceDirectory */
+        $sourceDirectory = $this->container->get('mapbender.source.typedirectory.service');
+        /** @var WmsSourceService $wmsService */
+        $wmsService = $sourceDirectory->getSourceService($wmsinst);
+
         $id = round(microtime(true) * 1000);
         $queryable = $this->getValue("./@queryable", $layerElm);
         $wmsinst->setVisible(!(bool) $this->getValue("./@hidden", $layerElm));
@@ -233,18 +243,10 @@ class WmcParser110 extends WmcParser
             $max = $this->getValue("./sld:MaxScaleDenominator/text()", $layerElm);
             $scale->setMax($max !== null ? floatval($max) : null);
         }
+        $wmsinst->setSource($wms);
         $wmsinst->setId(intval($id))
             ->setTitle($wms->getTitle())
             ->setSource($wms);
-        $wmsconf = new WmsInstanceConfiguration();
-        $wmsconf->setType(strtolower($wmsinst->getType()));
-        $wmsconf->setTitle($wmsinst->getTitle());
-        $wmsconf->setIsBaseSource(false);
-        $options = new WmsInstanceConfigurationOptions();
-        $options->setUrl($wms->getGetMap()->getHttpGet())
-            ->setVisible($wmsinst->getVisible())
-            ->setFormat($wmsinst->getFormat())
-            ->setVersion($wms->getVersion());
 
         $extensionEl = $this->getValue("./cntxt:Extension", $layerElm);
         $layerList = null;
@@ -260,13 +262,7 @@ class WmcParser110 extends WmcParser
                 ->setTiled((bool) $this->findFirstValue(array("./mb3:tiled"), $extensionEl, false));
             $layerList = $this->findFirstList(array("./mb3:layers/mb3:layer",
                 "./*[contains(local-name(),'layers')]/*[contains(local-name(),'layer')]"), $extensionEl);
-
-            $options->setTransparency($wmsinst->getTransparency())
-                ->setOpacity($wmsinst->getOpacity())
-                ->setTiled($wmsinst->getTiled())
-                ->setInfoformat($wmsinst->getInfoformat());
         }
-        $wmsconf->setOptions($options);
 
         $num = 0;
         $rootInst = new WmsInstanceLayer();
@@ -277,6 +273,8 @@ class WmcParser110 extends WmcParser
             ->setSourceInstance($wmsinst);
         $rootInst->setToggle(false);
         $rootInst->setAllowtoggle(true);
+        $wmsinst->addLayer($rootInst);
+
         $newLayerInstances = array();
         if ($layerList === null) {
             $layerListStr = explode(",", $this->getValue("./cntxt:Name/text()", $layerElm));
@@ -317,6 +315,7 @@ class WmcParser110 extends WmcParser
             }
         }
         if ($newLayerInstances) {
+            $wmsinst->addLayer($rootInst);
             foreach ($newLayerInstances as $layerIndex => $newLayerInstance) {
                 $newLayerInstance
                     ->setParent($rootInst)
@@ -326,14 +325,21 @@ class WmcParser110 extends WmcParser
                 $rootInst->addSublayer($newLayerInstance);
                 $wmsinst->addLayer($newLayerInstance);
             }
-            $rootLayHandler = new WmsInstanceLayerEntityHandler($this->container, $rootInst);
-            $children = array($rootLayHandler->generateConfiguration());
-            $wmsconf->setChildren($children);
+            $children = array($wmsService->getRootLayerConfig($wmsinst));
+
+            $instanceConfig = array(
+                'type' => $wmsinst->getType(),
+                'title' => $wmsinst->getTitle(),
+                'isBaseSource' => false,
+                'children' => $children,
+                'options' => $wmsService->getOptionsConfiguration($wmsinst),
+            );
             return array(
                 'type' => strtolower($wmsinst->getType()),
                 'title' => $wmsinst->getTitle(),
                 'id' => $wmsinst->getId(),
-                'configuration' => $wmsconf->toArray());
+                'configuration' => $instanceConfig,
+            );
         }
         return null;
     }
@@ -341,9 +347,9 @@ class WmcParser110 extends WmcParser
     /**
      * Returns the BoundingBox
      *
-     * @param type $xpathStrArr
-     * @param type $contextElm
-     * @param type $defSrs
+     * @param string[] $xpathStrArr
+     * @param \DOMNode $contextElm
+     * @param string $defSrs
      * @return \Mapbender\CoreBundle\Component\BoundingBox|null
      */
     private function getBoundingBox($xpathStrArr, $contextElm, $defSrs)
@@ -374,9 +380,9 @@ class WmcParser110 extends WmcParser
     /**
      * Returns the first found value with xpath from $xpathStrArr.
      *
-     * @param type $xpathStrArr array with xpathes
-     * @param type $contextElm context element
-     * @param type $defaultValue default value
+     * @param string[] $xpathStrArr array with xpathes
+     * @param \DOMNode $contextElm context element
+     * @param mixed $defaultValue default value
      * @return string|\DOMElement|$defaultValue
      */
     private function findFirstValue($xpathStrArr, $contextElm, $defaultValue = null)
@@ -399,8 +405,8 @@ class WmcParser110 extends WmcParser
     /**
      * Returns the first found DOMNodeList with xpath from $xpathStrArr.
      *
-     * @param type $xpathStrArr array with xpathes
-     * @param type $contextElm context element
+     * @param string[] $xpathStrArr array with xpathes
+     * @param \DOMNode $contextElm context element
      * @return \DOMNodeList
      */
     private function findFirstList($xpathStrArr, $contextElm)

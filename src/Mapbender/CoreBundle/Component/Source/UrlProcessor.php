@@ -51,7 +51,7 @@ class UrlProcessor
      */
     public function getProxyBaseUrl()
     {
-        return $this->getProxyUrl(array(), RouterInterface::ABSOLUTE_URL);
+        return $this->getProxyUrl(array(), RouterInterface::ABSOLUTE_PATH);
     }
 
     /**
@@ -65,7 +65,7 @@ class UrlProcessor
         $params = array(
             'url' => $this->signer->signUrl($url),
         );
-        return $this->getProxyUrl($params, RouterInterface::ABSOLUTE_URL);
+        return $this->getProxyUrl($params, RouterInterface::ABSOLUTE_PATH);
     }
 
     /**

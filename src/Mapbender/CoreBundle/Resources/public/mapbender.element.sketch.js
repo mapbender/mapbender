@@ -3,17 +3,33 @@
     $.widget("mapbender.mbSketch", {
         options: {
             target: null,
-            autoOpen: false
+            autoOpen: false,
+            types: [],
+            defaultType: 'circle'
         },
         control: {},
         activeType: null,
         activated: false,
+        mapModel: null,
         _create: function(){
-            if(!Mapbender.checkTarget("mbSketch", this.options.target)){ // check if target defined
-                return;
-            }
             var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self)); // call _setup if target ready
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self._setup(mbMap);
+            }, function() {
+                Mapbender.checkTarget("mbSketch", self.options.target);
+            });
+        },
+        _setup: function(mbMap) {
+            this.mapModel = mbMap.getModel();
+            this.layers = {};
+            this.controls = {};
+            this.activeType = null;
+            var self = this;
+            $.each(this.options.types, function(idx, type) {
+                self.layers[type] = self._createLayer(type);
+                self.controls[type] = self._createControl(type, self.layers[type]);
+            });
+            this._trigger('ready');
         },
         _createLayer: function(type){
             switch(type){
@@ -56,49 +72,37 @@
                     break;
             }
         },
-        _activateType: function(type){
-            for(tp in this.controls){
-                this.controls[tp].deactivate();
+        _activateType: function(type) {
+            var typeKeys = Object.keys(this.controls);
+            for (var i = 0; i < typeKeys.length; ++i) {
+                var typeKey = typeKeys[i];
+                if (!type || type === typeKey) {
+                    this.controls[typeKey].deactivate();
+                }
             }
-            if(type){
-                this.controls[this.activeType].activate();
-                this.activeType = type;
+            if (type) {
+                this.controls[type].activate();
             }
-
-        },
-        _setup: function(){
-            this.map = $('#' + this.options.target);
-            this.layers = {};
-            this.controls = {};
-            this.activeType = this.options.defaultType;
-            this._trigger('ready');
+            this.activeType = type || null;
         },
         /**
          * Default action for a mapbender element
          */
         defaultAction: function(callback){
-            this.activate(callback);
+            if (this.activated) {
+                this.deactivate();
+            } else {
+                this.activate(callback);
+            }
         },
         activate: function(callback){
-            if(this.activated){
-                this.deactivate();
-                return;
-            }
             var self = this;
             this.callback = callback ? callback : null;
 
-            var mq = this.map.data('mapQuery');
-            this.baseControls = [
-                new OpenLayers.Control.LayerSwitcher(),
-                new OpenLayers.Control.MousePosition()];
-            $.each(this.baseControls, function(idx, cntrl){
-                mq.olMap.addControl(cntrl);
-            });
+            var olMap = this.mapModel.map.olMap;
             $.each(this.options.types, function(idx, type){
-                self.layers[type] = self._createLayer(type);
-                mq.olMap.addLayer(self.layers[type]);
-                self.controls[type] = self._createControl(type, self.layers[type]);
-                mq.olMap.addControl(self.controls[type]);
+                olMap.addLayer(self.layers[type]);
+                olMap.addControl(self.controls[type]);
             });
             this._activateType(this.options.defaultType);
             this.activated = true;
@@ -107,14 +111,11 @@
             if(this.activated){
                 var self = this;
                 this._activateType(null);
-                var mq = this.map.data('mapQuery');
+                var olMap = this.mapModel.map.olMap;
                 $.each(this.options.types, function(idx, type){
-                    mq.olMap.removeControl(self.controls[type]);
-                    mq.olMap.removeLayer(self.layers[type]);
-                });
-                $.each(this.baseControls, function(idx, cntrl){
-                    cntrl.deactivate();
-                    mq.olMap.removeControl(cntrl);
+                    olMap.removeControl(self.controls[type]);
+                    olMap.removeLayer(self.layers[type]);
+                    self.layers[type].removeAllFeatures();
                 });
                 this._close();
                 this.callback ? this.callback.call() : this.callback = null;

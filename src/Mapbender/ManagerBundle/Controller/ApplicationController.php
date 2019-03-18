@@ -15,6 +15,7 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ExportJob;
@@ -809,11 +810,14 @@ class ApplicationController extends WelcomeController
         /** @var EntityManager $em */
         $slug          = $application->getSlug();
         $templateClass = $application->getTemplate();
-        $baseUrl       = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-        $screenShotUrl = AppComponent::getUploadsUrl($this->container) . "/" . $application->getSlug() . "/" . $application->getScreenshot();
-
-        if (!$screenShotUrl) {
-            $screenShotUrl = $baseUrl . "/" . $application->getScreenshot();
+        $screenShot = $application->getScreenshot();
+        if ($screenShot) {
+            $screenShotUrl = AppComponent::getUploadsUrl($this->container) . "/" . $application->getSlug() . "/" . $application->getScreenshot();
+            $screenShotUrl = UrlUtil::validateUrl($screenShotUrl, array(
+                't' => date('d.m.Y-H:i:s'),
+            ));
+        } else {
+            $screenShotUrl = null;
         }
 
         return array(
@@ -825,7 +829,7 @@ class ApplicationController extends WelcomeController
             'form_name'           => $form->getName(),
             'template_name'       => $templateClass::getTitle(),
             'screenshot'          => $screenShotUrl,
-            'screenshot_filename' => $application->getScreenshot(),
+            'screenshot_filename' => $screenShot,
             'time'                => new \DateTime());
     }
 

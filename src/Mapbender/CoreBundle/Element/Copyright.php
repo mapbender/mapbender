@@ -86,17 +86,22 @@ class Copyright extends Element
         return 'mapbender.mbCopyright';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:copyright.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:copyright.html.twig',
-                    array(
+                ->render($this->getFrontendTemplatePath(), array(
                     'id' => $this->getId(),
                     'title' => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+                    'configuration' => $this->getConfiguration(),
+        ));
     }
 
     /**

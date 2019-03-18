@@ -19,8 +19,7 @@
          */
         _create: function(){
             OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
-            var self = this,
-                    me = $(this.element);
+            var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
@@ -28,7 +27,7 @@
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
             });
-            this.map = me.data('mapQuery');
+            this.map = this.model.map;
             self._trigger('ready');
         },
         getMapState: function(){
@@ -148,6 +147,21 @@
             this.map.olMap.zoomToScale(scale, closest);
         },
         /**
+         * Super legacy, some variants of wmcstorage want to use this to replace the map's initial max extent AND
+         * initial SRS, which only really works when called immediately before an SRS switch. Very unsafe to use.
+         * @deprecated
+         */
+        setMaxExtent: function(newMaxExtent, newMaxExtentSrs) {
+            this.getModel().replaceInitialMaxExtent(newMaxExtent, newMaxExtentSrs);
+        },
+        /**
+         * Super legacy, never really did anything, only stored the argument in a (long gone) property of the Model
+         * @deprecated
+         */
+        setExtent: function() {
+            console.error("mbMap.setExtent called, doesn't do anything, you probably want to call zoomToExtent instead", arguments);
+        },
+        /**
          * Adds the popup
          */
         addPopup: function(popup){
@@ -197,9 +211,8 @@
          * Loads the srs definitions from server
          */
         loadSrs: function(srslist){
-            var self = this;
             $.ajax({
-                url: self.elementUrl + 'loadsrs',
+                url: this.elementUrl + 'loadsrs',
                 type: 'POST',
                 data: {
                     srs: srslist

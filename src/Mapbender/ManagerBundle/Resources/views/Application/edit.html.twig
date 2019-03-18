@@ -1,4 +1,4 @@
-{% extends "FOMManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
 
 {% block title %}{{ application.title }}{% endblock %}
 
@@ -36,20 +36,13 @@
 
         <div class="col-xs-8">{% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}</div>
         <div class="col-xs-4">
-            {% if screenshot is empty %}
-                <div class="screenshot_img default iconAppDefault">
-                    <div class="cell_edit">
-                        <img src="" alt="Load" class="screenshot" data-load=true />
-                    </div>
+            <div class="screenshot_img{{ screenshot is empty ? ' default' }}">
+                <div class="cell_edit">
+                    <div class="delete button critical hidden">X</div>
+                    <img alt="Load" data-load=true class="screenshot" src="{{ screenshot }}" />
+                    <i class="iconAppDefault"></i>
                 </div>
-            {% else %}
-                <div class="screenshot_img">
-                    <div class="cell_edit">     
-                        <div class="delete button critical hidden">X</div>
-                        <img src="{{screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}" alt="Load" class="screenshot" data-load=true />
-                    </div>
-                </div>
-            {% endif %}
+            </div>
         </div>
       </div>
       <div id="containerLayout" class="container">

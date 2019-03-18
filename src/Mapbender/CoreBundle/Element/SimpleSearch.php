@@ -28,6 +28,21 @@ class SimpleSearch extends Element
         );
     }
 
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\SimpleSearchAdminType';
+    }
+
+    public static function getFormTemplate()
+    {
+        return 'MapbenderCoreBundle:ElementAdmin:simple_search.html.twig';
+    }
+
+    public function getWidgetName()
+    {
+        return 'mapbender.mbSimpleSearch';
+    }
+
     public static function getDefaultConfiguration()
     {
         return array(
@@ -43,6 +58,11 @@ class SimpleSearch extends Element
             'geom_format'     => 'WKT',
             'delay'           => 300,
         );
+    }
+
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:simple_search.html.twig';
     }
 
     /**

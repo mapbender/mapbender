@@ -106,29 +106,6 @@
     }
   }
 
-  @include smartphones() {
-    .mb-element-zoombar {
-      bottom: $space*5;
-      > .toolPane {
-        > .zoomSlider {
-          > .iconZoomOut {
-            padding-left: 31px !important;
-          }
-        }
-      }
-    }
-    .toolBar {
-      > .toolBarItem {
-        > .iconBig {
-          font-size: 0;
-          &:before {
-            padding-left: 5px;
-          }
-        }
-      }
-    }
-  }
-
   .contentPane {
     overflow: hidden;
     @include absolute(0 0 0 0);

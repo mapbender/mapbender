@@ -95,8 +95,6 @@ class Layertree extends Element
         return array(
             "target" => null,
             "type" => null,
-            "displaytype" => null,
-            "titlemaxlength" => intval(40),
             "autoOpen" => false,
             "showBaseSource" => true,
             "showHeader" => false,
@@ -109,19 +107,22 @@ class Layertree extends Element
         );
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:layertree.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:layertree.html.twig',
-            array(
+            $this->getFrontendTemplatePath(), array(
                 'id' => $this->getId(),
                 'configuration' => $this->getConfiguration(),
-                'title' => $this->getTitle()
-            )
-        );
+                'title' => $this->getTitle(),
+        ));
     }
 
     /**

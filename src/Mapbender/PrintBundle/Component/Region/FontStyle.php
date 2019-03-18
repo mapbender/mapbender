@@ -66,6 +66,18 @@ class FontStyle
     }
 
     /**
+     * Gets an appropriate (minimum) line height in mm, for use in MultiCell rendering.
+     * @see \FPDF::MultiCell()
+     * @return float
+     */
+    public function getLineHeightMm()
+    {
+        // Font size is in 'pt'. Convert pt to mm for line height.
+        // see https://en.wikipedia.org/wiki/Point_(typography)
+        return .353 * $this->getSize();
+    }
+
+    /**
      * Returns new instance set up with OdgParser defaults.
      *
      * @return FontStyle

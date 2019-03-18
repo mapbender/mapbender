@@ -113,6 +113,11 @@ class FeatureInfo extends Element
         );
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:featureinfo.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
@@ -120,13 +125,11 @@ class FeatureInfo extends Element
     {
         $configuration = parent::getConfiguration();
         return $this->container->get('templating')
-                ->render(
-                    'MapbenderCoreBundle:Element:featureinfo.html.twig',
-                    array(
+                ->render($this->getFrontendTemplatePath(), array(
                     'id' => $this->getId(),
                     'configuration' => $configuration,
-                    'title' => $this->getTitle())
-        );
+                    'title' => $this->getTitle(),
+        ));
     }
 
     /**

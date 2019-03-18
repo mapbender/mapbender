@@ -11,21 +11,21 @@
                 this.form.attr('id') + '/';
         },
         _destroy: $.noop,
-        _layer2form: function(layer){
-            if(layer.options.type !== 'wms'){
+        _sourceToForm: function(model, source) {
+            if (source.type !== 'wms') {
                 return;
             }
+            var olLayer = model.getNativeLayer(source);
 
-            $('<input></input>')
+            $('<input>')
                 .attr('type', 'hidden')
-                .attr('name', 'layers[' + layer.label + ']')
+                .attr('name', 'layers[' + olLayer.name + ']')
                 .val($.param({
-                params: layer.olLayer.params,
+                params: olLayer.params,
                 options: {
-                    layers: layer.olLayer.options.layers,
-                    format: layer.olLayer.options.format,
-                    url: layer.olLayer.options.url,
-                    visibility: layer.olLayer.visible
+                    format: source.configuration.options.format,
+                    url: olLayer.url,
+                    visibility: olLayer.getVisibility()
                 }
             }))
                 .appendTo(this.form);
@@ -34,40 +34,30 @@
             var map = $('#' + targetId).data('mapbenderMbMap').map;
 
             var extent = map.olMap.getExtent();
-            $('<input></input>')
+            $('<input>')
                 .attr('type', 'hidden')
                 .attr('name', 'extent')
                 .val(extent.toBBOX())
                 .appendTo(this.form);
 
-            $('<input></input>')
+            $('<input>')
                 .attr('type', 'hidden')
                 .attr('name', 'srs')
                 .val(map.olMap.getProjection())
                 .appendTo(this.form);
         },
-        exportMap: function(targetId){
-            var map = $('#' + targetId).data('mapbenderMbMap').map,
-                mbLayers = map.layers(),
+        exportMap: function(targetId) {
+            var mbMap =$('#' + targetId).data('mapbenderMbMap'),
+                model = mbMap.getModel(),
+                sources = model.getSources(),
                 self = this;
 
             this.form.empty();
-
-            $.each(mbLayers, function(k, v){
-                self._layer2form(v);
+            sources.map(function(source) {
+                self._sourceToForm(model, source);
             });
 
             this._map2form(targetId);
-
-            this.form.submit();
-        },
-        exportLayer: function(layer){
-            var mapId = layer.map.element.attr('id');
-            this.form.empty();
-
-            this._layer2form(layer);
-
-            this._map2form(mapId);
 
             this.form.submit();
         }

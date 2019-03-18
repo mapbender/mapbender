@@ -42,41 +42,225 @@
  * @property {Array.<WmtsTileMatrixSet>} configuration.tilematrixsets
  */
 
+window.Mapbender = Mapbender || {};
+window.Mapbender.WmtsTmsBaseSource = (function() {
+    function WmtsTmsBaseSource(definition) {
+        Mapbender.Source.apply(this, arguments);
+        this.currentActiveLayer = null;
+        this.autoDisabled = false;
+        var sourceArg = this;
+        this.configuration.layers = (this.configuration.layers || []).map(function(layerDef) {
+            return Mapbender.SourceLayer.factory(layerDef, sourceArg, null);
+        });
+    }
+    WmtsTmsBaseSource.prototype = Object.create(Mapbender.Source.prototype);
+    $.extend(WmtsTmsBaseSource.prototype, {
+        constructor: WmtsTmsBaseSource,
+        currentActiveLayer: null,
+        autoDisabled: null,
+        recreateOnSrsSwitch: true,
+        initializeLayers: function() {
+            var proj = Mapbender.Model.getCurrentProj();
+            this.nativeLayers = this._initializeLayersInternal(proj);
+            return this.nativeLayers;
+        },
+        destroyLayers: function() {
+            Mapbender.Source.prototype.destroyLayers.call(this);
+            this.currentActiveLayer = null;
+        },
+        checkRecreateOnSrsSwitch: function(oldProj, newProj) {
+            return true;
+        },
+        _initializeLayersInternal: function(proj) {
+            var compatibleLayer = this._selectCompatibleLayer(proj);
+            var fakeRootLayer = this.configuration.children[0];
+            if (!compatibleLayer) {
+                this.configuration.children[0].children = [];
+                this.currentActiveLayer = null;
+
+                // disable layer before things can break
+                fakeRootLayer.options.treeOptions.allow.selected = false;
+                if (fakeRootLayer.options.treeOptions.selected) {
+                    this.autoDisabled = true;
+                }
+                fakeRootLayer.state.visibility = false;
+                return [];
+            }
+            fakeRootLayer.options.treeOptions.allow.selected = true;
+            this.autoDisabled = false;
+            fakeRootLayer.children = [compatibleLayer];
+            this.currentActiveLayer = compatibleLayer;
+            // Make the uncontrollable layer active
+            // @todo: we should either pre-initialize these values on the server, or evaluate server values
+            //        when picking a compatible layer. The can already be edited and saved, but all they
+            //        currently do is break print, unless we rewrite them again.
+            compatibleLayer.options.treeOptions.selected = true;
+            compatibleLayer.options.treeOptions.allow.selected = true;
+            fakeRootLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
+            compatibleLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
+            var olLayer = this._initializeSingleCompatibleLayer(compatibleLayer, proj);
+            return [olLayer];
+        },
+        _getNativeLayerOptions: function(matrixSet, layer, projection) {
+            var matrixOptions = this._getMatrixOptions(layer, matrixSet, projection);
+            var baseOptions = {
+                isBaseLayer: false,
+                opacity: this.configuration.options.opacity,
+                visible: this.configuration.options.visible,
+                label: layer.options.title,
+                url: layer.options.tileUrls,
+                format: layer.options.format
+            };
+            return $.extend(baseOptions, matrixOptions);
+        },
+        _selectCompatibleLayer: function(proj) {
+            var layer = this.findLayerEpsg(proj.projCode);
+            if (false && !layer) { // find first layer with epsg from srs list to initialize.
+                var allsrs = Mapbender.Model.getAllSrs();
+                for (var i = 0; i < allsrs.length; i++) {
+                    layer = this.findLayerEpsg(allsrs[i].name);
+                    if (layer) {
+                        break;
+                    }
+                }
+            }
+            return layer;
+        },
+        findLayerEpsg: function(epsg) {
+            var layers = this.configuration.layers;
+            for (var i = 0; i < layers.length; i++) {
+                var tileMatrixSetIdentifier = layers[i].options.tilematrixset;
+                var tileMatrixSet = this._getMatrixSet(tileMatrixSetIdentifier);
+                if (tileMatrixSet.supportedCrs.indexOf(epsg) !== -1) {
+                    return layers[i];
+                }
+            }
+            return null;
+        },
+        /**
+         * @param {string} identifier
+         * @return {WmtsTileMatrixSet|null}
+         */
+        _getMatrixSet: function(identifier) {
+            var matrixSets = this.configuration.tilematrixsets;
+            for (var i = 0; i < matrixSets.length; i++){
+                if (matrixSets[i].identifier === identifier) {
+                    return matrixSets[i];
+                }
+            }
+            return null;
+        },
+        getLayerParameters: function(stateMap) {
+            if (this.currentActiveLayer) {
+                return {
+                    layers: [this.currentActiveLayer.options.identifier],
+                    infolayers: [],
+                    styles: []
+                };
+            } else {
+                return {
+                    layers: [],
+                    infolayers: [],
+                    styles: []
+                };
+            }
+        },
+        checkLayerParameterChanges: function(layerParams) {
+            if (this.currentActiveLayer) {
+                var activeIdentifier = this.currentActiveLayer.options.identifier;
+                return !(layerParams.layers && layerParams.layers.length && layerParams.layers[0] === activeIdentifier);
+            } else {
+                return !!(layerParams.layers && layerParams.layers.length);
+            }
+        },
+        getPointFeatureInfoUrl: function(x, y) {
+            // not implemented
+            return null;
+        },
+        getMultiLayerPrintConfig: function(bounds, scale, projection) {
+            var layerDef = this.findLayerEpsg(projection.projCode);
+            var fakeRootLayer = this.configuration.children[0];
+            if (!fakeRootLayer.state.visibility) {
+                return [];
+            }
+            var matrix = this._getMatrix(layerDef, scale, projection);
+            return [
+                {
+                    url: Mapbender.Util.removeProxy(this.getPrintBaseUrl(layerDef)),
+                    matrix: $.extend({}, matrix),
+                    resolution: this._getMatrixResolution(matrix, projection)
+                }
+            ];
+        },
+        getLayerById: function(id) {
+            var foundLayer = Mapbender.Source.prototype.getLayerById.call(this, id);
+            if (!foundLayer) {
+                for (var i = 0; i < this.configuration.layers.length; ++i) {
+                    var candidate = this.configuration.layers[i];
+                    if (candidate.options.id === id) {
+                        foundLayer = candidate;
+                        break;
+                    }
+                }
+            }
+            return foundLayer;
+        },
+        getLayerExtentConfigMap: function(layerId, inheritFromParent, inheritFromSource) {
+            var bboxMap;
+            var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
+            var inheritSource_ = inheritFromSource || (typeof inheritFromSource === 'undefined');
+            if (this.currentActiveLayer && (inheritParent_ || inheritSource_)) {
+                bboxMap = this._reduceBboxMap(this.currentActiveLayer.options.bbox);
+                if (bboxMap) {
+                    return bboxMap;
+                }
+            }
+            var fakeRootLayerId = this.configuration.children[0].options.id;
+            if ((!layerId || layerId === fakeRootLayerId) && (inheritParent_ || inheritSource_)) {
+                // root layer doesn't have bbox config
+                // just find something..
+                for (var i = 0; i < this.configuration.layers.length; ++i) {
+                    bboxMap = this._reduceBboxMap(this.configuration.layers[i].options.bbox);
+                    if (bboxMap) {
+                        return bboxMap;
+                    }
+                }
+            }
+            return Mapbender.Source.prototype.getLayerExtentConfigMap.apply(this, arguments);
+        },
+        /**
+         * @param {WmtsLayerConfig} layer
+         * @param {number} scale
+         * @param {OpenLayers.Projection} projection
+         * @return {WmtsTileMatrix}
+         */
+        _getMatrix: function(layer, scale, projection) {
+            var resolution = OpenLayers.Util.getResolutionFromScale(scale, projection.proj.units);
+            var matrixSet = this._getMatrixSet(layer.options.tilematrixset);
+            var scaleDelta = Number.POSITIVE_INFINITY;
+            var closestMatrix = null;
+            for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
+                var matrix = matrixSet.tilematrices[i];
+                var matrixRes = this._getMatrixResolution(matrix, projection);
+                var resRatio = matrixRes / resolution;
+                var matrixScaleDelta = Math.abs(resRatio - 1);
+                if (matrixScaleDelta < scaleDelta) {
+                    scaleDelta = matrixScaleDelta;
+                    closestMatrix = matrix;
+                }
+            }
+            return closestMatrix;
+        }
+    });
+    return WmtsTmsBaseSource;
+}());
+
+
 
 /**
  * Base class for TMS and WMTS geosources
  */
-Mapbender.Geo.SourceTmsWmtsCommon = Class({
-    'extends': Mapbender.Geo.SourceHandler
-}, {
-    'private string layerNameIdent': 'identifier',
-    create: function(sourceOpts) {
-        var rootLayer = sourceOpts.configuration.children[0];
-        var proj = Mapbender.Model.getCurrentProj();
-        var layer = this.findLayerEpsg(sourceOpts, proj.projCode);
-        if (!layer) { // find first layer with epsg from srs list to initialize.
-            var allsrs = Mapbender.Model.getAllSrs();
-            for (var i = 0; i < allsrs.length; i++) {
-                layer = this.findLayerEpsg(sourceOpts, allsrs[i].name);
-                if (layer) {
-                    break;
-                }
-            }
-        }
-        rootLayer['children'] = [layer];
-        var matrixSet = this._getMatrixSet(sourceOpts, layer.options.tilematrixset);
-        var layerOptions = this._createLayerOptions(sourceOpts, layer, matrixSet, proj);
-        var mqLayerDef = {
-            type: sourceOpts.configuration.type,
-            isBaseLayer: false,
-            opacity: sourceOpts.configuration.options.opacity,
-            visible: sourceOpts.configuration.options.visible,
-            attribution: sourceOpts.configuration.options.attribution
-        };
-        $.extend(layerOptions, mqLayerDef);
-        sourceOpts.currentActiveLayer = layer;
-        return layerOptions;
-    },
+Mapbender.Geo.SourceTmsWmtsCommon = $.extend({}, Mapbender.Geo.SourceHandler, {
     /**
      * @param {WmtsSourceConfig} sourceDef
      * @param {WmtsLayerConfig} layer
@@ -112,74 +296,6 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
         }
         return null;
     },
-    getLayerExtents: function(source, layerId) {
-        if (source.currentActiveLayer) {
-            return source.currentActiveLayer.options.bbox || null;
-        }
-        return null;
-    },
-    _createLayerOptions: function(sourceDef, layerDef, matrixSet, projection) {
-        var matrixOptions = this._getMatrixOptions(layerDef, matrixSet, projection);
-        return $.extend(matrixOptions, {
-            label: layerDef.options.title,
-            url: layerDef.options.tileUrls,
-            format: layerDef.options.format
-        });
-    },
-    _getFakeRootLayerId: function(source) {
-        return source.configuration.children[0].options.id;
-    },
-    getPrintConfigEx: function(source, bounds, scale, projection) {
-        var layerDef = this.findLayerEpsg(source, projection.projCode);
-        var fakeRootLayer = source.configuration.children[0];
-        if (!fakeRootLayer.state.visibility) {
-            return [];
-        }
-        var matrix = this._getMatrix(source, layerDef, scale, projection);
-        return [
-            {
-                url: Mapbender.Util.removeProxy(this._getPrintBaseUrl(source, layerDef)),
-                matrix: $.extend({}, matrix),
-                resolution: this._getMatrixResolution(matrix, projection)
-            }
-        ];
-    },
-    beforeSrsChange: function(source, olLayer, newSrsCode) {
-        olLayer.removeBackBuffer();
-        var layer = this.findLayerEpsg(source, newSrsCode);
-        var matrixSet = layer && this._getMatrixSet(source, layer.options.tilematrixset);
-        var fakeRootLayer = source.configuration.children[0];
-        if (matrixSet) {
-            source.currentActiveLayer = layer;
-        } else {
-            // disable layer before things can break
-            fakeRootLayer.options.treeOptions.allow.selected = false;
-            if (fakeRootLayer.options.treeOptions.selected) {
-                source.autoDisabled = true;
-            }
-            Mapbender.Model.setSourceVisibility(source.id, false);
-            source.currentActiveLayer = null;
-        }
-    },
-    changeProjection: function(source, projection) {
-        var layer = this.findLayerEpsg(source, projection.projCode);
-        var matrixSet = layer && this._getMatrixSet(source, layer.options.tilematrixset);
-        var olLayer = layer && Mapbender.Model.getNativeLayer(source);
-        if (layer && olLayer && matrixSet) {
-            var options = this._getMatrixOptions(layer, matrixSet, projection);
-            options.projection = projection.projCode;
-            olLayer.addOptions(options, false);
-            if (source.autoDisabled) {
-                var fakeRootLayer = source.configuration.children[0];
-                fakeRootLayer.options.treeOptions.allow.selected = true;
-                source.autoDisabled = false;
-                Mapbender.Model.setSourceVisibility(source.id, true);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    },
     applyTreeOptions: function(source, layerOptionsMap) {
         var layerKeys = Object.keys(layerOptionsMap);
         for (var i = 0; i < layerKeys.length; ++i) {
@@ -187,94 +303,18 @@ Mapbender.Geo.SourceTmsWmtsCommon = Class({
             if (source.configuration.children[0].options.id === layerId) {
                 var layerOptions = layerOptionsMap[layerId];
                 var treeOptions = ((layerOptions.options || {}).treeOptions || {});
-                if (treeOptions.selected === false) {
-                    source.autoDisabled = false;
-                } else if (treeOptions.selected === true && source.autoDisabled) {
+                if (treeOptions.selected === true && source.autoDisabled) {
                     delete treeOptions.selected;
                 }
                 break;
             }
         }
-        this.super('applyTreeOptions', source, layerOptionsMap);
-    },
-    'public function getPrintConfig': function(olLayer, bounds) {
-        throw new Error("Unsafe printConfig with no scale information");
-    },
-    getLayerParameters: function(source, stateMap) {
-        if (source.currentActiveLayer) {
-            return {
-                layers: [source.currentActiveLayer.options.identifier],
-                infolayers: [],
-                styles: []
-            };
-        } else {
-            return {
-                layers: [],
-                infolayers: [],
-                styles: []
-            };
-        }
-    },
-    checkLayerParameterChanges: function(source, layerParams) {
-        if (source.currentActiveLayer) {
-            var activeIdentifier = source.currentActiveLayer.options.identifier;
-            return !(layerParams.layers && layerParams.layers.length && layerParams.layers[0] === activeIdentifier);
-        } else {
-            return !!(layerParams.layers && layerParams.layers.length);
-        }
-    },
-    findLayerEpsg: function(sourceDef, epsg) {
-        var layers = sourceDef.configuration.layers;
-        for (var i = 0; i < layers.length; i++) {
-            var tileMatrixSetIdentifier = layers[i].options.tilematrixset;
-            var tileMatrixSet = this._getMatrixSet(sourceDef, tileMatrixSetIdentifier);
-            if (tileMatrixSet.supportedCrs.indexOf(epsg) !== -1) {
-                return layers[i];
-            }
-        }
-        return null;
-    },
-    /**
-     * @param {WmtsSourceConfig} sourceDef
-     * @param {string} identifier
-     * @return {WmtsTileMatrixSet|null}
-     */
-    _getMatrixSet: function(sourceDef, identifier) {
-        var matrixSets = sourceDef.configuration.tilematrixsets;
-        for(var i = 0; i < matrixSets.length; i++){
-            if (matrixSets[i].identifier === identifier) {
-                return matrixSets[i];
-            }
-        }
-        return null;
-    },
-    /**
-     * @param {WmtsSourceConfig} sourceDef
-     * @param {WmtsLayerConfig} layer
-     * @param {number} scale
-     * @param {OpenLayers.Projection} projection
-     * @return {WmtsTileMatrix}
-     */
-    _getMatrix: function(sourceDef, layer, scale, projection) {
-        var resolution = OpenLayers.Util.getResolutionFromScale(scale, projection.proj.units);
-        var matrixSet = this._getMatrixSet(sourceDef, layer.options.tilematrixset);
-        var scaleDelta = Number.POSITIVE_INFINITY;
-        var closestMatrix = null;
-        for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
-            var matrix = matrixSet.tilematrices[i];
-            var matrixRes = this._getMatrixResolution(matrix, projection);
-            var resRatio = matrixRes / resolution;
-            var matrixScaleDelta = Math.abs(resRatio - 1);
-            if (matrixScaleDelta < scaleDelta) {
-                scaleDelta = matrixScaleDelta;
-                closestMatrix = matrix;
-            }
-        }
-        return closestMatrix;
-    },
-    featureInfoUrl: function() {
-        return null;
+        Mapbender.Geo.SourceHandler.applyTreeOptions.call(this, source, layerOptionsMap);
     }
 });
+(function() {
+    Mapbender.source['wmts'] = Mapbender.Geo.SourceTmsWmtsCommon;
+    Mapbender.source['tms'] = Mapbender.Geo.SourceTmsWmtsCommon;
+}());
 
 

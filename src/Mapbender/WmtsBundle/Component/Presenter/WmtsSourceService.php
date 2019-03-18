@@ -6,6 +6,7 @@ namespace Mapbender\WmtsBundle\Component\Presenter;
 
 
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmtsBundle\Component\WmtsInstanceLayerEntityHandler;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
@@ -296,5 +297,24 @@ class WmtsSourceService extends SourceService
             '%7B' => '{',
             '%7D' => '}',
         ));
+    }
+
+    public function getAssets(Application $application, $type)
+    {
+        switch ($type) {
+            case 'js':
+                return array(
+                    '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
+                    '@MapbenderWmtsBundle/Resources/public/geosource-base.js',
+                    '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.wmts.js',
+                    '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.tms.js',
+                );
+            case 'trans':
+                return array(
+                    'MapbenderCoreBundle::geosource.json.twig',
+                );
+            default:
+                throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));
+        }
     }
 }

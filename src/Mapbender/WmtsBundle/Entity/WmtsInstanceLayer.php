@@ -45,11 +45,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $format;
-
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     protected $infoformat;
 //
 //    /**
@@ -163,28 +158,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     public function getTitle()
     {
         return $this->title;
-    }
-
-    /**
-     * Set format
-     *
-     * @param string $format
-     * @return $this
-     */
-    public function setFormat($format)
-    {
-        $this->format = $format;
-        return $this;
-    }
-
-    /**
-     * Get format
-     *
-     * @return string
-     */
-    public function getFormat()
-    {
-        return $this->format;
     }
 
     /**

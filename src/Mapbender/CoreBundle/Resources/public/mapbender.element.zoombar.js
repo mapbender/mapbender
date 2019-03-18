@@ -64,7 +64,7 @@ $.widget("mapbender.mbZoomBar", {
 
         this.zoomslider.find('li').last()
             .addClass('iconZoomLevelSelected')
-            .append($('<div></div>'));
+        ;
 
         var step = [
             this.zoomslider.find('li').last().width(),

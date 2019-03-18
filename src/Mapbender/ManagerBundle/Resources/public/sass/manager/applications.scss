@@ -157,22 +157,30 @@
 
     overflow: hidden;
 
+    img {
+      display: block;
+    }
+    .iconAppDefault {
+      display: none;
+    }
+    &.default {
+      img {
+        display: none;
+      }
+      .iconAppDefault {
+        display: inline-block;
+      }
+    }
     &.default{
       border: 1px solid #a2a2a2;
       background-color:#404040;
     }
 
-    &.iconAppDefault{
+    .iconAppDefault{
+      font-style: normal;
       font-size: 60px;
-      padding-top: 50px;
-      padding-left: 65px;
-      padding-bottom: 0px;
-      display: block;
-      line-height: 110px;
-      height: $height+2 !important;
       color:lighten($darkFontColor, 10%);
     }
-
 
     div.cell_edit{
       position: relative;
@@ -189,11 +197,11 @@
         height: 200px;
         width: 200px;
 
-        img{
+        img {
          max-height: 100%;
          max-width: 100%;
-         width: inherit;
-         display: block;
+         width: auto;
+         height: auto;
          margin: 0 auto;
         }
       }

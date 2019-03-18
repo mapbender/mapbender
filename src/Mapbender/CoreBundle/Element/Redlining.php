@@ -91,18 +91,20 @@ class Redlining extends Element
         return 'MapbenderCoreBundle:ElementAdmin:redlining.html.twig';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:redlining.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
-        return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:redlining.html.twig',
-            array(
-                'id' => $this->getId(),
-                'title' => $this->getTitle(),
-                'configuration' => $this->getConfiguration()
-            )
-        );
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'configuration' => $this->getConfiguration(),
+        ));
     }
 }

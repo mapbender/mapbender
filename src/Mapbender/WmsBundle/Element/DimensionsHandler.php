@@ -3,15 +3,15 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
-use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * Dimensions handler
  * @author Paul Schmidt
  */
-class DimensionsHandler extends Element
+class DimensionsHandler extends Element implements BoundConfigMutator
 {
 
     /**
@@ -134,10 +134,6 @@ class DimensionsHandler extends Element
         $instances = array();
         foreach ($configuration['dimensionsets'] as $key => $value) {
             foreach (ArrayUtil::getDefault($value, 'group', array()) as $group) {
-                if (is_object($group)) {
-//                    die(var_export($configuration, true));
-//                    die(var_export(array($value, $group->getConfiguration()), true));
-                }
                 $item = explode("-", $group);
                 $instances[$item[0]] = $value['dimension'];
             }

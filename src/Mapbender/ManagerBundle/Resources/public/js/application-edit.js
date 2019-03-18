@@ -429,7 +429,7 @@ $(function() {
     var screenShotImg = screenShotCell.find('img');
     var uploadButton = applicationForm.find('.upload_button');
     var fileInput = applicationForm.find('#application_screenshotFile');
-    var validationMsgBox = applicationForm.find('span.validationMsgBox');
+    var validationMsgBox = applicationForm.find('.validationMsgBox');
     var maxFileSize = applicationForm.find('#application_maxFileSize').val();
     var minWidth = applicationForm.find('#application_screenshotWidth').val();
     var minHeight = applicationForm.find('#application_screenshotHeight').val();
@@ -442,34 +442,31 @@ $(function() {
         uploadButton.removeClass('hover');
     }).on('change', function(e) {
         setUploadFilename(e);  
-//        uploadScreenshotFile(this.files);
 
         var file = this.files;
         var reader = new FileReader();
         var img = new Image();
         var src = "";
+        var validationMessage;
         
         img.onload = function() {
             if (img.width >= minWidth && img.height >= minHeight) {
-               
+                validationMsgBox.addClass('hidden');
                 screenShotImg.attr('src', src);
-                screenShotImg.removeClass('hidden');
-                screenShot.find('div.messageBox').remove();
-                validationMsgBox.remove();
                 screenShotImg.before('<div class="delete button critical hidden">X</div>');
                 deleteScreenShotButtonInit();
-                screenShot.removeClass('default iconAppDefault');
+                screenShot.removeClass('default');
                 applicationForm.find('input[name="application[removeScreenShot]"]').val(0);
                 uploadScreenShot.val(0);
             } else {
                 uploadScreenShot.val(1);
-                $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.resolution.error',
-                {'screenshotWidth':minWidth, 'screenshotHeight':minHeight ,'uploadWidth': img.width, 'uploadHeighth': img.height }) +'</span>').insertAfter(fileInput);
-                validationMsgBox = applicationForm.find('span.validationMsgBox');
+                validationMessage = Mapbender.trans('mb.core.entity.app.screenshotfile.resolution.error',
+                    {'screenshotWidth':minWidth, 'screenshotHeight':minHeight ,'uploadWidth': img.width, 'uploadHeighth': img.height });
+                validationMsgBox.text(validationMessage);
+                validationMsgBox.removeClass('hidden');
             }
         };
-    
-        
+
          if (file && file[0]) {
             if (file[0].type.match('image/')){
                 if (file[0].size <= 2097152) {
@@ -482,12 +479,13 @@ $(function() {
                     
                 }else{
                     var uploadFileSize = file[0].size;
-                    $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.error',{'maxFileSize':maxFileSize, 'uploadFileSize': uploadFileSize }) +'</span>').insertAfter(fileInput);
-                    validationMsgBox = applicationForm.find('span.validationMsgBox');
+                    validationMessage = Mapbender.trans('mb.core.entity.app.screenshotfile.error', {'maxFileSize':maxFileSize, 'uploadFileSize': uploadFileSize });
+                    validationMsgBox.text(validationMessage);
+                    validationMsgBox.removeClass('hidden');
                 }
-            }else{
-                 $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.format_error') +'</span>').insertAfter(fileInput);
-                  validationMsgBox = applicationForm.find('span.validationMsgBox');
+             }else {
+                 validationMessage = Mapbender.trans('mb.core.entity.app.screenshotfile.format_error');
+                 validationMsgBox.removeClass('hidden');
             }
         }
         
@@ -506,38 +504,24 @@ $(function() {
     var deleteScreenShotButtonInit = function() {
            
         var deleteButton = screenShot.find('.delete');
-        screenShot.mouseenter('mouseover', function() {
-            deleteButton.removeClass('hidden');
-        }).mouseleave('mouseout', function() {
+        screenShot.hover(function() {
+            deleteButton.toggleClass('hidden', $(this).hasClass('default'));
+        }, function() {
             deleteButton.addClass('hidden');
         });
 
         deleteButton.on('click', function() {
-            screenShotImg.addClass('hidden');
-            deleteButton.remove();
+            screenShot.addClass('default');
             screenShotImg.attr('src',"");
-            screenShot.addClass('default').addClass('iconAppDefault');
             applicationForm.find('.upload_label').html(Mapbender.trans("mb.manager.upload.label_delete"));
             applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
+            deleteButton.addClass('hidden');
         });
         return deleteButton;
     };
     
     deleteScreenShotButtonInit();
     
-
-
-    fileInput.on('click',function(){
-        validationMsgBox.remove();
-    });
-
-//    applicationForm.find('.containerBaseData div.right').on('click', function(event) {
-//        if ($(event.target).hasClass('delete')) {
-//            return;
-//        }
-//        fileInput.trigger('click');
-//    });
-
     $(document).ready(function() {
         $('.application-component-table tbody .iconColumn input.checkbox[data-url]').each(function() {
             var self = this;

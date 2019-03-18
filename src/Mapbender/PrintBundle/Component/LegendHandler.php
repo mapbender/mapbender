@@ -94,7 +94,14 @@ class LegendHandler
     public function collectLegendGroup($groupData, $printJobData)
     {
         $group = new LegendBlockGroup();
-        foreach ($groupData as $title => $url) {
+        foreach ($groupData as $key => $data) {
+            if (is_array($data)) {
+                $url = $data['url'];
+                $title = $data['layerName'];
+            } else {
+                $url = $data;
+                $title = $key;
+            }
             $block = $this->prepareUrlBlock($title, $url);
             if ($block) {
                 $group->addBlock($block);

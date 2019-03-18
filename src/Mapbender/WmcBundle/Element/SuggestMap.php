@@ -1,7 +1,11 @@
 <?php
 namespace Mapbender\WmcBundle\Element;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SuggestMap extends WmcBase
 {
@@ -99,20 +103,22 @@ class SuggestMap extends WmcBase
         return $configuration;
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderWmcBundle:Element:suggestmap.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         $config = $this->getConfiguration();
-        $html = $this->container->get('templating')
-            ->render('MapbenderWmcBundle:Element:suggestmap.html.twig',
-            array(
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
             'id' => $this->getId(),
             'configuration' => $config,
             'title' => $this->getTitle(),
         ));
-        return $html;
     }
 
     /**
@@ -120,14 +126,14 @@ class SuggestMap extends WmcBase
      */
     public function httpAction($action)
     {
-        $session = $this->container->get("session");
-
-        if ($session->get("proxyAllowed", false) !== true) {
+        /** @var Request $request */
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        if ($request->getSession()->get("proxyAllowed", false) !== true) {
             throw new AccessDeniedHttpException('You are not allowed to use this proxy without a session.');
         }
         switch ($action) {
             case 'load':
-                $id = $this->container->get('request_stack')->getCurrentRequest()->get("_id", null);
+                $id = $request->get("_id", null);
                 return $this->loadState($id);
                 break;
             case 'state':
@@ -157,7 +163,8 @@ class SuggestMap extends WmcBase
     /**
      * Returns a json encoded state
      *
-     * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
+     * @param string $stateid
+     * @return JsonResponse
      */
     protected function loadState($stateid)
     {
@@ -165,19 +172,24 @@ class SuggestMap extends WmcBase
         $state = $wmchandler->findState($stateid);
         if ($state) {
             $id = $state->getId();
-            return new Response(json_encode(array("data" => array($id => json_decode($state->getJson())))),
-                200, array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                "data" => array(
+                    $id => json_decode($state->getJson()),
+                ),
+            ));
         } else {
-            return new Response(json_encode(array("error" => $this->trans("mb.wmc.error.statenotfound",
-                        array('%stateid%' => $stateid)))), 200,
-                array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                "error" => $this->trans("mb.wmc.error.statenotfound", array(
+                    '%stateid%' => $stateid,
+                )),
+            ));
         }
     }
 
     /**
      * Saves the mapbender state.
      *
-     * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
+     * @return JsonResponse
      */
     protected function saveState()
     {
@@ -185,14 +197,13 @@ class SuggestMap extends WmcBase
         $json = $this->container->get('request_stack')->getCurrentRequest()->get("state", null);
         $state = $wmchandler->saveState($json);
         if ($state !== null) {
-            return new Response(json_encode(array(
-                    "id" => $state->getId())), 200,
-                array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                "id" => $state->getId(),
+            ));
         } else {
-            return new Response(json_encode(array(
-                    "error" => $this->trans("mb.wmc.error.statecannotbesaved"))),
-                200, array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                "error" => $this->trans("mb.wmc.error.statecannotbesaved"),
+            ));
         }
     }
-
 }

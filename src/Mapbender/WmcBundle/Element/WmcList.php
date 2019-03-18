@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmcBundle\Element;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class WmcList extends WmcBase
 {
@@ -83,19 +83,22 @@ class WmcList extends WmcBase
         );
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderWmcBundle:Element:wmclist.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         $config = $this->getConfiguration();
-        $html = $this->container->get('templating')
-            ->render('MapbenderWmcBundle:Element:wmclist.html.twig',
-            array(
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
             'id' => $this->getId(),
             'configuration' => $config,
-            'title' => $this->getTitle()));
-        return $html;
+            'title' => $this->getTitle(),
+        ));
     }
 
     public function httpAction($action)
@@ -110,7 +113,7 @@ class WmcList extends WmcBase
     /**
      * Returns a html encoded list of all wmc documents
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return JsonResponse
      */
     protected function getWmcList()
     {
@@ -121,7 +124,9 @@ class WmcList extends WmcBase
         foreach ($wmclist as $wmc) {
             $wmces[$wmc->getId()] = $wmc->getState()->getTitle();
         }
-        return new Response(json_encode(array("success" => $wmces)), 200, array('Content-Type' => 'application/json'));
+        return new JsonResponse(array(
+            "success" => $wmces,
+        ));
     }
 
 }

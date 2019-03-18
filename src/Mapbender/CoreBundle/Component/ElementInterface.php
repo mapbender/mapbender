@@ -4,6 +4,8 @@
 namespace Mapbender\CoreBundle\Component;
 
 
+use Mapbender\CoreBundle\Component\ElementBase\EditableInterface;
+
 /**
  * Interface for Mapbender Element Component classes.
  * When writing / updating Elements, only implement methods from this interface, and optionally
@@ -11,32 +13,13 @@ namespace Mapbender\CoreBundle\Component;
  *
  * @todo: separate further by frontend / backend concerns
  */
-interface ElementInterface extends IAssetDependent
+interface ElementInterface extends IAssetDependent, EditableInterface
 {
     /**
-     * Should return string title of Element for
-     * 1) backend: selecting a new element when adding to an application
-     * 2) backend: default value for "title" field in Element Entity
-     *
-     * Return value is subject to translation
-     * @return string
-     */
-    public static function getClassTitle();
-
-    /**
-     * Should return the long-form element description, which is displayed just under the title in the list of available
-     * Elements, when adding to an application in the backend.
-     *
-     * Subject to translation.
-     *
-     * @return string
-     */
-    public static function getClassDescription();
-
-    /**
      * Should return the (namespaced) JavaScript widget constructor name. E.g. 'mapbender.mbAboutDialog'.
+     * May also return boolean false to indicate no javascript logic needs initializing at all.
      *
-     * @return string
+     * @return string|false
      */
     public function getWidgetName();
 
@@ -102,23 +85,4 @@ interface ElementInterface extends IAssetDependent
      * @return string[][] grouped asset references
      */
     public function getAssets();
-
-    /**
-     * Should return the element configuration form type for backend configuration. Acceptable values are
-     * * fully qualified service id (string)
-     * * fully qualified PHP class name (string)
-     * * Any object implementing Symfony FormTypeInterface (this also includes AbstractType children)
-     * * null for a fallback Yaml textarea
-     *
-     * @return string|null
-     */
-    public static function getType();
-
-    /**
-     * Should return a twig-style 'BundleName:section:filename.html.twig' reference to the HTML template used
-     * for rendering the backend configuration form.
-     *
-     * @return string
-     */
-    public static function getFormTemplate();
 }

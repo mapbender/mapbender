@@ -18,6 +18,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
  * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
  * @ORM\HasLifeCycleCallbacks()
+ * @property WmsLayerSource $sourceItem
  */
 class WmsInstanceLayer extends SourceInstanceItem
 {
@@ -37,7 +38,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     protected $sourceInstance;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmsLayerSource", cascade={"refresh"}, inversedBy="instanceLayers")
      * @ORM\JoinColumn(name="wmslayersource", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $sourceItem;
@@ -177,7 +178,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * Get title
      *
-     * @return string
+     * @return string|null
      */
     public function getTitle()
     {
@@ -623,7 +624,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $this->setSourceInstance($instance);
         $this->setSourceItem($layerSource);
-        $this->setTitle($layerSource->getTitle());
 
         $this->setMinScale($layerSource->getMinScale());
         $this->setMaxScale($layerSource->getMaxScale());

@@ -88,13 +88,18 @@ class AboutDialog extends Element
         return 'mapbender.mbAboutDialog';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:about_dialog.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:about_dialog.html.twig',
+                ->render($this->getFrontendTemplatePath(),
                     array(
                     'id' => $this->getId(),
                     'title' => $this->getTitle(),

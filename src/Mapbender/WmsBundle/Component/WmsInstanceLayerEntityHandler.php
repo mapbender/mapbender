@@ -10,7 +10,6 @@ use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
-use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
  * Description of WmsInstanceLayerEntityHandler
@@ -194,7 +193,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             "priority" => $entity->getPriority(),
             "name" => $sourceItem->getName() !== null ?
                 $sourceItem->getName() : "",
-            "title" => $entity->getTitle(),
+            "title" => $entity->getTitle() ?: $entity->getSourceItem()->getTitle(),
             "queryable" => $entity->getInfo(),
             "style" => $entity->getStyle(),
             "minScale" => $entity->getMinScale(true),

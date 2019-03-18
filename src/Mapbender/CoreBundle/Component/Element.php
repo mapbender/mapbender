@@ -5,8 +5,9 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\Component\BundleUtil;
 use Mapbender\Component\ClassUtil;
 use Mapbender\Component\StringUtil;
+use Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingInterface;
+use Mapbender\CoreBundle\Component\ElementBase\MinimalBound;
 use Mapbender\CoreBundle\Entity\Element as Entity;
-use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Component\Mapper;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -26,7 +27,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @author Christian Wygoda
  */
-abstract class Element implements ElementInterface, ElementHttpHandlerInterface
+abstract class Element extends MinimalBound
+    implements ElementInterface, ElementHttpHandlerInterface, BoundSelfRenderingInterface
 {
     /**
      * Extended API. The ext_api defines, if an element can be used as a target
@@ -47,12 +49,6 @@ abstract class Element implements ElementInterface, ElementHttpHandlerInterface
 
     /** @var ContainerInterface Symfony container */
     protected $container;
-
-    /**  @var Entity Element configuration storage entity */
-    protected $entity;
-
-    /** @var array Class name parts */
-    protected $classNameParts;
 
     /** @var array Element fefault configuration */
     protected static $defaultConfiguration = array();
@@ -76,10 +72,9 @@ abstract class Element implements ElementInterface, ElementHttpHandlerInterface
      */
     public function __construct(Application $application, ContainerInterface $container, Entity $entity)
     {
-        $this->classNameParts = explode('\\', get_called_class());
         $this->application    = $application;
         $this->container      = $container;
-        $this->entity         = $entity;
+        parent::__construct($entity);
     }
 
     /*************************************************************************
@@ -126,39 +121,11 @@ abstract class Element implements ElementInterface, ElementHttpHandlerInterface
         return static::$defaultConfiguration;
     }
 
-    /**
-     * @return \Mapbender\CoreBundle\Entity\Element $entity
-     */
-    public function getEntity()
-    {
-        return $this->entity;
-    }
-
     /*************************************************************************
      *                                                                       *
      *             Shortcut functions for leaner Twig templates              *
      *                                                                       *
      *************************************************************************/
-
-    /**
-     * Get the element ID
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->entity->getId();
-    }
-
-    /**
-     * Get the element title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->entity->getTitle();
-    }
 
     /**
      * Get the element description
@@ -249,20 +216,6 @@ abstract class Element implements ElementInterface, ElementHttpHandlerInterface
     public function getConfiguration()
     {
         return $this->entity->getConfiguration();
-    }
-
-    /**
-     * Should return the (namespaced) JavaScript widget constructor name. E.g. 'mapbender.mbAboutDialog'.
-     *
-     * Default implementation returns the concrete class name prefixed with 'mapbender.mb'.
-     * Automatic calculation is deprecated. The default implementation will be removed in a future release,
-     * making this method abstract. Return your widget constructor names explicitly.
-     *
-     * @return string
-     */
-    public function getWidgetName()
-    {
-        return 'mapbender.mb' . end($this->classNameParts);
     }
 
     /**
@@ -450,18 +403,6 @@ abstract class Element implements ElementInterface, ElementHttpHandlerInterface
     protected static function getTemplateName($className)
     {
         return StringUtil::camelToSnakeCase($className);
-    }
-
-    /**
-     * Hook function for embedded elements to influence the effective application config on initial load.
-     * We (can) use this for BaseSourceSwitchter (deactivates layers), SuggestMap element reloading state etc.
-     *
-     * @param array
-     * @return array
-     */
-    public function updateAppConfig($configIn)
-    {
-        return $configIn;
     }
 
     /**

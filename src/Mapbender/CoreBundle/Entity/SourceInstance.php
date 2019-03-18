@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\IAssetDependent;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 
 /**
@@ -15,9 +14,8 @@ use Mapbender\CoreBundle\Component\SourceMetadata;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_sourceinstance" = "SourceInstance"})
  */
-abstract class SourceInstance implements IAssetDependent
+abstract class SourceInstance
 {
-
     /**
      * @var integer $id
      * @ORM\Id

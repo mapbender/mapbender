@@ -52,6 +52,7 @@ class ElementClassesCommand extends ContainerAwareCommand
         $headers = array(
             'Name',
             'Comments',
+            'Widget Constructor',
             'Frontend template',
             'AdminType',
             'AdminTemplate',
@@ -119,6 +120,7 @@ class ElementClassesCommand extends ContainerAwareCommand
         $cells = array(
             get_class($element),
             $this->formatElementComments($element),
+            $this->formatGetWidgetName($element),
             $this->formatFrontendTemplateInfo($element),
             $this->formatAdminType($element),
             $this->formatAdminTemplateInfo($element),
@@ -131,34 +133,78 @@ class ElementClassesCommand extends ContainerAwareCommand
      * @param Element $element
      * @return string
      */
+    protected static function formatGetWidgetName($element)
+    {
+        try {
+            $widgetConstructor = $element->getWidgetName();
+            $rc = new \ReflectionClass($element);
+            $rm = $rc->getMethod('getWidgetName');
+        } catch (\ReflectionException $e) {
+            return '<error>No reflection</error>';
+        }
+        if (!$widgetConstructor) {
+            return '<error>No widget constructor</error>';
+        }
+
+        if ($rm->class !== $rc->getName()) {
+            if ($rm->getDeclaringClass()->isAbstract()) {
+                $comment = "<error>from abstract {$rm->getDeclaringClass()->getName()}</error>";
+            } else {
+                $comment = "<info>from {$rm->getDeclaringClass()->getName()}</info>";
+            }
+        } else {
+            $comment = "";
+        }
+        if (!trim($widgetConstructor)) {
+            $widgetConstructor = '<error>NONE!</error>';
+        }
+        return trim("{$widgetConstructor}\n{$comment}");
+    }
+
+    /**
+     * @param Element $element
+     * @return string
+     */
     protected static function formatAdminType($element)
     {
+        try {
+            $rc = new \ReflectionClass($element);
+            $rm = $rc->getMethod('getType');
+        } catch (\ReflectionException $e) {
+            return "<error>No reflection</error>";
+        }
+
         $adminType = $element->getType();
-        $autoAdminType = $element->getAutomaticAdminType();
         $elementBNS = BundleUtil::extractBundleNamespace(get_class($element));
         try {
             $adminTypeBNS = BundleUtil::extractBundleNamespace($adminType);
+            if (!class_exists($adminType)) {
+                // mark missing class as error
+                return "<error>{$adminType}</error>";
+            } else {
+                $formatted = "{$adminType}";
+            }
         } catch (\RuntimeException $e) {
             // assume servicy admin type
             if (false === strpos($adminType, '\\')) {
-                return "service <info>{$adminType}</info>";
+                $formatted = "service <info>{$adminType}</info>";
+                $adminTypeBNS = null;
             } else {
                 throw $e;
             }
         }
-
-        if (!class_exists($adminType)) {
-            // mark missing class as error
-            return "<error>$adminType</error>";
-        } elseif ($elementBNS != $adminTypeBNS) {
-            // highlight admin type in different bundle
-            return str_replace($adminTypeBNS, "<comment>{$adminTypeBNS}</comment>", $adminType);
-        } elseif ($adminType != $autoAdminType) {
-            // highlight admin type override that violates convention
-            return "<comment>$adminType</comment>\n(vs {$autoAdminType})";
-        } else {
-            return $adminType;
+        if ($adminTypeBNS && $adminTypeBNS != $elementBNS) {
+            $formatted = str_replace($formatted, "<comment>{$adminTypeBNS}</comment>", $adminType);
         }
+        if ($rm->class != $rc->getName()) {
+            $formatted .= "\n<comment>(inherited from</comment>\n";
+            if ($rm->getDeclaringClass()->isAbstract()) {
+                $formatted .= "<error>{$rm->class})</error>";
+            } else {
+                $formatted .= "<comment>{$rm->class})</comment>";
+            }
+        }
+        return $formatted;
     }
 
     /**
@@ -338,7 +384,9 @@ class ElementClassesCommand extends ContainerAwareCommand
             'getType'=> array('comment', null),
             'getFormTemplate' => array('comment', null),
             'getFrontendTemplatePath' => array('comment', null),
+            'getWidgetName' => array('comment', null),
         );
+
         foreach ($detectOverrides as $methodName => $treatment) {
             $isOverridden = $this->detectMethodOverride($rc, $methodName);
             $messageStyle = $treatment[intval($isOverridden)];
@@ -351,16 +399,17 @@ class ElementClassesCommand extends ContainerAwareCommand
                 $issues[] = $message;
             }
         }
-        $parentClass = get_parent_class($element);
-        if ($parentClass != 'Mapbender\CoreBundle\Component\Element') {
-            $parentNote = "<note>parent: $parentClass</note>";
+        $parentClass = $rc->getParentClass();
+        if (0 !== strpos($parentClass->getNamespaceName(), 'Mapbender\CoreBundle\Component')) {
+            $parentName = $parentClass->getName();
+            $parentNote = "<note>parent: $parentName</note>";
         } else {
             $parentNote = "";
         }
         return trim(trim(implode(', ', $issues), "\n") . "\n{$parentNote}", "\n");
     }
 
-    protected function detectMethodOverride(\ReflectionClass $rc, $methodName)
+    protected static function detectMethodOverride(\ReflectionClass $rc, $methodName)
     {
         $rm = $rc->getMethod($methodName);
         return $rm && ($rc->getName() == $rm->class);

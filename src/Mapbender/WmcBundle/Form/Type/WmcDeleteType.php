@@ -1,9 +1,6 @@
 <?php
 namespace Mapbender\WmcBundle\Form\Type;
 
-use Mapbender\CoreBundle\Form\Type\StateType;
-use Mapbender\WmsBundle\Form\Type\LegendUrlType;
-use Mapbender\WmsBundle\Form\Type\OnlineResourceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 

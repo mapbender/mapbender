@@ -17,6 +17,7 @@
                 {{ screenshot_filename | default('mb.manager.admin.application.upload.label' | trans) }}
             </span>
             {{ form_widget(form.screenshotFile) }}
+            <div class="validationMsgBox smallText hidden"></div>
             {{ form_widget(form.maxFileSize) }}
             {{ form_widget(form.screenshotWidth) }}
             {{ form_widget(form.screenshotHeight) }}

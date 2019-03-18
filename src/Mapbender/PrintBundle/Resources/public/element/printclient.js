@@ -8,7 +8,8 @@
                 fillOpacity:   0.5,
                 strokeColor:   '#000000',
                 strokeOpacity: 1.0,
-                strokeWidth:    2
+                strokeWidth:    2,
+                cursor: 'all-scroll'
             }
         },
         layer: null,
@@ -231,15 +232,37 @@
             ).toGeometry(), {});
             // copy bounds before rotation
             this.printBounds = this.feature.geometry.getBounds().clone();
-
-            this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
-            this._redrawSelectionFeatures([this.feature]);
+            this._updateRotation(rotation, center);
         },
         _redrawSelectionFeatures: function(features) {
             var layer = this._getSelectionLayer();
             layer.removeAllFeatures();
             layer.addFeatures(features);
             layer.redraw();
+        },
+        _updateRotation: function(rotation, center) {
+            this.control.unsetFeature();
+            var $rotationInput = $('input[name="rotation"]', this.$form);
+            var olRotation = this.control.rotation;
+
+            if (event.type !== 'keyup') { // Rotation via handle
+                var printRotation = olRotation;
+                if (printRotation > 0) {
+                    printRotation = 360 - printRotation;
+                } else {
+                    printRotation = Math.abs(printRotation);
+                }
+                $rotationInput.val(printRotation);
+            } else { // Rotation by user input
+                if (rotation > 180) {
+                    olRotation = 360 - rotation;
+                } else {
+                    olRotation = -rotation;
+                }
+            }
+            this.feature.geometry.rotate(olRotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
+            this._redrawSelectionFeatures([this.feature]);
+            this.control.setFeature(this.feature, {rotation: olRotation});
         },
         /**
          * Gets the layer on which the selection feature is drawn. Layer is created on first call, then reused
@@ -251,23 +274,58 @@
             if (!this.layer) {
                 this.layer = new OpenLayers.Layer.Vector("Print", {
                     styleMap: new OpenLayers.StyleMap({
-                        'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
+                        'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style),
+                        'transform': new OpenLayers.Style({
+                            display: '${getDisplay}',
+                            cursor: 'all-scroll',
+                            pointRadius: 0,
+                            fillColor: 'none',
+                            fillOpacity: 0,
+                            strokeColor: '#000'
+                        }, {
+                            context: {
+                                getDisplay: function(feature) {
+                                    // hide the resize handle at the se corner
+                                    return feature.attributes.role === 'se-resize' ? 'none' : '';
+                                }
+                            }
+                        }),
+                        'rotate': new OpenLayers.Style({
+                            display: '${getDisplay}',
+                            cursor: 'pointer',
+                            pointRadius: 10,
+                            fillColor: '#ddd',
+                            fillOpacity: 1,
+                            strokeColor: '#000'
+                        }, {
+                            context: {
+                                getDisplay: function(feature) {
+                                    // only display rotate handle at the se corner
+                                    return feature.attributes.role === 'se-rotate' ? '' : 'none';
+                                }
+                            }
+                        })
                     })
                 });
             }
             return this.layer;
         },
         /**
-         * Gets the drag control used to move the selection feature around over the map.
+         * Gets the drag control used to rotate and
+         * move the selection feature around over the map.
          * Control is created on first call, then reused.
          * Implicitly creates the selection layer, too, if not yet done.
          */
         _getSelectionDragControl: function() {
             var self = this;
             if (!this.control) {
-                this.control = new OpenLayers.Control.DragFeature(this._getSelectionLayer(),  {
-                    onComplete: function() {
-                        self._updateGeometry(false);
+                this.control = new OpenLayers.Control.TransformFeature(this._getSelectionLayer(), {
+                    renderIntent: 'transform',
+                    rotationHandleSymbolizer: 'rotate'
+                });
+                this.control.events.on({
+                    'transformcomplete': function() {
+                        self._updateGeometry();
                     }
                 });
             }
@@ -299,22 +357,44 @@
             var sources = this._getRasterSourceDefs();
             for (var i = 0; i < sources.length; ++i) {
                 var source = sources[i];
+                var rootLayer = source.configuration.children[0];
+                var sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
                 var gsHandler = this.map.model.getGeoSourceHandler(source);
                 var leafInfo = gsHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
-                var sourceLegendMap = {};
+                var sourceLegendList = [];
                 _.forEach(leafInfo, function(activeLeaf) {
                     if (activeLeaf.state.visibility) {
                         for (var p = -1; p < activeLeaf.parents.length; ++p) {
                             var legendLayer = (p < 0) ? activeLeaf.layer : activeLeaf.parents[p];
                             if (legendLayer.options.legend && legendLayer.options.legend.url) {
-                                sourceLegendMap[legendLayer.options.title] = legendLayer.options.legend.url;
+                                var remainingParents = activeLeaf.parents.slice(p + 1);
+                                var parentNames = remainingParents.map(function(parent) {
+                                    return parent.options.title;
+                                });
+                                parentNames = parentNames.filter(function(x) {
+                                    // remove all empty values
+                                    return !!x;
+                                });
+                                // @todo: deduplicate same legend urls, picking a reasonably shared (parent / source) title
+                                // NOTE that this can only safely be done server-side, post urlProcessor->getInternalUrl()
+                                //      because sources going through the instance tunnel will always have distinct legend
+                                //      urls per layer, no matter how unique the internal urls are.
+                                var legendInfo = {
+                                    url: legendLayer.options.legend.url,
+                                    layerName: legendLayer.options.title || '',
+                                    parentNames: parentNames,
+                                    sourceName: sourceName
+                                };
+                                // reverse layer order per source
+                                sourceLegendList.unshift(legendInfo);
                                 break;
                             }
                         }
                     }
                 });
-                if (Object.keys(sourceLegendMap).length) {
-                    legends.push(sourceLegendMap);
+                if (sourceLegendList.length) {
+                    // reverse source order
+                    legends.unshift(sourceLegendList);
                 }
             }
             return legends;

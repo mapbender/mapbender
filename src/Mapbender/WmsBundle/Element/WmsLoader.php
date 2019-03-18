@@ -141,17 +141,23 @@ class WmsLoader extends Element
         return 'MapbenderWmsBundle:ElementAdmin:wmsloader.html.twig';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderWmsBundle:Element:wmsloader.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')
-            ->render('MapbenderWmsBundle:Element:wmsloader.html.twig', array(
+            ->render($this->getFrontendTemplatePath(), array(
                 'id' => $this->getId(),
                 "title" => $this->getTitle(),
                 'example_url' => $this->container->getParameter('wmsloader.example_url'),
-                'configuration' => $this->getConfiguration()));
+                'configuration' => $this->getConfiguration(),
+        ));
     }
 
     /**
@@ -168,21 +174,8 @@ class WmsLoader extends Element
                 ));
             case 'loadWms':
                 return $this->loadWms($request);
-            // Compatibility bridge for team Wmts: forward to potentailly customized
-            // httpAction even if handleHttpRequest was not replaced
             default:
-                return $this->httpAction($action);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
-    {
-        switch ($action) {
-            default:
-                throw new NotFoundHttpException('No such action');
+                throw new NotFoundHttpException("Unknown action {$action}");
         }
     }
 

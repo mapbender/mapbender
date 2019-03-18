@@ -153,6 +153,12 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     protected $priority;
 
     /**
+     * @var ArrayCollection A list of layer instances
+     * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsInstanceLayer",mappedBy="sourceItem", cascade={"remove"})
+     */
+    protected $instanceLayers;
+
+    /**
      * WmsLayerSource constructor.
      */
     public function __construct()

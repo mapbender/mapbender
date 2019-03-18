@@ -277,10 +277,6 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
             $wmtslayer->addStyle($style);
         }
 
-        $formatsEls = $this->xpath->query("./wmts:Format", $contextElm);
-        foreach ($formatsEls as $formatEl) {
-            $wmtslayer->addFormat($this->getValue("./text()", $formatEl));
-        }
         $formatsFiEls = $this->xpath->query("./wmts:InfoFormat", $contextElm);
         foreach ($formatsFiEls as $formatEl) {
             $wmtslayer->addInfoformat($this->getValue("./text()", $formatEl));

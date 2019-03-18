@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\BoundConfigMutator;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
@@ -10,7 +11,7 @@ use Mapbender\ManagerBundle\Component\Mapper;
  *
  * @author Paul Schmidt
  */
-class BaseSourceSwitcher extends Element
+class BaseSourceSwitcher extends Element implements BoundConfigMutator
 {
 
     /**
@@ -138,19 +139,21 @@ class BaseSourceSwitcher extends Element
         return $configuration;
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:basesourceswitcher.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
-        return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:basesourceswitcher.html.twig',
-            array(
-                'id' => $this->getId(),
-                "title" => $this->getTitle(),
-                'configuration' => $this->getConfiguration()
-            )
-        );
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
+            'id' => $this->getId(),
+            "title" => $this->getTitle(),
+            'configuration' => $this->getConfiguration()
+        ));
     }
 
     /**

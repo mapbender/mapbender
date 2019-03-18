@@ -624,22 +624,6 @@ class WmtsInstance extends SourceInstance
         return (string) $this->getId();
     }
 
-    public function getAssets()
-    {
-        return  array(
-            'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
-                '@MapbenderWmtsBundle/Resources/public/geosource-base.js',
-                '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.wmts.js',
-                '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.tms.js',
-            ),
-            'trans' => array(
-                'MapbenderCoreBundle::geosource.json.twig',
-                'MapbenderWmtsBundle::wmtsbundle.json.twig',
-            ),
-        );
-    }
-
     /**
      * @return WmtsMetadata
      */

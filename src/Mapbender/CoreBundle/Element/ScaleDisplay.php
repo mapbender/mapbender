@@ -92,17 +92,22 @@ class ScaleDisplay extends Element
         );
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:scaledisplay.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:scaledisplay.html.twig',
-                    array(
+                ->render($this->getFrontendTemplatePath(), array(
                     'id' => $this->getId(),
                     "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()));
+                    'configuration' => $this->getConfiguration(),
+        ));
     }
 
 }

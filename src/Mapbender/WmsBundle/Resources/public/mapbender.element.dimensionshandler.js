@@ -1,31 +1,30 @@
 (function ($) {
     $.widget("mapbender.mbDimensionsHandler", {
         options: {
+            dimensionsets: {}
         },
-        elementUrl: null,
         model: null,
         _create: function () {
             var self = this;
-            if (!Mapbender.checkTarget("mbDimensionsHandler", this.options.target)) {
-                return;
-            }
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self._setup(mbMap);
+            }, function() {
+                Mapbender.checkTarget("mbDimensionsHandler", self.options.target);
+            });
         },
-        _setup: function () {
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
-            for (dimId in this.options.dimensionsets) {
-                this._setupGroup(dimId);
+        _setup: function (mbMap) {
+            this.model = mbMap.getModel();
+            var dimensionUuids = Object.keys(this.options.dimensionsets);
+            for (var i = 0; i < dimensionUuids.length; ++i) {
+                this._setupGroup(dimensionUuids[i]);
             }
             this._trigger('ready');
         },
         _setupGroup: function (key) {
             var self = this;
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
             var dimensionset = this.options.dimensionsets[key];
             var dimension = Mapbender.Dimension(dimensionset['dimension']);
-            var def = dimension.partFromValue(dimension.getDefault());// * 100;
+            var def = dimension.partFromValue(dimension.getDefault());
             var valarea = $('#' + key + ' .dimensionset-value', this.element);
             valarea.text(dimension.getDefault());
             $('#' + key + ' .mb-slider', this.element).slider({
@@ -41,7 +40,7 @@
                         if (sources.length > 0) {
                             var params = {};
                             params[dimension.getOptions().__name] = dimension.valueFromPart(ui.value / 100);
-                            self.model.resetSourceUrl(sources[0], {'add': params}, true);
+                            self.model.resetSourceUrl(sources[0], {'add': params});
                         }
                     });
                 }
@@ -49,4 +48,4 @@
         },
         _destroy: $.noop
     });
-        })(jQuery);
+})(jQuery);

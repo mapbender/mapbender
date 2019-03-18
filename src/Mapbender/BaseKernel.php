@@ -97,13 +97,8 @@ abstract class BaseKernel extends Kernel
             new CoreBundle\MapbenderCoreBundle(),
         );
 
-        // dev and ALL test environments get some extra sugar...
-        $isDevKernel = false;
-        if('dev' == $this->getEnvironment() || strpos($this->getEnvironment(), 'test') == 0) {
-            $isDevKernel = true;
-        }
-
-        if ($isDevKernel) {
+        $environment = $this->getEnvironment();
+        if ($environment == 'dev' || strpos($environment, 'test') === 0) {
             $bundles[] = new \Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new \Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new \Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();

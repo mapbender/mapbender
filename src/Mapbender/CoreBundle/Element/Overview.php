@@ -97,19 +97,22 @@ class Overview extends Element
         );
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:overview.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:overview.html.twig',
-            array(
+            $this->getFrontendTemplatePath(), array(
                 'id' => $this->getId(),
                 "title" => $this->getTitle(),
-                'configuration' => $this->getConfiguration()
-            )
-        );
+                'configuration' => $this->getConfiguration(),
+        ));
     }
 
     /**

@@ -33,7 +33,7 @@ Mapbender.WmcHandler = function(mapWidget, options){
     };
     this._loadFromIdSuccess = function(response, textStatus, jqXHR){
         if(response.data){
-            for(stateid in response.data){
+            for (var stateid in response.data){
                 var state = $.parseJSON(response.data[stateid]);
                 if(!state.window)
                     state = $.parseJSON(state);
@@ -45,7 +45,7 @@ Mapbender.WmcHandler = function(mapWidget, options){
     };
     this._loadFromUrlSuccess = function(response, textStatus, jqXHR){
         if(response.success){
-            for(stateid in response.success){
+            for (var stateid in response.success){
                 this.addToMap(stateid, response.success[stateid]);
             }
         }else if(response.error){
