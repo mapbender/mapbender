@@ -357,22 +357,44 @@
             var sources = this._getRasterSourceDefs();
             for (var i = 0; i < sources.length; ++i) {
                 var source = sources[i];
+                var rootLayer = source.configuration.children[0];
+                var sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
                 var gsHandler = this.map.model.getGeoSourceHandler(source);
                 var leafInfo = gsHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
-                var sourceLegendMap = {};
+                var sourceLegendList = [];
                 _.forEach(leafInfo, function(activeLeaf) {
                     if (activeLeaf.state.visibility) {
                         for (var p = -1; p < activeLeaf.parents.length; ++p) {
                             var legendLayer = (p < 0) ? activeLeaf.layer : activeLeaf.parents[p];
                             if (legendLayer.options.legend && legendLayer.options.legend.url) {
-                                sourceLegendMap[legendLayer.options.title] = legendLayer.options.legend.url;
+                                var remainingParents = activeLeaf.parents.slice(p + 1);
+                                var parentNames = remainingParents.map(function(parent) {
+                                    return parent.options.title;
+                                });
+                                parentNames = parentNames.filter(function(x) {
+                                    // remove all empty values
+                                    return !!x;
+                                });
+                                // @todo: deduplicate same legend urls, picking a reasonably shared (parent / source) title
+                                // NOTE that this can only safely be done server-side, post urlProcessor->getInternalUrl()
+                                //      because sources going through the instance tunnel will always have distinct legend
+                                //      urls per layer, no matter how unique the internal urls are.
+                                var legendInfo = {
+                                    url: legendLayer.options.legend.url,
+                                    layerName: legendLayer.options.title || '',
+                                    parentNames: parentNames,
+                                    sourceName: sourceName
+                                };
+                                // reverse layer order per source
+                                sourceLegendList.unshift(legendInfo);
                                 break;
                             }
                         }
                     }
                 });
-                if (Object.keys(sourceLegendMap).length) {
-                    legends.push(sourceLegendMap);
+                if (sourceLegendList.length) {
+                    // reverse source order
+                    legends.unshift(sourceLegendList);
                 }
             }
             return legends;

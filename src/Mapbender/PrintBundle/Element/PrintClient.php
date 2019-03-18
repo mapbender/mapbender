@@ -388,9 +388,23 @@ class PrintClient extends Element
         $legendDefsOut = array();
         foreach ($legendDefs as $ix => $imageList) {
             $legendDefsOut[$ix] = array();
-            foreach ($imageList as $title => $legendImageUrl) {
-                $internalUrl = $urlProcessor->getInternalUrl($legendImageUrl);
-                $legendDefsOut[$ix][$title] = $internalUrl;
+            foreach ($imageList as $imageListKey => $sourceLegendData) {
+                if (is_array($sourceLegendData)) {
+                    // New style arrays, fixes ~semi-random order from browser-specific JSON processing
+                    // $imageListKey is a numeric index, $sourceLegendData is an array with
+                    // * url
+                    // * sourceName
+                    // * layerName
+                    // * parentNames (string[])
+                    $legendDefsOut[$ix][$imageListKey] = array_replace($sourceLegendData, array(
+                        'url' => $urlProcessor->getInternalUrl($sourceLegendData['url']),
+                    ));
+                } else {
+                    // Old style title => url mapping. May go out of order depending on browser's and PHP's
+                    // JSON processing
+                    $internalUrl = $urlProcessor->getInternalUrl($sourceLegendData);
+                    $legendDefsOut[$ix][$imageListKey] = $internalUrl;
+                }
             }
         };
         return $legendDefsOut;
