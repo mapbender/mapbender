@@ -4,6 +4,10 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 
+/**
+ * Class POI
+ * @package Mapbender\CoreBundle\Element
+ */
 class POI extends Element
 {
 

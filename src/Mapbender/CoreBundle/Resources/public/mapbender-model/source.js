@@ -18,14 +18,9 @@ window.Mapbender.Source = (function() {
         this.title = definition.title;
         this.type = definition.type;
         this.configuration = definition.configuration;
-<<<<<<< HEAD
-        this.configuration.children = (this.configuration.children || []).map(function(childDef) {
-            return Mapbender.SourceLayer.factory(childDef, definition, null)
-=======
         var sourceArg = this;
         this.configuration.children = (this.configuration.children || []).map(function(childDef) {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
->>>>>>> origin/master
         });
     }
     Source.typeMap = {};
@@ -141,29 +136,6 @@ window.Mapbender.Source = (function() {
             }
             return boundsMap;
         },
-<<<<<<< HEAD
-        getLayerBounds: function(layerId, projCode, inheritFromParent, inheritFromSource) {
-            var bboxMap = this.getLayerExtentConfigMap(layerId, inheritFromParent, inheritFromSource);
-
-            if (bboxMap) {
-                var bboxArray, bboxProj;
-                var srsOrder = [projCode].concat(Object.keys(bboxMap));
-                for (var i = 0; i < srsOrder.length; ++i) {
-                    var srsName = srsOrder[i];
-                    bboxArray = bboxMap[srsName];
-                    bboxProj = bboxArray && Mapbender.Model.getProj(srsName);
-                    if (bboxProj) {
-                        break;
-                    } else {
-                        bboxArray = null;
-                    }
-                }
-                if (bboxArray) {
-                    var bounds = this._bboxArrayToBounds(bboxArray, bboxProj.projCode);
-                    return Mapbender.Model._transformExtent(bounds, bboxProj, Mapbender.Model.getProj(projCode));
-                }
-            }
-=======
         getLayerBounds: function(layerId, projCode, inheritFromParent) {
             var layer;
             if (layerId) {
@@ -177,7 +149,6 @@ window.Mapbender.Source = (function() {
                 return false;
             }
             return layer.getBounds(projCode, inheritFromParent) || null;
->>>>>>> origin/master
         },
         setOpacity: function(value) {
             this.configuration.options.opacity = value;
@@ -220,10 +191,6 @@ window.Mapbender.SourceLayer = (function() {
         if (!this.options.origId && this.options.id) {
             this.options.origId = this.options.id;
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
         if (definition.children && definition.children.length) {
             var self = this, i;
             this.children = definition.children.map(function(childDef) {
@@ -265,8 +232,6 @@ window.Mapbender.SourceLayer = (function() {
             if (!this.options.origId) {
                 this.options.origId = this.options.id;
             }
-<<<<<<< HEAD
-=======
         },
         getBounds: function(projCode, inheritFromParent) {
             var bboxMap = this.options.bbox;
@@ -284,7 +249,6 @@ window.Mapbender.SourceLayer = (function() {
                 return this.parent.getBounds(projCode, true);
             }
             return null;
->>>>>>> origin/master
         }
     };
     SourceLayer.typeMap = {};

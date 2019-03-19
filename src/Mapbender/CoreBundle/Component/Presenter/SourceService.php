@@ -44,13 +44,6 @@ abstract class SourceService
             'id'            => strval($sourceInstance->getId()),
             'origId'        => strval($sourceInstance->getId()),
         );
-        // layerset is optional; does not exist for WmsLoader sources
-        $layerSet = $sourceInstance->getLayerset();
-        if ($layerSet) {
-            $wrappedConfig['layerSetId'] = strval($layerSet->getId());
-        } else {
-            $wrappedConfig['layerSetId'] = '-runtime-added-';
-        }
         return $wrappedConfig;
     }
 

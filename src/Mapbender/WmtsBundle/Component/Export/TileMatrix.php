@@ -52,8 +52,6 @@ abstract class TileMatrix
     }
 
     abstract public function getTileUrl($tileX, $tileY);
-<<<<<<< HEAD
-=======
 
     /**
      * @return int
@@ -70,5 +68,4 @@ abstract class TileMatrix
     {
         return $this->tileHeight;
     }
->>>>>>> origin/master
 }

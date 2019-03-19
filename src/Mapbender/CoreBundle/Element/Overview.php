@@ -120,8 +120,6 @@ class Overview extends Element
      */
     public static function getFormTemplate()
     {
-        // For historic / bc reasons this template is not in ElementAdming,
-        // but in a different bundle altogether
         return 'MapbenderManagerBundle:Element:overview.html.twig';
     }
 
