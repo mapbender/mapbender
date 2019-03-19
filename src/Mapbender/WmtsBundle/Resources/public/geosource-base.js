@@ -291,41 +291,6 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
  * Base class for TMS and WMTS geosources
  */
 Mapbender.Geo.SourceTmsWmtsCommon = $.extend({}, Mapbender.Geo.SourceHandler, {
-    /**
-     * @param {WmtsSourceConfig} sourceDef
-     * @param {WmtsLayerConfig} layer
-     * @param {OpenLayers.Projection} projection
-     * @return {OpenLayers.Bounds|null}
-     * @private
-     */
-    getMaxExtent: function(sourceDef, projection, layer) {
-        var layer_ = layer || sourceDef.currentActiveLayer;
-        var projCode = projection.projCode;
-        if (!layer_) {
-            console.warn("Didn't find layer to calulate max extent", sourceDef, projection);
-            return null;
-        }
-        if (layer_.options.bbox[projCode]) {
-            return OpenLayers.Bounds.fromArray(layer_.options.bbox[projCode]);
-        } else {
-            var bboxSrses = Object.keys(layer_.options.bbox);
-            for (var i = 0; i < bboxSrses.length; ++i) {
-                var bboxSrs = bboxSrses[i];
-                var bboxArray = layer_.options.bbox[bboxSrs];
-                var bboxProj = Mapbender.Model.getProj(bboxSrs);
-                if (bboxProj) {
-                    var newExtent = OpenLayers.Bounds.fromArray(bboxArray).transform(
-                        bboxProj,
-                        projection
-                    );
-                    if (newExtent.right > newExtent.left && newExtent.top > newExtent.bottom) {
-                        return newExtent;
-                    }
-                }
-            }
-        }
-        return null;
-    },
     applyTreeOptions: function(source, layerOptionsMap) {
         var layerKeys = Object.keys(layerOptionsMap);
         for (var i = 0; i < layerKeys.length; ++i) {

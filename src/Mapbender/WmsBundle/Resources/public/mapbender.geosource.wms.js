@@ -227,32 +227,5 @@ Mapbender.source['wms'] = $.extend({}, Mapbender.Geo.SourceHandler, {
     getPrintConfig: function(layer, bounds) {
         console.warn("Calling legacy getPrintConfig. Please use Mapbender.Model.getPrintConfigEx instead, and pass in a Source");
         return layer.mbConfig.getPrintConfigLegacy(bounds);
-    },
-    getMaxExtent: function(source, projection, layer) {
-        var confSource;
-        if (layer) {
-            confSource = layer.options.bbox;
-        } else {
-            confSource = source.configuration.options.bbox;
-        }
-        var projCode = projection.projCode;
-        if (confSource[projCode]) {
-            return OpenLayers.Bounds.fromArray(confSource[projCode]);
-        } else {
-            var projKeys = Object.keys(confSource);
-            for (var i = 0; i < projKeys.length; ++i) {
-                var nextProj = Mapbender.Model.getProj(projKeys[i]);
-                if (nextProj) {
-                    var newExtent = OpenLayers.Bounds.fromArray(confSource[nextProj]);
-                    newExtent = Mapbender.Model._transformExtent(newExtent, nextProj, projection);
-                    // Reprojection wide EPSG:4326 range to local systems can produce completely
-                    // invalid extents. Check for that and avoid returning them.
-                    if (newExtent.right > newExtent.left && newExtent.top > newExtent.bottom) {
-                        return newExtent;
-                    }
-                }
-            }
-        }
-        return null;
     }
 });
