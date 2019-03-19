@@ -51,11 +51,6 @@ class LayertreeAdminType extends AbstractType
                 'required' => false))
             ->add('useTheme', 'checkbox', array(
                 'required' => false))
-            ->add('displaytype', 'choice', array(
-                'required' => true,
-                'choices' => array('tree' => 'Tree')))
-            ->add('titlemaxlength', 'text', array(
-                'required' => true))
             ->add('showBaseSource', 'checkbox', array(
                 'required' => false))
             ->add('showHeader', 'checkbox', array(

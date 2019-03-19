@@ -25,17 +25,9 @@ class GdSubCanvas extends GdCanvas
         parent::__construct($width, $height);
         imagesavealpha($this->resource, true);
         imagealphablending($this->resource, false);
-        imagefilledrectangle($this->resource, 0, 0, $width, $height, $this->transparent);
+        imagefilledrectangle($this->resource, 0, 0, $width, $height, IMG_COLOR_TRANSPARENT);
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
-    }
-
-    /**
-     * @return int GDish representation for fully white but also fully transparent color
-     */
-    public function getTransparent()
-    {
-        return $this->transparent;
     }
 
     /**
@@ -49,6 +41,22 @@ class GdSubCanvas extends GdCanvas
             $this->offsetX, $this->offsetY, 0,0,
             $this->getWidth(), $this->getHeight(),
             $this->getWidth(), $this->getHeight());
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffsetX()
+    {
+        return $this->offsetX;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffsetY()
+    {
+        return $this->offsetY;
     }
 
     /**

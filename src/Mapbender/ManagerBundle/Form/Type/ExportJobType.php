@@ -38,6 +38,7 @@ class ExportJobType extends AbstractType
     {
         $builder
             ->add('application', 'entity', array(
+                'label' => 'form.manager.admin.application.export.application',
                 'class' => 'Mapbender\CoreBundle\Entity\Application',
                 'property' => 'title',
                 'multiple' => false,

@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender;
 
+use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
@@ -96,13 +97,8 @@ abstract class BaseKernel extends Kernel
             new CoreBundle\MapbenderCoreBundle(),
         );
 
-        // dev and ALL test environments get some extra sugar...
-        $isDevKernel = false;
-        if('dev' == $this->getEnvironment() || strpos($this->getEnvironment(), 'test') == 0) {
-            $isDevKernel = true;
-        }
-
-        if ($isDevKernel) {
+        $environment = $this->getEnvironment();
+        if ($environment == 'dev' || strpos($environment, 'test') === 0) {
             $bundles[] = new \Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new \Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new \Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
@@ -138,5 +134,12 @@ abstract class BaseKernel extends Kernel
         // intersect instances with deduped keys => instances of same class gone, order preserved
         $keptBundleInstances = array_intersect_key($bundles, $keptBundleClasses);
         return $keptBundleInstances;
+    }
+
+    protected function buildContainer()
+    {
+        $container = parent::buildContainer();
+        $container->addCompilerPass(new RebuildElementInventoryPass($this));
+        return $container;
     }
 }

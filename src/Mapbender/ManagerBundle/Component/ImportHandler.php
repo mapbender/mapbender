@@ -72,6 +72,9 @@ class ImportHandler extends ExchangeHandler
         try {
             $this->importSources($denormalizer, $data, $copyHint);
             $apps = $this->importApplicationEntities($denormalizer, $data);
+            if (!$apps) {
+                throw new ImportException("No applications found");
+            }
             $this->em->flush();
 
             return $apps;

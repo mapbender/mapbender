@@ -1,6 +1,5 @@
 (function($){
-
-    $.widget('mapbender.mbRedlining', {
+    $.widget('mapbender.mbRedlining', $.mapbender.mbBaseElement, {
         options: {
             target: null,
             display_type: 'dialog',
@@ -87,14 +86,19 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
-            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
+            var $geomTable = $('.geometry-table', this.element);
+            this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
             this.model = this.map.model;
             this.rowTemplate = this.element.find('.geometry-table tr').remove();
             //var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
             //this.map.removeControl(selectControl[0]);
+
             if(this.options.auto_activate || this.options.display_type === 'element'){
                 this.activate();
             }
+            $geomTable.on('click', '.geometry-remove', $.proxy(this._removeFromGeomList, this));
+            $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
+            $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
 
             this.setupMapEventListeners();
 
@@ -102,6 +106,7 @@
         },
         setupMapEventListeners: function() {
             $(document).on('mbmapsourceadded', this._moveLayerToLayerStackTop.bind(this));
+            $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
         },
         defaultAction: function(callback){
             this.activate(callback);
@@ -126,14 +131,22 @@
             $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
         },
         deactivate: function(){
-            if (this.options.display_type === 'dialog'){
-                this._close();
-            }
-            if (this.options.display_type === 'dialog' && this.options.deactivate_on_close){
+            this._deactivateControl();
+            this._endEdit(null);
+            // end popup, if any
+            this._close();
+            if (this.options.deactivate_on_close) {
                 this._removeAllFeatures();
-                this.callback ? this.callback.call() : this.callback = null;
             }
+            this.callback ? this.callback.call() : this.callback = null;
             $('.redlining-tool', this.element).off('click');
+        },
+        // sidepane interaction, safe to use activate / deactivate unchanged
+        reveal: function() {
+            this.activate();
+        },
+        hide: function() {
+            this.deactivate();
         },
         /**
          * deprecated
@@ -177,9 +190,8 @@
             this.element.removeClass('hidden');
         },
         _close: function(){
-            if(this.popup) {
+            if (this.popup) {
                 this.element.addClass('hidden').appendTo($('body'));
-                this._deactivateControl();
                 if(this.popup.$element) {
                     this.popup.destroy();
                 }
@@ -298,6 +310,16 @@
             $('.geometry-table tr', this.element).remove();
             this.layer.removeAllFeatures();
         },
+        _endEdit: function(nextControl) {
+            var editFeature = (this.editControl || {}).feature;
+            if (this.editControl && nextControl !== this.editControl) {
+                this.editControl.deactivate();
+            }
+            if (editFeature && editFeature.style && editFeature.style.label) {
+                editFeature.style = this._setTextDefault(editFeature.style);
+                editFeature.layer.redraw();
+            }
+        },
         _deactivateControl: function(){
             // if(this.selectedFeature) {
                 // this.activeControl.unselectFeature(this.selectedFeature);
@@ -335,7 +357,6 @@
             }
         },
         _addToGeomList: function(feature, typeLabel){
-            var self = this;
             var activeTool = $('.redlining-tool.active', this.element).attr('name');
             var row = this.rowTemplate.clone();
             row.attr('data-id', function(){
@@ -346,18 +367,17 @@
             $('.geometry-name', row).text(this._getGeomLabel(feature, typeLabel, activeTool));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
-            $('.geometry-remove', $geomtable).off('click');
-            $('.geometry-remove', $geomtable).on('click', $.proxy(self._removeFromGeomList, self));
-            $('.geometry-edit', $geomtable).off('click');
-            $('.geometry-edit', $geomtable).on('click', $.proxy(self._modifyFeature, self));
-            $('.geometry-zoom', $geomtable).off('click');
-            $('.geometry-zoom', $geomtable).on('click', $.proxy(self._zoomToFeature, self));
         },
         _removeFromGeomList: function(e){
             this._deactivateControl();
             var $tr = $(e.target).parents('tr:first');
             this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
+            var eventFeature = this.layer.getFeatureById($tr.attr('data-id'));
+            if (this.editControl && this.editControl.active && this.editControl.feature === eventFeature) {
+                this._endEdit(null);
+            }
             this.model.removeFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
+            this._removeFeature(eventFeature);
             $tr.remove();
             this.selectedFeature = null;
         },
@@ -430,9 +450,22 @@
          * @private
          */
         _moveLayerToLayerStackTop: function(event, params) {
+            this._endEdit(null);
             if (this.layer) {
                 this.map.raiseLayer(this.layer, this.map.getNumLayers());
                 this.map.resetLayersZIndex();
+            }
+        },
+        _onSrsChange: function(event, data) {
+            this._endEdit(null);
+            this._deactivateControl();
+            if (this.layer) {
+                (this.layer.features || []).map(function(feature) {
+                    if (feature.geometry && feature.geometry.transform) {
+                        feature.geometry.transform(data.from, data.to);
+                    }
+                });
+                this.layer.redraw();
             }
         }
     });

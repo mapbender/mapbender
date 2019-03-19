@@ -56,31 +56,29 @@ class UploadScreenshot
     {
         $sourceWidth         = imagesx($sourceImage);
         $sourceHeight        = imagesy($sourceImage);
-        $isGeometryIdentical = $sourceWidth === $width && $sourceHeight === $height;
 
-        if ($isGeometryIdentical) {
-            $destinationImage = imagecreatetruecolor($width, $height);
-            imagealphablending($destinationImage, false);
-            imagesavealpha($destinationImage, true);
-            $transparent = imagecolorallocatealpha($destinationImage, 255, 255, 255, 127);
-            imagefilledrectangle($destinationImage, 0, 0, $width, $height, $transparent);
-            imagecopyresized($destinationImage, $sourceImage, 0, 0, 0, 0, $width, $height, $sourceWidth, $sourceHeight);
+        $destinationImage = imagecreatetruecolor($width, $height);
+        imagealphablending($destinationImage, false);
+        imagesavealpha($destinationImage, true);
+        $transparent = imagecolorallocatealpha($destinationImage, 255, 255, 255, 127);
+        imagefilledrectangle($destinationImage, 0, 0, $width, $height, $transparent);
+
+        $sourceAspect = $sourceWidth / $sourceHeight;
+        $targetAspect = $width / $height;
+        if ($sourceAspect >= $targetAspect) {
+            // wide aspect ratio
+            $dstX = 0;
+            $dstY = 0.5 * $height * (1 - $targetAspect / $sourceAspect);
         } else {
-            $tmpWidth         = (int)($sourceWidth / 100);
-            $tmpHeight        = (int)($sourceHeight / 100);
-            $destinationScale = min($tmpWidth, $tmpHeight);
-            $width            = $destinationScale * 100;
-            $height           = $destinationScale * 100;
-            $dstX             = (int)(($sourceWidth - $width) * 0.5);
-            $dstY             = (int)(($sourceHeight - $height) * 0.5);
-            $destinationImage = imagecreatetruecolor($width, $height);
-
-            imagealphablending($destinationImage, false);
-            imagesavealpha($destinationImage, true);
-            $transparent = imagecolorallocatealpha($destinationImage, 255, 255, 255, 127);
-            imagefilledrectangle($destinationImage, 0, 0, $width, $height, $transparent);
-            imagecopyresampled($destinationImage, $sourceImage, 0, 0, $dstX, $dstY, $sourceWidth, $sourceHeight, $sourceWidth, $sourceHeight);
+            // tall aspect ratio
+            $dstX = 0.5 * $width * (1 - $sourceAspect / $targetAspect);
+            $dstY = 0;
         }
+        imagecopyresampled($destinationImage, $sourceImage,
+            $dstX, $dstY,
+            0, 0,
+            $width - 2 * $dstX, $height - 2 * $dstY,
+            $sourceWidth, $sourceHeight);
 
         return $destinationImage;
     }

@@ -14,6 +14,8 @@
         poiMarkerLayer: null,
         poi: null,
         gpsElement: null,
+        // invoked on close; informs controlling button to de-highlight
+        closeCallback: null,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPOI", this.options.target)){
@@ -28,13 +30,16 @@
             this.mbMap = this.map.data('mapbenderMbMap');
             this.mapClickProxy = $.proxy(this._mapClickHandler, this);
 
-            if(this.options.gps) {
+            if (this.options.gps) {
                 this.gpsElement = $('#' + this.options.gps);
+                if (!this.gpsElement.length) {
+                    this.gpsElement = null;
+                }
             }
         },
 
-        defaultAction: function() {
-            return this.activate();
+        defaultAction: function(closeCallback) {
+            return this.open(closeCallback);
         },
 
         /**
@@ -42,11 +47,20 @@
          * For the call to be made in the right context, the onClickProxy must
          * be used.
          */
-        activate: function() {
+        activate: function(closeCallback) {
+            this.open(closeCallback);
+        },
+        /**
+         * Same as activate, but proper Button API name expectation
+         * @param closeCallback
+         */
+        open: function(closeCallback) {
             if (!this.popup && this.map.length !== 0) {
-                this._createDialog();
+                this.popup = new Mapbender.Popup(this._getPopupOptions());
+                this.popup.$element.on('close', this.close.bind(this));
                 this.map.on('click', this.mapClickProxy);
             }
+            this.closeCallback = closeCallback;
         },
 
         /**
@@ -59,25 +73,21 @@
                 x = event.pageX - this.map.offset().left;
                 y = event.pageY - this.map.offset().top;
 
-                var mbMap = this.map.data('mapbenderMbMap'),
-                olMap = mbMap.map.olMap,
-                ll = olMap.getLonLatFromPixel(new OpenLayers.Pixel(x, y)),
-                coordinates = {
+                var olMap = this.mbMap.map.olMap;
+                var lonLat = olMap.getLonLatFromPixel(new OpenLayers.Pixel(x, y));
+                var coordinates = {
                     pixel: {
                         x: x,
                         y: y
                     },
-                    world: {
-                        x: ll.lon,
-                        y: ll.lat
-                    }
+                    world: lonLat
                 };
 
-                this._setPoiMarkerLayer(mbMap, coordinates, ll);
+                this._setPoiMarkerLayer(coordinates);
             }
         },
 
-        _setPoiMarkerLayer: function(mbMap, coordinates, latLon) {
+        _setPoiMarkerLayer: function(coordinates) {
             var proj = this.mbMap.map.olMap.getProjectionObject();
             var deci = 0;
 
@@ -88,7 +98,7 @@
 
             this.poiMarkerLayer.clearMarkers();
 
-            var poiMarker = new OpenLayers.Marker(latLon, new OpenLayers.Icon(
+            var poiMarker = new OpenLayers.Marker(coordinates.world, new OpenLayers.Icon(
                 Mapbender.configuration.application.urls.asset +
                 this.mbMap.options.poiIcon.image, {
                     w: this.mbMap.options.poiIcon.width,
@@ -101,82 +111,75 @@
 
             this.poiMarkerLayer.addMarker(poiMarker);
 
-            if (proj.proj.units === 'degrees' || proj.proj.units === 'dd') {
+            if (!proj.units || proj.proj.units === 'degrees' || proj.proj.units === 'dd') {
                 deci = 5;
             }
 
-            this.popup.subtitle(
-                '<b>' + coordinates.world.x.toFixed(deci) + ',' + coordinates.world.y.toFixed(deci) + ' @ 1:' + mbMap.model.getScale() + '</b>'
-            );
-
             this.poi = {
-                point: coordinates.world.x.toFixed(deci) + ',' + coordinates.world.y.toFixed(deci),
-                scale: mbMap.model.getScale(),
+                point: coordinates.world.lon.toFixed(deci) + ',' + coordinates.world.lat.toFixed(deci),
+                scale: this.mbMap.model.getScale(),
                 srs: proj.projCode
             };
+            this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
         },
-
-        _createDialog: function(){
+        _getPopupOptions: function() {
             var self = this;
-            this.popup = new Mapbender.Popup2({
+            var options = {
                 draggable: true,
                 cssClass: 'mb-poi-popup',
                 destroyOnClose: true,
                 modal: false,
+                scrollable: false,
+                width: 500,
                 title: this.element.attr('title'),
                 content: $('.input', this.element).html(),
-                buttons: {
-                    'cancel': {
-                        label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
-                        cssClass: 'button buttonCancel critical right',
-                        callback: function () {
-                            self._reset();
-                            if(self.gpsElement) {
-                                self.gpsElement.mbGpsPosition('deactivate');
-                            }
-                            self.close();
-                        }
-                    },
-                    'ok': {
+                buttons: [
+                    {
                         label: Mapbender.trans('mb.core.poi.popup.btn.ok'),
-                        cssClass: 'button right',
+                        cssClass: 'button',
                         callback: function () {
                             self._sendPoi(this.$element);
                         }
+                    },
+                    {
+                        label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
+                        cssClass: 'button buttonCancel critical',
+                        callback: function () {
+                            self.close();
+                        }
                     }
-                }
-            });
-
-            if(self.gpsElement) {
-                this.popup.addButtons({'position':{
+                ]
+            };
+            if (this.gpsElement) {
+                options.buttons.unshift({
                     label: Mapbender.trans('mb.core.poi.popup.btn.position'),
-                    cssClass: 'button right',
+                    cssClass: 'button',
                     callback: function() {
-                        self.gpsElement.mbGpsPosition('getGPSPosition', function(){
-                            var loc = self.mbMap.map.olMap.getCenter();
-                            var plox = self.mbMap.map.olMap.getPixelFromLonLat(loc);
+                        self.gpsElement.mbGpsPosition('getGPSPosition', function(lonLat) {
+                            var plox = self.mbMap.map.olMap.getPixelFromLonLat(lonLat);
 
                             var coordinates = {
                                 pixel: {
                                     x: plox.x,
                                     y: plox.y
                                 },
-                                world: {
-                                    x: loc.lon,
-                                    y: loc.lat
-                                }
+                                world: lonLat
                             };
 
-                            self._setPoiMarkerLayer(self.mbMap, coordinates, loc);
+                            self._setPoiMarkerLayer(coordinates);
                         });
                     }
-                }});
+                });
             }
-            // For close button top right on Popup...
-            this.popup.$element.on('close', this.close.bind(this));
+            return options;
         },
 
         close: function() {
+            this._reset();
+            if (this.gpsElement) {
+                this.gpsElement.mbGpsPosition('deactivate');
+            }
+
             if (this.poiMarkerLayer) {
                 this.poiMarkerLayer.clearMarkers();
                 this.mbMap.map.olMap.removeLayer(this.poiMarkerLayer);
@@ -188,9 +191,10 @@
                 this.popup.$element.off('close');
                 this.popup.close();
             }
-            if (this.gpsElement) {
-                this.gpsElement.mbGpsPosition('deactivate');
+            if (this.closeCallback && typeof this.closeCallback === 'function') {
+                this.closeCallback.call();
             }
+            this.closeCallback = null;
             this.popup = null;
             this.map.off('click', self.mapClickProxy);
         },
@@ -223,13 +227,13 @@
                 });
                 ta.addClass("poi-link");
                 $('textarea', ta).val(body);
-                new Mapbender.Popup2({
+                new Mapbender.Popup({
                     destroyOnClose: true,
                     modal: true,
                     title: this.element.attr('title'),
-                    height: 350,
+                    width: 500,
                     content: ta,
-                    buttons: {}
+                    buttons: []
                 });
             }
 

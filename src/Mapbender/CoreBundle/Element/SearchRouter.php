@@ -45,6 +45,21 @@ class SearchRouter extends Element
         );
     }
 
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\SearchRouterAdminType';
+    }
+
+    public static function getFormTemplate()
+    {
+        return 'MapbenderCoreBundle:ElementAdmin:search_router.html.twig';
+    }
+
+    public function getWidgetName()
+    {
+        return 'mapbender.mbSearchRouter';
+    }
+
     public static function getDefaultConfiguration()
     {
         return array(
@@ -104,6 +119,11 @@ class SearchRouter extends Element
             ),
         )
     );
+
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:search_router.html.twig';
+    }
 
     /**
      * @inheritdoc

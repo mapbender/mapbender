@@ -100,6 +100,7 @@
             'template', 'autoOpen', 'modal',
             'header', 'closeButton',
             'buttons',
+            'content',
             'destroyOnClose', 'detachOnClose',
             'closeOnOutsideClick',
             'scrollable', 'resizable'
@@ -111,6 +112,10 @@
                 self.option(key, value);
             }
         });
+        if (this.options.content) {
+            this.setContent(this.options.content);
+            delete(this.options.content);
+        }
 
         // focused on popup click
         self.$element.on("click", $.proxy(self.focus, self));
@@ -221,8 +226,8 @@
             }
             var self = this;
 
-            if(content) {
-                this.content(content);
+            if (content) {
+                this.setContent(content);
             }
 
             // why?
@@ -271,14 +276,17 @@
             var token = { cancel: false };
             this.$element.trigger('close', token);
             if (token.cancel) {
-              return;
+                return;
             }
 
+            // NOTE: event may have called destroy or removed the $element some other way
             if (this.$modalWrap) {
-                this.$element.detach();
+                if (this.$element) {
+                    this.$element.detach();
+                }
                 this.$modalWrap.detach();
             }
-            if(this.options.detachOnClose || this.options.destroyOnClose) {
+            if (this.$element && (this.options.detachOnClose || this.options.destroyOnClose)) {
                 this.$element.detach();
             }
             if(this.options.destroyOnClose) {
@@ -320,10 +328,11 @@
                 if(conf.callback) {
                     button.on('click', function(event) {
                         event.preventDefault();
+                        event.stopPropagation();
                         conf.callback.call(self, event);
+                        return false;
                     });
                 }
-
                 buttonset = buttonset.add(button);
             });
             $('.popupButtons', this.$element.get(0)).append(buttonset);
@@ -415,8 +424,6 @@
         },
 
         /**
-         * Set or get contents
-         *
          * Contents may be:
          *   - simple string
          *   - DOM Nodes
@@ -424,15 +431,15 @@
          *   - Ajax promise
          *   - Array of all the above
          *
-         * @param  {mixed} content
+         * @param  {*} content
          */
-        content: function(content) {
-            if(undefined === content) {
-                return this.contents;
+        setContent: function(content) {
+            if (!content) {
+                return;
             }
 
             if($.isArray(content)) {
-                for(var i=0; i < content.length; i++) {
+                for (var i=0; i < content.length; i++) {
                     this.addContent(content[i], 0 === i);
                 }
             } else {
@@ -449,11 +456,8 @@
             var contentContainer = $('.popupContent', this.$element.get(0));
 
             if(emptyFirst) {
-                this.contents = [];
                 contentContainer.empty();
             }
-
-            this.contents.push(content);
 
             var contentItem = $('<div class="contentItem"/>');
 

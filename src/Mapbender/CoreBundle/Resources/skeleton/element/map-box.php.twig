@@ -2,70 +2,37 @@
 
 namespace {{ bundleNamespace }}\Element;
 
-use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Mapbender\CoreBundle\Element\Button;
 
-class {{ className }} extends Element {
-    public static function getClassTitle() {
+class {{ className }} extends Button
+{
+    public static function getClassTitle()
+    {
         return "{{ className }} - please give me a title";
     }
 
-    public static function getClassDescription() {
+    public static function getClassDescription()
+    {
         return "{{ className }} - please give me a description";
     }
 
-    public static function getClassTags() {
-        return array();
+    public function getAssets()
+    {
+        $allRefs = parent::getAssets();
+        $allRefs['js'][] = 'mapbender.element.{{ classNameLower }}.js';
+        return $allRefs;
     }
 
-    static public function listAssets() {
-        return array(
-            'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
-                'mapbender.element.{{ classNameLower }}.js'
-            ),
-            'css' => array()
-        );
-    }
-
-    public static function getDefaultConfiguration() {
-        return array(
-            'title' => '{{ className }} - map box tool',
-            'target' => null,
+    public static function getDefaultConfiguration()
+    {
+        return array_replace(parent::getDefaultConfiguration, array(
             'label' => true,
             'icon' => 'iconAreaRuler',
-            'target' => null,
-            'click' => null,
-            'group' => null,
-            'action' => null,
-            'deactivate' => null
-        );
+        ));
     }
 
-    public function getWidgetName() {
-        return 'mapbender.mb{{ className }}';
-    }
-
-    public function httpAction($action) {
-        $response = new Response();
-
-        $data = array(
-            'message' => 'Hello World'
-        );
-        $response->setContent(json_encode($data));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
-    }
-
-    /**
-     * If you want a custom button template, copy the button template from the
-     * CoreBundle to your own bundle as a starter.
-     */
-    public function render() {
-        return $this->container->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
-                'id' => $this->getId(),
-                'configuration' => $this->entity->getConfiguration(),
-                'title' => $this->getTitle()));
+    public function getWidgetName()
+    {
+        return 'mapbender.mb{{ classNameLower }}';
     }
 }

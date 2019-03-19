@@ -62,7 +62,21 @@ class Button extends Element
      */
     public function getWidgetName()
     {
-        return 'mapbender.mbButton';
+        if (get_class() === get_called_class()) {
+            // Most definitely a control button
+            return 'mapbender.mbControlButton';
+        } else {
+            // Called for a child class without an own getWidgetName implementation
+
+            // We expect any other Element inheriting from button to just want a simple
+            // self-highlighting toggle switch, with no actual desire to control other
+            // Elements. We give them a simpler, non-controlling button widget.
+            @trigger_error(
+                "Warning: assuming " . get_class($this) . " doesn't want to control other Element widgets,"
+              . " using different JS widget constructor. Override getWidgetName if you really want to control"
+              . " other Elements", E_USER_DEPRECATED);
+            return 'mapbender.mbButton';
+        }
     }
 
     /**

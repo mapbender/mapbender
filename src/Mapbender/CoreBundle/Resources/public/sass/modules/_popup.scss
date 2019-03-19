@@ -5,7 +5,9 @@
 }
 
 .popupHead {
-  @extend .title;
+  .popupTitle {
+    @extend .title;
+  }
   border-bottom:dashed 1px darken(#fff, 30%);
   &.draggable{cursor:move;}
   margin:0 $space $space $space;
@@ -47,7 +49,9 @@
   }
 }
 
-.popupSubTitle{@extend .labelInput;}
+.popupSubTitle{
+  @extend .smallText;
+}
 .fom-popup {
   .popupContent, .popupSubContent{
     padding:0 20px;
@@ -63,8 +67,11 @@
 }
 
 .popup {
-  &.fom-popup {
+  &.ui-resizable {
     min-width: 300px;
+    min-height: 250px;
+  }
+  &.fom-popup {
     min-height: 250px;
     width: $popupModalWidth;
     padding-bottom:$space;

@@ -8,73 +8,63 @@
             titleActivityClass: 'mb-activity-tile'
         },
 
-        elementUrl: null,
         ajaxActivity: false,
         tileActivity: false,
         loadingLayers: [],
+        knownLayers: [],
         targets: [],
 
         _create: function () {
             var widget = this;
-
-            Object.entries(Mapbender.configuration.elements).map(function (entry) {
-                var element = entry.pop(),
-                    id = entry.pop();
-
-                if (element.init === 'mapbender.mbMap') {
-                    widget.targets[id] = false;
-
-                    if (!Mapbender.checkTarget("mbActivityIndicator", id)) {
-                        return;
+            var elementIds = Object.keys(Mapbender.configuration.elements);
+            for (var i = 0; i < elementIds.length; ++i) {
+                var id = elementIds[i];
+                var elementConfig = Mapbender.configuration.elements[id];
+                if (elementConfig.init === 'mapbender.mbMap') {
+                    this.targets[id] = false;
+                    if (Mapbender.checkTarget("mbActivityIndicator", id)) {
+                        Mapbender.elementRegistry.waitReady(id).then($.proxy(widget._setupMap, widget));
                     }
-
-                    Mapbender.elementRegistry.onElementReady(id, $.proxy(widget._setup, widget, id));
                 }
-            });
-
-        },
-
-        _setup: function (id) {
-            var widget = this,
-                allInitiated = $.inArray(false, this.targets) >= 0;
-
-            $('#' + id).each(function () {
-                var mqMap = $(this).data('mapbenderMbMap').map;
-
-                $.each(mqMap.layers(), function (idx, mqLayer) {
-                    widget._bindToLayer(mqLayer);
-
-                    // Is it already loading tiles?
-                    if (typeof mqLayer.olLayer.numLoadingTiles === 'number' && mqLayer.olLayer.numLoadingTiles > 0) {
-                        widget.loadingLayers.push(mqLayer.olLayer.id);
-                        widget._onLayerLoadChange();
-                    }
-                });
-
-                mqMap.events.on('mqAddLayer', function (event, mqLayer) {
-                    widget._bindToLayer(mqLayer);
-                });
-            });
-
-            this.targets[id] = true;
-
-            if (allInitiated) {
-                this.element.on('ajaxStart', $.proxy(this._onAjaxStart, this));
-                this.element.on('ajaxStop', $.proxy(this._onAjaxStop, this));
             }
+            this.element.on('ajaxStart', $.proxy(this._onAjaxStart, this));
+            this.element.on('ajaxStop', $.proxy(this._onAjaxStop, this));
         },
-
-        _bindToLayer: function (mqLayer) {
-            mqLayer.olLayer.events.on({
-                scope: this,
+        _setupMap: function (mbMap) {
+            var self = this;
+            var olMap = mbMap.map.olMap;
+            for (var i = 0; i < olMap.layers.length; ++i) {
+                this._bindToLayer(olMap.layers[i]);
+            }
+            olMap.events.register('addlayer', null, function(event) {
+                self._bindToLayer(event.layer);
+            });
+            this._onLayerLoadChange();
+        },
+        _bindToLayer: function (olLayer) {
+            var self = this;
+            if (this.knownLayers.indexOf(olLayer.id) !== -1) {
+                return;
+            } else {
+                this.knownLayers.push(olLayer.id);
+            }
+            if (olLayer.numLoadingTiles && this.loadingLayers.indexOf(olLayer.id) === -1) {
+                this.loadingLayers.push(olLayer.id);
+            }
+            olLayer.events.on({
                 loadstart: function (event) {
-                    this.loadingLayers.push(event.object.id);
-                    this._onLayerLoadChange();
+                    var position = self.loadingLayers.indexOf(event.object.id);
+                    if (position === -1) {
+                        self.loadingLayers.push(event.object.id);
+                        self._onLayerLoadChange();
+                    }
                 },
                 loadend: function (event) {
-                    var position = this.loadingLayers.indexOf(event.object.id);
-                    this.loadingLayers.splice(position, 1);
-                    this._onLayerLoadChange();
+                    var position = self.loadingLayers.indexOf(event.object.id);
+                    if (position !== -1) {
+                        self.loadingLayers.splice(position, 1);
+                        self._onLayerLoadChange();
+                    }
                 }
             });
         },
@@ -108,24 +98,11 @@
          * Update body classes to match current activity
          */
         _updateBodyClass: function () {
-            var $body = $('body'),
-                hasAjaxClass = $body.hasClass(this.options.ajaxActivityClass),
-                hasTileClass = $body.hasClass(this.options.titleActivityClass),
-                hasActivityClass = $body.hasClass(this.options.activityClass);
-
-            if (this.ajaxActivity !== hasAjaxClass) {
-                $body.toggleClass(this.options.ajaxActivityClass);
-            }
-
-            if (this.tileActivity !== hasTileClass) {
-                $body.toggleClass(this.options.tileActivityClass);
-            }
-
-            if ((this.tileActivity || this.ajaxActivity) !== hasActivityClass) {
-                $body.toggleClass(this.options.activityClass);
-            }
+            var $body = $('body');
+            $body.toggleClass(this.options.ajaxActivityClass, this.ajaxActivity);
+            $body.toggleClass(this.options.titleActivityClass, this.tileActivity);
+            $body.toggleClass(this.options.activityClass, this.tileActivity || this.ajaxActivity);
         }
     });
 
 })(jQuery);
-

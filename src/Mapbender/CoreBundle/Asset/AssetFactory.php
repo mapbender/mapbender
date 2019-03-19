@@ -24,6 +24,22 @@ class AssetFactory extends AssetFactoryBase
     protected $templateEngine;
 
     /**
+     * Mark assets as moved, so refs can be rewritten
+     * This is a ~curated list, currently not intended for configurability.
+     * @var string[]
+     */
+    protected $migratedRefs = array(
+        '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
+        '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js' => '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+        '@FOMCoreBundle/Resources/public/js/widgets/popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js',
+        '@FOMCoreBundle/Resources/public/js/widgets/radiobuttonExtended.js' => '@MapbenderCoreBundle/Resources/public/widgets/radiobuttonExtended.js',
+        '@FOMCoreBundle/Resources/public/js/widgets/collection.js' => '@MapbenderManagerBundle/Resources/public/form/collection.js',
+        '@FOMCoreBundle/Resources/public/js/components.js' => '@MapbenderManagerBundle/Resources/public/components.js',
+        '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js' => '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
+        '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js' => '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
+    );
+
+    /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
      * @param EngineInterface $templateEngine
@@ -46,26 +62,27 @@ class AssetFactory extends AssetFactoryBase
      * Perform simple concatenation of all input assets. Some uniquification will take place.
      *
      * @param (FileAsset|StringAsset)[] $inputs
+     * @param bool $debug to enable file input markers
      * @return string
      */
-    public function compileRaw($inputs)
+    public function compileRaw($inputs, $debug)
     {
-        return $this->buildAssetCollection($inputs, null)->dump();
+        return $this->buildAssetCollection($inputs, null, $debug)->dump();
     }
 
     /**
      * @param (StringAsset|string)[] $inputs
      * @param string $sourcePath for adjusting relative urls in css rewrite filter
      * @param string $targetPath
-     * @param bool $minify
+     * @param bool $debug to enable file input markers
      * @return string
      */
-    public function compileCss($inputs, $sourcePath, $targetPath, $minify=false)
+    public function compileCss($inputs, $sourcePath, $targetPath, $debug=false)
     {
-        $content = $this->buildAssetCollection($inputs, $targetPath)->dump();
+        $content = $this->buildAssetCollection($inputs, $targetPath, $debug)->dump();
 
         $sass = clone $this->sassFilter;
-        $sass->setStyle($minify ? 'nested' : 'compressed');
+        $sass->setStyle($debug ? 'nested' : 'compressed');
         $filters = array(
             $sass,
             $this->cssRewriteFilter,

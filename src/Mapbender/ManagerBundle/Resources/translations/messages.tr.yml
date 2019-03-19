@@ -143,9 +143,6 @@ mb:
           title: 'URL Başlık' #'URL Title'
         description: 'Açıklama' #Description
         template: 'Şablon(Kalıp)' #Template
-        edit:
-          title: 'Common'
-          base_data: 'Temel veriler' #'Base data'
       applications: 'Uygulamalar' #Applications
     managerbundle:
       applications: 'Uygulamalar' #Applications

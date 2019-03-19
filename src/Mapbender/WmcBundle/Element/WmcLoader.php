@@ -7,6 +7,8 @@ use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmcBundle\Form\Type\WmcLoadType;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -108,19 +110,22 @@ class WmcLoader extends WmcBase
         return $configuration;
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderWmcBundle:Element:wmcloader.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         $config = $this->getConfiguration();
-        $html = $this->container->get('templating')
-            ->render('MapbenderWmcBundle:Element:wmcloader.html.twig',
-                     array(
+        return $this->container->get('templating')->render($this->getFrontendTemplatePath(), array(
             'id' => $this->getId(),
             'configuration' => $config,
-            'title' => $this->getTitle()));
-        return $html;
+            'title' => $this->getTitle(),
+        ));
     }
 
     public function httpAction($action)
@@ -152,7 +157,7 @@ class WmcLoader extends WmcBase
     /**
      * Returns a json encoded or html form wmc or error if wmc is not found.
      *
-     * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
+     * @return JsonResponse
      */
     protected function loadWmc()
     {
@@ -164,18 +169,20 @@ class WmcLoader extends WmcBase
             if ($wmc) {
 
                 $id = $wmc->getId();
-                return new Response(json_encode(array(
-                        "data" => array($id => $wmc->getState()->getJson()))), 200,
-                                                array('Content-Type' => 'application/json'));
+                return new JsonResponse(array(
+                    "data" => array($id => $wmc->getState()->getJson()),
+                ));
             } else {
-                return new Response(json_encode(array(
-                        "error" => $this->trans("mb.wmc.error.wmcnotfound", array('%wmcid%' => $wmcid)))), 200,
-                                                array('Content-Type' => 'application/json'));
+                return new JsonResponse(array(
+                    "error" => $this->trans("mb.wmc.error.wmcnotfound", array(
+                        '%wmcid%' => $wmcid,
+                    )),
+                ));
             }
         } else {
-            return new Response(json_encode(array(
-                    "error" => $this->trans('mb.wmc.error.wmcidloader_notallowed'))), 200,
-                                            array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                "error" => $this->trans('mb.wmc.error.wmcidloader_notallowed'),
+            ));
         }
     }
 
@@ -184,6 +191,7 @@ class WmcLoader extends WmcBase
         $config = $this->getConfiguration();
         if (in_array("wmcxmlloader", $config['components'])) {
             $wmc = new Wmc();
+            /** @var Form $form */
             $form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
             $html = $this->container->get('templating')
                 ->render('MapbenderWmcBundle:Wmc:wmcloader-form.html.twig',
@@ -192,16 +200,16 @@ class WmcLoader extends WmcBase
                 'id' => $this->getEntity()->getId()));
             return new Response($html, 200, array('Content-Type' => 'text/html'));
         } else {
-            return new Response(json_encode(array(
-                    "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"))), 200,
-                                            array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"),
+            ));
         }
     }
 
     /**
      * Returns a html encoded list of all wmc documents
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     protected function getWmcList()
     {
@@ -228,7 +236,7 @@ class WmcLoader extends WmcBase
 
     /**
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     private function getWmcAsXml()
     {
@@ -241,7 +249,6 @@ class WmcLoader extends WmcBase
                 $state->setJson(json_decode($json));
                 if ($state !== null && $state->getJson() !== null) {
                     $wmchandler = $this->wmcHandlerFactory();
-                    $state->setServerurl($wmchandler->getBaseUrl());
                     $state->setSlug($this->entity->getApplication()->getSlug());
                     $state->setTitle("Mapbender State");
                     $wmc->setWmcid(round((microtime(true) * 1000)));
@@ -249,17 +256,16 @@ class WmcLoader extends WmcBase
                     $xml = $this->container->get('templating')->render(
                         'MapbenderWmcBundle:Wmc:wmc110_simple.xml.twig', array(
                         'wmc' => $wmc));
-                    $response = new Response();
-                    $response->setContent($xml);
-                    $response->headers->set('Content-Type', 'application/xml');
-                    $response->headers->set('Content-Disposition', 'attachment; filename=wmc.xml');
-                    return $response;
+                    return new Response($xml, 200, array(
+                        'Content-Type' => 'application/xml',
+                        'Content-Disposition' => 'attachment; filename=wmc.xml',
+                    ));
                 }
             }
         } else {
-            return new Response(json_encode(array(
-                    "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"))), 200,
-                                            array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"),
+            ));
         }
     }
 
@@ -269,8 +275,9 @@ class WmcLoader extends WmcBase
         if (in_array("wmcxmlloader", $config['components'])) {
             $request = $this->container->get('request_stack')->getCurrentRequest();
             $wmc = Wmc::create();
+            /** @var Form $form */
             $form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
-            $form->bind($request);
+            $form->submit($request);
             if ($form->isValid()) {
                 if ($wmc->getXml() !== null) {
                     $file = $wmc->getXml();
@@ -281,23 +288,25 @@ class WmcLoader extends WmcBase
                     if (file_exists($file->getPathname())) {
                         unlink($file->getPathname());
                     }
-                    return new Response(json_encode(array("success" => array(round((microtime(true) * 1000)) => $wmc->getState()->getJson()))),
-                                                                                              200,
-                                                                                              array('Content-Type' => 'application/json'));
+                    return new JsonResponse(array(
+                        "success" => array(
+                            round((microtime(true) * 1000)) => $wmc->getState()->getJson(),
+                        ),
+                    ));
                 } else {
-                    return new Response(json_encode(array(
-                            "error" => $this->trans("mb.wmc.error.wmccannotbeloaded"))), 200,
-                                                    array('Content-Type' => 'application/json'));
+                    return new JsonResponse(array(
+                        "error" => $this->trans("mb.wmc.error.wmccannotbeloaded"),
+                    ));
                 }
             } else {
-                return new Response(json_encode(array(
-                        "error" => $this->trans("mb.wmc.error.wmccannotbeloaded"))), 200,
-                                                array('Content-Type' => 'application/json'));
+                return new JsonResponse(array(
+                    "error" => $this->trans("mb.wmc.error.wmccannotbeloaded"),
+                ));
             }
         } else {
-            return new Response(json_encode(array(
-                    "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"))), 200,
-                                            array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"),
+            ));
         }
     }
 
@@ -323,18 +332,20 @@ class WmcLoader extends WmcBase
                 // absolutely nothing
             }
             if ($wmc) {
-                return new Response(json_encode(array(
-                        "success" => array(round((microtime(true) * 1000)) => $wmc->getState()->getJson()))), 200,
-                                                            array('Content-Type' => 'application/json'));
+                return new JsonResponse(array(
+                    "success" => array(
+                        round((microtime(true) * 1000)) => $wmc->getState()->getJson(),
+                    ),
+                ));
             } else {
-                return new Response(json_encode(array(
-                        "error" => $this->trans("mb.wmc.error.wmccannotbeloaded"))), 200,
-                                                array('Content-Type' => 'application/json'));
+                return new JsonResponse(array(
+                    "error" => $this->trans("mb.wmc.error.wmccannotbeloaded"),
+                ));
             }
         } else {
-            return new Response(json_encode(array(
-                    "error" => $this->trans('mb.wmc.error.wmcurlloader_notallowed'))), 200,
-                                            array('Content-Type' => 'application/json'));
+            return new JsonResponse(array(
+                "error" => $this->trans('mb.wmc.error.wmcurlloader_notallowed'),
+            ));
         }
     }
 

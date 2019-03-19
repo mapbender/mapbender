@@ -54,11 +54,6 @@
   color:$lightFontColor;
   background-color:darken($contentColor, 60%); //IE8 & 9 fallback
   background-color:rgba(0,0,0,0.8);
-
-  [class^="icon"],[class*=" icon"]{
-    @include opacity(0.7);
-    &:hover{@include opacity(1);}
-  }
 }
 @mixin smartphones(){
   @media only screen

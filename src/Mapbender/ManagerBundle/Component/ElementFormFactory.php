@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
@@ -21,6 +22,8 @@ class ElementFormFactory
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
+    /** @var ElementInventoryService */
+    protected $inventoryService;
     /** @var ContainerInterface */
     protected $container;
     /** @var bool */
@@ -28,12 +31,16 @@ class ElementFormFactory
 
     /**
      * @param FormFactoryInterface $formFactory
+     * @param ElementInventoryService $inventoryService
      * @param ContainerInterface $container
      * @param bool $strict
      */
-    public function __construct(FormFactoryInterface $formFactory, ContainerInterface $container, $strict = false)
+    public function __construct(FormFactoryInterface $formFactory,
+                                ElementInventoryService $inventoryService,
+                                ContainerInterface $container, $strict = false)
     {
         $this->formFactory = $formFactory;
+        $this->inventoryService = $inventoryService;
         $this->container = $container;
         $this->setStrict($strict);
     }
@@ -67,7 +74,7 @@ class ElementFormFactory
             $configurationType = $this->getFallbackConfigurationFormType($element);
             $twigTemplate = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
         } else {
-            $componentClassName = $element->getClass();
+            $componentClassName = $this->getComponentClass($element);
             $twigTemplate = $componentClassName::getFormTemplate();
         }
 
@@ -90,13 +97,22 @@ class ElementFormFactory
 
     /**
      * @param Element $element
+     * @return string
+     */
+    protected function getComponentClass(Element $element)
+    {
+        return $this->inventoryService->getAdjustedElementClassName($element->getClass());
+    }
+
+    /**
+     * @param Element $element
      * @return FormTypeInterface|null
      * @throws \RuntimeException
      * @throws ServiceNotFoundException
      */
     public function getConfigurationFormType(Element $element)
     {
-        $componentClassName = $element->getClass();
+        $componentClassName = $this->getComponentClass($element);
         $type = $this->getServicyConfigurationFormType($element) ?: ($componentClassName::getType());
         if ($type === null) {
             return null;
@@ -137,7 +153,7 @@ class ElementFormFactory
      */
     protected function getServicyConfigurationFormType(Element $element)
     {
-        $componentClassName = $element->getClass();
+        $componentClassName = $this->getComponentClass($element);
         $typeDeclaration = $componentClassName::getType();
         if (is_string($typeDeclaration) && false !== strpos($typeDeclaration, '.')) {
             return $this->container->get($typeDeclaration);

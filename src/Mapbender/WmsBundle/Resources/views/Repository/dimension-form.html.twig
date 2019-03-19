@@ -1,20 +1,22 @@
 <div id="dimension{{ num }}" class="on-off on-off-title">
-    <div class="left">{%if dim.vars.data.name != ''%}{{ dim.vars.data.name }}{% else %}undefined{% endif %}</div><div style="width:50%;">
-        {{ form_widget(dim.active) }}<label for="{{dim.active.vars.id}}" class="labelCheck" title="Active">active</label>
+    <div class="row no-gutters">
+        <div class="col-xs-3 col-md-2">{{ dim.vars.data.name | default('undefined') }}</div>
+        <div class="col-xs-4 col-md-3">
+            {{ form_widget(dim.active) }}<label for="{{dim.active.vars.id}}" class="labelCheck" title="Active">active</label>
+        </div>
     </div>
 </div>
 <div id="dimension{{ num }}-content" class="on-off-content hidden" data-json="{{ dim.json.vars.data }}">
-    <div>
-        <div class="left">
+    <div class="row no-gutters">
+        <div class="col-xs-3">
             {{ form_widget(dim.multipleValues) }}<label for="{{dim.multipleValues.vars.id}}" class="labelCheck" title="multipleValues">multiple</label>
         </div>
-        <div class="left">
+        <div class="col-xs-3">
             {{ form_widget(dim.nearestValue) }}<label for="{{dim.nearestValue.vars.id}}" class="labelCheck" title="nearestValue">nearest</label>
         </div>
-        <div class="left">
+        <div class="col-xs-3">
             {{ form_widget(dim.current) }}<label for="{{dim.current.vars.id}}" class="labelCheck" title="current">current</label>
         </div>
-        <div class="clear"></div>
     </div>
     {{ form_row(dim.name) }}
     {{ form_row(dim.units) }}

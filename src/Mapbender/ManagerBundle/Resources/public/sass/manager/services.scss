@@ -1,8 +1,4 @@
 // ------------------------------------------------------------- SERVICES
-.listFilterInput{
-  margin-bottom:$space;
-  width:250px;
-}
 .listFilterServiceBoxes{
   $col1Width: 60px;
 
@@ -12,19 +8,20 @@
     min-height: $fontSize*7;
   }
 }
-// ---------------------------------------------------------- ADD SERVICE
-.serviceAddBox{
-  $labelWidth:120px;
-  $inputWidth:300px;
 
-  margin-right:$space;
-
-  .labelInput{width:$labelWidth;}
-  .input{
-    margin-bottom:$space/2;
-    width: $inputWidth;
+/**
+ * .box adds a border. If a fieldset has .box, that border appears at "strikethrough" height for the fieldset legend,
+ * which looks pretty bad. For this combination, remove the standard bottom border and minimize legend width to allow the
+ * border to at least fill the sides of the legend text.
+ */
+fieldset.box {
+  legend {
+    display: inline-block;
+    width: auto;
+    border-bottom: none;
   }
 }
+
 // --------------------------------------------------------- VIEW SERVICE
 .serviceContainer{
   .labelText{float:left;}
@@ -104,17 +101,8 @@
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
   .linkButton{display:inline-block;}
-  .labelInput{
-    display: inline-block;
-  }
-  .checkWrapper, .labelCheck{
-    display: inline-block;
-    margin-top:8px;
-    height:$inputHeight;
-  }
   .leftContainer {
     .inputWrapper, .dropdown {
-      display: block;
       margin-bottom:$space/2;
     }
     .inputWrapper input {
@@ -135,40 +123,40 @@
         }
       }
     }
+    .blockgroup {
+      .labelInput{width:80px;}
+      .inputWrapper, div.dropdown {
+        width:200px;
+        margin:0.25em 0;
+        display: inline-block;
+      }
+    }
     .on-off-content{
-      background-color:$contentColor;
+      background-color: darken($contentColor, 9%);
     }
     .vendorspecific-content,.on-off-content .on-off-content{
-      padding: 0 $space/2 $space/2 $space/2;
+      padding: $space/2 $space/2 $space/2 $space/2;
     }
     .labelCheck{
-      display: inline-block;
-      margin: 0  $space  0  $space/2;
+      margin: 0 0 0 0.25em;
       height: auto;
     }
     .on-off-title {
       padding: 0 $space/2 0 $space/2;
-      .checkWrapper {margin-left: $space;}
     }
     .blockgroup {
       margin-bottom: 1em;
     }
     .checkWrapper{
-      display: inline-block;
       margin: 0px;
       height: auto;
     }
     .vendorspecific-content{
-      .dropdown,.inputWrapper{
-        width:200px !important;
-        margin:0;
-      }
       .checkWrapper {
           width: 20px !important;
           margin-top: 4px;
       }
       input {width:100%;}
-      .labelInput{width:80px;}
       .collectionItem > label{display:none;}
       a.collectionRemove {
         float: right;
@@ -186,6 +174,7 @@
   .odd{background-color:darken($contentColor, 6%);}
 
   &.table {
+    background-color: lighten($contentColor, 2%);
     > thead > tr > .checkboxColumn {
       padding-left: 2px;
       padding-right: 2px;

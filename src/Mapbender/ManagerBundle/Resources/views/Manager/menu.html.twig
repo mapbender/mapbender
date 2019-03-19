@@ -1,0 +1,34 @@
+<ul class="navLevel1 navigation">
+  {% for k, itemLvlOne in menu %}
+
+    <li id="manager-{{ k }}" class="navItem {% if itemLvlOne.active is defined %} activeItem {% endif %}">
+      <a class="iconLinkButton" href="{{ path(itemLvlOne.route) }}">{{ itemLvlOne.title|trans }}</a>
+
+    {% if itemLvlOne.subroutes is defined %}
+      <ul class="navLevel2">
+
+        {% for itemLvlTwo in itemLvlOne.subroutes %}
+          <li class="{% if itemLvlTwo.active is defined %} activeItem {% endif %} navItem">
+            <a{% if itemLvlTwo.idx is defined %} id="{{ itemLvlTwo.idx }}"{% endif %} class="iconLinkButton" href="{{ path(itemLvlTwo.route) }}">{{ itemLvlTwo.title|trans }}</a>
+
+            {% if itemLvlTwo.subroutes is defined %}
+              <ul class="navLevel3">
+
+                {% for itemLvlThree in itemLvlTwo.subroutes %}
+                  <li class="navItem {% if itemLvlThree.active is defined %} activeItem {% endif %}">
+                    <a class="iconLinkButton" href="{{ path(itemLvlThree.route) }}">{{ itemLvlThree.title|trans }}</a>
+                  </li>
+                {% endfor %}
+
+              </ul>
+            {% endif %}
+
+          </li>
+
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    </li>
+  {% endfor %}
+</ul>

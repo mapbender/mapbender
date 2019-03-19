@@ -8,7 +8,8 @@
                 fillOpacity:   0.5,
                 strokeColor:   '#000000',
                 strokeOpacity: 1.0,
-                strokeWidth:    2
+                strokeWidth:    2,
+                cursor: 'all-scroll'
             }
         },
         layer: null,
@@ -21,6 +22,11 @@
         digitizerData: null,
         printBounds: null,
         jobList: null,
+        $selectionFrameToggle: null,
+        // buffer for ajax-loaded 'getTemplateSize' requests
+        // we generally don't want to keep reloading size information
+        // for the same template(s) within the same session
+        _templateSizeCache: {},
 
         _setup: function(){
             var self = this;
@@ -35,11 +41,12 @@
             $('input[name="rotation"]', this.$form)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.$form)
-                .on('change', $.proxy(this._getTemplateSize, this));
+                .on('change', $.proxy(this._onTemplateChange, this));
 
+            this.$selectionFrameToggle = $('.-fn-toggle-frame', this.element);
             if (this.options.type === 'element') {
                 $(this.element).show();
-                $(this.element).on('click', '.-fn-toggle-frame', function() {
+                this.$selectionFrameToggle.on('click', function() {
                     var $button = $(this);
                     var wasActive = !!$button.data('active');
                     $button.data('active', !wasActive);
@@ -47,13 +54,16 @@
                     var buttonText = wasActive ? 'mb.core.printclient.btn.activate'
                                                : 'mb.core.printclient.btn.deactivate';
                     $button.val(Mapbender.trans(buttonText));
-                    self._getTemplateSize();
-                    self._updateElements(!wasActive);
-                    self._setScale();
-
-                    $('.printSubmit', self.$form).toggleClass('hidden', wasActive);
+                    if (!wasActive) {
+                        self.activate();
+                    } else {
+                        self._deactivateSelection();
+                    }
                 });
                 $('.printSubmit', this.$form).on('click', $.proxy(this._print, this));
+            } else {
+                // popup comes with its own buttons
+                $('.printSubmit', this.$form).remove();
             }
             this.$form.on('submit', this._onSubmit.bind(this));
             this._super();
@@ -92,23 +102,54 @@
                             }
                         });
                     this.popup.$element.on('close', $.proxy(this.close, this));
-                    this._getTemplateSize();
-                    this._updateElements(true);
-                    this._setScale();
                 }
+                this.activate();
             }
-            // restart job list reloading by re-activating the current tab
+        },
+        _activateSelection: function(reset) {
+            var self = this;
+            this._getTemplateSize().then(function() {
+                var layer = self._getSelectionLayer();
+                var control = self._getSelectionDragControl();
+                self.map.map.olMap.addLayer(layer);
+                self.map.map.olMap.addControl(control);
+                control.activate();
+                if (reset) {
+                    self._setScale();       // NOTE: will end in a call to _updateGeometry(true)
+                } else {
+                    self._updateGeometry(false);
+                }
+                $('.printSubmit', self.$form).removeClass('hidden');
+            });
+        },
+        _deactivateSelection: function() {
+            if (this.control) {
+                this.control.deactivate();
+                this.map.map.olMap.removeControl(this.control);
+            }
+            if (this.layer) {
+                this.map.map.olMap.removeLayer(this.layer);
+            }
+            $('.printSubmit', this.$form).addClass('hidden');
+        },
+        activate: function() {
+            if (!this.$selectionFrameToggle.length || this.$selectionFrameToggle.data('active')) {
+                var resetScale = !this._isSelectionOnScreen();
+                this._activateSelection(resetScale);
+            }
             if (this.jobList) {
                 this.jobList.resume();
             }
         },
-
-        close: function() {
+        deactivate: function() {
             if (this.jobList) {
                 this.jobList.pause();
             }
+            this._deactivateSelection();
+        },
+        close: function() {
+            this.deactivate();
             if (this.popup) {
-                this._updateElements(false);
                 if (this.overwriteTemplates) {
                     this._overwriteTemplateSelect(this.options.templates);
                     this.overwriteTemplates = false;
@@ -116,7 +157,14 @@
             }
             this._super();
         },
-
+        _isSelectionOnScreen: function() {
+            if (this.feature && this.feature.geometry) {
+                var viewGeometry = this.map.map.olMap.getExtent().toGeometry();
+                return viewGeometry.intersects(this.feature.geometry);
+            } else {
+                return false;
+            }
+        },
         _setScale: function() {
             var select = $("select[name='scale_select']", this.$form);
             var styledSelect = select.parent().find(".dropdownValue.iconDown");
@@ -162,11 +210,6 @@
             this.map.map.olMap.getCenter() :
             this.feature.geometry.getBounds().getCenterLonLat();
 
-            if(this.feature) {
-                this.layer.removeAllFeatures();
-                this.feature = null;
-            }
-
             // adjust for geodesic pixel aspect ratio so
             // a) our print region selection rectangle appears with ~the same visual aspect ratio as
             //    the main map region in the template, for any projection
@@ -189,46 +232,104 @@
             ).toGeometry(), {});
             // copy bounds before rotation
             this.printBounds = this.feature.geometry.getBounds().clone();
-
-            this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
-            this.layer.addFeatures(this.feature);
-            this.layer.redraw();
+            this._updateRotation(rotation, center);
         },
+        _redrawSelectionFeatures: function(features) {
+            var layer = this._getSelectionLayer();
+            layer.removeAllFeatures();
+            layer.addFeatures(features);
+            layer.redraw();
+        },
+        _updateRotation: function(rotation, center) {
+            this.control.unsetFeature();
+            var $rotationInput = $('input[name="rotation"]', this.$form);
+            var olRotation = this.control.rotation;
 
-        _updateElements: function(active) {
-            var self = this;
-
-            if(true === active){
-                if (!this.layer) {
-                    this.layer = new OpenLayers.Layer.Vector("Print", {
-                        styleMap: new OpenLayers.StyleMap({
-                            'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
-                        })
-                    });
+            if (event.type !== 'keyup') { // Rotation via handle
+                var printRotation = olRotation;
+                if (printRotation > 0) {
+                    printRotation = 360 - printRotation;
+                } else {
+                    printRotation = Math.abs(printRotation);
                 }
-                if (!this.control) {
-                    this.control = new OpenLayers.Control.DragFeature(this.layer,  {
-                        onComplete: function() {
-                            self._updateGeometry(false);
-                        }
-                    });
-                }
-                this.map.map.olMap.addLayer(this.layer);
-                this.map.map.olMap.addControl(this.control);
-                this.control.activate();
-
-                this._updateGeometry(true);
-            }else{
-                if (this.control) {
-                    this.control.deactivate();
-                    this.map.map.olMap.removeControl(this.control);
-                    this.control = null;
-                }
-                if (this.layer) {
-                    this.map.map.olMap.removeLayer(this.layer);
-                    this.layer = null;
+                $rotationInput.val(printRotation);
+            } else { // Rotation by user input
+                if (rotation > 180) {
+                    olRotation = 360 - rotation;
+                } else {
+                    olRotation = -rotation;
                 }
             }
+            this.feature.geometry.rotate(olRotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
+            this._redrawSelectionFeatures([this.feature]);
+            this.control.setFeature(this.feature, {rotation: olRotation});
+        },
+        /**
+         * Gets the layer on which the selection feature is drawn. Layer is created on first call, then reused
+         * for the rest of the session.
+         *
+         * @return {OpenLayers.Layer.Vector}
+         */
+        _getSelectionLayer: function() {
+            if (!this.layer) {
+                this.layer = new OpenLayers.Layer.Vector("Print", {
+                    styleMap: new OpenLayers.StyleMap({
+                        'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style),
+                        'transform': new OpenLayers.Style({
+                            display: '${getDisplay}',
+                            cursor: 'all-scroll',
+                            pointRadius: 0,
+                            fillColor: 'none',
+                            fillOpacity: 0,
+                            strokeColor: '#000'
+                        }, {
+                            context: {
+                                getDisplay: function(feature) {
+                                    // hide the resize handle at the se corner
+                                    return feature.attributes.role === 'se-resize' ? 'none' : '';
+                                }
+                            }
+                        }),
+                        'rotate': new OpenLayers.Style({
+                            display: '${getDisplay}',
+                            cursor: 'pointer',
+                            pointRadius: 10,
+                            fillColor: '#ddd',
+                            fillOpacity: 1,
+                            strokeColor: '#000'
+                        }, {
+                            context: {
+                                getDisplay: function(feature) {
+                                    // only display rotate handle at the se corner
+                                    return feature.attributes.role === 'se-rotate' ? '' : 'none';
+                                }
+                            }
+                        })
+                    })
+                });
+            }
+            return this.layer;
+        },
+        /**
+         * Gets the drag control used to rotate and
+         * move the selection feature around over the map.
+         * Control is created on first call, then reused.
+         * Implicitly creates the selection layer, too, if not yet done.
+         */
+        _getSelectionDragControl: function() {
+            var self = this;
+            if (!this.control) {
+                this.control = new OpenLayers.Control.TransformFeature(this._getSelectionLayer(), {
+                    renderIntent: 'transform',
+                    rotationHandleSymbolizer: 'rotate'
+                });
+                this.control.events.on({
+                    'transformcomplete': function() {
+                        self._updateGeometry();
+                    }
+                });
+            }
+            return this.control;
         },
 
         _getPrintScale: function() {
@@ -256,22 +357,44 @@
             var sources = this._getRasterSourceDefs();
             for (var i = 0; i < sources.length; ++i) {
                 var source = sources[i];
+                var rootLayer = source.configuration.children[0];
+                var sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
                 var gsHandler = this.map.model.getGeoSourceHandler(source);
                 var leafInfo = gsHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
-                var sourceLegendMap = {};
+                var sourceLegendList = [];
                 _.forEach(leafInfo, function(activeLeaf) {
                     if (activeLeaf.state.visibility) {
                         for (var p = -1; p < activeLeaf.parents.length; ++p) {
                             var legendLayer = (p < 0) ? activeLeaf.layer : activeLeaf.parents[p];
                             if (legendLayer.options.legend && legendLayer.options.legend.url) {
-                                sourceLegendMap[legendLayer.options.title] = legendLayer.options.legend.url;
+                                var remainingParents = activeLeaf.parents.slice(p + 1);
+                                var parentNames = remainingParents.map(function(parent) {
+                                    return parent.options.title;
+                                });
+                                parentNames = parentNames.filter(function(x) {
+                                    // remove all empty values
+                                    return !!x;
+                                });
+                                // @todo: deduplicate same legend urls, picking a reasonably shared (parent / source) title
+                                // NOTE that this can only safely be done server-side, post urlProcessor->getInternalUrl()
+                                //      because sources going through the instance tunnel will always have distinct legend
+                                //      urls per layer, no matter how unique the internal urls are.
+                                var legendInfo = {
+                                    url: legendLayer.options.legend.url,
+                                    layerName: legendLayer.options.title || '',
+                                    parentNames: parentNames,
+                                    sourceName: sourceName
+                                };
+                                // reverse layer order per source
+                                sourceLegendList.unshift(legendInfo);
                                 break;
                             }
                         }
                     }
                 });
-                if (Object.keys(sourceLegendMap).length) {
-                    legends.push(sourceLegendMap);
+                if (sourceLegendList.length) {
+                    // reverse source order
+                    legends.unshift(sourceLegendList);
                 }
             }
             return legends;
@@ -377,25 +500,45 @@
             // switch to queue display tab on successful submit
             $('.tab-container', this.element).tabs({active: 1});
         },
+        _onTemplateChange: function() {
+            var self = this;
+            this._getTemplateSize().then(function() {
+                self._updateGeometry();
+            });
+        },
         _getTemplateSize: function() {
             var self = this;
             var template = $('select[name="template"]', this.$form).val();
-
-            var url =  this.elementUrl + 'getTemplateSize';
-            $.ajax({
-                url: url,
-                type: 'GET',
-                data: {template: template},
-                dataType: "json",
-                success: function(data) {
-                    // dimensions delivered in cm, we need m
-                    self.width = data.width / 100.0;
-                    self.height = data.height / 100.0;
-                    self._updateGeometry();
-                }
-            });
+            var cached = this._templateSizeCache[template];
+            var promise;
+            if (!cached) {
+                var url =  this.elementUrl + 'getTemplateSize';
+                promise = $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: {template: template},
+                    dataType: "json",
+                    success: function(data) {
+                        // dimensions delivered in cm, we need m
+                        var widthMeters = data.width / 100.0;
+                        var heightMeters = data.height / 100.0;
+                        self.width = widthMeters;
+                        self.height = heightMeters;
+                        self._templateSizeCache[template] = {
+                            width: widthMeters,
+                            height: heightMeters
+                        };
+                    }
+                });
+            } else {
+                this.width = cached.width;
+                this.height = cached.height;
+                // Maintain the illusion of an asynchronous operation
+                promise = $.Deferred();
+                promise.resolve();
+            }
+            return promise;
         },
-
         printDigitizerFeature: function(schemaName,featureId){
             // Sonderlocke Digitizer
             this.digitizerData = {

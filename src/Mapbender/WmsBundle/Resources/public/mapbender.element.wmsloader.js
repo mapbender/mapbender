@@ -11,7 +11,7 @@
         mbMap: null,
         _layerOptionsOn: {options: {treeOptions: {selected: true}}},
         _layerOptionsOff: {options: {treeOptions: {selected: false}}},
-        _create: function(){
+        _create: function() {
             var self = this;
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
                 return;
@@ -46,6 +46,9 @@
 
             if (this.options.wms_id && this.options.wms_id !== '') {
                 this._getInstances(this.options.wms_id);
+            }
+            if (this.options.autoOpen) {
+                this.open();
             }
         },
         defaultAction: function(callback){
@@ -206,6 +209,8 @@
                 var sourceId = srcIdPrefix + '-' + (self.loadedSourcesCount++);
                 sourceDef.id = sourceId;
                 sourceDef.origId = sourceId;
+                // Need to pre-generate layer ids now because layer activation only works if layers
+                // already have ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.wmsloader = true;
                 var mergeCandidate = sourceOpts.global.mergeSource && self._findMergeCandidateByUrl(sourceDef.configuration.options.url);

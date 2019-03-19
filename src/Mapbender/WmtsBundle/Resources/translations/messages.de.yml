@@ -1,0 +1,178 @@
+# Loco yaml export: Symfony YAML object
+# Project: messages.de.xlf conversion
+# Release: Working copy
+# Locale: de, German
+# Exported by: Unregistered user
+# Exported at: Fri, 25 May 2018 13:39:36 +0200
+---
+mb:
+  wmts:
+    wmtsloader:
+      error:
+        url: 'WMTS laden: das WMTS Capabilities Dokument konnte nicht geladen werden! Die Capabilities-URL ist nicht gültig.'
+        service: 'WMTS laden: der Service %service% wird nicht unterstützt!'
+        operation: 'WMTS laden: die WMTS Operation %operation% wird nicht unterstützt!'
+        version: 'WMTS laden: die WMTS Version %version% wird nicht unterstützt!'
+        load: 'WMTS laden: das WMTS Capabilities Dokument konnte nicht geladen werden!'
+      dialog:
+        btn:
+          cancel: Abbrechen
+          load: Laden
+        label:
+          example: Beispiel
+          wmtsurl: URL
+      repo:
+        view:
+          title:
+            wmts: WMTS
+          label:
+            metadata: Metadaten
+            contact: Kontakt
+            details: Details
+            layers: Layer
+            title: Titel
+            name: Name
+            version: Version
+            originurl: Ursprungs-URL
+            abstract: Beschreibung
+            onlineresource: Onlineresource
+            exceptionformats: Ausnahmeformate
+            fees: Gebühren
+            accessconstraints: Zugangsbeschränkungen
+            person: Person
+            organization: Organisation
+            position: Position
+            telephone: Telefon
+            facsimile: Fax
+            email: E-Mail
+            address: Adresse
+            addresstype: Adresstyp
+            city: Stadt
+            state: Bundesland
+            postcode: Postleitzahl
+            country: Staat
+            matrixsets: Matrixsets
+            theme: Themen
+            backtoservicelist: Zurück zu Datenquellen
+            serviceprovidername: Name des Dienstanbieters
+            serviceprovidersite: Webseite des Dienstanbieters
+        layer:
+          label:
+            identifier: Identifikator
+            formats: Formate
+            abstract: Abstrakt
+            title: Titel
+            latlonbounds: Bounding Box
+            tilematrixsetlinks: TileMatrixSetLinks
+        form:
+          label:
+            onlyvalid: Nur valid
+            serviceurl: Dienst-URL
+            username: Benutzername
+            password: Passwort
+            load: Laden
+            cancel: Abbrechen
+        tilematrixset:
+          label:
+            title: Titel
+            abstract: Abstrakt
+            identifier: Identifikator
+            supportedcrs: Unterstützte CRS
+          matrixes: Matrizen
+        preview:
+          title:
+            servicerepository: Dienstrepository
+          label:
+            load: Laden
+        new:
+          label:
+            addservice: Datenquelle hizufügen
+        tilematrix:
+          label:
+            identifier: Identifikator
+            scaledenominator: Maßstabsnenner
+            topleftcorner: Top-left corner
+            tilesize: Kachelgröße
+            matrixsize: Matrixgröße
+        theme:
+          label:
+            identifier: Identifikator
+            title: Titel
+            abstract: Abstract
+            layerrefs: Layerrefs
+        instance:
+          title:
+            instance: Instanz
+          btn:
+            save: Speichern
+            cancel: Abbrechen
+          label:
+            originurl: Ursprungs-URL
+            visible: Sichtbarkeit
+            basesource: Basesource
+            proxy: Proxy
+            title: Titel
+            active: aktiv
+            select: ausgewählt
+            info: Info
+            allow: erlauben
+            "on": an
+            save: Speichern
+            cancel: Abbrechen
+            toggle: aufklappen
+            tilemartixset: TileMartixSet
+            format: Format
+            style: Style
+        instancelayerform:
+          label:
+            minscale: Minimaler Maßstab
+            maxsclase: Maximaler Maßstab
+            active: aktiv
+            allowselecttoc: Erlaubt Auswahl im Layerbaum
+            selectedtoc: Ausgewählt im Layerbaum
+            allowinfotoc: Erlaubt FeatureInfo im Layerbaum
+            infotoc: FeatureInfo im Layerbaum
+            moreinfo: Weitere Information
+            id: ID
+            layer_name: Name
+            style: Style
+            allowtoggletoc: Erlaubt Umschalten im Layerbaum
+            toggletoc: Umschalten im Layerbaum
+            layer_title: Layertitle
+            layer_matrixsets: Verfügbare MatrixSets
+            layer_formats: Verfügbare Formate
+            layer_styles: Verfügbare Styles
+    repository:
+      parser:
+        couldnotparse: Das XML Dokument kann  nicht geparst werden.
+        not_supported_document: Das XML Dokument ist nicht unterstützt.
+        not_supported_version: Die WMTS Version ist nicht unterstützt.
+        not_valid_dtd: Das XML Dokument ist nicht valid (DTD).
+        not_valid_xsd: Das XML Dokument ist nicht valid (XSD).
+    metadata:
+      section:
+        common:
+          0: Allgemein
+          title: Titel
+          name: Name
+          version: Version
+          originUrl: Ursprungs-URL
+          description: Beschreibung
+        useconditions:
+          0: Nutzungsbedingungen
+          fees: Gebühren
+        contact:
+          0: Kontact
+          person: Person
+          position: Position
+          organization: Organisation
+          voiceTelephone: Telefon
+          facsimileTelephone: Fax
+          electronicMailAddress: E-Mail
+          address: Adress
+          addressType: Adresstyp
+          addressCity: Stadt
+          addressStateOrProvince: Bundesland
+          addressPostCode: PLZ
+          addressCountry: Staat
+...

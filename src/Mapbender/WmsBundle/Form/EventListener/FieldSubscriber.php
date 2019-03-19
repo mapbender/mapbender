@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Form\EventListener;
 
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -44,16 +45,23 @@ class FieldSubscriber implements EventSubscriberInterface
      * Presets a form data
      *
      * @param FormEvent $event
-     * @return type
      */
     public function preSetData(FormEvent $event)
     {
+        /** @var WmsInstanceLayer $data */
         $data = $event->getData();
         $form = $event->getForm();
 
         if (null === $data) {
             return;
         }
+        $form->remove('title');
+        $form->add('title', 'text', array(
+            'required' => false,
+            'attr' => array(
+                'placeholder' => $data->getSourceItem()->getTitle(),
+            ),
+        ));
 
         if ($data->getSublayer()->count() > 0) {
             $form->remove('toggle');
@@ -97,7 +105,7 @@ class FieldSubscriber implements EventSubscriberInterface
                     "required" => false,
                     'auto_initialize' => false)));
         }
-        $arrStyles = $data->getSourceItem()->getStyles();
+        $arrStyles = $data->getSourceItem()->getStyles(true);
         $styleOpt = array("" => " ");
         foreach ($arrStyles as $style) {
             if(strtolower($style->getName()) !== 'default'){ // accords with WMS Implementation Specification

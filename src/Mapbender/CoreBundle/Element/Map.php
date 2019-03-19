@@ -4,6 +4,8 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\ManagerBundle\Component\Mapper;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -54,7 +56,6 @@ class Map extends Element
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'units' => 'degrees',
-            'wmsTileDelay' => 2500,
             'tileSize' => 512,
             'minTileSize' => 128,
             'extents' => array(
@@ -79,10 +80,61 @@ class Map extends Element
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.map.js'),
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.map.js',
+            ),
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));
+    }
+
+    /**
+     * Returns a list of all configured SRSes, producing an array with 'name' and 'title' for each
+     * @return string[][]
+     */
+    protected function buildSrsConfigs()
+    {
+        $allSrs = array();
+        $configuration = $this->entity->getConfiguration();
+        $mainSrsParts  = preg_split("/\s*\|\s*/", trim($configuration["srs"]));
+        $configuration["srs"] = $mainSrsParts[0];
+        $allSrs[] = array(
+            "name" => $mainSrsParts[0],
+            "title" => (count($mainSrsParts) > 1) ? trim($mainSrsParts[1]) : '',
+        );
+
+        if (isset($configuration["otherSrs"])) {
+            if (is_array($configuration["otherSrs"])) {
+                $otherSrs = $configuration["otherSrs"];
+            } elseif (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
+                $otherSrs = preg_split("/\s*,\s*/", $configuration["otherSrs"]);
+            } else {
+                $otherSrs = array();
+            }
+            foreach ($otherSrs as $srs) {
+                $otherSrsParts = preg_split("/\s*\|\s*/", trim($srs));
+                $allSrs[] = array(
+                    "name" => $otherSrsParts[0],
+                    "title" => (count($otherSrsParts) > 1) ? trim($otherSrsParts[1]) : '',
+                );
+            }
+        }
+        $configured = array_values(array_unique($allSrs, SORT_REGULAR));
+        return $this->getSrsDefinitions($configured);
+    }
+
+    /**
+     * Checks if the SRS with $name appears in the list of configured SRSes
+     *
+     * @param string[][] $srsConfigs
+     * @param string $name
+     * @return bool
+     */
+    protected function hasSrs($srsConfigs, $name)
+    {
+        foreach ($srsConfigs as $srsConfig) {
+            if (strtoupper($srsConfig['name']) === strtoupper($name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -93,61 +145,25 @@ class Map extends Element
         $defaultConfiguration = $this->getDefaultConfiguration();
         $configuration        = parent::getConfiguration();
         $extra                = array();
-        // @TODO: Move into DataTransformer of MapAdminType
-        $configuration        = array_merge(array('extra' => $extra), $configuration);
-        $allsrs               = array();
-        if (is_int(stripos($configuration["srs"], "|"))) {
-            $srsHlp               = preg_split("/\s?\|{1}\s?/", $configuration["srs"]);
-            $configuration["srs"] = trim($srsHlp[0]);
-            $allsrs[]             = array(
-                "name" => trim($srsHlp[0]),
-                "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
-        } else {
-            $configuration["srs"] = trim($configuration["srs"]);
-            $allsrs[]             = array(
-                "name" => $configuration["srs"],
-                "title" => '');
-        }
 
-        if (isset($configuration["otherSrs"])) {
-            if (is_array($configuration["otherSrs"])) {
-                $otherSrs = $configuration["otherSrs"];
-            } elseif (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
-                $otherSrs = preg_split("/\s?,\s?/", $configuration["otherSrs"]);
-            }
-            foreach ($otherSrs as $srs) {
-                if (is_int(stripos($srs, "|"))) {
-                    $srsHlp   = preg_split("/\s?\|{1}\s?/", $srs);
-                    $allsrs[] = array(
-                        "name" => trim($srsHlp[0]),
-                        "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
-                } else {
-                    $allsrs[] = array(
-                        "name" => $srs,
-                        "title" => '');
-                }
-            }
-        }
-        $allsrs                   = array_unique($allsrs, SORT_REGULAR);
-        $configuration["srsDefs"] = $this->getSrsDefinitions($allsrs);
-        $srs_req                  = $this->container->get('request_stack')->getCurrentRequest()->get('srs');
-        if ($srs_req) {
-            $exists = false;
-            foreach ($allsrs as $srsItem) {
-                if (strtoupper($srsItem['name']) === strtoupper($srs_req)) {
-                    $exists = true;
-                    break;
-                }
-            }
-            if (!$exists) {
+        $srsConfigs = $this->buildSrsConfigs();
+        $configuration['srs'] = $srsConfigs[0]['name'];
+        $configuration["srsDefs"] = $srsConfigs;
+        /** @var Request $request */
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+
+        $querySrs = $request->get('srs');
+        if ($querySrs) {
+            if (!$this->hasSrs($srsConfigs, $querySrs)) {
                 $this->container->get('logger')->error(
-                    'The requested srs ' . $srs_req . ' is not supported by this application.');
+                    'The requested srs ' . $querySrs . ' is not supported by this application.');
+                $querySrs = null;
             } else {
-                $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
+                $configuration['targetsrs'] = strtoupper($querySrs);
             }
         }
 
-        $pois = $this->container->get('request_stack')->getCurrentRequest()->get('poi');
+        $pois = $request->get('poi');
         if ($pois) {
             $extra['pois'] = array();
             if (array_key_exists('point', $pois)) {
@@ -155,24 +171,32 @@ class Map extends Element
             }
             foreach ($pois as $poi) {
                 $point = explode(',', $poi['point']);
-                $help  = array(
+                $poiConfig  = array(
                     'x' => floatval($point[0]),
                     'y' => floatval($point[1]),
                     'label' => isset($poi['label']) ? htmlentities($poi['label']) : null,
                     'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
                 if (!empty($poi['srs'])) {
-                    $help['srs'] = $poi['srs'];
+                    if (!$this->hasSrs($srsConfigs, $poi['srs'])) {
+                        continue;
+                    }
+                    $poiConfig['srs'] = strtoupper($poi['srs']);
+                    if (empty($configuration['targetsrs'])) {
+                        $configuration['targetsrs'] = $poi['srs'];
+                    }
+                } else {
+                    if (!empty($configuration['targetsrs'])) {
+                        $poiConfig['srs'] = $configuration['targetsrs'];
+                    } else {
+                        $poiConfig['srs'] = $srsConfigs[0]['name'];
+                    }
                 }
-                $extra['pois'][] = $help;
+                $extra['pois'][] = $poiConfig;
             }
             // bake position and zoom level of single poi into map initialization
             // setting center and target scale makes the map initialize in the right place client-side
             if (count($extra['pois']) === 1) {
-                $configuration["center"] = array(
-                    $extra['pois'][0]['x'],
-                    $extra['pois'][0]['y'],
-                );
                 if (isset($extra['pois'][0]['scale'])) {
                     $configuration['targetscale'] = $extra['pois'][0]['scale'];
                 } else {
@@ -187,7 +211,7 @@ class Map extends Element
             }
         }
 
-        $bbox = $this->container->get('request_stack')->getCurrentRequest()->get('bbox');
+        $bbox = $request->get('bbox');
         if (!isset($extra['pois']) && $bbox) {
             $bbox = explode(',', $bbox);
             if (count($bbox) === 4) {
@@ -200,7 +224,7 @@ class Map extends Element
             }
         }
 
-        $center    = $this->container->get('request_stack')->getCurrentRequest()->get('center');
+        $center = $request->get('center');
         $centerArr = $center !== null ? explode(',', $center) : null;
         if ($center !== null && is_array($centerArr) && count($centerArr) === 2) {
             $configuration['center'] = array_map('floatval', $centerArr);
@@ -212,7 +236,7 @@ class Map extends Element
         if (!isset($configuration['layersets']) && isset($configuration['layerset'])) {# "layerset" deprecated start
             $configuration['layersets'] = array($configuration['layerset']);
         }# "layerset" deprecated end
-        if ($scale = $this->container->get('request_stack')->getCurrentRequest()->get('scale')) {
+        if ($scale = $request->get('scale')) {
             $scale  = intval($scale);
             $scales = $configuration['scales'];
             if ($scale > $scales[0]) {
@@ -286,17 +310,13 @@ class Map extends Element
      */
     public function httpAction($action)
     {
-        $response = new Response();
         switch ($action) {
             case 'loadsrs':
                 $data = $this->loadSrsDefinitions();
-                $response->setContent(json_encode($data));
-                $response->headers->set('Content-Type', 'application/json');
-                break;
+                return new JsonResponse($data);
             default:
                 throw new NotFoundHttpException('No such action');
         }
-        return $response;
     }
 
     /**
@@ -309,16 +329,11 @@ class Map extends Element
         $srses   = preg_split("/\s?,\s?/", $srsList);
         $allsrs  = array();
         foreach ($srses as $srs) {
-            if (is_int(stripos($srs, "|"))) {
-                $srsHlp   = preg_split("/\s?\|{1}\s?/", $srs);
-                $allsrs[] = array(
-                    "name" => trim($srsHlp[0]),
-                    "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
-            } else {
-                $allsrs[] = array(
-                    "name" => trim($srs),
-                    "title" => '');
-            }
+            $parts = preg_split("/\s*\|\s*/", trim($srs));
+            $allsrs[] = array(
+                "name" => $parts[0],
+                "title" => (count($parts) > 0) ? trim($parts[1]) : '',
+            );
         }
         $result = $this->getSrsDefinitions($allsrs);
         if (count($result) > 0) {

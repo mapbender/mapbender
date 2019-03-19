@@ -9,11 +9,10 @@
         selected: null,
         highlightLayer: null,
         lastSearch: new Date(),
-        resultCallbackEvent: null,
-        resultCallbackProxy: null,
         searchModel: null,
         autocompleteModel: null,
         popup: null,
+        mbMap: null,
         map: null,
         model: null,
         highlightLayerOwner: 'Search Highlight',
@@ -112,22 +111,24 @@
          */
         removeLastResults: function(){
             var widget = this;
-            var map = widget.map;
             widget.searchModel.reset();
-            widget._getLayer();
+            widget._getLayer().removeAllFeatures();
             widget.map.model.removeVectorLayer(widget.highlightLayerOwner, widget.highlightLayerId);
+            this.currentFeature = null;
         },
 
         _setup:         function(){
             var widget = this;
             var element = widget.element;
             var options = widget.options;
-            var searchModel = widget.searchModel = new Mapbender.SearchModel(null, null, widget);
+            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
+            this.map = this.mbMap.map.olMap;
+            var searchModelAttributes = {
+                srs: this.mbMap.getModel().getCurrentProj().projCode
+            };
+            this.searchModel = new Mapbender.SearchModel(searchModelAttributes, null, this);
             var routeSelect = $('select#search_routes_route', element);
             var routeCount = 0;
-            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
-            this.model = this.map.model;
-            var map = this.map;
 
             // bind form reset to reset search model
             element.delegate('.search-forms form', 'reset', function(){
@@ -140,12 +141,10 @@
             });
 
             // bind result to result list and map view
-            searchModel.on('change:results', widget._searchResults, widget);
-            searchModel.on('request', widget._setActive, widget);
-            searchModel.on('error sync', widget._setInactive, widget);
-            searchModel.on('error sync', widget._showResultState, widget);
-
-            widget.resultCallbackProxy = $.proxy(widget._resultCallback, widget);
+            this.searchModel.on('change:results', widget._searchResults, widget);
+            this.searchModel.on('request', widget._setActive, widget);
+            this.searchModel.on('error sync', widget._setInactive, widget);
+            this.searchModel.on('error sync', widget._showResultState, widget);
 
             // Prepare autocompletes
             $('form input[data-autocomplete="on"]', element).each(
@@ -200,7 +199,8 @@
             }
 
             map.model.setOnMoveendHandler(widget.redraw());
-
+            $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
+            this._setupResultCallback();
             widget._trigger('ready');
 
             if(widget.options.autoOpen) {
@@ -410,7 +410,6 @@
                 diff = (new Date()) - this.lastSearch;
 
             autoCompleteMenu.addClass("search-router");
-            console.log(autoCompleteMenu.attr("class"));
 
             if(diff <= delay * this.options.timeoutFactor){
                 event.preventDefault();
@@ -438,11 +437,12 @@
          * Prepare search result table
          */
         _prepareResultTable: function(container){
-            if(typeof this.options.routes[this.selected].results.headers === 'undefined'){
+            var currentRoute = this.getCurrentRoute();
+            if (!currentRoute || typeof currentRoute.results.headers === 'undefined'){
                 return;
             }
 
-            var headers = this.options.routes[this.selected].results.headers;
+            var headers = currentRoute.results.headers;
 
             var table = $('<table></table>'),
                 thead = $('<thead><tr></tr></thead>').appendTo(table);
@@ -454,15 +454,14 @@
             table.append($('<tbody></tbody>'));
 
             container.append(table);
-
-            this._setupResultCallback();
         },
 
         /**
          * Update result list when search model's results property was changed
          */
         _searchResults: function(model, results, options){
-            if('table' === this.options.routes[this.selected].results.view) {
+            var currentRoute = this.getCurrentRoute();
+            if (currentRoute && 'table' === currentRoute.results.view) {
                 var container = $('.search-results', this.element);
                 if($('table', container).length === 0) {
                     this._prepareResultTable(container);
@@ -479,11 +478,12 @@
          * @param {Object} options Backbone options (not used?)
          */
         _searchResultsTable: function(model, results, options){
-            var headers = this.options.routes[this.selected].results.headers;
-            var table = $('.search-results table', this.element);
-            var tbody = $('<tbody></tbody>');
-            var layer = this._getLayer(true);
-            var self = this;
+            var currentRoute = this.getCurrentRoute();
+            var headers = currentRoute.results.headers,
+                table = $('.search-results table', this.element),
+                tbody = $('<tbody></tbody>'),
+                layer = this._getLayer(true),
+                self = this;
 
             $('tbody', table).remove();
 
@@ -534,9 +534,17 @@
                 })
             ;
         },
-
-        _highlightFeature: function (feature, style) {
+        _highlightFeature4: function(feature, style) {
             feature.setStyle(style);
+        },
+        _highlightFeature: function (feature, style) {
+            if (style === 'select') {
+                if (this.currentFeature && this.currentFeature.layer) {
+                    this.currentFeature.layer.drawFeature(this.currentFeature, 'default');
+                }
+                this.currentFeature = feature;
+            }
+            feature.layer.drawFeature(feature, style);
         },
 
         _showResultState: function() {
@@ -579,9 +587,8 @@
             outer.removeClass('search-active');
         },
 
-        _createStyleMap: function(styles) {
+        _createStyleMap4: function(styles) {
             var map = this.map;
-            var styleMap = {};
             var styleDefault = null;
             var styleSelect = null;
             var keys = styles ? Object.keys(styles): null;
@@ -605,13 +612,11 @@
                 styleSelect = map.model.createVectorLayerStyle(this.selectStyle);
             }
 
-            styleMap = {
+            return {
                 default: styleDefault,
                 select: styleSelect,
                 temporary: map.model.createVectorLayerStyle(this.temporaryStyle)
             };
-
-            return styleMap;
         },
 
         /**
@@ -620,9 +625,7 @@
          * @returns object route configuration
          */
         getCurrentRoute: function() {
-            var widget = this;
-            var options = widget.options;
-            return options.routes[widget.selected];
+            return this.selected && this.options.routes[this.selected] || null;
         },
 
         /**
@@ -678,18 +681,19 @@
          * Set up result callback (zoom on click for example)
          */
         _setupResultCallback: function(){
-            var widget = this;
-            var anchor = $('.search-results', widget.element);
-            if(widget.resultCallbackEvent !== null){
-                anchor.undelegate('tbody tr', widget.resultCallbackEvent,
-                    widget.resultCallbackProxy);
-                widget.resultCallbackEvent = null;
+            var routeNames = Object.keys(this.options.routes);
+            var uniqueEventNames = [];
+            for (var i = 0; i < routeNames.length; ++i) {
+                var routeConfig = this.options.routes[routeNames[i]];
+                var callbackConf = routeConfig.results && routeConfig.results.callback;
+                var routeEventName = callbackConf && callbackConf.event;
+                if (routeEventName && uniqueEventNames.indexOf(routeEventName) === -1) {
+                    uniqueEventNames.push(routeEventName);
+                }
             }
-
-            var event = widget.options.routes[widget.selected].results.callback.event;
-            if(typeof event === 'string'){
-                anchor.delegate('tbody tr', event, widget.resultCallbackProxy);
-                widget.resultCallbackEvent = event;
+            if (uniqueEventNames.length) {
+                var $anchor = $('.search-results', this.element);
+                $anchor.on(uniqueEventNames.join(' '), 'tbody tr', $.proxy(this._resultCallback, this));
             }
         },
 
@@ -698,22 +702,17 @@
          *
          * @param  jQuery.Event event Mouse event
          */
-        _resultCallback: function(event){
-            var widget = this;
-            var options = widget.options;
-            var row = $(event.currentTarget);
-            var feature = $.extend({}, row.data('feature').getFeature());
-            var map = widget.map;
-            var model = map.model;
-            var callbackConf = widget.getCurrentRoute().results.callback;
-            var srs = widget.searchModel.get("srs");
-            var mapProj = model.getCurrentProjectionCode();
-            if(srs.projCode !== mapProj.projCode) {
-                featureGeometry = feature.getGeometry();
-                transFeatureGeomtry = featureGeometry.transform(srs, mapProj);
-                feature.setGeometry(transFeatureGeomtry);
+        _resultCallback: function(event) {
+            var currentRoute = this.getCurrentRoute();
+            var callbackConf = currentRoute && currentRoute.results && currentRoute.results.callback;
+            if (!callbackConf || event.type !== callbackConf.event) {
+                return;
             }
-            var featureExtent = feature.getGeometry().getExtent();
+            var row = $(event.currentTarget),
+                feature = row.data('feature').getFeature(),
+                map = feature.layer.map
+            ;
+            var featureExtent = $.extend({},feature.geometry.getBounds());
 
             // buffer, if needed
             if(callbackConf.options && callbackConf.options.buffer){
@@ -751,19 +750,23 @@
                     }
                 }
             }
-
-            // finally fit to View with zoom and duration of Animation
-            map.model.panToExtent(featureExtent, {duration: 1000, maxZoom: zoom});
-
-            // And highlight new feature TODO Change of Model und Ol4
-            var layer = feature.layer;
-            $.each(layer.selectedFeatures, function(idx, feature) {
-                layer.drawFeature(feature, 'default');
-            });
-
-            widget.currentFeature = feature;
-            widget.redraw();
-            layer.selectedFeatures.push(feature);
+            // finally, zoom
+            map.setCenter(featureExtent.getCenterLonLat(), zoom);
+        },
+        _onSrsChange: function(event, data) {
+            if (this.highlightLayer) {
+                (this.highlightLayer.features || []).map(function(feature) {
+                    if (feature.geometry && feature.geometry.transform) {
+                        feature.geometry.transform(data.from, data.to);
+                    }
+                });
+                this.highlightLayer.redraw();
+            }
+            if (this.searchModel && this.mbMap) {
+                this.searchModel.set({
+                    srs: data.to.projCode
+                });
+            }
         },
 
         /**

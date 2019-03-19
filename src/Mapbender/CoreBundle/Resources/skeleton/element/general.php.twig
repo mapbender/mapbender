@@ -3,51 +3,47 @@
 namespace {{ bundleNamespace }}\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
-class {{ className }} extends Element {
-    public static function getClassTitle() {
+class {{ className }} extends Element
+{
+    public static function getClassTitle()
+    {
         return "Please give me a title";
     }
 
-    public static function getClassDescription() {
+    public static function getClassDescription()
+    {
         return "Please give me a description";
     }
 
-    public static function getClassTags() {
-        return array();
-    }
-
-    static public function listAssets() {
+    public function getAssets()
+    {
         return array(
             'js' => array(
-                'mapbender.element.{{ classNameLower }}.js'
+                '@{{ bundle }}:mapbender.element.{{ classNameLower }}.js'
             ),
             'css' => array(
-                'mapbender.elements.css'
+                '@{{ bundle }}:mapbender.element.{{ classNameLower }}.js'
             )
         );
     }
 
     public static function getDefaultConfiguration() {
         return array(
-            'title' => 'some element',
-            'target' => null);
-    }
-
-    public function httpAction($action) {
-        $response = new Response();
-
-        $data = array(
-            'message' => 'Hello World'
+            'target' => null,
         );
-        $response->setContent(json_encode($data));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
     }
 
-    public function getWidgetName() {
+    public function httpAction($action)
+    {
+        return new JsonResponse(array(
+            'message' => 'Hello World',
+        ));
+    }
+
+    public function getWidgetName()
+    {
         return 'mapbender.mb{{ className }}';
     }
 
@@ -55,6 +51,7 @@ class {{ className }} extends Element {
         return $this->container->get('templating')->render('{{ bundle }}:Element:{{ classNameLower }}.html.twig', array(
                 'id' => $this->getId(),
                 'configuration' => $this->entity->getConfiguration(),
-                'title' => $this->getTitle()));
+                'title' => $this->getTitle(),
+        ));
     }
 }

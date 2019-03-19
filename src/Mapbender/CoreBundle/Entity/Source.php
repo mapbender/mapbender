@@ -10,7 +10,6 @@ use Mapbender\CoreBundle\Component\Utils;
  * @author Paul Schmidt
  *
  * @ORM\Entity
- * @ UniqueEntity("uuid")
  * @ORM\Table(name="mb_core_source")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -35,13 +34,6 @@ abstract class Source
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * @var string $uuid The unic id
-     * @ORM\Column(type="string", nullable=true)
-     * @ ORM\Column(type="string", length=36, nullable=false, unique=true)
-     */
-    protected $uuid;
 
     /**
      * @var string $title The source title
@@ -84,7 +76,6 @@ abstract class Source
     public function __construct($type)
     {
         $this->type = $type;
-        $this->uuid = Utils::guidv4();
     }
 
     /**
@@ -106,27 +97,6 @@ abstract class Source
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Get uuid
-     *
-     * @return string
-     */
-    public function getUuid()
-    {
-        return $this->uuid;
-    }
-
-    /**
-     * Set uuid
-     *
-     * @return Source
-     */
-    public function generateUuid()
-    {
-        $this->uuid = Utils::guidv4();
-        return $this;
     }
 
     /**

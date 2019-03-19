@@ -94,6 +94,11 @@ class GpsPosition extends Element
         return 'mapbender.mbGpsPosition';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderCoreBundle:Element:gpsposition.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
@@ -101,14 +106,11 @@ class GpsPosition extends Element
     {
         $configuration = $this->getConfiguration();
         return $this->container->get('templating')
-            ->render(
-                'MapbenderCoreBundle:Element:gpsposition.html.twig',
-                array(
+            ->render($this->getFrontendTemplatePath(), array(
                     'id' => $this->getId(),
                     'configuration' => $configuration,
-                    'title' => $this->getTitle()
-                )
-            );
+                    'title' => $this->getTitle(),
+        ));
     }
 
     /**

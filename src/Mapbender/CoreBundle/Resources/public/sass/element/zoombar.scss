@@ -1,32 +1,29 @@
-@mixin opacityAlpha($alpha) {
-  /* Required for IE 5, 6, 7 */
-  /* ...or something to trigger hasLayout, like zoom: 1; */
-
-  /* Theoretically for IE 8 & 9 (more valid) */
-  /* ...but not required as filter works too */
-  /* should come BEFORE filter */
-  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=$alpha*100);
-
-  /* This works in IE 8 & 9 too */
-  /* ... but also 5, 6, 7 */
-  filter: alpha(opacity=$alpha*100);
-
-  /* Older than Firefox 0.9 */
-  -moz-opacity:$alpha;
-
-  /* Safari 1.x (pre WebKit!) */
-  -khtml-opacity: $alpha;
-
-  /* Modern!
-  /* Firefox 0.9+, Safari 2?, Chrome any?
-  /* Opera 9+, IE 9+ */
-  opacity: $alpha;
-}
-
 .mb-element-zoombar{
   &.iconMove:before{
     @include absolute(-$space 0 '' '');
   }
+  .pan > span {
+    opacity: 0.7;
+    &:hover {
+      opacity: 1;
+    }
+  }
+  .toolPane > li  {
+    opacity: 0.7;
+    &:hover {
+      opacity: 1;
+    }
+    &.zoomSlider, &.history {
+      opacity: 1;
+      div, span, li {
+        opacity: 0.7;
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
   /**
   * Map navigation buttons
   */
@@ -51,64 +48,46 @@
     @include border-radius($radius);
     @include frontendContainerStyle();
 
-    & > li{margin:3px 0;}
-
-    .iconBig {
-      padding-left: 31px;
-      &:hover {
-        &:before {
-          @include opacityAlpha(1);
-        }
-      }
+    & > li,
+    .zoomSlider > span,
+    .zoomSlider > ul {
+      margin:3px 0;
     }
-    
+  }
+  .iconBig {
+    padding: 0;
+    margin: 0;
+    &:before {
+      padding: 0;
+      margin: 0;
+      position: unset;
+    }
   }
   .historyPrev, .historyNext{margin-left:5px;}
-  .zoomBox{
-    text-align:center;
-    &.activeZoomIcon{
-      .iconZoom{@include opacity(1);}
+  .toolPane {
+    li.zoomBox.activeZoomIcon {
+      opacity: 1;
     }
-  }
-  .zoomWorld, .zoomSlider {
-    text-align: center;
-  }
-  .zoomSliderLevels {
-    margin: 0px;
+    .zoomBox, .zoomWorld, .zoomSlider {
+      text-align: center;
+    }
   }
 
   .iconZoomLevel {
     font-size: 10px;
-    position: relative;
-    display: block;
-    margin-top: 0px;
-    margin-left: 15px;
     width: 10px;
     line-height: 10px;
-    height: 10px;
-    position: relative;
-    margin-bottom: 9px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     &:not(:last-child):after {
-      position: absolute;
       content: "\f142";
       font-family: FontAwesome;
-      line-height: 10px;
       display: block;
-      //margin-bottom: -3px;
-      width: 3px;
-      text-align: left;
-      margin-left: 4px;
-
+      margin-bottom: -1px;
     }
   }
   
-  .iconZoomOut{
-      position: relative;
-      display:block;
-      height: 17px;
-      padding-left: 35px !important;
-      margin-top: 3px;
-  }
 }
 
 /**

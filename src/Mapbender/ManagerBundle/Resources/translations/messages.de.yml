@@ -143,9 +143,6 @@ mb:
           title: 'URL Titel'
         description: Beschreibung
         template: Vorlage
-        edit:
-          title: Allgemein
-          base_data: Allgemein
       applications: Anwendungen
     managerbundle:
       applications: Anwendungen

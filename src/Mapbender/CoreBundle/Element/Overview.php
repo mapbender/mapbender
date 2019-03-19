@@ -105,6 +105,19 @@ class Overview extends Element
     /**
      * @inheritdoc
      */
+    public function render()
+    {
+        return $this->container->get('templating')->render(
+            $this->getFrontendTemplatePath(), array(
+                'id' => $this->getId(),
+                "title" => $this->getTitle(),
+                'configuration' => $this->getConfiguration(),
+        ));
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function getFormTemplate()
     {
         // For historic / bc reasons this template is not in ElementAdming,

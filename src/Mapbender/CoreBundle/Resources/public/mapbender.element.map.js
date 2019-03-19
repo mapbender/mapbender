@@ -5,37 +5,23 @@
                 image: 'bundles/mapbendercore/image/pin_red.png',
                 width: 32,
                 height: 41,
-                xoffset: 0,//-6,
-                yoffset: 0,//-38
+                xoffset: -6,
+                yoffset: -38
             },
-            targetscale: null,
             layersets: []
         },
-        srsDefinitions: [],
-        poiLayerId: null,
         elementUrl: null,
         model: null,
         map: null,
-        state_: {
-            srs: undefined
-        },
+
         /**
          * Creates the map widget
          */
         _create: function(){
             //OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
-            var self = this,
-                    me = $(this.element);
+            var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-
-            this.srsDefinitions = this.options.srsDefs || [];
-            // Patch missing SRS definitions into proj4
-            // This avoids errors when initializing the OL4 view with
-            // "exotic" / non-geodesic projections such as EPSG:25832
-            Mapbender.Projection.extendSrsDefintions(this.srsDefinitions, true, true);
-
             this.engineCode = Mapbender.configuration.application.mapEngineCode;
-
             var modelOptions = {
                 srs: this.options.srs,
                 maxExtent: Mapbender.Model.sanitizeExtent(this.options.extents.max),
@@ -45,35 +31,12 @@
                 tileSize: this.options.tileSize
             };
 
-
             this.model = new Mapbender.Model(this.element.attr('id'), modelOptions);
-            this.state_.srs = this.options.srs;
-            _.forEach(this.options.layersets.reverse(), function(layerSetId) {
-                this.model.addLayerSetById(layerSetId);
-            }.bind(this));
-
-
             $.extend(this.options, {
                 layerDefs: [],
                 poiIcon: this.options.poiIcon
             });
-
-            // NOTE: startExtent is technically mutually exclusive with
-            //    center and / or targetscale
-            //    However, ol may not properly initialize the view if we don't
-            //    go to a defined extent (which we always have) first
-            if (this.options.center) {
-                this.model.setCenter(this.options.center);
-            }
-            if (this.options.targetscale) {
-                this.model.setScale(this.options.targetscale);
-            }
-
-
-            this.map = me.data('mapQuery');
-
-            this.initializePois();
-
+            this.map = this.model.map;
             self._trigger('ready');
         },
         getMapState: function(){
@@ -84,21 +47,7 @@
          */
         addSource: function(sourceDef, mangleIds) {
             // legacy support: callers that do not know about the mangleIds argument most certainly want ids mangled
-            var doMangle = !!mangleIds || typeof mangleIds === 'undefined';
-            var source =this.model.addSourceFromConfig(sourceDef, doMangle);
-            if (this.engineCode === 'ol4') {
-                // @todo 3.1.0: only the map widget itself should ever fire mbmap* events
-                //      The old code does this in the Mapbender.Model
-                //      Fix that, then remove the if
-                this.fireModelEvent({
-                    name: 'sourceadded',
-                    value:{
-                        added:{
-                            source: source
-                        }
-                    }
-                });
-            }
+            this.model.addSourceFromConfig(sourceDef, !!mangleIds || typeof mangleIds === 'undefined');
         },
         /**
          *
@@ -115,19 +64,6 @@
             this.model.removeSources(keepSources);
         },
         /**
-         *
-         */
-        changeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.source && toChangeObj.type) {
-                this.model.changeSource(toChangeObj);
-            }
-        },
-        /**
-         * Triggers an event
-         * options.name - name of the event (mbmap prefix will be added, result lowercased)
-         * options.value - will be passed into the event handler callables as the second argument
-         *
-         * @see https://github.com/jquery/jquery-ui/blob/1.12.1/ui/widget.js#L659
          * Triggers an event from the model.
          * options.name - name of the event,
          * options.value - parameter in the form of:
@@ -149,7 +85,7 @@
          * Returns all defined srs
          */
         getAllSrs: function(){
-            return this.srsDefinitions;
+            return this.model.getAllSrs();
         },
         /**
          * Reterns the model
@@ -169,35 +105,16 @@
          * Changes the map's projection.
          */
         changeProjection: function(srs) {
-            if (!srs || typeof srs !== 'string') {
-                console.error("Invalid srs argument", srs);
-                throw new Error("Invalid srs argument");
-            }
-            if (this.state_.srs !== srs) {
-                var previousSrs = this.state_.srs;
-                console.log("mbMap switching srs", {from: previousSrs, to: srs});
-                this.model.updateMapViewForProjection(srs);
-                var newProjection = this.model.getCurrentProjectionObject();
-                var axisOrientation = newProjection.getAxisOrientation();
-                this.fireModelEvent({
-                    name: 'srschanged',
-                    value: {
-                        // @todo: emulate / shim projection object with OL2-compatible signature
-                        projection: newProjection,
-                        // this will stay engine-native
-                        nativeProjection: newProjection,
-                        // following attribs added to event data in OL4 initiative
-                        oldCode: previousSrs,
-                        newCode: srs,
-                        units: newProjection.getUnits(),
-                        axisOrientation: axisOrientation,
-                        yx: ((axisOrientation || "enu").slice(0,2)) !== 'en',
-                        extent: newProjection.getExtent()
-                    }
-                });
-                this.state_.srs = srs;
+            if (typeof srs === "string") {
+                this.model.changeProjection(srs);
             } else {
-                // console.log("mbMap skipping srs switch", srs);
+                // legacy stuff
+                var projCode = srs.projCode || (srs.proj && srs.proj.srsCode);
+                if (!projCode) {
+                    console.error("Invalid srs argument", srs);
+                    throw new Error("Invalid srs argument");
+                }
+                this.model.changeProjection(projCode);
             }
         },
         /**
@@ -233,6 +150,21 @@
             if(typeof closest === 'undefined')
                 closest = false;
             this.map.olMap.zoomToScale(scale, closest);
+        },
+        /**
+         * Super legacy, some variants of wmcstorage want to use this to replace the map's initial max extent AND
+         * initial SRS, which only really works when called immediately before an SRS switch. Very unsafe to use.
+         * @deprecated
+         */
+        setMaxExtent: function(newMaxExtent, newMaxExtentSrs) {
+            this.getModel().replaceInitialMaxExtent(newMaxExtent, newMaxExtentSrs);
+        },
+        /**
+         * Super legacy, never really did anything, only stored the argument in a (long gone) property of the Model
+         * @deprecated
+         */
+        setExtent: function() {
+            console.error("mbMap.setExtent called, doesn't do anything, you probably want to call zoomToExtent instead", arguments);
         },
         /**
          * Adds the popup
@@ -284,9 +216,8 @@
          * Loads the srs definitions from server
          */
         loadSrs: function(srslist){
-            var self = this;
             $.ajax({
-                url: self.elementUrl + 'loadsrs',
+                url: this.elementUrl + 'loadsrs',
                 type: 'POST',
                 data: {
                     srs: srslist

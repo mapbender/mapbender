@@ -1,0 +1,11 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ 'mb.wmts.wmtsloader.repo.preview.title.servicerepository' | trans }}{% endblock %}
+
+{% block manager_content %}
+    {{ form_errors(form) }}
+    <form action="{{path('mapbender_wmts_repository_create')}}" method="post">
+        {{form_rest(form)}}
+        <input type="submit" name="load" value="{{"mb.wmts.wmtsloader.repo.preview.label.load"|trans}}" />
+    </form>
+{% endblock %}

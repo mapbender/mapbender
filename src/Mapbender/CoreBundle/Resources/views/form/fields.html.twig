@@ -1,0 +1,544 @@
+{#
+ Default Mapbender form theme
+ Migrated to Mapbender from FOM v3.0.6.3
+ See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/views/Form/
+#}
+
+{% block form_widget %}
+  {% spaceless %}
+    {% if compound %}
+      {{ block('form_widget_compound') }}
+    {% else %}
+      {{ block('form_widget_simple') }}
+    {% endif %}
+  {% endspaceless %}
+{% endblock form_widget %}
+
+{% block form_widget_simple %}
+  {% spaceless %}
+    {% set type = type|default('text') %}
+
+    {% if type != 'hidden'%}
+      <div class="inputWrapper {{ block('widget_attribute_class') }}">
+        {% spaceless %}
+          <input class="{% if type != 'file' %}input validationInput{% endif %}" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
+
+          {% if errors|length > 0 %}
+            <span class="validationMsgBox smallText">
+              {% for error in errors %}
+                {{
+                  error.messagePluralization is null
+                  ? error.messageTemplate|trans(error.messageParameters, 'validators')
+                  : error.messageTemplate|transchoice(error.messagePluralization, error.messageParameters, 'validators')
+                }}
+              {% endfor %}
+            </span>
+          {% endif %}
+        {% endspaceless %}
+      </div>
+
+    {% else %}
+      <input class="hidden" {{block('widget_attributes')}} type="{{ type }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
+    {% endif %}
+  {% endspaceless %}
+{% endblock form_widget_simple %}
+
+{% block form_widget_compound %}
+  {% spaceless %}
+    <div {{ block('widget_container_attributes') }}>
+      {% if form.vars.prototype is defined  and form.vars.allow_add is defined %}
+      <a href="#add" class="collectionAdd iconAdd iconSmall"></a>
+      {% endif %}
+      {% if form.parent and 'allow_delete' in form.parent.vars | keys and form.parent.vars['allow_delete'] %}
+        <a href="#delete" class="collectionRemove iconSmall iconRemove"></a>
+      {% endif %}
+
+      {% if form.parent is empty %}
+      {{ form_errors(form) }}
+      {% endif %}
+      {{ block('form_rows') }}
+      {{ form_rest(form) }}
+    </div>
+
+  {% endspaceless %}
+{% endblock form_widget_compound %}
+
+{% block collection_widget %}
+  {% spaceless %}
+    {% if prototype is defined %}
+      {% set attr = attr|merge({'data-prototype': form_row(prototype) }) %}
+      {% endif %}
+      {% if allow_delete %}
+      {% set attr = attr|merge({'data-allow-delete': 1 }) %}
+      {% endif %}
+      {{ block('form_widget') }}
+    {% endspaceless %}
+{% endblock collection_widget %}
+
+{% block textarea_widget %}
+  <div class="inputWrapper {{ block('widget_attribute_class') }}">
+    {% spaceless %}
+      <textarea class="input validationInput" {{ block('widget_attributes') }}>{{ value }}</textarea>
+      {% if errors|length > 0 %}
+        <span class="validationMsgBox smallText">
+          {% for error in errors %}
+            {{
+              error.messagePluralization is null
+              ? error.messageTemplate|trans(error.messageParameters, 'validators')
+              : error.messageTemplate|transchoice(error.messagePluralization, error.messageParameters, 'validators')
+            }}
+          {% endfor %}
+        </span>
+      {% endif %}
+    {% endspaceless %}
+  </div>
+{% endblock textarea_widget %}
+
+{% block choice_widget %}
+  {% spaceless %}
+    {% if expanded %}
+      {% if form.vars.attr is defined and form.vars.attr['data-sortable'] is defined %}
+        {{ block('choice_widget_expanded_sortable') }}
+      {% else %}
+        {{ block('choice_widget_expanded') }}
+      {% endif %}
+    {% else %}
+      {{ block('choice_widget_collapsed') }}
+    {% endif %}
+  {% endspaceless %}
+{% endblock choice_widget %}
+
+{% block choice_widget_expanded %}
+  {% spaceless %}
+  <div {{ block('widget_container_attributes') }}>
+    {% for child in form %}
+    {{ form_widget(child) }}
+    {{ form_label(child) }}
+    {% endfor %}
+  </div>
+  {% endspaceless %}
+{% endblock choice_widget_expanded %}
+
+{% block choice_widget_expanded_sortable %}
+  {% spaceless %}
+  <div class="{{ form.vars.attr['data-sortable'] }}" {{ block('widget_container_attributes') }}>
+    {% for child in form %}
+      <div class="sortableItem">
+        {{ form_widget(child) }}
+        {{ form_label(child) }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endspaceless %}
+{% endblock choice_widget_expanded_sortable %}
+
+{% block choice_widget_collapsed %}
+  {% spaceless %}
+    {% if multiple %}
+      <select {{ block('widget_attributes') }} multiple="multiple">
+        {% if empty_value is not none %}
+          <option value="">{{ empty_value|trans({}, translation_domain) }}</option>
+        {% endif %}
+        {% if preferred_choices|length > 0 %}
+          {% set options = preferred_choices %}
+          {{ block('choice_widget_options') }}
+          {% if choices|length > 0 and separator is not none %}
+            <option disabled="disabled">{{ separator }}</option>
+          {% endif %}
+        {% endif %}
+        {% set options = choices %}
+        {{ block('choice_widget_options') }}
+      </select>
+    {% else %}
+      <div class="dropdown {{ block('widget_attribute_class') }}" >
+        {% set selectedValue = "" %}
+        {% set firstValue = "" %}
+
+        <select class="hiddenDropdown" {{ block('widget_attributes') }}>
+          {% if empty_value is defined and empty_value is not none %}
+            <option class="opt-0" selected="selected" value="">{{ empty_value|trans({}, translation_domain) }}</option>
+            {% set selectedValue = empty_value|trans({}, translation_domain) %}
+          {% endif %}
+
+          {% for choice in choices %}
+
+            {% if loop.index == 1 %}
+              {% set firstValue = choice.label %}
+            {% endif %}
+
+            {% if choice is selectedchoice(value) %}
+              {% set selectedValue = choice.label|trans({}, translation_domain) %}
+            {% endif %}
+
+            <option class="opt-{{ loop.index }}" {% if choice is selectedchoice(value) %} selected="selected" {% endif %} value="{{ choice.value }}">{{ choice.label|trans({}, translation_domain) }}</option>
+          {% endfor %}
+        </select>
+
+        <div class="dropdownValue iconDown">
+          {% if selectedValue|length == 0 %}
+            {% if empty_value is defined and empty_value is not none %}
+              {{ empty_value|trans({}, translation_domain) }}
+            {% else %}
+              {{ firstValue }}
+            {% endif %}
+          {% else %}
+            {{ selectedValue }}
+          {% endif %}
+        </div>
+        <ul class="dropdownList">
+          {% if empty_value is defined and empty_value is not none %}
+            <li class="item-0" value="">{{ empty_value|trans({}, translation_domain) }}</li>
+          {% endif %}
+          {% for choice in choices %}
+            <li class="item-{{ loop.index }}">{{ choice.label|trans({}, translation_domain) }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endspaceless %}
+{% endblock choice_widget_collapsed %}
+
+{% block checkbox_widget %}
+  {% spaceless %}
+    {# @todo: remove .left (float) if rendered via form_row, keep it if rendered otherwise...? #}
+    {% set _wrapperClass = 'checkWrapper iconCheckbox left' %}
+    {% if checked %}
+      {% set _wrapperClass = _wrapperClass~' iconCheckboxActive' %}
+    {% endif %}
+    {% if disabled %}
+      {% set _wrapperClass = _wrapperClass~' checkboxDisabled' %}
+    {% endif %}
+    <div class="{{ _wrapperClass }}" data-icon="iconCheckbox">
+      <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    </div>
+  {% endspaceless %}
+{% endblock checkbox_widget %}
+
+{% block radio_widget %}
+  {% spaceless %}
+    <div class="radioWrapper left iconRadio{% if checked %} iconRadioActive{% endif %} {% if disabled %} radioboxDisabled{% endif %}" data-icon="iconRadio">
+      <input class="radiobox" type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    </div>
+  {% endspaceless %}
+{% endblock radio_widget %}
+
+{% block datetime_widget %}
+  {% spaceless %}
+    {% if widget == 'single_text' %}
+      {{ block('form_widget_simple') }}
+    {% else %}
+      <div {{ block('widget_container_attributes') }}>
+        {{ form_errors(form.date) }}
+        {{ form_errors(form.time) }}
+        {{ form_widget(form.date) }}
+        {{ form_widget(form.time) }}
+      </div>
+    {% endif %}
+  {% endspaceless %}
+{% endblock datetime_widget %}
+
+{% block date_widget %}
+  {% spaceless %}
+    {% if widget == 'single_text' %}
+      {{ block('form_widget_simple') }}
+    {% else %}
+      <div {{ block('widget_container_attributes') }}>
+        {{ date_pattern|replace({
+        '{{ year }}':  form_widget(form.year),
+        '{{ month }}': form_widget(form.month),
+        '{{ day }}':   form_widget(form.day),
+      })|raw }}
+      </div>
+    {% endif %}
+  {% endspaceless %}
+{% endblock date_widget %}
+
+{% block time_widget %}
+  {% spaceless %}
+    {% if widget == 'single_text' %}
+      {{ block('form_widget_simple') }}
+    {% else %}
+      <div {{ block('widget_container_attributes') }}>
+        {{ form_widget(form.hour, { 'attr': { 'size': '1' } }) }}:{{ form_widget(form.minute, { 'attr': { 'size': '1' } }) }}{% if with_seconds %}:{{ form_widget(form.second, { 'attr': { 'size': '1' } }) }}{% endif %}
+      </div>
+    {% endif %}
+  {% endspaceless %}
+{% endblock time_widget %}
+
+{% block number_widget %}
+  {% spaceless %}
+    {# type="number" doesn't work with floats #}
+    {% set type = type|default('text') %}
+    {{ block('form_widget_simple') }}
+  {% endspaceless %}
+{% endblock number_widget %}
+
+{% block integer_widget %}
+  {% spaceless %}
+    {% set type = type|default('number') %}
+    {{ block('form_widget_simple') }}
+  {% endspaceless %}
+{% endblock integer_widget %}
+
+{% block money_widget %}
+  {% spaceless %}
+    {{ money_pattern|replace({ '{{ widget }}': block('form_widget_simple') })|raw }}
+  {% endspaceless %}
+{% endblock money_widget %}
+
+{% block url_widget %}
+  {% spaceless %}
+    {% set type = type|default('url') %}
+    {{ block('form_widget_simple') }}
+  {% endspaceless %}
+{% endblock url_widget %}
+
+{% block search_widget %}
+  {% spaceless %}
+    {% set type = type|default('search') %}
+      {{ block('form_widget_simple') }}
+    {% endspaceless %}
+{% endblock search_widget %}
+
+{% block percent_widget %}
+  {% spaceless %}
+    {% set type = type|default('text') %}
+    {{ block('form_widget_simple') }} %
+  {% endspaceless %}
+{% endblock percent_widget %}
+
+{% block password_widget %}
+  {% spaceless %}
+    {% set type = type|default('password') %}
+    {{ block('form_widget_simple') }}
+    <div class="clearContainer"></div>
+  {% endspaceless %}
+{% endblock password_widget %}
+
+{% block hidden_widget %}
+  {% spaceless %}
+    {% set type = type|default('hidden') %}
+    {{ block('form_widget_simple') }}
+  {% endspaceless %}
+{% endblock hidden_widget %}
+
+{% block email_widget %}
+  {% spaceless %}
+    {% set type = type|default('email') %}
+    {{ block('form_widget_simple') }}
+  {% endspaceless %}
+{% endblock email_widget %}
+
+
+
+
+{# Labels #}
+
+{% block form_label %}
+  {% spaceless %}
+    {% if not compound %}
+      {% set label_attr = label_attr|merge({'for': id}) %}
+    {% endif %}
+    {% if required %}
+      {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+    {% endif %}
+    {% if label is empty %}
+      {% set label = name|humanize %}
+    {% endif %}
+    {#
+       @todo: .labelCheck is the right thing because of line-height, but we lose some margins in many forms; need to update CSS
+       @todo: Emitting the correct .labelCheck class also causes the 'region properties' radio group to render labels -.-
+       @todo: merge label_attr.class into ... class!
+    #}
+    {% if false and 'checkbox' in form.vars.block_prefixes %}
+      {% set _labelClass = 'labelCheck' %}
+    {% else %}
+      {% set _labelClass = 'labelInput' %}
+    {% endif %}
+    <label class="{{ _labelClass }}" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}{% if required %}<span class="required">*</span>{% endif %}</label>
+  {% endspaceless %}
+{% endblock form_label %}
+
+
+
+
+{# Rows #}
+
+{% block repeated_row %}
+  {% spaceless %}
+  {#
+  No need to render the errors here, as all errors are mapped
+  to the first child (see RepeatedTypeValidatorExtension).
+  #}
+  {{ block('form_rows') }}
+  {% endspaceless %}
+{% endblock repeated_row %}
+
+{% block form_row %}
+  {% spaceless %}
+    <div {% if 'collection' in form.parent.vars['block_prefixes'] %}class="collectionItem"{% endif %}>
+      {% if 'checkbox' in form.vars.block_prefixes %}
+        {{ form_widget(form) }}
+        {{ form_label(form) }}
+      {% else %}
+        {{ form_label(form) }}
+        {{ form_widget(form) }}
+      {% endif %}
+    </div>
+  {% endspaceless %}
+{% endblock form_row %}
+
+{% block hidden_row %}
+  {{ form_widget(form) }}
+{% endblock hidden_row %}
+
+{# Misc #}
+
+{% block form_enctype %}
+  {% spaceless %}
+    {% if multipart %}enctype="multipart/form-data"{% endif %}
+  {% endspaceless %}
+{% endblock form_enctype %}
+
+{% block form_rest %}
+  {% spaceless %}
+    {% for child in form %}
+      {% if not child.rendered %}
+        {{ form_row(child) }}
+      {% endif %}
+    {% endfor %}
+  {% endspaceless %}
+{% endblock form_rest %}
+
+{% block acl_widget %}
+  {% spaceless %}
+
+    {% set prototype = form_widget(form.ace.vars.prototype) %}
+    <table id="listFilterPermission" class="listFilterContainer clear permissionsTable tableCore {% if form.ace|length == 0 %}hidePermissions{% endif %}">
+      <thead id="permissionsHead" data-prototype="{{ prototype }}">
+        <tr class="doNotFilter">
+          <th>
+            <label for="inputFilterPermission" class="labelInput left">{{"fom.core.fields.filter"|trans}}</label>
+            <input id="inputFilterPermission" type="text" class="input left listFilterInput"/>
+          </th>
+          {% for child in form.ace.vars.prototype %}
+            {% if child.vars.attr.class is defined %}
+              <th>
+                <div id="{{ child.vars.attr.class }}" class="headTagWrapper smallText {{ child.vars.attr.class }}">{{ child.vars.attr.class }}</div>
+              </th>
+            {% endif %}
+          {% endfor %}
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="permissionsBody">
+        {% for ace in form.ace %}
+          {{ form_widget(ace) }}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if form.ace|length == 0 %}
+      <p id="permissionsDescription" class="description left">{{"fom.core.fields.no_user_group_defined"|trans}}</p>
+    {% endif %}
+    <div class="clearContainer"></div>
+  {% endspaceless %}
+{% endblock %}
+
+{% block aclElement_widget %}
+  {% spaceless %}
+
+    {% set prototype = form_widget(form.ace.vars.prototype) %}
+    <table class="clear permissionsElementTable tableCore {% if form.ace|length == 0 %}hidePermissions{% endif %}">
+      <thead id="permissionsElementHead" data-prototype="{{ prototype }}">
+        <tr>
+          {% for child in form.ace.vars.prototype %}
+            {% if child.vars.attr.class is defined %}
+              <th>
+                <div id="{{ child.vars.attr.class }}" class="headTagWrapper smallText {{ child.vars.attr.class }}">{{ child.vars.attr.class }}</div>
+              </th>
+            {% endif %}
+          {% endfor %}
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="permissionsElementBody">
+        {% for ace in form.ace %}
+          {{ form_widget(ace) }}
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="clearContainer"></div>
+  {% endspaceless %}
+{% endblock %}
+
+{% block tagbox_widget %}
+  {% spaceless %}
+    <div data-perm-type="{{ form.vars.attr.class }}" class="checkWrapper smallText {{ form.vars.attr.class }} {% if form.vars.checked %} iconCheckboxActive {% endif %}">
+      {{ form.vars.attr.class }}
+      <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    </div>
+  {% endspaceless %}
+{% endblock tagbox_widget %}
+
+{% block ace_widget %}
+  {% spaceless %}
+    <tr class="filterItem" {{ block('widget_container_attributes') }}>
+      {% for child in form %}
+        <td>
+          {% if child.vars.block_prefixes.1 == "text" %}
+              <div class="{% if child.vars.value|slice(0, 1) == "u" %}iconUser {% else %} iconGroup{% endif %} userType">
+              <span class="labelInput">{{ child.vars.value|slice(2)|split(':')|first }}</span>
+            </div>
+            {{ form_widget(child) }}
+          {% else %}
+              {% if child.vars.attr.class is defined %}
+                {{ form_widget(child) }}
+              {% endif %}
+          {% endif %}
+        </td>
+      {% endfor %}
+      <td class="iconColumn">
+        <span class="iconRemove removeUserGroup iconSmall"></span>
+      </td>
+    </tr>
+  {% endspaceless %}
+{% endblock %}
+
+
+
+
+
+{# Support #}
+
+{% block form_rows %}
+  {% spaceless %}
+    {% for child in form %}
+      {{ form_row(child) }}
+     <div class="clearContainer"></div>
+    {% endfor %}
+  {% endspaceless %}
+{% endblock form_rows %}
+
+{% block widget_attributes %}
+  {% spaceless %}
+    id="{{ id }}" name="{{ full_name }}"{% if read_only %} readonly="readonly"{% endif %}{% if disabled %} disabled="disabled"{% endif %}{% if required %} required="required"{% endif %}{% if max_length %} maxlength="{{ max_length }}"{% endif %}{% if pattern %} pattern="{{ pattern }}"{% endif %}
+    {% for attrname, attrvalue in attr %}{% if attrname in ['placeholder', 'title'] %}{{ attrname }}="{{ attrvalue|trans({}, translation_domain) }}" {% else %}{{ attrname }}="{{ attrvalue }}" {% endif %}{% endfor %}
+  {% endspaceless %}
+{% endblock widget_attributes %}
+
+{% block widget_container_attributes %}
+  {% spaceless %}
+    {% if id is not empty %}id="{{ id }}" {% endif %}
+    {% for attrname, attrvalue in attr %}{{ attrname }}="{{ attrvalue }}" {% endfor %}
+  {% endspaceless %}
+{% endblock widget_container_attributes %}
+
+{% block widget_attribute_class %}
+  {% set cssClass = block('widget_attributes')|split('class') %}
+
+  {# Get the class attribute from widget_attributes #}
+  {% if cssClass[1] is defined%}
+    {{ cssClass[1]|replace({'"': '', '=':''}) }}
+  {% endif %}
+{% endblock widget_attribute_class %}

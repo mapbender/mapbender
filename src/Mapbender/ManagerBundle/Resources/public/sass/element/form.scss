@@ -39,7 +39,7 @@
       width: 100%;
       .checkWrapper, label {
         color: $secondColor;
-        margin-bottom: 0px;
+        margin-bottom: 0;
         line-height: $lineHeight;
         display: inline;
       }
@@ -48,7 +48,7 @@
         float: none;
       }
       .labelInput {
-        margin-left: 0px;
+        margin-left: 0;
         width: $label;
       }
       div {
@@ -57,26 +57,28 @@
     }
   }
   .choiceExpandedSortable {
-    position: relative;
+    color: $secondColor;
     display: inline-block;
     border: solid 1px lighten($thirdColor, 15%);
     background-color: $contentColor;
     .sortableItem {
-      position: relative;
-      display: block;
-      float: none;
-      clear: both;
-      width: 100%;
-      height: $inputHeight;
-      padding-left: 5px;
+      padding: 0 0.4em;
       cursor: move;
+      line-height: $lineHeight;
       .checkWrapper, label {
-        color: $secondColor;
-        margin-bottom: 0px;
-        line-height: $lineHeight;
-        cursor: move;
+        line-height: inherit;
+        color: inherit;
+        margin: 0;
       }
-      .sortableItem :hover {
+      label {
+        cursor: inherit;
+        width: 92%; // for browser without calc
+        // Width taken by checkbox is exactly $fontSize
+        // No immediate variable refs inside calc(): https://github.com/sass/sass/issues/818
+        width: calc(100% - #{$fontSize} - 2px);  // subtract fontsize (=checkbox width) plus 2 extra pixels for safety
+        padding-left: 0.2em;
+      }
+      &:hover {
         background-color: darken($contentColor, 10%);
       }
     }

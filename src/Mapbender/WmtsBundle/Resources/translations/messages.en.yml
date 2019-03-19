@@ -1,0 +1,125 @@
+# Loco yaml export: Symfony YAML object
+# Project: messages.en.xlf conversion
+# Release: Working copy
+# Locale: en, English
+# Exported by: Unregistered user
+# Exported at: Fri, 25 May 2018 11:59:55 +0200
+---
+mb:
+  wmts:
+    wmtsloader:
+      repo:
+        view:
+          label:
+            backtoservicelist: Back to Service List
+            metadata: Metadata
+            contact: Contact
+            details: Details
+            layers: Layers
+            matrixsets: Matrixsets
+            theme: Theme
+            title: Title
+            name: Name
+            version: Version
+            originurl: Origin URL
+            abstract: Abstract
+            accessconstraints: Access Constraints
+            person: Person
+            organization: Organization
+            position: Position
+            telephone: Telephone
+            facsimile: Facsimile
+            email: Email
+            address: Address
+            addresstype: Addresstype
+            city: City
+            state: State
+            postcode: Postcode
+            country: Country
+            serviceprovidername: Name of service provider
+            serviceprovidersite: Website of service provider
+        tilematrixset:
+          label:
+            identifier: Identifier
+            supportedcrs: Supported CRS
+            title: Title
+            abstract: Abstract
+          matrixes: Matrices
+        theme:
+          label:
+            identifier: Identifier
+            title: Title
+            abstract: Abstract
+            layerrefs: Layerrefs
+        instance:
+          title:
+            instance: Instance
+          btn:
+            save: Save
+            cancel: Cancel
+          label:
+            originurl: Origin URL
+            visible: Visible
+            basesource: BaseSource
+            proxy: Proxy
+            title: Title
+            tilemartixset: Tilemartixset
+            format: Format
+            style: Style
+            active: active
+            select: select
+            info: info
+            toggle: toggle
+            allow: allow
+            "on": "on"
+            save: Save
+            cancel: Cancel
+        instancelayerform:
+          label:
+            layer_title: Layer title
+            active: active
+            allowselecttoc: Allow Select at TOC
+            selectedtoc: Selected  at TOC
+            allowinfotoc: Allow FeatureInfo at TOC
+            infotoc: FeatureInfo at TOC
+            allowtoggletoc: Allow Toggle at TOC
+            toggletoc: Toggle at TOC
+            layer_matrixsets: available Matrixsets
+            layer_formats: available Formats
+            layer_styles: available Styles
+            moreinfo: More informations
+            id: Id
+            layer_name: Name
+            style: Style
+        preview:
+          title:
+            servicerepository: Service Repository
+          label:
+            load: Load
+        layer:
+          label:
+            identifier: Identifier
+            formats: Formats
+            title: Title
+            abstract: Abstract
+            latlonbounds: LatLonBounds
+            tilematrixsetlinks: TileMartixSetLinks
+        new:
+          label:
+            addservice: Add service
+        tilematrix:
+          label:
+            identifier: Identifier
+            scaledenominator: ScaleDenominator
+            topleftcorner: TopLeftCorner
+            tilesize: TileSize
+            matrixsize: MatrixSize
+        form:
+          label:
+            onlyvalid: only valid
+            serviceurl: Service URL
+            username: Username
+            password: Password
+            load: Load
+            cancel: Cancel
+...

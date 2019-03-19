@@ -2,17 +2,20 @@
     $.widget("mapbender.mbWmcEditor", {
         options: {},
         elementUrl: null,
+        mbMap: null,
         _create: function(){
-            if(!Mapbender.checkTarget("mbWmcEditor", this.options.target)){
-                return;
-            }
             var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self._setup(mbMap);
+            }, function() {
+                Mapbender.checkTarget("mbWmcEditor", self.options.target);
+            });
         },
         /**
          * Initializes the wmc handler
          */
-        _setup: function(){
+        _setup: function(mbMap) {
+            this.mbMap = mbMap;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
         },
         /**
@@ -176,8 +179,7 @@
                     });
                 }
                 var wmc_id = $(e.target).parents('tr:first').attr('data-id');
-                var map = $('#' + this.options.target).data('mapbenderMbMap');
-                var wmcHandlier = new Mapbender.WmcHandler(map, {});
+                var wmcHandlier = new Mapbender.WmcHandler(this.mbMap, {});
                 wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
             }
             return false;
@@ -192,8 +194,7 @@
                     url: self.elementUrl + 'save',
                     type: 'POST',
                     beforeSerialize: function(e){
-                        var map = $('#' + self.options.target).data('mapbenderMbMap')
-                        var state = map.getMapState();
+                        var state = self.mbMap.getMapState();
                         $('input#wmc_state_json', self.popup.$element).val(JSON.stringify(state));
                     },
                     contentType: 'json',

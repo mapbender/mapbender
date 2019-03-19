@@ -2,29 +2,30 @@
     'use strict';
 
     /**
-     * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~print
+     * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~export
+     * @typedef {{type:string, opacity:number, markers: Array<Object>}} MarkerLayerData~export
      */
-    $.widget('mapbender.mbImageExport', {
+    $.widget("mapbender.mbImageExport", {
         options: {},
         map: null,
         _geometryToGeoJson: null,
         $form: null,
 
-        _create: function() {
-            if(!Mapbender.checkTarget('mbImageExport', this.options.target)) {
+        _create: function(){
+            if(!Mapbender.checkTarget(this.widgetName, this.options.target)){
                 return;
             }
             this.$form = $('form', this.element);
             $(this.element).show();
 
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
-        },
-        _setup: function() {
-            this.model = Mapbender.elementRegistry.listWidgets().mapbenderMbMap.model;
             var olGeoJson = this.model.createOlFormatGeoJSON();
             this._geometryToGeoJson = function(geometry) {
                 return olGeoJson.writeGeometryObject.call(olGeoJson, geometry, olGeoJson);
             };
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+        },
+        _setup: function() {
+            this.map = $('#' + this.options.target).data('mapbenderMbMap');
 
             this._trigger('ready');
         },
@@ -45,14 +46,14 @@
                     width: 250,
                     buttons: {
                         'cancel': {
-                            label: Mapbender.trans('mb.print.imageexport.popup.btn.cancel'),
+                            label: Mapbender.trans("mb.print.imageexport.popup.btn.cancel"),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self.close();
                             }
                         },
                         'ok': {
-                            label: Mapbender.trans('mb.print.imageexport.popup.btn.ok'),
+                            label: Mapbender.trans("mb.print.imageexport.popup.btn.ok"),
                             cssClass: 'button right',
                             callback: function(){
                                 self._exportImage();
@@ -60,7 +61,6 @@
                         }
                     }
                 });
-
                 this.popup.$element.on('close', $.proxy(this.close, this));
             }
         },
@@ -107,50 +107,50 @@
          * @private
          */
         _getRasterSourceDefs: function() {
-            return this.model.getActiveSources();
+            return this.map.getSourceTree();
         },
         _getExportScale: function() {
             return null;
         },
         _getExportExtent: function() {
-            return this.model.getMapExtent();
+            return this.map.map.olMap.getExtent();
         },
         _collectRasterLayerData: function() {
             var sources = this._getRasterSourceDefs();
-            var mapSize = this.model.getMapSize();
-            var mapExtent = this._getExportExtent();
+            var scale = this._getExportScale();
+            var extent = this._getExportExtent();
 
             var dataOut = [];
 
             for (var i = 0; i < sources.length; i++) {
-                var source = sources[i];
-                if (!source.isVisible()) {
-                    continue;
-                }
-                var printConfig = this.model.getSourcePrintConfig(source, mapExtent, mapSize);
-                if (printConfig) {
-                    dataOut.push(printConfig);
-                }
+                var sourceDef = sources[i];
+                var olLayer = this.map.model.getNativeLayer(sourceDef);
+                var extra = {
+                    opacity: sourceDef.configuration.options.opacity,
+                    changeAxis: this._changeAxis(olLayer)
+                };
+                _.forEach(this.map.model.getPrintConfigEx(sourceDef, scale, extent), function(printConfig) {
+                    dataOut.push($.extend({}, printConfig, extra));
+                });
             }
             return dataOut;
         },
         _collectJobData: function() {
-            var mapCenter = this.model.getMapCenter();
             var mapExtent = this._getExportExtent();
-            var imageSize = this.model.getMapSize();
+            var imageSize = this.map.map.olMap.getCurrentSize();
             var rasterLayers = this._collectRasterLayerData();
-            var geometryLayers = this._collectGeometryLayers();
+            var geometryLayers = this._collectGeometryAndMarkerLayers();
             return {
                 layers: rasterLayers.concat(geometryLayers),
-                width: imageSize[0],
-                height: imageSize[1],
+                width: imageSize.w,
+                height: imageSize.h,
                 center: {
-                    x: mapCenter[0],
-                    y: mapCenter[1]
+                    x: mapExtent.getCenterLonLat().lon,
+                    y: mapExtent.getCenterLonLat().lat
                 },
                 extent: {
-                    width: this.model.getWidthOfExtent(mapExtent),
-                    height: this.model.getWidthOfExtent(mapExtent)
+                    width: mapExtent.getWidth(),
+                    height: mapExtent.getHeight()
                 }
             };
         },
@@ -187,6 +187,22 @@
                 return false;
             }
             return true;
+        },
+        /**
+         * Should return true if the given layer needs to be included in export
+         *
+         * @param {OpenLayers.Layer.Markers|OpenLayers.Layer} layer
+         * @returns {boolean}
+         * @private
+         */
+        _filterMarkerLayer: function(layer) {
+            if ('OpenLayers.Layer.Markers' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
+                return false;
+            }
+            if (!(layer.markers && layer.markers.length)) {
+                return false;
+            }
+            return layer.opacity > 0;
         },
         /**
          * Should return true if the given feature should be included in export.
@@ -297,6 +313,57 @@
                 }
             }
             return vectorLayers;
+        },
+        /**
+         * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
+         * to have passsed through the _filterGeometryLayer check positively.
+         *
+         * @param {OpenLayers.Layer.Markers|OpenLayers.Layer} layer
+         * @returns MarkerLayerData~export
+         * @private
+         */
+        _extractMarkerLayerData: function(layer) {
+            var markerData = [];
+            for (var i = 0; i < layer.markers.length; ++i) {
+                var marker = layer.markers[i];
+                var url = marker.icon && marker.icon.url;
+                if (!url || url.indexOf('/bundles/') !== 0) {
+                    console.warn("Unhandled marker: icon.url missing or not in /bundles/", marker);
+                    continue;
+                }
+                markerData.push({
+                    coordinates: {
+                        x: marker.lonlat.lon,
+                        y: marker.lonlat.lat
+                    },
+                    width: marker.icon.size.w,
+                    height: marker.icon.size.h,
+                    offset: {
+                        x: marker.icon.offset.x,
+                        y: marker.icon.offset.y
+                    },
+                    path: marker.icon.url
+                });
+            }
+            return {
+                type: 'markers',
+                opacity: layer.opacity,
+                markers: markerData
+            };
+        },
+        _collectGeometryAndMarkerLayers: function() {
+            // Iterating over all vector layers, not only the ones known to MapQuery
+            var allOlLayers = this.map.map.olMap.layers;
+            var layerDataOut = [];
+            for (var i = 0; i < allOlLayers.length; ++i) {
+                var olLayer = allOlLayers[i];
+                if (this._filterGeometryLayer(olLayer)) {
+                    layerDataOut.push(this._extractGeometryLayerData(olLayer));
+                } else if (this._filterMarkerLayer(olLayer)) {
+                    layerDataOut.push(this._extractMarkerLayerData(olLayer));
+                }
+            }
+            return layerDataOut;
         },
         /**
          * Check BBOX format inversion

@@ -41,46 +41,21 @@ $(function(){
         var button = $(e.currentTarget).data('mapbenderMbButton');
         var buttonOptions = button.options;
         var target = $('#' + buttonOptions.target);
-        if (!target) {
+        var pane = target.closest('.mobilePane');
+        if (!(target && target.length && pane && pane.length)) {
             return;
         }
-        var targets = target.data();
-        var pane = target.parents('.mobilePane');
         var paneContent = $('.mobileContent', pane);
         var paneTitle = $('.contentTitle', pane);
-        var hasPane = pane.size();
-
-        if(!hasPane) {
-            return false;
-        }
         e.stopImmediatePropagation();
 
         // hide frames
-        $.each(paneContent.children(), function(idx, item) {
+        $.each(paneContent.children().not(target), function(idx, item) {
             $(item).addClass('hidden');
         });
-
         target.removeClass('hidden');
-        paneTitle.text('undefined');
 
-        var _widget, isWidget, _element;
-        for (var widgetName in targets) {
-            _widget = targets[widgetName];
-            isWidget = typeof _widget === 'object' && _widget.options;
-
-            if(!isWidget) {
-                continue;
-            }
-
-            if(typeof  _widget.open == "function") {
-                _widget.open("mobile");
-            }
-
-            _element = _widget.element;
-            paneTitle.text(_element.attr('title') ? _element.attr('title') : _element.data('title'));
-            break;
-        }
-
+        paneTitle.text(target.attr('title') || target.data('title') || 'undefined');
         pane.attr('data-state', 'opened');
 
         return false;

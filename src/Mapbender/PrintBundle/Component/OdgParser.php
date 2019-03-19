@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\PrintBundle\Component\Region\FontStyle;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
@@ -89,10 +90,10 @@ class OdgParser
     /**
      * Get print configuration
      *
-     * @param $template
-     * @return array
+     * @param string $templateName
+     * @return Template
      */
-    public function getConf($template)
+    public function getConf($templateName)
     {
         /** @var \DOMElement $pageGeometry */
         /** @var \DOMElement $customShape */
@@ -101,60 +102,42 @@ class OdgParser
         /** @var \DOMElement $styleNode */
 
         $doc = new \DOMDocument();
-        $doc->loadXML($this->readOdgFile($template, 'styles.xml'));
+        $doc->loadXML($this->readOdgFile($templateName, 'styles.xml'));
         $xPath        = new \DOMXPath($doc);
         $node         = $xPath->query("//style:page-layout-properties");
-        $pageGeometry = $node->item(0);
-        $data         = array(
-            'orientation' => static::parseNodeAttribute($pageGeometry, 'style:print-orientation', static::DEFAULT_ORIENTATION),
-            'pageSize'    => array(
-                'height' => static::parseNumericNodeAttribute($pageGeometry, 'fo:page-height'),
-                'width'  => static::parseNumericNodeAttribute($pageGeometry, 'fo:page-width'),
-            ),
-            'fields' => array()
-        );
+        $templateObject = $this->parsePageGeometryIntoObject($node->item(0));
 
         $doc = new \DOMDocument();
-        $doc->loadXML($this->readOdgFile($template, 'content.xml'));
+        $doc->loadXML($this->readOdgFile($templateName, 'content.xml'));
 
         $xPath        = new \DOMXPath($doc);
         $customShapes = $xPath->query("//draw:custom-shape");
         foreach ($customShapes as $customShape) {
-            $data[ $customShape->getAttribute('draw:name') ] = static::parseShape($customShape);
+            $shapeName = $customShape->getAttribute('draw:name');
+            if (!$shapeName) {
+                continue;
+            }
+            $templateRegion = $this->parseShapeIntoRegion($customShape);
+            $templateRegion->setName($shapeName);
+            // @todo: extract (non-default) font styles for all shapes?
+            $templateRegion->setFontStyle(FontStyle::defaultFactory());
+            $templateObject->addRegion($templateRegion);
         }
 
         foreach ($xPath->query("draw:page/draw:frame", $doc->getElementsByTagName('drawing')->item(0)) as $node) {
             $name      = $node->getAttribute('draw:name');
-            $fontSize  = null;
-            $fontColor = null;
-            $style     = null;
 
             if (empty($name)) {
                 continue;
             }
-
-            // Recognize font name and size
-            $textParagraph = $xPath->query("draw:text-box/text:p", $node)->item(0);
-            $textNode      = $xPath->query("draw:text-box/text:p/text:span", $node)->item(0);
-            if ($textNode) {
-                $style = $textNode->getAttribute('text:style-name');
-            } elseif ($textParagraph) {
-                $style = $textParagraph->getAttribute('text:style-name');
-            }
-
-            if ($style) {
-                $styleNode = $xPath->query('//style:style[@style:name="' . $style . '"]/style:text-properties')->item(0);
-                $fontSize  = static::parseNodeAttribute($styleNode, 'fo:font-size', static::DEFAULT_FONT_SIZE);
-                $fontColor = static::parseNodeAttribute($styleNode, 'fo:color', static::DEFAULT_FONT_COLOR);
-            }
-
-            $data['fields'][ $name ] = array_merge(static::parseShape($node), array(
-                'font'     => self::DEFAULT_FONT_NAME,
-                'fontsize' => !empty($fontSize) ? $fontSize : self::DEFAULT_FONT_SIZE,
-                'color'    => !empty($fontColor) ? $fontColor : self::DEFAULT_FONT_COLOR,
-            ));
+            $textField = $this->parseShapeIntoRegion($node);
+            $styleNode = $this->detectStyleNode($xPath, $node);
+            $styleData = $this->parseStyleNode($styleNode);
+            $textField->setFontStyle(new FontStyle($styleData['font'], $styleData['fontsize'], $styleData['fontcolor']));
+            $textField->setName($name);
+            $templateObject->addTextField($textField);
         }
-        return $data;
+        return $templateObject;
     }
 
     /**
@@ -193,7 +176,7 @@ class OdgParser
     /**
      * Parse shape parameters
      *
-     * @param $customShape
+     * @param \DOMElement $customShape
      * @return array
      */
     public static function parseShape($customShape)
@@ -203,6 +186,88 @@ class OdgParser
             'height' => static::parseNumericNodeAttribute($customShape, 'svg:height'),
             'x'      => static::parseNumericNodeAttribute($customShape, 'svg:x'),
             'y'      => static::parseNumericNodeAttribute($customShape, 'svg:y'),
+        );
+    }
+
+    /**
+     * @param \DOMElement $customShape
+     * @return TemplateRegion
+     */
+    public function parseShapeIntoRegion($customShape)
+    {
+        $shd = static::parseShape($customShape);
+        return new TemplateRegion($shd['width'], $shd['height'], array($shd['x'],$shd['y']));
+
+    }
+
+    /**
+     * @param \DOMElement $node
+     * @return array
+     */
+    public function parsePageGeometry($node)
+    {
+        return array(
+            'orientation' => static::parseNodeAttribute($node, 'style:print-orientation', static::DEFAULT_ORIENTATION),
+            'pageSize'    => array(
+                'height' => static::parseNumericNodeAttribute($node, 'fo:page-height'),
+                'width'  => static::parseNumericNodeAttribute($node, 'fo:page-width'),
+            ),
+        );
+    }
+
+    /**
+     * @param \DOMElement $node
+     * @return Template
+     */
+    public function parsePageGeometryIntoObject($node)
+    {
+        $data = $this->parsePageGeometry($node);
+        return new Template($data['pageSize']['width'], $data['pageSize']['height'], $data['orientation']);
+    }
+
+    /**
+     * @param \DOMXPath $xPath
+     * @param \DOMElement $parentNode
+     * @return \DOMElement|null
+     */
+    public function detectStyleNode($xPath, $parentNode)
+    {
+        $textParagraph = $xPath->query("draw:text-box/text:p", $parentNode)->item(0);
+        $textNode      = $xPath->query("draw:text-box/text:p/text:span", $parentNode)->item(0);
+        if ($textNode) {
+            $styleAttribute = $textNode->getAttribute('text:style-name');
+        } elseif ($textParagraph) {
+            $styleAttribute = $textParagraph->getAttribute('text:style-name');
+        } else {
+            $styleAttribute = null;
+        }
+        if ($styleAttribute) {
+            $selector = '//style:style[@style:name="' . $styleAttribute . '"]/style:text-properties';
+            return $xPath->query($selector)->item(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Should extract font style properties from given $node, or default styles if node is emptyish.
+     *
+     * @param \DOMElement|null $node
+     * @return array
+     */
+    public function parseStyleNode($node)
+    {
+        if ($node) {
+            $fontSize  = static::parseNodeAttribute($node, 'fo:font-size', static::DEFAULT_FONT_SIZE);
+            $fontColor = static::parseNodeAttribute($node, 'fo:color', static::DEFAULT_FONT_COLOR);
+        } else {
+            $fontSize = static::DEFAULT_FONT_SIZE;
+            $fontColor = static::DEFAULT_FONT_COLOR;
+        }
+        return array(
+            'font' => static::DEFAULT_FONT_NAME,
+            'fontsize' => $fontSize,
+            'fontcolor' => $fontColor,
         );
     }
 }

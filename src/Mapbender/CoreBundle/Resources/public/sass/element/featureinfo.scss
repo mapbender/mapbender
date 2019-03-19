@@ -1,89 +1,49 @@
 .mb-element-featureinfo {
-  height: 100%;
   iframe.featureInfoFrame {
     width: 100%;
     height: 100%;
     border-width: 0;
   }
-  .accordionContainer > .container {
-    display: none;
-    &.active {
-      display: block
-    }
-  }
 
   .container {
     width: 100%;
-    height: 100%;
   }
 }
 
 .featureinfoDialog {
   .popupContent {
-    height: 100%;
+    height: 100%; // for accordion growth
     .contentItem {
-      height: 100%;
+      height: 100%; // for accordion growth
       .mb-element-featureinfo {
-        width: 100%;
+        height: 100%; // for accordion growth
         position: relative;
-        .featureInfoTabContainer.accordionContainer {
-          top: 0;
-          left: 0;
-          .accordion {
-            height: $fontSize*2;
-          }
-          .container {
-            display: none;
-          }
+        .tabContainer {
+          // Prevent doubled scrollbars Popup + iframe
+          // NOTE: With default css 34px is the exact height of the tab header bar...
+          height: calc(100% - 40px);
           .container.active {
-
-            table {
-              width: 100%;
-              border: 1px solid #E7E5E5;
-              th {
-                background-color: #ddd;
-              }
-              th, td {
-                padding-left: 5px;
-              }
+            height: 100%; // for tab iframe growth
+          }
+        }
+        .js-content-content {
+          table {
+            width: 100%;
+            th {
+              background-color: #ddd;
             }
-
-            .accordion-cell {
-              height: 100%;
-              .accordion-wrapper {
-                height: 100%;
-                display: block;
-                position: relative;
-                > iframe {
-                  height: 98%;
-                  width: 98%;
-                  position: absolute;
-                }
-                > .js-content-content {
-                  display: table-cell;
-                  position: absolute;
-                  bottom: 0;
-                  top: 0;
-                  overflow-y: auto;
-                  overflow-x: auto;
-                  width: 100%;
-                }
-              }
+            th, td {
+              padding-left: 5px;
             }
           }
         }
-        //.featureInfoTabContainer {
-        //  height: 100%;
-        //  > .container.active {
-        //    height: 90%;
-        //    overflow: auto;
-        //    > iframe {
-        //      height: 98%;
-        //      width: 98%;
-        //      position: absolute;
-        //    }
-        //  }
-        //}
+        .accordion-cell {
+          iframe.featureInfoFrame {
+            // Prevent doubled scrollbars Popup + iframe
+            height: 98%;
+            width: 98%;
+          }
+        }
       }
     }
   }
@@ -116,9 +76,6 @@
       > .container {
         > &.active {
           bottom: -1px;
-          > iframe {
-
-          }
         }
       }
     }
@@ -129,59 +86,13 @@
 .popupContent {
   > .contentItem {
     > .mb-element-featureinfo {
-
-      &.display-as-tabs {
-        > .tabContainer {
-          > .tabs {
-            > li {
-              &.active {
-              }
-            }
-          }
-          > .container {
-            &.active {
-              display: block;
-              padding: 20px;
+      > .tabContainer {
+        > .container {
+          &.active {
+            iframe.featureInfoFrame {
               position: absolute;
+              top: 0;
               left: 0;
-              right: 0;
-              top: 34px;
-              height: 90%;
-              iframe.featureInfoFrame {
-                height: 100%;
-                width: 100%;
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-              }
-            }
-          }
-        }
-      }
-
-      &.display-as-accordion {
-
-        // Accordion holder
-        > .accordionContainer {
-
-          // Header
-          > .accordion {
-            &.active {
-            }
-          }
-
-          // Content
-          > .container {
-            display: none;
-
-            &.active {
-              display: table-row;
-
-              iframe.featureInfoFrame {
-                height: 98%;
-              }
             }
           }
         }

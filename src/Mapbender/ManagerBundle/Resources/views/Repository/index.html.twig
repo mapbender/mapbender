@@ -1,4 +1,4 @@
-{% extends "FOMManagerBundle::manager.html.twig" %}
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
 
 {% block title %}{{ 'mb.manager.admin.sources' | trans }}{% endblock %}
 
@@ -16,9 +16,9 @@
 <a class="iconAdd iconBig right" href="{{ path("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
 {% endif %}
 {% if sources|length > 0 %}
-  <label for="inputFilterServices" class="labelInput left">{{"mb.manager.admin.filter.source"|trans}}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
+  <label for="inputFilterServices" class="labelInput">{{"mb.manager.admin.filter.source"|trans}}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
 
-  <ul id="listFilterServices" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
+  <ul id="listFilterServices" class="listFilterContainer listFilterBoxes listFilterServiceBoxes">
     {% for source in sources %}
       <li class="filterItem">
         <div class="col1">

@@ -27,7 +27,7 @@ class GenerateElementCommand extends ContainerAwareCommand {
                 new InputArgument('bundle', InputArgument::REQUIRED, 'The bundle namespace of the Element to create'),
                 new InputArgument('classname', InputArgument::REQUIRED, 'The classname of the Element to create'),
                 new InputArgument('dir', InputArgument::REQUIRED, 'The directory where to find the bundle'),
-                new InputOption('type', '', InputOption::VALUE_REQUIRED, 'Type of Element to create (general, button, map-click, map-box)', 'general')
+                new InputOption('type', '', InputOption::VALUE_REQUIRED, 'Type of Element to create (general, map-click, map-box)', 'general')
             ))
             ->setHelp(<<<EOT
 The <info>mapbender:generate:element</info> command generates a new Mapbender element with a basic skeleton.
@@ -48,7 +48,6 @@ EOT
 
         if(!in_array($type, array(
             'general',
-            'button',
             'map-click',
             'map-box'))) {
             throw new \RuntimeException(sprintf('The element type "%s" is not supported.', $type));

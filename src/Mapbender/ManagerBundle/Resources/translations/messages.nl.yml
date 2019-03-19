@@ -145,9 +145,6 @@ mb:
           title: 'URL Titel'
         description: Beschrijving
         template: Sjabloon
-        edit:
-          title: 'Algemeen'
-          base_data: 'Basis data'
       applications: Applicaties
     managerbundle:
       applications: Applicaties

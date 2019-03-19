@@ -15,6 +15,8 @@ class AssetFactoryBase
     /** @var FileLocatorInterface */
     protected $fileLocator;
 
+    protected $migratedRefs = array();
+
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
@@ -25,12 +27,23 @@ class AssetFactoryBase
         $this->webDir = $webDir;
     }
 
+    protected function getDebugHeader($finalPath, $originalRef)
+    {
+        return "\n"
+            . "/** \n"
+            . "  * BEGIN NEW ASSET INPUT -- {$finalPath}\n"
+            . "  * (original reference: {$originalRef})\n"
+            . "  */\n"
+        ;
+    }
+
     /**
      * @param (StringAsset|string)[] $inputs
      * @param string|null $targetPath
+     * @param bool $debug to emit file markers
      * @return AssetCollection
      */
-    protected function buildAssetCollection($inputs, $targetPath)
+    protected function buildAssetCollection($inputs, $targetPath, $debug=false)
     {
         $uniqueAssets = array();
         $stringAssetCounter = 0;
@@ -40,10 +53,15 @@ class AssetFactoryBase
                 $uniqueKey = 'stringasset_' . $stringAssetCounter++;
                 $uniqueAssets[$uniqueKey] = $input;
             } else {
-                $fileAsset = $this->makeFileAsset($input);
+                $realAssetPath = $this->locateAssetFile($input);
+                $fileAsset = new FileAsset($realAssetPath);
                 $fileAsset->setTargetPath($targetPath);
                 $uniqueKey = str_replace(array('@', 'Resources/public/'), '', $input);
                 $uniqueKey = str_replace(array('/', '.', '-'), '__', $uniqueKey);
+                if ($debug) {
+                    $debugInfo = $this->getDebugHeader($realAssetPath, $input);
+                    $uniqueAssets["{$uniqueKey}+dbgInfo"] = new StringAsset($debugInfo);
+                }
                 $uniqueAssets[$uniqueKey] = $fileAsset;
             }
         }
@@ -56,14 +74,14 @@ class AssetFactoryBase
 
     /**
      * @param string $input reference to an asset file
-     * @return FileAsset
+     * @return string resolved absolute path to file
      */
-    protected function makeFileAsset($input)
+    protected function locateAssetFile($input)
     {
-        $sourcePath = $this->fileLocator->locate($this->getSourcePath($input));
-        $fileAsset = new FileAsset($sourcePath);
-
-        return $fileAsset;
+        while (!empty($this->migratedRefs[$input])) {
+            $input = $this->migratedRefs[$input];
+        }
+        return $this->fileLocator->locate($this->getSourcePath($input));
     }
 
     /**

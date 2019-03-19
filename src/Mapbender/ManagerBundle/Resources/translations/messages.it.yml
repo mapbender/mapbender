@@ -1,54 +1,54 @@
 mb:
   application:
     create:
-      success: Your application has been created.
+      success: 'La tua applicazione è stata creata.'
       failure:
-        create.directory: Application directory can't be created.
+        create.directory: 'La directory dell''applicazione non può essere creata.'
     save:
-      success: Your application has been saved.
+      success: 'La tua applicazione è stata salvata.'
       failure:
-        general: There was an error trying to save your application.
-        create.directory: |
-          Your application has been updated but the application's directories can not be created.
+        general: 'Si è verificato un errore durante il tentativo di salvataggio dell''applicazione.'
+        create.directory:
+          'La tua applicazione è stata aggiornata ma non è possibile creare le directory dell''applicazione.'
     remove:
-      success: Your application has been deleted.
+      success: 'L''applicazione è stata eliminata.'
       failure:
-        general: Your application couldn't be deleted.
-        already.removed:  Your application has been already deleted.
-        remove.directory: |
-          Your application has been deleted but the application's directories can not be removed.
+        general: 'La tua applicazione non può essere cancellata.'
+        already.removed: 'La tua applicazione è stata già cancellata.'
+        remove.directory:
+          'La tua applicazione è stata cancellata ma le directory dell''applicazione non possono essere rimosse.'
   layerset:
     create:
-      success: Your layerset has been created.
+      success: 'Il tuo layerset di livelli è stato creato.'
       failure:
-        unique.title: Layerset title is already used.
+        unique.title: 'Il titolo Layerset è già utilizzato.'
     remove:
-      success: Your layerset has been deleted.
-      failure: Your layerset can't be deleted.
+      success: 'Il tuo Layerset è stato cancellato.'
+      failure: 'Il tuo Layerset non può essere cancellato.'
   source:
     instance:
       create:
-        success: A new instance has been created. Please edit it.
+        success: 'È stata creata una nuova istanza. Si prega di modificarla.'
   manager:
     admin:
-      sources: Sources
+      sources: Risorse
       source:
-        add: 'Aggiungi fonte'
+        add: 'Aggiungi risorsa'
         show_metadata: 'Mostra metadati'
-        delete: 'Elimina fonte'
+        delete: 'Elimina risorsa'
         new:
-          add: 'Aggiungi fonte'
-        valid: 'Source valid'
-        notvalid: 'Source notvalid'
-        no_source: 'Nessuna fonte disponibile'
-        update: 'Update source'
+          add: 'Aggiungi risorsa'
+        valid: 'La risorsa è valida'
+        notvalid: 'La risorsa non è valida'
+        no_source: 'Nessuna risorsa disponibile'
+        update: 'Aggiorna la risorsa'
         status:
-          ok: 'Source OK'
-          toupdate: 'Source not current anymore'
-          unreachable: 'Source unreachable'
+          ok: 'Risorsa OK'
+          toupdate: 'Risorsa non più attuale'
+          unreachable: 'Risorsa irraggiungibile'
       map:
-        max_extent: 'Max. extent'
-        start_extent: 'Start extent'
+        max_extent: 'Max. estensione'
+        start_extent: 'Estensione iniziale'
       element:
         delete:
           title: 'Elimina Elemento'
@@ -69,7 +69,7 @@ mb:
       zoombar:
         draggable: Trascinabile
       filter:
-        source: 'Filtra fonte'
+        source: 'Filtra risorsa'
         layerset: 'Filtra layerset'
         application: 'Filtra applicazioni'
         element: 'Filtra elemento'        
@@ -84,14 +84,14 @@ mb:
         delete:
           title: 'Elimina layerset'
           confirm: 'Sei sicuro di voler rimuovere il layerset con il titolo <span class="italic">%layerset_title%</span>?'
-        id_description: ~
+        id_description: 'Id sotto forma di SourceId / InstanceId '
         id: Id
       instance:
         add: 'Aggiungi istanza'
         show_hide: 'Alterna mostra/nascondi istanza'
         edit: 'Modifica istanza'
         delete:
-          title: 'elimina istanza'
+          title: 'Elimina istanza'
           confirm: 'Sei sicuro di voler rimuovere l''istanza con il titolo <span class="italic">%instance_title%</span>?'
         no_instance_added: 'Nessuna istanza aggiunta'
         no_layer_added: 'Nessun layer aggiunto'
@@ -103,11 +103,11 @@ mb:
           base_data: 'Dati di base'
         layouts: Layouts
         layersets: Layersets
-        custom_css: ~
+        custom_css: CSS
         security:
           title: Sicurezza
-          add_users_groups: 'Add users and groups'
-          public: activated
+          add_users_groups: 'Aggiungi utenti e gruppi'
+          public: attivato
         save: Salva
         cancel: Cancella
         view_this: 'Vedi questa applicazione'
@@ -124,40 +124,37 @@ mb:
           create: Crea
           cancel: Cancella
         upload:
-          button: ~
-          label: ~
-          tooltip: ~
+          button: 'Selezione file:'
+          label: 'Nessun file selezionato'
+          tooltip: 'Fai clic per caricare uno screenshot'
         export:
-          addAcl: ~
-          addSources: ~
+          addAcl: ACLs
+          addSources: Risorse
           btn:
-            export: ~
-            cancel: ~
+            export: Esporta
+            cancel: Cancella
         import:
-          addApplications: ~
-          addAcl: ~
-          addSources: ~
+          addApplications: Applicazioni
+          addAcl: ACLs
+          addSources: Risorsa
           btn:
-            import: ~
-            cancel: ~
-        title: Title
+            import: Importa
+            cancel: Cancella
+        title: Titolo
         url:
-          title: 'URL Title'
-        description: Description
+          title: 'Titolo URL'
+        description: Descrizione
         template: Template
-        edit:
-          title: 'Common'
-          base_data: 'Base data'
       applications: Applicazioni
     managerbundle:
       applications: Applicazioni
       new_application: 'Nuova applicazione'
       sources: Fonti
       add_source: 'Aggiungi fonte'
-      add_user_group: 'Add users and groups'
+      add_user_group: 'Aggiungi utenti e gruppi'
       acl_element: 'Acl elemento'
-      import_application: ~
-      export_application: ~
+      import_application: Importazione
+      export_application: Esportazione
     element:
       yaml:
         message: 'Usa il formato <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> per descrivere la configurazione dell''elemento.'
@@ -181,7 +178,7 @@ mb:
           subtitle: elemento
           title: 'Conferma eliminazione'
           btn:
-            ok: Elimina
+            ok: Eliminaö
             cancel: Cancella
         add_edit_layerset:
           title_edit: 'Modifica layerset'
@@ -217,14 +214,14 @@ mb:
         accordion:
           label: Accordion
     upload:
-      label_delete: ~
+      label_delete: 'Screenshot rimosso'
     import:
       application:
-        failed: 'Application cannot be imported.'
+        failed: 'L''applicazione non può essere importata.'
       acl:
-        failed: 'Acls cannot be imported.'
+        failed: 'Acls non può essere importato.'
       source:
-        failed: 'Sources cannot be imported.'
+        failed: 'Risorse non possono essere importate.'
   core:
     admin:
       button:
@@ -248,13 +245,13 @@ mb:
     entity:
       app:
         screenshotfile:
-          error: ~
-          format_error: ~
+          error: 'Il file è troppo grande (% uploadFileSize% bytes). La dimensione massima consentita è% maxFileSize% bytes.'
+          format_error: 'Questo formato non è supportato!'
           resolution:
-            error: 'Si possono solamente caricare dei file con la dimensione di %screenshotHeight% x %screenshotWidth% pixel  o  piu grande. Il file da lei caricato ha la dimensione di %uploadWidth% x %uploadHeighth% Pixel.'
+            error: 'Si possono solamente caricare dei file con la dimensione di %screenshotHeight% x %screenshotWidth% pixel  o più grande. Il file caricato ha la dimensione di %uploadWidth% x %uploadHeighth% pixel.'
 form:
   manager:
     admin:
       application:
         export:
-          application: Applications
+          application: Applicazioni

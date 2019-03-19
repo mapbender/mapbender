@@ -1,7 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use FOM\ManagerBundle\Component\ManagerBundle;
+use Mapbender\ManagerBundle\Component\ManagerBundle;
 
 /**
  * The base bundle class for all Mapbender3 bundles.

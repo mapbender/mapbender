@@ -141,17 +141,23 @@ class WmsLoader extends Element
         return 'MapbenderWmsBundle:ElementAdmin:wmsloader.html.twig';
     }
 
+    public function getFrontendTemplatePath($suffix = '.html.twig')
+    {
+        return 'MapbenderWmsBundle:Element:wmsloader.html.twig';
+    }
+
     /**
      * @inheritdoc
      */
     public function render()
     {
         return $this->container->get('templating')
-            ->render('MapbenderWmsBundle:Element:wmsloader.html.twig', array(
+            ->render($this->getFrontendTemplatePath(), array(
                 'id' => $this->getId(),
                 "title" => $this->getTitle(),
                 'example_url' => $this->container->getParameter('wmsloader.example_url'),
-                'configuration' => $this->getConfiguration()));
+                'configuration' => $this->getConfiguration(),
+        ));
     }
 
     /**
@@ -166,43 +172,28 @@ class WmsLoader extends Element
                 return new JsonResponse(array(
                     'success' => $this->getDatabaseInstanceConfigs($instanceIds),
                 ));
-            // Compatibility bridge for team Wmts: forward to potentailly customized
-            // httpAction even if handleHttpRequest was not replaced
-            default:
-                return $this->httpAction($action);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function httpAction($action)
-    {
-        switch ($action) {
             case 'loadWms':
-                return $this->loadWms();
+                return $this->loadWms($request);
             default:
-                throw new NotFoundHttpException('No such action');
+                throw new NotFoundHttpException("Unknown action {$action}");
         }
     }
 
-    protected function loadWms()
+    protected function loadWms(Request $request)
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
         $wmsSource = $this->getWmsSource($request);
 
         $wmsSourceEntityHandler = new WmsSourceEntityHandler($this->container, $wmsSource);
         $wmsInstance = $wmsSourceEntityHandler->createInstance();
         $sourceService = $this->getSourceService($wmsInstance);
         $layerConfiguration = $sourceService->getConfiguration($wmsInstance);
-        $elementConfig = $this->getConfiguration();
-        if ($elementConfig['splitLayers']) {
+        $config = array_replace($this->getDefaultConfiguration(), $this->entity->getConfiguration());
+        if ($config['splitLayers']) {
             $layerConfigurations = $this->splitLayers($layerConfiguration);
         } else {
             $layerConfigurations = [$layerConfiguration];
         }
         // amend info_format and format options
-        $config = array_replace($this->getDefaultConfiguration(), $this->entity->getConfiguration());
         foreach ($layerConfigurations as &$layerConfiguration) {
             $layerConfiguration['configuration']['options']['info_format'] = $config['defaultInfoFormat'];
             $layerConfiguration['configuration']['options']['format'] = $config['defaultFormat'];
@@ -211,6 +202,11 @@ class WmsLoader extends Element
         return new JsonResponse($layerConfigurations);
     }
 
+    /**
+     * @param Request $request
+     * @return \Mapbender\WmsBundle\Entity\WmsSource
+     * @throws \Mapbender\CoreBundle\Component\Exception\XmlParseException
+     */
     protected function getWmsSource($request)
     {
         $requestUrl = $request->get("url");

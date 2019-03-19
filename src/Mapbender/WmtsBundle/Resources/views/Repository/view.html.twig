@@ -1,0 +1,132 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% import "MapbenderWmtsBundle:Repository:macros.html.twig" as view %}
+
+{% block title %}{{ wmts.type }} {{ wmts.title }}{% endblock %}
+
+{% block css %}
+  {{parent()}}
+{% endblock %}
+
+{% block manager_js %}
+    <script type="text/javascript" src="{{ asset('bundles/mapbenderwmts/repository/repository.js') }}"></script>
+{% endblock %}
+
+{% block manager_content %}
+
+<a class="button right" title="{{"mb.wmts.wmtsloader.repo.view.label.backtoservicelist" | trans}}" href="{{ path('mapbender_manager_repository_index') }}">Back</a>
+
+<div id="serviceTabContainer" class="tabContainer">
+  <ul class="tabs">
+    <li id="tabMetaData" class="tab active">{{"mb.wmts.wmtsloader.repo.view.label.metadata" | trans }}</li>
+    <li id="tabContact" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.contact" | trans }}</li>
+    <li id="tabService" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.details" | trans }}</li>
+    <li id="tabLayers" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.layers" | trans }}</li>
+    <li id="tabMatrixsets" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.matrixsets" | trans }}</li>
+    <li id="tabTheme" class="tab">{{"mb.wmts.wmtsloader.repo.view.label.theme" | trans }}</li>
+  </ul>
+  <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.title" | trans }}:</div><div class="metaText">{{ wmts.title }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.name" | trans }}:</div><div class="metaText">ToDo{#{ wmts.name }#}</div>
+    <div class="clearContainer"></div>
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.version" | trans }}:</div><div class="metaText">{{ wmts.version }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.originurl" | trans }}:</div><div class="metaText metaUrl">{{ wmts.originUrl }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.abstract" | trans }}:</div><div class="metaText">{{ wmts.description }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidername" | trans }}:</div><div class="metaText">{{ wmts.serviceProviderName }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidersite" | trans }}:</div><div class="metaText">{{ wmts.serviceProviderSite }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.accessconstraints" | trans }}:</div><div class="metaText">{{ wmts.accessConstraints }}</div>
+    <div class="clearContainer"></div>
+  </div>
+  <div id="containerContact" class="container serviceContainer serviceContactContainer">
+    {% if wmts.contact is not null %}
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.person" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.person }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.organization" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.organization }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.position" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.position }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.telephone" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.voiceTelephone }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.facsimile" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.facsimileTelephone }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.email" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.electronicMailAddress }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.address" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.address }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.addresstype" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.addressType }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.city" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.addressCity }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.state" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.addressStateOrProvince }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.postcode" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.addressPostcode }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelText">{{ "mb.wmts.wmtsloader.repo.view.label.country" | trans }}:</div>
+    <div class="metaText">{{ wmts.contact.addressCountry }}</div>
+    <div class="clearContainer"></div> {# #}
+    {% endif %}
+  </div>
+  <div id="containerService" class="container serviceContainer serviceServiceContainer">
+  <ul class="itemLevel0 list">
+      <li>
+          <span class="labelText left">{{ "mb.wmts.wmtsloader.repo.view.label.version" | trans }}:</span>
+          <span class="metaText">{{ wmts.version }}</span>
+      </li>
+      {% if wmts.getCapabilities is not empty %}
+          <li>{{ view.requestinformation(wmts.getCapabilities, "GetCapabilities") }}</li>
+      {% endif %}
+      {% if wmts.getTile is not empty %}
+          <li>{{ view.requestinformation(wmts.getTile, "GetMap") }}</li>
+      {% endif %}
+
+      {% if wmts.getFeatureinfo is not empty %}
+          <li>{{ view.requestinformation(wmts.getFeatureinfo, "GetFeatureinfo") }}</li>
+      {% endif %}
+  </ul>
+  </div>
+  <div id="containerLayers" class="container serviceContainer serviceLayersContainer">
+    {% for layer in wmts.layers %}
+      {% include "MapbenderWmtsBundle:Repository:layer.html.twig"  with {'layer': layer, 'itemLevel': 1 }%}
+    {% endfor %}
+  </div>
+  <div id="containerMatrixsets" class="container serviceContainer serviceLayersContainer">
+    {% for tilematrixset in wmts.tilematrixsets %}
+      {% include "MapbenderWmtsBundle:Repository:tilematrixset.html.twig"  with {'tilematrixset': tilematrixset, 'itemLevel': 1 }%}
+    {% endfor %}
+  </div>
+  <div id="containerTheme" class="container serviceContainer serviceLayersContainer">
+    {% for theme in wmts.themes %}
+      {% include "MapbenderWmtsBundle:Repository:theme.html.twig"  with {'theme': theme, 'itemLevel': 1 }%}
+    {% endfor %}
+  </div>
+</div>
+<div class="clearContainer"></div>
+
+{% endblock %}

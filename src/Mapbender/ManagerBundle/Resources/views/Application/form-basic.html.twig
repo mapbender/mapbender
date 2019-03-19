@@ -1,37 +1,32 @@
-<label class="left labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.title" | trans}}:<span class="required">*</span></label>
-{{ form_widget(form.title) }}
-<div class="clearContainer"></div>
-<label class="left labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.url.title" | trans}}:<span class="required">*</span></label>
-{{ form_widget(form.slug) }}<br>
-<div class="clearContainer"></div>
-
-<div class="left">
-    {{ form_label(form.screenshotFile) }}
+<div class="form-group">
+    {{ form_row(form.title) }}
+</div>
+<div class="form-group">
+    {{ form_row(form.slug) }}
 </div>
 
-<div class="screenshot_upload left"  title=" {{ 'mb.manager.admin.application.upload.tooltip' | trans }}">
-    <div class="upload left">
-        <div class="label left upload_button">
-            {{ 'mb.manager.admin.application.upload.button' | trans }}
+<div class="form-group">
+    {{ form_label(form.screenshotFile) }}
+
+    <div class="screenshot_upload" title=" {{ 'mb.manager.admin.application.upload.tooltip' | trans }}">
+        <div class="upload">
+            <span class="label button upload_button">
+                {{ 'mb.manager.admin.application.upload.button' | trans }}
+            </span>
+            <span class="upload_label">
+                {{ screenshot_filename | default('mb.manager.admin.application.upload.label' | trans) }}
+            </span>
+            {{ form_widget(form.screenshotFile) }}
+            <div class="validationMsgBox smallText hidden"></div>
+            {{ form_widget(form.maxFileSize) }}
+            {{ form_widget(form.screenshotWidth) }}
+            {{ form_widget(form.screenshotHeight) }}
+
         </div>
-        <div class="label right input upload_label">
-            {% if screenshot_filename is not null  %}
-                {{screenshot_filename}}
-            {%else%}
-                {{ 'mb.manager.admin.application.upload.label' | trans }}
-            {% endif %}
-        </div>
-        {{ form_widget(form.screenshotFile) }}
-        {{ form_widget(form.maxFileSize) }}
-        {{ form_widget(form.screenshotWidth) }}
-        {{ form_widget(form.screenshotHeight) }}
-        
     </div>
 </div>
-<div class="clearContainer"></div>
-
-<label class="left labelInput" for="{{ form.title.vars.id }}">{{"mb.manager.admin.application.description" | trans}}</label>
-{{ form_widget(form.description) }}
-
+<div class="form-group">
+    {{ form_row(form.description) }}
+</div>
 {{ form_widget(form.removeScreenShot) }}
 {{ form_widget(form.uploadScreenShot) }}

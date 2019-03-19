@@ -1,84 +1,48 @@
-(function($) {
+(function($){
 
     $.widget("mapbender.mbRuler", {
-        options:                {
-            target:    null,
-            click:     undefined,
-            icon:      undefined,
-            label:     true,
-            group:     undefined,
+        options: {
+            target: null,
+            click: undefined,
+            icon: undefined,
+            label: true,
+            group: undefined,
             immediate: null,
-            persist:   true,
-            type:      'line',
+            persist: true,
+            type: 'line',
             precision: 2
         },
-        control:                null,
-        map:                    null,
-        segments:               null,
-        total:                  null,
-        container:              null,
-        active:                 false,
-        popup:                  null,
-        featureVeriticesLength: 2,
-        typeMap:                {
-            line: {
-                name:          'LineString',
-                startVertices: 4,
-                increase:      2
-            },
-            area: {
-                name:          'Polygon',
-                startVertices: 6,
-                increase:      2
-            }
-        },
-        _create:                function() {
+        control: null,
+        segments: null,
+        total: null,
+        container: null,
+        popup: null,
+        mapModel: null,
+        _create: function(){
             var self = this;
-            if(this.options.type !== 'line' && this.options.type !== 'area') {
+            if(this.options.type !== 'line' && this.options.type !== 'area'){
                 throw Mapbender.trans("mb.core.ruler.create_error");
             }
-            if(!Mapbender.checkTarget("mbRuler", this.options.target)) {
-                return;
-            }
-
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self._setup(mbMap);
+            }, function() {
+                Mapbender.checkTarget("mbRuler", self.options.target);
+            });
         },
         /**
          * Initializes the overview
          */
-        _setup:                 function() {
-
-            this.container = $('<div/>');
-            this.total = $('<div/>').appendTo(this.container);
-            this.segments = $('<ul/>').appendTo(this.container);
-
-            this._trigger('ready');
-        },
-        /**
-         * Default action for mapbender element
-         */
-        defaultAction:          function() {
-            this.activate();
-        },
-
-        /**
-         * This activates this button and will be called on click
-         */
-        activate:    function() {
-
-            if(this.active) {
-                this.popup.close("");
-                return false;
-            }
-            this.active = true;
-            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
-            var id = Mapbender.UUID();
-            this.id = id;
-            var model = this.map.model;
+        _setup: function(mbMap) {
+            this.mapModel = mbMap.getModel();
+            var model = this.mapModel;
+            var sm = $.extend(true, {}, OpenLayers.Feature.Vector.style, {
+                'default': this.options.style
+            });
+            var immediate = this.options.immediate || false;
 
             var type = this.typeMap[this.options.type].name;
 
-            this.layerId = model.createDrawControl(type, id, {
+            this.layerId = this.mapModel.createDrawControl(type, id, {
                 events: {
                     'drawstart': function(event) {
                         var obvservable = {value: null};
@@ -107,9 +71,32 @@
                 }
             });
 
-            this._reset();
+            this.container = $('<div/>');
+            this.total = $('<div/>').appendTo(this.container);
+            this.segments = $('<ul/>').appendTo(this.container);
 
-            if(!this.popup || !this.popup.$element) {
+            $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
+            
+            this._trigger('ready');
+        },
+        /**
+         * Default action for mapbender element
+         */
+        defaultAction: function(callback){
+            this.activate(callback);
+        },
+        /**
+         * This activates this button and will be called on click
+         */
+        activate: function(callback){
+            this.callback = callback ? callback : null;
+            var self = this,
+                    olMap = this.mapModel.map.olMap;
+            olMap.addControl(this.control);
+            this.control.activate();
+
+            this._reset();
+            if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
                     modal: false,
@@ -117,56 +104,63 @@
                     resizable: true,
                     closeOnESC: true,
                     destroyOnClose: true,
-                    content:        this.container,
-                    width:          300,
-                    height:         300,
-                    buttons:        {
+                    content: self.container,
+                    width: 300,
+                    height: 300,
+                    buttons: {
                         'ok': {
-                            label:    Mapbender.trans("mb.core.ruler.popup.btn.ok"),
+                            label: Mapbender.trans("mb.core.ruler.popup.btn.ok"),
                             cssClass: 'button right',
-                            callback: function() {
-
-                                this.popup.close("");
-                            }.bind(this)
+                            callback: function(){
+                                self.deactivate();
+                            }
                         }
                     }
                 });
-                this.popup.$element.on('close', this.deactivate.bind(this));
-            } else {
+                this.popup.$element.on('close', $.proxy(this.deactivate, this));
+            }else{
                 this.popup.open("");
             }
 
-            (this.options.type === 'line') ? $("#linerulerButton").parent().addClass("toolBarItemActive") : $("#arearulerButton").parent().addClass("toolBarItemActive");
+            (this.options.type === 'line') ?
+                    $("#linerulerButton").parent().addClass("toolBarItemActive") :
+                    $("#arearulerButton").parent().addClass("toolBarItemActive");
         },
         /**
          * This deactivates this button and will be called if another button of
          * this group is activated.
          */
-        deactivate:  function() {
-            if(this.active){
-                this.active = false;
-                this.map.model.removeAllFeaturesFromLayer(this.id, this.layerId);
-                this.map.model.removeVectorLayer(this.id, this.layerId);
-                $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
+        deactivate: function(){
+            this.container.detach();
+            this.map.model.removeAllFeaturesFromLayer(this.id, this.layerId);
+            this.map.model.removeVectorLayer(this.id, this.layerId);
+            $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
+            if(this.popup && this.popup.$element){
+                this.popup.destroy();
+            }
+            this.popup = null;
+            this.callback ? this.callback.call() : this.callback = null;
+        },
+        _mapSrsChanged: function(event, srs){
+            if (this.control) {
+                this._reset();
             }
         },
-
-        _reset:         function() {
-            this.map.model.removeAllFeaturesFromLayer(this.id, this.layerId);
+        _reset: function(){
             this.segments.empty();
             this.total.empty();
-            //this.segments.append('<li/>');
+            this.segments.append('<li/>');
 
         },
-        _handleModify:  function(measure) {
-
-            measure = this.formatLength(measure);
-            if(this.options.immediate) {
-                this.segments.children('li').first().html(measure);
+        _handleModify: function(event){
+            if(event.measure === 0.0){
+                return;
             }
 
-            if($('body').data('mapbenderMbPopup')) {
-                $("body").mbPopup('setContent', measure);
+            var measure = this._getMeasureFromEvent(event);
+
+            if(this.control.immediate){
+                this.segments.children('li').first().html(measure);
             }
         },
         _handlePartial: function(measure) {
@@ -174,32 +168,41 @@
             if(!this.options.immediate && this.featureVeriticesLength <= this.typeMap[this.options.type].startVertices + this.typeMap[this.options.type].increase) {
                 return false;
             }
-            if(this.options.type === 'area') {
-                this.segments.html($('<li/>', {html: measure}));
-            } else if(this.options.type === 'line') {
 
+            var measure = this._getMeasureFromEvent(event);
+            if(this.options.type === 'area'){
+                this.segments.html($('<li/>', { html: measure }));
+            } else if(this.options.type === 'line'){
                 var measureElement = $('<li/>');
-                measureElement.text(measure);
+                measureElement.html(measure);
                 this.segments.prepend(measureElement);
-
             }
         },
-        _handleFinal:   function(measure) {
-
+        _handleFinal: function(measure) {
             if(this.options.type === 'area') {
                 this.segments.empty();
                 var measureElement = $('<li/>');
                 measureElement.text(this.formatLength(measure));
                 this.segments.prepend(measureElement);
             }
-
             this.segments.children().first().wrap('<b>');
+            this.total.html('<b>'+measure+'</b>');
         },
+        _getMeasureFromEvent: function(event){
+            var measure = event.measure,
+                    units = event.units,
+                    order = event.order;
 
+            measure = measure.toFixed(this.options.precision) + " " + units;
+            if(order > 1){
+                measure += "<sup>" + order + "</sup>";
+            }
+            return measure;
+        },
         formatLength: function(length) {
             var unit = (this.options.type === 'line') ? ' km' : ' km²';
             return (length / 1000).toFixed(this.options.precision) + unit;
         }
-
     });
+
 })(jQuery);

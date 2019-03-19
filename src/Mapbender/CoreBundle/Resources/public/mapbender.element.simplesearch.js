@@ -10,18 +10,10 @@ $.widget('mapbender.mbSimpleSearch', {
     layer: null,
     iconStyle: null,
 
-    /**
-     * @var {Mapbender.Model}
-     */
-    model: null,
-
     _create: function() {
         var self = this;
         var searchInput = $('.searchterm', this.element);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
-
-        var mbMap = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
-        this.model = mbMap.model;
 
         // Set up autocomplete
         this.autocomplete = new Mapbender.Autocomplete(searchInput, {
@@ -59,11 +51,12 @@ $.widget('mapbender.mbSimpleSearch', {
                 bounds.left -= self.options.result.buffer;
             }
 
-            var extentResolution = self.model.getResolutionForExtent(bounds);
-            var zoom = self.model.getZoomForResolution(extentResolution);
+            var zoom = self.model.getZoomForExtent(bounds);
 
             // restrict zoom if needed
             if(self.options.result && (self.options.result.maxscale || self.options.result.minscale)){
+                var res = olMap.getResolutionForZoom(zoom);
+                var units = olMap.baseLayer.units;
 
                 if(self.options.result.maxscale) {
                     var maxRes = self.model.scaleToResolution(self.options.result.maxscale);
@@ -101,8 +94,15 @@ $.widget('mapbender.mbSimpleSearch', {
                             !isNaN(y) ? y : 0
                         ];
 
+                        // 4
                         self.iconStyle = self.model.createIconStyle({src: image.src, size: size, offset: offset});
                         self.layer = self.model.setMarkerOnCoordinates(coordinates, self.element.attr('id'), self.layer, self.iconStyle);
+                        // 2
+                        var icon = new OpenLayers.Icon(image.src, size, offset);
+                        self.marker = new OpenLayers.Marker(bounds.getCenterLonLat(), icon);
+                        self.layer = new OpenLayers.Layer.Markers();
+                        olMap.addLayer(self.layer);
+                        self.layer.addMarker(self.marker);
                     };
 
                     var image = new Image();
@@ -116,9 +116,7 @@ $.widget('mapbender.mbSimpleSearch', {
             }
 
             // finally, zoom
-            self.model.setCenter(coordinates);
-            self.model.zoomToExtent(bounds);
-            self.model.setZoom(zoom);
+            Mapbender.Model.center(bounds.getCenterLonLat, zoom);
         });
     },
 

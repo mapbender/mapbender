@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Asset;
 use Assetic\Asset\StringAsset;
 use Mapbender\CoreBundle\Component\ElementFactory;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -24,6 +25,8 @@ class ApplicationAssetService
 {
     /** @var ApplicationService */
     protected $applicationService;
+    /** @var TypeDirectoryService */
+    protected $sourceTypeDirectory;
     /** @var ElementFactory */
     protected $elementFactory;
     /** @var RouterInterface */
@@ -35,24 +38,26 @@ class ApplicationAssetService
     /** @var EngineInterface */
     protected $templateEngine;
     /** @var bool */
-    protected $minifyCss;
+    protected $debug;
     /** @var bool */
     protected $strict;
 
     public function __construct(AssetFactory $compiler,
                                 ApplicationService $applicationService,
+                                TypeDirectoryService $sourceTypeDirectory,
                                 ElementFactory $elementFactory,
                                 RouterInterface $router,
                                 EngineInterface $templateEngine,
-                                $minifyCss=false,
+                                $debug=false,
                                 $strict=false)
     {
         $this->compiler = $compiler;
-        $this->elementFactory = $elementFactory;
         $this->applicationService = $applicationService;
+        $this->sourceTypeDirectory = $sourceTypeDirectory;
+        $this->elementFactory = $elementFactory;
         $this->router = $router;
         $this->templateEngine = $templateEngine;
-        $this->minifyCss = $minifyCss;
+        $this->debug = $debug;
         $this->strict = $strict;
         $this->dummyContainer = new Container();
         $this->dummyContainer->set('templating', new \stdClass());
@@ -129,10 +134,11 @@ class ApplicationAssetService
             case 'css':
                 $sourcePath = $this->getCssAssetSourcePath();
                 $targetPath = $this->getCssAssetTargetPath($application);
-                return $this->compiler->compileCss($refs, $sourcePath, $targetPath, $this->minifyCss);
+                return $this->compiler->compileCss($refs, $sourcePath, $targetPath, $this->debug);
             case 'js':
-                return $this->compiler->compileRaw($refs);
+                return $this->compiler->compileRaw($refs, $this->debug);
             case 'trans':
+                // JSON does not support embedded comments, so ignore $debug here
                 return $this->compiler->compileTranslations($refs);
             default:
                 throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
@@ -146,6 +152,7 @@ class ApplicationAssetService
      */
     public function getMapEngineAssetReferences(Entity\Application $application, $type)
     {
+
         $engineCode = $application->getMapEngineCode();
         switch ($engineCode) {
             case 'mq-ol2':
@@ -153,11 +160,13 @@ class ApplicationAssetService
                     case 'js':
                         $commonAssets = array(
                             '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
+                            '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
                             '@MapbenderCoreBundle/Resources/public/init/projection.js',
+                            '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
+                            '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
+                            '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                             '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
-                            '/components/mapquery/lib/openlayers/OpenLayers.js',
-                            '../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',   // mapquery dependency
-                            '/components/mapquery/src/jquery.mapquery.core.js',
+                            '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
                         );
                         break;
                     default:
@@ -169,7 +178,7 @@ class ApplicationAssetService
                 $coreBundleBase = '@MapbenderCoreBundle/Resources/public';
                 switch ($type) {
                     case 'js':
-                        if ($this->minifyCss) {
+                        if (!$this->debug) {
                             $ol4 = '/components/openlayers/ol.js';
                             $proj4js = '/components/proj4js/dist/proj4.js';
                         } else {
@@ -215,11 +224,13 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
+                    '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/polyfills.js',
                     '/components/underscore/underscore-min.js',
                     '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
                     '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 );
                 break;
@@ -268,22 +279,15 @@ class ApplicationAssetService
      */
     protected function getLayerAssetReferences(Entity\Application $application, $type)
     {
-        $activeInstances = array();
-        foreach ($application->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
-                if ($application->isYamlBased() || $instance->getEnabled()) {
-                    $activeInstances[] = $instance;
-                }
-            }
+        switch ($type) {
+            case 'js':
+            case 'trans':
+                return $this->sourceTypeDirectory->getAssets($application, $type);
+            case 'css':
+                return array();
+            default:
+                throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));
         }
-        $combinedRefs = array();
-        foreach ($activeInstances as $sourceInstance) {
-            /** @var Entity\SourceInstance $sourceInstance */
-            $instanceRefs = ArrayUtil::getDefault($sourceInstance->getAssets() ?: array(), $type, array());
-            $qualifiedRefs = $this->qualifyAssetReferencesBulk($sourceInstance, $instanceRefs, $type);
-            $combinedRefs = array_merge($combinedRefs, $qualifiedRefs);
-        }
-        return $combinedRefs;
     }
 
     /**

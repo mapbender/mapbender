@@ -23,20 +23,22 @@
         contentManager: null,
 
         _create: function() {
-            if (!Mapbender.checkTarget("mbFeatureInfo", this.options.target)) {
-                return;
-            }
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            var self = this;
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self._setup(mbMap);
+            }, function() {
+                Mapbender.checkTarget("mbFeatureInfo", self.options.target);
+            });
         },
 
-        _setup: function() {
+        _setup: function(mbMap) {
             var widget = this;
             var options = widget.options;
             var widgetElement = widget.element;
-            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
-            widget.target = this.map;
-
-            widgetElement.addClass('display-as-' + options.displayType);
+            this.target = mbMap;
+            widget.mapClickHandler = new OpenLayers.Handler.Click(widget,
+                {'click': widget._triggerFeatureInfo},
+                {map: this.target.map.olMap});
 
             if (options.autoActivate || options.autoOpen){ // autoOpen old configuration
                 widget.activate();
@@ -74,10 +76,19 @@
             });
             widget._trigger('ready');
         },
-        _contentRef: function(mqLayer){
+        _contentElementId: function(source) {
+            // @todo: stop using mapqueryish stuff
+            var id0 = source.mqlid;
+            var id = this._getContentManager().contentId(id0);
+            // verify element is in DOM
+            if ($('#' + id, this._getContext()).length) {
+                return id;
+            }
+        },
+        _contentRef: function(layerId) {
             var $context = this._getContext();
             var manager = this._getContentManager();
-            return $('#' + manager.contentId(mqLayer.id), $context);
+            return $('#' + manager.contentId(layerId), $context);
         },
         /**
          * Default action for mapbender element
@@ -86,32 +97,23 @@
             this.activate(callback);
         },
         activate: function(callback) {
-            var widget = this;
-            var options = widget.options;
-            var mapElement = $('#' + options.target);
-
-            widget.callback = callback ? callback : null;
-            mapElement.addClass('mb-feature-info-active');
+            this.callback = callback;
+            this.target.element.addClass('mb-feature-info-active');
             this._setupMapClickHandler();
         },
         deactivate: function() {
             var widget = this;
-            var element = widget.element;
-            var options = widget.options;
-            var mapElement = $('#' + options.target);
-
             widget._trigger('featureinfo', null, {
                 action: "deactivate",
-                title: element.attr('title'),
-                id: element.attr('id')
+                title: this.element.attr('title'),
+                id: this.element.attr('id')
             });
 
-            mapElement.removeClass('mb-feature-info-active');
+            this.target.element.removeClass('mb-feature-info-active');
 
-            $(".toolBarItemActive").removeClass("toolBarItemActive");
             if (widget.popup) {
                 if (widget.popup.$element) {
-                    $('body').append(element.addClass('hidden'));
+                    $('body').append(this.element.addClass('hidden'));
                     widget.popup.destroy();
                 }
                 widget.popup = null;
@@ -147,13 +149,20 @@
             this.queries = {};
             $('#js-error-featureinfo').addClass('hidden');
             $.each(this.map.model.collectFeatureInfoObjects(e.coordinate), function(idx, obj) {
-                obj.label = obj.source.configuration.title;
-                obj.id = "-" + obj.source.id;
-                self.queries[obj.id] = obj.url;
-
-                if (!self.options.onlyValid) {
-                    self._addContent(obj, 'wird geladen');
-                    self._open();
+                var layerTitle = self._getTabTitle(src);
+                if (Mapbender.source[src.type]) {
+                    var url = Mapbender.source[src.type].featureInfoUrl(src, x, y);
+                    if (url) {
+                        self.queries[src.mqlid] = url;
+                        if (!self.options.onlyValid) {
+                            self._addContent(src.mqlid, layerTitle, 'wird geladen');
+                            self._open();
+                        }
+                        called = true;
+                        self._setInfo(src, url);
+                    } else {
+                        self._removeContent(src.mqlid);
+                    }
                 }
 
                 called = true;
@@ -168,21 +177,27 @@
             var src = url ? (' src="' + url + '"') : '';
             return '<iframe class="featureInfoFrame"' + id + src + '></iframe>'
         },
-        _setInfo: function(mqLayer, url) {
+        _getTabTitle: function(source) {
+            // @todo: Practically the last place that uses the instance title. Virtually everywhere else we use the
+            //  title of the root layer. This should be made consistent one way or the other.
+            return source.configuration.title;
+        },
+        _setInfo: function(source, url) {
             var self = this;
+            var layerTitle = this._getTabTitle(source);
             var contentType_ = "";
-            if (typeof (mqLayer.source.configuration.options.info_charset) !== 'undefined') {
+            if (typeof (source.configuration.options.info_charset) !== 'undefined') {
                 contentType_ += contentType_.length > 0 ? ";"
-                    : "" + mqLayer.source.configuration.options.info_charset;
+                    : "" + source.configuration.options.info_charset;
             }
             var ajaxOptions = {
                 url: url,
                 contentType: contentType_
             };
-            var useProxy = mqLayer.source.configuration.options.proxy;
+            var useProxy = source.configuration.options.proxy;
             // also use proxy on different host / scheme to avoid CORB
             useProxy |= !Mapbender.Util.isSameSchemeAndHost(url, window.location.href);
-            if (useProxy && !mqLayer.source.configuration.options.tunnel) {
+            if (useProxy && !source.configuration.options.tunnel) {
                 ajaxOptions.data = {
                     url: ajaxOptions.url
                 };
@@ -192,14 +207,14 @@
             request.done(function(data, textStatus, jqXHR) {
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 if (self.options.showOriginal) {
-                    self._showOriginal(mqLayer, data, mimetype);
+                    self._showOriginal(source, layerTitle, data, mimetype);
                 } else {
-                    self._showEmbedded(mqLayer, data, mimetype);
+                    self._showEmbedded(source, layerTitle, data, mimetype);
                 }
             });
             request.fail(function(jqXHR, textStatus, errorThrown) {
-                Mapbender.info(mqLayer.label + ' GetFeatureInfo: ' + errorThrown);
-                self._addContent(mqLayer, errorThrown);
+                Mapbender.info(layerTitle + ' GetFeatureInfo: ' + errorThrown);
+                self._addContent(source.mqlid, layerTitle, errorThrown);
             });
         },
         _isDataValid: function(data, mimetype) {
@@ -212,20 +227,31 @@
                     return true;
             }
         },
-        _showOriginal: function(mqLayer, data, mimetype) {
-            var self = this;
-            if (this.options.onlyValid && !this._isDataValid(data, mimetype)) {
-                this._removeContent(mqLayer);
-                Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                return;
-            }
+        _triggerHaveResult: function(source) {
             var eventData = {
                 action: "haveresult",
-                title: self.element.attr('title'),
-                content: self._contentRef(mqLayer).attr('id'),
-                mqlid: mqLayer.id,
-                id: self.element.attr('id')
+                title: this.element.attr('title'),
+                content: this._contentElementId(source),
+                source: source,
+                id: this.element.attr('id')
             };
+            Object.defineProperty(eventData, 'mqlid', {
+                enumerable: true,
+                get: function() {
+                    console.warn("You are accessing the legacy .mqlid property on feature info event data. Please access the also provided source object instead")
+                    return this.source.mqlid;
+                }
+            });
+            this._trigger('featureinfo', null, eventData);
+        },
+        _showOriginal: function(source, layerTitle, data, mimetype) {
+            var self = this;
+            var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
+            if (this.options.onlyValid && !this._isDataValid(data, mimetype)) {
+                this._removeContent(layerId);
+                Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                return;
+            }
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
@@ -233,16 +259,16 @@
                     this._open();
                     var uuid = Mapbender.Util.UUID();
                     var iframe = $(self._getIframeDeclaration(uuid, null));
-                    self._addContent(mqLayer, iframe);
+                    self._addContent(layerId, layerTitle, iframe);
                     var doc = document.getElementById(uuid).contentWindow.document;
                     iframe.on('load', function() {
                         if (Mapbender.Util.addDispatcher) {
                            Mapbender.Util.addDispatcher(doc);
                         }
                         iframe.data('loaded', true);
-                        $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
+                        $('#' + self._getContentManager().headerId(layerId), self.element).click();
                         iframe.contents().find("body").css("background","transparent");
-                        self._trigger('featureinfo', null, eventData);
+                        self._triggerHaveResult(source);
                     });
                     doc.open();
                     doc.write(data);
@@ -250,47 +276,36 @@
                     break;
                 case 'text/plain':
                 default:
-                    this._addContent(mqLayer, '<pre>' + data + '</pre>');
-                    this._trigger('featureinfo', null, eventData);
+                    this._addContent(layerId, layerTitle, '<pre>' + data + '</pre>');
+                    this._triggerHaveResult(source);
                     this._open();
                     break;
             }
         },
-        _showEmbedded: function(mqLayer, data, mimetype) {
+        _showEmbedded: function(source, layerTitle, data, mimetype) {
+            var layerId = source.mqlid; // @todo: stop using mapquery-specific stuff
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
                     var self = this;
                     data = this._cleanHtml(data);
                     if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
-                        this._addContent(mqLayer, data);
-                        this._trigger('featureinfo', null, {
-                            action: "haveresult",
-                            title: this.element.attr('title'),
-                            content: this._contentRef(mqLayer).attr('id'),
-                            mqlid: mqLayer.id,
-                            id: this.element.attr('id')
-                        });
+                        this._addContent(layerId, layerTitle, data);
+                        this._triggerHaveResult(source);
                         this._open();
-                        $('#' + self._getContentManager().headerId(mqLayer.id), self.element).click();
+                        $('#' + self._getContentManager().headerId(layerId), self.element).click();
                     } else {
-                        this._removeContent(mqLayer);
-                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                        this._removeContent(layerId);
+                        Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
                 case 'text/plain':
                 default:
                     if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
-                        this._addContent(mqLayer, '<pre>' + data + '</pre>');
-                        this._trigger('featureinfo', null, {
-                            action: "haveresult",
-                            title: this.element.attr('title'),
-                            content: this._contentRef(mqLayer).attr('id'),
-                            mqlid: mqLayer.id,
-                            id: this.element.attr('id')
-                        });
+                        this._addContent(layerId, layerTitle, '<pre>' + data + '</pre>');
+                        this._triggerHaveResult(source);
                     } else {
-                        this._setContentEmpty(mqLayer.id);
-                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                        this._setContentEmpty(layerId);
+                        Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
             }
@@ -405,12 +420,12 @@
         _selectorSelfAndSub: function(idStr, classSel) {
             return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
         },
-        _removeContent: function(mqLayer) {
+        _removeContent: function(layerId) {
             var $context = this._getContext();
             var manager = this._getContentManager();
-            $(this._selectorSelfAndSub(manager.headerId(mqLayer.id), manager.headerContentSel), $context).remove();
-            $(this._selectorSelfAndSub(manager.contentId(mqLayer.id), manager.contentContentSel), $context).remove();
-            delete(this.queries[mqLayer.id]);
+            $(this._selectorSelfAndSub(manager.headerId(layerId), manager.headerContentSel), $context).remove();
+            $(this._selectorSelfAndSub(manager.contentId(layerId), manager.contentContentSel), $context).remove();
+            delete(this.queries[layerId]);
             for (var prop in this.queries) {
                 return;
             }
@@ -427,29 +442,31 @@
                 $(manager.contentSel, manager.$contentParent).remove();
             }
         },
-        _addContent: function(mqLayer, content) {
+        _addContent: function(layerId, layerTitle, content) {
             var $context = this._getContext();
             var manager = this._getContentManager();
-            var $header = $('#' + manager.headerId(mqLayer.id), $context);
+            var headerId = manager.headerId(layerId);
+            var contentId = manager.contentId(layerId);
+            var $header = $('#' + headerId, $context);
             if ($header.length === 0) {
                 $header = manager.$header.clone();
-                $header.attr('id', manager.headerId(mqLayer.id));
+                $header.attr('id', headerId);
                 manager.$headerParent.append($header);
             }
-            $(this._selectorSelfAndSub(manager.headerId(mqLayer.id), manager.headerContentSel), $context).text(
-                mqLayer.label);
-            var $content = $('#' + manager.contentId(mqLayer.id), $context);
+            $(this._selectorSelfAndSub(headerId, manager.headerContentSel), $context).text(layerTitle);
+            var $content = $('#' + contentId, $context);
             if ($content.length === 0) {
                 $content = manager.$content.clone();
-                $content.attr('id', manager.contentId(mqLayer.id));
+                $content.attr('id', contentId);
                 manager.$contentParent.append($content);
             }
-            $(this._selectorSelfAndSub(manager.contentId(mqLayer.id), manager.contentContentSel), $context)
+            $(this._selectorSelfAndSub(contentId, manager.contentContentSel), $context)
                 .empty().append(content);
             if (this.options.displayType === 'tabs' || this.options.displayType === 'accordion') {
+                var $tabcont;
                 initTabContainer($context);
                 if(this.options.displayType === 'tabs') {
-                    var $tabcont = $header.parents('.tabContainer:first');
+                    $tabcont = $header.parents('.tabContainer:first');
                     $('.tabs .tab', $tabcont).each(function(idx, item){
                         $(item).removeClass('active');
                     });
@@ -459,12 +476,12 @@
                     });
                     $('#container' + $header.attr('id').replace('tab', ''), $tabcont).addClass('active');
                 } else if (this.options.displayType === 'accordion') {
-                    var $tabcont = $header.parents('.accordionContainer:first');
+                    $tabcont = $header.parents('.accordionContainer:first');
                     $('.accordion', $tabcont).each(function(idx, item){
                         $(item).removeClass('active');
                     });
                     $header.addClass('active');
-                    $('.container', $tabcont).each(function(idx, item){
+                    $('.container-accordion', $tabcont).each(function(idx, item){
                         $(item).removeClass('active');
                     });
                     $('#container' + $header.attr('id').replace('accordion', ''), $tabcont).addClass('active');

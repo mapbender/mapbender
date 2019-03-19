@@ -105,12 +105,21 @@ class ElementFactory
      */
     protected function instantiateComponent($className, Entity\Element $entity, Application $appComponent)
     {
-        if (!class_exists($className, true)) {
-            throw new Component\Exception\UndefinedElementClassException($className);
+        /** @var ElementInventoryService $inventoryService */
+        $inventoryService = $this->container->get('mapbender.element_inventory.service');
+        $finalClassName = $inventoryService->getAdjustedElementClassName($className);
+        // The class_exists call itself may throw, depending on Composer version and promotion of warnings to
+        // Exceptions via Symfony.
+        try {
+            if (!class_exists($finalClassName, true)) {
+                throw new Component\Exception\UndefinedElementClassException($finalClassName);
+            }
+        } catch (\Exception $e) {
+            throw new Component\Exception\UndefinedElementClassException($finalClassName, $e);
         }
-        $instance = new $className($appComponent, $this->container, $entity);
+        $instance = new $finalClassName($appComponent, $this->container, $entity);
         if (!$instance instanceof Component\Element) {
-            throw new Component\Exception\InvalidElementClassException($className);
+            throw new Component\Exception\InvalidElementClassException($finalClassName);
         }
         // @todo: check API conformance and generate deprecation warnings via trigger_error(E_USER_DEPRECATED, ...)
         return $instance;

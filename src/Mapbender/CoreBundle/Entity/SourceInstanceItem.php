@@ -15,7 +15,7 @@ abstract class SourceInstanceItem
 
     /**
      *
-     * @var SourceInstance a source instance
+     * @var SourceItem
      */
     protected $sourceItem;
 

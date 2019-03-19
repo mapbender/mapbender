@@ -11,9 +11,6 @@ class GdCanvas extends BaseCanvas
     /** @var resource Gdish */
     public $resource;
 
-    /** @var int */
-    protected $transparent;
-
     public function __construct($width, $height)
     {
         $width = intval(round($width));
@@ -25,12 +22,14 @@ class GdCanvas extends BaseCanvas
         $bg = imagecolorallocate($this->resource, 255, 255, 255);
         imagefilledrectangle($this->resource, 0, 0, $width, $height, $bg);
         imagecolordeallocate($this->resource, $bg);
-        $this->transparent = imagecolorallocatealpha($this->resource, 255, 255, 255, 127);
     }
 
-    public function __destruct()
+    /**
+     * @return int GDish representation for fully white but also fully transparent color
+     */
+    public function getTransparent()
     {
-        imagecolordeallocate($this->resource, $this->transparent);
+        return IMG_COLOR_TRANSPARENT;
     }
 
     /**

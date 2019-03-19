@@ -1,0 +1,8 @@
+/* @todo: move this into the default style for all instances */
+.instanceContainer .origin-url {
+    display: inline-block;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}

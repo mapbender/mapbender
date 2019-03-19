@@ -6,7 +6,7 @@
         <parameter id="version">3.0.2</parameter>
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
         <parameter key="assetic.filter.scss.class">Eslider\Filter\ScssFilter</parameter>
-        <parameter key="mapbender.owsproxy.httpclient.legacy.class">Mapbender\CoreBundle\Component\OwsProxy\LegacyService</parameter>
+        <parameter key="mapbender.http_transport.service.class">Mapbender\Component\Transport\OwsProxyTransport</parameter>
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
         <parameter key="mapbender.form_type.element.layertree.menu.class">Mapbender\CoreBundle\Element\Type\LayerTreeMenuType</parameter>
         <parameter key="mapbender.presenter.application.service.class">Mapbender\CoreBundle\Component\Presenter\ApplicationService</parameter>
@@ -27,6 +27,7 @@
         <parameter key="owsproxy.baseroute">owsproxy3_core_owsproxy_entrypoint</parameter>
         <parameter key="mapbender.asset_compiler.service.class">Mapbender\CoreBundle\Asset\AssetFactory</parameter>
         <parameter key="mapbender.application_asset.service.class">Mapbender\CoreBundle\Asset\ApplicationAssetService</parameter>
+        <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
     </parameters>
 
     <services>
@@ -36,6 +37,7 @@
 
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
+            <argument type="service" id="mapbender.element_inventory.service" />
         </service>
 
         <service id="target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
@@ -109,13 +111,15 @@
         </service>
 
         <service id="mapbender.source.instancetunnel.service" class="%mapbender.source.instancetunnel.service.class%">
+            <argument type="service" id="mapbender.http_transport.service" />
             <argument type="service" id="router" />
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
         </service>
 
-        <service id="owsproxy.httpclient" class="%mapbender.owsproxy.httpclient.legacy.class%">
-            <argument type="service" id="service_container" />
+        <service id="mapbender.http_transport.service" class="%mapbender.http_transport.service.class%">
+            <argument>%owsproxy.proxy%</argument>
+            <argument type="service" id="logger" />
         </service>
 
         <!-- layertree "menu" choices; servicy because of DimensionsHandler interaction -->
@@ -176,11 +180,15 @@
         <service id="mapbender.application_asset.service" class="%mapbender.application_asset.service.class%">
             <argument type="service" id="mapbender.asset_compiler.service" />
             <argument type="service" id="mapbender.presenter.application.service" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="mapbender.element_factory.service" />
             <argument type="service" id="router" />
             <argument type="service" id="templating" />
-            <argument key="minifyCss">%kernel.debug%</argument>
+            <argument key="debug">%kernel.debug%</argument>
             <argument key="strict">%mapbender.strict.asset.bundle_scopes%</argument>
+        </service>
+        <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
+            <!-- no arguments; element class changes are added via compiler passes; this is not configurable -->
         </service>
     </services>
 </container>

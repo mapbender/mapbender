@@ -1,21 +1,27 @@
-<form action="{{path('mapbender_manager_repository_create', {'managertype': constant('Mapbender\\CoreBundle\\Entity\\Source::TYPE_WMS')|lower})}}" method="post" novalidate="novalidate" autocomplete="false">
+{{ form_start(form, {
+    'action': path('mapbender_manager_repository_create', {'managertype': constant('Mapbender\\CoreBundle\\Entity\\Source::TYPE_WMS') | lower}),
+    'method': 'POST',
+    'attr': {
+        'novalidate': 'novalidate',
+        'autocomplete': 'false'
+    }
+}) }}
   {# This only option to prevent browser auto fill inputs. Sad but true. More info: #4814 #}
   <input style="position: absolute; display: block; top: -1000px; left: 0" type="text" name="somefakename" tabindex="-1"/>
   <input style="position: absolute; display: block; top: -1000px; left: 0" type="password" name="anotherfakename" tabindex="-1"/>
-  {{ form_widget(form.onlyvalid) }}<label for="{{form.onlyvalid.vars['id']}}" class="labelCheck">{{"mb.wms.wmsloader.repo.form.label.onlyvalid"|trans}}</label>
-  <div class="clearContainer"></div>
-  <label class="left labelInput" for="{{ form.originUrl.vars['id'] }}">{{"mb.wms.wmsloader.repo.form.label.serviceurl" | trans}}</label>
-  {{ form_widget(form.originUrl) }}
-  <div class="clearContainer"></div>
-  <label class="left labelInput" for="{{ form.username.vars['id'] }}">{{"mb.wms.wmsloader.repo.form.label.username" | trans}}</label>
-  {{ form_widget(form.username) }}
-  <div class="clearContainer"></div>
-  <label class="left labelInput" for="{{ form.password.vars['id'] }}">{{"mb.wms.wmsloader.repo.form.label.password" | trans}}</label>
-  {{ form_widget(form.password) }}
-  <div class="clearContainer"></div>
-  <div class="right">
+  {# special snowflake FOM checkbox widget doesn't even add the correct class name to the label, and ignores label_attr #}
+  {# {{ form_row(form.onlyvalid) }} #}
+  <div>
+    {{ form_widget(form.onlyvalid) }}<label for="{{form.onlyvalid.vars['id']}}" class="labelCheck">{{ form.onlyvalid.vars.label | trans }}</label>
+    {# checkbox widget added a float: left ... #}
+    <div class="clear"></div>
+  </div>
+  {{ form_row(form.originUrl) }}
+  {{ form_row(form.username) }}
+  {{ form_row(form.password) }}
+  {{ form_row(form._token) }}
+  <div class="button-group">
     <input class="button" type="submit" name="load" value="{{"mb.wms.wmsloader.repo.form.label.load"|trans}}" />
     <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">{{"mb.wms.wmsloader.repo.form.label.cancel"|trans}}</a>
   </div>
-  {{ form_row(form._token) }}
-</form>
+{{ form_end(form, {'render_rest': false}) }}

@@ -145,9 +145,6 @@ mb:
           title: 'URL Title'
         description: Description
         template: Template
-        edit:
-          title: 'Common'
-          base_data: 'Base data'
       applications: Applications
     managerbundle:
       applications: Applications

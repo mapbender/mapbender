@@ -1,0 +1,13 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ 'mb.wmts.wmtsloader.repo.new.label.addservice' | trans }}{% endblock %}
+
+{% block css %}
+  {{parent()}}
+{% endblock %}
+
+{% block manager_content %}
+
+    {% include 'MapbenderWmtsBundle:Repository:form.html.twig' %}
+
+{% endblock %}
