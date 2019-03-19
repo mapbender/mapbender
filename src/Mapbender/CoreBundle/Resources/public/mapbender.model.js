@@ -1242,14 +1242,14 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @param {OpenLayers.Projection} newProj
      * @private
      */
-    _changeLayerProjection: function(olLayer, oldProj, newProj) {
+    _changeLayerProjection: function(olLayer, newProj, newMaxExtent) {
         var layerOptions = {
             // passing projection as string is preferable to passing the object,
             // because it also auto-initializes units and projection-inherent maxExtent
             projection: newProj.projCode
         };
         if (olLayer.maxExtent) {
-            layerOptions.maxExtent = this._transformExtent(olLayer.maxExtent, oldProj, newProj);
+            layerOptions.maxExtent = newMaxExtent;
         }
         olLayer.addOptions(layerOptions);
     },
@@ -1284,14 +1284,14 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             } else {
                 olLayers = source.getNativeLayers();
                 for (j = 0; j < olLayers.length; ++ j) {
-                    this._changeLayerProjection(olLayers[j], oldProj, newProj);
+                    this._changeLayerProjection(olLayers[j], newProj, newMaxExtent);
                 }
             }
         }
         var center = this.map.olMap.getCenter().clone().transform(oldProj, newProj);
         var baseLayer = this.map.olMap.baseLayer || this.map.olMap.layers[0];
         if (baseLayer) {
-            this._changeLayerProjection(baseLayer, oldProj, newProj);
+            this._changeLayerProjection(baseLayer, newProj, newMaxExtent);
         }
         this.map.olMap.projection = newProj;
         this.map.olMap.displayProjection = newProj;
