@@ -7,7 +7,7 @@ window.Mapbender.WmtsSource = (function() {
     $.extend(WmtsSource.prototype, {
         constructor: WmtsSource,
         _initializeSingleCompatibleLayer: function(compatibleLayer, proj) {
-            var matrixSet = this._getMatrixSet(compatibleLayer.options.tilematrixset);
+            var matrixSet = this.getMatrixSetByIdent(compatibleLayer.options.tilematrixset);
             var options = $.extend(this._getNativeLayerOptions(matrixSet, compatibleLayer, proj), {
                 requestEncoding: 'REST',
                 layer: compatibleLayer.options.identifier,

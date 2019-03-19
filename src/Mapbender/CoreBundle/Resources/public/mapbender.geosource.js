@@ -383,16 +383,32 @@ Mapbender.Geo.SourceHandler = {
         return Mapbender.Util.isInScale(scale_, layer.options.minScale, layer.options.maxScale);
     },
     /**
-     * @todo: Implement this. Requires detection of applicable SRS, lookup in bbox list by SRS and potentially
-     *        retransformation.
-     *
      * @param {Object} layer
      * @param {*} extent
      * @return {boolean}
      */
     isLayerWithinBounds: function(layer, extent) {
-        // HACK: out of bounds calculation broken since introduction of SRS switcher
+        // HACK: disabled for now
+        // WHen switching SRS this gets called multiple times, sometimes with an extent in the old SRS,
+        // which effectively disables perfectly viable layers.
         return true;
+        var projectionCode = Mapbender.Model.getCurrentProjectonCode();
+        // let the source substitute the layer (c.f. WMTS fake root layer for layertree)
+        var bounds = layer.source && layer.source.getLayerBounds(layer.options.id, projectionCode, true);
+        if (layer.source && layer === layer.source.configuration.children[0]) {
+            console.warn("Checking root layer in bounds", extent_, projectionCode);
+        }
+        if (!bounds) {
+            if (bounds === null) {
+                // layer is world wide
+                return true;
+            } else {
+                // layer is kaputt
+                return false;
+            }
+        }
+        var extent_ = extent || Mapbender.Model.getCurrentExtent();
+        return extent_.intersectsBounds(bounds);
     },
     setLayerOrder: function setLayerOrder(source, layerIdOrder) {
         var listsSorted = [];
