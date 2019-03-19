@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7 @ bcfe07019**
+* **v3.0.8-beta2**
   - [Beta regression] Fix button group misalginment in Application "Layersets" tab
   - [Beta regression] Fix layout breakage in "Vendorspecifics" area of WMS instance backend
   - [Beta regression] Fix layout breakage in "Reload source" and "Add new source" sections
