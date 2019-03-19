@@ -337,14 +337,26 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             });
         });
     },
+    getCurrentProjectonCode: function() {
+        if (this.map && this.map.olMap) {
+            return this.map.olMap.getProjection();
+        } else {
+            return this._startProj.projCode;
+        }
+    },
     getCurrentProj: function() {
-        return this.map.olMap.getProjectionObject();
+        if (this.map && this.map.olMap) {
+            return this.map.olMap.getProjectionObject();
+        } else {
+            return this._startProj;
+        }
     },
     /**
      * @param {string} srscode
+     * @param {boolean} [strict] to throw errors (legacy default false)
      * @return {OpenLayers.Projection}
      */
-    getProj: function(srscode) {
+    getProj: function(srscode, strict) {
         if (Proj4js.defs[srscode]) {
             var proj = new OpenLayers.Projection(srscode);
             if (!proj.proj.units) {
@@ -352,7 +364,9 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             }
             return proj;
         }
-        // Mapbender.error("CRS: " + srscode + " is not defined.");
+        if (strict) {
+            throw new Error("Unsupported projection " + srscode.toString());
+        }
         return null;
     },
     getAllSrs: function() {
@@ -1260,6 +1274,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             to: newProj,
             mbMap: this.mbMap
         });
+        var newMaxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
         var i, j, olLayers, dynamicSources = [];
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
@@ -1281,7 +1296,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         this.map.olMap.projection = newProj;
         this.map.olMap.displayProjection = newProj;
         this.map.olMap.units = newProj.proj.units;
-        this.map.olMap.maxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
+        this.map.olMap.maxExtent = newMaxExtent;
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
         for (i = 0; i < dynamicSources.length; ++i) {
             source = dynamicSources[i];
@@ -1489,17 +1504,53 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
         return dataOut;
     },
-
     /**
-     * @param {OpenLayers.Bounds|null} extent
-     * @param {OpenLayers.Projection} fromProj
-     * @param {OpenLayers.Projection} toProj
-     * @returns {OpenLayers.Bounds|null}
+     * @param {string|OpenLayers.Projection} [projection] default: current
+     * @return {OpenLayers.Bounds}
+     */
+    getCurrentExtent: function(projection) {
+        var extent;
+        var fromProj;
+        if (this.map && this.map.olMap) {
+            extent = this.map.olMap.getExtent();
+            fromProj = this.map.olMap.getProjection();
+        }
+        if (!extent || !fromProj) {
+            extent = this.mapStartExtent.extent;
+            fromProj = this._startProj;
+        }
+        if (projection) {
+            return this._transformExtent(extent, fromProj, projection);
+        } else {
+            return extent && extent.clone();
+        }
+    },
+    /**
+     * @param {OpenLayers.Bounds} extent
+     * @param {string|OpenLayers.Projection} fromProj
+     * @param {string|OpenLayers.Projection} toProj
+     * @returns {OpenLayers.Bounds}
      */
     _transformExtent: function(extent, fromProj, toProj) {
         var extentOut = (extent && extent.clone()) || null;
-        if (extent && fromProj.projCode !== toProj.projCode) {
-            return extentOut.transform(fromProj, toProj);
+        var from, to;
+        if (typeof fromProj === 'string') {
+            from = this.getProj(fromProj, true);
+        } else {
+            from = fromProj;
+        }
+        if (typeof toProj === 'string') {
+            to = this.getProj(toProj, true);
+        } else {
+            to = toProj;
+        }
+        if (!extent || !extentOut || !from.projCode || !to.projCode) {
+            console.error("Empty extent or invalid projetcions", extent, fromProj, toProj);
+            throw new Error("Empty extent or invalid projections");
+        }
+
+        if (extent && from.projCode !== to.projCode) {
+            return extentOut.transform(from, to);
         }
         return extentOut;
     },
