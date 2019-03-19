@@ -7,7 +7,7 @@ window.Mapbender.TmsSource = (function() {
     $.extend(TmsSource.prototype, {
         constructor: TmsSource,
         _initializeSingleCompatibleLayer: function(compatibleLayer, proj) {
-            var matrixSet = this._getMatrixSet(compatibleLayer.options.tilematrixset);
+            var matrixSet = this.getMatrixSetByIdent(compatibleLayer.options.tilematrixset);
             var options = this._getNativeLayerOptions(matrixSet, compatibleLayer, proj);
             return new OpenLayers.Layer.TMS(compatibleLayer.options.title, compatibleLayer.options.tileUrls, options);
         },

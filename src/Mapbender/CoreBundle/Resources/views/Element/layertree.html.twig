@@ -16,8 +16,8 @@
       </div>
       <span class="layer-title labelCheck"></span>
       {% if configuration.menu is defined and configuration.menu != null and configuration.menu | length > 0 %}
-      <span class="iconMenu layer-menu-btn">
-        <div id="layer-menu" class="layer-menu hidden">
+      <span class="iconMenu layer-menu-btn"></span>
+        <div class="layer-menu hidden">
           <div>
             <span class="iconCancel exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"></span>
           </div>
@@ -48,7 +48,6 @@
             {% endif %}
           </div>
         </div>
-      </span>
       {% endif %}
     </div>
     <ul id="list-first" class="layers"></ul>

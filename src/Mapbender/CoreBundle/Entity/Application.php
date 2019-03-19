@@ -33,6 +33,8 @@ class Application
     /** Databased application type */
     const SOURCE_DB = 2;
 
+    const MAP_ENGINE_OL2 = 'ol2';
+
     /**  @var bool Exclude form application menu list */
     protected $excludeFromList = false;
 
@@ -665,6 +667,20 @@ class Application
     public function isDbBased()
     {
         return $this->source == self::SOURCE_DB;
+    }
+
+    /**
+     * Get the map engine code as a string. Currently only 'ol2'...
+     *
+     * @return string
+     */
+    public function getMapEngineCode()
+    {
+        // HACK: return constant
+        /**
+         * @todo: provide db column + expose in form
+         */
+        return self::MAP_ENGINE_OL2;
     }
 
     /**

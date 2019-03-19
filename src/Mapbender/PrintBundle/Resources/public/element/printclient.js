@@ -272,6 +272,7 @@
          */
         _getSelectionLayer: function() {
             if (!this.layer) {
+                var self = this;
                 this.layer = new OpenLayers.Layer.Vector("Print", {
                     styleMap: new OpenLayers.StyleMap({
                         'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style),
@@ -293,12 +294,23 @@
                         'rotate': new OpenLayers.Style({
                             display: '${getDisplay}',
                             cursor: 'pointer',
-                            pointRadius: 10,
+                            pointRadius: "${getPointRadius}",
                             fillColor: '#ddd',
                             fillOpacity: 1,
                             strokeColor: '#000'
                         }, {
                             context: {
+                                getPointRadius: function(feature) {
+                                    var mapScale = Mapbender.Model.getScale();
+                                    var printScale = self._getPrintScale();
+                                    // Make the point smaller for high ratios of mapScale / printScale
+                                    // so it doesn't start to obscure the print rectangle.
+                                    // This is not an accurate measure of relative size. The rect size
+                                    // depends on tempalte choice as well. It's just easier than calculating
+                                    // a pixel size from the feature.
+                                    // noinspection JSCheckFunctionSignatures
+                                    return parseInt(Math.max(3, Math.min(15, Math.sqrt(1000 * printScale / mapScale))));
+                                },
                                 getDisplay: function(feature) {
                                     // only display rotate handle at the se corner
                                     return feature.attributes.role === 'se-rotate' ? '' : 'none';

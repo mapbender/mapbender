@@ -2,25 +2,19 @@
   &.iconMove:before{
     @include absolute(-$space 0 '' '');
   }
+  .pan, .toolPane {
+    @include frontendContainerStyle();
+    color: fade-out($lightFontColor, .3);
+  }
+
   .pan > span {
-    opacity: 0.7;
     &:hover {
-      opacity: 1;
+      color: $lightFontColor;
     }
   }
-  .toolPane > li  {
-    opacity: 0.7;
-    &:hover {
-      opacity: 1;
-    }
-    &.zoomSlider, &.history {
-      opacity: 1;
-      div, span, li {
-        opacity: 0.7;
-        &:hover {
-          opacity: 1;
-        }
-      }
+  .toolPane > li {
+    [title]:hover {
+      color: $lightFontColor;
     }
   }
 
@@ -32,7 +26,7 @@
     width: 49px;
     position:relative;
     @include border-radius(50%,50%);
-    @include frontendContainerStyle();
+
 
     .iconTop{@include absolute(1px '' '' 18px);}
     .iconRight{@include absolute(15px 6px '' '');}
@@ -46,7 +40,6 @@
     margin:$space/2 5px 0px 5px;
     padding:5px 0px;
     @include border-radius($radius);
-    @include frontendContainerStyle();
 
     & > li,
     .zoomSlider > span,

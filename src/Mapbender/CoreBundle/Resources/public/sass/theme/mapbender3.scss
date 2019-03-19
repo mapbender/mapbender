@@ -26,28 +26,34 @@
 
 /* ---------------------------------------------------------- TOOLBAR */
 .logoContainer{background-image:url($headPatternUrl);}
-.toolBar{
+.toolBar {
   @include frontendContainerStyle();
+  .toolBarItem {
+    color: fade-out($lightFontColor, .3);
+    &:hover {
+      color: $lightFontColor;
+    }
+    @include border-radius($radius);
+  }
+  .toolBarItemActive, .toolBarItemActive:hover {
+    background-color: $contentColor;
+    color:$firstColor;
+  }
 
-  &.top{
+  &.top {
     padding:$space/4 $space/2 $space/4 $space/2;
     .toolBarItem {
       display: inline-block;
       text-wrap: avoid;
       white-space: nowrap;
       padding: 5px;
-      opacity: 0.7;
-
-      &.toolBarItemActive, &:hover {
-        opacity: 1;
-      }
       > label, > span, > a span {
         margin-bottom: 0;
       }
     }
     border-bottom:solid 1px darken($contentColor, 20%);
   }
-  &.bottom{
+  &.bottom {
     [class^="icon"]:before,[class*=" icon"]:before{font-size: 14px;}
     padding:$space/4 $space/2 $space/4 $space/2;
     margin-bottom: 0;
@@ -79,11 +85,6 @@
       bottom:0px;
       margin-bottom: $inputHeight;
     }
-  }
-  .toolBarItemActive{
-    background-color: $contentColor;
-    color:$firstColor;
-    @include border-radius($radius);
   }
   .toolBarItem{
     display:inline;
