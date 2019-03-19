@@ -18,8 +18,14 @@ window.Mapbender.Source = (function() {
         this.title = definition.title;
         this.type = definition.type;
         this.configuration = definition.configuration;
+<<<<<<< HEAD
         this.configuration.children = (this.configuration.children || []).map(function(childDef) {
             return Mapbender.SourceLayer.factory(childDef, definition, null)
+=======
+        var sourceArg = this;
+        this.configuration.children = (this.configuration.children || []).map(function(childDef) {
+            return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
+>>>>>>> origin/master
         });
     }
     Source.typeMap = {};
@@ -135,6 +141,7 @@ window.Mapbender.Source = (function() {
             }
             return boundsMap;
         },
+<<<<<<< HEAD
         getLayerBounds: function(layerId, projCode, inheritFromParent, inheritFromSource) {
             var bboxMap = this.getLayerExtentConfigMap(layerId, inheritFromParent, inheritFromSource);
 
@@ -156,6 +163,21 @@ window.Mapbender.Source = (function() {
                     return Mapbender.Model._transformExtent(bounds, bboxProj, Mapbender.Model.getProj(projCode));
                 }
             }
+=======
+        getLayerBounds: function(layerId, projCode, inheritFromParent) {
+            var layer;
+            if (layerId) {
+                layer = this.getLayerById(layerId);
+            } else {
+                // root layer
+                layer = this.configuration.children[0];
+            }
+            if (!layer) {
+                console.warn("No layer, unable to calculate bounds");
+                return false;
+            }
+            return layer.getBounds(projCode, inheritFromParent) || null;
+>>>>>>> origin/master
         },
         setOpacity: function(value) {
             this.configuration.options.opacity = value;
@@ -198,7 +220,10 @@ window.Mapbender.SourceLayer = (function() {
         if (!this.options.origId && this.options.id) {
             this.options.origId = this.options.id;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
         if (definition.children && definition.children.length) {
             var self = this, i;
             this.children = definition.children.map(function(childDef) {
@@ -240,6 +265,26 @@ window.Mapbender.SourceLayer = (function() {
             if (!this.options.origId) {
                 this.options.origId = this.options.id;
             }
+<<<<<<< HEAD
+=======
+        },
+        getBounds: function(projCode, inheritFromParent) {
+            var bboxMap = this.options.bbox;
+            var srsOrder = [projCode].concat(Object.keys(bboxMap));
+            for (var i = 0; i < srsOrder.length; ++i) {
+                var srsName = srsOrder[i];
+                var bboxArray = bboxMap[srsName];
+                if (bboxArray) {
+                    var bounds = this.source._bboxArrayToBounds(bboxArray, srsName);
+                    return Mapbender.Model._transformExtent(bounds, srsName, projCode);
+                }
+            }
+            var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
+            if (inheritParent_ && this.parent) {
+                return this.parent.getBounds(projCode, true);
+            }
+            return null;
+>>>>>>> origin/master
         }
     };
     SourceLayer.typeMap = {};

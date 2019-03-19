@@ -273,7 +273,7 @@
                 geometries: geometries
             };
         },
-        _collectGeometryLayers: function() {
+        _collectGeometryLayers4: function() {
             var printStyleOptions = this.model.getVectorLayerPrintStyleOptions();
 
             var vectorLayers = [];

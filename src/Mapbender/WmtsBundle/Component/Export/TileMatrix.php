@@ -52,4 +52,23 @@ abstract class TileMatrix
     }
 
     abstract public function getTileUrl($tileX, $tileY);
+<<<<<<< HEAD
+=======
+
+    /**
+     * @return int
+     */
+    public function getTileWidth()
+    {
+        return $this->tileWidth;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTileHeight()
+    {
+        return $this->tileHeight;
+    }
+>>>>>>> origin/master
 }

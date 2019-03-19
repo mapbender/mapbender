@@ -148,7 +148,7 @@
             var called = false;
             this.queries = {};
             $('#js-error-featureinfo').addClass('hidden');
-            $.each(this.map.model.collectFeatureInfoObjects(e.coordinate), function(idx, obj) {
+            $.each(this.target.getModel().collectFeatureInfoObjects(e.coordinate), function(idx, obj) {
                 var layerTitle = self._getTabTitle(src);
                 if (Mapbender.source[src.type]) {
                     var url = Mapbender.source[src.type].featureInfoUrl(src, x, y);
@@ -159,14 +159,11 @@
                             self._open();
                         }
                         called = true;
-                        self._setInfo(src, url);
+                        self._setInfo(obj, obj.url);
                     } else {
                         self._removeContent(src.mqlid);
                     }
                 }
-
-                called = true;
-                self._setInfo(obj, obj.url);
             });
             if (!called) {
                 $('#js-error-featureinfo').removeClass('hidden');
@@ -503,7 +500,7 @@
             w.print();
         },
 
-        _setupMapClickHandler: function () {
+        _setupMapClickHandler4: function () {
             var widget = this;
 
             if (!widget.mapClickHandler) {

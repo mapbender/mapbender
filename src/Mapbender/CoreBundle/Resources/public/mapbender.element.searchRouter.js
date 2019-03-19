@@ -112,7 +112,6 @@
         removeLastResults: function(){
             var widget = this;
             widget.searchModel.reset();
-            widget._getLayer().removeAllFeatures();
             widget.map.model.removeVectorLayer(widget.highlightLayerOwner, widget.highlightLayerId);
             this.currentFeature = null;
         },
@@ -208,6 +207,9 @@
             }
         },
 
+        defaultAction: function(callback){
+            this.open(callback);
+        },
         /** TODO Change drawFeature Function
          * Redraw current result layer selected feature
          */
@@ -218,10 +220,6 @@
                 //feature.layer.drawFeature(feature, 'select');
                 feature.setStyle(this.styleMap['select'])
             }
-        },
-
-        defaultAction: function(callback){
-            this.open(callback);
         },
 
         /**

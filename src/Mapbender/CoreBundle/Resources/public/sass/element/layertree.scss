@@ -1,4 +1,9 @@
 .mb-element-layertree{
+  #list-root {
+    // for absolute menu positioning in popup
+    position: relative;
+  }
+
   .iconFolder{
     display:none;
     margin-right:5px;

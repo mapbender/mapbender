@@ -1,8 +1,9 @@
 (function($) {
     'use strict';
 
-    $.widget('mapbender.mbScaledisplay', {
+    $.widget("mapbender.mbScaledisplay", {
         options: {
+//            unitPrefix: false
             target: null
         },
         scaledisplay: null,
@@ -24,13 +25,32 @@
          * Initializes the scale display
          */
         _setup: function() {
-            if(typeof this.options.unitPrefix === 'undefined') {
+            if(typeof this.options.unitPrefix === 'undefined')
                 this.options.unitPrefix = false;
-            }
             var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            this._initOl4(mbMap);
+            this._init(mapEngineCode);
             $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
             this._trigger('ready');
+        },
+        _initOl2: function() {
+            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
+
+            this.scaledisplay = this._initializeControl();
+            mbMap.map.olMap.addControl(this.scaledisplay);
+        },
+        _initializeControl: function() {
+            var control = new OpenLayers.Control.Scale(this.preDisplay);
+            var targetElement = $('>span', this.element).get(0);
+            var updateText = this._cleanupDisplayText.bind(this);
+            // Monkey-patch .updateScale method to massage the displayed text and forward it
+            // to targetElement
+            control.updateScale = function() {
+                /** @type {OpenLayers.Control.Scale} this */
+                OpenLayers.Control.Scale.prototype.updateScale.call(this);
+                // noinspection JSPotentiallyInvalidUsageOfThis
+                targetElement.innerHTML = updateText(this.element.innerHTML);
+            };
+            return control;
         },
         _initOl4: function(mbMap) {
             var model = mbMap.model;
@@ -60,26 +80,6 @@
         },
         _changeSrs: function(event, srs){
             this.scaledisplay.updateScale();
-        },
-        _initOl2: function() {
-            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            
-            this.scaledisplay = this._initializeControl();
-            mbMap.map.olMap.addControl(this.scaledisplay);
-        },
-        _initializeControl: function() {
-            var control = new OpenLayers.Control.Scale(this.preDisplay);
-            var targetElement = $('>span', this.element).get(0);
-            var updateText = this._cleanupDisplayText.bind(this);
-            // Monkey-patch .updateScale method to massage the displayed text and forward it
-            // to targetElement
-            control.updateScale = function() {
-                /** @type {OpenLayers.Control.Scale} this */
-                OpenLayers.Control.Scale.prototype.updateScale.call(this);
-                // noinspection JSPotentiallyInvalidUsageOfThis
-                targetElement.innerHTML = updateText(this.element.innerHTML);
-            };
-            return control;
         },
         _cleanupDisplayText: function(textIn) {
             // Openlayers 2.13.1 does not (yet) support a customizable template

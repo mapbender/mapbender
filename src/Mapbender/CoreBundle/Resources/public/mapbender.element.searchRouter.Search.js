@@ -105,13 +105,14 @@ Mapbender.SearchModel = Backbone.Model.extend({
             }
         });
 
+
         var map = this.router.mbMap;
 
         this.set({
             properties: properties,
             autocomplete_keys: autocomplete_keys,
             srs: map.model.getCurrentProjectionCode(),
-            extent: map.model.getCurrentExtent()
+            extent: map.model.getCurrentExtent().toArray()
         });
 
         this.save();

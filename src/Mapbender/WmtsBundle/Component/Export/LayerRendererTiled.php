@@ -72,7 +72,14 @@ abstract class LayerRendererTiled extends LayerRenderer
                 imagecopyresampled($image, $tileImage,
                     $imageTile->getOffsetX(), $imageTile->getOffsetY(),
                     0, 0,
+<<<<<<< HEAD
                     imagesx($tileImage), imagesy($tileImage),
+=======
+                    // NOTE: Returned tile image sizes may actually be different than sadvertised in capabilities.
+                    //       This is a common "High quality print" / "retina" hack
+                    //       Stitching target coordinates are always based on advertised dimensions though.
+                    $tileMatrix->getTileWidth(), $tileMatrix->getTileHeight(),
+>>>>>>> origin/master
                     imagesx($tileImage), imagesy($tileImage));
             }
         }

@@ -11,28 +11,19 @@
      * Usage (init / manual update):
      * $('input[type="checkbox"]', myScope).mbCheckbox()
      */
+    function propagateToWrapper() {
+        var $cb = $(this);
+        var $wrapper = $cb.parents('.checkWrapper');
+        $wrapper.toggleClass('checkboxDisabled', $cb.is(':disabled'));
+        $wrapper.toggleClass('iconCheckboxActive', $cb.is(':checked'));
+    }
     $.fn.mbCheckbox = function() {
-        var propagateToWrapper = function propagateToWrapper() {
-            var $cb = $(this);
-            var $wrapper = $cb.parents('.checkWrapper');
-            if ($cb.is(":disabled")){
-                $wrapper.addClass("checkboxDisabled");
-            } else {
-                $wrapper.removeClass("checkboxDisabled");
-            }
-            if ($cb.is(":checked")){
-                $wrapper.addClass("iconCheckboxActive");
-            } else {
-                $wrapper.removeClass("iconCheckboxActive");
-            }
-        };
         this.filter('.checkWrapper input[type="checkbox"]').each(function() {
             var $this = $(this);
             // Skip already initialized nodes, avoids binding events more than once
             if (!$this.data('mbCheckbox')) {
                 $this.data('mbCheckbox', {
-                    initialized: true,
-                    rerender: propagateToWrapper.bind(this)
+                    initialized: true
                 });
                 $this.on('change', function() {
                     propagateToWrapper.call(this);

@@ -38,13 +38,13 @@
             var projection = (data && data.to) || this.mbMap.getModel().getCurrentProj();
 
             var numDigits = this.options.numDigits || 0;
-            var model = this.map.model;
-            var isdeg = model.getCurrentProjectionObject().getUnits() === 'dd';
-            var srs = {projection: {projCode: model.getCurrentProjectionCode()}};
-
             if (!projection.proj.units || projection.proj.units === 'degrees' || projection.proj.units === 'dd') {
                 numDigits += 5;
             }
+
+            var model = this.map.model;
+            var isdeg = model.getCurrentProjectionObject().getUnits() === 'dd';
+            var srs = {projection: {projCode: model.getCurrentProjectionCode()}};
 
             var elementConfig = {
               target: $(this.element).attr('id'),

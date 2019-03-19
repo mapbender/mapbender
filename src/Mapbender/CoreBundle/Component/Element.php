@@ -552,6 +552,6 @@ abstract class Element extends MinimalBound
      */
     public function getMapEngineCode()
     {
-        return $this->application->getEntity()->getMapEngineCode();
+        return $this->entity->getApplication()->getMapEngineCode();
     }
 }

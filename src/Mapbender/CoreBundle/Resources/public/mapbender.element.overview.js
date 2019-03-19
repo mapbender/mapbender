@@ -22,14 +22,18 @@
          */
         _setup: function() {
             this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            var $element = $(this.element);
-            this.$viewport_ = $('.viewport', $element);
+
+            this.element.addClass(this.options.anchor);
+            if (!this.options.maximized) {
+                this.element.addClass("closed");
+            }
             if (!$element.hasClass('closed')) {
                 // if we start closed, wait with initialization until opened
                 this._initDisplay();
             }
+            $('.toggleOverview', this.element).on('click', $.proxy(this._openClose, this));
+
             this._trigger('ready');
-            $element.find('.toggleOverview').bind('click', this._openClose.bind(this));
         },
         _initDisplay: function() {
             switch (this.mbMap_.engineCode) {
@@ -99,30 +103,10 @@
             }
         },
         _initAsOl2Control: function() {
-            var widget = this;
-            var options = widget.options;
-            var mbMap = this.mbMap = $('#' + options.target).data('mapbenderMbMap');
-            var model = mbMap.model;
-            var element = $(widget.element);
-            var projection = model.map.olMap.projection;
-            var maxExtent = model.map.olMap.maxExtent;
-            var overviewLayers = [];
-            var layerSet = Mapbender.configuration.layersets[this.options.layerset];
-
-            element.addClass(options.anchor);
-            this.startproj = srs;
-            this.element.addClass(this.options.anchor);
-            if (!this.options.maximized) {
-                this.element.addClass("closed");
-            }
             this.overview = this._createOverviewControl();
             if (this.overview) {
                 this.mbMap.map.olMap.addControl(this.overview);
-                $(document).on('mbmapsrschanged', $.proxy(this._onMbMapSrsChanged, this));
             }
-            $('.toggleOverview', this.element).on('click', $.proxy(this._openClose, this));
-
-            this._trigger('ready');
         },
         _createOverviewControl: function() {
             var layers = this._createLayers();
@@ -221,46 +205,17 @@
             $(this.element).toggleClass('closed');
             window.setTimeout(function(){
                 if(!$(self.element).hasClass('closed')){
-                    self._initDisplay();
+                    if (4) {
+                        self._initDisplay();
+                    } else {
+                        if (self.overview && self.overview.ovmap) {
+                            self.overview.ovmap.updateSize();
+                        }
+                    }
                 }
             }, 300);
         },
 
-        /**
-         * Cahnges the overview srs
-         */
-        _changeSrs: function(event, srs) {
-            console.log("Overview changesrs event", event, srs);
-            var properties = this.control_.ovmap_.getProperties();
-            properties.view = new ol.View({
-              projection: this.mbMap_.model.getCurrentProjectionObject(),
-              center: this.mbMap_.model.map.getView().getCenter(),
-              extent: this.mbMap_.model.getMaxExtent(),
-              resolution: this.mbMap_.model.map.getView().getResolution()
-            });
-            this.control_.ovmap_.setProperties(properties);
-            return;
-
-
-            // @todo 3.1.0: this won't work on OL4, starting here
-            var ovMap = overview.ovmap;
-            var oldProj = ovMap.getProjectionObject();
-            if (oldProj.projCode === srs.projection.projCode) {
-                return;
-            }
-            var center = ovMap.getCenter().clone().transform(oldProj, srs.projection);
-
-            var mainMapMaxExtent = this.mbMap.model.map.olMap.maxExtent;
-
-
-            ovMap.projection = srs.projection;
-            ovMap.displayProjection = srs.projection;
-            ovMap.units = srs.projection.proj.units;
-            if (mainMapMaxExtent) {
-                // NOTE: this extent is already transformed
-                ovMap.maxExtent = mainMapMaxExtent.clone();
-            }
-        },
         _onMbMapSrsChanged: function(event, data) {
             if (data.mbMap !== this.mbMap) {
                 return;
@@ -281,7 +236,7 @@
                 console.error("Overview srs change failed", e);
             }
         },
-        _changeSrsOl2: function(srsCode, newCenter, newMaxExtent) {
+        _changeSrs2: function(srsCode, newCenter, newMaxExtent) {
             /**
              * @type {null|OpenLayers.Map}
              */
@@ -317,6 +272,39 @@
                 this.overview.update();
             } catch (e) {
                 console.error("Overview srs change failed", e);
+            }
+        }
+        ,
+        _changeSrs4: function(event, srs) {
+            console.log("Overview changesrs event", event, srs);
+            var properties = this.control_.ovmap_.getProperties();
+            properties.view = new ol.View({
+              projection: this.mbMap_.model.getCurrentProjectionObject(),
+              center: this.mbMap_.model.map.getView().getCenter(),
+              extent: this.mbMap_.model.getMaxExtent(),
+              resolution: this.mbMap_.model.map.getView().getResolution()
+            });
+            this.control_.ovmap_.setProperties(properties);
+            return;
+
+
+            // @todo 3.1.0: this won't work on OL4, starting here
+            var ovMap = overview.ovmap;
+            var oldProj = ovMap.getProjectionObject();
+            if (oldProj.projCode === srs.projection.projCode) {
+                return;
+            }
+            var center = ovMap.getCenter().clone().transform(oldProj, srs.projection);
+
+            var mainMapMaxExtent = this.mbMap.model.map.olMap.maxExtent;
+
+
+            ovMap.projection = srs.projection;
+            ovMap.displayProjection = srs.projection;
+            ovMap.units = srs.projection.proj.units;
+            if (mainMapMaxExtent) {
+                // NOTE: this extent is already transformed
+                ovMap.maxExtent = mainMapMaxExtent.clone();
             }
         }
     });

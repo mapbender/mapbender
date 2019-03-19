@@ -18,7 +18,8 @@
          * Creates the map widget
          */
         _create: function(){
-            //OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
+            // @todo: into the MapModel ctor
+            // OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.engineCode = Mapbender.configuration.application.mapEngineCode;
@@ -280,6 +281,7 @@
 
         /**
          * Initialize POIs
+         * @todo: out of map
          */
         initializePois: function () {
             var self = this,

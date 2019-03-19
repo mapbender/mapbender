@@ -24,11 +24,21 @@
 
             $(this.element).addClass(this.options.anchor);
 
-            var scaleLineOptions = {
+            var scalebarOptions4 = {
                 'className': 'ol-scale-line',
                 'minWidth': '64',
                 geodesic: true,
-                'units': 'metric'
+                'units': 'metric'       //?!?!?
+            };
+
+            var scalebarOptions = {
+                div: $(this.element).get(0),
+                maxWidth: this.options.maxWidth,
+                geodesic: true,
+                topOutUnits: "km",
+                topInUnits: "m",
+                bottomOutUnits: "mi",
+                bottomInUnits: "ft"
             };
 
             this.scalebar = new ol.control.ScaleLine(scaleLineOptions);

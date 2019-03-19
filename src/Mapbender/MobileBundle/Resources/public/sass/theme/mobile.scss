@@ -317,12 +317,6 @@ fieldset{
   }
   &.bottom{
     @include absolute('' 0 0 0);
-
-    > .toolBarItem{
-      &:hover {
-          opacity: 0.7;
-      }
-    }
   }
   .iconBig {
     font-size: 30px;
@@ -332,6 +326,14 @@ fieldset{
     &:before{
       position: unset;
       margin: 0;
+    }
+  }
+  > .toolBarItem{
+    &:hover {
+      color: fade-out($darkFontColor, 0.3);
+      .iconBig {
+        color: fade-out($ciColor, 0.3);
+      }
     }
   }
 }
@@ -499,7 +501,6 @@ fieldset{
     background-color: $ciColor4;
     padding:0;
     border:none;
-    @include box-shadow(none);
   }
   td{padding-right: $space;}
 }
@@ -520,10 +521,13 @@ fieldset{
           border: 2px solid $ciColor2;
           padding:$space/2;
           color:$ciColor3;
-          background-color: $ciColor4;
-          .iconBig{
-              color: $ciColor;
+          .iconBig {
+            color: $ciColor;
+            &[title]:hover {
+              color: fade-out($ciColor, 0.3);
+            }
           }
+          background-color: $ciColor4;
           li .iconBig {
             margin: 0;
           }

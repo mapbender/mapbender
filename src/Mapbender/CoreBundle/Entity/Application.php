@@ -33,6 +33,9 @@ class Application
     /** Databased application type */
     const SOURCE_DB = 2;
 
+    const MAP_ENGINE_OL2 = 'ol2';
+    const MAP_ENGINE_OL4 = 'ol4';
+
     /**  @var bool Exclude form application menu list */
     protected $excludeFromList = false;
 
@@ -668,10 +671,8 @@ class Application
     }
 
     /**
-     * Get the map engine code as a string. Can be (exactly) one of
-     * 'ol4' for Openlayers 4
-     * or
-     * 'mq-ol2' for Openlayers 2 via Mapquery
+     * Get the map engine code as a string. Currently only 'ol2'...
+     * ... 'ol4' work in progress
      *
      * @return string
      */
@@ -681,7 +682,8 @@ class Application
         /**
          * @todo: provide db column + expose in form
          */
-        return 'ol4';
+        return self::MAP_ENGINE_OL4;    // :-)
+        return self::MAP_ENGINE_OL2;
     }
 
     /**

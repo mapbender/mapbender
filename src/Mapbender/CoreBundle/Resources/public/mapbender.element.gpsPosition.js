@@ -13,7 +13,6 @@
             average: 1,
             zoomToAccuracy: false,
             centerOnFirstPosition: true,
-            zoomToAccuracyOnFirstPosition: true,
             accurancyStyle: {
                 stroke: new ol.style.Stroke({
                     color: 'rgba(255,255,255, 1)',
@@ -31,7 +30,8 @@
                     width: 3,
                     lineCap: 'butt'
                 })
-            }
+            },
+            zoomToAccuracyOnFirstPosition: true
         },
         map: null,
         model: null,
@@ -287,12 +287,17 @@
             if (navigator.geolocation && !this.observer) {
                 this.firstPosition = true;
                 this.observer = navigator.geolocation.watchPosition(function success(position) {
-                    var model = widget.model,
-                        proj = 'EPSG:4326',
-                        newProj = model.getCurrentProjectionCode(),
+                    if (4) {
+                    var newProj = model.getCurrentProjectionCode(),
                         p = model.addCoordinate([position.coords.longitude, position.coords.latitude]);
                         // transCoord= model.transformCoordinate(coord, proj, newProj),
                         // p = model.toLonLat(transCoord,newProj);
+                    }else {
+                    var newProj = olmap.getProjectionObject(),
+                        p = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude);
+
+                    p.transform(widget.internalProjection, newProj);
+                    }
 
                     // Averaging: Building a queue...
                     widget.stack.push(p);

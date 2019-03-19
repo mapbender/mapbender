@@ -1,11 +1,12 @@
 # Changelog
-* **dev-release/3.0.7 @ 07fee7c2a**
+* **v3.0.8-beta2**
   - [Beta regression] Fix button group misalginment in Application "Layersets" tab
   - [Beta regression] Fix layout breakage in "Vendorspecifics" area of WMS instance backend
   - [Beta regression] Fix layout breakage in "Reload source" and "Add new source" sections
   - [Beta regression] Fix mobile pane always displaying several currently disabled Elements in demo mobile Application
   - [Beta regression] Fix layertree menu initialization for WMS sources where no layer has any configured bounding boxes
   - [Beta regression] Fix layertree menu positioning
+  - [Beta regression] Re-invert legend ordering in print to match frontend Legend / LayerTree order
   - Fix Dimensions values not getting applied while layer is invisible ([PR#1114](https://github.com/mapbender/mapbender/pull/1114))
   - Fix map max extent breaking down on repeated SRS switches
   - Wms instance layer titles can now automatically follow source layer title changes on source reloads ([PR#1115](https://github.com/mapbender/mapbender/pull/1115))
@@ -20,6 +21,7 @@
   - LayerTree: "zoom to layer" now supports WMS 1.3.0 `<BoundingBox>` axis order specification quirks
   - LayerTree: Support horizontal growth and auto-ellipse long title texts purely with CSS; this obsoletes the `titlemaxlength` option, which has been removed
   - LayerTree menu: (partial) usability fix for menu when shown for source currently in loading state
+  - LayerTree: fix conflicts between layer menus opened simultaneously by multiple LayerTree elements
   - Add experimental, partial WMTS / TMS source support. Disabled by default. See [PR#1116](https://github.com/mapbender/mapbender/pull/1116) for instructions and known limitations
   - Annex responsibility for general backend layout and certain JavaScript widgets from FOM. See [PR#1120](https://github.com/mapbender/mapbender/pull/1120) for potential BC impact on highly customized installations.
   - Increase reverse-proxy setup compatibility also for owsproxy urls generated for source instances with `proxy` option checked
@@ -27,10 +29,13 @@
   - Button: fix ~random font family changes for label depending on chosen `icon` option
   - Button: fix display sizing of Button with no icon
   - Button: fix responsive toolbar folding of buttons with a label but no icon (leave the label visible)
-  - [Backend] Fix application screenshot deletion
+  - Replace toolbar / navigation element opacity with much more benign rgba colors (via sass fade-out)
+  - [Backend] Fix application edit form screenshot area layout breaking on deletion
   - [Backend] Fix application screenshot image rescaling to maintain aspect ratio and never crop
+  - [Backend] removed noisy background
   - [Framework] `false` is now a viable return type from Element::getWidgetName, and indicates a "static" element with no client-side script
   - Misc obsolete asset removals (see UPGRADING.md)
+  - Misc multiple-id DOM fixes
 
 * **v3.0.8-beta1**
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))

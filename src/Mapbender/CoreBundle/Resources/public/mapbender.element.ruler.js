@@ -34,7 +34,6 @@
          */
         _setup: function(mbMap) {
             this.mapModel = mbMap.getModel();
-            var model = this.mapModel;
             var sm = $.extend(true, {}, OpenLayers.Feature.Vector.style, {
                 'default': this.options.style
             });
@@ -134,6 +133,10 @@
             this.container.detach();
             this.map.model.removeAllFeaturesFromLayer(this.id, this.layerId);
             this.map.model.removeVectorLayer(this.id, this.layerId);
+
+            var olMap = this.mapModel.map.olMap;
+            this.control.deactivate();
+            olMap.removeControl(this.control);
             $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
             if(this.popup && this.popup.$element){
                 this.popup.destroy();

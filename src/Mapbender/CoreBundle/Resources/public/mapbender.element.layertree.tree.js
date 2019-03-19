@@ -54,7 +54,7 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li', this.element).remove();
             this.template.removeClass('hidden');
-            this.menuTemplate = $('#layer-menu', this.template).remove();
+            this.menuTemplate = $('.layer-menu', this.template).remove();
 
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
             if (this.options.type === 'element') {
@@ -580,9 +580,9 @@
             return false;
         },
         _selectAll: function(e) {
+            var self = this;
             var $sourceVsbl = $(e.target);
             var $li = $sourceVsbl.parents('li:first');
-            // @todo: OL4: fix 'select all' interaction ("thematic" layertree)
             $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, srcLi) {
                 var $srcLi = $(srcLi);
                 var source = {
@@ -657,9 +657,11 @@
                 atLeastOne = removeButton.length > 0;
                 removeButton.on('click', $.proxy(self._removeSource, self));
 
+                var $opacitySliderWrap = $('#layer-opacity', menu);
                 if ($element.parents('li:first').attr('data-type') !== self.consts.root) {
-                    menu.find('#layer-opacity').remove();
+                    $opacitySliderWrap.remove();
                     menu.find('#layer-opacity-title').remove();
+                    $opacitySliderWrap = [];
                 }
 
                 menu.removeClass('hidden');
@@ -669,10 +671,11 @@
                     e.stopPropagation();
                 });
 
-                if ($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0) {
+                if ($.inArray("opacity", self.options.menu) !== -1 && $opacitySliderWrap.length) {
                     atLeastOne = true;
-                    $('.layer-opacity-handle').attr('unselectable', 'on');
-                    new Dragdealer('layer-opacity', {
+                    var $handle = $('.layer-opacity-handle', menu);
+                    $handle.attr('unselectable', 'on');
+                    new Dragdealer($opacitySliderWrap.get(0), {
                         x: source.configuration.options.opacity,
                         horizontal: true,
                         vertical: false,
@@ -681,7 +684,7 @@
                         handleClass: "layer-opacity-handle",
                         animationCallback: function(x, y) {
                             var percentage = Math.round(x * 100);
-                            $("#layer-opacity").find(".layer-opacity-handle").text(percentage);
+                            $handle.text(percentage);
                             self._setOpacity(self.model.findSource({
                                 id: sourceId
                             })[0], percentage / 100.0);
@@ -728,10 +731,14 @@
             var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
             var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
             var layerIdMenu = null;
-            if ($('#layer-menu').length !== 0) {
-                layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
+            var $menu = this.currentMenu || $('.layer-menu', this.element);
+            if ($menu.length) {
+                layerIdMenu = $menu.attr("data-menuLayerId");
             }
             if (layerIdMenu !== currentLayerId) {
+                if ($menu.length) {
+                    this.closeMenu($menu);
+                }
                 createMenu($btnMenu, currentSourceId, currentLayerId);
 
             }
@@ -866,29 +873,30 @@
             var layerOpts = {id: $layer.attr('data-id')};
             Mapbender.Metadata.call(this.options.target, sourceOpts, layerOpts);
         },
-        _setSourcesCount: function() {
-            var countObj = {};
-            $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm) {
-                countObj[$(elm).attr('data-sourceid')] = true;
+        _getUniqueSourceIds: function() {
+            var sourceIds = [];
+            $('.serviceContainer[data-sourceid]', this.element).each(function() {
+                sourceIds.push($(this).attr('data-sourceid'));
             });
-            var num = 0;
-            for (s in countObj)
-                num++;
+            return _.uniq(sourceIds);
+        },
+        _setSourcesCount: function() {
+            var num = this._getUniqueSourceIds().length;
             $(this.element).find('#counter').text(num);
         },
         _removeAllSources: function(e) {
-            var self = this;
+            var sourceIds, i, n;
             if (Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))) {
-                $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm) {
-                    var sourceId = $(elm).attr('data-sourceid');
-                    self.model.removeSource({
+                sourceIds = this._getUniqueSourceIds();
+                for (i = 0, n = sourceIds.length; i < n; ++i) {
+                    this.model.removeSource({
                         remove: {
                             sourceIdx: {
-                                id: sourceId
+                                id: sourceIds[i]
                             }
                         }
                     });
-                });
+                }
             }
             this._setSourcesCount();
         },

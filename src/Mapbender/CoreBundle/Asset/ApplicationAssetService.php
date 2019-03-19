@@ -152,61 +152,51 @@ class ApplicationAssetService
      */
     public function getMapEngineAssetReferences(Entity\Application $application, $type)
     {
-
         $engineCode = $application->getMapEngineCode();
-        switch ($engineCode) {
-            case 'mq-ol2':
-                switch ($type) {
-                    case 'js':
-                        $commonAssets = array(
-                            '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
-                            '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
-                            '@MapbenderCoreBundle/Resources/public/init/projection.js',
-                            '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
-                            '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
-                            '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
-                            '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
-                            '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
-                        );
-                        break;
-                    default:
-                        $commonAssets = array();
-                        break;
-                }
-                return array_merge($commonAssets, $this->getLayerAssetReferences($application, $type));
-            case 'ol4':
-                $coreBundleBase = '@MapbenderCoreBundle/Resources/public';
-                switch ($type) {
-                    case 'js':
-                        if (!$this->debug) {
-                            $ol4 = '/components/openlayers/ol.js';
-                            $proj4js = '/components/proj4js/dist/proj4.js';
-                        } else {
-                            $ol4 = '/components/openlayers/ol-debug.js';
-                            $proj4js = '/components/proj4js/dist/proj4-src.js';
-                        }
-
-                        $modelJsBase = "$coreBundleBase/mapbender-model";
-                        return array(
-                            $ol4,
-                            $proj4js,
-                            '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
-                            '@MapbenderCoreBundle/Resources/public/init/projection.js',
-                            "$modelJsBase/mapbender.model.ol4.source.js",
-                            "$coreBundleBase/mapbender.model.ol4.js",
-                            "$modelJsBase/mapbender.model.ol4.sourcelayer.state.js",
-                            "$modelJsBase/mapbender.model.mappopup.js",
-                        );
-                    case 'css':
-                        return array(
-                            "{$coreBundleBase}/sass/modules/mapPopup.scss",
-                        );
-                    default:
-                        return array();
-                }
+        switch ("{$engineCode}-{$type}") {
+            case 'ol2-js':
+                $commonAssets = array(
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
+                    '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
+                    '@MapbenderCoreBundle/Resources/public/init/projection.js',
+                    '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                    '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
+                );
+                break;
             default:
-                throw new \RuntimeException("Unhandled map engine code " . print_r($engineCode, true));
+                $commonAssets = array();
+                break;
+            case 'ol4-js':
+                if (!$this->debug) {
+                    $ol4 = '/components/openlayers/ol.js';
+                    $proj4js = '/components/proj4js/dist/proj4.js';
+                } else {
+                    $ol4 = '/components/openlayers/ol-debug.js';
+                    $proj4js = '/components/proj4js/dist/proj4-src.js';
+                }
+
+                $modelJsBase = "@MapbenderCoreBundle/Resources/public/mapbender-model";
+                $commonAssets = array(
+                    $ol4,
+                    $proj4js,
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
+                    '@MapbenderCoreBundle/Resources/public/init/projection.js',
+                    "$modelJsBase/mapbender.model.ol4.source.js",
+                    "@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js",
+                    "$modelJsBase/mapbender.model.ol4.sourcelayer.state.js",
+                    "$modelJsBase/mapbender.model.mappopup.js",
+                );
+                break;
+            case 'ol4-css':
+                return array(
+                    "@MapbenderCoreBundle/Resources/public/sass/modules/mapPopup.scss",
+                );
+                break;
         }
+        return array_merge($commonAssets, $this->getLayerAssetReferences($application, $type));
     }
 
     /**

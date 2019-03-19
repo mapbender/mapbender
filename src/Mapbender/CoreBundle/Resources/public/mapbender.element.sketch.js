@@ -1,6 +1,7 @@
 (function($){
+
     'use strict';
-    $.widget('mapbender.mbSketch', {
+    $.widget("mapbender.mbSketch", {
         options: {
             target: null,
             autoOpen: false,
@@ -99,6 +100,31 @@
             var self = this;
             this.callback = callback ? callback : null;
 
+            var olMap = this.mapModel.map.olMap;
+            $.each(this.options.types, function(idx, type){
+                olMap.addLayer(self.layers[type]);
+                olMap.addControl(self.controls[type]);
+            });
+            this._activateType(this.options.defaultType);
+            this.activated = true;
+        },
+        deactivate: function(){
+            if(this.activated){
+                var self = this;
+                this._activateType(null);
+                var olMap = this.mapModel.map.olMap;
+                $.each(this.options.types, function(idx, type){
+                    olMap.removeControl(self.controls[type]);
+                    olMap.removeLayer(self.layers[type]);
+                    self.layers[type].removeAllFeatures();
+                });
+                this._close();
+                this.callback ? this.callback.call() : this.callback = null;
+
+                this.activated = false;
+            }
+        },
+        _somethingOl4: function() {
             var styleOptions = {
                 fill : {
                     color : '#ffcc33'
@@ -110,14 +136,6 @@
             };
 
             this.model.createDrawControl('Circle', this.id, this.model.createStyle(styleOptions));
-        },
-        deactivate: function() {
-            if (this.activated) {
-                this.model.removeInteractions();
-                this.activated = false;
-            }
-            this._close();
-            this.callback ? this.callback.call() : this.callback = null;
         },
         /**
          * closes a dialog
@@ -177,6 +195,7 @@
             }else{
                 this.popup.open();
             }
-        }
+        },
+        _destroy: $.noop
     });
 })(jQuery);

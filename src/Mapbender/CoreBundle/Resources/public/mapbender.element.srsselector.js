@@ -20,14 +20,13 @@
             for(var i = 0; i < allSrs.length; i++){
                 this._addSrsOption(this.$select, allSrs[i]);
             }
-            var mapProjectionCode = this.mbMap.model.getCurrentProjectionCode();
-            this.$select.val(mapProjectionCode);
+            this.$select.val(this.mbMap.map.olMap.getProjection());
 
             initDropdown.call(this.$select.parent());
             this.$select.on('change', $.proxy(this._switchSrs, this));
             $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
             $(document).on('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
-
+            
             this._trigger('ready');
         },
         _switchSrs: function(evt) {
