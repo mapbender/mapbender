@@ -301,7 +301,7 @@
                         }, {
                             context: {
                                 getPointRadius: function(feature) {
-                                    var mapScale = Mapbender.Model.getScale();
+                                    var mapScale = self.map.getModel().getScale();
                                     var printScale = self._getPrintScale();
                                     // Make the point smaller for high ratios of mapScale / printScale
                                     // so it doesn't start to obscure the print rectangle.

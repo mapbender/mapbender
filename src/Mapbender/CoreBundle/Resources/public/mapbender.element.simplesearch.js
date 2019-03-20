@@ -114,7 +114,7 @@ $.widget('mapbender.mbSimpleSearch', {
             self._hideMobile();
 
             // finally, zoom
-            Mapbender.Model.center(bounds.getCenterLonLat, zoom);
+            Mapbender.Model.center(bounds.getCenterLonLat(), zoom);
         });
     },
 
