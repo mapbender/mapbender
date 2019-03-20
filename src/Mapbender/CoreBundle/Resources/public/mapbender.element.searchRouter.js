@@ -515,6 +515,7 @@
                 .on('click', function () {
                     var feature = $(this).data('feature').getFeature();
                     self._highlightFeature(feature, 'select');
+                    self._hideMobile();
                 })
                 .on('mouseenter', function () {
                     var feature = $(this).data('feature').getFeature();
@@ -534,12 +535,14 @@
         },
         _highlightFeature: function (feature, style) {
             if (style === 'select') {
-                if (this.currentFeature && this.currentFeature.layer) {
-                    this.currentFeature.layer.drawFeature(this.currentFeature, 'default');
+                if (this.currentFeature) {
+                    this._highlightFeature(this.currentFeature, 'default');
                 }
                 this.currentFeature = feature;
             }
-            feature.layer.drawFeature(feature, style);
+            if (feature.layer) {
+                feature.layer.drawFeature(feature, style);
+            }
         },
         _highlightFeature4: function(feature, style) {
             feature.setStyle(this.styleMap[style]);
@@ -765,6 +768,10 @@
                     srs: data.to.projCode
                 });
             }
+        },
+
+        _hideMobile: function() {
+            $('.mobileClose', $(this.element).closest('.mobilePane')).click();
         },
 
         /**

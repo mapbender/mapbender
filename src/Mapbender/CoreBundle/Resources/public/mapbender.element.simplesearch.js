@@ -114,10 +114,15 @@ $.widget('mapbender.mbSimpleSearch', {
                     self.layer = self.model.setMarkerOnCoordinates(coordinates, self.element.attr('id'), self.layer, self.iconStyle);
                 }
             }
+            self._hideMobile();
 
             // finally, zoom
             Mapbender.Model.center(bounds.getCenterLonLat, zoom);
         });
+    },
+
+    _hideMobile: function() {
+        $('.mobileClose', $(this.element).closest('.mobilePane')).click();
     },
 
     _tokenize: function(string) {

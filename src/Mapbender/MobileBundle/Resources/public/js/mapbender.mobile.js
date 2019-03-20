@@ -63,32 +63,6 @@ $(function(){
     $('#mobilePaneClose').on('click', function(){
         $('#mobilePane').removeAttr('data-state');
     });
-    $('.mb-element-basesourceswitcher li').on('click', function(e){
-        $('#mobilePaneClose').click();
-    });
-    $('.mb-element-simplesearch input[type="text"]').on('mbautocomplete.selected', function(e){
-        $('#mobilePaneClose').click();
-    });
-    /* START close mobilePane if a map is centred after search */
-    var moved = false;
-    $(document).one('mapbender.setupfinished', function() {
-        Mapbender.elementRegistry.onElementReady("map", function() {
-            Mapbender.Model.mbMap.map.olMap.events.register('moveend', null, function() {
-                if($('#mobilePane').attr('data-state')) {
-                    moved = true;
-                } else {
-                    moved = false;
-                }
-            });
-        });
-    });
-
-    $('.search-results').on('click', function(e){
-        if(e.target.nodeName =="TD"){
-            $('#mobilePaneClose').click();
-        }
-    });
-    /* END close mobilePane if a map is centred after search */
     /* START center notifyjs dialog */
     $.notify.defaults({position: "top left"});
     /* END center notifyjs dialog */

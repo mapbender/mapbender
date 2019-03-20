@@ -56,6 +56,7 @@
             var $me = $(this.element),
                 $map = $('#' + this.options.target).data('mapbenderMbMap'),
                 model = $map.getModel(),
+                switched = false,
                 source;
 
             $me.find(selector).each(function (idx, elm) {
@@ -75,10 +76,14 @@
                         Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable")
                             .replace('%id%', sourcesId), {'id': sourcesId});
                     } else {
-                        source.setState(visibility);
+                        model.setSourceVisibility(source, visibility);
+                        switched = true;
                     }
                 });
             });
+            if (switched) {
+                this._hideMobile();
+            }
         },
 
         _toggleMapset: function (event) {
@@ -98,6 +103,10 @@
             }
 
             this._showActive();
+        },
+
+        _hideMobile: function() {
+            $('.mobileClose', $(this.element).closest('.mobilePane')).click();
         },
 
         _onSourceLoadStart: function (event, option) {
