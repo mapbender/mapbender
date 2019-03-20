@@ -111,10 +111,15 @@ $.widget('mapbender.mbSimpleSearch', {
                     self.marker.moveTo(newPx);
                 }
             }
+            self._hideMobile();
 
             // finally, zoom
             Mapbender.Model.center(bounds.getCenterLonLat, zoom);
         });
+    },
+
+    _hideMobile: function() {
+        $('.mobileClose', $(this.element).closest('.mobilePane')).click();
     },
 
     _tokenize: function(string) {

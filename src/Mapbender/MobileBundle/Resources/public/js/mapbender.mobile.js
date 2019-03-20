@@ -66,10 +66,6 @@ $(function(){
     $('.mb-element-basesourceswitcher li').on('click', function(e){
         $('#mobilePaneClose').click();
     });
-    $('.mb-element-simplesearch input[type="text"]').on('mbautocomplete.selected', function(e){
-        $('#mobilePaneClose').click();
-    });
-
     /* START center notifyjs dialog */
     $.notify.defaults({position: "top left"});
     /* END center notifyjs dialog */
