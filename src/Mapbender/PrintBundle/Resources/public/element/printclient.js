@@ -27,6 +27,7 @@
         // we generally don't want to keep reloading size information
         // for the same template(s) within the same session
         _templateSizeCache: {},
+        selectionActive: false,
 
         _setup: function(){
             var self = this;
@@ -113,6 +114,7 @@
                 var control = self._getSelectionDragControl();
                 self.map.map.olMap.addLayer(layer);
                 self.map.map.olMap.addControl(control);
+                self.selectionActive = true;
                 control.activate();
                 if (reset) {
                     self._setScale();       // NOTE: will end in a call to _updateGeometry(true)
@@ -123,6 +125,7 @@
             });
         },
         _deactivateSelection: function() {
+            this.selectionActive = false;
             if (this.control) {
                 this.control.deactivate();
                 this.map.map.olMap.removeControl(this.control);
@@ -515,7 +518,9 @@
         _onTemplateChange: function() {
             var self = this;
             this._getTemplateSize().then(function() {
-                self._updateGeometry();
+                if (self.selectionActive) {
+                    self._updateGeometry();
+                }
             });
         },
         _getTemplateSize: function() {
