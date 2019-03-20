@@ -12,6 +12,7 @@
         },
 
         callback:       null,
+        mbMap: null,
 
         /**
          * Widget constructor
@@ -19,11 +20,13 @@
          * @private
          */
         _create: function() {
-            if(!Mapbender.checkTarget("mbLegend", this.options.target)) {
-                return;
-            }
             this.htmlContainer = $('> .legends', this.element);
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            var self = this;
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self._setup(mbMap);
+            }, function() {
+                Mapbender.checkTarget("mbLegend", self.options.target);
+            });
         },
 
         /**
@@ -31,7 +34,8 @@
          *
          * @private
          */
-        _setup: function() {
+        _setup: function(mbMap) {
+            this.mbMap = mbMap;
             $(document).one('mbmapsourceloadend', $.proxy(this.onMapLoaded, this));
             this._trigger('ready');
         },
@@ -76,7 +80,7 @@
          */
         _getSources: function() {
             var sourceDataList = [];
-            var sources = Mapbender.Model.getSources();
+            var sources = this.mbMap.getModel().getSources();
             for (var i = 0; i < sources.length; ++i) {
                 var rootLayer = sources[i].configuration.children[0];
                 if (rootLayer.state.visibility) {
