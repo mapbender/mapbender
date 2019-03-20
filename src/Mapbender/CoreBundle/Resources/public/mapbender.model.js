@@ -863,7 +863,11 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     setOpacity: function(source, opacity) {
         // unchecked findSource in layertree may pass undefined for source
         if (source) {
-            var opacity_ = Math.max(0.0, Math.min(1.0, parseFloat(opacity) || 1.0));
+            var opacity_ = parseFloat(opacity);
+            if (isNaN(opacity_)) {
+                opacity_ = 1.0;
+            }
+            opacity_ = Math.max(0.0, Math.min(1.0, opacity_));
             if (opacity_ !== opacity) {
                 console.warn("Invalid-ish opacity, clipped to " + opacity_.toString(), opacity);
             }

@@ -1,9 +1,11 @@
 # Changelog
-* **dev-release/3.0.7** @ 7881c5f51
+* **dev-release/3.0.7** @ 91604aad3
   - [Beta regression] Restore Wms Loader function
   - [Beta regression] Fix error on SimpleSearch centering
+  - [Beta regression] Fix behavior of LayerTree opacity menu when reducing opacity to zero
   - Fix broken display of Buttons with 'Coordinates (FontAwesome)' icon assigned
   - Fix missing gap in ScaleDisplay
+  - Fix PrintClient errors when switching template while selection rectangle is disabled (sidepane / element mode)
 
 * **v3.0.8-beta2**
   - [Beta regression] Fix button group misalginment in Application "Layersets" tab
