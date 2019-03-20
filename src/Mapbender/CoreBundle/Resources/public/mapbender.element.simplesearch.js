@@ -54,26 +54,15 @@ $.widget('mapbender.mbSimpleSearch', {
 
             var zoom = olMap.getZoomForExtent(bounds);
 
-            // restrict zoom if needed
-            if(self.options.result && (self.options.result.maxscale || self.options.result.minscale)){
-                var res = olMap.getResolutionForZoom(zoom);
-                var units = olMap.baseLayer.units;
+            var centerLonLat = bounds.getCenterLonLat();
+            var x = centerLonLat.x, y = centerLonLat.y;
 
-                if(self.options.result.maxscale) {
-                    var maxRes = OpenLayers.Util.getResolutionFromScale(
-                        self.options.result.maxscale, olMap.baseLayer.units);
-                    if(Math.round(res) < maxRes) {
-                        zoom = olMap.getZoomForResolution(maxRes);
-                    }
-                }
-
-                if(self.options.result.minscale) {
-                    var minRes = OpenLayers.Util.getResolutionFromScale(
-                        self.options.result.minscale, olMap.baseLayer.units);
-                    if(Math.round(res) > minRes) {
-                        zoom = olMap.getZoomForResolution(minRes);
-                    }
-                }
+            var centerOptions = {
+                zoom: zoom
+            };
+            if (self.options.result) {
+                centerOptions.maxScale = parseInt(self.options.result.maxScale) || null;
+                centerOptions.minScale = parseInt(self.options.result.minScale) || null;
             }
 
             // Add marker
@@ -114,7 +103,7 @@ $.widget('mapbender.mbSimpleSearch', {
             self._hideMobile();
 
             // finally, zoom
-            Mapbender.Model.center(bounds.getCenterLonLat(), zoom);
+            Mapbender.Model.centerXy(x, y, centerOptions);
         });
     },
 

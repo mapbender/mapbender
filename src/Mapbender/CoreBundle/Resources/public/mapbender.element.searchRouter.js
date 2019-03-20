@@ -13,7 +13,6 @@
         autocompleteModel: null,
         popup: null,
         mbMap: null,
-        map: null,
 
         /**
          * Widget creator
@@ -44,7 +43,7 @@
             var element = widget.element;
             var options = widget.options;
             this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            this.map = this.mbMap.map.olMap;
+
             var searchModelAttributes = {
                 srs: this.mbMap.getModel().getCurrentProj().projCode
             };
@@ -518,14 +517,12 @@
 
         /**
          * Get highlight layer. Will construct one if neccessary.
-         * @TODO: Backbonify (view)
          *
          * @return OpenLayers.Layer.Vector Highlight layer
          */
         _getLayer: function(forceRebuild) {
             var widget = this;
-            var options = widget.options;
-            var map = $('#' + options.target).data('mapbenderMbMap').map.olMap;
+            var map = this.mbMap.map.olMap;
             var layer = widget.highlightLayer;
 
             if(!forceRebuild && layer) {
@@ -580,7 +577,7 @@
             }
             var row = $(event.currentTarget),
                 feature = row.data('feature').getFeature(),
-                map = feature.layer.map
+                map = this.mbMap.map.olMap
             ;
             var featureExtent = $.extend({},feature.geometry.getBounds());
 
@@ -596,30 +593,17 @@
             // get zoom for buffered extent
             var zoom = map.getZoomForExtent(featureExtent);
 
-            // restrict zoom if needed
-            if(callbackConf.options &&
-               (callbackConf.options.maxScale || callbackConf.options.minScale)){
+            var centerLonLat = featureExtent.getCenterLonLat();
+            var x = centerLonLat.x, y = centerLonLat.y;
 
-                var res = map.getResolutionForZoom(zoom);
-
-                if(callbackConf.options.maxScale){
-                    var maxRes = OpenLayers.Util.getResolutionFromScale(
-                        callbackConf.options.maxScale, map.baseLayer.units);
-                    if(Math.round(res) < maxRes){
-                        zoom = map.getZoomForResolution(maxRes);
-                    }
-                }
-
-                if(callbackConf.options.minScale){
-                    var minRes = OpenLayers.Util.getResolutionFromScale(
-                        callbackConf.options.minScale, map.baseLayer.units);
-                    if(Math.round(res) > minRes){
-                        zoom = map.getZoomForResolution(minRes);
-                    }
-                }
+            var centerOptions = {
+                zoom: zoom
+            };
+            if (callbackConf.options) {
+                centerOptions.maxScale = parseInt(callbackConf.maxScale) || null;
+                centerOptions.minScale = parseInt(callbackConf.minScale) || null;
             }
-            // finally, zoom
-            map.setCenter(featureExtent.getCenterLonLat(), zoom);
+            this.mbMap.getModel().centerXy(x, y, centerOptions);
         },
         _onSrsChange: function(event, data) {
             if (this.highlightLayer) {

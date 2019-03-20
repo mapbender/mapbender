@@ -755,6 +755,80 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         this.map.olMap.setCenter(_lonLat, _zoom);
     },
     /**
+     * @param {Number} x projected
+     * @param {Number} y projected
+     * @param {Object} [options]
+     * @param {Number} [options.minScale]
+     * @param {Number} [options.maxScale]
+     * @param {Number|String} [options.zoom]
+     */
+    centerXy: function(x, y, options) {
+        var centerLl = new OpenLayers.LonLat(x, y);
+        var zoom = null;
+        if (options && (options.zoom || parseInt(options.zoom) === 0)) {
+            zoom = this._clampZoomLevel(parseInt(options.zoom));
+        }
+        var zoomNow = this.map.olMap.getZoom();
+        if (options && options.minScale) {
+            var maxZoom = this.pickZoomForScale(options.minScale, true);
+            if (zoom !== null) {
+                zoom = Math.min(zoom, maxZoom);
+            } else {
+                zoom = Math.min(zoomNow, maxZoom);
+            }
+        }
+        if (options && options.maxScale) {
+            var minZoom = this.pickZoomForScale(options.maxScale, false);
+            if (zoom !== null) {
+                zoom = Math.max(zoom, minZoom);
+            } else {
+                zoom = Math.max(zoomNow, minZoom);
+            }
+        }
+        this.map.olMap.setCenter(centerLl, zoom);
+    },
+    pickZoomForScale: function(targetScale, pickHigh) {
+        // @todo: fractional zoom: use exact targetScale (TBD: method should not be called?)
+        var scales = this._getScales();
+        var scale = this._pickScale(scales, targetScale, pickHigh);
+        return scales.indexOf(scale);
+    },
+    _pickScale: function(scales, targetScale, pickHigh) {
+        if (targetScale >= scales[0]) {
+            return scales[0];
+        }
+        for (var i = 0, nScales = scales.length; i < nScales - 1; ++i) {
+            var scaleHigh = scales[i];
+            var scaleLow = scales[i + 1];
+            if (targetScale <= scaleHigh && targetScale >= scaleLow) {
+                if (targetScale > scaleLow && pickHigh) {
+                    return scaleHigh;
+                } else {
+                    return scaleLow;
+                }
+            }
+        }
+        return scales[nScales - 1];
+    },
+    _getScales: function() {
+        // @todo: fractional zoom: method must not be called
+        var baseLayer = this.map.olMap.baseLayer;
+        if (!(baseLayer && baseLayer.scales && baseLayer.scales.length)) {
+            console.error("No base layer, or scales not populated", baseLayer, this.map.olMap);
+            throw new Error("No base layer, or scales not populated");
+        }
+        return baseLayer.scales.map(function(s) {
+            return parseInt('' + Math.round(s));
+        });
+    },
+    _getMaxZoomLevel: function() {
+        // @todo: fractional zoom: no discrete scale steps
+        return this._getScales().length - 1;
+    },
+    _clampZoomLevel: function(zoomIn) {
+        return Math.max(0, Math.min(zoomIn, this._getMaxZoomLevel()));
+    },
+    /**
      * @param {Object} e
      * @param {OpenLayers.Layer} e.object
      */
