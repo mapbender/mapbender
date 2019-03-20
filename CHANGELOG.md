@@ -1,9 +1,10 @@
 # Changelog
-* **dev-release/3.0.7** @ 2147d465f
+* **dev-release/3.0.7** @ 6877ace4f
   - [Beta regression] Restore Wms Loader function
   - [Beta regression] Fix error on SimpleSearch centering
   - [Beta regression] Fix behavior of LayerTree opacity menu when reducing opacity to zero
   - [Beta regression] Fix PrintClient selection broken in Firefox
+  - [Beta regression] Fix ZoomBar missing highlight on activated zoom box icon
   - Fix broken display of Buttons with 'Coordinates (FontAwesome)' icon assigned
   - Fix missing gap in ScaleDisplay
   - Fix PrintClient errors when switching template while selection rectangle is disabled (sidepane / element mode)

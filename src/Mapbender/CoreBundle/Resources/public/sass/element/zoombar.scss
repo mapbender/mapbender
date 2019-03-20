@@ -16,6 +16,9 @@
     [title]:hover {
       color: $lightFontColor;
     }
+    &.activeZoomIcon {
+      color: $lightFontColor;
+    }
   }
 
   /**
@@ -58,9 +61,6 @@
   }
   .historyPrev, .historyNext{margin-left:5px;}
   .toolPane {
-    li.zoomBox.activeZoomIcon {
-      opacity: 1;
-    }
     .zoomBox, .zoomWorld, .zoomSlider {
       text-align: center;
     }
