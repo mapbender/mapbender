@@ -1080,8 +1080,23 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             value: eventData
         });
     },
-    setSourceVisibility: function(sourceId, state) {
-        var source = this.getSource({id: sourceId});
+    /**
+     *
+     * @param {string|Object} sourceOrId
+     * @property {string} sourceOrId.id
+     * @param state
+     */
+    setSourceVisibility: function(sourceOrId, state) {
+        var source;
+        if (typeof sourceOrId === 'object') {
+            if (sourceOrId instanceof Mapbender.Source) {
+                source = sourceOrId;
+            } else {
+                source = this.getSourceById(sourceOrId.id);
+            }
+        } else {
+            source = this.getSourceById(sourceOrId);
+        }
         var newProps = {};
         var rootLayer = source.configuration.children[0];
         if (state && !rootLayer.options.treeOptions.allow.selected) {
