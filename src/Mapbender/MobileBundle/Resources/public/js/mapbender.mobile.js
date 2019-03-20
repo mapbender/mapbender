@@ -63,9 +63,6 @@ $(function(){
     $('#mobilePaneClose').on('click', function(){
         $('#mobilePane').removeAttr('data-state');
     });
-    $('.mb-element-basesourceswitcher li').on('click', function(e){
-        $('#mobilePaneClose').click();
-    });
     /* START center notifyjs dialog */
     $.notify.defaults({position: "top left"});
     /* END center notifyjs dialog */
