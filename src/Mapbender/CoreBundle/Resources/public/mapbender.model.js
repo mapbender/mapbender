@@ -1160,6 +1160,9 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             source = this.getSource(sourceIdObject);
         }
         if (source !== null) {
+            if (!(source instanceof Mapbender.Source)) {
+                source = Mapbender.Source.factory(source);
+            }
             var toChangeOptions = Mapbender.source[source.type].createOptionsLayerState(source, options,
                 defaultSelected, mergeSelected);
             this._updateSourceLayerTreeOptions(source, toChangeOptions.change.options.children);
