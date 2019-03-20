@@ -1,4 +1,7 @@
 # Changelog
+* **dev-release/3.0.7** @ 48fde933d
+  - [Beta regression] Fix error on SimpleSearch centering
+
 * **v3.0.8-beta2**
   - [Beta regression] Fix button group misalginment in Application "Layersets" tab
   - [Beta regression] Fix layout breakage in "Vendorspecifics" area of WMS instance backend
