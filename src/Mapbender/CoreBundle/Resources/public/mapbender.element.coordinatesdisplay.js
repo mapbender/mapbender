@@ -61,7 +61,7 @@
                     ;
                 };
             } else {
-                controlOptions.element = $('#coordinatesdisplay', this.element).get(0);
+                controlOptions.element = $('.display-area', this.element).get(0);
             }
             if (this.control) {
                 this.mbMap.map.olMap.removeControl(this.control);
