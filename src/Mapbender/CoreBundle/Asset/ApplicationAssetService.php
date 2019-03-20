@@ -182,6 +182,7 @@ class ApplicationAssetService
                 $commonAssets = array(
                     $ol4,
                     $proj4js,
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
                     "$modelJsBase/mapbender.model.ol4.source.js",
