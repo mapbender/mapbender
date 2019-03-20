@@ -514,26 +514,23 @@
             $('.search-results tbody tr')
                 .on('click', function () {
                     var feature = $(this).data('feature').getFeature();
-                    self._highlightFeature(feature,self.styleMap['select']);
+                    self._highlightFeature(feature, 'select');
                 })
                 .on('mouseenter', function () {
                     var feature = $(this).data('feature').getFeature();
 
                     if(feature.renderIntent !== 'select') {
-                        self._highlightFeature(feature,self.styleMap['temporary']);
+                        self._highlightFeature(feature, 'temporary');
                     }
                 })
                 .on('mouseleave', function () {
                     var feature = $(this).data('feature').getFeature();
 
                     if(feature.renderIntent !== 'select') {
-                        self._highlightFeature(feature,self.styleMap['default']);
+                        self._highlightFeature(feature, 'default');
                     }
                 })
             ;
-        },
-        _highlightFeature4: function(feature, style) {
-            feature.setStyle(style);
         },
         _highlightFeature: function (feature, style) {
             if (style === 'select') {
@@ -543,6 +540,9 @@
                 this.currentFeature = feature;
             }
             feature.layer.drawFeature(feature, style);
+        },
+        _highlightFeature4: function(feature, style) {
+            feature.setStyle(this.styleMap[style]);
         },
 
         _showResultState: function() {
