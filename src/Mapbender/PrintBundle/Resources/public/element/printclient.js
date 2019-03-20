@@ -209,6 +209,8 @@
 
             var rotation = parseInt(rotationField.val()) || 0;
 
+            this.control.unsetFeature();
+
             var center = (reset === true || !this.feature) ?
             this.map.map.olMap.getCenter() :
             this.feature.geometry.getBounds().getCenterLonLat();
@@ -235,37 +237,16 @@
             ).toGeometry(), {});
             // copy bounds before rotation
             this.printBounds = this.feature.geometry.getBounds().clone();
-            this._updateRotation(rotation, center);
+
+            this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
+            this._redrawSelectionFeatures([this.feature]);
+            this.control.setFeature(this.feature, {rotation: -rotation});
         },
         _redrawSelectionFeatures: function(features) {
             var layer = this._getSelectionLayer();
             layer.removeAllFeatures();
             layer.addFeatures(features);
             layer.redraw();
-        },
-        _updateRotation: function(rotation, center) {
-            this.control.unsetFeature();
-            var $rotationInput = $('input[name="rotation"]', this.$form);
-            var olRotation = this.control.rotation;
-
-            if (event.type !== 'keyup') { // Rotation via handle
-                var printRotation = olRotation;
-                if (printRotation > 0) {
-                    printRotation = 360 - printRotation;
-                } else {
-                    printRotation = Math.abs(printRotation);
-                }
-                $rotationInput.val(printRotation);
-            } else { // Rotation by user input
-                if (rotation > 180) {
-                    olRotation = 360 - rotation;
-                } else {
-                    olRotation = -rotation;
-                }
-            }
-            this.feature.geometry.rotate(olRotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
-            this._redrawSelectionFeatures([this.feature]);
-            this.control.setFeature(this.feature, {rotation: olRotation});
         },
         /**
          * Gets the layer on which the selection feature is drawn. Layer is created on first call, then reused
@@ -340,7 +321,11 @@
                 });
                 this.control.events.on({
                     'transformcomplete': function() {
-                        self._updateGeometry();
+                        var userRotation = 360 - this.rotation;
+                        if (userRotation > 180) {
+                            userRotation -= 360;
+                        }
+                        $('input[name="rotation"]', self.$form).val(userRotation);
                     }
                 });
             }
