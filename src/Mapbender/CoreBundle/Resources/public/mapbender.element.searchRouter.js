@@ -422,6 +422,7 @@
                 .on('click', function () {
                     var feature = $(this).data('feature').getFeature();
                     self._highlightFeature(feature, 'select');
+                    self._hideMobile();
                 })
                 .on('mouseenter', function () {
                     var feature = $(this).data('feature').getFeature();
@@ -634,6 +635,10 @@
                     srs: data.to.projCode
                 });
             }
+        },
+
+        _hideMobile: function() {
+            $('.mobileClose', $(this.element).closest('.mobilePane')).click();
         },
 
         /**
