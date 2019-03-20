@@ -1,6 +1,9 @@
 # Changelog
-* **dev-release/3.0.7** @ 48fde933d
+* **dev-release/3.0.7** @ 7881c5f51
+  - [Beta regression] Restore Wms Loader function
   - [Beta regression] Fix error on SimpleSearch centering
+  - Fix broken display of Buttons with 'Coordinates (FontAwesome)' icon assigned
+  - Fix missing gap in ScaleDisplay
 
 * **v3.0.8-beta2**
   - [Beta regression] Fix button group misalginment in Application "Layersets" tab
