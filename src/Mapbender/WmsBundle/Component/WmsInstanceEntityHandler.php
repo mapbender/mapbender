@@ -32,35 +32,36 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->entity->setSource(new WmsSource());
         }
         $source = $this->entity->getSource();
-        $source->setId(ArrayUtil::hasSet($configuration, 'id', ""))
-            ->setTitle(ArrayUtil::hasSet($configuration, 'id', ""));
-        $source->setVersion(ArrayUtil::hasSet($configuration, 'version', "1.1.1"));
-        $source->setOriginUrl(ArrayUtil::hasSet($configuration, 'url'));
-        $source->setGetMap(new RequestInformation());
-        $source->getGetMap()->addFormat(ArrayUtil::hasSet($configuration, 'format', true))
-            ->setHttpGet(ArrayUtil::hasSet($configuration, 'url'));
+        $source->setId(!isset($configuration['id']) ? '' : $configuration['id'])
+            ->setTitle(!isset($configuration['id']) ? '' : $configuration['id'])
+            ->setVersion(!isset($configuration['version']) ? '1.1.1' : $configuration['version'])
+            ->setOriginUrl(!isset($configuration['url']) ? null : $configuration['url'])
+            ->setGetMap(new RequestInformation())
+            ->getGetMap()->addFormat(!isset($configuration['format']) ? 'image/png' : $configuration['format'])
+            ->setHttpGet(!isset($configuration['url']) ? null : $configuration['url']);
         if (isset($configuration['info_format'])) {
-            $source->setGetFeatureInfo(new RequestInformation());
-            $source->getGetFeatureInfo()->addFormat(ArrayUtil::hasSet($configuration, 'info_format', true))
-                ->setHttpGet(ArrayUtil::hasSet($configuration, 'url'));
+            $source->setGetFeatureInfo(new RequestInformation())
+                ->getGetFeatureInfo()->addFormat(!isset($configuration['info_format']) ? 'text/html' : $configuration['info_format'])
+                ->setHttpGet(!isset($configuration['url']) ? null : $configuration['url']);
         }
 
         $this->entity
-            ->setId(ArrayUtil::hasSet($configuration, 'id', null))
-            ->setTitle(ArrayUtil::hasSet($configuration, 'title', ""))
-            ->setWeight(ArrayUtil::hasSet($configuration, 'weight', 0))
-            ->setLayerset(ArrayUtil::hasSet($configuration, 'layerset'))
-            ->setProxy(ArrayUtil::hasSet($configuration, 'proxy', false))
-            ->setVisible(ArrayUtil::hasSet($configuration, 'visible', true))
-            ->setFormat(ArrayUtil::hasSet($configuration, 'format', true))
-            ->setInfoformat(ArrayUtil::hasSet($configuration, 'info_format'))
-            ->setTransparency(ArrayUtil::hasSet($configuration, 'transparent', true))
-            ->setOpacity(ArrayUtil::hasSet($configuration, 'opacity', 100))
-            ->setTiled(ArrayUtil::hasSet($configuration, 'tiled', false))
-            ->setBasesource(ArrayUtil::hasSet($configuration, 'isBaseSource', true));
+            ->setId(!isset($configuration['id']) ? null : $configuration['id'])
+            ->setTitle(!isset($configuration['title']) ? '' : $configuration['title'])
+            ->setWeight(!isset($configuration['weight']) ? -1 : $configuration['weight'])
+            ->setLayerset(!isset($configuration['layerset']) ? null : $configuration['layerset'])
+            ->setProxy(!isset($configuration['proxy']) ? false : $configuration['proxy'])
+            ->setVisible(!isset($configuration['visible']) ? true : $configuration['visible'])
+            ->setFormat(!isset($configuration['format']) ? 'image/png' : $configuration['format'])
+            ->setInfoformat(!isset($configuration['info_format']) ? 'text/html' : $configuration['info_format'])
+            ->setTransparency(!isset($configuration['transparent']) ? true : $configuration['transparent'])
+            ->setOpacity(!isset($configuration['opacity']) ? 100 : $configuration['opacity'])
+            ->setTiled(!isset($configuration['tiled']) ? false : $configuration['tiled'])
+            ->setBasesource(!isset($configuration['isBaseSource']) ? true : $configuration['isBaseSource'])
+            ->setLayerOrder(!isset($configuration['layerorder']) ? 'standard' : $configuration['layerorder']);
 
         $rootMinScale = !isset($configuration["minScale"]) ? null : $configuration["minScale"];
-        $rootMaxScale =!isset($configuration["maxScale"]) ? null : $configuration["maxScale"];
+        $rootMaxScale = !isset($configuration["maxScale"]) ? null : $configuration["maxScale"];
         $rootScaleObj = new MinMax($rootMinScale, $rootMaxScale);
 
         $num  = 0;
