@@ -1,10 +1,11 @@
 # Changelog
-* **dev-release/3.0.7** @ 6877ace4f
+* **dev-release/3.0.7** @ 58ea183cc
   - [Beta regression] Restore Wms Loader function
   - [Beta regression] Fix error on SimpleSearch centering
   - [Beta regression] Fix behavior of LayerTree opacity menu when reducing opacity to zero
   - [Beta regression] Fix PrintClient selection broken in Firefox
   - [Beta regression] Fix ZoomBar missing highlight on activated zoom box icon
+  - Update `mbPrintClient.printDigitizerFeature` API ([PR#1123](https://github.com/mapbender/mapbender/pull/1123), [Digitizer PR#69](https://github.com/mapbender/mapbender-digitizer/pull/69))
   - Fix broken display of Buttons with 'Coordinates (FontAwesome)' icon assigned
   - Fix missing gap in ScaleDisplay
   - Fix PrintClient errors when switching template while selection rectangle is disabled (sidepane / element mode)
