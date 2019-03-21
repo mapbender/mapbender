@@ -3,6 +3,18 @@
 $.widget('mapbender.mbSimpleSearch', {
     options: {
         url: null,
+        /** one of 'WKT', 'GeoJSON' */
+        token_regex: null,
+        token_regex_in: null,
+        token_regex_out: null,
+        label_attribute: null,
+        geom_attribute: null,
+        geom_format: null,
+        result_buffer: null,
+        result_minscale: null,
+        result_maxscale: null,
+        result_icon_url: null,
+        result_icon_offset: null,
         delay: 0
     },
 
@@ -112,9 +124,9 @@ $.widget('mapbender.mbSimpleSearch', {
     },
 
     _tokenize: function(string) {
-        if('' == this.options.token_regex_in || '' == this.options.token_regex_out) return string;
+        if (!(this.options.token_regex_in && this.options.token_regex_out)) return string;
 
-        if (this.options.token_regex != "") {
+        if (this.options.token_regex) {
             var regexp = new RegExp(this.options.token_regex, 'g');
             string = string.replace(regexp, " ");
         }
