@@ -126,6 +126,13 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @property {number|null} minResolution
      * @property {number|null} maxResolution
      */
+    /**
+     * @typedef {Object} Model~CenterOptionsMapQueryish
+     * @property {Array<Number>} [box]
+     * @property {Array<Number>} [position]
+     * @property {Array<Number>} [center] same as position! .position takes precedence if both are set
+     * @property {Number} [zoom]
+     */
 
     mbMap: null,
     map: null,
@@ -732,27 +739,66 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     /**
-     * @typedef {Object} Model~CenterOptionsMapQueryish
-     * @property {Array<Number>} position
-     * @property {Number} [zoom]
+     * @param {Array|OpenLayers.Bounds|Object} boundsOrCoords
      */
-    /**
-     * @param {Array<Number>|OpenLayers.LonLat|Model~CenterOptionsMapQueryish} lonLat
-     * @param zoom
-     */
-    center: function(lonLat, zoom) {
-        // Compatibility hack for legacy elements (e.g. old SimpleSearch) expecting MapQuery API
-        var _lonLat = lonLat, _zoom = zoom;
-        if (lonLat) {
-            if (typeof lonLat.position !== 'undefined') {
-                console.warn("Calling center with MapQuery-style options is deprecated", arguments);
-                _lonLat = new OpenLayers.LonLat(lonLat.position[0], lonLat.position[1]);
-                _zoom = lonLat.zoom || zoom;
-            }
+    setExtent: function(boundsOrCoords) {
+        var bounds;
+        if ($.isArray(boundsOrCoords)) {
+            bounds = OpenLayers.Bounds.fromArray(boundsOrCoords);
         } else {
-            _lonLat = null;
+            bounds = new OpenLayers.Bounds(
+                boundsOrCoords.left,
+                boundsOrCoords.bottom,
+                boundsOrCoords.right,
+                boundsOrCoords.top);
         }
-        this.map.olMap.setCenter(_lonLat, _zoom);
+        this.olMap.zoomToExtent(bounds);
+    },
+    /**
+     * Emulation shim for old-style MapQuery.Map.prototype.center.
+     * See https://github.com/mapbender/mapquery/blob/1.0.2/src/jquery.mapquery.core.js#L298
+     * @param {Model~CenterOptionsMapQueryish} options
+     * @deprecated
+     */
+    setCenterMapqueryish: function(options) {
+        if (!arguments.length) {
+            throw new Error("Unsupported getter-style invocation");
+        }
+        if (options.projection) {
+            throw new Error("Unsupported setCenterMapqueryish call with options.projection");
+        }
+        if (typeof options.box !== 'undefined') {
+            console.warn("Deprecated setCenter call, please switch to Mapbender.Model.setExtent");
+            this.setExtent(options.box);
+        } else if (typeof options.position !== 'undefined' || typeof options.center !== 'undefined') {
+            var _center = options.position || options.center;
+            var x, y, zoom = options.zoom;
+            if (typeof zoom === 'undefined') {
+                zoom = null;
+            }
+            if ($.isArray(_center) && _center.length === 2) {
+                x = _center[0];
+                y = _center[1];
+            } else {
+                x = _center.lon;
+                y = _center.lat;
+            }
+            if (typeof x === 'undefined' || typeof y == 'undefined' || x === null || y === null) {
+                throw new Error("Invalid position / center option");
+            }
+            console.warn("Deprecated setCenter call, please switch to Mapbender.Model.centerXy");
+            this.centerXy(x, y, {
+                zoom: zoom
+            });
+        }
+        throw new Error("Invalid setCenterMapqueryish options");
+    },
+    /**
+     * @param {Model~CenterOptionsMapQueryish} options
+     * @deprecated
+     */
+    center: function(options) {
+        this.setCenterMapqueryish(options);
     },
     /**
      * @param {Number} x projected
