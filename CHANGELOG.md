@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7** @ 58ea183cc
+* **v3.0.8-beta3**
   - [Beta regression] Restore Wms Loader function
   - [Beta regression] Fix error on SimpleSearch centering
   - [Beta regression] Fix behavior of LayerTree opacity menu when reducing opacity to zero
