@@ -391,21 +391,6 @@ abstract class Element extends MinimalBound
     }
 
     /**
-     * Converts a camel-case string to underscore-separated lower-case string
-     *
-     * E.g. "FantasticMethodNaming" => "fantastic_method_naming"
-     *
-     * @param $className
-     * @return mixed
-     * @internal
-     * @deprecated to be removed in 3.0.8; use StringUtil::camelToSnakeCase directly
-     */
-    protected static function getTemplateName($className)
-    {
-        return StringUtil::camelToSnakeCase($className);
-    }
-
-    /**
      * @param string $action
      * @param mixed $referenceType optional; one of the UrlGenerator constants
      * @return string
