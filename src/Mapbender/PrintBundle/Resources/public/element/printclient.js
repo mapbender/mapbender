@@ -541,30 +541,72 @@
             }
             return promise;
         },
-        printDigitizerFeature: function(schemaName,featureId){
-            // Sonderlocke Digitizer
-            this.digitizerData = {
-                digitizer_feature: {
-                    id: featureId,
-                    schemaName: schemaName
+        /**
+         * @param {OpenLayers.Feature.Vector} feature
+         * @return {Object}
+         * @private
+         */
+        _extractPrintAttributes: function(feature) {
+            var attributes = $.extend({}, feature.attributes);
+            if (feature.data) {
+                // Digitizerish OpenLayers feature, 'attributes' property out of date,
+                // non-standard 'data' property contains current values
+                $.extend(attributes, feature.data);
+                if (typeof feature.fid !== 'undefined') {
+                    // Non-standard Digitizerish 'fid' property on OpenLayers feature
+                    // overrides id
+                    attributes.id = feature.fid;
+                    attributes.fid = feature.fid;
                 }
+            }
+            return attributes;
+        },
+        /**
+         * @param {OpenLayers.Feature.Vector|Object} attributesOrFeature
+         * @param {String} [templateName]
+         */
+        printDigitizerFeature: function(attributesOrFeature, templateName) {
+            // Sonderlocke Digitizer
+            if (typeof attributesOrFeature !== 'object') {
+                var msg = "Unsupported mbPrintClient.printDigitizerFeature invocation. Must pass in printable attributes object (preferred) or OpenLayers feature to extract them from. Update your mapbender/digitizer to >=1.1.68";
+                console.error(msg, arguments);
+                throw new Error(msg);
+            }
+            var attributes;
+            if (attributesOrFeature.attributes) {
+                // Standard OpenLayers feature; see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L44
+                attributes = this._extractPrintAttributes(attributesOrFeature);
+            } else {
+                // Plain-old-data attributesOrFeature object (preferred invocation method)
+                attributes = attributesOrFeature;
+            }
+
+            this.digitizerData = {
+                // Freeze attribute values in place now.
+                // Also, if the resulting object is not serializable (cyclic refs), let's run into that error right now
+                digitizer_feature: JSON.parse(JSON.stringify(attributes))
             };
 
-            this._getDigitizerTemplates(schemaName);
+            if (templateName) {
+                var self = this;
+                this._getDigitizerTemplates(templateName).then(function() {
+                    self.open()
+                });
+            } else {
+                this.open();
+            }
         },
 
         _getDigitizerTemplates: function(schemaName) {
             var self = this;
 
             var url =  this.elementUrl + 'getDigitizerTemplates';
-            $.ajax({
+            return $.ajax({
                 url: url,
                 type: 'GET',
                 data: {schemaName: schemaName},
                 success: function(data) {
                     self._overwriteTemplateSelect(data);
-                    // open changed dialog
-                    self.open();
                 }
             });
         },
