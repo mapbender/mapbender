@@ -80,17 +80,26 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setSourceItem($layersourceroot)
             ->setSourceInstance($this->entity)
             ->setToggle(!isset($configuration["toggle"]) ? false : $configuration["toggle"])
-            ->setAllowtoggle(!isset($configuration["allowtoggle"]) ? true : $configuration["allowtoggle"]);
+            ->setAllowtoggle(!isset($configuration["allowtoggle"]) ? true : $configuration["allowtoggle"])
+            ->setPriority($num);
         $this->entity->addLayer($rootInstLayer);
-        foreach ($configuration["layers"] as $layerDef) {
+
+        foreach ($configuration['layers'] as $layerDef) {
+            $this->populateFromYaml($layerDef, $source, $layersourceroot, $rootInstLayer, $num);
+        }
+        return $this->entity;
+    }
+
+    public function populateFromYaml($configuration, WmsSource $source, WmsLayerSource $layersource, WmsInstanceLayer $instancelayer, $num)
+    {
             $num++;
-            $layersource = new WmsLayerSource();
-            $layersource->setSource($source)
-                ->setName($layerDef["name"])
-                ->setTitle($layerDef['title'])
-                ->setParent($layersourceroot)
+            $childLayerSource = new WmsLayerSource();
+            $childLayerSource->setSource($source)
+                ->setName($configuration["name"])
+                ->setTitle($configuration['title'])
+                ->setParent($layersource)
                 ->setId($this->entity->getId() . '_' . $num);
-            if (isset($layerDef["legendurl"])) {
+            if (isset($configuration["legendurl"])) {
                 $style          = new Style();
                 $style->setName(null);
                 $style->setTitle(null);
@@ -100,30 +109,38 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 $legendUrl->setHeight(null);
                 $onlineResource = new OnlineResource();
                 $onlineResource->setFormat(null);
-                $onlineResource->setHref($layerDef["legendurl"]);
+                $onlineResource->setHref($configuration["legendurl"]);
                 $legendUrl->setOnlineResource($onlineResource);
                 $style->setLegendUrl($legendUrl);
-                $layersource->addStyle($style);
+                $childLayerSource->addStyle($style);
             }
-            $layersourceroot->addSublayer($layersource);
-            $source->addLayer($layersource);
-            $layerInst       = new WmsInstanceLayer();
-            $layerInst->setTitle($layerDef["title"])
+            $layersource->addSublayer($childLayerSource);
+            $source->addLayer($childLayerSource);
+            $childLayerInstance       = new WmsInstanceLayer();
+            $childLayerInstance->setTitle($configuration["title"])
                 ->setId($this->entity->getId() . '_' . $num)
-                ->setMinScale(!isset($layerDef["minScale"]) ? null : $layerDef["minScale"])
-                ->setMaxScale(!isset($layerDef["maxScale"]) ? null : $layerDef["maxScale"])
-                ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
-                ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
-                ->setParent($rootInstLayer)
-                ->setSourceItem($layersource)
+                ->setMinScale(!isset($configuration["minScale"]) ? null : $configuration["minScale"])
+                ->setMaxScale(!isset($configuration["maxScale"]) ? null : $configuration["maxScale"])
+                ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
+                ->setInfo(!isset($configuration["queryable"]) ? false : $configuration["queryable"])
+                ->setParent($instancelayer)
+                ->setSourceItem($childLayerSource)
                 ->setSourceInstance($this->entity)
-                ->setAllowinfo($layerInst->getInfo() !== null && $layerInst->getInfo() ? true : false)
-                ->setToggle(!isset($layerDef["toggle"]) ? null : $layerDef["toggle"])
-                ->setAllowtoggle(!isset($layerDef["allowtoggle"]) ? null : $layerDef["allowtoggle"]);
-            $rootInstLayer->addSublayer($layerInst);
-            $this->entity->addLayer($layerInst);
-        }
-        return $this->entity;
+                ->setAllowinfo($childLayerInstance->getInfo() !== null && $childLayerInstance->getInfo() ? true : false)
+                ->setToggle(!isset($configuration["toggle"]) ? null : $configuration["toggle"])
+                ->setAllowtoggle(!isset($configuration["allowtoggle"]) ? null : $configuration["allowtoggle"])
+                ->setPriority($num);
+            $instancelayer->addSublayer($childLayerInstance);
+            $this->entity->addLayer($childLayerInstance);
+
+            if (isset($configuration['layers'])) {
+                foreach ($configuration['layers'] as $layerDef) {
+                    $this->populateFromYaml($layerDef, $source, $childLayerSource, $childLayerInstance, $num);
+                }
+            } else {
+                $instancelayer->setToggle(false);
+                $instancelayer->setAllowtoggle(true);
+            }
     }
 
     /**
