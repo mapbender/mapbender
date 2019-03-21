@@ -4,9 +4,7 @@
 namespace Mapbender\PrintBundle\Component\Plugin;
 
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\DataSourceBundle\Component\FeatureTypeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -60,35 +58,12 @@ class DigitizerPrintPlugin implements PrintClientHttpPluginInterface, TextFieldP
     public function getTextFieldContent($fieldName, $jobData)
     {
         if (isset($jobData['digitizer_feature']) && preg_match("/^feature./", $fieldName)) {
-            $dfData = $jobData['digitizer_feature'];
-            try {
-                $feature = $this->getFeature($dfData['schemaName'], $dfData['id']);
-            } catch (ServiceNotFoundException $e) {
-                // occurs if a configured dbal connection is missing or
-                // the feature type service is not registered at all
-                // => return null to leave field unhandled
-                return null;
-            }
-            $attribute = substr(strrchr($fieldName, "."), 1);
-
-            if ($feature && $attribute) {
-                return $feature->getAttribute($attribute);
+            $attributes = $jobData['digitizer_feature'] ?: array();
+            $attributeName = substr(strrchr($fieldName, "."), 1);
+            if (!empty($attributes[$attributeName])) {
+                return $attributes[$attributeName];
             }
         }
         return null;
-    }
-
-    /**
-     * @param $schemaName
-     * @param $featureId
-     * @return array|\Mapbender\DataSourceBundle\Entity\DataItem
-     */
-    protected function getFeature($schemaName, $featureId)
-    {
-        /** @var FeatureTypeService $featureTypeService */
-        $featureTypeService = $this->container->get('features');
-        $featureType = $featureTypeService->get($schemaName);
-        $feature = $featureType->get($featureId);
-        return $feature;
     }
 }
