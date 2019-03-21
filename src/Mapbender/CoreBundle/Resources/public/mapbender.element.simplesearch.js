@@ -47,6 +47,10 @@ $.widget('mapbender.mbSimpleSearch', {
         // On item selection in autocomplete, parse data and set map bbox
         searchInput.on('mbautocomplete.selected', $.proxy(this._onAutocompleteSelected, this));
     },
+    _getMbMap: function() {
+        // @todo: SimpleSearch should have a 'target' for this, like virtually every other element
+        return (Mapbender.elementRegistry.listWidgets())['mapbenderMbMap'];
+    },
     _onAutocompleteSelected: function(evt, evtData) {
         var format = new OpenLayers.Format[this.options.geom_format]();
         var self = this;
@@ -56,7 +60,8 @@ $.widget('mapbender.mbSimpleSearch', {
         }
 
         var feature = format.read(evtData.data[self.options.geom_attribute]);
-        var olMap = Mapbender.Model.map.olMap;
+        var mbMap = this._getMbMap();
+        var olMap = mbMap.getModel().map.olMap;
         var bounds = feature.geometry.getBounds();
 
         if(self.options.result.buffer > 0) {
@@ -117,7 +122,7 @@ $.widget('mapbender.mbSimpleSearch', {
         self._hideMobile();
 
         // finally, zoom
-        Mapbender.Model.centerXy(x, y, centerOptions);
+        mbMap.getModel().centerXy(x, y, centerOptions);
 
     },
 
