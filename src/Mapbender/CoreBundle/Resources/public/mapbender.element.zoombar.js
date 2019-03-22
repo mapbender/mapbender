@@ -8,23 +8,25 @@ $.widget("mapbender.mbZoomBar", {
         position: [0, 0],
         draggable: true},
 
-    mapDiv: null,
     map: null,
     zoomslider: null,
     navigationHistoryControl: null,
     zoomBoxControl: null,
+    mbMap: null,
 
     _create: function() {
         if(!Mapbender.checkTarget("mbZoomBar", this.options.target)){
             return;
         }
         var self = this;
-        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+        Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            self.mbMap = mbMap;
+            self._setup();
+        });
     },
 
     _setup: function() {
-        this.mapDiv = $('#' + this.options.target);
-        this.map = this.mapDiv.data('mapbenderMbMap').map.olMap;
+        this.map = this.mbMap.map.olMap;        // @todo: no direct access to OpenLayers map
         this._setupSlider();
         this._setupZoomButtons();
         this._setupPanButtons();
