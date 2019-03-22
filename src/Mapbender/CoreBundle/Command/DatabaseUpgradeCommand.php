@@ -33,8 +33,19 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
      * @return int|null|void
      */
 
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->changeMapsImagePath($input, $output);
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->updateMapElementConfigs($input, $output);
+    }
+
+    protected function getObsoleteMapOptionNames()
+    {
+        return array(
+            'imgPath',
+            'wmsTileDelay',
+            'minTileSize',
+            'maxResolution',
+        );
     }
 
     /**
@@ -42,7 +53,7 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
      * from  "bundles/mapbendercore/mapquery/lib/openlayers/img"
      * to "components/mapquery/lib/openlayers/img"
      */
-    protected function changeMapsImagePath(InputInterface $input, OutputInterface $output){
+    protected function updateMapElementConfigs(InputInterface $input, OutputInterface $output){
 
         /**
          * @var EntityManager $em
@@ -51,18 +62,26 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
         $doctrine=$this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
         $maps = $em->getRepository('MapbenderCoreBundle:Element')->findBy(array('class'=>'Mapbender\CoreBundle\Element\Map'));
-        $output->writeln('Updating map elements image path values');
+        $output->writeln('Updating map element configs');
         $output->writeln('Found ' . count($maps) . ' map elements');
         $progressBar = new ProgressBar($output, count($maps) );
+        $updatedElements = 0;
         foreach ($maps as $map) {
             $config = $map->getConfiguration();
             $progressBar->advance();
-            if ($config['imgPath'] == 'bundles/mapbendercore/mapquery/lib/openlayers/img') {
-                $progressBar->setMessage('Found old image path');
-                $config['imgPath']= 'components/mapquery/lib/openlayers/img';
+            $removedConfigs = array();
+            foreach ($this->getObsoleteMapOptionNames() as $obsoleteKey) {
+                if (array_key_exists($obsoleteKey, $config)) {
+                    unset($config[$obsoleteKey]);
+                    $removedConfigs[] = $obsoleteKey;
+                }
+            }
+            if ($removedConfigs) {
+                $progressBar->setMessage("Found obsolete configuration values " . implode(', ', $removedConfigs));
                 $map->setConfiguration($config);
                 $em->persist($map);
-                $progressBar->setMessage('Old image path successfully changed');
+                $progressBar->setMessage('Map configuration updated');
+                ++$updatedElements;
             } else {
                 $progressBar->setMessage('Map element already up-to-date');
             }
@@ -70,7 +89,11 @@ class DatabaseUpgradeCommand extends ContainerAwareCommand {
         $em->flush();
         $progressBar->finish();
         $output->writeln('');
-        $output->writeln('All image path values are now up-to-date');
+        if ($updatedElements) {
+            $output->writeln("Updated {$updatedElements} Map elements");
+        } else {
+            $output->writeln("All Map elements were already up to date");
+        }
         $output->writeln('Exiting now');
     }
 }
