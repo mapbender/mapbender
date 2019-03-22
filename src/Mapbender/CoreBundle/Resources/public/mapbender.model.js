@@ -241,6 +241,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             var zoom = this.pickZoomForScale(this.mbMap.options.targetscale, true);
             this.setZoomLevel(zoom, false);
         }
+        this.historyControl = new OpenLayers.Control.NavigationHistory();
+        this.map.olMap.addControl(this.historyControl);
     },
     /**
      * Set map view: extent from URL parameters or configuration and POIs
@@ -379,6 +381,12 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     },
     getAllSrs: function() {
         return this.srsDefs;
+    },
+    historyBack: function() {
+        this.historyControl.previous.trigger();
+    },
+    historyForward: function() {
+        this.historyControl.next.trigger();
     },
     /**
      * Calculates an extent from a geometry with buffer.
@@ -874,6 +882,9 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var pixelDx = (dx / 100.0) * mapSize.w;
         var pixelDy = (dy / 100.0) * mapSize.h;
         this.panByPixels(pixelDx, pixelDy);
+    },
+    getViewPort: function() {
+        return this.map.olMap.viewPortDiv;
     },
     _pickScale: function(scales, targetScale, pickHigh) {
         if (targetScale >= scales[0]) {
