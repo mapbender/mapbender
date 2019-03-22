@@ -190,7 +190,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         });
         var mapOptions = {
             maxExtent: this._transformExtent(this.mapMaxExtent.extent, this._configProj, this._startProj).toArray(),
-            maxResolution: this.mbMap.options.maxResolution,
+            maxResolution: 'auto',
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
             projection: this._startProj,
             displayProjection: this._startProj,

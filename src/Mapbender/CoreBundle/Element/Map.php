@@ -275,11 +275,7 @@ class Map extends Element
         if (isset($conf['targetscale'])) {
             $conf['targetscale'] = intval($conf['targetscale']);
         }
-
-        return array_replace($conf, array(
-            'imgPath' => 'components/mapquery/lib/openlayers/img',
-            'maxResolution' => 'auto',
-        ));
+        return $conf;
     }
 
     /**
