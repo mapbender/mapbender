@@ -76,7 +76,7 @@ $.widget("mapbender.mbZoomBar", {
         var self = this;
         this.zoomslider.find('li').click(function() {
             var zoomLevel = parseInt($(this).attr('data-zoom'));
-            self.mbMap.getModel().setZoomLevel(zoomLevel);
+            self.mbMap.getModel().setZoomLevel(zoomLevel, true);
         });
     },
 
@@ -166,13 +166,11 @@ $.widget("mapbender.mbZoomBar", {
             x: parseInt(this.options.stepSize),
             y: parseInt(this.options.stepSize)
         };
-        if (!this.options.stepByPixel) {
-            stepSize.x = Math.max(Math.min(stepSize.x, 100), 0) / 100.0 *
-                this.map.getSize().w;
-            stepSize.y = Math.max(Math.min(stepSize.x, 100), 0) / 100.0 *
-                this.map.getSize().h;
+        if (this.options.stepByPixel) {
+            this.mbMap.getModel().panByPixels(stepsX * stepSize.x, stepsY * stepSize.y);
+        } else {
+            this.mbMap.getModel().panByPercent(stepsX * Math.min(stepSize.x, 100), stepsY * Math.min(stepSize.y, 100));
         }
-        this.map.pan(stepsX * stepSize.x, stepsY * stepSize.y);
     },
 
     /**
