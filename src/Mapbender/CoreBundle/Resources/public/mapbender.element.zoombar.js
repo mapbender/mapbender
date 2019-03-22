@@ -179,14 +179,10 @@ $.widget("mapbender.mbZoomBar", {
      * Set slider to reflect map zoom level
      */
     _zoom2Slider: function() {
-        var position = this.map.getNumZoomLevels() - 1 - this.map.getZoom();
-
-        this.zoomslider.find('.iconZoomLevelSelected')
-            .removeClass('iconZoomLevelSelected')
-            .empty();
-        this.zoomslider.find('li').eq(position)
-            .addClass('iconZoomLevelSelected')
-            .append($('<div></div>'));
+        var zoomLevel = this.mbMap.getModel().getCurrentZoomLevel();
+        var $activeItem = $('[data-zoom="' + zoomLevel + '"]', this.zoomslider);
+        $('li', this.zoomslider).not($activeItem).removeClass('iconZoomLevelSelected');
+        $activeItem.addClass('iconZoomLevelSelected');
     }
 });
 
