@@ -839,11 +839,20 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var scale = this._pickScale(scales, targetScale, pickHigh);
         return scales.indexOf(scale);
     },
-    setZoomLevel: function(level) {
+    setZoomLevel: function(level, allowTransitionEffect) {
         var _level = this._clampZoomLevel(level);
         if (_level !== this.getCurrentZoomLevel()) {
-            this.map.olMap.zoomTo(_level);
+            if (allowTransitionEffect) {
+                this.map.olMap.zoomTo(_level);
+            } else {
+                var centerPx = this.map.olMap.getViewPortPxFromLonLat(this.map.olMap.getCenter());
+                var zoomCenter = this.map.olMap.getZoomTargetCenter(centerPx, _level);
+                this.map.olMap.setCenter(zoomCenter, _level, false, true);
+            }
         }
+    },
+    getCurrentScale: function() {
+        return (this._getScales())[this.map.olMap.getZoom()];
     },
     getCurrentZoomLevel: function() {
         return this.map.olMap.getZoom();
