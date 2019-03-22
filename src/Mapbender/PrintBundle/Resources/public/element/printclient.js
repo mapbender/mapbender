@@ -89,7 +89,7 @@
                                         label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
                                         cssClass: 'button buttonCancel critical right',
                                         callback: function(){
-                                            self.close();
+                                            self.popup.close();
                                         }
                                     },
                                     'ok': {
