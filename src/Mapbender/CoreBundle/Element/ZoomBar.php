@@ -89,6 +89,38 @@ class ZoomBar extends Element
         return 'MapbenderCoreBundle:Element:zoombar.html.twig';
     }
 
+    public function getPublicConfiguration()
+    {
+        $defaults = $this->getDefaultConfiguration();
+        $config = $this->entity->getConfiguration();
+        // Fix dichotomy 'stepSize' (actual backend form field name) vs 'stepsize' (legacy / some YAML applications)
+        // Fix dichotomy 'stepByPixel' (actual) vs 'stepbypixel' (legacy / YAML applications)
+        if (empty($config['stepSize'])) {
+            if (!empty($config['stepsize'])) {
+                $config['stepSize'] = $config['stepsize'];
+            } else {
+                $config['stepSize'] = $defaults['stepSize'];
+            }
+        }
+        if (!isset($config['stepByPixel'])) {
+            if (isset($config['stepbypixel'])) {
+                $config['stepByPixel'] = $config['stepbypixel'];
+            } else {
+                $config['stepByPixel'] = $defaults['stepByPixel'];
+            }
+        }
+        // Fix weird mis-treatment of boolean 'stepByPixel' as string (it's a dropdown!)
+        if ($config['stepByPixel'] === 'false') {
+            $config['stepByPixel'] = false;
+        } else {
+            // coerce all other values (including string "true") to boolean regularly
+            $config['stepByPixel'] = !!$config['stepByPixel'];
+        }
+        unset($config['stepsize']);
+        unset($config['stepbypixel']);
+        return $config;
+    }
+
     /**
      * @inheritdoc
      */
