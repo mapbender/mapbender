@@ -23,10 +23,9 @@
     background-image: url("components/mapquery/lib/openlayers/img/blank.gif");
   }
 
-  .viewport {
+  .olMap, .viewport {
     background-color: white;
     @include transition(all .2s linear);
-    // @include transition(height .2s linear);
     .olMap, .ol-viewport {
       border: {
         top: solid 3px $firstColor;
@@ -35,6 +34,8 @@
         bottom: solid 1px $thirdColor;
       }
     }
+  }
+  .viewport {
     // OL4: renders a toggle button, which we delegate to for visibility
     //      toggling, but we don't want to show it
     button {
@@ -47,13 +48,10 @@
   }
   &.closed {
     .viewport {
-      width: 0 !important;
-      height: 0 !important;
-      opacity: 0 !important;
+      width: 0;
+      height: 0;
+      opacity: 0;
       border: 0;
-      .olMap, .ol-viewport {
-        border: none;
-      }
     }
     .toggleOverview {
       @extend .iconOpen;
