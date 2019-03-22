@@ -147,22 +147,11 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     _startProj: null,
     baseId: 0,
     init: function(mbMap) {
-        var self = this;
         this.mbMap = mbMap;
+        Mapbender.mapEngine.patchGlobals(mbMap.options);
         this.srsDefs = this.mbMap.options.srsDefs;
         Mapbender.Projection.extendSrsDefintions(this.srsDefs || []);
 
-        if (typeof (this.mbMap.options.dpi) !== 'undefined') {
-            OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
-        }
-
-        var tileSize = this.mbMap.options.tileSize;
-        OpenLayers.Map.TILE_WIDTH = tileSize;
-        OpenLayers.Map.TILE_HEIGHT = tileSize;
-
-        OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + 'components/mapquery/lib/openlayers/img/';
-        // Allow drag pan motion to continue outside of map div. Great for multi-monitor setups.
-        OpenLayers.Control.Navigation.prototype.documentDrag = true;
         this._initMap();
     },
     _initMap: function _initMap() {

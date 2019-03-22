@@ -18,7 +18,6 @@
          * Creates the map widget
          */
         _create: function(){
-            OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
