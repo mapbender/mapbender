@@ -98,7 +98,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 ->setName($configuration["name"])
                 ->setTitle($configuration['title'])
                 ->setParent($layersource)
-                ->setId($this->entity->getId() . '_' . $num);
+                ->setId($configuration['title'] . '_' . $num);
             if (isset($configuration["legendurl"])) {
                 $style          = new Style();
                 $style->setName(null);
@@ -118,7 +118,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $source->addLayer($childLayerSource);
             $childLayerInstance       = new WmsInstanceLayer();
             $childLayerInstance->setTitle($configuration["title"])
-                ->setId($this->entity->getId() . '_' . $num)
+                ->setId($configuration['title'] . '_' . $num)
                 ->setMinScale(!isset($configuration["minScale"]) ? null : $configuration["minScale"])
                 ->setMaxScale(!isset($configuration["maxScale"]) ? null : $configuration["maxScale"])
                 ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
