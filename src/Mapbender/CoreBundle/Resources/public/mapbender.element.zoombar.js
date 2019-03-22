@@ -57,11 +57,14 @@ $.widget("mapbender.mbZoomBar", {
             .hide()
             .empty();
 
-        var levelsNumber = this.map.getNumZoomLevels();
-        for(var i = 0; i < levelsNumber; i++) {
-            var resolution = this.map.getResolutionForZoom(levelsNumber - i - 1);
-            var scale = Math.round(OpenLayers.Util.getScaleFromResolution(resolution, this.map.units));
-            this.zoomslider.append($('<li class="iconZoomLevel" title="1:' + scale + '"/>'));
+        var zoomLevels = this.mbMap.getModel().getZoomLevels();
+        for (var i = zoomLevels.length - 1; i >= 0; --i) {
+            var $zoomLi = $('<li>')
+                .addClass('iconZoomLevel')
+                .attr('title', '1:' + zoomLevels[i].scale)
+                .attr('data-zoom', zoomLevels[i].level)
+            ;
+            this.zoomslider.append($zoomLi);
         }
 
         this.zoomslider.find('li').last()
@@ -72,10 +75,8 @@ $.widget("mapbender.mbZoomBar", {
 
         var self = this;
         this.zoomslider.find('li').click(function() {
-            var li = $(this);
-            var index = li.index();
-            var position = self.map.getNumZoomLevels() - 1 - index;
-            self.map.zoomTo(position);
+            var zoomLevel = parseInt($(this).attr('data-zoom'));
+            self.mbMap.getModel().setZoomLevel(zoomLevel);
         });
     },
 
@@ -125,7 +126,7 @@ $.widget("mapbender.mbZoomBar", {
     },
 
     _zoomToBox: function(position) {
-        var zoom, center;
+        var zoom, center, model = this.mbMap.getModel();
         if(position instanceof OpenLayers.Bounds) {
             var minXY = this.map.getLonLatFromPixel(
                 new OpenLayers.Pixel(position.left, position.bottom));

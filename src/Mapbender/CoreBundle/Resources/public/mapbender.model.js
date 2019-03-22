@@ -752,7 +752,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 boundsOrCoords.right,
                 boundsOrCoords.top);
         }
-        this.olMap.zoomToExtent(bounds);
+        this.map.olMap.zoomToExtent(bounds);
     },
     /**
      * Emulation shim for old-style MapQuery.Map.prototype.center.
@@ -838,6 +838,23 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var scales = this._getScales();
         var scale = this._pickScale(scales, targetScale, pickHigh);
         return scales.indexOf(scale);
+    },
+    setZoomLevel: function(level) {
+        var _level = this._clampZoomLevel(level);
+        if (_level !== this.getCurrentZoomLevel()) {
+            this.map.olMap.zoomTo(_level);
+        }
+    },
+    getCurrentZoomLevel: function() {
+        return this.map.olMap.getZoom();
+    },
+    getZoomLevels: function() {
+        return this._getScales().map(function(scale, index) {
+            return {
+                scale: scale,
+                level: index
+            };
+        });
     },
     _pickScale: function(scales, targetScale, pickHigh) {
         if (targetScale >= scales[0]) {
