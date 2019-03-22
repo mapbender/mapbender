@@ -199,15 +199,10 @@ class Map extends Element
             // setting center and target scale makes the map initialize in the right place client-side
             if (count($extra['pois']) === 1) {
                 if (isset($extra['pois'][0]['scale'])) {
-                    $configuration['targetscale'] = $extra['pois'][0]['scale'];
+                    $configuration['targetscale'] = intval($extra['pois'][0]['scale']);
                 } else {
-                    if (isset($configuration['scales']) && count($configuration['scales'])) {
-                        // use last configured scale (smallest number / closest zoom)
-                        $configuration['targetscale'] = intval($configuration['scales'][count($configuration['scales']) - 1]);
-                    } else {
-                        // fall back to a hopefully reasonable default scale
-                        $configuration['targetscale'] = 500;
-                    }
+                    // fall back to a hopefully reasonable default scale
+                    $configuration['targetscale'] = 2500;
                 }
             }
         }
@@ -238,23 +233,7 @@ class Map extends Element
             $configuration['layersets'] = array($configuration['layerset']);
         }# "layerset" deprecated end
         if ($scale = $request->get('scale')) {
-            $scale  = intval($scale);
-            $scales = $configuration['scales'];
-            if ($scale > $scales[0]) {
-                $scale = $scales[0];
-            } elseif ($scale < $scales[count($scales) - 1]) {
-                $scale = $scales[count($scales) - 1];
-            } else {
-                $tmp = null;
-                for ($idx = count($scales) - 2; ($idx >= 0 && count($scales) > 1); $idx--) {
-                    if ($scale >= $scales[$idx + 1] && $scale <= $scales[$idx]) {
-                        $tmp = (($scales[$idx] - $scales[$idx + 1]) / 2 >= $scale - $scales[$idx + 1]) ?
-                            $scales[$idx + 1] : $scales[$idx];
-                    }
-                }
-                $scale = $tmp ? $tmp : $scales[0];
-            }
-            $configuration['targetscale'] = $scale;
+            $configuration['targetscale'] = intval($scale);
         }
 
         if (!isset($configuration["tileSize"])) {
@@ -271,9 +250,6 @@ class Map extends Element
         $conf = $this->getConfiguration();
         if ($conf['scales']) {
             $conf['scales'] = array_map('intval', $conf['scales']);
-        }
-        if (isset($conf['targetscale'])) {
-            $conf['targetscale'] = intval($conf['targetscale']);
         }
         return $conf;
     }

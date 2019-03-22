@@ -238,7 +238,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         this.setView(true);
         this.parseURL();
         if (this.mbMap.options.targetscale) {
-            this.map.olMap.zoomToScale(this.mbMap.options.targetscale, true);
+            var zoom = this.pickZoomForScale(this.mbMap.options.targetscale, true);
+            this.setZoomLevel(zoom, false);
         }
     },
     /**
