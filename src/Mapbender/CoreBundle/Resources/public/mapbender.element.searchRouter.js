@@ -13,8 +13,6 @@
         autocompleteModel: null,
         popup: null,
         mbMap: null,
-        map: null,
-        model: null,
         highlightLayerOwner: 'Search Highlight',
         highlightLayerId: null,
         defaultStyle: {
@@ -112,7 +110,7 @@
         removeLastResults: function(){
             var widget = this;
             widget.searchModel.reset();
-            widget.map.model.removeVectorLayer(widget.highlightLayerOwner, widget.highlightLayerId);
+            this.mbMap.model.removeVectorLayer(widget.highlightLayerOwner, widget.highlightLayerId);
             this.currentFeature = null;
         },
 
@@ -121,7 +119,7 @@
             var element = widget.element;
             var options = widget.options;
             this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
-            this.map = this.mbMap.map.olMap;
+
             var searchModelAttributes = {
                 srs: this.mbMap.getModel().getCurrentProj().projCode
             };
@@ -589,7 +587,7 @@
         },
 
         _createStyleMap4: function(styles) {
-            var map = this.map;
+            var model = this.mbMap.getModel();
             var styleDefault = null;
             var styleSelect = null;
             var keys = styles ? Object.keys(styles): null;
@@ -600,23 +598,23 @@
 
                     switch(styleMapName) {
                         case 'default':
-                            styleDefault = styleMapName ? map.model.createVectorLayerStyle(styleMapName) : map.model.createVectorLayerStyle();
+                            styleDefault = styleMapName ? model.createVectorLayerStyle(styleMapName) : model.createVectorLayerStyle();
                             break;
                         case 'select':
-                            styleSelect = styleMapName ? map.model.createVectorLayerStyle(styleMapName) : map.model.createVectorLayerStyle();
+                            styleSelect = styleMapName ? model.createVectorLayerStyle(styleMapName) : model.createVectorLayerStyle();
                             break;
                     }
 
                 }
             }else{
-                styleDefault = map.model.createVectorLayerStyle(this.defaultStyle);
-                styleSelect = map.model.createVectorLayerStyle(this.selectStyle);
+                styleDefault = model.createVectorLayerStyle(this.defaultStyle);
+                styleSelect = model.createVectorLayerStyle(this.selectStyle);
             }
 
             return {
                 default: styleDefault,
                 select: styleSelect,
-                temporary: map.model.createVectorLayerStyle(this.temporaryStyle)
+                temporary: model.createVectorLayerStyle(this.temporaryStyle)
             };
         },
 
@@ -631,32 +629,30 @@
 
         /**
          * Get highlight layer. Will construct one if neccessary.
-         * @TODO: Backbonify (view)
          *
          * @return OpenLayers.Layer.Vector Highlight layer
          */
         _getLayer: function(forceRebuild) {
             var widget = this;
-            var options = widget.options;
-            var map = widget.map;
+            var model = this.mbMap.getModel();
             var layer = widget.highlightLayer;
             var layerOwner = widget.highlightLayerOwner;
             var layerId = widget.highlightLayerId;
 
             if(!forceRebuild && ( layer && layerId ) ) {
-                layer = map.model.getVectorLayerByNameId(layerOwner,layerId);
+                layer = model.getVectorLayerByNameId(layerOwner,layerId);
                 return layer;
             }
 
             if(forceRebuild && ( layer && layerId ) ) {
-                map.removeVectorLayer(layer,layerId);
+                model.removeVectorLayer(layer,layerId);
                 widget.highlightLayer = null;
                 widget.highlightLayerId = null;
             }
 
             var route = widget.getCurrentRoute();
 
-            var center = map.model.getMapCenter();
+            var center = model.getMapCenter();
             var iconFeature = new ol.Feature(
                 new ol.geom.Point(center)
             );
@@ -667,12 +663,12 @@
             var styleMap = widget._createStyleMap(route.results.styleMap);
             this.styleMap = styleMap;
 
-            layerId = widget.highlightLayer || map.model.createVectorLayer({
+            layerId = widget.highlightLayer || model.createVectorLayer({
                 style: styleMap.default
             }, layerOwner);
 
             widget.highlightLayerId = layerId;
-            layer = map.model.getVectorLayerByNameId(layerOwner,layerId);
+            layer = model.getVectorLayerByNameId(layerOwner,layerId);
             layer.setSource(markersSource);
 
             return layer;
@@ -711,9 +707,9 @@
             }
             var row = $(event.currentTarget),
                 feature = row.data('feature').getFeature(),
-                map = feature.layer.map
+                model = this.mbMap.getModel()
             ;
-            var featureExtent = $.extend({},feature.geometry.getBounds());
+            var featureExtent = feature.getGeometry().getExtent();
 
             // buffer, if needed
             if(callbackConf.options && callbackConf.options.buffer){
@@ -731,28 +727,17 @@
             var res = model.getResolutionForExtent(extent, mapSize);
             var zoom = model.getZoomForResolution(res);
 
-            // restrict zoom if needed
-            if(callbackConf.options &&
-               (callbackConf.options.maxScale || callbackConf.options.minScale)){
+            var centerLonLat = featureExtent.getCenterLonLat();
+            var x = centerLonLat.x, y = centerLonLat.y;
 
-                var unit = model.getUnitsOfCurrentProjection();
-
-                if(callbackConf.options.maxScale){
-                    var maxRes = model.getResolutionForScale(callbackConf.options.maxScale,unit);
-                    if(Math.round(res) < maxRes){
-                        zoom = map.getZoomForResolution(maxRes);
-                    }
-                }
-
-                if(callbackConf.options.minScale){
-                    var minRes = model.getResolutionForScale(callbackConf.options.minScale,unit);
-                    if(Math.round(res) > minRes){
-                        zoom = map.getZoomForResolution(minRes);
-                    }
-                }
+            var centerOptions = {
+                zoom: zoom
+            };
+            if (callbackConf.options) {
+                centerOptions.maxScale = parseInt(callbackConf.maxScale) || null;
+                centerOptions.minScale = parseInt(callbackConf.minScale) || null;
             }
-            // finally, zoom
-            map.setCenter(featureExtent.getCenterLonLat(), zoom);
+            this.mbMap.getModel().centerXy(x, y, centerOptions);
         },
         _onSrsChange: function(event, data) {
             if (this.highlightLayer) {

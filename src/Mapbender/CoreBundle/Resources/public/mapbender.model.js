@@ -126,6 +126,13 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @property {number|null} minResolution
      * @property {number|null} maxResolution
      */
+    /**
+     * @typedef {Object} Model~CenterOptionsMapQueryish
+     * @property {Array<Number>} [box]
+     * @property {Array<Number>} [position]
+     * @property {Array<Number>} [center] same as position! .position takes precedence if both are set
+     * @property {Number} [zoom]
+     */
 
     mbMap: null,
     map: null,
@@ -732,27 +739,140 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     /**
-     * @typedef {Object} Model~CenterOptionsMapQueryish
-     * @property {Array<Number>} position
-     * @property {Number} [zoom]
+     * @param {Array|OpenLayers.Bounds|Object} boundsOrCoords
      */
-    /**
-     * @param {Array<Number>|OpenLayers.LonLat|Model~CenterOptionsMapQueryish} lonLat
-     * @param zoom
-     */
-    center: function(lonLat, zoom) {
-        // Compatibility hack for legacy elements (e.g. old SimpleSearch) expecting MapQuery API
-        var _lonLat = lonLat, _zoom = zoom;
-        if (lonLat) {
-            if (typeof lonLat.position !== 'undefined') {
-                console.warn("Calling center with MapQuery-style options is deprecated", arguments);
-                _lonLat = new OpenLayers.LonLat(lonLat.position[0], lonLat.position[1]);
-                _zoom = lonLat.zoom || zoom;
-            }
+    setExtent: function(boundsOrCoords) {
+        var bounds;
+        if ($.isArray(boundsOrCoords)) {
+            bounds = OpenLayers.Bounds.fromArray(boundsOrCoords);
         } else {
-            _lonLat = null;
+            bounds = new OpenLayers.Bounds(
+                boundsOrCoords.left,
+                boundsOrCoords.bottom,
+                boundsOrCoords.right,
+                boundsOrCoords.top);
         }
-        this.map.olMap.setCenter(_lonLat, _zoom);
+        this.olMap.zoomToExtent(bounds);
+    },
+    /**
+     * Emulation shim for old-style MapQuery.Map.prototype.center.
+     * See https://github.com/mapbender/mapquery/blob/1.0.2/src/jquery.mapquery.core.js#L298
+     * @param {Model~CenterOptionsMapQueryish} options
+     * @deprecated
+     */
+    setCenterMapqueryish: function(options) {
+        if (!arguments.length) {
+            throw new Error("Unsupported getter-style invocation");
+        }
+        if (options.projection) {
+            throw new Error("Unsupported setCenterMapqueryish call with options.projection");
+        }
+        if (typeof options.box !== 'undefined') {
+            console.warn("Deprecated setCenter call, please switch to Mapbender.Model.setExtent");
+            this.setExtent(options.box);
+        } else if (typeof options.position !== 'undefined' || typeof options.center !== 'undefined') {
+            var _center = options.position || options.center;
+            var x, y, zoom = options.zoom;
+            if (typeof zoom === 'undefined') {
+                zoom = null;
+            }
+            if ($.isArray(_center) && _center.length === 2) {
+                x = _center[0];
+                y = _center[1];
+            } else {
+                x = _center.lon;
+                y = _center.lat;
+            }
+            if (typeof x === 'undefined' || typeof y == 'undefined' || x === null || y === null) {
+                throw new Error("Invalid position / center option");
+            }
+            console.warn("Deprecated setCenter call, please switch to Mapbender.Model.centerXy");
+            this.centerXy(x, y, {
+                zoom: zoom
+            });
+        }
+        throw new Error("Invalid setCenterMapqueryish options");
+    },
+    /**
+     * @param {Model~CenterOptionsMapQueryish} options
+     * @deprecated
+     */
+    center: function(options) {
+        this.setCenterMapqueryish(options);
+    },
+    /**
+     * @param {Number} x projected
+     * @param {Number} y projected
+     * @param {Object} [options]
+     * @param {Number} [options.minScale]
+     * @param {Number} [options.maxScale]
+     * @param {Number|String} [options.zoom]
+     */
+    centerXy: function(x, y, options) {
+        var centerLl = new OpenLayers.LonLat(x, y);
+        var zoom = null;
+        if (options && (options.zoom || parseInt(options.zoom) === 0)) {
+            zoom = this._clampZoomLevel(parseInt(options.zoom));
+        }
+        var zoomNow = this.map.olMap.getZoom();
+        if (options && options.minScale) {
+            var maxZoom = this.pickZoomForScale(options.minScale, true);
+            if (zoom !== null) {
+                zoom = Math.min(zoom, maxZoom);
+            } else {
+                zoom = Math.min(zoomNow, maxZoom);
+            }
+        }
+        if (options && options.maxScale) {
+            var minZoom = this.pickZoomForScale(options.maxScale, false);
+            if (zoom !== null) {
+                zoom = Math.max(zoom, minZoom);
+            } else {
+                zoom = Math.max(zoomNow, minZoom);
+            }
+        }
+        this.map.olMap.setCenter(centerLl, zoom);
+    },
+    pickZoomForScale: function(targetScale, pickHigh) {
+        // @todo: fractional zoom: use exact targetScale (TBD: method should not be called?)
+        var scales = this._getScales();
+        var scale = this._pickScale(scales, targetScale, pickHigh);
+        return scales.indexOf(scale);
+    },
+    _pickScale: function(scales, targetScale, pickHigh) {
+        if (targetScale >= scales[0]) {
+            return scales[0];
+        }
+        for (var i = 0, nScales = scales.length; i < nScales - 1; ++i) {
+            var scaleHigh = scales[i];
+            var scaleLow = scales[i + 1];
+            if (targetScale <= scaleHigh && targetScale >= scaleLow) {
+                if (targetScale > scaleLow && pickHigh) {
+                    return scaleHigh;
+                } else {
+                    return scaleLow;
+                }
+            }
+        }
+        return scales[nScales - 1];
+    },
+    _getScales: function() {
+        // @todo: fractional zoom: method must not be called
+        var baseLayer = this.map.olMap.baseLayer;
+        if (!(baseLayer && baseLayer.scales && baseLayer.scales.length)) {
+            console.error("No base layer, or scales not populated", baseLayer, this.map.olMap);
+            throw new Error("No base layer, or scales not populated");
+        }
+        return baseLayer.scales.map(function(s) {
+            return parseInt('' + Math.round(s));
+        });
+    },
+    _getMaxZoomLevel: function() {
+        // @todo: fractional zoom: no discrete scale steps
+        return this._getScales().length - 1;
+    },
+    _clampZoomLevel: function(zoomIn) {
+        return Math.max(0, Math.min(zoomIn, this._getMaxZoomLevel()));
     },
     /**
      * @param {Object} e
@@ -863,7 +983,11 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     setOpacity: function(source, opacity) {
         // unchecked findSource in layertree may pass undefined for source
         if (source) {
-            var opacity_ = Math.max(0.0, Math.min(1.0, parseFloat(opacity) || 1.0));
+            var opacity_ = parseFloat(opacity);
+            if (isNaN(opacity_)) {
+                opacity_ = 1.0;
+            }
+            opacity_ = Math.max(0.0, Math.min(1.0, opacity_));
             if (opacity_ !== opacity) {
                 console.warn("Invalid-ish opacity, clipped to " + opacity_.toString(), opacity);
             }
@@ -1160,6 +1284,9 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             source = this.getSource(sourceIdObject);
         }
         if (source !== null) {
+            if (!(source instanceof Mapbender.Source)) {
+                source = Mapbender.Source.factory(source);
+            }
             var toChangeOptions = Mapbender.source[source.type].createOptionsLayerState(source, options,
                 defaultSelected, mergeSelected);
             this._updateSourceLayerTreeOptions(source, toChangeOptions.change.options.children);

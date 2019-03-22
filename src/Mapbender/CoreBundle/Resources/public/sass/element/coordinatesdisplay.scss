@@ -1,13 +1,23 @@
-
-.iconCoordinates{
-  cursor:default;
-  vertical-align: baseline;
-  &:before{margin-right:5px;}
+.mb-element-coordsdisplay {
+  .iconCoordinates {
+    cursor:default;
+    margin-right:5px;
+  }
 }
 
 .contentPane{
   .mb-element-coordsdisplay{
     z-index: 20;
     @include absolute('' $space $space*2 '');
+  }
+}
+.toolBar {
+  .mb-element-coordsdisplay {
+    display: inline-block;
+    vertical-align: baseline;
+    min-width: 160px;
+    > span {
+      float: left;
+    }
   }
 }

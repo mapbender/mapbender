@@ -27,6 +27,7 @@
         // we generally don't want to keep reloading size information
         // for the same template(s) within the same session
         _templateSizeCache: {},
+        selectionActive: false,
 
         _setup: function(){
             var self = this;
@@ -113,6 +114,7 @@
                 var control = self._getSelectionDragControl();
                 self.map.map.olMap.addLayer(layer);
                 self.map.map.olMap.addControl(control);
+                self.selectionActive = true;
                 control.activate();
                 if (reset) {
                     self._setScale();       // NOTE: will end in a call to _updateGeometry(true)
@@ -123,6 +125,7 @@
             });
         },
         _deactivateSelection: function() {
+            this.selectionActive = false;
             if (this.control) {
                 this.control.deactivate();
                 this.map.map.olMap.removeControl(this.control);
@@ -206,6 +209,8 @@
 
             var rotation = parseInt(rotationField.val()) || 0;
 
+            this.control.unsetFeature();
+
             var center = (reset === true || !this.feature) ?
             this.map.map.olMap.getCenter() :
             this.feature.geometry.getBounds().getCenterLonLat();
@@ -232,37 +237,16 @@
             ).toGeometry(), {});
             // copy bounds before rotation
             this.printBounds = this.feature.geometry.getBounds().clone();
-            this._updateRotation(rotation, center);
+
+            this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
+            this._redrawSelectionFeatures([this.feature]);
+            this.control.setFeature(this.feature, {rotation: -rotation});
         },
         _redrawSelectionFeatures: function(features) {
             var layer = this._getSelectionLayer();
             layer.removeAllFeatures();
             layer.addFeatures(features);
             layer.redraw();
-        },
-        _updateRotation: function(rotation, center) {
-            this.control.unsetFeature();
-            var $rotationInput = $('input[name="rotation"]', this.$form);
-            var olRotation = this.control.rotation;
-
-            if (event.type !== 'keyup') { // Rotation via handle
-                var printRotation = olRotation;
-                if (printRotation > 0) {
-                    printRotation = 360 - printRotation;
-                } else {
-                    printRotation = Math.abs(printRotation);
-                }
-                $rotationInput.val(printRotation);
-            } else { // Rotation by user input
-                if (rotation > 180) {
-                    olRotation = 360 - rotation;
-                } else {
-                    olRotation = -rotation;
-                }
-            }
-            this.feature.geometry.rotate(olRotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
-            this._redrawSelectionFeatures([this.feature]);
-            this.control.setFeature(this.feature, {rotation: olRotation});
         },
         /**
          * Gets the layer on which the selection feature is drawn. Layer is created on first call, then reused
@@ -301,7 +285,7 @@
                         }, {
                             context: {
                                 getPointRadius: function(feature) {
-                                    var mapScale = Mapbender.Model.getScale();
+                                    var mapScale = self.map.getModel().getScale();
                                     var printScale = self._getPrintScale();
                                     // Make the point smaller for high ratios of mapScale / printScale
                                     // so it doesn't start to obscure the print rectangle.
@@ -337,7 +321,11 @@
                 });
                 this.control.events.on({
                     'transformcomplete': function() {
-                        self._updateGeometry();
+                        var userRotation = 360 - this.rotation;
+                        if (userRotation > 180) {
+                            userRotation -= 360;
+                        }
+                        $('input[name="rotation"]', self.$form).val(userRotation);
                     }
                 });
             }
@@ -515,7 +503,9 @@
         _onTemplateChange: function() {
             var self = this;
             this._getTemplateSize().then(function() {
-                self._updateGeometry();
+                if (self.selectionActive) {
+                    self._updateGeometry();
+                }
             });
         },
         _getTemplateSize: function() {
@@ -551,30 +541,72 @@
             }
             return promise;
         },
-        printDigitizerFeature: function(schemaName,featureId){
-            // Sonderlocke Digitizer
-            this.digitizerData = {
-                digitizer_feature: {
-                    id: featureId,
-                    schemaName: schemaName
+        /**
+         * @param {OpenLayers.Feature.Vector} feature
+         * @return {Object}
+         * @private
+         */
+        _extractPrintAttributes: function(feature) {
+            var attributes = $.extend({}, feature.attributes);
+            if (feature.data) {
+                // Digitizerish OpenLayers feature, 'attributes' property out of date,
+                // non-standard 'data' property contains current values
+                $.extend(attributes, feature.data);
+                if (typeof feature.fid !== 'undefined') {
+                    // Non-standard Digitizerish 'fid' property on OpenLayers feature
+                    // overrides id
+                    attributes.id = feature.fid;
+                    attributes.fid = feature.fid;
                 }
+            }
+            return attributes;
+        },
+        /**
+         * @param {OpenLayers.Feature.Vector|Object} attributesOrFeature
+         * @param {String} [templateName]
+         */
+        printDigitizerFeature: function(attributesOrFeature, templateName) {
+            // Sonderlocke Digitizer
+            if (typeof attributesOrFeature !== 'object') {
+                var msg = "Unsupported mbPrintClient.printDigitizerFeature invocation. Must pass in printable attributes object (preferred) or OpenLayers feature to extract them from. Update your mapbender/digitizer to >=1.1.68";
+                console.error(msg, arguments);
+                throw new Error(msg);
+            }
+            var attributes;
+            if (attributesOrFeature.attributes) {
+                // Standard OpenLayers feature; see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L44
+                attributes = this._extractPrintAttributes(attributesOrFeature);
+            } else {
+                // Plain-old-data attributesOrFeature object (preferred invocation method)
+                attributes = attributesOrFeature;
+            }
+
+            this.digitizerData = {
+                // Freeze attribute values in place now.
+                // Also, if the resulting object is not serializable (cyclic refs), let's run into that error right now
+                digitizer_feature: JSON.parse(JSON.stringify(attributes))
             };
 
-            this._getDigitizerTemplates(schemaName);
+            if (templateName) {
+                var self = this;
+                this._getDigitizerTemplates(templateName).then(function() {
+                    self.open()
+                });
+            } else {
+                this.open();
+            }
         },
 
         _getDigitizerTemplates: function(schemaName) {
             var self = this;
 
             var url =  this.elementUrl + 'getDigitizerTemplates';
-            $.ajax({
+            return $.ajax({
                 url: url,
                 type: 'GET',
                 data: {schemaName: schemaName},
                 success: function(data) {
                     self._overwriteTemplateSelect(data);
-                    // open changed dialog
-                    self.open();
                 }
             });
         },

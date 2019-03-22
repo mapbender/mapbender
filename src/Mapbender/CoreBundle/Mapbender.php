@@ -95,19 +95,6 @@ class Mapbender
     }
 
     /**
-     * Get an empty array.
-     *
-     * @return array
-     * @internal
-     * @deprecated to be removed in 3.0.8
-     *   Return value is always empty, method is not called from anywhere
-     */
-    public function getLayers()
-    {
-        return array();
-    }
-
-    /**
      * Get list of names of all declared template classes.
      *
      * Template classes need to be declared in each bundle's main class

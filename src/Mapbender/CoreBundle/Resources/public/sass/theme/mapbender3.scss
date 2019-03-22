@@ -58,23 +58,12 @@
     padding:$space/4 $space/2 $space/4 $space/2;
     margin-bottom: 0;
     .toolBarItem{
-//      height:30px;
-//      line-height:30px;
-//      font-size:90%;
       vertical-align: middle;
       font-size:80%;
       padding:5px;
       display: inline-block;
       text-wrap: avoid;
       white-space: nowrap;
-
-      > .mb-element-coordsdisplay {
-        display: block;
-        min-width: 160px;
-        > span{
-          float: left !important;
-        }
-      }
 
       > label{
         margin-bottom: 0;

@@ -471,18 +471,6 @@ fieldset{
     }
   }
 }
-/* ------------------------------------------------------ COORDINATES DISPLAY */
-.iconCoordinates{
-  cursor:default;
-  vertical-align: baseline;
-  &:before{margin-right:5px;}
-}
-.contentPane{
-  .mb-element-coordsdisplay{
-    z-index: 20;
-    @include pos('',$space,$space*2,'');
-  }
-}
 /* ---------------------------------------------------------------- COPYRIGHT */
 .mb-element-copyright{
   @include opacity(0.6);

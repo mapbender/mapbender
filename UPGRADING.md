@@ -3,6 +3,8 @@
 If installed, mapbender/data-source must be at least 0.1.11. A conflict rule prevents installation of older versions via Composer. This is a
 [a dependency of mapbender/digitizer, mapbender/query-builder and mapbender/data-manager](https://packagist.org/packages/mapbender/data-source/dependents).
 
+Digitizer, if installed, must be >=1.1.68 for changes in feature printing API. See [PR#1123](https://github.com/mapbender/mapbender/pull/1123), [Digitizer PR#69](https://github.com/mapbender/mapbender-digitizer/pull/69). Mutual conflict rules prevent simultaneous installation. Forked / branched packages should include the changes from the linked PRs and only then be marked with appropriate version aliases.
+
 If installed, mapbender/coordinates-utility must be at least 1.0.5 to work at all. We recommend 1.0.7.1 for best results.
 
 If you update Mapbender alone and have trouble also merging in the corresponding Starter update, we recommend you run through the list of package updates in [Mapbender Starter's changelog](https://github.com/mapbender/mapbender-starter/blob/master/CHANGELOG.md) and try to replicate them

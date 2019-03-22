@@ -34,6 +34,7 @@
         "psr-4": {"Mapbender\\": "src/Mapbender"}
     },
     "conflict": {
+        "mapbender/digitizer": "<1.1.68",
         "mapbender/data-source": "<0.1.11",
         "mapbender/wmts": "*"
     },
