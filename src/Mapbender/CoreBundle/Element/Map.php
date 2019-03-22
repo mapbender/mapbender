@@ -17,6 +17,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class Map extends Element
 {
 
+    const MINIMUM_TILE_SIZE = 128;
+
     /**
      * @inheritdoc
      */
@@ -57,7 +59,6 @@ class Map extends Element
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'units' => 'degrees',
             'tileSize' => 512,
-            'minTileSize' => 128,
             'extents' => array(
                 'max' => array(0, 40, 20, 60),
                 'start' => array(5, 45, 15, 55)),
@@ -258,8 +259,8 @@ class Map extends Element
 
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];
-        } elseif ($configuration["tileSize"] < $defaultConfiguration["minTileSize"]) {
-            $configuration["tileSize"] = $defaultConfiguration["minTileSize"];
+        } else {
+            $configuration["tileSize"] = max(self::MINIMUM_TILE_SIZE, $configuration["tileSize"]);
         }
 
         return $configuration;
