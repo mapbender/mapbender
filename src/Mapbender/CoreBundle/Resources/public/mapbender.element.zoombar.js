@@ -133,38 +133,45 @@ $.widget("mapbender.mbZoomBar", {
                 new OpenLayers.Pixel(position.right, position.top));
             var bounds = new OpenLayers.Bounds(minXY.lon, minXY.lat,
                 maxXY.lon, maxXY.lat);
-            zoom = this.map.getZoomForExtent(bounds);
-            center = bounds.getCenterLonLat();
+            model.setExtent(bounds);
         } else {
-            zoom = this.map.getZoom() + 1;
+            zoom = model.getCurrentZoomLevel() + 1;
             center = this.map.getLonLatFromPixel(position);
+            model.centerXy(center.lon, center.lat, {
+                zoom: zoom
+            });
         }
-
-        this.map.setCenter(center, zoom);
 
         this.zoomBoxControl.deactivate();
         this.element.find('.zoomBox').removeClass('activeZoomIcon');
     },
-
     _setupPanButtons: function() {
         var self = this;
-        var pan = $.proxy(this.map.pan, this.map);
+        this.element.on('click', '.panUp', function() {
+            self._pan(0, -1);
+        });
+        this.element.on('click', '.panRight', function() {
+            self._pan(1, 0);
+        });
+        this.element.on('click', '.panDown', function() {
+            self._pan(0, 1);
+        });
+        this.element.on('click', '.panLeft', function() {
+            self._pan(-1, 0);
+        });
+    },
+    _pan: function(stepsX, stepsY) {
         var stepSize = {
             x: parseInt(this.options.stepSize),
-            y: parseInt(this.options.stepSize)};
-
-        if(this.options.stepByPixel === "false") {
-            stepSize = {
-                x: Math.max(Math.min(stepSize.x, 100), 0) / 100.0 *
-                    this.map.getSize().w,
-                y: Math.max(Math.min(stepSize.x, 100), 0) / 100.0 *
-                    this.map.getSize().h};
+            y: parseInt(this.options.stepSize)
+        };
+        if (!this.options.stepByPixel) {
+            stepSize.x = Math.max(Math.min(stepSize.x, 100), 0) / 100.0 *
+                this.map.getSize().w;
+            stepSize.y = Math.max(Math.min(stepSize.x, 100), 0) / 100.0 *
+                this.map.getSize().h;
         }
-
-        this.element.find(".panUp").bind("click", function(){pan(0, -stepSize.y);});
-        this.element.find(".panRight").bind("click", function(){pan(+stepSize.x, 0);})
-        this.element.find(".panDown").bind("click", function(){pan(0, +stepSize.y);})
-        this.element.find(".panLeft").bind("click", function(){pan(-stepSize.x, 0);})
+        this.map.pan(stepsX * stepSize.x, stepsY * stepSize.y);
     },
 
     /**
