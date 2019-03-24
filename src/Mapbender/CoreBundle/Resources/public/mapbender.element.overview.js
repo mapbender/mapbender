@@ -94,10 +94,6 @@
                 });
                 if (nonEmptyLayerNames.length) {
                     layers = layers.concat(source.createNativeLayers(srsName).map(function(nativeLayer) {
-                        // Legacy HACK: Overview ignores / willfully overrides backend 'tiled' option
-                        nativeLayer.addOptions({
-                            singleTile: true
-                        });
                         nativeLayer.mergeNewParams({
                             LAYERS: nonEmptyLayerNames
                         });
