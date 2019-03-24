@@ -9,8 +9,6 @@
             target: null
         },
 
-        elementUrl: null,
-
         /**
          * Mapbender map widget
          */
@@ -25,7 +23,6 @@
         _create: function() {
             var self = this;
             this.$select = $("select", this.element);
-            this.elementUrl = Mapbender.configuration.elementPath + this.element.attr('id') + '/';
             Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
