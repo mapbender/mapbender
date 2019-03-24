@@ -97,20 +97,23 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             return [olLayer];
         },
         _getNativeLayerOptions: function(matrixSet, layer, srsName) {
-            var matrixOptions = this._getMatrixOptions(layer, matrixSet, srsName);
+            var self = this;
             var baseOptions = {
                 isBaseLayer: false,
                 opacity: this.configuration.options.opacity,
                 visible: this.configuration.options.visible,
                 label: layer.options.title,
                 url: layer.options.tileUrls,
-                format: layer.options.format
+                format: layer.options.format,
+                serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
+                    return self._getMatrixResolution(tileMatrix, srsName);
+                })
             };
             var bounds = layer.getBounds(srsName, true);
             if (bounds) {
                 baseOptions.tileFullExtent = bounds;
             }
-            return $.extend(baseOptions, matrixOptions);
+            return baseOptions;
         },
         _getEnabledLayers: function() {
             return this.configuration.layers.filter(function(l) {
@@ -124,8 +127,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 if (!layer.options.treeOptions.allow.selected) {
                     continue;
                 }
-                var tileMatrixSetIdentifier = layer.options.tilematrixset;
-                var tileMatrixSet = this.getMatrixSetByIdent(tileMatrixSetIdentifier);
+                var tileMatrixSet = layer.getMatrixSet();
                 if (tileMatrixSet.supportedCrs.indexOf(projectionCode) !== -1) {
                     return layers[i];
                 }
@@ -239,14 +241,14 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 .getLayerBounds.call(this, layerId_, projCode, inheritFromParent);
         },
         /**
-         * @param {WmtsLayerConfig} layer
+         * @param {WmtsTmsBaseSourceLayer} layer
          * @param {number} scale
          * @param {OpenLayers.Projection} projection
          * @return {WmtsTileMatrix}
          */
         _getMatrix: function(layer, scale, projection) {
             var resolution = OpenLayers.Util.getResolutionFromScale(scale, projection.proj.units);
-            var matrixSet = this.getMatrixSetByIdent(layer.options.tilematrixset);
+            var matrixSet = layer.getMatrixSet();
             var scaleDelta = Number.POSITIVE_INFINITY;
             var closestMatrix = null;
             for (var i = 0; i < matrixSet.tilematrices.length; ++i) {

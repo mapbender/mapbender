@@ -7,7 +7,7 @@ window.Mapbender.WmtsSource = (function() {
     $.extend(WmtsSource.prototype, {
         constructor: WmtsSource,
         _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
-            var matrixSet = this.getMatrixSetByIdent(compatibleLayer.options.tilematrixset);
+            var matrixSet = compatibleLayer.getMatrixSet();
             var options = $.extend(this._getNativeLayerOptions(matrixSet, compatibleLayer, srsName), {
                 requestEncoding: 'REST',
                 layer: compatibleLayer.options.identifier,
@@ -19,14 +19,17 @@ window.Mapbender.WmtsSource = (function() {
             var olLayer = new OpenLayers.Layer.WMTS(options);
             return olLayer;
         },
+        _getNativeLayerOptions: function(matrixSet, compatibleLayer, srsName) {
+            var parentValues = Mapbender.WmtsTmsBaseSource.prototype._getNativeLayerOptions.apply(this, arguments);
+            var matrixOptions = this._getMatrixOptions(matrixSet);
+            return $.extend(parentValues, matrixOptions);
+        },
         /**
-         * @param {WmtsLayerConfig} layerDef
          * @param {WmtsTileMatrixSet} matrixSet
-         * @param {String} srsName
          * @return {{matrixSet: string, matrixIds: any[]}}
          * @private
          */
-        _getMatrixOptions: function(layerDef, matrixSet, srsName) {
+        _getMatrixOptions: function(matrixSet) {
             var matrixIds = matrixSet.tilematrices.map(function(matrix) {
                 if (matrix.topLeftCorner) {
                     return $.extend({}, matrix, {
@@ -36,13 +39,9 @@ window.Mapbender.WmtsSource = (function() {
                     return $.extend({}, matrix);
                 }
             });
-            var self = this;
             return {
                 matrixSet: matrixSet.identifier,
-                matrixIds: matrixIds,
-                serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
-                    return self._getMatrixResolution(tileMatrix, srsName);
-                })
+                matrixIds: matrixIds
             };
         },
         /**
