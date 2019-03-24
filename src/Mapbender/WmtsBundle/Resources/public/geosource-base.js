@@ -66,9 +66,8 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return true;
         },
-        createNativeLayers: function() {
-            var proj = Mapbender.Model.getCurrentProj();
-            var compatibleLayer = this._selectCompatibleLayer(proj.projCode);
+        createNativeLayers: function(srsName) {
+            var compatibleLayer = this._selectCompatibleLayer(srsName);
             var fakeRootLayer = this.configuration.children[0];
             if (!compatibleLayer) {
                 this.configuration.children[0].children = [];
@@ -94,11 +93,11 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             compatibleLayer.options.treeOptions.allow.selected = true;
             fakeRootLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
             compatibleLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
-            var olLayer = this._initializeSingleCompatibleLayer(compatibleLayer, proj);
+            var olLayer = this._initializeSingleCompatibleLayer(compatibleLayer, srsName);
             return [olLayer];
         },
-        _getNativeLayerOptions: function(matrixSet, layer, projection) {
-            var matrixOptions = this._getMatrixOptions(layer, matrixSet, projection);
+        _getNativeLayerOptions: function(matrixSet, layer, srsName) {
+            var matrixOptions = this._getMatrixOptions(layer, matrixSet, srsName);
             var baseOptions = {
                 isBaseLayer: false,
                 opacity: this.configuration.options.opacity,
@@ -107,7 +106,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 url: layer.options.tileUrls,
                 format: layer.options.format
             };
-            var bounds = layer.getBounds(projection.projCode, true);
+            var bounds = layer.getBounds(srsName, true);
             if (bounds) {
                 baseOptions.tileFullExtent = bounds;
             }
@@ -184,7 +183,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 {
                     url: Mapbender.Util.removeProxy(this.getPrintBaseUrl(layerDef)),
                     matrix: $.extend({}, matrix),
-                    resolution: this._getMatrixResolution(matrix, projection)
+                    resolution: this._getMatrixResolution(matrix, projection.projCode)
                 }
             ];
         },
@@ -252,7 +251,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             var closestMatrix = null;
             for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
                 var matrix = matrixSet.tilematrices[i];
-                var matrixRes = this._getMatrixResolution(matrix, projection);
+                var matrixRes = this._getMatrixResolution(matrix, projection.projCode);
                 var resRatio = matrixRes / resolution;
                 var matrixScaleDelta = Math.abs(resRatio - 1);
                 if (matrixScaleDelta < scaleDelta) {

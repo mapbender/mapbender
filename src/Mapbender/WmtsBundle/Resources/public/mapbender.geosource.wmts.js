@@ -6,9 +6,9 @@ window.Mapbender.WmtsSource = (function() {
     WmtsSource.prototype = Object.create(Mapbender.WmtsTmsBaseSource.prototype);
     $.extend(WmtsSource.prototype, {
         constructor: WmtsSource,
-        _initializeSingleCompatibleLayer: function(compatibleLayer, proj) {
+        _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
             var matrixSet = this.getMatrixSetByIdent(compatibleLayer.options.tilematrixset);
-            var options = $.extend(this._getNativeLayerOptions(matrixSet, compatibleLayer, proj), {
+            var options = $.extend(this._getNativeLayerOptions(matrixSet, compatibleLayer, srsName), {
                 requestEncoding: 'REST',
                 layer: compatibleLayer.options.identifier,
                 style: compatibleLayer.options.style,
@@ -22,11 +22,11 @@ window.Mapbender.WmtsSource = (function() {
         /**
          * @param {WmtsLayerConfig} layerDef
          * @param {WmtsTileMatrixSet} matrixSet
-         * @param {OpenLayers.Projection} projection
+         * @param {String} srsName
          * @return {{matrixSet: string, matrixIds: any[]}}
          * @private
          */
-        _getMatrixOptions: function(layerDef, matrixSet, projection) {
+        _getMatrixOptions: function(layerDef, matrixSet, srsName) {
             var matrixIds = matrixSet.tilematrices.map(function(matrix) {
                 if (matrix.topLeftCorner) {
                     return $.extend({}, matrix, {
@@ -41,17 +41,18 @@ window.Mapbender.WmtsSource = (function() {
                 matrixSet: matrixSet.identifier,
                 matrixIds: matrixIds,
                 serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
-                    return self._getMatrixResolution(tileMatrix, projection);
+                    return self._getMatrixResolution(tileMatrix, srsName);
                 })
             };
         },
         /**
          * @param {WmtsTileMatrix} tileMatrix
-         * @param {OpenLayers.Projection} projection
+         * @param {String} srsName
          * @return {Number}
          * @private
          */
-        _getMatrixResolution: function(tileMatrix, projection) {
+        _getMatrixResolution: function(tileMatrix, srsName) {
+            var projection = Mapbender.Model.getProj(srsName);
             var projectionUnits = projection.proj.units;
             // OGC TileMatrix scaleDenom is calculated using meters, irrespective of projection units
             // OGC TileMatrix scaleDenom is also calculated assuming 0.28mm per pixel

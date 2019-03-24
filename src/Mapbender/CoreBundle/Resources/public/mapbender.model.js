@@ -347,7 +347,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             });
         });
     },
-    getCurrentProjectonCode: function() {
+    getCurrentProjectionCode: function() {
         if (this.map && this.map.olMap) {
             return this.map.olMap.getProjection();
         } else {
@@ -1109,9 +1109,10 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         if (!this.getSourcePos(sourceDef)) {
             this.sourceTree.push(sourceDef);
         }
+        var projCode = this.getCurrentProjectionCode();
 
         sourceDef.mqlid = this.map.trackSource(sourceDef).id;
-        var olLayers = sourceDef.initializeLayers();
+        var olLayers = sourceDef.initializeLayers(projCode);
         for (var i = 0; i < olLayers.length; ++i) {
             var olLayer = olLayers[i];
             olLayer.setVisibility(false);
@@ -1490,7 +1491,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         for (i = 0; i < dynamicSources.length; ++i) {
             source = dynamicSources[i];
             if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
-                olLayers = source.initializeLayers();
+                olLayers = source.initializeLayers(newProj.projCode);
                 for (j = 0; j < olLayers.length; ++j) {
                     var olLayer = olLayers[j];
                     olLayer.setVisibility(false);
@@ -1598,6 +1599,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      */
     getMbConfig: function(source, initializePod, initializeLayers) {
         var _s;
+        var projCode;
         if (source.mbConfig) {
             // monkey-patched OpenLayers.Layer
             _s =  source.mbConfig;
@@ -1612,7 +1614,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 if (!(_s instanceof Mapbender.Source)) {
                     var sourceObj = Mapbender.Source.factory(_s);
                     if (initializeLayers) {
-                        sourceObj.initializeLayers();
+                        projCode = projCode || this.getCurrentProjectionCode();
+                        sourceObj.initializeLayers(projCode);
                     }
                     return sourceObj;
                 }

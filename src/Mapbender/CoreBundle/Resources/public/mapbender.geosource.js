@@ -392,7 +392,7 @@ Mapbender.Geo.SourceHandler = {
         // WHen switching SRS this gets called multiple times, sometimes with an extent in the old SRS,
         // which effectively disables perfectly viable layers.
         return true;
-        var projectionCode = Mapbender.Model.getCurrentProjectonCode();
+        var projectionCode = Mapbender.Model.getCurrentProjectionCode();
         // let the source substitute the layer (c.f. WMTS fake root layer for layertree)
         var bounds = layer.source && layer.source.getLayerBounds(layer.options.id, projectionCode, true);
         if (layer.source && layer === layer.source.configuration.children[0]) {

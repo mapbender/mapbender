@@ -33,12 +33,12 @@ window.Mapbender.Source = (function() {
     };
     Source.prototype = {
         constructor: Source,
-        createNativeLayers: function() {
+        createNativeLayers: function(srsName) {
             console.error("Layer creation not implemented", this);
             throw new Error("Layer creation not implemented");
         },
-        initializeLayers: function() {
-            this.nativeLayers = this.createNativeLayers();
+        initializeLayers: function(srsName) {
+            this.nativeLayers = this.createNativeLayers(srsName);
             return this.nativeLayers;
         },
         id: null,
