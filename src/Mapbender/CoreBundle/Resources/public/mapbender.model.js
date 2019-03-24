@@ -665,7 +665,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     _afterZoomBox: function(map) {
         if (map === this.map.olMap) {
             this.zoomBoxOff();
-            $(document).trigger('mbmapafterzoombox', {
+            $(this.mbMap.element).trigger('mbmapafterzoombox', {
                 mbMap: this.mbMap
             });
         }
@@ -673,7 +673,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     _afterZoom: function() {
         var scales = this._getScales();
         var zoom = this.getCurrentZoomLevel();
-        $(document).trigger('mbmapzoomchanged', {
+        $(this.mbMap.element).trigger('mbmapzoomchanged', {
             mbMap: this.mbMap,
             zoom: zoom,
             // scale: this.getCurrentScale()
