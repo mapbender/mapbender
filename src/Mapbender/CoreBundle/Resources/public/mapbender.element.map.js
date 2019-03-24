@@ -141,11 +141,11 @@
         },
         /**
          * Zooms the map to scale
+         * @deprecated
          */
-        zoomToScale: function(scale, closest){
-            if(typeof closest === 'undefined')
-                closest = false;
-            this.map.olMap.zoomToScale(scale, closest);
+        zoomToScale: function(scale, closest) {
+            console.warn("Deprecated zoomToScale call, use engine-independent Model.pickZoomForScale + Model.setZoomLevel");
+            this.map.olMap.zoomToScale.apply(this.map.olMap, arguments);
         },
         /**
          * Super legacy, some variants of wmcstorage want to use this to replace the map's initial max extent AND
