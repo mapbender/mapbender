@@ -109,11 +109,6 @@
                 ls += layers.layers[i].options.name !== "" ? "," + layers.layers[i].options.name : "";
             }
 
-            // Add proxy if needed
-            if(layerOptions.proxy) {
-                url = OpenLayers.ProxyHost + encodeURIComponent(url);
-            }
-
             return new OpenLayers.Layer.WMS(layerDefinition.title, url, {
                 version:     layerOptions.version,
                 layers:      ls.substring(1),
