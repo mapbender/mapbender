@@ -2,27 +2,23 @@
 
 namespace Mapbender\WmsBundle\Controller;
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\ORMException;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -37,35 +33,32 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class RepositoryController extends Controller
 {
     /**
-     * @ManagerRoute("/new")
-     * @Method({ "GET" })
-     * @Template
+     * @ManagerRoute("/new", methods={"GET"})
      */
     public function newAction()
     {
         $form = $this->createForm(new WmsSourceSimpleType(), new WmsSource());
-        return array(
+        return $this->render('@MapbenderWms/Repository/new.html.twig', array(
             "form" => $form->createView()
-        );
+        ));
     }
 
     /**
-     * @ManagerRoute("/start")
-     * @Method({ "GET" })
-     * @Template("MapbenderWmsBundle:Repository:form.html.twig")
+     * @ManagerRoute("/start", methods={"GET"})
+     * @return Response
      */
     public function startAction()
     {
         $form = $this->createForm(new WmsSourceSimpleType(), new WmsSource());
-        return array(
+        return $this->render('@MapbenderWms/Repository/form.html.twig', array(
             "form" => $form->createView()
-        );
+        ));
     }
 
     /**
-     * @ManagerRoute("{wms}")
-     * @Method({ "GET"})
-     * @Template
+     * @ManagerRoute("{wms}", methods={"GET"})
+     * @param WmsSource $wms
+     * @return Response
      */
     public function viewAction(WmsSource $wms)
     {
@@ -74,17 +67,18 @@ class RepositoryController extends Controller
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $wms)) {
             throw new AccessDeniedException();
         }
-        return array("wms" => $wms);
+        return $this->render('@MapbenderWms/Repository/view.html.twig', array(
+            'wms' => $wms,
+        ));
     }
 
     /**
-     * @ManagerRoute("/create")
-     * @Method({ "POST" })
-     * @Template("MapbenderWmsBundle:Repository:new.html.twig")
+     * @ManagerRoute("/create", methods={"POST"})
+     * @param Request $request
+     * @return Response
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        $request       = $this->getRequest();
         $wmssource_req = new WmsSource();
 
         $securityContext = $this->get('security.authorization_checker');
@@ -138,15 +132,17 @@ class RepositoryController extends Controller
             return $this->redirect($this
                 ->generateUrl("mapbender_manager_repository_view", array("sourceId" => $wmssource->getId()), true));
         }
-        return array(
+        return $this->render('@MapbenderWms/Repository/new.html.twig', array(
             'form' => $form->createView(),
-            'form_name' => $form->getName());
+            'form_name' => $form->getName(),
+        ));
     }
 
     /**
      * Updates a WMS Source
      * @ManagerRoute("/{sourceId}/updateform")
-     * @Template("MapbenderWmsBundle:Repository:updateform.html.twig")
+     * @param string $sourceId
+     * @return Response
      */
     public function updateformAction($sourceId)
     {
@@ -158,19 +154,20 @@ class RepositoryController extends Controller
         }
 
         $form = $this->createForm(new WmsSourceSimpleType(), $source);
-        return array(
+        return $this->render('@MapbenderWms/Repository/updateform.html.twig',  array(
             "form" => $form->createView()
-        );
+        ));
     }
 
     /**
      * Updates a WMS Source
      * @ManagerRoute("/{sourceId}/update")
-     * @Template("MapbenderWmsBundle:Repository:updateform.html.twig")
+     * @param Request $request
+     * @param string $sourceId
+     * @return Response
      */
-    public function updateAction($sourceId)
+    public function updateAction(Request $request, $sourceId)
     {
-        $request = $this->getRequest();
         /** @var WmsSource|null $wmsOrig */
         $wmsOrig         = $this->loadEntityByPk("MapbenderCoreBundle:Source", $sourceId);
         $securityContext = $this->get('security.authorization_checker');
@@ -241,25 +238,25 @@ class RepositoryController extends Controller
                     )
                 );
             } else {
-                return array(
+                return $this->render('@MapbenderWms/Repository/updateform.html.twig', array(
                     "form" => $form->createView()
-                );
+                ));
             }
         } else { // create form for update
             $form = $this->createForm(new WmsSourceSimpleType(), $wmsOrig);
-            return array(
+            return $this->render('@MapbenderWms/Repository/updateform.html.twig', array(
                 "form" => $form->createView()
-            );
+            ));
         }
     }
 
     /**
      * Removes a WmsSource
      *
-     * @ManagerRoute("/{sourceId}/delete")
-     * @Method({"GET"})
+     * @ManagerRoute("/{sourceId}/delete", methods={"GET"})
      * @param string $sourceId
      * @return Response
+     * @throws \Doctrine\ORM\ORMException
      */
     public function deleteAction($sourceId)
     {
@@ -279,6 +276,7 @@ class RepositoryController extends Controller
         foreach ($wmsinstances as $instance) {
             $application = $instance->getLayerset()->getApplication();
             $em->persist($application);
+            /** @noinspection PhpUnhandledExceptionInspection */
             $application->setUpdated(new \DateTime('now'));
         }
         $em->remove($wmssource);
@@ -291,19 +289,21 @@ class RepositoryController extends Controller
     /**
      * Removes a WmsInstance
      *
-     * @ManagerRoute("/{slug}/instance/{instanceId}/delete")
-     * @Method({"GET"})
+     * @ManagerRoute("/{slug}/instance/{instanceId}/delete", methods={"GET"})
      * @param string $slug
      * @param string $instanceId
      * @return Response
+     * @throws ORMException
      */
     public function deleteInstanceAction($slug, $instanceId)
     {
         /** @var WmsInstance $instance */
         $instance = $this->loadEntityByPk("MapbenderCoreBundle:SourceInstance", $instanceId);
         $application = $instance->getLayerset()->getApplication();
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         $em->persist($application);
+        /** @noinspection PhpUnhandledExceptionInspection */
         $application->setUpdated(new \DateTime('now'));
         $em->remove($instance);
         $em->flush();
@@ -315,11 +315,13 @@ class RepositoryController extends Controller
      * Edits, saves the WmsInstance
      *
      * @ManagerRoute("/instance/{slug}/{instanceId}")
-     * @Template("MapbenderWmsBundle:Repository:instance.html.twig")
+     * @param Request $request
+     * @param string $slug
+     * @param string $instanceId
+     * @return Response
      */
-    public function instanceAction($slug, $instanceId)
+    public function instanceAction(Request $request, $slug, $instanceId)
     {
-        $request = $this->getRequest();
         $repositoryName = "MapbenderWmsBundle:WmsInstance";
         /** @var WmsInstance|null $wmsinstance */
         $wmsinstance = $this->loadEntityByPk($repositoryName, $instanceId);
@@ -350,10 +352,11 @@ class RepositoryController extends Controller
                     ->redirect($this->generateUrl('mapbender_manager_application_edit', array("slug" => $slug)));
             } else { // edit
                 $this->get('session')->getFlashBag()->set('warning', 'Your Wms Instance is not valid.');
-                return array(
+                return $this->render('@MapbenderWms/Repository/instance.html.twig', array(
                     "form" => $form->createView(),
                     "slug" => $slug,
-                    "instance" => $wmsinstance);
+                    "instance" => $wmsinstance,
+                ));
             }
         } else { // edit
             /* bug fix start @TODO remove after migration's introduction */
@@ -365,11 +368,11 @@ class RepositoryController extends Controller
             }
             /* bug fix end */
             $form = $this->createForm('wmsinstanceinstancelayers', $wmsinstance);
-            return array(
+            return $this->render('@MapbenderWms/Repository/instance.html.twig', array(
                 "form" => $form->createView(),
                 "slug" => $slug,
                 "instance" => $wmsinstance,
-            );
+            ));
         }
     }
 
@@ -377,10 +380,17 @@ class RepositoryController extends Controller
      * Changes the priority of WmsInstanceLayers
      *
      * @ManagerRoute("/{slug}/instance/{instanceId}/priority/{instLayerId}")
+     * @param Request $request
+     * @param string $slug
+     * @param string $instanceId
+     * @param string $instLayerId
+     * @return Response
+     * @throws ORMException
+     * @throws DBALException
      */
-    public function instanceLayerPriorityAction($slug, $instanceId, $instLayerId)
+    public function instanceLayerPriorityAction(Request $request, $slug, $instanceId, $instLayerId)
     {
-        $number  = $this->getRequest()->get("number");
+        $number  = $request->get("number");
         /** @var WmsInstanceLayer|null $instLay */
         $instLay = $this->loadEntityByPk('MapbenderWmsBundle:WmsInstanceLayer', $instLayerId);
 
@@ -398,6 +408,7 @@ class RepositoryController extends Controller
                 'result' => 'ok',   // why?
             ));
         }
+        /** @var EntityManager $em */
         $em       = $this->getDoctrine()->getManager();
         $instLay->setPriority($number);
         $em->persist($instLay);
@@ -446,12 +457,17 @@ class RepositoryController extends Controller
     /**
      * Sets enabled/disabled for the WmsInstance
      *
-     * @ManagerRoute("/instance/{slug}/enabled/{instanceId}")
-     * @Method({ "POST" })
+     * @ManagerRoute("/instance/{slug}/enabled/{instanceId}", methods={"POST"})
+     * @param Request $request
+     * @param string $slug
+     * @param string $instanceId
+     * @return Response
+     * @throws ORMException
      */
-    public function instanceEnabledAction($slug, $instanceId)
+    public function instanceEnabledAction(Request $request, $slug, $instanceId)
     {
-        $enabled     = $this->getRequest()->get("enabled");
+        $enabled = $request->get("enabled");
+        /** @var WmsInstance|null $wmsinstance */
         $wmsinstance = $this->loadEntityByPk("MapbenderWmsBundle:WmsInstance", $instanceId);
         if (!$wmsinstance) {
             return new JsonResponse(array(
@@ -459,13 +475,17 @@ class RepositoryController extends Controller
                 'error' => 'The wms instance with the id "'.$instanceId.'" does not exist.',
             ));
         } else {
+            /** @var EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
             $enabled_before = $wmsinstance->getEnabled();
             $enabled        = $enabled === "true";
             $wmsinstance->setEnabled($enabled);
-            $this->getDoctrine()->getManager()->persist(
-                $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime('now')));
-            $this->getDoctrine()->getManager()->persist($wmsinstance);
-            $this->getDoctrine()->getManager()->flush();
+            $application = $wmsinstance->getLayerset()->getApplication();
+            /** @noinspection PhpUnhandledExceptionInspection */
+            $application->setUpdated(new \DateTime('now'));
+            $em->persist($application);
+            $em->persist($wmsinstance);
+            $em->flush();
             return new JsonResponse(array(
                 'success' => array(         // why?
                     "id" => $wmsinstance->getId(),
@@ -496,7 +516,7 @@ class RepositoryController extends Controller
      */
     protected function initializeAccessControl($entity)
     {
-        // ACL
+        /** @var MutableAclProviderInterface $aclProvider */
         $aclProvider    = $this->get('security.acl.provider');
         $objectIdentity = ObjectIdentity::fromDomainObject($entity);
         $acl            = $aclProvider->createAcl($objectIdentity);
