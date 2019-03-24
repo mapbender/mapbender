@@ -701,14 +701,12 @@
                 } else {
                     $('.layer-zoom', menu).remove();
                 }
-
-                if ($.inArray("metadata", self.options.menu) === -1 || menu.find(
-                    '.layer-metadata').length === 0 || (source.hasOwnProperty('wmsloader') && source.wmsloader === true) || isNaN(parseInt(source.origId))) {
-                    $('.layer-metadata', menu).remove();
-                } else {
+                if (self.options.menu.indexOf('metadata') !== -1 && source.supportsMetadata() && $('.layer-metadata', menu).length) {
                     atLeastOne = true;
                     $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata,
                         self));
+                } else {
+                    $('.layer-metadata', menu).remove();
                 }
                 var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
                 if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'

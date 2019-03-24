@@ -18,6 +18,7 @@ window.Mapbender.Source = (function() {
         this.title = definition.title;
         this.type = definition.type;
         this.configuration = definition.configuration;
+        this.wmsloader = definition.wmsloader;
         var sourceArg = this;
         this.configuration.children = (this.configuration.children || []).map(function(childDef) {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
@@ -49,6 +50,7 @@ window.Mapbender.Source = (function() {
         configuration: {},
         nativeLayers: [],
         recreateOnSrsSwitch: false,
+        wmsloader: false,
         rewriteLayerIds: function() {
             if (!this.id) {
                 throw new Error("Can't rewrite layer ids with empty source id");
@@ -101,6 +103,9 @@ window.Mapbender.Source = (function() {
                 }
             });
             return foundLayer;
+        },
+        supportsMetadata: function() {
+            return !(this.wmsloader || isNaN(parseInt(this.origId)));
         },
         _reduceBboxMap: function(bboxMap, projCode) {
             if (bboxMap && Object.keys(bboxMap).length) {

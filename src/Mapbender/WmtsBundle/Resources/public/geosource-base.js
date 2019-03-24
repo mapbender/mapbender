@@ -202,6 +202,9 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             }
             return foundLayer;
         },
+        supportsMetadata: function() {
+            return false;
+        },
         getLayerExtentConfigMap: function(layerId, inheritFromParent, inheritFromSource) {
             var bboxMap;
             var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
