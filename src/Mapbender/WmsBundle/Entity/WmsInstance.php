@@ -568,7 +568,7 @@ class WmsInstance extends SourceInstance
      */
     public function getMetadata()
     {
-        return new WmsMetadata($this);
+        return new WmsMetadata();
     }
 
     /**

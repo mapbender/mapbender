@@ -2,6 +2,7 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceMetadata;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\CoreBundle\Component\BoundingBox;
@@ -18,20 +19,23 @@ use Mapbender\WmsBundle\Controller\RepositoryController;
 class WmsMetadata extends SourceMetadata
 {
 
-    protected $instance;
-
-    public function __construct(WmsInstance $instance)
+    public function getTemplate()
     {
-        parent::__construct();
-        $this->instance = $instance;
+        return 'MapbenderCoreBundle::metadata.html.twig';
     }
 
-    private function prepareData($itemId)
+    /**
+     * @param SourceInstance $instance
+     * @param string $itemId
+     * @return array
+     */
+    public function getData(SourceInstance $instance, $itemId = null)
     {
-        $src = $this->instance->getSource();
+        /** @var WmsInstance $instance */
+        $src = $instance->getSource();
         if ($this->getUseCommon()) {
             $source_items = array();
-            $source_items[] = array("title" => $this->formatAlternatives($src->getTitle(), $this->instance->getTitle()));
+            $source_items[] = array("title" => $this->formatAlternatives($src->getTitle(), $instance->getTitle()));
             $source_items[] = array("name" => strval($src->getName()));
             $source_items[] = array("version" => strval($src->getVersion()));
             $source_items[] = array("originUrl" => strval($src->getOriginUrl()));
@@ -66,7 +70,7 @@ class WmsMetadata extends SourceMetadata
 
         # add items metadata
         if ($this->getUseItems() && $itemId) {
-            foreach ($this->instance->getLayers() as $layer) {
+            foreach ($instance->getLayers() as $layer) {
                 if (strval($layer->getId()) === strval($itemId)) {
                     $layerItems = $this->prepareLayers($layer);
                     $this->addMetadataSection(SourceMetadata::$SECTION_ITEMS, $layerItems);
@@ -74,6 +78,10 @@ class WmsMetadata extends SourceMetadata
                 }
             }
         }
+        return array(
+            'metadata' => $this->data,
+            'prefix' => 'mb.wms.metadata.section.',
+        );
     }
 
     /**
@@ -114,16 +122,4 @@ class WmsMetadata extends SourceMetadata
             $bbox->getMaxy(),
         ));
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function render($templating, $itemId = null)
-    {
-        $this->prepareData($itemId);
-        $content = $templating->render('MapbenderCoreBundle::metadata.html.twig',
-            array('metadata' => $this->data, 'prefix' => 'mb.wms.metadata.section.'));
-        return $content;
-    }
-
 }

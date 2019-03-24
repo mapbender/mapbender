@@ -507,11 +507,11 @@ class RepositoryController extends Controller
         $metadata  = $instance->getMetadata();
         $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
         $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
-        $content   = $metadata->render($this->container->get('templating'), $layerId);
-        $response  = new Response();
-        $response->setContent($content);
-        $response->headers->set('Content-Type', 'text/html');
-        return $response;
+        $template = $metadata->getTemplate();
+        $content = $this->renderView($template, $metadata->getData($instance, $layerId));
+        return new Response($content, 200, array(
+            'Content-Type' => 'text/html',
+        ));
     }
 
     protected function setAliasForDuplicate(WmsSource $wmsSource)
