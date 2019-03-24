@@ -37,6 +37,7 @@
         _setup: function() {
             var model = this.mbMap.getModel();
             var zoomLevels = model.getZoomLevels();
+            var self = this;
             for (var i = 0; i < zoomLevels.length; ++i) {
                 var $option = $("<option/>");
                 $option
@@ -52,8 +53,11 @@
             initDropdown.call(this.element.get(0));
 
             this._updateScale();
-
-            this.mbMap.map.olMap.events.register('zoomend', null, $.proxy(this._updateScale, this));
+            $(document).on('mbmapzoomchanged', function(e, data) {
+                if (data.mbMap === self.mbMap) {
+                    self._updateScale();
+                }
+            });
 
             this._trigger('ready');
         },

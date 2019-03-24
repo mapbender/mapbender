@@ -24,11 +24,16 @@ $.widget("mapbender.mbZoomBar", {
     },
 
     _setup: function() {
+        var self = this;
         this.map = this.mbMap.map.olMap;        // @todo: no direct access to OpenLayers map
         this._setupSlider();
         this._setupZoomButtons();
         this._setupPanButtons();
-        this.map.events.register('zoomend', this, this._zoom2Slider);
+        $(document).on('mbmapzoomchanged', function(e, data) {
+            if (data.mbMap === self.mbMap) {
+                self._zoom2Slider();
+            }
+        });
         this._zoom2Slider();
 
         if(this.options.draggable === true) {
