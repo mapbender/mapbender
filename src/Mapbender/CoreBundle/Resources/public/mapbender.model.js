@@ -166,6 +166,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         this._initMap();
     },
     _initMap: function _initMap() {
+        this._patchNavigationControl();
         var self = this;
         this._configProj = this.getProj(this.mbMap.options.srs);
         this._startProj = this.getProj(this.mbMap.options.targetsrs || this.mbMap.options.srs);
@@ -241,8 +242,28 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             var zoom = this.pickZoomForScale(this.mbMap.options.targetscale, true);
             this.setZoomLevel(zoom, false);
         }
+        this._setupHistoryControl();
+        this._setupNavigationControl();
+    },
+    _setupHistoryControl: function() {
         this.historyControl = new OpenLayers.Control.NavigationHistory();
         this.map.olMap.addControl(this.historyControl);
+    },
+    _patchNavigationControl: function() {
+        var self = this;
+        var zbZoomBoxMethodOriginal = OpenLayers.Control.ZoomBox.prototype.zoomBox;
+
+        function zbZoomBoxMethodPatched(position) {
+            console.warn("Monkey-patched zoomBoxControl.zoomBox", this, arguments);
+            zbZoomBoxMethodOriginal.apply(this, arguments);
+            self._afterZoomBox(this.map);
+        }
+        OpenLayers.Control.ZoomBox.prototype.zoomBox = zbZoomBoxMethodPatched;
+    },
+    _setupNavigationControl: function() {
+        this._navigationControl = this.map.olMap.getControlsByClass('OpenLayers.Control.Navigation')[0];
+        this._navigationDragHandler = this._navigationControl.zoomBox.handler.dragHandler;
+        this._initialDragHandlerKeyMask = this._navigationDragHandler.keyMask;
     },
     /**
      * Set map view: extent from URL parameters or configuration and POIs
@@ -624,6 +645,29 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             return this.map.olMap.scales[this.nextZoom];
         }
         return Math.round(this.map.olMap.getScale());
+    },
+    /**
+     * Enables the zoom selection box immediately without requiring a key combination (default: SHIFT)
+     * to be held.
+     */
+    zoomBoxOn: function() {
+        $(this.getViewPort()).css({cursor: 'crosshair'});
+        this._navigationDragHandler.keyMask = OpenLayers.Handler.MOD_NONE;
+    },
+    /**
+     * Reenables the keymask for drawing a zoom box
+     */
+    zoomBoxOff: function() {
+        $(this.getViewPort()).css({cursor: ''});
+        this._navigationDragHandler.keyMask = this._initialDragHandlerKeyMask;
+    },
+    _afterZoomBox: function(map) {
+        if (map === this.map.olMap) {
+            this.zoomBoxOff();
+            $(document).trigger('mbmapafterzoombox', {
+                mbMap: this.mbMap
+            });
+        }
     },
     /**
      * Updates the options.treeOptions within the source with new values from layerOptionsMap.
@@ -1428,8 +1472,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     },
     /**
      * @param {OpenLayers.Layer} olLayer
-     * @param {OpenLayers.Projection} oldProj
      * @param {OpenLayers.Projection} newProj
+     * @param {OpenLayers.Bounds} [newMaxExtent]
      * @private
      */
     _changeLayerProjection: function(olLayer, newProj, newMaxExtent) {
