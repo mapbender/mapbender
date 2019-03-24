@@ -36,12 +36,9 @@ $.widget("mapbender.mbZoomBar", {
         });
         this._zoom2Slider();
 
-        if(this.options.draggable === true) {
-            this.element.addClass("iconMove").draggable({
-                containment: this.element.closest('.region'),
-                start: function() {
-                    $(this).css("right", "inherit");
-                }
+        if (this.options.draggable === true) {
+            this.element.draggable({
+                containment: this.element.closest('.region')
             });
         }
         $(this.element).find('.iconZoomMin').bind("click" ,$.proxy(this._worldZoom, this));

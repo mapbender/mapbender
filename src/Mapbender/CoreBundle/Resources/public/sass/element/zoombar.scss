@@ -1,7 +1,7 @@
 .mb-element-zoombar{
-  &.iconMove:before{
-    @include absolute(-$space 0 '' '');
-  }
+  width: 49px;  // for .pan item positioning
+  text-align: center; // support .toolPane automatic centering
+
   .pan, .toolPane {
     @include frontendContainerStyle();
     color: fade-out($lightFontColor, .3);
@@ -26,7 +26,7 @@
   */
   .pan{
     height: 49px;
-    width: 49px;
+    width: 100%;
     position:relative;
     @include border-radius(50%,50%);
 
@@ -36,18 +36,32 @@
     .iconDown{@include absolute('' '' 1px 18px);}
     .iconLeft{@include absolute(15px '' '' 7px);}
   }
+  &.right-top, &.right-bottom {
+    .move-icon-wrap {
+      text-align: right;
+    }
+  }
+  &.left-top, &.left-bottom {
+    .move-icon-wrap {
+      text-align: left;
+    }
+  }
   /**
   * Map tools
   */
   .toolPane{
-    margin:$space/2 5px 0px 5px;
-    padding:5px 0px;
+    display: inline-block;
+    margin-top: $space/2;
+    padding:5px;
     @include border-radius($radius);
 
-    & > li,
+    > li,
     .zoomSlider > span,
     .zoomSlider > ul {
       margin:3px 0;
+    }
+    .historyNext {
+      margin-left:5px;
     }
   }
   .iconBig {
@@ -59,9 +73,8 @@
       position: unset;
     }
   }
-  .historyPrev, .historyNext{margin-left:5px;}
   .toolPane {
-    .zoomBox, .zoomWorld, .zoomSlider {
+    > li {
       text-align: center;
     }
   }
