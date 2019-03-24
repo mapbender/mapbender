@@ -15,7 +15,7 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
                 url: Mapbender.configuration.application.urls['metadata'],
                 data: {
                     sourceId: source.origId,
-                    layerName: layerH.layer.options.name || ''
+                    layerId: layerH.layer.options.origId || null
                 },
                 dataType: 'html',
                 error: function(jqXHR, textStatus, errorThrown) {

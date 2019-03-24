@@ -26,7 +26,7 @@ class WmsMetadata extends SourceMetadata
         $this->instance = $instance;
     }
 
-    private function prepareData($itemName)
+    private function prepareData($itemId)
     {
         $src = $this->instance->getSource();
         if ($this->getUseCommon()) {
@@ -65,19 +65,14 @@ class WmsMetadata extends SourceMetadata
         }
 
         # add items metadata
-        if ($this->getUseItems() && $itemName !== '') {
-            $layer = null;
-            foreach ($this->instance->getLayers() as $layerH) {
-                if ($layerH->getSourceItem()->getName() === $itemName) {
-                    $layer = $layerH;
+        if ($this->getUseItems() && $itemId) {
+            foreach ($this->instance->getLayers() as $layer) {
+                if (strval($layer->getId()) === strval($itemId)) {
+                    $layerItems = $this->prepareLayers($layer);
+                    $this->addMetadataSection(SourceMetadata::$SECTION_ITEMS, $layerItems);
                     break;
                 }
             }
-            $layer_items = array();
-            if ($layer) {
-                $layer_items = $this->prepareLayers($layer);
-            }
-            $this->addMetadataSection(SourceMetadata::$SECTION_ITEMS, $layer_items);
         }
     }
 
@@ -121,9 +116,9 @@ class WmsMetadata extends SourceMetadata
     /**
      * @inheritdoc
      */
-    public function render($templating, $itemName = null)
+    public function render($templating, $itemId = null)
     {
-        $this->prepareData($itemName);
+        $this->prepareData($itemId);
         $content = $templating->render('MapbenderCoreBundle::metadata.html.twig',
             array('metadata' => $this->data, 'prefix' => 'mb.wms.metadata.section.'));
         return $content;

@@ -377,8 +377,8 @@ abstract class SourceMetadata
     /**
      * Renders the SourceMetadata.
      * @param EngineInterface $templating
-     * @param string $itemName unic item name
+     * @param string $itemId
      * @return string
      */
-    abstract public function render($templating, $itemName);
+    abstract public function render($templating, $itemId = null);
 }

@@ -441,11 +441,11 @@ class RepositoryController extends Controller
         if (!$this->isGranted('VIEW', $oid)) {
             $this->denyAccessUnlessGranted('VIEW', $instance->getSource());
         }
-        $layerName = $request->get("layerName", null);
+        $layerId = $request->get("layerId", null);
         $metadata  = $instance->getMetadata();
         $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
         $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
-        $content   = $metadata->render($this->container->get('templating'), $layerName);
+        $content   = $metadata->render($this->container->get('templating'), $layerId);
         return new Response($content, 200, array(
             'Content-Type' => 'text/html',
         ));

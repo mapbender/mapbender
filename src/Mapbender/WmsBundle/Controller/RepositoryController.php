@@ -503,11 +503,11 @@ class RepositoryController extends Controller
             && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
-        $layerName = $request->attributes->get("layerName", null);
+        $layerId = $request->attributes->get("layerId", null);
         $metadata  = $instance->getMetadata();
         $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
         $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
-        $content   = $metadata->render($this->container->get('templating'), $layerName);
+        $content   = $metadata->render($this->container->get('templating'), $layerId);
         $response  = new Response();
         $response->setContent($content);
         $response->headers->set('Content-Type', 'text/html');

@@ -295,7 +295,7 @@ class ApplicationController extends Controller
         $manager = $managers[$instance->getManagertype()];
         return $this->forward($manager['bundle']. ':' . 'Repository:metadata', array(
             'sourceId' => $sourceId,
-            'layerName' => $request->get('layerName', null)
+            'layerId' => $request->query->get('layerId', null)
         ));
     }
 
