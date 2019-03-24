@@ -87,7 +87,9 @@ class WmsMetadata extends SourceMetadata
         $layer_items[] = array("name" => strval($sourceItem->getName()));
         $layer_items[] = array("title" => $this->formatAlternatives($sourceItem->getTitle(), $layer->getTitle()));
         $bbox = $sourceItem->getLatlonBounds(true);
-        $layer_items[] = array("bbox" => $this->formatBbox($bbox));
+        if ($bbox) {
+            $layer_items[] = array("bbox" => $this->formatBbox($bbox));
+        }
         $layer_items[] = array("srs" => implode(', ', $layer->getSourceItem()->getSrs(true)));
         if($layer->getSublayer()->count() > 0){
             $sublayers = array();
