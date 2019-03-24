@@ -244,6 +244,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
         this._setupHistoryControl();
         this._setupNavigationControl();
+        this.map.olMap.events.register('zoomend', this, this._afterZoom);
     },
     _setupHistoryControl: function() {
         this.historyControl = new OpenLayers.Control.NavigationHistory();
@@ -668,6 +669,16 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 mbMap: this.mbMap
             });
         }
+    },
+    _afterZoom: function() {
+        var scales = this._getScales();
+        var zoom = this.getCurrentZoomLevel();
+        $(document).trigger('mbmapzoomchanged', {
+            mbMap: this.mbMap,
+            zoom: zoom,
+            // scale: this.getCurrentScale()
+            scale: scales[zoom]
+        });
     },
     /**
      * Updates the options.treeOptions within the source with new values from layerOptionsMap.
