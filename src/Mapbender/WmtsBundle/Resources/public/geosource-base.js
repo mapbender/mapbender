@@ -59,11 +59,6 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         currentActiveLayer: null,
         autoDisabled: null,
         recreateOnSrsSwitch: true,
-        initializeLayers: function() {
-            var proj = Mapbender.Model.getCurrentProj();
-            this.nativeLayers = this._initializeLayersInternal(proj);
-            return this.nativeLayers;
-        },
         destroyLayers: function() {
             Mapbender.Source.prototype.destroyLayers.call(this);
             this.currentActiveLayer = null;
@@ -71,7 +66,8 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return true;
         },
-        _initializeLayersInternal: function(proj) {
+        createNativeLayers: function() {
+            var proj = Mapbender.Model.getCurrentProj();
             var compatibleLayer = this._selectCompatibleLayer(proj.projCode);
             var fakeRootLayer = this.configuration.children[0];
             if (!compatibleLayer) {
