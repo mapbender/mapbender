@@ -87,7 +87,6 @@
 * TODO: this is a wrong place for this declaration!
 */
 .olMapViewport{
-  &.MapbenderControlZoomBoxActive{cursor: crosshair;}
   .olHandlerBoxZoomBox {
     border: 2px solid $firstColor;
     background-color: white;

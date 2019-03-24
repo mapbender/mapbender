@@ -10,7 +10,6 @@ $.widget("mapbender.mbZoomBar", {
 
     map: null,
     zoomslider: null,
-    zoomBoxControl: null,
     mbMap: null,
 
     _create: function() {
@@ -81,29 +80,18 @@ $.widget("mapbender.mbZoomBar", {
 
     _setupZoomButtons: function() {
         var self = this;
-
-        this.zoomBoxControl = new OpenLayers.Control();
-        OpenLayers.Util.extend(this.zoomBoxControl, {
-            handler: null,
-            autoActivate: false,
-
-            draw: function() {
-                this.handler = new OpenLayers.Handler.Box(this, {
-                    done: $.proxy(self._zoomToBox, self) }, {
-                    keyMask: OpenLayers.Handler.MOD_NONE});
-            },
-
-            CLASS_NAME: 'Mapbender.Control.ZoomBox',
-            displayClass: 'MapbenderControlZoomBox'
-        });
-
-        this.map.addControl(this.zoomBoxControl);
+        var model = this.mbMap.getModel();
         this.element.find('.zoomBox').bind('click', function() {
             $(this).toggleClass('activeZoomIcon');
             if($(this).hasClass('activeZoomIcon')) {
-                self.zoomBoxControl.activate();
+                model.zoomBoxOn();
             } else {
-                self.zoomBoxControl.deactivate();
+                model.zoomBoxOff();
+            }
+        });
+        $(document).bind('mbmapafterzoombox', function(evt, data) {
+            if (data.mbMap === self.mbMap) {
+                $('.zoomBox', self.element).removeClass('activeZoomIcon');
             }
         });
 
@@ -118,28 +106,6 @@ $.widget("mapbender.mbZoomBar", {
             $.proxy(this.map.zoomIn, this.map));
         this.element.find('.zoomSlider .iconZoomOut').bind('click',
             $.proxy(this.map.zoomOut, this.map));
-    },
-
-    _zoomToBox: function(position) {
-        var zoom, center, model = this.mbMap.getModel();
-        if(position instanceof OpenLayers.Bounds) {
-            var minXY = this.map.getLonLatFromPixel(
-                new OpenLayers.Pixel(position.left, position.bottom));
-            var maxXY = this.map.getLonLatFromPixel(
-                new OpenLayers.Pixel(position.right, position.top));
-            var bounds = new OpenLayers.Bounds(minXY.lon, minXY.lat,
-                maxXY.lon, maxXY.lat);
-            model.setExtent(bounds);
-        } else {
-            zoom = model.getCurrentZoomLevel() + 1;
-            center = this.map.getLonLatFromPixel(position);
-            model.centerXy(center.lon, center.lat, {
-                zoom: zoom
-            });
-        }
-
-        this.zoomBoxControl.deactivate();
-        this.element.find('.zoomBox').removeClass('activeZoomIcon');
     },
     _setupPanButtons: function() {
         var self = this;
