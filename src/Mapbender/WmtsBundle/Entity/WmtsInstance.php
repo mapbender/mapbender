@@ -625,10 +625,10 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * @return WmtsMetadata
+     * @return null
      */
     public function getMetadata()
     {
-//        return new WmtsMetadata($this);
+        return null;
     }
 }

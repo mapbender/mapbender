@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Component\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Mapbender\CoreBundle\Component\Presenter\ApplicationService;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Mapbender;
@@ -287,15 +288,18 @@ class ApplicationController extends Controller
         if (!$this->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))) {
             $this->denyAccessUnlessGranted('VIEW', $instance->getLayerset()->getApplication());
         }
-// TODO source access ?
-//        $this->denyAccessUnlessGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'));
-//        $this->denyAccessUnlessGranted('VIEW', new $instance->getSource());
 
-        $managers = $this->get('mapbender')->getRepositoryManagers();
-        $manager = $managers[$instance->getManagertype()];
-        return $this->forward($manager['bundle']. ':' . 'Repository:metadata', array(
-            'sourceId' => $sourceId,
-            'layerId' => $request->query->get('layerId', null)
+        $layerId = $request->query->get('layerId', null);
+        $metadata  = $instance->getMetadata();
+        if (!$metadata) {
+            throw new NotFoundHttpException();
+        }
+        $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
+        $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
+        $template = $metadata->getTemplate();
+        $content = $this->renderView($template, $metadata->getData($instance, $layerId));
+        return  new Response($content, 200, array(
+            'Content-Type' => 'text/html',
         ));
     }
 

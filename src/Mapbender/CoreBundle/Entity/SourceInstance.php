@@ -246,7 +246,7 @@ abstract class SourceInstance
 
     /**
      *
-     * @return SourceMetadata
+     * @return SourceMetadata|null
      */
     abstract public function getMetadata();
 

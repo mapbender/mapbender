@@ -479,41 +479,6 @@ class RepositoryController extends Controller
         }
     }
 
-    /**
-     * Get Metadata for a wms service
-     *
-     * @ManagerRoute("/instance/metadata")
-     * @param Request $request
-     * @return Response
-     */
-    public function metadataAction(Request $request)
-    {
-        $sourceId = $request->attributes->get("sourceId", null);
-        if (!strlen($sourceId)) {
-            throw new BadRequestHttpException();
-        }
-        /** @var SourceInstance|null $instance */
-        $instance        = $this->loadEntityByPk('Mapbender\CoreBundle\Entity\SourceInstance', $sourceId);
-        if (!$instance) {
-            throw new NotFoundHttpException();
-        }
-        $securityContext = $this->get('security.authorization_checker');
-        $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-        if (!$securityContext->isGranted('VIEW', $oid)
-            && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
-            throw new AccessDeniedException();
-        }
-        $layerId = $request->attributes->get("layerId", null);
-        $metadata  = $instance->getMetadata();
-        $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
-        $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
-        $template = $metadata->getTemplate();
-        $content = $this->renderView($template, $metadata->getData($instance, $layerId));
-        return new Response($content, 200, array(
-            'Content-Type' => 'text/html',
-        ));
-    }
-
     protected function setAliasForDuplicate(WmsSource $wmsSource)
     {
         $wmsWithSameTitle = $this->getDoctrine()

@@ -5,9 +5,7 @@ namespace Mapbender\WmtsBundle\Controller;
 use Doctrine\ORM\EntityManager;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\EntityHandler;
-use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;
 use Mapbender\WmtsBundle\Component\WmtsCapabilitiesParser;
@@ -422,33 +420,5 @@ class RepositoryController extends Controller
                 ),
             ));
         }
-    }
-
-    /**
-     * Get Metadata for a wmts service
-     *
-     * @ManagerRoute("/instance/metadata", methods={"POST"})
-     * @param Request $request
-     * @return Response
-     */
-    public function metadataAction(Request $request)
-    {
-        $sourceId = $request->get("sourceId", null);
-        /** @var SourceInstance|null $instance */
-        $instance        = $this->container->get("doctrine")
-                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$this->isGranted('VIEW', $oid)) {
-            $this->denyAccessUnlessGranted('VIEW', $instance->getSource());
-        }
-        $layerId = $request->get("layerId", null);
-        $metadata  = $instance->getMetadata();
-        $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
-        $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
-        $template = $metadata->getTemplate();
-        $content = $this->renderView($template, $metadata->getData($instance, $layerId));
-        return new Response($content, 200, array(
-            'Content-Type' => 'text/html',
-        ));
     }
 }
