@@ -111,8 +111,13 @@ class UrlProcessor
         $routerMatch = UrlUtil::routeParamsFromUrl($this->router, $url, !$localOnly);
         if ($routerMatch) {
             if ($routerMatch['_route'] === $this->proxyRouteName) {
-                $fullUrl = Request::create($url)->query->get('url');
-                return $this->stripProxySignature($fullUrl);
+                $fullRequest = Request::create($url);
+                $urlParam = $fullRequest->query->get('url');
+                $otherParams = $fullRequest->query->all();
+                unset($otherParams['url']);
+                unset($otherParams['_signature']);
+                $baseUrl = $this->stripProxySignature($urlParam);
+                return UrlUtil::validateUrl($baseUrl, $otherParams);
             } else {
                 $tunnelInternalUrl = $this->tunnelService->getInternalUrl(Request::create($url), true);
                 if ($tunnelInternalUrl) {
