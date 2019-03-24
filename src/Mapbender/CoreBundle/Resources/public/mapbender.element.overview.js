@@ -42,7 +42,7 @@
                 Mapbender.info(Mapbender.trans("mb.core.overview.nolayer"));
                 return null;
             }
-            var projection = this.mbMap.map.olMap.projection;
+            var projection = this.mbMap.getModel().getCurrentProjectionCode();
             var maxExtent = this.mbMap.map.olMap.maxExtent;
 
             var options = {
@@ -79,47 +79,37 @@
         },
         _createLayers: function() {
             var layers = [];
+            var srsName = this.mbMap.getModel().getCurrentProjectionCode();
             var instanceDefs = this._getSourceInstanceDefinitions();
             for (var i = 0; i < instanceDefs.length; ++i) {
-                var instanceDef = instanceDefs[i];
-                if (instanceDef.type === 'wms') {
-                    layers.push(this.createWmsLayer(instanceDefs[i], {
-                        isBaseLayer: i === 0
+                var source = instanceDefs[i];
+                // Legacy HACK: Overview ignores backend settings on instance layers, enables all children
+                //        of the root layer with non-empty names, ignores every other layer
+                // Legacy HACK: Overview ignores styles
+                var ch1 = source.configuration.children[0].children;
+                var nonEmptyLayerNames = ch1.map(function(sourceLayer) {
+                    return sourceLayer.options.name;
+                }).filter(function(layerName) {
+                    return !!layerName;
+                });
+                if (nonEmptyLayerNames.length) {
+                    layers = layers.concat(source.createNativeLayers(srsName).map(function(nativeLayer) {
+                        // Legacy HACK: Overview ignores / willfully overrides backend 'tiled' option
+                        nativeLayer.addOptions({
+                            singleTile: true
+                        });
+                        nativeLayer.mergeNewParams({
+                            LAYERS: nonEmptyLayerNames
+                        });
+                        return nativeLayer;
                     }));
-                } else {
-                    console.warn("Overview only supports wms, skipping non-wms instance", instanceDef.type, instanceDef);
                 }
+            }
+            if (layers.length) {
+                layers[0].setIsBaseLayer(true);
             }
             return layers;
         },
-        /**
-         * Create WMS layer by definition
-         * @param layerDefinition
-         * @param options
-         * @returns {*}
-         */
-        createWmsLayer: function(layerDefinition, options) {
-            var ls = "";
-            var layerConfiguration = layerDefinition.configuration;
-            var layerOptions = layerConfiguration.options;
-            var layers = Mapbender.source[layerDefinition.type].getLayersList(layerDefinition);
-            var url = layerOptions.url;
-
-            for (var i = 0; i < layers.layers.length; i++) {
-                ls += layers.layers[i].options.name !== "" ? "," + layers.layers[i].options.name : "";
-            }
-
-            return new OpenLayers.Layer.WMS(layerDefinition.title, url, {
-                version:     layerOptions.version,
-                layers:      ls.substring(1),
-                format:      layerOptions.format,
-                transparent: layerOptions.transparent
-            }, $.extend({
-                opacity:    layerOptions.opacity,
-                singleTile: true
-            }, options));
-        },
-
         /**
          * Opens/closes the overview element
          */
