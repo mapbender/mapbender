@@ -12,16 +12,10 @@
         elementUrl: null,
 
         /**
-         * Map target instance of OpenLayers.Map
-         *
-         * @var {OpenLayers.Map}
-         */
-        olMap: null,
-
-        /**
          * Mapbender map widget
          */
-        map: null,
+        mbMap: null,
+        $select: null,
 
         /**
          * Constructor
@@ -29,46 +23,39 @@
          * @private
          */
         _create: function() {
-            var widget = this;
-            var options = widget.options;
-            var target = options.target;
-
-            if(!Mapbender.checkTarget("mbScaleSelector", target)) {
-                return;
-            }
-
-            var element = $(widget.element);
-
-            widget.elementUrl = Mapbender.configuration.elementPath + element.attr('id') + '/';
-            Mapbender.elementRegistry.onElementReady(target, $.proxy(widget._setup, widget));
+            var self = this;
+            this.$select = $("select", this.element);
+            this.elementUrl = Mapbender.configuration.elementPath + this.element.attr('id') + '/';
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget("mbScaleSelector", self.options.target)
+            });
         },
 
         _setup: function() {
-            var widget = this;
-            var options = widget.options;
-            var mbMap = widget.map = $('#' + options.target).data('mapbenderMbMap');
-            var olMap = widget.olMap = mbMap.map.olMap;
-            var scale = Math.round(olMap.getScale());
-            var select = $("select", $(widget.element));
+            var model = this.mbMap.getModel();
+            var zoomLevels = model.getZoomLevels();
+            for (var i = 0; i < zoomLevels.length; ++i) {
+                var $option = $("<option/>");
+                $option
+                    .attr('value', zoomLevels[i].scale)
+                    .html(zoomLevels[i].scale)
+                ;
+                this.$select.append($option);
+            }
 
-            _.each(mbMap.scales(), function(value) {
-                var option = $("<option/>");
-                var formattedValue = Math.round(value);
-
-                option.attr('value', formattedValue).html(formattedValue);
-                select.append(option);
-            });
-
-            select.change($.proxy(widget._zoomToScale, widget));
-            select.val(scale);
+            this.$select.change($.proxy(this._zoomToScale, this));
+            this.$select.val(model.getCurrentScale());
 
             initDropdown.call(this.element.get(0));
 
-            widget._updateScale();
+            this._updateScale();
 
-            olMap.events.register('zoomend', widget, $.proxy(widget._updateScale, widget));
+            this.mbMap.map.olMap.events.register('zoomend', null, $.proxy(this._updateScale, this));
 
-            widget._trigger('ready');
+            this._trigger('ready');
         },
 
         /**
@@ -76,12 +63,10 @@
          * @private
          */
         _zoomToScale: function() {
-            var widget = this;
-            var element = $(widget.element);
-            var scale = $("> select", element).val();
-            var map = widget.map;
-
-            map.zoomToScale(scale, true);
+            var scale = this.$select.val();
+            var model = this.mbMap.getModel();
+            var zoom = model.pickZoomForScale(scale);
+            model.setZoomLevel(zoom, false);
         },
 
         /**
@@ -90,16 +75,13 @@
          * @private
          */
         _updateScale: function() {
-            var widget = this;
-            var olMap = widget.olMap;
-            var scale = Math.round(olMap.getScale());
-            var element = $(widget.element);
-            var select = $("> select", element);
+            var scale = this.mbMap.getModel().getCurrentScale();
 
-            select
+            this.$select
                 .val(scale)
                 .siblings(".dropdownValue")
-                .text(scale);
+                .text(scale)
+            ;
         },
 
         _destroy: $.noop
