@@ -141,8 +141,8 @@
                     y: mapExtent.getCenterLonLat().lat
                 },
                 extent: {
-                    width: mapExtent.getWidth(),
-                    height: mapExtent.getHeight()
+                    width: Math.abs(mapExtent.getWidth()),
+                    height: Math.abs(mapExtent.getHeight())
                 }
             };
         },
