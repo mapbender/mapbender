@@ -85,7 +85,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->addLayer($rootInstLayer);
 
         foreach ($configuration['layers'] as $layerDef) {
-            $this->populateFromYaml($layerDef, $source, $layersourceroot, $rootInstLayer, $num);
+            $this->populateFromYaml($layerDef, $source, $layersourceroot, $rootInstLayer, $num++);
         }
         return $this->entity;
     }
@@ -98,7 +98,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 ->setName($configuration["name"])
                 ->setTitle($configuration['title'])
                 ->setParent($layersource)
-                ->setId($configuration['title'] . '_' . $num);
+                ->setId($layersource->getId() . '_' . $num);
             if (isset($configuration["legendurl"])) {
                 $style          = new Style();
                 $style->setName(null);
@@ -118,7 +118,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $source->addLayer($childLayerSource);
             $childLayerInstance       = new WmsInstanceLayer();
             $childLayerInstance->setTitle($configuration["title"])
-                ->setId($configuration['title'] . '_' . $num)
+                ->setId($childLayerSource->getId())
                 ->setMinScale(!isset($configuration["minScale"]) ? null : $configuration["minScale"])
                 ->setMaxScale(!isset($configuration["maxScale"]) ? null : $configuration["maxScale"])
                 ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
@@ -135,7 +135,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
             if (isset($configuration['layers'])) {
                 foreach ($configuration['layers'] as $layerDef) {
-                    $this->populateFromYaml($layerDef, $source, $childLayerSource, $childLayerInstance, $num);
+                    $this->populateFromYaml($layerDef, $source, $childLayerSource, $childLayerInstance, $num++);
                 }
             } else {
                 $instancelayer->setToggle(false);
