@@ -57,7 +57,7 @@
         open: function(closeCallback) {
             if (!this.popup && this.map.length !== 0) {
                 this.popup = new Mapbender.Popup(this._getPopupOptions());
-                this.popup.$element.on('close', this.close.bind(this));
+                this.popup.$element.one('close', this.close.bind(this));
                 this.map.on('click', this.mapClickProxy);
             }
             this.closeCallback = closeCallback;
@@ -145,7 +145,7 @@
                         label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
                         cssClass: 'button buttonCancel critical',
                         callback: function () {
-                            self.close();
+                            this.close();
                         }
                     }
                 ]
@@ -187,8 +187,6 @@
                 this.poiMarkerLayer = null;
             }
             if (this.popup) {
-                // To disable infinitely recursing event barrage...
-                this.popup.$element.off('close');
                 this.popup.close();
             }
             if (this.closeCallback && typeof this.closeCallback === 'function') {

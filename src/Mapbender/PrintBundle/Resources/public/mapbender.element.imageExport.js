@@ -46,7 +46,7 @@
                             label: Mapbender.trans("mb.print.imageexport.popup.btn.cancel"),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
-                                self.close();
+                                this.close();
                             }
                         },
                         'ok': {
@@ -58,15 +58,11 @@
                         }
                     }
                 });
-                this.popup.$element.on('close', $.proxy(this.close, this));
+                this.popup.$element.one('close', $.proxy(this.close, this));
             }
         },
         close: function(){
             if (this.popup) {
-                if (this.popup.$element) {
-                    // prevent infinite event handling recursion
-                    this.popup.$element.off('close');
-                }
                 this.popup.close();
                 this.popup = null;
             }
