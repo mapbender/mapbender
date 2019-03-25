@@ -110,6 +110,23 @@ window.Mapbender.WmsSource = (function() {
             });
             return result;
         },
+        /**
+         * Overview support hack: get names of all 'selected' leaf layers (c.f. instance backend),
+         * disregarding 'allowed', disregarding 'state', not recalculating out of scale / out of bounds etc.
+         */
+        getActivatedLeaves: function() {
+            var layers = [];
+            Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function(node, index, parents) {
+                var selected = node.options.treeOptions.selected;
+                for (var pi = 0; selected && pi < parents.length; ++pi) {
+                    selected = selected && parents[pi].options.treeOptions.selected;
+                }
+                if (selected) {
+                    layers.push(node);
+                }
+            });
+            return layers;
+        },
         _bboxArrayToBounds: function(bboxArray, projCode) {
             if (this.configuration.options.version === '1.3.0') {
                 var projDefaults = OpenLayers.Projection.defaults[projCode];

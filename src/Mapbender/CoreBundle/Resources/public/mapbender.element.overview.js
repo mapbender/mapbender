@@ -85,9 +85,8 @@
                 var source = instanceDefs[i];
                 // Legacy HACK: Overview ignores backend settings on instance layers, enables all children
                 //        of the root layer with non-empty names, ignores every other layer
-                // Legacy HACK: Overview ignores styles
-                var ch1 = source.configuration.children[0].children;
-                var nonEmptyLayerNames = ch1.map(function(sourceLayer) {
+                var activatedLayers = source.getActivatedLeaves();
+                var nonEmptyLayerNames = activatedLayers.map(function(sourceLayer) {
                     return sourceLayer.options.name;
                 }).filter(function(layerName) {
                     return !!layerName;
