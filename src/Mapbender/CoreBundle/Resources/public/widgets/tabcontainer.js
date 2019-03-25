@@ -4,11 +4,12 @@
  */
 var initTabContainer = function ($context) {
 
-    $(".tabContainer, .tabContainerAlt").on('click', '.tab', function () {
+    $(".tabContainer, .tabContainerAlt", $context).on('click', '.tab', function () {
         var me = $(this);
-        me.parent().parent().find(".active").removeClass("active");
+        var $cnt = $(this).parent().parent();
+        $('>.tabs >.tab, >.container', $cnt).removeClass('active');
+        $('>.container#' + me.attr('id').replace("tab", "container"), $cnt).addClass('active');
         me.addClass("active");
-        $("#" + me.attr("id").replace("tab", "container")).addClass("active");
     });
 
     var accordion = $.extend($(".accordionContainer", $context), {
