@@ -482,7 +482,12 @@ Mapbender.Util.Url = function(urlString){
         var paramKeys = Object.keys(this.parameters || {});
         for (var i = 0; i < paramKeys.length; ++i) {
             var key = paramKeys[i];
-            params.push([key, '=', this.parameters[key]].join(''));
+            var val = this.parameters[key];
+            if (val) {
+                params.push([key, '=', val].join(''));
+            } else {
+                params.push(key);
+            }
         }
         if (params.length) {
             parts.push('?', params.join('&'));
