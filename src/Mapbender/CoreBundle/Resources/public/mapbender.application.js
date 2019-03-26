@@ -448,8 +448,8 @@ Mapbender.Util.Url = function(urlString){
     var tmp = document.createElement("a");
     tmp.href = urlString;
     this.protocol = tmp.protocol;
-    this.username = tmp.username;
-    this.password = tmp.password;
+    this.username = decodeURIComponent(tmp.username || '') || null;
+    this.password = decodeURIComponent(tmp.password || '') || null;
     this.host = tmp.host;
     this.hostname = tmp.hostname;
     this.port = tmp.port;
@@ -471,7 +471,7 @@ Mapbender.Util.Url = function(urlString){
     this.asString = function(withoutUser) {
         var parts = [this.protocol, '//'];
         if (!withoutUser && this.username) {
-            parts.push(this.username, ':', this.password || '', '@');
+            parts.push(encodeURIComponent(this.username), ':', encodeURIComponent(this.password || ''), '@');
         }
         parts.push(this.hostname);
         if (this.port) {
