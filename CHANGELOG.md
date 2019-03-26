@@ -1,7 +1,8 @@
 # Changelog
-* **dev-release/3.0.7** @ e8d483a6e
+* **dev-release/3.0.7** @ 74a795e45
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting
+  - Support nested source definitions in YAML applications ([PR#1125](https://github.com/mapbender/mapbender/pull/1125))
   - Fix LayerTree menu metadata for WMS layers with empty names
   - Fix LayerTree menu metadata for WMS child layers without an own bounding box
   - Disable LayerTree menu metadata entry for WMTS / TMS sources (metadata rendering not implemented for these source types)
