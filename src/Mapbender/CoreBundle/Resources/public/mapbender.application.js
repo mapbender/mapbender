@@ -454,7 +454,21 @@ Mapbender.Util.Url = function(urlString){
     this.hostname = tmp.hostname;
     this.port = tmp.port;
     this.pathname = tmp.pathname;
-    this.parameters = OpenLayers.Util.getParameters(urlString);
+    this.parameters = {};
+    var rawParams = (tmp.search || '?').substr(1).split('&');
+    for (var i = 0; i < rawParams.length; ++i) {
+        var rawParam = rawParams[i];
+        var eqAt = rawParam.indexOf('=');
+        var paramName, paramValue;
+        if (eqAt !== -1) {
+            paramName = decodeURIComponent(rawParam.substr(0, eqAt));
+            paramValue = decodeURIComponent(rawParam.substr(eqAt + 1));
+        } else {
+            paramName = rawParam;
+            paramValue = '';
+        }
+        this.parameters[paramName] = paramValue;
+    }
     this.hash = tmp.hash;
     /**
      * Checks if a url object is valid.
@@ -484,9 +498,9 @@ Mapbender.Util.Url = function(urlString){
             var key = paramKeys[i];
             var val = this.parameters[key];
             if (val) {
-                params.push([key, '=', val].join(''));
+                params.push([encodeURIComponent(key), '=', encodeURIComponent(val)].join(''));
             } else {
-                params.push(key);
+                params.push(encodeURIComponent(key));
             }
         }
         if (params.length) {
