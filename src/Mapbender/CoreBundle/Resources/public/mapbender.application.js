@@ -479,7 +479,7 @@ Mapbender.Util.Url = function(urlString){
     };
     /**
      * Reconstruct url
-     * @param {boolean} withoutUser to omit credentials
+     * @param {boolean} [withoutUser] to omit credentials (default false)
      * @returns {String}
      */
     this.asString = function(withoutUser) {
