@@ -470,16 +470,25 @@ Mapbender.Util.Url = function(urlString){
      */
     this.asString = function(withoutUser) {
         var parts = [this.protocol, '//'];
-        var str = parts.join('');
-        str += (!withoutUser && self.username ? self.username + ':' + (self.password ? self.password : '') + '@' : '');
-        str += self.hostname + (self.port ? ':' + self.port : '') + self.pathname;
-        var params = '';
-        if(typeof (self.parameters) === 'object') {
-            for(var key in self.parameters) {
-                params += '&' + key + '=' + self.parameters[key];
-            }
+        if (!withoutUser && this.username) {
+            parts.push(this.username, ':', this.password || '', '@');
         }
-        return str + (params.length ? '?' + params.substr(1) : '') + (self.hash ? self.hash : '');
+        parts.push(this.hostname);
+        if (this.port) {
+            parts.push(':', this.port);
+        }
+        parts.push(this.pathname);
+        var params = [];
+        var paramKeys = Object.keys(this.parameters || {});
+        for (var i = 0; i < paramKeys.length; ++i) {
+            var key = paramKeys[i];
+            params.push([key, '=', this.parameters[key]].join(''));
+        }
+        if (params.length) {
+            parts.push('?', params.join('&'));
+        }
+        parts.push(this.hash || '');
+        return parts.join('');
     };
     /**
      * Gets a GET parameter value from a giving parameter name.
