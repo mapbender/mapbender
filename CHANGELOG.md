@@ -1,8 +1,9 @@
 # Changelog
-* **dev-release/3.0.7** @ fd6fb0b6d
+* **dev-release/3.0.7** @ e401b7422
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting
   - [Beta regression] Fix layer menu positioning in a non-thematic LayerTree ([Issue#1124](https://github.com/mapbender/mapbender/issues/1124), [PR#1142](https://github.com/mapbender/mapbender/pull/1142))
+  - [Beta regression] Restore Legend option `showGroupedLayerTitle`, migrate historically misspelled option names automatically ([Issue#1127](https://github.com/mapbender/mapbender/issues/1127), [PR#1143](https://github.com/mapbender/mapbender/pull/1143))
   - Support nested source definitions in YAML applications ([PR#1125](https://github.com/mapbender/mapbender/pull/1125))
   - Fix LayerTree menu metadata for WMS layers with empty names
   - Fix LayerTree menu metadata for WMS child layers without an own bounding box
