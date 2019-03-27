@@ -117,6 +117,9 @@ class ElementFactory
         } catch (\Exception $e) {
             throw new Component\Exception\UndefinedElementClassException($finalClassName, $e);
         }
+        if (is_a($finalClassName, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
+            $finalClassName::updateEntityConfig($entity);
+        }
         $instance = new $finalClassName($appComponent, $this->container, $entity);
         if (!$instance instanceof Component\Element) {
             throw new Component\Exception\InvalidElementClassException($finalClassName);
