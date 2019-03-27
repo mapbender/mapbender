@@ -1,12 +1,26 @@
 .mb-element-layertree{
-  #list-root {
-    // for absolute menu positioning in popup
+  .leave {
+    // for absolute menu positioning
     position: relative;
+    margin-left: 1em;
+  }
+
+  .featureInfoWrapper, .iconFolder, .sourceVisibilityWrapper {
+    // keep constant size to prevent visual "jump" on icon glyph change and neatly
+    // align icons across rows
+    width: 1em;
+    text-align:center;
+    flex: 0 0 auto;
+  }
+  .checkWrapper {
+    margin-left: 5px;
+  }
+  .checkWrapper.sourceVisibilityWrapper {
+    margin-left: 2px;
   }
 
   .iconFolder{
     display:none;
-    margin-right:5px;
   }
   .placeholder{
     display:block;
@@ -27,8 +41,6 @@
   }
   // needed for the feature info icon
   .featureInfoWrapper{
-    width:$space;
-    text-align:center;
     &.iconCheckboxActive{@extend .iconInfoActive}
   }
   .leave.invisible .layer-title {@include opacity(.7);} //for .serviceContainer too
@@ -38,13 +50,8 @@
     margin-bottom:1px; // Fix for Firefox
     // elements with childrens
     & > .leaveContainer{
-      position: relative;
       .iconFolder{display:block;}
       .layer-title{@extend .subTitle;}
-    }
-    .leave{
-      margin-left:20px;
-      position: relative;
     }
     .leaveContainer{
       margin-left:-6px;
@@ -59,7 +66,6 @@
 
     // elements with childrens
     & > .leaveContainer{
-      position: relative;
       .iconFolder{display:block;}
       .layer-title{@extend .subTitle;}
     }
@@ -69,34 +75,29 @@
     &.showLeaves > .layers{display:block;}
 
     .leave{
-      margin-left:20px;
-      position: relative;
-
       &:before{
         content:'';
         display: block;
         height:5px;
         width:5px;
         border-top:dotted 1px black;
-        @include absolute(10px '' '' -15px);
+        @include absolute(10px '' '' -10px);
       }
+    }
+    .leave.groupContainer:before {
+      left: -13px;    // ~= font size
     }
     .leaveContainer{
       margin-left:-6px;
       margin-top:1px; // Fix for Firefox
       .layer-menu-btn{
         margin-left: 4px;
-        position: relative !important;
         &:before{
           content: '\f0c9';
           font-family: 'FontAwesome';
         }
       }
     }
-  }
-  .checkWrapper{
-    position: relative;
-    height: 12px;
   }
   .checkWrapper.sourceVisibilityWrapper:before{
     content: "\f10c";
