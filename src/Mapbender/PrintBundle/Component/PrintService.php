@@ -466,10 +466,16 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             $transColor = imagecolorallocatealpha($image, 255, 255, 255, 0);
             $rotatedImage = imagerotate($image, $rotation, $transColor);
             $srcSize = array(imagesx($image), imagesy($image));
+
             $destSize = array(imagesx($rotatedImage), imagesy($rotatedImage));
-            $x = abs(($srcSize[0] - $destSize[0]) / 2);
-            $y = abs(($srcSize[1] - $destSize[1]) / 2);
-            $northarrow = $this->cropImage($rotatedImage, $x, $y, $srcSize[0], $srcSize[1]);
+            $x = intval(abs(($srcSize[0] - $destSize[0]) / 2));
+            $y = intval(abs(($srcSize[1] - $destSize[1]) / 2));
+
+            // Avoid actually enlarging the image during crop (added regions would be filled with opaque black)
+            // in either dimension
+            $cropWidth = min($srcSize[0], $destSize[0] - $x);
+            $cropHeight = min($srcSize[1], $destSize[1] - $y);
+            $northarrow = $this->cropImage($rotatedImage, $x, $y, $cropWidth, $cropHeight);
         }
         $this->addImageToPdfRegion($pdf, $northarrow, $region);
         return true;
