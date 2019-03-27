@@ -448,13 +448,27 @@ Mapbender.Util.Url = function(urlString){
     var tmp = document.createElement("a");
     tmp.href = urlString;
     this.protocol = tmp.protocol;
-    this.username = tmp.username;
-    this.password = tmp.password;
+    this.username = decodeURIComponent(tmp.username || '') || null;
+    this.password = decodeURIComponent(tmp.password || '') || null;
     this.host = tmp.host;
     this.hostname = tmp.hostname;
     this.port = tmp.port;
-    this.pathname = tmp.pathname.charAt(0) === '/' ? tmp.pathname : '/' + tmp.pathname;
-    this.parameters = OpenLayers.Util.getParameters(urlString);
+    this.pathname = tmp.pathname;
+    this.parameters = {};
+    var rawParams = (tmp.search || '?').substr(1).split('&');
+    for (var i = 0; i < rawParams.length; ++i) {
+        var rawParam = rawParams[i];
+        var eqAt = rawParam.indexOf('=');
+        var paramName, paramValue;
+        if (eqAt !== -1) {
+            paramName = decodeURIComponent(rawParam.substr(0, eqAt));
+            paramValue = decodeURIComponent(rawParam.substr(eqAt + 1));
+        } else {
+            paramName = rawParam;
+            paramValue = '';
+        }
+        this.parameters[paramName] = paramValue;
+    }
     this.hash = tmp.hash;
     /**
      * Checks if a url object is valid.
@@ -464,21 +478,36 @@ Mapbender.Util.Url = function(urlString){
         return  !(!self.hostname || !self.protocol);// TODO ?
     };
     /**
-     * Gets an url object as string.
-     * @returns {String} url as string
+     * Reconstruct url
+     * @param {boolean} [withoutUser] to omit credentials (default false)
+     * @returns {String}
      */
-    this.asString = function(withoutUser){
-        var str = self.protocol + (self.protocol === 'http:' || self.protocol === 'https:' || self.protocol === 'ftp:'
-                ? '//' : (self.protocol === 'file:' ? '///' : ''));// TODO for other protocols
-        str += (!withoutUser && self.username ? self.username + ':' + (self.password ? self.password : '') + '@' : '');
-        str += self.hostname + (self.port ? ':' + self.port : '') + self.pathname;
-        var params = '';
-        if(typeof (self.parameters) === 'object') {
-            for(var key in self.parameters) {
-                params += '&' + key + '=' + self.parameters[key];
+    this.asString = function(withoutUser) {
+        var parts = [this.protocol, '//'];
+        if (!withoutUser && this.username) {
+            parts.push(encodeURIComponent(this.username), ':', encodeURIComponent(this.password || ''), '@');
+        }
+        parts.push(this.hostname);
+        if (this.port) {
+            parts.push(':', this.port);
+        }
+        parts.push(this.pathname);
+        var params = [];
+        var paramKeys = Object.keys(this.parameters || {});
+        for (var i = 0; i < paramKeys.length; ++i) {
+            var key = paramKeys[i];
+            var val = this.parameters[key];
+            if (val) {
+                params.push([encodeURIComponent(key), '=', encodeURIComponent(val)].join(''));
+            } else {
+                params.push(encodeURIComponent(key));
             }
         }
-        return str + (params.length ? '?' + params.substr(1) : '') + (self.hash ? self.hash : '');
+        if (params.length) {
+            parts.push('?', params.join('&'));
+        }
+        parts.push(this.hash || '');
+        return parts.join('');
     };
     /**
      * Gets a GET parameter value from a giving parameter name.
