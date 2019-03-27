@@ -11,7 +11,6 @@
             autoStart: false,
             follow: false,
             average: 1,
-            zoomToAccuracy: false,
             centerOnFirstPosition: true,
             zoomToAccuracyOnFirstPosition: true
         },
@@ -51,19 +50,13 @@
             if (features.circle) {
                 this.layer.addFeatures([features.circle]);
             }
-            var allowPan = true;
-
-            if (features.circle) {
-                if (true || this.options.zoomToAccuracy || this.firstPosition && this.options.zoomToAccuracyOnFirstPosition) {
+            if ((this.firstPosition && this.options.centerOnFirstPosition) || this.options.follow) {
+                if (features.circle && this.options.zoomToAccuracyOnFirstPosition && this.firstPosition) {
                     olmap.zoomToExtent(features.circle.geometry.getBounds());
-                    allowPan = false;
-                }
-            }
-            if (allowPan && !olmap.getExtent().containsLonLat(position)) {
-                if (this.options.follow) {
-                    olmap.panTo(position);
-                } else if (this.firstPosition && this.options.centerOnFirstPosition) {
-                    olmap.panTo(position);
+                } else {
+                    if (this.firstPosition || !olmap.getExtent().containsLonLat(position)) {
+                        olmap.panTo(position);
+                    }
                 }
             }
             this.firstPosition = false;

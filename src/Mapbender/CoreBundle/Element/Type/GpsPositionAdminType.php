@@ -56,19 +56,16 @@ class GpsPositionAdminType extends AbstractType
             ->add('refreshinterval', 'text', array('required' => false))
             ->add('average', 'text', array(
                 'required' => false,
-                'property_path' => '[average]'
-                ))
+            ))
             ->add('follow', 'checkbox', array(
                 'required' => false,
-                'property_path' => '[follow]'))
+            ))
             ->add('centerOnFirstPosition', 'checkbox', array(
                 'required' => false,
-                'property_path' => '[centerOnFirstPosition]'))
-            ->add('zoomToAccuracy', 'checkbox', array(
-                'required' => false,
-                'property_path' => '[zoomToAccuracy]'))
+            ))
             ->add('zoomToAccuracyOnFirstPosition', 'checkbox', array(
                 'required' => false,
-                'property_path' => '[zoomToAccuracyOnFirstPosition]'));
+            ))
+        ;
     }
 }
