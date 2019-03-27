@@ -8,7 +8,7 @@
             displayType:              "list",
             showSourceTitle:          true,
             showLayerTitle:           true,
-            showGroupedTitle:         true
+            showGroupedLayerTitle: true
         },
 
         callback:       null,
@@ -203,7 +203,7 @@
             var $li = $('<li/>').addClass('ebene' + layer.level);
 
             if (layer.children.length) {
-                if (this.options.showGroupedTitle) {
+                if (this.options.showGroupedLayerTitle) {
                     $li.append(this.createTitle(layer));
                 }
                 var $ul = $('<ul/>').addClass('ebene' + layer.level);

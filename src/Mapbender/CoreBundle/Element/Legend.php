@@ -2,13 +2,15 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Entity;
 
 /**
  * The Legend class shows legends of the map's layers.
  * 
  * @author Paul Schmidt
  */
-class Legend extends Element
+class Legend extends Element implements ConfigMigrationInterface
 {
 
     /**
@@ -68,7 +70,8 @@ class Legend extends Element
             "tooltip" => "Legend",
             "showSourceTitle" => true,
             "showLayerTitle" => true,
-            "showGrouppedTitle" => true);
+            "showGroupedLayerTitle" => true,
+        );
     }
 
     /**
@@ -112,4 +115,18 @@ class Legend extends Element
         return 'MapbenderCoreBundle:ElementAdmin:legend.html.twig';
     }
 
+    public static function updateEntityConfig(Entity\Element $entity)
+    {
+        $config = $entity->getConfiguration() ?: array();
+        if (!isset($config['showGroupedLayerTitle'])) {
+            $defaults = static::getDefaultConfiguration();
+            if (isset($config['showGrouppedTitle'])) {
+                $config['showGroupedLayerTitle'] = !!$config['showGrouppedTitle'];
+            } else {
+                $config['showGroupedLayerTitle'] = $defaults['showGroupedLayerTitle'];
+            }
+        }
+        unset($config['showGrouppedTitle']);
+        $entity->setConfiguration($config);
+    }
 }
