@@ -2,11 +2,25 @@
   .leave {
     // for absolute menu positioning
     position: relative;
+    margin-left: 1em;
+  }
+
+  .featureInfoWrapper, .iconFolder, .sourceVisibilityWrapper {
+    // keep constant size to prevent visual "jump" on icon glyph change and neatly
+    // align icons across rows
+    width: 1em;
+    text-align:center;
+    flex: 0 0 auto;
+  }
+  .checkWrapper {
+    margin-left: 5px;
+  }
+  .checkWrapper.sourceVisibilityWrapper {
+    margin-left: 2px;
   }
 
   .iconFolder{
     display:none;
-    margin-right:5px;
   }
   .placeholder{
     display:block;
@@ -27,8 +41,6 @@
   }
   // needed for the feature info icon
   .featureInfoWrapper{
-    width:$space;
-    text-align:center;
     &.iconCheckboxActive{@extend .iconInfoActive}
   }
   .leave.invisible .layer-title {@include opacity(.7);} //for .serviceContainer too
@@ -40,9 +52,6 @@
     & > .leaveContainer{
       .iconFolder{display:block;}
       .layer-title{@extend .subTitle;}
-    }
-    .leave{
-      margin-left:20px;
     }
     .leaveContainer{
       margin-left:-6px;
@@ -66,16 +75,17 @@
     &.showLeaves > .layers{display:block;}
 
     .leave{
-      margin-left:20px;
-
       &:before{
         content:'';
         display: block;
         height:5px;
         width:5px;
         border-top:dotted 1px black;
-        @include absolute(10px '' '' -15px);
+        @include absolute(10px '' '' -10px);
       }
+    }
+    .leave.groupContainer:before {
+      left: -13px;    // ~= font size
     }
     .leaveContainer{
       margin-left:-6px;
