@@ -1,7 +1,8 @@
 # Changelog
-* **dev-release/3.0.7** @ 74a795e45
+* **dev-release/3.0.7** @ fd6fb0b6d
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting
+  - [Beta regression] Fix layer menu positioning in a non-thematic LayerTree ([Issue#1124](https://github.com/mapbender/mapbender/issues/1124), [PR#1142](https://github.com/mapbender/mapbender/pull/1142))
   - Support nested source definitions in YAML applications ([PR#1125](https://github.com/mapbender/mapbender/pull/1125))
   - Fix LayerTree menu metadata for WMS layers with empty names
   - Fix LayerTree menu metadata for WMS child layers without an own bounding box
@@ -12,6 +13,7 @@
   - Fix ZoomBar configuration value handling discrepancies for `stepByPixel` and `stepSize` optionsin YAML apps vs DB apps
   - Improve Digitizer feature Print support by always sending close event first before destrying popup ([PR#1128](https://github.com/mapbender/mapbender/pull/1128))
   - Fix nested tab container conflicts / conflicts with non-unique tab ids
+  - Fix multi-argument `visibilelayers` URL param handling ([Issue#1082](https://github.com/mapbender/mapbender/issues/1082), [PR#1140](https://github.com/mapbender/mapbender/pull/1140))
 
 * **v3.0.8-beta3**
   - [Beta regression] Restore Wms Loader function
