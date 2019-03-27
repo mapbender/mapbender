@@ -39,8 +39,20 @@ class GpsPositionAdminType extends AbstractType
     {
         $builder
             ->add('tooltip', 'text', array('required' => false))
-            ->add('label', 'checkbox', array('required' => false))
-            ->add('autoStart', 'checkbox', array('required' => false))
+            ->add('label', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.gpsposition.show_label',
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                ),
+            ))
+            ->add('autoStart', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.element.autostart',
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                ),
+            ))
             ->add(
                 'target',
                 'target_element',
@@ -59,12 +71,21 @@ class GpsPositionAdminType extends AbstractType
             ))
             ->add('follow', 'checkbox', array(
                 'required' => false,
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                ),
             ))
             ->add('centerOnFirstPosition', 'checkbox', array(
                 'required' => false,
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                ),
             ))
             ->add('zoomToAccuracyOnFirstPosition', 'checkbox', array(
                 'required' => false,
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                ),
             ))
         ;
     }
