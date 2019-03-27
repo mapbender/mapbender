@@ -348,14 +348,16 @@
     {#
        @todo: .labelCheck is the right thing because of line-height, but we lose some margins in many forms; need to update CSS
        @todo: Emitting the correct .labelCheck class also causes the 'region properties' radio group to render labels -.-
-       @todo: merge label_attr.class into ... class!
     #}
     {% if false and 'checkbox' in form.vars.block_prefixes %}
       {% set _labelClass = 'labelCheck' %}
     {% else %}
       {% set _labelClass = 'labelInput' %}
     {% endif %}
-    <label class="{{ _labelClass }}" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}{% if required %}<span class="required">*</span>{% endif %}</label>
+    {% if label_attr.class is not defined or not (' labelCheck ' in (' '~label_attr.class~' ') or ' labelInput ' in (' '~label_attr.class~' ')) %}
+      {% set label_attr = label_attr|merge({'class': ((label_attr.class | default('')) ~ ' ' ~_labelClass)|trim}) %}
+    {% endif %}
+    <label {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}{% if required %}<span class="required">*</span>{% endif %}</label>
   {% endspaceless %}
 {% endblock form_label %}
 
