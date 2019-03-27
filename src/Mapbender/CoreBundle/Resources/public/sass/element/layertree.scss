@@ -1,6 +1,6 @@
 .mb-element-layertree{
-  #list-root {
-    // for absolute menu positioning in popup
+  .leave {
+    // for absolute menu positioning
     position: relative;
   }
 
@@ -38,13 +38,11 @@
     margin-bottom:1px; // Fix for Firefox
     // elements with childrens
     & > .leaveContainer{
-      position: relative;
       .iconFolder{display:block;}
       .layer-title{@extend .subTitle;}
     }
     .leave{
       margin-left:20px;
-      position: relative;
     }
     .leaveContainer{
       margin-left:-6px;
@@ -59,7 +57,6 @@
 
     // elements with childrens
     & > .leaveContainer{
-      position: relative;
       .iconFolder{display:block;}
       .layer-title{@extend .subTitle;}
     }
@@ -70,7 +67,6 @@
 
     .leave{
       margin-left:20px;
-      position: relative;
 
       &:before{
         content:'';
@@ -86,17 +82,12 @@
       margin-top:1px; // Fix for Firefox
       .layer-menu-btn{
         margin-left: 4px;
-        position: relative !important;
         &:before{
           content: '\f0c9';
           font-family: 'FontAwesome';
         }
       }
     }
-  }
-  .checkWrapper{
-    position: relative;
-    height: 12px;
   }
   .checkWrapper.sourceVisibilityWrapper:before{
     content: "\f10c";
