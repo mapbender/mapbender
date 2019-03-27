@@ -41,7 +41,13 @@ class LegendAdminType extends AbstractType
                 'choices' => array(
                     "dialog" => "dialog",
                     "blockelement" => "blockelement")))
-            ->add('autoOpen', 'checkbox', array('required' => false))
+            ->add('autoOpen', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.legend.label.autoopen',
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                ),
+            ))
             ->add('displayType', 'choice',
                 array(
                 'required' => true,
@@ -53,9 +59,28 @@ class LegendAdminType extends AbstractType
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
-            ->add('showSourceTitle', 'checkbox', array('required' => false))
-            ->add('showLayerTitle', 'checkbox', array('required' => false))
-            ->add('showGrouppedTitle', 'checkbox', array('required' => false));
+            ->add('showSourceTitle', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.legend.label.showsourcetitle',
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                ),
+            ))
+            ->add('showLayerTitle', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.legend.label.showlayertitle',
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                ),
+            ))
+            ->add('showGrouppedTitle', 'checkbox', array(
+                'required' => false,
+                'label' => 'mb.core.admin.legend.label.showgroupedlayertitle',
+                'label_attr' => array(
+                    'class' => 'labelCheck',
+                ),
+            ))
+        ;
     }
 
 }
