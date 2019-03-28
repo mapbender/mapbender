@@ -32,6 +32,8 @@
   }
   .leaveContainer {
     display: flex;
+    height: 21px;       // must set height explicitly for IE11
+    line-height: 21px;  // line-height should equal height (note: dashed line trickery depends on this value)
   }
   .layer-title {
     flex: 1 1 auto;
