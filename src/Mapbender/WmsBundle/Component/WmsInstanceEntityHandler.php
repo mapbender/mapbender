@@ -75,7 +75,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $rootInstLayer = new WmsInstanceLayer();
         $rootInstLayer->setTitle($this->entity->getTitle())
             ->setId($this->entity->getId() . "_" . $num)
-            ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
+            ->setSelected(!isset($configuration["visible"]) ? true : $configuration["visible"])
             ->setPriority($num)
             ->setSourceItem($layersourceroot)
             ->setSourceInstance($this->entity)
