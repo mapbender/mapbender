@@ -121,7 +121,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 ->setId($childLayerSource->getId())
                 ->setMinScale(!isset($configuration["minScale"]) ? null : $configuration["minScale"])
                 ->setMaxScale(!isset($configuration["maxScale"]) ? null : $configuration["maxScale"])
-                ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
+                ->setSelected(!isset($configuration["visible"]) ? true : $configuration["visible"])
                 ->setInfo(!isset($configuration["queryable"]) ? false : $configuration["queryable"])
                 ->setParent($instancelayer)
                 ->setSourceItem($childLayerSource)
