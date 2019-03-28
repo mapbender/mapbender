@@ -25,7 +25,7 @@ $(function(){
             initCheckbox.call(checkbox);
         }
     };
-    $('.checkbox').each(function(){
+    $('.checkWrapper > .checkbox').each(function(){
         initCheckbox.call(this);
     });
     $(document).on("click", ".checkWrapper", toggleCheckBox);
