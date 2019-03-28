@@ -3,39 +3,27 @@
  * See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/public/js/widgets
  */
 var initCheckbox = function(){
-    var me = $(this);
-    var parent = me.parent(".checkWrapper");
+    var $checkbox = $(this);
+    var $wrapper = $checkbox.parent(".checkWrapper");
 
-    if(me.is(":checked")){
-        parent.addClass("iconCheckboxActive");
-    }else{
-        parent.removeClass("iconCheckboxActive");
+    if ($checkbox.prop("checked")) {
+        $wrapper.addClass("iconCheckboxActive");
+    } else {
+        $wrapper.removeClass("iconCheckboxActive");
     }
-
-    if(me.is(":disabled")){
-        parent.addClass("checkboxDisabled");
-    }else{
-        parent.removeClass("checkboxDisabled");
-    }
+    $wrapper.toggleClass("checkboxDisabled", $checkbox.prop("disabled"));
 };
 $(function(){
     var toggleCheckBox = function(){
         var me = $(this);
         var checkbox = me.find(".checkbox");
-
-        if(checkbox.is(":disabled")){
-            me.addClass("checkboxDisabled");
-        }else{
-            if(checkbox.is(":checked")){
-                me.removeClass("iconCheckboxActive");
-                checkbox.get(0).checked = false;
-            }else{
-                me.addClass("iconCheckboxActive");
-                checkbox.get(0).checked = true;
-            }
+        if (!checkbox.prop('disabled')) {
+            checkbox.prop('checked', !checkbox.prop('checked'));
+            initCheckbox.call(checkbox);
+            checkbox.trigger('change');
+        } else {
+            initCheckbox.call(checkbox);
         }
-
-        checkbox.trigger('change');
     };
     $('.checkbox').each(function(){
         initCheckbox.call(this);
