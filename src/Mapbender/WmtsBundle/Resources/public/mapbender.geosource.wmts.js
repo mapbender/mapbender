@@ -51,6 +51,8 @@ window.Mapbender.WmtsSource = (function() {
          * @private
          */
         _getMatrixResolution: function(tileMatrix, srsName) {
+            // OGC TileMatrix scaleDenom is calculated using meters, irrespective of projection units
+            // OGC TileMatrix scaleDenom is also calculated assuming 0.28mm per pixel
             var metersPerUnit = 1.0 / Mapbender.Model.getProjectionUnitsPerMeter(srsName);
             var unitsPerPixel = 0.00028 / metersPerUnit;
             return tileMatrix.scaleDenominator * unitsPerPixel;
