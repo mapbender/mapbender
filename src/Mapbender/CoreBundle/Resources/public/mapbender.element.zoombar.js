@@ -8,7 +8,6 @@ $.widget("mapbender.mbZoomBar", {
         position: [0, 0],
         draggable: true},
 
-    map: null,
     zoomslider: null,
     mbMap: null,
 
