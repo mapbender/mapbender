@@ -818,6 +818,15 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
         this.map.olMap.zoomToExtent(bounds);
     },
+    zoomIn: function() {
+        this.map.olMap.zoomIn();
+    },
+    zoomOut: function() {
+        this.map.olMap.zoomOut();
+    },
+    zoomToFullExtent: function() {
+        this.map.olMap.zoomToMaxExtent();
+    },
     /**
      * Emulation shim for old-style MapQuery.Map.prototype.center.
      * See https://github.com/mapbender/mapquery/blob/1.0.2/src/jquery.mapquery.core.js#L298

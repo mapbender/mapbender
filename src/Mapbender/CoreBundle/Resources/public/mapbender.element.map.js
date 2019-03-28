@@ -116,20 +116,20 @@
         /**
          * Zooms the map in
          */
-        zoomIn: function(){
-            this.map.olMap.zoomIn();
+        zoomIn: function() {
+            this.model.zoomIn();
         },
         /**
          * Zooms the map out
          */
-        zoomOut: function(){
-            this.map.olMap.zoomOut();
+        zoomOut: function() {
+            this.model.zoomOut();
         },
         /**
          * Zooms the map to max extent
          */
-        zoomToFullExtent: function(){
-            this.map.olMap.zoomToMaxExtent();
+        zoomToFullExtent: function() {
+            this.model.zoomToFullExtent();
         },
         /**
          * Zooms the map to extent

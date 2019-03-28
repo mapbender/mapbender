@@ -25,7 +25,6 @@ $.widget("mapbender.mbZoomBar", {
 
     _setup: function() {
         var self = this;
-        this.map = this.mbMap.map.olMap;        // @todo: no direct access to OpenLayers map
         this._setupSlider();
         this._setupZoomButtons();
         this._setupPanButtons();
@@ -41,17 +40,14 @@ $.widget("mapbender.mbZoomBar", {
                 containment: this.element.closest('.region')
             });
         }
-        $(this.element).find('.iconZoomMin').bind("click" ,$.proxy(this._worldZoom, this));
-
         this._trigger('ready');
     },
 
     _destroy: $.noop,
 
     _worldZoom: function(e) {
-        this.map.zoomToMaxExtent();
+        this.mbMap.zoomToFullExtent();
     },
-
     _setupSlider: function() {
         this.zoomslider = this.element.find('.zoomSlider .zoomSliderLevels')
             .hide()
@@ -96,18 +92,21 @@ $.widget("mapbender.mbZoomBar", {
                 $('.zoomBox', self.element).removeClass('activeZoomIcon');
             }
         });
-
         this.element.find(".history .historyPrev").bind("click", function() {
             self.mbMap.getModel().historyBack();
         });
         this.element.find(".history .historyNext").bind("click", function(){
             self.mbMap.getModel().historyForward();
         });
-
-        this.element.find('.zoomSlider .iconZoomIn').bind('click',
-            $.proxy(this.map.zoomIn, this.map));
-        this.element.find('.zoomSlider .iconZoomOut').bind('click',
-            $.proxy(this.map.zoomOut, this.map));
+        this.element.find('.zoomSlider .iconZoomIn').bind('click', function() {
+            self.mbMap.getModel().zoomIn();
+        });
+        this.element.find('.zoomSlider .iconZoomOut').bind('click', function() {
+            self.mbMap.getModel().zoomOut();
+        });
+        this.element.find('.iconZoomMin').bind('click', function() {
+            self._worldZoom();
+        });
     },
     _setupPanButtons: function() {
         var self = this;
