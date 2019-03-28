@@ -324,7 +324,7 @@ fieldset{
     padding: 0;
     margin: 0;
     &:before{
-      position: unset;
+      position: static;
       margin: 0;
     }
   }
