@@ -5,11 +5,15 @@
 var initCheckbox = function(){
     var $checkbox = $(this);
     var $wrapper = $checkbox.parent(".checkWrapper");
+    var iconOnDefault = "iconCheckboxActive", iconOn = $wrapper.attr('data-icon-on') || iconOnDefault;
+    var iconOffDefault = "iconCheckbox", iconOff = $wrapper.attr('data-icon-off') || iconOffDefault;
 
     if ($checkbox.prop("checked")) {
-        $wrapper.addClass("iconCheckboxActive");
+        $wrapper.addClass(iconOn || iconOnDefault);
+        $wrapper.removeClass([iconOff, iconOffDefault].join(' '));
     } else {
-        $wrapper.removeClass("iconCheckboxActive");
+        $wrapper.addClass(iconOff || iconOffDefault);
+        $wrapper.removeClass([iconOn, iconOnDefault].join(' '));
     }
     $wrapper.toggleClass("checkboxDisabled", $checkbox.prop("disabled"));
 };
