@@ -1583,6 +1583,15 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             });
         }
     },
+    getProjectionUnitsPerMeter: function(srsName) {
+        var units = this.getProj(srsName).proj.units || 'dd';
+        if (units === 'm' || units === 'Meter') {
+            return 1.0;
+        } else {
+            var metersPerUnit = OpenLayers.INCHES_PER_UNIT[units] * OpenLayers.METERS_PER_INCH;
+            return 1.0 / metersPerUnit;
+        }
+    },
     /**
      * Injects native layers into the map at the "natural" position for the source.
      * This supports multiple layers for the same source.

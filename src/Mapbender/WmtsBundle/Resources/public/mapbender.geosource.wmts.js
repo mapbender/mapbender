@@ -51,16 +51,7 @@ window.Mapbender.WmtsSource = (function() {
          * @private
          */
         _getMatrixResolution: function(tileMatrix, srsName) {
-            var projection = Mapbender.Model.getProj(srsName);
-            var projectionUnits = projection.proj.units;
-            // OGC TileMatrix scaleDenom is calculated using meters, irrespective of projection units
-            // OGC TileMatrix scaleDenom is also calculated assuming 0.28mm per pixel
-            // Undo both these unproductive assumptions and calculate a proper resolutiion for the
-            // current projection
-            var metersPerUnit = OpenLayers.INCHES_PER_UNIT['mUnits'] * OpenLayers.METERS_PER_INCH;
-            if (projectionUnits === 'm' || projectionUnits === 'Meter') {
-                metersPerUnit = 1.0;
-            }
+            var metersPerUnit = 1.0 / Mapbender.Model.getProjectionUnitsPerMeter(srsName);
             var unitsPerPixel = 0.00028 / metersPerUnit;
             return tileMatrix.scaleDenominator * unitsPerPixel;
         },
