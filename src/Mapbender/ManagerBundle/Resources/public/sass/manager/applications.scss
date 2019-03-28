@@ -252,8 +252,6 @@
 
   tbody {
     tr {
-      .iconCheckbox{@extend .iconPublish}
-      .iconCheckboxActive{@extend .iconPublishActive}
       border-top: solid 1px darken($contentColor, 10%);
       vertical-align: top;
 
