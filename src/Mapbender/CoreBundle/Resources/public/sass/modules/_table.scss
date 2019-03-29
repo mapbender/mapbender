@@ -90,18 +90,14 @@ table {
     height:$height;
     line-height:$height;
     text-align:center;
-    display: block;
     @include noUserSelect;
     @include border-radius($radius);
-
-    // kill the checkbox icon
-    &:before{display: none;}
 
     @each $perm in view, create, edit, delete, operator, master, owner{
       &.#{$perm}{
         &.multi{background-color:#c1c1c1;}
 
-        &.iconCheckboxActive{
+        &.active {
           color:white;
 
           @if($perm == "view"){background-color: #8DCA35;}

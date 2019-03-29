@@ -97,11 +97,11 @@ $(function() {
         var root         = $("#" + className);
         var permBody     = $("#permissionsBody");
         var rowCount     = permBody.find("tr").length;
-        var checkedCount = permBody.find(".checkWrapper." + className + ".iconCheckboxActive").length;
-        root.removeClass("iconCheckboxActive").removeClass("multi");
+        var checkedCount = permBody.find(".checkWrapper." + className + ' > input[type="checkbox"]:checked').length;
+        root.removeClass("active").removeClass("multi");
 
         if(rowCount == checkedCount){
-            root.addClass("iconCheckboxActive");
+            root.addClass("active");
         }else if(checkedCount == 0){
             // do nothing!
         }else{
@@ -113,19 +113,9 @@ $(function() {
         var self           = $(this);
         var className    = self.attr("id");
         var permElements = $(".checkWrapper[data-perm-type=" + className + "]:visible");
-        var state        = !self.hasClass("iconCheckboxActive");
-        var me;
-
-        // change all tagboxes with the same permission type
-        permElements.find(".checkbox").each(function(i,e){
-            me = $(e);
-            me.get(0).checked = state;
-
-            if(state){
-                me.parent().addClass("iconCheckboxActive");
-            }else{
-                me.parent().removeClass("iconCheckboxActive");
-            }
+        var state        = !self.hasClass("active");
+        $('input[type="checkbox"]', permElements).prop('checked', state).each(function() {
+            $(this).parent().toggleClass("active", state);
         });
 
         // change root permission state

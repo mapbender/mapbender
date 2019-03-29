@@ -476,9 +476,10 @@
 
 {% block tagbox_widget %}
   {% spaceless %}
-    <div data-perm-type="{{ form.vars.attr.class }}" class="checkWrapper smallText {{ form.vars.attr.class }} {% if form.vars.checked %} iconCheckboxActive {% endif %}">
+    <div data-perm-type="{{ form.vars.attr.class }}" class="checkWrapper smallText {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}"
+         data-icon-on="active" data-icon-off="" >
       {{ form.vars.attr.class }}
-      <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+      <input class="checkbox" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
     </div>
   {% endspaceless %}
 {% endblock tagbox_widget %}
