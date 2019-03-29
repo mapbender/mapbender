@@ -22,7 +22,7 @@ $(function() {
 
         var me = $(this);
         var tabcont = me.parent().parent();
-        tabcont.find(".active").removeClass("active");
+        $('>.tabs >.tab, >.container', tabcont).removeClass('active');
         me.addClass("active");
         $("#" + me.attr("id").replace("tab", "container"), tabcont).addClass("active");
     });
