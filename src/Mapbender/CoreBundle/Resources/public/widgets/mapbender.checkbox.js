@@ -33,10 +33,14 @@
             // Skip already initialized nodes, avoids binding events more than once
             if (!$this.data('mbCheckbox')) {
                 var $wrapper = $this.parent(".checkWrapper");
+                var iconOnAttrib = $wrapper.attr('data-icon-on');
+                var iconOffAttrib = $wrapper.attr('data-icon-off');
+                var iconOn = (typeof iconOnAttrib !== 'undefined') ? iconOnAttrib : iconOnDefault;
+                var iconOff = (typeof iconOffAttrib !== 'undefined') ? iconOffAttrib : iconOffDefault;
                 $this.data('mbCheckbox', {
                     initialized: true,
-                    iconOn: $wrapper.attr('data-icon-on') || iconOnDefault,
-                    iconOff: $wrapper.attr('data-icon-off') || iconOffDefault
+                    iconOn: iconOn,
+                    iconOff: iconOff
                 });
                 $this.on('change', function() {
                     propagateToWrapper.call(this);
