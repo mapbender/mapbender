@@ -146,10 +146,15 @@ $(function() {
     var popup;
 
     // add user or groups
-    $("#addPermission").bind("click", function(){
-        var self    = $(this);
-        var url     = self.attr("href");
-        var content = self.attr('title');
+    // Remaining FOM markup uses an anchor with a href, which allows undesirable "open in new tab" interactions and
+    // also causes some CSS quirks
+    // Modern markup uses a div with a data-href attribute
+    // @todo: scoping; unscoped, there can only be one user list in the markup at any given time
+    $(".-fn-add-permission, #addPermission").bind("click", function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        var $this = $(this);
+        var url = $this.attr('data-url') || $this.attr("href");
 
         if(popup){
             popup = popup.destroy();

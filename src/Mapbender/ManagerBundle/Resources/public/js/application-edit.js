@@ -189,8 +189,12 @@ $(function() {
                     url: self.attr("data-url"),
                     complete: function() {
                         $('#addElmPermission').on('click', function(e) {
+                            var $anchor = $(this);
+                            var url = $anchor.attr('data-href') || $anchor.attr('href');
+                            e.preventDefault();
+                            e.stopPropagation();
                             $.ajax({
-                                url: $(e.target).attr("href"),
+                                url: url,
                                 type: "GET",
                                 success: function(data, textStatus, jqXHR) {
                                     $(".contentItem:first,.buttonOk", popup.$element).addClass('hidden');
