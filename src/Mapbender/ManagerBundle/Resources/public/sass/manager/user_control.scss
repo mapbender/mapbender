@@ -1,49 +1,49 @@
-//$rootPath: "../../../mapbendercore/";
 // --------------------------------------------------------- USER/GROUP
-.userControlTable{margin-top:$space;}
 .tableUserGroups{
-  width:300px;
   .description{
-    width:150px;
     text-align: right;
-    padding:0px;
-  }
-  .iconCheckboxActive, .iconCheckbox{
-    @extend .iconOk;
-    @extend .iconBig;
-    &:before{
-      float:right;
-      margin-top:7px;
-      margin-right:$space/2;
-    }
-  }
-
-  td{
-    cursor:pointer;
-    padding:0px;
-    &:hover{
-      .checkWrapper{@include opacity(0.4);}
-      .checkWrapper.iconCheckboxActive{@include opacity(1);}
-    }
-  }
-  .tdContentWrapper{
-    position:relative;
-    padding:0px;
-    padding-left: 25px;
-    padding-top: 3px;
-    display:block;
   }
   .checkWrapper{
-    .checkbox{
-      width:100%;
-      @include opacity(0);
+    // HACK: markup puts label first, checkbox second (same cell). We want the checkbox left of the label...
+    position: absolute;
+    left: 0;
+    width: 100%;    // size up to catch clicks on entire cell
+    height: 100%;
+  }
+  .iconCheckboxActive, .iconCheckbox {
+    // HACK: rewire BOTH active and inactive icons to iconOk glyph
+    //       (markup in FOM)
+    @extend .iconOk;
+    &:before{
+      display:inline-block;
+      font-size: 153%;
+      margin-top: 4px;
     }
+  }
+  .iconCheckbox {
+    &:before {
+      opacity: 0.4;
+    }
+    &:hover:before {
+      opacity: 0.6;
+    }
+  }
+  .iconCheckboxActive {
+    &:before {
+      opacity: 0.8;
+    }
+    &:hover:before {
+      opacity: 1.0;
+    }
+  }
 
-    width: 100%;
-    @include opacity(0);
-    @include pos(0,0,'','');
-
-    &.iconCheckboxActive{@include opacity(1);}
+  .tdContentWrapper{
+    position:relative;
+    // padding:0px;
+    padding-left: 25px;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    display:block;
   }
 }
 .userGroupTabContainer{
