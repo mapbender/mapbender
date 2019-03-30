@@ -557,13 +557,16 @@ fieldset{
     }
   }
   .leaveContainer {
+    height: auto;
+    line-height: normal;
     flex-direction: row-reverse;
     padding: $space/2;
   }
   .checkWrapper {
     height: initial;
+    width: auto;
   }
-  .iconCheckbox{
+  .iconCheckbox, .iconCheckboxActive {
     @extend .iconOk;
     font-size: 20px;
     color:lighten($ciColor3, 60%);
