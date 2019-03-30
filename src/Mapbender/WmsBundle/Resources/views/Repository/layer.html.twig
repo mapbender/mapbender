@@ -1,5 +1,5 @@
 <ul class="itemLevel{{itemLevel}} list {% if itemLevel > 1 %}closed{% endif %}">
-  <li class="openCloseTitle iconSmall {% if itemLevel > 1 %} iconExpandClosed {% else %} iconExpand {% endif %}">{{ layer.title }}</li>
+  <li class="openCloseTitle hover-highlight-effect {% if itemLevel > 1 %} iconExpandClosed {% else %} iconExpand {% endif %}">{{ layer.title }}</li>
   {% if layer.name|length > 0 %}
     <li>
       <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.name" | trans }}:</span>

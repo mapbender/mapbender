@@ -68,8 +68,6 @@ $pageWidth: $contentPaneWidth + $navWidth;
   &:before {
     @extend .hover-highlight-effect;
   }
-  color:$darkFontColor;
-  margin-left:5px;
 }
 
 .notifyjs-corner {
@@ -249,16 +247,6 @@ ul.dropdownList{
 
 .contentPane {
   $top: $space*5;
-  .iconBig {
-    &:before {
-      @include opacity(0.7);
-    }
-    &:hover {
-      &:before {
-        @include opacity(1);
-      }
-    }
-  }
   padding-top: $top + $space;
 
   > .content {

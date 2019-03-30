@@ -23,10 +23,10 @@
 {% block _form_configuration_dimensionsets_entry_row %}
     <div class="collectionItem">
       {% if form.vars.prototype is defined  and form.vars.allow_add is defined %}
-      <a href="#add" class="collectionAdd iconAdd iconSmall"></a>
+      <a href="#add" class="collectionAdd iconAdd hover-highlight-effect"></a>
       {% endif %}
       {% if form.parent and 'allow_delete' in form.parent.vars | keys and form.parent.vars['allow_delete'] %}
-        <a href="#delete" class="collectionRemove iconSmall iconRemove"></a>
+        <a href="#delete" class="collectionRemove hover-highlight-effect iconRemove"></a>
       {% endif %}
 
         {{ block('_form_configuration_dimensionsets_entry_rows') }}
