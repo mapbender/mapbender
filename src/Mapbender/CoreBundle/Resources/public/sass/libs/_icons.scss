@@ -47,9 +47,9 @@
 }
 
 // all
-.iconCheckboxActive:before{content:"\f046" !important;} // overwrite the default icon if checked
-.iconCheckboxHalf:before{content:"\f147" !important;} // overwrite the default icon if checked
 .iconCheckbox:before{content:"\f096";}
+.iconCheckboxActive:before{content:"\f046";}
+.iconCheckboxHalf:before{content:"\f147";}
 .iconRadio:before{content:"\f10c";}
 .iconRadioActive:before{content:"\f192";}
 .iconView:before{content:"\f108";}
@@ -71,7 +71,7 @@
 .iconLayertree:before{content:"\f0e8";}
 .iconLegend:before{content:"\f00b";}
 .iconInfo:before{content:"\f129";}
-.iconInfoActive:before{content:"\f05a" !important;} // overwrite the default icon if checked
+.iconInfoActive:before{content:"\f05a"}
 .iconSearch:before{content:"\f002";}
 .iconWms:before, .iconOverview:before{content:"\f0ac";}
 .iconWmcEditor:before {content:"\f044";}
@@ -117,10 +117,10 @@
 .iconGroup:before{content: "\f0c0";}
 .iconAdd:before{content: "\f067";}
 .iconRemove:before{content:"\f00d";}
-.iconOk:before{content:"\f00c" !important;} // user/group selection need a ok icon but habe a checkbox icon... overwrite it plz :)
+.iconOk:before{content:"\f00c" !important;} // ACL user/group selection list hack (markup in FOM)
 .iconEdit:before{content:"\f040";}
-.iconPublish:before{content:"\f070" !important;} // the active checkbox in application edit, need to be overwritten
-.iconPublishActive:before{content:"\f06e" !important;}
+.iconPublish:before{content:"\f070"}
+.iconPublishActive:before{content:"\f06e"}
 .iconAppDefault:before{content:"\f03e";}
 .iconThumbsUp:before{content:"\f087";}
 .iconThumbsDown:before{content:"\f088";}
