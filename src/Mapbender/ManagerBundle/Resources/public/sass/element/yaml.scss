@@ -1,9 +1,0 @@
-.elementFormYaml {
-  $label: 90px;
-  .labelInput {
-    width: $label;
-  }
-  .dropdown, .input {
-    min-width: $elementPopupBodyWidth - $label - $space;
-  }
-}

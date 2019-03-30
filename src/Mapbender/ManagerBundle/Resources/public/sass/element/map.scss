@@ -3,15 +3,9 @@
   .labelInput {
     width: $label;
   }
-  .checkWrapper {
-    margin-bottom: $space/2;
-  }
   .singleRow {
     float: right;
-    width: $elementPopupBodyWidth - $label - $space;
-    .labelInput, & > .input {
-      float: left;
-    }
+    width: calc(100% - #{$label + 1.25 * $space});
     .labelInput {
       width: 40px;
       margin-right: 5px;
@@ -19,12 +13,14 @@
     .inputWrapper {
       min-width: 0;
       width: 80px;
-      float: left;
-      &:after {
-        content: '';
-        display: block;
-        clear: both;
-      }
+    }
+    .inputWrapper + .labelInput {
+      margin-left: $space;
+    }
+    &:after {
+      content: '';
+      display: table-cell;
+      clear: both;
     }
   }
 }

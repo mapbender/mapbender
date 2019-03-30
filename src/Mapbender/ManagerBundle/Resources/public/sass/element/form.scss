@@ -1,6 +1,7 @@
 .elementForm {
-  $label: 100px;
+  $labelWidth: 70px;
   .labelInput {
+    width: $labelWidth;
     margin-bottom: $space/2;
   }
   textarea {
@@ -49,7 +50,7 @@
       }
       .labelInput {
         margin-left: 0;
-        width: $label;
+        width: $labelWidth;
       }
       div {
         display: table-cell;
@@ -83,12 +84,9 @@
       }
     }
   }
-}
-
-.defaultForm {
-  $label: 70px;
-  .labelInput {
-    width: $label;
+  // add margin between consecutive "inline" checkboxes with .left
+  .left > .labelCheck {
+    margin-right: $space;
   }
 }
 
@@ -96,6 +94,27 @@
   $label: 100px;
   .labelInput {
     width: $label;
+  }
+  .inputWrapper, select, .choiceExpandedSortable, .collectionContainer {
+    width: calc(100% - #{$label + $space});
+  }
+  .dropdown {
+    min-width: calc(100% - #{$label + $space});
+    width: calc(100% - #{$label + $space});
+  }
+}
+
+.extraWideLabelForm {
+  $label: 120px;
+  .labelInput {
+    width: 120px;
+  }
+  .inputWrapper, select, .choiceExpandedSortable, .collectionContainer {
+    width: calc(100% - #{$label + $space});
+  }
+  .dropdown {
+    min-width: calc(100% - #{$label + $space});
+    width: calc(100% - #{$label + $space});
   }
 }
 
