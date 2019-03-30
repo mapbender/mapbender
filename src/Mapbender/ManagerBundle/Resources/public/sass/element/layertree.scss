@@ -1,10 +1,30 @@
 .elementFormLayerTree {
   .collectionContainer {
-    .item-opened .iconCheckbox:before {
-      content: "\f07b" !important;
+    border: solid 1px lighten($thirdColor, 15%);
+    background-color: $contentColor;
+    .collectionItem {
+      label {
+        margin-left: 5px;
+        display: inline;
+      }
+      .checkWrapper {
+        float: none;
+      }
     }
-    .item-opened .iconCheckboxActive:before {
-      content: "\f07c" !important;
+    .theme-settings {
+      text-align: right;
+      user-select: none;
+      > span {
+        display: inline-block;
+        text-align: left;
+        width: 1.5em;
+      }
+      .item-opened .iconCheckbox:before {
+        content: "\f07b" !important;
+      }
+      .item-opened .iconCheckboxActive:before {
+        content: "\f07c" !important;
+      }
     }
   }
 }
