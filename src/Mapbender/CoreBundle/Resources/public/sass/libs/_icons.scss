@@ -2,7 +2,12 @@
 [class^="icon"],
 [class*=" icon"],
 .icon {
+  // rules for a#{&} (would require Sass 3.3+): no decoration, no special colors for links with .icon class on them
   text-decoration: none;
+  color: inherit;
+  &:hover {
+    text-decoration: none;
+  }
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -11,6 +16,9 @@
   width: auto;
   height: auto;
   vertical-align: top;
+  &:before {
+    margin-right: 0.25em;
+  }
 }
 
 .iconBig {

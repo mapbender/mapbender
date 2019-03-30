@@ -1,5 +1,5 @@
 {% if 'listloader' in configuration.components %}
-<a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'mb.wmc.list.add_wmc'|trans}} {{region}}"></a>
+<a href="{{ path('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd hover-highlight-effect addElement" title="{{'mb.wmc.list.add_wmc'|trans}} {{region}}"></a>
 {% endif %}
 {% if 'listloader' in configuration.components %}
 <table class="tableCore">
@@ -19,11 +19,11 @@
             <td class="typeColumn description">{{ wmc.title }}</td>
             <td class="typeColumn description">{{ wmc.description }}</td>
             <td class="iconColumn">
-                <div class="checkWrapper left iconCheckbox iconSmall {% if wmc.public %}iconCheckboxActive{% endif %}" title="{{"mb.wmc.list.toggle"|trans}} {{wmc.title}}">
+                <div class="checkWrapper left iconCheckbox hover-highlight-effect {% if wmc.public %}iconCheckboxActive{% endif %}" title="{{"mb.wmc.list.toggle"|trans}} {{wmc.title}}">
                     <input class="checkbox" data-href="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}" data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>
                 </div>
-                <span class="iconEdit editElement iconSmall" title="{{"mb.wmc.list.wmc_element"|trans}}  {{wmc.title}}" data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': wmc.id})}}"></span>
-                <span class="iconRemove removeElement iconSmall" title="{{"mb.wmc.list.delete_wmc"|trans}} {{wmc.title}}" data-id="{{ wmc.id }}" data-slug="{{ application.slug }}" data-url="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}"></span>
+                <span class="iconEdit editElement hover-highlight-effect" title="{{"mb.wmc.list.wmc_element"|trans}}  {{wmc.title}}" data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': wmc.id})}}"></span>
+                <span class="iconRemove removeElement hover-highlight-effect" title="{{"mb.wmc.list.delete_wmc"|trans}} {{wmc.title}}" data-id="{{ wmc.id }}" data-slug="{{ application.slug }}" data-url="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}"></span>
             </td>
         </tr>
       {% endfor %}
