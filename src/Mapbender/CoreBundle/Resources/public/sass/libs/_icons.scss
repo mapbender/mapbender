@@ -143,6 +143,14 @@
   font-family: 'mapbender-icons';
 }
 
+.hover-highlight-effect {
+  opacity: 0.6;
+  &:hover {
+    opacity: 1.0;
+  }
+}
+
+
 @mixin buttonFAIcon($content) {
   margin-bottom: -1px;
   content: $content;

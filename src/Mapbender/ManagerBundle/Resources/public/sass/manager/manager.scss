@@ -65,10 +65,11 @@ $pageWidth: $contentPaneWidth + $navWidth;
 
 }
 .iconBig, .iconSmall{
+  &:before {
+    @extend .hover-highlight-effect;
+  }
   color:$darkFontColor;
   margin-left:5px;
-  @include opacity(0.6);
-  &:hover{@include opacity(1);}
 }
 
 .notifyjs-corner {
