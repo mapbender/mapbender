@@ -399,3 +399,9 @@ label[for^="inputFilter"] {
   /** FOM templates like to add .left for no particular reason, defeat that */
   float: none;
 }
+
+#addElmPermission {
+  // Link is outside of element permission markup, but want to display as an ~overlay top right
+  position: relative;
+  top: 30px;
+}
