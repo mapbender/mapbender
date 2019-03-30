@@ -378,12 +378,15 @@
 
 {% block form_row %}
   {% spaceless %}
-    <div {% if 'collection' in form.parent.vars['block_prefixes'] %}class="collectionItem"{% endif %}>
+    {% set _isCollectionItem = 'collection' in form.parent.vars['block_prefixes'] %}
+    <div{{ _isCollectionItem ? ' class="collectionItem"' : '' }}>
       {% if 'checkbox' in form.vars.block_prefixes %}
         {{ form_widget(form) }}
         {{ form_label(form) }}
       {% else %}
-        {{ form_label(form) }}
+        {% if not _isCollectionItem %}
+          {{ form_label(form) }}
+        {% endif %}
         {{ form_widget(form) }}
       {% endif %}
     </div>
