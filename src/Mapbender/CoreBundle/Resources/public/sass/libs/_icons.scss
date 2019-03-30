@@ -22,20 +22,16 @@
 }
 
 .iconBig {
-  line-height: 20px;
-  display: inline-block;
-  vertical-align: top;
-  padding-left: 23px;
-  //  height: 20px;
   &:before {
     font-size: 20px;
-    margin-top: -1px;
-    margin-left: -23px;
-    margin-bottom: -2px;
-    position: absolute;
-    display: block;
+    display: inline-block;
+    vertical-align: top;
   }
 }
+span.iconBig {
+  display: inline-block;
+}
+
 
 @-webkit-keyframes spin{
   0%{-webkit-transform:rotate(0deg)}
