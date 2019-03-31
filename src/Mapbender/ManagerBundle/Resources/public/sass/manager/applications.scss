@@ -305,7 +305,7 @@
 }
 .regionProperties{
   .radioWrapper{margin-left: $space/2;}
-  .labelInput{display:none;}
+  label {display:none;}
   .iconRadio{@include opacity(.3);@extend .iconCheckbox}
   .iconRadioActive{@include opacity(1);@extend .iconCheckbox}
   .iconRadiotabs{@include opacity(.3);@extend .iconTabActive}

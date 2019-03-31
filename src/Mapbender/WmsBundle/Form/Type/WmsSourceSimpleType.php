@@ -30,9 +30,6 @@ class WmsSourceSimpleType extends AbstractType
                 'mapped' => false,
                 'data' => false,
                 'label' => 'mb.wms.wmsloader.repo.form.label.onlyvalid',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                )
             ))
             ->add('originUrl', 'text', array(
                 'required' => true,

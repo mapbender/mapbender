@@ -44,9 +44,6 @@ class LegendAdminType extends AbstractType
             ->add('autoOpen', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.autoopen',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('displayType', 'choice',
                 array(
@@ -62,9 +59,6 @@ class LegendAdminType extends AbstractType
             ->add('showSourceTitle', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.showsourcetitle',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
             ->add('showLayerTitle', 'checkbox', array(
                 'required' => false,
@@ -76,9 +70,6 @@ class LegendAdminType extends AbstractType
             ->add('showGroupedLayerTitle', 'checkbox', array(
                 'required' => false,
                 'label' => 'mb.core.admin.legend.label.showgroupedlayertitle',
-                'label_attr' => array(
-                    'class' => 'labelCheck',
-                ),
             ))
         ;
     }
