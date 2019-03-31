@@ -160,84 +160,82 @@ $(function() {
             popup = popup.destroy();
         }
 
-        if(url.length > 0){
-            popup = new Mapbender.Popup2({
-                title: Mapbender.trans('fom.core.components.popup.add_user_group.title'),
-                closeOnOutsideClick: true,
-                height: 400,
-                content: [
-                    $.ajax({
-                        url: url,
-                        complete: function() {
-                            var groupUserItem, roleName, me, groupUserType, groupName;
-
-                            $("#listFilterGroupsAndUsers").find(".filterItem").each(function(i, e){
-                                groupUserItem = $(e);
-                                groupUserType = (groupUserItem.find(".tdContentWrapper")
-                                                              .hasClass("iconGroup") ? "iconGroup"
-                                                                                     : "iconUser");
-                                $("#permissionsBody").find(".labelInput").each(function(i, e) {
-                                    me = $(e);
-                                    roleName = me.text().trim().toUpperCase();
-                                    groupName = $(".labelInput", groupUserItem).text().toUpperCase();
-                                    var isUserType = (me.parent().hasClass(groupUserType));
-
-                                    if(roleName.indexOf("ROLE_GROUP_") === 0) {
-                                        groupName = "ROLE_GROUP_" + groupName;
-                                    }
-
-                                    if(groupName == roleName && isUserType) {
-                                        groupUserItem.remove();
-                                    }
-                                });
-                            });
-                        }
-                    })
-                ],
-                buttons: {
-                    'cancel': {
-                        label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.cancel'),
-                        cssClass: 'button buttonCancel critical right',
-                        callback: function() {
-                            this.close();
-                        }
-                    },
-                    'add': {
-                        label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.add'),
-                        cssClass: 'button right',
-                        callback: function() {
-                            var proto = $("#permissionsHead").attr("data-prototype");
-
-                            if(proto.length > 0){
+        if (url.length > 0) {
+            $.ajax({
+                url: url
+            }).then(function(response) {
+                popup = new Mapbender.Popup({
+                    title: Mapbender.trans('fom.core.components.popup.add_user_group.title'),
+                    closeOnOutsideClick: true,
+                    content: response,
+                    buttons: [
+                        {
+                            label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.add'),
+                            cssClass: 'button',
+                            callback: function() {
                                 var body  = $("#permissionsBody");
-                                var count = body.find("tr").length;
-                                var text, val, parent, newEl;
+                                var proto = $("#permissionsHead").attr("data-prototype");
 
-                                $("#listFilterGroupsAndUsers").find(".iconCheckboxActive").each(function(i, e){
-                                    parent   = $(e).parent();
-                                    text     = parent.find(".labelInput").text().trim();
-                                    val      = parent.find(".hide").text().trim();
-                                    userType = parent.hasClass("iconGroup") ? "iconGroup" : "iconUser";
-                                    newEl = body.prepend(proto.replace(/__name__/g, count))
-                                                .find("tr:first");
+                                if (proto) {
+                                    var count = body.find("tr").length;
+                                    var text, val, newEl;
 
-                                    newEl.addClass("new").find(".labelInput").text(text);
-                                    newEl.find(".input").attr("value", val);
-                                    newEl.find(".view.checkWrapper").trigger("click");
-                                    newEl.find(".userType")
-                                         .removeClass("iconGroup")
-                                         .removeClass("iconUser")
-                                         .addClass(userType);
-                                    ++count;
-                                });
+                                    $('#listFilterGroupsAndUsers input[type="checkbox"]:checked', popup.$element).each(function() {
+                                        var $row = $(this).closest('tr');
+                                        var userType = $('.tdContentWrapper', $row).hasClass("iconGroup") ? "iconGroup" : "iconUser";
+                                        text = $row.find(".labelInput").text().trim();
+                                        val = $row.find(".hide").text().trim();
+                                        newEl = body.prepend(proto.replace(/__name__/g, count))
+                                                    .find("tr:first");
 
+                                        newEl.addClass("new").find(".labelInput").text(text);
+                                        newEl.find(".input").attr("value", val);
+                                        newEl.find(".view.checkWrapper").trigger("click");
+                                        newEl.find(".userType")
+                                             .removeClass("iconGroup")
+                                             .removeClass("iconUser")
+                                             .addClass(userType);
+                                        ++count;
+                                    });
+
+                                    this.close();
+                                    $(".permissionsTable").show();
+                                    $("#permissionsDescription").hide();
+                                }
+                            }
+                        },
+                        {
+                            label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.cancel'),
+                            cssClass: 'button buttonCancel critical',
+                            callback: function() {
                                 this.close();
-                                $(".permissionsTable").show();
-                                $("#permissionsDescription").hide();
                             }
                         }
-                    }
-                }
+                    ]
+                });
+
+                var groupUserItem, roleName, me, groupUserType, groupName;
+
+                $("#listFilterGroupsAndUsers").find(".filterItem").each(function(i, e){
+                    groupUserItem = $(e);
+                    groupUserType = (groupUserItem.find(".tdContentWrapper")
+                                                  .hasClass("iconGroup") ? "iconGroup"
+                                                                         : "iconUser");
+                    $("#permissionsBody").find(".labelInput").each(function(i, e) {
+                        me = $(e);
+                        roleName = me.text().trim().toUpperCase();
+                        groupName = $(".labelInput", groupUserItem).text().toUpperCase();
+                        var isUserType = (me.parent().hasClass(groupUserType));
+
+                        if(roleName.indexOf("ROLE_GROUP_") === 0) {
+                            groupName = "ROLE_GROUP_" + groupName;
+                        }
+
+                        if(groupName == roleName && isUserType) {
+                            groupUserItem.remove();
+                        }
+                    });
+                });
             });
         }
 

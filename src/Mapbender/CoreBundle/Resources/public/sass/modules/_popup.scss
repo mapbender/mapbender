@@ -24,6 +24,11 @@
   }
 }
 .mapbender-popup {
+  .popupButtons {
+    text-align: right;
+  }
+}
+.mapbender-popup {
   display: flex;
   flex-direction: column;
   .popupHead, .footer {

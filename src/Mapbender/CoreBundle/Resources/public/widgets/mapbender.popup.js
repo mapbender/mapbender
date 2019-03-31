@@ -150,7 +150,7 @@
                 '      <div class="popupContent"></div>',
                 '   </div>',
                 '   <div class="footer row no-gutters">',
-                '       <div class="popupButtons right"></div>',
+                '       <div class="popupButtons"></div>',
                 '       <div class="clear"></div>',
                 '   </div>',
                 '  </div>'
