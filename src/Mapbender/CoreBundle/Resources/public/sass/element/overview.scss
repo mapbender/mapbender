@@ -12,7 +12,6 @@
     color: $lightFontColor;
     background-color: $buttonFirstColor;
 
-    @extend .icon;
     @extend .iconClose;
     @extend .buttonCore;
     @include border-radius($radius);
@@ -65,7 +64,6 @@
 }
 
 .olControlOverviewMapRectReplacement {
-  @extend .icon;
   @extend .iconTarget;
   cursor: move;
 }
