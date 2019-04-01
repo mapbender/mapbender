@@ -351,6 +351,7 @@ $.extend(Mapbender, (function($) {
 
 
     function setup() {
+        window.Mapbender.mapEngine = Mapbender.MapEngine.factory(Mapbender.configuration.application.mapEngineCode);
         _initLayersets(Mapbender.configuration.layersets || {});
 
         // Mark all elements for elementRegistry tracking before calling the constructors.

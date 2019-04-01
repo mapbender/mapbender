@@ -160,6 +160,8 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
                     '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngine.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngineOl2.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
                     '/../vendor/mapbender/mapquery/lib/jquery/jquery.tmpl.js',
