@@ -876,24 +876,46 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         if (options && (options.zoom || parseInt(options.zoom) === 0)) {
             zoom = this._clampZoomLevel(parseInt(options.zoom));
         }
-        var zoomNow = this.map.olMap.getZoom();
-        if (options && options.minScale) {
-            var maxZoom = this.pickZoomForScale(options.minScale, true);
-            if (zoom !== null) {
-                zoom = Math.min(zoom, maxZoom);
-            } else {
-                zoom = Math.min(zoomNow, maxZoom);
-            }
-        }
-        if (options && options.maxScale) {
-            var minZoom = this.pickZoomForScale(options.maxScale, false);
-            if (zoom !== null) {
-                zoom = Math.max(zoom, minZoom);
-            } else {
-                zoom = Math.max(zoomNow, minZoom);
-            }
-        }
+        zoom = this._adjustZoom(zoom, options);
         this.map.olMap.setCenter(centerLl, zoom);
+    },
+    /**
+     * @param {OpenLayers.Feature.Vector} feature
+     * @param {Object} [options]
+     * @param {number=} options.buffer in meters
+     * @param {number=} options.minScale
+     * @param {number=} options.maxScale
+     * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
+     *      just keeps feature in view
+     */
+    zoomToFeature: function(feature, options) {
+        if (!feature || !feature.geometry) {
+            console.error("Empty feature or empty feature geometry", feature);
+            return;
+        }
+        var center_;
+        if (options) {
+            center_ = options.center || typeof options.center === 'undefined';
+        } else {
+            center_ = true;
+        }
+        var bounds = feature.geometry.getBounds().clone();
+        if (options && options.buffer) {
+            var unitsPerMeter = this.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
+            var bufferNative = options.buffer * unitsPerMeter;
+            bounds.left -= bufferNative;
+            bounds.right += bufferNative;
+            bounds.top += bufferNative;
+            bounds.bottom -= bufferNative;
+        }
+        var zoom0 = this.map.olMap.getZoomForExtent(bounds, false);
+        var zoom = this._adjustZoom(zoom0, options);
+        var zoomNow = this.getCurrentZoomLevel();
+        var featureInView = this.getCurrentExtent().containsBounds(bounds);
+        if (center_ || zoom !== zoomNow || !featureInView) {
+            var centerLl = bounds.getCenterLonLat();
+            this.map.olMap.setCenter(centerLl, zoom);
+        }
     },
     pickZoomForScale: function(targetScale, pickHigh) {
         // @todo: fractional zoom: use exact targetScale (TBD: method should not be called?)
@@ -973,6 +995,36 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     },
     _clampZoomLevel: function(zoomIn) {
         return Math.max(0, Math.min(zoomIn, this._getMaxZoomLevel()));
+    },
+
+    /**
+     * @param {number|null} targetZoom
+     * @param {Object} scaleOptions
+     * @param {number=} scaleOptions.minScale
+     * @param {number=} scaleOptions.maxScale
+     * @return {number|null}
+     * @private
+     */
+    _adjustZoom: function(targetZoom, scaleOptions) {
+        var zoom = targetZoom;
+        var zoomNow = this.map.olMap.getZoom();
+        if (scaleOptions && scaleOptions.minScale) {
+            var maxZoom = this.pickZoomForScale(scaleOptions.minScale, true);
+            if (zoom !== null) {
+                zoom = Math.min(zoom, maxZoom);
+            } else {
+                zoom = Math.min(zoomNow, maxZoom);
+            }
+        }
+        if (scaleOptions && scaleOptions.maxScale) {
+            var minZoom = this.pickZoomForScale(scaleOptions.maxScale, false);
+            if (zoom !== null) {
+                zoom = Math.max(zoom, minZoom);
+            } else {
+                zoom = Math.max(zoomNow, minZoom);
+            }
+        }
+        return zoom;
     },
     /**
      * @param {Object} e

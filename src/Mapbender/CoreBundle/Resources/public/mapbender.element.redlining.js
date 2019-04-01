@@ -13,22 +13,25 @@
                 'strokeWidth': '3'
             }
         },
+        mbMap: null,
         map: null,
         layer: null,
         activeControl: null,
         geomCounter: 0,
         rowTemplate: null,
-        _create: function(){
-            if(!Mapbender.checkTarget("mbRedlining", this.options.target)) {
-                return;
-            }
+        _create: function() {
             var self = this;
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget("mbRedlining", self.options.target);
+            });
         },
         _setup: function(){
             var $geomTable = $('.geometry-table', this.element);
-            this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
+            // @todo: remove direct access to OpenLayers 2 map
+            this.map = this.mbMap.map.olMap;
             this.rowTemplate = $('tr', $geomTable).remove();
             if(this.options.auto_activate || this.options.display_type === 'element'){
                 this.activate();
@@ -282,8 +285,7 @@
         _zoomToFeature: function(e){
             this._deactivateControl();
             var feature = this.layer.getFeatureById($(e.target).parents("tr:first").attr('data-id'));
-            var bounds = feature.geometry.getBounds();
-            this.map.zoomToExtent(bounds);
+            this.mbMap.getModel().zoomToFeature(feature);
         },
         _generateTextStyle: function(label){
             var style = OpenLayers.Util.applyDefaults(null, OpenLayers.Feature.Vector.style['default']);
