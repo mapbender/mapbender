@@ -1,12 +1,14 @@
 # Changelog
-* **dev-release/3.0.7** @ 528e39b0e
+* **dev-release/3.0.7** @ 79a43b148
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting
   - [Beta regression] Fix layer menu positioning in a non-thematic LayerTree ([Issue#1124](https://github.com/mapbender/mapbender/issues/1124), [PR#1142](https://github.com/mapbender/mapbender/pull/1142))
   - [Beta regression] Restore Legend option `showGroupedLayerTitle`, migrate historically misspelled option names automatically ([Issue#1127](https://github.com/mapbender/mapbender/issues/1127), [PR#1143](https://github.com/mapbender/mapbender/pull/1143))
+  - [Beta 2 regression] Fix IE11 positioning issues for zoombar icons, mobile toolbar icons and LayerTree rows
   - Print: Fix black bar artifacts on `northArrow` image at rotations near 90 or 270 degrees
   - Print: Fix black opaque black backgrounds on transparent Wms tile images
   - Support nested source definitions in YAML applications ([PR#1125](https://github.com/mapbender/mapbender/pull/1125))
+  - Layers in YAML-defined sources are now initially selected by default if YAML-only `visible` setting is omitted (previously: deselected)
   - Fix LayerTree menu metadata for WMS layers with empty names
   - Fix LayerTree menu metadata for WMS child layers without an own bounding box
   - Disable LayerTree menu metadata entry for WMTS / TMS sources (metadata rendering not implemented for these source types)
@@ -17,6 +19,9 @@
   - Improve Digitizer feature Print support by always sending close event first before destrying popup ([PR#1128](https://github.com/mapbender/mapbender/pull/1128))
   - Fix nested tab container conflicts / conflicts with non-unique tab ids
   - Fix multi-argument `visibilelayers` URL param handling ([Issue#1082](https://github.com/mapbender/mapbender/issues/1082), [PR#1140](https://github.com/mapbender/mapbender/pull/1140))
+  - Fix WMTS matrix resolution calculations for non-metric initial projections
+  - Restore missing sub-layer toggle icons in backend source layer view
+  - Restore missing frontend icon highlight effects in Redlining, Wmc Elements and LayerTree inline menu
 
 * **v3.0.8-beta3**
   - [Beta regression] Restore Wms Loader function
