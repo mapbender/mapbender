@@ -576,34 +576,17 @@
                 return;
             }
             var row = $(event.currentTarget),
-                feature = row.data('feature').getFeature(),
-                map = this.mbMap.map.olMap
+                feature = row.data('feature').getFeature()
             ;
-            var featureExtent = $.extend({},feature.geometry.getBounds());
-
-            // buffer, if needed
-            if(callbackConf.options && callbackConf.options.buffer){
-                var radius = callbackConf.options.buffer;
-                featureExtent.top += radius;
-                featureExtent.right += radius;
-                featureExtent.bottom -= radius;
-                featureExtent.left -= radius;
-            }
-
-            // get zoom for buffered extent
-            var zoom = map.getZoomForExtent(featureExtent);
-
-            var centerLonLat = featureExtent.getCenterLonLat();
-            var x = centerLonLat.x, y = centerLonLat.y;
-
-            var centerOptions = {
-                zoom: zoom
-            };
+            var zoomToFeatureOptions;
             if (callbackConf.options) {
-                centerOptions.maxScale = parseInt(callbackConf.maxScale) || null;
-                centerOptions.minScale = parseInt(callbackConf.minScale) || null;
+                zoomToFeatureOptions = {
+                    maxScale: parseInt(callbackConf.options.maxScale) || null,
+                    minScale: parseInt(callbackConf.options.minScale) || null,
+                    buffer: parseInt(callbackConf.options.buffer) || null
+                };
             }
-            this.mbMap.getModel().centerXy(x, y, centerOptions);
+            this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         },
         _onSrsChange: function(event, data) {
             if (this.highlightLayer) {
