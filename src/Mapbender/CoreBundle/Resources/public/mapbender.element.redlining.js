@@ -30,8 +30,6 @@
             var $geomTable = $('.geometry-table', this.element);
             this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
             this.rowTemplate = $('tr', $geomTable).remove();
-            var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
-            this.map.removeControl(selectControl[0]);
             if(this.options.auto_activate || this.options.display_type === 'element'){
                 this.activate();
             }
