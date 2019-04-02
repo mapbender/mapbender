@@ -10,6 +10,7 @@
             printResult: false,
             showOriginal: false,
             onlyValid: false,
+            maxCount: 100,
             width: 700,
             height: 500
         },
@@ -151,19 +152,17 @@
             $('#js-error-featureinfo').addClass('hidden');
             $.each(this.target.getModel().getSources(), function(idx, src) {
                 var layerTitle = self._getTabTitle(src);
-                if (Mapbender.source[src.type]) {
-                    var url = Mapbender.source[src.type].featureInfoUrl(src, x, y);
-                    if (url) {
-                        self.queries[src.mqlid] = url;
-                        if (!self.options.onlyValid) {
-                            self._addContent(src.mqlid, layerTitle, 'wird geladen');
-                            self._open();
-                        }
-                        called = true;
-                        self._setInfo(src, url);
-                    } else {
-                        self._removeContent(src.mqlid);
+                var url = src.getPointFeatureInfoUrl(x, y, self.options.maxCount);
+                if (url) {
+                    self.queries[src.mqlid] = url;
+                    if (!self.options.onlyValid) {
+                        self._addContent(src.mqlid, layerTitle, 'wird geladen');
+                        self._open();
                     }
+                    called = true;
+                    self._setInfo(src, url);
+                } else {
+                    self._removeContent(src.mqlid);
                 }
             });
             if (!called) {

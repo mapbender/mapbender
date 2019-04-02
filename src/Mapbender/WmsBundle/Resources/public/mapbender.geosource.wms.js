@@ -145,7 +145,7 @@ window.Mapbender.WmsSource = (function() {
             var newStyles = (olLayer.params.STYLES || '').toString() !== layerParams.styles.toString();
             return newLayers || newStyles;
         },
-        getPointFeatureInfoUrl: function(x, y) {
+        getPointFeatureInfoUrl: function(x, y, maxCount) {
             var olLayer = this.getNativeLayer(0);
             if (!(olLayer && olLayer.getVisibility())) {
                 return false;
@@ -158,7 +158,7 @@ window.Mapbender.WmsSource = (function() {
                 url: Mapbender.Util.removeProxy(olLayer.url),
                 layers: [olLayer],
                 queryVisible: true,
-                maxFeatures: 1000
+                maxFeatures: maxCount || 100
             });
             wmsgfi.map = olLayer.map;
             var reqObj = wmsgfi.buildWMSOptions(
