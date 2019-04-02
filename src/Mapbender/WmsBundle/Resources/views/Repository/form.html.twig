@@ -9,13 +9,6 @@
   {# This only option to prevent browser auto fill inputs. Sad but true. More info: #4814 #}
   <input style="position: absolute; display: block; top: -1000px; left: 0" type="text" name="somefakename" tabindex="-1"/>
   <input style="position: absolute; display: block; top: -1000px; left: 0" type="password" name="anotherfakename" tabindex="-1"/>
-  {# special snowflake FOM checkbox widget doesn't even add the correct class name to the label, and ignores label_attr #}
-  {# {{ form_row(form.onlyvalid) }} #}
-  <div>
-    {{ form_widget(form.onlyvalid) }}<label for="{{form.onlyvalid.vars['id']}}" class="labelCheck">{{ form.onlyvalid.vars.label | trans }}</label>
-    {# checkbox widget added a float: left ... #}
-    <div class="clear"></div>
-  </div>
   {{ form_row(form.originUrl) }}
   {{ form_row(form.username) }}
   {{ form_row(form.password) }}
