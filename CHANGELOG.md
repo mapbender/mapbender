@@ -1,10 +1,11 @@
 # Changelog
-* **dev-release/3.0.7** @ 79a43b148
+* **dev-release/3.0.7** @ 063e6eb88
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting
   - [Beta regression] Fix layer menu positioning in a non-thematic LayerTree ([Issue#1124](https://github.com/mapbender/mapbender/issues/1124), [PR#1142](https://github.com/mapbender/mapbender/pull/1142))
   - [Beta regression] Restore Legend option `showGroupedLayerTitle`, migrate historically misspelled option names automatically ([Issue#1127](https://github.com/mapbender/mapbender/issues/1127), [PR#1143](https://github.com/mapbender/mapbender/pull/1143))
   - [Beta 2 regression] Fix IE11 positioning issues for zoombar icons, mobile toolbar icons and LayerTree rows
+  - [Beta regression] Fix SimpleSearch / SearchRouter zoom-to-feature behavior ([PR#1146](https://github.com/mapbender/mapbender/pull/1146))
   - Print: Fix black bar artifacts on `northArrow` image at rotations near 90 or 270 degrees
   - Print: Fix black opaque black backgrounds on transparent Wms tile images
   - Support nested source definitions in YAML applications ([PR#1125](https://github.com/mapbender/mapbender/pull/1125))
@@ -22,6 +23,7 @@
   - Fix WMTS matrix resolution calculations for non-metric initial projections
   - Restore missing sub-layer toggle icons in backend source layer view
   - Restore missing frontend icon highlight effects in Redlining, Wmc Elements and LayerTree inline menu
+  - Redlining: allow direct tool deactivation via second click on activation button ([PR#1147](https://github.com/mapbender/mapbender/pull/1147))
 
 * **v3.0.8-beta3**
   - [Beta regression] Restore Wms Loader function
