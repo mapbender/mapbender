@@ -12,7 +12,6 @@ use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
-use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,14 +23,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
  */
-class Importer extends ContainerAware
+class Importer
 {
+
+    /** @var ContainerInterface */
+    protected $container;
+
     /**
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {
-        $this->setContainer($container);
+        $this->container = $container;
     }
 
     /**
