@@ -49,6 +49,8 @@ class Importer
      * @param bool $onlyValid
      * @return \Mapbender\WmsBundle\Component\Wms\Importer\Response
      * @throws XmlParseException
+     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
+     * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
      */
     public function evaluateServer(WmsOrigin $serviceOrigin, $onlyValid=true)
     {
@@ -66,6 +68,7 @@ class Importer
      * @param boolean $onlyValid
      * @return \Mapbender\WmsBundle\Component\Wms\Importer\Response
      * @throws XmlParseException
+     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
      */
     public function evaluateCapabilitiesDocument(\DOMDocument $document, $onlyValid=true)
     {
@@ -87,6 +90,9 @@ class Importer
     /**
      * @param WmsOrigin $serviceOrigin
      * @return \DOMDocument
+     * @throws XmlParseException
+     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
+     * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
      */
     public function loadCapabilitiesDocument(WmsOrigin $serviceOrigin)
     {
