@@ -20,21 +20,7 @@
         _create: function(){
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.engineCode = Mapbender.configuration.application.mapEngineCode;
-            var modelOptions = {
-                srs: this.options.srs,
-                maxExtent: Mapbender.Model.sanitizeExtent(this.options.extents.max),
-                startExtent: Mapbender.Model.sanitizeExtent(this.options.extents.start),
-                scales : this.options.scales,
-                dpi: this.options.dpi,
-                tileSize: this.options.tileSize
-            };
-
-            this.model = new Mapbender.Model(this.element.attr('id'), modelOptions);
-            $.extend(this.options, {
-                layerDefs: [],
-                poiIcon: this.options.poiIcon
-            });
+            this.model = new Mapbender.Model(this);
             this.map = this.model.map;
             self._trigger('ready');
         },
