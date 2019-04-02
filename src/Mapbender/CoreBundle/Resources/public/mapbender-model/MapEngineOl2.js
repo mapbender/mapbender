@@ -61,6 +61,11 @@ window.Mapbender.MapEngineOl2 = (function() {
                 }
                 return params;
             }
+        },
+        compareWmsParams: function (olLayer, layers, styles) {
+            var newLayers = (olLayer.params.LAYERS || '').toString() !== layers.toString();
+            var newStyles = (olLayer.params.STYLES || '').toString() !== styles.toString();
+            return newLayers || newStyles;
         }
     });
     window.Mapbender.MapEngine.typeMap['ol2'] = MapEngineOl2;

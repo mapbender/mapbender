@@ -103,9 +103,7 @@ window.Mapbender.WmsSource = (function() {
         },
         checkLayerParameterChanges: function(layerParams) {
             var olLayer = this.getNativeLayer(0);
-            var newLayers = (olLayer.params.LAYERS || '').toString() !== layerParams.layers.toString();
-            var newStyles = (olLayer.params.STYLES || '').toString() !== layerParams.styles.toString();
-            return newLayers || newStyles;
+            return Mapbender.mapEngine.compareWmsParams(olLayer, layerParams.layers, layerParams.styles);
         },
         getPointFeatureInfoUrl: function(x, y, maxCount) {
             var olLayer = this.getNativeLayer(0);
