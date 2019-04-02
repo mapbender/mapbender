@@ -24,6 +24,7 @@
   - Restore missing sub-layer toggle icons in backend source layer view
   - Restore missing frontend icon highlight effects in Redlining, Wmc Elements and LayerTree inline menu
   - Redlining: allow direct tool deactivation via second click on activation button ([PR#1147](https://github.com/mapbender/mapbender/pull/1147))
+  - GpsButton: remove unsafe `zoomToAccuracy` option
 
 * **v3.0.8-beta3**
   - [Beta regression] Restore Wms Loader function
