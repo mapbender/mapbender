@@ -859,8 +859,11 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             }
         }
     },
+    /**
+     * @return {number}
+     */
     getCurrentScale: function() {
-        return (this._getScales())[this.map.olMap.getZoom()];
+        return (this._getScales())[this.getCurrentZoomLevel()];
     },
     getCurrentZoomLevel: function() {
         return this.map.olMap.getZoom();
