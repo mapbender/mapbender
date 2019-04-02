@@ -454,6 +454,70 @@ Mapbender.Model.prototype = {
                 sourceIdx: {id: source.id}
             }
         });
+    },
+    /**
+     * Bring the sources identified by the given ids into the given order.
+     * All other sources will be left alone!
+     *
+     * @param {string[]} newIdOrder
+     */
+    reorderSources: function(newIdOrder) {
+        var self = this;
+        var olMap = this.olMap;
+
+        var sourceObjs = (newIdOrder || []).map(function(id) {
+            return self.getSourceById(id);
+        });
+        // Collect current positions used by the layers to be reordered
+        // position := array index in olMap.layers
+        // The collected positions will be reused / redistributed to the affected
+        // layers, while all other layers stay in their current slots.
+        var layersToMove = [];
+        var currentLayerArray = this.olMap.getLayers().getArray();
+        var oldIndexes = [];
+        var olLayerIdsToMove = {};
+        _.forEach(sourceObjs, function(sourceObj) {
+            var olLayer = self.getNativeLayer(sourceObj);
+            layersToMove.push(olLayer);
+            oldIndexes.push(currentLayerArray.indexOf(olLayer));
+            olLayerIdsToMove[olLayer.ol_uid] = true;
+        });
+        oldIndexes.sort(function(a, b) {
+            // sort numerically (default sort performs string comparison)
+            return a - b;
+        });
+
+        var unmovedLayers = currentLayerArray.filter(function(olLayer) {
+            return !olLayerIdsToMove[olLayer.ol_uid];
+        });
+
+        // rebuild the layer list, mixing in unmoving layers with reordered layers
+        var newLayers = [];
+        var unmovedIndex = 0;
+        for (var i = 0; i < oldIndexes.length; ++i) {
+            var nextIndex = oldIndexes[i];
+            while (nextIndex > newLayers.length) {
+                newLayers.push(unmovedLayers[unmovedIndex]);
+                ++unmovedIndex;
+            }
+            newLayers.push(layersToMove[i]);
+        }
+        while (unmovedIndex < unmovedLayers.length) {
+            newLayers.push(unmovedLayers[unmovedIndex]);
+            ++unmovedIndex;
+        }
+        // set new layer list, let OpenLayers reassign z indexes in list order
+        olMap.getLayerGroup().setLayers(new ol.Collection(newLayers, {unique: true}));
+        // Re-sort 'sourceTree' structure (inspected by legend etc for source order) according to actual, applied
+        // layer order.
+        this.sourceTree.sort(function(a, b) {
+            var indexA = newLayers.indexOf(self.getNativeLayer(a));
+            var indexB = newLayers.indexOf(self.getNativeLayer(b));
+            return indexA - indexB;
+        });
+        this.mbMap.fireModelEvent({
+            name: 'sourcesreordered'
+        });
     }
 };
 
@@ -2145,41 +2209,6 @@ Mapbender.Model.prototype.toSourceObj_ = function toSourceObj_(input) {
     }
     console.error("Could not identify requested source from input", input);
     throw new Error("Could not identify requested source");
-};
-
-Mapbender.Model.prototype.reorderSources = function reorderSources(sources) {
-    var sourceObjs = sources.map(this.toSourceObj_.bind(this));
-    var newIdOrder = sourceObjs.map(function(source) { return source.id; });
-    // Collect currently set positions and z indexes for given sources.
-    // position := array index in this.sourceTree
-    // z index := mapquery layer position = openlayers map layer index - 1
-    // The collected values will be reused / redistributed to the affected
-    // sources.
-    var oldPositions = [];
-    var zIndexes = [];
-    var sourceIdToSource = {};
-    _.forEach(sourceObjs, function(sourceObj) {
-        var currentPosition = this.pixelSources.indexOf(sourceObj);
-        if (currentPosition === -1) {
-            console.error("Could not find relative position of source", sourceObj, this.pixelSources);
-            throw new Error("Could not find relative position of source");
-        }
-        oldPositions.push(currentPosition);
-        sourceIdToSource[sourceObj.id] = sourceObj;
-        zIndexes.push(sourceObj.getZIndex());
-    }.bind(this));
-    oldPositions.sort();
-    zIndexes.sort();
-    // rewrite pixelSources order and z indexes
-    for (var i = 0; i < oldPositions.length; ++i) {
-        var oldPos = oldPositions[i];
-        var injectSourceId = newIdOrder[i];
-        var injectSourceObj = sourceIdToSource[injectSourceId];
-        var injectSourceZ = zIndexes[i];
-        this.pixelSources[oldPos] = injectSourceObj;
-        injectSourceObj.setZIndex(injectSourceZ);
-    }
-    this.olMap.render();
 };
 
 /**
