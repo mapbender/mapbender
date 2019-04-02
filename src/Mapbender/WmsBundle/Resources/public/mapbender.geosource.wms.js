@@ -107,7 +107,8 @@ window.Mapbender.WmsSource = (function() {
         },
         getPointFeatureInfoUrl: function(x, y, maxCount) {
             var olLayer = this.getNativeLayer(0);
-            if (!(olLayer && olLayer.getVisibility())) {
+            var engine = Mapbender.mapEngine;
+            if (!(olLayer && engine.getLayerVisibility(olLayer))) {
                 return false;
             }
             var queryLayers = this.getLayerParameters({}).infolayers;

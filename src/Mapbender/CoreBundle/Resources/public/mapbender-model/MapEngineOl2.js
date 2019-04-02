@@ -22,6 +22,9 @@ window.Mapbender.MapEngineOl2 = (function() {
             OpenLayers.Control.Navigation.prototype.documentDrag = true;
             Mapbender.MapEngine.prototype.patchGlobals.apply(this, arguments);
         },
+        getLayerVisibility: function(olLayer) {
+            return olLayer.getVisibility();
+        },
         createWmsLayer: function(source) {
             var options = getNativeLayerOptions(source);
             var params = getNativeLayerParams(source);
