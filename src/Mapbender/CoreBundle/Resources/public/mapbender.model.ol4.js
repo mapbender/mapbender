@@ -396,6 +396,37 @@ Mapbender.Model.prototype = {
         }
     },
     /**
+     * Activate / deactivate a single layer's selection and / or FeatureInfo state states.
+     *
+     * @param {string|number} sourceId
+     * @param {string|number} layerId
+     * @param {boolean|null} [selected]
+     * @param {boolean|null} [info]
+     *
+     * engine-agnostic
+     */
+    controlLayer: function controlLayer(sourceId, layerId, selected, info) {
+        var layerMap = {};
+        var treeOptions = {};
+        if (selected !== null && typeof selected !== 'undefined') {
+            treeOptions.selected = !!selected;
+        }
+        if (info !== null && typeof info !== 'undefined') {
+            treeOptions.info = !!info;
+        }
+        if (Object.keys(treeOptions).length) {
+            layerMap['' + layerId] = {
+                options: {
+                    treeOptions: treeOptions
+                }
+            };
+        }
+        if (Object.keys(layerMap).length) {
+            var source = this.getSourceById(sourceId);
+            this._updateSourceLayerTreeOptions(source, layerMap);
+        }
+    },
+    /**
      * Updates the options.treeOptions within the source with new values from layerOptionsMap.
      * Always reapplies states to engine (i.e. affected layers are re-rendered).
      * Alawys fires an 'mbmapsourcechanged' event.
