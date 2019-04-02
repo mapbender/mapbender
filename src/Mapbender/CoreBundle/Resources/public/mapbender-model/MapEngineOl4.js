@@ -23,6 +23,47 @@ window.Mapbender.MapEngineOl4 = (function() {
             // todo: fix drag pan
             // OpenLayers.Control.Navigation.prototype.documentDrag = true;
             Mapbender.MapEngine.prototype.patchGlobals.apply(this, arguments);
+        },
+        createWmsLayer: function(source) {
+            var sourceOpts = {
+                url: source.configuration.options.url,
+                transition: 0
+            };
+
+            var olSourceClass;
+            var olLayerClass;
+            if (source.configuration.options.tiled) {
+                olSourceClass = ol.source.TileWMS;
+                olLayerClass = ol.layer.Tile;
+            } else {
+                olSourceClass = ol.source.ImageWMS;
+                olLayerClass = ol.layer.Image;
+            }
+
+            var layerOptions = {
+                source: new (olSourceClass)(sourceOpts),
+            };
+            // todo: minScale / maxScale
+            // todo: opacity
+            // todo: transparent
+            // todo: version
+            // todo: format
+            // todo: exception format
+            return new (olLayerClass)(layerOptions);
+        },
+        /**
+         * @param olLayer
+         * @param layers
+         * @param styles
+         * @return {boolean}
+         */
+        compareWmsParams: function (olLayer, layers, styles) {
+            var paramsNow = olLayer.getSource().getParams();
+            var layersNow = paramsNow.LAYERS;
+            var stylesNow = paramsNow.STYLES;
+            var newLayers = (layersNow || '').toString() !== layers.toString();
+            var newStyles = (stylesNow || '').toString() !== styles.toString();
+            return newLayers || newStyles;
         }
     });
     window.Mapbender.MapEngine.typeMap['ol4'] = MapEngineOl4;
