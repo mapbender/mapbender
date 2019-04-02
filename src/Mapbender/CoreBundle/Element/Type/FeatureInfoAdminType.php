@@ -56,6 +56,9 @@ class FeatureInfoAdminType extends AbstractType
             ->add('height', 'integer', array('required' => true))
             ->add('maxCount', 'integer', array(
                 'required' => false,
+                'attr' => array(
+                    'placeholder' => 100,
+                ),
             ))
         ;
     }
