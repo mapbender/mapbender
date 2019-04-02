@@ -25,12 +25,6 @@ class WmsSourceSimpleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            // Base data
-            ->add('onlyvalid', 'checkbox', array(
-                'mapped' => false,
-                'data' => false,
-                'label' => 'mb.wms.wmsloader.repo.form.label.onlyvalid',
-            ))
             ->add('originUrl', 'text', array(
                 'required' => true,
                 'label' => 'mb.wms.wmsloader.repo.form.label.serviceurl',
