@@ -542,9 +542,95 @@ Mapbender.Model.prototype = {
         this.mbMap.fireModelEvent({
             name: 'sourcesreordered'
         });
+    },
+    /**
+     * engine-agnostic
+     */
+    pickZoomForScale: function(targetScale, pickHigh) {
+        // @todo: fractional zoom: use exact targetScale (TBD: method should not be called?)
+        var scales = this._getScales();
+        var scale = this._pickScale(scales, targetScale, pickHigh);
+        return scales.indexOf(scale);
+    },
+    setZoomLevel: function(level, allowTransitionEffect) {
+        var _level = this._clampZoomLevel(level);
+        if (_level !== this.getCurrentZoomLevel()) {
+            if (allowTransitionEffect) {
+                this.olMap.getView().animate({zoom: _level});
+
+            } else {
+                this.olMap.getView().setZoom(_level);
+            }
+        }
+    },
+    /**
+     * @return {number}
+     * engine-agnostic
+     */
+    getCurrentScale: function() {
+        return (this._getScales())[this.getCurrentZoomLevel()];
+    },
+    getCurrentZoomLevel: function() {
+        return this.olMap.getView().getZoom();
+    },
+    getZoomLevels: function() {
+        return this._getScales().map(function(scale, index) {
+            return {
+                scale: scale,
+                level: index
+            };
+        });
+    },
+    /**
+     *
+     * @param scales
+     * @param targetScale
+     * @param pickHigh
+     * @return {*}
+     * @private
+     * engine-agnostic
+     */
+    _pickScale: function(scales, targetScale, pickHigh) {
+        if (targetScale >= scales[0]) {
+            return scales[0];
+        }
+        for (var i = 0, nScales = scales.length; i < nScales - 1; ++i) {
+            var scaleHigh = scales[i];
+            var scaleLow = scales[i + 1];
+            if (targetScale <= scaleHigh && targetScale >= scaleLow) {
+                if (targetScale > scaleLow && pickHigh) {
+                    return scaleHigh;
+                } else {
+                    return scaleLow;
+                }
+            }
+        }
+        return scales[nScales - 1];
+    },
+    _getScales: function() {
+        // @todo: fractional zoom: method must not be called
+        var view = this.olMap.getView();
+        var dpi = parseFloat(this.mbMap.options.dpi) || 72;
+        var self = this;
+        return view.getResolutions().map(function(res) {
+            var scale0 = self.resolutionToScale(res, dpi);
+            return parseInt('' + Math.round(scale0));
+        });
+    },
+    /**
+     * engine-agnostic
+     */
+    _getMaxZoomLevel: function() {
+        // @todo: fractional zoom: no discrete scale steps
+        return this._getScales().length - 1;
+    },
+    /**
+     * engine-agnostic
+     */
+    _clampZoomLevel: function(zoomIn) {
+        return Math.max(0, Math.min(zoomIn, this._getMaxZoomLevel()));
     }
 };
-
 
 Mapbender.Model.SourceModel = Mapbender.SourceModelOl4;
 Mapbender.Model.prototype.SourceModel = Mapbender.SourceModelOl4;
@@ -697,57 +783,6 @@ Mapbender.Model.prototype.resolutionToScale = function(resolution, dpi) {
     return resolution * mpu * inchesPerMetre * (dpi || this.options.dpi || 72);
 };
 
-/**
- * @param {float} scale
- * @param {number} dpi
- * @param {string} unit
- * @returns {number}
- */
-Mapbender.Model.scaleToResolutionStatic = function(scale, dpi, unit) {
-    if (!dpi || !unit) {
-        console.error("Must supply dpi and unit", scale, dpi, unit);
-        throw new Error("Must supply dpi and unit");
-    }
-    var mpu = this.getMetersPerUnit(unit);
-    var inchesPerMetre = 39.37;
-    return scale / (mpu * inchesPerMetre * dpi);
-};
-// make available on instance
-Mapbender.Model.prototype.scaleToResolutionStatic = Mapbender.Model.scaleToResolutionStatic;
-
-/**
- *
- * @param {float} scale
- * @param {number} [dpi]
- * @returns {number}
- */
-Mapbender.Model.prototype.scaleToResolution = function(scale, dpi) {
-    var currentUnit = this.getUnitsOfCurrentProjection();
-    return this.scaleToResolutionStatic(scale, dpi || this.options.dpi || 72, currentUnit);
-};
-
-/**
- *
- * @param {float} scale
- * @param {number} [dpi]
- * @returns {number}
- */
-Mapbender.Model.prototype.scaleToZoom = function(scale, dpi) {
-    var resolution = this.scaleToResolution(scale, dpi);
-    return this.olMap.getView().getZoomForResolution(resolution);
-};
-
-/**
- *
- * @param {float} scale
- * @param {number} [dpi]
- * @returns {number}
- */
-Mapbender.Model.prototype.setScale = function(scale, dpi) {
-    this.olMap.getView().setZoom(this.scaleToZoom(scale, dpi));
-};
-
-
 Mapbender.Model.prototype.center = function center() {
 };
 
@@ -869,16 +904,6 @@ Mapbender.Model.prototype.addFeaturesVectorSource = function addFeaturesVectorSo
 Mapbender.Model.prototype.setCenter = function setCenter(center) {
     'use strict';
     return this.olMap.getView().setCenter(center);
-};
-
-/**
- *
- * @param zoom
- * @returns {*}
- */
-Mapbender.Model.prototype.setZoom = function setZoom(zoom) {
-    'use strict';
-    return this.olMap.getView().setZoom(zoom);
 };
 
 /**
@@ -2053,9 +2078,12 @@ Mapbender.Model.prototype.initializeViewOptions = function initializeViewOptions
     if (options.scales && options.scales.length) {
         // Sometimes, the units are empty -.-
         // this seems to happen predominantely with "degrees" SRSs, so...
-        var units = ol.proj.get(options.srs).getUnits();
+        var units = proj.getUnits() || 'degrees';
+        var mpu = this.getMetersPerUnit(units);
+        var dpi = options.dpi || 72;
+        var inchesPerMetre = 39.37;
         viewOptions['resolutions'] = options.scales.map(function(scale) {
-            return this.scaleToResolutionStatic(scale, options.dpi || 72, proj.getUnits() || "degrees");
+            return scale / (mpu * inchesPerMetre * dpi);
         }.bind(this));
     } else {
         viewOptions.zoom = 7; // hope for the best
