@@ -8,7 +8,7 @@
     $buttonFirstColor: #6fb536;
     $buttonSecondColor: #5fa229;
 
-    padding: 0px 6px;
+    padding: 0 6px;
     color: $lightFontColor;
     background-color: $buttonFirstColor;
 
@@ -17,26 +17,16 @@
     @include border-radius($radius);
   }
 
-  .olControlOverviewMapExtentRectangle {
-    cursor: move;
-    background-image: url("components/mapquery/lib/openlayers/img/blank.gif");
-  }
-
-  .olMap {
+  .olMap, .ol-overviewmap-map {
     background-color: white;
     @include transition(width .2s linear);
-    & > div {
-      border: {
-        top: solid 3px $firstColor;
-        left: solid 1px $thirdColor;
-        right: solid 1px $thirdColor;
-        bottom: solid 1px $thirdColor;
-      }
+    .ol-viewport, .olMapViewport {
+      border: 1px solid $thirdColor;
     }
   }
   &.closed {
     .olMap {
-      width: 0px !important;
+      width: 0 !important;
     }
     .toggleOverview {
       @extend .iconOpen;
@@ -57,7 +47,7 @@
   }
 }
 
-.olControlOverviewMapExtentRectangle {
+.olControlOverviewMapExtentRectangle, .ol-overviewmap-box {
   overflow: hidden;
   cursor: move;
   border: 2px solid $firstColor;
