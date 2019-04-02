@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\ORMException;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Wms\Importer;
 use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
 use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
@@ -146,11 +147,19 @@ class RepositoryController extends Controller
      */
     public function updateformAction($sourceId)
     {
+        /** @var WmsSource $source */
         $source          = $this->loadEntityByPk("MapbenderCoreBundle:Source", $sourceId);
         $securityContext = $this->get('security.authorization_checker');
         $oid             = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
             throw new AccessDeniedException();
+        }
+        $detectedVersion = UrlUtil::getQueryParameterCaseInsensitive($source->getOriginUrl(), 'version', null);
+        if (!$detectedVersion) {
+            $amendedUrl = UrlUtil::validateUrl($source->getOriginUrl(), array(
+                'VERSION' => $source->getVersion(),
+            ));
+            $source->setOriginUrl($amendedUrl);
         }
 
         $form = $this->createForm(new WmsSourceSimpleType(), $source);
