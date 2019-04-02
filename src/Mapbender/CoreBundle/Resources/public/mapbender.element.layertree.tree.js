@@ -557,10 +557,8 @@
             }
             var li = $me.parents('li:first[data-sourceid]');
             if (li.length > 0) {
-                this._resetSourceAtTree(this.model.getSource({
-                    id: li.attr(
-                        'data-sourceid')
-                }));
+                var sourceId = li.attr('data-sourceid');
+                this._resetSourceAtTree(this.model.getSourceById(sourceId));
             }
             return false;
         },

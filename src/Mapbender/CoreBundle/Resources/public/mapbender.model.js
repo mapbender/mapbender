@@ -1300,14 +1300,15 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
         var newProps = {};
         var rootLayer = source.configuration.children[0];
+        var state_ = state;
         if (state && !rootLayer.options.treeOptions.allow.selected) {
-            state = false;
+            state_ = false;
         }
         var rootLayerId = rootLayer.options.id;
         newProps[rootLayerId] = {
             options: {
                 treeOptions: {
-                    selected: state
+                    selected: state_
                 }
             }
         };
@@ -1626,7 +1627,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             };
         }
         if (Object.keys(layerMap).length) {
-            this._updateSourceLayerTreeOptions(this.getSource({id: sourceId}), layerMap);
+            var source = this.getSourceById(sourceId);
+            this._updateSourceLayerTreeOptions(source, layerMap);
         }
     },
     /**
