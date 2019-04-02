@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7** @ 063e6eb88
+* **dev-release/3.0.7** @ 5b6ada69a
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting
   - [Beta regression] Fix layer menu positioning in a non-thematic LayerTree ([Issue#1124](https://github.com/mapbender/mapbender/issues/1124), [PR#1142](https://github.com/mapbender/mapbender/pull/1142))
@@ -25,6 +25,8 @@
   - Restore missing frontend icon highlight effects in Redlining, Wmc Elements and LayerTree inline menu
   - Redlining: allow direct tool deactivation via second click on activation button ([PR#1147](https://github.com/mapbender/mapbender/pull/1147))
   - GpsButton: remove unsafe `zoomToAccuracy` option
+  - Previously detected default version is now applied when reloading a WMS from an origin url with omitted `VERSION=...` parameter ([PR#1150](https://github.com/mapbender/mapbender/pull/1150))
+  - Avoid lengthy WMS validation when loading a new WMS source ([PR#1151](https://github.com/mapbender/mapbender/pull/1151))
 
 * **v3.0.8-beta3**
   - [Beta regression] Restore Wms Loader function
