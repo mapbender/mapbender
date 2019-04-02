@@ -456,6 +456,30 @@ Mapbender.Model.prototype = {
         });
     },
     /**
+     * Updates the source identified by given id with a new layer order.
+     * This will pull styles and "state" (such as visibility) from values
+     * currently stored in the "geosource".
+     *
+     * @param {string} sourceId
+     * @param {string[]} newLayerIdOrder
+     *
+     * engine-agnostic
+     */
+    setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
+        var sourceObj = this.getSourceById(sourceId);
+        var geoSource = Mapbender.source[sourceObj.type];
+
+        geoSource.setLayerOrder(sourceObj, newLayerIdOrder);
+
+        this.mbMap.fireModelEvent({
+            name: 'sourceMoved',
+            // no receiver uses the bizarre "changeOptions" return value
+            // on this event
+            value: null
+        });
+        this._checkSource(sourceObj, true, false);
+    },
+    /**
      * Bring the sources identified by the given ids into the given order.
      * All other sources will be left alone!
      *
@@ -2097,19 +2121,6 @@ Mapbender.Model.prototype.createIconStyle = function (options) {
     });
 
     return iconStyle;
-};
-
-/**
- * Update the layer order of a source to the new sequence of layerIds.
- * Layers available in the source but not present in layerIds are skipped and remain exactly in their current
- * place.
- *
- * @param {string} sourceId
- * @param {string[]} layerIds
- */
-Mapbender.Model.prototype.setSourceLayerOrder = function setSorceLayerOrder(sourceId, layerIds) {
-    var source = this.getSourceById(sourceId);
-    source.updateLayerOrderById(layerIds);
 };
 
 /**
