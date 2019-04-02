@@ -86,6 +86,9 @@ fieldset.box {
     padding-left:5px;
     height:17px;
     font-style:italic;
+    &:before {
+      font-style: normal;
+    }
 
     @include opacity(1);
 
@@ -147,17 +150,8 @@ fieldset.box {
     .blockgroup {
       margin-bottom: 1em;
     }
-    .checkWrapper{
-      margin: 0px;
-      height: auto;
-    }
     .vendorspecific-content{
-      .checkWrapper {
-          width: 20px !important;
-          margin-top: 4px;
-      }
       input {width:100%;}
-      .collectionItem > label{display:none;}
       a.collectionRemove {
         float: right;
       }

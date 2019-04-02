@@ -1,4 +1,4 @@
-<div class="elementFormLayerTree elementForm">
+<div class="elementForm elementFormLayerTree">
     <div class="left">
         {{ form_widget(form.configuration.showBaseSource) }}<label for="{{form.configuration.showBaseSource.vars.id}}" class="labelCheck">{{"mb.core.admin.layertree.label.showbasesources"|trans}}</label>
     </div>
@@ -32,12 +32,12 @@
     </div>
     <div class="clearContainer"></div>
     {% if form.configuration.themes is defined %}
-      <label for="{{form.configuration.themes.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.themes"|trans}}</label>
-      <div id="{{form.configuration.themes.vars.id}}" class="collectionContainer">
+      <label for="{{form.configuration.themes.vars.id}}" class="labelInput left">{{"mb.core.admin.layertree.label.themes"|trans}}</label>
+      <table id="{{form.configuration.themes.vars.id}}" class="collectionContainer">
       {% for theme in form.configuration.themes %}
         {% include "MapbenderCoreBundle:ElementAdmin:layertheme.html.twig"  with {'theme': theme} %}
       {% endfor %}
-      </div>
+      </table>
+      <div class="clearContainer"></div>
     {% endif %}
-    <div class="clearContainer"></div>
 </div>

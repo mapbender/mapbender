@@ -71,6 +71,7 @@
             }
 
         },
+        mbMap: null,
         map: null,
         model: null,
         layer: null,
@@ -78,26 +79,30 @@
         selectedFeature: null,
         geomCounter: 0,
         rowTemplate: null,
-        _create: function(){
-            if(!Mapbender.checkTarget('mbRedlining', this.options.target)) {
-                return;
-            }
+        _create: function() {
             var self = this;
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget("mbRedlining", self.options.target);
+            });
         },
         _setup: function(){
             var $geomTable = $('.geometry-table', this.element);
-            this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
+            // @todo: remove direct access to OpenLayers 2 map
+            this.map = this.mbMap.map.olMap;
             this.rowTemplate = $('tr', $geomTable).remove();
-            var selectControl = this.map.getControlsByClass('OpenLayers.Control.SelectFeature');
-            this.map.removeControl(selectControl[0]);
             if(this.options.auto_activate || this.options.display_type === 'element'){
                 this.activate();
             }
             $geomTable.on('click', '.geometry-remove', $.proxy(this._removeFromGeomList, this));
             $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
             $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
+            var self = this;
+            $('.redlining-tool', this.element).on('click', function() {
+                return self._onToolButtonClick($(this));
+            });
 
             this.setupMapEventListeners();
 
@@ -127,7 +132,6 @@
             } else {
                 this.element.removeClass('hidden');
             }
-            $('.redlining-tool', this.element).on('click', $.proxy(this._newControl, this));
         },
         deactivate: function(){
             this._deactivateControl();
@@ -197,18 +201,28 @@
                 this.popup = null;
             }
         },
-        _newControl: function(e){
-            var self = this;
-            if($(e.target).hasClass('active') === true) {
+        _onToolButtonClick: function($button) {
+            this._endEdit();
+            if ($button.hasClass('active')) {
                 this._deactivateControl();
-                return;
+            } else {
+                if (this.activeControl) {
+                    this._deactivateControl();
+                }
+                var toolName = $button.attr('name');
+                var control = this._controlFactory(toolName);
+                this.map.addControl(control);
+                control.activate();
+                this.activeControl = control;
+                $button.addClass('active');
             }
-            this._deactivateControl();
-            $(e.target).addClass('active');
-            switch(e.target.name)
-            {
+            return false;
+        },
+        _controlFactory: function(toolName){
+            var self = this;
+            switch(toolName) {
                 case 'point':
-                    this.activeControlId = this.model.createDrawControl('Point', this.element.attr('id'), {
+                    return this.model.createDrawControl('Point', this.element.attr('id'), {
                         style: this.defaultStyle,
                         events: {
                             'drawend': function(event) {
@@ -218,9 +232,8 @@
                             }.bind(this)
                         }
                     });
-                    break;
                 case 'line':
-                    this.activeControlId = this.model.createDrawControl('LineString', this.element.attr('id'), {
+                    return this.model.createDrawControl('LineString', this.element.attr('id'), {
                         style: this.defaultStyle,
                         events: {
                             'drawend': function(event) {
@@ -230,9 +243,8 @@
                             }.bind(this)
                         }
                     });
-                    break;
                 case 'polygon':
-                    this.activeControlId = this.model.createDrawControl('Polygon', this.element.attr('id'), {
+                    return this.model.createDrawControl('Polygon', this.element.attr('id'), {
                         style: this.defaultStyle,
                         events: {
                             'drawend': function(event) {
@@ -242,9 +254,8 @@
                             }.bind(this)
                         }
                     });
-                    break;
                 case 'rectangle':
-                    this.activeControlId = this.model.createDrawControl('Box', this.element.attr('id'), {
+                    return this.model.createDrawControl('Box', this.element.attr('id'), {
                         style: this.defaultStyle,
                         events: {
                             'drawend': function(event) {
@@ -254,11 +265,10 @@
                             }.bind(this)
                         }
                     });
-                    break;
                 case 'text':
                     $('input[name=label-text]', this.element).val('');
                     $('#redlining-text-wrapper', this.element).removeClass('hidden');
-                    this.activeControlId = this.model.createDrawControl('Point', this.element.attr('id'), {
+                    return this.model.createDrawControl('Point', this.element.attr('id'), {
                         style: this.defaultStyle,
                         events: {
                             'drawend': function(event) {
@@ -277,26 +287,7 @@
                             }.bind(this)
                         }
                     });
-                    // this.activeControl = new OpenLayers.Control.DrawFeature(this.layer,
-                    //         OpenLayers.Handler.Point, {
-                    //             featureAdded: function (e) {
-                    //                 if ($('input[name=label-text]', self.element).val().trim() === '') {
-                    //                     Mapbender.info(Mapbender.trans('mb.core.redlining.geometrytype.text.error.notext'));
-                    //                     self._removeFeature(e);
-                    //                 } else {
-                    //                     e.style = self._generateTextStyle($('input[name=label-text]', this.element).val());
-                    //                     self._addToGeomList(e, Mapbender.trans('mb.core.redlining.geometrytype.text.label'));
-                    //                     self.layer.redraw();
-                    //                     $('input[name=label-text]', this.element).val('');
-                    //                 }
-                    //             }
-                    //         });
-                    break;
             }
-            // TODO Check if this is still necessary
-            // this.map.addControl(this.activeControl);
-            // this.activeControl.activate();
-
         },
         _removeFeature: function(feature){
             // TODO This is ol4 stuff and needs to be replaced
@@ -400,14 +391,8 @@
         _zoomToFeature: function(e){
             this._deactivateControl();
             var $tr = $(e.target).parents('tr:first');
-            this.selectedFeature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
-            var extent = this.model.getFeatureExtent(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
-            this.model.zoomToExtent(extent);
-            // var feature = this.layer.getFeatureById($(e.target).parents('tr:first').attr('data-id'));
-            // var bounds = feature.geometry.getBounds();
-            // this.map.zoomToExtent(bounds);
-
-
+            var feature = this.model.getFeatureById(this.element.attr('id'), $tr.attr('data-layer-id'), $tr.attr('data-id'));
+            this.mbMap.getModel().zoomToFeature(feature);
         },
         _generateTextStyle: function(label){
             var style = OpenLayers.Util.applyDefaults(null, OpenLayers.Feature.Vector.style['default']);

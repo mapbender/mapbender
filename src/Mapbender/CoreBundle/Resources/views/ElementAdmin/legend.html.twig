@@ -1,7 +1,5 @@
-<div class="elementFormLegend elementForm">
-    <div class="left">
-        {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"mb.core.admin.legend.label.autoopen"|trans}}</label>
-    </div>
+<div class="elementForm wideLabelForm">
+    {{ form_row(form.configuration.autoOpen) }}
     <div class="clearContainer"></div>
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
@@ -13,10 +11,10 @@
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
     <div class="clearContainer"></div>
-    {{ form_widget(form.configuration.showSourceTitle) }}<label for="{{form.configuration.showSourceTitle.vars.id}}" class="labelCheck">{{"mb.core.admin.legend.label.showsourcetitle"|trans}}</label>
+    {{ form_row(form.configuration.showSourceTitle) }}
     <div class="clearContainer"></div>
-    {{ form_widget(form.configuration.showLayerTitle) }}<label for="{{form.configuration.showLayerTitle.vars.id}}" class="labelCheck">{{"mb.core.admin.legend.label.showlayertitle"|trans}}</label>
+    {{ form_row(form.configuration.showLayerTitle) }}
     <div class="clearContainer"></div>
-    {{ form_widget(form.configuration.showGrouppedTitle) }}<label for="{{form.configuration.showGrouppedTitle.vars.id}}" class="labelCheck">{{"mb.core.admin.legend.label.showgroupedlayertitle"|trans}}</label>
+    {{ form_row(form.configuration.showGroupedLayerTitle) }}
     <div class="clearContainer"></div>
 </div>

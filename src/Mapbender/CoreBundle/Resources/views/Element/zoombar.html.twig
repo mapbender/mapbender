@@ -1,5 +1,10 @@
 {% spaceless %}
 <div id="{{ id }}" class="mb-element mb-element-zoombar {{configuration.anchor}}">
+    {% if configuration.draggable is defined and configuration.draggable %}
+      <div class="move-icon-wrap">
+          <span class="iconMove"></span>
+      </div>
+    {% endif %}
   {% if 'pan' in configuration.components %}
   <div class="pan">
     <span class="panUp iconTop" title="{{ "mb.core.zoombar.panup" | trans }}"></span>

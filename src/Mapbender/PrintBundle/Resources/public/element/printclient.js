@@ -20,7 +20,6 @@
         height: null,
         overwriteTemplates: false,
         digitizerData: null,
-        printBounds: null,
         jobList: null,
         $selectionFrameToggle: null,
         // buffer for ajax-loaded 'getTemplateSize' requests
@@ -90,7 +89,7 @@
                                         label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
                                         cssClass: 'button buttonCancel critical right',
                                         callback: function(){
-                                            self.close();
+                                            this.close();
                                         }
                                     },
                                     'ok': {
@@ -102,7 +101,7 @@
                                     }
                             }
                         });
-                    this.popup.$element.on('close', $.proxy(this.close, this));
+                    this.popup.$element.one('close', $.proxy(this.close, this));
                 }
                 this.activate();
             }
@@ -197,6 +196,28 @@
 
             this._updateGeometry(true);
         },
+        _getPrintBounds: function(centerX, centerY, scale) {
+            // adjust for geodesic pixel aspect ratio so
+            // a) our print region selection rectangle appears with ~the same visual aspect ratio as
+            //    the main map region in the template, for any projection
+            // b) any pixel aspect distortion on geodesic projections is matched WYSIWIG in generated printout
+            var centerPixel = this.map.map.olMap.getPixelFromLonLat({lon: centerX, lat: centerY});
+            var kmPerPixel = this.map.map.olMap.getGeodesicPixelSize(centerPixel);
+            var pixelHeight = this.height * scale / (kmPerPixel.h * 1000);
+            var pixelAspectRatio = kmPerPixel.w / kmPerPixel.h;
+            var pixelWidth = this.width * scale * pixelAspectRatio / (kmPerPixel.w * 1000);
+
+            var pxBottomLeft = centerPixel.add(-0.5 * pixelWidth, -0.5 * pixelHeight);
+            var pxTopRight = centerPixel.add(0.5 * pixelWidth, 0.5 * pixelHeight);
+            var llBottomLeft = this.map.map.olMap.getLonLatFromPixel(pxBottomLeft);
+            var llTopRight = this.map.map.olMap.getLonLatFromPixel(pxTopRight);
+            var x0 = llBottomLeft.lon, x1 = llTopRight.lon, y0 = llBottomLeft.lat, y1 = llTopRight.lat;
+            return new OpenLayers.Bounds.fromArray([x0, y0, x1, y1]);
+        },
+        _printBoundsFromFeature: function(feature, scale) {
+            var featureCenter = this.feature.geometry.getBounds().getCenterLonLat();
+            return this._getPrintBounds(featureCenter.lon, featureCenter.lat, scale);
+        },
 
         _updateGeometry: function(reset) {
             var scale = this._getPrintScale(),
@@ -211,32 +232,14 @@
 
             this.control.unsetFeature();
 
-            var center = (reset === true || !this.feature) ?
-            this.map.map.olMap.getCenter() :
-            this.feature.geometry.getBounds().getCenterLonLat();
-
-            // adjust for geodesic pixel aspect ratio so
-            // a) our print region selection rectangle appears with ~the same visual aspect ratio as
-            //    the main map region in the template, for any projection
-            // b) any pixel aspect distortion on geodesic projections is matched WYSIWIG in generated printout
-            var centerPixel = this.map.map.olMap.getPixelFromLonLat(center);
-            var kmPerPixel = this.map.map.olMap.getGeodesicPixelSize(centerPixel);
-            var pixelHeight = this.height * scale / (kmPerPixel.h * 1000);
-            var pixelAspectRatio = kmPerPixel.w / kmPerPixel.h;
-            var pixelWidth = this.width * scale * pixelAspectRatio / (kmPerPixel.w * 1000);
-
-            var pxBottomLeft = centerPixel.add(-0.5 * pixelWidth, -0.5 * pixelHeight);
-            var pxTopRight = centerPixel.add(0.5 * pixelWidth, 0.5 * pixelHeight);
-            var llBottomLeft = this.map.map.olMap.getLonLatFromPixel(pxBottomLeft);
-            var llTopRight = this.map.map.olMap.getLonLatFromPixel(pxTopRight);
-            this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-                llBottomLeft.lon,
-                llBottomLeft.lat,
-                llTopRight.lon,
-                llTopRight.lat
-            ).toGeometry(), {});
-            // copy bounds before rotation
-            this.printBounds = this.feature.geometry.getBounds().clone();
+            var center;
+            if (reset) {
+                center = this.map.map.olMap.getCenter();
+            } else {
+                center = this.feature.geometry.getBounds().getCenterLonLat();
+            }
+            var bounds = this._getPrintBounds(center.lon, center.lat, scale);
+            this.feature = new OpenLayers.Feature.Vector(bounds.toGeometry());
 
             this.feature.geometry.rotate(-rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
             this._redrawSelectionFeatures([this.feature]);
@@ -344,7 +347,14 @@
             return this._getPrintScale();
         },
         _getExportExtent: function() {
-            return this.printBounds;
+            var scale = parseInt(this._getPrintScale());
+            if (!scale) {
+                throw new Error("Invalid scale " + scale.toString());
+            }
+            if (!this.feature) {
+                throw new Error("No current selection");
+            }
+            return this._printBoundsFromFeature(this.feature, scale);
         },
         /**
          *
@@ -455,7 +465,7 @@
                         x: ovCenter.lon,
                         y: ovCenter.lat
                     },
-                    height: ovMap.ovmap.getExtent().getHeight(),
+                    height: Math.abs(ovMap.ovmap.getExtent().getHeight()),
                     changeAxis: changeAxis
                 };
             } else {

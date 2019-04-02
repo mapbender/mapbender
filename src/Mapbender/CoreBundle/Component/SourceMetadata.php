@@ -1,7 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Symfony\Component\Templating\EngineInterface;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
  * Class SourceMetadata prepares and renders an OGC Service metadata
@@ -308,15 +308,6 @@ abstract class SourceMetadata
     }
 
     /**
-     * Returns data.
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
      * Add section by name
      *
      * @param string $sectionName
@@ -374,11 +365,7 @@ abstract class SourceMetadata
         }
     }
 
-    /**
-     * Renders the SourceMetadata.
-     * @param EngineInterface $templating
-     * @param string $itemName unic item name
-     * @return string
-     */
-    abstract public function render($templating, $itemName);
+    abstract public function getTemplate();
+
+    abstract public function getData(SourceInstance $sourceInstance, $itemId = null);
 }

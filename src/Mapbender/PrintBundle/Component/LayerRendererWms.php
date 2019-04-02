@@ -127,6 +127,8 @@ class LayerRendererWms extends LayerRenderer
             $layerImage = imagecreatetruecolor($grid->getWidth(), $grid->getHeight());
             imagesavealpha($layerImage, true);
             imagealphablending($layerImage, false);
+            imagefill($layerImage, 0, 0, IMG_COLOR_TRANSPARENT);
+
             foreach ($grid->getTiles() as $tile) {
                 $offsetBox = $tile->getOffsetBox();
                 $tileExtent = $tile->getExtent($extent, $grid->getWidth(), $grid->getHeight());

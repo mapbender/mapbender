@@ -24,6 +24,11 @@
   }
 }
 .mapbender-popup {
+  .popupButtons {
+    text-align: right;
+  }
+}
+.mapbender-popup {
   display: flex;
   flex-direction: column;
   .popupHead, .footer {
@@ -150,11 +155,11 @@
 }
 .ui-resizable-se{
   font-size: 16px;
-  @extend .icon;
   @include absolute('' 3px -3px '');
   @include transform(rotate(45deg));
   cursor: default;
   &:before{
+    font-family: FontAwesome;
     content: "\f054";
     display: block;
   }

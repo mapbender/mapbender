@@ -484,13 +484,11 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     public function getLatlonBounds($inherit = false)
     {
-//        //@TODO check layer inheritance if layer->latlonBounds === null
         if ($inherit && $this->latlonBounds === null && $this->getParent() !== null) {
-            return $this->getParent()->getLatlonBounds();
+            return $this->getParent()->getLatlonBounds($inherit);
         } else {
             return $this->latlonBounds;
         }
-//        return $this->latlonBounds;
     }
 
     /**

@@ -29,10 +29,9 @@
 
 .toolBarItem .mb-element-dimensionshandler{
   width: 140px;
-  height:$space;
   margin-top: -1px; // eat into toolbar item padding to center vertically with other toolbar items
-  @extend .iconBig;
-  padding-left: 0;
+  display: inline-block;
+  vertical-align: top;
   .dimensionset {
     font-size: 11px;
     line-height: 11px;

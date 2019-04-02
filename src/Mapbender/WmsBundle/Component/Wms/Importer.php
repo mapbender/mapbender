@@ -2,18 +2,17 @@
 
 namespace Mapbender\WmsBundle\Component\Wms;
 
-use Buzz\Message\Response;
+use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\XmlValidator;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Wms\Importer\DeferredValidation;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 use Mapbender\WmsBundle\Entity\WmsOrigin;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use OwsProxy3\CoreBundle\Component\CommonProxy;
-use OwsProxy3\CoreBundle\Component\ProxyQuery;
-use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Service class that produces WmsSource entities by evaluating a "GetCapabilities" document, either directly
@@ -24,14 +23,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
  */
-class Importer extends ContainerAware
+class Importer
 {
+
+    /** @var ContainerInterface */
+    protected $container;
+    /** @var HttpTransportInterface */
+    protected $transport;
+
     /**
+     * @param HttpTransportInterface $transport
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(HttpTransportInterface $transport, ContainerInterface $container)
     {
-        $this->setContainer($container);
+        $this->transport = $transport;
+        $this->container = $container;
     }
 
     /**
@@ -42,6 +49,8 @@ class Importer extends ContainerAware
      * @param bool $onlyValid
      * @return \Mapbender\WmsBundle\Component\Wms\Importer\Response
      * @throws XmlParseException
+     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
+     * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
      */
     public function evaluateServer(WmsOrigin $serviceOrigin, $onlyValid=true)
     {
@@ -59,6 +68,7 @@ class Importer extends ContainerAware
      * @param boolean $onlyValid
      * @return \Mapbender\WmsBundle\Component\Wms\Importer\Response
      * @throws XmlParseException
+     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
      */
     public function evaluateCapabilitiesDocument(\DOMDocument $document, $onlyValid=true)
     {
@@ -78,24 +88,16 @@ class Importer extends ContainerAware
     }
 
     /**
-     * @return string[]
-     */
-    public static function requestDefaults()
-    {
-        return array(
-            'request' => 'GetCapabilities',
-            'service' => 'WMS',
-        );
-    }
-
-    /**
      * @param WmsOrigin $serviceOrigin
      * @return \DOMDocument
+     * @throws XmlParseException
+     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
+     * @throws \Mapbender\WmsBundle\Component\Exception\WmsException
      */
     public function loadCapabilitiesDocument(WmsOrigin $serviceOrigin)
     {
         static::validateUrl($serviceOrigin->getUrl());
-        $serviceResponse = $this->capabilitiesRequest($serviceOrigin, static::requestDefaults());
+        $serviceResponse = $this->capabilitiesRequest($serviceOrigin);
         $capsDocument = WmsCapabilitiesParser::createDocument($serviceResponse->getContent());
         return $capsDocument;
     }
@@ -112,25 +114,19 @@ class Importer extends ContainerAware
 
     /**
      * @param WmsOrigin $serviceOrigin
-     * @param array $params
      * @return Response
      */
-    protected function capabilitiesRequest(WmsOrigin $serviceOrigin, $params)
+    protected function capabilitiesRequest(WmsOrigin $serviceOrigin)
     {
-        $proxy_config = $this->container->getParameter("owsproxy.proxy");
-        $proxy_query  = ProxyQuery::createFromUrl($serviceOrigin->getUrl(), $serviceOrigin->getUserName(), $serviceOrigin->getPassword());
-        /** @TODO: we REQUIRE a GetCapabilities request, so this should be a forced replacement of the "request" param */
-        /** @TODO: evaluate $params instead of hard-coding, so this thing actually becomes flexible enough for reuse */
-        if ($proxy_query->getGetPostParamValue("request", true) === null) {
-            $proxy_query->addQueryParameter("request", "GetCapabilities");
+        $addParams = array();
+        $url = $serviceOrigin->getUrl();
+        $addParams['REQUEST'] = 'GetCapabilities';
+        if (!UrlUtil::getQueryParameterCaseInsensitive($url, 'service')) {
+            $addParams['SERVICE'] = 'WMS';
         }
-        if ($proxy_query->getGetPostParamValue("service", true) === null) {
-            $proxy_query->addQueryParameter("service", "WMS");
-        }
-        $proxy = new CommonProxy($proxy_config, $proxy_query, $this->container->get("logger"));
-        /** @var Response $response */
-        $response = $proxy->handle();
-        return $response;
+        $url = UrlUtil::validateUrl($url, $addParams);
+        $url = UrlUtil::addCredentials($url, $serviceOrigin->getUserName(), $serviceOrigin->getPassword());
+        return $this->transport->getUrl($url);
     }
 
     /**

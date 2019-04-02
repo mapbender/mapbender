@@ -17,6 +17,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class Map extends Element
 {
 
+    const MINIMUM_TILE_SIZE = 128;
+
     /**
      * @inheritdoc
      */
@@ -57,7 +59,6 @@ class Map extends Element
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'units' => 'degrees',
             'tileSize' => 512,
-            'minTileSize' => 128,
             'extents' => array(
                 'max' => array(0, 40, 20, 60),
                 'start' => array(5, 45, 15, 55)),
@@ -198,15 +199,10 @@ class Map extends Element
             // setting center and target scale makes the map initialize in the right place client-side
             if (count($extra['pois']) === 1) {
                 if (isset($extra['pois'][0]['scale'])) {
-                    $configuration['targetscale'] = $extra['pois'][0]['scale'];
+                    $configuration['targetscale'] = intval($extra['pois'][0]['scale']);
                 } else {
-                    if (isset($configuration['scales']) && count($configuration['scales'])) {
-                        // use last configured scale (smallest number / closest zoom)
-                        $configuration['targetscale'] = intval($configuration['scales'][count($configuration['scales']) - 1]);
-                    } else {
-                        // fall back to a hopefully reasonable default scale
-                        $configuration['targetscale'] = 500;
-                    }
+                    // fall back to a hopefully reasonable default scale
+                    $configuration['targetscale'] = 2500;
                 }
             }
         }
@@ -237,29 +233,13 @@ class Map extends Element
             $configuration['layersets'] = array($configuration['layerset']);
         }# "layerset" deprecated end
         if ($scale = $request->get('scale')) {
-            $scale  = intval($scale);
-            $scales = $configuration['scales'];
-            if ($scale > $scales[0]) {
-                $scale = $scales[0];
-            } elseif ($scale < $scales[count($scales) - 1]) {
-                $scale = $scales[count($scales) - 1];
-            } else {
-                $tmp = null;
-                for ($idx = count($scales) - 2; ($idx >= 0 && count($scales) > 1); $idx--) {
-                    if ($scale >= $scales[$idx + 1] && $scale <= $scales[$idx]) {
-                        $tmp = (($scales[$idx] - $scales[$idx + 1]) / 2 >= $scale - $scales[$idx + 1]) ?
-                            $scales[$idx + 1] : $scales[$idx];
-                    }
-                }
-                $scale = $tmp ? $tmp : $scales[0];
-            }
-            $configuration['targetscale'] = $scale;
+            $configuration['targetscale'] = intval($scale);
         }
 
         if (!isset($configuration["tileSize"])) {
             $configuration["tileSize"] = $defaultConfiguration["tileSize"];
-        } elseif ($configuration["tileSize"] < $defaultConfiguration["minTileSize"]) {
-            $configuration["tileSize"] = $defaultConfiguration["minTileSize"];
+        } else {
+            $configuration["tileSize"] = max(self::MINIMUM_TILE_SIZE, $configuration["tileSize"]);
         }
 
         return $configuration;
@@ -271,14 +251,7 @@ class Map extends Element
         if ($conf['scales']) {
             $conf['scales'] = array_map('intval', $conf['scales']);
         }
-        if (isset($conf['targetscale'])) {
-            $conf['targetscale'] = intval($conf['targetscale']);
-        }
-
-        return array_replace($conf, array(
-            'imgPath' => 'components/mapquery/lib/openlayers/img',
-            'maxResolution' => 'auto',
-        ));
+        return $conf;
     }
 
     /**

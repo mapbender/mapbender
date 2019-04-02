@@ -27,7 +27,6 @@
     padding-top:5px;
     padding-right:$space/2;
     vertical-align: top;
-    [class^="icon"],[class*=" icon"]{margin-left:10px;}
   }
 }
 .table{
@@ -90,27 +89,26 @@ table {
     height:$height;
     line-height:$height;
     text-align:center;
-    display: block;
     @include noUserSelect;
     @include border-radius($radius);
 
-    // kill the checkbox icon
-    &:before{display: none;}
-
-    @each $perm in view, create, edit, delete, operator, master, owner{
-      &.#{$perm}{
-        &.multi{background-color:#c1c1c1;}
-
-        &.iconCheckboxActive{
-          color:white;
-
-          @if($perm == "view"){background-color: #8DCA35;}
-          @if(($perm == "create") or ($perm == "edit") or ($perm == "delete")){background-color: #FFAB00;}
-          @if(($perm == "operator") or ($perm == "master") or ($perm == "owner")){background-color: #FF702A;}
-        }
+    &.active {
+      color:white;
+      &.view {
+        background-color: #8DCA35;
+      }
+      &.edit, &.delete, &.create {
+        background-color: #FFAB00;
+      }
+      &.operator, &.master, &.owner {
+        background-color: #FF702A;
       }
     }
   }
+  .headTagWrapper.multi {
+    background-color:#c1c1c1;
+  }
+
 }
 .tableGroupsAndUsers{
   border:{
@@ -120,5 +118,4 @@ table {
     bottom:solid 1px $thirdColor;
   }
   @include border-bottom-radius($radius);
-  [class^="icon"],[class*=" icon"]{margin-left:10px;}
 }

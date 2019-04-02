@@ -56,25 +56,16 @@
   @include opacity(1);
 
   &.success{
-    &:before{
-      @extend .icon;
-    }
     @extend .iconThumbsUp;
     color:darken($noticeColor, 10%);
     background-color: lighten($noticeColor, 50%);
   }
   &.error{
-    &:before{
-      @extend .icon;
-    }
     @extend .iconThumbsDown;
     color:darken($errorColor, 10%);
     background-color: lighten($errorColor, 50%);
   }
   &.warning{
-    &:before{
-      @extend .icon;
-    }
     @extend .iconThumbsUp;
     color:darken($warningColor, 10%);
     background-color: lighten($warningColor, 50%);

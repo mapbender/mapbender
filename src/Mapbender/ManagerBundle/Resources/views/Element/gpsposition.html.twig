@@ -1,26 +1,17 @@
-<div class="elementFormGps elementForm">
-    <div class="left">
-        {{ form_widget(form.configuration.label) }}<label for="{{form.configuration.label.vars.id}}" class="labelCheck">{{"mb.core.admin.gpsposition.show_label"|trans}}</label>
-    </div>
-    {{ form_widget(form.configuration.autoStart) }}<label for="{{form.configuration.autoStart.vars.id}}" class="labelCheck">{{"mb.core.admin.element.autostart"|trans}}</label>
+<div class="elementForm wideLabelForm">
+    {{ form_row(form.configuration.label) }}
+    {{ form_row(form.configuration.autoStart) }}
     <div class="clearContainer"></div>
-    {{ form_label(form.title) }}{{ form_widget(form.title) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.configuration.tooltip) }}
+    {{ form_row(form.configuration.icon) }}
+    {{ form_row(form.configuration.target) }}
+    {{ form_row(form.configuration.average) }}
+    {{ form_row(form.configuration.refreshinterval) }}
+    {{ form_row(form.configuration.follow) }}
     <div class="clearContainer"></div>
-    {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
+    {{ form_row(form.configuration.centerOnFirstPosition) }}
     <div class="clearContainer"></div>
-    {{ form_label(form.configuration.icon) }}{{ form_widget(form.configuration.icon) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.average) }}{{ form_widget(form.configuration.average) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.refreshinterval) }}{{ form_widget(form.configuration.refreshinterval) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.follow) }}{{ form_widget(form.configuration.follow) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.centerOnFirstPosition) }}{{ form_widget(form.configuration.centerOnFirstPosition) }}
-    <div class="clearContainer"></div>    {{ form_label(form.configuration.zoomToAccuracy) }}{{ form_widget(form.configuration.zoomToAccuracy) }}
-    <div class="clearContainer"></div>
-    {{ form_label(form.configuration.zoomToAccuracyOnFirstPosition) }}{{ form_widget(form.configuration.zoomToAccuracyOnFirstPosition) }}
+    {{ form_row(form.configuration.zoomToAccuracyOnFirstPosition) }}
     <div class="clearContainer"></div>
 </div>

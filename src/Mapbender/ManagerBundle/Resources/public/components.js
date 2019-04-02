@@ -22,7 +22,7 @@ $(function() {
 
         var me = $(this);
         var tabcont = me.parent().parent();
-        tabcont.find(".active").removeClass("active");
+        $('>.tabs >.tab, >.container', tabcont).removeClass('active');
         me.addClass("active");
         $("#" + me.attr("id").replace("tab", "container"), tabcont).addClass("active");
     });
@@ -93,15 +93,15 @@ $(function() {
 
     // init permissions table ----------------------------------------------------------------
     // set permission root state
-    function setPermissionsRootState(className){
-        var root         = $("#" + className);
-        var permBody     = $("#permissionsBody");
+    function setPermissionsRootState(className, scope){
+        var root         = $("#" + className, scope);
+        var permBody     = $("#permissionsBody", scope);
         var rowCount     = permBody.find("tr").length;
-        var checkedCount = permBody.find(".checkWrapper." + className + ".iconCheckboxActive").length;
-        root.removeClass("iconCheckboxActive").removeClass("multi");
+        var checkedCount = permBody.find(".checkWrapper." + className + ' > input[type="checkbox"]:checked').length;
+        root.removeClass("active").removeClass("multi");
 
         if(rowCount == checkedCount){
-            root.addClass("iconCheckboxActive");
+            root.addClass("active");
         }else if(checkedCount == 0){
             // do nothing!
         }else{
@@ -109,133 +109,133 @@ $(function() {
         }
     }
     // toggle all permissions
-    var toggleAllPermissions = function(){
+    var toggleAllPermissions = function(scope){
         var self           = $(this);
         var className    = self.attr("id");
-        var permElements = $(".checkWrapper[data-perm-type=" + className + "]:visible");
-        var state        = !self.hasClass("iconCheckboxActive");
-        var me;
-
-        // change all tagboxes with the same permission type
-        permElements.find(".checkbox").each(function(i,e){
-            me = $(e);
-            me.get(0).checked = state;
-
-            if(state){
-                me.parent().addClass("iconCheckboxActive");
-            }else{
-                me.parent().removeClass("iconCheckboxActive");
-            }
+        var permElements = $(".checkWrapper[data-perm-type=" + className + "]", scope);
+        var state        = !self.hasClass("active");
+        $('input[type="checkbox"]', permElements).prop('checked', state).each(function() {
+            $(this).parent().toggleClass("active", state);
         });
 
         // change root permission state
-        setPermissionsRootState(className);
+        setPermissionsRootState(className, scope);
     }
     // init permission root state
     var initPermissionRoot = function(){
-        $(this).find(".headTagWrapper").each(function(){
-            setPermissionsRootState($(this).attr("id"));
-            $(this).bind("click", toggleAllPermissions);
+        var $head = $(this);
+        var $table = $head.closest('table');
+        $head.find(".headTagWrapper").each(function(){
+            setPermissionsRootState($(this).attr("id"), $table);
+            var self = this;
+            $(this).on('click', function() {
+                toggleAllPermissions.call(self, $table);
+            });
         });
     }
     $("#permissionsHead").one("load", initPermissionRoot).load();
 
     // toggle permission Event
     var togglePermission = function(){
-        setPermissionsRootState($(this).attr("data-perm-type"));
+        var $this = $(this);
+        var scope = $this.closest('table');
+        setPermissionsRootState($this.attr("data-perm-type"), scope);
     }
     $(document).on("click", ".permissionsTable .checkWrapper", togglePermission);
 
     var popup;
 
     // add user or groups
-    $("#addPermission").bind("click", function(){
-        var self    = $(this);
-        var url     = self.attr("href");
-        var content = self.attr('title');
+    // Remaining FOM markup uses an anchor with a href, which allows undesirable "open in new tab" interactions and
+    // also causes some CSS quirks
+    // Modern markup uses a div with a data-href attribute
+    // @todo: scoping; unscoped, there can only be one user list in the markup at any given time
+    $(".-fn-add-permission, #addPermission").bind("click", function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        var $this = $(this);
+        var url = $this.attr('data-url') || $this.attr("href");
 
         if(popup){
             popup = popup.destroy();
         }
 
-        if(url.length > 0){
-            popup = new Mapbender.Popup2({
-                title: Mapbender.trans('fom.core.components.popup.add_user_group.title'),
-                closeOnOutsideClick: true,
-                height: 400,
-                content: [
-                    $.ajax({
-                        url: url,
-                        complete: function() {
-                            var groupUserItem, roleName, me, groupUserType, groupName;
-
-                            $("#listFilterGroupsAndUsers").find(".filterItem").each(function(i, e){
-                                groupUserItem = $(e);
-                                groupUserType = (groupUserItem.find(".tdContentWrapper")
-                                                              .hasClass("iconGroup") ? "iconGroup"
-                                                                                     : "iconUser");
-                                $("#permissionsBody").find(".labelInput").each(function(i, e) {
-                                    me = $(e);
-                                    roleName = me.text().trim().toUpperCase();
-                                    groupName = $(".labelInput", groupUserItem).text().toUpperCase();
-                                    var isUserType = (me.parent().hasClass(groupUserType));
-
-                                    if(roleName.indexOf("ROLE_GROUP_") === 0) {
-                                        groupName = "ROLE_GROUP_" + groupName;
-                                    }
-
-                                    if(groupName == roleName && isUserType) {
-                                        groupUserItem.remove();
-                                    }
-                                });
-                            });
-                        }
-                    })
-                ],
-                buttons: {
-                    'cancel': {
-                        label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.cancel'),
-                        cssClass: 'button buttonCancel critical right',
-                        callback: function() {
-                            this.close();
-                        }
-                    },
-                    'add': {
-                        label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.add'),
-                        cssClass: 'button right',
-                        callback: function() {
-                            var proto = $("#permissionsHead").attr("data-prototype");
-
-                            if(proto.length > 0){
+        if (url.length > 0) {
+            $.ajax({
+                url: url
+            }).then(function(response) {
+                popup = new Mapbender.Popup({
+                    title: Mapbender.trans('fom.core.components.popup.add_user_group.title'),
+                    closeOnOutsideClick: true,
+                    content: response,
+                    buttons: [
+                        {
+                            label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.add'),
+                            cssClass: 'button',
+                            callback: function() {
                                 var body  = $("#permissionsBody");
-                                var count = body.find("tr").length;
-                                var text, val, parent, newEl;
+                                var proto = $("#permissionsHead").attr("data-prototype");
 
-                                $("#listFilterGroupsAndUsers").find(".iconCheckboxActive").each(function(i, e){
-                                    parent   = $(e).parent();
-                                    text     = parent.find(".labelInput").text().trim();
-                                    val      = parent.find(".hide").text().trim();
-                                    userType = parent.hasClass("iconGroup") ? "iconGroup" : "iconUser";
-                                    newEl = body.prepend(proto.replace(/__name__/g, count))
-                                                .find("tr:first");
+                                if (proto) {
+                                    var count = body.find("tr").length;
+                                    var text, val, newEl;
 
-                                    newEl.addClass("new").find(".labelInput").text(text);
-                                    newEl.find(".input").attr("value", val);
-                                    newEl.find(".view.checkWrapper").trigger("click");
-                                    newEl.find(".userType")
-                                         .removeClass("iconGroup")
-                                         .removeClass("iconUser")
-                                         .addClass(userType);
-                                    ++count;
-                                });
+                                    $('#listFilterGroupsAndUsers input[type="checkbox"]:checked', popup.$element).each(function() {
+                                        var $row = $(this).closest('tr');
+                                        var userType = $('.tdContentWrapper', $row).hasClass("iconGroup") ? "iconGroup" : "iconUser";
+                                        text = $row.find(".labelInput").text().trim();
+                                        val = $row.find(".hide").text().trim();
+                                        newEl = body.prepend(proto.replace(/__name__/g, count))
+                                                    .find("tr:first");
 
+                                        newEl.addClass("new").find(".labelInput").text(text);
+                                        newEl.find(".input").attr("value", val);
+                                        newEl.find(".view.checkWrapper").trigger("click");
+                                        newEl.find(".userType")
+                                             .removeClass("iconGroup")
+                                             .removeClass("iconUser")
+                                             .addClass(userType);
+                                        ++count;
+                                    });
+
+                                    this.close();
+                                    $(".permissionsTable").show();
+                                    $("#permissionsDescription").hide();
+                                }
+                            }
+                        },
+                        {
+                            label: Mapbender.trans('fom.core.components.popup.add_user_group.btn.cancel'),
+                            cssClass: 'button buttonCancel critical',
+                            callback: function() {
                                 this.close();
-                                $(".permissionsTable").show();
-                                $("#permissionsDescription").hide();
                             }
                         }
-                    }
-                }
+                    ]
+                });
+
+                var groupUserItem, roleName, me, groupUserType, groupName;
+
+                $("#listFilterGroupsAndUsers").find(".filterItem").each(function(i, e){
+                    groupUserItem = $(e);
+                    groupUserType = (groupUserItem.find(".tdContentWrapper")
+                                                  .hasClass("iconGroup") ? "iconGroup"
+                                                                         : "iconUser");
+                    $("#permissionsBody").find(".labelInput").each(function(i, e) {
+                        me = $(e);
+                        roleName = me.text().trim().toUpperCase();
+                        groupName = $(".labelInput", groupUserItem).text().toUpperCase();
+                        var isUserType = (me.parent().hasClass(groupUserType));
+
+                        if(roleName.indexOf("ROLE_GROUP_") === 0) {
+                            groupName = "ROLE_GROUP_" + groupName;
+                        }
+
+                        if(groupName == roleName && isUserType) {
+                            groupUserItem.remove();
+                        }
+                    });
+                });
             });
         }
 

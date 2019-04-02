@@ -65,10 +65,9 @@ $pageWidth: $contentPaneWidth + $navWidth;
 
 }
 .iconBig, .iconSmall{
-  color:$darkFontColor;
-  margin-left:5px;
-  @include opacity(0.6);
-  &:hover{@include opacity(1);}
+  &:before {
+    @extend .hover-highlight-effect;
+  }
 }
 
 .notifyjs-corner {
@@ -248,16 +247,6 @@ ul.dropdownList{
 
 .contentPane {
   $top: $space*5;
-  .iconBig {
-    &:before {
-      @include opacity(0.7);
-    }
-    &:hover {
-      &:before {
-        @include opacity(1);
-      }
-    }
-  }
   padding-top: $top + $space;
 
   > .content {
@@ -397,4 +386,10 @@ label[for^="inputFilter"] {
   margin-bottom: 1.5 * $space;
   /** FOM templates like to add .left for no particular reason, defeat that */
   float: none;
+}
+
+#addElmPermission {
+  // Link is outside of element permission markup, but want to display as an ~overlay top right
+  position: relative;
+  top: 30px;
 }

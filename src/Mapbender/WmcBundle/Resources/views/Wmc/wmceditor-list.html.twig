@@ -5,7 +5,7 @@
             <th>{{ 'mb.wmc.wmceditor.list.title' | trans }}</th>
             <th>{{ 'mb.wmc.wmceditor.list.description' | trans }}</th>
             <th class="iconColumn right" colspan="3">
-                <a href="{{ path('mapbender_core_application_element', { 'slug': application.slug, 'id': id, 'action': 'get', 'wmcid': '' }) }}" class="icon iconAdd iconSmall addWmc" title="{{'mb.wmc.wmceditor.list.add_wmc'|trans}}"></a>
+                <a href="{{ path('mapbender_core_application_element', { 'slug': application.slug, 'id': id, 'action': 'get', 'wmcid': '' }) }}" class="icon iconAdd hover-highlight-effect addWmc" title="{{'mb.wmc.wmceditor.list.add_wmc'|trans}}"></a>
             </th>
         </tr>
     </thead>
@@ -17,13 +17,13 @@
             <td class="description">{{ wmc.state.title }}</td>
             <td class="description">{{ wmc.abstract }}</td>
             <td class="iconColumn right">
-                <span class="iconRemove iconSmall removeWmc" title="{{"mb.wmc.wmceditor.list.delete_wmc"|trans}} {{wmc.state.title}}" data-id="{{ wmc.id }}" data-slug="{{ application.slug }}" data-url="{{ path('mapbender_core_application_element', { 'slug': application.slug, 'id': id, 'action': 'confirmdelete', '_id': wmc.id }) }}"></span>
+                <span class="iconRemove hover-highlight-effect removeWmc" title="{{"mb.wmc.wmceditor.list.delete_wmc"|trans}} {{wmc.state.title}}" data-id="{{ wmc.id }}" data-slug="{{ application.slug }}" data-url="{{ path('mapbender_core_application_element', { 'slug': application.slug, 'id': id, 'action': 'confirmdelete', '_id': wmc.id }) }}"></span>
             </td>
             <td class="iconColumn right">
-                <span class="iconEdit iconSmall editWmc" title="{{"mb.wmc.wmceditor.list.edit_wmc"|trans}}  {{wmc.state.title}}" data-url="{{ path('mapbender_core_application_element', { 'slug': application.slug, 'id': id, 'action': 'get', 'wmcid': wmc.id }) }}"></span>
+                <span class="iconEdit hover-highlight-effect editWmc" title="{{"mb.wmc.wmceditor.list.edit_wmc"|trans}}  {{wmc.state.title}}" data-url="{{ path('mapbender_core_application_element', { 'slug': application.slug, 'id': id, 'action': 'get', 'wmcid': wmc.id }) }}"></span>
             </td>
             <td class="iconColumn right">
-                <div class="checkWrapper iconCheckbox iconSmall {% if wmc.public %}iconCheckboxActive{% endif %}" title="{{"mb.wmc.wmceditor.list.toggle"|trans}} {{wmc.state.title}}">
+                <div class="checkWrapper iconCheckbox hover-highlight-effect {% if wmc.public %}iconCheckboxActive{% endif %}" title="{{"mb.wmc.wmceditor.list.toggle"|trans}} {{wmc.state.title}}">
                     <input class="checkbox" data-href="{{ path('mapbender_core_application_element', { 'slug': application.slug, 'id': id })}}" data-id="{{ wmc.id }}" type="checkbox" {% if wmc.public %} checked="checked" {% endif %}>
                 </div>
             </td>

@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
@@ -179,14 +180,18 @@ class ApplicationYAMLMapper
         unset($configuration['title']);
         try {
             $element = $this->getElementFactory()->newEntity($elementDefinition['class'], $region);
+            $element->setConfiguration($configuration);
             $element->setId($id);
             $elComp = $this->getElementFactory()->componentFromEntity($element);
             $title = ArrayUtil::getDefault($elementDefinition, 'title', $elComp->getTitle());
             if ($elComp::$merge_configurations) {
-                $configuration = $elComp->mergeArrays($elComp->getDefaultConfiguration(), $configuration);
+                // Configuration may already have been modified once implicitly
+                /** @see ConfigMigrationInterface */
+                $configBefore = $element->getConfiguration();
+                $configAfter = $elComp->mergeArrays($elComp->getDefaultConfiguration(), $configBefore);
+                $element->setConfiguration($configAfter);
             }
             $element->setTitle($title);
-            $element->setConfiguration($configuration);
             return $element;
         } catch (ElementErrorException $e) {
             // @todo: add strict mode support and throw if enabled

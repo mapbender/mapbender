@@ -1,4 +1,4 @@
-<a id="addPermission" href="{{path('fom_user_acl_overview')}}" class="iconAdd iconBig right" title="{{'mb.manager.admin.application.security.add_users_groups'|trans}}"></a>
+<div class="right -fn-add-permission" data-url="{{path('fom_user_acl_overview')}}" title="{{'mb.manager.admin.application.security.add_users_groups'|trans}}"><span class="iconBig iconAdd"></span></div>
 {{ form_widget(form.published) }}<label for="{{form.published.vars.id}}" class="labelCheck">{{"mb.manager.admin.application.security.public"|trans}}</label>
 <div class="clearContainer"></div>
 {{ form_widget(form.acl) }}

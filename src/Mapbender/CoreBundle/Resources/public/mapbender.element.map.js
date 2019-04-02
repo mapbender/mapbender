@@ -18,8 +18,6 @@
          * Creates the map widget
          */
         _create: function(){
-            // @todo: into the MapModel ctor
-            // OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.engineCode = Mapbender.configuration.application.mapEngineCode;
@@ -122,20 +120,20 @@
         /**
          * Zooms the map in
          */
-        zoomIn: function(){
-            this.map.olMap.zoomIn();
+        zoomIn: function() {
+            this.model.zoomIn();
         },
         /**
          * Zooms the map out
          */
-        zoomOut: function(){
-            this.map.olMap.zoomOut();
+        zoomOut: function() {
+            this.model.zoomOut();
         },
         /**
          * Zooms the map to max extent
          */
-        zoomToFullExtent: function(){
-            this.map.olMap.zoomToMaxExtent();
+        zoomToFullExtent: function() {
+            this.model.zoomToFullExtent();
         },
         /**
          * Zooms the map to extent
@@ -147,11 +145,11 @@
         },
         /**
          * Zooms the map to scale
+         * @deprecated
          */
-        zoomToScale: function(scale, closest){
-            if(typeof closest === 'undefined')
-                closest = false;
-            this.map.olMap.zoomToScale(scale, closest);
+        zoomToScale: function(scale, closest) {
+            console.warn("Deprecated zoomToScale call, use engine-independent Model.pickZoomForScale + Model.setZoomLevel");
+            this.map.olMap.zoomToScale.apply(this.map.olMap, arguments);
         },
         /**
          * Super legacy, some variants of wmcstorage want to use this to replace the map's initial max extent AND

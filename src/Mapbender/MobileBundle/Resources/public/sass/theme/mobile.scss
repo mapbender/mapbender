@@ -324,7 +324,7 @@ fieldset{
     padding: 0;
     margin: 0;
     &:before{
-      position: unset;
+      position: static;
       margin: 0;
     }
   }
@@ -525,11 +525,6 @@ fieldset{
         }
     }
 }
-.iconOk:before,
-.iconCheckbox:before,
-.iconCancel:before {
-   font-family: FontAwesome;
-}
 
 .iconBig {
   font-size: 30px;
@@ -557,13 +552,16 @@ fieldset{
     }
   }
   .leaveContainer {
+    height: auto;
+    line-height: normal;
     flex-direction: row-reverse;
     padding: $space/2;
   }
   .checkWrapper {
     height: initial;
+    width: auto;
   }
-  .iconCheckbox{
+  .iconCheckbox, .iconCheckboxActive {
     @extend .iconOk;
     font-size: 20px;
     color:lighten($ciColor3, 60%);

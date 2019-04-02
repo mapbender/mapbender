@@ -16,3 +16,11 @@
     @include absolute(0 0 0 0);
   }
 }
+
+.mb-element-map {
+  .olHandlerBoxZoomBox {
+    border: 2px solid $firstColor;
+    background-color: white;
+    @include opacity(.6);
+  }
+}

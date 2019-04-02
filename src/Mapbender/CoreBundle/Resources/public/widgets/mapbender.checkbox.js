@@ -1,4 +1,7 @@
 (function($) {
+    var iconOnDefault = "iconCheckboxActive";
+    var iconOffDefault = "iconCheckbox";
+
     /**
      * Replacement for fom/src/FOM/CoreBundle/Resources/public/js/widgets/checkbox.js:initCheckbox.
      * Forwards checkbox state <=> display BOTH WAYS.
@@ -13,17 +16,31 @@
      */
     function propagateToWrapper() {
         var $cb = $(this);
+        var data = $cb.data('mbCheckbox');
         var $wrapper = $cb.parents('.checkWrapper');
-        $wrapper.toggleClass('checkboxDisabled', $cb.is(':disabled'));
-        $wrapper.toggleClass('iconCheckboxActive', $cb.is(':checked'));
+        $wrapper.toggleClass('checkboxDisabled', $cb.prop('disabled'));
+        if ($cb.prop('checked')) {
+            $wrapper.addClass(data.iconOn);
+            $wrapper.removeClass([data.iconOff, iconOffDefault].join(' '));
+        } else {
+            $wrapper.addClass(data.iconOff);
+            $wrapper.removeClass([data.iconOn, iconOnDefault].join(' '));
+        }
     }
     $.fn.mbCheckbox = function() {
         this.filter('.checkWrapper input[type="checkbox"]').each(function() {
             var $this = $(this);
             // Skip already initialized nodes, avoids binding events more than once
             if (!$this.data('mbCheckbox')) {
+                var $wrapper = $this.parent(".checkWrapper");
+                var iconOnAttrib = $wrapper.attr('data-icon-on');
+                var iconOffAttrib = $wrapper.attr('data-icon-off');
+                var iconOn = (typeof iconOnAttrib !== 'undefined') ? iconOnAttrib : iconOnDefault;
+                var iconOff = (typeof iconOffAttrib !== 'undefined') ? iconOffAttrib : iconOffDefault;
                 $this.data('mbCheckbox', {
-                    initialized: true
+                    initialized: true,
+                    iconOn: iconOn,
+                    iconOff: iconOff
                 });
                 $this.on('change', function() {
                     propagateToWrapper.call(this);

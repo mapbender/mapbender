@@ -1,6 +1,6 @@
 (function($) {
 
-    $.widget('mapbender.mbScaleSelector', {
+    $.widget("mapbender.mbScaleSelector", {
 
         options: {
             /**
@@ -9,19 +9,11 @@
             target: null
         },
 
-        elementUrl: null,
-
-        /**
-         * Map target instance of OpenLayers.Map
-         *
-         * @var {OpenLayers.Map}
-         */
-        olMap: null,
-
         /**
          * Mapbender map widget
          */
-        map: null,
+        mbMap: null,
+        $select: null,
 
         /**
          * Constructor
@@ -29,55 +21,42 @@
          * @private
          */
         _create: function() {
-            var widget = this;
-            var options = widget.options;
-            var target = options.target;
-
-            if(!Mapbender.checkTarget('mbScaleSelector', target)) {
-                return;
-            }
-
-            var element = $(widget.element);
-
-            widget.elementUrl = Mapbender.configuration.elementPath + element.attr('id') + '/';
-            Mapbender.elementRegistry.onElementReady(target, $.proxy(widget._setup, widget));
+            var self = this;
+            this.$select = $("select", this.element);
+            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget("mbScaleSelector", self.options.target)
+            });
         },
 
         _setup: function() {
-            var widget = this;
+            var model = this.mbMap.getModel();
+            var zoomLevels = model.getZoomLevels();
+            var self = this;
+            for (var i = 0; i < zoomLevels.length; ++i) {
+                var $option = $("<option/>");
+                $option
+                    .attr('value', zoomLevels[i].scale)
+                    .html(zoomLevels[i].scale)
+                ;
+                this.$select.append($option);
+            }
 
-            this.map = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
-            this.olMap = this.map.model.map.getView();
-
-            var mbMap = Mapbender.elementRegistry.listWidgets().mapbenderMbMap;
-            var model = mbMap.model;
-            var olMap = mbMap.model.map.getView();
-
-            var opt = model.options;
-            var scales = opt.scales;
-            var dpi = opt.dpi;
-
-            var scale = model.getScale(dpi, true, false);
-            var select = $('select', $(widget.element));
-
-            _.each(scales, function(scaleVal) {
-                var option = $('<option/>');
-                var formattedValue = Math.round(scaleVal);
-
-                option.attr('value', formattedValue).html(formattedValue);
-                select.append(option);
-            });
+            this.$select.change($.proxy(this._zoomToScale, this));
+            this.$select.val(model.getCurrentScale());
 
             initDropdown.call(this.element.get(0));
 
-            select.change($.proxy(widget._zoomToScale, widget));
-            select.val(scale);
+            this._updateScale();
+            $(document).on('mbmapzoomchanged', function(e, data) {
+                if (data.mbMap === self.mbMap) {
+                    self._updateScale();
+                }
+            });
 
-            widget._updateScale();
-
-            model.setOnMoveendHandler($.proxy(widget._updateScale, widget), event);
-
-            widget._trigger('ready');
+            this._trigger('ready');
         },
 
         /**
@@ -85,10 +64,10 @@
          * @private
          */
         _zoomToScale: function() {
-            var element = $(this.element);
-            var scale = $('> select', element).val();
-
-            this.map.model.setScale(scale);
+            var scale = this.$select.val();
+            var model = this.mbMap.getModel();
+            var zoom = model.pickZoomForScale(scale);
+            model.setZoomLevel(zoom, false);
         },
 
         /**
@@ -97,18 +76,13 @@
          * @private
          */
         _updateScale: function() {
-            var widget = this;
-            var model = widget.map.model;
-            var dpi = model.options.dpi;
+            var scale = this.mbMap.getModel().getCurrentScale();
 
-            var scale = Math.round(model.getScale(dpi));
-            var element = $(widget.element);
-            var select = $('> select', element);
-
-            select
+            this.$select
                 .val(scale)
-                .siblings('.dropdownValue')
-                .text(scale);
+                .siblings(".dropdownValue")
+                .text(scale)
+            ;
         },
 
         _destroy: $.noop

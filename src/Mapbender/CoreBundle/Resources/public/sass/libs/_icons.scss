@@ -2,7 +2,12 @@
 [class^="icon"],
 [class*=" icon"],
 .icon {
+  // rules for a#{&} (would require Sass 3.3+): no decoration, no special colors for links with .icon class on them
   text-decoration: none;
+  color: inherit;
+  &:hover {
+    text-decoration: none;
+  }
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -12,26 +17,21 @@
   height: auto;
   vertical-align: top;
   &:before {
-    font-family: FontAwesome;
+    margin-right: 0.25em;
   }
 }
 
 .iconBig {
-  line-height: 20px;
-  display: inline-block;
-  vertical-align: top;
-  padding-left: 23px;
-  //  height: 20px;
   &:before {
-    font-family: FontAwesome;
     font-size: 20px;
-    margin-top: -1px;
-    margin-left: -23px;
-    margin-bottom: -2px;
-    position: absolute;
-    display: block;
+    display: inline-block;
+    vertical-align: top;
   }
 }
+span.iconBig {
+  display: inline-block;
+}
+
 
 @-webkit-keyframes spin{
   0%{-webkit-transform:rotate(0deg)}
@@ -47,101 +47,114 @@
 }
 
 // all
-.iconCheckboxActive:before{content:"\f046" !important;} // overwrite the default icon if checked
-.iconCheckboxHalf:before{content:"\f147" !important;} // overwrite the default icon if checked
-.iconCheckbox:before{content:"\f096";}
-.iconRadio:before{content:"\f10c";}
-.iconRadioActive:before{content:"\f192";}
-.iconView:before{content:"\f108";}
-.iconHelp:before{content:"\f059";}
-.iconLinkButton:before{content:"\f0da";}
-.iconDown:before{content:"\f078";}
-.iconRight:before{content:"\f054";}
-.iconLeft:before{content:"\f053";}
-.iconTop:before{content:"\f077";}
-.iconExpand:before{content:"\f117";}
-.iconExpandClosed:before{content:"\f116";}
-.iconMove:before{content:"\f047";}
-.iconMenu:before{content:"\f0c9";}
+.iconCheckbox:before{content:"\f096"; font-family: FontAwesome;}
+.iconCheckboxActive:before{content:"\f046"; font-family: FontAwesome;}
+.iconCheckboxHalf:before{content:"\f147"; font-family: FontAwesome;}
+.iconRadio:before{content:"\f10c"; font-family: FontAwesome;}
+.iconRadioActive:before{content:"\f192"; font-family: FontAwesome;}
+.iconView:before{content:"\f108"; font-family: FontAwesome;}
+.iconHelp:before{content:"\f059"; font-family: FontAwesome;}
+.iconLinkButton:before{content:"\f0da"; font-family: FontAwesome;}
+.iconDown:before{content:"\f078"; font-family: FontAwesome;}
+.iconRight:before{content:"\f054"; font-family: FontAwesome;}
+.iconLeft:before{content:"\f053"; font-family: FontAwesome;}
+.iconTop:before{content:"\f077"; font-family: FontAwesome;}
+.iconExpand:before{content:"\f147"; font-family: FontAwesome;}
+.iconExpandClosed:before{content:"\f196"; font-family: FontAwesome;}
+.iconMove:before{content:"\f047"; font-family: FontAwesome;}
+.iconMenu:before{content:"\f0c9"; font-family: FontAwesome;}
 
 // only frontend
-.iconAbout:before{content:"\f0c0";}
-.iconPrint:before{content:"\f02f";}
-.iconGps:before{content:"\f041";}
-.iconLayertree:before{content:"\f0e8";}
-.iconLegend:before{content:"\f00b";}
-.iconInfo:before{content:"\f129";}
-.iconInfoActive:before{content:"\f05a" !important;} // overwrite the default icon if checked
-.iconSearch:before{content:"\f002";}
-.iconWms:before, .iconOverview:before{content:"\f0ac";}
-.iconWmcEditor:before {content:"\f044";}
-.iconWmcLoader:before {content:"\f07c";}
-.iconOpen:before{content:"\f067";}
-.iconClose:before{content:"\f068";}
-.iconActivity:before{content:"\f110";}
-.iconCoordinates:before{content:"\f05b";}
-.iconGpsTarget:before{content:"\f05b";}
-.iconPrev:before{content:"\f0e2";}
-.iconNext:before{content:"\f01e";}
-.iconZoomSelect:before{content:"\f00e";}
-.iconZoomMin:before{content:"\f0ac";}
-.iconZoomIn:before{content:"\f196";}
-.iconZoomOut:before{content:"\f147";}
-.iconZoomLevel:before{content:"\f10c";}
-.iconZoomLevelSelected:before{content:"\f111";}
-.iconAreaRuler:before{content:"\f125";}
-.iconFolder:before{content:"\f07b";}
-.iconFolderActive:before{content:"\f07c";}
-.iconTarget:before{content:"\f05b";}
-.iconPoi:before{content:"\f08d";}
-.iconImageExport:before{content:"\f030";}
-.iconWarning:before{content:"\f071";}
-.iconWarningCcl:before{content:"\f06a";}
-.iconWarningSmpl:before{content:"\f12a";}
-.iconEmail:before {content: "\f0e0";}
-.iconTwitter:before {content: "\f081";}
-.iconFacebook:before {content: "\f082";}
-.iconGooglePlus:before {content: "\f0d4";}
-.iconSketch:before {content: "\f044";}
-.iconMore:before {content: "\f0c9";}
-.iconClock:before {content: "\f017";}
-.iconFile:before {content: "\f016";}
-.iconBolt:before {content: "\f0e7";}
-.iconStarO:before{content:"\f006";}
-.iconBars:before{content:"\f0c9";}
-.iconFileText:before{content:"\f0f6";}
-.iconCancel:before{ content: "\f05c";}
-.iconCopyright:before{ content: "\f1f9";}
+.iconAbout:before{content:"\f0c0"; font-family: FontAwesome;}
+.iconPrint:before{content:"\f02f"; font-family: FontAwesome;}
+.iconGps:before{content:"\f041"; font-family: FontAwesome;}
+.iconLayertree:before{content:"\f0e8"; font-family: FontAwesome;}
+.iconLegend:before{content:"\f00b"; font-family: FontAwesome;}
+.iconInfo:before{content:"\f129"; font-family: FontAwesome;}
+.iconInfoActive:before{content:"\f05a"; font-family: FontAwesome;}
+.iconSearch:before{content:"\f002"; font-family: FontAwesome;}
+.iconWms:before, .iconOverview:before{content:"\f0ac"; font-family: FontAwesome;}
+.iconWmcEditor:before {content:"\f044"; font-family: FontAwesome;}
+.iconWmcLoader:before {content:"\f07c"; font-family: FontAwesome;}
+.iconOpen:before{content:"\f067"; font-family: FontAwesome;}
+.iconClose:before{content:"\f068"; font-family: FontAwesome;}
+.iconActivity:before{content:"\f110"; font-family: FontAwesome;}
+.iconCoordinates:before{content:"\f05b"; font-family: FontAwesome;}
+.iconGpsTarget:before{content:"\f05b"; font-family: FontAwesome;}
+.iconPrev:before{content:"\f0e2"; font-family: FontAwesome;}
+.iconNext:before{content:"\f01e"; font-family: FontAwesome;}
+.iconZoomSelect:before{content:"\f00e"; font-family: FontAwesome;}
+.iconZoomMin:before{content:"\f0ac"; font-family: FontAwesome;}
+.iconZoomIn:before{content:"\f196"; font-family: FontAwesome;}
+.iconZoomOut:before{content:"\f147"; font-family: FontAwesome;}
+.iconZoomLevel:before{content:"\f10c"; font-family: FontAwesome;}
+.iconZoomLevelSelected:before{content:"\f111"; font-family: FontAwesome;}
+.iconAreaRuler:before{content:"\f125"; font-family: FontAwesome;}
+.iconFolder:before{content:"\f07b"; font-family: FontAwesome;}
+.iconFolderActive:before{content:"\f07c"; font-family: FontAwesome;}
+.iconTarget:before{content:"\f05b"; font-family: FontAwesome;}
+.iconPoi:before{content:"\f08d"; font-family: FontAwesome;}
+.iconImageExport:before{content:"\f030"; font-family: FontAwesome;}
+.iconWarning:before{content:"\f071"; font-family: FontAwesome;}
+.iconWarningCcl:before{content:"\f06a"; font-family: FontAwesome;}
+.iconWarningSmpl:before{content:"\f12a"; font-family: FontAwesome;}
+.iconEmail:before {content: "\f0e0"; font-family: FontAwesome;}
+.iconTwitter:before {content: "\f081"; font-family: FontAwesome;}
+.iconFacebook:before {content: "\f082"; font-family: FontAwesome;}
+.iconGooglePlus:before {content: "\f0d4"; font-family: FontAwesome;}
+.iconSketch:before {content: "\f044"; font-family: FontAwesome;}
+.iconMore:before {content: "\f0c9"; font-family: FontAwesome;}
+.iconClock:before {content: "\f017"; font-family: FontAwesome;}
+.iconFile:before {content: "\f016"; font-family: FontAwesome;}
+.iconBolt:before {content: "\f0e7"; font-family: FontAwesome;}
+.iconStarO:before{content:"\f006"; font-family: FontAwesome;}
+.iconBars:before{content:"\f0c9"; font-family: FontAwesome;}
+.iconFileText:before{content:"\f0f6"; font-family: FontAwesome;}
+.iconCancel:before{ content: "\f05c"; font-family: FontAwesome;}
+.iconCopyright:before{ content: "\f1f9"; font-family: FontAwesome;}
 
 // only backend
-.iconGroup:before{content: "\f0c0";}
-.iconAdd:before{content: "\f067";}
-.iconRemove:before{content:"\f00d";}
-.iconOk:before{content:"\f00c" !important;} // user/group selection need a ok icon but habe a checkbox icon... overwrite it plz :)
-.iconEdit:before{content:"\f040";}
-.iconPublish:before{content:"\f070" !important;} // the active checkbox in application edit, need to be overwritten
-.iconPublishActive:before{content:"\f06e" !important;}
-.iconAppDefault:before{content:"\f03e";}
-.iconThumbsUp:before{content:"\f087";}
-.iconThumbsDown:before{content:"\f088";}
-.iconGroup:before{content:"\f0c0";}
-.iconUser:before{content:"\f007";}
-.iconSettings:before{content:"\f0ad";}
-.iconSignOut:before{content:"\f08b";}
-.iconSignIn:before{content:"\f090";}
-.iconMore:before{content:"\f141";}
-.iconCopy:before{content:"\f0c5";}
-.iconKey:before{content:"\f084";}
-.iconTab:before{content:"\f114";}
-.iconTabActive:before{content:"\f07b" !important;}
-.iconReset:before{content:"\f021";}
-.iconPlay:before{content: "\f04b";}
-.iconStop:before{content: "\f04d";}
+.iconGroup:before{content: "\f0c0"; font-family: FontAwesome;}
+.iconAdd:before{content: "\f067"; font-family: FontAwesome;}
+.iconRemove:before{content:"\f00d"; font-family: FontAwesome;}
+.iconOk:before{content:"\f00c" !important; font-family: FontAwesome;} // ACL user/group selection list hack (markup in FOM)
+.iconEdit:before{content:"\f040"; font-family: FontAwesome;}
+.iconPublish:before{content:"\f070"; font-family: FontAwesome;}
+.iconPublishActive:before{content:"\f06e"; font-family: FontAwesome;}
+.iconAppDefault:before{content:"\f03e"; font-family: FontAwesome;}
+.iconThumbsUp:before{content:"\f087"; font-family: FontAwesome;}
+.iconThumbsDown:before{content:"\f088"; font-family: FontAwesome;}
+.iconGroup:before{content:"\f0c0"; font-family: FontAwesome;}
+.iconUser:before{content:"\f007"; font-family: FontAwesome;}
+.iconSettings:before{content:"\f0ad"; font-family: FontAwesome;}
+.iconSignOut:before{content:"\f08b"; font-family: FontAwesome;}
+.iconSignIn:before{content:"\f090"; font-family: FontAwesome;}
+.iconMore:before{content:"\f141"; font-family: FontAwesome;}
+.iconCopy:before{content:"\f0c5"; font-family: FontAwesome;}
+.iconKey:before{content:"\f084"; font-family: FontAwesome;}
+.iconTab:before{content:"\f114"; font-family: FontAwesome;}
+.iconTabActive:before{content:"\f07b" !important; font-family: FontAwesome;}
+.iconReset:before{content:"\f021"; font-family: FontAwesome;}
+.iconPlay:before{content: "\f04b"; font-family: FontAwesome;}
+.iconStop:before{content: "\f04d"; font-family: FontAwesome;}
 
 @import url("components/mapbender-icons/style.css");
 [class^="icon-"]:before, [class*=" icon-"]:before {
   font-family: 'mapbender-icons';
 }
+
+.hover-highlight-effect {
+  opacity: 0.6;
+  &:hover {
+    opacity: 1.0;
+  }
+}
+
+// Support hack for coordinates utility
+.mb-element-coordinatesutility .copyClipBoard:before {
+  font-family: FontAwesome;
+}
+
 
 @mixin buttonFAIcon($content) {
   margin-bottom: -1px;

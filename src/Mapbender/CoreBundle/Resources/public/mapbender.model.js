@@ -147,25 +147,15 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     _startProj: null,
     baseId: 0,
     init: function(mbMap) {
-        var self = this;
         this.mbMap = mbMap;
+        Mapbender.mapEngine.patchGlobals(mbMap.options);
         this.srsDefs = this.mbMap.options.srsDefs;
         Mapbender.Projection.extendSrsDefintions(this.srsDefs || []);
 
-        if (typeof (this.mbMap.options.dpi) !== 'undefined') {
-            OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
-        }
-
-        var tileSize = this.mbMap.options.tileSize;
-        OpenLayers.Map.TILE_WIDTH = tileSize;
-        OpenLayers.Map.TILE_HEIGHT = tileSize;
-
-        OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + 'components/mapquery/lib/openlayers/img/';
-        // Allow drag pan motion to continue outside of map div. Great for multi-monitor setups.
-        OpenLayers.Control.Navigation.prototype.documentDrag = true;
         this._initMap();
     },
     _initMap: function _initMap() {
+        this._patchNavigationControl();
         var self = this;
         this._configProj = this.getProj(this.mbMap.options.srs);
         this._startProj = this.getProj(this.mbMap.options.targetsrs || this.mbMap.options.srs);
@@ -190,7 +180,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         });
         var mapOptions = {
             maxExtent: this._transformExtent(this.mapMaxExtent.extent, this._configProj, this._startProj).toArray(),
-            maxResolution: this.mbMap.options.maxResolution,
+            maxResolution: 'auto',
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
             projection: this._startProj,
             displayProjection: this._startProj,
@@ -238,8 +228,32 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         this.setView(true);
         this.parseURL();
         if (this.mbMap.options.targetscale) {
-            this.map.olMap.zoomToScale(this.mbMap.options.targetscale, true);
+            var zoom = this.pickZoomForScale(this.mbMap.options.targetscale, true);
+            this.setZoomLevel(zoom, false);
         }
+        this._setupHistoryControl();
+        this._setupNavigationControl();
+        this.map.olMap.events.register('zoomend', this, this._afterZoom);
+    },
+    _setupHistoryControl: function() {
+        this.historyControl = new OpenLayers.Control.NavigationHistory();
+        this.map.olMap.addControl(this.historyControl);
+    },
+    _patchNavigationControl: function() {
+        var self = this;
+        var zbZoomBoxMethodOriginal = OpenLayers.Control.ZoomBox.prototype.zoomBox;
+
+        function zbZoomBoxMethodPatched(position) {
+            console.warn("Monkey-patched zoomBoxControl.zoomBox", this, arguments);
+            zbZoomBoxMethodOriginal.apply(this, arguments);
+            self._afterZoomBox(this.map);
+        }
+        OpenLayers.Control.ZoomBox.prototype.zoomBox = zbZoomBoxMethodPatched;
+    },
+    _setupNavigationControl: function() {
+        this._navigationControl = this.map.olMap.getControlsByClass('OpenLayers.Control.Navigation')[0];
+        this._navigationDragHandler = this._navigationControl.zoomBox.handler.dragHandler;
+        this._initialDragHandlerKeyMask = this._navigationDragHandler.keyMask;
     },
     /**
      * Set map view: extent from URL parameters or configuration and POIs
@@ -344,7 +358,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             });
         });
     },
-    getCurrentProjectonCode: function() {
+    getCurrentProjectionCode: function() {
         if (this.map && this.map.olMap) {
             return this.map.olMap.getProjection();
         } else {
@@ -378,6 +392,12 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     },
     getAllSrs: function() {
         return this.srsDefs;
+    },
+    historyBack: function() {
+        this.historyControl.previous.trigger();
+    },
+    historyForward: function() {
+        this.historyControl.next.trigger();
     },
     /**
      * Calculates an extent from a geometry with buffer.
@@ -617,6 +637,39 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         return Math.round(this.map.olMap.getScale());
     },
     /**
+     * Enables the zoom selection box immediately without requiring a key combination (default: SHIFT)
+     * to be held.
+     */
+    zoomBoxOn: function() {
+        $(this.getViewPort()).css({cursor: 'crosshair'});
+        this._navigationDragHandler.keyMask = OpenLayers.Handler.MOD_NONE;
+    },
+    /**
+     * Reenables the keymask for drawing a zoom box
+     */
+    zoomBoxOff: function() {
+        $(this.getViewPort()).css({cursor: ''});
+        this._navigationDragHandler.keyMask = this._initialDragHandlerKeyMask;
+    },
+    _afterZoomBox: function(map) {
+        if (map === this.map.olMap) {
+            this.zoomBoxOff();
+            $(this.mbMap.element).trigger('mbmapafterzoombox', {
+                mbMap: this.mbMap
+            });
+        }
+    },
+    _afterZoom: function() {
+        var scales = this._getScales();
+        var zoom = this.getCurrentZoomLevel();
+        $(this.mbMap.element).trigger('mbmapzoomchanged', {
+            mbMap: this.mbMap,
+            zoom: zoom,
+            // scale: this.getCurrentScale()
+            scale: scales[zoom]
+        });
+    },
+    /**
      * Updates the options.treeOptions within the source with new values from layerOptionsMap.
      * Always reapplies states to engine (i.e. affected layers are re-rendered).
      * Alawys fires an 'mbmapsourcechanged' event.
@@ -752,7 +805,16 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 boundsOrCoords.right,
                 boundsOrCoords.top);
         }
-        this.olMap.zoomToExtent(bounds);
+        this.map.olMap.zoomToExtent(bounds);
+    },
+    zoomIn: function() {
+        this.map.olMap.zoomIn();
+    },
+    zoomOut: function() {
+        this.map.olMap.zoomOut();
+    },
+    zoomToFullExtent: function() {
+        this.map.olMap.zoomToMaxExtent();
     },
     /**
      * Emulation shim for old-style MapQuery.Map.prototype.center.
@@ -814,30 +876,90 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         if (options && (options.zoom || parseInt(options.zoom) === 0)) {
             zoom = this._clampZoomLevel(parseInt(options.zoom));
         }
-        var zoomNow = this.map.olMap.getZoom();
-        if (options && options.minScale) {
-            var maxZoom = this.pickZoomForScale(options.minScale, true);
-            if (zoom !== null) {
-                zoom = Math.min(zoom, maxZoom);
-            } else {
-                zoom = Math.min(zoomNow, maxZoom);
-            }
-        }
-        if (options && options.maxScale) {
-            var minZoom = this.pickZoomForScale(options.maxScale, false);
-            if (zoom !== null) {
-                zoom = Math.max(zoom, minZoom);
-            } else {
-                zoom = Math.max(zoomNow, minZoom);
-            }
-        }
+        zoom = this._adjustZoom(zoom, options);
         this.map.olMap.setCenter(centerLl, zoom);
+    },
+    /**
+     * @param {OpenLayers.Feature.Vector} feature
+     * @param {Object} [options]
+     * @param {number=} options.buffer in meters
+     * @param {number=} options.minScale
+     * @param {number=} options.maxScale
+     * @param {boolean=} options.center to forcibly recenter map (default: true); otherwise
+     *      just keeps feature in view
+     */
+    zoomToFeature: function(feature, options) {
+        if (!feature || !feature.geometry) {
+            console.error("Empty feature or empty feature geometry", feature);
+            return;
+        }
+        var center_;
+        if (options) {
+            center_ = options.center || typeof options.center === 'undefined';
+        } else {
+            center_ = true;
+        }
+        var bounds = feature.geometry.getBounds().clone();
+        if (options && options.buffer) {
+            var unitsPerMeter = this.getProjectionUnitsPerMeter(this.getCurrentProjectionCode());
+            var bufferNative = options.buffer * unitsPerMeter;
+            bounds.left -= bufferNative;
+            bounds.right += bufferNative;
+            bounds.top += bufferNative;
+            bounds.bottom -= bufferNative;
+        }
+        var zoom0 = this.map.olMap.getZoomForExtent(bounds, false);
+        var zoom = this._adjustZoom(zoom0, options);
+        var zoomNow = this.getCurrentZoomLevel();
+        var featureInView = this.getCurrentExtent().containsBounds(bounds);
+        if (center_ || zoom !== zoomNow || !featureInView) {
+            var centerLl = bounds.getCenterLonLat();
+            this.map.olMap.setCenter(centerLl, zoom);
+        }
     },
     pickZoomForScale: function(targetScale, pickHigh) {
         // @todo: fractional zoom: use exact targetScale (TBD: method should not be called?)
         var scales = this._getScales();
         var scale = this._pickScale(scales, targetScale, pickHigh);
         return scales.indexOf(scale);
+    },
+    setZoomLevel: function(level, allowTransitionEffect) {
+        var _level = this._clampZoomLevel(level);
+        if (_level !== this.getCurrentZoomLevel()) {
+            if (allowTransitionEffect) {
+                this.map.olMap.zoomTo(_level);
+            } else {
+                var centerPx = this.map.olMap.getViewPortPxFromLonLat(this.map.olMap.getCenter());
+                var zoomCenter = this.map.olMap.getZoomTargetCenter(centerPx, _level);
+                this.map.olMap.setCenter(zoomCenter, _level, false, true);
+            }
+        }
+    },
+    getCurrentScale: function() {
+        return (this._getScales())[this.map.olMap.getZoom()];
+    },
+    getCurrentZoomLevel: function() {
+        return this.map.olMap.getZoom();
+    },
+    getZoomLevels: function() {
+        return this._getScales().map(function(scale, index) {
+            return {
+                scale: scale,
+                level: index
+            };
+        });
+    },
+    panByPixels: function(dx, dy) {
+        this.map.olMap.pan(dx, dy);
+    },
+    panByPercent: function(dx, dy) {
+        var mapSize = this.map.olMap.getSize();
+        var pixelDx = (dx / 100.0) * mapSize.w;
+        var pixelDy = (dy / 100.0) * mapSize.h;
+        this.panByPixels(pixelDx, pixelDy);
+    },
+    getViewPort: function() {
+        return this.map.olMap.viewPortDiv;
     },
     _pickScale: function(scales, targetScale, pickHigh) {
         if (targetScale >= scales[0]) {
@@ -873,6 +995,36 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     },
     _clampZoomLevel: function(zoomIn) {
         return Math.max(0, Math.min(zoomIn, this._getMaxZoomLevel()));
+    },
+
+    /**
+     * @param {number|null} targetZoom
+     * @param {Object} scaleOptions
+     * @param {number=} scaleOptions.minScale
+     * @param {number=} scaleOptions.maxScale
+     * @return {number|null}
+     * @private
+     */
+    _adjustZoom: function(targetZoom, scaleOptions) {
+        var zoom = targetZoom;
+        var zoomNow = this.map.olMap.getZoom();
+        if (scaleOptions && scaleOptions.minScale) {
+            var maxZoom = this.pickZoomForScale(scaleOptions.minScale, true);
+            if (zoom !== null) {
+                zoom = Math.min(zoom, maxZoom);
+            } else {
+                zoom = Math.min(zoomNow, maxZoom);
+            }
+        }
+        if (scaleOptions && scaleOptions.maxScale) {
+            var minZoom = this.pickZoomForScale(scaleOptions.maxScale, false);
+            if (zoom !== null) {
+                zoom = Math.max(zoom, minZoom);
+            } else {
+                zoom = Math.max(zoomNow, minZoom);
+            }
+        }
+        return zoom;
     },
     /**
      * @param {Object} e
@@ -1062,9 +1214,10 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         if (!this.getSourcePos(sourceDef)) {
             this.sourceTree.push(sourceDef);
         }
+        var projCode = this.getCurrentProjectionCode();
 
         sourceDef.mqlid = this.map.trackSource(sourceDef).id;
-        var olLayers = sourceDef.initializeLayers();
+        var olLayers = sourceDef.initializeLayers(projCode);
         for (var i = 0; i < olLayers.length; ++i) {
             var olLayer = olLayers[i];
             olLayer.setVisibility(false);
@@ -1380,8 +1533,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     },
     /**
      * @param {OpenLayers.Layer} olLayer
-     * @param {OpenLayers.Projection} oldProj
      * @param {OpenLayers.Projection} newProj
+     * @param {OpenLayers.Bounds} [newMaxExtent]
      * @private
      */
     _changeLayerProjection: function(olLayer, newProj, newMaxExtent) {
@@ -1443,7 +1596,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         for (i = 0; i < dynamicSources.length; ++i) {
             source = dynamicSources[i];
             if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
-                olLayers = source.initializeLayers();
+                olLayers = source.initializeLayers(newProj.projCode);
                 for (j = 0; j < olLayers.length; ++j) {
                     var olLayer = olLayers[j];
                     olLayer.setVisibility(false);
@@ -1478,6 +1631,15 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                     sourceIdx: {id: source.id}
                 }
             });
+        }
+    },
+    getProjectionUnitsPerMeter: function(srsName) {
+        var units = this.getProj(srsName).proj.units || 'dd';
+        if (units === 'm' || units === 'Meter') {
+            return 1.0;
+        } else {
+            var metersPerUnit = OpenLayers.INCHES_PER_UNIT[units] * OpenLayers.METERS_PER_INCH;
+            return 1.0 / metersPerUnit;
         }
     },
     /**
@@ -1551,6 +1713,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      */
     getMbConfig: function(source, initializePod, initializeLayers) {
         var _s;
+        var projCode;
         if (source.mbConfig) {
             // monkey-patched OpenLayers.Layer
             _s =  source.mbConfig;
@@ -1565,7 +1728,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 if (!(_s instanceof Mapbender.Source)) {
                     var sourceObj = Mapbender.Source.factory(_s);
                     if (initializeLayers) {
-                        sourceObj.initializeLayers();
+                        projCode = projCode || this.getCurrentProjectionCode();
+                        sourceObj.initializeLayers(projCode);
                     }
                     return sourceObj;
                 }

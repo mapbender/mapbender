@@ -11,7 +11,7 @@
       <div class="checkWrapper iconCheckbox selectedWrapper" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans  }}">
         <input class="layer-selected checkbox" type="checkbox" name="selected">
       </div>
-      <div class="checkWrapper iconInfo featureInfoWrapper" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}">
+      <div class="checkWrapper featureInfoWrapper" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}" data-icon-on="iconInfoActive" data-icon-off="iconInfo">
         <input class="layer-info checkbox" type="checkbox" name="info"/>
       </div>
       <span class="layer-title labelCheck"></span>
@@ -38,13 +38,13 @@
           {% endif %}
           <div>
             {% if 'zoomtolayer' in configuration.menu %}
-            <span class="layer-zoom iconSearch iconSmall" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
+            <span class="layer-zoom iconSearch hover-highlight-effect" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
             {% endif %}
             {% if 'metadata' in configuration.menu %}
-            <span class="layer-metadata iconFileText iconSmall" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
+            <span class="layer-metadata iconFileText hover-highlight-effect" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
             {% endif %}
             {% if 'layerremove' in configuration.menu %}
-            <span class="layer-remove-btn iconRemove iconSmall" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
+            <span class="layer-remove-btn iconRemove hover-highlight-effect" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
             {% endif %}
           </div>
         </div>

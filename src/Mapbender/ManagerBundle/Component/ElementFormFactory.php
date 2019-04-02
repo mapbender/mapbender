@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element;
@@ -70,11 +71,14 @@ class ElementFormFactory
         if ($configurationType instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
             $options['element'] = $element;
         }
+        $componentClassName = $this->getComponentClass($element);
+        if (is_a($componentClassName, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
+            $componentClassName::updateEntityConfig($element);
+        }
         if ($configurationType === null) {
             $configurationType = $this->getFallbackConfigurationFormType($element);
             $twigTemplate = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
         } else {
-            $componentClassName = $this->getComponentClass($element);
             $twigTemplate = $componentClassName::getFormTemplate();
         }
 

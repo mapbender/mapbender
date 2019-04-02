@@ -60,6 +60,15 @@ such as Mapbender.Model.map, and Mapbender.Model.map.layersList.
 [Mapbender.Model.map.layers()](https://github.com/mapbender/mapbender/blob/8df72bc31a4d09623c8447fa42197111bb4b277e/src/Mapbender/CoreBundle/Resources/public/mapbender.model.js#L60) may now only be called to create a single vector layer, where it will generate a client-side warning. All other
 invocations will throw an Error.
 
+#### Client: icon CSS rules, Button icon markup
+CSS rules for .icon* and particularly .iconBig have been updated. The negative margins, negative paddings and `position: absolute` rules
+are all gone. If you have counter-styled these rules in a custom CSS theme and now observe icon layouting issues, those are most likely
+resolved by removing counter-rules for paddings and margins.
+
+Icon CSS classes on Button Elements are no longer assigned on the full button. Icons are now emitted as a tag inside the
+button instead. Markup for custom toolbar-dwelling Elements with icons should be reviewed against the updated button.html.twig
+template if issues arise.
+
 #### Backend: Removal of FOS JS Routing
 The Element configuration backend no longer emits the [FOS JS Routing](https://packagist.org/packages/friendsofsymfony/jsrouting-bundle) assets.
 Element forms with custom JavaScript making calls to `Routing.generate` et al will fail. We strongly advise against re-adding FOS JS Routing explicitly
@@ -119,6 +128,31 @@ Also gone are the options `jsSrc` and `css`. There are already three viable ways
 Mapbender has [taken in certain portions of FOM](https://github.com/mapbender/mapbender/pull/1120). The general BC impact of this
 move will be very low, but there is a definite impact for installations with drop-in customized `manager.html.twig` and / or `menu.html.twig`
 templates. Concise instructions what to do are [in the pull](https://github.com/mapbender/mapbender/pull/1120).
+
+#### API change `printDigitizerFeature`
+This method signature has changed in tandem with Digitizer's invocation, to make its intended use case work.
+See [PR#1123](https://github.com/mapbender/mapbender/pull/1123), [Digitizer PR#69](https://github.com/mapbender/mapbender-digitizer/pull/69).
+
+If you attempt to invoke this method from JavaScript generated from a FeatureInfo template, you will also need to update your
+invocation.
+
+You are now expected to pass in a JavaScript attribute: value mapping. A first attempt may look something like this ([Mapserver-specific](https://mapserver.org/output/template_output.html)):
+```
+<...>.printDigitizerFeature({
+        id: "[item name=id]",
+        tensile_strength: "[tensile_strength]",
+        some_other_attribute: "[some_other_attribute]"
+    },
+    "name-of-template");
+```
+Because any field you render requires a corresponding text field in an odg template to show up in print, you should have
+full awareness of the set of attributes you have to pass in.
+
+We consider this use case a hack. Deep calls into element internals made from externally generated code cannot be
+supported. There will be no particular amenities to make such hacks work.
+
+#### Misc Element changes
+SearchRouter and SimpleSearch buffer settings are now always in meters, not in "map units" as currently documented.
 
 ## v3.0.7.7
 Starting from Mapbender v3.0.7.7, PrintClient JavaScript widget inherits from ImageExport JavaScript widget.

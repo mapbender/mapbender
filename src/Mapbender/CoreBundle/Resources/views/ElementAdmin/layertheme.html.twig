@@ -1,18 +1,20 @@
-<div id="{{form.configuration.themes.vars.id}}" class="collectionItem">
-    {{ form_widget(theme.id) }}
-    <div class="collectionItemProperty" title="{{"mb.core.admin.layertree.label.theme.label"|trans}}">
+<tr id="{{form.configuration.themes.vars.id}}" class="collectionItem">
+    <td title="{{"mb.core.admin.layertree.label.theme.label"|trans}}">
+        {{ form_widget(theme.id) }}
         <label class="labelInput">{{ theme.vars.data.title }}</label>{{ form_widget(theme.title) }}
-    </div>
-    <div class="collectionItemProperty item-activate" title="{{"mb.core.admin.layertree.label.theme.useTheme"|trans}}">
-        {{ form_widget(theme.useTheme) }}<!--label for="{{theme.useTheme.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.useTheme"|trans}}</label-->
-    </div>
-    <div class="collectionItemProperty item-opened" title="{{"mb.core.admin.layertree.label.theme.opened"|trans}}">
-        {{ form_widget(theme.opened) }}<!--label for="{{theme.opened.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.opened"|trans}}</label-->
-    </div>
-    <div class="collectionItemProperty item-activate" title="{{"mb.core.admin.layertree.label.theme.sourceVisibility"|trans}}">
-        {{ form_widget(theme.sourceVisibility) }}<!--label for="{{theme.sourceVisibility.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.sourceVisibility"|trans}}</label-->
-    </div>
-    <div class="collectionItemProperty item-activate" title="{{"mb.core.admin.layertree.label.theme.allSelected"|trans}}">
-        {{ form_widget(theme.allSelected) }}<!--label for="{{theme.allSelected.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.allSelected"|trans}}</label-->
-    </div>
-</div>
+    </td>
+    <td class="theme-settings">
+        <span title="{{"mb.core.admin.layertree.label.theme.useTheme"|trans}}">
+            {{ form_widget(theme.useTheme) }}
+        </span>
+        <span class="item-opened" title="{{"mb.core.admin.layertree.label.theme.opened"|trans}}">
+            {{ form_widget(theme.opened) }}
+        </span>
+        <span title="{{"mb.core.admin.layertree.label.theme.sourceVisibility"|trans}}">
+            {{ form_widget(theme.sourceVisibility) }}
+        </span>
+        <span title="{{"mb.core.admin.layertree.label.theme.allSelected"|trans}}">
+            {{ form_widget(theme.allSelected) }}
+        </span>
+    </td>
+</tr>

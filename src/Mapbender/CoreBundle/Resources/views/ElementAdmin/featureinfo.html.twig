@@ -1,4 +1,4 @@
-<div class="elementFormFeatureInfo elementForm">
+<div class="elementForm">
     <div class="left">
         {{ form_widget(form.configuration.autoActivate) }}<label for="{{form.configuration.autoActivate.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfo.label.autoopen"|trans }}</label>
     </div>
@@ -19,6 +19,7 @@
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.displayType) }}{{ form_widget(form.configuration.displayType) }}
     <div class="clearContainer"></div>
+    {{ form_row(form.configuration.maxCount) }}
     {{ form_label(form.configuration.width) }}{{ form_widget(form.configuration.width) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.height) }}{{ form_widget(form.configuration.height) }}

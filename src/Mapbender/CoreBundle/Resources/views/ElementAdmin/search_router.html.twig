@@ -1,4 +1,4 @@
-<div class="elementFormSearchRouter elementForm">
+<div class="elementForm wideLabelForm">
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
@@ -12,9 +12,4 @@
     {{ form_label(form.configuration.height) }}{{ form_widget(form.configuration.height) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.routes) }}{{ form_widget(form.configuration.routes) }}
-
-    {#-
-    <script src="{{ asset('bundles/mapbendermanager/codemirror/lib/codemirror.js') }}"></script>
-    <script src="{{ asset('bundles/mapbendermanager/codemirror/mode/yaml/yaml.js') }}"></script>
-    <script src="{{ asset('bundles/mapbendercore/admin/searchrouter.js') }}"></script> -#}
 </div>

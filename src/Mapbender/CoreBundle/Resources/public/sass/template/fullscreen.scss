@@ -250,29 +250,7 @@ form {
   .form-group {
 
     > label {
-      margin-bottom: 0px;
-    }
-
-    > input[type='text'] {
-    }
-
-    > input[type='text']:before {
-      display: block;
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      font-family: FontAwesome;
-      font-style: normal;
-      font-weight: normal;
-      line-height: 1;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      font-smoothing: antialiased;
-      content: "\f110";
-      -webkit-animation: spin 2s infinite linear;
-      -moz-animation: spin 2s infinite linear;
-      -o-animation: spin 2s infinite linear;
-      animation: spin 2s infinite linear;
+      margin-bottom: 0;
     }
   }
 }

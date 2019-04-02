@@ -25,7 +25,8 @@ class FeatureInfoAdminType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
+            'maxCount' => 100,
         ));
     }
 
@@ -52,6 +53,13 @@ class FeatureInfoAdminType extends AbstractType
                 'property_path' => '[target]',
                 'required' => false))
             ->add('width', 'integer', array('required' => true))
-            ->add('height', 'integer', array('required' => true));
+            ->add('height', 'integer', array('required' => true))
+            ->add('maxCount', 'integer', array(
+                'required' => false,
+                'attr' => array(
+                    'placeholder' => 100,
+                ),
+            ))
+        ;
     }
 }
