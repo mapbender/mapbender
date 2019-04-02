@@ -45,15 +45,18 @@ class FeatureInfo extends Element
     /**
      * @inheritdoc
      */
-    public function getConfiguration()
+    public function getPublicConfiguration()
     {
-        $config = parent::getConfiguration();
+        $config = $this->entity->getConfiguration();
         $defaults = self::getDefaultConfiguration();
         if (empty($config['width'])) {
             $config['width'] = $defaults['width'];
         }
         if (empty($config['height'])) {
             $config['height'] = $defaults['height'];
+        }
+        if (empty($config['maxCount']) || $config['maxCount'] < 0) {
+            $config['maxCount'] = $defaults['maxCount'];
         }
         return $config;
     }
@@ -74,7 +77,8 @@ class FeatureInfo extends Element
             "displayType" => 'tabs',
             "target" => null,
             "width" => 700,
-            "height" => 500
+            "height" => 500,
+            "maxCount" => 100,
         );
     }
 

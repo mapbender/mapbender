@@ -170,7 +170,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 return !!(layerParams.layers && layerParams.layers.length);
             }
         },
-        getPointFeatureInfoUrl: function(x, y) {
+        getPointFeatureInfoUrl: function(x, y, maxCount) {
             // not implemented
             return null;
         },
