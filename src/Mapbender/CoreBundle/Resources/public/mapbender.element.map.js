@@ -233,30 +233,6 @@
                 Mapbender.error(Mapbender.trans(response.error));
             }
         },
-        setSourceLayerOrder: function(sourceId, layerIdOrder) {
-            this.model.setSourceLayerOrder(sourceId, layerIdOrder);
-            this.fireModelEvent({
-                name: 'sourcemoved',
-                // no receiver uses the bizarre "changeOptions" return value
-                // on this event
-                value: null
-            });
-        },
-        setSourceState: function(source, visible) {
-            this.model.setSourceState(source, !!visible);
-            this.fireModelEvent({
-                name: 'sourcestatechanged',
-                value: null
-            });
-            // @todo: legacy 'sourcechanged' event with legacy data payload
-        },
-        reorderSources: function(sources) {
-            this.model.reorderSources(sources);
-            this.fireModelEvent({
-                name: 'sourcemoved',
-                value: null
-            });
-        },
         /**
          * Loads the srs definitions from server
          */

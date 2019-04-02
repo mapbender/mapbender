@@ -107,49 +107,6 @@ window.Mapbender.SourceModelOl4 = (function() {
     };
 
     /**
-     * Add or remove param values to GetMap request URL.
-     *
-     * Map undefined to a key to remove that parameter.
-     *
-     * @param {Object} params plain old data
-     * @param {boolean} caseSensitive for query param names (WMS style is CI)
-     */
-    Source.prototype.updateRequestParams = function updateRequestParams(params, caseSensitive) {
-        var existingKeys = Object.keys(this.getMapParams);
-        var passedKeys = Object.keys(params);
-        var i, j;
-        var keyTransform;
-        if (!caseSensitive) {
-            keyTransform = String.prototype.toLowerCase;
-        } else {
-            keyTransform = function identity() { return this; }
-        }
-        for (i = 0; i < passedKeys.length; ++i) {
-            var passedKey = passedKeys[i];
-            var passedValue = params[passedKey];
-            var passedKeyTransformed = keyTransform.call(passedKey);
-            // remove original value (might theoretically remove multiple values if not case sensitive!)
-            for (j = 0; j < existingKeys.length; ++j) {
-                var existingKey = existingKeys[j];
-                var existingKeyTransformed = keyTransform.call(existingKey);
-                if (existingKeyTransformed === passedKeyTransformed) {
-                    delete this.getMapParams[existingKey];
-                }
-            }
-            // warn if layers changed, any case
-            if (passedKey.toLowerCase() === 'layers') {
-                console.warn("Modifying layers parameter directly, you should use updateLayerState instead!", passedKey, passedValue, params);
-            }
-            if (typeof passedValue !== 'undefined') {
-                // add value (use original, untransformed key)
-                this.getMapParams[passedKey] = passedValue;
-            }
-            // NOTE: if passedValue === undefined, we specify that the original value is removed; we already did that
-        }
-        this.updateEngine();
-    };
-
-    /**
      *
      * @param {object} sourceConfig
      * @private
@@ -238,36 +195,6 @@ window.Mapbender.SourceModelOl4 = (function() {
         this.updateEngine();
     };
 
-    /**
-     * Activate / deactivate a single layer by name
-     *
-     * @param {string} layerName
-     * @param {object} options should have string keys 'visible' and / or 'queryable' with booleans assigned
-     * @todo: also support queryable
-     */
-    Source.prototype.updateLayerState = function updateLayerState(layerName, options) {
-        if (!this.layerNameMap_[layerName]) {
-            console.error("Unknown layer name", layerName, "known:", Object.keys(this.layerNameMap_));
-            return;
-        }
-        this.updateStateMaps_();
-        if (typeof options.visible !== 'undefined') {
-            if (options.visible) {
-                this.activeLayerMap_[layerName] = true;
-            } else {
-                delete this.activeLayerMap_[layerName];
-            }
-        }
-        if (typeof options.queryable !== 'undefined') {
-            if (options.queryable) {
-                this.queryLayerMap_[layerName] = true;
-            } else {
-                delete this.queryLayerMap_[layerName];
-            }
-        }
-        this.updateLayerParams_();
-    };
-
     Source.prototype.updateLayerParams_ = function updateLayerParams_() {
         var visible = [];
         var queryable = [];
@@ -298,13 +225,6 @@ window.Mapbender.SourceModelOl4 = (function() {
     };
 
     /**
-     * @returns {string[]}
-     */
-    Source.prototype.getQueryableLayerNames = function() {
-        return _.filter((this.featureInfoParams.QUERY_LAYERS || "").split(','));
-    };
-
-    /**
      * Check if source is active
      *
      * @returns {boolean}
@@ -313,50 +233,6 @@ window.Mapbender.SourceModelOl4 = (function() {
 
         return this.options.visibility;
     };
-
-    /**
-     * @returns {boolean}
-     */
-    Source.prototype.isVisible = function isVisible() {
-
-        return this.isActive() && (!!this.getMapParams.LAYERS);
-    };
-
-    /**
-     * @returns {boolean}
-     */
-    Source.prototype.isQueryable = function isQueryable() {
-
-        return this.isActive() && (!!this.featureInfoParams.QUERY_LAYERS);
-    };
-
-    /**
-     * Updates private internal tracking structures for active layer names (map + feature info)
-     * @private
-     */
-    Source.prototype.updateStateMaps_ = function updateStateMaps_() {
-        var visibleNames = this.getActiveLayerNames();
-        var queryableNames = this.getQueryableLayerNames();
-        // reset, restart from scratch
-        this.activeLayerMap_ = {};
-        this.queryLayerMap_ = {};
-        var tasks = [
-            {
-                names: visibleNames,
-                targetMap: this.activeLayerMap_
-            },
-            {
-                names: queryableNames,
-                targetMap: this.queryLayerMap_
-            }
-        ];
-        for (var i = 0; i < tasks.length; ++i) {
-            for (var j = 0; j < tasks[i].names.length; ++j) {
-                tasks[i].targetMap[tasks[i].names[j]] = true;
-            }
-        }
-    };
-
 
     /**
      * @returns {string|null}
@@ -437,43 +313,6 @@ window.Mapbender.SourceModelOl4 = (function() {
         console.log(layerNames);
         return this.updateLayerOrderByName(layerNames);
     };
-    /**
-     * Iterate through all active leaf layer definitions and invoke the given callback.
-     * Callback is invoked with 1)layerDef, 2)sibling index, 3)list of parents
-     *
-     * If filter callback is supplied, it is invoked first, with same arguments, and the main callback is only
-     * invoked if the filter callback returns trueish.
-     *
-     * Layer leafs are visited / callbacks are invoked in current layer order of this Source instance.
-     *
-     * @see Mapbender.Util.SourceTree.iterateSourceLeaves
-     *
-     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} callback
-     * @param {Mapbender.Util.SourceTree~cbTypeNodeOffsetParents} [filter]
-     */
-    Source.prototype.iterateActiveLayerDefs = function iterateActiveLayerDefs(callback, filter) {
-        var argsMapByName = {};
-        var _appendArgs = function(node, siblingIndex, parents) {
-            var layerName = node.options.name;
-            if (!layerName || argsMapByName[layerName]) {
-                console.warn("Encountered leaf layer with same name twice", layerName, {current: node, previous: argsMapByName[layerName]});
-            } else {
-                argsMapByName[layerName] = [node, siblingIndex, parents];
-            }
-        };
-        // collect leaves
-        Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, _appendArgs, filter);
-        // bring into set order, additionally filter out inactive layers
-        for (var i = 0; i < this.layerOrder_.length; ++i) {
-            var layerName = this.layerOrder_[i];
-            var layerArgs = argsMapByName[layerName];
-            if (layerArgs) {
-                // Invoke supplied callback with (node, siblingIndex, parents)
-                callback.apply(null, layerArgs);
-            }
-        }
-    };
-
     /**
      * @returns {number|undefined}
      */

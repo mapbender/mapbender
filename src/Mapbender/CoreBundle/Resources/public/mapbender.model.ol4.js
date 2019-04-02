@@ -2113,16 +2113,6 @@ Mapbender.Model.prototype.setSourceLayerOrder = function setSorceLayerOrder(sour
 };
 
 /**
- *
- * @param {string|object|SourceModelOl4} source
- * @param {boolean} visible
- */
-Mapbender.Model.prototype.setSourceState = function setSourceState(source, visible) {
-    var sourceObj = this.toSourceObj_(source);
-    sourceObj.setState(visible);
-};
-
-/**
  * create ol.style.Style
  * @param {array} customStyle only fill, stroke, zIndex
  * @returns {ol.style.Style}

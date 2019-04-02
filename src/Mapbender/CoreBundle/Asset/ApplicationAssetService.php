@@ -194,7 +194,6 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
                     "$modelJsBase/mapbender.model.ol4.source.js",
                     "@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js",
-                    "$modelJsBase/mapbender.model.ol4.sourcelayer.state.js",
                     "$modelJsBase/mapbender.model.mappopup.js",
                 );
                 break;
