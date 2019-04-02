@@ -1379,7 +1379,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @param {string[]} newLayerIdOrder
      */
     setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
-        var sourceObj = this.getSource({id: sourceId});
+        var sourceObj = this.getSourceById(sourceId);
         var geoSource = Mapbender.source[sourceObj.type];
 
         geoSource.setLayerOrder(sourceObj, newLayerIdOrder);
