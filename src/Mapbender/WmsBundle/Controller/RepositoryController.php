@@ -89,14 +89,13 @@ class RepositoryController extends Controller
 
         $form      = $this->createForm(new WmsSourceSimpleType(), $wmssource_req);
         $form->submit($request);
-        $onlyvalid = $form->get('onlyvalid')->getData();
         if ($form->isValid()) {
             /** @var Importer $importer */
             $importer = $this->container->get('mapbender.importer.source.wms.service');
             $origin = new WmsOrigin($wmssource_req->getOriginUrl(), $wmssource_req->getUsername(), $wmssource_req->getPassword());
 
             try {
-                $importerResponse = $importer->evaluateServer($origin, $onlyvalid);
+                $importerResponse = $importer->evaluateServer($origin, false);
             } catch (\Exception $e) {
                 $this->get("logger")->err($e->getMessage());
                 $this->get('session')->getFlashBag()->set('error', $e->getMessage());
@@ -104,11 +103,6 @@ class RepositoryController extends Controller
             }
 
             $wmssource = $importerResponse->getWmsSourceEntity();
-            $validationError = $importerResponse->getValidationError();
-            if ($validationError) {
-                $this->get("logger")->warn($validationError->getMessage());
-                $this->get('session')->getFlashBag()->set('warning', $validationError->getMessage());
-            }
 
             /** @TODO: this path can never be entered. Why is it here? */
             if (!$wmssource) {
