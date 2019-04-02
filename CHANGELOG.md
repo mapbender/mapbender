@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7** @ 13f7e7ddc
+* **v3.0.8-beta4**
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting
   - [Beta regression] Fix layer menu positioning in a non-thematic LayerTree ([Issue#1124](https://github.com/mapbender/mapbender/issues/1124), [PR#1142](https://github.com/mapbender/mapbender/pull/1142))
