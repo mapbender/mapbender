@@ -1,5 +1,5 @@
 # Changelog
-* **dev-release/3.0.7** @ 5b6ada69a
+* **dev-release/3.0.7** @ 13f7e7ddc
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting
   - [Beta regression] Fix layer menu positioning in a non-thematic LayerTree ([Issue#1124](https://github.com/mapbender/mapbender/issues/1124), [PR#1142](https://github.com/mapbender/mapbender/pull/1142))
@@ -27,6 +27,7 @@
   - GpsButton: remove unsafe `zoomToAccuracy` option
   - Previously detected default version is now applied when reloading a WMS from an origin url with omitted `VERSION=...` parameter ([PR#1150](https://github.com/mapbender/mapbender/pull/1150))
   - Avoid lengthy WMS validation when loading a new WMS source ([PR#1151](https://github.com/mapbender/mapbender/pull/1151))
+  - WMS GetFeatureInfo FEATURE_COUNT default is reduced from 1000 to 100; this value is now configurable in the FeatureInfo Element as `maxCount` ([Issue#1099](https://github.com/mapbender/mapbender/issues/1099), [PR#1152](https://github.com/mapbender/mapbender/pull/1152))
 
 * **v3.0.8-beta3**
   - [Beta regression] Restore Wms Loader function
