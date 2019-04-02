@@ -530,6 +530,9 @@
                             width: widthMeters,
                             height: heightMeters
                         };
+                    },
+                    error: function() {
+                        console.error("getTemplateSize request failed: - template "+template+" might not be available");
                     }
                 });
             } else {
