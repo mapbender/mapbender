@@ -8,6 +8,7 @@
                 xoffset: -6,
                 yoffset: -38
             },
+            srsDefs: [],
             layersets: []
         },
         elementUrl: null,
@@ -70,7 +71,7 @@
          * Returns all defined srs
          */
         getAllSrs: function(){
-            return this.model.getAllSrs();
+            return this.options.srsDefs;
         },
         /**
          * Reterns the model
@@ -222,8 +223,8 @@
         _loadSrsSuccess: function(response, textStatus, jqXHR){
             if(response.data) {
                 for(var i = 0; i < response.data.length; i++) {
-                    proj4.defs(response.data[i].name, response.data[i].definition);
-                    this.model.srsDefs.push(response.data[i]);
+                    this.options.srsDefs.push(response.data[i]);
+                    Mapbender.Projection.extendSrsDefintions([response.data[i]]);
                     this.fireModelEvent({
                         name: 'srsadded',
                         value: response.data[i]

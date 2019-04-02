@@ -6,9 +6,9 @@
 Mapbender.Model = function(mbMap) {
     'use strict';
     this.mbMap = mbMap;
+    console.log("Map options", mbMap.options);
     Mapbender.mapEngine.patchGlobals(mbMap.options);
-    this.srsDefs = this.mbMap.options.srsDefs;
-    Mapbender.Projection.extendSrsDefintions(this.srsDefs || []);
+    Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
 
     this.sourceTree = [];
     this._initMap();

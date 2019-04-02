@@ -20,7 +20,7 @@
             for(var i = 0; i < allSrs.length; i++){
                 this._addSrsOption(this.$select, allSrs[i]);
             }
-            this.$select.val(this.mbMap.map.olMap.getProjection());
+            this.$select.val(this.mbMap.model.getCurrentProjectionCode());
 
             initDropdown.call(this.$select.parent());
             this.$select.on('change', $.proxy(this._switchSrs, this));

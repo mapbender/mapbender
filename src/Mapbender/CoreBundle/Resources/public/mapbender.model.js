@@ -61,7 +61,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     mbMap: null,
     map: null,
     sourceTree: [],
-    srsDefs: null,
     mapMaxExtent: null,
     mapStartExtent: null,
     _highlightLayer: null,
@@ -73,8 +72,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     init: function(mbMap) {
         this.mbMap = mbMap;
         Mapbender.mapEngine.patchGlobals(mbMap.options);
-        this.srsDefs = this.mbMap.options.srsDefs;
-        Mapbender.Projection.extendSrsDefintions(this.srsDefs || []);
+        Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
 
         this._initMap();
     },
@@ -313,9 +311,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             throw new Error("Unsupported projection " + srscode.toString());
         }
         return null;
-    },
-    getAllSrs: function() {
-        return this.srsDefs;
     },
     historyBack: function() {
         this.historyControl.previous.trigger();
