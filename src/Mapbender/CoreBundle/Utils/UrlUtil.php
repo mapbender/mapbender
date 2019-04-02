@@ -52,6 +52,29 @@ class UrlUtil
     }
 
     /**
+     * @param string $url
+     * @param string $paramName
+     * @param mixed $default
+     * @return mixed
+     * @throws \InvalidArgumentException on empty $paramName
+     */
+    public static function getQueryParameterCaseInsensitive($url, $paramName, $default = null)
+    {
+        if (!$paramName) {
+            throw new \InvalidArgumentException("Empty parameter name");
+        }
+        $lcParamName = strtolower($paramName);
+        $urlParams = array();
+        parse_str(parse_url($url, PHP_URL_QUERY), $urlParams);
+        foreach ($urlParams as $urlParam => $value) {
+            if (strtolower($urlParam) == $lcParamName) {
+                return $value;
+            }
+        }
+        return $default;
+    }
+
+    /**
      * Inverse of parse_url.
      * This is a drop-in for a single-argument http_build_url as provided by the (rarely installed) "http" PECL
      * extension.
