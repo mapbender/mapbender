@@ -154,7 +154,7 @@ Mapbender.Model.prototype = {
         for (var s = sourceIndex - 1; s >= 0; --s) {
             var previousSource = this.sourceTree[s];
             var previousLayer = (previousSource.nativeLayers.slice(-1))[0];
-            if (previousLayer && previousLayer.map === olMap) {
+            if (previousLayer) {
                 afterLayer = previousLayer;
                 break;
             }
