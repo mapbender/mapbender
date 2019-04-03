@@ -24,11 +24,28 @@ window.Mapbender.MapEngineOl4 = (function() {
             // OpenLayers.Control.Navigation.prototype.documentDrag = true;
             Mapbender.MapEngine.prototype.patchGlobals.apply(this, arguments);
         },
+        getLayerVisibility: function(olLayer) {
+            return olLayer.getVisibile();
+        },
         createWmsLayer: function(source) {
             var sourceOpts = {
                 url: source.configuration.options.url,
-                transition: 0
+                transition: 0,
+                params: {}
             };
+
+            var activatedLeaves = source.getActivatedLeaves();
+            var nonEmptyLayerNames = activatedLeaves.map(function(sourceLayer) {
+                return sourceLayer.options.name;
+            }).filter(function(layerName) {
+                return !!layerName;
+            });
+            sourceOpts.params.LAYERS = nonEmptyLayerNames;
+            // @todo: use configured styles
+            var styles = nonEmptyLayerNames.map(function() {
+                return '';
+            });
+            sourceOpts.params.STYLES = styles;
 
             var olSourceClass;
             var olLayerClass;
