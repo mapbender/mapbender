@@ -308,6 +308,37 @@ Mapbender.Model.prototype = {
         }
     },
     /**
+     * Zooms to layer
+     * @param {Object} options
+     * @property {String} options.sourceId
+     * @property {String} options.layerId
+     */
+    zoomToLayer: function(options) {
+        var source = this.getSourceById(options.sourceId);
+        var bounds = source && source.getLayerBounds(options.layerId, this.getCurrentProjectionCode(), true, true);
+        if (bounds) {
+            this.olMap.getView().fit(bounds);
+        }
+    },
+    /**
+     * Gets a mapping of all defined extents for a layer, keyed on SRS
+     * @param {Object} options
+     * @property {String} options.sourceId
+     * @property {String} options.layerId
+     * @return {Object<String, Array<Number>>}
+     *
+     * engine-agnostic
+     */
+    getLayerExtents: function(options) {
+        var source = this.getSourceById(options.sourceId);
+        if (source) {
+            return source.getLayerExtentConfigMap(options.layerId, true, true);
+        } else {
+            console.warn("Source not found", options);
+            return null;
+        }
+    },
+    /**
      * Check if OpenLayer layer need to be redraw
      *
      * @TODO: infoLayers should be set outside of the function
