@@ -81,6 +81,46 @@ window.Mapbender.MapEngineOl4 = (function() {
             var newLayers = (layersNow || '').toString() !== layers.toString();
             var newStyles = (stylesNow || '').toString() !== styles.toString();
             return newLayers || newStyles;
+        },
+        isProjectionAxisFlipped: function(srsName) {
+            var projection = ol.proj.get(srsName);
+            var axisOrientation = projection && projection.getAxisOrientation();
+            return !!(axisOrientation && axisOrientation.substr(0, 2) === 'ne');
+        },
+        boundsFromArray: function(values) {
+            var bounds = values.slice();
+            Object.defineProperty(bounds, 'left', {
+                get: function() { return this[0]; }
+            });
+            Object.defineProperty(bounds, 'bottom', {
+                get: function() { return this[1]; }
+            });
+            Object.defineProperty(bounds, 'right', {
+                get: function() { return this[2]; }
+            });
+            Object.defineProperty(bounds, 'top', {
+                get: function() { return this[3]; }
+            });
+            console.log("Wow its a bound", bounds);
+            return bounds;
+        },
+        transformBounds: function(bounds, fromProj, toProj) {
+            var from = this._getProj(fromProj, true);
+            var to = this._getProj(toProj, true);
+            var transformFn = ol.proj.getTransformFromProjections(from, to);
+            var transformed = ol.extent.applyTransform(bounds, transformFn);
+            return this.boundsFromArray(transformed);
+        },
+        _getProj: function(projOrSrsName, strict) {
+            // ol.proj.get will happily accept an ol.proj instance :)
+            var proj = ol.proj.get(projOrSrsName);
+            if (!proj && strict) {
+                throw new Error("Unsupported projection " + projOrSrsName.toString());
+            }
+            if (proj && !proj.units_) {
+                proj.units_ = 'degrees';
+            }
+            return proj || null;
         }
     });
     window.Mapbender.MapEngine.typeMap['ol4'] = MapEngineOl4;
