@@ -291,6 +291,23 @@ Mapbender.Model.prototype = {
         this._updateSourceLayerTreeOptions(source, newProps);
     },
     /**
+     * engine-agnostic
+     */
+    setOpacity: function(source, opacity) {
+        // unchecked findSource in layertree may pass undefined for source
+        if (source) {
+            var opacity_ = parseFloat(opacity);
+            if (isNaN(opacity_)) {
+                opacity_ = 1.0;
+            }
+            opacity_ = Math.max(0.0, Math.min(1.0, opacity_));
+            if (opacity_ !== opacity) {
+                console.warn("Invalid-ish opacity, clipped to " + opacity_.toString(), opacity);
+            }
+            source.setOpacity(opacity_);
+        }
+    },
+    /**
      * Check if OpenLayer layer need to be redraw
      *
      * @TODO: infoLayers should be set outside of the function
@@ -787,8 +804,6 @@ Mapbender.Model.prototype.center = function center() {
 };
 
 Mapbender.Model.prototype.removeSource = function removeSource() {
-};
-Mapbender.Model.prototype.setLayerOpacity = function setLayerOpacity() {
 };
 Mapbender.Model.prototype.changeProjection = function changeProjection() {
 };
