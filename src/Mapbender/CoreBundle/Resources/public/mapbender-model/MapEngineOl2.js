@@ -81,6 +81,56 @@ window.Mapbender.MapEngineOl2 = (function() {
             var newLayers = (olLayer.params.LAYERS || '').toString() !== layers.toString();
             var newStyles = (olLayer.params.STYLES || '').toString() !== styles.toString();
             return newLayers || newStyles;
+        },
+        isProjectionAxisFlipped: function(srsName) {
+            var projDefaults = OpenLayers.Projection.defaults[srsName];
+            return !!(projDefaults && projDefaults.yx);
+        },
+        boundsFromArray: function(values) {
+            return OpenLayers.Bounds.fromArray(values);
+        },
+        transformBounds: function(bounds, fromProj, toProj) {
+            var from = this._getProj(fromProj, true);
+            var to = this._getProj(toProj, true);
+            var boundsOut = (bounds && bounds.clone()) || null;
+            if (!bounds || !boundsOut || !from.projCode || !to.projCode) {
+                console.error("Empty extent or invalid projetcions", bounds, fromProj, toProj);
+                throw new Error("Empty extent or invalid projections");
+            }
+
+            if (bounds && from.projCode !== to.projCode) {
+                return boundsOut.transform(from, to);
+            }
+            return boundsOut;
+        },
+        _getProj: function(projOrSrsName, strict) {
+            var srsName;
+            if (projOrSrsName && projOrSrsName.projCode) {
+                srsName = projOrSrsName.projCode;
+            } else {
+                if (typeof projOrSrsName !== 'string') {
+                    console.error("Invalid argument", projOrSrsName);
+                    if (strict) {
+                        throw new Error("Invalid argument");
+                    } else {
+                        return null;
+                    }
+                } else {
+                    srsName = projOrSrsName;
+                }
+            }
+
+            if (Proj4js.defs[srsName]) {
+                var proj = new OpenLayers.Projection(srsName);
+                if (!proj.proj.units) {
+                    proj.proj.units = 'degrees';
+                }
+                return proj;
+            }
+            if (strict) {
+                throw new Error("Unsupported projection " + srsName.toString());
+            }
+            return null;
         }
     });
     window.Mapbender.MapEngine.typeMap['ol2'] = MapEngineOl2;

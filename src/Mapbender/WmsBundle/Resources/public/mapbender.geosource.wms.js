@@ -99,16 +99,17 @@ window.Mapbender.WmsSource = (function() {
             return !!nonEmptyLayerNames.length;
         },
         _bboxArrayToBounds: function(bboxArray, projCode) {
-            if (this.configuration.options.version === '1.3.0') {
-                var projDefaults = OpenLayers.Projection.defaults[projCode];
-                var yx = projDefaults && projDefaults.yx;
-                if (yx) {
-                    // Seriously.
-                    // See http://portal.opengeospatial.org/files/?artifact_id=14416 page 18
-                    bboxArray = [bboxArray[1], bboxArray[0], bboxArray[3], bboxArray[2]];
-                }
+            var bboxArray_;
+            var flipped = this.configuration.options.version === '1.3.0';
+            flipped = flipped && Mapbender.mapEngine.isProjectionAxisFlipped(projCode);
+            if (flipped) {
+                // Seriously.
+                // See http://portal.opengeospatial.org/files/?artifact_id=14416 page 18
+                bboxArray_ = [bboxArray[1], bboxArray[0], bboxArray[3], bboxArray[2]];
+            } else {
+                bboxArray_ = bboxArray;
             }
-            return Mapbender.Source.prototype._bboxArrayToBounds.call(this, bboxArray, projCode);
+            return Mapbender.Source.prototype._bboxArrayToBounds.call(this, bboxArray_, projCode);
         },
         checkLayerParameterChanges: function(layerParams) {
             var olLayer = this.getNativeLayer(0);

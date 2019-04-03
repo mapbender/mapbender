@@ -166,7 +166,7 @@ window.Mapbender.Source = (function() {
             });
         },
         _bboxArrayToBounds: function(bboxArray, projCode) {
-            return OpenLayers.Bounds.fromArray(bboxArray);
+            return Mapbender.mapEngine.boundsFromArray(bboxArray);
         },
         // Custom toJSON for mbMap.getMapState()
         // Drops runtime-specific ollid and mqlid
@@ -250,7 +250,7 @@ window.Mapbender.SourceLayer = (function() {
                 var bboxArray = bboxMap[srsName];
                 if (bboxArray) {
                     var bounds = this.source._bboxArrayToBounds(bboxArray, srsName);
-                    return Mapbender.Model._transformExtent(bounds, srsName, projCode);
+                    return Mapbender.mapEngine.transformBounds(bounds, srsName, projCode);
                 }
             }
             var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
