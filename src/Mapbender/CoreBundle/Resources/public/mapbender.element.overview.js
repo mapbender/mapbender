@@ -26,8 +26,7 @@
             this.element.addClass(this.options.anchor);
             if (!this.options.maximized) {
                 this.element.addClass("closed");
-            }
-            if (!$element.hasClass('closed')) {
+            } else if (!this.element.hasClass('closed')) {
                 // if we start closed, wait with initialization until opened
                 this._initDisplay();
             }
@@ -54,26 +53,15 @@
                     throw new Error("Unhandled engine code " + Mapbender.mapEngine.code);
             }
         },
-        _initAsOl4Control: function() {
+        _initAsOl4Control: function(layers) {
+            var viewportId = 'mb-overview-' + this.element.attr('id') + '-viewport';
+            var $viewport = $('.overviewContainer', this.element);
+            $viewport.attr('id', viewportId);
             // @see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/overviewmap.js
 
-            var mainMapModel = this.mbMap_.model;
-            var maxExtent = mainMapModel.getMaxExtent();
-            this.$viewport_.width(this.options.width).height(this.options.height);
-            var viewportId = this.$viewport_.attr('id');
-
-            var sources = Mapbender.Model.sourcesFromLayerSetId("" + this.options.layerset);
-            var layers = sources.map(function(source) {
-                var layer = Mapbender.Model.layerFactoryStatic(source, maxExtent);
-                // Also activate all sources and all layers.
-                // This is backwards-compatible behvavior. The old overview never
-                // evaluated "visible", or any other config state on the source nor
-                // its layers
-                // NOTE: we can only do this AFTER creating and attach the layer via factory
-                source.setState(true);
-                return layer;
-            });
-            var center = mainMapModel.map.getView().getCenter();
+            var mainMapModel = this.mbMap.model;
+            $viewport.width(this.options.width).height(this.options.height);
+            var center = mainMapModel.olMap.getView().getCenter();
             /**
              * @todo: find a working solution for 'fixed' mode
              *      adding constant 'minZoom: 7, maxZoom: 7' to the view options
@@ -88,12 +76,11 @@
                 layers: layers,
                 view: new ol.View({
                     projection: mainMapModel.getCurrentProjectionObject(), //map.getView().getProjection(),
-                    center: center,
-                    extent: mainMapModel.getMaxExtent()
+                    center: center
                 })
             };
             this.control_ = new ol.control.OverviewMap(controlOptions);
-            mainMapModel.map.addControl(this.control_);
+            mainMapModel.olMap.addControl(this.control_);
             if (this.options.fixed) {
                 console.warn("Engaging Overview mode 'fixed', no working implementation!", mainMapModel.getMaxExtent(), center);
                 // zoom out to main map extent limit and lock
