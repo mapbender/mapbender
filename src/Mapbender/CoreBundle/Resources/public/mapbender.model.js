@@ -1076,7 +1076,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      */
     zoomToLayer: function(options) {
         var source = this.getSourceById(options.sourceId);
-        var bounds = source && source.getLayerBounds(options.layerId, this.map.olMap.getProjection(), true, true);
+        var bounds = source && source.getLayerBounds(options.layerId, this.getCurrentProjectionCode(), true, true);
         if (bounds) {
             this.mbMap.zoomToExtent(bounds, true);
         }
@@ -1762,27 +1762,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      * @returns {OpenLayers.Bounds}
      */
     _transformExtent: function(extent, fromProj, toProj) {
-        var extentOut = (extent && extent.clone()) || null;
-        var from, to;
-        if (typeof fromProj === 'string') {
-            from = this.getProj(fromProj, true);
-        } else {
-            from = fromProj;
-        }
-        if (typeof toProj === 'string') {
-            to = this.getProj(toProj, true);
-        } else {
-            to = toProj;
-        }
-        if (!extent || !extentOut || !from.projCode || !to.projCode) {
-            console.error("Empty extent or invalid projetcions", extent, fromProj, toProj);
-            throw new Error("Empty extent or invalid projections");
-        }
-
-        if (extent && from.projCode !== to.projCode) {
-            return extentOut.transform(from, to);
-        }
-        return extentOut;
+        return Mapbender.mapEngine.transformBounds(extent, fromProj, toProj);
     },
     parseURL: function() {
         var visibleLayersParam = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');

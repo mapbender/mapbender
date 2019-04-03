@@ -101,7 +101,6 @@ window.Mapbender.MapEngineOl4 = (function() {
             Object.defineProperty(bounds, 'top', {
                 get: function() { return this[3]; }
             });
-            console.log("Wow its a bound", bounds);
             return bounds;
         },
         transformBounds: function(bounds, fromProj, toProj) {

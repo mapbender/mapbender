@@ -986,38 +986,6 @@ Mapbender.Model.prototype.containsCoordinate = function containsCoordinate(exten
 };
 
 /**
- * fit to Extent
- * @param extent
- * @param {array} optOptions
- */
-Mapbender.Model.prototype.panToExtent = function panToExtent(extent, optOptions) {
-    'use strict';
-
-    var view = this.olMap.getView();
-    var size = optOptions['size'] ? optOptions['size']: undefined;
-    var padding =  optOptions['padding'] ?optOptions['padding']: undefined;
-    var constrainResolution =  optOptions['constrainResolution'] ?optOptions['constrainResolution']: undefined;
-    var nearest =  optOptions['nearest'] ?optOptions['nearest']: undefined;
-    var minResolution =  optOptions['minResolution'] ?optOptions['minResolution']: undefined;
-    var easing =  optOptions['easing'] ?optOptions['easing']: undefined;
-    var callback =  optOptions['callback'] ?optOptions['callback']: undefined;
-    var maxZoom= optOptions['maxZoom'] ? optOptions['maxZoom']: view.getZoom();
-    var duration = optOptions['duration'] ? optOptions['duration'] : 0;
-
-    view.fit(extent, {
-        size: size,
-        paddig:padding,
-        constrainResolution: constrainResolution,
-        nearest: nearest,
-        minResolution: minResolution,
-        easing:easing,
-        callback: callback,
-        duration: duration,
-        maxZoom: maxZoom
-    });
-};
-
-/**
  *
  * @param mbExtent
  * @return {Mapbender.Model}
@@ -1033,16 +1001,6 @@ Mapbender.Model.prototype.zoomToExtent = function(mbExtent) {
     this.olMap.getView().fit(extent, this.olMap.getSize());
 
     return this;
-};
-
-/**
- *
- * @param coordinate
- * @returns {ol.Extent}
- */
-Mapbender.Model.prototype.boundingExtentFromCoordinates = function boundingExtentFromCoordinates(coordinate) {
-    'use strict';
-    return ol.extent.boundingExtent(coordinate);
 };
 
 /**
@@ -1290,17 +1248,6 @@ Mapbender.Model.prototype.removeFeatureById = function(owner, vectorId, featureI
     var source = this.vectorLayer[owner][vectorId].getSource();
     var feature = source.getFeatureById(featureId);
     source.removeFeature(feature);
-};
-
-/**
- *
- * @param owner
- * @param vectorId
- */
-Mapbender.Model.prototype.getLayerExtent = function(owner, vectorId) {
-    'use strict';
-    var vectorLayerExtent = this.vectorLayer[owner][vectorId].getSource().getExtent();
-    return this.mbExtent(vectorLayerExtent);
 };
 
 /**
@@ -2312,17 +2259,4 @@ Mapbender.Model.prototype.getResolutionForExtent = function getResolutionForExte
     var yResolution = ol.extent.getHeight(extent) / size[1];
 
     return Math.max(xResolution, yResolution);
-};
-
-/**
- *
- * @param scale
- * @param units
- * @returns {number}
- */
-Mapbender.Model.prototype.getResolutionForScale = function getResolutionForScale (scale, units) {
-    var dpi = 25.4 / 0.28;
-    var mpu = ol.proj.METERS_PER_UNIT[units];
-    var inchesPerMeter = 39.37;
-    return parseFloat(scale) / (mpu * inchesPerMeter * dpi);
 };
