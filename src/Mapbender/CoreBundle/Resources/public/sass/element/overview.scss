@@ -17,16 +17,10 @@
     @include border-radius($radius);
   }
 
-  // previous
-//  .olMap, .viewport {
-  // upstream
   .olMap, .ol-overviewmap-map {
     background-color: white;
     @include transition(all .2s linear);
-    // previous
-//    .ol-viewport, .olMapViewport {
-    // upstream
-    .olMap, .ol-viewport {
+    .ol-viewport, .olMapViewport {
       border: 1px solid $thirdColor;
     }
   }
