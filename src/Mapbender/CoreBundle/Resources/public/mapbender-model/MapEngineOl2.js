@@ -62,6 +62,18 @@ window.Mapbender.MapEngineOl2 = (function() {
                 if (exceptionFormatConfig) {
                     params.exceptions = exceptionFormatConfig;
                 }
+                var activatedLeaves = source.getActivatedLeaves();
+                var nonEmptyLayerNames = activatedLeaves.map(function(sourceLayer) {
+                    return sourceLayer.options.name;
+                }).filter(function(layerName) {
+                    return !!layerName;
+                });
+                params.LAYERS = nonEmptyLayerNames;
+                // @todo: use configured styles
+                var styles = nonEmptyLayerNames.map(function() {
+                    return '';
+                });
+                params.STYLES = styles;
                 return params;
             }
         },

@@ -36,17 +36,23 @@
             this._trigger('ready');
         },
         _initDisplay: function() {
-            switch (this.mbMap_.engineCode) {
+            var layers = this._createLayers();
+            if (!layers.length){
+                Mapbender.info(Mapbender.trans("mb.core.overview.nolayer"));
+                return null;
+            }
+
+            switch (Mapbender.mapEngine.code) {
                 case 'ol4':
-                    this._initAsOl4Control();
+                    this._initAsOl4Control(layers);
                     break;
-                case 'mq-ol2':
-                    this._initAsOl2Control();
+                case 'ol2':
+                    this._initAsOl2Control(layers);
+                    $(document).bind('mbmapsrschanged', this._changeSrs2.bind(this));
                     break;
                 default:
-                    throw new Error("Unhandled engine code " + this.mbMap_.engineCode);
+                    throw new Error("Unhandled engine code " + Mapbender.mapEngine.code);
             }
-            $(document).bind('mbmapsrschanged', this._changeSrs.bind(this));
         },
         _initAsOl4Control: function() {
             // @see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/overviewmap.js
@@ -102,20 +108,18 @@
 
             }
         },
-        _initAsOl2Control: function() {
-            this.overview = this._createOverviewControl();
+        _initAsOl2Control: function(layers) {
+            this.overview = this._createOverviewControl(layers);
             if (this.overview) {
                 this.mbMap.map.olMap.addControl(this.overview);
             }
         },
-        _createOverviewControl: function() {
-            var layers = this._createLayers();
-            if (!layers.length){
-                Mapbender.info(Mapbender.trans("mb.core.overview.nolayer"));
-                return null;
-            }
+        _createOverviewControl: function(layers) {
             var projection = this.mbMap.getModel().getCurrentProjectionCode();
             var maxExtent = this.mbMap.map.olMap.maxExtent;
+            if (layers.length) {
+                layers[0].setIsBaseLayer(true);
+            }
 
             var options = {
                 layers: layers,
@@ -157,23 +161,9 @@
                 var source = instanceDefs[i];
                 // Legacy HACK: Overview ignores backend settings on instance layers, enables all children
                 //        of the root layer with non-empty names, ignores every other layer
-                var activatedLayers = source.getActivatedLeaves();
-                var nonEmptyLayerNames = activatedLayers.map(function(sourceLayer) {
-                    return sourceLayer.options.name;
-                }).filter(function(layerName) {
-                    return !!layerName;
-                });
-                if (nonEmptyLayerNames.length) {
-                    layers = layers.concat(source.createNativeLayers(srsName).map(function(nativeLayer) {
-                        nativeLayer.mergeNewParams({
-                            LAYERS: nonEmptyLayerNames
-                        });
-                        return nativeLayer;
-                    }));
+                if (source.hasVisibleLayers(srsName)) {
+                    layers = layers.concat(source.createNativeLayers(srsName));
                 }
-            }
-            if (layers.length) {
-                layers[0].setIsBaseLayer(true);
             }
             return layers;
         },

@@ -89,6 +89,15 @@ window.Mapbender.WmsSource = (function() {
             });
             return layers;
         },
+        hasVisibleLayers: function(srsName) {
+            var activatedLayers = this.getActivatedLeaves();
+            var nonEmptyLayerNames = activatedLayers.map(function(sourceLayer) {
+                return sourceLayer.options.name;
+            }).filter(function(layerName) {
+                return !!layerName;
+            });
+            return !!nonEmptyLayerNames.length;
+        },
         _bboxArrayToBounds: function(bboxArray, projCode) {
             if (this.configuration.options.version === '1.3.0') {
                 var projDefaults = OpenLayers.Projection.defaults[projCode];
