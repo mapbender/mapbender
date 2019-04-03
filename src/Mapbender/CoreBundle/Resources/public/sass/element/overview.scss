@@ -30,28 +30,28 @@
       border: 1px solid $thirdColor;
     }
   }
-  .viewport {
-    // OL4: renders a toggle button, which we delegate to for visibility
-    //      toggling, but we don't want to show it
+  .ol-overviewmap {
     button {
+      // OL4: renders a toggle button, which we delegate to for visibility
+      //      toggling, but we don't want to show it
       width: 0;
       padding: 0;
       border: 0;
       font-size: 0;
       overflow-x: hidden;
     }
+    // prevent weird vertical displacement of map relative to toggle button
+    font-size: 0;
+    line-height: 0;
   }
   &.closed {
-    .viewport {
-      width: 0;
+    .olMap, .ol-overviewmap-map {
+      width: 0 !important;
       height: 0;
       opacity: 0;
       border: 0;
     }
 
-    .olMap {
-      width: 0 !important;
-    }
     .toggleOverview {
       @extend .iconOpen;
     }

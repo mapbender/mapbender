@@ -56,11 +56,13 @@
         _initAsOl4Control: function(layers) {
             var viewportId = 'mb-overview-' + this.element.attr('id') + '-viewport';
             var $viewport = $('.overviewContainer', this.element);
+            $('.toggleOverview', this.element).on('click', function() {
+                $('button', $viewport).click();
+            });
             $viewport.attr('id', viewportId);
             // @see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/overviewmap.js
 
             var mainMapModel = this.mbMap.model;
-            $viewport.width(this.options.width).height(this.options.height);
             var center = mainMapModel.olMap.getView().getCenter();
             /**
              * @todo: find a working solution for 'fixed' mode
@@ -79,8 +81,13 @@
                     center: center
                 })
             };
-            this.control_ = new ol.control.OverviewMap(controlOptions);
-            mainMapModel.olMap.addControl(this.control_);
+            this.overview = new ol.control.OverviewMap(controlOptions);
+
+            mainMapModel.olMap.addControl(this.overview);
+            $('.ol-overviewmap-map', $viewport)
+                .width(this.options.width)
+                .height(this.options.height)
+            ;
             if (this.options.fixed) {
                 console.warn("Engaging Overview mode 'fixed', no working implementation!", mainMapModel.getMaxExtent(), center);
                 // zoom out to main map extent limit and lock
@@ -94,6 +101,7 @@
                 // ctView.constrainResolution(fixedRes, 0.0); // no effect?!
 
             }
+            this.overview.ovmap_.updateSize();
         },
         _initAsOl2Control: function(layers) {
             this.overview = this._createOverviewControl(layers);
@@ -161,8 +169,8 @@
             var self = this;
             $(this.element).toggleClass('closed');
             window.setTimeout(function(){
-                if(!$(self.element).hasClass('closed')){
-                    if (4) {
+                if (!$(self.element).hasClass('closed')) {
+                    if (!self.overview) {
                         self._initDisplay();
                     } else {
                         if (self.overview && self.overview.ovmap) {
