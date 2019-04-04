@@ -46,12 +46,6 @@ Mapbender.Model.prototype = {
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         this._initEvents(this.olMap, this.mbMap);
-        // ordered list of WMS / WMTS etc sources that provide pixel tiles
-        /** @type {Array.<Mapbender.SourceModelOl4>} **/
-        this.pixelSources = [];
-        // OL4 happily assigns all layers a zIndex of 0, and displays them in the order added
-        // we need real z indexes to enable reordering
-        this.pixelSourceZOffset = 0;
         this.zoomToExtent(options.startExtent || options.maxExtent);
         this.initializeSourceLayers();
     },
@@ -1205,31 +1199,6 @@ Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerSty
 };
 
 /**
- *
- * @returns {Array.<Mapbender.SourceModelOl4>}
- */
-Mapbender.Model.prototype.getActiveSources = function() {
-    var sources = [];
-    for (var i = 0; i < this.pixelSources.length; ++i) {
-        var source = this.pixelSources[i];
-        if (source.isActive()) {
-            sources.push(source);
-        }
-    }
-    return sources;
-};
-
-/**
- * @returns {string[]}
- */
-Mapbender.Model.prototype.getActiveSourceIds = function() {
-    return this.getActiveSources().map(function(source) {
-        /** @var {Mapbender.SourceModelOl4} source */
-        return source.id;
-    });
-};
-
-/**
  * @returns {string[]}
  * @param sourceId
  */
@@ -1402,25 +1371,6 @@ Mapbender.Model.prototype.getFeatureInfoObject = function getFeatureInfoObject(s
     return result;
 };
 
-/**
- * Collects feature info URLs and source object from all active sources
- *
- * @todo: add resolution params
- *
- * @returns {object[]}
- */
-Mapbender.Model.prototype.collectFeatureInfoObjects = function collectFeatureInfoObjects(coordinate) {
-    var urls = [];
-    var sourceIds = this.getActiveSourceIds();
-    for (var i = 0; i < sourceIds.length; ++i) {
-        // pass sourceId, forward all remaining arguments
-        // @todo: remove this argument-forwarding style once the API has settled
-        urls.push(this.getFeatureInfoObject.apply(this, [sourceIds[i]].concat(arguments)));
-    }
-    // strip nulls
-    return _.filter(urls);
-};
-
 Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
     'use strict';
 
@@ -1461,6 +1411,7 @@ Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
             console.error("Missing / incomplete transformations (log order from / to)", [currentSrsCode, projectionCode], [fromProj, toProj]);
             throw new Error("Missing / incomplete transformations");
         }
+        // @todo: attribute gone
         for (var i = 0; i < this.pixelSources.length; ++i) {
             this.pixelSources[i].updateSrs(toProj);
         }
