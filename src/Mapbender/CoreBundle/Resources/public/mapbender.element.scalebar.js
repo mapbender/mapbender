@@ -42,8 +42,13 @@
                 target: this.element.attr('id'),
                 'minWidth': '64',
                 geodesic: true,
-                'units': 'metric'       //?!?!?
+                'units': 'metric'
             };
+            if (this.options.units.indexOf('ml') !== -1) {
+                controlOptions.units = 'imperial';
+            } else {
+                controlOptions.units = 'metric';
+            }
             this.scalebar = new ol.control.ScaleLine(controlOptions);
             this.mbMap.getModel().olMap.addControl(this.scalebar);
         },
