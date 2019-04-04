@@ -45,6 +45,7 @@ Mapbender.Model.prototype = {
         });
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
+        this._initEvents(this.olMap, this.mbMap);
         // ordered list of WMS / WMTS etc sources that provide pixel tiles
         /** @type {Array.<Mapbender.SourceModelOl4>} **/
         this.pixelSources = [];
@@ -53,6 +54,18 @@ Mapbender.Model.prototype = {
         this.pixelSourceZOffset = 0;
         this.zoomToExtent(options.startExtent || options.maxExtent);
         this.initializeSourceLayers();
+    },
+    _initEvents: function(olMap, mbMap) {
+        var self = this;
+        olMap.on('moveend', function() {
+            var scales = self._getScales();
+            var zoom = self.getCurrentZoomLevel();
+            mbMap.element.trigger('mbmapzoomchanged', {
+                mbMap: mbMap,
+                zoom: zoom,
+                scale: scales[zoom]
+            });
+        });
     },
     initializeSourceLayers: function() {
         var self = this;
