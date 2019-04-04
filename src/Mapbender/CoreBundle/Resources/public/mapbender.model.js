@@ -79,19 +79,19 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     _initMap: function _initMap() {
         this._patchNavigationControl();
         var self = this;
-        this._configProj = this.getProj(this.mbMap.options.srs);
+        this._configProj = this.mbMap.options.srs;
         this._startProj = this.mbMap.options.targetsrs || this.mbMap.options.srs;
 
 
         this.mapMaxExtent = {
-            projection: this._configProj,
+            projection: this.getProj(this._configProj),
             // using null or open bounds here causes failures in map, overview and other places
             // @todo: make applications work with open / undefined max extent
             extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max)
         };
 
         this.mapStartExtent = {
-            projection: this._configProj,
+            projection: this.getProj(this._configProj),
             extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start || this.mbMap.options.extents.max)
         };
         var baseLayer = new OpenLayers.Layer('fake', {
@@ -1551,9 +1551,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         if (!mx || !(mx instanceof OpenLayers.Bounds)) {
             throw new Error("Invalid newMaxExtent (empty or bad type)");
         }
-        this._configProj = proj;
+        this._configProj = proj.projCode;
         this.mapMaxExtent = $.extend(this.mapMaxExtent || {}, {
-            projection: proj,
+            projection: this.getProj(this._configProj),
             extent: mx
         });
     },
