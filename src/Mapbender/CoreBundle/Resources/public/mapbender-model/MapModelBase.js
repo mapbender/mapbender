@@ -6,6 +6,8 @@ window.Mapbender.MapModelBase = (function() {
         this.mbMap = mbMap;
         this.sourceBaseId_ = 0;
         this.sourceTree = [];
+        this._configProj = this.mbMap.options.srs;
+        this._startProj = this.mbMap.options.targetsrs || this.mbMap.options.srs;
     }
 
     MapModelBase.prototype = {
@@ -13,6 +15,10 @@ window.Mapbender.MapModelBase = (function() {
         mbMap: null,
         sourceBaseId_: null,
         sourceTree: [],
+        /** Backend-configured initial projection, used for start / max extents */
+        _configProj: null,
+        /** Actual initial projection, determined by a combination of several URL parameters */
+        _startProj: null,
         /**
          * @return {number}
          * engine-agnostic

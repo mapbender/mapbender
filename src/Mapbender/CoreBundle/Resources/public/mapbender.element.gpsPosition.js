@@ -65,16 +65,16 @@
         },
         _createMarker: function (position, accuracy) {
             var self = this,
-                olmap = self.map,
+                mbMap = self.map,
                 markerId = self.geolocationMarkerId,
                 accuracyId = self.geolocationAccuracyId,
                 positionProj = 'EPSG:4326',
                 metersProj = 'EPSG:3857',
-                currentProj = olmap.model.getCurrentProjectionCode(),
-                transPositionCurrentProj = olmap.model.transformCoordinate(position,positionProj,currentProj),
-                currentUnit = olmap.model.getUnitsOfCurrentProjection(),
-                mpu = olmap.model.getMeterPersUnit(currentUnit),
-                pointInMeters = olmap.model.transformCoordinate(position,positionProj,metersProj),
+                currentProj = mbMap.model.getCurrentProjectionCode(),
+                transPositionCurrentProj = mbMap.model.transformCoordinate(position,positionProj,currentProj),
+                currentUnit = mbMap.model.getCurrentProjectionUnits(),
+                mpu = mbMap.model.getMeterPersUnit(currentUnit),
+                pointInMeters = mbMap.model.transformCoordinate(position,positionProj,metersProj),
                 accuracyOrgPoint,
                 differancePerUnit,
                 accurancyStyleParams = self.options.accurancyStyle,
@@ -95,10 +95,10 @@
 
             // check vectorlayer and set an new Source
             if (markerId){
-                var markerVectorLayer = olmap.model.getVectorLayerByNameId('Position',markerId);
+                var markerVectorLayer = mbMap.model.getVectorLayerByNameId('Position',markerId);
                 markerVectorLayer.setSource(markersSource);
             }else {
-                markerId = olmap.model.createVectorLayer({
+                markerId = mbMap.model.createVectorLayer({
                     source: markersSource,
                     style: markerStyle
                 }, 'Position');
@@ -127,10 +127,10 @@
 
             // check vectorlayer and set an new Source
             if (accuracyId) {
-                var accuracyVectorLayer = olmap.model.getVectorLayerByNameId('Accuracy', accuracyId);
+                var accuracyVectorLayer = mbMap.model.getVectorLayerByNameId('Accuracy', accuracyId);
                 accuracyVectorLayer.setSource(accurancySource);
             }else{
-                accuracyId = olmap.model.createVectorLayer({
+                accuracyId = mbMap.model.createVectorLayer({
                     source: accurancySource,
                     style : accurancyStyle
                 },'Accuracy');

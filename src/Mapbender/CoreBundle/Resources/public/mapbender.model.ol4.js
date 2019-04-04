@@ -419,6 +419,22 @@ window.Mapbender.MapModelOl4 = (function() {
     getCurrentZoomLevel: function() {
         return this.olMap.getView().getZoom();
     },
+    getCurrentProjectionUnits: function() {
+        var proj;
+        if (this.olMap) {
+            proj = this.olMap.getView().getProjection();
+        } else {
+            proj = ol.proj.get(this._startProj);
+        }
+        return proj.getUnits() || 'degrees';
+    },
+    getCurrentProjectionCode: function() {
+        if (this.olMap) {
+            return this.olMap.getView().getProjection().getCode();
+        } else {
+            return this._startProj;
+        }
+    },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
         var view = this.olMap.getView();
@@ -477,10 +493,6 @@ window.Mapbender.MapModelOl4 = (function() {
 
     return style;
 },
-        getCurrentProjectionCode: function() {
-    return this.olMap.getView().getProjection().getCode();
-},
-
 /**
  * @returns {ol.proj.Projection}
  */
@@ -546,7 +558,7 @@ getScale: function (dpi, optRound, optScaleRating) {
  * @returns {number}
  */
 resolutionToScale: function(resolution, dpi) {
-    var currentUnit = this.getUnitsOfCurrentProjection();
+    var currentUnit = this.getCurrentProjectionUnits();
     var mpu = this.getMetersPerUnit(currentUnit);
     var inchesPerMetre = 39.37;
     return resolution * mpu * inchesPerMetre * (dpi || this.options.dpi || 72);
@@ -1122,21 +1134,6 @@ getCoordinatesXYObjectFromMapClickEvent: function(event) {
     }
 
     return coordinates;
-},
-
-/**
- * Get units of current map projection
- *
- * @returns {ol.proj.Units}
- */
-getUnitsOfCurrentProjection: function () {
-    var proj = this.getCurrentProjectionObject();
-    var units = proj.getUnits();
-    if (!units) {
-        console.warn("Projection object has undefined units! Defaulting to degrees", proj);
-        units = "degrees";
-    }
-    return units;
 },
 
 /**

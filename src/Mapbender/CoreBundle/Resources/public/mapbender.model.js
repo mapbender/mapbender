@@ -72,16 +72,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     mapMaxExtent: null,
     mapStartExtent: null,
     _highlightLayer: null,
-    /** Backend-configured initial projection, used for start / max extents */
-    _configProj: null,
-    /** Actual initial projection, determined by a combination of several URL parameters */
-    _startProj: null,
     _initMap: function _initMap() {
         this._patchNavigationControl();
         var self = this;
-        this._configProj = this.mbMap.options.srs;
-        this._startProj = this.mbMap.options.targetsrs || this.mbMap.options.srs;
-
 
         this.mapMaxExtent = {
             projection: this.getProj(this._configProj),
@@ -281,11 +274,20 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         });
     },
     getCurrentProjectionCode: function() {
-        if (this.map && this.map.olMap) {
-            return this.map.olMap.getProjection();
+        if (this.olMap) {
+            return this.olMap.getProjection();
         } else {
             return this._startProj;
         }
+    },
+    getCurrentProjectionUnits: function() {
+        var proj;
+        if (this.olMap) {
+            proj = this.getProj(this.olMap.getProjection());
+        } else {
+            proj = this.getProj(this._startProj);
+        }
+        return proj.proj.units || 'degrees';
     },
     getCurrentProj: function() {
         if (this.map && this.map.olMap) {
