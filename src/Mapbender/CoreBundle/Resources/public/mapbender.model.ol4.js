@@ -52,7 +52,7 @@ window.Mapbender.MapModelOl4 = (function() {
         this.map = new Mapbender.NotMapQueryMap(this.mbMap.element, this.olMap);
 
         this._initEvents(this.olMap, this.mbMap);
-        this.zoomToExtent(options.startExtent || options.maxExtent);
+        this.setExtent(options.startExtent || options.maxExtent);
         this.initializeSourceLayers();
     },
     _initEvents: function(olMap, mbMap) {
@@ -133,19 +133,6 @@ window.Mapbender.MapModelOl4 = (function() {
         });
         this._checkSource(sourceDef, true, false);
         return sourceDef;
-    },
-    /**
-     * Returns the source's position
-     */
-    getSourcePos: function(source) {
-        if (source) {
-            for (var i = 0; i < this.sourceTree.length; i++) {
-                if (this.sourceTree[i].id.toString() === source.id.toString()) {
-                    return i;
-                }
-            }
-        } else
-            return null;
     },
     /**
      * Injects native layers into the map at the "natural" position for the source.
@@ -304,19 +291,6 @@ window.Mapbender.MapModelOl4 = (function() {
         this._updateSourceLayerTreeOptions(source, newProps);
     },
     /**
-     * Zooms to layer
-     * @param {Object} options
-     * @property {String} options.sourceId
-     * @property {String} options.layerId
-     */
-    zoomToLayer: function(options) {
-        var source = this.getSourceById(options.sourceId);
-        var bounds = source && source.getLayerBounds(options.layerId, this.getCurrentProjectionCode(), true, true);
-        if (bounds) {
-            this.olMap.getView().fit(bounds);
-        }
-    },
-    /**
      * Check if OpenLayer layer need to be redraw
      *
      * @TODO: infoLayers should be set outside of the function
@@ -373,6 +347,23 @@ window.Mapbender.MapModelOl4 = (function() {
             olLayer.setVisible(true);
             return true;
         }
+    },
+    /**
+     * @param {Array<number>} boundsOrCoords
+     */
+    setExtent: function(boundsOrCoords) {
+        var bounds;
+        if ($.isArray(boundsOrCoords)) {
+            bounds = boundsOrCoords;
+        } else {
+            bounds = [
+                boundsOrCoords.left,
+                boundsOrCoords.bottom,
+                boundsOrCoords.right,
+                boundsOrCoords.top
+            ];
+        }
+        this.olMap.getView().fit(bounds);
     },
     getSources: function() {
         return this.sourceTree;

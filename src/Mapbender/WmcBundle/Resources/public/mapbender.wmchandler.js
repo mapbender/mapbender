@@ -84,7 +84,7 @@ Mapbender.WmcHandler = function(mapWidget, options){
         }
         if(!this.options.keepExtent){
             var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
-            this.mapWidget.zoomToExtent(OpenLayers.Bounds.fromArray(boundsAr), true);
+            this.mapWidget.getModel().setExtent(boundsAr);
         }
         this._addWmcToMap(state.sources);
     };

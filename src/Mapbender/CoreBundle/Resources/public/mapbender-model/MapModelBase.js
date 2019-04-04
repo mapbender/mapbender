@@ -80,6 +80,19 @@ window.Mapbender.MapModelBase = (function() {
             this._checkSource(sourceObj, true, false);
         },
         /**
+         * Zooms to layer
+         * @param {Object} options
+         * @property {String} options.sourceId
+         * @property {String} options.layerId
+         */
+        zoomToLayer: function(options) {
+            var source = this.getSourceById(options.sourceId);
+            var bounds = source && source.getLayerBounds(options.layerId, this.getCurrentProjectionCode(), true, true);
+            if (bounds) {
+                this.setExtent(bounds);
+            }
+        },
+        /**
          * Gets a mapping of all defined extents for a layer, keyed on SRS
          * @param {Object} options
          * @property {String} options.sourceId
@@ -100,6 +113,19 @@ window.Mapbender.MapModelBase = (function() {
             var id = 'auto-src-' + (this.sourceBaseId_ + 1);
             ++this.sourceBaseId_;
             return id;
+        },
+        /**
+         * Returns the source's position
+         */
+        getSourcePos: function(source) {
+            if (source) {
+                for (var i = 0; i < this.sourceTree.length; i++) {
+                    if (this.sourceTree[i].id.toString() === source.id.toString()) {
+                        return i;
+                    }
+                }
+            } else
+                return null;
         },
         /**
          *

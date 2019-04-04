@@ -129,14 +129,6 @@
             this.model.zoomToFullExtent();
         },
         /**
-         * Zooms the map to extent
-         */
-        zoomToExtent: function(extent, closest){
-            if(typeof closest === 'undefined')
-                closest = true;
-            this.map.olMap.zoomToExtent(extent, closest);
-        },
-        /**
          * Zooms the map to scale
          * @deprecated
          */

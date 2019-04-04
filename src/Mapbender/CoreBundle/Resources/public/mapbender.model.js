@@ -210,7 +210,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             } else {
                 startExtent = this._transformExtent(this.mapStartExtent.extent, this._configProj, this._startProj);
             }
-            this.map.olMap.zoomToExtent(startExtent, true);
+            this.setExtent(startExtent);
         }
         if (addLayers) {
             this.initializeSourceLayers();
@@ -525,19 +525,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         return null;
     },
     /**
-     * Returns the source's position
-     */
-    getSourcePos: function(source) {
-        if (source) {
-            for (var i = 0; i < this.sourceTree.length; i++) {
-                if (this.sourceTree[i].id.toString() === source.id.toString()) {
-                    return i;
-                }
-            }
-        } else
-            return null;
-    },
-    /**
      * Returns the source by id
      */
     getSourceLayerById: function(source, layerId) {
@@ -727,16 +714,16 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
                 boundsOrCoords.right,
                 boundsOrCoords.top);
         }
-        this.map.olMap.zoomToExtent(bounds);
+        this.olMap.zoomToExtent(bounds);
     },
     zoomIn: function() {
-        this.map.olMap.zoomIn();
+        this.olMap.zoomIn();
     },
     zoomOut: function() {
-        this.map.olMap.zoomOut();
+        this.olMap.zoomOut();
     },
     zoomToFullExtent: function() {
-        this.map.olMap.zoomToMaxExtent();
+        this.olMap.zoomToMaxExtent();
     },
     /**
      * Emulation shim for old-style MapQuery.Map.prototype.center.
@@ -999,7 +986,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         if (!options || typeof options.goto === 'undefined' || options.goto) {
             var bounds = this._highlightLayer.getDataExtent();
             if (bounds !== null) {
-                this.map.olMap.zoomToExtent(bounds);
+                this.setExtent(bounds);
             }
         }
     },
@@ -1011,19 +998,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             this._highlightLayer.map.removeLayer(this._highlightLayer);
         } else if (features && this.highlightLayer) {
             this._highlightLayer.removeFeatures(features);
-        }
-    },
-    /**
-     * Zooms to layer
-     * @param {Object} options
-     * @property {String} options.sourceId
-     * @property {String} options.layerId
-     */
-    zoomToLayer: function(options) {
-        var source = this.getSourceById(options.sourceId);
-        var bounds = source && source.getLayerBounds(options.layerId, this.getCurrentProjectionCode(), true, true);
-        if (bounds) {
-            this.mbMap.zoomToExtent(bounds, true);
         }
     },
     /**
