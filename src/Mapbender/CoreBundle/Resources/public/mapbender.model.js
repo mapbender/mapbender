@@ -1390,40 +1390,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
     },
     /**
-     * @param {OpenLayers.Layer.HTTPRequest|Object} source
-     * @param {boolean} [initializePod] to auto-instantiate a Mapbender.Source object from plain-old-data (default true)
-     * @param {boolean} [initializeLayers] to also auto-instantiate layers after instantiating Mapbender.Source (default false)
-     * @return {Mapbender.Source}
-     */
-    getMbConfig: function(source, initializePod, initializeLayers) {
-        var _s;
-        var projCode;
-        if (source.mbConfig) {
-            // monkey-patched OpenLayers.Layer
-            _s =  source.mbConfig;
-        } else if (source.source) {
-            // MapQuery layer
-            _s = source.source;
-        } else if (source.configuration && source.configuration.children) {
-            _s = source;
-        }
-        if (_s) {
-            if (initializePod || typeof initializePod === 'undefined') {
-                if (!(_s instanceof Mapbender.Source)) {
-                    var sourceObj = Mapbender.Source.factory(_s);
-                    if (initializeLayers) {
-                        projCode = projCode || this.getCurrentProjectionCode();
-                        sourceObj.initializeLayers(projCode);
-                    }
-                    return sourceObj;
-                }
-            }
-            return _s;
-        }
-        console.error("Cannot infer source configuration from given input", source);
-        throw new Error("Cannot infer source configuration from given input");
-    },
-    /**
      * @param {*} anything
      * @return {OpenLayers.Layer|null}
      */
@@ -1448,20 +1414,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         console.error("Could not find native layer for given obect", anything);
         return null;
-    },
-    /**
-     * Get the "geosource" object for given source from Mapbender.source
-     * @param {OpenLayers.Layer|MapQuery.Layer|Object} source
-     * @param {boolean} [strict] to throw on missing geosource object (default true)
-     * @returns {*|null}
-     */
-    getGeoSourceHandler: function(source, strict) {
-        var type = this.getMbConfig(source).type;
-        var gs = Mapbender.source[type];
-        if (!gs && (strict || typeof strict === 'undefined')) {
-            throw new Error("No geosource for type " + type);
-        }
-        return gs || null;
     },
     /**
      * Returns individual print / export instructions for each active layer in the source individually.
