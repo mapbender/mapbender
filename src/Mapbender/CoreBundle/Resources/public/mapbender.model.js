@@ -1,7 +1,17 @@
 ((function($) {
 
 window.Mapbender = Mapbender || {};
-window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
+    /**
+     * @param {Object} mbMap
+     * @constructor
+     */
+    window.Mapbender.MapModelOl2 = function(mbMap) {
+    Mapbender.MapModelBase.apply(this, arguments);
+    this.init(mbMap);
+};
+Mapbender.MapModelOl2.prototype = Object.create(Mapbender.MapModelBase.prototype);
+Object.assign(Mapbender.MapModelOl2.prototype, {
+    constructor: Mapbender.MapModelOl2,
     /**
      * @typedef Model~LayerState
      * @property {boolean} visibility
@@ -68,9 +78,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     _configProj: null,
     /** Actual initial projection, determined by a combination of several URL parameters */
     _startProj: null,
-    baseId: 0,
     init: function(mbMap) {
-        this.mbMap = mbMap;
         Mapbender.mapEngine.patchGlobals(mbMap.options);
         Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
 
@@ -367,11 +375,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             centroid.y - 0.5 * h - buffer_bounds.h,
             centroid.x + 0.5 * w + buffer_bounds.w,
             centroid.y + 0.5 * h + buffer_bounds.h);
-    },
-    generateSourceId: function() {
-        var id = 'auto-src-' + (this.baseId + 1);
-        ++this.baseId;
-        return id;
     },
     getMapExtent: function() {
         return this.map.olMap.getExtent();
@@ -836,12 +839,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             this.map.olMap.setCenter(centerLl, zoom);
         }
     },
-    pickZoomForScale: function(targetScale, pickHigh) {
-        // @todo: fractional zoom: use exact targetScale (TBD: method should not be called?)
-        var scales = this._getScales();
-        var scale = this._pickScale(scales, targetScale, pickHigh);
-        return scales.indexOf(scale);
-    },
     setZoomLevel: function(level, allowTransitionEffect) {
         var _level = this._clampZoomLevel(level);
         if (_level !== this.getCurrentZoomLevel()) {
@@ -854,22 +851,8 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             }
         }
     },
-    /**
-     * @return {number}
-     */
-    getCurrentScale: function() {
-        return (this._getScales())[this.getCurrentZoomLevel()];
-    },
     getCurrentZoomLevel: function() {
         return this.map.olMap.getZoom();
-    },
-    getZoomLevels: function() {
-        return this._getScales().map(function(scale, index) {
-            return {
-                scale: scale,
-                level: index
-            };
-        });
     },
     panByPixels: function(dx, dy) {
         this.map.olMap.pan(dx, dy);
@@ -883,23 +866,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     getViewPort: function() {
         return this.map.olMap.viewPortDiv;
     },
-    _pickScale: function(scales, targetScale, pickHigh) {
-        if (targetScale >= scales[0]) {
-            return scales[0];
-        }
-        for (var i = 0, nScales = scales.length; i < nScales - 1; ++i) {
-            var scaleHigh = scales[i];
-            var scaleLow = scales[i + 1];
-            if (targetScale <= scaleHigh && targetScale >= scaleLow) {
-                if (targetScale > scaleLow && pickHigh) {
-                    return scaleHigh;
-                } else {
-                    return scaleLow;
-                }
-            }
-        }
-        return scales[nScales - 1];
-    },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
         var baseLayer = this.map.olMap.baseLayer;
@@ -910,13 +876,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         return baseLayer.scales.map(function(s) {
             return parseInt('' + Math.round(s));
         });
-    },
-    _getMaxZoomLevel: function() {
-        // @todo: fractional zoom: no discrete scale steps
-        return this._getScales().length - 1;
-    },
-    _clampZoomLevel: function(zoomIn) {
-        return Math.max(0, Math.min(zoomIn, this._getMaxZoomLevel()));
     },
 
     /**
@@ -1054,20 +1013,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
             this._highlightLayer.removeFeatures(features);
         }
     },
-    setOpacity: function(source, opacity) {
-        // unchecked findSource in layertree may pass undefined for source
-        if (source) {
-            var opacity_ = parseFloat(opacity);
-            if (isNaN(opacity_)) {
-                opacity_ = 1.0;
-            }
-            opacity_ = Math.max(0.0, Math.min(1.0, opacity_));
-            if (opacity_ !== opacity) {
-                console.warn("Invalid-ish opacity, clipped to " + opacity_.toString(), opacity);
-            }
-            source.setOpacity(opacity_);
-        }
-    },
     /**
      * Zooms to layer
      * @param {Object} options
@@ -1079,22 +1024,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         var bounds = source && source.getLayerBounds(options.layerId, this.getCurrentProjectionCode(), true, true);
         if (bounds) {
             this.mbMap.zoomToExtent(bounds, true);
-        }
-    },
-    /**
-     * Gets a mapping of all defined extents for a layer, keyed on SRS
-     * @param {Object} options
-     * @property {String} options.sourceId
-     * @property {String} options.layerId
-     * @return {Object<String, Array<Number>>}
-     */
-    getLayerExtents: function(options) {
-        var source = this.getSourceById(options.sourceId);
-        if (source) {
-            return source.getLayerExtentConfigMap(options.layerId, true, true);
-        } else {
-            console.warn("Source not found", options);
-            return null;
         }
     },
     /**
@@ -1369,28 +1298,6 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
     },
     /**
-     * Updates the source identified by given id with a new layer order.
-     * This will pull styles and "state" (such as visibility) from values
-     * currently stored in the "geosource".
-     *
-     * @param {string} sourceId
-     * @param {string[]} newLayerIdOrder
-     */
-    setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
-        var sourceObj = this.getSourceById(sourceId);
-        var geoSource = Mapbender.source[sourceObj.type];
-
-        geoSource.setLayerOrder(sourceObj, newLayerIdOrder);
-
-        this.mbMap.fireModelEvent({
-            name: 'sourceMoved',
-            // no receiver uses the bizarre "changeOptions" return value
-            // on this event
-            value: null
-        });
-        this._checkSource(sourceObj, true, false);
-    },
-    /**
      * Bring the sources identified by the given ids into the given order.
      * All other sources will be left alone!
      *
@@ -1398,7 +1305,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
      */
     reorderSources: function(newIdOrder) {
         var self = this;
-        var olMap = self.map.olMap;
+        var olMap = this.olMap;
 
         var sourceObjs = (newIdOrder || []).map(function(id) {
             return self.getSourceById(id);
