@@ -190,12 +190,13 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngine.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngineOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
                     "$modelJsBase/mapbender.model.ol4.source.js",
                     "@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js",
-                    "$modelJsBase/mapbender.model.mappopup.js",
+                    // "$modelJsBase/mapbender.model.mappopup.js",
                 );
                 break;
             case 'ol4-css':

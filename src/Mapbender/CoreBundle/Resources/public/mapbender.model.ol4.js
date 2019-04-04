@@ -1,23 +1,29 @@
-/**
- *
- * @param {Object} mbMap
- * @constructor
- */
-Mapbender.Model = function(mbMap) {
+window.Mapbender = Mapbender || {};
+window.Mapbender.MapModelOl4 = (function() {
     'use strict';
-    this.mbMap = mbMap;
-    console.log("Map options", mbMap.options);
-    Mapbender.mapEngine.patchGlobals(mbMap.options);
-    Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
 
-    this.sourceTree = [];
-    this._initMap();
-};
+    /**
+     * @param {Object} mbMap
+     * @constructor
+     */
+    function MapModelOl4(mbMap) {
+        Mapbender.MapModelBase.apply(this, arguments);
+        this.mbMap = mbMap;
+        console.log("Map options", mbMap.options);
+        Mapbender.mapEngine.patchGlobals(mbMap.options);
+        Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
+
+        this.sourceTree = [];
+        this._initMap();
+    }
+
+    MapModelOl4.prototype = Object.create(Mapbender.MapModelBase.prototype);
+    Object.assign(MapModelOl4.prototype, {
+        constructor: MapModelOl4,
+        sourceTree: [],
 
 
-Mapbender.Model.prototype = {
-    constructor: Mapbender.Model,
-    sourceTree: [],
+
     _initMap: function() {
         var options = {
             srs: this.mbMap.options.srs,
@@ -298,23 +304,6 @@ Mapbender.Model.prototype = {
         this._updateSourceLayerTreeOptions(source, newProps);
     },
     /**
-     * engine-agnostic
-     */
-    setOpacity: function(source, opacity) {
-        // unchecked findSource in layertree may pass undefined for source
-        if (source) {
-            var opacity_ = parseFloat(opacity);
-            if (isNaN(opacity_)) {
-                opacity_ = 1.0;
-            }
-            opacity_ = Math.max(0.0, Math.min(1.0, opacity_));
-            if (opacity_ !== opacity) {
-                console.warn("Invalid-ish opacity, clipped to " + opacity_.toString(), opacity);
-            }
-            source.setOpacity(opacity_);
-        }
-    },
-    /**
      * Zooms to layer
      * @param {Object} options
      * @property {String} options.sourceId
@@ -325,24 +314,6 @@ Mapbender.Model.prototype = {
         var bounds = source && source.getLayerBounds(options.layerId, this.getCurrentProjectionCode(), true, true);
         if (bounds) {
             this.olMap.getView().fit(bounds);
-        }
-    },
-    /**
-     * Gets a mapping of all defined extents for a layer, keyed on SRS
-     * @param {Object} options
-     * @property {String} options.sourceId
-     * @property {String} options.layerId
-     * @return {Object<String, Array<Number>>}
-     *
-     * engine-agnostic
-     */
-    getLayerExtents: function(options) {
-        var source = this.getSourceById(options.sourceId);
-        if (source) {
-            return source.getLayerExtentConfigMap(options.layerId, true, true);
-        } else {
-            console.warn("Source not found", options);
-            return null;
         }
     },
     /**
@@ -511,30 +482,6 @@ Mapbender.Model.prototype = {
         });
     },
     /**
-     * Updates the source identified by given id with a new layer order.
-     * This will pull styles and "state" (such as visibility) from values
-     * currently stored in the "geosource".
-     *
-     * @param {string} sourceId
-     * @param {string[]} newLayerIdOrder
-     *
-     * engine-agnostic
-     */
-    setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
-        var sourceObj = this.getSourceById(sourceId);
-        var geoSource = Mapbender.source[sourceObj.type];
-
-        geoSource.setLayerOrder(sourceObj, newLayerIdOrder);
-
-        this.mbMap.fireModelEvent({
-            name: 'sourceMoved',
-            // no receiver uses the bizarre "changeOptions" return value
-            // on this event
-            value: null
-        });
-        this._checkSource(sourceObj, true, false);
-    },
-    /**
      * Bring the sources identified by the given ids into the given order.
      * All other sources will be left alone!
      *
@@ -598,15 +545,6 @@ Mapbender.Model.prototype = {
             name: 'sourcesreordered'
         });
     },
-    /**
-     * engine-agnostic
-     */
-    pickZoomForScale: function(targetScale, pickHigh) {
-        // @todo: fractional zoom: use exact targetScale (TBD: method should not be called?)
-        var scales = this._getScales();
-        var scale = this._pickScale(scales, targetScale, pickHigh);
-        return scales.indexOf(scale);
-    },
     setZoomLevel: function(level, allowTransitionEffect) {
         var _level = this._clampZoomLevel(level);
         if (_level !== this.getCurrentZoomLevel()) {
@@ -618,49 +556,8 @@ Mapbender.Model.prototype = {
             }
         }
     },
-    /**
-     * @return {number}
-     * engine-agnostic
-     */
-    getCurrentScale: function() {
-        return (this._getScales())[this.getCurrentZoomLevel()];
-    },
     getCurrentZoomLevel: function() {
         return this.olMap.getView().getZoom();
-    },
-    getZoomLevels: function() {
-        return this._getScales().map(function(scale, index) {
-            return {
-                scale: scale,
-                level: index
-            };
-        });
-    },
-    /**
-     *
-     * @param scales
-     * @param targetScale
-     * @param pickHigh
-     * @return {*}
-     * @private
-     * engine-agnostic
-     */
-    _pickScale: function(scales, targetScale, pickHigh) {
-        if (targetScale >= scales[0]) {
-            return scales[0];
-        }
-        for (var i = 0, nScales = scales.length; i < nScales - 1; ++i) {
-            var scaleHigh = scales[i];
-            var scaleLow = scales[i + 1];
-            if (targetScale <= scaleHigh && targetScale >= scaleLow) {
-                if (targetScale > scaleLow && pickHigh) {
-                    return scaleHigh;
-                } else {
-                    return scaleLow;
-                }
-            }
-        }
-        return scales[nScales - 1];
     },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
@@ -672,53 +569,16 @@ Mapbender.Model.prototype = {
             return parseInt('' + Math.round(scale0));
         });
     },
+    SourceModel: Mapbender.SourceModelOl4,
+    DRAWTYPES: ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle', 'Box'],
+
     /**
-     * engine-agnostic
+     * @todo is not complete yet
+     *
+     * @param {Object} options
+     * @returns {ol.style.Style}
      */
-    _getMaxZoomLevel: function() {
-        // @todo: fractional zoom: no discrete scale steps
-        return this._getScales().length - 1;
-    },
-    /**
-     * engine-agnostic
-     */
-    _clampZoomLevel: function(zoomIn) {
-        return Math.max(0, Math.min(zoomIn, this._getMaxZoomLevel()));
-    }
-};
-
-Mapbender.Model.SourceModel = Mapbender.SourceModelOl4;
-Mapbender.Model.prototype.SourceModel = Mapbender.SourceModelOl4;
-
-Mapbender.Model.prototype.layerTypes = {
-    vector: 'vectorLayer'
-};
-
-
-Mapbender.Model.prototype.DRAWTYPES = ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle', 'Box'];
-
-Mapbender.Model.prototype.mapElement = null;
-Mapbender.Model.prototype.parseURL = function parseURL() {
-};
-Mapbender.Model.prototype.onMapClick = function onMapClick() {
-    'use strict';
-    return this;
-};
-Mapbender.Model.prototype.onFeatureClick = function onFeatureClick() {
-    'use strict';
-    return this;
-};
-Mapbender.Model.prototype.setLayerStyle = function setLayerStyle() {
-};
-
-/**
- * @todo is not complete yet
- *
- * @param {Object} options
- * @returns {ol.style.Style}
- */
-Mapbender.Model.prototype.createStyle = function createStyle(options) {
-
+    createStyle: function createStyle(options) {
     var style = new ol.style.Style();
 
     if (options['fill']) {
@@ -756,21 +616,15 @@ Mapbender.Model.prototype.createStyle = function createStyle(options) {
     }
 
     return style;
-};
-
-/**
- * @returns {string}
- */
-Mapbender.Model.prototype.getCurrentProjectionCode = function getCurrentProj() {
-    'use strict';
+},
+        getCurrentProjectionCode: function() {
     return this.olMap.getView().getProjection().getCode();
-};
+},
 
 /**
  * @returns {ol.proj.Projection}
  */
-Mapbender.Model.prototype.getCurrentProjectionObject = function getCurrentProj() {
-    'use strict';
+getCurrentProjectionObject: function() {
     if(this.olMap){
         return this.olMap.getView().getProjection();
     } else {
@@ -780,16 +634,16 @@ Mapbender.Model.prototype.getCurrentProjectionObject = function getCurrentProj()
       });
     }
 
-};
+},
 
 /**
  *
  * @returns {*|OpenLayers.Bounds}
  */
-Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
-    'use strict';
+getMapExtent: function () {
     return this.olMap.getView().calculateExtent();
-};
+},
+
 
 /** @todo (following methods): put the "default" dpi in a common place? */
 /**
@@ -799,7 +653,7 @@ Mapbender.Model.prototype.getMapExtent = function getMapExtent() {
  * @param {boolean} optScaleRating Whether to round the scale rating or not. K:X000 and M:X000000
  * @returns {number}
  */
-Mapbender.Model.prototype.getScale = function getScale(dpi, optRound, optScaleRating) {
+getScale: function (dpi, optRound, optScaleRating) {
     var dpiNumber = dpi ? dpi : this.options.dpi;
     var resolution = this.olMap.getView().getResolution();
     var scaleCalc = this.resolutionToScale(resolution, dpiNumber);
@@ -822,7 +676,7 @@ Mapbender.Model.prototype.getScale = function getScale(dpi, optRound, optScaleRa
     scale = typeof scale ? parseFloat(scale) : scale;
 
     return scale;
-};
+},
 
 /**
  *
@@ -831,40 +685,12 @@ Mapbender.Model.prototype.getScale = function getScale(dpi, optRound, optScaleRa
  * @param {string} unit "m" or "degrees"
  * @returns {number}
  */
-Mapbender.Model.prototype.resolutionToScale = function(resolution, dpi) {
+resolutionToScale: function(resolution, dpi) {
     var currentUnit = this.getUnitsOfCurrentProjection();
     var mpu = this.getMetersPerUnit(currentUnit);
     var inchesPerMetre = 39.37;
     return resolution * mpu * inchesPerMetre * (dpi || this.options.dpi || 72);
-};
-
-Mapbender.Model.prototype.center = function center() {
-};
-
-Mapbender.Model.prototype.removeSource = function removeSource() {
-};
-Mapbender.Model.prototype.changeProjection = function changeProjection() {
-};
-
-/**
- * @type {number}
- * @static
- * @private
- */
-Mapbender.Model.nextGeneratedSourceId_ = 1;
-
-/**
- * Generate a string id for a source that doesn't have one. Preconfigured sources
- * (application backend: "Layersets") always have an id. Sources supplied dynamically
- * by WmsLoader and / or WmcHandler might not.
- *
- * @returns {string}
- * @static
- */
-Mapbender.Model.generateSourceId = function generateSourceId() {
-    return "src-autoid-" + (Mapbender.Model.nextGeneratedSourceId_++);
-};
-Mapbender.Model.prototype.generateSourceId = Mapbender.Model.generateSourceId;
+},
 
 /**
  * @param {Object} options (See https://openlayers.org/en/latest/apidoc/ol.layer.Vector.html)
@@ -872,8 +698,7 @@ Mapbender.Model.prototype.generateSourceId = Mapbender.Model.generateSourceId;
  * @param {string} owner
  * @returns {string}
  */
-Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
-    'use strict';
+createVectorLayer: function(options, owner) {
     var uuid = Mapbender.UUID();
     this.vectorLayer[owner] = this.vectorLayer[owner] || {};
     options.map = this.olMap;
@@ -881,7 +706,7 @@ Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
     this.vectorLayer[owner][uuid] = new ol.layer.Vector(options);
 
     return uuid;
-};
+},
 
 /**
  *
@@ -889,15 +714,13 @@ Mapbender.Model.prototype.createVectorLayer = function(options, owner) {
  * @param deltaArray
  * @returns {ol.coordinate.add}
  */
-Mapbender.Model.prototype.addCoordinate= function addCoordinate(array, deltaArray) {
-    'use strict';
-
+addCoordinate: function (array, deltaArray) {
     if (!deltaArray) {
         deltaArray = [0, 0];
     }
 
     return new ol.coordinate.add(array, deltaArray);
-};
+},
 
 /**
  *
@@ -907,10 +730,9 @@ Mapbender.Model.prototype.addCoordinate= function addCoordinate(array, deltaArra
  * @returns {ol.Coordinate}
  */
 
-Mapbender.Model.prototype.transformCoordinate = function transformCoordinate(coordinate, source, destination) {
-    'use strict';
+transformCoordinate: function(coordinate, source, destination) {
     return ol.proj.transform(coordinate, source, destination);
-};
+},
 
 /**
  *
@@ -918,46 +740,41 @@ Mapbender.Model.prototype.transformCoordinate = function transformCoordinate(coo
  * @param opt_projection
  * @returns {ol.Coordinate}
  */
-Mapbender.Model.prototype.toLonLat = function toLonLat(coordinate, opt_projection) {
-    'use strict';
+toLonLat: function (coordinate, opt_projection) {
     return ol.proj.toLonLat(coordinate,opt_projection);
-};
+},
 
 /**
  *
  * @param owner
  * @returns {*}
  */
-Mapbender.Model.prototype.getVectorLayerByNameId = function getVectorLayerByNameId(owner, id) {
-    'use strict';
+getVectorLayerByNameId: function getVectorLayerByNameId(owner, id) {
     var vectorLayer = this.vectorLayer;
     return  vectorLayer[owner][id];
-};
+},
 
 /**
  *
  * @param owner
  * @param featuresArray
  */
-Mapbender.Model.prototype.addFeaturesVectorSource = function addFeaturesVectorSource(owner,featuresArray) {
-    'use strict';
+addFeaturesVectorSource: function(owner,featuresArray) {
     var vectorLayer = this.vectorLayer[owner];
     var vectorSource = new ol.source.Vector({
         features: featuresArray
     });
     vectorLayer.setSource(vectorSource);
-
-};
+},
 
 /**
  *
  * @param center
  * @returns {*|void}
  */
-Mapbender.Model.prototype.setCenter = function setCenter(center) {
-    'use strict';
+setCenter: function setCenter(center) {
     return this.olMap.getView().setCenter(center);
-};
+},
 
 /**
  *
@@ -965,10 +782,9 @@ Mapbender.Model.prototype.setCenter = function setCenter(center) {
  * @param opt_options
  * @returns {*}
  */
-Mapbender.Model.prototype.fit = function fit(geometryOrExtent, opt_options) {
-    'use strict';
+fit: function(geometryOrExtent, opt_options) {
     return this.olMap.getView().fit(geometryOrExtent, opt_options);
-};
+},
 
 /**
  *
@@ -976,10 +792,9 @@ Mapbender.Model.prototype.fit = function fit(geometryOrExtent, opt_options) {
  * @param extent2
  * @returns {*|boolean}
  */
-Mapbender.Model.prototype.containsExtent = function containsExtent(extent1, extent2) {
-    'use strict';
+containsExtent: function(extent1, extent2) {
     return ol.extent.containsExtent(extent1, extent2);
-};
+},
 
 /**
  *
@@ -987,37 +802,17 @@ Mapbender.Model.prototype.containsExtent = function containsExtent(extent1, exte
  * @param coordinate
  * @returns {*}
  */
-Mapbender.Model.prototype.containsCoordinate = function containsCoordinate(extent, coordinate) {
-    'use strict';
+containsCoordinate: function(extent, coordinate) {
     return ol.extent.containsCoordinate(extent, coordinate);
-};
-
-/**
- *
- * @param mbExtent
- * @return {Mapbender.Model}
- */
-Mapbender.Model.prototype.zoomToExtent = function(mbExtent) {
-    'use strict';
-    var extent = [
-        mbExtent.left,
-        mbExtent.bottom,
-        mbExtent.right,
-        mbExtent.top
-    ];
-    this.olMap.getView().fit(extent, this.olMap.getSize());
-
-    return this;
-};
+},
 
 /**
  *
  * @returns {*}
  */
-Mapbender.Model.prototype.getLayers = function getLayers() {
-    'use strict';
+getLayers: function() {
     return this.olMap.getLayers();
-};
+},
 
 /**
  *
@@ -1026,10 +821,9 @@ Mapbender.Model.prototype.getLayers = function getLayers() {
  * @param style
  * @param refresh
  */
-Mapbender.Model.prototype.setVectorLayerStyle = function setVectorLayerStyle(owner, uuid, style, refresh){
-    'use strict';
+setVectorLayerStyle: function(owner, uuid, style, refresh){
     this.setLayerStyle('vectorLayer', owner, uuid, style);
-};
+},
 
 /**
  *
@@ -1039,17 +833,14 @@ Mapbender.Model.prototype.setVectorLayerStyle = function setVectorLayerStyle(own
  * @param style
  * @param refresh
  */
-Mapbender.Model.prototype.setLayerStyle = function setLayerStyle(layerType, owner, uuid, style, refresh){
-    'use strict';
+setLayerStyle: function(layerType, owner, uuid, style, refresh){
     this.vectorLayer[owner][uuid].setLayerStyle(new ol.style.Style(style));
     if(refresh){
         this.vectorLayer[owner][uuid].refresh();
     }
 
-};
-Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, owner, options){
-    'use strict';
-
+},
+createDrawControl: function(type, owner, options){
     if(!_.contains( this.DRAWTYPES,type )){
         throw new Error('Mapbender.Model.createDrawControl only supports the operations' + this.DRAWTYPES.toString()+ 'not' + type);
     }
@@ -1081,11 +872,8 @@ Mapbender.Model.prototype.createDrawControl = function createDrawControl(type, o
 
     return id;
 
-};
-
-Mapbender.Model.prototype.createModifyInteraction = function createModifyInteraction(owner, style, vectorId, featureId, events) {
-    'use strict';
-
+},
+createModifyInteraction: function(owner, style, vectorId, featureId, events) {
     var vectorLayer = this.vectorLayer[owner][vectorId];
     var features = vectorLayer.getSource().getFeatures();
     var selectInteraction = new ol.interaction.Select({
@@ -1112,55 +900,41 @@ Mapbender.Model.prototype.createModifyInteraction = function createModifyInterac
     this.olMap.getInteractions().extend([selectInteraction, modify]);
 
     return vectorId;
-};
+},
 
-Mapbender.Model.prototype.deselectFeatureById = function deselectFeatureById(owner, vectorId) {
-    'use strict';
+deselectFeatureById: function(owner, vectorId) {
     var vectorLayer = this.vectorLayer[owner][vectorId];
     if (!vectorLayer.interactions.select) {
         return;
     }
     var interaction = vectorLayer.interactions.select[vectorId];
     interaction.getFeatures().clear();
-};
-
-Mapbender.Model.prototype.removeVectorLayer = function removeVectorLayer(owner,id){
+},
+removeVectorLayer: function(owner,id){
     var vectorLayer = this.vectorLayer[owner][id];
     if(this.vectorLayer[owner][id].hasOwnProperty('interactions')){
         this.removeInteractions(this.vectorLayer[owner][id].interactions);
     }
     this.olMap.removeLayer(vectorLayer);
     delete this.vectorLayer[owner][id];
-
-
-};
-
-Mapbender.Model.prototype.removeInteractions = function removeControls(controls){
+},
+removeInteractions: function(controls){
     _.each(controls, function(control, index){
         this.olMap.removeInteraction(control);
     }.bind(this));
-
-
-};
-
-Mapbender.Model.prototype.eventFeatureWrapper = function eventFeatureWrapper(event, callback, args){
-    'use strict';
+},
+eventFeatureWrapper: function(event, callback, args){
     var args = [event.feature].concat(args)
     return callback.apply(this,args);
 
-};
+},
 
 
 
-Mapbender.Model.prototype.getLineStringLength = function(line){
-    'use strict';
-
+getLineStringLength: function(line){
     return  ol.Sphere.getLength(line);
-};
-
-Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservable, args){
-    'use strict';
-
+},
+onFeatureChange: function(feature, callback,obvservable, args){
     return feature.getGeometry().on('change', function(evt) {
         var geom = evt.target;
         args = [geom].concat(args);
@@ -1168,7 +942,7 @@ Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservab
     });
 
 
-};
+},
 
 
 /**
@@ -1176,7 +950,7 @@ Mapbender.Model.prototype.onFeatureChange = function(feature, callback,obvservab
  * @param {array} optOptions params from ol.style.Style.
  * @returns {ol.style.Style}
  */
-Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerStyle(optOptions){
+createVectorLayerStyle: function(optOptions){
     var olStyle = null;
     if (optOptions){
         olStyle = this.getCustomStyle(optOptions);
@@ -1196,15 +970,15 @@ Mapbender.Model.prototype.createVectorLayerStyle = function createVectorLayerSty
     }
 
     return olStyle;
-};
+},
 
 /**
  * @returns {string[]}
  * @param sourceId
  */
-Mapbender.Model.prototype.getActiveLayerNames = function(sourceId) {
+getActiveLayerNames: function(sourceId) {
     return this.getSourceById(sourceId).getActiveLayerNames();
-};
+},
 
 /**
  *
@@ -1213,11 +987,10 @@ Mapbender.Model.prototype.getActiveLayerNames = function(sourceId) {
  * @param featureId
  * @returns {ol.Feature}
  */
-Mapbender.Model.prototype.getFeatureById = function(owner, vectorId, featureId) {
-    'use strict';
+getFeatureById: function(owner, vectorId, featureId) {
     var source = this.vectorLayer[owner][vectorId].getSource();
     return source.getFeatureById(featureId);
-};
+},
 
 /**
  *
@@ -1225,12 +998,11 @@ Mapbender.Model.prototype.getFeatureById = function(owner, vectorId, featureId) 
  * @param vectorId
  * @param featureId
  */
-Mapbender.Model.prototype.removeFeatureById = function(owner, vectorId, featureId) {
-    'use strict';
+removeFeatureById: function(owner, vectorId, featureId) {
     var source = this.vectorLayer[owner][vectorId].getSource();
     var feature = source.getFeatureById(featureId);
     source.removeFeature(feature);
-};
+},
 
 /**
  *
@@ -1238,12 +1010,12 @@ Mapbender.Model.prototype.removeFeatureById = function(owner, vectorId, featureI
  * @param vectorId
  * @param featureId
  */
-Mapbender.Model.prototype.getFeatureExtent = function(owner, vectorId, featureId) {
+getFeatureExtent: function(owner, vectorId, featureId) {
     'use strict';
     var feature = this.getFeatureById(owner, vectorId, featureId);
     var featureExtent = feature.getGeometry().getExtent();
     return this.mbExtent(featureExtent);
-};
+},
 
 /**
  * Promote input extent into "universally understood" extent.
@@ -1258,8 +1030,7 @@ Mapbender.Model.prototype.getFeatureExtent = function(owner, vectorId, featureId
  * @returns {Array.<number>}
  * @static
  */
-Mapbender.Model.mbExtent = function mbExtent(extent) {
-    'use strict';
+mbExtent: function mbExtent(extent) {
     if (Array.isArray(extent)) {
         if (extent.length !== 4) {
             console.error("Extent coordinate length mismatch", extent);
@@ -1285,25 +1056,22 @@ Mapbender.Model.mbExtent = function mbExtent(extent) {
         console.error("Unsupported extent format", extent);
         throw new Error("Unsupported extent format");
     }
-};
-Mapbender.Model.prototype.mbExtent = Mapbender.Model.mbExtent;
+},
 
 /**
  *
  * @param mbExtent
  */
-Mapbender.Model.prototype.zoomToExtent = function(extent) {
-    'use strict';
+zoomToExtent: function(extent) {
     this.olMap.getView().fit(this.mbExtent(extent), this.olMap.getSize());
-};
+},
 
-Mapbender.Model.prototype.removeAllFeaturesFromLayer = function removeAllFeaturesFromLayer(owner, id) {
-
+removeAllFeaturesFromLayer: function(owner, id) {
     return this.vectorLayer[owner][id].getSource().clear();
 
-};
+},
 
-Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature, type) {
+getFeatureSize: function(feature, type) {
 
     if(type === 'line'){
         return this.getLineStringLength(feature);
@@ -1316,30 +1084,27 @@ Mapbender.Model.prototype.getFeatureSize = function getFeatureSize(feature, type
 
 
 
-};
+},
 
-Mapbender.Model.prototype.getGeometryCoordinates = function getFeaureCoordinates(geom) {
+getGeometryCoordinates: function (geom) {
 
     return geom.getFlatCoordinates();
 
-};
+},
 
 
 
 
 
-Mapbender.Model.prototype.getPolygonArea = function getPolygonArea(polygon){
-    'use strict';
-
+getPolygonArea: function (polygon){
     return  ol.Sphere.getArea(polygon);
-};
+},
 
-Mapbender.Model.prototype.getGeometryFromFeatureWrapper = function getGeometryFromFeatureWrapper(feature, callback, args){
-    'use strict';
+getGeometryFromFeatureWrapper: function(feature, callback, args){
     args = [feature.getGeometry()].concat(args)
     return callback.apply(this,args);
 
-};
+},
 
 /**
  * Get feature info url and source object; may return null if feature info is not available.
@@ -1349,7 +1114,7 @@ Mapbender.Model.prototype.getGeometryFromFeatureWrapper = function getGeometryFr
  * @param {*} resolution purpose?
  * @returns {object|null}
  */
-Mapbender.Model.prototype.getFeatureInfoObject = function getFeatureInfoObject(sourceId, coordinate, resolution) {
+getFeatureInfoObject: function(sourceId, coordinate, resolution) {
     var sourceObj = this.getSourceById(sourceId);
 
     if (!sourceObj.featureInfoParams.QUERY_LAYERS) {
@@ -1369,11 +1134,9 @@ Mapbender.Model.prototype.getFeatureInfoObject = function getFeatureInfoObject(s
     };
 
     return result;
-};
+},
 
-Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
-    'use strict';
-
+createTextStyle: function(options) {
     var textStyle = new ol.style.Text();
 
     if(options['text']) {
@@ -1391,14 +1154,14 @@ Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
         textStyle.setStroke(stroke);
     }
     return new ol.style.Text(options);
-};
+},
 
     /**
      * Update map view according to selected projection
      *
      * @param {string} projectionCode
      */
-    Mapbender.Model.prototype.updateMapViewForProjection = function(projectionCode) {
+updateMapViewForProjection: function(projectionCode) {
         var currentSrsCode = this.getCurrentProjectionCode();
 
         if(typeof projectionCode === 'undefined' || projectionCode === currentSrsCode) {
@@ -1446,7 +1209,7 @@ Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
 
         var newView = new ol.View(newViewOptions);
         this.olMap.setView(newView);
-    };
+    },
 
 /**
  * Set callback function for single click event
@@ -1454,23 +1217,20 @@ Mapbender.Model.prototype.createTextStyle = function createTextStyle(options) {
  * @param callback
  * @returns {ol.EventsKey|Array.<ol.EventsKey>}
  */
-Mapbender.Model.prototype.setOnSingleClickHandler = function (callback) {
-    'use strict';
-    return this.olMap.on("singleclick", callback);
-};
+setOnSingleClickHandler: function(callback) {
+   return this.olMap.on("singleclick", callback);
+},
 
 /**
  * Set callback for map moveend event
  * @param callback
  * @returns {ol.EventsKey|Array<ol.EventsKey>}
  */
-Mapbender.Model.prototype.setOnMoveendHandler = function (callback) {
-    'use strict';
-
+setOnMoveendHandler: function(callback) {
     if (typeof callback === 'function') {
         return this.olMap.on("moveend", callback);
     }
-};
+},
 
 /**
  * Remove event listener by event key
@@ -1478,11 +1238,11 @@ Mapbender.Model.prototype.setOnMoveendHandler = function (callback) {
  * @param key
  * @returns {Mapbender.Model}
  */
-Mapbender.Model.prototype.removeEventListenerByKey = function (key) {
+removeEventListenerByKey: function(key) {
     ol.Observable.unByKey(key);
 
     return this;
-};
+},
 
 /**
  * Get coordinates from map click event and wrap them in {x,y} object
@@ -1490,7 +1250,7 @@ Mapbender.Model.prototype.removeEventListenerByKey = function (key) {
  * @param event
  * @returns undefined | {{x}, {y}}
  */
-Mapbender.Model.prototype.getCoordinatesXYObjectFromMapClickEvent = function (event) {
+getCoordinatesXYObjectFromMapClickEvent: function(event) {
 
     var coordinates = undefined;
 
@@ -1502,14 +1262,14 @@ Mapbender.Model.prototype.getCoordinatesXYObjectFromMapClickEvent = function (ev
     }
 
     return coordinates;
-};
+},
 
 /**
  * Get units of current map projection
  *
  * @returns {ol.proj.Units}
  */
-Mapbender.Model.prototype.getUnitsOfCurrentProjection = function () {
+getUnitsOfCurrentProjection: function () {
     var proj = this.getCurrentProjectionObject();
     var units = proj.getUnits();
     if (!units) {
@@ -1517,7 +1277,7 @@ Mapbender.Model.prototype.getUnitsOfCurrentProjection = function () {
         units = "degrees";
     }
     return units;
-};
+},
 
 /**
  * Set style of map cursor
@@ -1525,11 +1285,11 @@ Mapbender.Model.prototype.getUnitsOfCurrentProjection = function () {
  * @param style
  * @returns {Mapbender.Model}
  */
-Mapbender.Model.prototype.setMapCursorStyle = function (style) {
+setMapCursorStyle: function (style) {
     this.olMap.getTargetElement().style.cursor = style;
 
     return this;
-};
+},
 
 /**
  * Set marker on a map by provided coordinates
@@ -1540,7 +1300,7 @@ Mapbender.Model.prototype.setMapCursorStyle = function (style) {
  * @param {ol.style} style
  * @returns {string} vectorLayerId
  */
-Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner, vectorLayerId, style) {
+setMarkerOnCoordinates: function(coordinates, owner, vectorLayerId, style) {
 
     if (typeof coordinates === 'undefined') {
         throw new Error("Coordinates are not defined!");
@@ -1560,7 +1320,7 @@ Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner,
     this.drawFeatureOnVectorLayer(point, this.vectorLayer[owner][vectorLayerId], style);
 
     return vectorLayerId;
-};
+},
 
 /**
  * Draw feature on a vector layer
@@ -1570,7 +1330,7 @@ Mapbender.Model.prototype.setMarkerOnCoordinates = function (coordinates, owner,
  * @param {ol.style} style
  * @returns {Mapbender.Model}
  */
-Mapbender.Model.prototype.drawFeatureOnVectorLayer = function (geometry, vectorLayer, style) {
+drawFeatureOnVectorLayer: function(geometry, vectorLayer, style) {
     var feature = new ol.Feature({
         geometry: geometry,
     });
@@ -1582,7 +1342,7 @@ Mapbender.Model.prototype.drawFeatureOnVectorLayer = function (geometry, vectorL
     source.addFeature(feature);
 
     return this;
-};
+},
 
 /**
  * Valdiates and fixes an incoming extent. Coordinate values will
@@ -1592,7 +1352,7 @@ Mapbender.Model.prototype.drawFeatureOnVectorLayer = function (geometry, vectorL
  * @returns {Array<number>} monkey-patched mbExtent with .left etc
  * @static
  */
-Mapbender.Model.sanitizeExtent = function(extent) {
+sanitizeExtent: function(extent) {
     var mbExtent = this.mbExtent(extent);
     var warnings = [];
     for (var i = 0; i < mbExtent.length; ++i) {
@@ -1617,8 +1377,8 @@ Mapbender.Model.sanitizeExtent = function(extent) {
     } else {
         return mbExtent;
     }
-};
-Mapbender.Model.prototype.sanitizeExtent = Mapbender.Model.sanitizeExtent;
+},
+
 
 /**
  * Return current live extent in "universal extent" format
@@ -1626,11 +1386,11 @@ Mapbender.Model.prototype.sanitizeExtent = Mapbender.Model.sanitizeExtent;
  *
  * @returns {Array<number>|*}
  */
-Mapbender.Model.prototype.getCurrentExtent = function getCurrentExtent() {
+getCurrentExtent: function() {
     var extent = this.mbExtent(this.olMap.getView().calculateExtent());
     extent.srs = this.getCurrentProjectionCode();
     return extent;
-};
+},
 
 /**
  * Return maximum extent in "universal extent" format
@@ -1638,11 +1398,11 @@ Mapbender.Model.prototype.getCurrentExtent = function getCurrentExtent() {
  *
  * @returns {Array<number>|*}
  */
-Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
+getMaxExtent: function() {
     var extent = this.mbExtent(this.getCurrentProjectionObject().getExtent());
     extent.srs = this.getCurrentProjectionCode();
     return extent;
-};
+},
 
 /**
  *
@@ -1650,64 +1410,57 @@ Mapbender.Model.prototype.getMaxExtent = function getMaxExtent() {
  * @static
  * @returns {number}
  */
-Mapbender.Model.prototype.getMetersPerUnit = function getMetersPerUnit(currentUnit) {
-    'use strict';
+getMetersPerUnit: function(currentUnit) {
     return ol.proj.METERS_PER_UNIT[currentUnit];
-};
-Mapbender.Model.getMetersPerUnit = Mapbender.Model.prototype.getMetersPerUnit;
+},
 
 
-Mapbender.Model.prototype.getGeomFromFeature = function getGeomFromFeature(feature) {
+getGeomFromFeature: function(feature) {
     'use strict';
     return feature.getGeometry();
-};
+},
 
 /**
  * Returns the size of the map in the DOM (in pixels):
  * An array of numbers representing a size: [width, height].
  * @returns {Array.<number>}
  */
-Mapbender.Model.prototype.getMapSize = function getMapSize() {
-    'use strict';
+getMapSize: function() {
     return this.olMap.getSize();
-};
+},
 
 /**
  * Returns the view center of a map:
  * An array of numbers representing an xy coordinate. Example: [16, 48].
  * @returns {Array.<number>}
  */
-Mapbender.Model.prototype.getMapCenter = function getMapCenter() {
-    'use strict';
+getMapCenter: function() {
     return this.olMap.getView().getCenter();
-};
+},
 
 /**
  * Returns the width of an extent.
  * @param extent
  * @returns {number}
  */
-Mapbender.Model.prototype.getWidthOfExtent = function getWidthOfExtent(extent) {
-    'use strict';
+getWidthOfExtent: function(extent) {
     return ol.extent.getWidth(extent);
-};
+},
 
 /**
  * Returns the height of an extent.
  * @param {Array} extent
  * @returns {number}
  */
-Mapbender.Model.prototype.getHeigthOfExtent = function getHeigthOfExtent(extent) {
-    'use strict';
+getHeigthOfExtent: function(extent) {
     return ol.extent.getHeight(extent);
-};
+},
 
 /**
  * @param {Object} params
  * @returns {string}
  */
-Mapbender.Model.prototype.getUrlParametersAsString = function getUrlParametersAsString(params) {
-    'use strict';
+getUrlParametersAsString: function(params) {
     var url = '';
     for (var key in params) {
         if (params.hasOwnProperty(key)) {
@@ -1716,7 +1469,7 @@ Mapbender.Model.prototype.getUrlParametersAsString = function getUrlParametersAs
     }
 
     return url;
-};
+},
 
 /**
  * @param {string} sourceId
@@ -1724,7 +1477,7 @@ Mapbender.Model.prototype.getUrlParametersAsString = function getUrlParametersAs
  * @param {Array} size
  * @returns {{type: (string|null), url: string, opacity}}
  */
-Mapbender.Model.prototype.getSourcePrintConfig = function(source, extent, size) {
+getSourcePrintConfig: function(source, extent, size) {
     var sourceObj = this.toSourceObj_(source);
 
     // Contains VERSION, FORMAT, TRANSPARENT, LAYERS
@@ -1766,22 +1519,20 @@ Mapbender.Model.prototype.getSourcePrintConfig = function(source, extent, size) 
         url : url,
         opacity : sourceObj.options.opacity
     };
-}
+},
 
 /**
  * @returns {ol.format.GeoJSON}
  */
-Mapbender.Model.prototype.createOlFormatGeoJSON = function createOlFormatGeoJSON() {
-    'use strict';
+createOlFormatGeoJSON: function() {
     return new ol.format.GeoJSON;
-};
+},
 
 /**
  * Returns the features of the vectorLayers hashed by owner and uuid.
  * @returns {object.<string>.<string>.<Array.<ol.Feature>>}
  */
-Mapbender.Model.prototype.getVectorLayerFeatures = function getVectorLayerFeatures() {
-    'use strict';
+getVectorLayerFeatures: function() {
     var features = {};
     for (var owner in this.vectorLayer) {
         for (var uuid in this.vectorLayer[owner]) {
@@ -1799,14 +1550,13 @@ Mapbender.Model.prototype.getVectorLayerFeatures = function getVectorLayerFeatur
     }
 
     return features;
-};
+},
 
 /**
  * Returns the styles of the vectorLayers hashed by owner and uuid.
  * @returns {object.<string>.<string>.<ol.style.Style>}
  */
-Mapbender.Model.prototype.getVectorLayerStyles = function getVectorLayerStyles() {
-    'use strict';
+getVectorLayerStyles: function() {
     var styles = {};
     for (var owner in this.vectorLayer) {
         for (var uuid in this.vectorLayer[owner]) {
@@ -1824,14 +1574,13 @@ Mapbender.Model.prototype.getVectorLayerStyles = function getVectorLayerStyles()
     }
 
     return styles;
-};
+},
 
 /**
  * Returns the print style options of the vectorLayers hashed by owner and uuid.
  * @returns {Object.<string>.<string>.<object>}
  */
-Mapbender.Model.prototype.getVectorLayerPrintStyleOptions = function getVectorLayerPrintStyleOptions() {
-    'use strict';
+getVectorLayerPrintStyleOptions: function() {
     var olVectorLayerStyles = this.getVectorLayerStyles();
 
     var allStyleOptions = {};
@@ -1905,7 +1654,7 @@ Mapbender.Model.prototype.getVectorLayerPrintStyleOptions = function getVectorLa
     }
 
     return allStyleOptions;
-};
+},
 
 /**
  * Returns an object with color and opacity. If the color is in rgb or rgba form, it will be converted
@@ -1913,8 +1662,7 @@ Mapbender.Model.prototype.getVectorLayerPrintStyleOptions = function getVectorLa
  * @param {string} color
  * @returns {object}
  */
-Mapbender.Model.prototype.getHexNormalColorAndOpacityObject = function getHexNormalColorAndOpacityObject(color) {
-    'use strict';
+getHexNormalColorAndOpacityObject: function (color) {
     var opacity = 1;
     if (color.indexOf('rgb') !== -1) {
         if (color.indexOf('rgba') !== -1) {
@@ -1928,27 +1676,25 @@ Mapbender.Model.prototype.getHexNormalColorAndOpacityObject = function getHexNor
     hexColorAndOpacityObject['opacity'] = opacity;
 
     return hexColorAndOpacityObject;
-};
+},
 
 /**
  * @param {string} orig
  * @returns {string}
  */
-Mapbender.Model.prototype.rgb2hex = function rgb2hex(orig) {
-    'use strict';
+rgb2hex: function(orig) {
     var rgb = orig.replace(/\s/g,'').match(/^rgba?\((\d+),(\d+),(\d+)/i);
     return (rgb && rgb.length === 4) ? "#" +
         ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : orig;
-};
+},
 
 /**
  *
  * @param elementConfig
  */
-Mapbender.Model.prototype.createMousePositionControl = function createMousePositionControl(elementConfig){
-    'use strict';
+createMousePositionControl: function(elementConfig){
     var template = elementConfig.prefix + '{x}' + elementConfig.separator + '{y}';
     var mousePositionControl = new ol.control.MousePosition({
         coordinateFormat: function(coordinate) {
@@ -1961,7 +1707,7 @@ Mapbender.Model.prototype.createMousePositionControl = function createMousePosit
         undefinedHTML: elementConfig.emptyString
     });
     this.olMap.addControl(mousePositionControl);
-};
+},
 
 /**
  * Get bounds from binary geometry of a particular format
@@ -1970,7 +1716,7 @@ Mapbender.Model.prototype.createMousePositionControl = function createMousePosit
  * @param {string} format must be a string identifier of {ol.format} https://openlayers.org/en/latest/apidoc/ol.format.html
  * @returns {top, right, bottom, left} extent object
  */
-Mapbender.Model.prototype.getBoundsFromBinaryUsingFormat = function (binary, format) {
+getBoundsFromBinaryUsingFormat: function (binary, format) {
     if (typeof ol.format[format] === 'undefined') {
         console.error("Format is not supported", format);
         throw new Error("Format" + format + " is not supported");
@@ -1982,7 +1728,7 @@ Mapbender.Model.prototype.getBoundsFromBinaryUsingFormat = function (binary, for
     var extent = feature.getGeometry().getExtent();
 
     return this.mbExtent(extent);
-};
+},
 
 /**
  * Get resolution for zoom level
@@ -1990,9 +1736,9 @@ Mapbender.Model.prototype.getBoundsFromBinaryUsingFormat = function (binary, for
  * @param {number} zoom
  * @returns {number}
  */
-Mapbender.Model.prototype.getResolutionForZoom = function (zoom) {
+getResolutionForZoom: function(zoom) {
     return this.olMap.getView().getResolutionForZoom(zoom);
-};
+},
 
 /**
  * Get zoom for resolution
@@ -2000,30 +1746,28 @@ Mapbender.Model.prototype.getResolutionForZoom = function (zoom) {
  * @param {number} resolution
  * @returns {number|undefined}
  */
-Mapbender.Model.prototype.getZoomForResolution = function (resolution) {
+getZoomForResolution: function(resolution) {
     return this.olMap.getView().getZoomForResolution(resolution);
-};
+},
 
 
 /**
  *
  * @param projection
  */
-Mapbender.Model.prototype.mousePositionControlUpdateProjection = function mousePositionControlUpdateProjection(projection) {
-    'use strict';
+mousePositionControlUpdateProjection: function(projection) {
     this.olMap.getControls().forEach(function (control) {
         if (control instanceof ol.control.MousePosition) {
             control.setProjection(projection);
         }
     });
-};
+},
 
 /**
  * @param {object} options
  * @returns {object}
  */
-Mapbender.Model.prototype.initializeViewOptions = function initializeViewOptions(options) {
-    'use strict';
+initializeViewOptions: function(options) {
     var proj = ol.proj.get(options.srs);
     var viewOptions = {
         projection: proj
@@ -2046,7 +1790,7 @@ Mapbender.Model.prototype.initializeViewOptions = function initializeViewOptions
         viewOptions.zoom = 7; // hope for the best
     }
     return viewOptions;
-};
+},
 
 /**
  * Recalculate a resolution number valid for fromUnit to an equivalent valid
@@ -2066,14 +1810,12 @@ Mapbender.Model.prototype.initializeViewOptions = function initializeViewOptions
  * @private
  * @static
  */
-Mapbender.Model.convertResolution_ = function convertResolution_(fromUnits, toUnits, resolution) {
+convertResolution_: function(fromUnits, toUnits, resolution) {
     var resolutionFactor =
         ol.proj.METERS_PER_UNIT[fromUnits] /
         ol.proj.METERS_PER_UNIT[toUnits];
     return resolution * resolutionFactor;
-};
-// make available on instance
-Mapbender.Model.prototype.convertResolution_ = Mapbender.Model.convertResolution_;
+},
 
 /**
  * Get resolution for extent
@@ -2082,9 +1824,9 @@ Mapbender.Model.prototype.convertResolution_ = Mapbender.Model.convertResolution
  * @param {Array} size [width, height]
  * @returns {number}
  */
-Mapbender.Model.prototype.getResolutionForExtent = function (extent, size) {
+getResolutionForExtent: function(extent, size) {
     return this.olMap.getView().getResolutionForExtent(extent, size);
-};
+},
 
 /**
  * Create style for icon
@@ -2092,7 +1834,7 @@ Mapbender.Model.prototype.getResolutionForExtent = function (extent, size) {
  * @param {*} options
  * @return {ol.style.Style}
  */
-Mapbender.Model.prototype.createIconStyle = function (options) {
+createIconStyle: function(options) {
     var defaultOptions = {
         anchor: [0.5, 46],
         anchorXUnits: 'fraction',
@@ -2106,15 +1848,14 @@ Mapbender.Model.prototype.createIconStyle = function (options) {
     });
 
     return iconStyle;
-};
+},
 
 /**
  * create ol.style.Style
  * @param {array} customStyle only fill, stroke, zIndex
  * @returns {ol.style.Style}
  */
-Mapbender.Model.prototype.getCustomStyle = function getCustomStyle(customStyle) {
-    'use strict';
+getCustomStyle: function(customStyle) {
     var geometry = undefined;
     var fill = undefined;
     var image = undefined;
@@ -2171,7 +1912,7 @@ Mapbender.Model.prototype.getCustomStyle = function getCustomStyle(customStyle) 
         text: text,
         zIndex: zIndex
     });
-};
+},
 
 /**
  *
@@ -2179,7 +1920,7 @@ Mapbender.Model.prototype.getCustomStyle = function getCustomStyle(customStyle) 
  * @returns {Mapbender.SourceModelOl4}
  * @private
  */
-Mapbender.Model.prototype.toSourceObj_ = function toSourceObj_(input) {
+toSourceObj_: function(input) {
     if (input instanceof Mapbender.SourceModelOl4) {
         return input;
     }
@@ -2195,32 +1936,9 @@ Mapbender.Model.prototype.toSourceObj_ = function toSourceObj_(input) {
     }
     console.error("Could not identify requested source from input", input);
     throw new Error("Could not identify requested source");
-};
+}
 
-/**
- *
- * @param callback
- * @returns {ol.EventsKey|Array<ol.EventsKey>}
- */
-Mapbender.Model.prototype.setOnChangeResolutionHandler = function (callback) {
-    'use strict';
+    });
 
-    if (typeof callback === 'function') {
-        return this.olMap.on("change:resolution", callback);
-    }
-};
-
-/**
- *
- * @param extent
- * @param size
- * @returns {number}
- */
-Mapbender.Model.prototype.getResolutionForExtent = function getResolutionForExtent(extent, size){
-    'use strict';
-
-    var xResolution = ol.extent.getWidth(extent) / size[0];
-    var yResolution = ol.extent.getHeight(extent) / size[1];
-
-    return Math.max(xResolution, yResolution);
-};
+    return MapModelOl4;
+}());
