@@ -201,13 +201,13 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 scales: this.mbMap.options.scales
             });
         }
-        var olMap = new OpenLayers.Map(this.mbMap.element.get(0), mapOptions);
+        this.olMap = new OpenLayers.Map(this.mbMap.element.get(0), mapOptions);
         // Use a faked, somewhat compatible-ish surrogate for MapQuery Map
         // @todo: eliminate MapQuery method / property access completely
         // * accesses to 'layersList'
         // * layer lookup via 'mqlid' on source definitions
 
-        this.map = new NotMapQueryMap(this.mbMap.element, olMap);
+        this.map = new NotMapQueryMap(this.mbMap.element, this.olMap);
 
         // monkey-patch zoom interactions
         (function(olMap) {
@@ -227,7 +227,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
                 }
                 zoomToOriginal.apply(this, arguments);
             };
-        })(this.map.olMap);
+        })(this.olMap);
 
         this.setView(true);
         this.parseURL();
@@ -261,7 +261,7 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
     },
     _setupHistoryControl: function() {
         this.historyControl = new OpenLayers.Control.NavigationHistory();
-        this.map.olMap.addControl(this.historyControl);
+        this.olMap.addControl(this.historyControl);
     },
     _patchNavigationControl: function() {
         var self = this;
