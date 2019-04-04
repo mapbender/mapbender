@@ -80,7 +80,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         this._patchNavigationControl();
         var self = this;
         this._configProj = this.getProj(this.mbMap.options.srs);
-        this._startProj = this.getProj(this.mbMap.options.targetsrs || this.mbMap.options.srs);
+        this._startProj = this.mbMap.options.targetsrs || this.mbMap.options.srs;
 
 
         this.mapMaxExtent = {
@@ -106,7 +106,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
             projection: this._startProj,
             displayProjection: this._startProj,
-            units: this._startProj.proj.units,
+            units: this.getProj(this._startProj).proj.units || 'degrees',
             allOverlays: true,
             fallThrough: true,
             layers: [baseLayer],
@@ -192,7 +192,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         } else if (pois && pois.length === 1) {
             var singlePoi = pois[0];
             lonlat = new OpenLayers.LonLat(singlePoi.x, singlePoi.y);
-            lonlat = lonlat.transform(this.getProj(singlePoi.srs), this._startProj);
+            lonlat = lonlat.transform(this.getProj(singlePoi.srs), this.getProj(this._startProj));
             this.map.olMap.setCenter(lonlat);
         } else {
             var mapExtra = this.mbMap.options.extra;
@@ -284,14 +284,14 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         if (this.map && this.map.olMap) {
             return this.map.olMap.getProjection();
         } else {
-            return this._startProj.projCode;
+            return this._startProj;
         }
     },
     getCurrentProj: function() {
         if (this.map && this.map.olMap) {
             return this.map.olMap.getProjectionObject();
         } else {
-            return this._startProj;
+            return this.getProj(this._startProj);
         }
     },
     /**
