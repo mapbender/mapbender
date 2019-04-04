@@ -35,36 +35,24 @@
         },
 
         _reset: function(event, data) {
-            var projection = (data && data.to) || this.mbMap.getModel().getCurrentProj();
-
+            var units = this.mbMap.getModel().getCurrentProjectionUnits();
+            var isDeg = !units || units === 'degrees' || units === 'dd';
             var numDigits = this.options.numDigits || 0;
-            if (!projection.proj.units || projection.proj.units === 'degrees' || projection.proj.units === 'dd') {
+            if (isDeg) {
                 numDigits += 5;
             }
-
-            var model = this.map.model;
-            var isdeg = model.getCurrentProjectionObject().getUnits() === 'dd';
-            var srs = {projection: {projCode: model.getCurrentProjectionCode()}};
-
-            var elementConfig = {
-              target: $(this.element).attr('id'),
-              emptyString: this.options.empty || '',
-              prefix: this.options.prefix || '',
-              separator: this.options.separator || ' ',
-              suffix: this.options.suffix,
-              numDigits: isdeg ? 5 + numDigits : numDigits,
-              displayProjection: srs.projection
-            };
-            model.createMousePositionControl(elementConfig);
-            this.crs = srs.projection.projCode;
+            switch (Mapbender.mapEngine.code) {
+                case 'ol2':
+                    this._resetOl2(numDigits);
+                    break;
+                case 'ol4':
+                    this._resetOl4(numDigits);
+                    break;
+                default:
+                    throw new Error("Unuspported map engine code " + Mapbender.mapEngine.code);
+            }
         },
-
-        _updateProjection: function () {
-          var projection = this.map.model.getCurrentProjectionCode();
-          this.map.model.mousePositionControlUpdateProjection(projection);
-          this.crs = projection;
-        },
-        _setupOl2: function() {
+        _resetOl2: function(numDigits) {
             var controlOptions = {
                 emptyString: this.options.empty,
                 numDigits: numDigits,
@@ -93,6 +81,18 @@
             }
             this.control = new OpenLayers.Control.MousePosition(controlOptions);
             this.mbMap.map.olMap.addControl(this.control);
+        },
+        _resetOl4: function(numDigits) {
+            var model = this.mbMap.getModel();
+            var elementConfig = {
+                numDigits: numDigits,
+                target: $(this.element).attr('id'),
+                emptyString: this.options.empty,
+                prefix: this.options.prefix,
+                separator: this.options.separator,
+                suffix: this.options.suffix
+            };
+            model.createMousePositionControl(elementConfig);
         }
     });
 
