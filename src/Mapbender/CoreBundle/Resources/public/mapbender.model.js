@@ -7,7 +7,7 @@ window.Mapbender = Mapbender || {};
      */
     window.Mapbender.MapModelOl2 = function(mbMap) {
     Mapbender.MapModelBase.apply(this, arguments);
-    this.init(mbMap);
+    this._initMap(mbMap);
 };
 Mapbender.MapModelOl2.prototype = Object.create(Mapbender.MapModelBase.prototype);
 Object.assign(Mapbender.MapModelOl2.prototype, {
@@ -68,9 +68,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * @property {Number} [zoom]
      */
 
-    mbMap: null,
     map: null,
-    sourceTree: [],
     mapMaxExtent: null,
     mapStartExtent: null,
     _highlightLayer: null,
@@ -78,12 +76,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     _configProj: null,
     /** Actual initial projection, determined by a combination of several URL parameters */
     _startProj: null,
-    init: function(mbMap) {
-        Mapbender.mapEngine.patchGlobals(mbMap.options);
-        Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
-
-        this._initMap();
-    },
     _initMap: function _initMap() {
         this._patchNavigationControl();
         var self = this;
@@ -420,9 +412,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         return state;
     },
-    getSources: function() {
-        return this.sourceTree;
-    },
     /**
      * Returns a source from a sourceTree
      * @param {Object} idObject in form of:
@@ -453,13 +442,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         } else if (options.remove) {
             source.removeParams(Object.keys(options.remove));
         }
-    },
-    /**
-     * @param {Number|String} id
-     * @return {Mapbender.Source|null}
-     */
-    getSourceById: function(id) {
-        return _.findWhere(this.sourceTree, {id: '' + id}) || null;
     },
     /**
      * @param options
@@ -576,33 +558,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             zoom: zoom,
             // scale: this.getCurrentScale()
             scale: scales[zoom]
-        });
-    },
-    /**
-     * Updates the options.treeOptions within the source with new values from layerOptionsMap.
-     * Always reapplies states to engine (i.e. affected layers are re-rendered).
-     * Alawys fires an 'mbmapsourcechanged' event.
-     *
-     * @param {Object} source
-     * @param {Object<string, Model~LayerTreeOptionWrapper>} layerOptionsMap
-     * @private
-     */
-    _updateSourceLayerTreeOptions: function(source, layerOptionsMap) {
-        var gsHandler = this.getGeoSourceHandler(source);
-        gsHandler.applyTreeOptions(source, layerOptionsMap);
-        var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
-        var changedStates = gsHandler.applyLayerStates(source, newStates);
-        var layerParams = source.getLayerParameters(newStates);
-        this._resetSourceVisibility(source, layerParams);
-
-        this.mbMap.fireModelEvent({
-            name: 'sourceChanged',
-            value: {
-                changed: {
-                    children: $.extend(true, {}, layerOptionsMap, changedStates)
-                },
-                sourceIdx: {id: source.id}
-            }
         });
     },
     /**
@@ -1001,22 +956,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
     },
     /**
-     * Old-style API to add a source. Source is a POD object that needs to be nested into an outer structure like:
-     *  {add: {sourceDef: <x>}}
-     *
-     * @param {object} addOptions
-     * @returns {object} source defnition (unraveled but same ref)
-     * @deprecated, call addSourceFromConfig directly
-     */
-    addSource: function(addOptions) {
-        if (addOptions.add && addOptions.add.sourceDef) {
-            // because legacy behavior was to always mangle / destroy / rewrite all ids, we do the same here
-            return this.addSourceFromConfig(addOptions.add.sourceDef, true);
-        } else {
-            console.error("Unuspported options, ignoring", addOptions);
-        }
-    },
-    /**
      * @param {Mapbender.Source|Object} sourceOrSourceDef
      * @param {boolean} [mangleIds] to rewrite sourceDef.id and all layer ids EVEN IF ALREADY POPULATED
      * @returns {object} sourceDef same ref, potentially modified
@@ -1181,39 +1120,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             name: 'sourceChanged',
             value: eventData
         });
-    },
-    /**
-     *
-     * @param {string|Object} sourceOrId
-     * @property {string} sourceOrId.id
-     * @param state
-     */
-    setSourceVisibility: function(sourceOrId, state) {
-        var source;
-        if (typeof sourceOrId === 'object') {
-            if (sourceOrId instanceof Mapbender.Source) {
-                source = sourceOrId;
-            } else {
-                source = this.getSourceById(sourceOrId.id);
-            }
-        } else {
-            source = this.getSourceById(sourceOrId);
-        }
-        var newProps = {};
-        var rootLayer = source.configuration.children[0];
-        var state_ = state;
-        if (state && !rootLayer.options.treeOptions.allow.selected) {
-            state_ = false;
-        }
-        var rootLayerId = rootLayer.options.id;
-        newProps[rootLayerId] = {
-            options: {
-                treeOptions: {
-                    selected: state_
-                }
-            }
-        };
-        this._updateSourceLayerTreeOptions(source, newProps);
     },
     /**
      * Performs bulk-updates on the targetted source's treeOptions to make
@@ -1479,35 +1385,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             olLayer.events.register("loadstart", this, this._sourceLoadStart);
             olLayer.events.register("tileerror", this, this._sourceLoadError);
             olLayer.events.register("loadend", this, this._sourceLoadeEnd);
-        }
-    },
-    /**
-     * Activate / deactivate a single layer's selection and / or FeatureInfo state states.
-     *
-     * @param {string|number} sourceId
-     * @param {string|number} layerId
-     * @param {boolean|null} [selected]
-     * @param {boolean|null} [info]
-     */
-    controlLayer: function controlLayer(sourceId, layerId, selected, info) {
-        var layerMap = {};
-        var treeOptions = {};
-        if (selected !== null && typeof selected !== 'undefined') {
-            treeOptions.selected = !!selected;
-        }
-        if (info !== null && typeof info !== 'undefined') {
-            treeOptions.info = !!info;
-        }
-        if (Object.keys(treeOptions).length) {
-            layerMap['' + layerId] = {
-                options: {
-                    treeOptions: treeOptions
-                }
-            };
-        }
-        if (Object.keys(layerMap).length) {
-            var source = this.getSourceById(sourceId);
-            this._updateSourceLayerTreeOptions(source, layerMap);
         }
     },
     /**

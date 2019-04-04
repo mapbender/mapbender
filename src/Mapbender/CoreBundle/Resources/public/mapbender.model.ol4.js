@@ -8,12 +8,6 @@ window.Mapbender.MapModelOl4 = (function() {
      */
     function MapModelOl4(mbMap) {
         Mapbender.MapModelBase.apply(this, arguments);
-        this.mbMap = mbMap;
-        console.log("Map options", mbMap.options);
-        Mapbender.mapEngine.patchGlobals(mbMap.options);
-        Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
-
-        this.sourceTree = [];
         this._initMap();
     }
 
@@ -247,50 +241,6 @@ window.Mapbender.MapModelOl4 = (function() {
         throw new Error("Cannot infer source configuration from given input");
     },
     /**
-     * @param {Number|String} id
-     * @return {Mapbender.Source|null}
-     *
-     * engine-agnostic
-     */
-    getSourceById: function(id) {
-        return _.findWhere(this.sourceTree, {id: '' + id}) || null;
-    },
-    /**
-     *
-     * @param {string|Object} sourceOrId
-     * @property {string} sourceOrId.id
-     * @param state
-     *
-     * engine-agnostic
-     */
-    setSourceVisibility: function(sourceOrId, state) {
-        var source;
-        if (typeof sourceOrId === 'object') {
-            if (sourceOrId instanceof Mapbender.Source) {
-                source = sourceOrId;
-            } else {
-                source = this.getSourceById(sourceOrId.id);
-            }
-        } else {
-            source = this.getSourceById(sourceOrId);
-        }
-        var newProps = {};
-        var rootLayer = source.configuration.children[0];
-        var state_ = state;
-        if (state && !rootLayer.options.treeOptions.allow.selected) {
-            state_ = false;
-        }
-        var rootLayerId = rootLayer.options.id;
-        newProps[rootLayerId] = {
-            options: {
-                treeOptions: {
-                    selected: state_
-                }
-            }
-        };
-        this._updateSourceLayerTreeOptions(source, newProps);
-    },
-    /**
      * Check if OpenLayer layer need to be redraw
      *
      * @TODO: infoLayers should be set outside of the function
@@ -365,9 +315,6 @@ window.Mapbender.MapModelOl4 = (function() {
         }
         this.olMap.getView().fit(bounds);
     },
-    getSources: function() {
-        return this.sourceTree;
-    },
     /**
      * @param {*} anything
      * @return {OpenLayers.Layer|null}
@@ -393,84 +340,6 @@ window.Mapbender.MapModelOl4 = (function() {
         }
         console.error("Could not find native layer for given obect", anything);
         return null;
-    },
-    /**
-     * Old-style API to add a source. Source is a POD object that needs to be nested into an outer structure like:
-     *  {add: {sourceDef: <x>}}
-     *
-     * @param {object} addOptions
-     * @returns {object} source defnition (unraveled but same ref)
-     * @deprecated, call addSourceFromConfig directly
-     *
-     * engine-agnostic
-     */
-    addSource: function(addOptions) {
-        if (addOptions.add && addOptions.add.sourceDef) {
-            // because legacy behavior was to always mangle / destroy / rewrite all ids, we do the same here
-            return this.addSourceFromConfig(addOptions.add.sourceDef, true);
-        } else {
-            console.error("Unuspported options, ignoring", addOptions);
-        }
-    },
-    /**
-     * Activate / deactivate a single layer's selection and / or FeatureInfo state states.
-     *
-     * @param {string|number} sourceId
-     * @param {string|number} layerId
-     * @param {boolean|null} [selected]
-     * @param {boolean|null} [info]
-     *
-     * engine-agnostic
-     */
-    controlLayer: function controlLayer(sourceId, layerId, selected, info) {
-        var layerMap = {};
-        var treeOptions = {};
-        if (selected !== null && typeof selected !== 'undefined') {
-            treeOptions.selected = !!selected;
-        }
-        if (info !== null && typeof info !== 'undefined') {
-            treeOptions.info = !!info;
-        }
-        if (Object.keys(treeOptions).length) {
-            layerMap['' + layerId] = {
-                options: {
-                    treeOptions: treeOptions
-                }
-            };
-        }
-        if (Object.keys(layerMap).length) {
-            var source = this.getSourceById(sourceId);
-            this._updateSourceLayerTreeOptions(source, layerMap);
-        }
-    },
-    /**
-     * Updates the options.treeOptions within the source with new values from layerOptionsMap.
-     * Always reapplies states to engine (i.e. affected layers are re-rendered).
-     * Alawys fires an 'mbmapsourcechanged' event.
-     *
-     * @param {Object} source
-     * @param {Object<string, Model~LayerTreeOptionWrapper>} layerOptionsMap
-     * @private
-     *
-     * engine-agnostic
-     */
-    _updateSourceLayerTreeOptions: function(source, layerOptionsMap) {
-        var gsHandler = this.getGeoSourceHandler(source);
-        gsHandler.applyTreeOptions(source, layerOptionsMap);
-        var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
-        var changedStates = gsHandler.applyLayerStates(source, newStates);
-        var layerParams = source.getLayerParameters(newStates);
-        this._resetSourceVisibility(source, layerParams);
-
-        this.mbMap.fireModelEvent({
-            name: 'sourceChanged',
-            value: {
-                changed: {
-                    children: $.extend(true, {}, layerOptionsMap, changedStates)
-                },
-                sourceIdx: {id: source.id}
-            }
-        });
     },
     /**
      * Bring the sources identified by the given ids into the given order.
