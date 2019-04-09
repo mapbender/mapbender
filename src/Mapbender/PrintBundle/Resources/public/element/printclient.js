@@ -124,12 +124,13 @@
             });
         },
         _deactivateSelection: function() {
+            var wasActive = !!this.selectionActive;
             this.selectionActive = false;
-            if (this.control) {
+            if (wasActive && this.control) {
                 this.control.deactivate();
                 this.map.map.olMap.removeControl(this.control);
             }
-            if (this.layer) {
+            if (wasActive && this.layer) {
                 this.map.map.olMap.removeLayer(this.layer);
             }
             $('.printSubmit', this.$form).addClass('hidden');
