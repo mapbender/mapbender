@@ -143,10 +143,11 @@ You are now expected to pass in a JavaScript attribute: value mapping. A first a
         tensile_strength: "[tensile_strength]",
         some_other_attribute: "[some_other_attribute]"
     },
-    "name-of-template");
+    "name-of-a-feature-schema");
 ```
 Because any field you render requires a corresponding text field in an odg template to show up in print, you should have
-full awareness of the set of attributes you have to pass in.
+full awareness of the set of attributes you have to pass in.  
+The second argument references a predefined call of features, used to look up specialized print templates.
 
 We consider this use case a hack. Deep calls into element internals made from externally generated code cannot be
 supported. There will be no particular amenities to make such hacks work.
