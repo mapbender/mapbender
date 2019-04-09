@@ -33,19 +33,24 @@ $(function() {
 
     // init filter inputs --------------------------------------------------------------------
     $(document).on("keyup", ".listFilterInput", function(){
-        var me    = $(this);
-        var val   = $.trim(me.val());
-        var items = $("#" + me.attr("id").replace("input", "list")).find("li, tr");
+        var $this = $(this);
+        var val = $.trim($this.val());
+        var filterTargetId = $this.attr('data-filter-target');
+        if (!filterTargetId) {
+            filterTargetId = $this.attr('id').replace("input", "list");
+        }
+        var filterScope = filterTargetId && $('#' + filterTargetId);
+        if (!filterTargetId || !filterScope.length) {
+            console.error("Could not find target for list filter", this, filterTargetId);
+            return;
+        }
+        var items = $("li, tr", filterScope).not('.doNotFilter');
 
         if(val.length > 0){
-            var item = null;
-
-            $.each(items, function(i, e){
-                item = $(e);
-                if(!item.hasClass("doNotFilter")){
-                    (item.text().toUpperCase().indexOf(val.toUpperCase()) >= 0) ? item.show()
-                                                                                : item.hide();
-                }
+            $.each(items, function() {
+                var $item = $(this);
+                var containsInput = $item.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
+                $item.toggle(containsInput);
             });
         }else{
             items.show();
