@@ -357,27 +357,17 @@
                 this._removeChild(options.changed);
             }
         },
-        _isThemeChecked: function($li){
-            if(this.options.useTheme === false) { // a theme exists
+        _isThemeChecked: function($li) {
+            var $themeNode = $li.closest('li.themeContainer', this.element);
+            if (!this.options.useTheme || !$themeNode.length) {
                 return true;
             }
-            var $lith = $li.parents('li.themeContainer:first');
-            if($lith.length === 1){
-                var theme = {};
-                var lsid = $lith.attr('data-layersetid');
-                $.each(this.options.themes, function(idx, item) {
-                    if (item.id === lsid)
-                        theme = item;
-                });
-                if(theme.sourceVisibility){
-                    return $('input[name="sourceVisibility"]:first', $lith).prop('checked');
-                } else {
-                    return true;
-                }
-            } else if($lith.length === 0){ // no theme exists
+            var $sourceVisCheckbox = $('>.leaveContainer input[name="sourceVisibility"]', $themeNode);
+            if ($sourceVisCheckbox.length) {
+                return $sourceVisCheckbox.prop('checked');
+            } else {
                 return true;
             }
-            return false;
         },
         _redisplayLayerState: function($li, state) {
             if (state.outOfScale) {
@@ -408,9 +398,6 @@
                     var layerSettings = changed.children[layerId];
                     var $li = $('li[data-id="' + layerId + '"]', this.element);
                     if ($li.length !== 0) {
-                        if ($li.attr("data-type") === this.consts.root && !this._isThemeChecked($li)){
-                            continue;
-                        }
                         var newTreeOptions = (layerSettings.options || {}).treeOptions;
                         var newLayerState = layerSettings.state;
                         if (!newLayerState && newTreeOptions && typeof newTreeOptions.selected !== 'undefined') {
