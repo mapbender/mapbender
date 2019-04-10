@@ -77,13 +77,6 @@
                 var resolution = Math.max(resolutionH, resolutionV);
                 viewOptions.resolutions = [resolution];
             }
-            /**
-             * @todo: find a working solution for 'fixed' mode
-             *      adding constant 'minZoom: 7, maxZoom: 7' to the view options
-             *      disables zooming, but we need the calculated values that match
-             *      the maximum extent of the main map. Combining view zoom constraints
-             *      with center + fit (see below) additionally throws errors.
-             */
             var controlOptions = {
                 collapsible: true,
                 collapsed: false,
