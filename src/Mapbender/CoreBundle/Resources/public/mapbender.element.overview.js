@@ -64,6 +64,19 @@
 
             var mainMapModel = this.mbMap.model;
             var center = mainMapModel.olMap.getView().getCenter();
+            var viewOptions = {
+                projection: mainMapModel.getCurrentProjectionObject(), //map.getView().getProjection(),
+                center: center
+            };
+            if (this.options.fixed) {
+                var maxExtent = mainMapModel.getMaxExtent();
+                var projectedWidth = Math.abs(maxExtent.right - maxExtent.left);
+                var projectedHeight = Math.abs(maxExtent.top - maxExtent.bottom);
+                var resolutionH = projectedWidth / this.options.width;
+                var resolutionV = projectedHeight / this.options.height;
+                var resolution = Math.max(resolutionH, resolutionV);
+                viewOptions.resolutions = [resolution];
+            }
             /**
              * @todo: find a working solution for 'fixed' mode
              *      adding constant 'minZoom: 7, maxZoom: 7' to the view options
@@ -76,10 +89,7 @@
                 collapsed: false,
                 target: viewportId,
                 layers: layers,
-                view: new ol.View({
-                    projection: mainMapModel.getCurrentProjectionObject(), //map.getView().getProjection(),
-                    center: center
-                })
+                view: new ol.View(viewOptions)
             };
             this.overview = new ol.control.OverviewMap(controlOptions);
 
@@ -88,19 +98,6 @@
                 .width(this.options.width)
                 .height(this.options.height)
             ;
-            if (this.options.fixed) {
-                console.warn("Engaging Overview mode 'fixed', no working implementation!", mainMapModel.getMaxExtent(), center);
-                // zoom out to main map extent limit and lock
-                console.log("Ovmap?", this.control_);
-                var ctView = this.control_.getOverviewMap().getView();
-                var fixedRes = ctView.getResolutionForExtent(mainMapModel.getMaxExtent());
-                console.log("Calculated resolution", fixedRes);
-                // @todo: figure out how to constrain the overview map / its view
-                // ctView.fit(mainMapModel.getMaxExtent());   // no effect?!
-                // ctView.constrainCenter(center);  // no effect?!
-                // ctView.constrainResolution(fixedRes, 0.0); // no effect?!
-
-            }
             this.overview.ovmap_.updateSize();
         },
         _initAsOl2Control: function(layers) {
