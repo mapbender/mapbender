@@ -36,7 +36,7 @@
          */
         _setup: function(mbMap) {
             this.mbMap = mbMap;
-            $(document).one('mbmapsourceloadend', $.proxy(this.onMapLoaded, this));
+            this.onMapLoaded();
             this._trigger('ready');
         },
 
