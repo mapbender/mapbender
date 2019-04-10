@@ -84,15 +84,36 @@
         },
         _resetOl4: function(numDigits) {
             var model = this.mbMap.getModel();
-            var elementConfig = {
-                numDigits: numDigits,
+            var template;
+            if (this.options.formatoutput && this.options.displaystring) {
+                // Undocumented / unassignable legacy option combination doing ~template replacement
+                template = this.options.displaystring
+                    .replace("$lon$", "{x}")
+                    .replace("$lat$", "{y}")
+                ;
+            } else {
+                template = [
+                    this.options.prefix,
+                    '{x}',
+                    this.options.separator,
+                    '{y}'
+                    ].join('');
+            }
+            var controlOptions = {
+                coordinateFormat: function(coordinate) {
+                    return ol.coordinate.format(coordinate, template, numDigits);
+                },
+                projection: model.getCurrentProjectionCode(),
+                className: 'custom-mouse-position',
                 target: $(this.element).attr('id'),
-                emptyString: this.options.empty,
-                prefix: this.options.prefix,
-                separator: this.options.separator,
-                suffix: this.options.suffix
+                undefinedHTML: $('<span/>').text(this.options.empty).html()
             };
-            model.createMousePositionControl(elementConfig);
+            if (this.control) {
+                model.olMap.removeControl(this.control);
+                this.control = null;
+            }
+            this.control = new ol.control.MousePosition(controlOptions);
+            model.olMap.addControl(this.control);
         }
     });
 

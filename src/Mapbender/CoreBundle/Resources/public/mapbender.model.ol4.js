@@ -1500,25 +1500,6 @@ rgb2hex: function(orig) {
 },
 
 /**
- *
- * @param elementConfig
- */
-createMousePositionControl: function(elementConfig){
-    var template = elementConfig.prefix + '{x}' + elementConfig.separator + '{y}';
-    var mousePositionControl = new ol.control.MousePosition({
-        coordinateFormat: function(coordinate) {
-
-            return ol.coordinate.format(coordinate, template, elementConfig.numDigits);
-        },
-        projection: elementConfig.displayProjection.projCode,
-        className: 'custom-mouse-position',
-        target: elementConfig.target,
-        undefinedHTML: elementConfig.emptyString
-    });
-    this.olMap.addControl(mousePositionControl);
-},
-
-/**
  * Get bounds from binary geometry of a particular format
  *
  * @param {string} binary
