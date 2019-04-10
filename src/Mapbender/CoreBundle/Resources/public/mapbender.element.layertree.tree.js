@@ -430,13 +430,14 @@
                 this._redisplayLayerState($li, layer.state);
             }
             if (layer && Object.keys((layer.options || {}).treeOptions).length) {
-                this._updateLayerCheckboxes($li, layer.options.treeOptions);
+                var $checkboxScope = $('>.leaveContainer', $li);
+                this._updateLayerCheckboxes($checkboxScope, layer.options.treeOptions);
             }
         },
-        _updateLayerCheckboxes: function($li, treeOptions) {
+        _updateLayerCheckboxes: function($scope, treeOptions) {
             var allow = treeOptions.allow || {};
-            var $selectedChk = $('input[name="selected"]:first', $li);
-            var $infoChk = $('input[name="info"]:first', $li);
+            var $selectedChk = $('input[name="selected"]:first', $scope);
+            var $infoChk = $('input[name="info"]:first', $scope);
             if (treeOptions.selected !== null && typeof treeOptions.selected !== 'undefined') {
                 $selectedChk.prop('checked', !!treeOptions.selected);
             }

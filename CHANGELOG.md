@@ -1,4 +1,11 @@
 # Changelog
+* **dev-release/3.0.7** @ e5c9c185f
+  - [Beta 4 regression] Fix Print client dialog-type deactivation via click on controlling button
+  - [Beta regression] Restore function of Application Layersets list filter
+  - [Beta regression] Fix Layertree sometimes updating the wrong FeatureInfo checkbox
+  - Fix out-of-box overflow in application list with very long application descriptions
+  - Denoise popup and sidepane backgrounds
+
 * **v3.0.8-beta4**
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting

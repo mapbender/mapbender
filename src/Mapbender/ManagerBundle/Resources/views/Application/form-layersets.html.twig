@@ -1,8 +1,8 @@
 <a href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}" class="iconAdd right addLayerset iconBig" title="{{ 'mb.manager.admin.layerset.add' | trans}}"></a>
 {% if application.layersets|length > 0 %}
-  <label for="inputFilterLayersets" class="labelInput">{{"mb.manager.admin.filter.layerset"|trans}}</label><input id="inputFilterLayersets" type="text" class="input listFilterInput">
+  <label for="inputFilterLayersets" class="labelInput">{{"mb.manager.admin.filter.layerset"|trans}}</label><input id="inputFilterLayersets" type="text" class="input listFilterInput" data-filter-target="all-instances">
 
-  <ul class="listFilterContainer">
+  <ul class="listFilterContainer" id="all-instances">
     {% for layerset in application.layersets %}
       <li class="filterItem">
         <table class="application-component-table layersetTable" data-id="{{ layerset.id }}">

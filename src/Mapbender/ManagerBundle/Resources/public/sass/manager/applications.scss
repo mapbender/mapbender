@@ -55,23 +55,20 @@
   $col1Width: 120px;
   $height:120px;
 
-  .filterItem{
+  .filterItem, .col2 {
     min-height:$height;
   }
-  .col1{width:$col1Width;
-    padding:0px;
+  .col1{
+    width:$col1Width;
+    padding: 0;
     display:table;
+    text-align: center;
+    font-size: 70px;
+    color: lighten($darkFontColor, 10%);
 
-    &.default{
-      border: 1px solid #a2a2a2;
-      background-color:#404040;
-    }
-    div.cell{
+    div.cell {
       display: table-cell;
       vertical-align:middle;
-      text-align: center;
-      padding: 0;
-      margin:0;
       height: 120px;
       width: 120px;
 
@@ -85,13 +82,12 @@
   }
 
   .col2{
-    height:$height;
     margin-left: $col1Width;
   }
   .iconAppDefault{
-    font-size: 70px;
-    line-height: 120px;
-    color:lighten($darkFontColor, 10%);
+    &:before {
+      margin: 0;
+    }
   }
 }
 .mapbender-popup {
