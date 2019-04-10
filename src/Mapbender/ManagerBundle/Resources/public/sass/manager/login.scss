@@ -91,7 +91,7 @@
     padding: $space;
     width: 90%;
     max-width: 340px;
-    background-image: url($contentPatternUrl);
+    background: lighten($contentColor, 2%) url($managerContentPatternUrl);
     margin: 15px auto 0;
     border: {
       top: solid 1px $secondColor;
