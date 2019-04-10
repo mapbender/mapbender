@@ -397,7 +397,6 @@ window.Mapbender.MapModelOl4 = (function() {
             return parseInt('' + Math.round(scale0));
         });
     },
-    SourceModel: Mapbender.SourceModelOl4,
     DRAWTYPES: ['Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'Circle', 'Box'],
 
     /**
@@ -794,14 +793,6 @@ createVectorLayerStyle: function(optOptions){
     }
 
     return olStyle;
-},
-
-/**
- * @returns {string[]}
- * @param sourceId
- */
-getActiveLayerNames: function(sourceId) {
-    return this.getSourceById(sourceId).getActiveLayerNames();
 },
 
 /**
@@ -1248,89 +1239,6 @@ getMapCenter: function() {
 },
 
 /**
- * Returns the width of an extent.
- * @param extent
- * @returns {number}
- */
-getWidthOfExtent: function(extent) {
-    return ol.extent.getWidth(extent);
-},
-
-/**
- * Returns the height of an extent.
- * @param {Array} extent
- * @returns {number}
- */
-getHeigthOfExtent: function(extent) {
-    return ol.extent.getHeight(extent);
-},
-
-/**
- * @param {Object} params
- * @returns {string}
- */
-getUrlParametersAsString: function(params) {
-    var url = '';
-    for (var key in params) {
-        if (params.hasOwnProperty(key)) {
-            url += '&' + key + '=' + params[key];
-        }
-    }
-
-    return url;
-},
-
-/**
- * @param {string} sourceId
- * @param {Array} extent
- * @param {Array} size
- * @returns {{type: (string|null), url: string, opacity}}
- */
-getSourcePrintConfig: function(source, extent, size) {
-    var sourceObj = this.toSourceObj_(source);
-
-    // Contains VERSION, FORMAT, TRANSPARENT, LAYERS
-    var params = sourceObj.getMapParams;  //engineSource.getParams();
-
-    var v13 = false;
-    if (params.VERSION.indexOf('1.3') !== -1) {
-        v13 = true;
-    }
-
-    // To ensure that only active layers are considered.
-    params.LAYERS = sourceObj.getActiveLayerNames().join(',');
-
-    params.REQUEST = 'GetMap';
-    params.SERVICE = sourceObj.getType().toUpperCase();
-    params.STYLES = ''; //@todo always empty or should it be possible to assign them from a config?
-
-
-    params[v13 ? 'CRS' : 'SRS'] = this.getCurrentProjectionCode();
-
-    var bbox;
-    var axisOrientation = this.getCurrentProjectionObject().getAxisOrientation();
-    if (v13 && axisOrientation.substr(0, 2) === 'ne') {
-        bbox = [extent[1], extent[0], extent[3], extent[2]];
-    } else {
-        bbox = extent;
-    }
-    params.BBOX = bbox.join(',');
-
-    params.WIDTH = size[0];
-    params.HEIGHT = size[1];
-
-    // base url contains the ? sign already.
-    var url = sourceObj.getBaseUrl();
-    url += this.getUrlParametersAsString(params);
-
-    return {
-        type : sourceObj.getType(),
-        url : url,
-        opacity : sourceObj.options.opacity
-    };
-},
-
-/**
  * @returns {ol.format.GeoJSON}
  */
 createOlFormatGeoJSON: function() {
@@ -1702,30 +1610,6 @@ getCustomStyle: function(customStyle) {
         text: text,
         zIndex: zIndex
     });
-},
-
-/**
- *
- * @param {string|number|object|SourceModelOl4} input
- * @returns {Mapbender.SourceModelOl4}
- * @private
- */
-toSourceObj_: function(input) {
-    if (input instanceof Mapbender.SourceModelOl4) {
-        return input;
-    }
-    switch (typeof input) {
-        case 'string':
-        case 'number':
-            return this.getSourceById('' + input);
-        case 'object':
-            if (typeof input.id !== 'undefined') {
-                return this.toSourceObj_(input.id);
-            }
-            break;
-    }
-    console.error("Could not identify requested source from input", input);
-    throw new Error("Could not identify requested source");
 }
 
     });

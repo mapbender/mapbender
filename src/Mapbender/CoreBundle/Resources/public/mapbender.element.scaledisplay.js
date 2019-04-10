@@ -30,7 +30,6 @@
          */
         _setup: function() {
             var self = this;
-            console.log("Scaledisplay options", this.options);
             switch (Mapbender.mapEngine.code) {
                 case 'ol2':
                     // fall through
