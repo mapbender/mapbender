@@ -40,7 +40,7 @@
   border-radius: $borderRadius;
   border: 1px solid #b3b3b3;
   box-shadow:none;
-  background: #E4E4E4 url("bundles/mapbendercore/image/content.png");
+  background: #E4E4E4 url($contentPatternUrl);
   border-bottom-width: 5px;
   //  @extend .ie-8-borders-hack;
 
