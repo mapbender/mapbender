@@ -1,14 +1,35 @@
 window.Mapbender = Mapbender || {};
 window.Mapbender.MapModelBase = (function() {
+    /**
+     * @typedef {Object} mmFlexibleExtent
+     * @property {number} left
+     * @property {number} right
+     * @property {number} bottom
+     * @property {number} top
+     */
+
+
+    /**
+     * @param {Object} mbMap
+     * @constructor
+     */
     function MapModelBase(mbMap) {
         Mapbender.mapEngine.patchGlobals(mbMap.options);
         Mapbender.Projection.extendSrsDefintions(mbMap.options.srsDefs || []);
         this.mbMap = mbMap;
+        var mapOptions = mbMap.options;
         this.sourceBaseId_ = 0;
         this.sourceTree = [];
-        this._configProj = this.mbMap.options.srs;
-        this._startProj = this.mbMap.options.targetsrs || this.mbMap.options.srs;
-        this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(this.mbMap.options.extents.max);
+        this._configProj = mapOptions.srs;
+        this._startProj = mapOptions.targetsrs || mapOptions.srs;
+        this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(mapOptions.extents.max);
+        var startExtentArray;
+        if (mapOptions.extra && mapOptions.extra.bbox) {
+            startExtentArray = mapOptions.extra.bbox;
+        } else {
+            startExtentArray = mapOptions.extents.start || mapOptions.extents.max;
+        }
+        this.mapStartExtent = Mapbender.mapEngine.boundsFromArray(startExtentArray);
     }
 
     MapModelBase.prototype = {
@@ -16,6 +37,7 @@ window.Mapbender.MapModelBase = (function() {
         mbMap: null,
         sourceBaseId_: null,
         sourceTree: [],
+        mapStartExtent: null,
         mapMaxExtent: null,
         /** Backend-configured initial projection, used for start / max extents */
         _configProj: null,
@@ -218,6 +240,21 @@ window.Mapbender.MapModelBase = (function() {
             } else
                 return null;
         },
+        /**
+         * @param {string} [srsName] default: current
+         * @return {mmFlexibleExtent}
+         */
+        getCurrentExtent: function(srsName) {
+            var srsNow = this.getCurrentProjectionCode();
+            var srsName_ = srsName || srsNow;
+            var extentArray = this.getCurrentExtentArray();
+            var extentNative = Mapbender.mapEngine.boundsFromArray(extentArray);
+            return Mapbender.mapEngine.transformBounds(extentNative, srsNow, srsName_);
+        },
+        /**
+         * @param {string} [srsName] default: current
+         * @return {mmFlexibleExtent}
+         */
         getMaxExtent: function(srsName) {
             var srsName_ = srsName || this.getCurrentProjectionCode();
             return Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, srsName_);

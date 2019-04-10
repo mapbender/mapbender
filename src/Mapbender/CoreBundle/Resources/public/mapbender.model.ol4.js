@@ -21,8 +21,8 @@ window.Mapbender.MapModelOl4 = (function() {
     _initMap: function() {
         var options = {
             srs: this.mbMap.options.srs,
-            maxExtent: this.sanitizeExtent(this.mbMap.options.extents.max),
-            startExtent: this.sanitizeExtent(this.mbMap.options.extents.start),
+            maxExtent: this.mapMaxExtent,
+            startExtent: this.mapStartExtent,
             scales : this.mbMap.options.scales,
             dpi: this.mbMap.options.dpi,
             tileSize: this.mbMap.options.tileSize
@@ -820,19 +820,6 @@ removeFeatureById: function(owner, vectorId, featureId) {
 },
 
 /**
- *
- * @param owner
- * @param vectorId
- * @param featureId
- */
-getFeatureExtent: function(owner, vectorId, featureId) {
-    'use strict';
-    var feature = this.getFeatureById(owner, vectorId, featureId);
-    var featureExtent = feature.getGeometry().getExtent();
-    return this.mbExtent(featureExtent);
-},
-
-/**
  * Promote input extent into "universally understood" extent.
  *
  * Monkey-patch attributes 'left', 'bottom', 'right', 'top' onto
@@ -1143,54 +1130,12 @@ drawFeatureOnVectorLayer: function(geometry, vectorLayer, style) {
 
     return this;
 },
-
-/**
- * Valdiates and fixes an incoming extent. Coordinate values will
- * be cast to float. Inverted coordinates are flipped.
- *
- * @param extent
- * @returns {Array<number>} monkey-patched mbExtent with .left etc
- * @static
- */
-sanitizeExtent: function(extent) {
-    var mbExtent = this.mbExtent(extent);
-    var warnings = [];
-    for (var i = 0; i < mbExtent.length; ++i) {
-        if (isNaN(mbExtent[i])) {
-            console.error("Extent contains NaNs", mbExtent);
-            throw new Error("Extent contains NaNs");
-        }
-    }
-    if (mbExtent[0] > mbExtent[2]) {
-        warnings.push("left > right");
-    }
-    if (mbExtent[1] > mbExtent[3]) {
-        warnings.push("bottom > top");
-    }
-    if (warnings.length) {
-        console.warn("Fixing flipped extent coordinates " + warnings.join(","), mbExtent);
-        var left = Math.min(mbExtent[0], mbExtent[2]);
-        var right = Math.max(mbExtent[0], mbExtent[2]);
-        var bottom = Math.min(mbExtent[1], mbExtent[3]);
-        var top = Math.max(mbExtent[1], mbExtent[3]);
-        return this.mbExtent([left, bottom, right, top]);
-    } else {
-        return mbExtent;
-    }
-},
-
-
-/**
- * Return current live extent in "universal extent" format
- * + monkey-patched attribute 'srs'
- *
- * @returns {Array<number>|*}
- */
-getCurrentExtent: function() {
-    var extent = this.mbExtent(this.olMap.getView().calculateExtent());
-    extent.srs = this.getCurrentProjectionCode();
-    return extent;
-},
+        /**
+         * @return {Array<Number>}
+         */
+        getCurrentExtentArray: function() {
+            return this.olMap.getView().calculateExtent();
+        },
 
 /**
  *
@@ -1393,27 +1338,6 @@ rgb2hex: function(orig) {
         ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : orig;
-},
-
-/**
- * Get bounds from binary geometry of a particular format
- *
- * @param {string} binary
- * @param {string} format must be a string identifier of {ol.format} https://openlayers.org/en/latest/apidoc/ol.format.html
- * @returns {top, right, bottom, left} extent object
- */
-getBoundsFromBinaryUsingFormat: function (binary, format) {
-    if (typeof ol.format[format] === 'undefined') {
-        console.error("Format is not supported", format);
-        throw new Error("Format" + format + " is not supported");
-    }
-
-    var formatObject = new ol.format[format]();
-    var feature = formatObject.readFeature(binary);
-
-    var extent = feature.getGeometry().getExtent();
-
-    return this.mbExtent(extent);
 },
 
 /**

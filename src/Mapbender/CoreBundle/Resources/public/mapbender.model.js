@@ -69,16 +69,11 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      */
 
     map: null,
-    mapStartExtent: null,
     _highlightLayer: null,
     _initMap: function _initMap() {
         this._patchNavigationControl();
         var self = this;
 
-        this.mapStartExtent = {
-            projection: this.getProj(this._configProj),
-            extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start || this.mbMap.options.extents.max)
-        };
         var baseLayer = new OpenLayers.Layer('fake', {
             visibility: false,
             isBaseLayer: true,
@@ -180,14 +175,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             lonlat = lonlat.transform(this.getProj(singlePoi.srs), this.getProj(this._startProj));
             this.map.olMap.setCenter(lonlat);
         } else {
-            var mapExtra = this.mbMap.options.extra;
-            var startExtent;
-            if (mapExtra && mapExtra.bbox) {
-                startExtent = OpenLayers.Bounds.fromArray(mapExtra.bbox);
-            } else {
-                startExtent = this._transformExtent(this.mapStartExtent.extent, this._configProj, this._startProj);
-            }
-            this.setExtent(startExtent);
+            this.setExtent(this.mapStartExtent);
         }
         if (addLayers) {
             this.initializeSourceLayers();
@@ -769,7 +757,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         var zoom0 = this.map.olMap.getZoomForExtent(bounds, false);
         var zoom = this._adjustZoom(zoom0, options);
         var zoomNow = this.getCurrentZoomLevel();
-        var featureInView = this.getCurrentExtent().containsBounds(bounds);
+        var featureInView = this.olMap.getExtent().containsBounds(bounds);
         if (center_ || zoom !== zoomNow || !featureInView) {
             var centerLl = bounds.getCenterLonLat();
             this.map.olMap.setCenter(centerLl, zoom);
@@ -1439,25 +1427,10 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         return dataOut;
     },
     /**
-     * @param {string|OpenLayers.Projection} [projection] default: current
-     * @return {OpenLayers.Bounds}
+     * @return {Array<Number>}
      */
-    getCurrentExtent: function(projection) {
-        var extent;
-        var fromProj;
-        if (this.map && this.map.olMap) {
-            extent = this.map.olMap.getExtent();
-            fromProj = this.map.olMap.getProjection();
-        }
-        if (!extent || !fromProj) {
-            extent = this.mapStartExtent.extent;
-            fromProj = this._startProj;
-        }
-        if (projection) {
-            return this._transformExtent(extent, fromProj, projection);
-        } else {
-            return extent && extent.clone();
-        }
+    getCurrentExtentArray: function() {
+        return this.olMap.getExtent().toArray();
     },
     /**
      * @param {OpenLayers.Bounds} extent
