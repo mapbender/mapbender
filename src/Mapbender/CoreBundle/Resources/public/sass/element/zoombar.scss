@@ -11,6 +11,9 @@
     &:hover {
       color: $lightFontColor;
     }
+    &:before {
+      margin: 0;
+    }
   }
   .toolPane > li {
     [title]:hover {
