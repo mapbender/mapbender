@@ -69,19 +69,11 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      */
 
     map: null,
-    mapMaxExtent: null,
     mapStartExtent: null,
     _highlightLayer: null,
     _initMap: function _initMap() {
         this._patchNavigationControl();
         var self = this;
-
-        this.mapMaxExtent = {
-            projection: this.getProj(this._configProj),
-            // using null or open bounds here causes failures in map, overview and other places
-            // @todo: make applications work with open / undefined max extent
-            extent: OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max)
-        };
 
         this.mapStartExtent = {
             projection: this.getProj(this._configProj),
@@ -90,11 +82,11 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         var baseLayer = new OpenLayers.Layer('fake', {
             visibility: false,
             isBaseLayer: true,
-            maxExtent: this._transformExtent(this.mapMaxExtent.extent, this._configProj, this._startProj).toArray(),
+            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this._startProj).toArray(),
             projection: this._startProj
         });
         var mapOptions = {
-            maxExtent: this._transformExtent(this.mapMaxExtent.extent, this._configProj, this._startProj).toArray(),
+            maxExtent: this._transformExtent(this.mapMaxExtent, this._configProj, this._startProj).toArray(),
             maxResolution: 'auto',
             numZoomLevels: this.mbMap.options.scales ? this.mbMap.options.scales.length : this.mbMap.options.numZoomLevels,
             projection: this._startProj,
@@ -1281,7 +1273,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             to: newProj,
             mbMap: this.mbMap
         });
-        var newMaxExtent = this._transformExtent(this.mapMaxExtent.extent, this.mapMaxExtent.projection, newProj);
+        var newMaxExtent = this._transformExtent(this.mapMaxExtent, this._configProj, newProj);
         var i, j, olLayers, dynamicSources = [];
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
@@ -1481,35 +1473,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         if (visibleLayersParam) {
             this.processVisibleLayersParam(visibleLayersParam);
         }
-    },
-    /**
-     * Super legacy, some variants of wmcstorage want to use this to replace the map's initial max extent AND
-     * initial SRS, which only really works when called immediately before an SRS switch. Very unsafe to use.
-     * @deprecated
-     */
-    replaceInitialMaxExtent: function(newMaxExtent, newMaxExtentSrs) {
-        var proj, mx;
-        if (typeof newMaxExtentSrs === 'string') {
-            proj = this.getProj(newMaxExtentSrs);
-        } else if (newMaxExtentSrs && newMaxExtentSrs.projCode) {
-            proj = this.getProj(newMaxExtentSrs.projCode);
-        }
-        if (!proj) {
-            throw new Error("Invalid newMaxTentSrs omission");
-        }
-        if ($.isArray(newMaxExtent)) {
-            mx = OpenLayers.Bounds.fromArray(newMaxExtent);
-        } else {
-            mx = newMaxExtent;
-        }
-        if (!mx || !(mx instanceof OpenLayers.Bounds)) {
-            throw new Error("Invalid newMaxExtent (empty or bad type)");
-        }
-        this._configProj = proj.projCode;
-        this.mapMaxExtent = $.extend(this.mapMaxExtent || {}, {
-            projection: this.getProj(this._configProj),
-            extent: mx
-        });
     },
     /**
      * Activate specific layers on specific sources by interpreting a (comma-separated list of)

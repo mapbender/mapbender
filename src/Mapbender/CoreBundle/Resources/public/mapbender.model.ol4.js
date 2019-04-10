@@ -1193,18 +1193,6 @@ getCurrentExtent: function() {
 },
 
 /**
- * Return maximum extent in "universal extent" format
- * + monkey-patched attribute 'srs'
- *
- * @returns {Array<number>|*}
- */
-getMaxExtent: function() {
-    var extent = this.mbExtent(this.getCurrentProjectionObject().getExtent());
-    extent.srs = this.getCurrentProjectionCode();
-    return extent;
-},
-
-/**
  *
  * @param currentUnit
  * @static

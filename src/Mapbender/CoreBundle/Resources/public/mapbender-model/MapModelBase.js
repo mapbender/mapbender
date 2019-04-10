@@ -8,6 +8,7 @@ window.Mapbender.MapModelBase = (function() {
         this.sourceTree = [];
         this._configProj = this.mbMap.options.srs;
         this._startProj = this.mbMap.options.targetsrs || this.mbMap.options.srs;
+        this.mapMaxExtent = Mapbender.mapEngine.boundsFromArray(this.mbMap.options.extents.max);
     }
 
     MapModelBase.prototype = {
@@ -15,6 +16,7 @@ window.Mapbender.MapModelBase = (function() {
         mbMap: null,
         sourceBaseId_: null,
         sourceTree: [],
+        mapMaxExtent: null,
         /** Backend-configured initial projection, used for start / max extents */
         _configProj: null,
         /** Actual initial projection, determined by a combination of several URL parameters */
@@ -215,6 +217,10 @@ window.Mapbender.MapModelBase = (function() {
                 }
             } else
                 return null;
+        },
+        getMaxExtent: function(srsName) {
+            var srsName_ = srsName || this.getCurrentProjectionCode();
+            return Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, srsName_);
         },
         /**
          *
