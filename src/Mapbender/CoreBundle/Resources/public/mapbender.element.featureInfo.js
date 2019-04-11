@@ -145,12 +145,13 @@
                 id: this.element.attr('id')
             });
             var self = this;
+            var model = this.target.getModel();
             var called = false;
             this.queries = {};
             $('#js-error-featureinfo').addClass('hidden');
-            $.each(this.target.getModel().getSources(), function(idx, src) {
+            $.each(model.getSources(), function(idx, src) {
                 var layerTitle = self._getTabTitle(src);
-                var url = src.getPointFeatureInfoUrl(self.target.getModel(), x, y, self.options.maxCount);
+                var url = model.getPointFeatureInfoUrl(src, x, y, self.options.maxCount);
                 if (url) {
                     self.queries[src.mqlid] = url;
                     if (!self.options.onlyValid) {

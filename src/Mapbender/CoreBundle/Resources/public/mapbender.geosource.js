@@ -12,17 +12,6 @@ var Mapbender = Mapbender || {};
 Mapbender.Geo = {};
 
 Mapbender.Geo.SourceHandler = {
-    featureInfoUrl: function(source, x, y) {
-        var source_;
-        if (source.source) {
-            // An actual MapQuery layer
-            console.warn("Deprecated call to featureInfoUrl with a MapQuery layer, pass in the source object instead");
-            source_ = source.source;
-        } else {
-            source_ = source;
-        }
-        return source_.getPointFeatureInfoUrl(x, y);
-    },
     /**
      * Returns modernish print data.
      *

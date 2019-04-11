@@ -115,36 +115,6 @@ window.Mapbender.WmsSource = (function() {
             var olLayer = this.getNativeLayer(0);
             return Mapbender.mapEngine.compareWmsParams(olLayer, layerParams.layers, layerParams.styles);
         },
-        getPointFeatureInfoUrl: function(x, y, maxCount) {
-            var olLayer = this.getNativeLayer(0);
-            var engine = Mapbender.mapEngine;
-            if (!(olLayer && engine.getLayerVisibility(olLayer))) {
-                return false;
-            }
-            var queryLayers = this.getLayerParameters({}).infolayers;
-            if (!queryLayers.length) {
-                return false;
-            }
-            var wmsgfi = new OpenLayers.Control.WMSGetFeatureInfo({
-                url: Mapbender.Util.removeProxy(olLayer.url),
-                layers: [olLayer],
-                queryVisible: true,
-                maxFeatures: maxCount || 100
-            });
-            wmsgfi.map = olLayer.map;
-            var reqObj = wmsgfi.buildWMSOptions(
-                Mapbender.Util.removeProxy(olLayer.url),
-                [olLayer],
-                {x: x, y: y},
-                olLayer.params.FORMAT
-            );
-            reqObj.params['LAYERS'] = reqObj.params['QUERY_LAYERS'] = queryLayers;
-            reqObj.params['STYLES'] = [];
-            reqObj.params['EXCEPTIONS'] = this.configuration.options.exception_format;
-            reqObj.params['INFO_FORMAT'] = this.configuration.options.info_format || 'text/html';
-            var reqUrl = OpenLayers.Util.urlAppend(reqObj.url, OpenLayers.Util.getParameterString(reqObj.params || {}));
-            return reqUrl;
-        },
         getMultiLayerPrintConfig: function(bounds, scale, projection) {
             var baseUrl = this.getPrintConfigLegacy(bounds).url;
             var baseParams = OpenLayers.Util.getParameters(baseUrl);

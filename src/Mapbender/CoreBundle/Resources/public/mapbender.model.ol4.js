@@ -395,6 +395,29 @@ window.Mapbender.MapModelOl4 = (function() {
             return this._startProj;
         }
     },
+    getPointFeatureInfoUrl: function(source, x, y, maxCount) {
+        var layerNames = source.getLayerParameters({}).infolayers;
+        var engine = Mapbender.mapEngine;
+        var olLayer = source.getNativeLayer(0);
+        if (!(layerNames.length && olLayer && engine.getLayerVisibility(olLayer))) {
+            return false;
+        }
+        /** @var {ol.source.ImageWMS|ol.source.TileWMS} nativeSource */
+        var nativeSource = olLayer.getSource();
+        if (!nativeSource.getGetFeatureInfoUrl) {
+            return null;
+        }
+        var fiParams = {
+            QUERY_LAYERS: layerNames,
+            INFO_FORMAT: source.configuration.options.info_format || 'text/html',
+            EXCEPTIONS: source.configuration.options.exception_format,
+            FEATURE_COUNT: maxCount || 100
+        };
+        var res = this.olMap.getView().getResolution();
+        var proj = this.getCurrentProjectionCode();
+        var coord = this.olMap.getCoordinateFromPixel([x, y]);
+        return nativeSource.getGetFeatureInfoUrl(coord, res, proj, fiParams);
+    },
     _getScales: function() {
         // @todo: fractional zoom: method must not be called
         var view = this.olMap.getView();

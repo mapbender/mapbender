@@ -170,10 +170,6 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 return !!(layerParams.layers && layerParams.layers.length);
             }
         },
-        getPointFeatureInfoUrl: function(x, y, maxCount) {
-            // not implemented
-            return null;
-        },
         getMultiLayerPrintConfig: function(bounds, scale, projection) {
             var layerDef = this._selectCompatibleLayer(projection.projCode);
             var fakeRootLayer = this.configuration.children[0];
