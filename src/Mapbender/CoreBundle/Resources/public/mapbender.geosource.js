@@ -425,13 +425,23 @@ Mapbender.Geo.SourceHandler = {
             var ixB = layerIdOrder.indexOf(_pickChildId(layerIdOrder, b));
             return ixA - ixB;
         };
+        var parentIdOrder = [];
         for (var idIx = 0; idIx < layerIdOrder.length; ++idIx) {
             var layerId = layerIdOrder[idIx];
-            var layerObj = this.findLayer(source, {id: layerId}).layer;
+            var layerObj = source.getLayerById(layerId);
             if (listsSorted.indexOf(layerObj.siblings) === -1) {
                 layerObj.siblings.sort(_siblingSort);
                 listsSorted.push(layerObj.siblings);
             }
+            if (layerObj.parent) {
+                var parentId = layerObj.parent.options.id;
+                if (parentId && parentIdOrder.indexOf(parentId) === -1) {
+                    parentIdOrder.push(parentId);
+                }
+            }
+        }
+        if (parentIdOrder.length) {
+            this.setLayerOrder(source, parentIdOrder);
         }
     }
 };
