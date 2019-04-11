@@ -25,7 +25,7 @@ window.Mapbender.MapEngineOl4 = (function() {
             Mapbender.MapEngine.prototype.patchGlobals.apply(this, arguments);
         },
         getLayerVisibility: function(olLayer) {
-            return olLayer.getVisibile();
+            return olLayer.getVisible();
         },
         createWmsLayer: function(source) {
             var sourceOpts = {
