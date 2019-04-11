@@ -237,7 +237,28 @@ window.Mapbender.Model = $.extend(Mapbender && Mapbender.Model || {}, {
         }
         this._setupHistoryControl();
         this._setupNavigationControl();
-        this.map.olMap.events.register('zoomend', this, this._afterZoom);
+        this._initEvents(this.olMap, this.mbMap);
+    },
+    _initEvents: function(olMap, mbMap) {
+        var self = this;
+        olMap.events.register('zoomend', this, this._afterZoom);
+        var clickHandlerOptions = {
+            map: olMap
+        };
+        var handlerFn = function(event) {
+            return self._onMapClick(event);
+        };
+        var clickHandler = new OpenLayers.Handler.Click({}, {click: handlerFn}, clickHandlerOptions);
+        clickHandler.activate();
+    },
+    _onMapClick: function(event) {
+        var clickLonLat = this.olMap.getLonLatFromViewPortPx(event);
+        $(this.mbMap.element).trigger('mbmapclick', {
+            mbMap: this.mbMap,
+            pixel: [event.x, event.y],
+            coordinate: [clickLonLat.lon, clickLonLat.lat],
+            event: event
+        });
     },
     _setupHistoryControl: function() {
         this.historyControl = new OpenLayers.Control.NavigationHistory();
