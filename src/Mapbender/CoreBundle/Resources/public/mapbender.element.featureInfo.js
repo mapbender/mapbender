@@ -15,13 +15,13 @@
         },
         target: null,
         model: null,
-        mapClickHandler: null,
         popup: null,
         context: null,
         queries: {},
         state: null,
         contentManager: null,
         mobilePane: null,
+        isActive: false,
 
         _create: function() {
             this.mobilePane = this.element.closest('.mobilePane');
@@ -37,10 +37,7 @@
             var widget = this;
             var options = widget.options;
             this.target = mbMap;
-            widget.mapClickHandler = new OpenLayers.Handler.Click(widget,
-                {'click': widget._triggerFeatureInfo},
-                {map: this.target.map.olMap});
-
+            this._setupMapClickHandler();
             if (options.autoActivate || options.autoOpen){ // autoOpen old configuration
                 widget.activate();
             }
@@ -65,7 +62,7 @@
         activate: function(callback) {
             this.callback = callback;
             this.target.element.addClass('mb-feature-info-active');
-            this.mapClickHandler.activate();
+            this.isActive = true;
         },
         deactivate: function() {
             var widget = this;
@@ -76,6 +73,7 @@
             });
 
             this.target.element.removeClass('mb-feature-info-active');
+            this.isActive = false;
 
             if (widget.popup) {
                 if (widget.popup.$element) {
@@ -85,22 +83,22 @@
                 widget.popup = null;
             }
 
-            widget.mapClickHandler.deactivate();
             widget.callback ? widget.callback.call() : widget.callback = null;
         },
         /**
          * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.
          */
-        _triggerFeatureInfo: function(e) {
+        _triggerFeatureInfo: function(x, y) {
+            if (!this.isActive) {
+                return;
+            }
             this._trigger('featureinfo', null, {
                 action: "clicked",
                 title: this.element.attr('title'),
                 id: this.element.attr('id')
             });
             var self = this;
-            var x = e.xy.x;
-            var y = e.xy.y;
             this.queries = {};
             $.each(this.target.getModel().getSources(), function(idx, src) {
                 var layerTitle = self._getTabTitle(src);
@@ -420,6 +418,12 @@
             }
             w.document.write(printContent);
             w.print();
+        },
+        _setupMapClickHandler: function () {
+            var self = this;
+            self.target.element.on('mbmapclick', function(event, data) {
+                self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
+            });
         }
     });
 })(jQuery);
