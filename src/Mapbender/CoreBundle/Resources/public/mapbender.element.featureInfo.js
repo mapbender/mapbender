@@ -500,18 +500,9 @@
 
         _setupMapClickHandler: function () {
             var self = this;
-            switch (Mapbender.mapEngine.code) {
-                case 'ol2':
-                    self.target.element.on('mbmapclick', function(event, data) {
-                        self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
-                    });
-                    break;
-                case 'ol4':
-                    this.target.model.setOnSingleClickHandler($.proxy(this._triggerFeatureInfo, this));
-                    break;
-                default:
-                    throw new Error("Unsupported map engine code " + Mapbender.mapEngine.code);
-            }
+            self.target.element.on('mbmapclick', function(event, data) {
+                self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
+            });
         }
     });
 })(jQuery);

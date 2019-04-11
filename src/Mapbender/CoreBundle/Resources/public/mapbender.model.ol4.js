@@ -60,6 +60,14 @@ window.Mapbender.MapModelOl4 = (function() {
                 scale: scales[zoom]
             });
         });
+        olMap.on("singleclick", function(data) {
+            $(self.mbMap.element).trigger('mbmapclick', {
+                mbMap: self.mbMap,
+                pixel: data.pixel.slice(),
+                coordinate: data.coordinate.slice(),
+                event: data.originalEvent
+            });
+        });
     },
     initializeSourceLayers: function() {
         var self = this;
@@ -1014,16 +1022,6 @@ updateMapViewForProjection: function(projectionCode) {
     },
 
 /**
- * Set callback function for single click event
- *
- * @param callback
- * @returns {ol.EventsKey|Array.<ol.EventsKey>}
- */
-setOnSingleClickHandler: function(callback) {
-   return this.olMap.on("singleclick", callback);
-},
-
-/**
  * Set callback for map moveend event
  * @param callback
  * @returns {ol.EventsKey|Array<ol.EventsKey>}
@@ -1044,26 +1042,6 @@ removeEventListenerByKey: function(key) {
     ol.Observable.unByKey(key);
 
     return this;
-},
-
-/**
- * Get coordinates from map click event and wrap them in {x,y} object
- *
- * @param event
- * @returns undefined | {{x}, {y}}
- */
-getCoordinatesXYObjectFromMapClickEvent: function(event) {
-
-    var coordinates = undefined;
-
-    if (typeof event.coordinate !== 'undefined') {
-        coordinates = {
-            x: event.coordinate[0],
-            y: event.coordinate[1],
-        };
-    }
-
-    return coordinates;
 },
 
 /**

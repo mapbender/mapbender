@@ -7,8 +7,12 @@ window.Mapbender.MapModelBase = (function() {
      * @property {number} bottom
      * @property {number} top
      */
-
-
+    /**
+     * @typedef {Object} mmClickData
+     * @property {Array<number>} pixel
+     * @property {Array<number>} coordinate
+     * @property {*} event
+     */
     /**
      * @param {Object} mbMap
      * @constructor
