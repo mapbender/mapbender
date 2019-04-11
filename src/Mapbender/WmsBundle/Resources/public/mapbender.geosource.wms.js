@@ -116,7 +116,8 @@ window.Mapbender.WmsSource = (function() {
             return Mapbender.mapEngine.compareWmsParams(olLayer, layerParams.layers, layerParams.styles);
         },
         getMultiLayerPrintConfig: function(bounds, scale, projection) {
-            var baseUrl = this.getPrintConfigLegacy(bounds).url;
+            var olLayer = this.getNativeLayer(0);
+            var baseUrl = Mapbender.Util.removeProxy(olLayer.getURL(bounds));
             var baseParams = OpenLayers.Util.getParameters(baseUrl);
             var dataOut = [];
             var leafInfoMap = Mapbender.source.wms.getExtendedLeafInfo(this, scale, bounds);
@@ -142,13 +143,6 @@ window.Mapbender.WmsSource = (function() {
             return dataOut.sort(function(a, b) {
                 return a.order - b.order;
             });
-        },
-        getPrintConfigLegacy: function(bounds) {
-            var olLayer = this.getNativeLayer(0);
-            return {
-                type: 'wms',
-                url: Mapbender.Util.removeProxy(olLayer.getURL(bounds))
-            };
         }
     });
     return WmsSource;
@@ -170,20 +164,4 @@ if(window.OpenLayers) {
 }
 
 Mapbender.source['wms'] = $.extend({}, Mapbender.Geo.SourceHandler, {
-    /**
-     * Returns legacy print object. Single object with 'type' and 'url'. Assumes all sources work with
-     * a single layer. Does not check layer visibility. Does not provide opacity. Cannot reliably
-     * indicate that nothing should be printed. Cannot respect print target scale. Expects
-     * OpenLayers 2 objects as parameters. Source must be inferred from monkey-patched attribute
-     * on OpenLayers layer.
-     *
-     * @param {OpenLayers.Layer} layer
-     * @param {Mapbender.Source} layer.mbConfig
-     * @param {OpenLayers.Bounds} bounds
-     * @return {{type, url}|void}
-     */
-    getPrintConfig: function(layer, bounds) {
-        console.warn("Calling legacy getPrintConfig. Please use Mapbender.Model.getPrintConfigEx instead, and pass in a Source");
-        return layer.mbConfig.getPrintConfigLegacy(bounds);
-    }
 });

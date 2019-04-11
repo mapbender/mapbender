@@ -1401,7 +1401,7 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
                 dataOut.push($.extend({}, commonLayerData, pc));
             });
         } else {
-            dataOut.push($.extend({}, commonLayerData, source.getPrintConfigLegacy(extent_)));
+            console.warn("Unprintable source", sourceOrLayer);
         }
         return dataOut;
     },

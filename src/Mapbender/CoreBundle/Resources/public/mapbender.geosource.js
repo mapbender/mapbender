@@ -12,18 +12,6 @@ var Mapbender = Mapbender || {};
 Mapbender.Geo = {};
 
 Mapbender.Geo.SourceHandler = {
-    /**
-     * Returns modernish print data.
-     *
-     * @param {*} source
-     * @param {OpenLayers.Bounds} bounds
-     * @param {Number} scale
-     * @param {OpenLayers.Projection} projection
-     * @return {Array<RasterPrintDataRecord>}
-     */
-    getPrintConfigEx: function(source, bounds, scale, projection) {
-        return source.getMultiLayerPrintConfig(bounds, scale, projection);
-    },
     getLayersList: function getLayersList(source) {
         if (arguments.length !== 1) {
             console.warn("Called getLayersList with extra arguments, ignoring");

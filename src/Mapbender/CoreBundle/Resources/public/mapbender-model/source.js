@@ -82,13 +82,6 @@ window.Mapbender.Source = (function() {
             }
             return layer;
         },
-        getPrintConfigLegacy: function(bounds) {
-            console.error("Legacy print config not implemented");
-            return {
-                type: this.type,
-                url: 'http://invalid.invalid.invalid/'
-            };
-        },
         /**
          * @param {string} id
          * @return {SourceLayer}
