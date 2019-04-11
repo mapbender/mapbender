@@ -22,7 +22,7 @@
             <div class="col1">
               <div class="cell">
               {% if application.screenshot is not null %}
-                  <img src="{{ uploads_web_url }}/{{application.slug}}/{{application.screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}" alt="screenshot">
+                  <img src="{{ uploads_web_url }}/{{application.slug}}/{{application.screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}">
               {% else %}
                   <span class="iconAppDefault"></span>
               {% endif %}
