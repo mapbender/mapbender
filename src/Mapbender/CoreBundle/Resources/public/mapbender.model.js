@@ -148,6 +148,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         };
         var clickHandler = new OpenLayers.Handler.Click({}, {click: handlerFn}, clickHandlerOptions);
         clickHandler.activate();
+        olMap.events.register('movestart', this, $.proxy(this._checkChanges, this));
+        olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
     },
     _onMapClick: function(event) {
         var clickLonLat = this.olMap.getLonLatFromViewPortPx(event);
@@ -253,25 +255,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
                         this.destroy();
                     }));
             }
-        });
-    },
-    initializeSourceLayers: function() {
-        var self = this;
-        // @todo 3.1.0: event binding is historically tied to initializing layers ... resolve / separate?
-        this.map.olMap.events.register('movestart', this, $.proxy(this._checkChanges, this));
-        this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
-        // Array.protoype.reverse is in-place
-        // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
-        // Do not use .reverse on centrally shared values without making your own copy
-        $.each(this.mbMap.options.layersets.slice().reverse(), function(idx, layersetId) {
-            if(!Mapbender.configuration.layersets[layersetId]) {
-                return;
-            }
-            $.each(Mapbender.configuration.layersets[layersetId].slice().reverse(), function(lsidx, defArr) {
-                $.each(defArr, function(idx, sourceDef) {
-                    self.addSourceFromConfig(sourceDef, false);
-                });
-            });
         });
     },
     getCurrentProjectionCode: function() {
@@ -1103,39 +1086,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         for (var i = 0; i < toRemoveArr.length; i++) {
             this.removeSource(toRemoveArr[i]);
         }
-    },
-    /**
-     * @deprecated
-     */
-    changeSource: function(options) {
-        if (options.change) {
-            var changeOpts = options.change;
-            if (changeOpts.options) {
-                switch (changeOpts.options.type) {
-                    case 'selected':
-                    case 'info':
-                        var sourceToChange = this.getSource(changeOpts.sourceIdx);
-                        this.mbMap.fireModelEvent({
-                            name: 'beforeSourceChanged',
-                            value: {
-                                source: sourceToChange,
-                                changeOptions: changeOpts
-                            }
-                        });
-                        console.warn("Use controlLayer instead of changeSource with type " + changeOpts.options.type);
-                        this._updateSourceLayerTreeOptions(sourceToChange, changeOpts.options.children);
-                        return;
-                    default:
-                        break;
-                }
-            } else if (changeOpts.layerRemove) {
-                console.warn("Use removeLayer instead of changeSource");
-                this.removeLayer(changeOpts.layerRemove.sourceIdx.id, changeOpts.layerRemove.layer.options.id);
-                return;
-            }
-        }
-        console.error("Unsupported changeSource options", options);
-        throw new Error("Unsupported changeSource options");
     },
     removeLayer: function(sourceId, layerId) {
         var source = this.getSource({id: sourceId});

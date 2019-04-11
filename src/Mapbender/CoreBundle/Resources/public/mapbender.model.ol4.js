@@ -69,22 +69,6 @@ window.Mapbender.MapModelOl4 = (function() {
             });
         });
     },
-    initializeSourceLayers: function() {
-        var self = this;
-        // Array.protoype.reverse is in-place
-        // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
-        // Do not use .reverse on centrally shared values without making your own copy
-        $.each(this.mbMap.options.layersets.slice().reverse(), function(idx, layersetId) {
-            if(!Mapbender.configuration.layersets[layersetId]) {
-                return;
-            }
-            $.each(Mapbender.configuration.layersets[layersetId].slice().reverse(), function(lsidx, defArr) {
-                $.each(defArr, function(idx, sourceDef) {
-                    self.addSourceFromConfig(sourceDef, false);
-                });
-            });
-        });
-    },
     /**
      * @param {Mapbender.Source|Object} sourceOrSourceDef
      * @param {boolean} [mangleIds] to rewrite sourceDef.id and all layer ids EVEN IF ALREADY POPULATED
@@ -632,16 +616,6 @@ setCenter: function setCenter(center) {
 
 /**
  *
- * @param geometryOrExtent
- * @param opt_options
- * @returns {*}
- */
-fit: function(geometryOrExtent, opt_options) {
-    return this.olMap.getView().fit(geometryOrExtent, opt_options);
-},
-
-/**
- *
  * @param extent1
  * @param extent2
  * @returns {*|boolean}
@@ -658,14 +632,6 @@ containsExtent: function(extent1, extent2) {
  */
 containsCoordinate: function(extent, coordinate) {
     return ol.extent.containsCoordinate(extent, coordinate);
-},
-
-/**
- *
- * @returns {*}
- */
-getLayers: function() {
-    return this.olMap.getLayers();
 },
 
 /**
@@ -937,36 +903,6 @@ getGeometryFromFeatureWrapper: function(feature, callback, args){
     args = [feature.getGeometry()].concat(args)
     return callback.apply(this,args);
 
-},
-
-/**
- * Get feature info url and source object; may return null if feature info is not available.
- *
- * @param {string} sourceId
- * @param {*} coordinate in current EPSG
- * @param {*} resolution purpose?
- * @returns {object|null}
- */
-getFeatureInfoObject: function(sourceId, coordinate, resolution) {
-    var sourceObj = this.getSourceById(sourceId);
-
-    if (!sourceObj.featureInfoParams.QUERY_LAYERS) {
-        return null;
-    }
-
-    var sourceObjParams = sourceObj.featureInfoParams;
-    /** @var {ol.source.ImageWMS|ol.source.TileWMS} engineSource */
-    var engineSource = sourceObj.getEngineSource();
-    var projection = this.getCurrentProjectionCode();
-
-    // @todo: figure out the purpose of 'resolution' param
-
-    var result = {
-        url: engineSource.getGetFeatureInfoUrl(coordinate[0] || [0, 0], resolution || 5, projection, sourceObjParams),
-        source: sourceObj
-    };
-
-    return result;
 },
 
 createTextStyle: function(options) {

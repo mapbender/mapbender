@@ -58,7 +58,7 @@ window.Mapbender.MapEngineOl4 = (function() {
             }
 
             var layerOptions = {
-                source: new (olSourceClass)(sourceOpts),
+                source: new (olSourceClass)(sourceOpts)
             };
             // todo: minScale / maxScale
             // todo: opacity

@@ -402,7 +402,24 @@ window.Mapbender.MapModelBase = (function() {
             }
             console.error("Cannot infer source configuration from given input", source);
             throw new Error("Cannot infer source configuration from given input");
-        }
+        },
+        initializeSourceLayers: function() {
+            var self = this;
+            // Array.protoype.reverse is in-place
+            // see https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
+            // Do not use .reverse on centrally shared values without making your own copy
+            $.each(this.mbMap.options.layersets.slice().reverse(), function(idx, layersetId) {
+                if(!Mapbender.configuration.layersets[layersetId]) {
+                    return;
+                }
+                $.each(Mapbender.configuration.layersets[layersetId].slice().reverse(), function(lsidx, defArr) {
+                    $.each(defArr, function(idx, sourceDef) {
+                        self.addSourceFromConfig(sourceDef, false);
+                    });
+                });
+            });
+        },
+        _comma_dangle_dummy: null
     });
 
     return MapModelBase;
