@@ -1392,8 +1392,8 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         var dataOut = [];
         var commonLayerData = {
             type: source.configuration.type,
-            sourceId: source.id
-            // @todo: provide opacity and changeAxis here?
+            sourceId: source.id,
+            opacity: source.configuration.options.opacity
         };
         if (typeof source.getMultiLayerPrintConfig === 'function') {
             var mlPrintConfigs = source.getMultiLayerPrintConfig(extent_, scale, this.getCurrentProj());

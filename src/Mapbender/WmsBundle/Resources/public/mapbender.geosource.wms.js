@@ -98,11 +98,16 @@ window.Mapbender.WmsSource = (function() {
             });
             return !!nonEmptyLayerNames.length;
         },
+        _isBboxFlipped: function(srsName) {
+            if (this.configuration.options.version === '1.3.0') {
+                return Mapbender.mapEngine.isProjectionAxisFlipped(srsName);
+            } else {
+                return false;
+            }
+        },
         _bboxArrayToBounds: function(bboxArray, projCode) {
             var bboxArray_;
-            var flipped = this.configuration.options.version === '1.3.0';
-            flipped = flipped && Mapbender.mapEngine.isProjectionAxisFlipped(projCode);
-            if (flipped) {
+            if (this._isBboxFlipped(projCode)) {
                 // Seriously.
                 // See http://portal.opengeospatial.org/files/?artifact_id=14416 page 18
                 bboxArray_ = [bboxArray[1], bboxArray[0], bboxArray[3], bboxArray[2]];
@@ -125,6 +130,7 @@ window.Mapbender.WmsSource = (function() {
             var resFromScale = function(scale) {
                 return scale && (OpenLayers.Util.getResolutionFromScale(scale, units)) || null;
             };
+            var changeAxis = this._isBboxFlipped(projection.projCode);
             _.forEach(leafInfoMap, function(item) {
                 if (item.state.visibility) {
                     var layerParams = $.extend(OpenLayers.Util.upperCaseObject(baseParams), {
@@ -136,6 +142,7 @@ window.Mapbender.WmsSource = (function() {
                         url: layerUrl,
                         minResolution: resFromScale(item.layer.options.minScale),
                         maxResolution: resFromScale(item.layer.options.maxScale),
+                        changeAxis: changeAxis,
                         order: item.order
                     });
                 }
