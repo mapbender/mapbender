@@ -33,32 +33,6 @@ Mapbender.Geo.SourceHandler = {
             layers: (rootLayer.children || [])
         };
     },
-    addLayer: function addLayer(source, layerToAdd, parentLayerToAdd, position) {
-        var rootLayer = source.configuration.children[0];
-        var options = {
-            layer: null
-        };
-        _addLayer(rootLayer);
-        return options.layer;
-
-        function _addLayer(layer) {
-            if (layer.options.id.toString() === parentLayerToAdd.options.id.toString()) {
-                if (layer.children) {
-                    layer.children.splice(position, 0, layerToAdd);
-                    options.layer = layer.children[position];
-                } else {
-                    // ignore position
-                    layer.children = [];
-                    layer.children.push($.extend(true, layerToAdd));
-                    options.layer = layer.children[0];
-                }
-            } else if (layer.children) {
-                for (var i = 0; i < layer.children.length; i++) {
-                    _addLayer(layer.children[i]);
-                }
-            }
-        }
-    },
     removeLayer: function removeLayer(source, layerToRemove) {
         var rootLayer = source.configuration.children[0];
         if (layerToRemove.options.id.toString() === rootLayer.options.id.toString()) {
@@ -116,29 +90,6 @@ Mapbender.Geo.SourceHandler = {
                 }
             }
         });
-    },
-    /**
-     * Returns object's changes : { layers: [], infolayers: [], changed: changed };
-     */
-    changeOptions: function changeOptions(source, scale, toChangeOpts) {
-        var newTreeOptions = ((toChangeOpts || {}).options || {}).children || {};
-        // apply tree options
-        this.applyTreeOptions(source, newTreeOptions);
-        // recalculate state
-        var newStates = this.calculateLeafLayerStates(source, scale);
-        // apply states and calculate changeset
-        var changedStates = this.applyLayerStates(source, newStates);
-        // Copy state changeset extended with treeOptions changeset
-        // (a layer's state may change without a treeOptions change and vice versa)
-        var result = {
-            changed: {
-                sourceIdx: {
-                    id: source.id
-                },
-                children: $.extend(true, {}, newTreeOptions, changedStates)
-            }
-        };
-        return $.extend(result, source.getLayerParameters(newStates));
     },
     /**
      * @param {object} source wms source

@@ -77,28 +77,6 @@
             }
         },
         /**
-         *
-         * @param {*} sourceDef
-         * @param {number} [scale]
-         * @returns {{layers: *, styles: *}}
-         * @private
-         */
-        _getRasterVisibilityInfo: function(sourceDef, scale) {
-            var layer = this.map.model.getNativeLayer(sourceDef);
-            if (scale) {
-                var geoSourceResponse = Mapbender.source[sourceDef.type].changeOptions(sourceDef, scale, {});
-                return {
-                    layers: geoSourceResponse.layers,
-                    styles: geoSourceResponse.styles
-                };
-            } else {
-                return {
-                    layers: layer.params.LAYERS,
-                    styles: layer.params.STYLES
-                };
-            }
-        },
-        /**
          * @returns {Array<Object>} sourceTreeish configuration objects
          * @private
          */
