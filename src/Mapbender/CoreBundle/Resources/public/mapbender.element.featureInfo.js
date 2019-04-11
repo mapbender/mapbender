@@ -16,12 +16,12 @@
         },
         target: null,
         model: null,
-        mapClickHandler: null,
         popup: null,
         context: null,
         queries: {},
         state: null,
         contentManager: null,
+        isActive: false,
 
         _create: function() {
             var self = this;
@@ -37,10 +37,7 @@
             var options = widget.options;
             var widgetElement = widget.element;
             this.target = mbMap;
-            widget.mapClickHandler = new OpenLayers.Handler.Click(widget,
-                {'click': widget._triggerFeatureInfo},
-                {map: this.target.map.olMap});
-
+            this._setupMapClickHandler();
             if (options.autoActivate || options.autoOpen){ // autoOpen old configuration
                 widget.activate();
             }
@@ -100,7 +97,7 @@
         activate: function(callback) {
             this.callback = callback;
             this.target.element.addClass('mb-feature-info-active');
-            this._setupMapClickHandler();
+            this.isActive = true;
         },
         deactivate: function() {
             var widget = this;
@@ -111,6 +108,7 @@
             });
 
             this.target.element.removeClass('mb-feature-info-active');
+            this.isActive = false;
 
             if (widget.popup) {
                 if (widget.popup.$element) {
@@ -120,8 +118,6 @@
                 widget.popup = null;
             }
 
-            this.map.model.removeEventListenerByKey(this.mapClickHandler);
-            this.mapClickHandler = null;
             widget.callback ? widget.callback.call() : widget.callback = null;
         },
         _isVisible: function() {
@@ -139,7 +135,10 @@
          * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.
          */
-        _triggerFeatureInfo: function(e) {
+        _triggerFeatureInfo: function(x, y) {
+            if (!this.isActive) {
+                return;
+            }
             this._trigger('featureinfo', null, {
                 action: "clicked",
                 title: this.element.attr('title'),
@@ -149,9 +148,9 @@
             var called = false;
             this.queries = {};
             $('#js-error-featureinfo').addClass('hidden');
-            $.each(this.target.getModel().collectFeatureInfoObjects(e.coordinate), function(idx, obj) {
+            $.each(this.target.getModel().getSources(), function(idx, src) {
                 var layerTitle = self._getTabTitle(src);
-                var url = src.getPointFeatureInfoUrl(x, y, self.options.maxCount);
+                var url = src.getPointFeatureInfoUrl(self.target.getModel(), x, y, self.options.maxCount);
                 if (url) {
                     self.queries[src.mqlid] = url;
                     if (!self.options.onlyValid) {
@@ -499,14 +498,20 @@
             w.print();
         },
 
-        _setupMapClickHandler4: function () {
-            var widget = this;
-
-            if (!widget.mapClickHandler) {
-                widget.mapClickHandler = this.map.model.setOnSingleClickHandler( $.proxy(this._triggerFeatureInfo, this));
+        _setupMapClickHandler: function () {
+            var self = this;
+            switch (Mapbender.mapEngine.code) {
+                case 'ol2':
+                    self.target.element.on('mbmapclick', function(event, data) {
+                        self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
+                    });
+                    break;
+                case 'ol4':
+                    this.target.model.setOnSingleClickHandler($.proxy(this._triggerFeatureInfo, this));
+                    break;
+                default:
+                    throw new Error("Unsupported map engine code " + Mapbender.mapEngine.code);
             }
-
-            return this;
         }
     });
 })(jQuery);
