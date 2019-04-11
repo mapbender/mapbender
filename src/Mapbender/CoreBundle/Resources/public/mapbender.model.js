@@ -488,14 +488,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
         return sources;
     },
-    findLayer: function(sourceOptions, layerOptions) {
-        var source = this.findSource(sourceOptions);
-        if (source.length === 1) {
-            return Mapbender.source[source[0].type].findLayer(source[0], layerOptions);
-        } else {
-            return null;
-        }
-    },
     /**
      * @deprecated used by layertree only, return type is presentationy, supports only a single search criterion
      * @param options
@@ -519,18 +511,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             }
         }
         return null;
-    },
-    /**
-     * Returns the source by id
-     */
-    getSourceLayerById: function(source, layerId) {
-        if (source && layerId) {
-            return Mapbender.source[source.type].findLayer(source, {
-                id: layerId
-            });
-        } else {
-            return null;
-        }
     },
     /**
      * Returns the current map's scale

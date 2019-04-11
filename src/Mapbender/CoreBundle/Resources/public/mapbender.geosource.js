@@ -98,31 +98,6 @@ Mapbender.Geo.SourceHandler = {
             }
         }
     },
-    findLayer: function findLayer(source, optionToFind) {
-        var options = {
-            level: 0,
-            idx: 0,
-            layer: null,
-            parent: null
-        };
-        Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, i, parents) {
-            for (var key in optionToFind) {
-                if (layer.options[key].toString() === optionToFind[key].toString()) {
-                    options.idx = i;
-                    options.parent = parents[0] || null;
-                    options.level = parents.length;
-                    options.layer = layer;
-                    // abort iteration
-                    return false;
-                }
-            }
-        });
-        return options;
-    },
-    checkInfoLayers: function checkInfoLayers(source, scale, tochange) {
-        console.warn("checkInfoLayers is equivalent to changeOptions");
-        return this.changeOptions(source, scale, tochange);
-    },
     applyTreeOptions: function applyTreeOptions(source, layerOptionsMap) {
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
             var layerId = layer.options.id;

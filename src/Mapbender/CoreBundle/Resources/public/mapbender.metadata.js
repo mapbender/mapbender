@@ -8,14 +8,14 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
     var map = $("#" + mapElementId).data("mapbenderMbMap");
     if (map) {
         var source = map.getModel().getSource(sourceOptions);
-        var layerH = source && map.getModel().getSourceLayerById(source, layerOptions.id);
-        if (source && layerH && layerH.layer) {
+        var layer = source && source.getLayerById(layerOptions.id);
+        if (layer) {
             $.ajax({
                 type: "GET",
                 url: Mapbender.configuration.application.urls['metadata'],
                 data: {
                     sourceId: source.origId,
-                    layerId: layerH.layer.options.origId || null
+                    layerId: layer.options.origId || null
                 },
                 dataType: 'html',
                 error: function(jqXHR, textStatus, errorThrown) {
