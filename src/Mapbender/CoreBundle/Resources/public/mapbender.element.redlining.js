@@ -142,7 +142,6 @@
                 this._removeAllFeatures();
             }
             this.callback ? this.callback.call() : this.callback = null;
-            $('.redlining-tool', this.element).off('click');
         },
         // sidepane interaction, safe to use activate / deactivate unchanged
         reveal: function() {

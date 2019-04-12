@@ -1,12 +1,13 @@
-# Changelog
-* **dev-release/3.0.7** @ e5c9c185f
+## v3.0.8
   - [Beta 4 regression] Fix Print client dialog-type deactivation via click on controlling button
+  - [Beta 4 regression] Fix Redlining toolset loss after sidepane deactivate / activate cycle
+  - [Beta regression] Fix layertree sublayer reordering under certain source layer nesting conditions
   - [Beta regression] Restore function of Application Layersets list filter
   - [Beta regression] Fix Layertree sometimes updating the wrong FeatureInfo checkbox
   - Fix out-of-box overflow in application list with very long application descriptions
   - Denoise popup and sidepane backgrounds
 
-* **v3.0.8-beta4**
+## v3.0.8-beta4
   - [Beta 3 regression] Fix Print selection dragging not influencing print extent
   - [Beta 2 regression] Fix Export / Print handling of source instances with `proxy` setting
   - [Beta regression] Fix layer menu positioning in a non-thematic LayerTree ([Issue#1124](https://github.com/mapbender/mapbender/issues/1124), [PR#1142](https://github.com/mapbender/mapbender/pull/1142))
@@ -23,10 +24,10 @@
   - Fix Overview map support for source instances with `proxy` setting
   - Fix Overview map support for source instances with `tiled` setting
   - Overview map now respects per-layer `selected` setting on assigned WMS instances
-  - Fix ZoomBar configuration value handling discrepancies for `stepByPixel` and `stepSize` optionsin YAML apps vs DB apps
+  - Fix ZoomBar configuration value handling discrepancies for `stepByPixel` and `stepSize` options in YAML apps vs DB apps
   - Improve Digitizer feature Print support by always sending close event first before destrying popup ([PR#1128](https://github.com/mapbender/mapbender/pull/1128))
   - Fix nested tab container conflicts / conflicts with non-unique tab ids
-  - Fix multi-argument `visibilelayers` URL param handling ([Issue#1082](https://github.com/mapbender/mapbender/issues/1082), [PR#1140](https://github.com/mapbender/mapbender/pull/1140))
+  - Fix multi-argument `visiblelayers` URL param handling ([Issue#1082](https://github.com/mapbender/mapbender/issues/1082), [PR#1140](https://github.com/mapbender/mapbender/pull/1140))
   - Fix WMTS matrix resolution calculations for non-metric initial projections
   - Restore missing sub-layer toggle icons in backend source layer view
   - Restore missing frontend icon highlight effects in Redlining, Wmc Elements and LayerTree inline menu
@@ -36,7 +37,7 @@
   - Avoid lengthy WMS validation when loading a new WMS source ([PR#1151](https://github.com/mapbender/mapbender/pull/1151))
   - WMS GetFeatureInfo FEATURE_COUNT default is reduced from 1000 to 100; this value is now configurable in the FeatureInfo Element as `maxCount` ([Issue#1099](https://github.com/mapbender/mapbender/issues/1099), [PR#1152](https://github.com/mapbender/mapbender/pull/1152))
 
-* **v3.0.8-beta3**
+## v3.0.8-beta3
   - [Beta regression] Restore Wms Loader function
   - [Beta regression] Fix error on SimpleSearch centering
   - [Beta regression] Fix behavior of LayerTree opacity menu when reducing opacity to zero
@@ -47,7 +48,7 @@
   - Fix missing gap in ScaleDisplay
   - Fix PrintClient errors when switching template while selection rectangle is disabled (sidepane / element mode)
 
-* **v3.0.8-beta2**
+## v3.0.8-beta2
   - [Beta regression] Fix button group misalginment in Application "Layersets" tab
   - [Beta regression] Fix layout breakage in "Vendorspecifics" area of WMS instance backend
   - [Beta regression] Fix layout breakage in "Reload source" and "Add new source" sections
@@ -62,7 +63,7 @@
   - Fix Wmc Editor Screenshot upload errors
   - Sources in YAML-defined Applications can now be configured to start expanded and / or not be expandable, analogous to `toggle` and `allowToggle` root layer options for DB applications ([PR#1113](https://github.com/mapbender/mapbender/pull/1113))
   - Print: Rotation can now be controlled by dragging the corner of the print area ([PR#1121](https://github.com/mapbender/mapbender/pull/1121))
-  - Print: fix rendering of multi-line dynamicially populated text regions
+  - Print: fix rendering of multi-line dynamically populated text regions
   - Print: fix errors extracting user specific job values for custom LDAP user objects without a `getId()` method
   - FeatureInfo: fix visual dialog overflow for wide response HTML formats with `showOriginal` option off
   - FeatureInfo: fix erratic double scrollbars appearing / disappearing when resizing dialog with `showOriginal` option on
@@ -85,7 +86,7 @@
   - Misc obsolete asset removals (see UPGRADING.md)
   - Misc multiple-id DOM fixes
 
-* **v3.0.8-beta1**
+## v3.0.8-beta1
   - [Regression fix] restore function of optional `wms_id` application url parameter ([PR#1084](https://github.com/mapbender/mapbender/pull/1084))
     - Sources added via `wms_id` parameter now support metadata loading via LayerTree menu
   - [Regression fix] restore function of optional `visiblelayers` application url parameter on root layers ([PR#1083](https://github.com/mapbender/mapbender/pull/1083) collateral)
@@ -164,7 +165,7 @@
   - Add new `mapbender:config:check` console command
   - Misc deprecation cleanups for Symfony 3+ compatibility
 
-* **v3.0.7.7**
+## v3.0.7.7
   - [Regression fix] Restore either-or privilege checking behaviour for access to instance tunnel and metadata actions ([341bf11](https://github.com/mapbender/mapbender/commit/341bf117812173b3d9e211be8d5498750d73bf2d))
   - [Regression fix] Fix erratic behaviour when dynamically reodering sources ([09050ee](https://github.com/mapbender/mapbender/commit/09050eeecd81bd6a003e62c3a0d54f1de8a03cbb))
   - [Regression fix] Remove 'required' asterisk from non-required fields configured into print client form ([PR#1036](https://github.com/mapbender/mapbender/pull/1036))
@@ -195,13 +196,13 @@
     - Improved ImageExport and PrintClient JS customizability by breaking up monolithic job data collection + sumbission into multiple smaller methods ([PR#1038](https://github.com/mapbender/mapbender/pull/1038))
 
 
-* **v3.0.7.6**
+## v3.0.7.6
   - Fix button group behavior of Legend Element ([PR#1034](https://github.com/mapbender/mapbender/pull/1034))
   - Fix broken 'queryable' state of source added via WmsLoader ([91e7d4e](https://github.com/mapbender/mapbender/commit/91e7d4e29dcd9bf4096df3bdd7d6714be7ba360b))
   - Integrate GPS and POI Elements ([PR#985](https://github.com/mapbender/mapbender/pull/985), [PR#1015](https://github.com/mapbender/mapbender/pull/1015))
   - More robust sizing of backend Element editing modal popups ([PR#1035](https://github.com/mapbender/mapbender/pull/1035))
 
-* **v3.0.7.5**
+## v3.0.7.5
   - [Security] Remove obsolete TranslationController (potential XSS vector)
   - [Security] Fix SecurityContext compatiblity with framework auth listeners ([PR#1021](https://github.com/mapbender/mapbender/pull/1021))
   - [Regression fix] Restore support for Wms services advertising only a root layer ([0192e0c](https://github.com/mapbender/mapbender/commit/0192e0c135af44c5c7ff55a718069d2dc3a646d1))
@@ -241,7 +242,7 @@
   - [Misc] merge Github issue templates from master
   - [Misc] non-functional type annotation fixes
 
-* **v3.0.7.4**
+## v3.0.7.4
   - [Security] Fix potential XSS vector in applicationAssetsAction
   - [Regression fix] restore compatibility with Internet Explorer 11
   - [Regression fix] Apply WmsLoader image format / info format settings
@@ -254,780 +255,305 @@
   - Clean up dummy translations ("__mb...", "[Placeholder]") from es, it and ru locales, those will
     now use the texts from the fallback locale (most likely English)
 
-* **v3.0.7.3**
+## v3.0.7.3
   - "target" selection in elements shows only appropriate other elements (regression fix)
   - WMS metadata now renders email addresses and links as clickable links (PR#837)
   - Update Turkish translation (PR#944)
 
-* **v3.0.7.2**
-    - Fix dynamic layertree reordering vs reversed layer order (PR#852)
-    - Change default prefix for printouts to mapbender (Issue #855)
-    - Add cookieconsent code for mapbender (PR#835)
-    - Fix PHP5 incompatibility in Migrations (PR#851)
-    - Restore WmsLoader "splitLayers" functionality (PR#848)
-    - Disable non-functional Meta data display for dynamically added Wms (PR#845)
-    - Raise maximum feature count for feature info to 1000 (PR#849)
-    - Fix saving layer order on Postgres (PR#846)
-    - Restore application of preconfigured image format / feature info format in WmsLoader (PR#841)
-    - Fix foreign key violation error when deleting data source on Postgres (PR#840)
+## v3.0.7.2
+  - Fix dynamic layertree reordering vs reversed layer order (PR#852)
+  - Change default prefix for printouts to mapbender (Issue #855)
+  - Add cookieconsent code for mapbender (PR#835)
+  - Fix PHP5 incompatibility in Migrations (PR#851)
+  - Restore WmsLoader "splitLayers" functionality (PR#848)
+  - Disable non-functional Meta data display for dynamically added Wms (PR#845)
+  - Raise maximum feature count for feature info to 1000 (PR#849)
+  - Fix saving layer order on Postgres (PR#846)
+  - Restore application of preconfigured image format / feature info format in WmsLoader (PR#841)
+  - Fix foreign key violation error when deleting data source on Postgres (PR#840)
 
-* **v3.0.7.1**
-    - Revert inclusion of "only valid" checkbox in WmsLoader
-    - Bypass (potentially very long) WmsLoader DTD / XSD validation of GetCapabilities document
-    - Print: fixed font size handling for coordinates display
-    - Fix application screenshot upload handling
+## v3.0.7.1
+  - Revert inclusion of "only valid" checkbox in WmsLoader
+  - Bypass (potentially very long) WmsLoader DTD / XSD validation of GetCapabilities document
+  - Print: fixed font size handling for coordinates display
+  - Fix application screenshot upload handling
 
-* **v.3.0.7.0**
-    - Support reversible layer order per WMS source instance (new dropdown application backend section "Layersets")
-    - Support WMS keywords > 255 characters; needs app/console doctrine:schema:update for running installations
-    - Extend WmsLoader WMS service compatibility, now matches backend
-    - Update WmsLoader example URL to https
-    - Skip undefined element classes in Yaml applications, log a warning instead of crashing
-    - Fix unbounded growth in "authority" on repeated export / reimport / cloning of applications (#777)
-    - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers (see pull #787)
-    - Add Doctrine migration framework and command-line support (pull #762)
-    - Fix strict SCSS warnings when compiling with ruby-sass (closes issue #761)
-    - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
-    - Replace usort => array_multisort to skip around PHP bug #50688 when sorting Element names (MB3 issue #586)
-    - Fix http 500 when rendering meta data for a service with undefined contact information
-    - Merge pull request #760 from mapbender/fix/unittest-preconditions
-    - Merge pull request #747 from mapbender/fix/metadata-serialization-746
-    - Merge pull request #743 from mapbender/fix/element-inheritance-639-noconfig
-    - Changed Opacity for zoombar and toolbar to get a unique button color
+## v.3.0.7.0
+  - Support reversible layer order per WMS source instance (new dropdown application backend section "Layersets")
+  - Support WMS keywords > 255 characters; needs app/console doctrine:schema:update for running installations
+  - Extend WmsLoader WMS service compatibility, now matches backend
+  - Update WmsLoader example URL to https
+  - Skip undefined element classes in Yaml applications, log a warning instead of crashing
+  - Fix unbounded growth in "authority" on repeated export / reimport / cloning of applications (#777)
+  - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers (see pull #787)
+  - Add Doctrine migration framework and command-line support (pull #762)
+  - Fix strict SCSS warnings when compiling with ruby-sass (closes issue #761)
+  - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
+  - Replace usort => array_multisort to skip around PHP bug #50688 when sorting Element names (MB3 issue #586)
+  - Fix http 500 when rendering meta data for a service with undefined contact information
+  - Merge pull request #760 from mapbender/fix/unittest-preconditions
+  - Merge pull request #747 from mapbender/fix/metadata-serialization-746
+  - Merge pull request #743 from mapbender/fix/element-inheritance-639-noconfig
+  - Changed Opacity for zoombar and toolbar to get a unique button color
 
-* **v.3.0.6.4**
-    - Validate Element forms in backend
-    - Extend WmsLoader WMS service compatibility, now matches backend
-    - Fix error displaying Wms metadata if no contact information available
-    - Element selector (when adding to Application) is now filtered (Pull #766)
-    - Fix displaying scale value in scale selector #657
-    - Fix GetLegendGraphic tunnel
+## v3.0.6.4
+  - Validate Element forms in backend
+  - Extend WmsLoader WMS service compatibility, now matches backend
+  - Fix error displaying Wms metadata if no contact information available
+  - Element selector (when adding to Application) is now filtered (Pull #766)
+  - Fix displaying scale value in scale selector #657
+  - Fix GetLegendGraphic tunnel
 
-* **v.3.0.6.3** - 2017-07-27
-    - Fix WMS with Scale fails to load #584 - see commit message #2783540 for more information
-    - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
+## v3.0.6.3
+  - Fix WMS with Scale fails to load #584 - see commit message #2783540 for more information
+  - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
 
-* **v.3.0.6.2** - 2017-07-20
-    - Fix create legend URL
-    - Merge pull request #572 from mapbender/fix/wrong-scaleHint-in-sublayers
-    - Fix layer instance administration form sizes Closes: #559
-    - Merge pull request #545 from mapbender/hotfix/imagepathCommand-530
-    - Merge pull request #553 from mapbender/hotfix/featureinfo-print-trans-button
-    - Add output for better UX
-    - Revert commit d11dd2fd1bde139225a388ddb6d125cb24562260
-    - Merge pull request #570 from mapbender/fix/ruler-unmatching-value-app-backend
-    - Reverse to old getScaleRecursive-function in WmsLayerSource because of regression bug. Now correct scale and scale hint for sublayer are set
-    - Change default value for immediate messurment to null and add check if value is set
-    - Merge pull request #563 from mapbender/hotfix/epsg-code-list
-    - added EPSG:4839 and EPSG:5243 to the list
-    - changed trans variable for print button mb.core.featureinfo.popup.btn.print
-    - changed trans variable for print button mb.core.featureinfo.error.noresult
-    - Fix FeatureInfo print translations
-    - Fix initialize search router Closes: #543
-    - Added Command to update old imagepath of map element / Fix OpenLayers2 image path #530
-    - Merge pull request #551 from mapbender/fix/search-router-autoclose-after-click
-    - remove 'move' check on click event
-    - Add spaces behind foreach and if to satisfy code quality standards
-    - Remove unused element generator code. Add documentation
-    - Added reverse axis default for EPSG:31466
+## v3.0.6.2
+  - Fix create legend URL
+  - Merge pull request #572 from mapbender/fix/wrong-scaleHint-in-sublayers
+  - Fix layer instance administration form sizes Closes: #559
+  - Merge pull request #545 from mapbender/hotfix/imagepathCommand-530
+  - Merge pull request #553 from mapbender/hotfix/featureinfo-print-trans-button
+  - Add output for better UX
+  - Revert commit d11dd2fd1bde139225a388ddb6d125cb24562260
+  - Merge pull request #570 from mapbender/fix/ruler-unmatching-value-app-backend
+  - Reverse to old getScaleRecursive-function in WmsLayerSource because of regression bug. Now correct scale and scale hint for sublayer are set
+  - Change default value for immediate messurment to null and add check if value is set
+  - Merge pull request #563 from mapbender/hotfix/epsg-code-list
+  - added EPSG:4839 and EPSG:5243 to the list
+  - changed trans variable for print button mb.core.featureinfo.popup.btn.print
+  - changed trans variable for print button mb.core.featureinfo.error.noresult
+  - Fix FeatureInfo print translations
+  - Fix initialize search router Closes: #543
+  - Added Command to update old imagepath of map element / Fix OpenLayers2 image path #530
+  - Merge pull request #551 from mapbender/fix/search-router-autoclose-after-click
+  - remove 'move' check on click event
+  - Add spaces behind foreach and if to satisfy code quality standards
+  - Remove unused element generator code. Add documentation
+  - Added reverse axis default for EPSG:31466
 
-* **v.3.0.6.1** - 2017-05-24
-    - PrintService/ImageExport: Accept all kinds of image/jpeg and image/gif from wms
-    - Refactor print scale bugfix
-    - fix a css problem with checkboxes by moving it out of screen some more
-    - improved position of removebutton
-    - Print Scale Bugfix
-    - Update Date in Changelog.md
-    - Set deprecated command advice for next release version
-    - Fix and add application by render elements
-    - Add WmcEditor Default Parameters for width and height
-    - Fix parse dimension data
-    - Fix vendor specific parameter close button position
-    - Add missed VendorSpecific origextentextent property
-    - Fix save MetadataUrl as doctine array type
-    - Fix WmsLayerSource modificators
-    - Fix save Style, VendorSpecific and WmsLayerSource entities
+## v3.0.6.1
+  - PrintService/ImageExport: Accept all kinds of image/jpeg and image/gif from wms
+  - Refactor print scale bugfix
+  - fix a css problem with checkboxes by moving it out of screen some more
+  - improved position of removebutton
+  - Print Scale Bugfix
+  - Update Date in Changelog.md
+  - Set deprecated command advice for next release version
+  - Fix and add application by render elements
+  - Add WmcEditor Default Parameters for width and height
+  - Fix parse dimension data
+  - Fix vendor specific parameter close button position
+  - Add missed VendorSpecific origextentextent property
+  - Fix save MetadataUrl as doctine array type
+  - Fix WmsLayerSource modificators
+  - Fix save Style, VendorSpecific and WmsLayerSource entities
 
-* **v3.0.6.0** - 2017-05-05
+## v3.0.6.0
+  - Fix transalate element titles by import Closes: https://github.com/mapbender/mapbender-starter/issues/46
+  - Add WmsInstanceLayer to fix import applications
+  - Fix import YAML application BaseSourceSwitcher element configuration
+  - Add WmsInstanceLayerRepository to fix import
+  - Remove repository class  WmsInstanceLayerRepository as annotation
+  - Fix import demo applications and import base source switcher configuration
+  - Fix and refactor YAML application importing https://github.com/mapbender/mapbender-starter/issues/45
+  - Improve core annotations
+  - Fix display error message text https://github.com/mapbender/mapbender-starter/issues/45
+  - Fix print element administration translation https://github.com/mapbender/mapbender-starter/issues/46
+  - Fix WMS doctrine entities
+  - Fix getting print settings from ODG file Closes: https://github.com/mapbender/mapbender-starter/issues/44
+  - Fix getting new application entity by slug from database Closes: https://github.com/mapbender/mapbender-starter/issues/43
+  - Fix composer open-sans vendor typo
+  - Change open sans font library vendor to wheregroup
+  - Change JOII javascript library vendor to wheregroup
+  - Change compass-mixins library vendor to wheregroup
+  - Change codemirror library vendor to wheregroup
+  - Fix getting setting minimal and maximal scale hint by WmsInstanceLayer, WmsLayerSource, WmsInstanceLayerEntityHandler and MinMax
+  - Improve WMS annotations
+  - Improve EntityHandler annotation
+  - Revert encoding credentials by RepositoryController
+  - Fix gettint scale hint by WmsLayerSource
+  - Encode WMS credintials
+  - Fix using application edit/create title translation
+  - Merge pull request #511 from mapbender/fix/translations_manager
+  - restructured translations for de, en and fr in edit/create new application
+  - Fix application manager edit translation link
+  - Merge feature/symfony-upgrade-2.8
+  - Add logging if element isn't registered
+  - Skip elements this not registred instead of break whole application
+  - Merge pull request #506 from mapbender/hotfix/popup-text-selection
+  - Reenable default text selection in elements (popups...) nested inside OL map
+  - Merge pull request #489 from mapbender/feature/searchrouter-buttonposition
+  - Merge pull request #505 from mapbender/hotfix/translation-manager-typos
+  - Fix tabs german translation
+  - Merge pull request #500 from mapbender/hotfix/translation-core-typos-1
+  - Remove search word from global translation name spache
+  - Merge pull request #496 from mapbender/hotfix/translation-manager-typos
+  - Deactivate WMS only valid option by default
+  - Fix WmsLayerSource getScaleRecursive method and add annotations
+  - Merge pull request #499 from mapbender/hotfix/translation-core-typos
+  - Merge pull request #503 from mapbender/hotfix/printclient-adddynamictext-utfdecode
+  - Improve copy right element configurability (release/3.0.5 merge)
+  - Fix frontend.html.twig and index.html.twig templates using JOII lib
+  - Add utf8_decode to handle öüä for dynamic textes
+  - Remove deprecated joii.min.js library
+  - Describe and fix WMS entity documenations
+  - Fix core element documentation
+  - Describe SourceMetadata method types
+  - Fix MapbenderBundle code description
+  - Describe and fix InstanceConfiguration
+  - Describe and refactor EntityHandler
+  - Describe Element::getElementForm
+  - Describe Mapbender core bundle class
+  - Fix and refactor Application component
+  - Fix recover vendor specifics and buffer settings my WmsInstanceConfigurationOptions
+  - Fix and describe WMC entity
+  - Fix WmcParser code description
+  - Clean up MapbenderPrintBundle desciprion
+  - Describe MapbenderMobileBundle
+  - Refactor and descript mobile template
+  - Clean up manager bundle component code descriptions
+  - Clean up drupal and KML bundles code description
+  - Clean up mapbender core bundle code description
+  - Clean up core data transformers and add code documentation
+  - Optimize RequestListener imports
+  - Clean up core entities and add code documentation
+  - Revert Template render method fix
+  - Fix using authorization_checker as service in RepositoryController
+  - Clean up core components and add code documentation
+  - Refactor and mark core generating commands as deprecated
+  - Refactor asset classes
+  - Mark CustomDoctrineParamConverter as deprecaed and optimize imports
+  - Fix utils annotations and documentation
+  - Fix actions.html.twig template create application translation
+  - Upgrade security context from 2.3 to 2.8
+  - Merge remote-tracking branch 'composer/feature/symfony2.7' into feature/symfony-upgrade-2.8
+  - Fix map query image patch
+  - Fix Printcl typo
+  - Fixed typos and merged structure with en version
+  - Fixed typos in core bundle translation see #498
+  - Fixed typos, merged with en version, changed some translation
+  - Fix options variable link in copyright element
+  - Add copyright element width and height configuration options
+  - Add fullscreen template region "align" and "closed" properties
+  - Fix only valid russian translation
+  - Merge pull request #490 from mapbender/hotfix/wms-keyword-unlimit
+  - Fixed keyword character limitation
+  - SearchRouter in Sidepane move buttons ok/reset under form
+  - Set mapbender/mapquery version to 1.x
+  - Add require libraries to composer definition
+  - Remove html5shiv.3.7.2.min.js, placeholders.3.0.2.min.js, respond.1.4.2.min.js and javascript.util.js
+  - Remove IE 6-10 template support
+  - Add "eslider/sasscb" and "components/underscore" libraries
+  - Merge pull request #486 from mapbender/feature/printClient-legendpage-image
+  - Fix legendpage_image and logo on legend page #476 #477
+  - Merge pull request #482 from mapbender/hotfix/basesourceswitcher-initialization
+  - Merge printclient: legend on first page, legend logo #462
+  - Fix load core application by MapbenderYamlCompilerPass
+  - Refactor Mapbender Yaml Compiler Pass
+  - Merge pull request #483 from mapbender/feature/print-transparent-background
+  - Fix SecurityContext annotations
+  - Fix getting blank gif by overview.scss
+  - Fix component codemirror source path
+  - Rewrite components/codemirror paths
+  - Remove git modules definition file
+  - Remove mapquery as submodule
+  - Remove components/codemirror
+  - Fix OpenLayer2 MapQuery edition library binding
+  - Add composer definition
+  - Merge pull request #484 from mapbender/hotfix/scaledisplay
+  - Remove calculate scale
+  - Move LDAP component to Mapbender/Ldap Bundle as composer 'mapbender/ldap' module
+  - Remove unnecessary overlay from mobile SCSS
+  - Remove abstract typed class definition from mapbender.geosource.js
+  - Merge pull request #473 from mapbender/hotfix/view-permission-for-instance-creating
+  - Fix set paramaters by create meta data object
+  - Fix incomplete configuration update when first BSS entry is a multi-item submenu
+  - Fix getting permission for creating objects
+  - Merge pull request #481 from mapbender/hotfix/print_png8_png24
+  - Fix Print and Imageexport with content-type image/png8 and image/png mode=24bit
+  - Apply BaseSourceSwitcher initial state top-down to Application config
+  - Machinery for top-down Application configuration updates through Elements
+  - Fix Print templates with transparent background windows fix
+  - Merge pull request #474 from mapbender/hotfix/fix-duplicate-loads
+  - Merge pull request #475 from mapbender/feature/print-transparent-background
+  - Fix duplicate loads of WMS
+  - Fix allow saving of instances with VIEW right on sources
+  - Fix print pdf templates with transparent background part2
+  - Fix print pdf templates with transparent background
+  - Fix error legendpage_image on every legend page
+  - Merge pull request #471 from mapbender/hotfix/map-default-dpi-value
+  - Merge pull request #472 from mapbender/hotfix/print-legend-owsproxy
+  - Add host for a legend url
+  - Revert change of standard dpi value to 90.714 again because it's more conformant to the wms specification
+  - Merge pull request #470 from mapbender/hotfix/print-styles-param
+  - Fix printing on some scales
+  - Update dimension handler source code
+  - Add application template security block
+  - Merge pull request #469 from mapbender/hotfix/print-style
+  - Fix printservice: point style fix
+  - Fix printservice: fix feature style in case of strokewidth = 0
+  - Fix printservice style
+  - Define logo block in full screen template
+  - Fix showing feature iframe informations as tab
+  - Fix print second opened feature data
+  - Fix showing feature informations as tabs
+  - Fix showing feature informations in mobile apps
+  - Fix print legendpage_image on second page
+  - Revert feature info styling
+  - Show line ruler measure reverse (first measure on top)
+  - Merge pull request #466 from LazerTiberius/feature/immediate-ruler-measurement
+  - Deselect base source by creating WMS Instance
+  - Fix displaying feature info iframe content and draw container border
+  - Fix applciation copy permissions check by not root user
+  - Fix feature info reopen if active
+  - Merge remote-tracking branch 'origin/hotfix/wms-via-tunnel' into release/3.0.5
+  - Improve login input height style
+  - Make login, register, forgot password and restore password screens responsive
+  - Disallow select map, overview and buttons as text
+  - Fix print getting geometry style defaults
+  - Merge print and digitizer service binding
+  - Set FF accordion overflow-x: hidden
+  - Add SecurityContext anonymouse ID
+  - Fix set anonymous user by SecurityContext
+  - Merge remote-tracking branch 'remotes/origin/feature/added-anonymous-userconst' into release/3.0.5
+  - Print additional data from digitizer feature
+  - Remove popup tab item space for last and first children
+  - Fix form generate dialog close button position
+  - Remove application temlate name from application list
+  - Fix manage  application administration link
+  - Fix screen shot image tag
+  - Merge remote-tracking branch 'remotes/github/release/3.0.5' into upgrade/3.0.5
+  - Workaround adding doctrine where conditions (PHP7)
+  - Fix Userid setting
+  - Add anonymous user constant for security.
+  - Add possibility to update the shown distance/area after mouse move instead of click
+  - Add immediate checkbox to admin form
+  - Add generic way to render form -  Form will be iterated, So all form entries will be rendered , not only the defined. This way is more DRY
+  - Move YAML edit plugin to edit.html.twig template
+  - Add code-mirror.yaml.plugin init textarea as YAML editor
+  - Add code mirror YAML highlighting plugin
+  - Add HTML element the ability to set custom css files
+  - Add full screen template container info manager
+  - Refactor HTMLElement
+  - Add missed entity property for render element template
+  - Improve show errors by SymfonyAjaxManager
+  - PrintClient: fixes to generate legendpage image with group
+  - Optimize printservice, imageexport for secured services
+  - Fix printclient: legend on first page, legend logo
+  - Fix pring for tunnel connections
+  - Merge remote-tracking branch 'origin/release/3.0.5' into release/3.0.5
+  - Check if url for tunnel esists
+  - Fix call legends, featureInfo via tunnel for secured services
+  - Add SymfonyAjaxManager to ManagerTemplate
+  - Fix wms proxy vs. tunnel
+  - Add popup styles to manager template
+  - Fix ui dialog close button displaying
+  - Fix administration input color
+  - Intergrate bootstrap and refactor/fix administration SCSS files
+  - Fix and refactor login and manager template
+  - Fix and refactor UploadScreenshot component
+  - Merge pull request #459 from mapbender/hotfix/changelog
+  - Merge pull request #460 from mapbender/hotfix/default-titlesize512
+  - Change tilesize default to 512
 
-    - Fix transalate element titles by import Closes: https://github.com/mapbender/mapbender-starter/issues/46
-    - Add WmsInstanceLayer to fix import applications
-    - Fix import YAML application BaseSourceSwitcher element configuration
-    - Add WmsInstanceLayerRepository to fix import
-    - Remove repository class  WmsInstanceLayerRepository as annotation
-    - Fix import demo applications and import base source switcher configuration
-    - Fix and refactor YAML application importing https://github.com/mapbender/mapbender-starter/issues/45
-    - Improve core annotations
-    - Fix display error message text https://github.com/mapbender/mapbender-starter/issues/45
-    - Fix print element administration translation https://github.com/mapbender/mapbender-starter/issues/46
-    - Fix WMS doctrine entities
-    - Fix getting print settings from ODG file Closes: https://github.com/mapbender/mapbender-starter/issues/44
-    - Fix getting new application entity by slug from database Closes: https://github.com/mapbender/mapbender-starter/issues/43
-    - Fix composer open-sans vendor typo
-    - Change open sans font library vendor to wheregroup
-    - Change JOII javascript library vendor to wheregroup
-    - Change compass-mixins library vendor to wheregroup
-    - Change codemirror library vendor to wheregroup
-    - Fix getting setting minimal and maximal scale hint by WmsInstanceLayer, WmsLayerSource, WmsInstanceLayerEntityHandler and MinMax
-    - Improve WMS annotations
-    - Improve EntityHandler annotation
-    - Revert encoding credentials by RepositoryController
-    - Fix gettint scale hint by WmsLayerSource
-    - Encode WMS credintials
-    - Fix using application edit/create title translation
-    - Merge pull request #511 from mapbender/fix/translations_manager
-    - restructured translations for de, en and fr in edit/create new application
-    - Fix application manager edit translation link
-    - Merge feature/symfony-upgrade-2.8
-    - Add logging if element isn't registered
-    - Skip elements this not registred instead of break whole application
-    - Merge pull request #506 from mapbender/hotfix/popup-text-selection
-    - Reenable default text selection in elements (popups...) nested inside OL map
-    - Merge pull request #489 from mapbender/feature/searchrouter-buttonposition
-    - Merge pull request #505 from mapbender/hotfix/translation-manager-typos
-    - Fix tabs german translation
-    - Merge pull request #500 from mapbender/hotfix/translation-core-typos-1
-    - Remove search word from global translation name spache
-    - Merge pull request #496 from mapbender/hotfix/translation-manager-typos
-    - Deactivate WMS only valid option by default
-    - Fix WmsLayerSource getScaleRecursive method and add annotations
-    - Merge pull request #499 from mapbender/hotfix/translation-core-typos
-    - Merge pull request #503 from mapbender/hotfix/printclient-adddynamictext-utfdecode
-    - Improve copy right element configurability (release/3.0.5 merge)
-    - Fix frontend.html.twig and index.html.twig templates using JOII lib
-    - Add utf8_decode to handle öüä for dynamic textes
-    - Remove deprecated joii.min.js library
-    - Describe and fix WMS entity documenations
-    - Fix core element documentation
-    - Describe SourceMetadata method types
-    - Fix MapbenderBundle code description
-    - Describe and fix InstanceConfiguration
-    - Describe and refactor EntityHandler
-    - Describe Element::getElementForm
-    - Describe Mapbender core bundle class
-    - Fix and refactor Application component
-    - Fix recover vendor specifics and buffer settings my WmsInstanceConfigurationOptions
-    - Fix and describe WMC entity
-    - Fix WmcParser code description
-    - Clean up MapbenderPrintBundle desciprion
-    - Describe MapbenderMobileBundle
-    - Refactor and descript mobile template
-    - Clean up manager bundle component code descriptions
-    - Clean up drupal and KML bundles code description
-    - Clean up mapbender core bundle code description
-    - Clean up core data transformers and add code documentation
-    - Optimize RequestListener imports
-    - Clean up core entities and add code documentation
-    - Revert Template render method fix
-    - Fix using authorization_checker as service in RepositoryController
-    - Clean up core components and add code documentation
-    - Refactor and mark core generating commands as deprecated
-    - Refactor asset classes
-    - Mark CustomDoctrineParamConverter as deprecaed and optimize imports
-    - Fix utils annotations and documentation
-    - Fix actions.html.twig template create application translation
-    - Upgrade security context from 2.3 to 2.8
-    - Merge remote-tracking branch 'composer/feature/symfony2.7' into feature/symfony-upgrade-2.8
-    - Fix map query image patch
-    - Fix Printcl typo
-    - Fixed typos and merged structure with en version
-    - Fixed typos in core bundle translation see #498
-    - Fixed typos, merged with en version, changed some translation
-    - Fix options variable link in copyright element
-    - Add copyright element width and height configuration options
-    - Add fullscreen template region "align" and "closed" properties
-    - Fix only valid russian translation
-    - Merge pull request #490 from mapbender/hotfix/wms-keyword-unlimit
-    - Fixed keyword character limitation
-    - SearchRouter in Sidepane move buttons ok/reset under form
-    - Set mapbender/mapquery version to 1.x
-    - Add require libraries to composer definition
-    - Remove html5shiv.3.7.2.min.js, placeholders.3.0.2.min.js, respond.1.4.2.min.js and javascript.util.js
-    - Remove IE 6-10 template support
-    - Add "eslider/sasscb" and "components/underscore" libraries
-    - Merge pull request #486 from mapbender/feature/printClient-legendpage-image
-    - Fix legendpage_image and logo on legend page #476 #477
-    - Merge pull request #482 from mapbender/hotfix/basesourceswitcher-initialization
-    - Merge printclient: legend on first page, legend logo #462
-    - Fix load core application by MapbenderYamlCompilerPass
-    - Refactor Mapbender Yaml Compiler Pass
-    - Merge pull request #483 from mapbender/feature/print-transparent-background
-    - Fix SecurityContext annotations
-    - Fix getting blank gif by overview.scss
-    - Fix component codemirror source path
-    - Rewrite components/codemirror paths
-    - Remove git modules definition file
-    - Remove mapquery as submodule
-    - Remove components/codemirror
-    - Fix OpenLayer2 MapQuery edition library binding
-    - Add composer definition
-    - Merge pull request #484 from mapbender/hotfix/scaledisplay
-    - Remove calculate scale
-    - Move LDAP component to Mapbender/Ldap Bundle as composer 'mapbender/ldap' module
-    - Remove unnecessary overlay from mobile SCSS
-    - Remove abstract typed class definition from mapbender.geosource.js
-    - Merge pull request #473 from mapbender/hotfix/view-permission-for-instance-creating
-    - Fix set paramaters by create meta data object
-    - Fix incomplete configuration update when first BSS entry is a multi-item submenu
-    - Fix getting permission for creating objects
-    - Merge pull request #481 from mapbender/hotfix/print_png8_png24
-    - Fix Print and Imageexport with content-type image/png8 and image/png mode=24bit
-    - Apply BaseSourceSwitcher initial state top-down to Application config
-    - Machinery for top-down Application configuration updates through Elements
-    - Fix Print templates with transparent background windows fix
-    - Merge pull request #474 from mapbender/hotfix/fix-duplicate-loads
-    - Merge pull request #475 from mapbender/feature/print-transparent-background
-    - Fix duplicate loads of WMS
-    - Fix allow saving of instances with VIEW right on sources
-    - Fix print pdf templates with transparent background part2
-    - Fix print pdf templates with transparent background
-    - Fix error legendpage_image on every legend page
-    - Merge pull request #471 from mapbender/hotfix/map-default-dpi-value
-    - Merge pull request #472 from mapbender/hotfix/print-legend-owsproxy
-    - Add host for a legend url
-    - Revert change of standard dpi value to 90.714 again because it's more conformant to the wms specification
-    - Merge pull request #470 from mapbender/hotfix/print-styles-param
-    - Fix printing on some scales
-    - Update dimension handler source code
-    - Add application template security block
-    - Merge pull request #469 from mapbender/hotfix/print-style
-    - Fix printservice: point style fix
-    - Fix printservice: fix feature style in case of strokewidth = 0
-    - Fix printservice style
-    - Define logo block in full screen template
-    - Fix showing feature iframe informations as tab
-    - Fix print second opened feature data
-    - Fix showing feature informations as tabs
-    - Fix showing feature informations in mobile apps
-    - Fix print legendpage_image on second page
-    - Revert feature info styling
-    - Show line ruler measure reverse (first measure on top)
-    - Merge pull request #466 from LazerTiberius/feature/immediate-ruler-measurement
-    - Deselect base source by creating WMS Instance
-    - Fix displaying feature info iframe content and draw container border
-    - Fix applciation copy permissions check by not root user
-    - Fix feature info reopen if active
-    - Merge remote-tracking branch 'origin/hotfix/wms-via-tunnel' into release/3.0.5
-    - Improve login input height style
-    - Make login, register, forgot password and restore password screens responsive
-    - Disallow select map, overview and buttons as text
-    - Fix print getting geometry style defaults
-    - Merge print and digitizer service binding
-    - Set FF accordion overflow-x: hidden
-    - Add SecurityContext anonymouse ID
-    - Fix set anonymous user by SecurityContext
-    - Merge remote-tracking branch 'remotes/origin/feature/added-anonymous-userconst' into release/3.0.5
-    - Print additional data from digitizer feature
-    - Remove popup tab item space for last and first children
-    - Fix form generate dialog close button position
-    - Remove application temlate name from application list
-    - Fix manage  application administration link
-    - Fix screen shot image tag
-    - Merge remote-tracking branch 'remotes/github/release/3.0.5' into upgrade/3.0.5
-    - Workaround adding doctrine where conditions (PHP7)
-    - Fix Userid setting
-    - Add anonymous user constant for security.
-    - Add possibility to update the shown distance/area after mouse move instead of click
-    - Add immediate checkbox to admin form
-    - Add generic way to render form -  Form will be iterated, So all form entries will be rendered , not only the defined. This way is more DRY
-    - Move YAML edit plugin to edit.html.twig template
-    - Add code-mirror.yaml.plugin init textarea as YAML editor
-    - Add code mirror YAML highlighting plugin
-    - Add HTML element the ability to set custom css files
-    - Add full screen template container info manager
-    - Refactor HTMLElement
-    - Add missed entity property for render element template
-    - Improve show errors by SymfonyAjaxManager
-    - PrintClient: fixes to generate legendpage image with group
-    - Optimize printservice, imageexport for secured services
-    - Fix printclient: legend on first page, legend logo
-    - Fix pring for tunnel connections
-    - Merge remote-tracking branch 'origin/release/3.0.5' into release/3.0.5
-    - Check if url for tunnel esists
-    - Fix call legends, featureInfo via tunnel for secured services
-    - Add SymfonyAjaxManager to ManagerTemplate
-    - Fix wms proxy vs. tunnel
-    - Add popup styles to manager template
-    - Fix ui dialog close button displaying
-    - Fix administration input color
-    - Intergrate bootstrap and refactor/fix administration SCSS files
-    - Fix and refactor login and manager template
-    - Fix and refactor UploadScreenshot component
-    - Merge pull request #459 from mapbender/hotfix/changelog
-    - Merge pull request #460 from mapbender/hotfix/default-titlesize512
-    - Change tilesize default to 512
-
-* **v3.0.5.4**
-    - Support reversible layer order per WMS source instance (new dropdown application backend section "Layersets")
-    - Support WMS keywords > 255 characters; needs app/console doctrine:schema:update for running installations
-    - Extend WmsLoader WMS service compatibility, now matches backend
-    - Update WmsLoader example URL to https
-    - Skip undefined element classes in Yaml applications, log a warning instead of crashing
-    - Fix unbounded growth in "authority" on repeated export / reimport / cloning of applications (#777)
-    - Backport doctrine annotations to fix some broken import / export scenarios
-    - Various fixes to displaying and handling min / max scale definition from sublayers vs root layers (see pull #787)
-    - Backport fix for getting Dimension configuration with open extent
-    - Fix strict SCSS warnings when compiling with ruby-sass (closes issue #761)
-    - Fix possible URL signing spoof with input URLs missing query parameters (internal issue #8375)
-    - Replace usort => array_multisort to skip around PHP bug #50688 when sorting Element names (MB3 issue #586)
-    - Merge pull request #765 from mapbender/fix/wms-cleanups-loading
-    - Fix http 500 when rendering meta data for a service with undefined contact information
-    - Merge pull request #760 from mapbender/fix/unittest-preconditions
-    - Merge pull request #747 from mapbender/fix/metadata-serialization-746
-    - Merge pull request #743 from mapbender/fix/element-inheritance-639-noconfig
-    - Fix getting new application entity by slug from database (issue #739)
-    - Changed Opacity for zoombar and toolbar to get a unique button color
-    - Support legend URL extraction from styles even if last style has no LegendURL node
-    - Merge pull request #699 from mapbender/hotfix/publicFieldsInEntity
-    - Merge pull request #657 from mapbender/fix/display-scale-selector-status
-    - Merge pull request #456 from mapbender/hotfix/redlining-text
-    - No longer persist `WmsInstance->configuration["children"]` (aka "layersets" in frontend), generate only for Application config
-    - Fix unknown instance access HTTP status via tunnel (500 => 404)
-    - Remove deprecated joii.min.js library
-    - Misc code documentation and type annotation improvements
-    - Deprecate template and element generator commands
-    - Add copyright element width and height configuration options
-    - Merge pull request #484 from mapbender/hotfix/scaledisplay
-    - Remove unnecessary overlay from mobile SCSS
-    - Improved mimetype handling in Print and ImageExport
-    - Fix BaseSourceSwitcher initial state immediately on application load
-    - Fix duplicate loads of WMS when a layer is going out of scale.
-    - allow saving of instances with VIEW right on sources
-    - Support print Pdf templates with transparent background
-    - Merge pull request #466 from LazerTiberius/feature/immediate-ruler-measurement
-    - Improve FeatureInfo behavior in mobile apps
-    - Fix feature info reopen if active
-    - Make login, register, forgot password and restore password screens responsive
-    - Disallow select map, overview and buttons as text
-    - Improved PHP7 support
-    - Add syntax highlighting for Yaml entry forms
-    - Improve cookie and legend handling via "instance tunnel" (used for services secured by basic auth)
-    - Better print / export support for secured services
-    - Better print support for digitizer features and other geometries
-    - Add SymfonyAjaxManager to ManagerTemplate
-    - Intergrate bootstrap and refactor/fix administration SCSS files
-    - Merge pull request #460 from mapbender/hotfix/default-titlesize512
-    - Fix doublets zoom level dots
-    - Merge pull request #457 from mapbender/hotfix/featureinfo-css-no-accordion
-    - use composer installed phantomjs for tests
-    - Add deprecation comment to "generate:*" commands
-    - Remove dump asset command
-    - fixed featureinfo iframe css
-    - Merge pull request #454 from mapbender/hotfix/deleted-layersets
-    - Merge pull request #455 from mapbender/hotfix/featureinfo-css-no-accordion
-    - Restrict move popups outside of visible area application
-    - fixed featureinfo css in certain conditions
-    - Remove debugging statement.
-    - Merge pull request #453 from mapbender/feature/wmcedit-dialog-size
-    - Merge pull request #452 from mapbender/hotfix/add-empty-button-target
-    - fixed app loading when layersets were deleted
-    - Remove deprecated simple search mobile js handler. #7080
-    - added options to configure dialog size
-    - added empty button target to dropdown
-    - fix update wms scale, scaleHint, MinMax
-    - Merge pull request #445 from mapbender/hotfix/metadata
-    - Merge pull request #450 from mapbender/hotfix/stored-xss
-    - Merge pull request #451 from mapbender/hotfix/manager_app_logo
-    - Fix getting element template name in PHP 7
-    - Fix element property description typo
-    - icon visibility of application in configuration #7082
-    - Fix and refactor simple search element. Closes: #409
-    - fixed wmclist part of vulnerability
-    - Fix element property description typo
-    - Fix remove deprecated highlighted layer
-    - Merge pull request #449 from mapbender/hotfix/print
-    - Merge pull request #448 from mapbender/hotfix/add-styles-to-getmap
-    - Fix merge search route default configuration
-    - add message for an invalid instance
-    - print: fixed multipolygon bug
-    - fix target position by layer sorting
-    - remove STYLES values for getFeatureInfo Request
-    - add 'STYLES' to getMap request
-    - Merge hotfix/fix-travis-ci
-    - Add element entity repository
-    - Fix search router getting default settings
-    - print: added visibility check for vector layers
-    - print: recognize text color from template
-    - Refactor and optimize search router
-    - Refactor and automate getting element relevant name for template, administration form, etc.
-    - Merge pull request #446 from mapbender/hotfix/poi-element
-    - Fix translate SearchRouter default title and tool tip
-    - Fix getting default full screen template default properties
-    - Translate GPS "no signal" error message
-    - Remove old JS test
-    - Fix zoom bar level separator displaying for IE 9-11
-    - Throw exception if print template doesn't exists
-    - Refactor template assets binding
-    - transform poi coordinates
-    - change layername, change translations
-    - add exception_format to OL wms layer
-    - Fix getting template static properties
-    - Improve and refactor templates
-    - Merge pull request #444 from mapbender/hotfix/measure-add-geodesic
-    - add geodesic property by activate
-    - add geodesic property for measures
-    - Refactor and extract Fullscreen template template path to twigTemplate variable
-    - Fix handle mobile template button click if target isn't defined
-    - Set mobile icon label font weight to normal
-    - Fix and improve mobile template button handling
-    - Fix displaying layer meta data titles
-    - Merge pull request #435 from mapbender/hotfix/import-element
-    - Merge pull request #442 from mapbender/hotfix/print-encoding
-    - print: fixed input field encoding
-    - fix permission for source list
-    - Merge pull request #441 from mapbender/hotfix/print-format
-    - print: bugfix template format and fontsize
-    - Merge pull request #440 from mapbender/hotfix/gps_first_position
-    - Update mapbender.element.gpsPosition.js
-    - Fix getting default print font name and size
-    - gps first position and center on first you know what I mean. #6091
-    - Remove EntityAnnotationParser empty comment
-    - Fix typos in WmcParser
-    - Deprecate Mapbender2UserProvider
-    - Merge pull request #434 from mapbender/hotfix/layer-switch-fix
-    - Merge pull request #437 from mapbender/hotfix/print-fontsize
-    - Merge pull request #436 from mapbender/printclient-labelinputwidth-patch
-    - print: bugfix parsing fontsize from pdf-template
-    - Update printclient.scss
-    - Fix changed paramer of isElementGranted to the new ElementEntity type
-    - Revert messed up format
-    - Change import of  Mapbender\CoreBundle\Entity\Element to use Mapbender\CoreBundle\Entity\Element as ElementEntity;
-    - fixed #6577 (display of wrong back buffer when switching on layers)
-    - Merge pull request #424 from mapbender/hotfix-for-5988
-    - Merge pull request #433 from mapbender/hotfix/print-fontsize-check
-    - Fix print default font size setting
-    - Merge pull request #430 from mapbender/hotfix/print
-    - Remove dump role names fix
-    - Fix and union application save validation logici
-    - Improve ApplicationController asset cache check
-    - Fix print default font size setting
-    - Merge pull request #432 from mapbender/fix/acl-handling
-    - Improve application TestBase
-    - Fix coping application
-    - Fix application creation form check
-    - Remove auto completion from WMS source login form
-    - Merge pull request #431 from ThorstenHi/bugfix/addSource
-    - fixed add wms source, disable autocomplete password
-    - print: fixed template import with fpdi
-    - Merge pull request #429 from ThorstenHi/bugfix/xss
-    - Improve ACL handling
-    - Fix Map POI XSS
-    - Fix get iterratable ACL OID's list
-    - fix XSS vulnerability
-    - fixed php7 print bug
-    - Fix manager application common tab DE/EN translation
-    - Revert Application component changes
-    - Refactor Application component
-    - Refactor Application, Template components and Fullscreen template
-    - Refactor full screen template and handler
-    - Refactor Application->getElementById
-    - Merge pull request #420 from mapbender/feature/fractionDigits-number-coordinatedisplay
-    - Check der Datenquelle aus Ausgabetemplate entfernt s.a. Ticket: Datenquelle OK entfernen
-    - Fix register mobile application event handler on "moveend"
-    - Refactor PDF_ImageAlpha
-    - Use "setasign/fpdi-fpdf" instead of  "toooni/fpdf" library. Adapt PDF_ImageAlpha and PrintService on "setasign/fpdi-fpdf".
-    - Simplify WmsBundle translations from XML to YAML hierarchical structure
-    - Simplify WmcBundle translations from XML to YAML hierarchical structure
-    - Simplify PrintBundle translations from XML to YAML hierarchical structure
-    - Simplify KmlBundle translations from XML to YAML hierarchical structure
-    - Simplify CoreBundle translations from XML to YAML hierarchical structure
-    - Simplify translations from XML to YAML hierarchical structure
-    - Refactor and add default application manager translations
-    - Improve  application manager russian translations, powered by Zhandos (http://osgeo-org.1560.x6.nabble.com/Proved-russian-translation-file-td5261873.html)
-    - Use new  application manager messages translations. Refactor ApplicationController.
-    - Translate application manager messages to DE and EN dictionaries
-    - Refactor imports of WelcomeController
-    - Extend ApplicationController by WelcomeController. Remove redundant code.
-    - Refactor ApplicationController and TranslationController
-    - Refactor Manager ApplicationController
-    - Refactor Import/Export components
-    - Improve tab navigation to use keyboard (TAB)
-    - Fix display workflow buttons by editing of application element ACL
-    - Fix find object ACL (add try-catch block)
-    - Add ability to see which security permissions are set for an element (or some other object)
-    - Extract administration border radius variables
-    - Refactor ApplicationController security permission check
-    - Remove EntityHandler unnecessary comment
-    - Refactor ApplicationController export methods
-    - Remove ExchangeNormalizer unnecessary head comment
-    - Fix export permission check call
-    - Fix SecurityContext permission check
-    - Fix display administration navigation item active icon
-    - Display elements by edit which has ACL in different color
-    - Refactor element controller security method
-    - Refactor Element entity class
-    - Refactor manager.scss
-    - Improve tab navigation container style
-    - Improve buttons and input elements styles
-    - Improve tab navigator style
-    - Merge pull request #419 from mapbender/feature/show-source-id-by-add-instance
-    - Improve manager tab navigator style
-    - Fix _icons.scss font
-    - Improve application list navigation style
-    - Improve application list border style (radius=8)
-    - Refactor ManagerBundle
-    - Refactor application core components
-    - Core application components refactored
-    - Core entities refactored
-    - Application refactored
-    - Refactor WelcomeController
-    - Improve ExportHandler documentation
-    - Improve ExchangeJob documenation code format
-    - Refactor and clean code of Element entity
-    - Merge pull request #421 from mapbender/hotfix/wms-doctrine-entities
-    - Refactor ElementController
-    - set Many-To-One, Unidirectional for WmsInstanceLayer->WmsLayerSource
-    - Fix WmsSource annotations
-    - Fix WMS entities
-    - Revert reload parameter bag service
-    - Revert about dialog changes
-    - Add composer clean lifecycle
-    - set number of fractionDigits for srs.units=grad to +5
-    - show source id by create an instance
-    - Remove featureInfo IFrame background color (switch to transparent)
-    - add persist application by components change
-    - Merge pull request #412 from mapbender/feature/load-app-config-dynamic
-    - use wms version at wmsloader
-    - Merge remote-tracking branch 'origin/release/3.0.5' into feature/load-app-config-dynamic
-    - add initDropdown for select
-    - Improve feature info response table styling
-    - fix hide wms tiled for outer scale
-    - Rebuild cache after save application in production mode
-    - add GET parameters for dynamic loading
-    - add dynamic application's configuration loading
-    - Check if user logged in security.context
-    - Fix security context annotation return type
-    - get supported projections from Proj4js.defs
-    - Fix load EPSG data
-    - Merge pull request #410 from mapbender/feature/wms-1.3.0
-    - support wms version 1.3.0 in overview element
-    - fix default version for mapbender.yaml wms
-    - Merge branch 'release/3.0.5' into feature/wms-1.3.0
-    - add srs for poi
-    - round a poi coordiante
-    - Merge pull request #411 from mapbender/release/305
-    - Add SCSS validation before save application
-    - update featureinfo element
-    - Merge remote-tracking branch 'origin' into feature/wms-1.3.0
-    - clean a code
-    - add support for wms v1.3.0
-    - Merge pull request #405 from mapbender/hotfix/change-layer-options
-    - add version, exception_format to WmsInstance; use version for GetFeatureInfo
-    - Refactor element generator
-    - Fix DataFixtures EPSG's import and implement EPSG's update
-    - Merge pull request #406 from mapbender/hotfix/exchange
-    - Remove obsolete mapbender.element.zoombar.css file
-    - Change zoom pane vertical margin to 4 dots
-    - Fix overview map navigation in IE9
-    - Refactor mapbender overview  element javascript
-    - Refactor overview style sheets
-    - Remove obsolete mapbender.element.overview.css
-    - Merge remote-tracking branch 'origin/release/3.0.5' into hotfix/exchange
-    - fix default visibility for a layer
-    - fix name 'application' at form type
-    - Merge branch 'release/3.0.5' of https://github.com/mapbender/mapbender into release/3.0.5
-    - optimize applications import/copy for not mysql, sqlite, spatialite
-    - Add SecurityContext get user role names
-    - Set default YAMLDataTransformer indentention=2
-    - fix copy application
-    - Improve edit YAML styling
-    - optimize an export
-    - Add HTMLElement handling  of service and DataStore configuration
-    - Refactor ApplicationController and Application
-
-* **v3.0.5.3** - 2016-02-04
-    - fix on/off layer visibility
-    - Improve application manager button style
-    - Improve tool and zoom bar icon opacity
-    - Set login menu default font family
-    - Shrink mapbender logo
-    - Remove console.log froim mapbender.element.gpsPosition.js
-    - Merge export alpha layers as image
-    - Fix deactivate GPS button in Firefox
-    - Fix search router zoom to feature twice
-    - Redraw search router selected feature after zoom
-    - print: fixed legend size
-    - imageexport: fixed opacity
-    - Fix and refactor GPS locator widget
-    - Fix deactivate gps button
-    - Fix simple search side pane styling
-    - fix featureinfo url
-    - Fix simple search admin type styles
-    - Fix set layer name
-    - Improve search router style for mobile template
-    - Disable wrap search router table header text
-    - Fix  search router horizontal scroll and remove result styles
-    - Refactor search router
-    - Improve SimpleSearch element styling
-    - Fix HTTP/HTTPS feature info requests
-    - Fix check map tileSize option
-    - Add search route horizontal scrolling
-    - Fix search router reset last results and improve styles
-    - Improve poi link dialog style
-    - Disable error message fade effect
-    - Remove TODOs.rst because becomes outdated
-    - Fix search router element input label (title)
-    - Improve scale and srs selector styles
-    - Fix import/export region properties
-    - Set layer tree title max length = 40
-    - set protocol into featureinfo url from browser
-    - Fix RegionProperties entity property visibility
-    - Change Application $regionProperties property to protected
-    - Merge pull request #394 from mapbender/feature/print-sidepane
-    - print: sidepane-print changed button style and behaviour
-    - Merge branch 'release/3.0.5' into feature/print-sidepane
-    - print: bugfix type parameter
-    - Improve SearchRouter table header padding
-    - Merge branch 'release/3.0.5' into feature/print-sidepane
-    - print: fixed sidepane usage
-    - Remove normalize.css becourse bootstrap alredy include them
-    - Remove using normalize.css because bootstrap.css already includes them
-    - Hotfix print twig template generation
-    - fix transform a clicked feature geometry to map srs
-    - Fix result table selection checkbox  position and selected row color
-    - add default values for SearchRouter
-    - add with/height for SearchRouter dialog
-    - Merge pull request #393 from mapbender/hotfix/print-legend
-    - Merge pull request #384 from mapbender/feature/print-sidepane
-    - merged
-    - print: added missing translations
-    - print: added missing button label
-    - print: fixed legend bug
-    - print: fixed dynamic text position
-    - Merge pull request #392 from mapbender/feature/redlining-without-dialog
-    - fix wms layer get legend from self, formate code
-    - Fix coordinates width  at bottom menu
-    - Remove CSS transition animation for map tile load
-    - Fix annotation typo
-    - Fix HTML element assets paths
-    - fix max height for searchRouter result
-    - Merge branch 'release/3.0.5' into feature/redlining-without-dialog
-    - fix a layer validation for an instance
-    - fix: add only valid instances into layerset configuration
-    - fix layertree: remove theme by missing sources
-    - Fixes sass compiler fails on Linux 32-bit #389
-    - CP#5164: GPS accuracy fix
-    - Improve assets generation and caching mechanic and fixes: #388.
-    - Improve CSS cache modification check
-    - Cache CSS for production environment
-    - printclient: sidepane usage
-    - Merge pull request #383 from mapbender/hotfix/application-copy-sqlite-5018
-    - Merge pull request #382 from mapbender/release/3.0.5
-    - Merge pull request #381 from mapbender/hotfix/print-optionalfields
-    - printclient: fixed required input fields
-    - fix coordinatesdisplay: set default values for options
-    - fix application copy for sqlite: add 'flush' after 'persist'
-    - Fix copy application
-    - add check if Storage suported
-    - fix set active tab after form saving
-    - add translations for redlining
-    - display type 'element' for a redlining element
-    - fix show/hide redlining
-    - fix import application from mapbender.yml
-    - Remove global $.ajax proxy rewriting
-    - Merge pull request #376 from mapbender/develop
-
-* **v3.0.5.2**
-    - Copy applications: User-Rights and groups are copied. The user who copied the application becomes owner of the copied application.
-    - FOM: Changes in behaviour of wrong logins and user locking. It is only shown that the login failed, independent if the user exists or not.
-    - Fixed error message when creating a user with a too short password.
-    - Print: Fix of replace pattern.
-    - Print: Fix if a wrong configured WMS has special characters (%26) in the legend URL.
-    - Image export in Firefox.
-    - WMC Loader: Loading WMC and Behaviour of BaseSources.
-    - BaseSourceSwitcher: Tiles of a not visible service are not pre-fetched.
-    - BaseSourceSwitcher: If a group is defined, only one theme is switched on.
-    - SearchRouter: Fix of quotes for table-names.
-    - Copy applications: Fix of the search in the copied application.
-    - Simple Search: Catch the return key.
-    - FeatureInfo: Add WMS functionality and WMS Loader.
-    - Icon Polygon is visible in the toolbar of applications.
-    - Icons, which are not based on FontAwesome also work in the mobile application.
-    - Administration of the map element: The view of the configuration dialog in the backend starts on top.
-    - Administration data source: No form data auto-complete from the browser for username and password.
-    - Mobile application: Design in Firefox for Android.
-    - Update 3.0.4.x: FeatureInfo autoopen=true is kept.
-    - Doku: FOM UserBundle translation and additional information for failed user logins.
-    - Doku: URL parameter scale in map element.
-    - Doku: WMC Loader and KeepSources.
-* **v3.0.5.1**
-    - Map: OpenLayers TileSize: You can set the tile-size for the map. Default: 256x256.
-    - Map: Delay before Tiles: For WMS-T, for example with temporal parameters (in future)
-    - Print: Show coordinates in PDF print
-    - Print: get print scale depending on map-scale
-    - Print: print legend_default_behaviour
-    - Print: add print templates with the + symbol
-    - Print: user-defined logo and text
-    - Layertree: loading symbol and exclamation mark symbol.
-    - Layertree: zoom Symbol not for layers without a BBOX information
-    - WMS Reload: FeatureInfo
-    - WMS Reload: some WMS couldn't be reloaded.
-    - Export/Import of application and miscellaneous bugfixes
-    - WMC-Editor and WMC-Load fixes.
-    - WMC from a Mapbender 3.0.4.1 application
-    - Tile buffer and BBOX buffer fixes
-    - FeatureInfo: Fixes in design and when shown as an Accordion Panel
-    - FeatureInfo: Print
-    - Wrong Jquery-UI link in layerset instance
-    - Save Layerset and Save Layout leaves you on the page
-    - Classic Template: SCSS corrections
-    - Mobile Template: Bootstrap message hides close button
-    - Mobile Template: close SearchRouter window
-    - Mobile Template: Mozilla Firefox Fixes on layout
-    - Backend: Layerset Filter and +-Buttons doesn't hide everything anymore
-    - composer.json upgrade version of joii to 3.1.2
-    - composer.json upgrade version of Digitizer to 1.0.*
-    - Documentation of the JS-UI Generator (Form-Generator): https://github.com/eSlider/vis-ui.js
-* **v3.0.5.0**
-    - a map parameter "layerset" is renamed into "layersets" and represets a list of layersets
-    - WMS Update
-    - Digitize Functionality
-    - Print with legend
-    - configurable Layertree
-    - Mobile Template
-    - SASS Compiler
-    - addvendorspecific
-    - advanced features for HTML element through formgenerator
-    - New button collection
-    - advanced behaviour of featureInfo dialog (keep styles, only open tabs for hits, width and height for FeatureInfo dialog)
-    - add prameter on start of a Mapbender3 application (change srs, poi, bbox, center)
-    - Symfony Update 2.3.27
-* **v3.0.4.1**
-    - center the map from GET paramter 'center added
-    - option 'removelayer' added into layertree menu
-    - parameter 'layerRemove' removed from layertree configuration
-    - container accordion structure changed
-    - import / export from applications added (without acls)
-    - display layer metadata
-* **v3.0.4.0**
-    - Switched to MIT license
-    - fixed element saving bug
-    - use degrees as unit fallback when none are provided by SRS definition
-    - added screenshot management to application editing
-    - enhanced CSS URL rewrite to be more dynamic depending on apps URL rewriting
-    - patched OpenLayers with unreleased upstream fixes
-    - enhanced GPS position element (remove marker on disable, position averaging)
-    - properly remove proxy from WMS URLs before printing
-    - display WMS metadata valdiation results
-    - fixed application copy bugs
-    - region properties added (normal/tabs/accordion)
-    - Symfony 2.3 upgrade
-    - patched OpenLayers 2.13 with fixes for proper IE8-10 behavior
-    - prevent unsaved element forms to be closed accidentally
-    - added CSS editing to application editing
-    - added generic HTML element
-    - Codemirror updated
-    - workaround weird fileinfo behavior during print
-    - added scalebar to print
-    - enhanced SimpleSearch preprocessing with regex and sensible Solr defaults
-    - travis-ci.org integration for automated testing
-    - SearchRouter enhancements (z-index, results counter)
-    - GPS position can make the map follow it's position
-    - More WMS metadata validation, handling and displaying
-    - FeatureInfo can have custom data handlers
-    - configurable buffer/ratio property for WMS instances
-    - print using layer opacity
-    - SearchRouter feature styles can be configured
-    - Spanish translatiosn
-    - SearchRouter: autocomplete enhancements, feature garbage collection, more configration options
-    - responsive application templates

@@ -5,6 +5,7 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ContainerUpdateTimestampPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideBrandingPass;
+use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideCookieConsentGlobalPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -41,6 +42,7 @@ class MapbenderCoreBundle extends MapbenderBundle
         $formThemeOldLocation = 'FOMCoreBundle:Form:fields.html.twig';
         $formThemeNewLocation = 'MapbenderCoreBundle:form:fields.html.twig';
         $container->addCompilerPass(new RewriteFormThemeCompilerPass($formThemeOldLocation, $formThemeNewLocation));
+        $container->addCompilerPass(new ProvideCookieConsentGlobalPass());
     }
 
     /**

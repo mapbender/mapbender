@@ -28,6 +28,7 @@
         <parameter key="mapbender.asset_compiler.service.class">Mapbender\CoreBundle\Asset\AssetFactory</parameter>
         <parameter key="mapbender.application_asset.service.class">Mapbender\CoreBundle\Asset\ApplicationAssetService</parameter>
         <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
+        <parameter key="mapbender.cookieconsent">false</parameter>
     </parameters>
 
     <services>
