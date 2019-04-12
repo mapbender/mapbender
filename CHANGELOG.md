@@ -23,10 +23,10 @@
   - Fix Overview map support for source instances with `proxy` setting
   - Fix Overview map support for source instances with `tiled` setting
   - Overview map now respects per-layer `selected` setting on assigned WMS instances
-  - Fix ZoomBar configuration value handling discrepancies for `stepByPixel` and `stepSize` optionsin YAML apps vs DB apps
+  - Fix ZoomBar configuration value handling discrepancies for `stepByPixel` and `stepSize` options in YAML apps vs DB apps
   - Improve Digitizer feature Print support by always sending close event first before destrying popup ([PR#1128](https://github.com/mapbender/mapbender/pull/1128))
   - Fix nested tab container conflicts / conflicts with non-unique tab ids
-  - Fix multi-argument `visibilelayers` URL param handling ([Issue#1082](https://github.com/mapbender/mapbender/issues/1082), [PR#1140](https://github.com/mapbender/mapbender/pull/1140))
+  - Fix multi-argument `visiblelayers` URL param handling ([Issue#1082](https://github.com/mapbender/mapbender/issues/1082), [PR#1140](https://github.com/mapbender/mapbender/pull/1140))
   - Fix WMTS matrix resolution calculations for non-metric initial projections
   - Restore missing sub-layer toggle icons in backend source layer view
   - Restore missing frontend icon highlight effects in Redlining, Wmc Elements and LayerTree inline menu
@@ -62,7 +62,7 @@
   - Fix Wmc Editor Screenshot upload errors
   - Sources in YAML-defined Applications can now be configured to start expanded and / or not be expandable, analogous to `toggle` and `allowToggle` root layer options for DB applications ([PR#1113](https://github.com/mapbender/mapbender/pull/1113))
   - Print: Rotation can now be controlled by dragging the corner of the print area ([PR#1121](https://github.com/mapbender/mapbender/pull/1121))
-  - Print: fix rendering of multi-line dynamicially populated text regions
+  - Print: fix rendering of multi-line dynamically populated text regions
   - Print: fix errors extracting user specific job values for custom LDAP user objects without a `getId()` method
   - FeatureInfo: fix visual dialog overflow for wide response HTML formats with `showOriginal` option off
   - FeatureInfo: fix erratic double scrollbars appearing / disappearing when resizing dialog with `showOriginal` option on
