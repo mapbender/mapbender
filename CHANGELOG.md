@@ -1,6 +1,8 @@
 # Changelog
-* **dev-release/3.0.7** @ e5c9c185f
+* **dev-release/3.0.7** @ f5849b5cf
   - [Beta 4 regression] Fix Print client dialog-type deactivation via click on controlling button
+  - [Beta 4 regression] Fix Redlining toolset loss after sidepane deactivate / activate cycle
+  - [Beta regression] Fix layertree sublayer reordering under certain source layer nesting conditions
   - [Beta regression] Restore function of Application Layersets list filter
   - [Beta regression] Fix Layertree sometimes updating the wrong FeatureInfo checkbox
   - Fix out-of-box overflow in application list with very long application descriptions
