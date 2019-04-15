@@ -460,21 +460,6 @@ window.Mapbender.MapModelOl4 = (function() {
     return style;
 },
 /**
- * @returns {ol.proj.Projection}
- */
-getCurrentProjectionObject: function() {
-    if(this.olMap){
-        return this.olMap.getView().getProjection();
-    } else {
-      return new ol.proj.Projection({
-          code: this.options.srs,
-          extent: this.options.maxExtent
-      });
-    }
-
-},
-
-/**
  *
  * @returns {*|OpenLayers.Bounds}
  */

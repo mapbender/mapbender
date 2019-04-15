@@ -64,8 +64,9 @@
 
             var mainMapModel = this.mbMap.model;
             var center = mainMapModel.olMap.getView().getCenter();
+
             var viewOptions = {
-                projection: mainMapModel.getCurrentProjectionObject(), //map.getView().getProjection(),
+                projection: mainMapModel.getCurrentProjectionCode(),
                 center: center
             };
             if (this.options.fixed) {
@@ -232,14 +233,14 @@
         ,
         _changeSrs4: function(event, srs) {
             console.log("Overview changesrs event", event, srs);
-            var properties = this.control_.ovmap_.getProperties();
+            var properties = this.overview.ovmap_.getProperties();
             properties.view = new ol.View({
-              projection: this.mbMap_.model.getCurrentProjectionObject(),
-              center: this.mbMap_.model.map.getView().getCenter(),
-              extent: this.mbMap_.model.getMaxExtent(),
-              resolution: this.mbMap_.model.map.getView().getResolution()
+              projection: this.mbMap.model.getCurrentProjectionCode(),
+              center: this.mbMap.model.olMap.getView().getCenter(),
+              extent: this.mbMap.model.getMaxExtent(),
+              resolution: this.mbMap.model.olMap.getView().getResolution()
             });
-            this.control_.ovmap_.setProperties(properties);
+            this.overview.ovmap_.setProperties(properties);
             return;
 
 
