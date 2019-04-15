@@ -235,6 +235,19 @@ window.Mapbender.SourceLayer = (function() {
                 this.options.origId = this.options.id;
             }
         },
+        remove: function() {
+            var index = this.siblings.indexOf(this);
+            if (index !== -1) {
+                this.siblings.splice(index, 1);
+                if (!this.siblings.length && this.parent) {
+                    return this.parent.remove();
+                } else {
+                    return this.options.id;
+                }
+            } else {
+                return null;
+            }
+        },
         getBounds: function(projCode, inheritFromParent) {
             var bboxMap = this.options.bbox;
             var srsOrder = [projCode].concat(Object.keys(bboxMap));

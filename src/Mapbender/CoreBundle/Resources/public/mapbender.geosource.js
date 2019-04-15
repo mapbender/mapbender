@@ -21,45 +21,6 @@ Mapbender.Geo.SourceHandler = {
             layers: (rootLayer.children || [])
         };
     },
-    removeLayer: function removeLayer(source, layerToRemove) {
-        var rootLayer = source.configuration.children[0];
-        if (layerToRemove.options.id.toString() === rootLayer.options.id.toString()) {
-            source.configuration.children = [];
-            return {
-                layer: rootLayer
-            };
-        }
-        var options = {
-            layer: null,
-            layerToRemove: null
-        };
-        _removeLayer(rootLayer, layerToRemove);
-        return {
-            layer: options.layerToRemove
-        };
-
-        function _removeLayer(layer) {
-            if (layer.children) {
-                for (var i = 0; i < layer.children.length; i++) {
-                    _removeLayer(layer.children[i]);
-                    if (options.layer) {
-                        if (options.layer.options.id.toString() === layerToRemove.options.id.toString()) {
-                            var layerToRemArr = layer.children.splice(i, 1);
-                            if (layerToRemArr[0]) {
-                                options.layerToRemove = $.extend({}, layerToRemArr[0]);
-                            }
-                        }
-                    }
-                }
-            }
-            if (layer.options.id.toString() === layerToRemove.options.id.toString()) {
-                options.layer = layer;
-                options.layerToRemove = layer;
-            } else {
-                options.layer = null;
-            }
-        }
-    },
     applyTreeOptions: function applyTreeOptions(source, layerOptionsMap) {
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
             var layerId = layer.options.id;

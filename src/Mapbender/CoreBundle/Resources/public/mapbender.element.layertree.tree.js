@@ -123,6 +123,7 @@
             $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
+            $(document).bind('mbmapsourcelayerremoved', $.proxy(this._onSourceLayerRemoved, this));
             if (this._mobilePane) {
                 $(this.element).on('click', '.leaveContainer', function() {
                     $('input[name="selected"]', this).click();
@@ -353,9 +354,13 @@
         _onSourceChanged: function(event, options) {
             if (options.changed && options.changed.children) {
                 this._changeChildren(options.changed);
-            } else if (options.changed && options.changed.childRemoved) {
-                this._removeChild(options.changed);
             }
+        },
+        _onSourceLayerRemoved: function(event, data) {
+            var layerId = data.layerId;
+            var sourceId = data.source.id;
+            var $node = $('[data-sourceid="' + sourceId + '"][data-id="' + layerId + '"]', this.element);
+            $node.remove();
         },
         _isThemeChecked: function($li) {
             var $themeNode = $li.closest('li.themeContainer', this.element);
@@ -436,13 +441,6 @@
             }
             if (allow.info !== null && typeof allow.info !== 'undefined') {
                 $infoChk.prop('disabled', !allow.info);
-            }
-        },
-        _removeChild: function(changed) {
-            var self = this;
-            if (changed && changed.sourceIdx && changed.childRemoved) {
-                $('ul.layers:first li[data-id="' + changed.childRemoved.layer.options.id + '"]', self.element).
-                    remove();
             }
         },
         _onSourceRemoved: function(event, removed) {
@@ -817,25 +815,21 @@
             this.model.setOpacity(source, opacity);
         },
         _removeSource: function(e) {
-            var layer = $(e.currentTarget).closest("li").data();
-            var types = this.consts;
-            var model = this.model;
-
-            if (layer.sourceid && layer.type) {
-                switch (layer.type) {
-                    case types.root:
-                        model.removeSource({
-                            remove: {
-                                sourceIdx: {
-                                    id: layer.sourceid
-                                }
+            var $node = $(e.currentTarget).closest('li.leave');
+            var layerId = $node.attr('data-id');
+            var sourceId = $node.attr('data-sourceid');
+            var type = $node.attr('data-type');
+            if (type && layerId && sourceId) {
+                if (type === this.consts.root) {
+                    this.model.removeSource({
+                        remove: {
+                            sourceIdx: {
+                                id: sourceId
                             }
-                        });
-                        break;
-                    case types.group:
-                    case types.simple:
-                        model.removeLayer(layer.sourceid, layer.id);
-                        break;
+                        }
+                    });
+                } else {
+                    this.model.removeLayer(sourceId, layerId);
                 }
             }
 

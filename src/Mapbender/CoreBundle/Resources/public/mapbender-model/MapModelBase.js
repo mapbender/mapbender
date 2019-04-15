@@ -351,6 +351,22 @@ window.Mapbender.MapModelBase = (function() {
                 console.error("Unuspported options, ignoring", addOptions);
             }
         },
+        removeLayer: function(sourceId, layerId) {
+            var source = this.getSourceById(sourceId);
+            var layer = source && source.getLayerById(layerId);
+            var removedLayerId = null;
+            if (layer) {
+                removedLayerId = layer.remove();
+            }
+            if (removedLayerId) {
+                this._checkSource(source, true, false);
+                $(this.mbMap.element).trigger('mbmapsourcelayerremoved', {
+                    layerId: removedLayerId,
+                    source: source,
+                    mbMap: this.mbMap
+                });
+            }
+        },
         /**
          * Get the "geosource" object for given source from Mapbender.source
          * @param {OpenLayers.Layer|MapQuery.Layer|Object} source

@@ -53,9 +53,15 @@
                     this.open();
                 }
             }
+            var rerenderOn = [
+                'mbmapsourceadded',
+                'mbmapsourcechanged',
+                'mbmapsourcemoved',
+                'mbmapsourcesreordered',
+                'mbmapsourcelayerremoved'
+            ];
 
-            $(document)
-                .bind('mbmapsourceadded mbmapsourcechanged mbmapsourcemoved mbmapsourcesreordered', $.proxy(this.onMapLayerChanges, this))
+            $(document).bind(rerenderOn.join(' '), $.proxy(this.onMapLayerChanges, this));
         },
 
         /**

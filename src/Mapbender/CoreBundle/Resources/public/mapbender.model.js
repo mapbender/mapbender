@@ -1067,21 +1067,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             this.removeSource(toRemoveArr[i]);
         }
     },
-    removeLayer: function(sourceId, layerId) {
-        var source = this.getSource({id: sourceId});
-        var gs = this.getGeoSourceHandler(source, true);
-        var eventData = {
-            changed: {
-                childRemoved: gs.removeLayer(source, {options: {id: layerId}}),
-                sourceIdx: {id: sourceId}
-            }
-        };
-        this._checkSource(source, true, false);
-        this.mbMap.fireModelEvent({
-            name: 'sourceChanged',
-            value: eventData
-        });
-    },
     /**
      * Performs bulk-updates on the targetted source's treeOptions to make
      * specific, or all, layers visible or invisible.
