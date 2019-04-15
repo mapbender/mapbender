@@ -57,22 +57,18 @@ Mapbender.WmcHandler = function(mapWidget, options){
     };
     this.addToMap = function(wmcid, state){
         var model = this.mapWidget.getModel();
-        var mapProj = model.map.olMap.getProjectionObject(),
-            toKeepSources = {};
-        var source, i;
-        if (this.options.keepSources === 'basesources'){
-            for (i = 0; i < model.sourceTree.length; i++){
-                source = model.sourceTree[i];
-                if(source.configuration.isBaseSource)
-                    toKeepSources[source.id] = {sourceId: source.id};
+        var mapProj = model.map.olMap.getProjectionObject();
+        if (this.options.keepSources !== 'allsources') {
+            var toKeepSources = {};
+            if (this.options.keepSources === 'basesources') {
+                for(var i = 0; i < model.sourceTree.length; i++){
+                    var source = model.sourceTree[i];
+                    if(source.configuration.isBaseSource)
+                        toKeepSources[source.id] = {sourceId: source.id};
+                }
             }
-        } else if (this.options.keepSources === 'allsources'){
-            for (i = 0; i < model.sourceTree.length; i++){
-                source = model.sourceTree[i];
-                toKeepSources[source.id] = {sourceId: source.id};
-            }
+            this.mapWidget.removeSources(toKeepSources);
         }
-        this.mapWidget.removeSources(toKeepSources);
         if (state.extent.srs !== mapProj.projCode) {
             try {
                 this.mapWidget.changeProjection(state.extent.srs);
@@ -89,30 +85,6 @@ Mapbender.WmcHandler = function(mapWidget, options){
         this._addWmcToMap(state.sources);
     };
     
-    this.removeFromMap = function(){
-        this.mapWidget.fireModelEvent({
-            name: 'contextremovestart',
-            value: null
-        });
-        var model = this.mapWidget.getModel();
-        if (this.options.keepSources !== 'allsources') {
-            var toKeepSources = {};
-            if (this.options.keepSources === 'basesources') {
-                for(var i = 0; i < model.sourceTree.length; i++){
-                    var source = model.sourceTree[i];
-                    if(source.configuration.isBaseSource)
-                        toKeepSources[source.id] = {sourceId: source.id};
-                }
-            }
-            this.mapWidget.removeSources(toKeepSources);
-        }
-
-        this.mapWidget.fireModelEvent({
-            name: 'contextremoveend',
-            value: null
-        });
-    };
-
     this._addWmcToMap = function(sources){
         this.mapWidget.fireModelEvent({
             name: 'contextaddstart',

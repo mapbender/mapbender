@@ -213,12 +213,6 @@
                 keepSources: this.options.keepSources});
             wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
         },
-        removeFromMap: function(){
-            var wmcHandlier = new Mapbender.WmcHandler(this.mbMap, {
-                keepExtent: this.options.keepExtent,
-                keepSources: this.options.keepSources});
-            wmcHandlier.removeFromMap();
-        },
         wmcAsXml: function(){
             var state = this.mbMap.getMapState();
             var form = $('<form method="POST" action="' + (this.elementUrl + 'wmcasxml') + '" target="_BLANK" />');
