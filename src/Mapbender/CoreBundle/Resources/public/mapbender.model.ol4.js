@@ -157,29 +157,6 @@ window.Mapbender.MapModelOl4 = (function() {
         }
     },
     /**
-     * Calculates and applies layer state changes from accumulated treeOption changes in the source and (optionally)
-     * 1) updates the engine layer parameters and redraws
-     * 2) fires a mbmapsourcechanged event with the updated individual layer states
-     * @param {Object} source
-     * @param {boolean} redraw
-     * @param {boolean} fireSourceChangedEvent
-     */
-    _checkSource: function(source, redraw, fireSourceChangedEvent) {
-        var gsHandler = this.getGeoSourceHandler(source, true);
-        var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
-        var changedStates = gsHandler.applyLayerStates(source, newStates);
-        if (redraw) {
-            var layerParams = source.getLayerParameters(newStates);
-            this._resetSourceVisibility(source, layerParams);
-        }
-        if (fireSourceChangedEvent && Object.keys(changedStates).length) {
-            $(this.mbMap.element).trigger('mbmapsourcechanged', {
-                mbMap: this.mbMap,
-                source: source
-            });
-        }
-    },
-    /**
      * Check if OpenLayer layer need to be redraw
      *
      * @TODO: infoLayers should be set outside of the function
