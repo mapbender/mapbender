@@ -367,6 +367,24 @@ window.Mapbender.MapModelBase = (function() {
                 });
             }
         },
+        removeSourceById: function(sourceId) {
+            var source = this.getSourceById(sourceId);
+            if (source) {
+                $(this.mbMap.element).trigger('mbmapbeforesourceremoved', {
+                    source: source
+                });
+                var stIndex = this.sourceTree.indexOf(source);
+                Mapbender.mapEngine.removeLayers(this.olMap, source.nativeLayers);
+                if (stIndex) {
+                    this.sourceTree.splice(stIndex, 1);
+                }
+                var fakeMqId = source.mqlid;
+                delete(this.map.layersList[fakeMqId]);
+                $(this.mbMap.element).trigger('mbmapsourceremoved', {
+                    source: source
+                });
+            }
+        },
         /**
          * Get the "geosource" object for given source from Mapbender.source
          * @param {OpenLayers.Layer|MapQuery.Layer|Object} source

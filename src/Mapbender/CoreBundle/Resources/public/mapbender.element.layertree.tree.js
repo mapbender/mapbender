@@ -821,13 +821,7 @@
             var type = $node.attr('data-type');
             if (type && layerId && sourceId) {
                 if (type === this.consts.root) {
-                    this.model.removeSource({
-                        remove: {
-                            sourceIdx: {
-                                id: sourceId
-                            }
-                        }
-                    });
+                    this.model.removeSourceById(sourceId);
                 } else {
                     this.model.removeLayer(sourceId, layerId);
                 }
@@ -864,13 +858,7 @@
             if (Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))) {
                 sourceIds = this._getUniqueSourceIds();
                 for (i = 0, n = sourceIds.length; i < n; ++i) {
-                    this.model.removeSource({
-                        remove: {
-                            sourceIdx: {
-                                id: sourceIds[i]
-                            }
-                        }
-                    });
+                    this.model.removeSourceById(sourceIds[i]);
                 }
             }
             this._setSourcesCount();

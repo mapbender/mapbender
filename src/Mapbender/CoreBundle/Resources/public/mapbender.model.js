@@ -1002,69 +1002,12 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
     /**
      *
      */
-    removeSource: function(options) {
-        if (options.remove.sourceIdx) {
-            var sourceToRemove = this.getSource(options.remove.sourceIdx);
-            if (sourceToRemove) {
-                this.mbMap.fireModelEvent({
-                    name: 'beforeSourceRemoved',
-                    value: {
-                        source: sourceToRemove
-                    }
-                });
-                var olLayer = this.getNativeLayer(sourceToRemove);
-                if (olLayer) {
-                    if (olLayer instanceof OpenLayers.Layer.Grid) {
-                        olLayer.clearGrid();
-                    }
-                    if (olLayer.map) {
-                        if (olLayer.map.tileManager) {
-                            olLayer.map.tileManager.clearTileQueue({
-                                object: olLayer
-                            });
-                        }
-                        olLayer.map.removeLayer(olLayer);
-                    }
-                    for (var i = 0; i < this.sourceTree.length; i++) {
-                        if (this.sourceTree[i].id.toString() === sourceToRemove.id.toString()) {
-                            this.sourceTree.splice(i, 1);
-                            break;
-                        }
-                    }
-                    if (sourceToRemove.mqlid && this.map.layersList[sourceToRemove.mqlid]) {
-                        delete(this.map.layersList[sourceToRemove.mqlid]);
-                    }
-                    this.mbMap.fireModelEvent({
-                        name: 'sourceRemoved',
-                        value: {
-                            source: sourceToRemove
-                        }
-                    });
-                }
-            }
-        } else {
-            window.console && console.error("CHECK options at model.addSource");
-        }
-    },
-    /**
-     *
-     */
     removeSources: function(keepSources) {
-        var toRemoveArr = [];
         for (var i = 0; i < this.sourceTree.length; i++) {
             var source = this.sourceTree[i];
             if (!keepSources[source.id]) {
-                toRemoveArr.push({
-                    remove: {
-                        sourceIdx: {
-                            id: source.id
-                        }
-                    }
-                });
+                this.removeSourceById(source.id);
             }
-        }
-        for (var i = 0; i < toRemoveArr.length; i++) {
-            this.removeSource(toRemoveArr[i]);
         }
     },
     /**

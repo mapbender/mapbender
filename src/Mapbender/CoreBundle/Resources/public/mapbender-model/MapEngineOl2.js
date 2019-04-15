@@ -103,6 +103,22 @@ window.Mapbender.MapEngineOl2 = (function() {
             }
             return boundsOut;
         },
+        removeLayers: function(olMap, olLayers) {
+            for (var i = 0; i <olLayers.length; ++i) {
+                var olLayer = olLayers[i];
+                if (olLayer instanceof OpenLayers.Layer.Grid) {
+                    olLayer.clearGrid();
+                }
+                if (olLayer.map && olLayer.map.tileManager) {
+                    olLayer.map.tileManager.clearTileQueue({
+                        object: olLayer
+                    });
+                }
+                if (olLayer.map) {
+                    olLayer.map.removeLayer(olLayer);
+                }
+            }
+        },
         _getProj: function(projOrSrsName, strict) {
             var srsName;
             if (projOrSrsName && projOrSrsName.projCode) {

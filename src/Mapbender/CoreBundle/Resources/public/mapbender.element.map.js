@@ -44,14 +44,6 @@
         /**
          *
          */
-        removeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.remove && toChangeObj.remove.sourceIdx) {
-                this.model.removeSource(toChangeObj);
-            }
-        },
-        /**
-         *
-         */
         removeSources: function(keepSources){
             this.model.removeSources(keepSources);
         },

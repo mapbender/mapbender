@@ -110,6 +110,13 @@ window.Mapbender.MapEngineOl4 = (function() {
             var transformed = ol.extent.applyTransform(bounds, transformFn);
             return this.boundsFromArray(transformed);
         },
+        removeLayers: function(olMap, olLayers) {
+            var layerCollection = olMap.getLayers();
+            for (var i = 0; i <olLayers.length; ++i) {
+                var olLayer = olLayers[i];
+                layerCollection.remove(olLayer);
+            }
+        },
         _getProj: function(projOrSrsName, strict) {
             // ol.proj.get will happily accept an ol.proj instance :)
             var proj = ol.proj.get(projOrSrsName);
