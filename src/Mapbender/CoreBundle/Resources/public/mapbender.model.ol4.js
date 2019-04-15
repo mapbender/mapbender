@@ -913,25 +913,29 @@ createTextStyle: function(options) {
     /**
      * Update map view according to selected projection
      *
-     * @param {string} projectionCode
+     * @param {string} srsCode
      */
-updateMapViewForProjection: function(projectionCode) {
+    _changeProjectionInternal: function(srsNameFrom, srsNameTo) {
         var currentSrsCode = this.getCurrentProjectionCode();
-
-        if(typeof projectionCode === 'undefined' || projectionCode === currentSrsCode) {
-            return;
-        }
         var currentView = this.olMap.getView();
-        var fromProj = ol.proj.get(currentSrsCode);
-        var toProj = ol.proj.get(projectionCode);
+        var fromProj = ol.proj.get(srsNameFrom);
+        var toProj = ol.proj.get(srsNameTo);
+        var i;
         if (!fromProj || !fromProj.getUnits() || !toProj || !toProj.getUnits()) {
-            console.error("Missing / incomplete transformations (log order from / to)", [currentSrsCode, projectionCode], [fromProj, toProj]);
+            console.error("Missing / incomplete transformations (log order from / to)", [currentSrsCode, srsCode], [fromProj, toProj]);
             throw new Error("Missing / incomplete transformations");
         }
-        // @todo: attribute gone
-        for (var i = 0; i < this.pixelSources.length; ++i) {
-            this.pixelSources[i].updateSrs(toProj);
+        for (i = 0; i < this.sourceTree.length; ++i) {
+            var source = this.sourceTree[i];
+            for (var j = 0; j < source.nativeLayers.length; ++j) {
+                var olLayer = source.nativeLayers[j];
+                var nativeSource = olLayer.getSource();
+                if (nativeSource) {
+                    nativeSource.projection_ = toProj;
+                }
+            }
         }
+
         // viewProjection.getUnits() may return undefined, safer this way!
         var currentUnits = fromProj.getUnits() || "degrees";
         var newUnits = toProj.getUnits() || "degrees";
@@ -939,14 +943,11 @@ updateMapViewForProjection: function(projectionCode) {
         // DO NOT use currentView.getProjection().getExtent() here!
         // Going back and forth between SRSs, there is extreme drift in the
         // calculated values. Always start from the configured maxExtent.
-        var newMaxExtent = ol.proj.transformExtent(this.options.maxExtent, this.options.srs, toProj);
+        var newMaxExtent = Mapbender.mapEngine.transformBounds(this.options.maxExtent, this._configProj, srsNameTo);
 
         var viewPortSize = this.olMap.getSize();
         var currentCenter = currentView.getCenter();
         var newCenter = ol.proj.transform(currentCenter, fromProj, toProj);
-
-        var newProjection = ol.proj.get(projectionCode);
-        newProjection.setExtent(newMaxExtent);
 
         // Recalculate resolution and allowed resolution steps
         var _convertResolution = this.convertResolution_.bind(undefined, currentUnits, newUnits);
@@ -954,11 +955,12 @@ updateMapViewForProjection: function(projectionCode) {
         var newResolutions = this.viewOptions_.resolutions.map(_convertResolution);
         // Amend this.viewOptions_, we need the applied values for the next SRS switch
         var newViewOptions = $.extend(this.viewOptions_, {
-            projection: newProjection,
+            projection: srsNameTo,
             resolutions: newResolutions,
             center: newCenter,
             size: viewPortSize,
-            resolution: newResolution
+            resolution: newResolution,
+            extent: newMaxExtent
         });
 
         var newView = new ol.View(newViewOptions);

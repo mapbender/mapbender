@@ -1151,25 +1151,17 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
      * Changes the map's projection.
      */
     changeProjection: function(srsCode) {
-        var source;
-        var newProj;
         if (srsCode.projection) {
             console.warn("Legacy object-style argument passed to changeProjection");
-            newProj = this.getProj(srsCode.projection.projCode);
-        } else {
-            newProj = this.getProj(srsCode);
+            return this.changeProjection(srsCode.projection.projCode);
         }
-        var oldProj = this.map.olMap.getProjectionObject();
-        if (oldProj.projCode === newProj.projCode) {
-            return;
-        }
-        $(this.mbMap.element).trigger('mbmapbeforesrschange', {
-            from: oldProj,
-            to: newProj,
-            mbMap: this.mbMap
-        });
+        Mapbender.MapModelBase.prototype.changeProjection.call(this, srsCode);
+    },
+    _changeProjectionInternal: function(srsNameFrom, srsNameTo) {
+        var oldProj = this.getProj(srsNameFrom);
+        var newProj = this.getProj(srsNameTo);
         var newMaxExtent = this._transformExtent(this.mapMaxExtent, this._configProj, newProj);
-        var i, j, olLayers, dynamicSources = [];
+        var i, j, olLayers, dynamicSources = [], source;
         for (i = 0; i < this.sourceTree.length; ++i) {
             source = this.sourceTree[i];
             if (source.checkRecreateOnSrsSwitch(oldProj, newProj)) {
@@ -1204,33 +1196,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             }
         }
         this._checkChanges({type: 'not-really-an-event'});
-        this.mbMap.fireModelEvent({
-            name: 'srschanged',
-            value: {
-                projection: newProj,
-                from: oldProj,
-                to: newProj,
-                mbMap: this.mbMap
-            }
-        });
-        for (i = 0; i < dynamicSources.length; ++i) {
-            // WMTS / TMS special: send another change event for each root layer, which
-            // may potentially just have been disabled / reenabled. This will update the
-            // Layertree visual
-            source = dynamicSources[i];
-            var rootLayer = source.configuration.children[0];
-            var optionMap = {};
-            optionMap[rootLayer.options.id] = rootLayer;
-            this.mbMap.fireModelEvent({
-                name: 'sourceChanged',
-                value: {
-                    changed: {
-                        children: optionMap
-                    },
-                    sourceIdx: {id: source.id}
-                }
-            });
-        }
     },
     getProjectionUnitsPerMeter: function(srsName) {
         var units = this.getProj(srsName).proj.units || 'dd';

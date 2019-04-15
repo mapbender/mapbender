@@ -460,6 +460,46 @@ window.Mapbender.MapModelBase = (function() {
                 });
             });
         },
+        changeProjection: function(srsName) {
+            var srsNameBefore = this.getCurrentProjectionCode();
+            if (srsNameBefore === srsName) {
+                return;
+            }
+            $(this.mbMap.element).trigger('mbmapbeforesrschange', {
+                from: srsNameBefore,
+                to: srsName,
+                mbMap: this.mbMap
+            });
+            this._changeProjectionInternal(srsNameBefore, srsName);
+            this.mbMap.fireModelEvent({
+                name: 'srschanged',
+                value: {
+                    from: srsNameBefore,
+                    to: srsName,
+                    mbMap: this.mbMap
+                }
+            });
+            for (var i = 0; i < this.sourceTree.length; ++i) {
+                var source = this.sourceTree[i];
+                if (source.checkRecreateOnSrsSwitch(srsNameBefore, srsName)) {
+                    // WMTS / TMS special: send another change event for each root layer, which
+                    // may potentially just have been disabled / reenabled. This will update the
+                    // Layertree visual
+                    var rootLayer = source.configuration.children[0];
+                    var optionMap = {};
+                    optionMap[rootLayer.options.id] = rootLayer;
+                    this.mbMap.fireModelEvent({
+                        name: 'sourceChanged',
+                        value: {
+                            changed: {
+                                children: optionMap
+                            },
+                            sourceIdx: {id: source.id}
+                        }
+                    });
+                }
+            }
+        },
         _comma_dangle_dummy: null
     });
 

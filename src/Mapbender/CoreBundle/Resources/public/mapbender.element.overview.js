@@ -47,11 +47,11 @@
                     break;
                 case 'ol2':
                     this._initAsOl2Control(layers);
-                    $(document).bind('mbmapsrschanged', this._changeSrs2.bind(this));
                     break;
                 default:
                     throw new Error("Unhandled engine code " + Mapbender.mapEngine.code);
             }
+            $(this.mbMap.element).bind('mbmapsrschanged', this._onMbMapSrsChanged.bind(this));
         },
         _initAsOl4Control: function(layers) {
             var viewportId = 'mb-overview-' + this.element.attr('id') + '-viewport';
@@ -173,30 +173,33 @@
         },
 
         _onMbMapSrsChanged: function(event, data) {
-            if (data.mbMap !== this.mbMap) {
-                return;
+            try {
+                switch (Mapbender.mapEngine.code) {
+                    case 'ol2':
+                        this._changeSrs2(event, data);
+                        break;
+                    case 'ol4':
+                        this._changeSrs4(event, data);
+                        break;
+                    default:
+                        throw new Error("Unsupported map engine code " + Mapbender.mapEngine.code);
+                }
+            } catch (e) {
+                console.error("Overview srs change failed", e);
             }
-            var oldProj = this.overview.ovmap.getProjectionObject();
-            if (oldProj.projCode === data.to.projCode) {
-                return;
-            }
-            var newCenter = this.overview.ovmap.getCenter().clone().transform(oldProj, data.to);
+        },
+        _changeSrs2: function(event, data) {
+            /**
+             * @type {null|OpenLayers.Map}
+             */
+            var ovMap = this.overview.ovmap;
+            var oldProj = ovMap.getProjectionObject();
+            var newCenter = ovMap.getCenter().clone().transform(oldProj, data.to);
             // NOTE: this extent is already transformed
             var newMaxExtent = this.mbMap.model.map.olMap.maxExtent || null;
             if (newMaxExtent) {
                 newMaxExtent = newMaxExtent.clone();
             }
-            try {
-                this._changeSrs(data.to.projCode, newCenter, newMaxExtent);
-            } catch (e) {
-                console.error("Overview srs change failed", e);
-            }
-        },
-        _changeSrs2: function(srsCode, newCenter, newMaxExtent) {
-            /**
-             * @type {null|OpenLayers.Map}
-             */
-            var ovMap = this.overview.ovmap;
 
             var baseLayer = ovMap.layers[0];
             var layerUpdateOrder = ovMap.layers.filter(function(l) {
@@ -210,7 +213,7 @@
                 }
             }));
             var layerOptions = {
-                projection: srsCode
+                projection: data.to
             };
             if (newMaxExtent) {
                 layerOptions.maxExtent = newMaxExtent;
@@ -231,37 +234,15 @@
             }
         }
         ,
-        _changeSrs4: function(event, srs) {
-            console.log("Overview changesrs event", event, srs);
+        _changeSrs4: function(event, data) {
             var properties = this.overview.ovmap_.getProperties();
             properties.view = new ol.View({
-              projection: this.mbMap.model.getCurrentProjectionCode(),
+              projection: data.to,
               center: this.mbMap.model.olMap.getView().getCenter(),
               extent: this.mbMap.model.getMaxExtent(),
               resolution: this.mbMap.model.olMap.getView().getResolution()
             });
             this.overview.ovmap_.setProperties(properties);
-            return;
-
-
-            // @todo 3.1.0: this won't work on OL4, starting here
-            var ovMap = overview.ovmap;
-            var oldProj = ovMap.getProjectionObject();
-            if (oldProj.projCode === srs.projection.projCode) {
-                return;
-            }
-            var center = ovMap.getCenter().clone().transform(oldProj, srs.projection);
-
-            var mainMapMaxExtent = this.mbMap.model.map.olMap.maxExtent;
-
-
-            ovMap.projection = srs.projection;
-            ovMap.displayProjection = srs.projection;
-            ovMap.units = srs.projection.proj.units;
-            if (mainMapMaxExtent) {
-                // NOTE: this extent is already transformed
-                ovMap.maxExtent = mainMapMaxExtent.clone();
-            }
         }
     });
 

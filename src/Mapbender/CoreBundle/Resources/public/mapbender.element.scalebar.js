@@ -73,7 +73,11 @@
             }
         },
         _changeSrs: function(event, srs) {
-            this.scalebar.update();
+            if (typeof this.scalebar.update === 'function') {
+                this.scalebar.update();
+            } else {
+                console.warn("Implement me: scalebar refresh on srs change", this);
+            }
         }
     });
 
