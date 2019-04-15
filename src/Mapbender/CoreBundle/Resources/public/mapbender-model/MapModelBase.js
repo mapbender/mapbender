@@ -356,7 +356,17 @@ window.Mapbender.MapModelBase = (function() {
             var layer = source && source.getLayerById(layerId);
             var removedLayerId = null;
             if (layer) {
+                if (!layer.parent) {
+                    this.removeSourceById(sourceId);
+                    return;
+                }
+                var rootLayerId = '' + source.getRootLayer().options.id;
                 removedLayerId = layer.remove();
+                var wasRootLayer = removedLayerId && (('' + removedLayerId) === rootLayerId);
+                if (wasRootLayer) {
+                    this.removeSourceById(sourceId);
+                    return;
+                }
             }
             if (removedLayerId) {
                 this._checkSource(source, true, false);

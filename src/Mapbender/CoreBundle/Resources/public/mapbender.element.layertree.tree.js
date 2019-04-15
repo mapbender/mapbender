@@ -818,16 +818,10 @@
             var $node = $(e.currentTarget).closest('li.leave');
             var layerId = $node.attr('data-id');
             var sourceId = $node.attr('data-sourceid');
-            var type = $node.attr('data-type');
-            if (type && layerId && sourceId) {
-                if (type === this.consts.root) {
-                    this.model.removeSourceById(sourceId);
-                } else {
-                    this.model.removeLayer(sourceId, layerId);
-                }
+            if (layerId && sourceId) {
+                this.model.removeLayer(sourceId, layerId);
+                this._setSourcesCount();
             }
-
-            this._setSourcesCount();
         },
         _zoomToLayer: function(e) {
             var options = {

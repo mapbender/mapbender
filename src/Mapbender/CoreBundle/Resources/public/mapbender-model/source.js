@@ -97,6 +97,9 @@ window.Mapbender.Source = (function() {
             });
             return foundLayer;
         },
+        getRootLayer: function() {
+            return this.configuration.children[0];
+        },
         supportsMetadata: function() {
             return !(this.wmsloader || isNaN(parseInt(this.origId)));
         },
