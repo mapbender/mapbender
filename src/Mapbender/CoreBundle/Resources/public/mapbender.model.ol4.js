@@ -173,14 +173,9 @@ window.Mapbender.MapModelOl4 = (function() {
             this._resetSourceVisibility(source, layerParams);
         }
         if (fireSourceChangedEvent && Object.keys(changedStates).length) {
-            this.mbMap.fireModelEvent({
-                name: 'sourceChanged',
-                value: {
-                    changed: {
-                        children: changedStates,
-                        sourceIdx: {id: source.id}
-                    }
-                }
+            $(this.mbMap.element).trigger('mbmapsourcechanged', {
+                mbMap: this.mbMap,
+                source: source
             });
         }
     },

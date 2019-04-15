@@ -351,10 +351,8 @@
             };
             this._reset();
         },
-        _onSourceChanged: function(event, options) {
-            if (options.changed && options.changed.children) {
-                this._changeChildren(options.changed);
-            }
+        _onSourceChanged: function(event, data) {
+            this._resetSourceAtTree(data.source);
         },
         _onSourceLayerRemoved: function(event, data) {
             var layerId = data.layerId;
@@ -386,36 +384,16 @@
         },
         _resetSourceAtTree: function(source) {
             var self = this;
-            function resetSourceAtTree(layer, parent) {
+            function resetLayer(layer) {
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
-                self._redisplayLayerState($li, layer.state);
+                self._updateLayerDisplay($li, layer);
                 if (layer.children) {
                     for (var i = 0; i < layer.children.length; i++) {
-                        resetSourceAtTree(layer.children[i], layer);
+                        resetLayer(layer.children[i]);
                     }
                 }
             }
-            resetSourceAtTree(source.configuration.children[0], null);
-        },
-        _changeChildren: function(changed) {
-            if (changed.children) {
-                for (var layerId in changed.children) {
-                    var layerSettings = changed.children[layerId];
-                    var $li = $('li[data-id="' + layerId + '"]', this.element);
-                    if ($li.length !== 0) {
-                        var newTreeOptions = (layerSettings.options || {}).treeOptions;
-                        var newLayerState = layerSettings.state;
-                        if (!newLayerState && newTreeOptions && typeof newTreeOptions.selected !== 'undefined') {
-                            newLayerState = {visibility: newTreeOptions.selected};
-                        }
-                        this._updateLayerDisplay($li, {
-                            state: newLayerState,
-                            options: layerSettings.options
-                        });
-                        $('input[type="checkbox"]', $li).mbCheckbox();
-                    }
-                }
-            }
+            resetLayer(source.configuration.children[0]);
         },
         _updateLayerDisplay: function($li, layer) {
             if (layer && layer.state && Object.keys(layer.state).length) {
@@ -442,6 +420,7 @@
             if (allow.info !== null && typeof allow.info !== 'undefined') {
                 $infoChk.prop('disabled', !allow.info);
             }
+            $('input[type="checkbox"]', $scope).mbCheckbox();
         },
         _onSourceRemoved: function(event, removed) {
             if (removed && removed.source && removed.source.id) {

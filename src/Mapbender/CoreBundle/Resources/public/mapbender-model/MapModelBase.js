@@ -316,18 +316,13 @@ window.Mapbender.MapModelBase = (function() {
             var gsHandler = this.getGeoSourceHandler(source);
             gsHandler.applyTreeOptions(source, layerOptionsMap);
             var newStates = gsHandler.calculateLeafLayerStates(source, this.getScale());
-            var changedStates = gsHandler.applyLayerStates(source, newStates);
+            gsHandler.applyLayerStates(source, newStates);
             var layerParams = source.getLayerParameters(newStates);
             this._resetSourceVisibility(source, layerParams);
 
-            this.mbMap.fireModelEvent({
-                name: 'sourceChanged',
-                value: {
-                    changed: {
-                        children: $.extend(true, {}, layerOptionsMap, changedStates)
-                    },
-                    sourceIdx: {id: source.id}
-                }
+            $(this.mbMap.element).trigger('mbmapsourcechanged', {
+                mbMap: this.mbMap,
+                source: source
             });
         }
     };
@@ -485,17 +480,9 @@ window.Mapbender.MapModelBase = (function() {
                     // WMTS / TMS special: send another change event for each root layer, which
                     // may potentially just have been disabled / reenabled. This will update the
                     // Layertree visual
-                    var rootLayer = source.configuration.children[0];
-                    var optionMap = {};
-                    optionMap[rootLayer.options.id] = rootLayer;
-                    this.mbMap.fireModelEvent({
-                        name: 'sourceChanged',
-                        value: {
-                            changed: {
-                                children: optionMap
-                            },
-                            sourceIdx: {id: source.id}
-                        }
+                    $(this.mbMap.element).trigger('mbmapsourcechanged', {
+                        mbMap: this.mbMap,
+                        source: source
                     });
                 }
             }

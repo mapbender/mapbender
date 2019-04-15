@@ -571,14 +571,9 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
             this._resetSourceVisibility(source, layerParams);
         }
         if (fireSourceChangedEvent && Object.keys(changedStates).length) {
-            this.mbMap.fireModelEvent({
-                name: 'sourceChanged',
-                value: {
-                    changed: {
-                        children: changedStates,
-                        sourceIdx: {id: source.id}
-                    }
-                }
+            $(this.mbMap.element).trigger('mbmapsourcechanged', {
+                mbMap: this.mbMap,
+                source: source
             });
         }
     },
