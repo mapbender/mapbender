@@ -370,9 +370,6 @@ window.Mapbender.MapModelBase = (function() {
         removeSourceById: function(sourceId) {
             var source = this.getSourceById(sourceId);
             if (source) {
-                $(this.mbMap.element).trigger('mbmapbeforesourceremoved', {
-                    source: source
-                });
                 var stIndex = this.sourceTree.indexOf(source);
                 Mapbender.mapEngine.removeLayers(this.olMap, source.nativeLayers);
                 if (stIndex) {
