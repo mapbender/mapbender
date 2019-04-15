@@ -333,7 +333,7 @@ window.Mapbender.MapModelBase = (function() {
                 var layerParams = source.getLayerParameters(newStates);
                 this._resetSourceVisibility(source, layerParams);
             }
-            if (fireSourceChangedEvent && Object.keys(changedStates).length) {
+            if (fireSourceChangedEvent && changedStates) {
                 $(this.mbMap.element).trigger('mbmapsourcechanged', {
                     mbMap: this.mbMap,
                     source: source

@@ -185,17 +185,16 @@ Mapbender.Geo.SourceHandler = {
         });
     },
     /**
-     * Punches (assumed) leaf layer states from stateMap into the source structure, and calculates
-     * a (conservative, imprecise) layer changeset that can be supplied in mbmapsourcechanged event data.
-     * This will also update states of parent layers appropriately, and include these in the changeset.
+     * Punches (assumed) leaf layer states from stateMap into the source structure, and returns
+     * a boolean indicating if any state was changed.
      *
      * @param source
      * @param {Object.<string, Model~LayerState>} stateMap
-     * @return {Object.<string, Model~LayerChangeInfo>}
+     * @return {boolean}
      */
     applyLayerStates: function applyLayerStates(source, stateMap) {
         var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
-        var changeMap = {};
+        var stateChanged = false;
 
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, offset, parents) {
             if (layer.children && layer.children.length) {
@@ -204,18 +203,11 @@ Mapbender.Geo.SourceHandler = {
                 layer.state.visibility = false;
             }
             var entry = stateMap[layer.options.id];
-            var stateChanged = false;
             if (entry) {
                 for (var sni = 0; sni < stateNames.length; ++ sni) {
                     var stateName = stateNames[sni];
                     if (layer.state[stateName] !== entry[stateName]) {
                         layer.state = $.extend(layer.state || {}, entry);
-                        changeMap[layer.options.id] = {
-                            state: layer.state,
-                            options: {
-                                treeOptions: layer.options.treeOptions
-                            }
-                        };
                         stateChanged = true;
                         break;
                     }
@@ -223,19 +215,10 @@ Mapbender.Geo.SourceHandler = {
             }
             for (var p = 0; p < parents.length; ++p) {
                 var parentLayer = parents[p];
-                var parentId = parentLayer.options.id;
                 parentLayer.state.visibility = parentLayer.state.visibility || layer.state.visibility;
-                if (stateChanged) {
-                    changeMap[parentId] = $.extend(changeMap[parentId] || {}, {
-                        state: parentLayer.state,
-                        options: {
-                            treeOptions: parentLayer.options.treeOptions
-                        }
-                    });
-                }
             }
         });
-        return changeMap;
+        return stateChanged;
     },
     /**
      * @param {Object} layer
