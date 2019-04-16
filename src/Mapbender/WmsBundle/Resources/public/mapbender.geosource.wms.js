@@ -50,7 +50,7 @@ window.Mapbender.WmsSource = (function() {
             s.customParams = this.customParams;
             return s;
         },
-        getLayerParameters: function(stateMap) {
+        getLayerParameters: function() {
             var result = {
                 layers: [],
                 styles: [],
@@ -60,7 +60,7 @@ window.Mapbender.WmsSource = (function() {
                 // Layer names can be emptyish, most commonly on root layers
                 // Suppress layers with empty names entirely
                 if (layer.options.name) {
-                    var layerState = stateMap[layer.options.id] || layer.state;
+                    var layerState = layer.state;
                     if (layerState.visibility) {
                         result.layers.push(layer.options.name);
                         result.styles.push(layer.options.style || '');

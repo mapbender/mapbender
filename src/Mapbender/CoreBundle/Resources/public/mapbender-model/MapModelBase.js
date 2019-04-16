@@ -311,10 +311,9 @@ window.Mapbender.MapModelBase = (function() {
          * @param {boolean} fireSourceChangedEvent
          */
         _checkSource: function(source, redraw, fireSourceChangedEvent) {
-            var newStates = Mapbender.Geo.SourceHandler.calculateLeafLayerStates(source, this.getScale());
-            var changedStates = Mapbender.Geo.SourceHandler.applyLayerStates(source, newStates);
+            var changedStates = Mapbender.Geo.SourceHandler.updateLayerStates(source, this.getScale());
             if (redraw) {
-                var layerParams = source.getLayerParameters(newStates);
+                var layerParams = source.getLayerParameters();
                 this._resetSourceVisibility(source, layerParams);
             }
             if (fireSourceChangedEvent && changedStates) {

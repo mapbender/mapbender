@@ -147,7 +147,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             }
             return null;
         },
-        getLayerParameters: function(stateMap) {
+        getLayerParameters: function() {
             if (this.currentActiveLayer) {
                 return {
                     layers: [this.currentActiveLayer.options.identifier],

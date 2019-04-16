@@ -66,29 +66,18 @@ Mapbender.Geo.SourceHandler = {
         return infoMap;
     },
     /**
-     * Returns a preview mapping of states of displayable (=leaf) layers as if the given scale + extent were applied
-     * (but they are not!).
+     * Updates layer states, considering current treeOptions and given scale / extent.
      *
      * @param {*} source
      * @param {number} [scale] uses current map scale if not passed in
      * @param [extent] currently not used; @todo: implement outOfBounds checking
-     * @returns {Object.<string, Model~LayerState>}
-     */
-    calculateLeafLayerStates: function calculateLeafLayerStates(source, scale, extent) {
-        // delegate to getExtendedLeafInfo and reduce objects to just the 'state' entries
-        return _.mapObject(this.getExtendedLeafInfo(source, scale, extent), function(item) {
-            return item.state;
-        });
-    },
-    /**
-     * Punches (assumed) leaf layer states from stateMap into the source structure, and returns
-     * a boolean indicating if any state was changed.
-     *
-     * @param source
-     * @param {Object.<string, Model~LayerState>} stateMap
      * @return {boolean}
      */
-    applyLayerStates: function applyLayerStates(source, stateMap) {
+    updateLayerStates: function applyLayerStates(source, scale, extent) {
+        var stateMap = _.mapObject(this.getExtendedLeafInfo(source, scale, extent), function(item) {
+            return item.state;
+        });
+
         var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
         var stateChanged = false;
 
