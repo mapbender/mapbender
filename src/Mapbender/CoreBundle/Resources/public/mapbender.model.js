@@ -976,62 +976,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
     },
     /**
-     * Performs bulk-updates on the targetted source's treeOptions to make
-     * specific, or all, layers visible or invisible.
-     * Individual layers can be targetted by the options.layers mapping, which
-     * should map layer ids to {options: {treeOptions: {selected: <something>}}}
-     * objects.
-     *
-     * All other layers use the defaultSelected value for their new 'selected' value,
-     * which defaults to false (=off).
-     * Explicitly pass null for defaultSelected to avoid this.
-     *
-     * If you pass mergeSelected=true, you will essentially be prevented from turning
-     * any layer off that is currently on.
-     *
-     * NOTE: The resulting source tree change will also implicitly enable parent
-     *       layers of the layers you asked to enable. This behaviour cannot be disabled.
-     *       If you intend to just "tick a checkbox" without implicit side effects
-     *       on parent layers, use controlLayers instead.
-     *
-     * NOTE: This method can operate on sources that are OUTSIDE the current 'sourceTree',
-     *       i.e. plain-data source definition objects that have not yet been promoted
-     *       to active map sources.
-     *
-     *
-     * @param {Object} sourceIdObject in form of:
-     * - source id -> {id: MYSOURCEID}
-     * - mapqyery id -> {mqlid: MYSOURCEMAPQUERYID}
-     * - openlayers id -> {ollid: MYSOURCEOPENLAYERSID}
-     * - origin id -> {ollid: MYSOURCEORIGINID}
-     * @param {Object} options
-     * @param {Object<string, Model~LayerTreeOptionWrapper>} options.layers
-     * @param {boolean|null} [defaultSelected] defaults to false
-     * @param {boolean} [mergeSelected] defaults to false
-     *
-     */
-    changeLayerState: function(sourceIdObject, options, defaultSelected, mergeSelected) {
-        if (typeof mergeSelected === 'undefined')
-            mergeSelected = false;
-        if (typeof defaultSelected === 'undefined')
-            defaultSelected = false;
-        var source;
-        if (sourceIdObject.configuration && sourceIdObject.id && sourceIdObject.configuration.children && sourceIdObject.type) {
-            // let's just assume this already is a full-fledged source definition
-            source = sourceIdObject;
-        } else {
-            source = this.getSource(sourceIdObject);
-        }
-        if (source !== null) {
-            if (!(source instanceof Mapbender.Source)) {
-                source = Mapbender.Source.factory(source);
-            }
-            var toChangeOptions = Mapbender.source[source.type].createOptionsLayerState(source, options,
-                defaultSelected, mergeSelected);
-            this._updateSourceLayerTreeOptions(source, toChangeOptions.change.options.children);
-        }
-    },
-    /**
      * Bring the sources identified by the given ids into the given order.
      * All other sources will be left alone!
      *
