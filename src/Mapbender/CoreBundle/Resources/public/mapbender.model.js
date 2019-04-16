@@ -451,61 +451,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
     },
     /**
-     * @param options
-     * @return {Array<Model~SourceTreeish>}
-     */
-    findSource: function(options) {
-        var sources = [];
-        var findSource = function(object, options) {
-            var found = null;
-            for (var key in options) {
-                if (object[key]) {
-                    if (typeof object[key] === 'object') {
-                        var res = findSource(object[key], options[key]);
-                        if (found === null)
-                            found = res;
-                        else
-                            found = found && res;
-
-                    } else {
-                        return object[key] === options[key]
-                    }
-                }
-            }
-            return found;
-        };
-        for (var i = 0; i < this.sourceTree.length; i++) {
-            var source = this.sourceTree[i];
-            if (findSource(source, options))
-                sources.push(source);
-        }
-        return sources;
-    },
-    /**
-     * @deprecated used by layertree only, return type is presentationy, supports only a single search criterion
-     * @param options
-     * @returns {*}
-     */
-    findLayerset: function(options) {
-        if (!(options.source && options.source.origId)) {
-            console.error("Invalid layerset search parameters", options);
-            throw new Error("Invalid layerset search parameters");
-        }
-        for (var layersetId in Mapbender.configuration.layersets) {
-            var layerset = Mapbender.configuration.layersets[layersetId];
-            for (var i = 0; i < layerset.length; i++) {
-                if (layerset[i][options.source.origId]) {
-                    return {
-                        id: layersetId,
-                        title: Mapbender.configuration.layersetmap[layersetId],
-                        content: layerset
-                    };
-                }
-            }
-        }
-        return null;
-    },
-    /**
      * Returns the current map's scale
      */
     getScale: function() {
