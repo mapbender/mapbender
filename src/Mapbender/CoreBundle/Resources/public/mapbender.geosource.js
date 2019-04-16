@@ -12,15 +12,6 @@ var Mapbender = Mapbender || {};
 Mapbender.Geo = {};
 
 Mapbender.Geo.SourceHandler = {
-    getLayersList: function getLayersList(source) {
-        if (arguments.length !== 1) {
-            console.warn("Called getLayersList with extra arguments, ignoring");
-        }
-        var rootLayer = source.configuration.children[0];
-        return {
-            layers: (rootLayer.children || [])
-        };
-    },
     applyTreeOptions: function applyTreeOptions(source, layerOptionsMap) {
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer) {
             var layerId = layer.options.id;

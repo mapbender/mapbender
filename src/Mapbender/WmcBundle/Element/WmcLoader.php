@@ -254,7 +254,7 @@ class WmcLoader extends WmcBase
                     $wmc->setWmcid(round((microtime(true) * 1000)));
                     $wmc->setState($wmchandler->unSignUrls($state));
                     $xml = $this->container->get('templating')->render(
-                        'MapbenderWmcBundle:Wmc:wmc110_simple.xml.twig', array(
+                        'MapbenderWmcBundle:Wmc:wmc110.xml.twig', array(
                         'wmc' => $wmc));
                     return new Response($xml, 200, array(
                         'Content-Type' => 'application/xml',
