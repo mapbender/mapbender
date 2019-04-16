@@ -23,16 +23,6 @@ class MapbenderWmtsBundle extends MapbenderBundle
     /**
      * @inheritdoc
      */
-    public function getElements()
-    {
-        return array(
-//            'Mapbender\WmtsBundle\Element\WmtsLoader'
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getRepositoryManagers()
     {
         return array(
